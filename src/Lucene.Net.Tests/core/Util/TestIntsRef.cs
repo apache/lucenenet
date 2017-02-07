@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
         public virtual void TestEmpty()
         {
             IntsRef i = new IntsRef();
-            Assert.AreEqual(IntsRef.EMPTY_INTS, i.Ints);
+            Assert.AreEqual(IntsRef.EMPTY_INTS, i.Int32s);
             Assert.AreEqual(0, i.Offset);
             Assert.AreEqual(0, i.Length);
         }
@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
         {
             int[] ints = new int[] { 1, 2, 3, 4 };
             IntsRef i = new IntsRef(ints, 0, 4);
-            Assert.AreEqual(ints, i.Ints);
+            Assert.AreEqual(ints, i.Int32s);
             Assert.AreEqual(0, i.Offset);
             Assert.AreEqual(4, i.Length);
 

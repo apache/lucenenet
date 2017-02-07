@@ -57,7 +57,10 @@ namespace Lucene.Net.Util
 
         private static readonly char[] HEX = "0123456789abcdef".ToCharArray();
 
-        public static string LongHex(long x)
+        /// <summary>
+        /// NOTE: This was longHex() in Lucene
+        /// </summary>
+        public static string Int64Hex(long x)
         {
             char[] asHex = new char[16];
             for (int i = 16; --i >= 0; x = (long)((ulong)x >> 4))

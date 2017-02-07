@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
             {
                 Document document = open.Document(i);
                 float expected = Convert.ToSingle(document.Get(FloatTestField));
-                Assert.AreEqual(expected, Number.IntBitsToFloat((int)norms.Get(i)), 0.0f);
+                Assert.AreEqual(expected, Number.Int32BitsToSingle((int)norms.Get(i)), 0.0f);
             }
             open.Dispose();
             dir.Dispose();
@@ -127,7 +127,7 @@ namespace Lucene.Net.Index
         {
             public override long ComputeNorm(FieldInvertState state)
             {
-                return Number.FloatToIntBits(state.Boost);
+                return Number.SingleToInt32Bits(state.Boost);
             }
 
             public override SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats)

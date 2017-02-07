@@ -215,19 +215,19 @@ namespace Lucene.Net.Util.Fst
             if (output is long?)
             {
                 long? output2 = (long?)output;
-                @out.WriteVLong(output2.GetValueOrDefault() << 1);
+                @out.WriteVInt64(output2.GetValueOrDefault() << 1);
             }
             else
             {
                 TwoLongs output3 = (TwoLongs)output;
-                @out.WriteVLong((output3.First << 1) | 1);
-                @out.WriteVLong(output3.Second);
+                @out.WriteVInt64((output3.First << 1) | 1);
+                @out.WriteVInt64(output3.Second);
             }
         }
 
         public override object Read(DataInput @in)
         {
-            long code = @in.ReadVLong();
+            long code = @in.ReadVInt64();
             if ((code & 1) == 0)
             {
                 // single long
@@ -245,7 +245,7 @@ namespace Lucene.Net.Util.Fst
             {
                 // two longs
                 long first = (long)((ulong)code >> 1);
-                long second = @in.ReadVLong();
+                long second = @in.ReadVInt64();
                 return new TwoLongs(first, second);
             }
         }

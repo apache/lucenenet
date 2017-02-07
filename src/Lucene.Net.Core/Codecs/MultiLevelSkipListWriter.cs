@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs
                 if (level != 0)
                 {
                     // store child pointers for all levels except the lowest
-                    skipBuffer[level].WriteVLong(childPointer);
+                    skipBuffer[level].WriteVInt64(childPointer);
                 }
 
                 //remember the childPointer for the next level
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs
                 long length = skipBuffer[level].FilePointer;
                 if (length > 0)
                 {
-                    output.WriteVLong(length);
+                    output.WriteVInt64(length);
                     skipBuffer[level].WriteTo(output);
                 }
             }

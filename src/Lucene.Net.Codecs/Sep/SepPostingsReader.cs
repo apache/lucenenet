@@ -102,9 +102,9 @@ namespace Lucene.Net.Codecs.Sep
             // Make sure we are talking to the matching past writer
             CodecUtil.CheckHeader(termsIn, SepPostingsWriter.CODEC, SepPostingsWriter.VERSION_START,
                 SepPostingsWriter.VERSION_START);
-            _skipInterval = termsIn.ReadInt();
-            _maxSkipLevels = termsIn.ReadInt();
-            _skipMinimum = termsIn.ReadInt();
+            _skipInterval = termsIn.ReadInt32();
+            _maxSkipLevels = termsIn.ReadInt32();
+            _skipMinimum = termsIn.ReadInt32();
         }
 
         protected override void Dispose(bool disposing)
@@ -215,11 +215,11 @@ namespace Lucene.Net.Codecs.Sep
                     {
                         if (absolute)
                         {
-                            termState.PAYLOAD_FP = input.ReadVLong();
+                            termState.PAYLOAD_FP = input.ReadVInt64();
                         }
                         else
                         {
-                            termState.PAYLOAD_FP += input.ReadVLong();
+                            termState.PAYLOAD_FP += input.ReadVInt64();
                         }
                     }
                 }
@@ -229,11 +229,11 @@ namespace Lucene.Net.Codecs.Sep
             {
                 if (absolute)
                 {
-                    termState.SKIP_FP = input.ReadVLong();
+                    termState.SKIP_FP = input.ReadVInt64();
                 }
                 else
                 {
-                    termState.SKIP_FP += input.ReadVLong();
+                    termState.SKIP_FP += input.ReadVInt64();
                 }
             }
             else if (absolute)

@@ -467,7 +467,7 @@ namespace Lucene.Net.Index
                             // index into byte array (actually the end of
                             // the doc-specific byte[] when building)
                             int pos = (int)((uint)val >> 8);
-                            int ilen = VIntSize(delta);
+                            int ilen = VInt32Size(delta);
                             var arr = bytes[doc];
                             int newend = pos + ilen;
                             if (newend > arr.Length)
@@ -484,7 +484,7 @@ namespace Lucene.Net.Index
                                 arr = newarr;
                                 bytes[doc] = newarr;
                             }
-                            pos = WriteInt(delta, arr, pos);
+                            pos = WriteInt32(delta, arr, pos);
                             index[doc] = (pos << 8) | 1; // update pointer to end index in byte[]
                         }
                         else
@@ -515,7 +515,7 @@ namespace Lucene.Net.Index
 
                             //System.out.println("      ipos=" + ipos);
 
-                            int endPos = WriteInt(delta, tempArr, ipos);
+                            int endPos = WriteInt32(delta, tempArr, ipos);
                             //System.out.println("      endpos=" + endPos);
                             if (endPos <= 4)
                             {
@@ -671,8 +671,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Number of bytes to represent an unsigned int as a vint. </summary>
-        private static int VIntSize(int x)
+        /// Number of bytes to represent an unsigned int as a vint. 
+        /// <para/>
+        /// NOTE: This was vIntSize() in Lucene
+        /// </summary>
+        private static int VInt32Size(int x)
         {
             if ((x & (0xffffffff << (7 * 1))) == 0)
             {
@@ -695,7 +698,10 @@ namespace Lucene.Net.Index
 
         // todo: if we know the size of the vInt already, we could do
         // a single switch on the size
-        private static int WriteInt(int x, sbyte[] arr, int pos)
+        /// <summary>
+        /// NOTE: This was writeInt() in Lucene
+        /// </summary>
+        private static int WriteInt32(int x, sbyte[] arr, int pos)
         {
             var a = ((int)((uint)x >> (7 * 4)));
             if (a != 0)

@@ -100,35 +100,44 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
         /// this is method is used by <seealso cref="NumericTokenStream"/>.
-        /// After encoding, {@code bytes.offset} will always be 0. </summary>
+        /// After encoding, {@code bytes.offset} will always be 0. 
+        /// <para/>
+        /// NOTE: This was longToPrefixCoded() in Lucene
+        /// </summary>
         /// <param name="val"> the numeric value </param>
         /// <param name="shift"> how many bits to strip from the right </param>
         /// <param name="bytes"> will contain the encoded value </param>
-        public static void LongToPrefixCoded(long val, int shift, BytesRef bytes) // LUCENENET TODO: Rename to Int64ToPrefixCoded ?
+        public static void Int64ToPrefixCoded(long val, int shift, BytesRef bytes)
         {
-            LongToPrefixCodedBytes(val, shift, bytes);
+            Int64ToPrefixCodedBytes(val, shift, bytes);
         }
 
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
         /// this is method is used by <seealso cref="NumericTokenStream"/>.
-        /// After encoding, {@code bytes.offset} will always be 0. </summary>
+        /// After encoding, {@code bytes.offset} will always be 0. 
+        /// <para/>
+        /// NOTE: This was intToPrefixCoded() in Lucene
+        /// </summary>
         /// <param name="val"> the numeric value </param>
         /// <param name="shift"> how many bits to strip from the right </param>
         /// <param name="bytes"> will contain the encoded value </param>
-        public static void IntToPrefixCoded(int val, int shift, BytesRef bytes) // LUCENENET TODO: Rename to Int32ToPrefixCoded ?
+        public static void Int32ToPrefixCoded(int val, int shift, BytesRef bytes)
         {
-            IntToPrefixCodedBytes(val, shift, bytes);
+            Int32ToPrefixCodedBytes(val, shift, bytes);
         }
 
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
         /// this is method is used by <seealso cref="NumericTokenStream"/>.
-        /// After encoding, {@code bytes.offset} will always be 0. </summary>
+        /// After encoding, {@code bytes.offset} will always be 0. 
+        /// <para/>
+        /// NOTE: This was longToPrefixCodedBytes() in Lucene
+        /// </summary>
         /// <param name="val"> the numeric value </param>
         /// <param name="shift"> how many bits to strip from the right </param>
         /// <param name="bytes"> will contain the encoded value </param>
-        public static void LongToPrefixCodedBytes(long val, int shift, BytesRef bytes) // LUCENENET TODO: Rename to Int64ToPrefixCodedBytes ?
+        public static void Int64ToPrefixCodedBytes(long val, int shift, BytesRef bytes)
         {
             if ((shift & ~0x3f) != 0) // ensure shift is 0..63
             {
@@ -156,11 +165,14 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
         /// this is method is used by <seealso cref="NumericTokenStream"/>.
-        /// After encoding, {@code bytes.offset} will always be 0. </summary>
+        /// After encoding, {@code bytes.offset} will always be 0. 
+        /// <para/>
+        /// NOTE: This was intToPrefixCodedBytes() in Lucene
+        /// </summary>
         /// <param name="val"> the numeric value </param>
         /// <param name="shift"> how many bits to strip from the right </param>
         /// <param name="bytes"> will contain the encoded value </param>
-        public static void IntToPrefixCodedBytes(int val, int shift, BytesRef bytes) // LUCENENET TODO: Int64ToPrefixCodedBytes ?
+        public static void Int32ToPrefixCodedBytes(int val, int shift, BytesRef bytes)
         {
             if ((shift & ~0x1f) != 0) // ensure shift is 0..31
             {
@@ -186,10 +198,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the shift value from a prefix encoded {@code long}. </summary>
+        /// Returns the shift value from a prefix encoded {@code long}. 
+        /// <para/>
+        /// NOTE: This was getPrefixCodedLongShift() in Lucene
+        /// </summary>
         /// <exception cref="NumberFormatException"> if the supplied <seealso cref="BytesRef"/> is
         /// not correctly prefix encoded. </exception>
-        public static int GetPrefixCodedLongShift(BytesRef val) // LUCENENET TODO: Rename to GetPrefixCodedInt64Shift ?
+        public static int GetPrefixCodedInt64Shift(BytesRef val)
         {
             int shift = val.Bytes[val.Offset] - SHIFT_START_LONG;
             if (shift > 63 || shift < 0)
@@ -200,10 +215,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the shift value from a prefix encoded {@code int}. </summary>
+        /// Returns the shift value from a prefix encoded {@code int}. 
+        /// <para/>
+        /// NOTE: This was getPrefixCodedIntShift() in Lucene
+        /// </summary>
         /// <exception cref="NumberFormatException"> if the supplied <seealso cref="BytesRef"/> is
         /// not correctly prefix encoded. </exception>
-        public static int GetPrefixCodedIntShift(BytesRef val) // LUCENENET TODO: Rename GetPrefixCodedInt32Shift ?
+        public static int GetPrefixCodedInt32Shift(BytesRef val)
         {
             int shift = val.Bytes[val.Offset] - SHIFT_START_INT;
             if (shift > 31 || shift < 0)
@@ -216,11 +234,14 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns a long from prefixCoded bytes.
         /// Rightmost bits will be zero for lower precision codes.
-        /// this method can be used to decode a term's value. </summary>
+        /// this method can be used to decode a term's value. 
+        /// <para/>
+        /// NOTE: This was prefixCodedToLong() in Lucene
+        /// </summary>
         /// <exception cref="NumberFormatException"> if the supplied <seealso cref="BytesRef"/> is
         /// not correctly prefix encoded. </exception>
         /// <seealso cref= #longToPrefixCodedBytes </seealso>
-        public static long PrefixCodedToLong(BytesRef val) // LUCENENET TODO: Rename PrefixCodedToInt64 ?
+        public static long PrefixCodedToInt64(BytesRef val)
         {
             long sortableBits = 0L;
             for (int i = val.Offset + 1, limit = val.Offset + val.Length; i < limit; i++)
@@ -233,17 +254,20 @@ namespace Lucene.Net.Util
                 }
                 sortableBits |= (byte)b;
             }
-            return (long)((ulong)(sortableBits << GetPrefixCodedLongShift(val)) ^ 0x8000000000000000L);
+            return (long)((ulong)(sortableBits << GetPrefixCodedInt64Shift(val)) ^ 0x8000000000000000L);
         }
 
         /// <summary>
         /// Returns an int from prefixCoded bytes.
         /// Rightmost bits will be zero for lower precision codes.
-        /// this method can be used to decode a term's value. </summary>
+        /// this method can be used to decode a term's value. 
+        /// <para/>
+        /// NOTE: This was prefixCodedToInt() in Lucene
+        /// </summary>
         /// <exception cref="NumberFormatException"> if the supplied <seealso cref="BytesRef"/> is
         /// not correctly prefix encoded. </exception>
         /// <seealso cref= #intToPrefixCodedBytes </seealso>
-        public static int PrefixCodedToInt(BytesRef val) // LUCENENET TODO: Rename PrefixCodedToInt32 ?
+        public static int PrefixCodedToInt32(BytesRef val)
         {
             long sortableBits = 0;
             for (int i = val.Offset, limit = val.Offset + val.Length; i < limit; i++)
@@ -256,7 +280,7 @@ namespace Lucene.Net.Util
                 }
                 sortableBits |= (sbyte)b;
             }
-            return (int)((sortableBits << GetPrefixCodedIntShift(val)) ^ 0x80000000);
+            return (int)((sortableBits << GetPrefixCodedInt32Shift(val)) ^ 0x80000000);
         }
 
         /// <summary>
@@ -265,11 +289,14 @@ namespace Lucene.Net.Util
         /// bit layout and then some bits are swapped, to be able to compare the result as long.
         /// By this the precision is not reduced, but the value can easily used as a long.
         /// The sort order (including <seealso cref="Double#NaN"/>) is defined by
-        /// <seealso cref="Double#compareTo"/>; {@code NaN} is greater than positive infinity. </summary>
+        /// <seealso cref="Double#compareTo"/>; {@code NaN} is greater than positive infinity. 
+        /// <para/>
+        /// NOTE: This was doubleToSortableLong() in Lucene
+        /// </summary>
         /// <seealso cref= #sortableLongToDouble </seealso>
-        public static long DoubleToSortableLong(double val) // LUCENENET TODO: Rename DoubleToSortableInt64 ?
+        public static long DoubleToSortableInt64(double val)
         {
-            long f = Number.DoubleToLongBits(val);
+            long f = Number.DoubleToInt64Bits(val);
             if (f < 0)
             {
                 f ^= 0x7fffffffffffffffL;
@@ -278,9 +305,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts a sortable <code>long</code> back to a <code>double</code>. </summary>
+        /// Converts a sortable <code>long</code> back to a <code>double</code>. 
+        /// <para/>
+        /// NOTE: This was sortableLongToDouble() in Lucene
+        /// </summary>
         /// <seealso cref= #doubleToSortableLong </seealso>
-        public static double SortableLongToDouble(long val) // LUCENENET TODO: Rename SortableInt64ToDouble ?
+        public static double SortableInt64ToDouble(long val)
         {
             if (val < 0)
             {
@@ -295,11 +325,14 @@ namespace Lucene.Net.Util
         /// bit layout and then some bits are swapped, to be able to compare the result as int.
         /// By this the precision is not reduced, but the value can easily used as an int.
         /// The sort order (including <seealso cref="Float#NaN"/>) is defined by
-        /// <seealso cref="Float#compareTo"/>; {@code NaN} is greater than positive infinity. </summary>
+        /// <seealso cref="Float#compareTo"/>; {@code NaN} is greater than positive infinity. 
+        /// <para/>
+        /// NOTE: This was floatToSortableInt() in Lucene
+        /// </summary>
         /// <seealso cref= #sortableIntToFloat </seealso>
-        public static int FloatToSortableInt(float val) // LUCENENET TODO: rename SingleToSortableInt32 ?
+        public static int SingleToSortableInt32(float val)
         {
-            int f = Number.FloatToIntBits(val);
+            int f = Number.SingleToInt32Bits(val);
             if (f < 0)
             {
                 f ^= 0x7fffffff;
@@ -308,15 +341,18 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts a sortable <code>int</code> back to a <code>float</code>. </summary>
-        /// <seealso cref= #floatToSortableInt </seealso>
-        public static float SortableIntToFloat(int val) // LUCENENET TODO: rename SortableInt32ToSingle ?
+        /// Converts a sortable <see cref="int"/> back to a <see cref="float"/>. 
+        /// <para/>
+        /// NOTE: This was sortableIntToFloat() in Lucene
+        /// </summary>
+        /// <seealso cref="SingleToSortableInt32"/>
+        public static float SortableInt32ToSingle(int val)
         {
             if (val < 0)
             {
                 val ^= 0x7fffffff;
             }
-            return Number.IntBitsToFloat(val);
+            return Number.Int32BitsToSingle(val);
         }
 
         /// <summary>
@@ -325,9 +361,12 @@ namespace Lucene.Net.Util
         /// <seealso cref="Lucene.Net.Search.BooleanQuery"/> for each call to its
         /// <seealso cref="LongRangeBuilder#addRange(BytesRef,BytesRef)"/>
         /// method.
-        /// <p>this method is used by <seealso cref="NumericRangeQuery"/>.
+        /// <para/>
+        /// this method is used by <seealso cref="NumericRangeQuery"/>.
+        /// <para/>
+        /// NOTE: This was splitLongRange() in Lucene
         /// </summary>
-        public static void SplitLongRange(LongRangeBuilder builder, int precisionStep, long minBound, long maxBound) // LUCENENET TODO: Rename SplitIn64Range ?
+        public static void SplitInt64Range(LongRangeBuilder builder, int precisionStep, long minBound, long maxBound)
         {
             SplitRange(builder, 64, precisionStep, minBound, maxBound);
         }
@@ -338,9 +377,12 @@ namespace Lucene.Net.Util
         /// <seealso cref="Lucene.Net.Search.BooleanQuery"/> for each call to its
         /// <seealso cref="IntRangeBuilder#addRange(BytesRef,BytesRef)"/>
         /// method.
-        /// <p>this method is used by <seealso cref="NumericRangeQuery"/>.
+        /// <para/>
+        /// this method is used by <seealso cref="NumericRangeQuery"/>.
+        /// <para/>
+        /// NOTE: This was splitIntRange() in Lucene
         /// </summary>
-        public static void SplitIntRange(IntRangeBuilder builder, int precisionStep, int minBound, int maxBound) // LUCENENET TODO: rename SplitInt32Range ?
+        public static void SplitInt32Range(IntRangeBuilder builder, int precisionStep, int minBound, int maxBound)
         {
             SplitRange(builder, 32, precisionStep, minBound, maxBound);
         }
@@ -438,8 +480,8 @@ namespace Lucene.Net.Util
             public virtual void AddRange(long min, long max, int shift)
             {
                 BytesRef minBytes = new BytesRef(BUF_SIZE_LONG), maxBytes = new BytesRef(BUF_SIZE_LONG);
-                LongToPrefixCodedBytes(min, shift, minBytes);
-                LongToPrefixCodedBytes(max, shift, maxBytes);
+                Int64ToPrefixCodedBytes(min, shift, minBytes);
+                Int64ToPrefixCodedBytes(max, shift, maxBytes);
                 AddRange(minBytes, maxBytes);
             }
         }
@@ -468,8 +510,8 @@ namespace Lucene.Net.Util
             public virtual void AddRange(int min, int max, int shift)
             {
                 BytesRef minBytes = new BytesRef(BUF_SIZE_INT), maxBytes = new BytesRef(BUF_SIZE_INT);
-                IntToPrefixCodedBytes(min, shift, minBytes);
-                IntToPrefixCodedBytes(max, shift, maxBytes);
+                Int32ToPrefixCodedBytes(min, shift, minBytes);
+                Int32ToPrefixCodedBytes(max, shift, maxBytes);
                 AddRange(minBytes, maxBytes);
             }
         }
@@ -477,12 +519,14 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Filters the given <seealso cref="TermsEnum"/> by accepting only prefix coded 64 bit
         /// terms with a shift value of <tt>0</tt>.
+        /// <para/>
+        /// NOTE: This was filterPrefixCodedLongs() in Lucene
         /// </summary>
         /// <param name="termsEnum">
         ///          the terms enum to filter </param>
         /// <returns> a filtered <seealso cref="TermsEnum"/> that only returns prefix coded 64 bit
         ///         terms with a shift value of <tt>0</tt>. </returns>
-        public static TermsEnum FilterPrefixCodedLongs(TermsEnum termsEnum) // LUCENENET TODO: Rename FilterPrefixCodedInt64s ?
+        public static TermsEnum FilterPrefixCodedInt64s(TermsEnum termsEnum)
         {
             return new FilteredTermsEnumAnonymousInnerClassHelper(termsEnum);
         }
@@ -496,19 +540,21 @@ namespace Lucene.Net.Util
 
             protected override AcceptStatus Accept(BytesRef term)
             {
-                return NumericUtils.GetPrefixCodedLongShift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
+                return NumericUtils.GetPrefixCodedInt64Shift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
             }
         }
 
         /// <summary>
         /// Filters the given <seealso cref="TermsEnum"/> by accepting only prefix coded 32 bit
         /// terms with a shift value of <tt>0</tt>.
+        /// <para/>
+        /// NOTE: This was filterPrefixCodedInts() in Lucene
         /// </summary>
         /// <param name="termsEnum">
         ///          the terms enum to filter </param>
         /// <returns> a filtered <seealso cref="TermsEnum"/> that only returns prefix coded 32 bit
         ///         terms with a shift value of <tt>0</tt>. </returns>
-        public static TermsEnum FilterPrefixCodedInts(TermsEnum termsEnum) // LUCENENET TODO: Rename FilterPrefixCodedInt32s ?
+        public static TermsEnum FilterPrefixCodedInt32s(TermsEnum termsEnum)
         {
             return new FilteredTermsEnumAnonymousInnerClassHelper2(termsEnum);
         }
@@ -522,7 +568,7 @@ namespace Lucene.Net.Util
 
             protected override AcceptStatus Accept(BytesRef term)
             {
-                return NumericUtils.GetPrefixCodedIntShift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
+                return NumericUtils.GetPrefixCodedInt32Shift(term) == 0 ? AcceptStatus.YES : AcceptStatus.END;
             }
         }
     }

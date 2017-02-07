@@ -312,7 +312,7 @@ namespace Lucene.Net.Search.Grouping
                 w.Dispose();
 
                 // NOTE: intentional but temporary field cache insanity!
-                FieldCache.Ints docIdToFieldId = FieldCache.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(r), "id", false);
+                FieldCache.Ints docIdToFieldId = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
                 int[] fieldIdToDocID = new int[numDocs];
                 for (int i = 0; i < numDocs; i++)
                 {

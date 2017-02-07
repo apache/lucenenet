@@ -6,7 +6,7 @@ namespace Lucene.Net.Support
     /// <summary>
     /// Ported from Java's nio.LongBuffer
     /// </summary>
-    public abstract class LongBuffer : Buffer, IComparable<LongBuffer>
+    public abstract class LongBuffer : Buffer, IComparable<LongBuffer> // LUCENENET TODO: Rename Int64Buffer
     {
         // These fields are declared here rather than in Heap-X-Buffer in order to
         // reduce the number of virtual method invocations needed to access these

@@ -204,7 +204,10 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override sealed short ReadShort()
+        /// <summary>
+        /// NOTE: this was readShort() in Lucene
+        /// </summary>
+        public override sealed short ReadInt16()
         {
             if (2 <= (bufferLength - bufferPosition))
             {
@@ -212,11 +215,11 @@ namespace Lucene.Net.Store
             }
             else
             {
-                return base.ReadShort();
+                return base.ReadInt16();
             }
         }
 
-        public override sealed int ReadInt()
+        public override sealed int ReadInt32()
         {
             if (4 <= (bufferLength - bufferPosition))
             {
@@ -224,11 +227,11 @@ namespace Lucene.Net.Store
             }
             else
             {
-                return base.ReadInt();
+                return base.ReadInt32();
             }
         }
 
-        public override sealed long ReadLong()
+        public override sealed long ReadInt64()
         {
             if (8 <= (bufferLength - bufferPosition))
             {
@@ -238,11 +241,11 @@ namespace Lucene.Net.Store
             }
             else
             {
-                return base.ReadLong();
+                return base.ReadInt64();
             }
         }
 
-        public override sealed int ReadVInt()
+        public override sealed int ReadVInt32()
         {
             if (5 <= (bufferLength - bufferPosition))
             {
@@ -281,11 +284,11 @@ namespace Lucene.Net.Store
             }
             else
             {
-                return base.ReadVInt();
+                return base.ReadVInt32();
             }
         }
 
-        public override sealed long ReadVLong()
+        public override sealed long ReadVInt64()
         {
             if (9 <= bufferLength - bufferPosition)
             {
@@ -347,7 +350,7 @@ namespace Lucene.Net.Store
             }
             else
             {
-                return base.ReadVLong();
+                return base.ReadVInt64();
             }
         }
 

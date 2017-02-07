@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs
             if (level != 0)
             {
                 // read the child pointer if we are not on the leaf level
-                childPointer[level] = skipStream[level].ReadVLong() + skipPointer[level - 1];
+                childPointer[level] = skipStream[level].ReadVInt64() + skipPointer[level - 1];
             }
 
             return true;
@@ -221,7 +221,7 @@ namespace Lucene.Net.Codecs
             m_skipDoc[level] = lastDoc;
             if (level > 0)
             {
-                childPointer[level] = skipStream[level].ReadVLong() + skipPointer[level - 1];
+                childPointer[level] = skipStream[level].ReadVInt64() + skipPointer[level - 1];
             }
         }
 
@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs
             for (int i = numberOfSkipLevels - 1; i > 0; i--)
             {
                 // the length of the current level
-                long length = skipStream[0].ReadVLong();
+                long length = skipStream[0].ReadVInt64();
 
                 // the start pointer of the current level
                 skipPointer[i] = skipStream[0].FilePointer;

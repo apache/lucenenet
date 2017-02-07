@@ -83,16 +83,16 @@ namespace Lucene.Net.Util.Packed
                 maxZigZagDelta = Math.Max(maxZigZagDelta, m_values[i]);
             }
 
-            m_out.WriteVLong(min);
-            m_out.WriteInt(Number.FloatToIntBits(avg));
+            m_out.WriteVInt64(min);
+            m_out.WriteInt32(Number.SingleToInt32Bits(avg));
             if (maxZigZagDelta == 0)
             {
-                m_out.WriteVInt(0);
+                m_out.WriteVInt32(0);
             }
             else
             {
                 int bitsRequired = PackedInts.BitsRequired(maxZigZagDelta);
-                m_out.WriteVInt(bitsRequired);
+                m_out.WriteVInt32(bitsRequired);
                 WriteValues(bitsRequired);
             }
 

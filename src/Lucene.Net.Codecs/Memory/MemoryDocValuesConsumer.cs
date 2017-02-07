@@ -84,9 +84,9 @@ namespace Lucene.Net.Codecs.Memory
 
         internal virtual void AddNumericField(FieldInfo field, IEnumerable<long?> values, bool optimizeStorage)
         {
-            meta.WriteVInt(field.Number);
+            meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.NUMBER);
-            meta.WriteLong(data.FilePointer);
+            meta.WriteInt64(data.FilePointer);
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -149,12 +149,12 @@ namespace Lucene.Net.Codecs.Memory
             {
                 long start = data.FilePointer;
                 WriteMissingBitset(values);
-                meta.WriteLong(start);
-                meta.WriteLong(data.FilePointer - start);
+                meta.WriteInt64(start);
+                meta.WriteInt64(data.FilePointer - start);
             }
             else
             {
-                meta.WriteLong(-1L);
+                meta.WriteInt64(-1L);
             }
 
             if (uniqueValues != null)
@@ -178,16 +178,16 @@ namespace Lucene.Net.Codecs.Memory
                     long?[] decode = uniqueValues.ToArray();
 
                     var encode = new Dictionary<long?, int?>();
-                    data.WriteVInt(decode.Length);
+                    data.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        data.WriteLong(decode[i].Value);
+                        data.WriteInt64(decode[i].Value);
                         encode[decode[i]] = i;
                     }
 
-                    meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                    data.WriteVInt(formatAndBits.Format.Id);
-                    data.WriteVInt(formatAndBits.BitsPerValue);
+                    meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                    data.WriteVInt32(formatAndBits.Format.Id);
+                    data.WriteVInt32(formatAndBits.BitsPerValue);
 
                     PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.Format, maxDoc,
                         formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
@@ -203,10 +203,10 @@ namespace Lucene.Net.Codecs.Memory
             else if (gcd != 0 && gcd != 1)
             {
                 meta.WriteByte(MemoryDocValuesProducer.GCD_COMPRESSED);
-                meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                data.WriteLong(minValue);
-                data.WriteLong(gcd);
-                data.WriteVInt(MemoryDocValuesProducer.BLOCK_SIZE);
+                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                data.WriteInt64(minValue);
+                data.WriteInt64(gcd);
+                data.WriteVInt32(MemoryDocValuesProducer.BLOCK_SIZE);
 
                 var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
                 foreach (var nv in values)
@@ -219,8 +219,8 @@ namespace Lucene.Net.Codecs.Memory
             {
                 meta.WriteByte(MemoryDocValuesProducer.DELTA_COMPRESSED); // delta-compressed
 
-                meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                data.WriteVInt(MemoryDocValuesProducer.BLOCK_SIZE);
+                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                data.WriteVInt32(MemoryDocValuesProducer.BLOCK_SIZE);
 
                 var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
                 foreach (var nv in values)
@@ -240,7 +240,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (meta != null)
                 {
-                    meta.WriteVInt(-1); // write EOF marker
+                    meta.WriteVInt32(-1); // write EOF marker
                     CodecUtil.WriteFooter(meta); // write checksum
                 }
                 if (data != null)
@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.Memory
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
             // write the byte[] data
-            meta.WriteVInt(field.Number);
+            meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.BYTES);
             var minLength = int.MaxValue;
             var maxLength = int.MinValue;
@@ -297,28 +297,28 @@ namespace Lucene.Net.Codecs.Memory
                     data.WriteBytes(v.Bytes, v.Offset, v.Length);
                 }
             }
-            meta.WriteLong(startFP);
-            meta.WriteLong(data.FilePointer - startFP);
+            meta.WriteInt64(startFP);
+            meta.WriteInt64(data.FilePointer - startFP);
             if (missing)
             {
                 long start = data.FilePointer;
                 WriteMissingBitset(values);
-                meta.WriteLong(start);
-                meta.WriteLong(data.FilePointer - start);
+                meta.WriteInt64(start);
+                meta.WriteInt64(data.FilePointer - start);
             }
             else
             {
-                meta.WriteLong(-1L);
+                meta.WriteInt64(-1L);
             }
-            meta.WriteVInt(minLength);
-            meta.WriteVInt(maxLength);
+            meta.WriteVInt32(minLength);
+            meta.WriteVInt32(maxLength);
 
             // if minLength == maxLength, its a fixed-length byte[], we are done (the addresses are implicit)
             // otherwise, we need to record the length fields...
             if (minLength != maxLength)
             {
-                meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                meta.WriteVInt(MemoryDocValuesProducer.BLOCK_SIZE);
+                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                meta.WriteVInt32(MemoryDocValuesProducer.BLOCK_SIZE);
 
 
                 var writer = new MonotonicBlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
@@ -337,16 +337,16 @@ namespace Lucene.Net.Codecs.Memory
 
         private void WriteFST(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            meta.WriteVInt(field.Number);
+            meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.FST);
-            meta.WriteLong(data.FilePointer);
+            meta.WriteInt64(data.FilePointer);
             PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
             var builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
             var scratch = new IntsRef();
             long ord = 0;
             foreach (BytesRef v in values)
             {
-                builder.Add(Util.ToIntsRef(v, scratch), ord);
+                builder.Add(Util.ToInt32sRef(v, scratch), ord);
                 ord++;
             }
             FST<long?> fst = builder.Finish();
@@ -354,7 +354,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 fst.Save(data);
             }
-            meta.WriteVLong(ord);
+            meta.WriteVInt64(ord);
         }
 
         // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
@@ -368,7 +368,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (count == 64)
                 {
-                    data.WriteLong(bits);
+                    data.WriteInt64(bits);
                     count = 0;
                     bits = 0;
                 }
@@ -380,7 +380,7 @@ namespace Lucene.Net.Codecs.Memory
             }
             if (count > 0)
             {
-                data.WriteLong(bits);
+                data.WriteInt64(bits);
             }
         }
 
@@ -493,7 +493,7 @@ namespace Lucene.Net.Codecs.Memory
                         break;
 
                     long ord = ords.Current.Value;
-                    @out.WriteVLong(ord - lastOrd);
+                    @out.WriteVInt64(ord - lastOrd);
                     lastOrd = ord;
                 }
             }

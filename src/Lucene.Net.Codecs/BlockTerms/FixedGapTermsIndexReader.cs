@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 if (_version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
                     CodecUtil.ChecksumEntireFile(_input);
                 
-                indexInterval = _input.ReadInt();
+                indexInterval = _input.ReadInt32();
                 
                 if (indexInterval < 1)
                 {
@@ -111,7 +111,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 SeekDir(_input, _dirOffset);
 
                 // Read directory
-                int numFields = _input.ReadVInt();
+                int numFields = _input.ReadVInt32();
 
                 if (numFields < 0)
                     throw new CorruptIndexException(String.Format("Invalid numFields: {0}, Resource: {1}", numFields,
@@ -119,17 +119,17 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 for (int i = 0; i < numFields; i++)
                 {
-                    int field = _input.ReadVInt();
-                    int numIndexTerms = _input.ReadVInt();
+                    int field = _input.ReadVInt32();
+                    int numIndexTerms = _input.ReadVInt32();
                     if (numIndexTerms < 0)
                         throw new CorruptIndexException(String.Format("Invalid numIndexTerms: {0}, Resource: {1}",
                             numIndexTerms,
                             _input));
 
-                    long termsStart = _input.ReadVLong();
-                    long indexStart = _input.ReadVLong();
-                    long packedIndexStart = _input.ReadVLong();
-                    long packedOffsetsStart = _input.ReadVLong();
+                    long termsStart = _input.ReadVInt64();
+                    long indexStart = _input.ReadVInt64();
+                    long packedIndexStart = _input.ReadVInt64();
+                    long packedOffsetsStart = _input.ReadVInt64();
 
                     if (packedIndexStart < indexStart)
                         throw new CorruptIndexException(
@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 FixedGapTermsIndexWriter.VERSION_START, FixedGapTermsIndexWriter.VERSION_CURRENT);
             
             if (version < FixedGapTermsIndexWriter.VERSION_APPEND_ONLY)
-                _dirOffset = input.ReadLong();
+                _dirOffset = input.ReadInt64();
 
             return version;
         }
@@ -501,13 +501,13 @@ namespace Lucene.Net.Codecs.BlockTerms
             if (_version >= FixedGapTermsIndexWriter.VERSION_CHECKSUM)
             {
                 input.Seek(input.Length - CodecUtil.FooterLength() - 8);
-                dirOffset = input.ReadLong();
+                dirOffset = input.ReadInt64();
 
             }
             else if (_version >= FixedGapTermsIndexWriter.VERSION_APPEND_ONLY)
             {
                 input.Seek(input.Length - 8);
-                dirOffset = input.ReadLong();
+                dirOffset = input.ReadInt64();
             }
 
             input.Seek(dirOffset);

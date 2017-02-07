@@ -35,8 +35,11 @@ namespace Lucene.Net.Util.Packed
             return (n >> 63) ^ (n << 1);
         }
 
-        // same as DataOutput.writeVLong but accepts negative values
-        internal static void WriteVLong(DataOutput @out, long i)
+        // same as DataOutput.WriteVInt64 but accepts negative values
+        /// <summary>
+        /// NOTE: This was writeVLong() in Lucene
+        /// </summary>
+        internal static void WriteVInt64(DataOutput @out, long i)
         {
             int k = 0;
             while ((i & ~0x7FL) != 0L && k++ < 8)

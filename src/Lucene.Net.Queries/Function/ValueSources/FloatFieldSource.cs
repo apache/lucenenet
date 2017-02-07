@@ -50,7 +50,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = m_cache.GetFloats(readerContext.AtomicReader, m_field, m_parser, true);
+            var arr = m_cache.GetSingles(readerContext.AtomicReader, m_field, m_parser, true);
             var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
             return new FloatDocValuesAnonymousInnerClassHelper(this, arr, valid);
         }

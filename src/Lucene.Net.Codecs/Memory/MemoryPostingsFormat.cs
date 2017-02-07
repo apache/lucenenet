@@ -149,17 +149,17 @@ namespace Lucene.Net.Codecs.Memory
 
                     if (outerInstance.field.IndexOptions == IndexOptions.DOCS_ONLY)
                     {
-                        buffer.WriteVInt(delta);
+                        buffer.WriteVInt32(delta);
                     }
                     else if (termDocFreq == 1)
                     {
-                        buffer.WriteVInt((delta << 1) | 1);
+                        buffer.WriteVInt32((delta << 1) | 1);
                     }
                     else
                     {
-                        buffer.WriteVInt(delta << 1);
+                        buffer.WriteVInt32(delta << 1);
                         Debug.Assert(termDocFreq > 0);
-                        buffer.WriteVInt(termDocFreq);
+                        buffer.WriteVInt32(termDocFreq);
                     }
 
                     lastPos = 0;
@@ -184,17 +184,17 @@ namespace Lucene.Net.Codecs.Memory
                         if (payloadLen != lastPayloadLen)
                         {
                             lastPayloadLen = payloadLen;
-                            buffer.WriteVInt((delta << 1) | 1);
-                            buffer.WriteVInt(payloadLen);
+                            buffer.WriteVInt32((delta << 1) | 1);
+                            buffer.WriteVInt32(payloadLen);
                         }
                         else
                         {
-                            buffer.WriteVInt(delta << 1);
+                            buffer.WriteVInt32(delta << 1);
                         }
                     }
                     else
                     {
-                        buffer.WriteVInt(delta);
+                        buffer.WriteVInt32(delta);
                     }
 
                     if (outerInstance.field.IndexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
@@ -205,12 +205,12 @@ namespace Lucene.Net.Codecs.Memory
                         int offsetLength = endOffset - startOffset;
                         if (offsetLength != lastOffsetLength)
                         {
-                            buffer.WriteVInt(offsetDelta << 1 | 1);
-                            buffer.WriteVInt(offsetLength);
+                            buffer.WriteVInt32(offsetDelta << 1 | 1);
+                            buffer.WriteVInt32(offsetLength);
                         }
                         else
                         {
-                            buffer.WriteVInt(offsetDelta << 1);
+                            buffer.WriteVInt32(offsetDelta << 1);
                         }
                         lastOffset = startOffset;
                         lastOffsetLength = offsetLength;
@@ -256,10 +256,10 @@ namespace Lucene.Net.Codecs.Memory
 
                 Debug.Assert(buffer2.FilePointer == 0);
 
-                buffer2.WriteVInt(stats.DocFreq);
+                buffer2.WriteVInt32(stats.DocFreq);
                 if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                 {
-                    buffer2.WriteVLong(stats.TotalTermFreq - stats.DocFreq);
+                    buffer2.WriteVInt64(stats.TotalTermFreq - stats.DocFreq);
                 }
                 int pos = (int)buffer2.FilePointer;
                 buffer2.WriteTo(finalBuffer, 0);
@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs.Memory
                 //  System.out.println("      " + Integer.toHexString(finalBuffer[i]&0xFF));
                 //}
 
-                builder.Add(Util.ToIntsRef(text, scratchIntsRef), BytesRef.DeepCopyOf(spare));
+                builder.Add(Util.ToInt32sRef(text, scratchIntsRef), BytesRef.DeepCopyOf(spare));
                 termCount++;
             }
 
@@ -289,14 +289,14 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (termCount > 0)
                 {
-                    @out.WriteVInt(termCount);
-                    @out.WriteVInt(field.Number);
+                    @out.WriteVInt32(termCount);
+                    @out.WriteVInt32(field.Number);
                     if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        @out.WriteVLong(sumTotalTermFreq);
+                        @out.WriteVInt64(sumTotalTermFreq);
                     }
-                    @out.WriteVLong(sumDocFreq);
-                    @out.WriteVInt(docCount);
+                    @out.WriteVInt64(sumDocFreq);
+                    @out.WriteVInt32(docCount);
                     FST<BytesRef> fst = builder.Finish();
                     fst.Save(@out);
                     //System.out.println("finish field=" + field.name + " fp=" + out.getFilePointer());
@@ -362,7 +362,7 @@ namespace Lucene.Net.Codecs.Memory
                 // EOF marker:
                 try
                 {
-                    @out.WriteVInt(0);
+                    @out.WriteVInt32(0);
                     CodecUtil.WriteFooter(@out);
                 }
                 finally
@@ -433,11 +433,11 @@ namespace Lucene.Net.Codecs.Memory
                     docUpto++;
                     if (indexOptions == IndexOptions.DOCS_ONLY)
                     {
-                        accum += @in.ReadVInt();
+                        accum += @in.ReadVInt32();
                     }
                     else
                     {
-                        int code = @in.ReadVInt();
+                        int code = @in.ReadVInt32();
                         accum += (int)((uint)code >> 1);
                         //System.out.println("  docID=" + accum + " code=" + code);
                         if ((code & 1) != 0)
@@ -446,7 +446,7 @@ namespace Lucene.Net.Codecs.Memory
                         }
                         else
                         {
-                            freq_Renamed = @in.ReadVInt();
+                            freq_Renamed = @in.ReadVInt32();
                             Debug.Assert(freq_Renamed > 0);
                         }
 
@@ -457,14 +457,14 @@ namespace Lucene.Net.Codecs.Memory
                             {
                                 if (!storePayloads)
                                 {
-                                    @in.ReadVInt();
+                                    @in.ReadVInt32();
                                 }
                                 else
                                 {
-                                    int posCode = @in.ReadVInt();
+                                    int posCode = @in.ReadVInt32();
                                     if ((posCode & 1) != 0)
                                     {
-                                        payloadLen = @in.ReadVInt();
+                                        payloadLen = @in.ReadVInt32();
                                     }
                                     @in.SkipBytes(payloadLen);
                                 }
@@ -475,15 +475,15 @@ namespace Lucene.Net.Codecs.Memory
                             // Skip positions/offsets/payloads
                             for (int posUpto = 0; posUpto < freq_Renamed; posUpto++)
                             {
-                                int posCode = @in.ReadVInt();
+                                int posCode = @in.ReadVInt32();
                                 if (storePayloads && ((posCode & 1) != 0))
                                 {
-                                    payloadLen = @in.ReadVInt();
+                                    payloadLen = @in.ReadVInt32();
                                 }
-                                if ((@in.ReadVInt() & 1) != 0)
+                                if ((@in.ReadVInt32() & 1) != 0)
                                 {
                                     // new offset length
-                                    @in.ReadVInt();
+                                    @in.ReadVInt32();
                                 }
                                 if (storePayloads)
                                 {
@@ -604,7 +604,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     docUpto++;
 
-                    int code = @in.ReadVInt();
+                    int code = @in.ReadVInt32();
                     accum += (int)((uint)code >> 1);
                     if ((code & 1) != 0)
                     {
@@ -612,7 +612,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     else
                     {
-                        freq_Renamed = @in.ReadVInt();
+                        freq_Renamed = @in.ReadVInt32();
                         Debug.Assert(freq_Renamed > 0);
                     }
 
@@ -630,24 +630,24 @@ namespace Lucene.Net.Codecs.Memory
                     {
                         if (!storePayloads)
                         {
-                            @in.ReadVInt();
+                            @in.ReadVInt32();
                         }
                         else
                         {
-                            int skipCode = @in.ReadVInt();
+                            int skipCode = @in.ReadVInt32();
                             if ((skipCode & 1) != 0)
                             {
-                                payloadLength = @in.ReadVInt();
+                                payloadLength = @in.ReadVInt32();
                                 //System.out.println("    new payloadLen=" + payloadLength);
                             }
                         }
 
                         if (storeOffsets)
                         {
-                            if ((@in.ReadVInt() & 1) != 0)
+                            if ((@in.ReadVInt32() & 1) != 0)
                             {
                                 // new offset length
-                                offsetLength = @in.ReadVInt();
+                                offsetLength = @in.ReadVInt32();
                             }
                         }
 
@@ -666,15 +666,15 @@ namespace Lucene.Net.Codecs.Memory
                 posPending--;
                 if (!storePayloads)
                 {
-                    pos += @in.ReadVInt();
+                    pos += @in.ReadVInt32();
                 }
                 else
                 {
-                    int code = @in.ReadVInt();
+                    int code = @in.ReadVInt32();
                     pos += (int)((uint)code >> 1);
                     if ((code & 1) != 0)
                     {
-                        payloadLength = @in.ReadVInt();
+                        payloadLength = @in.ReadVInt32();
                         //System.out.println("      new payloadLen=" + payloadLength);
                         //} else {
                         //System.out.println("      same payloadLen=" + payloadLength);
@@ -683,11 +683,11 @@ namespace Lucene.Net.Codecs.Memory
 
                 if (storeOffsets)
                 {
-                    int offsetCode = @in.ReadVInt();
+                    int offsetCode = @in.ReadVInt32();
                     if ((offsetCode & 1) != 0)
                     {
                         // new offset length
-                        offsetLength = @in.ReadVInt();
+                        offsetLength = @in.ReadVInt32();
                     }
                     startOffset_Renamed += (int)((uint)offsetCode >> 1);
                 }
@@ -766,10 +766,10 @@ namespace Lucene.Net.Codecs.Memory
                 if (!didDecode)
                 {
                     buffer.Reset(current.Output.Bytes, current.Output.Offset, current.Output.Length);
-                    docFreq_Renamed = buffer.ReadVInt();
+                    docFreq_Renamed = buffer.ReadVInt32();
                     if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        totalTermFreq_Renamed = docFreq_Renamed + buffer.ReadVLong();
+                        totalTermFreq_Renamed = docFreq_Renamed + buffer.ReadVInt64();
                     }
                     else
                     {
@@ -941,18 +941,18 @@ namespace Lucene.Net.Codecs.Memory
             public TermsReader(FieldInfos fieldInfos, IndexInput @in, int termCount)
             {
                 this.termCount = termCount;
-                int fieldNumber = @in.ReadVInt();
+                int fieldNumber = @in.ReadVInt32();
                 field = fieldInfos.FieldInfo(fieldNumber);
                 if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                 {
-                    sumTotalTermFreq = @in.ReadVLong();
+                    sumTotalTermFreq = @in.ReadVInt64();
                 }
                 else
                 {
                     sumTotalTermFreq = -1;
                 }
-                sumDocFreq = @in.ReadVLong();
-                docCount = @in.ReadVInt();
+                sumDocFreq = @in.ReadVInt64();
+                docCount = @in.ReadVInt32();
 
                 fst = new FST<BytesRef>(@in, outputs);
             }
@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Codecs.Memory
                 CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
                 while (true)
                 {
-                    int termCount = @in.ReadVInt();
+                    int termCount = @in.ReadVInt32();
                     if (termCount == 0)
                     {
                         break;

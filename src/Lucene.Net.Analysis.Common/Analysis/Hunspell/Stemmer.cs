@@ -187,18 +187,18 @@ namespace Lucene.Net.Analysis.Hunspell
 
                     for (int j = 0; j < prefixes.Length; j++)
                     {
-                        int prefix = prefixes.Ints[prefixes.Offset + j];
+                        int prefix = prefixes.Int32s[prefixes.Offset + j];
                         if (prefix == previous)
                         {
                             continue;
                         }
                         affixReader.Position = 8 * prefix;
-                        char flag = (char)(affixReader.ReadShort() & 0xffff);
-                        char stripOrd = (char)(affixReader.ReadShort() & 0xffff);
-                        int condition = (char)(affixReader.ReadShort() & 0xffff);
+                        char flag = (char)(affixReader.ReadInt16() & 0xffff);
+                        char stripOrd = (char)(affixReader.ReadInt16() & 0xffff);
+                        int condition = (char)(affixReader.ReadInt16() & 0xffff);
                         bool crossProduct = (condition & 1) == 1;
                         condition = (int)((uint)condition >> 1);
-                        char append = (char)(affixReader.ReadShort() & 0xffff);
+                        char append = (char)(affixReader.ReadInt16() & 0xffff);
 
                         bool compatible;
                         if (recursionDepth == 0)
@@ -256,18 +256,18 @@ namespace Lucene.Net.Analysis.Hunspell
 
                     for (int j = 0; j < suffixes.Length; j++)
                     {
-                        int suffix = suffixes.Ints[suffixes.Offset + j];
+                        int suffix = suffixes.Int32s[suffixes.Offset + j];
                         if (suffix == previous)
                         {
                             continue;
                         }
                         affixReader.Position = 8 * suffix;
-                        char flag = (char)(affixReader.ReadShort() & 0xffff);
-                        char stripOrd = (char)(affixReader.ReadShort() & 0xffff);
-                        int condition = (char)(affixReader.ReadShort() & 0xffff);
+                        char flag = (char)(affixReader.ReadInt16() & 0xffff);
+                        char stripOrd = (char)(affixReader.ReadInt16() & 0xffff);
+                        int condition = (char)(affixReader.ReadInt16() & 0xffff);
                         bool crossProduct = (condition & 1) == 1;
                         condition = (int)((uint)condition >> 1);
-                        char append = (char)(affixReader.ReadShort() & 0xffff);
+                        char append = (char)(affixReader.ReadInt16() & 0xffff);
 
                         bool compatible;
                         if (recursionDepth == 0)
@@ -364,12 +364,12 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             // TODO: just pass this in from before, no need to decode it twice
             affixReader.Position = 8 * affix;
-            char flag = (char)(affixReader.ReadShort() & 0xffff);
+            char flag = (char)(affixReader.ReadInt16() & 0xffff);
             affixReader.SkipBytes(2); // strip
-            int condition = (char)(affixReader.ReadShort() & 0xffff);
+            int condition = (char)(affixReader.ReadInt16() & 0xffff);
             bool crossProduct = (condition & 1) == 1;
             condition = (int)((uint)condition >> 1);
-            char append = (char)(affixReader.ReadShort() & 0xffff);
+            char append = (char)(affixReader.ReadInt16() & 0xffff);
 
             List<CharsRef> stems = new List<CharsRef>();
 
@@ -378,7 +378,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 for (int i = 0; i < forms.Length; i++)
                 {
-                    dictionary.flagLookup.Get(forms.Ints[forms.Offset + i], scratch);
+                    dictionary.flagLookup.Get(forms.Int32s[forms.Offset + i], scratch);
                     char[] wordFlags = Dictionary.DecodeFlags(scratch);
                     if (Dictionary.HasFlag(wordFlags, flag))
                     {

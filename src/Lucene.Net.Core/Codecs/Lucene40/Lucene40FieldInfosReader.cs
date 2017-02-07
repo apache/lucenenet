@@ -57,13 +57,13 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 CodecUtil.CheckHeader(input, Lucene40FieldInfosFormat.CODEC_NAME, Lucene40FieldInfosFormat.FORMAT_START, Lucene40FieldInfosFormat.FORMAT_CURRENT);
 
-                int size = input.ReadVInt(); //read in the size
+                int size = input.ReadVInt32(); //read in the size
                 FieldInfo[] infos = new FieldInfo[size];
 
                 for (int i = 0; i < size; i++)
                 {
                     string name = input.ReadString();
-                    int fieldNumber = input.ReadVInt();
+                    int fieldNumber = input.ReadVInt32();
                     byte bits = input.ReadByte();
                     bool isIndexed = (bits & Lucene40FieldInfosFormat.IS_INDEXED) != 0;
                     bool storeTermVector = (bits & Lucene40FieldInfosFormat.STORE_TERMVECTOR) != 0;

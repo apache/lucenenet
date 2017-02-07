@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         //{
                         if (type == LegacyDocValuesType.VAR_INTS)
                         {
-                            instance = LoadVarIntsField(field, input);
+                            instance = LoadVarInt32sField(field, input);
                         }
                         else if (type == LegacyDocValuesType.FIXED_INTS_8)
                         {
@@ -94,19 +94,19 @@ namespace Lucene.Net.Codecs.Lucene40
                         }
                         else if (type == LegacyDocValuesType.FIXED_INTS_16)
                         {
-                            instance = LoadShortField(field, input);
+                            instance = LoadInt16Field(field, input);
                         }
                         else if (type == LegacyDocValuesType.FIXED_INTS_32)
                         {
-                            instance = LoadIntField(field, input);
+                            instance = LoadInt32Field(field, input);
                         }
                         else if (type == LegacyDocValuesType.FIXED_INTS_64)
                         {
-                            instance = LoadLongField(field, input);
+                            instance = LoadInt64Field(field, input);
                         }
                         else if (type == LegacyDocValuesType.FLOAT_32)
                         {
-                            instance = LoadFloatField(field, input);
+                            instance = LoadSingleField(field, input);
                         }
                         else if (type == LegacyDocValuesType.FLOAT_64)
                         {
@@ -137,7 +137,10 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private NumericDocValues LoadVarIntsField(FieldInfo field, IndexInput input)
+        /// <summary>
+        /// NOTE: This was loadVarIntsField() in Lucene
+        /// </summary>
+        private NumericDocValues LoadVarInt32sField(FieldInfo field, IndexInput input)
         {
             CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.VAR_INTS_CODEC_NAME, Lucene40DocValuesFormat.VAR_INTS_VERSION_START, Lucene40DocValuesFormat.VAR_INTS_VERSION_CURRENT);
             var header = (sbyte)input.ReadByte();
@@ -147,15 +150,15 @@ namespace Lucene.Net.Codecs.Lucene40
                 var values = new long[maxDoc];
                 for (int i = 0; i < values.Length; i++)
                 {
-                    values[i] = input.ReadLong();
+                    values[i] = input.ReadInt64();
                 }
                 ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
                 return new NumericDocValuesAnonymousInnerClassHelper(values);
             }
             else if (header == Lucene40DocValuesFormat.VAR_INTS_PACKED)
             {
-                long minValue = input.ReadLong();
-                long defaultValue = input.ReadLong();
+                long minValue = input.ReadInt64();
+                long defaultValue = input.ReadInt64();
                 PackedInts.Reader reader = PackedInts.GetReader(input);
                 ramBytesUsed.AddAndGet(reader.RamBytesUsed());
                 return new NumericDocValuesAnonymousInnerClassHelper2(minValue, defaultValue, reader);
@@ -211,7 +214,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private NumericDocValues LoadByteField(FieldInfo field, IndexInput input)
         {
             CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_START, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
-            int valueSize = input.ReadInt();
+            int valueSize = input.ReadInt32();
             if (valueSize != 1)
             {
                 throw new CorruptIndexException("invalid valueSize: " + valueSize);
@@ -238,10 +241,13 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private NumericDocValues LoadShortField(FieldInfo field, IndexInput input)
+        /// <summary>
+        /// NOTE: This was loadShortField() in Lucene
+        /// </summary>
+        private NumericDocValues LoadInt16Field(FieldInfo field, IndexInput input)
         {
             CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_START, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
-            int valueSize = input.ReadInt();
+            int valueSize = input.ReadInt32();
             if (valueSize != 2)
             {
                 throw new CorruptIndexException("invalid valueSize: " + valueSize);
@@ -250,7 +256,7 @@ namespace Lucene.Net.Codecs.Lucene40
             short[] values = new short[maxDoc];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = input.ReadShort();
+                values[i] = input.ReadInt16();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
             return new NumericDocValuesAnonymousInnerClassHelper4(values);
@@ -271,10 +277,13 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private NumericDocValues LoadIntField(FieldInfo field, IndexInput input)
+        /// <summary>
+        /// NOTE: This was loadIntField() in Lucene
+        /// </summary>
+        private NumericDocValues LoadInt32Field(FieldInfo field, IndexInput input)
         {
             CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_START, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
-            int valueSize = input.ReadInt();
+            int valueSize = input.ReadInt32();
             if (valueSize != 4)
             {
                 throw new CorruptIndexException("invalid valueSize: " + valueSize);
@@ -283,7 +292,7 @@ namespace Lucene.Net.Codecs.Lucene40
             var values = new int[maxDoc];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = input.ReadInt();
+                values[i] = input.ReadInt32();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
             return new NumericDocValuesAnonymousInnerClassHelper5(values);
@@ -304,10 +313,13 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private NumericDocValues LoadLongField(FieldInfo field, IndexInput input)
+        /// <summary>
+        /// NOTE: This was loadLongField() in Lucene
+        /// </summary>
+        private NumericDocValues LoadInt64Field(FieldInfo field, IndexInput input)
         {
             CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_START, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
-            int valueSize = input.ReadInt();
+            int valueSize = input.ReadInt32();
             if (valueSize != 8)
             {
                 throw new CorruptIndexException("invalid valueSize: " + valueSize);
@@ -316,7 +328,7 @@ namespace Lucene.Net.Codecs.Lucene40
             long[] values = new long[maxDoc];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = input.ReadLong();
+                values[i] = input.ReadInt64();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
             return new NumericDocValuesAnonymousInnerClassHelper6(values);
@@ -337,10 +349,13 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        private NumericDocValues LoadFloatField(FieldInfo field, IndexInput input)
+        /// <summary>
+        /// NOTE: This was loadFloatField() in Lucene
+        /// </summary>
+        private NumericDocValues LoadSingleField(FieldInfo field, IndexInput input)
         {
             CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.FLOATS_CODEC_NAME, Lucene40DocValuesFormat.FLOATS_VERSION_START, Lucene40DocValuesFormat.FLOATS_VERSION_CURRENT);
-            int valueSize = input.ReadInt();
+            int valueSize = input.ReadInt32();
             if (valueSize != 4)
             {
                 throw new CorruptIndexException("invalid valueSize: " + valueSize);
@@ -349,7 +364,7 @@ namespace Lucene.Net.Codecs.Lucene40
             int[] values = new int[maxDoc];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = input.ReadInt();
+                values[i] = input.ReadInt32();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
             return new NumericDocValuesAnonymousInnerClassHelper7(values);
@@ -373,7 +388,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private NumericDocValues LoadDoubleField(FieldInfo field, IndexInput input)
         {
             CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.FLOATS_CODEC_NAME, Lucene40DocValuesFormat.FLOATS_VERSION_START, Lucene40DocValuesFormat.FLOATS_VERSION_CURRENT);
-            int valueSize = input.ReadInt();
+            int valueSize = input.ReadInt32();
             if (valueSize != 8)
             {
                 throw new CorruptIndexException("invalid valueSize: " + valueSize);
@@ -382,7 +397,7 @@ namespace Lucene.Net.Codecs.Lucene40
             long[] values = new long[maxDoc];
             for (int i = 0; i < values.Length; i++)
             {
-                values[i] = input.ReadLong();
+                values[i] = input.ReadInt64();
             }
             ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(values));
             return new NumericDocValuesAnonymousInnerClassHelper8(values);
@@ -446,7 +461,7 @@ namespace Lucene.Net.Codecs.Lucene40
             try
             {
                 CodecUtil.CheckHeader(input, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_CODEC_NAME, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_VERSION_CURRENT);
-                int fixedLength = input.ReadInt();
+                int fixedLength = input.ReadInt32();
                 var bytes = new PagedBytes(16);
                 bytes.Copy(input, fixedLength * (long)state.SegmentInfo.DocCount);
                 PagedBytes.Reader bytesReader = bytes.Freeze(true);
@@ -498,7 +513,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.CheckHeader(data, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_CURRENT);
                 index = dir.OpenInput(indexName, state.Context);
                 CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_CURRENT);
-                long totalBytes = index.ReadVLong();
+                long totalBytes = index.ReadVInt64();
                 PagedBytes bytes = new PagedBytes(16);
                 bytes.Copy(data, totalBytes);
                 PagedBytes.Reader bytesReader = bytes.Freeze(true);
@@ -555,8 +570,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 index = dir.OpenInput(indexName, state.Context);
                 CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_CURRENT);
 
-                int fixedLength = data.ReadInt();
-                int valueCount = index.ReadInt();
+                int fixedLength = data.ReadInt32();
+                int valueCount = index.ReadInt32();
                 PagedBytes bytes = new PagedBytes(16);
                 bytes.Copy(data, fixedLength * (long)valueCount);
                 PagedBytes.Reader bytesReader = bytes.Freeze(true);
@@ -614,7 +629,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 index = dir.OpenInput(indexName, state.Context);
                 CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_VAR_DEREF_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_CURRENT);
 
-                long totalBytes = index.ReadLong();
+                long totalBytes = index.ReadInt64();
                 PagedBytes bytes = new PagedBytes(16);
                 bytes.Copy(data, totalBytes);
                 PagedBytes.Reader bytesReader = bytes.Freeze(true);
@@ -727,8 +742,8 @@ namespace Lucene.Net.Codecs.Lucene40
             CodecUtil.CheckHeader(data, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_CURRENT);
             CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_START, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_CURRENT);
 
-            int fixedLength = data.ReadInt();
-            int valueCount = index.ReadInt();
+            int fixedLength = data.ReadInt32();
+            int valueCount = index.ReadInt32();
 
             PagedBytes bytes = new PagedBytes(16);
             bytes.Copy(data, fixedLength * (long)valueCount);
@@ -778,7 +793,7 @@ namespace Lucene.Net.Codecs.Lucene40
             CodecUtil.CheckHeader(data, Lucene40DocValuesFormat.BYTES_VAR_SORTED_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_CURRENT);
             CodecUtil.CheckHeader(index, Lucene40DocValuesFormat.BYTES_VAR_SORTED_CODEC_NAME_IDX, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_START, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_CURRENT);
 
-            long maxAddress = index.ReadLong();
+            long maxAddress = index.ReadInt64();
             PagedBytes bytes = new PagedBytes(16);
             bytes.Copy(data, maxAddress);
             PagedBytes.Reader bytesReader = bytes.Freeze(true);

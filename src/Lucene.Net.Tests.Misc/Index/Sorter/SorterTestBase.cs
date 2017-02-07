@@ -49,7 +49,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 if (state.Name.Equals(NORMS_FIELD))
                 {
-                    return Number.FloatToIntBits(state.Boost);
+                    return Number.SingleToInt32Bits(state.Boost);
                 }
                 else
                 {
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index.Sorter
             }
             doc.Add(new NumericDocValuesField(NUMERIC_DV_FIELD, id));
             TextField norms = new TextField(NORMS_FIELD, id.ToString(), Field.Store.NO);
-            norms.Boost = (Number.IntBitsToFloat(id));
+            norms.Boost = (Number.Int32BitsToSingle(id));
             doc.Add(norms);
             doc.Add(new BinaryDocValuesField(BINARY_DV_FIELD, new BytesRef(id.ToString())));
             doc.Add(new SortedDocValuesField(SORTED_DV_FIELD, new BytesRef(id.ToString())));

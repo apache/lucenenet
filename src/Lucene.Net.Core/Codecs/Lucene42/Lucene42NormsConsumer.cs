@@ -77,9 +77,9 @@ namespace Lucene.Net.Codecs.Lucene42
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            meta.WriteVInt(field.Number);
+            meta.WriteVInt32(field.Number);
             meta.WriteByte((byte)NUMBER);
-            meta.WriteLong(data.FilePointer);
+            meta.WriteInt64(data.FilePointer);
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -147,16 +147,16 @@ namespace Lucene.Net.Codecs.Lucene42
                     meta.WriteByte((byte)TABLE_COMPRESSED); // table-compressed
                     var decode = uniqueValues.ToArray();
                     var encode = new Dictionary<long, int>();
-                    data.WriteVInt(decode.Length);
+                    data.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        data.WriteLong(decode[i]);
+                        data.WriteInt64(decode[i]);
                         encode[decode[i]] = i;
                     }
 
-                    meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                    data.WriteVInt(formatAndBits.Format.Id);
-                    data.WriteVInt(formatAndBits.BitsPerValue);
+                    meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                    data.WriteVInt32(formatAndBits.Format.Id);
+                    data.WriteVInt32(formatAndBits.BitsPerValue);
 
                     PackedInts.Writer writer = PackedInts.GetWriterNoHeader(data, formatAndBits.Format, maxDoc, formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
@@ -169,10 +169,10 @@ namespace Lucene.Net.Codecs.Lucene42
             else if (gcd != 0 && gcd != 1)
             {
                 meta.WriteByte((byte)GCD_COMPRESSED);
-                meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                data.WriteLong(minValue);
-                data.WriteLong(gcd);
-                data.WriteVInt(BLOCK_SIZE);
+                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                data.WriteInt64(minValue);
+                data.WriteInt64(gcd);
+                data.WriteVInt32(BLOCK_SIZE);
 
                 var writer = new BlockPackedWriter(data, BLOCK_SIZE);
                 foreach (long? nv in values)
@@ -186,8 +186,8 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 meta.WriteByte((byte)DELTA_COMPRESSED); // delta-compressed
 
-                meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                data.WriteVInt(BLOCK_SIZE);
+                meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                data.WriteVInt32(BLOCK_SIZE);
 
                 var writer = new BlockPackedWriter(data, BLOCK_SIZE);
                 foreach (long? nv in values)
@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     if (meta != null)
                     {
-                        meta.WriteVInt(-1); // write EOF marker
+                        meta.WriteVInt32(-1); // write EOF marker
                         CodecUtil.WriteFooter(meta); // write checksum
                     }
                     if (data != null)

@@ -501,13 +501,13 @@ namespace Lucene.Net.Analysis.Synonym
         {
             bytesReader.Reset(bytes.Bytes, bytes.Offset, bytes.Length);
 
-            int code = bytesReader.ReadVInt();
+            int code = bytesReader.ReadVInt32();
             bool keepOrig = (code & 0x1) == 0;
             int count = (int)((uint)code >> 1);
             //System.out.println("  addOutput count=" + count + " keepOrig=" + keepOrig);
             for (int outputIDX = 0; outputIDX < count; outputIDX++)
             {
-                synonyms.Words.Get(bytesReader.ReadVInt(), scratchBytes);
+                synonyms.Words.Get(bytesReader.ReadVInt32(), scratchBytes);
                 //System.out.println("    outIDX=" + outputIDX + " bytes=" + scratchBytes.length);
                 UnicodeUtil.UTF8toUTF16(scratchBytes, scratchChars);
                 int lastStart = scratchChars.Offset;

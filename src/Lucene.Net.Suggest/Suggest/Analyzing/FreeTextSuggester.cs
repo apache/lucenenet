@@ -213,12 +213,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 readerB.Reset(b.Bytes, b.Offset, b.Length);
 
                 // By token:
-                scratchA.Length = (ushort)readerA.ReadShort();
+                scratchA.Length = (ushort)readerA.ReadInt16();
                 scratchA.Bytes = a.Bytes;
                 scratchA.Offset = readerA.Position;
 
                 scratchB.Bytes = b.Bytes;
-                scratchB.Length = (ushort)readerB.ReadShort();
+                scratchB.Length = (ushort)readerB.ReadInt16();
                 scratchB.Offset = readerB.Position;
 
                 int cmp = scratchA.CompareTo(scratchB);
@@ -391,7 +391,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             totTokens += termsEnum.TotalTermFreq;
                         }
 
-                        builder.Add(Lucene.Net.Util.Fst.Util.ToIntsRef(term, scratchInts), EncodeWeight(termsEnum.TotalTermFreq));
+                        builder.Add(Lucene.Net.Util.Fst.Util.ToInt32sRef(term, scratchInts), EncodeWeight(termsEnum.TotalTermFreq));
                     }
 
                     fst = builder.Finish();
@@ -454,10 +454,10 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public override bool Store(DataOutput output)
         {
             CodecUtil.WriteHeader(output, CODEC_NAME, VERSION_CURRENT);
-            output.WriteVLong(count);
+            output.WriteVInt64(count);
             output.WriteByte(separator);
-            output.WriteVInt(grams);
-            output.WriteVLong(totTokens);
+            output.WriteVInt32(grams);
+            output.WriteVInt64(totTokens);
             fst.Save(output);
             return true;
         }
@@ -465,18 +465,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         public override bool Load(DataInput input)
         {
             CodecUtil.CheckHeader(input, CODEC_NAME, VERSION_START, VERSION_START);
-            count = input.ReadVLong();
+            count = input.ReadVInt64();
             var separatorOrig = (sbyte)input.ReadByte();
             if (separatorOrig != separator)
             {
                 throw new InvalidOperationException("separator=" + separator + " is incorrect: original model was built with separator=" + separatorOrig);
             }
-            int gramsOrig = input.ReadVInt();
+            int gramsOrig = input.ReadVInt32();
             if (gramsOrig != grams)
             {
                 throw new InvalidOperationException("grams=" + grams + " is incorrect: original model was built with grams=" + gramsOrig);
             }
-            totTokens = input.ReadVLong();
+            totTokens = input.ReadVInt64();
 
             fst = new FST<long?>(input, PositiveIntOutputs.Singleton);
 
@@ -676,7 +676,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         if (token.Bytes[token.Offset + i] == separator)
                         {
                             BytesRef context = new BytesRef(token.Bytes, token.Offset, i);
-                            long? output = Lucene.Net.Util.Fst.Util.Get(fst, Lucene.Net.Util.Fst.Util.ToIntsRef(context, new IntsRef()));
+                            long? output = Lucene.Net.Util.Fst.Util.Get(fst, Lucene.Net.Util.Fst.Util.ToInt32sRef(context, new IntsRef()));
                             Debug.Assert(output != null);
                             contextCount = DecodeWeight(output);
                             lastTokenFragment = new BytesRef(token.Bytes, token.Offset + i + 1, token.Length - i - 1);

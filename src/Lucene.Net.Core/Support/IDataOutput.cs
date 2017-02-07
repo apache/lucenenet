@@ -10,11 +10,27 @@
         void Write(byte[] b, int off, int len);
         void WriteBoolean(bool v);
         void WriteByte(int v);
-        void WriteShort(int v);
+
+        /// <summary>
+        /// NOTE: This was writeShort() in the JDK
+        /// </summary>
+        void WriteInt16(int v);
         void WriteChar(int v);
-        void WriteInt(int v);
-        void WriteLong(long v);
-        void WriteFloat(float v);
+
+        /// <summary>
+        /// NOTE: This was writeInt() in the JDK
+        /// </summary>
+        void WriteInt32(int v);
+
+        /// <summary>
+        /// NOTE: This was writeInt64() in the JDK
+        /// </summary>
+        void WriteInt64(long v);
+
+        /// <summary>
+        /// NOTE: This was writeSingle() in the JDK
+        /// </summary>
+        void WriteSingle(float v);
         void WriteDouble(double v);
         void WriteBytes(string s);
         void WriteChars(string s);

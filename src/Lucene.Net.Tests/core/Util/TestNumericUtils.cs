@@ -34,7 +34,7 @@ namespace Lucene.Net.Util
             BytesRef last = null, act = new BytesRef(NumericUtils.BUF_SIZE_LONG);
             for (long l = -100000L; l < 100000L; l++)
             {
-                NumericUtils.LongToPrefixCodedBytes(l, 0, act);
+                NumericUtils.Int64ToPrefixCodedBytes(l, 0, act);
                 if (last != null)
                 {
                     // test if smaller
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
                     Assert.IsTrue(last.Utf8ToString().CompareToOrdinal(act.Utf8ToString()) < 0, "actual bigger than last (as String)");
                 }
                 // test is back and forward conversion works
-                Assert.AreEqual(l, NumericUtils.PrefixCodedToLong(act), "forward and back conversion should generate same long");
+                Assert.AreEqual(l, NumericUtils.PrefixCodedToInt64(act), "forward and back conversion should generate same long");
                 // next step
                 last = act;
                 act = new BytesRef(NumericUtils.BUF_SIZE_LONG);
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
             BytesRef last = null, act = new BytesRef(NumericUtils.BUF_SIZE_INT);
             for (int i = -100000; i < 100000; i++)
             {
-                NumericUtils.IntToPrefixCodedBytes(i, 0, act);
+                NumericUtils.Int32ToPrefixCodedBytes(i, 0, act);
                 if (last != null)
                 {
                     // test if smaller
@@ -64,7 +64,7 @@ namespace Lucene.Net.Util
                     Assert.IsTrue(last.Utf8ToString().CompareToOrdinal(act.Utf8ToString()) < 0, "actual bigger than last (as String)");
                 }
                 // test is back and forward conversion works
-                Assert.AreEqual(i, NumericUtils.PrefixCodedToInt(act), "forward and back conversion should generate same int");
+                Assert.AreEqual(i, NumericUtils.PrefixCodedToInt32(act), "forward and back conversion should generate same int");
                 // next step
                 last = act;
                 act = new BytesRef(NumericUtils.BUF_SIZE_INT);
@@ -80,15 +80,15 @@ namespace Lucene.Net.Util
             for (int i = 0; i < vals.Length; i++)
             {
                 prefixVals[i] = new BytesRef(NumericUtils.BUF_SIZE_LONG);
-                NumericUtils.LongToPrefixCodedBytes(vals[i], 0, prefixVals[i]);
+                NumericUtils.Int64ToPrefixCodedBytes(vals[i], 0, prefixVals[i]);
 
                 // check forward and back conversion
-                Assert.AreEqual(vals[i], NumericUtils.PrefixCodedToLong(prefixVals[i]), "forward and back conversion should generate same long");
+                Assert.AreEqual(vals[i], NumericUtils.PrefixCodedToInt64(prefixVals[i]), "forward and back conversion should generate same long");
 
                 // test if decoding values as int fails correctly
                 try
                 {
-                    NumericUtils.PrefixCodedToInt(prefixVals[i]);
+                    NumericUtils.PrefixCodedToInt32(prefixVals[i]);
                     Assert.Fail("decoding a prefix coded long value as int should fail");
                 }
 #pragma warning disable 168
@@ -111,8 +111,8 @@ namespace Lucene.Net.Util
             {
                 for (int j = 0; j < 64; j++)
                 {
-                    NumericUtils.LongToPrefixCodedBytes(vals[i], j, @ref);
-                    long prefixVal = NumericUtils.PrefixCodedToLong(@ref);
+                    NumericUtils.Int64ToPrefixCodedBytes(vals[i], j, @ref);
+                    long prefixVal = NumericUtils.PrefixCodedToInt64(@ref);
                     long mask = (1L << j) - 1L;
                     Assert.AreEqual(vals[i] & mask, vals[i] - prefixVal, "difference between prefix val and original value for " + vals[i] + " with shift=" + j);
                 }
@@ -128,15 +128,15 @@ namespace Lucene.Net.Util
             for (int i = 0; i < vals.Length; i++)
             {
                 prefixVals[i] = new BytesRef(NumericUtils.BUF_SIZE_INT);
-                NumericUtils.IntToPrefixCodedBytes(vals[i], 0, prefixVals[i]);
+                NumericUtils.Int32ToPrefixCodedBytes(vals[i], 0, prefixVals[i]);
 
                 // check forward and back conversion
-                Assert.AreEqual(vals[i], NumericUtils.PrefixCodedToInt(prefixVals[i]), "forward and back conversion should generate same int");
+                Assert.AreEqual(vals[i], NumericUtils.PrefixCodedToInt32(prefixVals[i]), "forward and back conversion should generate same int");
 
                 // test if decoding values as long fails correctly
                 try
                 {
-                    NumericUtils.PrefixCodedToLong(prefixVals[i]);
+                    NumericUtils.PrefixCodedToInt64(prefixVals[i]);
                     Assert.Fail("decoding a prefix coded int value as long should fail");
                 }
 #pragma warning disable 168
@@ -159,8 +159,8 @@ namespace Lucene.Net.Util
             {
                 for (int j = 0; j < 32; j++)
                 {
-                    NumericUtils.IntToPrefixCodedBytes(vals[i], j, @ref);
-                    int prefixVal = NumericUtils.PrefixCodedToInt(@ref);
+                    NumericUtils.Int32ToPrefixCodedBytes(vals[i], j, @ref);
+                    int prefixVal = NumericUtils.PrefixCodedToInt32(@ref);
                     int mask = (1 << j) - 1;
                     Assert.AreEqual(vals[i] & mask, vals[i] - prefixVal, "difference between prefix val and original value for " + vals[i] + " with shift=" + j);
                 }
@@ -176,8 +176,8 @@ namespace Lucene.Net.Util
             // check forward and back conversion
             for (int i = 0; i < vals.Length; i++)
             {
-                longVals[i] = NumericUtils.DoubleToSortableLong(vals[i]);
-                Assert.IsTrue(vals[i].CompareTo(NumericUtils.SortableLongToDouble(longVals[i])) == 0, "forward and back conversion should generate same double");
+                longVals[i] = NumericUtils.DoubleToSortableInt64(vals[i]);
+                Assert.IsTrue(vals[i].CompareTo(NumericUtils.SortableInt64ToDouble(longVals[i])) == 0, "forward and back conversion should generate same double");
             }
 
             // check sort order (prefixVals should be ascending)
@@ -192,11 +192,11 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestSortableDoubleNaN()
         {
-            long plusInf = NumericUtils.DoubleToSortableLong(double.PositiveInfinity);
+            long plusInf = NumericUtils.DoubleToSortableInt64(double.PositiveInfinity);
             foreach (double nan in DOUBLE_NANs)
             {
                 Assert.IsTrue(double.IsNaN(nan));
-                long sortable = NumericUtils.DoubleToSortableLong(nan);
+                long sortable = NumericUtils.DoubleToSortableInt64(nan);
                 Assert.IsTrue((ulong)sortable > (ulong)plusInf, "Double not sorted correctly: " + nan + ", long repr: " + sortable + ", positive inf.: " + plusInf);
             }
         }
@@ -210,8 +210,8 @@ namespace Lucene.Net.Util
             // check forward and back conversion
             for (int i = 0; i < vals.Length; i++)
             {
-                intVals[i] = NumericUtils.FloatToSortableInt(vals[i]);
-                Assert.IsTrue(vals[i].CompareTo(NumericUtils.SortableIntToFloat(intVals[i])) == 0, "forward and back conversion should generate same double");
+                intVals[i] = NumericUtils.SingleToSortableInt32(vals[i]);
+                Assert.IsTrue(vals[i].CompareTo(NumericUtils.SortableInt32ToSingle(intVals[i])) == 0, "forward and back conversion should generate same double");
             }
 
             // check sort order (prefixVals should be ascending)
@@ -221,16 +221,16 @@ namespace Lucene.Net.Util
             }
         }
 
-        public static readonly float[] FLOAT_NANs = new float[] { float.NaN, Number.IntBitsToFloat(0x7f800001), Number.IntBitsToFloat(0x7fffffff), Number.IntBitsToFloat(unchecked((int)0xff800001)), Number.IntBitsToFloat(unchecked((int)0xffffffff)) };
+        public static readonly float[] FLOAT_NANs = new float[] { float.NaN, Number.Int32BitsToSingle(0x7f800001), Number.Int32BitsToSingle(0x7fffffff), Number.Int32BitsToSingle(unchecked((int)0xff800001)), Number.Int32BitsToSingle(unchecked((int)0xffffffff)) };
 
         [Test]
         public virtual void TestSortableFloatNaN()
         {
-            int plusInf = NumericUtils.FloatToSortableInt(float.PositiveInfinity);
+            int plusInf = NumericUtils.SingleToSortableInt32(float.PositiveInfinity);
             foreach (float nan in FLOAT_NANs)
             {
                 Assert.IsTrue(float.IsNaN(nan));
-                uint sortable = (uint)NumericUtils.FloatToSortableInt(nan);
+                uint sortable = (uint)NumericUtils.SingleToSortableInt32(nan);
                 Assert.IsTrue(sortable > plusInf, "Float not sorted correctly: " + nan + ", int repr: " + sortable + ", positive inf.: " + plusInf);
             }
         }
@@ -246,7 +246,7 @@ namespace Lucene.Net.Util
             IEnumerator<long> neededBounds = (expectedBounds == null) ? null : expectedBounds.GetEnumerator();
             IEnumerator<int> neededShifts = (expectedShifts == null) ? null : expectedShifts.GetEnumerator();
 
-            NumericUtils.SplitLongRange(new LongRangeBuilderAnonymousInnerClassHelper(this, lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
+            NumericUtils.SplitInt64Range(new LongRangeBuilderAnonymousInnerClassHelper(this, lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
 
             if (useBitSet)
             {
@@ -446,7 +446,7 @@ namespace Lucene.Net.Util
             IEnumerator<int> neededBounds = (expectedBounds == null) ? null : expectedBounds.GetEnumerator();
             IEnumerator<int> neededShifts = (expectedShifts == null) ? null : expectedShifts.GetEnumerator();
 
-            NumericUtils.SplitIntRange(new IntRangeBuilderAnonymousInnerClassHelper(this, lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
+            NumericUtils.SplitInt32Range(new IntRangeBuilderAnonymousInnerClassHelper(this, lower, upper, useBitSet, bits, neededBounds, neededShifts), precisionStep, lower, upper);
 
             if (useBitSet)
             {

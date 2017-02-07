@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_8.Name);
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
-            output.WriteInt(1); // size
+            output.WriteInt32(1); // size
             foreach (long? n in values)
             {
                 output.WriteByte(n == null ? (byte)0 : (byte)n);
@@ -116,10 +116,10 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_16.Name);
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
-            output.WriteInt(2); // size
+            output.WriteInt32(2); // size
             foreach (long? n in values)
             {
-                output.WriteShort(n == null ? (short)0 : (short)n);
+                output.WriteInt16(n == null ? (short)0 : (short)n);
             }
         }
 
@@ -127,10 +127,10 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_32.Name);
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
-            output.WriteInt(4); // size
+            output.WriteInt32(4); // size
             foreach (long? n in values)
             {
-                output.WriteInt(n == null ? 0 : (int)n);
+                output.WriteInt32(n == null ? 0 : (int)n);
             }
         }
 
@@ -148,15 +148,15 @@ namespace Lucene.Net.Codecs.Lucene40
                 output.WriteByte((byte)Lucene40DocValuesFormat.VAR_INTS_FIXED_64);
                 foreach (long? n in values)
                 {
-                    output.WriteLong(n == null ? 0 : n.Value);
+                    output.WriteInt64(n == null ? 0 : n.Value);
                 }
             }
             else
             {
                 // writes packed ints
                 output.WriteByte((byte)Lucene40DocValuesFormat.VAR_INTS_PACKED);
-                output.WriteLong(minValue);
-                output.WriteLong(0 - minValue); // default value (representation of 0)
+                output.WriteInt64(minValue);
+                output.WriteInt64(0 - minValue); // default value (representation of 0)
                 PackedInts.Writer writer = PackedInts.GetWriter(output, State.SegmentInfo.DocCount, PackedInts.BitsRequired(delta), PackedInts.DEFAULT);
                 foreach (long? n in values)
                 {
@@ -302,7 +302,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_CODEC_NAME, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_VERSION_CURRENT);
 
-            output.WriteInt(length);
+            output.WriteInt32(length);
             foreach (BytesRef v in values)
             {
                 if (v != null)
@@ -336,7 +336,7 @@ namespace Lucene.Net.Codecs.Lucene40
             /* addresses */
 
             long maxAddress = data.FilePointer - startPos;
-            index.WriteVLong(maxAddress);
+            index.WriteVInt64(maxAddress);
 
             int maxDoc = State.SegmentInfo.DocCount;
             Debug.Assert(maxDoc != int.MaxValue); // unsupported by the 4.0 impl
@@ -373,7 +373,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
 
             /* values */
-            data.WriteInt(length);
+            data.WriteInt32(length);
             foreach (BytesRef v in dictionary)
             {
                 data.WriteBytes(v.Bytes, v.Offset, v.Length);
@@ -382,7 +382,7 @@ namespace Lucene.Net.Codecs.Lucene40
             /* ordinals */
             int valueCount = dictionary.Count;
             Debug.Assert(valueCount > 0);
-            index.WriteInt(valueCount);
+            index.WriteInt32(valueCount);
             int maxDoc = State.SegmentInfo.DocCount;
             PackedInts.Writer w = PackedInts.GetWriter(index, maxDoc, PackedInts.BitsRequired(valueCount - 1), PackedInts.DEFAULT);
 
@@ -431,7 +431,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* ordinals */
             long totalBytes = data.FilePointer - startPosition;
-            index.WriteLong(totalBytes);
+            index.WriteInt64(totalBytes);
             int maxDoc = State.SegmentInfo.DocCount;
             PackedInts.Writer w = PackedInts.GetWriter(index, maxDoc, PackedInts.BitsRequired(currentAddress), PackedInts.DEFAULT);
 
@@ -539,7 +539,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* values */
 
-            data.WriteInt(length);
+            data.WriteInt32(length);
             int valueCount = 0;
             foreach (BytesRef v in values)
             {
@@ -549,7 +549,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* ordinals */
 
-            index.WriteInt(valueCount);
+            index.WriteInt32(valueCount);
             int maxDoc = State.SegmentInfo.DocCount;
             Debug.Assert(valueCount > 0);
             PackedInts.Writer w = PackedInts.GetWriter(index, maxDoc, PackedInts.BitsRequired(valueCount - 1), PackedInts.DEFAULT);
@@ -582,7 +582,7 @@ namespace Lucene.Net.Codecs.Lucene40
             /* addresses */
 
             long maxAddress = data.FilePointer - startPos;
-            index.WriteLong(maxAddress);
+            index.WriteInt64(maxAddress);
 
             Debug.Assert(valueCount != int.MaxValue); // unsupported by the 4.0 impl
 

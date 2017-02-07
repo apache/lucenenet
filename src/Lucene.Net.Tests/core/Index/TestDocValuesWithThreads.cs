@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     //NumericDocValues ndv = ar.GetNumericDocValues("number");
-                    FieldCache.Longs ndv = FieldCache.DEFAULT.GetLongs(Ar, "number", false);
+                    FieldCache.Longs ndv = FieldCache.DEFAULT.GetInt64s(Ar, "number", false);
                     //BinaryDocValues bdv = ar.GetBinaryDocValues("bytes");
                     BinaryDocValues bdv = FieldCache.DEFAULT.GetTerms(Ar, "bytes", false);
                     SortedDocValues sdv = FieldCache.DEFAULT.GetTermsIndex(Ar, "sorted");
@@ -145,20 +145,20 @@ namespace Lucene.Net.Index
                                 break;
 
                             case 1:
-                                Assert.AreEqual((long)(short)Numbers[docID], FieldCache.DEFAULT.GetShorts(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(short)Numbers[docID], FieldCache.DEFAULT.GetInt16s(Ar, "number", false).Get(docID));
                                 break;
 #pragma warning restore 612, 618
 
                             case 2:
-                                Assert.AreEqual((long)(int)Numbers[docID], FieldCache.DEFAULT.GetInts(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(int)Numbers[docID], FieldCache.DEFAULT.GetInt32s(Ar, "number", false).Get(docID));
                                 break;
 
                             case 3:
-                                Assert.AreEqual((long)Numbers[docID], FieldCache.DEFAULT.GetLongs(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)Numbers[docID], FieldCache.DEFAULT.GetInt64s(Ar, "number", false).Get(docID));
                                 break;
 
                             case 4:
-                                Assert.AreEqual(Number.IntBitsToFloat((int)Numbers[docID]), FieldCache.DEFAULT.GetFloats(Ar, "number", false).Get(docID), 0.0f);
+                                Assert.AreEqual(Number.Int32BitsToSingle((int)Numbers[docID]), FieldCache.DEFAULT.GetSingles(Ar, "number", false).Get(docID), 0.0f);
                                 break;
 
                             case 5:

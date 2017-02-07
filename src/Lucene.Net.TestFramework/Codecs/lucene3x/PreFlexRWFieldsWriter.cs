@@ -171,19 +171,19 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                     if (OuterInstance.OmitTF)
                     {
-                        OuterInstance.OuterInstance.FreqOut.WriteVInt(delta);
+                        OuterInstance.OuterInstance.FreqOut.WriteVInt32(delta);
                     }
                     else
                     {
                         int code = delta << 1;
                         if (termDocFreq == 1)
                         {
-                            OuterInstance.OuterInstance.FreqOut.WriteVInt(code | 1);
+                            OuterInstance.OuterInstance.FreqOut.WriteVInt32(code | 1);
                         }
                         else
                         {
-                            OuterInstance.OuterInstance.FreqOut.WriteVInt(code);
-                            OuterInstance.OuterInstance.FreqOut.WriteVInt(termDocFreq);
+                            OuterInstance.OuterInstance.FreqOut.WriteVInt32(code);
+                            OuterInstance.OuterInstance.FreqOut.WriteVInt32(termDocFreq);
                         }
                     }
                     LastPosition = 0;
@@ -205,12 +205,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                         {
                             //System.out.println("        write payload len=" + payloadLength);
                             LastPayloadLength = payloadLength;
-                            OuterInstance.OuterInstance.ProxOut.WriteVInt((delta << 1) | 1);
-                            OuterInstance.OuterInstance.ProxOut.WriteVInt(payloadLength);
+                            OuterInstance.OuterInstance.ProxOut.WriteVInt32((delta << 1) | 1);
+                            OuterInstance.OuterInstance.ProxOut.WriteVInt32(payloadLength);
                         }
                         else
                         {
-                            OuterInstance.OuterInstance.ProxOut.WriteVInt(delta << 1);
+                            OuterInstance.OuterInstance.ProxOut.WriteVInt32(delta << 1);
                         }
                         if (payloadLength > 0)
                         {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        OuterInstance.OuterInstance.ProxOut.WriteVInt(delta);
+                        OuterInstance.OuterInstance.ProxOut.WriteVInt32(delta);
                     }
                 }
 

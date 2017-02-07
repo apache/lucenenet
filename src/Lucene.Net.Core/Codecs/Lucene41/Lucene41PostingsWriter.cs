@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public override void Init(IndexOutput termsOut)
         {
             CodecUtil.WriteHeader(termsOut, TERMS_CODEC, VERSION_CURRENT);
-            termsOut.WriteVInt(Lucene41PostingsFormat.BLOCK_SIZE);
+            termsOut.WriteVInt32(Lucene41PostingsFormat.BLOCK_SIZE);
         }
 
         public override int SetField(FieldInfo fieldInfo)
@@ -391,7 +391,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 if (fieldHasPayloads)
                 {
                     forUtil.WriteBlock(payloadLengthBuffer, encoded, payOut);
-                    payOut.WriteVInt(payloadByteUpto);
+                    payOut.WriteVInt32(payloadByteUpto);
                     payOut.WriteBytes(payloadBytes, 0, payloadByteUpto);
                     payloadByteUpto = 0;
                 }
@@ -467,16 +467,16 @@ namespace Lucene.Net.Codecs.Lucene41
                     int freq = freqBuffer[i];
                     if (!fieldHasFreqs)
                     {
-                        docOut.WriteVInt(docDelta);
+                        docOut.WriteVInt32(docDelta);
                     }
                     else if (freqBuffer[i] == 1)
                     {
-                        docOut.WriteVInt((docDelta << 1) | 1);
+                        docOut.WriteVInt32((docDelta << 1) | 1);
                     }
                     else
                     {
-                        docOut.WriteVInt(docDelta << 1);
-                        docOut.WriteVInt(freq);
+                        docOut.WriteVInt32(docDelta << 1);
+                        docOut.WriteVInt32(freq);
                     }
                 }
             }
@@ -523,12 +523,12 @@ namespace Lucene.Net.Codecs.Lucene41
                             if (payloadLength != lastPayloadLength)
                             {
                                 lastPayloadLength = payloadLength;
-                                posOut.WriteVInt((posDelta << 1) | 1);
-                                posOut.WriteVInt(payloadLength);
+                                posOut.WriteVInt32((posDelta << 1) | 1);
+                                posOut.WriteVInt32(payloadLength);
                             }
                             else
                             {
-                                posOut.WriteVInt(posDelta << 1);
+                                posOut.WriteVInt32(posDelta << 1);
                             }
 
                             // if (DEBUG) {
@@ -546,7 +546,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         }
                         else
                         {
-                            posOut.WriteVInt(posDelta);
+                            posOut.WriteVInt32(posDelta);
                         }
 
                         if (fieldHasOffsets)
@@ -558,12 +558,12 @@ namespace Lucene.Net.Codecs.Lucene41
                             int length = offsetLengthBuffer[i];
                             if (length == lastOffsetLength)
                             {
-                                posOut.WriteVInt(delta << 1);
+                                posOut.WriteVInt32(delta << 1);
                             }
                             else
                             {
-                                posOut.WriteVInt(delta << 1 | 1);
-                                posOut.WriteVInt(length);
+                                posOut.WriteVInt32(delta << 1 | 1);
+                                posOut.WriteVInt32(length);
                                 lastOffsetLength = length;
                             }
                         }
@@ -633,18 +633,18 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             if (state2.singletonDocID != -1)
             {
-                @out.WriteVInt(state2.singletonDocID);
+                @out.WriteVInt32(state2.singletonDocID);
             }
             if (fieldHasPositions)
             {
                 if (state2.lastPosBlockOffset != -1)
                 {
-                    @out.WriteVLong(state2.lastPosBlockOffset);
+                    @out.WriteVInt64(state2.lastPosBlockOffset);
                 }
             }
             if (state2.skipOffset != -1)
             {
-                @out.WriteVLong(state2.skipOffset);
+                @out.WriteVInt64(state2.skipOffset);
             }
             lastState = state2;
         }

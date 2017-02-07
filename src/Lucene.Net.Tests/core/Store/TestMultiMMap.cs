@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
         {
             MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSafety"));
             IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
-            io.WriteVInt(5);
+            io.WriteVInt32(5);
             io.Dispose();
             IndexInput one = mmapDir.OpenInput("bytes", IOContext.DEFAULT);
             IndexInput two = (IndexInput)one.Clone();
@@ -72,7 +72,7 @@ namespace Lucene.Net.Store
             one.Dispose();
             try
             {
-                one.ReadVInt();
+                one.ReadVInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -83,7 +83,7 @@ namespace Lucene.Net.Store
             }
             try
             {
-                two.ReadVInt();
+                two.ReadVInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
             }
             try
             {
-                three.ReadVInt();
+                three.ReadVInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -115,16 +115,16 @@ namespace Lucene.Net.Store
         {
             MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneClose"));
             IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
-            io.WriteVInt(5);
+            io.WriteVInt32(5);
             io.Dispose();
             IndexInput one = mmapDir.OpenInput("bytes", IOContext.DEFAULT);
             IndexInput two = (IndexInput)one.Clone();
             IndexInput three = (IndexInput)two.Clone(); // clone of clone
             two.Dispose();
-            Assert.AreEqual(5, one.ReadVInt());
+            Assert.AreEqual(5, one.ReadVInt32());
             try
             {
-                two.ReadVInt();
+                two.ReadVInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -133,7 +133,7 @@ namespace Lucene.Net.Store
             {
                 // pass
             }
-            Assert.AreEqual(5, three.ReadVInt());
+            Assert.AreEqual(5, three.ReadVInt32());
             one.Dispose();
             three.Dispose();
             mmapDir.Dispose();
@@ -144,8 +144,8 @@ namespace Lucene.Net.Store
         {
             MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSliceSafety"));
             IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
-            io.WriteInt(1);
-            io.WriteInt(2);
+            io.WriteInt32(1);
+            io.WriteInt32(2);
             io.Dispose();
             IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
             IndexInput one = slicer.OpenSlice("first int", 0, 4);
@@ -155,7 +155,7 @@ namespace Lucene.Net.Store
             slicer.Dispose();
             try
             {
-                one.ReadInt();
+                one.ReadInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -166,7 +166,7 @@ namespace Lucene.Net.Store
             }
             try
             {
-                two.ReadInt();
+                two.ReadInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -177,7 +177,7 @@ namespace Lucene.Net.Store
             }
             try
             {
-                three.ReadInt();
+                three.ReadInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -188,7 +188,7 @@ namespace Lucene.Net.Store
             }
             try
             {
-                four.ReadInt();
+                four.ReadInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -211,8 +211,8 @@ namespace Lucene.Net.Store
         {
             MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testCloneSliceClose"));
             IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
-            io.WriteInt(1);
-            io.WriteInt(2);
+            io.WriteInt32(1);
+            io.WriteInt32(2);
             io.Dispose();
             IndexInputSlicer slicer = mmapDir.CreateSlicer("bytes", NewIOContext(Random()));
             IndexInput one = slicer.OpenSlice("first int", 0, 4);
@@ -220,7 +220,7 @@ namespace Lucene.Net.Store
             one.Dispose();
             try
             {
-                one.ReadInt();
+                one.ReadInt32();
                 Assert.Fail("Must throw AlreadyClosedException");
             }
 #pragma warning disable 168
@@ -229,10 +229,10 @@ namespace Lucene.Net.Store
             {
                 // pass
             }
-            Assert.AreEqual(2, two.ReadInt());
+            Assert.AreEqual(2, two.ReadInt32());
             // reopen a new slice "one":
             one = slicer.OpenSlice("first int", 0, 4);
-            Assert.AreEqual(1, one.ReadInt());
+            Assert.AreEqual(1, one.ReadInt32());
             one.Dispose();
             two.Dispose();
             slicer.Dispose();

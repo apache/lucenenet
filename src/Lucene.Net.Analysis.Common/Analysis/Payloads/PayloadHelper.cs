@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Payloads
 
         public static byte[] EncodeFloat(float payload, byte[] data, int offset)
         {
-            return EncodeInt(Number.FloatToIntBits(payload), data, offset);
+            return EncodeInt(Number.SingleToInt32Bits(payload), data, offset);
         }
 
         public static byte[] EncodeInt(int payload)
@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Payloads
         public static float DecodeFloat(byte[] bytes, int offset)
         {
 
-            return Number.IntBitsToFloat(DecodeInt(bytes, offset));
+            return Number.Int32BitsToSingle(DecodeInt(bytes, offset));
         }
 
         public static int DecodeInt(byte[] bytes, int offset)

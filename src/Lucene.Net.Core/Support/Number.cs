@@ -391,18 +391,27 @@ namespace Lucene.Net.Support
             return Convert.ToString(value, 2);
         }
 
-        public static float IntBitsToFloat(int value)
+        /// <summary>
+        /// NOTE: This was intBitsToFloat() in the JDK
+        /// </summary>
+        public static float Int32BitsToSingle(int value)
         {
             return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
         }
 
-        public static int FloatToRawIntBits(float value)
+        /// <summary>
+        /// NOTE: This was floatToRawIntBits() in the JDK
+        /// </summary>
+        public static int SingleToRawInt32Bits(float value)
         {
             // TODO: does this handle NaNs the same?
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
 
-        public static int FloatToIntBits(float value)
+        /// <summary>
+        /// NOTE: This was floatToIntBits() in the JDK
+        /// </summary>
+        public static int SingleToInt32Bits(float value)
         {
             if (float.IsNaN(value))
             {
@@ -413,17 +422,26 @@ namespace Lucene.Net.Support
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
 
-        public static long FloatToLongBits(float value)
+        /// <summary>
+        /// NOTE: This was floatToLongBits() in the JDK
+        /// </summary>
+        public static long SingleToInt64Bits(float value)
         {
             return BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
         }
 
-        public static long DoubleToRawLongBits(double value)
+        /// <summary>
+        /// NOTE: This was doubleToRawLongBits() in the JDK
+        /// </summary>
+        public static long DoubleToRawInt64Bits(double value)
         {
             return BitConverter.DoubleToInt64Bits(value);
         }
 
-        public static long DoubleToLongBits(double value)
+        /// <summary>
+        /// NOTE: This was doubleToLongBits() in the JDK
+        /// </summary>
+        public static long DoubleToInt64Bits(double value)
         {
             if (double.IsNaN(value))
             {
@@ -467,8 +485,8 @@ namespace Lucene.Net.Support
         //4 bytes
         public static float FlipEndian(float f)
         {
-            int x = FloatToIntBits(f);
-            return IntBitsToFloat(FlipEndian(x));
+            int x = SingleToInt32Bits(f);
+            return Int32BitsToSingle(FlipEndian(x));
         }
 
         //8 bytes

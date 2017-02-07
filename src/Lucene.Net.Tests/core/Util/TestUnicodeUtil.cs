@@ -176,7 +176,7 @@ namespace Lucene.Net.Util
                     codePoints[intUpto++] = cp;
                     charUpto += Character.CharCount(cp);
                 }
-                if (!ArrayUtil.Equals(codePoints, 0, utf32.Ints, utf32.Offset, intUpto))
+                if (!ArrayUtil.Equals(codePoints, 0, utf32.Int32s, utf32.Offset, intUpto))
                 {
                     Console.WriteLine("FAILED");
                     for (int j = 0; j < s.Length; j++)
@@ -187,7 +187,7 @@ namespace Lucene.Net.Util
                     Assert.AreEqual(intUpto, utf32.Length);
                     for (int j = 0; j < intUpto; j++)
                     {
-                        Console.WriteLine("  " + utf32.Ints[j].ToString("x") + " vs " + codePoints[j].ToString("x"));
+                        Console.WriteLine("  " + utf32.Int32s[j].ToString("x") + " vs " + codePoints[j].ToString("x"));
                     }
                     Assert.Fail("mismatch");
                 }

@@ -144,10 +144,10 @@ namespace Lucene.Net.Codecs.Bloom
 
                     _delegateFieldsProducer = delegatePostingsFormat
                         .FieldsProducer(state);
-                    var numBlooms = bloomIn.ReadInt();
+                    var numBlooms = bloomIn.ReadInt32();
                     for (var i = 0; i < numBlooms; i++)
                     {
-                        var fieldNum = bloomIn.ReadInt();
+                        var fieldNum = bloomIn.ReadInt32();
                         var bloom = FuzzySet.Deserialize(bloomIn);
                         var fieldInfo = state.FieldInfos.FieldInfo(fieldNum);
                         _bloomsByFieldName.Add(fieldInfo.Name, bloom);
@@ -456,12 +456,12 @@ namespace Lucene.Net.Codecs.Bloom
                     bloomOutput.WriteString(outerInstance._delegatePostingsFormat.Name);
 
                     // First field in the output file is the number of fields+blooms saved
-                    bloomOutput.WriteInt(nonSaturatedBlooms.Count);
+                    bloomOutput.WriteInt32(nonSaturatedBlooms.Count);
                     foreach (var entry in nonSaturatedBlooms)
                     {
                         var fieldInfo = entry.Key;
                         var bloomFilter = entry.Value;
-                        bloomOutput.WriteInt(fieldInfo.Number);
+                        bloomOutput.WriteInt32(fieldInfo.Number);
                         SaveAppropriatelySizedBloomFilter(bloomOutput, bloomFilter, fieldInfo);
                     }
 

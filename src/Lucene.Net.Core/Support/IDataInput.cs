@@ -11,12 +11,28 @@
         bool ReadBoolean();
         byte ReadByte();
         int ReadUnsignedByte();
-        short ReadShort();
-        int ReadUnsignedShort();
+
+        /// <summary>
+        /// NOTE: This was readShort() in the JDK
+        /// </summary>
+        short ReadInt16();
+
+        /// <summary>
+        /// NOTE: This was readUnsignedShort() in the JDK
+        /// </summary>
+        int ReadUInt16();
         char ReadChar();
-        int ReadInt();
-        long ReadLong();
-        float ReadFloat();
+
+        /// <summary>
+        /// NOTE: This was readInt() in the JDK
+        /// </summary>
+        int ReadInt32();
+
+        /// <summary>
+        /// NOTE: This was readLong() in the JDK
+        /// </summary>
+        long ReadInt64();
+        float ReadSingle();
         double ReadDouble();
         string ReadLine();
         string ReadUTF();

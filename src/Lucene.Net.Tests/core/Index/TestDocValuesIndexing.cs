@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
             w.ForceMerge(1);
             DirectoryReader r = w.Reader;
             w.Dispose();
-            Assert.AreEqual(17, FieldCache.DEFAULT.GetInts(GetOnlySegmentReader(r), "field", false).Get(0));
+            Assert.AreEqual(17, FieldCache.DEFAULT.GetInt32s(GetOnlySegmentReader(r), "field", false).Get(0));
             r.Dispose();
             d.Dispose();
         }
@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
             w.ForceMerge(1);
             DirectoryReader r = w.Reader;
             w.Dispose();
-            Assert.AreEqual(17, FieldCache.DEFAULT.GetInts(GetOnlySegmentReader(r), "field", false).Get(0));
+            Assert.AreEqual(17, FieldCache.DEFAULT.GetInt32s(GetOnlySegmentReader(r), "field", false).Get(0));
             r.Dispose();
             d.Dispose();
         }

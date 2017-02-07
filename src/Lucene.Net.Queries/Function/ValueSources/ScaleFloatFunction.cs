@@ -73,7 +73,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 {
 
                     float val = vals.FloatVal(i);
-                    if ((Number.FloatToRawIntBits(val) & (0xff << 23)) == 0xff << 23)
+                    if ((Number.SingleToRawInt32Bits(val) & (0xff << 23)) == 0xff << 23)
                     {
                         // if the exponent in the float is all ones, then this is +Inf, -Inf or NaN
                         // which don't make sense to factor into the scale function
@@ -154,9 +154,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = Number.FloatToIntBits(m_min);
+            int h = Number.SingleToInt32Bits(m_min);
             h = h * 29;
-            h += Number.FloatToIntBits(m_max);
+            h += Number.SingleToInt32Bits(m_max);
             h = h * 29;
             h += m_source.GetHashCode();
             return h;

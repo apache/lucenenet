@@ -79,9 +79,9 @@ namespace Lucene.Net.Codecs
             {
                 throw new System.ArgumentException("codec must be simple ASCII, less than 128 characters in length [got " + codec + "]");
             }
-            @out.WriteInt(CODEC_MAGIC);
+            @out.WriteInt32(CODEC_MAGIC);
             @out.WriteString(codec);
-            @out.WriteInt(version);
+            @out.WriteInt32(version);
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs
         public static int CheckHeader(DataInput @in, string codec, int minVersion, int maxVersion)
         {
             // Safety to guard against reading a bogus string:
-            int actualHeader = @in.ReadInt();
+            int actualHeader = @in.ReadInt32();
             if (actualHeader != CODEC_MAGIC)
             {
                 throw new System.IO.IOException("codec header mismatch: actual header=" + actualHeader + " vs expected header=" + CODEC_MAGIC + " (resource: " + @in + ")");
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs
                 throw new System.IO.IOException("codec mismatch: actual codec=" + actualCodec + " vs expected codec=" + codec + " (resource: " + @in + ")");
             }
 
-            int actualVersion = @in.ReadInt();
+            int actualVersion = @in.ReadInt32();
             if (actualVersion < minVersion)
             {
                 throw new System.IO.IOException("Version: " + actualVersion + " is not supported. Minimum Version number is " + minVersion + ".");
@@ -181,9 +181,9 @@ namespace Lucene.Net.Codecs
         /// <exception cref="IOException"> If there is an I/O error writing to the underlying medium. </exception>
         public static void WriteFooter(IndexOutput @out)
         {
-            @out.WriteInt(FOOTER_MAGIC);
-            @out.WriteInt(0);
-            @out.WriteLong(@out.Checksum);
+            @out.WriteInt32(FOOTER_MAGIC);
+            @out.WriteInt32(0);
+            @out.WriteInt64(@out.Checksum);
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs
         {
             ValidateFooter(@in);
             long actualChecksum = @in.Checksum;
-            long expectedChecksum = @in.ReadLong();
+            long expectedChecksum = @in.ReadInt64();
             if (expectedChecksum != actualChecksum)
             {
                 throw new System.IO.IOException("checksum failed (hardware problem?) : expected=" + expectedChecksum.ToString("x") + " actual=" + actualChecksum.ToString("x") + " (resource=" + @in + ")");
@@ -226,18 +226,18 @@ namespace Lucene.Net.Codecs
         {
             @in.Seek(@in.Length - FooterLength());
             ValidateFooter(@in);
-            return @in.ReadLong();
+            return @in.ReadInt64();
         }
 
         private static void ValidateFooter(IndexInput @in)
         {
-            int magic = @in.ReadInt();
+            int magic = @in.ReadInt32();
             if (magic != FOOTER_MAGIC)
             {
                 throw new System.IO.IOException("codec footer mismatch: actual footer=" + magic + " vs expected footer=" + FOOTER_MAGIC + " (resource: " + @in + ")");
             }
 
-            int algorithmID = @in.ReadInt();
+            int algorithmID = @in.ReadInt32();
             if (algorithmID != 0)
             {
                 throw new System.IO.IOException("codec footer mismatch: unknown algorithmID: " + algorithmID);

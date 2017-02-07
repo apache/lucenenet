@@ -64,16 +64,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
             switch (numberType)
             {
                 case NumericType.LONG:
-                    return NumericRangeQuery.NewLongRange(field, precisionStep,
+                    return NumericRangeQuery.NewInt64Range(field, precisionStep,
                         (long?)lowerNumber, (long?)upperNumber, minInclusive, maxInclusive);
 
                 case NumericType.INT:
-                    return NumericRangeQuery.NewIntRange(field, precisionStep,
+                    return NumericRangeQuery.NewInt32Range(field, precisionStep,
                         (int?)lowerNumber, (int?)upperNumber, minInclusive,
                         maxInclusive);
 
                 case NumericType.FLOAT:
-                    return NumericRangeQuery.NewFloatRange(field, precisionStep,
+                    return NumericRangeQuery.NewSingleRange(field, precisionStep,
                         (float?)lowerNumber, (float?)upperNumber, minInclusive,
                         maxInclusive);
 

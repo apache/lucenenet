@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs.Pulsing
         {
             _termsOut = termsOut;
             CodecUtil.WriteHeader(termsOut, CODEC, VERSION_CURRENT);
-            termsOut.WriteVInt(_pending.Length); // encode maxPositions in header
+            termsOut.WriteVInt32(_pending.Length); // encode maxPositions in header
             _wrappedPostingsWriter.Init(termsOut);
         }
 
@@ -302,12 +302,12 @@ namespace Lucene.Net.Codecs.Pulsing
 
                         if (doc.termFreq == 1)
                         {
-                            _buffer.WriteVInt((delta << 1) | 1);
+                            _buffer.WriteVInt32((delta << 1) | 1);
                         }
                         else
                         {
-                            _buffer.WriteVInt(delta << 1);
-                            _buffer.WriteVInt(doc.termFreq);
+                            _buffer.WriteVInt32(delta << 1);
+                            _buffer.WriteVInt32(doc.termFreq);
                         }
 
                         var lastPos = 0;
@@ -324,18 +324,18 @@ namespace Lucene.Net.Codecs.Pulsing
                             {
                                 if (payloadLength != lastPayloadLength)
                                 {
-                                    _buffer.WriteVInt((posDelta << 1) | 1);
-                                    _buffer.WriteVInt(payloadLength);
+                                    _buffer.WriteVInt32((posDelta << 1) | 1);
+                                    _buffer.WriteVInt32(payloadLength);
                                     lastPayloadLength = payloadLength;
                                 }
                                 else
                                 {
-                                    _buffer.WriteVInt(posDelta << 1);
+                                    _buffer.WriteVInt32(posDelta << 1);
                                 }
                             }
                             else
                             {
-                                _buffer.WriteVInt(posDelta);
+                                _buffer.WriteVInt32(posDelta);
                             }
 
                             if (_indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
@@ -345,12 +345,12 @@ namespace Lucene.Net.Codecs.Pulsing
                                 var offsetLength = pos.endOffset - pos.startOffset;
                                 if (offsetLength != lastOffsetLength)
                                 {
-                                    _buffer.WriteVInt(offsetDelta << 1 | 1);
-                                    _buffer.WriteVInt(offsetLength);
+                                    _buffer.WriteVInt32(offsetDelta << 1 | 1);
+                                    _buffer.WriteVInt32(offsetLength);
                                 }
                                 else
                                 {
-                                    _buffer.WriteVInt(offsetDelta << 1);
+                                    _buffer.WriteVInt32(offsetDelta << 1);
                                 }
                                 lastOffset = pos.startOffset;
                                 lastOffsetLength = offsetLength;
@@ -378,12 +378,12 @@ namespace Lucene.Net.Codecs.Pulsing
 
                             if (doc.termFreq == 1)
                             {
-                                _buffer.WriteVInt((delta << 1) | 1);
+                                _buffer.WriteVInt32((delta << 1) | 1);
                             }
                             else
                             {
-                                _buffer.WriteVInt(delta << 1);
-                                _buffer.WriteVInt(doc.termFreq);
+                                _buffer.WriteVInt32(delta << 1);
+                                _buffer.WriteVInt32(doc.termFreq);
                             }
                             lastDocId = doc.docID;
                         }
@@ -395,7 +395,7 @@ namespace Lucene.Net.Codecs.Pulsing
                         for (var posIdx = 0; posIdx < _pendingCount; posIdx++)
                         {
                             var doc = _pending[posIdx];
-                            _buffer.WriteVInt(doc.docID - lastDocId);
+                            _buffer.WriteVInt32(doc.docID - lastDocId);
                             lastDocId = doc.docID;
                         }
                     }
@@ -420,7 +420,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 _wrappedPostingsWriter.EncodeTerm(_longs, _buffer, fieldInfo, _state.wrappedState, _absolute);
                 for (var i = 0; i < _longsSize; i++)
                 {
-                    output.WriteVLong(_longs[i]);
+                    output.WriteVInt64(_longs[i]);
                 }
                 _buffer.WriteTo(output);
                 _buffer.Reset();
@@ -428,7 +428,7 @@ namespace Lucene.Net.Codecs.Pulsing
             }
             else
             {
-                output.WriteVInt(_state.bytes.Length);
+                output.WriteVInt32(_state.bytes.Length);
                 output.WriteBytes(_state.bytes, 0, _state.bytes.Length);
                 _absolute = _absolute || abs;
             }
@@ -452,11 +452,11 @@ namespace Lucene.Net.Codecs.Pulsing
                 output =
                     _segmentState.Directory.CreateOutput(summaryFileName, _segmentState.Context);
                 CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
-                output.WriteVInt(_fields.Count);
+                output.WriteVInt32(_fields.Count);
                 foreach (var field in _fields)
                 {
-                    output.WriteVInt(field.FieldNumber);
-                    output.WriteVInt(field.LongsSize);
+                    output.WriteVInt32(field.FieldNumber);
+                    output.WriteVInt32(field.LongsSize);
                 }
                 output.Dispose();
             }

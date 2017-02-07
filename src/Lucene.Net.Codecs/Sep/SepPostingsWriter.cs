@@ -158,9 +158,9 @@ namespace Lucene.Net.Codecs.Sep
         {
             CodecUtil.WriteHeader(termsOut, CODEC, VERSION_CURRENT);
             // TODO: -- just ask skipper to "start" here
-            termsOut.WriteInt(skipInterval);    // write skipInterval
-            termsOut.WriteInt(maxSkipLevels);   // write maxSkipLevels
-            termsOut.WriteInt(skipMinimum);     // write skipMinimum
+            termsOut.WriteInt32(skipInterval);    // write skipInterval
+            termsOut.WriteInt32(maxSkipLevels);   // write maxSkipLevels
+            termsOut.WriteInt32(skipMinimum);     // write skipMinimum
         }
 
         public override BlockTermState NewTermState()
@@ -377,11 +377,11 @@ namespace Lucene.Net.Codecs.Sep
                     {
                         if (absolute)
                         {
-                            output.WriteVLong(state.PayloadFp);
+                            output.WriteVInt64(state.PayloadFp);
                         }
                         else
                         {
-                            output.WriteVLong(state.PayloadFp - lastPayloadFP);
+                            output.WriteVInt64(state.PayloadFp - lastPayloadFP);
                         }
                         lastPayloadFP = state.PayloadFp;
                     }
@@ -391,11 +391,11 @@ namespace Lucene.Net.Codecs.Sep
 
             if (absolute)
             {
-                output.WriteVLong(state.SkipFp);
+                output.WriteVInt64(state.SkipFp);
             }
             else
             {
-                output.WriteVLong(state.SkipFp - lastSkipFP);
+                output.WriteVInt64(state.SkipFp - lastSkipFP);
             }
             lastSkipFP = state.SkipFp;
         }

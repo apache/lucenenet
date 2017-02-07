@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                 // First time we are seeing this token since we last
                 // flushed the hash.
                 // Init stream slices
-                if (numPostingInt + intPool.IntUpto > IntBlockPool.INT_BLOCK_SIZE)
+                if (numPostingInt + intPool.Int32Upto > IntBlockPool.INT_BLOCK_SIZE)
                 {
                     intPool.NextBuffer();
                 }
@@ -171,10 +171,10 @@ namespace Lucene.Net.Index
                 }
 
                 intUptos = intPool.Buffer;
-                intUptoStart = intPool.IntUpto;
-                intPool.IntUpto += streamCount;
+                intUptoStart = intPool.Int32Upto;
+                intPool.Int32Upto += streamCount;
 
-                postingsArray.intStarts[termID] = intUptoStart + intPool.IntOffset;
+                postingsArray.intStarts[termID] = intUptoStart + intPool.Int32Offset;
 
                 for (int i = 0; i < streamCount; i++)
                 {
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             {
                 bytesHash.ByteStart(termID);
                 // Init stream slices
-                if (numPostingInt + intPool.IntUpto > IntBlockPool.INT_BLOCK_SIZE)
+                if (numPostingInt + intPool.Int32Upto > IntBlockPool.INT_BLOCK_SIZE)
                 {
                     intPool.NextBuffer();
                 }
@@ -246,10 +246,10 @@ namespace Lucene.Net.Index
                 }
 
                 intUptos = intPool.Buffer;
-                intUptoStart = intPool.IntUpto;
-                intPool.IntUpto += streamCount;
+                intUptoStart = intPool.Int32Upto;
+                intPool.Int32Upto += streamCount;
 
-                postingsArray.intStarts[termID] = intUptoStart + intPool.IntOffset;
+                postingsArray.intStarts[termID] = intUptoStart + intPool.Int32Offset;
 
                 for (int i = 0; i < streamCount; i++)
                 {
@@ -310,7 +310,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal void WriteVInt(int stream, int i)
+        /// <summary>
+        /// NOTE: This was writeVInt() in Lucene
+        /// </summary>
+        internal void WriteVInt32(int stream, int i)
         {
             Debug.Assert(stream < streamCount);
             while ((i & ~0x7F) != 0)

@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene45
         private void ReadSortedField(int fieldNumber, IndexInput meta, FieldInfos infos)
         {
             // sorted = binary + numeric
-            if (meta.ReadVInt() != fieldNumber)
+            if (meta.ReadVInt32() != fieldNumber)
             {
                 throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene45
             BinaryEntry b = ReadBinaryEntry(meta);
             binaries[fieldNumber] = b;
 
-            if (meta.ReadVInt() != fieldNumber)
+            if (meta.ReadVInt32() != fieldNumber)
             {
                 throw new Exception("sorted entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs.Lucene45
         private void ReadSortedSetFieldWithAddresses(int fieldNumber, IndexInput meta, FieldInfos infos)
         {
             // sortedset = binary + numeric (addresses) + ordIndex
-            if (meta.ReadVInt() != fieldNumber)
+            if (meta.ReadVInt32() != fieldNumber)
             {
                 throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.Lucene45
             BinaryEntry b = ReadBinaryEntry(meta);
             binaries[fieldNumber] = b;
 
-            if (meta.ReadVInt() != fieldNumber)
+            if (meta.ReadVInt32() != fieldNumber)
             {
                 throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Lucene45
             NumericEntry n1 = ReadNumericEntry(meta);
             ords[fieldNumber] = n1;
 
-            if (meta.ReadVInt() != fieldNumber)
+            if (meta.ReadVInt32() != fieldNumber)
             {
                 throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
             }
@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private void ReadFields(IndexInput meta, FieldInfos infos)
         {
-            int fieldNumber = meta.ReadVInt();
+            int fieldNumber = meta.ReadVInt32();
             while (fieldNumber != -1)
             {
                 // check should be: infos.fieldInfo(fieldNumber) != null, which incorporates negative check
@@ -234,7 +234,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     else if (ss.Format == Lucene45DocValuesConsumer.SORTED_SET_SINGLE_VALUED_SORTED)
                     {
-                        if (meta.ReadVInt() != fieldNumber)
+                        if (meta.ReadVInt32() != fieldNumber)
                         {
                             throw new Exception("sortedset entry for field: " + fieldNumber + " is corrupt (resource=" + meta + ")");
                         }
@@ -253,24 +253,24 @@ namespace Lucene.Net.Codecs.Lucene45
                 {
                     throw new Exception("invalid type: " + type + ", resource=" + meta);
                 }
-                fieldNumber = meta.ReadVInt();
+                fieldNumber = meta.ReadVInt32();
             }
         }
 
         internal static NumericEntry ReadNumericEntry(IndexInput meta)
         {
             NumericEntry entry = new NumericEntry();
-            entry.format = meta.ReadVInt();
-            entry.missingOffset = meta.ReadLong();
-            entry.PackedIntsVersion = meta.ReadVInt();
-            entry.Offset = meta.ReadLong();
-            entry.Count = meta.ReadVLong();
-            entry.BlockSize = meta.ReadVInt();
+            entry.format = meta.ReadVInt32();
+            entry.missingOffset = meta.ReadInt64();
+            entry.PackedInt32sVersion = meta.ReadVInt32();
+            entry.Offset = meta.ReadInt64();
+            entry.Count = meta.ReadVInt64();
+            entry.BlockSize = meta.ReadVInt32();
             switch (entry.format)
             {
                 case Lucene45DocValuesConsumer.GCD_COMPRESSED:
-                    entry.minValue = meta.ReadLong();
-                    entry.gcd = meta.ReadLong();
+                    entry.minValue = meta.ReadInt64();
+                    entry.gcd = meta.ReadInt64();
                     break;
 
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
@@ -278,7 +278,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     {
                         throw new Exception("Cannot use TABLE_COMPRESSED with more than MAX_VALUE values, input=" + meta);
                     }
-                    int uniqueValues = meta.ReadVInt();
+                    int uniqueValues = meta.ReadVInt32();
                     if (uniqueValues > 256)
                     {
                         throw new Exception("TABLE_COMPRESSED cannot have more than 256 distinct values, input=" + meta);
@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     entry.table = new long[uniqueValues];
                     for (int i = 0; i < uniqueValues; ++i)
                     {
-                        entry.table[i] = meta.ReadLong();
+                        entry.table[i] = meta.ReadInt64();
                     }
                     break;
 
@@ -302,28 +302,28 @@ namespace Lucene.Net.Codecs.Lucene45
         internal static BinaryEntry ReadBinaryEntry(IndexInput meta)
         {
             BinaryEntry entry = new BinaryEntry();
-            entry.format = meta.ReadVInt();
-            entry.missingOffset = meta.ReadLong();
-            entry.minLength = meta.ReadVInt();
-            entry.maxLength = meta.ReadVInt();
-            entry.Count = meta.ReadVLong();
-            entry.offset = meta.ReadLong();
+            entry.format = meta.ReadVInt32();
+            entry.missingOffset = meta.ReadInt64();
+            entry.minLength = meta.ReadVInt32();
+            entry.maxLength = meta.ReadVInt32();
+            entry.Count = meta.ReadVInt64();
+            entry.offset = meta.ReadInt64();
             switch (entry.format)
             {
                 case Lucene45DocValuesConsumer.BINARY_FIXED_UNCOMPRESSED:
                     break;
 
                 case Lucene45DocValuesConsumer.BINARY_PREFIX_COMPRESSED:
-                    entry.AddressInterval = meta.ReadVInt();
-                    entry.AddressesOffset = meta.ReadLong();
-                    entry.PackedIntsVersion = meta.ReadVInt();
-                    entry.BlockSize = meta.ReadVInt();
+                    entry.AddressInterval = meta.ReadVInt32();
+                    entry.AddressesOffset = meta.ReadInt64();
+                    entry.PackedInt32sVersion = meta.ReadVInt32();
+                    entry.BlockSize = meta.ReadVInt32();
                     break;
 
                 case Lucene45DocValuesConsumer.BINARY_VARIABLE_UNCOMPRESSED:
-                    entry.AddressesOffset = meta.ReadLong();
-                    entry.PackedIntsVersion = meta.ReadVInt();
-                    entry.BlockSize = meta.ReadVInt();
+                    entry.AddressesOffset = meta.ReadInt64();
+                    entry.PackedInt32sVersion = meta.ReadVInt32();
+                    entry.BlockSize = meta.ReadVInt32();
                     break;
 
                 default:
@@ -337,7 +337,7 @@ namespace Lucene.Net.Codecs.Lucene45
             SortedSetEntry entry = new SortedSetEntry();
             if (version >= Lucene45DocValuesFormat.VERSION_SORTED_SET_SINGLE_VALUE_OPTIMIZED)
             {
-                entry.Format = meta.ReadVInt();
+                entry.Format = meta.ReadVInt32();
             }
             else
             {
@@ -377,19 +377,19 @@ namespace Lucene.Net.Codecs.Lucene45
             switch (entry.format)
             {
                 case Lucene45DocValuesConsumer.DELTA_COMPRESSED:
-                    BlockPackedReader reader = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
+                    BlockPackedReader reader = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
                     return reader;
 
                 case Lucene45DocValuesConsumer.GCD_COMPRESSED:
                     long min = entry.minValue;
                     long mult = entry.gcd;
-                    BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
+                    BlockPackedReader quotientReader = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
                     return new LongValuesAnonymousInnerClassHelper(this, min, mult, quotientReader);
 
                 case Lucene45DocValuesConsumer.TABLE_COMPRESSED:
                     long[] table = entry.table;
                     int bitsRequired = PackedInts.BitsRequired(table.Length - 1);
-                    PackedInts.Reader ords = PackedInts.GetDirectReaderNoHeader(data, PackedInts.Format.PACKED, entry.PackedIntsVersion, (int)entry.Count, bitsRequired);
+                    PackedInts.Reader ords = PackedInts.GetDirectReaderNoHeader(data, PackedInts.Format.PACKED, entry.PackedInt32sVersion, (int)entry.Count, bitsRequired);
                     return new LongValuesAnonymousInnerClassHelper2(this, table, ords);
 
                 default:
@@ -513,7 +513,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 if (!addressInstances.TryGetValue(field.Number, out addrInstance))
                 {
                     data.Seek(bytes.AddressesOffset);
-                    addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, bytes.Count, false);
+                    addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedInt32sVersion, bytes.BlockSize, bytes.Count, false);
                     addressInstances[field.Number] = addrInstance;
                     ramBytesUsed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
                 }
@@ -593,7 +593,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     {
                         size = 1L + bytes.Count / interval;
                     }
-                    addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedIntsVersion, bytes.BlockSize, size, false);
+                    addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedInt32sVersion, bytes.BlockSize, size, false);
                     addressInstances[field.Number] = addrInstance;
                     ramBytesUsed.AddAndGet(addrInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
                 }
@@ -618,7 +618,7 @@ namespace Lucene.Net.Codecs.Lucene45
             NumericEntry entry = ords[field.Number];
             IndexInput data = (IndexInput)this.data.Clone();
             data.Seek(entry.Offset);
-            BlockPackedReader ordinals = new BlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, true);
+            BlockPackedReader ordinals = new BlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, true);
 
             return new SortedDocValuesAnonymousInnerClassHelper(this, valueCount, binary, ordinals);
         }
@@ -695,7 +695,7 @@ namespace Lucene.Net.Codecs.Lucene45
                 if (!ordIndexInstances.TryGetValue(field.Number, out ordIndexInstance))
                 {
                     data.Seek(entry.Offset);
-                    ordIndexInstance = new MonotonicBlockPackedReader(data, entry.PackedIntsVersion, entry.BlockSize, entry.Count, false);
+                    ordIndexInstance = new MonotonicBlockPackedReader(data, entry.PackedInt32sVersion, entry.BlockSize, entry.Count, false);
                     ordIndexInstances[field.Number] = ordIndexInstance;
                     ramBytesUsed.AddAndGet(ordIndexInstance.RamBytesUsed() + RamUsageEstimator.NUM_BYTES_INT);
                 }
@@ -914,8 +914,11 @@ namespace Lucene.Net.Codecs.Lucene45
             internal int format;
 
             /// <summary>
-            /// packed ints version used to encode these numerics </summary>
-            public int PackedIntsVersion { get; set; }
+            /// packed ints version used to encode these numerics 
+            /// <para/>
+            /// NOTE: This was packedIntsVersion (field) in Lucene
+            /// </summary>
+            public int PackedInt32sVersion { get; set; }
 
             /// <summary>
             /// count of values written </summary>
@@ -964,8 +967,11 @@ namespace Lucene.Net.Codecs.Lucene45
             public long AddressInterval { get; set; }
 
             /// <summary>
-            /// packed ints version used to encode addressing information </summary>
-            public int PackedIntsVersion { get; set; }
+            /// packed ints version used to encode addressing information 
+            /// <para/>
+            /// NOTE: This was packedIntsVersion (field) in Lucene
+            /// </summary>
+            public int PackedInt32sVersion { get; set; }
 
             /// <summary>
             /// packed ints blocksize </summary>
@@ -1121,8 +1127,8 @@ namespace Lucene.Net.Codecs.Lucene45
                     }
                     else
                     {
-                        int start = input.ReadVInt();
-                        int suffix = input.ReadVInt();
+                        int start = input.ReadVInt32();
+                        int suffix = input.ReadVInt32();
                         input.ReadBytes(termBuffer.Bytes, start, suffix);
                         termBuffer.Length = start + suffix;
                         return termBuffer;

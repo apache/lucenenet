@@ -369,7 +369,7 @@ namespace Lucene.Net.Search
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + Number.FloatToIntBits(Boost);
+            result = prime * result + Number.SingleToInt32Bits(Boost);
             result = prime * result + m_rewriteMethod.GetHashCode();
             if (m_field != null)
             {
@@ -393,7 +393,7 @@ namespace Lucene.Net.Search
                 return false;
             }
             MultiTermQuery other = (MultiTermQuery)obj;
-            if (Number.FloatToIntBits(Boost) != Number.FloatToIntBits(other.Boost))
+            if (Number.SingleToInt32Bits(Boost) != Number.SingleToInt32Bits(other.Boost))
             {
                 return false;
             }

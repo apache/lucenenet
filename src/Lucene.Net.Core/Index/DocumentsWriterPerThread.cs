@@ -717,14 +717,14 @@ namespace Lucene.Net.Index
 
             /* Allocate another int[] from the shared pool */
 
-            public override int[] GetIntBlock()
+            public override int[] GetInt32Block()
             {
                 int[] b = new int[IntBlockPool.INT_BLOCK_SIZE];
                 bytesUsed.AddAndGet(IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT);
                 return b;
             }
 
-            public override void RecycleIntBlocks(int[][] blocks, int offset, int length)
+            public override void RecycleInt32Blocks(int[][] blocks, int offset, int length)
             {
                 bytesUsed.AddAndGet(-(length * (IntBlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT)));
             }

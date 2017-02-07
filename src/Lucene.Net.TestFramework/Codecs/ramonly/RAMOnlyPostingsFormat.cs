@@ -672,7 +672,7 @@ namespace Lucene.Net.Codecs.ramonly
             try
             {
                 CodecUtil.WriteHeader(@out, RAM_ONLY_NAME, VERSION_LATEST);
-                @out.WriteVInt(id);
+                @out.WriteVInt32(id);
                 success = true;
             }
             finally
@@ -707,7 +707,7 @@ namespace Lucene.Net.Codecs.ramonly
             try
             {
                 CodecUtil.CheckHeader(@in, RAM_ONLY_NAME, VERSION_START, VERSION_LATEST);
-                id = @in.ReadVInt();
+                id = @in.ReadVInt32();
                 success = true;
             }
             finally

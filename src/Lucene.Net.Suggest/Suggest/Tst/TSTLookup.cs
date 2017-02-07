@@ -185,7 +185,7 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
             if ((mask & HAS_VALUE) != 0)
             {
-                node.val = Convert.ToInt64(@in.ReadLong());
+                node.val = Convert.ToInt64(@in.ReadInt64());
             }
             if ((mask & LO_KID) != 0)
             {
@@ -238,7 +238,7 @@ namespace Lucene.Net.Search.Suggest.Tst
             }
             if (node.val != null)
             {
-                @out.WriteLong((long)node.val);
+                @out.WriteInt64((long)node.val);
             }
             // recurse and write kids
             if (node.loKid != null)
@@ -259,7 +259,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         {
             lock (this)
             {
-                output.WriteVLong(count);
+                output.WriteVInt64(count);
                 WriteRecursively(output, root);
                 return true;
             }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Search.Suggest.Tst
         {
             lock (this)
             {
-                count = input.ReadVLong();
+                count = input.ReadVInt64();
                 root = new TernaryTreeNode();
                 ReadRecursively(input, root);
                 return true;

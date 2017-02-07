@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     continue; // for duplicate suggestions, the best weight is actually
                     // added
                 }
-                Lucene.Net.Util.Fst.Util.ToIntsRef(scratch, scratchInts);
+                Lucene.Net.Util.Fst.Util.ToInt32sRef(scratch, scratchInts);
                 builder.Add(scratchInts, cost);
                 previous.CopyBytes(scratch);
                 count++;
@@ -116,7 +116,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public override bool Store(DataOutput output)
         {
-            output.WriteVLong(count);
+            output.WriteVInt64(count);
             if (fst == null)
             {
                 return false;
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Suggest.Fst
 
         public override bool Load(DataInput input)
         {
-            count = input.ReadVLong();
+            count = input.ReadVInt64();
             this.fst = new FST<long?>(input, PositiveIntOutputs.Singleton);
             return true;
         }
@@ -303,7 +303,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 }
                 output.Reset(buffer);
                 output.WriteBytes(spare.Bytes, spare.Offset, spare.Length);
-                output.WriteInt(EncodeWeight(weight));
+                output.WriteInt32(EncodeWeight(weight));
                 writer.Write(buffer, 0, output.Position);
             }
 
@@ -312,7 +312,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 scratch.Length -= 4; // int
                 // skip suggestion:
                 tmpInput.Reset(scratch.Bytes, scratch.Offset + scratch.Length, 4);
-                return tmpInput.ReadInt();
+                return tmpInput.ReadInt32();
             }
         }
 

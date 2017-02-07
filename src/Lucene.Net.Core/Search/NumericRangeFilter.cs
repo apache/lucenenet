@@ -105,11 +105,12 @@ namespace Lucene.Net.Search
         /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newLongRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewInt64Range
-        public static NumericRangeFilter<long> NewLongRange(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<long> NewInt64Range(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeFilter<long>(NumericRangeQuery.NewLongRange(field, precisionStep, min, max, minInclusive, maxInclusive));
+            return new NumericRangeFilter<long>(NumericRangeQuery.NewInt64Range(field, precisionStep, min, max, minInclusive, maxInclusive));
         }
 
         /// <summary>
@@ -118,11 +119,12 @@ namespace Lucene.Net.Search
         /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newLongRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewInt64Range
-        public static NumericRangeFilter<long> NewLongRange(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<long> NewInt64Range(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeFilter<long>(NumericRangeQuery.NewLongRange(field, min, max, minInclusive, maxInclusive));
+            return new NumericRangeFilter<long>(NumericRangeQuery.NewInt64Range(field, min, max, minInclusive, maxInclusive));
         }
 
         /// <summary>
@@ -131,11 +133,12 @@ namespace Lucene.Net.Search
         /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newIntRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewInt32Range
-        public static NumericRangeFilter<int> NewIntRange(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<int> NewInt32Range(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeFilter<int>(NumericRangeQuery.NewIntRange(field, precisionStep, min, max, minInclusive, maxInclusive));
+            return new NumericRangeFilter<int>(NumericRangeQuery.NewInt32Range(field, precisionStep, min, max, minInclusive, maxInclusive));
         }
 
         /// <summary>
@@ -144,11 +147,12 @@ namespace Lucene.Net.Search
         /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newIntRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewInt32Range
-        public static NumericRangeFilter<int> NewIntRange(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<int> NewInt32Range(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeFilter<int>(NumericRangeQuery.NewIntRange(field, min, max, minInclusive, maxInclusive));
+            return new NumericRangeFilter<int>(NumericRangeQuery.NewInt32Range(field, min, max, minInclusive, maxInclusive));
         }
 
         /// <summary>
@@ -187,11 +191,12 @@ namespace Lucene.Net.Search
         /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
         /// with {@code min == max == Float.NaN}. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newFloatRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewSingleRange
-        public static NumericRangeFilter<float> NewFloatRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<float> NewSingleRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeFilter<float>(NumericRangeQuery.NewFloatRange(field, precisionStep, min, max, minInclusive, maxInclusive));
+            return new NumericRangeFilter<float>(NumericRangeQuery.NewSingleRange(field, precisionStep, min, max, minInclusive, maxInclusive));
         }
 
         /// <summary>
@@ -202,11 +207,12 @@ namespace Lucene.Net.Search
         /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
         /// with {@code min == max == Float.NaN}. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newFloatRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewSingleRange
-        public static NumericRangeFilter<float> NewFloatRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeFilter<float> NewSingleRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeFilter<float>(NumericRangeQuery.NewFloatRange(field, min, max, minInclusive, maxInclusive));
+            return new NumericRangeFilter<float>(NumericRangeQuery.NewSingleRange(field, min, max, minInclusive, maxInclusive));
         }
     }
 }

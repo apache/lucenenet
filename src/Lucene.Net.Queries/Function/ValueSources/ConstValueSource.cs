@@ -88,7 +88,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(constant) * 31;
+            return Number.SingleToInt32Bits(constant) * 31;
         }
 
         public override bool Equals(object o)

@@ -194,9 +194,11 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// The current high long has been determined to not contain the set bit that is needed.
-        ///  Increment setBitForIndex to the next high long and set curHighLong accordingly.
+        /// Increment setBitForIndex to the next high long and set curHighLong accordingly.
+        /// <para/>
+        /// NOTE: this was toNextHighLong() in Lucene
         /// </summary>
-        private void ToNextHighLong()
+        private void ToNextHighInt64()
         {
             setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
             //assert getCurrentRightShift() == 0;
@@ -212,7 +214,7 @@ namespace Lucene.Net.Util.Packed
         {
             while (curHighLong == 0L)
             {
-                ToNextHighLong(); // inlining and unrolling would simplify somewhat
+                ToNextHighInt64(); // inlining and unrolling would simplify somewhat
             }
             setBitForIndex += Number.NumberOfTrailingZeros(curHighLong);
         }
@@ -265,7 +267,7 @@ namespace Lucene.Net.Util.Packed
             while ((efIndex + curSetBits) < index) // curHighLong has not enough set bits to reach index
             {
                 efIndex += curSetBits;
-                ToNextHighLong();
+                ToNextHighInt64();
                 curSetBits = Number.BitCount(curHighLong);
             }
             // curHighLong has enough set bits to reach index
@@ -449,9 +451,11 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// The current high long has been determined to not contain the set bit that is needed.
-        ///  Decrement setBitForIndex to the previous high long and set curHighLong accordingly.
+        /// Decrement setBitForIndex to the previous high long and set curHighLong accordingly.
+        /// <para/>
+        /// NOTE: this was toPreviousHighLong() in Lucene
         /// </summary>
-        private void ToPreviousHighLong()
+        private void ToPreviousHighInt64()
         {
             setBitForIndex -= (setBitForIndex & ((sizeof(long) * 8) - 1)) + 1;
             //assert getCurrentLeftShift() == 0;
@@ -467,7 +471,7 @@ namespace Lucene.Net.Util.Packed
         {
             while (curHighLong == 0L)
             {
-                ToPreviousHighLong(); // inlining and unrolling would simplify somewhat
+                ToPreviousHighInt64(); // inlining and unrolling would simplify somewhat
             }
             setBitForIndex -= Number.NumberOfLeadingZeros(curHighLong);
             return CurrentHighValue();
@@ -506,7 +510,7 @@ namespace Lucene.Net.Util.Packed
                 {
                     return NO_MORE_VALUES;
                 }
-                ToPreviousHighLong();
+                ToPreviousHighInt64();
                 //assert getCurrentLeftShift() == 0;
                 curSetBits = Number.BitCount(curHighLong);
                 curClearBits = (sizeof(long) * 8) - curSetBits;

@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 if (version >= CompressingTermVectorsWriter.VERSION_CHECKSUM)
                 {
-                    indexStream.ReadVLong(); // the end of the data file
+                    indexStream.ReadVInt64(); // the end of the data file
                     CodecUtil.CheckFooter(indexStream);
                 }
                 else
@@ -106,8 +106,8 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.FilePointer);
 
-                packedIntsVersion = vectorsStream.ReadVInt();
-                chunkSize = vectorsStream.ReadVInt();
+                packedIntsVersion = vectorsStream.ReadVInt32();
+                chunkSize = vectorsStream.ReadVInt32();
                 decompressor = compressionMode.NewDecompressor();
                 this.reader = new BlockPackedReaderIterator(vectorsStream, packedIntsVersion, CompressingTermVectorsWriter.BLOCK_SIZE, 0);
 
@@ -138,7 +138,10 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        internal int PackedIntsVersion
+        /// <summary>
+        /// NOTE: This was getPackedIntsVersion() in Lucene
+        /// </summary>
+        internal int PackedInt32sVersion
         {
             get
             {
@@ -206,8 +209,8 @@ namespace Lucene.Net.Codecs.Compressing
             // decode
             // - docBase: first doc ID of the chunk
             // - chunkDocs: number of docs of the chunk
-            int docBase = vectorsStream.ReadVInt();
-            int chunkDocs = vectorsStream.ReadVInt();
+            int docBase = vectorsStream.ReadVInt32();
+            int chunkDocs = vectorsStream.ReadVInt32();
             if (doc < docBase || doc >= docBase + chunkDocs || docBase + chunkDocs > numDocs)
             {
                 throw new CorruptIndexException("docBase=" + docBase + ",chunkDocs=" + chunkDocs + ",doc=" + doc + " (resource=" + vectorsStream + ")");
@@ -219,7 +222,7 @@ namespace Lucene.Net.Codecs.Compressing
             if (chunkDocs == 1)
             {
                 skip = 0;
-                numFields = totalFields = vectorsStream.ReadVInt();
+                numFields = totalFields = vectorsStream.ReadVInt32();
             }
             else
             {
@@ -254,7 +257,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int totalDistinctFields = (int)((uint)token >> 5);
                 if (totalDistinctFields == 0x07)
                 {
-                    totalDistinctFields += vectorsStream.ReadVInt();
+                    totalDistinctFields += vectorsStream.ReadVInt32();
                 }
                 ++totalDistinctFields;
                 PackedInts.IReaderIterator it = PackedInts.GetReaderIteratorNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalDistinctFields, bitsPerFieldNum, 1);
@@ -271,7 +274,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 int bitsPerOff = PackedInts.BitsRequired(fieldNums.Length - 1);
                 PackedInts.Reader allFieldNumOffs = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, bitsPerOff);
-                switch (vectorsStream.ReadVInt())
+                switch (vectorsStream.ReadVInt32())
                 {
                     case 0:
                         PackedInts.Reader fieldFlags = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, fieldNums.Length, CompressingTermVectorsWriter.FLAGS_BITS);
@@ -303,7 +306,7 @@ namespace Lucene.Net.Codecs.Compressing
             PackedInts.Reader numTerms;
             int totalTerms;
             {
-                int bitsRequired = vectorsStream.ReadVInt();
+                int bitsRequired = vectorsStream.ReadVInt32();
                 numTerms = PackedInts.GetReaderNoHeader(vectorsStream, PackedInts.Format.PACKED, packedIntsVersion, totalFields, bitsRequired);
                 int sum = 0;
                 for (int i = 0; i < totalFields; ++i)
@@ -338,7 +341,7 @@ namespace Lucene.Net.Codecs.Compressing
                         LongsRef next = reader.Next(termCount - j);
                         for (int k = 0; k < next.Length; ++k)
                         {
-                            fieldPrefixLengths[j++] = (int)next.Longs[next.Offset + k];
+                            fieldPrefixLengths[j++] = (int)next.Int64s[next.Offset + k];
                         }
                     }
                 }
@@ -364,7 +367,7 @@ namespace Lucene.Net.Codecs.Compressing
                         LongsRef next = reader.Next(termCount - j);
                         for (int k = 0; k < next.Length; ++k)
                         {
-                            fieldSuffixLengths[j++] = (int)next.Longs[next.Offset + k];
+                            fieldSuffixLengths[j++] = (int)next.Int64s[next.Offset + k];
                         }
                     }
                     fieldLengths[i] = Sum(suffixLengths[i]);
@@ -389,7 +392,7 @@ namespace Lucene.Net.Codecs.Compressing
                     LongsRef next = reader.Next(totalTerms - i);
                     for (int k = 0; k < next.Length; ++k)
                     {
-                        termFreqs[i++] = 1 + (int)next.Longs[next.Offset + k];
+                        termFreqs[i++] = 1 + (int)next.Int64s[next.Offset + k];
                     }
                 }
             }
@@ -436,7 +439,7 @@ namespace Lucene.Net.Codecs.Compressing
                 float[] charsPerTerm = new float[fieldNums.Length];
                 for (int i = 0; i < charsPerTerm.Length; ++i)
                 {
-                    charsPerTerm[i] = Number.IntBitsToFloat(vectorsStream.ReadInt());
+                    charsPerTerm[i] = Number.Int32BitsToSingle(vectorsStream.ReadInt32());
                 }
                 startOffsets = ReadPositions(skip, numFields, flags, numTerms, termFreqs, CompressingTermVectorsWriter.OFFSETS, totalOffsets, positionIndex);
                 lengths = ReadPositions(skip, numFields, flags, numTerms, termFreqs, CompressingTermVectorsWriter.OFFSETS, totalOffsets, positionIndex);
@@ -676,7 +679,7 @@ namespace Lucene.Net.Codecs.Compressing
                         LongsRef nextPositions = reader.Next(totalFreq - j);
                         for (int k = 0; k < nextPositions.Length; ++k)
                         {
-                            fieldPositions[j++] = (int)nextPositions.Longs[nextPositions.Offset + k];
+                            fieldPositions[j++] = (int)nextPositions.Int64s[nextPositions.Offset + k];
                         }
                     }
                 }

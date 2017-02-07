@@ -120,7 +120,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             try
             {
-                int format = idxStream.ReadInt();
+                int format = idxStream.ReadInt32();
                 if (format < FORMAT_MINIMUM)
                 {
                     throw new IndexFormatTooOldException(idxStream, format, FORMAT_MINIMUM, FORMAT_CURRENT);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 string indexStreamFN = IndexFileNames.SegmentFileName(segment, "", FIELDS_INDEX_EXTENSION);
                 indexStream = d.OpenInput(indexStreamFN, context);
 
-                format = indexStream.ReadInt();
+                format = indexStream.ReadInt32();
 
                 if (format < FORMAT_MINIMUM)
                 {
@@ -262,12 +262,12 @@ namespace Lucene.Net.Codecs.Lucene3x
         public override sealed void VisitDocument(int n, StoredFieldVisitor visitor)
         {
             SeekIndex(n);
-            fieldsStream.Seek(indexStream.ReadLong());
+            fieldsStream.Seek(indexStream.ReadInt64());
 
-            int numFields = fieldsStream.ReadVInt();
+            int numFields = fieldsStream.ReadVInt32();
             for (int fieldIDX = 0; fieldIDX < numFields; fieldIDX++)
             {
-                int fieldNumber = fieldsStream.ReadVInt();
+                int fieldNumber = fieldsStream.ReadVInt32();
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
                 int bits = fieldsStream.ReadByte() & 0xFF;
@@ -297,19 +297,19 @@ namespace Lucene.Net.Codecs.Lucene3x
                 switch (numeric)
                 {
                     case FIELD_IS_NUMERIC_INT:
-                        visitor.Int32Field(info, fieldsStream.ReadInt());
+                        visitor.Int32Field(info, fieldsStream.ReadInt32());
                         return;
 
                     case FIELD_IS_NUMERIC_LONG:
-                        visitor.Int64Field(info, fieldsStream.ReadLong());
+                        visitor.Int64Field(info, fieldsStream.ReadInt64());
                         return;
 
                     case FIELD_IS_NUMERIC_FLOAT:
-                        visitor.SingleField(info, Number.IntBitsToFloat(fieldsStream.ReadInt()));
+                        visitor.SingleField(info, Number.Int32BitsToSingle(fieldsStream.ReadInt32()));
                         return;
 
                     case FIELD_IS_NUMERIC_DOUBLE:
-                        visitor.DoubleField(info, BitConverter.Int64BitsToDouble(fieldsStream.ReadLong()));
+                        visitor.DoubleField(info, BitConverter.Int64BitsToDouble(fieldsStream.ReadInt64()));
                         return;
 
                     default:
@@ -318,7 +318,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                int length = fieldsStream.ReadVInt();
+                int length = fieldsStream.ReadVInt32();
                 var bytes = new byte[length];
                 fieldsStream.ReadBytes(bytes, 0, length);
                 if ((bits & FIELD_IS_BINARY) != 0)
@@ -341,12 +341,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     case FIELD_IS_NUMERIC_INT:
                     case FIELD_IS_NUMERIC_FLOAT:
-                        fieldsStream.ReadInt();
+                        fieldsStream.ReadInt32();
                         return;
 
                     case FIELD_IS_NUMERIC_LONG:
                     case FIELD_IS_NUMERIC_DOUBLE:
-                        fieldsStream.ReadLong();
+                        fieldsStream.ReadInt64();
                         return;
 
                     default:
@@ -355,7 +355,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                int length = fieldsStream.ReadVInt();
+                int length = fieldsStream.ReadVInt32();
                 fieldsStream.Seek(fieldsStream.FilePointer + length);
             }
         }

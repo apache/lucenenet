@@ -107,7 +107,7 @@ namespace Lucene.Net.Facet.Range
 
         internal LongRange ToLongRange()
         {
-            return new LongRange(Label, NumericUtils.DoubleToSortableLong(minIncl), true, NumericUtils.DoubleToSortableLong(maxIncl), true);
+            return new LongRange(Label, NumericUtils.DoubleToSortableInt64(minIncl), true, NumericUtils.DoubleToSortableInt64(maxIncl), true);
         }
 
         public override string ToString()

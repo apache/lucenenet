@@ -35,8 +35,11 @@ namespace Lucene.Net.Util.Packed
             return (((long)((ulong)n >> 1)) ^ -(n & 1));
         }
 
-        // same as DataInput.readVLong but supports negative values
-        internal static long ReadVLong(DataInput @in) // LUCENENET TODO: rename to ReadVInt64 ?
+        // same as DataInput.ReadVInt64 but supports negative values
+        /// <summary>
+        /// NOTE: This was readVLong() in Lucene
+        /// </summary>
+        internal static long ReadVInt64(DataInput @in)
         {
             byte b = @in.ReadByte();
             if ((sbyte)b >= 0)
@@ -161,7 +164,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 if ((token & AbstractBlockPackedWriter.MIN_VALUE_EQUALS_0) == 0)
                 {
-                    ReadVLong(@in);
+                    ReadVInt64(@in);
                 }
                 long blockBytes = PackedInts.Format.PACKED.ByteCount(packedIntsVersion, blockSize, bitsPerValue);
                 SkipBytes(blockBytes);
@@ -253,7 +256,7 @@ namespace Lucene.Net.Util.Packed
             {
                 throw new System.IO.IOException("Corrupted");
             }
-            long minValue = minEquals0 ? 0L : ZigZagDecode(1L + ReadVLong(@in));
+            long minValue = minEquals0 ? 0L : ZigZagDecode(1L + ReadVInt64(@in));
             Debug.Assert(minEquals0 || minValue != 0);
 
             if (bitsPerValue == 0)

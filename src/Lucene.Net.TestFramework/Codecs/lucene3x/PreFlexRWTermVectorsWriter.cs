@@ -49,11 +49,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 // Open files for TermVector storage
                 Tvx = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_INDEX_EXTENSION), context);
-                Tvx.WriteInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+                Tvx.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
                 Tvd = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_DOCUMENTS_EXTENSION), context);
-                Tvd.WriteInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+                Tvd.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
                 Tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xTermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
-                Tvf.WriteInt(Lucene3xTermVectorsReader.FORMAT_CURRENT);
+                Tvf.WriteInt32(Lucene3xTermVectorsReader.FORMAT_CURRENT);
                 success = true;
             }
             finally
@@ -69,9 +69,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             LastFieldName = null;
             this.NumVectorFields = numVectorFields;
-            Tvx.WriteLong(Tvd.FilePointer);
-            Tvx.WriteLong(Tvf.FilePointer);
-            Tvd.WriteVInt(numVectorFields);
+            Tvx.WriteInt64(Tvd.FilePointer);
+            Tvx.WriteInt64(Tvf.FilePointer);
+            Tvd.WriteVInt32(numVectorFields);
             FieldCount = 0;
             Fps = ArrayUtil.Grow(Fps, numVectorFields);
         }
@@ -93,8 +93,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             this.Offsets = offsets;
             LastTerm.Length = 0;
             Fps[FieldCount++] = Tvf.FilePointer;
-            Tvd.WriteVInt(info.Number);
-            Tvf.WriteVInt(numTerms);
+            Tvd.WriteVInt32(info.Number);
+            Tvf.WriteVInt32(numTerms);
             sbyte bits = 0x0;
             if (positions)
             {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // this is crazy because the file format is crazy!
                 for (int i = 1; i < FieldCount; i++)
                 {
-                    Tvd.WriteVLong(Fps[i] - Fps[i - 1]);
+                    Tvd.WriteVInt64(Fps[i] - Fps[i - 1]);
                 }
             }
         }
@@ -134,10 +134,10 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             int prefix = StringHelper.BytesDifference(LastTerm, term);
             int suffix = term.Length - prefix;
-            Tvf.WriteVInt(prefix);
-            Tvf.WriteVInt(suffix);
+            Tvf.WriteVInt32(prefix);
+            Tvf.WriteVInt32(suffix);
             Tvf.WriteBytes(term.Bytes, term.Offset + prefix, suffix);
-            Tvf.WriteVInt(freq);
+            Tvf.WriteVInt32(freq);
             LastTerm.CopyBytes(term);
             LastPosition = LastOffset = 0;
 
@@ -160,7 +160,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             if (Positions && Offsets)
             {
                 // write position delta
-                Tvf.WriteVInt(position - LastPosition);
+                Tvf.WriteVInt32(position - LastPosition);
                 LastPosition = position;
 
                 // buffer offsets
@@ -173,8 +173,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     for (int i = 0; i < OffsetIndex; i++)
                     {
-                        Tvf.WriteVInt(OffsetStartBuffer[i] - LastOffset);
-                        Tvf.WriteVInt(OffsetEndBuffer[i] - OffsetStartBuffer[i]);
+                        Tvf.WriteVInt32(OffsetStartBuffer[i] - LastOffset);
+                        Tvf.WriteVInt32(OffsetEndBuffer[i] - OffsetStartBuffer[i]);
                         LastOffset = OffsetEndBuffer[i];
                     }
                 }
@@ -182,14 +182,14 @@ namespace Lucene.Net.Codecs.Lucene3x
             else if (Positions)
             {
                 // write position delta
-                Tvf.WriteVInt(position - LastPosition);
+                Tvf.WriteVInt32(position - LastPosition);
                 LastPosition = position;
             }
             else if (Offsets)
             {
                 // write offset deltas
-                Tvf.WriteVInt(startOffset - LastOffset);
-                Tvf.WriteVInt(endOffset - startOffset);
+                Tvf.WriteVInt32(startOffset - LastOffset);
+                Tvf.WriteVInt32(endOffset - startOffset);
                 LastOffset = endOffset;
             }
         }

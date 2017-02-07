@@ -53,25 +53,30 @@ namespace Lucene.Net.Util
         /// Parses the string argument as if it was an int value and returns the
         /// result. Throws NumberFormatException if the string does not represent an
         /// int quantity.
+        /// <para/>
+        /// NOTE: This was parseInt() in Lucene
         /// </summary>
         /// <param name="chars"> a string representation of an int quantity. </param>
         /// <returns> int the value represented by the argument </returns>
         /// <exception cref="NumberFormatException"> if the argument could not be parsed as an int quantity. </exception>
-        public static int ParseInt(char[] chars) // LUCENENET TODO: Rename ParseInt32 ?
+        public static int ParseInt32(char[] chars)
         {
-            return ParseInt(chars, 0, chars.Length, 10);
+            return ParseInt32(chars, 0, chars.Length, 10);
         }
 
         /// <summary>
-        /// Parses a char array into an int. </summary>
+        /// Parses a char array into an int. 
+        /// <para/>
+        /// NOTE: This was parseInt() in Lucene
+        /// </summary>
         /// <param name="chars"> the character array </param>
         /// <param name="offset"> The offset into the array </param>
         /// <param name="len"> The length </param>
         /// <returns> the int </returns>
         /// <exception cref="NumberFormatException"> if it can't parse </exception>
-        public static int ParseInt(char[] chars, int offset, int len) // LUCENENET TODO: Rename ParseInt32 ?
+        public static int ParseInt32(char[] chars, int offset, int len)
         {
-            return ParseInt(chars, offset, len, 10);
+            return ParseInt32(chars, offset, len, 10);
         }
 
         /// <summary>
@@ -79,12 +84,14 @@ namespace Lucene.Net.Util
         /// result. Throws NumberFormatException if the string does not represent an
         /// int quantity. The second argument specifies the radix to use when parsing
         /// the value.
+        /// <para/>
+        /// NOTE: This was parseInt() in Lucene
         /// </summary>
         /// <param name="chars"> a string representation of an int quantity. </param>
         /// <param name="radix"> the base to use for conversion. </param>
         /// <returns> int the value represented by the argument </returns>
         /// <exception cref="NumberFormatException"> if the argument could not be parsed as an int quantity. </exception>
-        public static int ParseInt(char[] chars, int offset, int len, int radix) // LUCENENET TODO: Rename ParseInt32 ?
+        public static int ParseInt32(char[] chars, int offset, int len, int radix)
         {
             int minRadix = 2, maxRadix = 36;
             if (chars == null || radix < minRadix || radix > maxRadix)
@@ -757,7 +764,10 @@ namespace Lucene.Net.Util
             return false;
         }
 
-        public static int[] ToIntArray(ICollection<int?> ints) // LUCENENET TODO: Nullable issue - the cast to int probably won't work here
+        /// <summary>
+        /// NOTE: This was toIntArray() in Lucene
+        /// </summary>
+        public static int[] ToInt32Array(ICollection<int?> ints) // LUCENENET TODO: Nullable issue - the cast to int probably won't work here
         {
             int[] result = new int[ints.Count];
             int upto = 0;

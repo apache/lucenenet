@@ -189,31 +189,31 @@ namespace Lucene.Net.Codecs.Bloom
         /// </summary>
         public virtual void Serialize(DataOutput output)
         {
-            output.WriteInt(VERSION_CURRENT);
-            output.WriteInt(_bloomSize);
+            output.WriteInt32(VERSION_CURRENT);
+            output.WriteInt32(_bloomSize);
             var bits = _filter.GetBits();
-            output.WriteInt(bits.Length);
+            output.WriteInt32(bits.Length);
             foreach (var t in bits)
             {
                 // Can't used VLong encoding because cant cope with negative numbers
                 // output by FixedBitSet
-                output.WriteLong(t);
+                output.WriteInt64(t);
             }
         }
 
         public static FuzzySet Deserialize(DataInput input)
         {
-            var version = input.ReadInt();
+            var version = input.ReadInt32();
             if (version == VERSION_SPI)
                 input.ReadString();
            
             var hashFunction = HashFunctionForVersion(version);
-            var bloomSize = input.ReadInt();
-            var numLongs = input.ReadInt();
+            var bloomSize = input.ReadInt32();
+            var numLongs = input.ReadInt32();
             var longs = new long[numLongs];
             for (var i = 0; i < numLongs; i++)
             {
-                longs[i] = input.ReadLong();
+                longs[i] = input.ReadInt64();
             }
             var bits = new FixedBitSet(longs, bloomSize + 1);
             return new FuzzySet(bits, bloomSize, hashFunction);

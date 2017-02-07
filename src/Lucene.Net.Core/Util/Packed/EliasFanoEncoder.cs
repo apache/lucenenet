@@ -162,7 +162,7 @@ namespace Lucene.Net.Util.Packed
             this.numLowBits = nLowBits;
             this.lowerBitsMask = (long)(unchecked((ulong)long.MaxValue) >> (sizeof(long) * 8 - 1 - this.numLowBits));
 
-            long numLongsForLowBits = NumLongsForBits(numValues * numLowBits);
+            long numLongsForLowBits = NumInt64sForBits(numValues * numLowBits);
             if (numLongsForLowBits > int.MaxValue)
             {
                 throw new System.ArgumentException("numLongsForLowBits too large to index a long array: " + numLongsForLowBits);
@@ -173,7 +173,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(numHighBitsClear <= (2 * this.numValues));
             long numHighBitsSet = this.numValues;
 
-            long numLongsForHighBits = NumLongsForBits(numHighBitsClear + numHighBitsSet);
+            long numLongsForHighBits = NumInt64sForBits(numHighBitsClear + numHighBitsSet);
             if (numLongsForHighBits > int.MaxValue)
             {
                 throw new System.ArgumentException("numLongsForHighBits too large to index a long array: " + numLongsForHighBits);
@@ -189,7 +189,7 @@ namespace Lucene.Net.Util.Packed
             this.numIndexEntries = (nIndexEntries >= 0) ? nIndexEntries : 0;
             long maxIndexEntry = maxHighValue + numValues - 1; // clear upper bits, set upper bits, start at zero
             this.nIndexEntryBits = (maxIndexEntry <= 0) ? 0 : (64 - Number.NumberOfLeadingZeros(maxIndexEntry));
-            long numLongsForIndexBits = NumLongsForBits(numIndexEntries * nIndexEntryBits);
+            long numLongsForIndexBits = NumInt64sForBits(numIndexEntries * nIndexEntryBits);
             if (numLongsForIndexBits > int.MaxValue)
             {
                 throw new System.ArgumentException("numLongsForIndexBits too large to index a long array: " + numLongsForIndexBits);
@@ -207,7 +207,10 @@ namespace Lucene.Net.Util.Packed
         {
         }
 
-        private static long NumLongsForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
+        /// <summary>
+        /// NOTE: This was numLongsForBits() in Lucene
+        /// </summary>
+        private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
             Debug.Assert(numBits >= 0, numBits.ToString());
             return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_LONG_SIZE);
@@ -350,18 +353,18 @@ namespace Lucene.Net.Util.Packed
             s.Append("\nupperLongs[" + upperLongs.Length + "]");
             for (int i = 0; i < upperLongs.Length; i++)
             {
-                s.Append(" " + ToStringUtils.LongHex(upperLongs[i]));
+                s.Append(" " + ToStringUtils.Int64Hex(upperLongs[i]));
             }
             s.Append("\nlowerLongs[" + lowerLongs.Length + "]");
             for (int i = 0; i < lowerLongs.Length; i++)
             {
-                s.Append(" " + ToStringUtils.LongHex(lowerLongs[i]));
+                s.Append(" " + ToStringUtils.Int64Hex(lowerLongs[i]));
             }
             s.Append("\nindexInterval: " + indexInterval + ", nIndexEntryBits: " + nIndexEntryBits);
             s.Append("\nupperZeroBitPositionIndex[" + upperZeroBitPositionIndex.Length + "]");
             for (int i = 0; i < upperZeroBitPositionIndex.Length; i++)
             {
-                s.Append(" " + ToStringUtils.LongHex(upperZeroBitPositionIndex[i]));
+                s.Append(" " + ToStringUtils.Int64Hex(upperZeroBitPositionIndex[i]));
             }
             return s.ToString();
         }

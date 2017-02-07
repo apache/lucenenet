@@ -130,7 +130,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < int.MaxValue; i++)
             {
                 encoder.Reset(bytes);
-                encoder.WriteVInt(i % 65535); // 1, 2, or 3 bytes
+                encoder.WriteVInt32(i % 65535); // 1, 2, or 3 bytes
                 data.Length = encoder.Position;
                 w.AddDocument(doc);
                 if (i % 100000 == 0)
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
                 {
                     dv.Get(i, scratch);
                     input.Reset((byte[])(Array)scratch.Bytes, scratch.Offset, scratch.Length);
-                    Assert.AreEqual(expectedValue % 65535, input.ReadVInt());
+                    Assert.AreEqual(expectedValue % 65535, input.ReadVInt32());
                     Assert.IsTrue(input.Eof);
                     expectedValue++;
                 }

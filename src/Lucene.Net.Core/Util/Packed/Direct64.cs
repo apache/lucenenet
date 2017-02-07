@@ -44,7 +44,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < valueCount; ++i)
             {
-                values[i] = @in.ReadLong();
+                values[i] = @in.ReadInt64();
             }
         }
 

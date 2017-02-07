@@ -93,7 +93,7 @@ namespace Lucene.Net.Util.Packed
 
             if (min != 0)
             {
-                WriteVLong(m_out, ZigZagEncode(min) - 1);
+                WriteVInt64(m_out, ZigZagEncode(min) - 1);
             }
 
             if (bitsRequired > 0)

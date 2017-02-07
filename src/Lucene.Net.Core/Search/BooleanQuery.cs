@@ -675,7 +675,7 @@ namespace Lucene.Net.Search
         /// Returns a hash code value for this object. </summary>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ (clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count)) + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
+            return Number.SingleToInt32Bits(Boost) ^ (clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count)) + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
         }
     }
 }

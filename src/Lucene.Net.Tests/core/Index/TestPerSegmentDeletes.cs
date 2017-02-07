@@ -263,7 +263,7 @@ namespace Lucene.Net.Index
                 int docID = docsEnum.DocID;
                 docs.Add(docID);
             }
-            return ArrayUtil.ToIntArray(docs);
+            return ArrayUtil.ToInt32Array(docs);
         }
 
         public class RangeMergePolicy : MergePolicy

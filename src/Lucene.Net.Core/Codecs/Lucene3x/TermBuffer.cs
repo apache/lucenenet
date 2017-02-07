@@ -62,8 +62,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         public void Read(IndexInput input, FieldInfos fieldInfos)
         {
             this.term = null; // invalidate cache
-            newSuffixStart = input.ReadVInt();
-            int length = input.ReadVInt();
+            newSuffixStart = input.ReadVInt32();
+            int length = input.ReadVInt32();
             int totalLength = newSuffixStart + length;
             Debug.Assert(totalLength <= ByteBlockPool.BYTE_BLOCK_SIZE - 2, "termLength=" + totalLength + ",resource=" + input);
             if (bytes.Bytes.Length < totalLength)
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             bytes.Length = totalLength;
             input.ReadBytes(bytes.Bytes, newSuffixStart, length);
-            int fieldNumber = input.ReadVInt();
+            int fieldNumber = input.ReadVInt32();
             if (fieldNumber != currentFieldNumber)
             {
                 currentFieldNumber = fieldNumber;

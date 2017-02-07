@@ -184,7 +184,7 @@ namespace Lucene.Net.Tests.Queries
 
             protected override CustomScoreProvider GetCustomScoreProvider(AtomicReaderContext context)
             {
-                FieldCache.Ints values = FieldCache.DEFAULT.GetInts(context.AtomicReader, INT_FIELD, false);
+                FieldCache.Ints values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, INT_FIELD, false);
                 return new CustomScoreProviderAnonymousInnerClassHelper(this, context, values);
             }
             

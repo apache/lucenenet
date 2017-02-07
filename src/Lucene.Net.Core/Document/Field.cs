@@ -577,15 +577,15 @@ namespace Lucene.Net.Documents
                 switch (numericType)
                 {
                     case NumericType.INT:
-                        nts.SetIntValue(Convert.ToInt32(val));
+                        nts.SetInt32Value(Convert.ToInt32(val));
                         break;
 
                     case NumericType.LONG:
-                        nts.SetLongValue(Convert.ToInt64(val));
+                        nts.SetInt64Value(Convert.ToInt64(val));
                         break;
 
                     case NumericType.FLOAT:
-                        nts.SetFloatValue(Convert.ToSingle(val));
+                        nts.SetSingleValue(Convert.ToSingle(val));
                         break;
 
                     case NumericType.DOUBLE:

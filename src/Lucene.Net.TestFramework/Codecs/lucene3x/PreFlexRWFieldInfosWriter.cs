@@ -66,8 +66,8 @@ namespace Lucene.Net.Codecs.Lucene3x
             bool success = false;
             try
             {
-                output.WriteVInt(FORMAT_PREFLEX_RW);
-                output.WriteVInt(infos.Count);
+                output.WriteVInt32(FORMAT_PREFLEX_RW);
+                output.WriteVInt32(infos.Count);
                 foreach (FieldInfo fi in infos)
                 {
                     sbyte bits = 0x0;
@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                      * to stabelize the field numbers across segments so the
                      * FI ordinal is not necessarily equivalent to the field number
                      */
-                    output.WriteInt(fi.Number);
+                    output.WriteInt32(fi.Number);
                     output.WriteByte((byte)bits);
                     if (fi.IsIndexed && !fi.OmitsNorms)
                     {

@@ -178,11 +178,11 @@ namespace Lucene.Net.Analysis
                 Debug.Assert(ValueSize == 64 || ValueSize == 32);
                 if (ValueSize == 64)
                 {
-                    NumericUtils.LongToPrefixCoded(_value, Shift, _bytes);
+                    NumericUtils.Int64ToPrefixCoded(_value, Shift, _bytes);
                 }
                 else
                 {
-                    NumericUtils.IntToPrefixCoded((int)_value, Shift, _bytes);
+                    NumericUtils.Int32ToPrefixCoded((int)_value, Shift, _bytes);
                 }
             }
 
@@ -275,22 +275,28 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Initializes the token stream with the supplied <code>long</code> value. </summary>
+        /// Initializes the token stream with the supplied <code>long</code> value. 
+        /// <para/>
+        /// NOTE: This was setLongValue() in Lucene
+        /// </summary>
         /// <param name="value"> the value, for which this TokenStream should enumerate tokens. </param>
         /// <returns> this instance, because of this you can use it the following way:
         /// <code>new Field(name, new NumericTokenStream(precisionStep).setLongValue(value))</code> </returns>
-        public NumericTokenStream SetLongValue(long value)
+        public NumericTokenStream SetInt64Value(long value)
         {
             numericAtt.Init(value, valSize = 64, precisionStep, -precisionStep);
             return this;
         }
 
         /// <summary>
-        /// Initializes the token stream with the supplied <code>int</code> value. </summary>
+        /// Initializes the token stream with the supplied <code>int</code> value.
+        /// <para/>
+        /// NOTE: This was setIntValue() in Lucene
+        /// </summary>
         /// <param name="value"> the value, for which this TokenStream should enumerate tokens. </param>
         /// <returns> this instance, because of this you can use it the following way:
         /// <code>new Field(name, new NumericTokenStream(precisionStep).setIntValue(value))</code> </returns>
-        public NumericTokenStream SetIntValue(int value)
+        public NumericTokenStream SetInt32Value(int value)
         {
             numericAtt.Init(value, valSize = 32, precisionStep, -precisionStep);
             return this;
@@ -303,18 +309,21 @@ namespace Lucene.Net.Analysis
         /// <code>new Field(name, new NumericTokenStream(precisionStep).setDoubleValue(value))</code> </returns>
         public NumericTokenStream SetDoubleValue(double value)
         {
-            numericAtt.Init(NumericUtils.DoubleToSortableLong(value), valSize = 64, precisionStep, -precisionStep);
+            numericAtt.Init(NumericUtils.DoubleToSortableInt64(value), valSize = 64, precisionStep, -precisionStep);
             return this;
         }
 
         /// <summary>
-        /// Initializes the token stream with the supplied <code>float</code> value. </summary>
+        /// Initializes the token stream with the supplied <code>float</code> value. 
+        /// <para/>
+        /// NOTE: This was setFloatValue() in Lucene
+        /// </summary>
         /// <param name="value"> the value, for which this TokenStream should enumerate tokens. </param>
         /// <returns> this instance, because of this you can use it the following way:
         /// <code>new Field(name, new NumericTokenStream(precisionStep).setFloatValue(value))</code> </returns>
-        public NumericTokenStream SetFloatValue(float value)
+        public NumericTokenStream SetSingleValue(float value)
         {
-            numericAtt.Init(NumericUtils.FloatToSortableInt(value), valSize = 32, precisionStep, -precisionStep);
+            numericAtt.Init(NumericUtils.SingleToSortableInt32(value), valSize = 32, precisionStep, -precisionStep);
             return this;
         }
 

@@ -134,16 +134,16 @@ namespace Lucene.Net.Codecs.Memory
 
         private void ReadFields(IndexInput meta, FieldInfos infos)
         {
-            int fieldNumber = meta.ReadVInt();
+            int fieldNumber = meta.ReadVInt32();
             while (fieldNumber != -1)
             {
                 int fieldType = meta.ReadByte();
                 if (fieldType == NUMBER)
                 {
-                    var entry = new NumericEntry {offset = meta.ReadLong(), missingOffset = meta.ReadLong()};
+                    var entry = new NumericEntry {offset = meta.ReadInt64(), missingOffset = meta.ReadInt64()};
                     if (entry.missingOffset != -1)
                     {
-                        entry.missingBytes = meta.ReadLong();
+                        entry.missingBytes = meta.ReadInt64();
                     }
                     else
                     {
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                     if (entry.format != UNCOMPRESSED)
                     {
-                        entry.packedIntsVersion = meta.ReadVInt();
+                        entry.packedIntsVersion = meta.ReadVInt32();
                     }
                     numerics[fieldNumber] = entry;
                 }
@@ -170,37 +170,37 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     var entry = new BinaryEntry
                     {
-                        offset = meta.ReadLong(),
-                        numBytes = meta.ReadLong(),
-                        missingOffset = meta.ReadLong()
+                        offset = meta.ReadInt64(),
+                        numBytes = meta.ReadInt64(),
+                        missingOffset = meta.ReadInt64()
                     };
                     if (entry.missingOffset != -1)
                     {
-                        entry.missingBytes = meta.ReadLong();
+                        entry.missingBytes = meta.ReadInt64();
                     }
                     else
                     {
                         entry.missingBytes = 0;
                     }
-                    entry.minLength = meta.ReadVInt();
-                    entry.maxLength = meta.ReadVInt();
+                    entry.minLength = meta.ReadVInt32();
+                    entry.maxLength = meta.ReadVInt32();
                     if (entry.minLength != entry.maxLength)
                     {
-                        entry.packedIntsVersion = meta.ReadVInt();
-                        entry.blockSize = meta.ReadVInt();
+                        entry.packedIntsVersion = meta.ReadVInt32();
+                        entry.blockSize = meta.ReadVInt32();
                     }
                     binaries[fieldNumber] = entry;
                 }
                 else if (fieldType == FST)
                 {
-                    var entry = new FSTEntry {offset = meta.ReadLong(), numOrds = meta.ReadVLong()};
+                    var entry = new FSTEntry {offset = meta.ReadInt64(), numOrds = meta.ReadVInt64()};
                     fsts[fieldNumber] = entry;
                 }
                 else
                 {
                     throw new CorruptIndexException("invalid entry type: " + fieldType + ", input=" + meta);
                 }
-                fieldNumber = meta.ReadVInt();
+                fieldNumber = meta.ReadVInt32();
             }
         }
 
@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.Memory
             switch (entry.format)
             {
                 case TABLE_COMPRESSED:
-                    int size = data.ReadVInt();
+                    int size = data.ReadVInt32();
                     if (size > 256)
                     {
                         throw new CorruptIndexException(
@@ -247,16 +247,16 @@ namespace Lucene.Net.Codecs.Memory
                     var decode = new long[size];
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        decode[i] = data.ReadLong();
+                        decode[i] = data.ReadInt64();
                     }
-                    int formatID = data.ReadVInt();
-                    int bitsPerValue = data.ReadVInt();
+                    int formatID = data.ReadVInt32();
+                    int bitsPerValue = data.ReadVInt32();
                     var ordsReader = PackedInts.GetReaderNoHeader(data, PackedInts.Format.ById(formatID),
                         entry.packedIntsVersion, maxDoc, bitsPerValue);
                     ramBytesUsed.AddAndGet(RamUsageEstimator.SizeOf(decode) + ordsReader.RamBytesUsed());
                     return new NumericDocValuesAnonymousInnerClassHelper(this, decode, ordsReader);
                 case DELTA_COMPRESSED:
-                    int blockSize = data.ReadVInt();
+                    int blockSize = data.ReadVInt32();
                     var reader = new BlockPackedReader(data, entry.packedIntsVersion, blockSize, maxDoc,
                         false);
                     ramBytesUsed.AddAndGet(reader.RamBytesUsed());
@@ -268,9 +268,9 @@ namespace Lucene.Net.Codecs.Memory
                     // LUCENENET: IMPORTANT - some bytes are negative here, so we need to pass as sbyte
                     return new NumericDocValuesAnonymousInnerClassHelper2(this, (sbyte[])(Array)bytes);
                 case GCD_COMPRESSED:
-                    long min = data.ReadLong();
-                    long mult = data.ReadLong();
-                    int quotientBlockSize = data.ReadVInt();
+                    long min = data.ReadInt64();
+                    long mult = data.ReadInt64();
+                    int quotientBlockSize = data.ReadVInt32();
                     var quotientReader = new BlockPackedReader(data, entry.packedIntsVersion,
                         quotientBlockSize, maxDoc, false);
                     ramBytesUsed.AddAndGet(quotientReader.RamBytesUsed());
@@ -603,7 +603,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 else
                 {
-                    currentOrd += input.ReadVLong();
+                    currentOrd += input.ReadVInt64();
                     return currentOrd;
                 }
             }
@@ -687,7 +687,7 @@ namespace Lucene.Net.Codecs.Memory
                         var bits = new long[(int) length >> 3];
                         for (var i = 0; i < bits.Length; i++)
                         {
-                            bits[i] = data.ReadLong();
+                            bits[i] = data.ReadInt64();
                         }
                         instance = new FixedBitSet(bits, maxDoc);
                         docsWithFieldInstances[fieldNumber] = instance;

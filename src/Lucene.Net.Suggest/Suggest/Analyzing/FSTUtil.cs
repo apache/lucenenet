@@ -104,8 +104,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         if (nextArc != null)
                         {
                             IntsRef newInput = new IntsRef(currentInput.Length + 1);
-                            newInput.CopyInts(currentInput);
-                            newInput.Ints[currentInput.Length] = t.Min;
+                            newInput.CopyInt32s(currentInput);
+                            newInput.Int32s[currentInput.Length] = t.Min;
                             newInput.Length = currentInput.Length + 1;
                             queue.Add(new Path<T>(t.Dest, new FST.Arc<T>()
                               .CopyFrom(nextArc), fst.Outputs.Add(path.Output, nextArc.Output), newInput));
@@ -127,8 +127,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             Debug.Assert(nextArc.Label <= max);
                             Debug.Assert(nextArc.Label >= min, nextArc.Label + " " + min);
                             IntsRef newInput = new IntsRef(currentInput.Length + 1);
-                            newInput.CopyInts(currentInput);
-                            newInput.Ints[currentInput.Length] = nextArc.Label;
+                            newInput.CopyInt32s(currentInput);
+                            newInput.Int32s[currentInput.Length] = nextArc.Label;
                             newInput.Length = currentInput.Length + 1;
                             queue.Add(new Path<T>(t.Dest, new FST.Arc<T>()
                               .CopyFrom(nextArc), fst.Outputs.Add(path.Output, nextArc.Output), newInput));

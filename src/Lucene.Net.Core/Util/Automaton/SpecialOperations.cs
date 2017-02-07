@@ -319,7 +319,7 @@ namespace Lucene.Net.Util.Automaton
                 for (int n = t.min; n <= t.max; n++)
                 {
                     path.Grow(path.Length + 1);
-                    path.Ints[path.Length] = n;
+                    path.Int32s[path.Length] = n;
                     path.Length++;
                     if (t.to.accept)
                     {

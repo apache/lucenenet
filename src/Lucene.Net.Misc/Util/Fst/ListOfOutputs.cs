@@ -112,13 +112,13 @@ namespace Lucene.Net.Util.Fst
         {
             if (!(output is IList))
             {
-                @out.WriteVInt(1);
+                @out.WriteVInt32(1);
                 outputs.Write((T)output, @out);
             }
             else
             {
                 IList outputList = (IList)output;
-                @out.WriteVInt(outputList.Count);
+                @out.WriteVInt32(outputList.Count);
                 foreach (var eachOutput in outputList)
                 {
                     outputs.Write((T)eachOutput, @out);
@@ -133,7 +133,7 @@ namespace Lucene.Net.Util.Fst
 
         public override object ReadFinalOutput(DataInput @in)
         {
-            int count = @in.ReadVInt();
+            int count = @in.ReadVInt32();
             if (count == 1)
             {
                 return outputs.Read(@in);

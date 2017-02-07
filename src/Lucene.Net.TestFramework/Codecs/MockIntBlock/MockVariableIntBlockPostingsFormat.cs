@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.IntBlock
             public override IntIndexInput OpenInput(Directory dir, string fileName, IOContext context)
             {
                 IndexInput input = dir.OpenInput(fileName, context);
-                int baseBlockSize = input.ReadInt();
+                int baseBlockSize = input.ReadInt32();
                 return new VariableIntBlockIndexInputAnonymousHelper(input, baseBlockSize);
             }
 
@@ -105,12 +105,12 @@ namespace Lucene.Net.Codecs.IntBlock
 
                     public int ReadBlock()
                     {
-                        buffer[0] = input.ReadVInt();
+                        buffer[0] = input.ReadVInt32();
                         int count = buffer[0] <= 3 ? baseBlockSize - 1 : 2 * baseBlockSize - 1;
                         Debug.Assert(buffer.Length >= count, "buffer.length=" + buffer.Length + " count=" + count);
                         for (int i = 0; i < count; i++)
                         {
-                            buffer[i + 1] = input.ReadVInt();
+                            buffer[i + 1] = input.ReadVInt32();
                         }
                         return 1 + count;
                     }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 bool success = false;
                 try
                 {
-                    output.WriteInt(baseBlockSize);
+                    output.WriteInt32(baseBlockSize);
                     VariableIntBlockIndexOutput ret = new VariableIntBlockIndexOutputAnonymousHelper(output, 2 * baseBlockSize);
                     success = true;
                     return ret;
@@ -164,7 +164,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 {
                     for (int i = 0; i < flushAt; i++)
                     {
-                        m_output.WriteVInt(buffer[i]);
+                        m_output.WriteVInt32(buffer[i]);
                     }
                     buffer[0] = buffer[flushAt];
                     pendingCount = 1;

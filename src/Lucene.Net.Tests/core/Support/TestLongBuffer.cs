@@ -122,19 +122,19 @@ namespace Lucene.Net.Support
             // LUCENENET: AllocateDirect not implemented
 
             //LongBuffer direct1 = ByteBuffer.AllocateDirect(cap).AsLongBuffer();
-            LongBuffer nondirect1 = ByteBuffer.Allocate(cap).AsLongBuffer();
+            LongBuffer nondirect1 = ByteBuffer.Allocate(cap).AsInt64Buffer();
             //direct1.Put(nondirect1);
 
             //LongBuffer direct2 = ByteBuffer.AllocateDirect(cap).AsLongBuffer();
-            LongBuffer nondirect2 = ByteBuffer.Allocate(cap).AsLongBuffer();
+            LongBuffer nondirect2 = ByteBuffer.Allocate(cap).AsInt64Buffer();
             //nondirect2.Put(direct2);
 
             //LongBuffer direct3 = ByteBuffer.AllocateDirect(cap).AsLongBuffer();
             //LongBuffer direct4 = ByteBuffer.AllocateDirect(cap).AsLongBuffer();
             //direct3.Put(direct4);
 
-            LongBuffer nondirect3 = ByteBuffer.Allocate(cap).AsLongBuffer();
-            LongBuffer nondirect4 = ByteBuffer.Allocate(cap).AsLongBuffer();
+            LongBuffer nondirect3 = ByteBuffer.Allocate(cap).AsInt64Buffer();
+            LongBuffer nondirect4 = ByteBuffer.Allocate(cap).AsInt64Buffer();
             nondirect3.Put(nondirect4);
         }
 

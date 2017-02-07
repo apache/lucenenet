@@ -96,7 +96,10 @@ namespace Lucene.Net.Search
 
         internal sealed class JustCompileExtendedFieldCacheLongParser : FieldCache.ILongParser
         {
-            public long ParseLong(BytesRef @string)
+            /// <summary>
+            /// NOTE: This was parseLong() in Lucene
+            /// </summary>
+            public long ParseInt64(BytesRef @string)
             {
                 throw new System.NotSupportedException(UNSUPPORTED_MSG);
             }

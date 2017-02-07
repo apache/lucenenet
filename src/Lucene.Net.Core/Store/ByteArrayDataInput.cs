@@ -97,25 +97,36 @@ namespace Lucene.Net.Store
         /// <summary>
         /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
         /// the value is positive!
+        /// <para/>
+        /// NOTE: this was readShort() in Lucene
         /// </summary>
-        public override short ReadShort()
+        public override short ReadInt16()
         {
             return (short)(ushort)(((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF));
         }
 
-        public override int ReadInt()
+        /// <summary>
+        /// NOTE: this was readInt() in Lucene
+        /// </summary>
+        public override int ReadInt32()
         {
             return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF);
         }
 
-        public override long ReadLong()
+        /// <summary>
+        /// NOTE: this was readLong() in Lucene
+        /// </summary>
+        public override long ReadInt64()
         {
             int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
             int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
             return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
         }
 
-        public override int ReadVInt()
+        /// <summary>
+        /// NOTE: this was readVInt() in Lucene
+        /// </summary>
+        public override int ReadVInt32()
         {
             // .NET Port: going back to original style code instead of Java code below due to sbyte/byte diff
             /*byte b = Bytes[Pos++];
@@ -161,7 +172,10 @@ namespace Lucene.Net.Store
             throw new Exception("Invalid vInt detected (too many bits)");
         }
 
-        public override long ReadVLong()
+        /// <summary>
+        /// NOTE: this was readVLong() in Lucene
+        /// </summary>
+        public override long ReadVInt64()
         {
             // .NET Port: going back to old style code
             /*byte b = Bytes[Pos++];

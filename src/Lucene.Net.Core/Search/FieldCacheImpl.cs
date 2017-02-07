@@ -605,13 +605,19 @@ namespace Lucene.Net.Search
         }
 
         // inherit javadocs
-        public virtual FieldCache.Shorts GetShorts(AtomicReader reader, string field, bool setDocsWithField)
+        /// <summary>
+        /// NOTE: this was getShorts() in Lucene
+        /// </summary>
+        public virtual FieldCache.Shorts GetInt16s(AtomicReader reader, string field, bool setDocsWithField)
         {
-            return GetShorts(reader, field, null, setDocsWithField);
+            return GetInt16s(reader, field, null, setDocsWithField);
         }
 
         // inherit javadocs
-        public virtual FieldCache.Shorts GetShorts(AtomicReader reader, string field, FieldCache.IShortParser parser, bool setDocsWithField)
+        /// <summary>
+        /// NOTE: this was getShorts() in Lucene
+        /// </summary>
+        public virtual FieldCache.Shorts GetInt16s(AtomicReader reader, string field, FieldCache.IShortParser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
@@ -689,7 +695,7 @@ namespace Lucene.Net.Search
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser = DEFAULT_SHORT_PARSER) so cache
                     // key includes DEFAULT_SHORT_PARSER:
-                    return wrapper.GetShorts(reader, key.field, FieldCache.DEFAULT_SHORT_PARSER, setDocsWithField);
+                    return wrapper.GetInt16s(reader, key.field, FieldCache.DEFAULT_SHORT_PARSER, setDocsWithField);
                 }
 
                 values = new short[maxDoc];
@@ -722,7 +728,7 @@ namespace Lucene.Net.Search
 
                 protected override void VisitTerm(BytesRef term)
                 {
-                    currentValue = parser.ParseShort(term);
+                    currentValue = parser.ParseInt16(term);
                 }
 
                 protected override void VisitDoc(int docID)
@@ -738,12 +744,18 @@ namespace Lucene.Net.Search
         }
 
         // inherit javadocs
-        public virtual FieldCache.Ints GetInts(AtomicReader reader, string field, bool setDocsWithField)
+        /// <summary>
+        /// NOTE: this was getInts() in Lucene
+        /// </summary>
+        public virtual FieldCache.Ints GetInt32s(AtomicReader reader, string field, bool setDocsWithField)
         {
-            return GetInts(reader, field, null, setDocsWithField);
+            return GetInt32s(reader, field, null, setDocsWithField);
         }
 
-        public virtual FieldCache.Ints GetInts(AtomicReader reader, string field, FieldCache.IIntParser parser, bool setDocsWithField)
+        /// <summary>
+        /// NOTE: this was getInts() in Lucene
+        /// </summary>
+        public virtual FieldCache.Ints GetInt32s(AtomicReader reader, string field, FieldCache.IIntParser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
@@ -854,11 +866,11 @@ namespace Lucene.Net.Search
                     // DEFAULT_INT_PARSER/NUMERIC_UTILS_INT_PARSER:
                     try
                     {
-                        return wrapper.GetInts(reader, key.field, FieldCache.DEFAULT_INT_PARSER, setDocsWithField);
+                        return wrapper.GetInt32s(reader, key.field, FieldCache.DEFAULT_INT_PARSER, setDocsWithField);
                     }
                     catch (System.FormatException)
                     {
-                        return wrapper.GetInts(reader, key.field, FieldCache.NUMERIC_UTILS_INT_PARSER, setDocsWithField);
+                        return wrapper.GetInt32s(reader, key.field, FieldCache.NUMERIC_UTILS_INT_PARSER, setDocsWithField);
                     }
                 }
 
@@ -902,7 +914,7 @@ namespace Lucene.Net.Search
 
                 protected override void VisitTerm(BytesRef term)
                 {
-                    currentValue = parser.ParseInt(term);
+                    currentValue = parser.ParseInt32(term);
                     if (values == null)
                     {
                         // Lazy alloc so for the numeric field case
@@ -1028,12 +1040,18 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual FieldCache.Floats GetFloats(AtomicReader reader, string field, bool setDocsWithField)
+        /// <summary>
+        /// NOTE: this was getFloats() in Lucene
+        /// </summary>
+        public virtual FieldCache.Floats GetSingles(AtomicReader reader, string field, bool setDocsWithField)
         {
-            return GetFloats(reader, field, null, setDocsWithField);
+            return GetSingles(reader, field, null, setDocsWithField);
         }
 
-        public virtual FieldCache.Floats GetFloats(AtomicReader reader, string field, FieldCache.IFloatParser parser, bool setDocsWithField)
+        /// <summary>
+        /// NOTE: this was getFloats() in Lucene
+        /// </summary>
+        public virtual FieldCache.Floats GetSingles(AtomicReader reader, string field, FieldCache.IFloatParser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
@@ -1075,7 +1093,7 @@ namespace Lucene.Net.Search
 
             public override float Get(int docID)
             {
-                return Number.IntBitsToFloat((int)valuesIn.Get(docID));
+                return Number.Int32BitsToSingle((int)valuesIn.Get(docID));
             }
         }
 
@@ -1113,11 +1131,11 @@ namespace Lucene.Net.Search
                     // DEFAULT_FLOAT_PARSER/NUMERIC_UTILS_FLOAT_PARSER:
                     try
                     {
-                        return wrapper.GetFloats(reader, key.field, FieldCache.DEFAULT_FLOAT_PARSER, setDocsWithField);
+                        return wrapper.GetSingles(reader, key.field, FieldCache.DEFAULT_FLOAT_PARSER, setDocsWithField);
                     }
                     catch (System.FormatException)
                     {
-                        return wrapper.GetFloats(reader, key.field, FieldCache.NUMERIC_UTILS_FLOAT_PARSER, setDocsWithField);
+                        return wrapper.GetSingles(reader, key.field, FieldCache.NUMERIC_UTILS_FLOAT_PARSER, setDocsWithField);
                     }
                 }
 
@@ -1161,7 +1179,7 @@ namespace Lucene.Net.Search
 
                 protected override void VisitTerm(BytesRef term)
                 {
-                    currentValue = parser.ParseFloat(term);
+                    currentValue = parser.ParseSingle(term);
                     if (values == null)
                     {
                         // Lazy alloc so for the numeric field case
@@ -1185,12 +1203,18 @@ namespace Lucene.Net.Search
             }
         }
 
-        public virtual FieldCache.Longs GetLongs(AtomicReader reader, string field, bool setDocsWithField)
+        /// <summary>
+        /// NOTE: this was getLongs() in Lucene
+        /// </summary>
+        public virtual FieldCache.Longs GetInt64s(AtomicReader reader, string field, bool setDocsWithField)
         {
-            return GetLongs(reader, field, null, setDocsWithField);
+            return GetInt64s(reader, field, null, setDocsWithField);
         }
 
-        public virtual FieldCache.Longs GetLongs(AtomicReader reader, string field, FieldCache.ILongParser parser, bool setDocsWithField)
+        /// <summary>
+        /// NOTE: this was getLongs() in Lucene
+        /// </summary>
+        public virtual FieldCache.Longs GetInt64s(AtomicReader reader, string field, FieldCache.ILongParser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
@@ -1272,11 +1296,11 @@ namespace Lucene.Net.Search
                     // DEFAULT_LONG_PARSER/NUMERIC_UTILS_LONG_PARSER:
                     try
                     {
-                        return wrapper.GetLongs(reader, key.field, FieldCache.DEFAULT_LONG_PARSER, setDocsWithField);
+                        return wrapper.GetInt64s(reader, key.field, FieldCache.DEFAULT_LONG_PARSER, setDocsWithField);
                     }
                     catch (System.FormatException)
                     {
-                        return wrapper.GetLongs(reader, key.field, FieldCache.NUMERIC_UTILS_LONG_PARSER, setDocsWithField);
+                        return wrapper.GetInt64s(reader, key.field, FieldCache.NUMERIC_UTILS_LONG_PARSER, setDocsWithField);
                     }
                 }
 
@@ -1320,7 +1344,7 @@ namespace Lucene.Net.Search
 
                 protected override void VisitTerm(BytesRef term)
                 {
-                    currentValue = parser.ParseLong(term);
+                    currentValue = parser.ParseInt64(term);
                     if (values == null)
                     {
                         // Lazy alloc so for the numeric field case

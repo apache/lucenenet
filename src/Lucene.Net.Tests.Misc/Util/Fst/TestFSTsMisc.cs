@@ -181,10 +181,10 @@ namespace Lucene.Net.Util.Fst
             IntsRef scratch = new IntsRef();
             // Add the same input more than once and the outputs
             // are merged:
-            builder.Add(Util.ToIntsRef(new BytesRef("a"), scratch), 1L);
-            builder.Add(Util.ToIntsRef(new BytesRef("a"), scratch), 3L);
-            builder.Add(Util.ToIntsRef(new BytesRef("a"), scratch), 0L);
-            builder.Add(Util.ToIntsRef(new BytesRef("b"), scratch), 17L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 1L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 3L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 0L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("b"), scratch), 17L);
             FST<object> fst = builder.Finish();
 
             object output = Util.Get(fst, new BytesRef("a"));
@@ -215,10 +215,10 @@ namespace Lucene.Net.Util.Fst
             builder.Add(scratch, 17L);
             builder.Add(scratch, 1L);
 
-            builder.Add(Util.ToIntsRef(new BytesRef("a"), scratch), 1L);
-            builder.Add(Util.ToIntsRef(new BytesRef("a"), scratch), 3L);
-            builder.Add(Util.ToIntsRef(new BytesRef("a"), scratch), 0L);
-            builder.Add(Util.ToIntsRef(new BytesRef("b"), scratch), 0L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 1L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 3L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("a"), scratch), 0L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("b"), scratch), 0L);
 
             FST<object> fst = builder.Finish();
 

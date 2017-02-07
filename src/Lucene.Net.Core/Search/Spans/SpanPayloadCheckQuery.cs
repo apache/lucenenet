@@ -126,7 +126,7 @@ namespace Lucene.Net.Search.Spans
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
             //TODO: is this right?
             h ^= m_payloadToMatch.GetHashCode();
-            h ^= Number.FloatToIntBits(Boost); // LUCENENET TODO: This was FloatToRawIntBits in the original
+            h ^= Number.SingleToInt32Bits(Boost); // LUCENENET TODO: This was FloatToRawIntBits in the original
             return h;
         }
     }

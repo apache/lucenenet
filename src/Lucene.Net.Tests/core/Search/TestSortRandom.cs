@@ -345,7 +345,7 @@ namespace Lucene.Net.Search
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
             {
                 int maxDoc = context.Reader.MaxDoc;
-                FieldCache.Ints idSource = FieldCache.DEFAULT.GetInts(context.AtomicReader, "id", false);
+                FieldCache.Ints idSource = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, "id", false);
                 Assert.IsNotNull(idSource);
                 FixedBitSet bits = new FixedBitSet(maxDoc);
                 for (int docID = 0; docID < maxDoc; docID++)

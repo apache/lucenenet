@@ -67,7 +67,7 @@ namespace Lucene.Net.Codecs.MockSep
             public override int Next()
             {
                 //System.out.println("msii.next() fp=" + in.getFilePointer() + " vs " + in.length());
-                return @in.ReadVInt();
+                return @in.ReadVInt32();
             }
         }
 
@@ -79,11 +79,11 @@ namespace Lucene.Net.Codecs.MockSep
             {
                 if (absolute)
                 {
-                    fp = indexIn.ReadVLong();
+                    fp = indexIn.ReadVInt64();
                 }
                 else
                 {
-                    fp += indexIn.ReadVLong();
+                    fp += indexIn.ReadVInt64();
                 }
             }
 

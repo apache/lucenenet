@@ -292,16 +292,16 @@ namespace Lucene.Net.Search.Suggest
                 foreach (BytesRef ctx in contexts)
                 {
                     output.WriteBytes(ctx.Bytes, ctx.Offset, ctx.Length);
-                    output.WriteShort((short)ctx.Length);
+                    output.WriteInt16((short)ctx.Length);
                 }
-                output.WriteShort((short)contexts.Count());
+                output.WriteInt16((short)contexts.Count());
             }
             if (hasPayloads)
             {
                 output.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
-                output.WriteShort((short)payload.Length);
+                output.WriteInt16((short)payload.Length);
             }
-            output.WriteLong(weight);
+            output.WriteInt64(weight);
             writer.Write(buffer, 0, output.Position);
         }
 
@@ -312,7 +312,7 @@ namespace Lucene.Net.Search.Suggest
             tmpInput.Reset(scratch.Bytes);
             tmpInput.SkipBytes(scratch.Length - 8); // suggestion
             scratch.Length -= 8; // long
-            return tmpInput.ReadLong();
+            return tmpInput.ReadInt64();
         }
 
         /// <summary>
@@ -321,14 +321,14 @@ namespace Lucene.Net.Search.Suggest
         {
             tmpInput.Reset(scratch.Bytes);
             tmpInput.SkipBytes(scratch.Length - 2); //skip to context set size
-            ushort ctxSetSize = (ushort)tmpInput.ReadShort();
+            ushort ctxSetSize = (ushort)tmpInput.ReadInt16();
             scratch.Length -= 2;
 
             var contextSet = new HashSet<BytesRef>();
             for (ushort i = 0; i < ctxSetSize; i++)
             {
                 tmpInput.Position = scratch.Length - 2;
-                ushort curContextLength = (ushort)tmpInput.ReadShort();
+                ushort curContextLength = (ushort)tmpInput.ReadInt16();
                 scratch.Length -= 2;
                 tmpInput.Position = scratch.Length - curContextLength;
                 BytesRef contextSpare = new BytesRef(curContextLength);
@@ -353,7 +353,7 @@ namespace Lucene.Net.Search.Suggest
         {
             tmpInput.Reset(scratch.Bytes);
             tmpInput.SkipBytes(scratch.Length - 2); // skip to payload size
-            ushort payloadLength = (ushort)tmpInput.ReadShort(); // read payload size
+            ushort payloadLength = (ushort)tmpInput.ReadInt16(); // read payload size
             tmpInput.Position = scratch.Length - 2 - payloadLength; // setPosition to start of payload
             BytesRef payloadScratch = new BytesRef(payloadLength);
             tmpInput.ReadBytes(payloadScratch.Bytes, 0, payloadLength); // read payload

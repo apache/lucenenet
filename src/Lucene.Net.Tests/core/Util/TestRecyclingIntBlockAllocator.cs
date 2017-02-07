@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
         {
             RecyclingIntBlockAllocator allocator = NewAllocator();
             HashSet<int[]> set = new HashSet<int[]>();
-            int[] block = allocator.GetIntBlock();
+            int[] block = allocator.GetInt32Block();
             set.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -52,7 +52,7 @@ namespace Lucene.Net.Util
             int num = AtLeast(97);
             for (int i = 0; i < num; i++)
             {
-                block = allocator.GetIntBlock();
+                block = allocator.GetInt32Block();
                 Assert.IsNotNull(block);
                 Assert.AreEqual(size, block.Length);
                 Assert.IsTrue(set.Add(block), "block is returned twice");
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
             RecyclingIntBlockAllocator allocator = NewAllocator();
             HashSet<int[]> allocated = new HashSet<int[]>();
 
-            int[] block = allocator.GetIntBlock();
+            int[] block = allocator.GetInt32Block();
             allocated.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
                 int num = 1 + Random().Next(39);
                 for (int j = 0; j < num; j++)
                 {
-                    block = allocator.GetIntBlock();
+                    block = allocator.GetInt32Block();
                     Assert.IsNotNull(block);
                     Assert.AreEqual(size, block.Length);
                     Assert.IsTrue(allocated.Add(block), "block is returned twice");
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
                 {
                     selected.Add(array[j]);
                 }
-                allocator.RecycleIntBlocks(array, begin, end);
+                allocator.RecycleInt32Blocks(array, begin, end);
                 for (int j = begin; j < end; j++)
                 {
                     Assert.IsNull(array[j]);
@@ -109,7 +109,7 @@ namespace Lucene.Net.Util
             RecyclingIntBlockAllocator allocator = NewAllocator();
             HashSet<int[]> allocated = new HashSet<int[]>();
             int freeButAllocated = 0;
-            int[] block = allocator.GetIntBlock();
+            int[] block = allocator.GetInt32Block();
             allocated.Add(block);
             Assert.IsNotNull(block);
             int size = block.Length;
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
                 int num = 1 + Random().Next(39);
                 for (int j = 0; j < num; j++)
                 {
-                    block = allocator.GetIntBlock();
+                    block = allocator.GetInt32Block();
                     freeButAllocated = Math.Max(0, freeButAllocated - 1);
                     Assert.IsNotNull(block);
                     Assert.AreEqual(size, block.Length);
@@ -136,7 +136,7 @@ namespace Lucene.Net.Util
                     int[] b = array[j];
                     Assert.IsTrue(allocated.Remove(b));
                 }
-                allocator.RecycleIntBlocks(array, begin, end);
+                allocator.RecycleInt32Blocks(array, begin, end);
                 for (int j = begin; j < end; j++)
                 {
                     Assert.IsNull(array[j]);

@@ -63,11 +63,13 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Writes an int as four bytes.
-        /// <p>
+        /// <para/>
         /// 32-bit unsigned integer written as four bytes, high-order bytes first.
+        /// <para/>
+        /// NOTE: this was writeInt() in Lucene
         /// </summary>
         /// <seealso cref= DataInput#readInt() </seealso>
-        public virtual void WriteInt(int i) // LUCENENET TODO: Rename WriteInt32() ?
+        public virtual void WriteInt32(int i)
         {
             WriteByte((byte)(sbyte)(i >> 24));
             WriteByte((byte)(sbyte)(i >> 16));
@@ -76,9 +78,12 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes a short as two bytes. </summary>
+        /// Writes a short as two bytes. 
+        /// <para/>
+        /// NOTE: this was writeShort() in Lucene
+        /// </summary>
         /// <seealso cref= DataInput#readShort() </seealso>
-        public virtual void WriteShort(short i) // LUCENENET TODO: Rename WriteInt16() ?
+        public virtual void WriteInt16(short i)
         {
             WriteByte((byte)(sbyte)((ushort)i >> 8));
             WriteByte((byte)(sbyte)(ushort)i);
@@ -185,12 +190,14 @@ namespace Lucene.Net.Store
         /// </tr>
         /// </table>
         /// <p>this provides compression while still being efficient to decode.</p>
+        /// <para/>
+        /// NOTE: this was writeVInt() in Lucene
         /// </summary>
         /// <param name="i"> Smaller values take fewer bytes.  Negative numbers are
         /// supported, but should be avoided. </param>
         /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
         /// <seealso cref= DataInput#readVInt() </seealso>
-        public void WriteVInt(int i) // LUCENENET TODO: Rename WriteVInt32() ?
+        public void WriteVInt32(int i)
         {
             while ((i & ~0x7F) != 0)
             {
@@ -202,24 +209,29 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Writes a long as eight bytes.
-        /// <p>
+        /// <para/>
         /// 64-bit unsigned integer written as eight bytes, high-order bytes first.
+        /// <para/>
+        /// NOTE: this was writeLong() in Lucene
         /// </summary>
         /// <seealso cref= DataInput#readLong() </seealso>
-        public virtual void WriteLong(long i) // LUCENENET TODO: Rename WriteInt64() ?
+        public virtual void WriteInt64(long i)
         {
-            WriteInt((int)(i >> 32));
-            WriteInt((int)i);
+            WriteInt32((int)(i >> 32));
+            WriteInt32((int)i);
         }
 
         /// <summary>
         /// Writes an long in a variable-length format.  Writes between one and nine
         /// bytes.  Smaller values take fewer bytes.  Negative numbers are not
         /// supported.
-        /// <p>
-        /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>. </summary>
+        /// <para/>
+        /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>. 
+        /// <para/>
+        /// NOTE: this was writeVLong() in Lucene
+        /// </summary>
         /// <seealso cref= DataInput#readVLong() </seealso>
-        public void WriteVLong(long i) // LUCENENET TODO: Rename WriteVInt64() ?
+        public void WriteVInt64(long i)
         {
             Debug.Assert(i >= 0L);
             while ((i & ~0x7FL) != 0L)
@@ -241,7 +253,7 @@ namespace Lucene.Net.Store
         {
             var utf8Result = new BytesRef(10);
             UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8Result);
-            WriteVInt(utf8Result.Length);
+            WriteVInt32(utf8Result.Length);
             WriteBytes(utf8Result.Bytes, 0, utf8Result.Length);
         }
 
@@ -287,11 +299,11 @@ namespace Lucene.Net.Store
         {
             if (map == null)
             {
-                WriteInt(0);
+                WriteInt32(0);
             }
             else
             {
-                WriteInt(map.Count);
+                WriteInt32(map.Count);
                 foreach (KeyValuePair<string, string> entry in map)
                 {
                     WriteString(entry.Key);
@@ -312,11 +324,11 @@ namespace Lucene.Net.Store
         {
             if (set == null)
             {
-                WriteInt(0);
+                WriteInt32(0);
             }
             else
             {
-                WriteInt(set.Count);
+                WriteInt32(set.Count);
                 foreach (string value in set)
                 {
                     WriteString(value);

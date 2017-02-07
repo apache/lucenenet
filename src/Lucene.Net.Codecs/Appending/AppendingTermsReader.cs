@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs.Appending
         protected override void SeekDir(IndexInput input, long dirOffset)
         {
             input.Seek(input.Length - sizeof(long)/8);
-            long offset = input.ReadLong();
+            long offset = input.ReadInt64();
             input.Seek(offset);
         }
     }

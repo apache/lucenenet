@@ -184,7 +184,7 @@ namespace Lucene.Net.Search
             public override SimScorer GetSimScorer(SimWeight stats, AtomicReaderContext context)
             {
                 SimScorer sub = Sim.GetSimScorer(stats, context);
-                FieldCache.Floats values = FieldCache.DEFAULT.GetFloats(context.AtomicReader, BoostField, false);
+                FieldCache.Floats values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, BoostField, false);
 
                 return new SimScorerAnonymousInnerClassHelper(this, sub, values);
             }

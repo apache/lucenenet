@@ -82,9 +82,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = Number.FloatToIntBits(m_slope);
+            int h = Number.SingleToInt32Bits(m_slope);
             h = ((int)((uint)h >> 2)) | (h << 30);
-            h += Number.FloatToIntBits(m_intercept);
+            h += Number.SingleToInt32Bits(m_intercept);
             h ^= (h << 14) | ((int)((uint)h >> 19));
             return h + m_source.GetHashCode();
         }

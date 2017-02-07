@@ -267,7 +267,7 @@ namespace Lucene.Net.Codecs.Lucene40
             IndexOutput output = d.CreateOutput(name, context);
             try
             {
-                output.WriteInt(-2);
+                output.WriteInt32(-2);
                 CodecUtil.WriteHeader(output, CODEC, VERSION_CURRENT);
                 if (IsSparse)
                 {
@@ -333,8 +333,8 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Write as a bit set </summary>
         private void WriteBits(IndexOutput output)
         {
-            output.WriteInt(Length); // write size
-            output.WriteInt(Count()); // write count
+            output.WriteInt32(Length); // write size
+            output.WriteInt32(Count()); // write count
             output.WriteBytes(bits, bits.Length);
         }
 
@@ -342,16 +342,16 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Write as a d-gaps list </summary>
         private void WriteClearedDgaps(IndexOutput output)
         {
-            output.WriteInt(-1); // mark using d-gaps
-            output.WriteInt(Length); // write size
-            output.WriteInt(Count()); // write count
+            output.WriteInt32(-1); // mark using d-gaps
+            output.WriteInt32(Length); // write size
+            output.WriteInt32(Count()); // write count
             int last = 0;
             int numCleared = Length - Count();
             for (int i = 0; i < bits.Length && numCleared > 0; i++)
             {
                 if (bits[i] != unchecked((byte)0xff))
                 {
-                    output.WriteVInt(i - last);
+                    output.WriteVInt32(i - last);
                     output.WriteByte(bits[i]);
                     last = i;
                     numCleared -= (8 - BitUtil.BitCount(bits[i]));
@@ -420,13 +420,13 @@ namespace Lucene.Net.Codecs.Lucene40
 
             try
             {
-                int firstInt = input.ReadInt();
+                int firstInt = input.ReadInt32();
 
                 if (firstInt == -2)
                 {
                     // New format, with full header & version:
                     version = CodecUtil.CheckHeader(input, CODEC, VERSION_START, VERSION_CURRENT);
-                    size = input.ReadInt();
+                    size = input.ReadInt32();
                 }
                 else
                 {
@@ -486,7 +486,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Read as a bit set </summary>
         private void ReadBits(IndexInput input)
         {
-            count = input.ReadInt(); // read count
+            count = input.ReadInt32(); // read count
             bits = new byte[GetNumBytes(size)]; // allocate bits
             input.ReadBytes(bits, 0, bits.Length);
         }
@@ -495,14 +495,14 @@ namespace Lucene.Net.Codecs.Lucene40
         /// read as a d-gaps list </summary>
         private void ReadSetDgaps(IndexInput input)
         {
-            size = input.ReadInt(); // (re)read size
-            count = input.ReadInt(); // read count
+            size = input.ReadInt32(); // (re)read size
+            count = input.ReadInt32(); // read count
             bits = new byte[GetNumBytes(size)]; // allocate bits
             int last = 0;
             int n = Count();
             while (n > 0)
             {
-                last += input.ReadVInt();
+                last += input.ReadVInt32();
                 bits[last] = input.ReadByte();
                 n -= BitUtil.BitCount(bits[last]);
                 Debug.Assert(n >= 0);
@@ -513,8 +513,8 @@ namespace Lucene.Net.Codecs.Lucene40
         /// read as a d-gaps cleared bits list </summary>
         private void ReadClearedDgaps(IndexInput input)
         {
-            size = input.ReadInt(); // (re)read size
-            count = input.ReadInt(); // read count
+            size = input.ReadInt32(); // (re)read size
+            count = input.ReadInt32(); // read count
             bits = new byte[GetNumBytes(size)]; // allocate bits
             for (int i = 0; i < bits.Length; ++i)
             {
@@ -525,7 +525,7 @@ namespace Lucene.Net.Codecs.Lucene40
             int numCleared = Length - Count();
             while (numCleared > 0)
             {
-                last += input.ReadVInt();
+                last += input.ReadVInt32();
                 bits[last] = input.ReadByte();
                 numCleared -= 8 - BitUtil.BitCount(bits[last]);
                 Debug.Assert(numCleared >= 0 || (last == (bits.Length - 1) && numCleared == -(8 - (size & 7))));

@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
                 int num = AtLeast(100);
                 for (int i = 0; i < num; i++)
                 {
-                    writer.WriteInt(i);
+                    writer.WriteInt32(i);
                 }
 
                 int upto = writer.CurrentOffset;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
                 reader.Reset(start, upto);
                 for (int i = 0; i < num; i++)
                 {
-                    Assert.AreEqual(i, reader.ReadInt());
+                    Assert.AreEqual(i, reader.ReadInt32());
                 }
                 Assert.IsTrue(reader.EndOfSlice());
                 if (Random().NextBoolean())
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                     {
                         writer.Reset(values.End);
                     }
-                    writer.WriteInt(values.NextValue());
+                    writer.WriteInt32(values.NextValue());
                     values.End = writer.CurrentOffset;
                     if (Random().Next(5) == 0)
                     {
@@ -142,13 +142,13 @@ namespace Lucene.Net.Index
                 this.BytesUsed = bytesUsed;
             }
 
-            public override int[] GetIntBlock()
+            public override int[] GetInt32Block()
             {
                 BytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
                 return new int[m_blockSize];
             }
 
-            public override void RecycleIntBlocks(int[][] blocks, int start, int end)
+            public override void RecycleInt32Blocks(int[][] blocks, int start, int end)
             {
                 BytesUsed.AddAndGet(-((end - start) * m_blockSize * RamUsageEstimator.NUM_BYTES_INT));
             }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Index
             reader.Reset(values.Start, values.End);
             for (int i = 0; i < values.ValueCount; i++)
             {
-                Assert.AreEqual(values.ValueOffset + i, reader.ReadInt());
+                Assert.AreEqual(values.ValueOffset + i, reader.ReadInt32());
             }
             Assert.IsTrue(reader.EndOfSlice());
         }

@@ -217,7 +217,7 @@ namespace Lucene.Net.Codecs.Compressing
                     return;
                 }
 
-                byte[] compressedBytes = new byte[input.ReadVInt()];
+                byte[] compressedBytes = new byte[input.ReadVInt32()];
                 input.ReadBytes(compressedBytes, 0, compressedBytes.Length);
                 byte[] decompressedBytes = null;
 
@@ -272,12 +272,12 @@ namespace Lucene.Net.Codecs.Compressing
                 if (resultArray.Length == 0)
                 {
                     Debug.Assert(len == 0, len.ToString());
-                    output.WriteVInt(0);
+                    output.WriteVInt32(0);
                     return;
                 }
                 else
                 {
-                    output.WriteVInt(resultArray.Length);
+                    output.WriteVInt32(resultArray.Length);
                     output.WriteBytes(resultArray, resultArray.Length);
                 }
             }

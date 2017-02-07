@@ -303,12 +303,12 @@ namespace Lucene.Net.Analysis.Synonym
                             }
                             dedupSet.Add(ent);
                         }
-                        scratchOutput.WriteVInt(output.ords[i]);
+                        scratchOutput.WriteVInt32(output.ords[i]);
                         count++;
                     }
 
                     int pos = scratchOutput.Position;
-                    scratchOutput.WriteVInt(count << 1 | (output.includeOrig ? 0 : 1));
+                    scratchOutput.WriteVInt32(count << 1 | (output.includeOrig ? 0 : 1));
                     int pos2 = scratchOutput.Position;
                     int vIntLen = pos2 - pos;
 

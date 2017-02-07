@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private int ReadDeltaPosition()
         {
-            int delta = proxStream.ReadVInt();
+            int delta = proxStream.ReadVInt32();
             if (m_currentFieldStoresPayloads)
             {
                 // if the current field stores payloads then
@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // payload length
                 if ((delta & 1) != 0)
                 {
-                    payloadLength = proxStream.ReadVInt();
+                    payloadLength = proxStream.ReadVInt32();
                 }
                 delta = (int)((uint)delta >> 1);
                 needToLoadPayload = true;

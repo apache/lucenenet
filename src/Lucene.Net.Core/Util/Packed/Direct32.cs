@@ -44,7 +44,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < valueCount; ++i)
             {
-                values[i] = @in.ReadInt();
+                values[i] = @in.ReadInt32();
             }
             // because packed ints have not always been byte-aligned
             int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 32) - 4L * valueCount);

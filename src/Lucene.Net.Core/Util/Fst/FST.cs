@@ -251,7 +251,7 @@ namespace Lucene.Net.Util.Fst
                 // accepts empty string
                 // 1 KB blocks:
                 BytesStore emptyBytes = new BytesStore(10);
-                int numBytes = @in.ReadVInt();
+                int numBytes = @in.ReadVInt32();
                 emptyBytes.CopyBytes(@in, numBytes);
 
                 // De-serialize empty-string output:
@@ -303,12 +303,12 @@ namespace Lucene.Net.Util.Fst
             {
                 nodeRefToAddress = null;
             }
-            startNode = @in.ReadVLong();
-            nodeCount = @in.ReadVLong();
-            arcCount = @in.ReadVLong();
-            arcWithOutputCount = @in.ReadVLong();
+            startNode = @in.ReadVInt64();
+            nodeCount = @in.ReadVInt64();
+            arcCount = @in.ReadVInt64();
+            arcWithOutputCount = @in.ReadVInt64();
 
-            long numBytes_ = @in.ReadVLong();
+            long numBytes_ = @in.ReadVInt64();
             bytes = new BytesStore(@in, numBytes_, 1 << maxBlockBits);
 
             NO_OUTPUT = outputs.NoOutput;
@@ -533,7 +533,7 @@ namespace Lucene.Net.Util.Fst
                         upto++;
                     }
                 }
-                @out.WriteVInt(emptyOutputBytes.Length);
+                @out.WriteVInt32(emptyOutputBytes.Length);
                 @out.WriteBytes(emptyOutputBytes, 0, emptyOutputBytes.Length);
             }
             else
@@ -558,12 +558,12 @@ namespace Lucene.Net.Util.Fst
             {
                 ((PackedInts.Mutable)nodeRefToAddress).Save(@out);
             }
-            @out.WriteVLong(startNode);
-            @out.WriteVLong(nodeCount);
-            @out.WriteVLong(arcCount);
-            @out.WriteVLong(arcWithOutputCount);
+            @out.WriteVInt64(startNode);
+            @out.WriteVInt64(nodeCount);
+            @out.WriteVInt64(arcCount);
+            @out.WriteVInt64(arcWithOutputCount);
             long numBytes = bytes.Position;
-            @out.WriteVLong(numBytes);
+            @out.WriteVInt64(numBytes);
             bytes.WriteTo(@out);
         }
 
@@ -604,11 +604,11 @@ namespace Lucene.Net.Util.Fst
             else if (inputType == FST.INPUT_TYPE.BYTE2)
             {
                 Debug.Assert(v <= 65535, "v=" + v);
-                @out.WriteShort((short)v);
+                @out.WriteInt16((short)v);
             }
             else
             {
-                @out.WriteVInt(v);
+                @out.WriteVInt32(v);
             }
         }
 
@@ -623,11 +623,11 @@ namespace Lucene.Net.Util.Fst
             else if (inputType == FST.INPUT_TYPE.BYTE2)
             {
                 // Unsigned short:
-                v = @in.ReadShort() & 0xFFFF;
+                v = @in.ReadInt16() & 0xFFFF;
             }
             else
             {
-                v = @in.ReadVInt();
+                v = @in.ReadVInt32();
             }
             return v;
         }
@@ -748,7 +748,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     Debug.Assert(target.Node > 0);
                     //System.out.println("    write target");
-                    bytes.WriteVLong(target.Node);
+                    bytes.WriteVInt64(target.Node);
                 }
 
                 // just write the arcs "like normal" on first pass,
@@ -797,8 +797,8 @@ namespace Lucene.Net.Util.Fst
                 var bad = new ByteArrayDataOutput(header);
                 // write a "false" first arc:
                 bad.WriteByte((byte)FST.ARCS_AS_FIXED_ARRAY);
-                bad.WriteVInt(nodeIn.NumArcs);
-                bad.WriteVInt(maxBytesPerArc);
+                bad.WriteVInt32(nodeIn.NumArcs);
+                bad.WriteVInt32(maxBytesPerArc);
                 int headerLen = bad.Position;
 
                 long fixedArrayStart = startAddress + headerLen;
@@ -919,14 +919,14 @@ namespace Lucene.Net.Util.Fst
                 if (b == FST.ARCS_AS_FIXED_ARRAY)
                 {
                     // array: jump straight to end
-                    arc.NumArcs = @in.ReadVInt();
+                    arc.NumArcs = @in.ReadVInt32();
                     if (packed || version >= FST.VERSION_VINT_TARGET)
                     {
-                        arc.BytesPerArc = @in.ReadVInt();
+                        arc.BytesPerArc = @in.ReadVInt32();
                     }
                     else
                     {
-                        arc.BytesPerArc = @in.ReadInt();
+                        arc.BytesPerArc = @in.ReadInt32();
                     }
                     //System.out.println("  array numArcs=" + arc.numArcs + " bpa=" + arc.bytesPerArc);
                     arc.PosArcsStart = @in.Position;
@@ -958,7 +958,7 @@ namespace Lucene.Net.Util.Fst
                         }
                         else if (packed)
                         {
-                            @in.ReadVLong();
+                            @in.ReadVInt64();
                         }
                         else
                         {
@@ -981,11 +981,11 @@ namespace Lucene.Net.Util.Fst
             long target;
             if (version < FST.VERSION_VINT_TARGET)
             {
-                target = @in.ReadInt();
+                target = @in.ReadInt32();
             }
             else
             {
-                target = @in.ReadVLong();
+                target = @in.ReadVInt64();
             }
             return target;
         }
@@ -1039,14 +1039,14 @@ namespace Lucene.Net.Util.Fst
             {
                 //System.out.println("  fixedArray");
                 // this is first arc in a fixed-array
-                arc.NumArcs = @in.ReadVInt();
+                arc.NumArcs = @in.ReadVInt32();
                 if (packed || version >= FST.VERSION_VINT_TARGET)
                 {
-                    arc.BytesPerArc = @in.ReadVInt();
+                    arc.BytesPerArc = @in.ReadVInt32();
                 }
                 else
                 {
-                    arc.BytesPerArc = @in.ReadInt();
+                    arc.BytesPerArc = @in.ReadInt32();
                 }
                 arc.ArcIdx = -1;
                 arc.NextArc = arc.PosArcsStart = @in.Position;
@@ -1118,16 +1118,16 @@ namespace Lucene.Net.Util.Fst
                 if (b == FST.ARCS_AS_FIXED_ARRAY)
                 {
                     //System.out.println("    nextArc fixed array");
-                    @in.ReadVInt();
+                    @in.ReadVInt32();
 
                     // Skip bytesPerArc:
                     if (packed || version >= FST.VERSION_VINT_TARGET)
                     {
-                        @in.ReadVInt();
+                        @in.ReadVInt32();
                     }
                     else
                     {
-                        @in.ReadInt();
+                        @in.ReadInt32();
                     }
                 }
                 else
@@ -1245,7 +1245,7 @@ namespace Lucene.Net.Util.Fst
                 if (packed)
                 {
                     long pos = @in.Position;
-                    long code = @in.ReadVLong();
+                    long code = @in.ReadVInt64();
                     if (arc.Flag(FST.BIT_TARGET_DELTA))
                     {
                         // Address is delta-coded from current address:
@@ -1340,14 +1340,14 @@ namespace Lucene.Net.Util.Fst
             if (@in.ReadByte() == FST.ARCS_AS_FIXED_ARRAY)
             {
                 // Arcs are full array; do binary search:
-                arc.NumArcs = @in.ReadVInt();
+                arc.NumArcs = @in.ReadVInt32();
                 if (packed || version >= FST.VERSION_VINT_TARGET)
                 {
-                    arc.BytesPerArc = @in.ReadVInt();
+                    arc.BytesPerArc = @in.ReadVInt32();
                 }
                 else
                 {
-                    arc.BytesPerArc = @in.ReadInt();
+                    arc.BytesPerArc = @in.ReadInt32();
                 }
                 arc.PosArcsStart = @in.Position;
                 int low = 0;
@@ -1429,7 +1429,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     if (packed)
                     {
-                        @in.ReadVLong();
+                        @in.ReadVInt64();
                     }
                     else
                     {
@@ -1812,8 +1812,8 @@ namespace Lucene.Net.Util.Fst
                                 bytesPerArc = arc.BytesPerArc;
                             }
                             writer.WriteByte((byte)FST.ARCS_AS_FIXED_ARRAY);
-                            writer.WriteVInt(arc.NumArcs);
-                            writer.WriteVInt(bytesPerArc);
+                            writer.WriteVInt32(arc.NumArcs);
+                            writer.WriteVInt32(bytesPerArc);
                             //System.out.println("node " + node + ": " + arc.numArcs + " arcs");
                         }
 
@@ -1930,7 +1930,7 @@ namespace Lucene.Net.Util.Fst
                                 if (Flag(flags, FST.BIT_TARGET_DELTA))
                                 {
                                     //System.out.println("        delta");
-                                    writer.WriteVLong(delta);
+                                    writer.WriteVInt64(delta);
                                     if (!retry)
                                     {
                                         deltaCount++;
@@ -1945,7 +1945,7 @@ namespace Lucene.Net.Util.Fst
                                       System.out.println("        abs");
                                     }
                                     */
-                                    writer.WriteVLong(absPtr);
+                                    writer.WriteVInt64(absPtr);
                                     if (!retry)
                                     {
                                         if (absPtr >= topNodeMap.Count)

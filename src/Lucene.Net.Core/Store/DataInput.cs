@@ -80,20 +80,25 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Reads two bytes and returns a short. 
-        /// 
+        /// <para/>
         /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
         /// the value is positive!
+        /// <para/>
+        /// NOTE: this was readShort() in Lucene
         /// </summary>
         /// <seealso cref= DataOutput#writeByte(byte) </seealso>
-        public virtual short ReadShort() // LUCENENET TODO: Rename ReadInt16() ?
+        public virtual short ReadInt16()
         {
             return (short)(ushort)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
         }
 
         /// <summary>
-        /// Reads four bytes and returns an int. </summary>
+        /// Reads four bytes and returns an int. 
+        /// <para/>
+        /// NOTE: this was readInt() in Lucene
+        /// </summary>
         /// <seealso cref= DataOutput#writeInt(int) </seealso>
-        public virtual int ReadInt() // LUCENENET TODO: Rename ReadInt32() ?
+        public virtual int ReadInt32()
         {
             return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16) | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
         }
@@ -102,11 +107,13 @@ namespace Lucene.Net.Store
         /// Reads an int stored in variable-length format.  Reads between one and
         /// five bytes.  Smaller values take fewer bytes.  Negative numbers are not
         /// supported.
-        /// <p>
+        /// <para/>
         /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>.
+        /// <para/>
+        /// NOTE: this was readVInt() in Lucene
         /// </summary>
         /// <seealso cref= DataOutput#writeVInt(int) </seealso>
-        public virtual int ReadVInt() // LUCENENET TODO: Rename ReadVInt32() ?
+        public virtual int ReadVInt32()
         {
             // .NET Port: Going back to original code instead of Java code below due to sbyte/byte diff
             /*byte b = ReadByte();
@@ -153,12 +160,15 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads eight bytes and returns a long. </summary>
+        /// Reads eight bytes and returns a long. 
+        /// <para/>
+        /// NOTE: this was readLong() in Lucene
+        /// </summary>
         /// <seealso cref= DataOutput#writeLong(long) </seealso>
-        public virtual long ReadLong() // LUCENENET TODO: Rename ReadInt64() ?
+        public virtual long ReadInt64()
         {
-            long halfA = ((long)ReadInt()) << 32;
-            long halfB = (ReadInt() & 0xFFFFFFFFL);
+            long halfA = ((long)ReadInt32()) << 32;
+            long halfB = (ReadInt32() & 0xFFFFFFFFL);
             long ret = halfA | halfB;
             return ret;
         }
@@ -167,11 +177,13 @@ namespace Lucene.Net.Store
         /// Reads a long stored in variable-length format.  Reads between one and
         /// nine bytes.  Smaller values take fewer bytes.  Negative numbers are not
         /// supported.
-        /// <p>
+        /// <para/>
         /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>.
+        /// <para/>
+        /// NOTE: this was readVLong() in Lucene
         /// </summary>
         /// <seealso cref= DataOutput#writeVLong(long) </seealso>
-        public virtual long ReadVLong() // LUCENENET TODO: Rename ReadVInt64() ?
+        public virtual long ReadVInt64()
         {
             // .NET Port: going back to old style code
             /*byte b = ReadByte();
@@ -245,7 +257,7 @@ namespace Lucene.Net.Store
         /// <seealso cref= DataOutput#writeString(String) </seealso>
         public virtual string ReadString()
         {
-            var length = ReadVInt();
+            var length = ReadVInt32();
             var bytes = new byte[length];
             ReadBytes(bytes, 0, length);
 
@@ -283,7 +295,7 @@ namespace Lucene.Net.Store
         public virtual IDictionary<string, string> ReadStringStringMap()
         {
             IDictionary<string, string> map = new Dictionary<string, string>();
-            int count = ReadInt();
+            int count = ReadInt32();
             for (int i = 0; i < count; i++)
             {
                 string key = ReadString();
@@ -301,7 +313,7 @@ namespace Lucene.Net.Store
         public virtual ISet<string> ReadStringSet()
         {
             ISet<string> set = new HashSet<string>();
-            int count = ReadInt();
+            int count = ReadInt32();
             for (int i = 0; i < count; i++)
             {
                 set.Add(ReadString());

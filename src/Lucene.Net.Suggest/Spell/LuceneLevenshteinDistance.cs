@@ -103,15 +103,15 @@ namespace Lucene.Net.Search.Spell
 
             for (j = 1; j <= m; j++)
             {
-                t_j = otherPoints.Ints[j - 1];
+                t_j = otherPoints.Int32s[j - 1];
 
                 for (i = 1; i <= n; i++)
                 {
-                    cost = targetPoints.Ints[i - 1] == t_j ? 0 : 1;
+                    cost = targetPoints.Int32s[i - 1] == t_j ? 0 : 1;
                     // minimum of cell to the left+1, to the top+1, diagonally left and up +cost
                     d[i][j] = Math.Min(Math.Min(d[i - 1][j] + 1, d[i][j - 1] + 1), d[i - 1][j - 1] + cost);
                     // transposition
-                    if (i > 1 && j > 1 && targetPoints.Ints[i - 1] == otherPoints.Ints[j - 2] && targetPoints.Ints[i - 2] == otherPoints.Ints[j - 1])
+                    if (i > 1 && j > 1 && targetPoints.Int32s[i - 1] == otherPoints.Int32s[j - 2] && targetPoints.Int32s[i - 2] == otherPoints.Int32s[j - 1])
                     {
                         d[i][j] = Math.Min(d[i][j], d[i - 2][j - 2] + cost);
                     }
@@ -127,7 +127,7 @@ namespace Lucene.Net.Search.Spell
             int utf16Len = s.Length;
             for (int i = 0, cp = 0; i < utf16Len; i += Character.CharCount(cp))
             {
-                cp = @ref.Ints[@ref.Length++] = Character.CodePointAt(s, i);
+                cp = @ref.Int32s[@ref.Length++] = Character.CodePointAt(s, i);
             }
             return @ref;
         }

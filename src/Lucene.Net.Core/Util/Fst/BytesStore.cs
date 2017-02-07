@@ -266,9 +266,11 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Writes an int at the absolute position without
-        ///  changing the current pointer.
+        /// changing the current pointer.
+        /// <para/>
+        /// NOTE: This was writeInt() in Lucene
         /// </summary>
-        public virtual void WriteInt(long pos, int value) // LUCENENET TODO: Change to WriteInt32 ?
+        public virtual void WriteInt32(long pos, int value)
         {
             int blockIndex = (int)(pos >> blockBits);
             int upto = (int)(pos & blockMask);

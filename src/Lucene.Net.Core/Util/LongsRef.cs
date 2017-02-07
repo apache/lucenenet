@@ -37,10 +37,13 @@ namespace Lucene.Net.Util
         public static readonly long[] EMPTY_LONGS = new long[0];
 
         /// <summary>
-        /// The contents of the LongsRef. Should never be {@code null}. </summary>
+        /// The contents of the LongsRef. Should never be {@code null}. 
+        /// <para/>
+        /// NOTE: This was longs (field) in Lucene
+        /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public long[] Longs
+        public long[] Int64s
         {
             get { return longs; }
             set
@@ -121,12 +124,15 @@ namespace Lucene.Net.Util
             }
             if (other is LongsRef)
             {
-                return this.LongsEquals((LongsRef)other);
+                return this.Int64sEquals((LongsRef)other);
             }
             return false;
         }
 
-        public bool LongsEquals(LongsRef other)
+        /// <summary>
+        /// NOTE: This was longsEquals() in Lucene
+        /// </summary>
+        public bool Int64sEquals(LongsRef other)
         {
             if (Length == other.Length)
             {
@@ -182,7 +188,10 @@ namespace Lucene.Net.Util
             return this.Length - other.Length;
         }
 
-        public void CopyLongs(LongsRef other)
+        /// <summary>
+        /// NOTE: This was copyLongs() in Lucene
+        /// </summary>
+        public void CopyInt64s(LongsRef other)
         {
             if (longs.Length - Offset < other.Length)
             {
@@ -235,7 +244,7 @@ namespace Lucene.Net.Util
         public static LongsRef DeepCopyOf(LongsRef other)
         {
             LongsRef clone = new LongsRef();
-            clone.CopyLongs(other);
+            clone.CopyInt64s(other);
             return clone;
         }
 

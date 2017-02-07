@@ -333,9 +333,9 @@ namespace Lucene.Net.Search
             // not cacheable:
             AssertDocIdSetCacheable(reader, new QueryWrapperFilter(new TermQuery(new Term("test", "value"))), false);
             // returns default empty docidset, always cacheable:
-            AssertDocIdSetCacheable(reader, NumericRangeFilter.NewIntRange("test", Convert.ToInt32(10000), Convert.ToInt32(-10000), true, true), true);
+            AssertDocIdSetCacheable(reader, NumericRangeFilter.NewInt32Range("test", Convert.ToInt32(10000), Convert.ToInt32(-10000), true, true), true);
             // is cacheable:
-            AssertDocIdSetCacheable(reader, FieldCacheRangeFilter.NewIntRange("test", Convert.ToInt32(10), Convert.ToInt32(20), true, true), true);
+            AssertDocIdSetCacheable(reader, FieldCacheRangeFilter.NewInt32Range("test", Convert.ToInt32(10), Convert.ToInt32(20), true, true), true);
             // a fixedbitset filter is always cacheable
             AssertDocIdSetCacheable(reader, new FilterAnonymousInnerClassHelper3(this), true);
 

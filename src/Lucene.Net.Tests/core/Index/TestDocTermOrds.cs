@@ -342,7 +342,7 @@ namespace Lucene.Net.Index
         {
             DocTermOrds dto = new DocTermOrds(r, r.LiveDocs, "field", prefixRef, int.MaxValue, TestUtil.NextInt(Random(), 2, 10));
 
-            FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInts(r, "id", false);
+            FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInt32s(r, "id", false);
             /*
               for(int docID=0;docID<subR.MaxDoc;docID++) {
               System.out.println("  docID=" + docID + " id=" + docIDToID[docID]);

@@ -82,16 +82,16 @@ namespace Lucene.Net.Codecs.Memory
                 SeekDir(@in);
 
                 FieldInfos fieldInfos = state.FieldInfos;
-                int numFields = @in.ReadVInt();
+                int numFields = @in.ReadVInt32();
                 for (int i = 0; i < numFields; i++)
                 {
-                    int fieldNumber = @in.ReadVInt();
+                    int fieldNumber = @in.ReadVInt32();
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
-                    long numTerms = @in.ReadVLong();
-                    long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : @in.ReadVLong();
-                    long sumDocFreq = @in.ReadVLong();
-                    int docCount = @in.ReadVInt();
-                    int longsSize = @in.ReadVInt();
+                    long numTerms = @in.ReadVInt64();
+                    long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY ? -1 : @in.ReadVInt64();
+                    long sumDocFreq = @in.ReadVInt64();
+                    int docCount = @in.ReadVInt32();
+                    int longsSize = @in.ReadVInt32();
                     TermsReader current = new TermsReader(this, fieldInfo, @in, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize);
                     TermsReader previous;
                     // LUCENENET NOTE: This simulates a put operation in Java,
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 @in.Seek(@in.Length - 8);
             }
-            @in.Seek(@in.ReadLong());
+            @in.Seek(@in.ReadInt64());
         }
         
         

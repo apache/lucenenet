@@ -25,7 +25,7 @@ namespace Lucene.Net.Util.Automaton
     // Just holds a set of int[] states, plus a corresponding
     // int[] count per state.  Used by
     // BasicOperations.determinize
-    internal sealed class SortedIntSet : IEquatable<SortedIntSet>, IEquatable<SortedIntSet.FrozenIntSet>
+    internal sealed class SortedIntSet : IEquatable<SortedIntSet>, IEquatable<SortedIntSet.FrozenIntSet> // LUCENENET TODO: Rename SortedInt32Set
     {
         internal int[] values;
         internal int[] counts;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        public FrozenIntSet ToFrozenIntSet() // LUCENENET TODO: This didn't exist in the original
+        public FrozenIntSet ToFrozenInt32Set() // LUCENENET TODO: This didn't exist in the original
         {
             int[] c = new int[upto];
             Array.Copy(values, 0, c, 0, upto);
@@ -280,7 +280,7 @@ namespace Lucene.Net.Util.Automaton
             return sb.ToString();
         }
 
-        public sealed class FrozenIntSet : IEquatable<SortedIntSet>, IEquatable<FrozenIntSet>
+        public sealed class FrozenIntSet : IEquatable<SortedIntSet>, IEquatable<FrozenIntSet> // LUCENENET TODO: Rename FrozenInt32Set
         {
             internal readonly int[] values;
             internal readonly int hashCode;

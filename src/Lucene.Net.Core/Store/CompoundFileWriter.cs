@@ -247,12 +247,12 @@ namespace Lucene.Net.Store
         private void WriteEntryTable(ICollection<FileEntry> entries, IndexOutput entryOut)
         {
             CodecUtil.WriteHeader(entryOut, ENTRY_CODEC, VERSION_CURRENT);
-            entryOut.WriteVInt(entries.Count);
+            entryOut.WriteVInt32(entries.Count);
             foreach (FileEntry fe in entries)
             {
                 entryOut.WriteString(IndexFileNames.StripSegmentName(fe.File));
-                entryOut.WriteLong(fe.Offset);
-                entryOut.WriteLong(fe.Length);
+                entryOut.WriteInt64(fe.Offset);
+                entryOut.WriteInt64(fe.Length);
             }
             CodecUtil.WriteFooter(entryOut);
         }

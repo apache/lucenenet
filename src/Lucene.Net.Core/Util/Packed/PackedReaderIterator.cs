@@ -43,7 +43,7 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(valueCount == 0 || iterations > 0);
             nextBlocks = new byte[iterations * bulkOperation.ByteBlockCount];
             nextValues = new LongsRef(new long[iterations * bulkOperation.ByteValueCount], 0, 0);
-            nextValues.Offset = nextValues.Longs.Length;
+            nextValues.Offset = nextValues.Int64s.Length;
             position = -1;
         }
 
@@ -62,7 +62,7 @@ namespace Lucene.Net.Util.Packed
         {
             Debug.Assert(nextValues.Length >= 0);
             Debug.Assert(count > 0);
-            Debug.Assert(nextValues.Offset + nextValues.Length <= nextValues.Longs.Length);
+            Debug.Assert(nextValues.Offset + nextValues.Length <= nextValues.Int64s.Length);
 
             nextValues.Offset += nextValues.Length;
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util.Packed
             }
             count = Math.Min(remaining, count);
 
-            if (nextValues.Offset == nextValues.Longs.Length)
+            if (nextValues.Offset == nextValues.Int64s.Length)
             {
                 long remainingBlocks = format.ByteCount(packedIntsVersion, remaining, m_bitsPerValue);
                 int blocksToRead = (int)Math.Min(remainingBlocks, nextBlocks.Length);
@@ -83,11 +83,11 @@ namespace Lucene.Net.Util.Packed
                     Arrays.Fill(nextBlocks, blocksToRead, nextBlocks.Length, (byte)0);
                 }
 
-                bulkOperation.Decode(nextBlocks, 0, nextValues.Longs, 0, iterations);
+                bulkOperation.Decode(nextBlocks, 0, nextValues.Int64s, 0, iterations);
                 nextValues.Offset = 0;
             }
 
-            nextValues.Length = Math.Min(nextValues.Longs.Length - nextValues.Offset, count);
+            nextValues.Length = Math.Min(nextValues.Int64s.Length - nextValues.Offset, count);
             position += nextValues.Length;
             return nextValues;
         }

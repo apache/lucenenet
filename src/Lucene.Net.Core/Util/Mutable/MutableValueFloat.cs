@@ -70,7 +70,7 @@ namespace Lucene.Net.Util.Mutable
 
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Value);
+            return Number.SingleToInt32Bits(Value);
         }
     }
 }

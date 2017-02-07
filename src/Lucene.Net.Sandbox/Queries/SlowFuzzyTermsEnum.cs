@@ -124,7 +124,7 @@ namespace Lucene.Net.Sandbox.Queries
                 if (StringHelper.StartsWith(term, prefixBytesRef))
                 {
                     UnicodeUtil.UTF8toUTF32(term, utf32);
-                    int distance = CalcDistance(utf32.Ints, outerInstance.m_realPrefixLength, utf32.Length - outerInstance.m_realPrefixLength);
+                    int distance = CalcDistance(utf32.Int32s, outerInstance.m_realPrefixLength, utf32.Length - outerInstance.m_realPrefixLength);
 
                     //Integer.MIN_VALUE is the sentinel that Levenshtein stopped early
                     if (distance == int.MinValue)

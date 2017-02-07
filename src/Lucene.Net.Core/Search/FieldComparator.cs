@@ -582,7 +582,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetFloats((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetSingles((context.AtomicReader), m_field, parser, m_missingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -672,7 +672,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetShorts((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetInt16s((context.AtomicReader), m_field, parser, m_missingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -758,7 +758,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetInts((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetInt32s((context.AtomicReader), m_field, parser, m_missingValue != null);
                 return base.SetNextReader(context);
             }
 
@@ -849,7 +849,7 @@ namespace Lucene.Net.Search
             {
                 // NOTE: must do this before calling super otherwise
                 // we compute the docsWithField Bits twice!
-                currentReaderValues = FieldCache.DEFAULT.GetLongs((context.AtomicReader), m_field, parser, m_missingValue != null);
+                currentReaderValues = FieldCache.DEFAULT.GetInt64s((context.AtomicReader), m_field, parser, m_missingValue != null);
                 return base.SetNextReader(context);
             }
 

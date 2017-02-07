@@ -55,15 +55,21 @@ namespace Lucene.Net.Codecs.Compressing
             return Hash(i, HASH_LOG_HC);
         }
 
-        private static int ReadInt(byte[] buf, int i)
+        /// <summary>
+        /// NOTE: This was readInt() in Lucene
+        /// </summary>
+        private static int ReadInt32(byte[] buf, int i)
         {
             return ((((sbyte)buf[i]) & 0xFF) << 24) | ((((sbyte)buf[i + 1]) & 0xFF) << 16) | ((((sbyte)buf[i + 2]) & 0xFF) << 8) |
                 (((sbyte)buf[i + 3]) & 0xFF);
         }
 
-        private static bool ReadIntEquals(byte[] buf, int i, int j)
+        /// <summary>
+        /// NOTE: This was readIntEquals() in Lucene
+        /// </summary>
+        private static bool ReadInt32Equals(byte[] buf, int i, int j)
         {
-            return ReadInt(buf, i) == ReadInt(buf, j);
+            return ReadInt32(buf, i) == ReadInt32(buf, j);
         }
 
         private static int CommonBytes(byte[] b, int o1, int o2, int limit)
@@ -264,12 +270,12 @@ namespace Lucene.Net.Codecs.Compressing
                         {
                             goto mainBreak;
                         }
-                        int v = ReadInt(bytes, off);
+                        int v = ReadInt32(bytes, off);
                         int h = Hash(v, hashLog);
                         @ref = @base + (int)hashTable.Get(h);
                         Debug.Assert(PackedInts.BitsRequired(off - @base) <= hashTable.BitsPerValue);
                         hashTable.Set(h, off - @base);
-                        if (off - @ref < MAX_DISTANCE && ReadInt(bytes, @ref) == v)
+                        if (off - @ref < MAX_DISTANCE && ReadInt32(bytes, @ref) == v)
                         {
                             break;
                         }
@@ -342,7 +348,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             private int HashPointer(byte[] bytes, int off)
             {
-                int v = ReadInt(bytes, off);
+                int v = ReadInt32(bytes, off);
                 int h = HashHC(v);
                 return hashTable[h];
             }
@@ -354,7 +360,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             private void AddHash(byte[] bytes, int off)
             {
-                int v = ReadInt(bytes, off);
+                int v = ReadInt32(bytes, off);
                 int h = HashHC(v);
                 int delta = off - hashTable[h];
                 Debug.Assert(delta > 0, delta.ToString());
@@ -387,7 +393,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 if (@ref >= off - 4 && @ref <= off && @ref >= @base) // potential repetition
                 {
-                    if (ReadIntEquals(buf, @ref, off)) // confirmed
+                    if (ReadInt32Equals(buf, @ref, off)) // confirmed
                     {
                         delta = off - @ref;
                         repl = match.len = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
@@ -402,7 +408,7 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         break;
                     }
-                    if (buf[@ref + match.len] == buf[off + match.len] && ReadIntEquals(buf, @ref, off))
+                    if (buf[@ref + match.len] == buf[off + match.len] && ReadInt32Equals(buf, @ref, off))
                     {
                         int matchLen = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
                         if (matchLen > match.len)
@@ -426,7 +432,7 @@ namespace Lucene.Net.Codecs.Compressing
                     do
                     {
                         chainTable[ptr & MASK] = (short)delta;
-                        hashTable[HashHC(ReadInt(buf, ptr))] = ptr;
+                        hashTable[HashHC(ReadInt32(buf, ptr))] = ptr;
                         ++ptr;
                     } while (ptr < end);
                     nextToUpdate = end;
@@ -449,7 +455,7 @@ namespace Lucene.Net.Codecs.Compressing
                     {
                         break;
                     }
-                    if (buf[@ref - delta + match.len] == buf[startLimit + match.len] && ReadIntEquals(buf, @ref, off))
+                    if (buf[@ref - delta + match.len] == buf[startLimit + match.len] && ReadInt32Equals(buf, @ref, off))
                     {
                         int matchLenForward = MIN_MATCH + CommonBytes(buf, @ref + MIN_MATCH, off + MIN_MATCH, matchLimit);
                         int matchLenBackward = CommonBytesBackward(buf, @ref, off, @base, startLimit);

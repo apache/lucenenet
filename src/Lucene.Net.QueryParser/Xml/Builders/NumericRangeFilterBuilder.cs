@@ -121,12 +121,12 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 Filter filter;
                 if (type.Equals("int", StringComparison.OrdinalIgnoreCase))
                 {
-                    filter = NumericRangeFilter.NewIntRange(field, precisionStep, Convert.ToInt32(lowerTerm), Convert.ToInt32(upperTerm), lowerInclusive,
+                    filter = NumericRangeFilter.NewInt32Range(field, precisionStep, Convert.ToInt32(lowerTerm), Convert.ToInt32(upperTerm), lowerInclusive,
                         upperInclusive);
                 }
                 else if (type.Equals("long", StringComparison.OrdinalIgnoreCase))
                 {
-                    filter = NumericRangeFilter.NewLongRange(field, precisionStep, Convert
+                    filter = NumericRangeFilter.NewInt64Range(field, precisionStep, Convert
                         .ToInt64(lowerTerm), Convert.ToInt64(upperTerm), lowerInclusive,
                         upperInclusive);
                 }
@@ -138,7 +138,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 }
                 else if (type.Equals("float", StringComparison.OrdinalIgnoreCase))
                 {
-                    filter = NumericRangeFilter.NewFloatRange(field, precisionStep, Convert
+                    filter = NumericRangeFilter.NewSingleRange(field, precisionStep, Convert
                         .ToSingle(lowerTerm), Convert.ToSingle(upperTerm), lowerInclusive,
                         upperInclusive);
                 }

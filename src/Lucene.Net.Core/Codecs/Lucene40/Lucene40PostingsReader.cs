@@ -114,9 +114,9 @@ namespace Lucene.Net.Codecs.Lucene40
             // Make sure we are talking to the matching past writer
             CodecUtil.CheckHeader(termsIn, TERMS_CODEC, VERSION_START, VERSION_CURRENT);
 
-            skipInterval = termsIn.ReadInt();
-            maxSkipLevels = termsIn.ReadInt();
-            skipMinimum = termsIn.ReadInt();
+            skipInterval = termsIn.ReadInt32();
+            maxSkipLevels = termsIn.ReadInt32();
+            skipMinimum = termsIn.ReadInt32();
         }
 
         // Must keep final because we do non-standard clone
@@ -185,7 +185,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 termState2.proxOffset = 0;
             }
 
-            termState2.freqOffset += @in.ReadVLong();
+            termState2.freqOffset += @in.ReadVInt64();
             /*
             if (DEBUG) {
               System.out.println("  dF=" + termState2.docFreq);
@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             if (termState2.DocFreq >= skipMinimum)
             {
-                termState2.skipOffset = @in.ReadVLong();
+                termState2.skipOffset = @in.ReadVInt64();
                 // if (DEBUG) System.out.println("  skipOffset=" + termState2.skipOffset + " vs freqIn.length=" + freqIn.length());
                 Debug.Assert(termState2.freqOffset + termState2.skipOffset < freqIn.Length);
             }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             if (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                termState2.proxOffset += @in.ReadVLong();
+                termState2.proxOffset += @in.ReadVInt64();
                 // if (DEBUG) System.out.println("  proxFP=" + termState2.proxOffset);
             }
         }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 else
                 {
-                    return freqIn.ReadVInt(); // else read freq
+                    return freqIn.ReadVInt32(); // else read freq
                 }
             }
 
@@ -475,7 +475,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 int docAc = m_accum;
                 for (int i = 0; i < size; i++)
                 {
-                    docAc += freqIn.ReadVInt();
+                    docAc += freqIn.ReadVInt32();
                     docs[i] = docAc;
                 }
                 m_accum = docAc;
@@ -490,7 +490,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 int docAc = m_accum;
                 for (int i = 0; i < size; i++)
                 {
-                    int code = freqIn.ReadVInt();
+                    int code = freqIn.ReadVInt32();
                     docAc += (int)((uint)code >> 1); // shift off low bit
                     freqs[i] = ReadFreq(freqIn, code);
                     docs[i] = docAc;
@@ -590,7 +590,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 int loopLimit = m_limit;
                 for (int i = m_ord; i < loopLimit; i++)
                 {
-                    int code = freqIn.ReadVInt();
+                    int code = freqIn.ReadVInt32();
                     if (omitTF)
                     {
                         docAcc += code;
@@ -617,7 +617,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (m_ord++ < m_limit)
                 {
-                    int code = freqIn.ReadVInt();
+                    int code = freqIn.ReadVInt32();
                     if (m_indexOmitsTF)
                     {
                         m_accum += code;
@@ -692,7 +692,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 IBits liveDocs = this.m_liveDocs;
                 for (int i = m_ord; i < loopLimit; i++)
                 {
-                    int code = freqIn.ReadVInt();
+                    int code = freqIn.ReadVInt32();
                     if (omitTF)
                     {
                         docAcc += code;
@@ -725,7 +725,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 IBits liveDocs = this.m_liveDocs;
                 for (int i = m_ord; i < loopLimit; i++)
                 {
-                    int code = freqIn.ReadVInt();
+                    int code = freqIn.ReadVInt32();
                     if (omitTF)
                     {
                         docAcc += code;
@@ -832,7 +832,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     ord++;
 
                     // Decode next doc/freq pair
-                    int code = freqIn.ReadVInt();
+                    int code = freqIn.ReadVInt32();
 
                     accum += (int)((uint)code >> 1); // shift off low bit
                     if ((code & 1) != 0) // if low bit is set
@@ -841,7 +841,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        freq = freqIn.ReadVInt(); // else read freq
+                        freq = freqIn.ReadVInt32(); // else read freq
                     }
                     posPendingCount += freq;
 
@@ -937,7 +937,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                 }
 
-                position += proxIn.ReadVInt();
+                position += proxIn.ReadVInt32();
 
                 posPendingCount--;
 
@@ -1068,7 +1068,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     ord++;
 
                     // Decode next doc/freq pair
-                    int code = freqIn.ReadVInt();
+                    int code = freqIn.ReadVInt32();
 
                     accum += (int)((uint)code >> 1); // shift off low bit
                     if ((code & 1) != 0) // if low bit is set
@@ -1077,7 +1077,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     }
                     else
                     {
-                        freq = freqIn.ReadVInt(); // else read freq
+                        freq = freqIn.ReadVInt32(); // else read freq
                     }
                     posPendingCount += freq;
 
@@ -1175,14 +1175,14 @@ namespace Lucene.Net.Codecs.Lucene40
                 // scan over any docs that were iterated without their positions
                 while (posPendingCount > freq)
                 {
-                    int code = proxIn.ReadVInt();
+                    int code = proxIn.ReadVInt32();
 
                     if (storePayloads)
                     {
                         if ((code & 1) != 0)
                         {
                             // new payload length
-                            payloadLength = proxIn.ReadVInt();
+                            payloadLength = proxIn.ReadVInt32();
                             Debug.Assert(payloadLength >= 0);
                         }
                         Debug.Assert(payloadLength != -1);
@@ -1190,10 +1190,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
                     if (storeOffsets)
                     {
-                        if ((proxIn.ReadVInt() & 1) != 0)
+                        if ((proxIn.ReadVInt32() & 1) != 0)
                         {
                             // new offset length
-                            offsetLength = proxIn.ReadVInt();
+                            offsetLength = proxIn.ReadVInt32();
                         }
                     }
 
@@ -1216,13 +1216,13 @@ namespace Lucene.Net.Codecs.Lucene40
                     proxIn.Seek(proxIn.FilePointer + payloadLength);
                 }
 
-                int code_ = proxIn.ReadVInt();
+                int code_ = proxIn.ReadVInt32();
                 if (storePayloads)
                 {
                     if ((code_ & 1) != 0)
                     {
                         // new payload length
-                        payloadLength = proxIn.ReadVInt();
+                        payloadLength = proxIn.ReadVInt32();
                         Debug.Assert(payloadLength >= 0);
                     }
                     Debug.Assert(payloadLength != -1);
@@ -1234,11 +1234,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 if (storeOffsets)
                 {
-                    int offsetCode = proxIn.ReadVInt();
+                    int offsetCode = proxIn.ReadVInt32();
                     if ((offsetCode & 1) != 0)
                     {
                         // new offset length
-                        offsetLength = proxIn.ReadVInt();
+                        offsetLength = proxIn.ReadVInt32();
                     }
                     startOffset += (int)((uint)offsetCode >> 1);
                 }

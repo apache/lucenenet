@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 // Read per-field details
                 SeekDir(_input, _dirOffset);
 
-                int numFields = _input.ReadVInt();
+                int numFields = _input.ReadVInt32();
                 if (numFields < 0)
                 {
                     throw new CorruptIndexException(string.Format("Invalid number of fields: {0}, Resource: {1}",
@@ -125,19 +125,19 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 for (var i = 0; i < numFields; i++)
                 {
-                    var field = _input.ReadVInt();
-                    var numTerms = _input.ReadVLong();
+                    var field = _input.ReadVInt32();
+                    var numTerms = _input.ReadVInt64();
 
                     Debug.Assert(numTerms >= 0);
 
-                    var termsStartPointer = _input.ReadVLong();
+                    var termsStartPointer = _input.ReadVInt64();
                     var fieldInfo = fieldInfos.FieldInfo(field);
                     var sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY
                         ? -1
-                        : _input.ReadVLong();
-                    var sumDocFreq = _input.ReadVLong();
-                    var docCount = _input.ReadVInt();
-                    var longsSize = _version >= BlockTermsWriter.VERSION_META_ARRAY ? _input.ReadVInt() : 0;
+                        : _input.ReadVInt64();
+                    var sumDocFreq = _input.ReadVInt64();
+                    var docCount = _input.ReadVInt32();
+                    var longsSize = _version >= BlockTermsWriter.VERSION_META_ARRAY ? _input.ReadVInt32() : 0;
 
                     if (docCount < 0 || docCount > info.DocCount)
                     {
@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 BlockTermsWriter.VERSION_CURRENT);
 
             if (version < BlockTermsWriter.VERSION_APPEND_ONLY)
-                _dirOffset = input.ReadLong();
+                _dirOffset = input.ReadInt64();
 
             return version;
         }
@@ -207,12 +207,12 @@ namespace Lucene.Net.Codecs.BlockTerms
             if (_version >= BlockTermsWriter.VERSION_CHECKSUM)
             {
                 input.Seek(input.Length - CodecUtil.FooterLength() - 8);
-                dirOffset = input.ReadLong();
+                dirOffset = input.ReadInt64();
             }
             else if (_version >= BlockTermsWriter.VERSION_APPEND_ONLY)
             {
                 input.Seek(input.Length - 8);
-                dirOffset = input.ReadLong();
+                dirOffset = input.ReadInt64();
             }
             input.Seek(dirOffset);
         }
@@ -531,9 +531,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                                     {
                                         _state.TermBlockOrd++;
                                         _state.Ord++;
-                                        _termSuffixesReader.SkipBytes(_termSuffixesReader.ReadVInt());
+                                        _termSuffixesReader.SkipBytes(_termSuffixesReader.ReadVInt32());
                                     }
-                                    var suffix = _termSuffixesReader.ReadVInt();
+                                    var suffix = _termSuffixesReader.ReadVInt32();
                                     _term.Length = _termBlockPrefix + suffix;
                                     if (_term.Bytes.Length < _term.Length)
                                     {
@@ -558,7 +558,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 // block and return NOT_FOUND:
                                 Debug.Assert(_state.TermBlockOrd == 0);
 
-                                var suffix = _termSuffixesReader.ReadVInt();
+                                var suffix = _termSuffixesReader.ReadVInt32();
                                 _term.Length = _termBlockPrefix + suffix;
                                 if (_term.Bytes.Length < _term.Length)
                                 {
@@ -581,7 +581,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                             _state.TermBlockOrd++;
                             _state.Ord++;
 
-                            var suffix = _termSuffixesReader.ReadVInt();
+                            var suffix = _termSuffixesReader.ReadVInt32();
 
                             // We know the prefix matches, so just compare the new suffix:
 
@@ -710,7 +710,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                     // TODO: cutover to something better for these ints!  simple64?
 
-                    var suffix = _termSuffixesReader.ReadVInt();
+                    var suffix = _termSuffixesReader.ReadVInt32();
                     //System.out.println("  suffix=" + suffix);
 
                     _term.Length = _termBlockPrefix + suffix;
@@ -852,15 +852,15 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // bsearch w/in the block...
 
                     _state.BlockFilePointer = _input.FilePointer;
-                    _blockTermCount = _input.ReadVInt();
+                    _blockTermCount = _input.ReadVInt32();
 
                     if (_blockTermCount == 0)
                         return false;
 
-                    _termBlockPrefix = _input.ReadVInt();
+                    _termBlockPrefix = _input.ReadVInt32();
 
                     // term suffixes:
-                    int len = _input.ReadVInt();
+                    int len = _input.ReadVInt32();
                     if (_termSuffixes.Length < len)
                     {
                         _termSuffixes = new byte[ArrayUtil.Oversize(len, 1)];
@@ -871,7 +871,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _termSuffixesReader.Reset(_termSuffixes, 0, len);
 
                     // docFreq, totalTermFreq
-                    len = _input.ReadVInt();
+                    len = _input.ReadVInt32();
                     if (_docFreqBytes.Length < len)
                         _docFreqBytes = new byte[ArrayUtil.Oversize(len, 1)];
 
@@ -879,7 +879,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _freqReader.Reset(_docFreqBytes, 0, len);
 
                     // metadata
-                    len = _input.ReadVInt();
+                    len = _input.ReadVInt32();
                     if (_bytes == null)
                     {
                         _bytes = new byte[ArrayUtil.Oversize(len, 1)];
@@ -929,15 +929,15 @@ namespace Lucene.Net.Codecs.BlockTerms
                             // TODO: if docFreq were bulk decoded we could
                             // just skipN here:
 
-                            _state.DocFreq = _freqReader.ReadVInt();
+                            _state.DocFreq = _freqReader.ReadVInt32();
                             if (_fieldReader._fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
-                                _state.TotalTermFreq = _state.DocFreq + _freqReader.ReadVLong();
+                                _state.TotalTermFreq = _state.DocFreq + _freqReader.ReadVInt64();
                             }
                             // metadata
                             for (int i = 0; i < _longs.Length; i++)
                             {
-                                _longs[i] = _bytesReader.ReadVLong();
+                                _longs[i] = _bytesReader.ReadVInt64();
                             }
                             _blockTermsReader._postingsReader.DecodeTerm(_longs, _bytesReader, _fieldReader._fieldInfo, _state, absolute);
                             _metaDataUpto++;

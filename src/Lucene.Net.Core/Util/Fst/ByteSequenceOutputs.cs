@@ -134,13 +134,13 @@ namespace Lucene.Net.Util.Fst
         public override void Write(BytesRef prefix, DataOutput @out)
         {
             Debug.Assert(prefix != null);
-            @out.WriteVInt(prefix.Length);
+            @out.WriteVInt32(prefix.Length);
             @out.WriteBytes(prefix.Bytes, prefix.Offset, prefix.Length);
         }
 
         public override BytesRef Read(DataInput @in)
         {
-            int len = @in.ReadVInt();
+            int len = @in.ReadVInt32();
             if (len == 0)
             {
                 return NO_OUTPUT;

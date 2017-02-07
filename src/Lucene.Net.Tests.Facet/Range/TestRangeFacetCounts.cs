@@ -274,7 +274,7 @@ namespace Lucene.Net.Facet.Range
 
             // Third search, drill down on "less than or equal to 10":
             ddq = new DrillDownQuery(config);
-            ddq.Add("field", NumericRangeQuery.NewLongRange("field", 0L, 10L, true, true));
+            ddq.Add("field", NumericRangeQuery.NewInt64Range("field", 0L, 10L, true, true));
             dsr = ds.Search(null, ddq, 10);
 
             Assert.AreEqual(11, dsr.Hits.TotalHits);
@@ -522,11 +522,11 @@ namespace Lucene.Net.Facet.Range
                 {
                     if (Random().NextBoolean())
                     {
-                        fastMatchFilter = NumericRangeFilter.NewLongRange("field", minValue, maxValue, true, true);
+                        fastMatchFilter = NumericRangeFilter.NewInt64Range("field", minValue, maxValue, true, true);
                     }
                     else
                     {
-                        fastMatchFilter = NumericRangeFilter.NewLongRange("field", minAcceptedValue, maxAcceptedValue, true, true);
+                        fastMatchFilter = NumericRangeFilter.NewInt64Range("field", minAcceptedValue, maxAcceptedValue, true, true);
                     }
                 }
                 else
@@ -555,11 +555,11 @@ namespace Lucene.Net.Facet.Range
                     {
                         if (Random().NextBoolean())
                         {
-                            ddq.Add("field", NumericRangeFilter.NewLongRange("field", range.Min, range.Max, range.MinInclusive, range.MaxInclusive));
+                            ddq.Add("field", NumericRangeFilter.NewInt64Range("field", range.Min, range.Max, range.MinInclusive, range.MaxInclusive));
                         }
                         else
                         {
-                            ddq.Add("field", NumericRangeQuery.NewLongRange("field", range.Min, range.Max, range.MinInclusive, range.MaxInclusive));
+                            ddq.Add("field", NumericRangeQuery.NewInt64Range("field", range.Min, range.Max, range.MinInclusive, range.MaxInclusive));
                         }
                     }
                     else
@@ -727,11 +727,11 @@ namespace Lucene.Net.Facet.Range
                 {
                     if (Random().NextBoolean())
                     {
-                        fastMatchFilter = NumericRangeFilter.NewFloatRange("field", minValue, maxValue, true, true);
+                        fastMatchFilter = NumericRangeFilter.NewSingleRange("field", minValue, maxValue, true, true);
                     }
                     else
                     {
-                        fastMatchFilter = NumericRangeFilter.NewFloatRange("field", minAcceptedValue, maxAcceptedValue, true, true);
+                        fastMatchFilter = NumericRangeFilter.NewSingleRange("field", minAcceptedValue, maxAcceptedValue, true, true);
                     }
                 }
                 else
@@ -760,11 +760,11 @@ namespace Lucene.Net.Facet.Range
                     {
                         if (Random().NextBoolean())
                         {
-                            ddq.Add("field", NumericRangeFilter.NewFloatRange("field", (float)range.Min, (float)range.Max, range.MinInclusive, range.MaxInclusive));
+                            ddq.Add("field", NumericRangeFilter.NewSingleRange("field", (float)range.Min, (float)range.Max, range.MinInclusive, range.MaxInclusive));
                         }
                         else
                         {
-                            ddq.Add("field", NumericRangeQuery.NewFloatRange("field", (float)range.Min, (float)range.Max, range.MinInclusive, range.MaxInclusive));
+                            ddq.Add("field", NumericRangeQuery.NewSingleRange("field", (float)range.Min, (float)range.Max, range.MinInclusive, range.MaxInclusive));
                         }
                     }
                     else

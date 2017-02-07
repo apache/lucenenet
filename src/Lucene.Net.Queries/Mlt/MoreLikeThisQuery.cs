@@ -145,7 +145,7 @@ namespace Lucene.Net.Queries.Mlt
             result = prime * result + minDocFreq;
             result = prime * result + minTermFrequency;
             result = prime * result + Arrays.GetHashCode(moreLikeFields);
-            result = prime * result + Number.FloatToIntBits(percentTermsToMatch);
+            result = prime * result + Number.SingleToInt32Bits(percentTermsToMatch);
             result = prime * result + ((stopWords == null) ? 0 : stopWords.GetValueHashCode());
             return result;
         }
@@ -214,7 +214,7 @@ namespace Lucene.Net.Queries.Mlt
             {
                 return false;
             }
-            if (Number.FloatToIntBits(percentTermsToMatch) != Number.FloatToIntBits(other.percentTermsToMatch))
+            if (Number.SingleToInt32Bits(percentTermsToMatch) != Number.SingleToInt32Bits(other.percentTermsToMatch))
             {
                 return false;
             }

@@ -66,7 +66,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             bool success = false;
             try
             {
-                int format = input.ReadVInt();
+                int format = input.ReadVInt32();
 
                 if (format > FORMAT_MINIMUM)
                 {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     throw new IndexFormatTooNewException(input, format, FORMAT_MINIMUM, FORMAT_CURRENT);
                 }
 
-                int size = input.ReadVInt(); //read in the size
+                int size = input.ReadVInt32(); //read in the size
                 FieldInfo[] infos = new FieldInfo[size];
 
                 for (int i = 0; i < size; i++)

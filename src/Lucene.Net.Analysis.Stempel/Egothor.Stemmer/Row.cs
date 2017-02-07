@@ -77,14 +77,14 @@ namespace Egothor.Stemmer
         /// <exception cref="IOException">if an I/O error occurs</exception>
         public Row(IDataInput @is)
         {
-            for (int i = @is.ReadInt(); i > 0; i--)
+            for (int i = @is.ReadInt32(); i > 0; i--)
             {
                 char ch = @is.ReadChar();
                 Cell c = new Cell();
-                c.cmd = @is.ReadInt();
-                c.cnt = @is.ReadInt();
-                c.@ref = @is.ReadInt();
-                c.skip = @is.ReadInt();
+                c.cmd = @is.ReadInt32();
+                c.cnt = @is.ReadInt32();
+                c.@ref = @is.ReadInt32();
+                c.skip = @is.ReadInt32();
                 cells[ch] = c;
             }
         }
@@ -247,7 +247,7 @@ namespace Egothor.Stemmer
         /// <exception cref="IOException">if an I/O error occurs</exception>
         public virtual void Store(IDataOutput os)
         {
-            os.WriteInt(cells.Count);
+            os.WriteInt32(cells.Count);
             IEnumerator<char> i = cells.Keys.GetEnumerator();
             for (; i.MoveNext();)
             {
@@ -259,10 +259,10 @@ namespace Egothor.Stemmer
                 }
 
                 os.WriteChar(c);
-                os.WriteInt(e.cmd);
-                os.WriteInt(e.cnt);
-                os.WriteInt(e.@ref);
-                os.WriteInt(e.skip);
+                os.WriteInt32(e.cmd);
+                os.WriteInt32(e.cnt);
+                os.WriteInt32(e.@ref);
+                os.WriteInt32(e.skip);
             }
         }
 

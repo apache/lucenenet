@@ -43,10 +43,10 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         public static void ReadLegacyInfos(SegmentInfos infos, Directory directory, IndexInput input, int format)
         {
-            infos.Version = input.ReadLong(); // read version
-            infos.Counter = input.ReadInt(); // read counter
+            infos.Version = input.ReadInt64(); // read version
+            infos.Counter = input.ReadInt32(); // read counter
             Lucene3xSegmentInfoReader reader = new Lucene3xSegmentInfoReader();
-            for (int i = input.ReadInt(); i > 0; i--) // read segmentInfos
+            for (int i = input.ReadInt32(); i > 0; i--) // read segmentInfos
             {
                 SegmentCommitInfo siPerCommit = reader.ReadLegacySegmentInfo(directory, format, input);
                 SegmentInfo si = siPerCommit.Info;
@@ -161,10 +161,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             string name = input.ReadString();
 
-            int docCount = input.ReadInt();
-            long delGen = input.ReadLong();
+            int docCount = input.ReadInt32();
+            long delGen = input.ReadInt64();
 
-            int docStoreOffset = input.ReadInt();
+            int docStoreOffset = input.ReadInt32();
             IDictionary<string, string> attributes = new Dictionary<string, string>();
 
             // parse the docstore stuff and shove it into attributes
@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             //System.out.println("version=" + version + " name=" + name + " docCount=" + docCount + " delGen=" + delGen + " dso=" + docStoreOffset + " dss=" + docStoreSegment + " dssCFs=" + docStoreIsCompoundFile + " b=" + b + " format=" + format);
 
             Debug.Assert(1 == b, "expected 1 but was: " + b + " format: " + format);
-            int numNormGen = input.ReadInt();
+            int numNormGen = input.ReadInt32();
             IDictionary<int, long> normGen;
             if (numNormGen == SegmentInfo.NO)
             {
@@ -201,12 +201,12 @@ namespace Lucene.Net.Codecs.Lucene3x
                 normGen = new Dictionary<int, long>();
                 for (int j = 0; j < numNormGen; j++)
                 {
-                    normGen[j] = input.ReadLong();
+                    normGen[j] = input.ReadInt64();
                 }
             }
             bool isCompoundFile = input.ReadByte() == SegmentInfo.YES;
 
-            int delCount = input.ReadInt();
+            int delCount = input.ReadInt32();
             Debug.Assert(delCount <= docCount);
 
             bool hasProx = input.ReadByte() == 1;
@@ -296,7 +296,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             CodecUtil.CheckHeader(input, Lucene3xSegmentInfoFormat.UPGRADED_SI_CODEC_NAME, Lucene3xSegmentInfoFormat.UPGRADED_SI_VERSION_START, Lucene3xSegmentInfoFormat.UPGRADED_SI_VERSION_CURRENT);
             string version = input.ReadString();
 
-            int docCount = input.ReadInt();
+            int docCount = input.ReadInt32();
 
             IDictionary<string, string> attributes = input.ReadStringStringMap();
 

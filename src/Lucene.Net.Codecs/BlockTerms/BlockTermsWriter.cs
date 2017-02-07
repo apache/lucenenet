@@ -131,22 +131,22 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 var dirStart = m_output.FilePointer;
 
-                m_output.WriteVInt(_fields.Count);
+                m_output.WriteVInt32(_fields.Count);
 
                 foreach (var field in _fields)
                 {
-                    m_output.WriteVInt(field.FieldInfo.Number);
-                    m_output.WriteVLong(field.NumTerms);
-                    m_output.WriteVLong(field.TermsStartPointer);
+                    m_output.WriteVInt32(field.FieldInfo.Number);
+                    m_output.WriteVInt64(field.NumTerms);
+                    m_output.WriteVInt64(field.TermsStartPointer);
                     if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        m_output.WriteVLong(field.SumTotalTermFreq);
+                        m_output.WriteVInt64(field.SumTotalTermFreq);
                     }
-                    m_output.WriteVLong(field.SumDocFreq);
-                    m_output.WriteVInt(field.DocCount);
+                    m_output.WriteVInt64(field.SumDocFreq);
+                    m_output.WriteVInt32(field.DocCount);
                     if (VERSION_CURRENT >= VERSION_META_ARRAY)
                     {
-                        m_output.WriteVInt(field.LongsSize);
+                        m_output.WriteVInt32(field.LongsSize);
                     }
 
                 }
@@ -162,7 +162,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private void WriteTrailer(long dirStart)
         {
-            m_output.WriteLong(dirStart);
+            m_output.WriteInt64(dirStart);
         }
 
         private class TermEntry
@@ -276,7 +276,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
 
                 // EOF marker:
-                outerInstance.m_output.WriteVInt(0);
+                outerInstance.m_output.WriteVInt32(0);
 
                 _sumTotalTermFreq = sumTotalTermFreq;
                 _sumDocFreq = sumDocFreq;
@@ -334,8 +334,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                             _pendingTerms[termCount].Term));
                 }
 
-                outerInstance.m_output.WriteVInt(_pendingCount);
-                outerInstance.m_output.WriteVInt(commonPrefix);
+                outerInstance.m_output.WriteVInt32(_pendingCount);
+                outerInstance.m_output.WriteVInt32(commonPrefix);
 
                 // 2nd pass: write suffixes, as separate byte[] blob
                 for (var termCount = 0; termCount < _pendingCount; termCount++)
@@ -343,10 +343,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                     var suffix = _pendingTerms[termCount].Term.Length - commonPrefix;
                     // TODO: cutover to better intblock codec, instead
                     // of interleaving here:
-                    _bytesWriter.WriteVInt(suffix);
+                    _bytesWriter.WriteVInt32(suffix);
                     _bytesWriter.WriteBytes(_pendingTerms[termCount].Term.Bytes, commonPrefix, suffix);
                 }
-                outerInstance.m_output.WriteVInt((int)_bytesWriter.FilePointer);
+                outerInstance.m_output.WriteVInt32((int)_bytesWriter.FilePointer);
                 _bytesWriter.WriteTo(outerInstance.m_output);
                 _bytesWriter.Reset();
 
@@ -359,13 +359,13 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                     Debug.Assert(state != null);
 
-                    _bytesWriter.WriteVInt(state.DocFreq);
+                    _bytesWriter.WriteVInt32(state.DocFreq);
                     if (_fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        _bytesWriter.WriteVLong(state.TotalTermFreq - state.DocFreq);
+                        _bytesWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                     }
                 }
-                outerInstance.m_output.WriteVInt((int)_bytesWriter.FilePointer);
+                outerInstance.m_output.WriteVInt32((int)_bytesWriter.FilePointer);
                 _bytesWriter.WriteTo(outerInstance.m_output);
                 _bytesWriter.Reset();
 
@@ -378,13 +378,13 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _postingsWriter.EncodeTerm(longs, _bufferWriter, _fieldInfo, state, absolute);
                     for (int i = 0; i < _longsSize; i++)
                     {
-                        _bytesWriter.WriteVLong(longs[i]);
+                        _bytesWriter.WriteVInt64(longs[i]);
                     }
                     _bufferWriter.WriteTo(_bytesWriter);
                     _bufferWriter.Reset();
                     absolute = false;
                 }
-                outerInstance.m_output.WriteVInt((int)_bytesWriter.FilePointer);
+                outerInstance.m_output.WriteVInt32((int)_bytesWriter.FilePointer);
                 _bytesWriter.WriteTo(outerInstance.m_output);
                 _bytesWriter.Reset();
 

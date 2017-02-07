@@ -118,8 +118,8 @@ namespace Lucene.Net.Codecs.Lucene40
         // in the correct fields format.
         public override void StartDocument(int numStoredFields)
         {
-            indexStream.WriteLong(fieldsStream.FilePointer);
-            fieldsStream.WriteVInt(numStoredFields);
+            indexStream.WriteInt64(fieldsStream.FilePointer);
+            fieldsStream.WriteVInt32(numStoredFields);
         }
 
         protected override void Dispose(bool disposing)
@@ -151,7 +151,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void WriteField(FieldInfo info, IIndexableField field)
         {
-            fieldsStream.WriteVInt(info.Number);
+            fieldsStream.WriteVInt32(info.Number);
             int bits = 0;
             BytesRef bytes;
             string @string;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             if (bytes != null)
             {
-                fieldsStream.WriteVInt(bytes.Length);
+                fieldsStream.WriteVInt32(bytes.Length);
                 fieldsStream.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
             }
             else if (@string != null)
@@ -219,19 +219,19 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (number is sbyte || number is short || number is int)
                 {
-                    fieldsStream.WriteInt((int)number);
+                    fieldsStream.WriteInt32((int)number);
                 }
                 else if (number is long)
                 {
-                    fieldsStream.WriteLong((long)number);
+                    fieldsStream.WriteInt64((long)number);
                 }
                 else if (number is float)
                 {
-                    fieldsStream.WriteInt(Number.FloatToIntBits((float)number));
+                    fieldsStream.WriteInt32(Number.SingleToInt32Bits((float)number));
                 }
                 else if (number is double)
                 {
-                    fieldsStream.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
+                    fieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits((double)number));
                 }
                 else
                 {
@@ -253,7 +253,7 @@ namespace Lucene.Net.Codecs.Lucene40
             long start = position;
             for (int i = 0; i < numDocs; i++)
             {
-                indexStream.WriteLong(position);
+                indexStream.WriteInt64(position);
                 position += lengths[i];
             }
             fieldsStream.CopyBytes(stream, position - start);

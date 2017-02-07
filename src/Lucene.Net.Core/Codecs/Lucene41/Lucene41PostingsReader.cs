@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             // Make sure we are talking to the matching postings writer
             CodecUtil.CheckHeader(termsIn, Lucene41PostingsWriter.TERMS_CODEC, Lucene41PostingsWriter.VERSION_START, Lucene41PostingsWriter.VERSION_CURRENT);
-            int indexBlockSize = termsIn.ReadVInt();
+            int indexBlockSize = termsIn.ReadVInt32();
             if (indexBlockSize != Lucene41PostingsFormat.BLOCK_SIZE)
             {
                 throw new InvalidOperationException("index-time BLOCK_SIZE (" + indexBlockSize + ") != read-time BLOCK_SIZE (" + Lucene41PostingsFormat.BLOCK_SIZE + ")");
@@ -94,14 +94,16 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// Read values that have been written using variable-length encoding instead of bit-packing.
+        /// <para/>
+        /// NOTE: This was readVIntBlock() in Lucene
         /// </summary>
-        internal static void ReadVIntBlock(IndexInput docIn, int[] docBuffer, int[] freqBuffer, int num, bool indexHasFreq)
+        internal static void ReadVInt32Block(IndexInput docIn, int[] docBuffer, int[] freqBuffer, int num, bool indexHasFreq)
         {
             if (indexHasFreq)
             {
                 for (int i = 0; i < num; i++)
                 {
-                    int code = docIn.ReadVInt();
+                    int code = docIn.ReadVInt32();
                     docBuffer[i] = (int)((uint)code >> 1);
                     if ((code & 1) != 0)
                     {
@@ -109,7 +111,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     }
                     else
                     {
-                        freqBuffer[i] = docIn.ReadVInt();
+                        freqBuffer[i] = docIn.ReadVInt32();
                     }
                 }
             }
@@ -117,7 +119,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 for (int i = 0; i < num; i++)
                 {
-                    docBuffer[i] = docIn.ReadVInt();
+                    docBuffer[i] = docIn.ReadVInt32();
                 }
             }
         }
@@ -162,7 +164,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             if (termState2.DocFreq == 1)
             {
-                termState2.singletonDocID = @in.ReadVInt();
+                termState2.singletonDocID = @in.ReadVInt32();
             }
             else
             {
@@ -172,7 +174,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 if (termState2.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    termState2.lastPosBlockOffset = @in.ReadVLong();
+                    termState2.lastPosBlockOffset = @in.ReadVInt64();
                 }
                 else
                 {
@@ -181,7 +183,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             if (termState2.DocFreq > Lucene41PostingsFormat.BLOCK_SIZE)
             {
-                termState2.skipOffset = @in.ReadVLong();
+                termState2.skipOffset = @in.ReadVInt64();
             }
             else
             {
@@ -196,19 +198,19 @@ namespace Lucene.Net.Codecs.Lucene41
             bool fieldHasPayloads = fieldInfo.HasPayloads;
             if (termState.DocFreq == 1)
             {
-                termState.singletonDocID = @in.ReadVInt();
+                termState.singletonDocID = @in.ReadVInt32();
             }
             else
             {
                 termState.singletonDocID = -1;
-                termState.docStartFP += @in.ReadVLong();
+                termState.docStartFP += @in.ReadVInt64();
             }
             if (fieldHasPositions)
             {
-                termState.posStartFP += @in.ReadVLong();
+                termState.posStartFP += @in.ReadVInt64();
                 if (termState.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    termState.lastPosBlockOffset = @in.ReadVLong();
+                    termState.lastPosBlockOffset = @in.ReadVInt64();
                 }
                 else
                 {
@@ -216,12 +218,12 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
                 if ((fieldHasPayloads || fieldHasOffsets) && termState.TotalTermFreq >= Lucene41PostingsFormat.BLOCK_SIZE)
                 {
-                    termState.payStartFP += @in.ReadVLong();
+                    termState.payStartFP += @in.ReadVInt64();
                 }
             }
             if (termState.DocFreq > Lucene41PostingsFormat.BLOCK_SIZE)
             {
-                termState.skipOffset = @in.ReadVLong();
+                termState.skipOffset = @in.ReadVInt64();
             }
             else
             {
@@ -436,7 +438,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    fill last vInt block from fp=" + docIn.getFilePointer());
                     // }
-                    ReadVIntBlock(docIn, docDeltaBuffer, freqBuffer, left, indexHasFreq);
+                    ReadVInt32Block(docIn, docDeltaBuffer, freqBuffer, left, indexHasFreq);
                 }
                 docBufferUpto = 0;
             }
@@ -758,7 +760,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    fill last vInt doc block from fp=" + docIn.getFilePointer());
                     // }
-                    ReadVIntBlock(docIn, docDeltaBuffer, freqBuffer, left, true);
+                    ReadVInt32Block(docIn, docDeltaBuffer, freqBuffer, left, true);
                 }
                 docBufferUpto = 0;
             }
@@ -777,12 +779,12 @@ namespace Lucene.Net.Codecs.Lucene41
                     int payloadLength = 0;
                     for (int i = 0; i < count; i++)
                     {
-                        int code = posIn.ReadVInt();
+                        int code = posIn.ReadVInt32();
                         if (indexHasPayloads)
                         {
                             if ((code & 1) != 0)
                             {
-                                payloadLength = posIn.ReadVInt();
+                                payloadLength = posIn.ReadVInt32();
                             }
                             posDeltaBuffer[i] = (int)((uint)code >> 1);
                             if (payloadLength != 0)
@@ -796,10 +798,10 @@ namespace Lucene.Net.Codecs.Lucene41
                         }
                         if (indexHasOffsets)
                         {
-                            if ((posIn.ReadVInt() & 1) != 0)
+                            if ((posIn.ReadVInt32() & 1) != 0)
                             {
                                 // offset length changed
-                                posIn.ReadVInt();
+                                posIn.ReadVInt32();
                             }
                         }
                     }
@@ -1272,7 +1274,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     // if (DEBUG) {
                     //   System.out.println("    fill last vInt doc block from fp=" + docIn.getFilePointer());
                     // }
-                    ReadVIntBlock(docIn, docDeltaBuffer, freqBuffer, left, true);
+                    ReadVInt32Block(docIn, docDeltaBuffer, freqBuffer, left, true);
                 }
                 docBufferUpto = 0;
             }
@@ -1293,12 +1295,12 @@ namespace Lucene.Net.Codecs.Lucene41
                     payloadByteUpto = 0;
                     for (int i = 0; i < count; i++)
                     {
-                        int code = posIn.ReadVInt();
+                        int code = posIn.ReadVInt32();
                         if (indexHasPayloads)
                         {
                             if ((code & 1) != 0)
                             {
-                                payloadLength = posIn.ReadVInt();
+                                payloadLength = posIn.ReadVInt32();
                             }
                             // if (DEBUG) {
                             //   System.out.println("        i=" + i + " payloadLen=" + payloadLength);
@@ -1326,10 +1328,10 @@ namespace Lucene.Net.Codecs.Lucene41
                             // if (DEBUG) {
                             //   System.out.println("        i=" + i + " read offsets from posIn.fp=" + posIn.getFilePointer());
                             // }
-                            int deltaCode = posIn.ReadVInt();
+                            int deltaCode = posIn.ReadVInt32();
                             if ((deltaCode & 1) != 0)
                             {
-                                offsetLength = posIn.ReadVInt();
+                                offsetLength = posIn.ReadVInt32();
                             }
                             offsetStartDeltaBuffer[i] = (int)((uint)deltaCode >> 1);
                             offsetLengthBuffer[i] = offsetLength;
@@ -1355,7 +1357,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         if (needsPayloads)
                         {
                             outerInstance.forUtil.ReadBlock(payIn, encoded, payloadLengthBuffer);
-                            int numBytes = payIn.ReadVInt();
+                            int numBytes = payIn.ReadVInt32();
                             // if (DEBUG) {
                             //   System.out.println("        " + numBytes + " payload bytes @ pay.fp=" + payIn.getFilePointer());
                             // }
@@ -1369,7 +1371,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         {
                             // this works, because when writing a vint block we always force the first length to be written
                             outerInstance.forUtil.SkipBlock(payIn); // skip over lengths
-                            int numBytes = payIn.ReadVInt(); // read length of payloadBytes
+                            int numBytes = payIn.ReadVInt32(); // read length of payloadBytes
                             payIn.Seek(payIn.FilePointer + numBytes); // skip over payloadBytes
                         }
                         payloadByteUpto = 0;
@@ -1590,7 +1592,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             outerInstance.forUtil.SkipBlock(payIn);
 
                             // Skip payloadBytes block:
-                            int numBytes = payIn.ReadVInt();
+                            int numBytes = payIn.ReadVInt32();
                             payIn.Seek(payIn.FilePointer + numBytes);
                         }
 

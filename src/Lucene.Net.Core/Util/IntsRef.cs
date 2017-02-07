@@ -37,10 +37,13 @@ namespace Lucene.Net.Util
         public static readonly int[] EMPTY_INTS = new int[0];
 
         /// <summary>
-        /// The contents of the IntsRef. Should never be {@code null}. </summary>
+        /// The contents of the IntsRef. Should never be {@code null}. 
+        /// <para/>
+        /// NOTE: This was ints (field) in Lucene
+        /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
-        public int[] Ints
+        public int[] Int32s
         {
             get { return ints; }
             set
@@ -121,12 +124,15 @@ namespace Lucene.Net.Util
             }
             if (other is IntsRef)
             {
-                return this.IntsEquals((IntsRef)other);
+                return this.Int32sEquals((IntsRef)other);
             }
             return false;
         }
 
-        public bool IntsEquals(IntsRef other)
+        /// <summary>
+        /// NOTE: This was intsEquals() in Lucene
+        /// </summary>
+        public bool Int32sEquals(IntsRef other)
         {
             if (Length == other.Length)
             {
@@ -182,7 +188,10 @@ namespace Lucene.Net.Util
             return this.Length - other.Length;
         }
 
-        public void CopyInts(IntsRef other)
+        /// <summary>
+        /// NOTE: This was copyInts() in Lucene
+        /// </summary>
+        public void CopyInt32s(IntsRef other)
         {
             if (ints.Length - Offset < other.Length)
             {
@@ -235,7 +244,7 @@ namespace Lucene.Net.Util
         public static IntsRef DeepCopyOf(IntsRef other)
         {
             IntsRef clone = new IntsRef();
-            clone.CopyInts(other);
+            clone.CopyInt32s(other);
             return clone;
         }
 
@@ -255,7 +264,7 @@ namespace Lucene.Net.Util
             }
             if (Length > ints.Length)
             {
-                throw new InvalidOperationException("length is out of bounds: " + Length + ",ints.length=" + Ints.Length);
+                throw new InvalidOperationException("length is out of bounds: " + Length + ",ints.length=" + Int32s.Length);
             }
             if (Offset < 0)
             {
@@ -263,15 +272,15 @@ namespace Lucene.Net.Util
             }
             if (Offset > ints.Length)
             {
-                throw new InvalidOperationException("offset out of bounds: " + Offset + ",ints.length=" + Ints.Length);
+                throw new InvalidOperationException("offset out of bounds: " + Offset + ",ints.length=" + Int32s.Length);
             }
             if (Offset + Length < 0)
             {
                 throw new InvalidOperationException("offset+length is negative: offset=" + Offset + ",length=" + Length);
             }
-            if (Offset + Length > Ints.Length)
+            if (Offset + Length > Int32s.Length)
             {
-                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",ints.length=" + Ints.Length);
+                throw new InvalidOperationException("offset+length out of bounds: offset=" + Offset + ",length=" + Length + ",ints.length=" + Int32s.Length);
             }
             return true;
         }

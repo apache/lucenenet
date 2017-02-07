@@ -104,12 +104,12 @@ namespace Lucene.Net.Util.Fst
         public override void Write(long? output, DataOutput @out)
         {
             Debug.Assert(Valid(output));
-            @out.WriteVLong(output.Value);
+            @out.WriteVInt64(output.Value);
         }
 
         public override long? Read(DataInput @in)
         {
-            long v = @in.ReadVLong();
+            long v = @in.ReadVInt64();
             if (v == 0)
             {
                 return NO_OUTPUT;

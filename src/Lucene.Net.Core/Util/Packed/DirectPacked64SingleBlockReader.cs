@@ -45,7 +45,7 @@ namespace Lucene.Net.Util.Packed
             {
                 @in.Seek(startPointer + skip);
 
-                long block = @in.ReadLong();
+                long block = @in.ReadInt64();
                 int offsetInBlock = index % valuesPerBlock;
                 return ((long)((ulong)block >> (offsetInBlock * m_bitsPerValue))) & mask;
             }

@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.DiskDV
             BinaryEntry bytes)
         {
             data.Seek(bytes.AddressesOffset);
-            return new MonotonicBlockPackedReader((IndexInput)data.Clone(), bytes.PackedIntsVersion, bytes.BlockSize, bytes.Count,
+            return new MonotonicBlockPackedReader((IndexInput)data.Clone(), bytes.PackedInt32sVersion, bytes.BlockSize, bytes.Count,
                 true);
         }
 
@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.DiskDV
             NumericEntry entry)
         {
             data.Seek(entry.Offset);
-            return new MonotonicBlockPackedReader((IndexInput)data.Clone(), entry.PackedIntsVersion, entry.BlockSize, entry.Count,
+            return new MonotonicBlockPackedReader((IndexInput)data.Clone(), entry.PackedInt32sVersion, entry.BlockSize, entry.Count,
                 true);
         }
     }

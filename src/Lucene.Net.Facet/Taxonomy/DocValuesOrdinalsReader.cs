@@ -97,9 +97,9 @@
             // grow the buffer up front, even if by a large number of values (buf.length)
             // that saves the need to check inside the loop for every decoded value if
             // the buffer needs to grow.
-            if (ordinals.Ints.Length < buf.Length)
+            if (ordinals.Int32s.Length < buf.Length)
             {
-                ordinals.Ints = ArrayUtil.Grow(ordinals.Ints, buf.Length);
+                ordinals.Int32s = ArrayUtil.Grow(ordinals.Int32s, buf.Length);
             }
 
             ordinals.Offset = 0;
@@ -116,9 +116,9 @@
                 byte b = buf.Bytes[offset++];
                 if ((sbyte)b >= 0)
                 {
-                    ordinals.Ints[ordinals.Length] = ((value << 7) | b) + prev;
+                    ordinals.Int32s[ordinals.Length] = ((value << 7) | b) + prev;
                     value = 0;
-                    prev = ordinals.Ints[ordinals.Length];
+                    prev = ordinals.Int32s[ordinals.Length];
                     ordinals.Length++;
                 }
                 else

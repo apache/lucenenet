@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.SimpleText
         private int ParseIntAt(BytesRef bytes, int offset, CharsRef scratch) // LUCENENET TODO: Rename ParseInt32At ?
         {
             UnicodeUtil.UTF8toUTF16(bytes.Bytes, bytes.Offset + offset, bytes.Length - offset, scratch);
-            return ArrayUtil.ParseInt(scratch.Chars, 0, scratch.Length);
+            return ArrayUtil.ParseInt32(scratch.Chars, 0, scratch.Length);
         }
 
         public override void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount,

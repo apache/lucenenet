@@ -286,9 +286,9 @@ namespace Lucene.Net.Index
                 IndexOutput genOutput = dir.CreateOutput(IndexFileNames.SEGMENTS_GEN, IOContext.READ_ONCE);
                 try
                 {
-                    genOutput.WriteInt(FORMAT_SEGMENTS_GEN_CURRENT);
-                    genOutput.WriteLong(generation);
-                    genOutput.WriteLong(generation);
+                    genOutput.WriteInt32(FORMAT_SEGMENTS_GEN_CURRENT);
+                    genOutput.WriteInt64(generation);
+                    genOutput.WriteInt64(generation);
                     CodecUtil.WriteFooter(genOutput);
                 }
                 finally
@@ -353,15 +353,15 @@ namespace Lucene.Net.Index
             var input = directory.OpenChecksumInput(segmentFileName, IOContext.READ);
             try
             {
-                int format = input.ReadInt();
+                int format = input.ReadInt32();
                 int actualFormat;
                 if (format == CodecUtil.CODEC_MAGIC)
                 {
                     // 4.0+
                     actualFormat = CodecUtil.CheckHeaderNoMagic(input, "segments", VERSION_40, VERSION_48);
-                    Version = input.ReadLong();
-                    Counter = input.ReadInt();
-                    int numSegments = input.ReadInt();
+                    Version = input.ReadInt64();
+                    Counter = input.ReadInt32();
+                    int numSegments = input.ReadInt32();
                     if (numSegments < 0)
                     {
                         throw new CorruptIndexException("invalid segment count: " + numSegments + " (resource: " + input + ")");
@@ -373,8 +373,8 @@ namespace Lucene.Net.Index
                         //System.out.println("SIS.read seg=" + seg + " codec=" + codec);
                         var info = codec.SegmentInfoFormat.SegmentInfoReader.Read(directory, segName, IOContext.READ);
                         info.Codec = codec;
-                        long delGen = input.ReadLong();
-                        int delCount = input.ReadInt();
+                        long delGen = input.ReadInt64();
+                        int delCount = input.ReadInt32();
                         if (delCount < 0 || delCount > info.DocCount)
                         {
                             throw new CorruptIndexException("invalid deletion count: " + delCount + " vs docCount=" + info.DocCount + " (resource: " + input + ")");
@@ -382,12 +382,12 @@ namespace Lucene.Net.Index
                         long fieldInfosGen = -1;
                         if (actualFormat >= VERSION_46)
                         {
-                            fieldInfosGen = input.ReadLong();
+                            fieldInfosGen = input.ReadInt64();
                         }
                         var siPerCommit = new SegmentCommitInfo(info, delCount, delGen, fieldInfosGen);
                         if (actualFormat >= VERSION_46)
                         {
-                            int numGensUpdatesFiles = input.ReadInt();
+                            int numGensUpdatesFiles = input.ReadInt32();
                             IDictionary<long, ISet<string>> genUpdatesFiles;
                             if (numGensUpdatesFiles == 0)
                             {
@@ -398,7 +398,7 @@ namespace Lucene.Net.Index
                                 genUpdatesFiles = new Dictionary<long, ISet<string>>(numGensUpdatesFiles);
                                 for (int i = 0; i < numGensUpdatesFiles; i++)
                                 {
-                                    genUpdatesFiles[input.ReadLong()] = input.ReadStringSet();
+                                    genUpdatesFiles[input.ReadInt64()] = input.ReadStringSet();
                                 }
                             }
                             siPerCommit.SetGenUpdatesFiles(genUpdatesFiles);
@@ -425,7 +425,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     long checksumNow = input.Checksum;
-                    long checksumThen = input.ReadLong();
+                    long checksumThen = input.ReadInt64();
                     if (checksumNow != checksumThen)
                     {
                         throw new CorruptIndexException("checksum mismatch in segments file (resource: " + input + ")");
@@ -511,27 +511,27 @@ namespace Lucene.Net.Index
             {
                 segnOutput = directory.CreateOutput(segmentsFileName, IOContext.DEFAULT);
                 CodecUtil.WriteHeader(segnOutput, "segments", VERSION_48);
-                segnOutput.WriteLong(Version);
-                segnOutput.WriteInt(Counter); // write counter
-                segnOutput.WriteInt(Count); // write infos
+                segnOutput.WriteInt64(Version);
+                segnOutput.WriteInt32(Counter); // write counter
+                segnOutput.WriteInt32(Count); // write infos
                 foreach (SegmentCommitInfo siPerCommit in segments)
                 {
                     SegmentInfo si = siPerCommit.Info;
                     segnOutput.WriteString(si.Name);
                     segnOutput.WriteString(si.Codec.Name);
-                    segnOutput.WriteLong(siPerCommit.DelGen);
+                    segnOutput.WriteInt64(siPerCommit.DelGen);
                     int delCount = siPerCommit.DelCount;
                     if (delCount < 0 || delCount > si.DocCount)
                     {
                         throw new InvalidOperationException("cannot write segment: invalid docCount segment=" + si.Name + " docCount=" + si.DocCount + " delCount=" + delCount);
                     }
-                    segnOutput.WriteInt(delCount);
-                    segnOutput.WriteLong(siPerCommit.FieldInfosGen);
+                    segnOutput.WriteInt32(delCount);
+                    segnOutput.WriteInt64(siPerCommit.FieldInfosGen);
                     IDictionary<long, ISet<string>> genUpdatesFiles = siPerCommit.UpdatesFiles;
-                    segnOutput.WriteInt(genUpdatesFiles.Count);
+                    segnOutput.WriteInt32(genUpdatesFiles.Count);
                     foreach (KeyValuePair<long, ISet<string>> e in genUpdatesFiles)
                     {
-                        segnOutput.WriteLong(e.Key);
+                        segnOutput.WriteInt64(e.Key);
                         segnOutput.WriteStringSet(e.Value);
                     }
                     Debug.Assert(si.Dir == directory);
@@ -659,7 +659,7 @@ namespace Lucene.Net.Index
                 CodecUtil.WriteHeader(output, Lucene3xSegmentInfoFormat.UPGRADED_SI_CODEC_NAME, Lucene3xSegmentInfoFormat.UPGRADED_SI_VERSION_CURRENT);
                 // Write the Lucene version that created this segment, since 3.1
                 output.WriteString(si.Version);
-                output.WriteInt(si.DocCount);
+                output.WriteInt32(si.DocCount);
 
                 output.WriteStringStringMap(si.Attributes);
 
@@ -915,11 +915,11 @@ namespace Lucene.Net.Index
                         {
                             try
                             {
-                                int version = genInput.ReadInt();
+                                int version = genInput.ReadInt32();
                                 if (version == FORMAT_SEGMENTS_GEN_47 || version == FORMAT_SEGMENTS_GEN_CHECKSUM)
                                 {
-                                    long gen0 = genInput.ReadLong();
-                                    long gen1 = genInput.ReadLong();
+                                    long gen0 = genInput.ReadInt64();
+                                    long gen1 = genInput.ReadInt64();
                                     if (infoStream != null)
                                     {
                                         Message("fallback check: " + gen0 + "; " + gen1);

@@ -287,11 +287,11 @@ namespace Lucene.Net.Search
         internal readonly bool minInclusive, maxInclusive;
 
         // used to handle float/double infinity correcty
-        internal static readonly long LONG_NEGATIVE_INFINITY = NumericUtils.DoubleToSortableLong(double.NegativeInfinity);
+        internal static readonly long LONG_NEGATIVE_INFINITY = NumericUtils.DoubleToSortableInt64(double.NegativeInfinity);
 
-        internal static readonly long LONG_POSITIVE_INFINITY = NumericUtils.DoubleToSortableLong(double.PositiveInfinity);
-        internal static readonly int INT_NEGATIVE_INFINITY = NumericUtils.FloatToSortableInt(float.NegativeInfinity);
-        internal static readonly int INT_POSITIVE_INFINITY = NumericUtils.FloatToSortableInt(float.PositiveInfinity);
+        internal static readonly long LONG_POSITIVE_INFINITY = NumericUtils.DoubleToSortableInt64(double.PositiveInfinity);
+        internal static readonly int INT_NEGATIVE_INFINITY = NumericUtils.SingleToSortableInt32(float.NegativeInfinity);
+        internal static readonly int INT_POSITIVE_INFINITY = NumericUtils.SingleToSortableInt32(float.PositiveInfinity);
 
         /// <summary>
         /// Subclass of FilteredTermsEnum for enumerating all terms that match the
@@ -330,7 +330,7 @@ namespace Lucene.Net.Search
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
-                                minBound = (this.outerInstance.min == null) ? LONG_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableLong(Convert.ToDouble(this.outerInstance.min.Value));
+                                minBound = (this.outerInstance.min == null) ? LONG_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
                             {
@@ -350,7 +350,7 @@ namespace Lucene.Net.Search
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
-                                maxBound = (this.outerInstance.max == null) ? LONG_POSITIVE_INFINITY : NumericUtils.DoubleToSortableLong(Convert.ToDouble(this.outerInstance.max));
+                                maxBound = (this.outerInstance.max == null) ? LONG_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
                             {
@@ -361,7 +361,7 @@ namespace Lucene.Net.Search
                                 maxBound--;
                             }
 
-                            NumericUtils.SplitLongRange(new LongRangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
+                            NumericUtils.SplitInt64Range(new LongRangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
                             break;
                         }
 
@@ -377,7 +377,7 @@ namespace Lucene.Net.Search
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.FLOAT);
-                                minBound = (this.outerInstance.min == null) ? INT_NEGATIVE_INFINITY : NumericUtils.FloatToSortableInt(Convert.ToSingle(this.outerInstance.min));
+                                minBound = (this.outerInstance.min == null) ? INT_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
                             {
@@ -397,7 +397,7 @@ namespace Lucene.Net.Search
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.FLOAT);
-                                maxBound = (this.outerInstance.max == null) ? INT_POSITIVE_INFINITY : NumericUtils.FloatToSortableInt(Convert.ToSingle(this.outerInstance.max));
+                                maxBound = (this.outerInstance.max == null) ? INT_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
                             {
@@ -408,7 +408,7 @@ namespace Lucene.Net.Search
                                 maxBound--;
                             }
 
-                            NumericUtils.SplitIntRange(new IntRangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
+                            NumericUtils.SplitInt32Range(new IntRangeBuilderAnonymousInnerClassHelper(this), this.outerInstance.precisionStep, minBound, maxBound);
                             break;
                         }
 
@@ -514,9 +514,10 @@ namespace Lucene.Net.Search
         /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newLongRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewInt64Range
-        public static NumericRangeQuery<long> NewLongRange(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<long> NewInt64Range(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<long>(field, precisionStep, NumericType.LONG, min, max, minInclusive, maxInclusive);
         }
@@ -527,9 +528,10 @@ namespace Lucene.Net.Search
         /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newLongRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewInt64Range
-        public static NumericRangeQuery<long> NewLongRange(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<long> NewInt64Range(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<long>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.LONG, min, max, minInclusive, maxInclusive);
         }
@@ -540,9 +542,10 @@ namespace Lucene.Net.Search
         /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newIntRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewInt32Range
-        public static NumericRangeQuery<int> NewIntRange(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<int> NewInt32Range(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<int>(field, precisionStep, NumericType.INT, min, max, minInclusive, maxInclusive);
         }
@@ -553,9 +556,10 @@ namespace Lucene.Net.Search
         /// You can have half-open ranges (which are in fact &lt;/&lt;= or &gt;/&gt;= queries)
         /// by setting the min or max value to <code>null</code>. By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newIntRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewInt32Range
-        public static NumericRangeQuery<int> NewIntRange(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<int> NewInt32Range(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<int>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.INT, min, max, minInclusive, maxInclusive);
         }
@@ -596,9 +600,10 @@ namespace Lucene.Net.Search
         /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
         /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newFloatRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewSingleRange
-        public static NumericRangeQuery<float> NewFloatRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<float> NewSingleRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<float>(field, precisionStep, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
         }
@@ -611,9 +616,10 @@ namespace Lucene.Net.Search
         /// <seealso cref="Float#NaN"/> will never match a half-open range, to hit {@code NaN} use a query
         /// with {@code min == max == Float.NaN}.  By setting inclusive to false, it will
         /// match all documents excluding the bounds, with inclusive on, the boundaries are hits, too.
+        /// <para/>
+        /// NOTE: This was newFloatRange() in Lucene
         /// </summary>
-         // LUCENENET TODO: Rename NewSingleRange
-        public static NumericRangeQuery<float> NewFloatRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
+        public static NumericRangeQuery<float> NewSingleRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
             return new NumericRangeQuery<float>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
         }

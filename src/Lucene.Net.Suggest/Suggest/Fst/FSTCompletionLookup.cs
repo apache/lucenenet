@@ -169,7 +169,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     }
 
                     output.Reset(buffer);
-                    output.WriteInt(EncodeWeight(iterator.Weight));
+                    output.WriteInt32(EncodeWeight(iterator.Weight));
                     output.WriteBytes(spare.Bytes, spare.Offset, spare.Length);
                     writer.Write(buffer, 0, output.Position);
                 }
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 while (reader.Read(tmp1))
                 {
                     input.Reset(tmp1.Bytes);
-                    int currentScore = input.ReadInt();
+                    int currentScore = input.ReadInt32();
 
                     int bucket;
                     if (line > 0 && currentScore == previousScore)
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             lock (this)
             {
-                output.WriteVLong(count);
+                output.WriteVInt64(count);
                 if (this.normalCompletion == null || normalCompletion.FST == null)
                 {
                     return false;
@@ -304,7 +304,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             lock (this)
             {
-                count = input.ReadVLong();
+                count = input.ReadVInt64();
                 this.higherWeightsCompletion = new FSTCompletion(new FST<object>(input, NoOutputs.Singleton));
                 this.normalCompletion = new FSTCompletion(higherWeightsCompletion.FST, false, exactMatchFirst);
                 return true;

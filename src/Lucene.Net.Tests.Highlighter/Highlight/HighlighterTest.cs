@@ -502,7 +502,7 @@ namespace Lucene.Net.Search.Highlight
         public void TestNumericRangeQuery()
         {
             // doesn't currently highlight, but make sure it doesn't cause exception either
-            query = NumericRangeQuery.NewIntRange(NUMERIC_FIELD_NAME, 2, 6, true, true);
+            query = NumericRangeQuery.NewInt32Range(NUMERIC_FIELD_NAME, 2, 6, true, true);
             searcher = NewSearcher(reader);
             hits = searcher.Search(query, 100);
             int maxNumFragmentsRequired = 2;

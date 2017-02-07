@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             isIndex = isi;
             maxSkipLevels = 1; // use single-level skip lists for formats > -3
 
-            int firstInt = input.ReadInt();
+            int firstInt = input.ReadInt32();
             if (firstInt >= 0)
             {
                 // original-format file, without explicit format version number
@@ -97,11 +97,11 @@ namespace Lucene.Net.Codecs.Lucene3x
                     throw new IndexFormatTooNewException(input, format, FORMAT_MINIMUM, FORMAT_CURRENT);
                 }
 
-                size = input.ReadLong(); // read the size
+                size = input.ReadInt64(); // read the size
 
-                indexInterval = input.ReadInt();
-                skipInterval = input.ReadInt();
-                maxSkipLevels = input.ReadInt();
+                indexInterval = input.ReadInt32();
+                skipInterval = input.ReadInt32();
+                maxSkipLevels = input.ReadInt32();
                 Debug.Assert(indexInterval > 0, "indexInterval=" + indexInterval + " is negative; must be > 0");
                 Debug.Assert(skipInterval > 0, "skipInterval=" + skipInterval + " is negative; must be > 0");
             }
@@ -158,18 +158,18 @@ namespace Lucene.Net.Codecs.Lucene3x
             termBuffer.Read(input, fieldInfos);
             newSuffixStart = termBuffer.newSuffixStart;
 
-            termInfo.DocFreq = input.ReadVInt(); // read doc freq
-            termInfo.FreqPointer += input.ReadVLong(); // read freq pointer
-            termInfo.ProxPointer += input.ReadVLong(); // read prox pointer
+            termInfo.DocFreq = input.ReadVInt32(); // read doc freq
+            termInfo.FreqPointer += input.ReadVInt64(); // read freq pointer
+            termInfo.ProxPointer += input.ReadVInt64(); // read prox pointer
 
             if (termInfo.DocFreq >= skipInterval)
             {
-                termInfo.SkipOffset = input.ReadVInt();
+                termInfo.SkipOffset = input.ReadVInt32();
             }
 
             if (isIndex)
             {
-                indexPointer += input.ReadVLong(); // read index pointer
+                indexPointer += input.ReadVInt64(); // read index pointer
             }
 
             //System.out.println("  ste ret term=" + term());

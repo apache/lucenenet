@@ -384,7 +384,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 IntsRef output = new IntsRef(entries.Count);
                 foreach (char? c in entries)
                 {
-                    output.Ints[output.Length++] = c.HasValue ? c.Value : 0;
+                    output.Int32s[output.Length++] = c.HasValue ? c.Value : 0;
                 }
                 builder.Add(scratch, output);
             }
@@ -521,12 +521,12 @@ namespace Lucene.Net.Analysis.Hunspell
                     throw new System.NotSupportedException("Too many unique append flags, please report this to dev@lucene.apache.org");
                 }
 
-                affixWriter.WriteShort((short)flag);
-                affixWriter.WriteShort((short)stripOrd);
+                affixWriter.WriteInt16((short)flag);
+                affixWriter.WriteInt16((short)stripOrd);
                 // encode crossProduct into patternIndex
                 int patternOrd = (int)patternIndex << 1 | (crossProduct ? 1 : 0);
-                affixWriter.WriteShort((short)patternOrd);
-                affixWriter.WriteShort((short)appendFlagsOrd);
+                affixWriter.WriteInt16((short)patternOrd);
+                affixWriter.WriteInt16((short)appendFlagsOrd);
 
                 if (needsInputCleaning)
                 {
@@ -875,7 +875,7 @@ namespace Lucene.Net.Analysis.Hunspell
                             currentOrds = new IntsRef(); // must be this way
                         }
                         currentOrds.Grow(currentOrds.Length + 1);
-                        currentOrds.Ints[currentOrds.Length++] = ord;
+                        currentOrds.Int32s[currentOrds.Length++] = ord;
                     }
                 }
 

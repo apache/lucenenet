@@ -119,20 +119,20 @@ namespace Lucene.Net.Codecs.Lucene3x
                 // to read the current payload length
                 // because it differs from the length of the
                 // previous payload
-                delta = skipStream.ReadVInt();
+                delta = skipStream.ReadVInt32();
                 if ((delta & 1) != 0)
                 {
-                    payloadLength[level] = skipStream.ReadVInt();
+                    payloadLength[level] = skipStream.ReadVInt32();
                 }
                 delta = (int)((uint)delta >> 1);
             }
             else
             {
-                delta = skipStream.ReadVInt();
+                delta = skipStream.ReadVInt32();
             }
 
-            freqPointer[level] += skipStream.ReadVInt();
-            proxPointer[level] += skipStream.ReadVInt();
+            freqPointer[level] += skipStream.ReadVInt32();
+            proxPointer[level] += skipStream.ReadVInt32();
 
             return delta;
         }

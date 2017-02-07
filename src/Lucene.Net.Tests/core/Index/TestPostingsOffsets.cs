@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
                 DocsEnum docs = null;
                 DocsAndPositionsEnum docsAndPositions = null;
                 DocsAndPositionsEnum docsAndPositionsAndOffsets = null;
-                FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInts(sub, "id", false);
+                FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInt32s(sub, "id", false);
                 foreach (string term in terms)
                 {
                     //System.out.println("  term=" + term);

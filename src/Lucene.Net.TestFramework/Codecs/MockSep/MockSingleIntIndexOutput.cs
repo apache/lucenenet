@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.MockSep
 
         public override void Write(int v)
         {
-            @out.WriteVInt(v);
+            @out.WriteVInt32(v);
         }
 
         public override AbstractIndex GetIndex()
@@ -84,11 +84,11 @@ namespace Lucene.Net.Codecs.MockSep
             {
                 if (absolute)
                 {
-                    indexOut.WriteVLong(fp);
+                    indexOut.WriteVInt64(fp);
                 }
                 else
                 {
-                    indexOut.WriteVLong(fp - lastFP);
+                    indexOut.WriteVInt64(fp - lastFP);
                 }
                 lastFP = fp;
             }

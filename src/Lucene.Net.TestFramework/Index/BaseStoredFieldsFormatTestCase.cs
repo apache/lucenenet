@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
             foreach (AtomicReaderContext ctx in r.Leaves)
             {
                 AtomicReader sub = (AtomicReader)ctx.Reader;
-                FieldCache.Ints ids = FieldCache.DEFAULT.GetInts(sub, "id", false);
+                FieldCache.Ints ids = FieldCache.DEFAULT.GetInt32s(sub, "id", false);
                 for (int docID = 0; docID < sub.NumDocs; docID++)
                 {
                     Document doc = sub.Document(docID);
@@ -632,7 +632,7 @@ namespace Lucene.Net.Index
             {
                 int min = Random().Next(data.Length);
                 int max = min + Random().Next(20);
-                iw.DeleteDocuments(NumericRangeQuery.NewIntRange("id", min, max, true, false));
+                iw.DeleteDocuments(NumericRangeQuery.NewInt32Range("id", min, max, true, false));
             }
 
             iw.ForceMerge(2); // force merges with deletions

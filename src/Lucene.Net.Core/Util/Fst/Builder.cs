@@ -314,7 +314,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         // this node doesn't make it -- deref it
                         node.Clear();
-                        parent.DeleteLast(lastInput.Ints[lastInput.Offset + idx - 1], node);
+                        parent.DeleteLast(lastInput.Int32s[lastInput.Offset + idx - 1], node);
                     }
                     else
                     {
@@ -336,13 +336,13 @@ namespace Lucene.Net.Util.Fst
                             // this node makes it and we now compile it.  first,
                             // compile any targets that were previously
                             // undecided:
-                            parent.ReplaceLast(lastInput.Ints[lastInput.Offset + idx - 1], CompileNode(node, 1 + lastInput.Length - idx), nextFinalOutput, isFinal);
+                            parent.ReplaceLast(lastInput.Int32s[lastInput.Offset + idx - 1], CompileNode(node, 1 + lastInput.Length - idx), nextFinalOutput, isFinal);
                         }
                         else
                         {
                             // replaceLast just to install
                             // nextFinalOutput/isFinal onto the arc
-                            parent.ReplaceLast(lastInput.Ints[lastInput.Offset + idx - 1], node, nextFinalOutput, isFinal);
+                            parent.ReplaceLast(lastInput.Int32s[lastInput.Offset + idx - 1], node, nextFinalOutput, isFinal);
                             // this node will stay in play for now, since we are
                             // undecided on whether to prune it.  later, it
                             // will be either compiled or pruned, so we must
@@ -425,7 +425,7 @@ namespace Lucene.Net.Util.Fst
             {
                 frontier[pos1].InputCount++;
                 //System.out.println("  incr " + pos1 + " ct=" + frontier[pos1].inputCount + " n=" + frontier[pos1]);
-                if (pos1 >= pos1Stop || lastInput.Ints[pos1] != input.Ints[pos2])
+                if (pos1 >= pos1Stop || lastInput.Int32s[pos1] != input.Int32s[pos2])
                 {
                     break;
                 }
@@ -452,7 +452,7 @@ namespace Lucene.Net.Util.Fst
             // init tail states for current input
             for (int idx = prefixLenPlus1; idx <= input.Length; idx++)
             {
-                frontier[idx - 1].AddArc(input.Ints[input.Offset + idx - 1], frontier[idx]);
+                frontier[idx - 1].AddArc(input.Int32s[input.Offset + idx - 1], frontier[idx]);
                 frontier[idx].InputCount++;
             }
 
@@ -470,7 +470,7 @@ namespace Lucene.Net.Util.Fst
                 UnCompiledNode<T> node = frontier[idx];
                 UnCompiledNode<T> parentNode = frontier[idx - 1];
 
-                T lastOutput = parentNode.GetLastOutput(input.Ints[input.Offset + idx - 1]);
+                T lastOutput = parentNode.GetLastOutput(input.Int32s[input.Offset + idx - 1]);
                 Debug.Assert(ValidOutput(lastOutput));
 
                 T commonOutputPrefix;
@@ -482,7 +482,7 @@ namespace Lucene.Net.Util.Fst
                     Debug.Assert(ValidOutput(commonOutputPrefix));
                     wordSuffix = fst.Outputs.Subtract(lastOutput, commonOutputPrefix);
                     Debug.Assert(ValidOutput(wordSuffix));
-                    parentNode.SetLastOutput(input.Ints[input.Offset + idx - 1], commonOutputPrefix);
+                    parentNode.SetLastOutput(input.Int32s[input.Offset + idx - 1], commonOutputPrefix);
                     node.PrependOutput(wordSuffix);
                 }
                 else
@@ -504,11 +504,11 @@ namespace Lucene.Net.Util.Fst
             {
                 // this new arc is private to this new input; set its
                 // arc output to the leftover output:
-                frontier[prefixLenPlus1 - 1].SetLastOutput(input.Ints[input.Offset + prefixLenPlus1 - 1], output);
+                frontier[prefixLenPlus1 - 1].SetLastOutput(input.Int32s[input.Offset + prefixLenPlus1 - 1], output);
             }
 
             // save last input
-            lastInput.CopyInts(input);
+            lastInput.CopyInt32s(input);
 
             //System.out.println("  count[0]=" + frontier[0].inputCount);
         }

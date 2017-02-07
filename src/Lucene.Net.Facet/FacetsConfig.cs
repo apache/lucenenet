@@ -425,11 +425,11 @@ namespace Lucene.Net.Facet
 
                     CheckTaxoWriter(taxoWriter);
                     int ordinal = taxoWriter.AddCategory(cp);
-                    if (ordinals.Length == ordinals.Ints.Length)
+                    if (ordinals.Length == ordinals.Int32s.Length)
                     {
                         ordinals.Grow(ordinals.Length + 1);
                     }
-                    ordinals.Ints[ordinals.Length++] = ordinal;
+                    ordinals.Int32s[ordinals.Length++] = ordinal;
                     //System.out.println("ords[" + (ordinals.length-1) + "]=" + ordinal);
                     //System.out.println("  add cp=" + cp);
 
@@ -440,11 +440,11 @@ namespace Lucene.Net.Facet
                         int parent = taxoWriter.GetParent(ordinal);
                         while (parent > 0)
                         {
-                            if (ordinals.Ints.Length == ordinals.Length)
+                            if (ordinals.Int32s.Length == ordinals.Length)
                             {
                                 ordinals.Grow(ordinals.Length + 1);
                             }
-                            ordinals.Ints[ordinals.Length++] = parent;
+                            ordinals.Int32s[ordinals.Length++] = parent;
                             parent = taxoWriter.GetParent(parent);
                         }
 
@@ -538,13 +538,13 @@ namespace Lucene.Net.Facet
         /// </summary>
         protected virtual BytesRef DedupAndEncode(IntsRef ordinals)
         {
-            Array.Sort(ordinals.Ints, ordinals.Offset, ordinals.Length);
+            Array.Sort(ordinals.Int32s, ordinals.Offset, ordinals.Length);
             byte[] bytes = new byte[5 * ordinals.Length];
             int lastOrd = -1;
             int upto = 0;
             for (int i = 0; i < ordinals.Length; i++)
             {
-                int ord = ordinals.Ints[ordinals.Offset + i];
+                int ord = ordinals.Int32s[ordinals.Offset + i];
                 // ord could be == lastOrd, so we must dedup:
                 if (ord > lastOrd)
                 {

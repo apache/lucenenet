@@ -169,8 +169,8 @@ namespace Lucene.Net.Search
             string field = "field" + precisionStep;
             int count = 3000;
             long lower = (Distance * 3 / 2) + StartOffset, upper = lower + count * Distance + (Distance / 3);
-            NumericRangeQuery<long> q = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, true, true);
-            NumericRangeFilter<long> f = NumericRangeFilter.NewLongRange(field, precisionStep, lower, upper, true, true);
+            NumericRangeQuery<long> q = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, true, true);
+            NumericRangeFilter<long> f = NumericRangeFilter.NewInt64Range(field, precisionStep, lower, upper, true, true);
             for (sbyte i = 0; i < 3; i++)
             {
                 TopDocs topDocs;
@@ -235,18 +235,18 @@ namespace Lucene.Net.Search
         public virtual void TestInverseRange()
         {
             AtomicReaderContext context = (AtomicReaderContext)SlowCompositeReaderWrapper.Wrap(Searcher.IndexReader).Context;
-            NumericRangeFilter<long> f = NumericRangeFilter.NewLongRange("field8", 8, 1000L, -1000L, true, true);
+            NumericRangeFilter<long> f = NumericRangeFilter.NewInt64Range("field8", 8, 1000L, -1000L, true, true);
             Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A inverse range should return the null instance");
-            f = NumericRangeFilter.NewLongRange("field8", 8, long.MaxValue, null, false, false);
+            f = NumericRangeFilter.NewInt64Range("field8", 8, long.MaxValue, null, false, false);
             Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A exclusive range starting with Long.MAX_VALUE should return the null instance");
-            f = NumericRangeFilter.NewLongRange("field8", 8, null, long.MinValue, false, false);
+            f = NumericRangeFilter.NewInt64Range("field8", 8, null, long.MinValue, false, false);
             Assert.IsNull(f.GetDocIdSet(context, (context.AtomicReader).LiveDocs), "A exclusive range ending with Long.MIN_VALUE should return the null instance");
         }
 
         [Test]
         public virtual void TestOneMatchQuery()
         {
-            NumericRangeQuery<long> q = NumericRangeQuery.NewLongRange("ascfield8", 8, 1000L, 1000L, true, true);
+            NumericRangeQuery<long> q = NumericRangeQuery.NewInt64Range("ascfield8", 8, 1000L, 1000L, true, true);
             TopDocs topDocs = Searcher.Search(q, NoDocs);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsNotNull(sd);
@@ -258,7 +258,7 @@ namespace Lucene.Net.Search
             string field = "field" + precisionStep;
             int count = 3000;
             long upper = (count - 1) * Distance + (Distance / 3) + StartOffset;
-            NumericRangeQuery<long> q = NumericRangeQuery.NewLongRange(field, precisionStep, null, upper, true, true);
+            NumericRangeQuery<long> q = NumericRangeQuery.NewInt64Range(field, precisionStep, null, upper, true, true);
             TopDocs topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsNotNull(sd);
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
             doc = Searcher.Doc(sd[sd.Length - 1].Doc);
             Assert.AreEqual((count - 1) * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "Last doc");
 
-            q = NumericRangeQuery.NewLongRange(field, precisionStep, null, upper, false, true);
+            q = NumericRangeQuery.NewInt64Range(field, precisionStep, null, upper, false, true);
             topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
             sd = topDocs.ScoreDocs;
             Assert.IsNotNull(sd);
@@ -308,7 +308,7 @@ namespace Lucene.Net.Search
             string field = "field" + precisionStep;
             int count = 3000;
             long lower = (count - 1) * Distance + (Distance / 3) + StartOffset;
-            NumericRangeQuery<long> q = NumericRangeQuery.NewLongRange(field, precisionStep, lower, null, true, true);
+            NumericRangeQuery<long> q = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, null, true, true);
             TopDocs topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
             ScoreDoc[] sd = topDocs.ScoreDocs;
             Assert.IsNotNull(sd);
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
             doc = Searcher.Doc(sd[sd.Length - 1].Doc);
             Assert.AreEqual((NoDocs - 1) * Distance + StartOffset, (long)doc.GetField(field).GetNumericValue(), "Last doc");
 
-            q = NumericRangeQuery.NewLongRange(field, precisionStep, lower, null, true, false);
+            q = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, null, true, false);
             topDocs = Searcher.Search(q, null, NoDocs, Sort.INDEXORDER);
             sd = topDocs.ScoreDocs;
             Assert.IsNotNull(sd);
@@ -385,19 +385,19 @@ namespace Lucene.Net.Search
             IndexReader r = DirectoryReader.Open(dir);
             IndexSearcher s = NewSearcher(r);
 
-            Query q = NumericRangeQuery.NewLongRange("long", null, null, true, true);
+            Query q = NumericRangeQuery.NewInt64Range("long", null, null, true, true);
             TopDocs topDocs = s.Search(q, 10);
             Assert.AreEqual(3, topDocs.ScoreDocs.Length, "Score doc count");
 
-            q = NumericRangeQuery.NewLongRange("long", null, null, false, false);
+            q = NumericRangeQuery.NewInt64Range("long", null, null, false, false);
             topDocs = s.Search(q, 10);
             Assert.AreEqual(3, topDocs.ScoreDocs.Length, "Score doc count");
 
-            q = NumericRangeQuery.NewLongRange("long", long.MinValue, long.MaxValue, true, true);
+            q = NumericRangeQuery.NewInt64Range("long", long.MinValue, long.MaxValue, true, true);
             topDocs = s.Search(q, 10);
             Assert.AreEqual(3, topDocs.ScoreDocs.Length, "Score doc count");
 
-            q = NumericRangeQuery.NewLongRange("long", long.MinValue, long.MaxValue, false, false);
+            q = NumericRangeQuery.NewInt64Range("long", long.MinValue, long.MaxValue, false, false);
             topDocs = s.Search(q, 10);
             Assert.AreEqual(1, topDocs.ScoreDocs.Length, "Score doc count");
 
@@ -441,11 +441,11 @@ namespace Lucene.Net.Search
                     upper = a;
                 }
                 BytesRef lowerBytes = new BytesRef(NumericUtils.BUF_SIZE_LONG), upperBytes = new BytesRef(NumericUtils.BUF_SIZE_LONG);
-                NumericUtils.LongToPrefixCodedBytes(lower, 0, lowerBytes);
-                NumericUtils.LongToPrefixCodedBytes(upper, 0, upperBytes);
+                NumericUtils.Int64ToPrefixCodedBytes(lower, 0, lowerBytes);
+                NumericUtils.Int64ToPrefixCodedBytes(upper, 0, upperBytes);
 
                 // test inclusive range
-                NumericRangeQuery<long> tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, true, true);
+                NumericRangeQuery<long> tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, true, true);
                 TermRangeQuery cq = new TermRangeQuery(field, lowerBytes, upperBytes, true, true);
                 TopDocs tTopDocs = Searcher.Search(tq, 1);
                 TopDocs cTopDocs = Searcher.Search(cq, 1);
@@ -454,7 +454,7 @@ namespace Lucene.Net.Search
                 totalTermCountC += termCountC = CountTerms(cq);
                 CheckTermCounts(precisionStep, termCountT, termCountC);
                 // test exclusive range
-                tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, false, false);
+                tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, false, false);
                 cq = new TermRangeQuery(field, lowerBytes, upperBytes, false, false);
                 tTopDocs = Searcher.Search(tq, 1);
                 cTopDocs = Searcher.Search(cq, 1);
@@ -463,7 +463,7 @@ namespace Lucene.Net.Search
                 totalTermCountC += termCountC = CountTerms(cq);
                 CheckTermCounts(precisionStep, termCountT, termCountC);
                 // test left exclusive range
-                tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, false, true);
+                tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, false, true);
                 cq = new TermRangeQuery(field, lowerBytes, upperBytes, false, true);
                 tTopDocs = Searcher.Search(tq, 1);
                 cTopDocs = Searcher.Search(cq, 1);
@@ -472,7 +472,7 @@ namespace Lucene.Net.Search
                 totalTermCountC += termCountC = CountTerms(cq);
                 CheckTermCounts(precisionStep, termCountT, termCountC);
                 // test right exclusive range
-                tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, true, false);
+                tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, true, false);
                 cq = new TermRangeQuery(field, lowerBytes, upperBytes, true, false);
                 tTopDocs = Searcher.Search(tq, 1);
                 cTopDocs = Searcher.Search(cq, 1);
@@ -498,13 +498,13 @@ namespace Lucene.Net.Search
             long lower = (Distance * 3 / 2) + StartOffset, upper = lower + count * Distance + (Distance / 3);
             // test empty enum
             Debug.Assert(lower < upper);
-            Assert.IsTrue(0 < CountTerms(NumericRangeQuery.NewLongRange("field4", 4, lower, upper, true, true)));
-            Assert.AreEqual(0, CountTerms(NumericRangeQuery.NewLongRange("field4", 4, upper, lower, true, true)));
+            Assert.IsTrue(0 < CountTerms(NumericRangeQuery.NewInt64Range("field4", 4, lower, upper, true, true)));
+            Assert.AreEqual(0, CountTerms(NumericRangeQuery.NewInt64Range("field4", 4, upper, lower, true, true)));
             // test empty enum outside of bounds
             lower = Distance * NoDocs + StartOffset;
             upper = 2L * lower;
             Debug.Assert(lower < upper);
-            Assert.AreEqual(0, CountTerms(NumericRangeQuery.NewLongRange("field4", 4, lower, upper, true, true)));
+            Assert.AreEqual(0, CountTerms(NumericRangeQuery.NewInt64Range("field4", 4, lower, upper, true, true)));
         }
 
         private int CountTerms(MultiTermQuery q)
@@ -590,19 +590,19 @@ namespace Lucene.Net.Search
                     upper = a;
                 }
                 // test inclusive range
-                Query tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, true, true);
+                Query tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, true, true);
                 TopDocs tTopDocs = Searcher.Search(tq, 1);
                 Assert.AreEqual(upper - lower + 1, tTopDocs.TotalHits, "Returned count of range query must be equal to inclusive range length");
                 // test exclusive range
-                tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, false, false);
+                tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, false, false);
                 tTopDocs = Searcher.Search(tq, 1);
                 Assert.AreEqual(Math.Max(upper - lower - 1, 0), tTopDocs.TotalHits, "Returned count of range query must be equal to exclusive range length");
                 // test left exclusive range
-                tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, false, true);
+                tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, false, true);
                 tTopDocs = Searcher.Search(tq, 1);
                 Assert.AreEqual(upper - lower, tTopDocs.TotalHits, "Returned count of range query must be equal to half exclusive range length");
                 // test right exclusive range
-                tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, true, false);
+                tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, true, false);
                 tTopDocs = Searcher.Search(tq, 1);
                 Assert.AreEqual(upper - lower, tTopDocs.TotalHits, "Returned count of range query must be equal to half exclusive range length");
             }
@@ -639,11 +639,11 @@ namespace Lucene.Net.Search
             string field = "ascfield" + precisionStep;
             const long lower = -1000L, upper = +2000L;
 
-            Query tq = NumericRangeQuery.NewDoubleRange(field, precisionStep, NumericUtils.SortableLongToDouble(lower), NumericUtils.SortableLongToDouble(upper), true, true);
+            Query tq = NumericRangeQuery.NewDoubleRange(field, precisionStep, NumericUtils.SortableInt64ToDouble(lower), NumericUtils.SortableInt64ToDouble(upper), true, true);
             TopDocs tTopDocs = Searcher.Search(tq, 1);
             Assert.AreEqual(upper - lower + 1, tTopDocs.TotalHits, "Returned count of range query must be equal to inclusive range length");
 
-            Filter tf = NumericRangeFilter.NewDoubleRange(field, precisionStep, NumericUtils.SortableLongToDouble(lower), NumericUtils.SortableLongToDouble(upper), true, true);
+            Filter tf = NumericRangeFilter.NewDoubleRange(field, precisionStep, NumericUtils.SortableInt64ToDouble(lower), NumericUtils.SortableInt64ToDouble(upper), true, true);
             tTopDocs = Searcher.Search(new MatchAllDocsQuery(), tf, 1);
             Assert.AreEqual(upper - lower + 1, tTopDocs.TotalHits, "Returned count of range filter must be equal to inclusive range length");
         }
@@ -688,7 +688,7 @@ namespace Lucene.Net.Search
                     lower = upper;
                     upper = a;
                 }
-                Query tq = NumericRangeQuery.NewLongRange(field, precisionStep, lower, upper, true, true);
+                Query tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, true, true);
                 TopDocs topDocs = Searcher.Search(tq, null, NoDocs, new Sort(new SortField(field, SortFieldType.LONG, true)));
                 if (topDocs.TotalHits == 0)
                 {
@@ -733,19 +733,19 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestEqualsAndHash()
         {
-            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test1", 4, 10L, 20L, true, true));
-            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test2", 4, 10L, 20L, false, true));
-            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test3", 4, 10L, 20L, true, false));
-            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test4", 4, 10L, 20L, false, false));
-            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test5", 4, 10L, null, true, true));
-            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test6", 4, null, 20L, true, true));
-            QueryUtils.CheckHashEquals(NumericRangeQuery.NewLongRange("test7", 4, null, null, true, true));
-            QueryUtils.CheckEqual(NumericRangeQuery.NewLongRange("test8", 4, 10L, 20L, true, true), NumericRangeQuery.NewLongRange("test8", 4, 10L, 20L, true, true));
-            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test9", 4, 10L, 20L, true, true), NumericRangeQuery.NewLongRange("test9", 8, 10L, 20L, true, true));
-            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test10a", 4, 10L, 20L, true, true), NumericRangeQuery.NewLongRange("test10b", 4, 10L, 20L, true, true));
-            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test11", 4, 10L, 20L, true, true), NumericRangeQuery.NewLongRange("test11", 4, 20L, 10L, true, true));
-            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test12", 4, 10L, 20L, true, true), NumericRangeQuery.NewLongRange("test12", 4, 10L, 20L, false, true));
-            QueryUtils.CheckUnequal(NumericRangeQuery.NewLongRange("test13", 4, 10L, 20L, true, true), NumericRangeQuery.NewFloatRange("test13", 4, 10f, 20f, true, true));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewInt64Range("test1", 4, 10L, 20L, true, true));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewInt64Range("test2", 4, 10L, 20L, false, true));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewInt64Range("test3", 4, 10L, 20L, true, false));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewInt64Range("test4", 4, 10L, 20L, false, false));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewInt64Range("test5", 4, 10L, null, true, true));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewInt64Range("test6", 4, null, 20L, true, true));
+            QueryUtils.CheckHashEquals(NumericRangeQuery.NewInt64Range("test7", 4, null, null, true, true));
+            QueryUtils.CheckEqual(NumericRangeQuery.NewInt64Range("test8", 4, 10L, 20L, true, true), NumericRangeQuery.NewInt64Range("test8", 4, 10L, 20L, true, true));
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewInt64Range("test9", 4, 10L, 20L, true, true), NumericRangeQuery.NewInt64Range("test9", 8, 10L, 20L, true, true));
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewInt64Range("test10a", 4, 10L, 20L, true, true), NumericRangeQuery.NewInt64Range("test10b", 4, 10L, 20L, true, true));
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewInt64Range("test11", 4, 10L, 20L, true, true), NumericRangeQuery.NewInt64Range("test11", 4, 20L, 10L, true, true));
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewInt64Range("test12", 4, 10L, 20L, true, true), NumericRangeQuery.NewInt64Range("test12", 4, 10L, 20L, false, true));
+            QueryUtils.CheckUnequal(NumericRangeQuery.NewInt64Range("test13", 4, 10L, 20L, true, true), NumericRangeQuery.NewSingleRange("test13", 4, 10f, 20f, true, true));
             // difference to int range is tested in TestNumericRangeQuery32
         }
     }

@@ -57,13 +57,13 @@ namespace Lucene.Net.Codecs.Compressing
             PackedInts.Reader[] docBasesDeltas = new PackedInts.Reader[16];
             PackedInts.Reader[] startPointersDeltas = new PackedInts.Reader[16];
 
-            int packedIntsVersion = fieldsIndexIn.ReadVInt();
+            int packedIntsVersion = fieldsIndexIn.ReadVInt32();
 
             int blockCount = 0;
 
             for (; ; )
             {
-                int numChunks = fieldsIndexIn.ReadVInt();
+                int numChunks = fieldsIndexIn.ReadVInt32();
                 if (numChunks == 0)
                 {
                     break;
@@ -80,9 +80,9 @@ namespace Lucene.Net.Codecs.Compressing
                 }
 
                 // doc bases
-                docBases[blockCount] = fieldsIndexIn.ReadVInt();
-                avgChunkDocs[blockCount] = fieldsIndexIn.ReadVInt();
-                int bitsPerDocBase = fieldsIndexIn.ReadVInt();
+                docBases[blockCount] = fieldsIndexIn.ReadVInt32();
+                avgChunkDocs[blockCount] = fieldsIndexIn.ReadVInt32();
+                int bitsPerDocBase = fieldsIndexIn.ReadVInt32();
                 if (bitsPerDocBase > 32)
                 {
                     throw new CorruptIndexException("Corrupted bitsPerDocBase (resource=" + fieldsIndexIn + ")");
@@ -90,9 +90,9 @@ namespace Lucene.Net.Codecs.Compressing
                 docBasesDeltas[blockCount] = PackedInts.GetReaderNoHeader(fieldsIndexIn, PackedInts.Format.PACKED, packedIntsVersion, numChunks, bitsPerDocBase);
 
                 // start pointers
-                startPointers[blockCount] = fieldsIndexIn.ReadVLong();
-                avgChunkSizes[blockCount] = fieldsIndexIn.ReadVLong();
-                int bitsPerStartPointer = fieldsIndexIn.ReadVInt();
+                startPointers[blockCount] = fieldsIndexIn.ReadVInt64();
+                avgChunkSizes[blockCount] = fieldsIndexIn.ReadVInt64();
+                int bitsPerStartPointer = fieldsIndexIn.ReadVInt32();
                 if (bitsPerStartPointer > 64)
                 {
                     throw new CorruptIndexException("Corrupted bitsPerStartPointer (resource=" + fieldsIndexIn + ")");

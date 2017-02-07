@@ -531,7 +531,7 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(expectedRef, scratch);
 
                     Assert.AreEqual((double)id, BitConverter.Int64BitsToDouble(dvDouble.Get(i)), 0D);
-                    Assert.AreEqual((float)id, Number.IntBitsToFloat((int)dvFloat.Get(i)), 0F);
+                    Assert.AreEqual((float)id, Number.Int32BitsToSingle((int)dvFloat.Get(i)), 0F);
                     Assert.AreEqual(id, dvInt.Get(i));
                     Assert.AreEqual(id, dvLong.Get(i));
                     Assert.AreEqual(id, dvPacked.Get(i));
@@ -869,26 +869,26 @@ namespace Lucene.Net.Index
 
                 for (int id = 10; id < 15; id++)
                 {
-                    ScoreDoc[] hits = searcher.Search(NumericRangeQuery.NewIntRange("trieInt", 4, Convert.ToInt32(id), Convert.ToInt32(id), true, true), 100).ScoreDocs;
+                    ScoreDoc[] hits = searcher.Search(NumericRangeQuery.NewInt32Range("trieInt", 4, Convert.ToInt32(id), Convert.ToInt32(id), true, true), 100).ScoreDocs;
                     Assert.AreEqual(1, hits.Length, "wrong number of hits");
                     Document d = searcher.Doc(hits[0].Doc);
                     Assert.AreEqual(Convert.ToString(id), d.Get("id"));
 
-                    hits = searcher.Search(NumericRangeQuery.NewLongRange("trieLong", 4, Convert.ToInt64(id), Convert.ToInt64(id), true, true), 100).ScoreDocs;
+                    hits = searcher.Search(NumericRangeQuery.NewInt64Range("trieLong", 4, Convert.ToInt64(id), Convert.ToInt64(id), true, true), 100).ScoreDocs;
                     Assert.AreEqual(1, hits.Length, "wrong number of hits");
                     d = searcher.Doc(hits[0].Doc);
                     Assert.AreEqual(Convert.ToString(id), d.Get("id"));
                 }
 
                 // check that also lower-precision fields are ok
-                ScoreDoc[] hits_ = searcher.Search(NumericRangeQuery.NewIntRange("trieInt", 4, int.MinValue, int.MaxValue, false, false), 100).ScoreDocs;
+                ScoreDoc[] hits_ = searcher.Search(NumericRangeQuery.NewInt32Range("trieInt", 4, int.MinValue, int.MaxValue, false, false), 100).ScoreDocs;
                 Assert.AreEqual(34, hits_.Length, "wrong number of hits");
 
-                hits_ = searcher.Search(NumericRangeQuery.NewLongRange("trieLong", 4, long.MinValue, long.MaxValue, false, false), 100).ScoreDocs;
+                hits_ = searcher.Search(NumericRangeQuery.NewInt64Range("trieLong", 4, long.MinValue, long.MaxValue, false, false), 100).ScoreDocs;
                 Assert.AreEqual(34, hits_.Length, "wrong number of hits");
 
                 // check decoding into field cache
-                FieldCache.Ints fci = FieldCache.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(searcher.IndexReader), "trieInt", false);
+                FieldCache.Ints fci = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(searcher.IndexReader), "trieInt", false);
                 int maxDoc = searcher.IndexReader.MaxDoc;
                 for (int doc = 0; doc < maxDoc; doc++)
                 {
@@ -896,7 +896,7 @@ namespace Lucene.Net.Index
                     Assert.IsTrue(val >= 0 && val < 35, "value in id bounds");
                 }
 
-                FieldCache.Longs fcl = FieldCache.DEFAULT.GetLongs(SlowCompositeReaderWrapper.Wrap(searcher.IndexReader), "trieLong", false);
+                FieldCache.Longs fcl = FieldCache.DEFAULT.GetInt64s(SlowCompositeReaderWrapper.Wrap(searcher.IndexReader), "trieLong", false);
                 for (int doc = 0; doc < maxDoc; doc++)
                 {
                     long val = fcl.Get(doc);

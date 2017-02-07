@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(text, hitDoc.Get("fieldname"));
                 Debug.Assert(ireader.Leaves.Count == 1);
                 NumericDocValues dv = ((AtomicReader)((AtomicReader)ireader.Leaves[0].Reader)).GetNumericDocValues("dv");
-                Assert.AreEqual(Number.FloatToIntBits(5.7f), dv.Get(hits.ScoreDocs[i].Doc));
+                Assert.AreEqual(Number.SingleToInt32Bits(5.7f), dv.Get(hits.ScoreDocs[i].Doc));
             }
 
             ireader.Dispose();

@@ -55,13 +55,13 @@ namespace Lucene.Net.Codecs.Lucene46
             {
                 int codecVersion = CodecUtil.CheckHeader(input, Lucene46FieldInfosFormat.CODEC_NAME, Lucene46FieldInfosFormat.FORMAT_START, Lucene46FieldInfosFormat.FORMAT_CURRENT);
 
-                int size = input.ReadVInt(); //read in the size
+                int size = input.ReadVInt32(); //read in the size
                 FieldInfo[] infos = new FieldInfo[size];
 
                 for (int i = 0; i < size; i++)
                 {
                     string name = input.ReadString();
-                    int fieldNumber = input.ReadVInt();
+                    int fieldNumber = input.ReadVInt32();
                     byte bits = input.ReadByte();
                     bool isIndexed = (bits & Lucene46FieldInfosFormat.IS_INDEXED) != 0;
                     bool storeTermVector = (bits & Lucene46FieldInfosFormat.STORE_TERMVECTOR) != 0;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene46
                     byte val = input.ReadByte();
                     DocValuesType? docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
                     DocValuesType? normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
-                    long dvGen = input.ReadLong();
+                    long dvGen = input.ReadInt64();
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.UnmodifiableMap(attributes));
                     infos[i].DocValuesGen = dvGen;

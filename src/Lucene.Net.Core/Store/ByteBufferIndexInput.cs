@@ -140,15 +140,18 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override sealed short ReadShort()
+        /// <summary>
+        /// NOTE: this was readShort() in Lucene
+        /// </summary>
+        public override sealed short ReadInt16()
         {
             try
             {
-                return curBuf.GetShort();
+                return curBuf.GetInt16();
             }
             catch (BufferUnderflowException)
             {
-                return base.ReadShort();
+                return base.ReadInt16();
             }
             catch (System.NullReferenceException)
             {
@@ -156,15 +159,18 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override sealed int ReadInt()
+        /// <summary>
+        /// NOTE: this was readInt() in Lucene
+        /// </summary>
+        public override sealed int ReadInt32()
         {
             try
             {
-                return curBuf.GetInt();
+                return curBuf.GetInt32();
             }
             catch (BufferUnderflowException)
             {
-                return base.ReadInt();
+                return base.ReadInt32();
             }
             catch (System.NullReferenceException)
             {
@@ -172,15 +178,18 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override sealed long ReadLong()
+        /// <summary>
+        /// NOTE: this was readLong() in Lucene
+        /// </summary>
+        public override sealed long ReadInt64()
         {
             try
             {
-                return curBuf.GetLong();
+                return curBuf.GetInt64();
             }
             catch (BufferUnderflowException)
             {
-                return base.ReadLong();
+                return base.ReadInt64();
             }
             catch (System.NullReferenceException)
             {

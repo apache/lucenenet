@@ -181,7 +181,7 @@ namespace Lucene.Net.Support
             //checkBytes(b, new byte[] { 0, 0, 0, (byte)ic(0) });
             //checkInvalidMarkException(ib);
 
-            LongBuffer lb = b.AsLongBuffer();
+            LongBuffer lb = b.AsInt64Buffer();
             TestLongBuffer.test(level, lb, direct);
             checkBytes(b, new byte[] { 0, 0, 0, 0, 0, 0, 0, (byte)Ic(0) });
             checkInvalidMarkException(lb);
@@ -209,21 +209,21 @@ namespace Lucene.Net.Support
             b.PutChar((char)char.MaxValue);
             output.Write(" char");
 
-            b.PutShort((short)1);
-            b.PutShort((short)short.MaxValue);
+            b.PutInt16((short)1);
+            b.PutInt16((short)short.MaxValue);
             output.Write(" short");
 
-            b.PutInt(1);
-            b.PutInt(int.MaxValue);
+            b.PutInt32(1);
+            b.PutInt32(int.MaxValue);
             output.Write(" int");
 
-            b.PutLong((long)1);
-            b.PutLong((long)long.MaxValue);
+            b.PutInt64((long)1);
+            b.PutInt64((long)long.MaxValue);
             output.Write(" long");
 
-            b.PutFloat((float)1);
-            b.PutFloat((float)float.MinValue);
-            b.PutFloat((float)float.MaxValue);
+            b.PutSingle((float)1);
+            b.PutSingle((float)float.MinValue);
+            b.PutSingle((float)float.MaxValue);
             output.Write(" float");
 
             b.PutDouble((double)1);
@@ -241,21 +241,21 @@ namespace Lucene.Net.Support
             ck(b, b.GetChar(), char.MaxValue);
             output.Write(" char");
 
-            ck(b, b.GetShort(), 1);
-            ck(b, b.GetShort(), short.MaxValue);
+            ck(b, b.GetInt16(), 1);
+            ck(b, b.GetInt16(), short.MaxValue);
             output.Write(" short");
 
-            ck(b, b.GetInt(), 1);
-            ck(b, b.GetInt(), int.MaxValue);
+            ck(b, b.GetInt32(), 1);
+            ck(b, b.GetInt32(), int.MaxValue);
             output.Write(" int");
 
-            ck(b, b.GetLong(), 1);
-            ck(b, b.GetLong(), long.MaxValue);
+            ck(b, b.GetInt64(), 1);
+            ck(b, b.GetInt64(), long.MaxValue);
             output.Write(" long");
 
-            ck(b, (long)b.GetFloat(), 1);
-            ck(b, (long)b.GetFloat(), unchecked((long)float.MinValue));
-            ck(b, (long)b.GetFloat(), unchecked((long)float.MaxValue));
+            ck(b, (long)b.GetSingle(), 1);
+            ck(b, (long)b.GetSingle(), unchecked((long)float.MinValue));
+            ck(b, (long)b.GetSingle(), unchecked((long)float.MaxValue));
             output.Write(" float");
 
             ck(b, (long)b.GetDouble(), 1);
@@ -575,38 +575,38 @@ namespace Lucene.Net.Support
 
             tryCatch(b, typeof(ReadOnlyBufferException), () =>
             {
-                rb.PutShort((short)1);
+                rb.PutInt16((short)1);
             });
             tryCatch(b, typeof(ReadOnlyBufferException), () =>
             {
-                rb.PutShort(0, (short)1);
-            });
-
-            tryCatch(b, typeof(ReadOnlyBufferException), () =>
-            {
-                rb.PutInt(1);
-            });
-            tryCatch(b, typeof(ReadOnlyBufferException), () =>
-            {
-                rb.PutInt(0, 1);
+                rb.PutInt16(0, (short)1);
             });
 
             tryCatch(b, typeof(ReadOnlyBufferException), () =>
             {
-                rb.PutLong((long)1);
+                rb.PutInt32(1);
             });
             tryCatch(b, typeof(ReadOnlyBufferException), () =>
             {
-                rb.PutLong(0, (long)1);
+                rb.PutInt32(0, 1);
             });
 
             tryCatch(b, typeof(ReadOnlyBufferException), () =>
             {
-                rb.PutFloat((float)1);
+                rb.PutInt64((long)1);
             });
             tryCatch(b, typeof(ReadOnlyBufferException), () =>
             {
-                rb.PutFloat(0, (float)1);
+                rb.PutInt64(0, (long)1);
+            });
+
+            tryCatch(b, typeof(ReadOnlyBufferException), () =>
+            {
+                rb.PutSingle((float)1);
+            });
+            tryCatch(b, typeof(ReadOnlyBufferException), () =>
+            {
+                rb.PutSingle(0, (float)1);
             });
 
             tryCatch(b, typeof(ReadOnlyBufferException), () =>

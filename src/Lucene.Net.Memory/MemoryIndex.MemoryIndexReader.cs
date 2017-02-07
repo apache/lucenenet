@@ -533,14 +533,14 @@ namespace Lucene.Net.Index.Memory
                     Debug.Assert(!sliceReader.EndOfSlice(), " stores offsets : " + startOffset_Renamed);
                     if (outerInstance.outerInstance.storeOffsets)
                     {
-                        int pos = sliceReader.ReadInt();
-                        startOffset_Renamed = sliceReader.ReadInt();
-                        endOffset_Renamed = sliceReader.ReadInt();
+                        int pos = sliceReader.ReadInt32();
+                        startOffset_Renamed = sliceReader.ReadInt32();
+                        endOffset_Renamed = sliceReader.ReadInt32();
                         return pos;
                     }
                     else
                     {
-                        return sliceReader.ReadInt();
+                        return sliceReader.ReadInt32();
                     }
                 }
 

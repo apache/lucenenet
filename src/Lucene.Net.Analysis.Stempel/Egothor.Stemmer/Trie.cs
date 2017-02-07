@@ -84,12 +84,12 @@ namespace Egothor.Stemmer
         public Trie(IDataInput @is)
         {
             forward = @is.ReadBoolean();
-            root = @is.ReadInt();
-            for (int i = @is.ReadInt(); i > 0; i--)
+            root = @is.ReadInt32();
+            for (int i = @is.ReadInt32(); i > 0; i--)
             {
                 cmds.Add(@is.ReadUTF());
             }
-            for (int i = @is.ReadInt(); i > 0; i--)
+            for (int i = @is.ReadInt32(); i > 0; i--)
             {
                 rows.Add(new Row(@is));
             }
@@ -346,12 +346,12 @@ namespace Egothor.Stemmer
         public virtual void Store(IDataOutput os)
         {
             os.WriteBoolean(forward);
-            os.WriteInt(root);
-            os.WriteInt(cmds.Count);
+            os.WriteInt32(root);
+            os.WriteInt32(cmds.Count);
             foreach (string cmd in cmds)
                 os.WriteUTF(cmd);
 
-            os.WriteInt(rows.Count);
+            os.WriteInt32(rows.Count);
             foreach (Row row in rows)
                 row.Store(os);
         }

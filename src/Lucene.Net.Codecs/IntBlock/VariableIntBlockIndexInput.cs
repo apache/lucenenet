@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.IntBlock
         protected internal VariableIntBlockIndexInput(IndexInput input)
         {
             this.input = input;
-            m_maxBlockSize = input.ReadInt();
+            m_maxBlockSize = input.ReadInt32();
         }
 
         public override AbstractReader GetReader()
@@ -179,12 +179,12 @@ namespace Lucene.Net.Codecs.IntBlock
             {
                 if (absolute)
                 {
-                    upto = indexIn.ReadVInt();
-                    fp = indexIn.ReadVLong();
+                    upto = indexIn.ReadVInt32();
+                    fp = indexIn.ReadVInt64();
                 }
                 else
                 {
-                    int uptoDelta = indexIn.ReadVInt();
+                    int uptoDelta = indexIn.ReadVInt32();
                     if ((uptoDelta & 1) == 1)
                     {
                         // same block
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.IntBlock
                     {
                         // new block
                         upto = (int)((uint)uptoDelta >> 1);
-                        fp += indexIn.ReadVLong();
+                        fp += indexIn.ReadVInt64();
                     }
                 }
                 // TODO: we can't do this assert because non-causal

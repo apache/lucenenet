@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.Compressing
             totalDocs = 0;
             docBaseDeltas = new int[BLOCK_SIZE];
             startPointerDeltas = new long[BLOCK_SIZE];
-            fieldsIndexOut.WriteVInt(PackedInts.VERSION_CURRENT);
+            fieldsIndexOut.WriteVInt32(PackedInts.VERSION_CURRENT);
         }
 
         private void Reset()
@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Compressing
         private void WriteBlock()
         {
             Debug.Assert(blockChunks > 0);
-            fieldsIndexOut.WriteVInt(blockChunks);
+            fieldsIndexOut.WriteVInt32(blockChunks);
 
             // The trick here is that we only store the difference from the average start
             // pointer or doc base, this helps save bits per value.
@@ -122,8 +122,8 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 avgChunkDocs = (int)Math.Round((float)(blockDocs - docBaseDeltas[blockChunks - 1]) / (blockChunks - 1));
             }
-            fieldsIndexOut.WriteVInt(totalDocs - blockDocs); // docBase
-            fieldsIndexOut.WriteVInt(avgChunkDocs);
+            fieldsIndexOut.WriteVInt32(totalDocs - blockDocs); // docBase
+            fieldsIndexOut.WriteVInt32(avgChunkDocs);
             int docBase = 0;
             long maxDelta = 0;
             for (int i = 0; i < blockChunks; ++i)
@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
 
             int bitsPerDocBase = PackedInts.BitsRequired(maxDelta);
-            fieldsIndexOut.WriteVInt(bitsPerDocBase);
+            fieldsIndexOut.WriteVInt32(bitsPerDocBase);
             PackedInts.Writer writer = PackedInts.GetWriterNoHeader(fieldsIndexOut, PackedInts.Format.PACKED, blockChunks, bitsPerDocBase, 1);
             docBase = 0;
             for (int i = 0; i < blockChunks; ++i)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Compressing
             writer.Finish();
 
             // start pointers
-            fieldsIndexOut.WriteVLong(firstStartPointer);
+            fieldsIndexOut.WriteVInt64(firstStartPointer);
             long avgChunkSize;
             if (blockChunks == 1)
             {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 avgChunkSize = (maxStartPointer - firstStartPointer) / (blockChunks - 1);
             }
-            fieldsIndexOut.WriteVLong(avgChunkSize);
+            fieldsIndexOut.WriteVInt64(avgChunkSize);
             long startPointer = 0;
             maxDelta = 0;
             for (int i = 0; i < blockChunks; ++i)
@@ -168,7 +168,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
 
             int bitsPerStartPointer = PackedInts.BitsRequired(maxDelta);
-            fieldsIndexOut.WriteVInt(bitsPerStartPointer);
+            fieldsIndexOut.WriteVInt32(bitsPerStartPointer);
             writer = PackedInts.GetWriterNoHeader(fieldsIndexOut, PackedInts.Format.PACKED, blockChunks, bitsPerStartPointer, 1);
             startPointer = 0;
             for (int i = 0; i < blockChunks; ++i)
@@ -214,8 +214,8 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 WriteBlock();
             }
-            fieldsIndexOut.WriteVInt(0); // end marker
-            fieldsIndexOut.WriteVLong(maxPointer);
+            fieldsIndexOut.WriteVInt32(0); // end marker
+            fieldsIndexOut.WriteVInt64(maxPointer);
             CodecUtil.WriteFooter(fieldsIndexOut);
         }
 

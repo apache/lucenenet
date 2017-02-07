@@ -78,7 +78,7 @@ namespace Lucene.Net.Util
             int test;
             try
             {
-                test = ArrayUtil.ParseInt("".ToCharArray());
+                test = ArrayUtil.ParseInt32("".ToCharArray());
                 Assert.IsTrue(false);
             }
 #pragma warning disable 168
@@ -89,7 +89,7 @@ namespace Lucene.Net.Util
             }
             try
             {
-                test = ArrayUtil.ParseInt("foo".ToCharArray());
+                test = ArrayUtil.ParseInt32("foo".ToCharArray());
                 Assert.IsTrue(false);
             }
 #pragma warning disable 168
@@ -100,7 +100,7 @@ namespace Lucene.Net.Util
             }
             try
             {
-                test = ArrayUtil.ParseInt(Convert.ToString(long.MaxValue).ToCharArray());
+                test = ArrayUtil.ParseInt32(Convert.ToString(long.MaxValue).ToCharArray());
                 Assert.IsTrue(false);
             }
 #pragma warning disable 168
@@ -111,7 +111,7 @@ namespace Lucene.Net.Util
             }
             try
             {
-                test = ArrayUtil.ParseInt("0.34".ToCharArray());
+                test = ArrayUtil.ParseInt32("0.34".ToCharArray());
                 Assert.IsTrue(false);
             }
 #pragma warning disable 168
@@ -123,15 +123,15 @@ namespace Lucene.Net.Util
 
             try
             {
-                test = ArrayUtil.ParseInt("1".ToCharArray());
+                test = ArrayUtil.ParseInt32("1".ToCharArray());
                 Assert.IsTrue(test == 1, test + " does not equal: " + 1);
-                test = ArrayUtil.ParseInt("-10000".ToCharArray());
+                test = ArrayUtil.ParseInt32("-10000".ToCharArray());
                 Assert.IsTrue(test == -10000, test + " does not equal: " + -10000);
-                test = ArrayUtil.ParseInt("1923".ToCharArray());
+                test = ArrayUtil.ParseInt32("1923".ToCharArray());
                 Assert.IsTrue(test == 1923, test + " does not equal: " + 1923);
-                test = ArrayUtil.ParseInt("-1".ToCharArray());
+                test = ArrayUtil.ParseInt32("-1".ToCharArray());
                 Assert.IsTrue(test == -1, test + " does not equal: " + -1);
-                test = ArrayUtil.ParseInt("foo 1923 bar".ToCharArray(), 4, 4);
+                test = ArrayUtil.ParseInt32("foo 1923 bar".ToCharArray(), 4, 4);
                 Assert.IsTrue(test == 1923, test + " does not equal: " + 1923);
             }
             catch (FormatException e)

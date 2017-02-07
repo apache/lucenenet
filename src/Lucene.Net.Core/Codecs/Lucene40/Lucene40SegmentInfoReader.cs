@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 CodecUtil.CheckHeader(input, Lucene40SegmentInfoFormat.CODEC_NAME, Lucene40SegmentInfoFormat.VERSION_START, Lucene40SegmentInfoFormat.VERSION_CURRENT);
                 string version = input.ReadString();
-                int docCount = input.ReadInt();
+                int docCount = input.ReadInt32();
                 if (docCount < 0)
                 {
                     throw new CorruptIndexException("invalid docCount: " + docCount + " (resource=" + input + ")");

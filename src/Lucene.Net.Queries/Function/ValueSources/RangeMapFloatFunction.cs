@@ -101,9 +101,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
         {
             int h = m_source.GetHashCode();
             h ^= (h << 10) | ((int)((uint)h >> 23));
-            h += Number.FloatToIntBits(m_min);
+            h += Number.SingleToInt32Bits(m_min);
             h ^= (h << 14) | ((int)((uint)h >> 19));
-            h += Number.FloatToIntBits(m_max);
+            h += Number.SingleToInt32Bits(m_max);
             h += m_target.GetHashCode();
             if (m_defaultVal != null)
             {

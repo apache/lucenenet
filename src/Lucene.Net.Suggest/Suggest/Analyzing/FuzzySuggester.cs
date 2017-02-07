@@ -230,14 +230,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 if (path.Length <= nonFuzzyPrefix || path.Length < minFuzzyLength)
                 {
-                    subs[upto] = BasicAutomata.MakeString(path.Ints, path.Offset, path.Length);
+                    subs[upto] = BasicAutomata.MakeString(path.Int32s, path.Offset, path.Length);
                     upto++;
                 }
                 else
                 {
-                    Automaton prefix = BasicAutomata.MakeString(path.Ints, path.Offset, nonFuzzyPrefix);
+                    Automaton prefix = BasicAutomata.MakeString(path.Int32s, path.Offset, nonFuzzyPrefix);
                     int[] ints = new int[path.Length - nonFuzzyPrefix];
-                    Array.Copy(path.Ints, path.Offset + nonFuzzyPrefix, ints, 0, ints.Length);
+                    Array.Copy(path.Int32s, path.Offset + nonFuzzyPrefix, ints, 0, ints.Length);
                     // TODO: maybe add alphaMin to LevenshteinAutomata,
                     // and pass 1 instead of 0?  We probably don't want
                     // to allow the trailing dedup bytes to be

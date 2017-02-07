@@ -96,7 +96,7 @@ namespace Lucene.Net.Support
             return (ch != 0);
         }
 
-        public byte ReadByte()
+        public byte ReadByte() // LUCENENET TODO: Rename ReadSByte() ... change this to int the same as Stream.ReadByte() ? (since putting sbyte here is ugly)
         {
             int ch = @in.ReadByte();
             if (ch < 0)
@@ -104,7 +104,7 @@ namespace Lucene.Net.Support
             return (byte)(ch);
         }
 
-        public int ReadUnsignedByte()
+        public int ReadUnsignedByte() // LUCENET TODO: Rename ReadByte() after above method is fixed
         {
             int ch = @in.ReadByte();
             if (ch < 0)
@@ -112,7 +112,10 @@ namespace Lucene.Net.Support
             return ch;
         }
 
-        public short ReadShort()
+        /// <summary>
+        /// NOTE: This was readShort() in the JDK
+        /// </summary>
+        public short ReadInt16()
         {
             int ch1 = @in.ReadByte();
             int ch2 = @in.ReadByte();
@@ -121,7 +124,10 @@ namespace Lucene.Net.Support
             return (short)((ch1 << 8) + (ch2 << 0));
         }
 
-        public int ReadUnsignedShort()
+        /// <summary>
+        /// NOTE: This was readUnsignedShort() in the JDK
+        /// </summary>
+        public int ReadUInt16()
         {
             int ch1 = @in.ReadByte();
             int ch2 = @in.ReadByte();
@@ -139,7 +145,10 @@ namespace Lucene.Net.Support
             return (char)((ch1 << 8) + (ch2 << 0));
         }
 
-        public int ReadInt()
+        /// <summary>
+        /// NOTE: This was readInt() in the JDK
+        /// </summary>
+        public int ReadInt32()
         {
             int ch1 = @in.ReadByte();
             int ch2 = @in.ReadByte();
@@ -152,7 +161,10 @@ namespace Lucene.Net.Support
 
         private byte[] readBuffer = new byte[8];
 
-        public long ReadLong()
+        /// <summary>
+        /// NOTE: This was readLong() in the JDK
+        /// </summary>
+        public long ReadInt64()
         {
             ReadFully(readBuffer, 0, 8);
             return (((long)readBuffer[0] << 56) +
@@ -165,9 +177,12 @@ namespace Lucene.Net.Support
                     ((readBuffer[7] & 255) << 0));
         }
 
-        public float ReadFloat()
+        /// <summary>
+        /// NOTE: This was readFloat() in the JDK
+        /// </summary>
+        public float ReadSingle()
         {
-            return Number.IntBitsToFloat(ReadInt());
+            return Number.Int32BitsToSingle(ReadInt32());
         }
 
         public double ReadDouble()
@@ -243,7 +258,7 @@ namespace Lucene.Net.Support
 
         public static string ReadUTF(IDataInput @in)
         {
-            int utflen = @in.ReadUnsignedShort();
+            int utflen = @in.ReadUInt16();
             byte[] bytearr = null;
             char[] chararr = null;
             if (@in is DataInputStream)

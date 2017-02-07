@@ -261,7 +261,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 count++;
                 if (scratch.CompareTo(entry) != 0)
                 {
-                    builder.Add(Util.Fst.Util.ToIntsRef(entry, scratchIntsRef), empty);
+                    builder.Add(Util.Fst.Util.ToInt32sRef(entry, scratchIntsRef), empty);
                     scratch.CopyBytes(entry);
                 }
             }

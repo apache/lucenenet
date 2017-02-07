@@ -571,7 +571,7 @@ namespace Lucene.Net.Util
                 Debug.Assert(bytes != null);
                 Debug.Assert(off >= 0 && off + len <= bytes.Length);
                 Debug.Assert(len >= 0);
-                os.WriteShort((short)len);
+                os.WriteInt16((short)len);
                 os.WriteBytes(bytes, off, len); // LUCENENET NOTE: We call WriteBytes, since there is no Write() on Lucene's version of DataOutput
             }
 
@@ -622,7 +622,7 @@ namespace Lucene.Net.Util
                 ushort length;
                 try
                 {
-                    length = (ushort)inputStream.ReadShort();
+                    length = (ushort)inputStream.ReadInt16();
                 }
                 catch (Exception)
                 {
@@ -649,7 +649,7 @@ namespace Lucene.Net.Util
                 ushort length;
                 try
                 {
-                    length = (ushort)inputStream.ReadShort();
+                    length = (ushort)inputStream.ReadInt16();
                 }
 #pragma warning disable 168
                 catch (Exception e)

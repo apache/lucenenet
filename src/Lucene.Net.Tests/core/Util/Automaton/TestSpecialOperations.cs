@@ -51,10 +51,10 @@ namespace Lucene.Net.Util.Automaton
             ISet<IntsRef> strings = SpecialOperations.GetFiniteStrings(a, -1);
             Assert.AreEqual(2, strings.Count);
             IntsRef dog = new IntsRef();
-            Util.ToIntsRef(new BytesRef("dog"), dog);
+            Util.ToInt32sRef(new BytesRef("dog"), dog);
             Assert.IsTrue(strings.Contains(dog));
             IntsRef duck = new IntsRef();
-            Util.ToIntsRef(new BytesRef("duck"), duck);
+            Util.ToInt32sRef(new BytesRef("duck"), duck);
             Assert.IsTrue(strings.Contains(duck));
         }
     }

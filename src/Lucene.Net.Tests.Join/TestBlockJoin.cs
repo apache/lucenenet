@@ -103,7 +103,7 @@ namespace Lucene.Net.Tests.Join
 
             BooleanQuery childQuery = new BooleanQuery();
             childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
-            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
+            childQuery.Add(new BooleanClause(NumericRangeQuery.NewInt32Range("year", 2006, 2011, true, true), Occur.MUST));
 
             ToParentBlockJoinQuery childJoinQuery = new ToParentBlockJoinQuery(childQuery, parentsFilter, ScoreMode.Avg);
 
@@ -156,7 +156,7 @@ namespace Lucene.Net.Tests.Join
             // Define child document criteria (finds an example of relevant work experience)
             BooleanQuery childQuery = new BooleanQuery();
             childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
-            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
+            childQuery.Add(new BooleanClause(NumericRangeQuery.NewInt32Range("year", 2006, 2011, true, true), Occur.MUST));
 
             // Define parent document criteria (find a resident in the UK)
             Query parentQuery = new TermQuery(new Term("country", "United Kingdom"));
@@ -238,7 +238,7 @@ namespace Lucene.Net.Tests.Join
             w.Dispose();
             IndexSearcher s = NewSearcher(r);
 
-            MultiTermQuery qc = NumericRangeQuery.NewIntRange("year", 2007, 2007, true, true);
+            MultiTermQuery qc = NumericRangeQuery.NewInt32Range("year", 2007, 2007, true, true);
             // Hacky: this causes the query to need 2 rewrite
             // iterations: 
             qc.MultiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE;
@@ -312,7 +312,7 @@ namespace Lucene.Net.Tests.Join
             // Define child document criteria (finds an example of relevant work experience)
             BooleanQuery childQuery = new BooleanQuery();
             childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
-            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
+            childQuery.Add(new BooleanClause(NumericRangeQuery.NewInt32Range("year", 2006, 2011, true, true), Occur.MUST));
 
             // Define parent document criteria (find a resident in the UK)
             Query parentQuery = new TermQuery(new Term("country", "United Kingdom"));
@@ -417,7 +417,7 @@ namespace Lucene.Net.Tests.Join
             w.Commit();
             IndexSearcher s = NewSearcher(DirectoryReader.Open(dir));
 
-            ToParentBlockJoinQuery q = new ToParentBlockJoinQuery(NumericRangeQuery.NewIntRange("year", 1990, 2010, true, true), new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("docType", "resume")))), ScoreMode.Total);
+            ToParentBlockJoinQuery q = new ToParentBlockJoinQuery(NumericRangeQuery.NewInt32Range("year", 1990, 2010, true, true), new FixedBitSetCachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("docType", "resume")))), ScoreMode.Total);
 
             TopDocs topDocs = s.Search(q, 10);
             assertEquals(2, topDocs.TotalHits);
@@ -1145,11 +1145,11 @@ namespace Lucene.Net.Tests.Join
             // Define child document criteria (finds an example of relevant work experience)
             BooleanQuery childJobQuery = new BooleanQuery();
             childJobQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
-            childJobQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
+            childJobQuery.Add(new BooleanClause(NumericRangeQuery.NewInt32Range("year", 2006, 2011, true, true), Occur.MUST));
 
             BooleanQuery childQualificationQuery = new BooleanQuery();
             childQualificationQuery.Add(new BooleanClause(new TermQuery(new Term("qualification", "maths")), Occur.MUST));
-            childQualificationQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 1980, 2000, true, true), Occur.MUST));
+            childQualificationQuery.Add(new BooleanClause(NumericRangeQuery.NewInt32Range("year", 1980, 2000, true, true), Occur.MUST));
 
 
             // Define parent document criteria (find a resident in the UK)
@@ -1295,7 +1295,7 @@ namespace Lucene.Net.Tests.Join
             // Define child document criteria (finds an example of relevant work experience)
             BooleanQuery childQuery = new BooleanQuery();
             childQuery.Add(new BooleanClause(new TermQuery(new Term("skill", "java")), Occur.MUST));
-            childQuery.Add(new BooleanClause(NumericRangeQuery.NewIntRange("year", 2006, 2011, true, true), Occur.MUST));
+            childQuery.Add(new BooleanClause(NumericRangeQuery.NewInt32Range("year", 2006, 2011, true, true), Occur.MUST));
 
             // Wrap the child document query to 'join' any matches
             // up to corresponding parent:

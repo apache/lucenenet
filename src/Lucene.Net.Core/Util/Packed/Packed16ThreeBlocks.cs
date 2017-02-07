@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < 3 * valueCount; ++i)
             {
-                blocks[i] = @in.ReadShort();
+                blocks[i] = @in.ReadInt16();
             }
             // because packed ints have not always been byte-aligned
             int remaining = (int)(PackedInts.Format.PACKED.ByteCount(packedIntsVersion, valueCount, 48) - 3L * valueCount * 2);

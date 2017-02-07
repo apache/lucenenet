@@ -246,7 +246,11 @@ namespace Lucene.Net.Codecs
             public long SumTotalTermFreq { get; private set; }
             public long SumDocFreq { get; private set; }
             public int DocCount { get; private set; }
-            internal int LongsSize { get; private set; }
+
+            /// <summary>
+            /// NOTE: This was longsSize (field) in Lucene
+            /// </summary>
+            internal int Int64sSize { get; private set; }
 
             public FieldMetaData(FieldInfo fieldInfo, BytesRef rootCode, long numTerms, long indexStartFP, long sumTotalTermFreq, long sumDocFreq, int docCount, int longsSize)
             {
@@ -259,7 +263,7 @@ namespace Lucene.Net.Codecs
                 this.SumTotalTermFreq = sumTotalTermFreq;
                 this.SumDocFreq = sumDocFreq;
                 this.DocCount = docCount;
-                this.LongsSize = longsSize;
+                this.Int64sSize = longsSize;
             }
         }
 
@@ -345,14 +349,14 @@ namespace Lucene.Net.Codecs
         /// Writes the terms file trailer. </summary>
         protected internal virtual void WriteTrailer(IndexOutput @out, long dirStart)
         {
-            @out.WriteLong(dirStart);
+            @out.WriteInt64(dirStart);
         }
 
         /// <summary>
         /// Writes the index file trailer. </summary>
         protected internal virtual void WriteIndexTrailer(IndexOutput indexOut, long dirStart)
         {
-            indexOut.WriteLong(dirStart);
+            indexOut.WriteInt64(dirStart);
         }
 
         public override TermsConsumer AddField(FieldInfo field)
@@ -436,10 +440,10 @@ namespace Lucene.Net.Codecs
                 // TODO: try writing the leading vLong in MSB order
                 // (opposite of what Lucene does today), for better
                 // outputs sharing in the FST
-                scratchBytes.WriteVLong(EncodeOutput(Fp, HasTerms, IsFloor));
+                scratchBytes.WriteVInt64(EncodeOutput(Fp, HasTerms, IsFloor));
                 if (IsFloor)
                 {
-                    scratchBytes.WriteVInt(floorBlocks.Count);
+                    scratchBytes.WriteVInt32(floorBlocks.Count);
                     foreach (PendingBlock sub in floorBlocks)
                     {
                         Debug.Assert(sub.FloorLeadByte != -1);
@@ -448,7 +452,7 @@ namespace Lucene.Net.Codecs
                         //}
                         scratchBytes.WriteByte((byte)(sbyte)sub.FloorLeadByte);
                         Debug.Assert(sub.Fp > Fp);
-                        scratchBytes.WriteVLong((sub.Fp - Fp) << 1 | (sub.HasTerms ? 1 : 0));
+                        scratchBytes.WriteVInt64((sub.Fp - Fp) << 1 | (sub.HasTerms ? 1 : 0));
                     }
                 }
 
@@ -457,7 +461,7 @@ namespace Lucene.Net.Codecs
                 var bytes = new byte[(int)scratchBytes.FilePointer];
                 Debug.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
-                indexBuilder.Add(Util.ToIntsRef(Prefix, scratchIntsRef), new BytesRef(bytes, 0, bytes.Length));
+                indexBuilder.Add(Util.ToInt32sRef(Prefix, scratchIntsRef), new BytesRef(bytes, 0, bytes.Length));
                 scratchBytes.Reset();
 
                 // Copy over index for all sub-blocks
@@ -508,7 +512,7 @@ namespace Lucene.Net.Codecs
                     //if (DEBUG) {
                     //  System.out.println("      add sub=" + indexEnt.input + " " + indexEnt.input + " output=" + indexEnt.output);
                     //}
-                    builder.Add(Util.ToIntsRef(indexEnt.Input, scratchIntsRef), indexEnt.Output);
+                    builder.Add(Util.ToInt32sRef(indexEnt.Input, scratchIntsRef), indexEnt.Output);
                 }
             }
         }
@@ -647,7 +651,7 @@ namespace Lucene.Net.Codecs
                     //}
                     //System.out.println("\nwbs count=" + count);
 
-                    int savLabel = prevTerm.Ints[prevTerm.Offset + prefixLength];
+                    int savLabel = prevTerm.Int32s[prevTerm.Offset + prefixLength];
 
                     // Count up how many items fall under
                     // each unique label after the prefix.
@@ -791,7 +795,7 @@ namespace Lucene.Net.Codecs
                             {
                                 curPrefixLength = 1 + prefixLength;
                                 // floor term:
-                                prevTerm.Ints[prevTerm.Offset + prefixLength] = startLabel;
+                                prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                             }
                             //System.out.println("  " + subCount + " subs");
                             PendingBlock floorBlock = WriteBlock(prevTerm, prefixLength, curPrefixLength, curStart, pendingCount, subTermCountSums[1 + sub], true, startLabel, curStart == pendingCount);
@@ -824,7 +828,7 @@ namespace Lucene.Net.Codecs
                                 // here
                                 Debug.Assert(startLabel != -1);
                                 Debug.Assert(firstBlock != null);
-                                prevTerm.Ints[prevTerm.Offset + prefixLength] = startLabel;
+                                prevTerm.Int32s[prevTerm.Offset + prefixLength] = startLabel;
                                 //System.out.println("  final " + (numSubs-sub-1) + " subs");
                                 /*
                                 for(sub++;sub < numSubs;sub++) {
@@ -841,7 +845,7 @@ namespace Lucene.Net.Codecs
                         }
                     }
 
-                    prevTerm.Ints[prevTerm.Offset + prefixLength] = savLabel;
+                    prevTerm.Int32s[prevTerm.Offset + prefixLength] = savLabel;
 
                     Debug.Assert(firstBlock != null);
                     firstBlock.CompileIndex(floorBlocks, outerInstance.scratchBytes);
@@ -885,12 +889,12 @@ namespace Lucene.Net.Codecs
                 BytesRef prefix = new BytesRef(indexPrefixLength);
                 for (int m = 0; m < indexPrefixLength; m++)
                 {
-                    prefix.Bytes[m] = (byte)prevTerm.Ints[m];
+                    prefix.Bytes[m] = (byte)prevTerm.Int32s[m];
                 }
                 prefix.Length = indexPrefixLength;
 
                 // Write block header:
-                outerInstance.@out.WriteVInt((length << 1) | (isLastInFloor ? 1 : 0));
+                outerInstance.@out.WriteVInt32((length << 1) | (isLastInFloor ? 1 : 0));
 
                 // 1st pass: pack term suffix bytes into byte[] blob
                 // TODO: cutover to bulk int codec... simple64?
@@ -946,15 +950,15 @@ namespace Lucene.Net.Codecs
                         //   System.out.println("    write term suffix=" + suffixBytes);
                         // }
                         // For leaf block we write suffix straight
-                        suffixWriter.WriteVInt(suffix);
+                        suffixWriter.WriteVInt32(suffix);
                         suffixWriter.WriteBytes(term.Term.Bytes, prefixLength, suffix);
 
                         // Write term stats, to separate byte[] blob:
-                        statsWriter.WriteVInt(state.DocFreq);
+                        statsWriter.WriteVInt32(state.DocFreq);
                         if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                         {
                             Debug.Assert(state.TotalTermFreq >= state.DocFreq, state.TotalTermFreq + " vs " + state.DocFreq);
-                            statsWriter.WriteVLong(state.TotalTermFreq - state.DocFreq);
+                            statsWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                         }
 
                         // Write term meta data
@@ -962,7 +966,7 @@ namespace Lucene.Net.Codecs
                         for (int pos = 0; pos < longsSize; pos++)
                         {
                             Debug.Assert(longs[pos] >= 0);
-                            metaWriter.WriteVLong(longs[pos]);
+                            metaWriter.WriteVInt64(longs[pos]);
                         }
                         bytesWriter.WriteTo(metaWriter);
                         bytesWriter.Reset();
@@ -989,15 +993,15 @@ namespace Lucene.Net.Codecs
                             // }
                             // For non-leaf block we borrow 1 bit to record
                             // if entry is term or sub-block
-                            suffixWriter.WriteVInt(suffix << 1);
+                            suffixWriter.WriteVInt32(suffix << 1);
                             suffixWriter.WriteBytes(term.Term.Bytes, prefixLength, suffix);
 
                             // Write term stats, to separate byte[] blob:
-                            statsWriter.WriteVInt(state.DocFreq);
+                            statsWriter.WriteVInt32(state.DocFreq);
                             if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
                                 Debug.Assert(state.TotalTermFreq >= state.DocFreq);
-                                statsWriter.WriteVLong(state.TotalTermFreq - state.DocFreq);
+                                statsWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                             }
 
                             // TODO: now that terms dict "sees" these longs,
@@ -1013,7 +1017,7 @@ namespace Lucene.Net.Codecs
                             for (int pos = 0; pos < longsSize; pos++)
                             {
                                 Debug.Assert(longs[pos] >= 0);
-                                metaWriter.WriteVLong(longs[pos]);
+                                metaWriter.WriteVInt64(longs[pos]);
                             }
                             bytesWriter.WriteTo(metaWriter);
                             bytesWriter.Reset();
@@ -1030,7 +1034,7 @@ namespace Lucene.Net.Codecs
 
                             // For non-leaf block we borrow 1 bit to record
                             // if entry is term or sub-block
-                            suffixWriter.WriteVInt((suffix << 1) | 1);
+                            suffixWriter.WriteVInt32((suffix << 1) | 1);
                             suffixWriter.WriteBytes(block.Prefix.Bytes, prefixLength, suffix);
                             Debug.Assert(block.Fp < startFP);
 
@@ -1041,7 +1045,7 @@ namespace Lucene.Net.Codecs
                             //   System.out.println("    write sub-block suffix=" + toString(suffixBytes) + " subFP=" + block.fp + " subCode=" + (startFP-block.fp) + " floor=" + block.isFloor);
                             // }
 
-                            suffixWriter.WriteVLong(startFP - block.Fp);
+                            suffixWriter.WriteVInt64(startFP - block.Fp);
                             subIndices.Add(block.Index);
                         }
                     }
@@ -1054,17 +1058,17 @@ namespace Lucene.Net.Codecs
                 // search on lookup
 
                 // Write suffixes byte[] blob to terms dict output:
-                outerInstance.@out.WriteVInt((int)(suffixWriter.FilePointer << 1) | (isLeafBlock ? 1 : 0));
+                outerInstance.@out.WriteVInt32((int)(suffixWriter.FilePointer << 1) | (isLeafBlock ? 1 : 0));
                 suffixWriter.WriteTo(outerInstance.@out);
                 suffixWriter.Reset();
 
                 // Write term stats byte[] blob
-                outerInstance.@out.WriteVInt((int)statsWriter.FilePointer);
+                outerInstance.@out.WriteVInt32((int)statsWriter.FilePointer);
                 statsWriter.WriteTo(outerInstance.@out);
                 statsWriter.Reset();
 
                 // Write term meta data byte[] blob
-                outerInstance.@out.WriteVInt((int)metaWriter.FilePointer);
+                outerInstance.@out.WriteVInt32((int)metaWriter.FilePointer);
                 metaWriter.WriteTo(outerInstance.@out);
                 metaWriter.Reset();
 
@@ -1134,7 +1138,7 @@ namespace Lucene.Net.Codecs
                 Debug.Assert(stats.DocFreq > 0);
                 //if (DEBUG) System.out.println("BTTW.finishTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment + " df=" + stats.docFreq);
 
-                blockBuilder.Add(Util.ToIntsRef(text, scratchIntsRef), noOutputs.NoOutput);
+                blockBuilder.Add(Util.ToInt32sRef(text, scratchIntsRef), noOutputs.NoOutput);
                 BlockTermState state = outerInstance.postingsWriter.NewTermState();
                 state.DocFreq = stats.DocFreq;
                 state.TotalTermFreq = stats.TotalTermFreq;
@@ -1199,23 +1203,23 @@ namespace Lucene.Net.Codecs
                 long dirStart = @out.FilePointer;
                 long indexDirStart = indexOut.FilePointer;
 
-                @out.WriteVInt(fields.Count);
+                @out.WriteVInt32(fields.Count);
 
                 foreach (FieldMetaData field in fields)
                 {
                     //System.out.println("  field " + field.fieldInfo.name + " " + field.numTerms + " terms");
-                    @out.WriteVInt(field.FieldInfo.Number);
-                    @out.WriteVLong(field.NumTerms);
-                    @out.WriteVInt(field.RootCode.Length);
+                    @out.WriteVInt32(field.FieldInfo.Number);
+                    @out.WriteVInt64(field.NumTerms);
+                    @out.WriteVInt32(field.RootCode.Length);
                     @out.WriteBytes(field.RootCode.Bytes, field.RootCode.Offset, field.RootCode.Length);
                     if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        @out.WriteVLong(field.SumTotalTermFreq);
+                        @out.WriteVInt64(field.SumTotalTermFreq);
                     }
-                    @out.WriteVLong(field.SumDocFreq);
-                    @out.WriteVInt(field.DocCount);
-                    @out.WriteVInt(field.LongsSize);
-                    indexOut.WriteVLong(field.IndexStartFP);
+                    @out.WriteVInt64(field.SumDocFreq);
+                    @out.WriteVInt32(field.DocCount);
+                    @out.WriteVInt32(field.Int64sSize);
+                    indexOut.WriteVInt64(field.IndexStartFP);
                 }
                 WriteTrailer(@out, dirStart);
                 CodecUtil.WriteFooter(@out);

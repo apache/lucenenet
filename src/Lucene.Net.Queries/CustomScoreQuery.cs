@@ -179,7 +179,7 @@ namespace Lucene.Net.Queries
         public override int GetHashCode()
         {
             return (this.GetType().GetHashCode() + subQuery.GetHashCode() + Arrays.GetHashCode(scoringQueries)) ^
-                   Number.FloatToIntBits(Boost) ^ (strict ? 1234 : 4321);
+                   Number.SingleToInt32Bits(Boost) ^ (strict ? 1234 : 4321);
         }
 
         /// <summary>

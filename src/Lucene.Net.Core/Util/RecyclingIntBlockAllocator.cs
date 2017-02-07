@@ -79,7 +79,10 @@ namespace Lucene.Net.Util
         {
         }
 
-        public override int[] GetIntBlock() // LUCENENET TODO: Rename GetInt32Block() ?
+        /// <summary>
+        /// NOTE: This was getIntBlock() in Lucene
+        /// </summary>
+        public override int[] GetInt32Block()
         {
             if (freeBlocks == 0)
             {
@@ -91,7 +94,10 @@ namespace Lucene.Net.Util
             return b;
         }
 
-        public override void RecycleIntBlocks(int[][] blocks, int start, int end) // LUCENENET TODO: Rename RecycleInt32Blocks ?
+        /// <summary>
+        /// NOTE: This was recycleIntBlocks in Lucene
+        /// </summary>
+        public override void RecycleInt32Blocks(int[][] blocks, int start, int end)
         {
             int numBlocks = Math.Min(maxBufferedBlocks - freeBlocks, end - start);
             int size = freeBlocks + numBlocks;

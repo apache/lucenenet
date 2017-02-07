@@ -164,14 +164,14 @@ namespace Lucene.Net.Index
 
             if (payload != null && payload.Length > 0)
             {
-                termsHashPerField.WriteVInt(1, (proxCode << 1) | 1);
-                termsHashPerField.WriteVInt(1, payload.Length);
+                termsHashPerField.WriteVInt32(1, (proxCode << 1) | 1);
+                termsHashPerField.WriteVInt32(1, payload.Length);
                 termsHashPerField.WriteBytes(1, payload.Bytes, payload.Offset, payload.Length);
                 hasPayloads = true;
             }
             else
             {
-                termsHashPerField.WriteVInt(1, proxCode << 1);
+                termsHashPerField.WriteVInt32(1, proxCode << 1);
             }
 
             FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
@@ -185,8 +185,8 @@ namespace Lucene.Net.Index
             int endOffset = offsetAccum + offsetAttribute.EndOffset;
             FreqProxPostingsArray postings = (FreqProxPostingsArray)termsHashPerField.postingsArray;
             Debug.Assert(startOffset - postings.lastOffsets[termID] >= 0);
-            termsHashPerField.WriteVInt(1, startOffset - postings.lastOffsets[termID]);
-            termsHashPerField.WriteVInt(1, endOffset - startOffset);
+            termsHashPerField.WriteVInt32(1, startOffset - postings.lastOffsets[termID]);
+            termsHashPerField.WriteVInt32(1, endOffset - startOffset);
 
             postings.lastOffsets[termID] = startOffset;
         }
@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
                 if (docState.docID != postings.lastDocIDs[termID])
                 {
                     Debug.Assert(docState.docID > postings.lastDocIDs[termID]);
-                    termsHashPerField.WriteVInt(0, postings.lastDocCodes[termID]);
+                    termsHashPerField.WriteVInt32(0, postings.lastDocCodes[termID]);
                     postings.lastDocCodes[termID] = docState.docID - postings.lastDocIDs[termID];
                     postings.lastDocIDs[termID] = docState.docID;
                     fieldState.UniqueTermCount++;
@@ -254,12 +254,12 @@ namespace Lucene.Net.Index
                 // write it & lastDocCode
                 if (1 == postings.termFreqs[termID])
                 {
-                    termsHashPerField.WriteVInt(0, postings.lastDocCodes[termID] | 1);
+                    termsHashPerField.WriteVInt32(0, postings.lastDocCodes[termID] | 1);
                 }
                 else
                 {
-                    termsHashPerField.WriteVInt(0, postings.lastDocCodes[termID]);
-                    termsHashPerField.WriteVInt(0, postings.termFreqs[termID]);
+                    termsHashPerField.WriteVInt32(0, postings.lastDocCodes[termID]);
+                    termsHashPerField.WriteVInt32(0, postings.termFreqs[termID]);
                 }
                 postings.termFreqs[termID] = 1;
                 fieldState.MaxTermFrequency = Math.Max(1, fieldState.MaxTermFrequency);
@@ -528,7 +528,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        int code = freq.ReadVInt();
+                        int code = freq.ReadVInt32();
                         if (!readTermFreq)
                         {
                             docID += code;
@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
                             }
                             else
                             {
-                                termFreq = freq.ReadVInt();
+                                termFreq = freq.ReadVInt32();
                             }
                         }
 
@@ -601,13 +601,13 @@ namespace Lucene.Net.Index
 
                             if (readPositions)
                             {
-                                int code = prox.ReadVInt();
+                                int code = prox.ReadVInt32();
                                 position += (int)((uint)code >> 1);
 
                                 if ((code & 1) != 0)
                                 {
                                     // this position has a payload
-                                    int payloadLength = prox.ReadVInt();
+                                    int payloadLength = prox.ReadVInt32();
 
                                     if (payload == null)
                                     {
@@ -630,8 +630,8 @@ namespace Lucene.Net.Index
 
                                 if (readOffsets)
                                 {
-                                    int startOffset = offset + prox.ReadVInt();
-                                    int endOffset = startOffset + prox.ReadVInt();
+                                    int startOffset = offset + prox.ReadVInt32();
+                                    int endOffset = startOffset + prox.ReadVInt32();
                                     if (writePositions)
                                     {
                                         if (writeOffsets)

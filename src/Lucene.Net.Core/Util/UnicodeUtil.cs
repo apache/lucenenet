@@ -539,13 +539,13 @@ namespace Lucene.Net.Util
             // TODO: broken if incoming result.offset != 0
             // pre-alloc for worst case
             // TODO: ints cannot be null, should be an assert
-            if (utf32.Ints == null || utf32.Ints.Length < utf8.Length)
+            if (utf32.Int32s == null || utf32.Int32s.Length < utf8.Length)
             {
-                utf32.Ints = new int[utf8.Length];
+                utf32.Int32s = new int[utf8.Length];
             }
             int utf32Count = 0;
             int utf8Upto = utf8.Offset;
-            int[] ints = utf32.Ints;
+            int[] ints = utf32.Int32s;
             var bytes = utf8.Bytes;
             int utf8Limit = utf8.Offset + utf8.Length;
             while (utf8Upto < utf8Limit)

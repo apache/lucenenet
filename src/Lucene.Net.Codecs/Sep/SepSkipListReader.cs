@@ -180,16 +180,16 @@ namespace Lucene.Net.Codecs.Sep
                 // to read the current payload length
                 // because it differs from the length of the
                 // previous payload
-                delta = skipStream.ReadVInt();
+                delta = skipStream.ReadVInt32();
                 if ((delta & 1) != 0)
                 {
-                    _payloadLength[level] = skipStream.ReadVInt();
+                    _payloadLength[level] = skipStream.ReadVInt32();
                 }
                 delta = (int) ((uint) delta >> 1);
             }
             else
             {
-                delta = skipStream.ReadVInt();
+                delta = skipStream.ReadVInt32();
             }
 
             if (_indexOptions != IndexOptions.DOCS_ONLY)
@@ -201,7 +201,7 @@ namespace Lucene.Net.Codecs.Sep
             _posIndex[level].Read(skipStream, false);
             
             if (_currentFieldStoresPayloads)
-                _payloadPointer[level] += skipStream.ReadVInt();
+                _payloadPointer[level] += skipStream.ReadVInt32();
             
             return delta;
         }

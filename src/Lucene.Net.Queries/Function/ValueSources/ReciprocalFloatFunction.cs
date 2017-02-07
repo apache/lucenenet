@@ -96,9 +96,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            int h = Number.FloatToIntBits(m_a) + Number.FloatToIntBits(m_m);
+            int h = Number.SingleToInt32Bits(m_a) + Number.SingleToInt32Bits(m_m);
             h ^= (h << 13) | ((int)((uint)h >> 20));
-            return h + (Number.FloatToIntBits(m_b)) + m_source.GetHashCode();
+            return h + (Number.SingleToInt32Bits(m_b)) + m_source.GetHashCode();
         }
 
         public override bool Equals(object o)

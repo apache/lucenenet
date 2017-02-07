@@ -37,13 +37,15 @@ namespace Lucene.Net.Util
         /// <br>Values less than zero are all mapped to zero.
         /// <br>Values are truncated (rounded down) to the nearest 8 bit value.
         /// <br>Values between zero and the smallest representable value
-        ///  are rounded up.
+        /// are rounded up.
+        /// <para/>
+        /// NOTE: This was floatToByte() in Lucene
         /// </summary>
         /// <param name="f"> the 32 bit float to be converted to an 8 bit float (byte) </param>
         /// <param name="numMantissaBits"> the number of mantissa bits to use in the byte, with the remainder to be used in the exponent </param>
         /// <param name="zeroExp"> the zero-point in the range of exponent values </param>
         /// <returns> the 8 bit float representation </returns>
-        public static sbyte FloatToByte(float f, int numMantissaBits, int zeroExp) // LUCENENET TODO: rename SingleToByte ? can we remove the sbyte?
+        public static sbyte SingleToByte(float f, int numMantissaBits, int zeroExp) // LUCENENET TODO: can we remove the sbyte?
         {
             // Adjustment from a float zero exponent to our zero exponent,
             // shifted over to our exponent position.
@@ -65,8 +67,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts an 8 bit float to a 32 bit float. </summary>
-        public static float ByteToFloat(sbyte b, int numMantissaBits, int zeroExp) // LUCENENET TODO: rename ByteToSingle ? can we remove the sbyte?
+        /// Converts an 8 bit float to a 32 bit float. 
+        /// <para/>
+        /// NOTE: This was byteToFloat() in Lucene
+        /// </summary>
+        public static float ByteToSingle(sbyte b, int numMantissaBits, int zeroExp) // LUCENENET TODO: can we remove the sbyte?
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)
@@ -90,8 +95,10 @@ namespace Lucene.Net.Util
         /// <br>smallest non-zero value = 5.820766E-10
         /// <br>largest value = 7.5161928E9
         /// <br>epsilon = 0.125
+        /// <para/>
+        /// NOTE: This was floatToByte315() in Lucene
         /// </summary>
-        public static sbyte FloatToByte315(float f) // LUCENENET TODO: rename SingleToByte315 ? can we remove the sbyte?
+        public static sbyte SingleToByte315(float f) // LUCENENET TODO: can we remove the sbyte?
         {
             int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
             int smallfloat = bits >> (24 - 3);
@@ -107,8 +114,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// byteToFloat(b, mantissaBits=3, zeroExponent=15) </summary>
-        public static float Byte315ToFloat(sbyte b) // LUCENENET TODO: rename Byte315ToSingle ? can we remove the sbyte?
+        /// byteToFloat(b, mantissaBits=3, zeroExponent=15) 
+        /// <para/>
+        /// NOTE: This was byte315ToFloat() in Lucene
+        /// </summary>
+        public static float Byte315ToSingle(sbyte b) // LUCENENET TODO: can we remove the sbyte?
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)
@@ -126,8 +136,10 @@ namespace Lucene.Net.Util
         /// <br>smallest nonzero value = 0.033203125
         /// <br>largest value = 1984.0
         /// <br>epsilon = 0.03125
+        /// <para/>
+        /// NOTE: This was floatToByte52() in Lucene
         /// </summary>
-        public static sbyte FloatToByte52(float f) // LUCENENET TODO: rename SingleToByte52 ? can we remove the sbyte?
+        public static sbyte SingleToByte52(float f) // LUCENENET TODO: can we remove the sbyte?
         {
             int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
             int smallfloat = bits >> (24 - 5);
@@ -143,8 +155,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// byteToFloat(b, mantissaBits=5, zeroExponent=2) </summary>
-        public static float Byte52ToFloat(sbyte b) // LUCENENET TODO: rename Byte52ToSingle ? can we remove the sbyte?
+        /// byteToFloat(b, mantissaBits=5, zeroExponent=2) 
+        /// <para/>
+        /// NOTE: This was byte52ToFloat() in Lucene
+        /// </summary>
+        public static float Byte52ToSingle(sbyte b) // LUCENENET TODO: can we remove the sbyte?
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)

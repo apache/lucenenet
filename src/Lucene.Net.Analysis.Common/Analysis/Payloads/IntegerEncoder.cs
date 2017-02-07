@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Payloads
     {
         public override BytesRef Encode(char[] buffer, int offset, int length)
         {
-            int payload = ArrayUtil.ParseInt(buffer, offset, length); //TODO: improve this so that we don't have to new Strings
+            int payload = ArrayUtil.ParseInt32(buffer, offset, length); //TODO: improve this so that we don't have to new Strings
             byte[] bytes = PayloadHelper.EncodeInt(payload);
             BytesRef result = new BytesRef(bytes);
             return result;

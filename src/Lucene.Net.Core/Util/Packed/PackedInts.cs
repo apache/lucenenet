@@ -248,7 +248,10 @@ namespace Lucene.Net.Util.Packed
             {
             }
 
-            public override int LongCount(int packedIntsVersion, int valueCount, int bitsPerValue)
+            /// <summary>
+            /// NOTE: This was longCount() in Lucene
+            /// </summary>
+            public override int Int64Count(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
                 int valuesPerBlock = 64 / bitsPerValue;
                 return (int)Math.Ceiling((double)valueCount / valuesPerBlock);
@@ -308,10 +311,13 @@ namespace Lucene.Net.Util.Packed
             public virtual long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
                 // assume long-aligned
-                return 8L * LongCount(packedIntsVersion, valueCount, bitsPerValue);
+                return 8L * Int64Count(packedIntsVersion, valueCount, bitsPerValue);
             }
 
-            public virtual int LongCount(int packedIntsVersion, int valueCount, int bitsPerValue) // LUCENENET TODO: Rename Int64Count ?
+            /// <summary>
+            /// NOTE: This was longCount() in Lucene
+            /// </summary>
+            public virtual int Int64Count(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
                 long byteCount = ByteCount(packedIntsVersion, valueCount, bitsPerValue);
 
@@ -447,14 +453,18 @@ namespace Lucene.Net.Util.Packed
             /// <summary>
             /// The minimum number of long blocks to encode in a single iteration, when
             /// using long encoding.
+            /// <para/>
+            /// NOTE: This was longBlockCount() in Lucene
             /// </summary>
-            int LongBlockCount { get; } // LUCENENET TODO: Rename Int64BlockCount ?
+            int Int64BlockCount { get; }
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#longBlockCount()"/> long
             /// blocks.
+            /// <para/>
+            /// NOTE: This was longValueCount() in Lucene
             /// </summary>
-            int LongValueCount { get; } // LUCENENET TODO: Rename Int64ValueCount ?
+            int Int64ValueCount { get; }
 
             /// <summary>
             /// The minimum number of byte blocks to encode in a single iteration, when
@@ -525,14 +535,18 @@ namespace Lucene.Net.Util.Packed
             /// <summary>
             /// The minimum number of long blocks to encode in a single iteration, when
             /// using long encoding.
+            /// <para/>
+            /// NOTE: This was longBlockCount() in Lucene
             /// </summary>
-            int LongBlockCount { get; } // LUCENENET TODO: Rename Int64BlockCount ?
+            int Int64BlockCount { get; }
 
             /// <summary>
             /// The number of values that can be stored in <seealso cref="#longBlockCount()"/> long
             /// blocks.
+            /// <para/>
+            /// NOTE: This was longValueCount() in Lucene
             /// </summary>
-            int LongValueCount { get; } // LUCENENET TODO:  Rename Int64ValueCount ?
+            int Int64ValueCount { get; }
 
             /// <summary>
             /// The minimum number of byte blocks to encode in a single iteration, when
@@ -711,7 +725,7 @@ namespace Lucene.Net.Util.Packed
             {
                 LongsRef nextValues = Next(1);
                 Debug.Assert(nextValues.Length > 0);
-                long result = nextValues.Longs[nextValues.Offset];
+                long result = nextValues.Int64s[nextValues.Offset];
                 ++nextValues.Offset;
                 --nextValues.Length;
                 return result;
@@ -943,9 +957,9 @@ namespace Lucene.Net.Util.Packed
             {
                 Debug.Assert(m_valueCount != -1);
                 CodecUtil.WriteHeader(m_out, CODEC_NAME, VERSION_CURRENT);
-                m_out.WriteVInt(m_bitsPerValue);
-                m_out.WriteVInt(m_valueCount);
-                m_out.WriteVInt(Format.Id);
+                m_out.WriteVInt32(m_bitsPerValue);
+                m_out.WriteVInt32(m_valueCount);
+                m_out.WriteVInt32(Format.Id);
             }
 
             /// <summary>
@@ -1087,10 +1101,10 @@ namespace Lucene.Net.Util.Packed
         public static Reader GetReader(DataInput @in)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
-            int bitsPerValue = @in.ReadVInt();
+            int bitsPerValue = @in.ReadVInt32();
             Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-            int valueCount = @in.ReadVInt();
-            Format format = Format.ById(@in.ReadVInt());
+            int valueCount = @in.ReadVInt32();
+            Format format = Format.ById(@in.ReadVInt32());
 
             return GetReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
         }
@@ -1126,10 +1140,10 @@ namespace Lucene.Net.Util.Packed
         public static IReaderIterator GetReaderIterator(DataInput @in, int mem)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
-            int bitsPerValue = @in.ReadVInt();
+            int bitsPerValue = @in.ReadVInt32();
             Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-            int valueCount = @in.ReadVInt();
-            Format format = Format.ById(@in.ReadVInt());
+            int valueCount = @in.ReadVInt32();
+            Format format = Format.ById(@in.ReadVInt32());
             return GetReaderIteratorNoHeader(@in, format, version, valueCount, bitsPerValue, mem);
         }
 
@@ -1246,10 +1260,10 @@ namespace Lucene.Net.Util.Packed
         public static Reader GetDirectReader(IndexInput @in)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
-            int bitsPerValue = @in.ReadVInt();
+            int bitsPerValue = @in.ReadVInt32();
             Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-            int valueCount = @in.ReadVInt();
-            Format format = Format.ById(@in.ReadVInt());
+            int valueCount = @in.ReadVInt32();
+            Format format = Format.ById(@in.ReadVInt32());
             return GetDirectReaderNoHeader(@in, format, version, valueCount, bitsPerValue);
         }
 
@@ -1512,10 +1526,10 @@ namespace Lucene.Net.Util.Packed
         public static Header ReadHeader(DataInput @in)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
-            int bitsPerValue = @in.ReadVInt();
+            int bitsPerValue = @in.ReadVInt32();
             Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, "bitsPerValue=" + bitsPerValue);
-            int valueCount = @in.ReadVInt();
-            Format format = Format.ById(@in.ReadVInt());
+            int valueCount = @in.ReadVInt32();
+            Format format = Format.ById(@in.ReadVInt32());
             return new Header(format, valueCount, bitsPerValue, version);
         }
 

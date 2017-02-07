@@ -142,7 +142,7 @@ namespace Lucene.Net.Search.Spell
 
         public override int GetHashCode()
         {
-            return 113 * Number.FloatToIntBits(threshold) * this.GetType().GetHashCode();
+            return 113 * Number.SingleToInt32Bits(threshold) * this.GetType().GetHashCode();
         }
 
         public override bool Equals(object obj)
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search.Spell
             }
 
             JaroWinklerDistance o = (JaroWinklerDistance)obj;
-            return (Number.FloatToIntBits(o.threshold) == Number.FloatToIntBits(this.threshold));
+            return (Number.SingleToInt32Bits(o.threshold) == Number.SingleToInt32Bits(this.threshold));
         }
 
         public override string ToString()

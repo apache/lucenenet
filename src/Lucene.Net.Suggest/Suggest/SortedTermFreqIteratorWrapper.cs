@@ -213,7 +213,7 @@ namespace Lucene.Net.Search.Suggest
             }
             output.Reset(buffer);
             output.WriteBytes(spare.Bytes, spare.Offset, spare.Length);
-            output.WriteLong(weight);
+            output.WriteInt64(weight);
             writer.Write(buffer, 0, output.Position);
         }
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search.Suggest
             tmpInput.Reset(scratch.Bytes);
             tmpInput.SkipBytes(scratch.Length - 8); // suggestion
             scratch.Length -= 8; // long
-            return tmpInput.ReadLong();
+            return tmpInput.ReadInt64();
         }
     }
 }

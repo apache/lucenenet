@@ -256,7 +256,7 @@ namespace Lucene.Net.Util.Fst
                     output.Length = s.Length;
                     for (int idx2 = 0; idx2 < output.Length; idx2++)
                     {
-                        output.Ints[idx2] = s[idx2];
+                        output.Int32s[idx2] = s[idx2];
                     }
                     pairs.Add(new FSTTester<IntsRef>.InputOutput<IntsRef>(terms[idx], output));
                 }
@@ -413,7 +413,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         output = termsEnum.DocFreq;
                     }
-                    builder.Add(Util.ToIntsRef(term, scratchIntsRef), (long)output);
+                    builder.Add(Util.ToInt32sRef(term, scratchIntsRef), (long)output);
                     ord++;
                     if (VERBOSE && ord % 100000 == 0 && LuceneTestCase.TEST_NIGHTLY)
                     {
@@ -888,7 +888,7 @@ namespace Lucene.Net.Util.Fst
         {
             Outputs<object> outputs = NoOutputs.Singleton;
             Builder<object> b = new Builder<object>(FST.INPUT_TYPE.BYTE1, outputs);
-            b.Add(Util.ToIntsRef(new BytesRef("foobar"), new IntsRef()), outputs.NoOutput);
+            b.Add(Util.ToInt32sRef(new BytesRef("foobar"), new IntsRef()), outputs.NoOutput);
             BytesRefFSTEnum<object> fstEnum = new BytesRefFSTEnum<object>(b.Finish());
             Assert.IsNull(fstEnum.SeekFloor(new BytesRef("foo")));
             Assert.IsNull(fstEnum.SeekCeil(new BytesRef("foobaz")));
@@ -904,7 +904,7 @@ namespace Lucene.Net.Util.Fst
             IntsRef ints = new IntsRef();
             for (int i = 0; i < 10; i++)
             {
-                b.Add(Util.ToIntsRef(new BytesRef(str), ints), outputs.NoOutput);
+                b.Add(Util.ToInt32sRef(new BytesRef(str), ints), outputs.NoOutput);
             }
             FST<object> fst = b.Finish();
 
@@ -979,9 +979,9 @@ namespace Lucene.Net.Util.Fst
             BytesRef b = new BytesRef("b");
             BytesRef c = new BytesRef("c");
 
-            builder.Add(Util.ToIntsRef(a, new IntsRef()), 17L);
-            builder.Add(Util.ToIntsRef(b, new IntsRef()), 42L);
-            builder.Add(Util.ToIntsRef(c, new IntsRef()), 13824324872317238L);
+            builder.Add(Util.ToInt32sRef(a, new IntsRef()), 17L);
+            builder.Add(Util.ToInt32sRef(b, new IntsRef()), 42L);
+            builder.Add(Util.ToInt32sRef(c, new IntsRef()), 13824324872317238L);
 
             FST<long?> fst = builder.Finish();
 
@@ -1006,10 +1006,10 @@ namespace Lucene.Net.Util.Fst
             Assert.AreEqual(b, seekResult.Input);
             Assert.AreEqual(42, seekResult.Output);
 
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("c"), new IntsRef()), Util.GetByOutput(fst, 13824324872317238L));
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("c"), new IntsRef()), Util.GetByOutput(fst, 13824324872317238L));
             Assert.IsNull(Util.GetByOutput(fst, 47));
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("b"), new IntsRef()), Util.GetByOutput(fst, 42));
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("a"), new IntsRef()), Util.GetByOutput(fst, 17));
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("b"), new IntsRef()), Util.GetByOutput(fst, 42));
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("a"), new IntsRef()), Util.GetByOutput(fst, 17));
         }
 
         [Test]
@@ -1287,7 +1287,7 @@ namespace Lucene.Net.Util.Fst
                         break;
                     }
                     term.CopyChars(w);
-                    b.Add(Util.ToIntsRef(term, scratchIntsRef), nothing);
+                    b.Add(Util.ToInt32sRef(term, scratchIntsRef), nothing);
                 }
 
                 return b.Finish();
@@ -1358,8 +1358,8 @@ namespace Lucene.Net.Util.Fst
             PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
             bool willRewrite = Random().NextBoolean();
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, 0, 0, true, true, int.MaxValue, outputs, null, willRewrite, PackedInts.DEFAULT, true, 15);
-            builder.Add(Util.ToIntsRef(new BytesRef("stat"), new IntsRef()), outputs.NoOutput);
-            builder.Add(Util.ToIntsRef(new BytesRef("station"), new IntsRef()), outputs.NoOutput);
+            builder.Add(Util.ToInt32sRef(new BytesRef("stat"), new IntsRef()), outputs.NoOutput);
+            builder.Add(Util.ToInt32sRef(new BytesRef("station"), new IntsRef()), outputs.NoOutput);
             FST<long?> fst = builder.Finish();
             StringWriter w = new StringWriter();
             //Writer w = new OutputStreamWriter(new FileOutputStream("/x/tmp/out.dot"));
@@ -1471,9 +1471,9 @@ namespace Lucene.Net.Util.Fst
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
 
             IntsRef scratch = new IntsRef();
-            builder.Add(Util.ToIntsRef(new BytesRef("aab"), scratch), 22L);
-            builder.Add(Util.ToIntsRef(new BytesRef("aac"), scratch), 7L);
-            builder.Add(Util.ToIntsRef(new BytesRef("ax"), scratch), 17L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("aab"), scratch), 22L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("aac"), scratch), 7L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("ax"), scratch), 17L);
             FST<long?> fst = builder.Finish();
             //Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"));
             //Util.toDot(fst, w, false, false);
@@ -1482,13 +1482,13 @@ namespace Lucene.Net.Util.Fst
             Util.TopResults<long?> res = Util.ShortestPaths(fst, fst.GetFirstArc(new FST.Arc<long?>()), outputs.NoOutput, minLongComparer, 3, true);
             Assert.IsTrue(res.IsComplete);
             Assert.AreEqual(3, res.TopN.Count);
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
             Assert.AreEqual(7L, res.TopN[0].Output);
 
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("ax"), scratch), res.TopN[1].Input);
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("ax"), scratch), res.TopN[1].Input);
             Assert.AreEqual(17L, res.TopN[1].Output);
 
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("aab"), scratch), res.TopN[2].Input);
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aab"), scratch), res.TopN[2].Input);
             Assert.AreEqual(22L, res.TopN[2].Output);
         }
 
@@ -1499,12 +1499,12 @@ namespace Lucene.Net.Util.Fst
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
 
             IntsRef scratch = new IntsRef();
-            builder.Add(Util.ToIntsRef(new BytesRef("aab"), scratch), 22L);
-            builder.Add(Util.ToIntsRef(new BytesRef("aac"), scratch), 7L);
-            builder.Add(Util.ToIntsRef(new BytesRef("adcd"), scratch), 17L);
-            builder.Add(Util.ToIntsRef(new BytesRef("adcde"), scratch), 17L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("aab"), scratch), 22L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("aac"), scratch), 7L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("adcd"), scratch), 17L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("adcde"), scratch), 17L);
 
-            builder.Add(Util.ToIntsRef(new BytesRef("ax"), scratch), 17L);
+            builder.Add(Util.ToInt32sRef(new BytesRef("ax"), scratch), 17L);
             FST<long?> fst = builder.Finish();
             AtomicInteger rejectCount = new AtomicInteger();
             Util.TopNSearcher<long?> searcher = new TopNSearcherAnonymousInnerClassHelper(this, fst, minLongComparer, rejectCount);
@@ -1515,7 +1515,7 @@ namespace Lucene.Net.Util.Fst
             Assert.IsTrue(res.IsComplete); // rejected(4) + topN(2) <= maxQueueSize(6)
 
             Assert.AreEqual(1, res.TopN.Count);
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
             Assert.AreEqual(7L, res.TopN[0].Output);
             rejectCount.Set(0);
             searcher = new TopNSearcherAnonymousInnerClassHelper2(this, fst, minLongComparer, rejectCount);
@@ -1600,9 +1600,9 @@ namespace Lucene.Net.Util.Fst
             Builder<Pair> builder = new Builder<Pair>(FST.INPUT_TYPE.BYTE1, outputs);
 
             IntsRef scratch = new IntsRef();
-            builder.Add(Util.ToIntsRef(new BytesRef("aab"), scratch), outputs.NewPair(22L, 57L));
-            builder.Add(Util.ToIntsRef(new BytesRef("aac"), scratch), outputs.NewPair(7L, 36L));
-            builder.Add(Util.ToIntsRef(new BytesRef("ax"), scratch), outputs.NewPair(17L, 85L));
+            builder.Add(Util.ToInt32sRef(new BytesRef("aab"), scratch), outputs.NewPair(22L, 57L));
+            builder.Add(Util.ToInt32sRef(new BytesRef("aac"), scratch), outputs.NewPair(7L, 36L));
+            builder.Add(Util.ToInt32sRef(new BytesRef("ax"), scratch), outputs.NewPair(17L, 85L));
             FST<Pair> fst = builder.Finish();
             //Writer w = new OutputStreamWriter(new FileOutputStream("out.dot"));
             //Util.toDot(fst, w, false, false);
@@ -1612,15 +1612,15 @@ namespace Lucene.Net.Util.Fst
             Assert.IsTrue(res.IsComplete);
             Assert.AreEqual(3, res.TopN.Count);
 
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aac"), scratch), res.TopN[0].Input);
             Assert.AreEqual(7L, res.TopN[0].Output.Output1); // weight
             Assert.AreEqual(36L, res.TopN[0].Output.Output2); // output
 
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("ax"), scratch), res.TopN[1].Input);
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("ax"), scratch), res.TopN[1].Input);
             Assert.AreEqual(17L, res.TopN[1].Output.Output1); // weight
             Assert.AreEqual(85L, res.TopN[1].Output.Output2); // output
 
-            Assert.AreEqual(Util.ToIntsRef(new BytesRef("aab"), scratch), res.TopN[2].Input);
+            Assert.AreEqual(Util.ToInt32sRef(new BytesRef("aab"), scratch), res.TopN[2].Input);
             Assert.AreEqual(22L, res.TopN[2].Output.Output1); // weight
             Assert.AreEqual(57L, res.TopN[2].Output.Output2); // output
         }
@@ -1661,7 +1661,7 @@ namespace Lucene.Net.Util.Fst
             foreach (KeyValuePair<string, long> e in slowCompletor)
             {
                 //System.out.println("add: " + e);
-                builder.Add(Util.ToIntsRef(new BytesRef(e.Key), scratch), e.Value);
+                builder.Add(Util.ToInt32sRef(new BytesRef(e.Key), scratch), e.Value);
             }
 
             FST<long?> fst = builder.Finish();
@@ -1703,7 +1703,7 @@ namespace Lucene.Net.Util.Fst
                     if (e.Key.StartsWith(prefix))
                     {
                         //System.out.println("  consider " + e.getKey());
-                        matches.Add(new Util.Result<long?>(Util.ToIntsRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()), e.Value - prefixOutput));
+                        matches.Add(new Util.Result<long?>(Util.ToInt32sRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()), e.Value - prefixOutput));
                     }
                 }
 
@@ -1804,7 +1804,7 @@ namespace Lucene.Net.Util.Fst
                 //System.out.println("add: " + e);
                 long weight = e.Value.a;
                 long output = e.Value.b;
-                builder.Add(Util.ToIntsRef(new BytesRef(e.Key), scratch), outputs.NewPair(weight, output));
+                builder.Add(Util.ToInt32sRef(new BytesRef(e.Key), scratch), outputs.NewPair(weight, output));
             }
 
             FST<Pair> fst = builder.Finish();
@@ -1845,7 +1845,7 @@ namespace Lucene.Net.Util.Fst
                     if (e.Key.StartsWith(prefix))
                     {
                         //System.out.println("  consider " + e.getKey());
-                        matches.Add(new Util.Result<Pair>(Util.ToIntsRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()),
+                        matches.Add(new Util.Result<Pair>(Util.ToInt32sRef(new BytesRef(e.Key.Substring(prefix.Length)), new IntsRef()),
                             outputs.NewPair(e.Value.a - prefixOutput.Output1, e.Value.b - prefixOutput.Output2)));
                     }
                 }
@@ -1881,7 +1881,7 @@ namespace Lucene.Net.Util.Fst
             BytesRef output = new BytesRef(bytes);
             for (int arc = 0; arc < 6; arc++)
             {
-                input.Ints[0] = arc;
+                input.Int32s[0] = arc;
                 output.Bytes[0] = (byte)arc;
                 builder.Add(input, BytesRef.DeepCopyOf(output));
             }
@@ -1889,7 +1889,7 @@ namespace Lucene.Net.Util.Fst
             FST<BytesRef> fst = builder.Finish();
             for (int arc = 0; arc < 6; arc++)
             {
-                input.Ints[0] = arc;
+                input.Int32s[0] = arc;
                 BytesRef result = Util.Get(fst, input);
                 Assert.IsNotNull(result);
                 Assert.AreEqual(300, result.Length);

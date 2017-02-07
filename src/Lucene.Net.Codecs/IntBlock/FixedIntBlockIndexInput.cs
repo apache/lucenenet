@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs.IntBlock
         public FixedIntBlockIndexInput(IndexInput @in)
         {
             input = @in;
-            m_blockSize = @in.ReadVInt();
+            m_blockSize = @in.ReadVInt32();
         }
 
         public override AbstractReader GetReader()
@@ -146,12 +146,12 @@ namespace Lucene.Net.Codecs.IntBlock
             {
                 if (absolute)
                 {
-                    upto = indexIn.ReadVInt();
-                    fp = indexIn.ReadVLong();
+                    upto = indexIn.ReadVInt32();
+                    fp = indexIn.ReadVInt64();
                 }
                 else
                 {
-                    int uptoDelta = indexIn.ReadVInt();
+                    int uptoDelta = indexIn.ReadVInt32();
                     if ((uptoDelta & 1) == 1)
                     {
                         // same block
@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs.IntBlock
                     {
                         // new block
                         upto = (int)((uint)uptoDelta >> 1);
-                        fp += indexIn.ReadVLong();
+                        fp += indexIn.ReadVInt64();
                     }
                 }
                 Debug.Assert(upto < outerInstance.m_blockSize);

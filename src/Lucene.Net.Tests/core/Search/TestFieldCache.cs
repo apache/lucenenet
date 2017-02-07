@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
                 {
                     cache.InfoStream = bos;
                     cache.GetDoubles(Reader, "theDouble", false);
-                    cache.GetFloats(Reader, "theDouble", false);
+                    cache.GetSingles(Reader, "theDouble", false);
                 }
                 Assert.IsTrue(sb.ToString(/*IOUtils.UTF_8*/).IndexOf("WARNING") != -1);
             }
@@ -209,9 +209,9 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(doubles.Get(i) == (double.MaxValue - i), doubles.Get(i) + " does not equal: " + (double.MaxValue - i));
             }
 
-            FieldCache.Longs longs = cache.GetLongs(Reader, "theLong", Random().NextBoolean());
-            Assert.AreSame(longs, cache.GetLongs(Reader, "theLong", Random().NextBoolean()), "Second request to cache return same array");
-            Assert.AreSame(longs, cache.GetLongs(Reader, "theLong", FieldCache.DEFAULT_LONG_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
+            FieldCache.Longs longs = cache.GetInt64s(Reader, "theLong", Random().NextBoolean());
+            Assert.AreSame(longs, cache.GetInt64s(Reader, "theLong", Random().NextBoolean()), "Second request to cache return same array");
+            Assert.AreSame(longs, cache.GetInt64s(Reader, "theLong", FieldCache.DEFAULT_LONG_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Assert.IsTrue(longs.Get(i) == (long.MaxValue - i), longs.Get(i) + " does not equal: " + (long.MaxValue - i) + " i=" + i);
@@ -226,26 +226,26 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(bytes.Get(i) == (sbyte)(sbyte.MaxValue - i), bytes.Get(i) + " does not equal: " + (sbyte.MaxValue - i));
             }
 
-            FieldCache.Shorts shorts = cache.GetShorts(Reader, "theShort", Random().NextBoolean());
-            Assert.AreSame(shorts, cache.GetShorts(Reader, "theShort", Random().NextBoolean()), "Second request to cache return same array");
-            Assert.AreSame(shorts, cache.GetShorts(Reader, "theShort", FieldCache.DEFAULT_SHORT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
+            FieldCache.Shorts shorts = cache.GetInt16s(Reader, "theShort", Random().NextBoolean());
+            Assert.AreSame(shorts, cache.GetInt16s(Reader, "theShort", Random().NextBoolean()), "Second request to cache return same array");
+            Assert.AreSame(shorts, cache.GetInt16s(Reader, "theShort", FieldCache.DEFAULT_SHORT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Assert.IsTrue(shorts.Get(i) == (short)(short.MaxValue - i), shorts.Get(i) + " does not equal: " + (short.MaxValue - i));
             }
 #pragma warning restore 612, 618
 
-            FieldCache.Ints ints = cache.GetInts(Reader, "theInt", Random().NextBoolean());
-            Assert.AreSame(ints, cache.GetInts(Reader, "theInt", Random().NextBoolean()), "Second request to cache return same array");
-            Assert.AreSame(ints, cache.GetInts(Reader, "theInt", FieldCache.DEFAULT_INT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
+            FieldCache.Ints ints = cache.GetInt32s(Reader, "theInt", Random().NextBoolean());
+            Assert.AreSame(ints, cache.GetInt32s(Reader, "theInt", Random().NextBoolean()), "Second request to cache return same array");
+            Assert.AreSame(ints, cache.GetInt32s(Reader, "theInt", FieldCache.DEFAULT_INT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Assert.IsTrue(ints.Get(i) == (int.MaxValue - i), ints.Get(i) + " does not equal: " + (int.MaxValue - i));
             }
 
-            FieldCache.Floats floats = cache.GetFloats(Reader, "theFloat", Random().NextBoolean());
-            Assert.AreSame(floats, cache.GetFloats(Reader, "theFloat", Random().NextBoolean()), "Second request to cache return same array");
-            Assert.AreSame(floats, cache.GetFloats(Reader, "theFloat", FieldCache.DEFAULT_FLOAT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
+            FieldCache.Floats floats = cache.GetSingles(Reader, "theFloat", Random().NextBoolean());
+            Assert.AreSame(floats, cache.GetSingles(Reader, "theFloat", Random().NextBoolean()), "Second request to cache return same array");
+            Assert.AreSame(floats, cache.GetSingles(Reader, "theFloat", FieldCache.DEFAULT_FLOAT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Assert.IsTrue(floats.Get(i) == (float.MaxValue - i), floats.Get(i) + " does not equal: " + (float.MaxValue - i));
@@ -435,7 +435,7 @@ namespace Lucene.Net.Search
             Assert.AreEqual(3, cache.GetCacheEntries().Length);
             Assert.IsTrue(bits is Bits.MatchAllBits);
 
-            Ints ints = cache.GetInts(Reader, "sparse", true);
+            Ints ints = cache.GetInt32s(Reader, "sparse", true);
             Assert.AreEqual(6, cache.GetCacheEntries().Length);
             IBits docsWithField = cache.GetDocsWithField(Reader, "sparse");
             Assert.AreEqual(6, cache.GetCacheEntries().Length);
@@ -452,7 +452,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            Ints numInts = cache.GetInts(Reader, "numInt", Random().NextBoolean());
+            Ints numInts = cache.GetInt32s(Reader, "numInt", Random().NextBoolean());
             docsWithField = cache.GetDocsWithField(Reader, "numInt");
             for (int i = 0; i < docsWithField.Length; i++)
             {
@@ -562,7 +562,7 @@ namespace Lucene.Net.Search
                         }
                         else
                         {
-                            Ints ints = Cache.GetInts(Reader, "sparse", true);
+                            Ints ints = Cache.GetInt32s(Reader, "sparse", true);
                             IBits docsWithField = Cache.GetDocsWithField(Reader, "sparse");
                             for (int i = 0; i < docsWithField.Length; i++)
                             {
@@ -613,7 +613,7 @@ namespace Lucene.Net.Search
             // Binary type: can be retrieved via getTerms()
             try
             {
-                FieldCache.DEFAULT.GetInts(ar, "binary", false);
+                FieldCache.DEFAULT.GetInt32s(ar, "binary", false);
                 Assert.Fail();
             }
 #pragma warning disable 168
@@ -665,7 +665,7 @@ namespace Lucene.Net.Search
             // Sorted type: can be retrieved via getTerms(), getTermsIndex(), getDocTermOrds()
             try
             {
-                FieldCache.DEFAULT.GetInts(ar, "sorted", false);
+                FieldCache.DEFAULT.GetInt32s(ar, "sorted", false);
                 Assert.Fail();
             }
 #pragma warning disable 168
@@ -705,7 +705,7 @@ namespace Lucene.Net.Search
             Assert.IsTrue(bits.Get(0));
 
             // Numeric type: can be retrieved via getInts() and so on
-            Ints numeric = FieldCache.DEFAULT.GetInts(ar, "numeric", false);
+            Ints numeric = FieldCache.DEFAULT.GetInt32s(ar, "numeric", false);
             Assert.AreEqual(42, numeric.Get(0));
 
             try
@@ -760,7 +760,7 @@ namespace Lucene.Net.Search
             {
                 try
                 {
-                    FieldCache.DEFAULT.GetInts(ar, "sortedset", false);
+                    FieldCache.DEFAULT.GetInt32s(ar, "sortedset", false);
                     Assert.Fail();
                 }
 #pragma warning disable 168
@@ -837,17 +837,17 @@ namespace Lucene.Net.Search
             Bytes bytes = cache.GetBytes(ar, "bogusbytes", true);
             Assert.AreEqual(0, bytes.Get(0));
 
-            Shorts shorts = cache.GetShorts(ar, "bogusshorts", true);
+            Shorts shorts = cache.GetInt16s(ar, "bogusshorts", true);
             Assert.AreEqual(0, shorts.Get(0));
 #pragma warning restore 612, 618
 
-            Ints ints = cache.GetInts(ar, "bogusints", true);
+            Ints ints = cache.GetInt32s(ar, "bogusints", true);
             Assert.AreEqual(0, ints.Get(0));
 
-            Longs longs = cache.GetLongs(ar, "boguslongs", true);
+            Longs longs = cache.GetInt64s(ar, "boguslongs", true);
             Assert.AreEqual(0, longs.Get(0));
 
-            Floats floats = cache.GetFloats(ar, "bogusfloats", true);
+            Floats floats = cache.GetSingles(ar, "bogusfloats", true);
             Assert.AreEqual(0, floats.Get(0), 0.0f);
 
             Doubles doubles = cache.GetDoubles(ar, "bogusdoubles", true);
@@ -906,17 +906,17 @@ namespace Lucene.Net.Search
             Bytes bytes = cache.GetBytes(ar, "bogusbytes", true);
             Assert.AreEqual(0, bytes.Get(0));
 
-            Shorts shorts = cache.GetShorts(ar, "bogusshorts", true);
+            Shorts shorts = cache.GetInt16s(ar, "bogusshorts", true);
             Assert.AreEqual(0, shorts.Get(0));
 #pragma warning restore 612, 618
 
-            Ints ints = cache.GetInts(ar, "bogusints", true);
+            Ints ints = cache.GetInt32s(ar, "bogusints", true);
             Assert.AreEqual(0, ints.Get(0));
 
-            Longs longs = cache.GetLongs(ar, "boguslongs", true);
+            Longs longs = cache.GetInt64s(ar, "boguslongs", true);
             Assert.AreEqual(0, longs.Get(0));
 
-            Floats floats = cache.GetFloats(ar, "bogusfloats", true);
+            Floats floats = cache.GetSingles(ar, "bogusfloats", true);
             Assert.AreEqual(0, floats.Get(0), 0.0f);
 
             Doubles doubles = cache.GetDoubles(ar, "bogusdoubles", true);
@@ -989,7 +989,7 @@ namespace Lucene.Net.Search
             }
             iw.ForceMerge(1);
             DirectoryReader reader = iw.Reader;
-            Longs longs = FieldCache.DEFAULT.GetLongs(GetOnlySegmentReader(reader), "f", false);
+            Longs longs = FieldCache.DEFAULT.GetInt64s(GetOnlySegmentReader(reader), "f", false);
             for (int i = 0; i < values.Length; ++i)
             {
                 Assert.AreEqual(values[i], longs.Get(i));
@@ -1043,7 +1043,7 @@ namespace Lucene.Net.Search
             }
             iw.ForceMerge(1);
             DirectoryReader reader = iw.Reader;
-            Ints ints = FieldCache.DEFAULT.GetInts(GetOnlySegmentReader(reader), "f", false);
+            Ints ints = FieldCache.DEFAULT.GetInt32s(GetOnlySegmentReader(reader), "f", false);
             for (int i = 0; i < values.Length; ++i)
             {
                 Assert.AreEqual(values[i], ints.Get(i));

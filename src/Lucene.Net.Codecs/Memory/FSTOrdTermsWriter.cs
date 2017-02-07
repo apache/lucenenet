@@ -195,21 +195,21 @@ namespace Lucene.Net.Codecs.Memory
                 var blockDirStart = blockOut.FilePointer;
 
                 // write field summary
-                blockOut.WriteVInt(_fields.Count);
+                blockOut.WriteVInt32(_fields.Count);
                 foreach (var field in _fields)
                 {
-                    blockOut.WriteVInt(field.FieldInfo.Number);
-                    blockOut.WriteVLong(field.NumTerms);
+                    blockOut.WriteVInt32(field.FieldInfo.Number);
+                    blockOut.WriteVInt64(field.NumTerms);
                     if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        blockOut.WriteVLong(field.SumTotalTermFreq);
+                        blockOut.WriteVInt64(field.SumTotalTermFreq);
                     }
-                    blockOut.WriteVLong(field.SumDocFreq);
-                    blockOut.WriteVInt(field.DocCount);
-                    blockOut.WriteVInt(field.LongsSize);
-                    blockOut.WriteVLong(field.StatsOut.FilePointer);
-                    blockOut.WriteVLong(field.MetaLongsOut.FilePointer);
-                    blockOut.WriteVLong(field.MetaBytesOut.FilePointer);
+                    blockOut.WriteVInt64(field.SumDocFreq);
+                    blockOut.WriteVInt32(field.DocCount);
+                    blockOut.WriteVInt32(field.LongsSize);
+                    blockOut.WriteVInt64(field.StatsOut.FilePointer);
+                    blockOut.WriteVInt64(field.MetaLongsOut.FilePointer);
+                    blockOut.WriteVInt64(field.MetaBytesOut.FilePointer);
 
                     field.SkipOut.WriteTo(blockOut);
                     field.StatsOut.WriteTo(blockOut);
@@ -239,7 +239,7 @@ namespace Lucene.Net.Codecs.Memory
 
         private void WriteTrailer(IndexOutput output, long dirStart)
         {
-            output.WriteLong(dirStart);
+            output.WriteInt64(dirStart);
         }
 
         private class FieldMetaData
@@ -332,17 +332,17 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (delta == 0)
                     {
-                        _statsOut.WriteVInt(stats.DocFreq << 1 | 1);
+                        _statsOut.WriteVInt32(stats.DocFreq << 1 | 1);
                     }
                     else
                     {
-                        _statsOut.WriteVInt(stats.DocFreq << 1 | 0);
-                        _statsOut.WriteVLong(stats.TotalTermFreq - stats.DocFreq);
+                        _statsOut.WriteVInt32(stats.DocFreq << 1 | 0);
+                        _statsOut.WriteVInt64(stats.TotalTermFreq - stats.DocFreq);
                     }
                 }
                 else
                 {
-                    _statsOut.WriteVInt(stats.DocFreq);
+                    _statsOut.WriteVInt32(stats.DocFreq);
                 }
                 var state = _outerInstance.postingsWriter.NewTermState();
                 state.DocFreq = stats.DocFreq;
@@ -351,12 +351,12 @@ namespace Lucene.Net.Codecs.Memory
                 _outerInstance.postingsWriter.EncodeTerm(longs, _metaBytesOut, _fieldInfo, state, true);
                 for (var i = 0; i < _longsSize; i++)
                 {
-                    _metaLongsOut.WriteVLong(longs[i] - _lastLongs[i]);
+                    _metaLongsOut.WriteVInt64(longs[i] - _lastLongs[i]);
                     _lastLongs[i] = longs[i];
                 }
-                _metaLongsOut.WriteVLong(_metaBytesOut.FilePointer - _lastMetaBytesFp);
+                _metaLongsOut.WriteVInt64(_metaBytesOut.FilePointer - _lastMetaBytesFp);
 
-                _builder.Add(Util.ToIntsRef(text, _scratchTerm), _numTerms);
+                _builder.Add(Util.ToInt32sRef(text, _scratchTerm), _numTerms);
                 _numTerms++;
 
                 _lastMetaBytesFp = _metaBytesOut.FilePointer;
@@ -385,12 +385,12 @@ namespace Lucene.Net.Codecs.Memory
 
             private void BufferSkip()
             {
-                _skipOut.WriteVLong(_statsOut.FilePointer - _lastBlockStatsFp);
-                _skipOut.WriteVLong(_metaLongsOut.FilePointer - _lastBlockMetaLongsFp);
-                _skipOut.WriteVLong(_metaBytesOut.FilePointer - _lastBlockMetaBytesFp);
+                _skipOut.WriteVInt64(_statsOut.FilePointer - _lastBlockStatsFp);
+                _skipOut.WriteVInt64(_metaLongsOut.FilePointer - _lastBlockMetaLongsFp);
+                _skipOut.WriteVInt64(_metaBytesOut.FilePointer - _lastBlockMetaBytesFp);
                 for (var i = 0; i < _longsSize; i++)
                 {
-                    _skipOut.WriteVLong(_lastLongs[i] - _lastBlockLongs[i]);
+                    _skipOut.WriteVInt64(_lastLongs[i] - _lastBlockLongs[i]);
                 }
                 _lastBlockStatsFp = _statsOut.FilePointer;
                 _lastBlockMetaLongsFp = _metaLongsOut.FilePointer;

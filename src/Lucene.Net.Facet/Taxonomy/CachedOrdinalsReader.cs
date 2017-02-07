@@ -116,7 +116,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             public override void Get(int docID, IntsRef ordinals)
             {
-                ordinals.Ints = cachedOrds.Ordinals;
+                ordinals.Int32s = cachedOrds.Ordinals;
                 ordinals.Offset = cachedOrds.Offsets[docID];
                 ordinals.Length = cachedOrds.Offsets[docID + 1] - ordinals.Offset;
             }
@@ -166,7 +166,7 @@ namespace Lucene.Net.Facet.Taxonomy
                         }
                         ords = ArrayUtil.Grow(ords, (int)nextLength);
                     }
-                    Array.Copy(values.Ints, 0, ords, (int)totOrds, values.Length);
+                    Array.Copy(values.Int32s, 0, ords, (int)totOrds, values.Length);
                     totOrds = nextLength;
                 }
                 Offsets[maxDoc] = (int)totOrds;

@@ -529,43 +529,94 @@ namespace Lucene.Net.Support
 
         //public abstract CharBuffer AsCharBuffer();
 
-        public abstract short GetShort();
+        /// <summary>
+        /// NOTE: This was getShort() in the JDK
+        /// </summary>
+        public abstract short GetInt16();
 
-        public abstract ByteBuffer PutShort(short value);
+        /// <summary>
+        /// NOTE: This was putShort() in the JDK
+        /// </summary>
+        public abstract ByteBuffer PutInt16(short value);
 
-        public abstract short GetShort(int index);
+        /// <summary>
+        /// NOTE: This was getShort() in the JDK
+        /// </summary>
+        public abstract short GetInt16(int index);
 
-        public abstract ByteBuffer PutShort(int index, short value);
+        /// <summary>
+        /// NOTE: This was putShort() in the JDK
+        /// </summary>
+        public abstract ByteBuffer PutInt16(int index, short value);
 
         // public abstract ShortBuffer AsShortBuffer();
 
-        public abstract int GetInt();
+        /// <summary>
+        /// NOTE: This was getInt() in the JDK
+        /// </summary>
+        public abstract int GetInt32();
 
-        public abstract ByteBuffer PutInt(int value);
+        /// <summary>
+        /// NOTE: This was putInt() in the JDK
+        /// </summary>
+        public abstract ByteBuffer PutInt32(int value);
 
-        public abstract int GetInt(int index);
+        /// <summary>
+        /// NOTE: This was getInt() in the JDK
+        /// </summary>
+        public abstract int GetInt32(int index);
 
-        public abstract ByteBuffer PutInt(int index, int value);
+        /// <summary>
+        /// NOTE: This was putInt() in the JDK
+        /// </summary>
+        public abstract ByteBuffer PutInt32(int index, int value);
 
         //public abstract IntBuffer AsIntBuffer();
 
-        public abstract long GetLong();
+        /// <summary>
+        /// NOTE: This was getLong() in the JDK
+        /// </summary>
+        public abstract long GetInt64();
 
-        public abstract ByteBuffer PutLong(long value);
+        /// <summary>
+        /// NOTE: This was putLong() in the JDK
+        /// </summary>
+        public abstract ByteBuffer PutInt64(long value);
 
-        public abstract long GetLong(int index);
+        /// <summary>
+        /// NOTE: This was getLong() in the JDK
+        /// </summary>
+        public abstract long GetInt64(int index);
 
-        public abstract ByteBuffer PutLong(int index, long value);
+        /// <summary>
+        /// NOTE: This was putLong() in the JDK
+        /// </summary>
+        public abstract ByteBuffer PutInt64(int index, long value);
 
-        public abstract LongBuffer AsLongBuffer();
+        /// <summary>
+        /// NOTE: This was asLongBuffer() in the JDK
+        /// </summary>
+        public abstract LongBuffer AsInt64Buffer();
 
-        public abstract float GetFloat();
+        /// <summary>
+        /// NOTE: This was getFloat() in the JDK
+        /// </summary>
+        public abstract float GetSingle();
 
-        public abstract ByteBuffer PutFloat(float value);
+        /// <summary>
+        /// NOTE: This was putFloat() in the JDK
+        /// </summary>
+        public abstract ByteBuffer PutSingle(float value);
 
-        public abstract float GetFloat(int index);
+        /// <summary>
+        /// NOTE: This was getFloat() in the JDK
+        /// </summary>
+        public abstract float GetSingle(int index);
 
-        public abstract ByteBuffer PutFloat(int index, float value);
+        /// <summary>
+        /// NOTE: This was putFloat() in the JDK
+        /// </summary>
+        public abstract ByteBuffer PutSingle(int index, float value);
 
         //public abstract FloatBuffer AsFloatBuffer();
 
@@ -823,7 +874,10 @@ namespace Lucene.Net.Support
 
             // short
 
-            public override short GetShort()
+            /// <summary>
+            /// NOTE: This was getShort() in the JDK
+            /// </summary>
+            public override short GetInt16()
             {
                 var littleEndian = BitConverter.ToInt16(hb, Ix(NextGetIndex(2)));
                 if (bigEndian)
@@ -833,7 +887,10 @@ namespace Lucene.Net.Support
                 return littleEndian;
             }
 
-            public override short GetShort(int index)
+            /// <summary>
+            /// NOTE: This was getShort() in the JDK
+            /// </summary>
+            public override short GetInt16(int index)
             {
                 var littleEndian = BitConverter.ToInt16(hb, Ix(CheckIndex(index, 2)));
                 if (bigEndian)
@@ -843,7 +900,10 @@ namespace Lucene.Net.Support
                 return littleEndian;
             }
 
-            public override ByteBuffer PutShort(short value)
+            /// <summary>
+            /// NOTE: This was putShort() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt16(short value)
             {
                 var bytes = BitConverter.GetBytes(bigEndian ? Number.FlipEndian(value) : value);
 
@@ -854,8 +914,10 @@ namespace Lucene.Net.Support
             }
 
 
-
-            public override ByteBuffer PutShort(int index, short value)
+            /// <summary>
+            /// NOTE: This was putShort() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt16(int index, short value)
             {
                 var bytes = BitConverter.GetBytes(bigEndian ? Number.FlipEndian(value) : value);
 
@@ -886,7 +948,10 @@ namespace Lucene.Net.Support
 
             // int
 
-            public override int GetInt()
+            /// <summary>
+            /// NOTE: This was getInt() in the JDK
+            /// </summary>
+            public override int GetInt32()
             {
                 var littleEndian = BitConverter.ToInt32(hb, Ix(NextGetIndex(4)));
                 if (bigEndian)
@@ -896,7 +961,10 @@ namespace Lucene.Net.Support
                 return littleEndian;
             }
 
-            public override int GetInt(int index)
+            /// <summary>
+            /// NOTE: This was getInt() in the JDK
+            /// </summary>
+            public override int GetInt32(int index)
             {
                 var littleEndian = BitConverter.ToInt32(hb, Ix(CheckIndex(index, 4)));
                 if (bigEndian)
@@ -906,7 +974,10 @@ namespace Lucene.Net.Support
                 return littleEndian;
             }
 
-            public override ByteBuffer PutInt(int value)
+            /// <summary>
+            /// NOTE: This was putInt() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt32(int value)
             {
                 var bytes = BitConverter.GetBytes(bigEndian ? Number.FlipEndian(value) : value);
 
@@ -918,7 +989,10 @@ namespace Lucene.Net.Support
                 return this;
             }
 
-            public override ByteBuffer PutInt(int index, int value)
+            /// <summary>
+            /// NOTE: This was putInt() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt32(int index, int value)
             {
                 var bytes = BitConverter.GetBytes(bigEndian ? Number.FlipEndian(value) : value);
 
@@ -951,7 +1025,10 @@ namespace Lucene.Net.Support
 
             // long
 
-            public override long GetLong()
+            /// <summary>
+            /// NOTE: This was getLong() in the JDK
+            /// </summary>
+            public override long GetInt64()
             {
                 var littleEndian = BitConverter.ToInt64(hb, Ix(NextGetIndex(8)));
                 if (bigEndian)
@@ -961,7 +1038,10 @@ namespace Lucene.Net.Support
                 return littleEndian;
             }
 
-            public override long GetLong(int index)
+            /// <summary>
+            /// NOTE: This was getLong() in the JDK
+            /// </summary>
+            public override long GetInt64(int index)
             {
                 var littleEndian = BitConverter.ToInt64(hb, Ix(CheckIndex(index, 8)));
                 if (bigEndian)
@@ -971,7 +1051,10 @@ namespace Lucene.Net.Support
                 return littleEndian;
             }
 
-            public override ByteBuffer PutLong(long value)
+            /// <summary>
+            /// NOTE: This was putLong() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt64(long value)
             {
                 var bytes = BitConverter.GetBytes(bigEndian ? Number.FlipEndian(value) : value);
 
@@ -988,8 +1071,10 @@ namespace Lucene.Net.Support
             }
 
 
-
-            public override ByteBuffer PutLong(int index, long value)
+            /// <summary>
+            /// NOTE: This was putLong() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt64(int index, long value)
             {
                 var bytes = BitConverter.GetBytes(bigEndian ? Number.FlipEndian(value) : value);
 
@@ -1005,7 +1090,10 @@ namespace Lucene.Net.Support
                 return this;
             }
 
-            public override LongBuffer AsLongBuffer()
+            /// <summary>
+            /// NOTE: This was asLongBuffer() in the JDK
+            /// </summary>
+            public override LongBuffer AsInt64Buffer()
             {
                 int size = this.Remaining >> 3;
                 int off = offset + Position;
@@ -1032,7 +1120,10 @@ namespace Lucene.Net.Support
                 //                                                       off)));
             }
 
-            public override float GetFloat()
+            /// <summary>
+            /// NOTE: This was getFloat() in the JDK
+            /// </summary>
+            public override float GetSingle()
             {
                 byte[] temp = new byte[4];
                 System.Array.Copy(hb, Ix(NextGetIndex(4)), temp, 0, 4);
@@ -1043,7 +1134,10 @@ namespace Lucene.Net.Support
                 return BitConverter.ToSingle(temp, 0);
             }
 
-            public override float GetFloat(int index)
+            /// <summary>
+            /// NOTE: This was getFloat() in the JDK
+            /// </summary>
+            public override float GetSingle(int index)
             {
                 var littleEndian = BitConverter.ToSingle(hb, Ix(CheckIndex(index, 4)));
                 if (bigEndian)
@@ -1053,7 +1147,10 @@ namespace Lucene.Net.Support
                 return littleEndian;
             }
 
-            public override ByteBuffer PutFloat(float value)
+            /// <summary>
+            /// NOTE: This was putFloat() in the JDK
+            /// </summary>
+            public override ByteBuffer PutSingle(float value)
             {
                 var bytes = BitConverter.GetBytes(value);
 
@@ -1071,8 +1168,10 @@ namespace Lucene.Net.Support
             }
 
 
-
-            public override ByteBuffer PutFloat(int index, float value)
+            /// <summary>
+            /// NOTE: This was putFloat() in the JDK
+            /// </summary>
+            public override ByteBuffer PutSingle(int index, float value)
             {
                 var bytes = BitConverter.GetBytes(value);
 
@@ -1305,12 +1404,18 @@ namespace Lucene.Net.Support
 
             // short
 
-            public override ByteBuffer PutShort(short x)
+            /// <summary>
+            /// NOTE: This was putShort() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt16(short x)
             {
                 throw new ReadOnlyBufferException();
             }
 
-            public override ByteBuffer PutShort(int i, short x)
+            /// <summary>
+            /// NOTE: This was putShort() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt16(int i, short x)
             {
                 throw new ReadOnlyBufferException();
             }
@@ -1337,12 +1442,18 @@ namespace Lucene.Net.Support
 
             // int
 
-            public override ByteBuffer PutInt(int x)
+            /// <summary>
+            /// NOTE: This was putInt() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt32(int x)
             {
                 throw new ReadOnlyBufferException();
             }
 
-            public override ByteBuffer PutInt(int i, int x)
+            /// <summary>
+            /// NOTE: This was putInt() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt32(int i, int x)
             {
                 throw new ReadOnlyBufferException();
             }
@@ -1369,17 +1480,26 @@ namespace Lucene.Net.Support
 
             // long
 
-            public override ByteBuffer PutLong(long x)
+            /// <summary>
+            /// NOTE: This was putLong() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt64(long x)
             {
                 throw new ReadOnlyBufferException();
             }
 
-            public override ByteBuffer PutLong(int i, long x)
+            /// <summary>
+            /// NOTE: This was putLong() in the JDK
+            /// </summary>
+            public override ByteBuffer PutInt64(int i, long x)
             {
                 throw new ReadOnlyBufferException();
             }
 
-            public override LongBuffer AsLongBuffer()
+            /// <summary>
+            /// NOTE: This was asLongBuffer() in the JDK
+            /// </summary>
+            public override LongBuffer AsInt64Buffer()
             {
                 throw new NotImplementedException();
                 //int size = this.remaining() >> 3;
@@ -1401,12 +1521,18 @@ namespace Lucene.Net.Support
 
             // float
 
-            public override ByteBuffer PutFloat(float x)
+            /// <summary>
+            /// NOTE: This was putFloat() in the JDK
+            /// </summary>
+            public override ByteBuffer PutSingle(float x)
             {
                 throw new ReadOnlyBufferException();
             }
 
-            public override ByteBuffer PutFloat(int i, float x)
+            /// <summary>
+            /// NOTE: This was putFloat() in the JDK
+            /// </summary>
+            public override ByteBuffer PutSingle(int i, float x)
             {
                 throw new ReadOnlyBufferException();
             }

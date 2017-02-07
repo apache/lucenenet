@@ -104,7 +104,7 @@ namespace Lucene.Net.Util.Fst
                                     {
                                         Console.WriteLine("    abs writeInt pos=" + randomPos + " x=" + x);
                                     }
-                                    bytes.WriteInt(randomPos, x);
+                                    bytes.WriteInt32(randomPos, x);
                                     expected[randomPos++] = (byte)(x >> 24);
                                     expected[randomPos++] = (byte)(x >> 16);
                                     expected[randomPos++] = (byte)(x >> 8);
@@ -424,7 +424,7 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         r.SkipBytes(skipBytes);
-                        Assert.AreEqual(expectedInt, r.ReadInt());
+                        Assert.AreEqual(expectedInt, r.ReadInt32());
                     }
                 }
             }

@@ -139,22 +139,31 @@ namespace Lucene.Net.Store
             @delegate.ReadBytes(b, offset, len, useBuffer);
         }
 
-        public override short ReadShort()
+        /// <summary>
+        /// NOTE: this was readShort() in Lucene
+        /// </summary>
+        public override short ReadInt16()
         {
             EnsureOpen();
-            return @delegate.ReadShort();
+            return @delegate.ReadInt16();
         }
 
-        public override int ReadInt()
+        /// <summary>
+        /// NOTE: this was readInt() in Lucene
+        /// </summary>
+        public override int ReadInt32()
         {
             EnsureOpen();
-            return @delegate.ReadInt();
+            return @delegate.ReadInt32();
         }
 
-        public override long ReadLong()
+        /// <summary>
+        /// NOTE: this was readLong() in Lucene
+        /// </summary>
+        public override long ReadInt64()
         {
             EnsureOpen();
-            return @delegate.ReadLong();
+            return @delegate.ReadInt64();
         }
 
         public override string ReadString()
@@ -169,16 +178,22 @@ namespace Lucene.Net.Store
             return @delegate.ReadStringStringMap();
         }
 
-        public override int ReadVInt()
+        /// <summary>
+        /// NOTE: this was readVInt() in Lucene
+        /// </summary>
+        public override int ReadVInt32()
         {
             EnsureOpen();
-            return @delegate.ReadVInt();
+            return @delegate.ReadVInt32();
         }
 
-        public override long ReadVLong()
+        /// <summary>
+        /// NOTE: this was readVLong() in Lucene
+        /// </summary>
+        public override long ReadVInt64()
         {
             EnsureOpen();
-            return @delegate.ReadVLong();
+            return @delegate.ReadVInt64();
         }
 
         public override string ToString()

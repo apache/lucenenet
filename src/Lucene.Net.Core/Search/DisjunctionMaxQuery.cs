@@ -363,8 +363,8 @@ namespace Lucene.Net.Search
         /// <returns> the hash code </returns>
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) 
-                + Number.FloatToIntBits(tieBreakerMultiplier) 
+            return Number.SingleToInt32Bits(Boost) 
+                + Number.SingleToInt32Bits(tieBreakerMultiplier) 
                 + disjuncts.GetHashCode();
         }
     }

@@ -371,7 +371,7 @@ namespace Lucene.Net.Search
                     return null;
 
 #pragma warning disable 612, 618
-                FieldCache.Shorts values = FieldCache.DEFAULT.GetShorts(context.AtomicReader, field, (FieldCache.IShortParser)parser, false);
+                FieldCache.Shorts values = FieldCache.DEFAULT.GetInt16s(context.AtomicReader, field, (FieldCache.IShortParser)parser, false);
 #pragma warning restore 612, 618
 
                 // we only request the usage of termDocs, if the range contains 0
@@ -440,7 +440,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Ints values = FieldCache.DEFAULT.GetInts(context.AtomicReader, field, (FieldCache.IIntParser)parser, false);
+                FieldCache.Ints values = FieldCache.DEFAULT.GetInt32s(context.AtomicReader, field, (FieldCache.IIntParser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
@@ -507,7 +507,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Longs values = FieldCache.DEFAULT.GetLongs(context.AtomicReader, field, (FieldCache.ILongParser)parser, false);
+                FieldCache.Longs values = FieldCache.DEFAULT.GetInt64s(context.AtomicReader, field, (FieldCache.ILongParser)parser, false);
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
@@ -555,8 +555,8 @@ namespace Lucene.Net.Search
                     float f = (float)lowerVal;
                     if (!includeUpper && f > 0.0f && float.IsInfinity(f))
                         return null;
-                    int i = NumericUtils.FloatToSortableInt(f);
-                    inclusiveLowerPoint = NumericUtils.SortableIntToFloat(includeLower ? i : (i + 1));
+                    int i = NumericUtils.SingleToSortableInt32(f);
+                    inclusiveLowerPoint = NumericUtils.SortableInt32ToSingle(includeLower ? i : (i + 1));
                 }
                 else
                 {
@@ -567,8 +567,8 @@ namespace Lucene.Net.Search
                     float f = (float)upperVal;
                     if (!includeUpper && f < 0.0f && float.IsInfinity(f))
                         return null;
-                    int i = NumericUtils.FloatToSortableInt(f);
-                    inclusiveUpperPoint = NumericUtils.SortableIntToFloat(includeUpper ? i : (i - 1));
+                    int i = NumericUtils.SingleToSortableInt32(f);
+                    inclusiveUpperPoint = NumericUtils.SortableInt32ToSingle(includeUpper ? i : (i - 1));
                 }
                 else
                 {
@@ -578,7 +578,7 @@ namespace Lucene.Net.Search
                 if (inclusiveLowerPoint > inclusiveUpperPoint)
                     return null;
 
-                FieldCache.Floats values = FieldCache.DEFAULT.GetFloats(context.AtomicReader, field, (FieldCache.IFloatParser)parser, false);
+                FieldCache.Floats values = FieldCache.DEFAULT.GetSingles(context.AtomicReader, field, (FieldCache.IFloatParser)parser, false);
 
                 // we only request the usage of termDocs, if the range contains 0
                 return new AnonymousClassFieldCacheDocIdSet(values, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
@@ -627,8 +627,8 @@ namespace Lucene.Net.Search
                     double f = (double)lowerVal;
                     if (!includeUpper && f > 0.0 && double.IsInfinity(f))
                         return null;
-                    long i = NumericUtils.DoubleToSortableLong(f);
-                    inclusiveLowerPoint = NumericUtils.SortableLongToDouble(includeLower ? i : (i + 1L));
+                    long i = NumericUtils.DoubleToSortableInt64(f);
+                    inclusiveLowerPoint = NumericUtils.SortableInt64ToDouble(includeLower ? i : (i + 1L));
                 }
                 else
                 {
@@ -639,8 +639,8 @@ namespace Lucene.Net.Search
                     double f = (double)upperVal;
                     if (!includeUpper && f < 0.0 && double.IsInfinity(f))
                         return null;
-                    long i = NumericUtils.DoubleToSortableLong(f);
-                    inclusiveUpperPoint = NumericUtils.SortableLongToDouble(includeUpper ? i : (i - 1L));
+                    long i = NumericUtils.DoubleToSortableInt64(f);
+                    inclusiveUpperPoint = NumericUtils.SortableInt64ToDouble(includeUpper ? i : (i - 1L));
                 }
                 else
                 {
@@ -706,22 +706,24 @@ namespace Lucene.Net.Search
         /// Creates a numeric range filter using <seealso cref="IFieldCache#getShorts(AtomicReader,String,boolean)"/>. this works with all
         /// short fields containing exactly one numeric term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
+        /// <para/>
+        /// NOTE: this was newShortRange() in Lucene
         /// </summary>
-        // LUCENENET TODO: Rename NewInt16Range
         [Obsolete]
-        public static FieldCacheRangeFilter<short?> NewShortRange(string field, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<short?> NewInt16Range(string field, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
         {
-            return NewShortRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
+            return NewInt16Range(field, null, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
         /// Creates a numeric range filter using <seealso cref="IFieldCache#getShorts(AtomicReader,String,FieldCache.ShortParser,boolean)"/>. this works with all
         /// short fields containing exactly one numeric term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
+        /// <para/>
+        /// NOTE: this was newShortRange() in Lucene
         /// </summary>
-        // LUCENENET TODO: Rename NewInt16Range
         [Obsolete]
-        public static FieldCacheRangeFilter<short?> NewShortRange(string field, FieldCache.IShortParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<short?> NewInt16Range(string field, FieldCache.IShortParser parser, short? lowerVal, short? upperVal, bool includeLower, bool includeUpper)
         {
             return new AnonymousShortFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
@@ -730,20 +732,22 @@ namespace Lucene.Net.Search
         /// Creates a numeric range filter using <seealso cref="IFieldCache#getInts(AtomicReader,String,boolean)"/>. this works with all
         /// int fields containing exactly one numeric term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
+        /// <para/>
+        /// NOTE: this was newIntRange() in Lucene
         /// </summary>
-        // LUCENENET TODO: Rename NewInt32Range
-        public static FieldCacheRangeFilter<int?> NewIntRange(string field, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<int?> NewInt32Range(string field, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
         {
-            return NewIntRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
+            return NewInt32Range(field, null, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
         /// Creates a numeric range filter using <seealso cref="IFieldCache#getInts(AtomicReader,String,FieldCache.IntParser,boolean)"/>. this works with all
         /// int fields containing exactly one numeric term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
+        /// <para/>
+        /// NOTE: this was newIntRange() in Lucene
         /// </summary>
-        // LUCENENET TODO: Rename NewInt32Range
-        public static FieldCacheRangeFilter<int?> NewIntRange(string field, FieldCache.IIntParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<int?> NewInt32Range(string field, FieldCache.IIntParser parser, int? lowerVal, int? upperVal, bool includeLower, bool includeUpper)
         {
             return new AnonymousIntFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
@@ -754,18 +758,19 @@ namespace Lucene.Net.Search
         /// of the values to <code>null</code>.
         /// </summary>
         // LUCENENET TODO: Rename NewInt64Range
-        public static FieldCacheRangeFilter<long?> NewLongRange(string field, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<long?> NewInt64Range(string field, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
         {
-            return NewLongRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
+            return NewInt64Range(field, null, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
         /// Creates a numeric range filter using <seealso cref="IFieldCache#getLongs(AtomicReader,String,FieldCache.LongParser,boolean)"/>. this works with all
         /// long fields containing exactly one numeric term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
+        /// <para/>
+        /// NOTE: this was newLongRange() in Lucene
         /// </summary>
-        // LUCENENET TODO: Rename NewInt64Range
-        public static FieldCacheRangeFilter<long?> NewLongRange(string field, FieldCache.ILongParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<long?> NewInt64Range(string field, FieldCache.ILongParser parser, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
         {
             return new AnonymousLongFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }
@@ -774,20 +779,22 @@ namespace Lucene.Net.Search
         /// Creates a numeric range filter using <seealso cref="IFieldCache#getFloats(AtomicReader,String,boolean)"/>. this works with all
         /// float fields containing exactly one numeric term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
+        /// <para/>
+        /// NOTE: this was newFloatRange() in Lucene
         /// </summary>
-        // LUCENENET TODO: Rename NewSingleRange
-        public static FieldCacheRangeFilter<float?> NewFloatRange(string field, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<float?> NewSingleRange(string field, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
         {
-            return NewFloatRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
+            return NewSingleRange(field, null, lowerVal, upperVal, includeLower, includeUpper);
         }
 
         /// <summary>
         /// Creates a numeric range filter using <seealso cref="IFieldCache#getFloats(AtomicReader,String,FieldCache.FloatParser,boolean)"/>. this works with all
         /// float fields containing exactly one numeric term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
+        /// <para/>
+        /// NOTE: this was newFloatRange() in Lucene
         /// </summary>
-        // LUCENENET TODO: Rename NewSingleRange
-        public static FieldCacheRangeFilter<float?> NewFloatRange(string field, FieldCache.IFloatParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
+        public static FieldCacheRangeFilter<float?> NewSingleRange(string field, FieldCache.IFloatParser parser, float? lowerVal, float? upperVal, bool includeLower, bool includeUpper)
         {
             return new AnonymousFloatFieldCacheRangeFilter(field, parser, lowerVal, upperVal, includeLower, includeUpper);
         }

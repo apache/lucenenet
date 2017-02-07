@@ -361,7 +361,7 @@ namespace Lucene.Net.Util.Automaton
                     }
                 }
 
-                return ArrayUtil.ToIntArray(soFar);
+                return ArrayUtil.ToInt32Array(soFar);
             }
         }
 

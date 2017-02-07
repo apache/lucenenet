@@ -261,8 +261,8 @@ namespace Lucene.Net.Index
                 int startOffset = fieldState.Offset + offsetAttribute.StartOffset;
                 int endOffset = fieldState.Offset + offsetAttribute.EndOffset;
 
-                termsHashPerField.WriteVInt(1, startOffset - postings.lastOffsets[termID]);
-                termsHashPerField.WriteVInt(1, endOffset - startOffset);
+                termsHashPerField.WriteVInt32(1, startOffset - postings.lastOffsets[termID]);
+                termsHashPerField.WriteVInt32(1, endOffset - startOffset);
                 postings.lastOffsets[termID] = endOffset;
             }
 
@@ -281,14 +281,14 @@ namespace Lucene.Net.Index
                 int pos = fieldState.Position - postings.lastPositions[termID];
                 if (payload != null && payload.Length > 0)
                 {
-                    termsHashPerField.WriteVInt(0, (pos << 1) | 1);
-                    termsHashPerField.WriteVInt(0, payload.Length);
+                    termsHashPerField.WriteVInt32(0, (pos << 1) | 1);
+                    termsHashPerField.WriteVInt32(0, payload.Length);
                     termsHashPerField.WriteBytes(0, payload.Bytes, payload.Offset, payload.Length);
                     hasPayloads = true;
                 }
                 else
                 {
-                    termsHashPerField.WriteVInt(0, pos << 1);
+                    termsHashPerField.WriteVInt32(0, pos << 1);
                 }
                 postings.lastPositions[termID] = fieldState.Position;
             }

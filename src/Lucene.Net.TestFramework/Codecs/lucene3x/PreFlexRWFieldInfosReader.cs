@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             try
             {
-                int format = input.ReadVInt();
+                int format = input.ReadVInt32();
 
                 if (format > FORMAT_MINIMUM)
                 {
@@ -58,13 +58,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                     throw new IndexFormatTooNewException(input, format, FORMAT_MINIMUM, PreFlexRWFieldInfosWriter.FORMAT_CURRENT);
                 }
 
-                int size = input.ReadVInt(); //read in the size
+                int size = input.ReadVInt32(); //read in the size
                 FieldInfo[] infos = new FieldInfo[size];
 
                 for (int i = 0; i < size; i++)
                 {
                     string name = input.ReadString();
-                    int fieldNumber = format == PreFlexRWFieldInfosWriter.FORMAT_PREFLEX_RW ? input.ReadInt() : i;
+                    int fieldNumber = format == PreFlexRWFieldInfosWriter.FORMAT_PREFLEX_RW ? input.ReadInt32() : i;
                     byte bits = input.ReadByte();
                     bool isIndexed = (bits & PreFlexRWFieldInfosWriter.IS_INDEXED) != 0;
                     bool storeTermVector = (bits & PreFlexRWFieldInfosWriter.STORE_TERMVECTOR) != 0;

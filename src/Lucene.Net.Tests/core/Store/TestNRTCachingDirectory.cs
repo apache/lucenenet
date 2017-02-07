@@ -184,7 +184,7 @@ namespace Lucene.Net.Store
             CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
             CreateSequenceFile(newDir, "d1", (sbyte)0, 15);
             IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
-            @out.WriteInt(0);
+            @out.WriteInt32(0);
             @out.Dispose();
             Assert.AreEqual(1, csw.ListAll().Length);
             Assert.AreEqual("d.xyz", csw.ListAll()[0]);

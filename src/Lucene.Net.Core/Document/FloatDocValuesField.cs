@@ -36,13 +36,13 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 32-bit float value </param>
         /// <exception cref="ArgumentException"> if the field name is null </exception>
         public FloatDocValuesField(string name, float value)
-            : base(name, Support.Number.FloatToIntBits(value))
+            : base(name, Support.Number.SingleToInt32Bits(value))
         {
         }
 
         public override void SetSingleValue(float value)
         {
-            base.SetInt64Value(Support.Number.FloatToIntBits(value));
+            base.SetInt64Value(Support.Number.SingleToInt32Bits(value));
         }
 
         public override void SetInt64Value(long value)

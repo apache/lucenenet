@@ -1556,7 +1556,10 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public int ParseInt(BytesRef term)
+            /// <summary>
+            /// NOTE: This was parseInt() in Lucene
+            /// </summary>
+            public int ParseInt32(BytesRef term)
             {
                 return (term.Bytes[term.Offset] - 'A') * 123456;
             }
@@ -1672,7 +1675,10 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public short ParseShort(BytesRef term)
+            /// <summary>
+            /// NOTE: This was parseShort() in Lucene
+            /// </summary>
+            public short ParseInt16(BytesRef term)
             {
                 return (short)(term.Bytes[term.Offset] - 'A');
             }
@@ -1730,7 +1736,10 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public long ParseLong(BytesRef term)
+            /// <summary>
+            /// NOTE: This was parseLong() in Lucene
+            /// </summary>
+            public long ParseInt64(BytesRef term)
             {
                 return (term.Bytes[term.Offset] - 'A') * 1234567890L;
             }
@@ -1788,7 +1797,10 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public float ParseFloat(BytesRef term)
+            /// <summary>
+            /// NOTE: This was parseFloat() in Lucene
+            /// </summary>
+            public float ParseSingle(BytesRef term)
             {
                 return (float)Math.Sqrt(term.Bytes[term.Offset]);
             }

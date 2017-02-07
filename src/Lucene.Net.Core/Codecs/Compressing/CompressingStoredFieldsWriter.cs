@@ -102,8 +102,8 @@ namespace Lucene.Net.Codecs.Compressing
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
                 indexStream = null;
 
-                fieldsStream.WriteVInt(chunkSize);
-                fieldsStream.WriteVInt(PackedInts.VERSION_CURRENT);
+                fieldsStream.WriteVInt32(chunkSize);
+                fieldsStream.WriteVInt32(PackedInts.VERSION_CURRENT);
 
                 success = true;
             }
@@ -154,12 +154,15 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        private static void SaveInts(int[] values, int length, DataOutput @out) // LUCENENET TODO: Rename SaveInt32s ?
+        /// <summary>
+        /// NOTE: This was saveInts() in Lucene
+        /// </summary>
+        private static void SaveInt32s(int[] values, int length, DataOutput @out)
         {
             Debug.Assert(length > 0);
             if (length == 1)
             {
-                @out.WriteVInt(values[0]);
+                @out.WriteVInt32(values[0]);
             }
             else
             {
@@ -174,8 +177,8 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 if (allEqual)
                 {
-                    @out.WriteVInt(0);
-                    @out.WriteVInt(values[0]);
+                    @out.WriteVInt32(0);
+                    @out.WriteVInt32(values[0]);
                 }
                 else
                 {
@@ -185,7 +188,7 @@ namespace Lucene.Net.Codecs.Compressing
                         max |= (uint)values[i];
                     }
                     int bitsRequired = PackedInts.BitsRequired(max);
-                    @out.WriteVInt(bitsRequired);
+                    @out.WriteVInt32(bitsRequired);
                     PackedInts.Writer w = PackedInts.GetWriterNoHeader(@out, PackedInts.Format.PACKED, length, bitsRequired, 1);
                     for (int i = 0; i < length; ++i)
                     {
@@ -199,14 +202,14 @@ namespace Lucene.Net.Codecs.Compressing
         private void WriteHeader(int docBase, int numBufferedDocs, int[] numStoredFields, int[] lengths)
         {
             // save docBase and numBufferedDocs
-            fieldsStream.WriteVInt(docBase);
-            fieldsStream.WriteVInt(numBufferedDocs);
+            fieldsStream.WriteVInt32(docBase);
+            fieldsStream.WriteVInt32(numBufferedDocs);
 
             // save numStoredFields
-            SaveInts(numStoredFields, numBufferedDocs, fieldsStream);
+            SaveInt32s(numStoredFields, numBufferedDocs, fieldsStream);
 
             // save lengths
-            SaveInts(lengths, numBufferedDocs, fieldsStream);
+            SaveInt32s(lengths, numBufferedDocs, fieldsStream);
         }
 
         private bool TriggerFlush()
@@ -333,11 +336,11 @@ namespace Lucene.Net.Codecs.Compressing
             }
 
             long infoAndBits = (((long)info.Number) << TYPE_BITS) | bits;
-            bufferedDocs.WriteVLong(infoAndBits);
+            bufferedDocs.WriteVInt64(infoAndBits);
 
             if (bytes != null)
             {
-                bufferedDocs.WriteVInt(bytes.Length);
+                bufferedDocs.WriteVInt32(bytes.Length);
                 bufferedDocs.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
             }
             else if (@string != null)
@@ -381,19 +384,19 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     if (number is sbyte || number is short || number is int)
                     {
-                        bufferedDocs.WriteInt((int)number);
+                        bufferedDocs.WriteInt32((int)number);
                     }
                     else if (number is long)
                     {
-                        bufferedDocs.WriteLong((long)number);
+                        bufferedDocs.WriteInt64((long)number);
                     }
                     else if (number is float)
                     {
-                        bufferedDocs.WriteInt(Number.FloatToIntBits((float)number));
+                        bufferedDocs.WriteInt32(Number.SingleToInt32Bits((float)number));
                     }
                     else if (number is double)
                     {
-                        bufferedDocs.WriteLong(BitConverter.DoubleToInt64Bits((double)number));
+                        bufferedDocs.WriteInt64(BitConverter.DoubleToInt64Bits((double)number));
                     }
                     else
                     {

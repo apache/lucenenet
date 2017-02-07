@@ -209,11 +209,11 @@ namespace Lucene.Net.Index
                 try
                 {
                     CodecUtil.WriteHeader(@out, CODEC_NAME, VERSION_CURRENT);
-                    @out.WriteVInt(m_refCounts.Count);
+                    @out.WriteVInt32(m_refCounts.Count);
                     foreach (KeyValuePair<long, int> ent in m_refCounts)
                     {
-                        @out.WriteVLong(ent.Key);
-                        @out.WriteVInt(ent.Value);
+                        @out.WriteVInt64(ent.Key);
+                        @out.WriteVInt32(ent.Value);
                     }
                     success = true;
                 }
@@ -319,11 +319,11 @@ namespace Lucene.Net.Index
                             try
                             {
                                 CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_START);
-                                int count = @in.ReadVInt();
+                                int count = @in.ReadVInt32();
                                 for (int i = 0; i < count; i++)
                                 {
-                                    long commitGen = @in.ReadVLong();
-                                    int refCount = @in.ReadVInt();
+                                    long commitGen = @in.ReadVInt64();
+                                    int refCount = @in.ReadVInt32();
                                     m[commitGen] = refCount;
                                 }
                             }

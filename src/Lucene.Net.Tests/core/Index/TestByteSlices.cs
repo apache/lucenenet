@@ -105,8 +105,8 @@ namespace Lucene.Net.Index
                             Console.WriteLine("    write " + (counters[stream] + j));
                         }
                         // write some large (incl. negative) ints:
-                        writer.WriteVInt(Random().Next());
-                        writer.WriteVInt(counters[stream] + j);
+                        writer.WriteVInt32(Random().Next());
+                        writer.WriteVInt32(counters[stream] + j);
                     }
                     counters[stream] += numValue;
                     uptos[stream] = writer.Address;
@@ -128,8 +128,8 @@ namespace Lucene.Net.Index
                         reader.Init(pool, starts[stream], uptos[stream]);
                         for (int j = 0; j < counters[stream]; j++)
                         {
-                            reader.ReadVInt();
-                            Assert.AreEqual(j, reader.ReadVInt());
+                            reader.ReadVInt32();
+                            Assert.AreEqual(j, reader.ReadVInt32());
                         }
                     }
                 }

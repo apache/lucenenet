@@ -50,7 +50,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = m_cache.GetShorts(readerContext.AtomicReader, m_field, parser, false);
+            var arr = m_cache.GetInt16s(readerContext.AtomicReader, m_field, parser, false);
             return new FunctionValuesAnonymousInnerClassHelper(this, arr);
         }
 

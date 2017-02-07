@@ -108,7 +108,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    return target.Ints[target.Offset + m_upto - 1];
+                    return target.Int32s[target.Offset + m_upto - 1];
                 }
             }
         }
@@ -118,17 +118,17 @@ namespace Lucene.Net.Util.Fst
             get
             {
                 // current.offset fixed at 1
-                return current.Ints[m_upto];
+                return current.Int32s[m_upto];
             }
             set
             {
-                current.Ints[m_upto] = value;
+                current.Int32s[m_upto] = value;
             }
         }
 
         protected override void Grow()
         {
-            current.Ints = ArrayUtil.Grow(current.Ints, m_upto + 1);
+            current.Int32s = ArrayUtil.Grow(current.Int32s, m_upto + 1);
         }
 
         private IntsRefFSTEnum.InputOutput<T> SetResult()

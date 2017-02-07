@@ -682,7 +682,7 @@ namespace Lucene.Net.Index.Sorter
             internal virtual void AddPositions(DocsAndPositionsEnum @in, IndexOutput @out)
             {
                 int freq = @in.Freq;
-                @out.WriteVInt(freq);
+                @out.WriteVInt32(freq);
                 int previousPosition = 0;
                 int previousEndOffset = 0;
                 for (int i = 0; i < freq; i++)
@@ -692,19 +692,19 @@ namespace Lucene.Net.Index.Sorter
                     // The low-order bit of token is set only if there is a payload, the
                     // previous bits are the delta-encoded position. 
                     int token = (pos - previousPosition) << 1 | (payload == null ? 0 : 1);
-                    @out.WriteVInt(token);
+                    @out.WriteVInt32(token);
                     previousPosition = pos;
                     if (storeOffsets) // don't encode offsets if they are not stored
                     {
                         int startOffset = @in.StartOffset;
                         int endOffset = @in.EndOffset;
-                        @out.WriteVInt(startOffset - previousEndOffset);
-                        @out.WriteVInt(endOffset - startOffset);
+                        @out.WriteVInt32(startOffset - previousEndOffset);
+                        @out.WriteVInt32(endOffset - startOffset);
                         previousEndOffset = endOffset;
                     }
                     if (payload != null)
                     {
-                        @out.WriteVInt(payload.Length);
+                        @out.WriteVInt32(payload.Length);
                         @out.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
                     }
                 }
@@ -744,7 +744,7 @@ namespace Lucene.Net.Index.Sorter
                     return DocIdSetIterator.NO_MORE_DOCS;
                 }
                 postingInput.Seek(offsets[docIt]);
-                currFreq = postingInput.ReadVInt();
+                currFreq = postingInput.ReadVInt32();
                 // reset variables used in nextPosition
                 pos = 0;
                 endOffset = 0;
@@ -753,17 +753,17 @@ namespace Lucene.Net.Index.Sorter
 
             public override int NextPosition()
             {
-                int token = postingInput.ReadVInt();
+                int token = postingInput.ReadVInt32();
                 pos += (int)((uint)token >> 1);
                 if (storeOffsets)
                 {
-                    startOffset = endOffset + postingInput.ReadVInt();
-                    endOffset = startOffset + postingInput.ReadVInt();
+                    startOffset = endOffset + postingInput.ReadVInt32();
+                    endOffset = startOffset + postingInput.ReadVInt32();
                 }
                 if ((token & 1) != 0)
                 {
                     payload.Offset = 0;
-                    payload.Length = postingInput.ReadVInt();
+                    payload.Length = postingInput.ReadVInt32();
                     if (payload.Length > payload.Bytes.Length)
                     {
                         payload.Bytes = new byte[ArrayUtil.Oversize(payload.Length, 1)];

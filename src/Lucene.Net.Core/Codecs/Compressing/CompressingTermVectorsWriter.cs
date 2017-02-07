@@ -268,8 +268,8 @@ namespace Lucene.Net.Codecs.Compressing
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
                 indexStream = null;
 
-                vectorsStream.WriteVInt(PackedInts.VERSION_CURRENT);
-                vectorsStream.WriteVInt(chunkSize);
+                vectorsStream.WriteVInt32(PackedInts.VERSION_CURRENT);
+                vectorsStream.WriteVInt32(chunkSize);
                 writer = new BlockPackedWriter(vectorsStream, BLOCK_SIZE);
 
                 positionsBuf = new int[1024];
@@ -380,8 +380,8 @@ namespace Lucene.Net.Codecs.Compressing
             indexWriter.WriteIndex(chunkDocs, vectorsStream.FilePointer);
 
             int docBase = numDocs - chunkDocs;
-            vectorsStream.WriteVInt(docBase);
-            vectorsStream.WriteVInt(chunkDocs);
+            vectorsStream.WriteVInt32(docBase);
+            vectorsStream.WriteVInt32(chunkDocs);
 
             // total number of fields of the chunk
             int totalFields = FlushNumFields(chunkDocs);
@@ -423,7 +423,7 @@ namespace Lucene.Net.Codecs.Compressing
             if (chunkDocs == 1)
             {
                 int numFields = pendingDocs.First.Value.numFields;
-                vectorsStream.WriteVInt(numFields);
+                vectorsStream.WriteVInt32(numFields);
                 return numFields;
             }
             else
@@ -460,7 +460,7 @@ namespace Lucene.Net.Codecs.Compressing
             vectorsStream.WriteByte((byte)(sbyte)token);
             if (numDistinctFields - 1 >= 0x07)
             {
-                vectorsStream.WriteVInt(numDistinctFields - 1 - 0x07);
+                vectorsStream.WriteVInt32(numDistinctFields - 1 - 0x07);
             }
             PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldNums.Count, bitsRequired, 1);
             foreach (int fieldNum in fieldNums)
@@ -524,7 +524,7 @@ namespace Lucene.Net.Codecs.Compressing
             if (nonChangingFlags)
             {
                 // write one flag per field num
-                vectorsStream.WriteVInt(0);
+                vectorsStream.WriteVInt32(0);
                 PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, fieldFlags.Length, FLAGS_BITS, 1);
                 foreach (int flags in fieldFlags)
                 {
@@ -537,7 +537,7 @@ namespace Lucene.Net.Codecs.Compressing
             else
             {
                 // write one flag for every field instance
-                vectorsStream.WriteVInt(1);
+                vectorsStream.WriteVInt32(1);
                 PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, FLAGS_BITS, 1);
                 foreach (DocData dd in pendingDocs)
                 {
@@ -562,7 +562,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
             int bitsRequired = PackedInts.BitsRequired(maxNumTerms);
-            vectorsStream.WriteVInt(bitsRequired);
+            vectorsStream.WriteVInt32(bitsRequired);
             PackedInts.Writer writer = PackedInts.GetWriterNoHeader(vectorsStream, PackedInts.Format.PACKED, totalFields, bitsRequired, 1);
             foreach (DocData dd in pendingDocs)
             {
@@ -695,7 +695,7 @@ namespace Lucene.Net.Codecs.Compressing
             // start offsets
             for (int i = 0; i < fieldNums.Length; ++i)
             {
-                vectorsStream.WriteInt(Number.FloatToIntBits(charsPerTerm[i]));
+                vectorsStream.WriteInt32(Number.SingleToInt32Bits(charsPerTerm[i]));
             }
 
             writer.Reset(vectorsStream);
@@ -813,11 +813,11 @@ namespace Lucene.Net.Codecs.Compressing
                     }
                     for (int i = 0; i < numProx; ++i)
                     {
-                        int code = positions.ReadVInt();
+                        int code = positions.ReadVInt32();
                         if ((code & 1) != 0)
                         {
                             // this position has a payload
-                            int payloadLength = positions.ReadVInt();
+                            int payloadLength = positions.ReadVInt32();
                             payloadLengthsBuf[payStart + i] = payloadLength;
                             payloadBytes.CopyBytes(positions, payloadLength);
                         }
@@ -833,7 +833,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     for (int i = 0; i < numProx; ++i)
                     {
-                        position += ((int)((uint)positions.ReadVInt() >> 1));
+                        position += ((int)((uint)positions.ReadVInt32() >> 1));
                         positionsBuf[posStart + i] = position;
                     }
                 }
@@ -851,8 +851,8 @@ namespace Lucene.Net.Codecs.Compressing
                 int lastOffset = 0, startOffset, endOffset;
                 for (int i = 0; i < numProx; ++i)
                 {
-                    startOffset = lastOffset + offsets.ReadVInt();
-                    endOffset = startOffset + offsets.ReadVInt();
+                    startOffset = lastOffset + offsets.ReadVInt32();
+                    endOffset = startOffset + offsets.ReadVInt32();
                     lastOffset = endOffset;
                     startOffsetsBuf[offStart + i] = startOffset;
                     lengthsBuf[offStart + i] = endOffset - startOffset;
@@ -884,7 +884,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
 
-                if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != compressionMode || matchingVectorsReader.ChunkSize != chunkSize || matchingVectorsReader.PackedIntsVersion != PackedInts.VERSION_CURRENT)
+                if (matchingVectorsReader == null || matchingVectorsReader.Version != VERSION_CURRENT || matchingVectorsReader.CompressionMode != compressionMode || matchingVectorsReader.ChunkSize != chunkSize || matchingVectorsReader.PackedInt32sVersion != PackedInts.VERSION_CURRENT)
                 {
                     // naive merge...
                     for (int i = NextLiveDoc(0, liveDocs, maxDoc); i < maxDoc; i = NextLiveDoc(i + 1, liveDocs, maxDoc))
@@ -913,16 +913,16 @@ namespace Lucene.Net.Codecs.Compressing
                         }
                         if ((pendingDocs.Count == 0) && (i == 0 || index.GetStartPointer(i - 1) < startPointer)) // start of a chunk
                         {
-                            int docBase = vectorsStream.ReadVInt();
-                            int chunkDocs = vectorsStream.ReadVInt();
+                            int docBase = vectorsStream.ReadVInt32();
+                            int chunkDocs = vectorsStream.ReadVInt32();
                             Debug.Assert(docBase + chunkDocs <= matchingSegmentReader.MaxDoc);
                             if (docBase + chunkDocs < matchingSegmentReader.MaxDoc && NextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs)
                             {
                                 long chunkEnd = index.GetStartPointer(docBase + chunkDocs);
                                 long chunkLength = chunkEnd - vectorsStream.FilePointer;
                                 indexWriter.WriteIndex(chunkDocs, this.vectorsStream.FilePointer);
-                                this.vectorsStream.WriteVInt(docCount);
-                                this.vectorsStream.WriteVInt(chunkDocs);
+                                this.vectorsStream.WriteVInt32(docCount);
+                                this.vectorsStream.WriteVInt32(chunkDocs);
                                 this.vectorsStream.CopyBytes(vectorsStream, chunkLength);
                                 docCount += chunkDocs;
                                 this.numDocs += chunkDocs;

@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene42
             try
             {
                 CodecUtil.WriteHeader(output, Lucene42FieldInfosFormat.CODEC_NAME, Lucene42FieldInfosFormat.FORMAT_CURRENT);
-                output.WriteVInt(infos.Count);
+                output.WriteVInt32(infos.Count);
                 foreach (FieldInfo fi in infos)
                 {
                     IndexOptions? indexOptions = fi.IndexOptions;
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene42
                         }
                     }
                     output.WriteString(fi.Name);
-                    output.WriteVInt(fi.Number);
+                    output.WriteVInt32(fi.Number);
                     output.WriteByte((byte)bits);
 
                     // pack the DV types in one byte

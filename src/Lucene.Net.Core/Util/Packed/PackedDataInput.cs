@@ -45,8 +45,10 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Read the next long using exactly <code>bitsPerValue</code> bits.
+        /// <para/>
+        /// NOTE: This was readLong() in Lucene
         /// </summary>
-        public long ReadLong(int bitsPerValue)
+        public long ReadInt64(int bitsPerValue)
         {
             Debug.Assert(bitsPerValue > 0 && bitsPerValue <= 64, bitsPerValue.ToString());
             long r = 0;

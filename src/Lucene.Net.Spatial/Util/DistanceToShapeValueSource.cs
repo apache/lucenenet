@@ -122,7 +122,7 @@ namespace Lucene.Net.Spatial.Util
             long temp;
             result = shapeValueSource.GetHashCode();
             result = 31 * result + queryPoint.GetHashCode();
-            temp = Number.DoubleToLongBits(multiplier);
+            temp = Number.DoubleToInt64Bits(multiplier);
             result = 31 * result + (int)(temp ^ ((long)((ulong)temp) >> 32));
             return result;
         }

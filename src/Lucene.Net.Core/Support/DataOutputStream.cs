@@ -98,7 +98,10 @@ namespace Lucene.Net.Support
             IncCount(1);
         }
 
-        public void WriteShort(int v)
+        /// <summary>
+        /// NOTE: This was writeShort() in the JDK
+        /// </summary>
+        public void WriteInt16(int v)
         {
             @out.WriteByte((byte)((int)((uint)v >> 8) & 0xFF));
             @out.WriteByte((byte)((int)((uint)v >> 0) & 0xFF));
@@ -112,7 +115,10 @@ namespace Lucene.Net.Support
             IncCount(2);
         }
 
-        public void WriteInt(int v)
+        /// <summary>
+        /// NOTE: This was writeInt() in the JDK
+        /// </summary>
+        public void WriteInt32(int v)
         {
             @out.WriteByte((byte)(int)(((uint)v >> 24) & 0xFF));
             @out.WriteByte((byte)(int)(((uint)v >> 16) & 0xFF));
@@ -123,7 +129,10 @@ namespace Lucene.Net.Support
 
         private byte[] writeBuffer = new byte[8];
 
-        public void WriteLong(long v)
+        /// <summary>
+        /// NOTE: This was writeLong() in the JDK
+        /// </summary>
+        public void WriteInt64(long v)
         {
             writeBuffer[0] = (byte)(long)((ulong)v >> 56);
             writeBuffer[1] = (byte)(long)((ulong)v >> 48);
@@ -137,14 +146,17 @@ namespace Lucene.Net.Support
             IncCount(8);
         }
 
-        public void WriteFloat(float v)
+        /// <summary>
+        /// NOTE: This was writeFloat() in the JDK
+        /// </summary>
+        public void WriteSingle(float v)
         {
-            WriteInt(Number.FloatToIntBits(v));
+            WriteInt32(Number.SingleToInt32Bits(v));
         }
 
         public void WriteDouble(double v)
         {
-            WriteLong(Number.DoubleToLongBits(v));
+            WriteInt64(Number.DoubleToInt64Bits(v));
         }
 
         public void WriteBytes(string s)

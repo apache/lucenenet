@@ -47,9 +47,15 @@ namespace Lucene.Net.Util.Packed
 
         public abstract int ByteBlockCount { get; }
 
-        public abstract int LongValueCount { get; } // LUCENENET TODO: Rename Int64ValueCount ?
+        /// <summary>
+        /// NOTE: This was longValueCount() in Lucene
+        /// </summary>
+        public abstract int Int64ValueCount { get; }
 
-        public abstract int LongBlockCount { get; } // LUCENENET TODO: Rename Int64BlockCount ?
+        /// <summary>
+        /// NOTE: This was longBlockCount() in Lucene
+        /// </summary>
+        public abstract int Int64BlockCount { get; }
 
         private static readonly BulkOperation[] packedBulkOps = new BulkOperation[] {
             new BulkOperationPacked1(),
@@ -172,7 +178,10 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        protected virtual int WriteLong(long block, byte[] blocks, int blocksOffset) // LUCENENET TODO: Rename WriteInt64 ?
+        /// <summary>
+        /// NOTE: This was writeLong() in Lucene
+        /// </summary>
+        protected virtual int WriteInt64(long block, byte[] blocks, int blocksOffset)
         {
             for (int j = 1; j <= 8; ++j)
             {

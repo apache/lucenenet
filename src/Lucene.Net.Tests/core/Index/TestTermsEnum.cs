@@ -285,7 +285,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             // NOTE: intentional insanity!!
-            FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(r), "id", false);
+            FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
 
             for (int iter = 0; iter < 10 * RANDOM_MULTIPLIER; iter++)
             {

@@ -107,7 +107,7 @@ namespace Lucene.Net.Queries
         {
             const int prime = 31;
             int result = base.GetHashCode();
-            result = prime * result + Number.FloatToIntBits(boost);
+            result = prime * result + Number.SingleToInt32Bits(boost);
             result = prime * result + ((context == null) ? 0 : context.GetHashCode());
             result = prime * result + ((match == null) ? 0 : match.GetHashCode());
             return result;
@@ -134,7 +134,7 @@ namespace Lucene.Net.Queries
             }
 
             var other = (BoostingQuery)obj;
-            if (Number.FloatToIntBits(boost) != Number.FloatToIntBits(other.boost))
+            if (Number.SingleToInt32Bits(boost) != Number.SingleToInt32Bits(other.boost))
             {
                 return false;
             }

@@ -458,13 +458,13 @@ namespace Lucene.Net.Index.Memory
                     sumTotalTermFreq++;
                     if (!storeOffsets)
                     {
-                        postingsWriter.WriteInt(pos);
+                        postingsWriter.WriteInt32(pos);
                     }
                     else
                     {
-                        postingsWriter.WriteInt(pos);
-                        postingsWriter.WriteInt(offsetAtt.StartOffset + offset);
-                        postingsWriter.WriteInt(offsetAtt.EndOffset + offset);
+                        postingsWriter.WriteInt32(pos);
+                        postingsWriter.WriteInt32(offsetAtt.StartOffset + offset);
+                        postingsWriter.WriteInt32(offsetAtt.EndOffset + offset);
                     }
                     sliceArray.end[ord] = postingsWriter.CurrentOffset;
                 }
@@ -672,7 +672,7 @@ namespace Lucene.Net.Index.Memory
 
                         for (int k = 0; k < iters; k++)
                         {
-                            result.Append(postingsReader.ReadInt());
+                            result.Append(postingsReader.ReadInt32());
                             if (k < iters - 1)
                             {
                                 result.Append(", ");

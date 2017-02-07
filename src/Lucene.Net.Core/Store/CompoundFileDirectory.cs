@@ -147,7 +147,7 @@ namespace Lucene.Net.Store
 #pragma warning disable 612, 618
                 stream = handle.OpenFullSlice();
 #pragma warning restore 612, 618
-                int firstInt = stream.ReadVInt();
+                int firstInt = stream.ReadVInt32();
                 // impossible for 3.0 to have 63 files in a .cfs, CFS writer was not visible
                 // and separate norms/etc are outside of cfs.
                 if (firstInt == CODEC_MAGIC_BYTE1)
@@ -163,7 +163,7 @@ namespace Lucene.Net.Store
                     string entriesFileName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
                     entriesStream = dir.OpenChecksumInput(entriesFileName, IOContext.READ_ONCE);
                     CodecUtil.CheckHeader(entriesStream, CompoundFileWriter.ENTRY_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
-                    int numEntries = entriesStream.ReadVInt();
+                    int numEntries = entriesStream.ReadVInt32();
                     mapping = new Dictionary<string, FileEntry>(numEntries);
                     for (int i = 0; i < numEntries; i++)
                     {
@@ -179,8 +179,8 @@ namespace Lucene.Net.Store
                         {
                             mapping[id] = fileEntry;
                         }
-                        fileEntry.Offset = entriesStream.ReadLong();
-                        fileEntry.Length = entriesStream.ReadLong();
+                        fileEntry.Offset = entriesStream.ReadInt64();
+                        fileEntry.Length = entriesStream.ReadInt64();
                     }
                     if (version >= CompoundFileWriter.VERSION_CHECKSUM)
                     {
@@ -224,7 +224,7 @@ namespace Lucene.Net.Store
                     throw new CorruptIndexException("Incompatible format version: " + firstInt + " expected >= " + CompoundFileWriter.FORMAT_NO_SEGMENT_PREFIX + " (resource: " + stream + ")");
                 }
                 // It's a post-3.1 index, read the count.
-                count = stream.ReadVInt();
+                count = stream.ReadVInt32();
                 stripSegmentName = false;
             }
             else
@@ -238,7 +238,7 @@ namespace Lucene.Net.Store
             FileEntry entry = null;
             for (int i = 0; i < count; i++)
             {
-                long offset = stream.ReadLong();
+                long offset = stream.ReadInt64();
                 if (offset < 0 || offset > streamLength)
                 {
                     throw new CorruptIndexException("Invalid CFS entry offset: " + offset + " (resource: " + stream + ")");

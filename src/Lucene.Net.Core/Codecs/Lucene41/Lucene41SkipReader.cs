@@ -239,34 +239,34 @@ namespace Lucene.Net.Codecs.Lucene41
             // if (DEBUG) {
             //   System.out.println("readSkipData level=" + level);
             // }
-            int delta = skipStream.ReadVInt();
+            int delta = skipStream.ReadVInt32();
             // if (DEBUG) {
             //   System.out.println("  delta=" + delta);
             // }
-            docPointer[level] += skipStream.ReadVInt();
+            docPointer[level] += skipStream.ReadVInt32();
             // if (DEBUG) {
             //   System.out.println("  docFP=" + docPointer[level]);
             // }
 
             if (posPointer != null)
             {
-                posPointer[level] += skipStream.ReadVInt();
+                posPointer[level] += skipStream.ReadVInt32();
                 // if (DEBUG) {
                 //   System.out.println("  posFP=" + posPointer[level]);
                 // }
-                posBufferUpto[level] = skipStream.ReadVInt();
+                posBufferUpto[level] = skipStream.ReadVInt32();
                 // if (DEBUG) {
                 //   System.out.println("  posBufferUpto=" + posBufferUpto[level]);
                 // }
 
                 if (payloadByteUpto != null)
                 {
-                    payloadByteUpto[level] = skipStream.ReadVInt();
+                    payloadByteUpto[level] = skipStream.ReadVInt32();
                 }
 
                 if (payPointer != null)
                 {
-                    payPointer[level] += skipStream.ReadVInt();
+                    payPointer[level] += skipStream.ReadVInt32();
                 }
             }
             return delta;

@@ -152,9 +152,9 @@ namespace Lucene.Net.Codecs.Lucene40
         public override void Init(IndexOutput termsOut)
         {
             CodecUtil.WriteHeader(termsOut, Lucene40PostingsReader.TERMS_CODEC, Lucene40PostingsReader.VERSION_CURRENT);
-            termsOut.WriteInt(SkipInterval); // write skipInterval
-            termsOut.WriteInt(MaxSkipLevels); // write maxSkipLevels
-            termsOut.WriteInt(SkipMinimum); // write skipMinimum
+            termsOut.WriteInt32(SkipInterval); // write skipInterval
+            termsOut.WriteInt32(MaxSkipLevels); // write maxSkipLevels
+            termsOut.WriteInt32(SkipMinimum); // write skipMinimum
         }
 
         public override BlockTermState NewTermState()
@@ -225,16 +225,16 @@ namespace Lucene.Net.Codecs.Lucene40
             LastDocID = docID;
             if (IndexOptions == Index.IndexOptions.DOCS_ONLY)
             {
-                FreqOut.WriteVInt(delta);
+                FreqOut.WriteVInt32(delta);
             }
             else if (1 == termDocFreq)
             {
-                FreqOut.WriteVInt((delta << 1) | 1);
+                FreqOut.WriteVInt32((delta << 1) | 1);
             }
             else
             {
-                FreqOut.WriteVInt(delta << 1);
-                FreqOut.WriteVInt(termDocFreq);
+                FreqOut.WriteVInt32(delta << 1);
+                FreqOut.WriteVInt32(termDocFreq);
             }
 
             LastPosition = 0;
@@ -264,17 +264,17 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (payloadLength != LastPayloadLength)
                 {
                     LastPayloadLength = payloadLength;
-                    ProxOut.WriteVInt((delta << 1) | 1);
-                    ProxOut.WriteVInt(payloadLength);
+                    ProxOut.WriteVInt32((delta << 1) | 1);
+                    ProxOut.WriteVInt32(payloadLength);
                 }
                 else
                 {
-                    ProxOut.WriteVInt(delta << 1);
+                    ProxOut.WriteVInt32(delta << 1);
                 }
             }
             else
             {
-                ProxOut.WriteVInt(delta);
+                ProxOut.WriteVInt32(delta);
             }
 
             if (StoreOffsets)
@@ -286,12 +286,12 @@ namespace Lucene.Net.Codecs.Lucene40
                 Debug.Assert(offsetDelta >= 0 && offsetLength >= 0, "startOffset=" + startOffset + ",lastOffset=" + LastOffset + ",endOffset=" + endOffset);
                 if (offsetLength != LastOffsetLength)
                 {
-                    ProxOut.WriteVInt(offsetDelta << 1 | 1);
-                    ProxOut.WriteVInt(offsetLength);
+                    ProxOut.WriteVInt32(offsetDelta << 1 | 1);
+                    ProxOut.WriteVInt32(offsetLength);
                 }
                 else
                 {
-                    ProxOut.WriteVInt(offsetDelta << 1);
+                    ProxOut.WriteVInt32(offsetDelta << 1);
                 }
                 LastOffset = startOffset;
                 LastOffsetLength = offsetLength;
@@ -346,15 +346,15 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 LastState = EmptyState;
             }
-            @out.WriteVLong(state.FreqStart - LastState.FreqStart);
+            @out.WriteVInt64(state.FreqStart - LastState.FreqStart);
             if (state.SkipOffset != -1)
             {
                 Debug.Assert(state.SkipOffset > 0);
-                @out.WriteVLong(state.SkipOffset);
+                @out.WriteVInt64(state.SkipOffset);
             }
             if (IndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                @out.WriteVLong(state.ProxStart - LastState.ProxStart);
+                @out.WriteVInt64(state.ProxStart - LastState.ProxStart);
             }
             LastState = state;
         }

@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private int CheckValidFormat(IndexInput @in)
         {
-            int format = @in.ReadInt();
+            int format = @in.ReadInt32();
             if (format < FORMAT_MINIMUM)
             {
                 throw new IndexFormatTooOldException(@in, format, FORMAT_MINIMUM, FORMAT_CURRENT);
@@ -228,9 +228,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 this.outerInstance = outerInstance;
                 outerInstance.SeekTvx(docID);
-                outerInstance.tvd.Seek(outerInstance.tvx.ReadLong());
+                outerInstance.tvd.Seek(outerInstance.tvx.ReadInt64());
 
-                int fieldCount = outerInstance.tvd.ReadVInt();
+                int fieldCount = outerInstance.tvd.ReadVInt32();
                 Debug.Assert(fieldCount >= 0);
                 if (fieldCount != 0)
                 {
@@ -238,16 +238,16 @@ namespace Lucene.Net.Codecs.Lucene3x
                     fieldFPs = new long[fieldCount];
                     for (int fieldUpto = 0; fieldUpto < fieldCount; fieldUpto++)
                     {
-                        int fieldNumber = outerInstance.tvd.ReadVInt();
+                        int fieldNumber = outerInstance.tvd.ReadVInt32();
                         fieldNumbers[fieldUpto] = fieldNumber;
                         fieldNumberToIndex[fieldNumber] = fieldUpto;
                     }
 
-                    long position = outerInstance.tvx.ReadLong();
+                    long position = outerInstance.tvx.ReadInt64();
                     fieldFPs[0] = position;
                     for (int fieldUpto = 1; fieldUpto < fieldCount; fieldUpto++)
                     {
-                        position += outerInstance.tvd.ReadVLong();
+                        position += outerInstance.tvd.ReadVInt64();
                         fieldFPs[fieldUpto] = position;
                     }
                 }
@@ -364,7 +364,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 this.outerInstance = outerInstance;
                 outerInstance.tvf.Seek(tvfFP);
-                numTerms = outerInstance.tvf.ReadVInt();
+                numTerms = outerInstance.tvf.ReadVInt32();
                 byte bits = outerInstance.tvf.ReadByte();
                 storePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
                 storeOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
@@ -532,13 +532,13 @@ namespace Lucene.Net.Codecs.Lucene3x
                     TermAndPostings t = new TermAndPostings();
                     BytesRef term = new BytesRef();
                     term.CopyBytes(lastTerm);
-                    int start = tvf.ReadVInt();
-                    int deltaLen = tvf.ReadVInt();
+                    int start = tvf.ReadVInt32();
+                    int deltaLen = tvf.ReadVInt32();
                     term.Length = start + deltaLen;
                     term.Grow(term.Length);
                     tvf.ReadBytes(term.Bytes, start, deltaLen);
                     t.Term = term;
-                    int freq = tvf.ReadVInt();
+                    int freq = tvf.ReadVInt32();
                     t.Freq = freq;
 
                     if (storePositions)
@@ -547,7 +547,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                         int pos = 0;
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {
-                            int delta = tvf.ReadVInt();
+                            int delta = tvf.ReadVInt32();
                             if (delta == -1)
                             {
                                 delta = 0; // LUCENE-1542 correction
@@ -565,8 +565,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                         int offset = 0;
                         for (int posUpto = 0; posUpto < freq; posUpto++)
                         {
-                            startOffsets[posUpto] = offset + tvf.ReadVInt();
-                            offset = endOffsets[posUpto] = startOffsets[posUpto] + tvf.ReadVInt();
+                            startOffsets[posUpto] = offset + tvf.ReadVInt32();
+                            offset = endOffsets[posUpto] = startOffsets[posUpto] + tvf.ReadVInt32();
                         }
                         t.StartOffsets = startOffsets;
                         t.EndOffsets = endOffsets;

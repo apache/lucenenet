@@ -91,7 +91,7 @@ namespace Lucene.Net.Facet.Range
             for (int i = 0; i < ranges.Length; i++)
             {
                 DoubleRange range = ranges[i];
-                longRanges[i] = new LongRange(range.Label, NumericUtils.DoubleToSortableLong(range.minIncl), true, NumericUtils.DoubleToSortableLong(range.maxIncl), true);
+                longRanges[i] = new LongRange(range.Label, NumericUtils.DoubleToSortableInt64(range.minIncl), true, NumericUtils.DoubleToSortableInt64(range.maxIncl), true);
             }
 
             LongRangeCounter counter = new LongRangeCounter(longRanges);
@@ -135,7 +135,7 @@ namespace Lucene.Net.Facet.Range
                     // Skip missing docs:
                     if (fv.Exists(doc))
                     {
-                        counter.Add(NumericUtils.DoubleToSortableLong(fv.DoubleVal(doc)));
+                        counter.Add(NumericUtils.DoubleToSortableInt64(fv.DoubleVal(doc)));
                     }
                     else
                     {

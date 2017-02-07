@@ -284,7 +284,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 text.Length = outerInstance.IndexedTermPrefixLength(_lastTerm, text);
                 try
                 {
-                    _fstBuilder.Add(Util.Fst.Util.ToIntsRef(text, _scratchIntsRef), termsFilePointer);
+                    _fstBuilder.Add(Util.Fst.Util.ToInt32sRef(text, _scratchIntsRef), termsFilePointer);
                 }
                 finally
                 {
@@ -320,14 +320,14 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                 }
 
-                m_output.WriteVInt(nonNullFieldCount);
+                m_output.WriteVInt32(nonNullFieldCount);
                 for (int i = 0; i < fieldCount; i++)
                 {
                     FstFieldWriter field = _fields[i];
                     if (field.Fst != null)
                     {
-                        m_output.WriteVInt(field.FieldInfo.Number);
-                        m_output.WriteVLong(field.IndexStart);
+                        m_output.WriteVInt32(field.FieldInfo.Number);
+                        m_output.WriteVInt64(field.IndexStart);
                     }
                 }
                 WriteTrailer(dirStart);
@@ -342,7 +342,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private void WriteTrailer(long dirStart)
         {
-            m_output.WriteLong(dirStart);
+            m_output.WriteInt64(dirStart);
         }
     }
 }

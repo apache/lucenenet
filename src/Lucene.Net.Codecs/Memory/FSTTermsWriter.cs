@@ -156,7 +156,7 @@ namespace Lucene.Net.Codecs.Memory
 
         private void WriteTrailer(IndexOutput output, long dirStart)
         {
-            output.WriteLong(dirStart);
+            output.WriteInt64(dirStart);
         }
 
         public override TermsConsumer AddField(FieldInfo field)
@@ -174,18 +174,18 @@ namespace Lucene.Net.Codecs.Memory
                 // write field summary
                 var dirStart = _output.FilePointer;
 
-                _output.WriteVInt(_fields.Count);
+                _output.WriteVInt32(_fields.Count);
                 foreach (var field in _fields)
                 {
-                    _output.WriteVInt(field.FieldInfo.Number);
-                    _output.WriteVLong(field.NumTerms);
+                    _output.WriteVInt32(field.FieldInfo.Number);
+                    _output.WriteVInt64(field.NumTerms);
                     if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                     {
-                        _output.WriteVLong(field.SumTotalTermFreq);
+                        _output.WriteVInt64(field.SumTotalTermFreq);
                     }
-                    _output.WriteVLong(field.SumDocFreq);
-                    _output.WriteVInt(field.DocCount);
-                    _output.WriteVInt(field.LongsSize);
+                    _output.WriteVInt64(field.SumDocFreq);
+                    _output.WriteVInt32(field.DocCount);
+                    _output.WriteVInt32(field.LongsSize);
                     field.Dict.Save(_output);
                 }
                 WriteTrailer(_output, dirStart);
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Memory
                     _metaWriter.WriteTo(meta.bytes, 0);
                     _metaWriter.Reset();
                 }
-                _builder.Add(Util.ToIntsRef(text, _scratchTerm), meta);
+                _builder.Add(Util.ToInt32sRef(text, _scratchTerm), meta);
                 _numTerms++;
             }
 

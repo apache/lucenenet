@@ -56,7 +56,7 @@ namespace Lucene.Net.Util.Fst
             int stopAt1 = pos1 + Math.Min(output1.Length, output2.Length);
             while (pos1 < stopAt1)
             {
-                if (output1.Ints[pos1] != output2.Ints[pos2])
+                if (output1.Int32s[pos1] != output2.Int32s[pos2])
                 {
                     break;
                 }
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util.Fst
             }
             else
             {
-                return new IntsRef(output1.Ints, output1.Offset, pos1 - output1.Offset);
+                return new IntsRef(output1.Int32s, output1.Offset, pos1 - output1.Offset);
             }
         }
 
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util.Fst
             {
                 Debug.Assert(inc.Length < output.Length, "inc.length=" + inc.Length + " vs output.length=" + output.Length);
                 Debug.Assert(inc.Length > 0);
-                return new IntsRef(output.Ints, output.Offset + inc.Length, output.Length - inc.Length);
+                return new IntsRef(output.Int32s, output.Offset + inc.Length, output.Length - inc.Length);
             }
         }
 
@@ -124,8 +124,8 @@ namespace Lucene.Net.Util.Fst
                 Debug.Assert(prefix.Length > 0);
                 Debug.Assert(output.Length > 0);
                 IntsRef result = new IntsRef(prefix.Length + output.Length);
-                Array.Copy(prefix.Ints, prefix.Offset, result.Ints, 0, prefix.Length);
-                Array.Copy(output.Ints, output.Offset, result.Ints, prefix.Length, output.Length);
+                Array.Copy(prefix.Int32s, prefix.Offset, result.Int32s, 0, prefix.Length);
+                Array.Copy(output.Int32s, output.Offset, result.Int32s, prefix.Length, output.Length);
                 result.Length = prefix.Length + output.Length;
                 return result;
             }
@@ -134,16 +134,16 @@ namespace Lucene.Net.Util.Fst
         public override void Write(IntsRef prefix, DataOutput @out)
         {
             Debug.Assert(prefix != null);
-            @out.WriteVInt(prefix.Length);
+            @out.WriteVInt32(prefix.Length);
             for (int idx = 0; idx < prefix.Length; idx++)
             {
-                @out.WriteVInt(prefix.Ints[prefix.Offset + idx]);
+                @out.WriteVInt32(prefix.Int32s[prefix.Offset + idx]);
             }
         }
 
         public override IntsRef Read(DataInput @in)
         {
-            int len = @in.ReadVInt();
+            int len = @in.ReadVInt32();
             if (len == 0)
             {
                 return NO_OUTPUT;
@@ -153,7 +153,7 @@ namespace Lucene.Net.Util.Fst
                 IntsRef output = new IntsRef(len);
                 for (int idx = 0; idx < len; idx++)
                 {
-                    output.Ints[idx] = @in.ReadVInt();
+                    output.Int32s[idx] = @in.ReadVInt32();
                 }
                 output.Length = len;
                 return output;

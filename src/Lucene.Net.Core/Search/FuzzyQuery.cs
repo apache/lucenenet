@@ -263,13 +263,15 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Helper function to convert from deprecated "minimumSimilarity" fractions
         /// to raw edit distances.
+        /// <para/>
+        /// NOTE: this was floatToEdits() in Lucene
         /// </summary>
         /// <param name="minimumSimilarity"> scaled similarity </param>
         /// <param name="termLen"> length (in unicode codepoints) of the term. </param>
         /// <returns> equivalent number of maxEdits </returns>
         /// @deprecated pass integer edit distances instead.
         [Obsolete("pass integer edit distances instead.")]
-        public static int FloatToEdits(float minimumSimilarity, int termLen)
+        public static int SingleToEdits(float minimumSimilarity, int termLen)
         {
             if (minimumSimilarity >= 1f)
             {

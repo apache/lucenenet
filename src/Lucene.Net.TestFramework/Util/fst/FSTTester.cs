@@ -74,7 +74,7 @@ namespace Lucene.Net.Util.Fst
             else
             {
                 // utf32
-                return UnicodeUtil.NewString(term.Ints, term.Offset, term.Length) + " " + term;
+                return UnicodeUtil.NewString(term.Int32s, term.Offset, term.Length) + " " + term;
             }
         }
 
@@ -83,7 +83,7 @@ namespace Lucene.Net.Util.Fst
             BytesRef br = new BytesRef(ir.Length);
             for (int i = 0; i < ir.Length; i++)
             {
-                int x = ir.Ints[ir.Offset + i];
+                int x = ir.Int32s[ir.Offset + i];
                 Debug.Assert(x >= 0 && x <= 255);
                 br.Bytes[i] = (byte)x;
             }
@@ -150,12 +150,12 @@ namespace Lucene.Net.Util.Fst
             int intIdx = 0;
             while (charIdx < charLength)
             {
-                if (intIdx == ir.Ints.Length)
+                if (intIdx == ir.Int32s.Length)
                 {
                     ir.Grow(intIdx + 1);
                 }
                 int utf32 = Character.CodePointAt(s, charIdx);
-                ir.Ints[intIdx] = utf32;
+                ir.Int32s[intIdx] = utf32;
                 charIdx += Character.CharCount(utf32);
                 intIdx++;
             }
@@ -165,13 +165,13 @@ namespace Lucene.Net.Util.Fst
 
         internal static IntsRef ToIntsRef(BytesRef br, IntsRef ir)
         {
-            if (br.Length > ir.Ints.Length)
+            if (br.Length > ir.Int32s.Length)
             {
                 ir.Grow(br.Length);
             }
             for (int i = 0; i < br.Length; i++)
             {
-                ir.Ints[i] = br.Bytes[br.Offset + i] & 0xFF;
+                ir.Int32s[i] = br.Bytes[br.Offset + i] & 0xFF;
             }
             ir.Length = br.Length;
             return ir;
@@ -232,7 +232,7 @@ namespace Lucene.Net.Util.Fst
                 }
                 else
                 {
-                    label = term.Ints[term.Offset + i];
+                    label = term.Int32s[term.Offset + i];
                 }
                 // System.out.println("   loop i=" + i + " label=" + label + " output=" + fst.Outputs.outputToString(output) + " curArc: target=" + arc.target + " isFinal?=" + arc.isFinal());
                 if (fst.FindTargetArc(label, arc, arc, fstReader) == null)
@@ -294,11 +294,11 @@ namespace Lucene.Net.Util.Fst
                     break;
                 }
 
-                if (@in.Ints.Length == @in.Length)
+                if (@in.Int32s.Length == @in.Length)
                 {
                     @in.Grow(1 + @in.Length);
                 }
-                @in.Ints[@in.Length++] = arc.Label;
+                @in.Int32s[@in.Length++] = arc.Label;
             }
 
             return output;
@@ -824,7 +824,7 @@ namespace Lucene.Net.Util.Fst
             IntsRef scratch = new IntsRef(10);
             foreach (InputOutput<T> pair in Pairs)
             {
-                scratch.CopyInts(pair.Input);
+                scratch.CopyInt32s(pair.Input);
                 for (int idx = 0; idx <= pair.Input.Length; idx++)
                 {
                     scratch.Length = idx;
@@ -893,7 +893,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         // consult our parent
                         scratch.Length = prefix.Length - 1;
-                        Array.Copy(prefix.Ints, prefix.Offset, scratch.Ints, 0, scratch.Length);
+                        Array.Copy(prefix.Int32s, prefix.Offset, scratch.Int32s, 0, scratch.Length);
                         CountMinOutput<T> cmo2 = prefixes.ContainsKey(scratch) ? prefixes[scratch] : null;
                         //System.out.println("    parent count = " + (cmo2 == null ? -1 : cmo2.count));
                         keep = cmo2 != null && ((prune2 > 1 && cmo2.Count >= prune2) || (prune2 == 1 && (cmo2.Count >= 2 || prefix.Length <= 1)));
@@ -917,7 +917,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     // clear isLeaf for all ancestors
                     //System.out.println("    keep");
-                    scratch.CopyInts(prefix);
+                    scratch.CopyInt32s(prefix);
                     scratch.Length--;
                     while (scratch.Length >= 0)
                     {

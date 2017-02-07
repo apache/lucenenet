@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
             int state;
             int pos = 0;
             savedStates.Grow(seekBytesRef.Length + 1);
-            int[] states = savedStates.Ints;
+            int[] states = savedStates.Int32s;
             states[0] = runAutomaton.InitialState;
 
             while (true)

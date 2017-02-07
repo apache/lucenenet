@@ -35,7 +35,10 @@ namespace Lucene.Net.Util.Packed
             this.mask = (1L << bitsPerValue) - 1;
         }
 
-        public override sealed int LongBlockCount
+        /// <summary>
+        /// NOTE: This was longBlockCount() in Lucene
+        /// </summary>
+        public override sealed int Int64BlockCount
         {
             get { return BLOCK_COUNT; }
         }
@@ -45,7 +48,10 @@ namespace Lucene.Net.Util.Packed
             get { return BLOCK_COUNT * 8; }
         }
 
-        public override int LongValueCount
+        /// <summary>
+        /// NOTE: This was longValueCount() in Lucene
+        /// </summary>
+        public override int Int64ValueCount
         {
             get { return valueCount; }
         }
@@ -55,7 +61,10 @@ namespace Lucene.Net.Util.Packed
             get { return valueCount; }
         }
 
-        private static long ReadLong(byte[] blocks, int blocksOffset)
+        /// <summary>
+        /// NOTE: This was readLong() in Lucene
+        /// </summary>
+        private static long ReadInt64(byte[] blocks, int blocksOffset)
         {
             return (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 56 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 48 | 
                 (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 40 | (((sbyte)blocks[blocksOffset++]) & 0xFFL) << 32 |
@@ -118,7 +127,7 @@ namespace Lucene.Net.Util.Packed
         {
             for (int i = 0; i < iterations; ++i)
             {
-                long block = ReadLong(blocks, blocksOffset);
+                long block = ReadInt64(blocks, blocksOffset);
                 blocksOffset += 8;
                 valuesOffset = Decode(block, values, valuesOffset);
             }
@@ -145,7 +154,7 @@ namespace Lucene.Net.Util.Packed
             }
             for (int i = 0; i < iterations; ++i)
             {
-                long block = ReadLong(blocks, blocksOffset);
+                long block = ReadInt64(blocks, blocksOffset);
                 blocksOffset += 8;
                 valuesOffset = Decode(block, values, valuesOffset);
             }
@@ -175,7 +184,7 @@ namespace Lucene.Net.Util.Packed
             {
                 long block = Encode(values, valuesOffset);
                 valuesOffset += valueCount;
-                blocksOffset = WriteLong(block, blocks, blocksOffset);
+                blocksOffset = WriteInt64(block, blocks, blocksOffset);
             }
         }
 
@@ -185,7 +194,7 @@ namespace Lucene.Net.Util.Packed
             {
                 long block = Encode(values, valuesOffset);
                 valuesOffset += valueCount;
-                blocksOffset = WriteLong(block, blocks, blocksOffset);
+                blocksOffset = WriteInt64(block, blocks, blocksOffset);
             }
         }
     }

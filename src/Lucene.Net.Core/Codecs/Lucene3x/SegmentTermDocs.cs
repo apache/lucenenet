@@ -165,7 +165,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     return false;
                 }
-                int docCode = m_freqStream.ReadVInt();
+                int docCode = m_freqStream.ReadVInt32();
 
                 if (m_indexOptions == IndexOptions.DOCS_ONLY)
                 {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        freq = m_freqStream.ReadVInt(); // else read freq
+                        freq = m_freqStream.ReadVInt32(); // else read freq
                         Debug.Assert(freq != 1);
                     }
                 }
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 while (i < length && m_count < m_df)
                 {
                     // manually inlined call to next() for speed
-                    int docCode = m_freqStream.ReadVInt();
+                    int docCode = m_freqStream.ReadVInt32();
                     doc += (int)((uint)docCode >> 1); // shift off low bit
                     if ((docCode & 1) != 0) // if low bit is set
                     {
@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     else
                     {
-                        freq = m_freqStream.ReadVInt(); // else read freq
+                        freq = m_freqStream.ReadVInt32(); // else read freq
                     }
                     m_count++;
 
@@ -240,7 +240,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             while (i < length && m_count < m_df)
             {
                 // manually inlined call to next() for speed
-                doc += m_freqStream.ReadVInt();
+                doc += m_freqStream.ReadVInt32();
                 m_count++;
 
                 if (m_liveDocs == null || m_liveDocs.Get(doc))

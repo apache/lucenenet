@@ -46,7 +46,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static BytesRef FloatToBytesRef(float v)
         {
-            return IntAssociationFacetField.IntToBytesRef(Number.FloatToIntBits(v));
+            return IntAssociationFacetField.IntToBytesRef(Number.SingleToInt32Bits(v));
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public static float BytesRefToFloat(BytesRef b)
         {
-            return Number.IntBitsToFloat(IntAssociationFacetField.BytesRefToInt(b));
+            return Number.Int32BitsToSingle(IntAssociationFacetField.BytesRefToInt(b));
         }
 
         public override string ToString()

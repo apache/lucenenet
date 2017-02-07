@@ -45,8 +45,10 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Write a value using exactly <code>bitsPerValue</code> bits.
+        /// <para/>
+        /// NOTE: This was writeLong() in Lucene
         /// </summary>
-        public void WriteLong(long value, int bitsPerValue) // LUCENENET TODO: Rename WriteInt64 ?
+        public void WriteInt64(long value, int bitsPerValue)
         {
             Debug.Assert(bitsPerValue == 64 || (value >= 0 && value <= PackedInts.MaxValue(bitsPerValue)));
             while (bitsPerValue > 0)

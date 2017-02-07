@@ -110,7 +110,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         internal ForUtil(float acceptableOverheadRatio, DataOutput @out)
         {
-            @out.WriteVInt(PackedInts.VERSION_CURRENT);
+            @out.WriteVInt32(PackedInts.VERSION_CURRENT);
             encodedSizes = new int[33];
             encoders = new PackedInts.IEncoder[33];
             decoders = new PackedInts.IDecoder[33];
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 decoders[bpv] = PackedInts.GetDecoder(formatAndBits.Format, PackedInts.VERSION_CURRENT, formatAndBits.BitsPerValue);
                 iterations[bpv] = ComputeIterations(decoders[bpv]);
 
-                @out.WriteVInt(formatAndBits.Format.Id << 5 | (formatAndBits.BitsPerValue - 1));
+                @out.WriteVInt32(formatAndBits.Format.Id << 5 | (formatAndBits.BitsPerValue - 1));
             }
         }
 
@@ -135,7 +135,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// </summary>
         internal ForUtil(DataInput @in)
         {
-            int packedIntsVersion = @in.ReadVInt();
+            int packedIntsVersion = @in.ReadVInt32();
             PackedInts.CheckVersion(packedIntsVersion);
             encodedSizes = new int[33];
             encoders = new PackedInts.IEncoder[33];
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             for (int bpv = 1; bpv <= 32; ++bpv)
             {
-                var code = @in.ReadVInt();
+                var code = @in.ReadVInt32();
                 var formatId = (int)((uint)code >> 5);
                 var bitsPerValue = (code & 31) + 1;
 
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Lucene41
             if (IsAllEqual(data))
             {
                 @out.WriteByte((byte)(sbyte)ALL_VALUES_EQUAL);
-                @out.WriteVInt(data[0]);
+                @out.WriteVInt32(data[0]);
                 return;
             }
 
@@ -201,7 +201,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
             if (numBits == ALL_VALUES_EQUAL)
             {
-                int value = @in.ReadVInt();
+                int value = @in.ReadVInt32();
                 Arrays.Fill(decoded, 0, Lucene41PostingsFormat.BLOCK_SIZE, value);
                 return;
             }
@@ -226,7 +226,7 @@ namespace Lucene.Net.Codecs.Lucene41
             int numBits = @in.ReadByte();
             if (numBits == ALL_VALUES_EQUAL)
             {
-                @in.ReadVInt();
+                @in.ReadVInt32();
                 return;
             }
             Debug.Assert(numBits > 0 && numBits <= 32, numBits.ToString());

@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInts"/> and makes those
+    /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInt32s"/> and makes those
     /// values available as other numeric types, casting as needed.
     /// </summary>
     public class IntFieldSource : FieldCacheSource
@@ -51,7 +51,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            FieldCache.Ints arr = m_cache.GetInts(readerContext.AtomicReader, m_field, parser, true);
+            FieldCache.Ints arr = m_cache.GetInt32s(readerContext.AtomicReader, m_field, parser, true);
             IBits valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);

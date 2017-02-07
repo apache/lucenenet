@@ -148,27 +148,27 @@ namespace Lucene.Net.Codecs.Lucene40
                 // to read the current payload/offset lengths
                 // because it differs from the lengths of the
                 // previous payload/offset
-                delta = skipStream.ReadVInt();
+                delta = skipStream.ReadVInt32();
                 if ((delta & 1) != 0)
                 {
                     if (currentFieldStoresPayloads)
                     {
-                        payloadLength[level] = skipStream.ReadVInt();
+                        payloadLength[level] = skipStream.ReadVInt32();
                     }
                     if (currentFieldStoresOffsets)
                     {
-                        offsetLength[level] = skipStream.ReadVInt();
+                        offsetLength[level] = skipStream.ReadVInt32();
                     }
                 }
                 delta = (int)((uint)delta >> 1);
             }
             else
             {
-                delta = skipStream.ReadVInt();
+                delta = skipStream.ReadVInt32();
             }
 
-            freqPointer[level] += skipStream.ReadVInt();
-            proxPointer[level] += skipStream.ReadVInt();
+            freqPointer[level] += skipStream.ReadVInt32();
+            proxPointer[level] += skipStream.ReadVInt32();
 
             return delta;
         }

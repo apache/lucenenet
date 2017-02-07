@@ -544,7 +544,7 @@ namespace Lucene.Net.QueryParsers.Classic
             // FuzzyQuery doesn't yet allow constant score rewrite
             string text = term.Text();
 #pragma warning disable 612, 618
-            int numEdits = FuzzyQuery.FloatToEdits(minimumSimilarity,
+            int numEdits = FuzzyQuery.SingleToEdits(minimumSimilarity,
                 text.CodePointCount(0, text.Length));
 #pragma warning restore 612, 618
             return new FuzzyQuery(term, numEdits, prefixLength);

@@ -83,8 +83,8 @@ namespace Egothor.Stemmer
             : base(false)
         {
             forward = @is.ReadBoolean();
-            BY = @is.ReadInt();
-            for (int i = @is.ReadInt(); i > 0; i--)
+            BY = @is.ReadInt32();
+            for (int i = @is.ReadInt32(); i > 0; i--)
             {
                 m_tries.Add(new Trie(@is));
             }
@@ -148,8 +148,8 @@ namespace Egothor.Stemmer
         public override void Store(IDataOutput os)
         {
             os.WriteBoolean(forward);
-            os.WriteInt(BY);
-            os.WriteInt(m_tries.Count);
+            os.WriteInt32(BY);
+            os.WriteInt32(m_tries.Count);
             foreach (Trie trie in m_tries)
                 trie.Store(os);
         }

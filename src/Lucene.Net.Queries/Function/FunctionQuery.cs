@@ -231,7 +231,7 @@ namespace Lucene.Net.Queries.Function
         /// </summary>
         public override int GetHashCode()
         {
-            return func.GetHashCode() * 31 + Number.FloatToIntBits(Boost);
+            return func.GetHashCode() * 31 + Number.SingleToInt32Bits(Boost);
         }
     }
 }

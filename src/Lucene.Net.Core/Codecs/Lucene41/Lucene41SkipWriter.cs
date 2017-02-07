@@ -131,10 +131,10 @@ namespace Lucene.Net.Codecs.Lucene41
             // if (DEBUG) {
             //   System.out.println("writeSkipData level=" + level + " lastDoc=" + curDoc + " delta=" + delta + " curDocPointer=" + curDocPointer);
             // }
-            skipBuffer.WriteVInt(delta);
+            skipBuffer.WriteVInt32(delta);
             lastSkipDoc[level] = curDoc;
 
-            skipBuffer.WriteVInt((int)(curDocPointer - lastSkipDocPointer[level]));
+            skipBuffer.WriteVInt32((int)(curDocPointer - lastSkipDocPointer[level]));
             lastSkipDocPointer[level] = curDocPointer;
 
             if (fieldHasPositions)
@@ -142,18 +142,18 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("  curPosPointer=" + curPosPointer + " curPosBufferUpto=" + curPosBufferUpto);
                 // }
-                skipBuffer.WriteVInt((int)(curPosPointer - lastSkipPosPointer[level]));
+                skipBuffer.WriteVInt32((int)(curPosPointer - lastSkipPosPointer[level]));
                 lastSkipPosPointer[level] = curPosPointer;
-                skipBuffer.WriteVInt(curPosBufferUpto);
+                skipBuffer.WriteVInt32(curPosBufferUpto);
 
                 if (fieldHasPayloads)
                 {
-                    skipBuffer.WriteVInt(curPayloadByteUpto);
+                    skipBuffer.WriteVInt32(curPayloadByteUpto);
                 }
 
                 if (fieldHasOffsets || fieldHasPayloads)
                 {
-                    skipBuffer.WriteVInt((int)(curPayPointer - lastSkipPayPointer[level]));
+                    skipBuffer.WriteVInt32((int)(curPayPointer - lastSkipPayPointer[level]));
                     lastSkipPayPointer[level] = curPayPointer;
                 }
             }

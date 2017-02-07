@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Lucene46
             {
                 int codecVersion = CodecUtil.CheckHeader(input, Lucene46SegmentInfoFormat.CODEC_NAME, Lucene46SegmentInfoFormat.VERSION_START, Lucene46SegmentInfoFormat.VERSION_CURRENT);
                 string version = input.ReadString();
-                int docCount = input.ReadInt();
+                int docCount = input.ReadInt32();
                 if (docCount < 0)
                 {
                     throw new CorruptIndexException("invalid docCount: " + docCount + " (resource=" + input + ")");

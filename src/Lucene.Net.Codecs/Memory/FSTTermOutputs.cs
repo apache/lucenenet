@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.Memory
                 else
                 {
                     output.WriteByte((byte) bits);
-                    output.WriteVInt(data.bytes.Length);
+                    output.WriteVInt32(data.bytes.Length);
                 }
             }
             else
@@ -272,7 +272,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 for (int pos = 0; pos < _longsSize; pos++)
                 {
-                    output.WriteVLong(data.longs[pos]);
+                    output.WriteVInt64(data.longs[pos]);
                 }
             }
             if (bit1 > 0) // bytes exists
@@ -285,17 +285,17 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     if (data.docFreq == data.totalTermFreq)
                     {
-                        output.WriteVInt((data.docFreq << 1) | 1);
+                        output.WriteVInt32((data.docFreq << 1) | 1);
                     }
                     else
                     {
-                        output.WriteVInt((data.docFreq << 1));
-                        output.WriteVLong(data.totalTermFreq - data.docFreq);
+                        output.WriteVInt32((data.docFreq << 1));
+                        output.WriteVInt64(data.totalTermFreq - data.docFreq);
                     }
                 }
                 else
                 {
-                    output.WriteVInt(data.docFreq);
+                    output.WriteVInt32(data.docFreq);
                 }
             }
         }
@@ -313,13 +313,13 @@ namespace Lucene.Net.Codecs.Memory
             var bytesSize = ((int) ((uint) bits >> 3));
             if (bit1 > 0 && bytesSize == 0) // determine extra length
             {
-                bytesSize = input.ReadVInt();
+                bytesSize = input.ReadVInt32();
             }
             if (bit0 > 0) // not all-zero case
             {
                 for (int pos = 0; pos < _longsSize; pos++)
                 {
-                    longs[pos] = input.ReadVLong();
+                    longs[pos] = input.ReadVInt64();
                 }
             }
             if (bit1 > 0) // bytes exists
@@ -329,13 +329,13 @@ namespace Lucene.Net.Codecs.Memory
             }
             if (bit2 > 0) // stats exist
             {
-                int code = input.ReadVInt();
+                int code = input.ReadVInt32();
                 if (_hasPos)
                 {
                     totalTermFreq = docFreq = (int) ((uint) code >> 1);
                     if ((code & 1) == 0)
                     {
-                        totalTermFreq += input.ReadVLong();
+                        totalTermFreq += input.ReadVInt64();
                     }
                 }
                 else

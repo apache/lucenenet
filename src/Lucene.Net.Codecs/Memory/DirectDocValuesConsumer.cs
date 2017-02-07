@@ -65,14 +65,14 @@ namespace Lucene.Net.Codecs.Memory
 
         public override void AddNumericField(FieldInfo field, IEnumerable<long?> values)
         {
-            meta.WriteVInt(field.Number);
+            meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.NUMBER);
             AddNumericFieldValues(field, values);
         }
 
         private void AddNumericFieldValues(FieldInfo field, IEnumerable<long?> values)
         {
-            meta.WriteLong(data.FilePointer);
+            meta.WriteInt64(data.FilePointer);
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             bool missing = false;
@@ -97,18 +97,18 @@ namespace Lucene.Net.Codecs.Memory
                                                        DirectDocValuesFormat.MAX_SORTED_SET_ORDS + " values/total ords");
                 }
             }
-            meta.WriteInt((int) count);
+            meta.WriteInt32((int) count);
 
             if (missing)
             {
                 long start = data.FilePointer;
                 WriteMissingBitset(values);
-                meta.WriteLong(start);
-                meta.WriteLong(data.FilePointer - start);
+                meta.WriteInt64(start);
+                meta.WriteInt64(data.FilePointer - start);
             }
             else
             {
-                meta.WriteLong(-1L);
+                meta.WriteInt64(-1L);
             }
 
             byte byteWidth;
@@ -148,13 +148,13 @@ namespace Lucene.Net.Codecs.Memory
                         data.WriteByte((byte)(sbyte) v);
                         break;
                     case 2:
-                        data.WriteShort((short) v);
+                        data.WriteInt16((short) v);
                         break;
                     case 4:
-                        data.WriteInt((int) v);
+                        data.WriteInt32((int) v);
                         break;
                     case 8:
-                        data.WriteLong(v);
+                        data.WriteInt64(v);
                         break;
                 }
             }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (meta != null)
                 {
-                    meta.WriteVInt(-1); // write EOF marker
+                    meta.WriteVInt32(-1); // write EOF marker
                     CodecUtil.WriteFooter(meta); // write checksum
                 }
                 if (data != null)
@@ -194,7 +194,7 @@ namespace Lucene.Net.Codecs.Memory
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            meta.WriteVInt(field.Number);
+            meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.BYTES);
             AddBinaryFieldValues(field, values);
         }
@@ -226,31 +226,31 @@ namespace Lucene.Net.Codecs.Memory
                 count++;
             }
 
-            meta.WriteLong(startFP);
-            meta.WriteInt((int) totalBytes);
-            meta.WriteInt(count);
+            meta.WriteInt64(startFP);
+            meta.WriteInt32((int) totalBytes);
+            meta.WriteInt32(count);
             if (missing)
             {
                 long start = data.FilePointer;
                 WriteMissingBitset(values);
-                meta.WriteLong(start);
-                meta.WriteLong(data.FilePointer - start);
+                meta.WriteInt64(start);
+                meta.WriteInt64(data.FilePointer - start);
             }
             else
             {
-                meta.WriteLong(-1L);
+                meta.WriteInt64(-1L);
             }
 
             int addr = 0;
             foreach (BytesRef v in values)
             {
-                data.WriteInt(addr);
+                data.WriteInt32(addr);
                 if (v != null)
                 {
                     addr += v.Length;
                 }
             }
-            data.WriteInt(addr);
+            data.WriteInt32(addr);
         }
 
         // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
@@ -263,7 +263,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (count == 64)
                 {
-                    data.WriteLong(bits);
+                    data.WriteInt64(bits);
                     count = 0;
                     bits = 0;
                 }
@@ -275,13 +275,13 @@ namespace Lucene.Net.Codecs.Memory
             }
             if (count > 0)
             {
-                data.WriteLong(bits);
+                data.WriteInt64(bits);
             }
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            meta.WriteVInt(field.Number);
+            meta.WriteVInt32(field.Number);
             meta.WriteByte((byte)DirectDocValuesProducer.SORTED);
 
             // write the ordinals as numerics
@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs.Memory
         public override void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values,
             IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords)
         {
-            meta.WriteVInt(field.Number);
+            meta.WriteVInt32(field.Number);
             meta.WriteByte((byte)DirectDocValuesProducer.SORTED_SET);
 
             // First write docToOrdCounts, except we "aggregate" the

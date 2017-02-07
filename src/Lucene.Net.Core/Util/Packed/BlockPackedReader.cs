@@ -56,7 +56,7 @@ namespace Lucene.Net.Util.Packed
                     {
                         minValues = new long[numBlocks];
                     }
-                    minValues[i] = BlockPackedReaderIterator.ZigZagDecode(1L + BlockPackedReaderIterator.ReadVLong(@in));
+                    minValues[i] = BlockPackedReaderIterator.ZigZagDecode(1L + BlockPackedReaderIterator.ReadVInt64(@in));
                 }
                 if (bitsPerValue == 0)
                 {

@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             sbyte mask = (sbyte)@in.ReadByte();
             if ((mask & HAS_VALUE) != 0)
             {
-                node.data = Convert.ToInt64(@in.ReadLong());
+                node.data = Convert.ToInt64(@in.ReadInt64());
             }
             if ((mask & LO_KID) != 0)
             {
@@ -215,7 +215,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
             @out.WriteByte((byte)mask);
             if (node.data != null)
             {
-                @out.WriteLong((long)(node.data));
+                @out.WriteInt64((long)(node.data));
             }
             WriteRecursively(@out, node.relatives[JaspellTernarySearchTrie.TSTNode.LOKID]);
             WriteRecursively(@out, node.relatives[JaspellTernarySearchTrie.TSTNode.EQKID]);
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         public override bool Store(DataOutput output)
         {
-            output.WriteVLong(count);
+            output.WriteVInt64(count);
             JaspellTernarySearchTrie.TSTNode root = trie.Root;
             if (root == null) // empty tree
             {
@@ -236,7 +236,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         public override bool Load(DataInput input)
         {
-            count = input.ReadVLong();
+            count = input.ReadVInt64();
             var root = new JaspellTernarySearchTrie.TSTNode(trie, '\0', null);
             ReadRecursively(input, root);
             trie.Root = root;

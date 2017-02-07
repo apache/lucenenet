@@ -48,9 +48,9 @@ namespace Lucene.Net.Util.Packed
             subReaders = new PackedInts.Reader[numBlocks];
             for (int i = 0; i < numBlocks; ++i)
             {
-                minValues[i] = @in.ReadVLong();
-                averages[i] = Number.IntBitsToFloat(@in.ReadInt());
-                int bitsPerValue = @in.ReadVInt();
+                minValues[i] = @in.ReadVInt64();
+                averages[i] = Number.Int32BitsToSingle(@in.ReadInt32());
+                int bitsPerValue = @in.ReadVInt32();
                 if (bitsPerValue > 64)
                 {
                     throw new Exception("Corrupted");

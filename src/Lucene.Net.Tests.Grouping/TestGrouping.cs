@@ -900,7 +900,7 @@ namespace Lucene.Net.Search.Grouping
                 w.Dispose();
 
                 // NOTE: intentional but temporary field cache insanity!
-                FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(r), "id", false);
+                FieldCache.Ints docIDToID = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(r), "id", false);
                 DirectoryReader rBlocks = null;
                 Directory dirBlocks = null;
 
@@ -944,7 +944,7 @@ namespace Lucene.Net.Search.Grouping
                     dirBlocks = NewDirectory();
                     rBlocks = GetDocBlockReader(dirBlocks, groupDocs);
                     Filter lastDocInBlock = new CachingWrapperFilter(new QueryWrapperFilter(new TermQuery(new Term("groupend", "x"))));
-                    FieldCache.Ints docIDToIDBlocks = FieldCache.DEFAULT.GetInts(SlowCompositeReaderWrapper.Wrap(rBlocks), "id", false);
+                    FieldCache.Ints docIDToIDBlocks = FieldCache.DEFAULT.GetInt32s(SlowCompositeReaderWrapper.Wrap(rBlocks), "id", false);
 
                     IndexSearcher sBlocks = NewSearcher(rBlocks);
                     ShardState shardsBlocks = new ShardState(sBlocks);

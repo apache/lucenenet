@@ -89,16 +89,16 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 TermInfo termInfo = indexEnum.TermInfo();
                 indexToTerms.Set(i, dataOutput.Position);
-                dataOutput.WriteVInt(fieldCounter);
+                dataOutput.WriteVInt32(fieldCounter);
                 dataOutput.WriteString(term.Text());
-                dataOutput.WriteVInt(termInfo.DocFreq);
+                dataOutput.WriteVInt32(termInfo.DocFreq);
                 if (termInfo.DocFreq >= skipInterval)
                 {
-                    dataOutput.WriteVInt(termInfo.SkipOffset);
+                    dataOutput.WriteVInt32(termInfo.SkipOffset);
                 }
-                dataOutput.WriteVLong(termInfo.FreqPointer);
-                dataOutput.WriteVLong(termInfo.ProxPointer);
-                dataOutput.WriteVLong(indexEnum.indexPointer);
+                dataOutput.WriteVInt64(termInfo.FreqPointer);
+                dataOutput.WriteVInt64(termInfo.ProxPointer);
+                dataOutput.WriteVInt64(indexEnum.indexPointer);
                 for (int j = 1; j < indexDivisor; j++)
                 {
                     if (!indexEnum.Next())
@@ -133,25 +133,25 @@ namespace Lucene.Net.Codecs.Lucene3x
             input.SetPosition(indexToDataOffset.Get(indexOffset));
 
             // read the term
-            int fieldId = input.ReadVInt();
+            int fieldId = input.ReadVInt32();
             Term field = fields[fieldId];
             Term term = new Term(field.Field, input.ReadString());
 
             // read the terminfo
             var termInfo = new TermInfo();
-            termInfo.DocFreq = input.ReadVInt();
+            termInfo.DocFreq = input.ReadVInt32();
             if (termInfo.DocFreq >= skipInterval)
             {
-                termInfo.SkipOffset = input.ReadVInt();
+                termInfo.SkipOffset = input.ReadVInt32();
             }
             else
             {
                 termInfo.SkipOffset = 0;
             }
-            termInfo.FreqPointer = input.ReadVLong();
-            termInfo.ProxPointer = input.ReadVLong();
+            termInfo.FreqPointer = input.ReadVInt64();
+            termInfo.ProxPointer = input.ReadVInt64();
 
-            long pointer = input.ReadVLong();
+            long pointer = input.ReadVInt64();
 
             // perform the seek
             enumerator.Seek(pointer, ((long)indexOffset * totalIndexInterval) - 1, term, termInfo);
@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             input.SetPosition(indexToDataOffset.Get(termIndex));
 
             // read the term
-            int fieldId = input.ReadVInt();
+            int fieldId = input.ReadVInt32();
             Term field = fields[fieldId];
             return new Term(field.Field, input.ReadString());
         }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             int c = CompareField(term, termIndex, input);
             if (c == 0)
             {
-                reuse.Length = input.ReadVInt();
+                reuse.Length = input.ReadVInt32();
                 reuse.Grow(reuse.Length);
                 input.ReadBytes(reuse.Bytes, 0, reuse.Length);
                 return comparer.Compare(term.Bytes, reuse);
@@ -272,7 +272,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private int CompareField(Term term, int termIndex, PagedBytesDataInput input)
         {
             input.SetPosition(indexToDataOffset.Get(termIndex));
-            return System.String.Compare(term.Field, fields[input.ReadVInt()].Field, System.StringComparison.Ordinal);
+            return System.String.Compare(term.Field, fields[input.ReadVInt32()].Field, System.StringComparison.Ordinal);
         }
 
         internal virtual long RamBytesUsed()

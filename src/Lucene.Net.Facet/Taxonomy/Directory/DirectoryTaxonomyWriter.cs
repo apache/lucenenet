@@ -1047,13 +1047,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             public void AddMapping(int origOrdinal, int newOrdinal)
             {
-                @out.WriteInt(origOrdinal);
-                @out.WriteInt(newOrdinal);
+                @out.WriteInt32(origOrdinal);
+                @out.WriteInt32(newOrdinal);
             }
 
             public void SetSize(int taxonomySize)
             {
-                @out.WriteInt(taxonomySize);
+                @out.WriteInt32(taxonomySize);
             }
 
             public void AddDone()
@@ -1077,14 +1077,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
                 var ifs = new FileStream(tmpfile, FileMode.OpenOrCreate, FileAccess.Read);
                 var @in = new InputStreamDataInput(ifs);
-                map = new int[@in.ReadInt()];
+                map = new int[@in.ReadInt32()];
                 // NOTE: The current code assumes here that the map is complete,
                 // i.e., every ordinal gets one and exactly one value. Otherwise,
                 // we may run into an EOF here, or vice versa, not read everything.
                 for (int i = 0; i < map.Length; i++)
                 {
-                    int origordinal = @in.ReadInt();
-                    int newordinal = @in.ReadInt();
+                    int origordinal = @in.ReadInt32();
+                    int newordinal = @in.ReadInt32();
                     map[origordinal] = newordinal;
                 }
                 @in.Dispose();

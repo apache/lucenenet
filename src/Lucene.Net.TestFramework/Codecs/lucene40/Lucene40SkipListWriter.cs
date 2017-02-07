@@ -130,22 +130,22 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     // the current payload/offset lengths equals the lengths at the previous skip point,
                     // so we don't store the lengths again
-                    skipBuffer.WriteVInt(delta << 1);
+                    skipBuffer.WriteVInt32(delta << 1);
                 }
                 else
                 {
                     // the payload and/or offset length is different from the previous one. We shift the DocSkip,
                     // set the lowest bit and store the current payload and/or offset lengths as VInts.
-                    skipBuffer.WriteVInt(delta << 1 | 1);
+                    skipBuffer.WriteVInt32(delta << 1 | 1);
 
                     if (CurStorePayloads)
                     {
-                        skipBuffer.WriteVInt(CurPayloadLength);
+                        skipBuffer.WriteVInt32(CurPayloadLength);
                         LastSkipPayloadLength[level] = CurPayloadLength;
                     }
                     if (CurStoreOffsets)
                     {
-                        skipBuffer.WriteVInt(CurOffsetLength);
+                        skipBuffer.WriteVInt32(CurOffsetLength);
                         LastSkipOffsetLength[level] = CurOffsetLength;
                     }
                 }
@@ -153,11 +153,11 @@ namespace Lucene.Net.Codecs.Lucene40
             else
             {
                 // current field does not store payloads or offsets
-                skipBuffer.WriteVInt(delta);
+                skipBuffer.WriteVInt32(delta);
             }
 
-            skipBuffer.WriteVInt((int)(CurFreqPointer - LastSkipFreqPointer[level]));
-            skipBuffer.WriteVInt((int)(CurProxPointer - LastSkipProxPointer[level]));
+            skipBuffer.WriteVInt32((int)(CurFreqPointer - LastSkipFreqPointer[level]));
+            skipBuffer.WriteVInt32((int)(CurProxPointer - LastSkipProxPointer[level]));
 
             LastSkipDoc[level] = CurDoc;
 

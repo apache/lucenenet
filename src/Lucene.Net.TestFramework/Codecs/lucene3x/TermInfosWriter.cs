@@ -136,11 +136,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             bool success = false;
             try
             {
-                Output.WriteInt(FORMAT_CURRENT); // write format
-                Output.WriteLong(0); // leave space for size
-                Output.WriteInt(IndexInterval); // write indexInterval
-                Output.WriteInt(SkipInterval); // write skipInterval
-                Output.WriteInt(MaxSkipLevels); // write maxSkipLevels
+                Output.WriteInt32(FORMAT_CURRENT); // write format
+                Output.WriteInt64(0); // leave space for size
+                Output.WriteInt32(IndexInterval); // write indexInterval
+                Output.WriteInt32(SkipInterval); // write skipInterval
+                Output.WriteInt32(MaxSkipLevels); // write maxSkipLevels
                 Debug.Assert(InitUTF16Results());
                 success = true;
             }
@@ -260,18 +260,18 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             WriteTerm(fieldNumber, term); // write term
 
-            Output.WriteVInt(ti.DocFreq); // write doc freq
-            Output.WriteVLong(ti.FreqPointer - LastTi.FreqPointer); // write pointers
-            Output.WriteVLong(ti.ProxPointer - LastTi.ProxPointer);
+            Output.WriteVInt32(ti.DocFreq); // write doc freq
+            Output.WriteVInt64(ti.FreqPointer - LastTi.FreqPointer); // write pointers
+            Output.WriteVInt64(ti.ProxPointer - LastTi.ProxPointer);
 
             if (ti.DocFreq >= SkipInterval)
             {
-                Output.WriteVInt(ti.SkipOffset);
+                Output.WriteVInt32(ti.SkipOffset);
             }
 
             if (IsIndex)
             {
-                Output.WriteVLong(Other.Output.FilePointer - LastIndexPointer);
+                Output.WriteVInt64(Other.Output.FilePointer - LastIndexPointer);
                 LastIndexPointer = Other.Output.FilePointer; // write pointer
             }
 
@@ -298,10 +298,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
 
             int length = term.Length - start;
-            Output.WriteVInt(start); // write shared prefix length
-            Output.WriteVInt(length); // write delta length
+            Output.WriteVInt32(start); // write shared prefix length
+            Output.WriteVInt32(length); // write delta length
             Output.WriteBytes(term.Bytes, start + term.Offset, length); // write delta bytes
-            Output.WriteVInt(fieldNumber); // write field num
+            Output.WriteVInt32(fieldNumber); // write field num
             LastTerm.CopyBytes(term);
         }
 
@@ -312,7 +312,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             try
             {
                 Output.Seek(4); // write size after format
-                Output.WriteLong(Size);
+                Output.WriteInt64(Size);
             }
             finally
             {

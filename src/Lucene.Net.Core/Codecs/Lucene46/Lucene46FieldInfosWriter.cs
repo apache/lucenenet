@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.Lucene46
             try
             {
                 CodecUtil.WriteHeader(output, Lucene46FieldInfosFormat.CODEC_NAME, Lucene46FieldInfosFormat.FORMAT_CURRENT);
-                output.WriteVInt(infos.Count);
+                output.WriteVInt32(infos.Count);
                 foreach (FieldInfo fi in infos)
                 {
                     IndexOptions? indexOptions = fi.IndexOptions;
@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Lucene46
                         }
                     }
                     output.WriteString(fi.Name);
-                    output.WriteVInt(fi.Number);
+                    output.WriteVInt32(fi.Number);
                     output.WriteByte((byte)bits);
 
                     // pack the DV types in one byte
@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.Lucene46
                     Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
                     var val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
                     output.WriteByte((byte)val);
-                    output.WriteLong(fi.DocValuesGen);
+                    output.WriteInt64(fi.DocValuesGen);
                     output.WriteStringStringMap(fi.Attributes);
                 }
                 CodecUtil.WriteFooter(output);

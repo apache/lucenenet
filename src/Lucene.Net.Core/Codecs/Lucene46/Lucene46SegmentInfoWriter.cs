@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene46
                 CodecUtil.WriteHeader(output, Lucene46SegmentInfoFormat.CODEC_NAME, Lucene46SegmentInfoFormat.VERSION_CURRENT);
                 // Write the Lucene version that created this segment, since 3.1
                 output.WriteString(si.Version);
-                output.WriteInt(si.DocCount);
+                output.WriteInt32(si.DocCount);
 
                 output.WriteByte((byte)(sbyte)(si.UseCompoundFile ? SegmentInfo.YES : SegmentInfo.NO));
                 output.WriteStringStringMap(si.Diagnostics);

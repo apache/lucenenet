@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
 
                                 fieldInfo.DocValuesGen = nextFieldInfosGen;
                                 // write the numeric updates to a new gen'd docvalues file
-                                fieldsConsumer.AddNumericField(fieldInfo, GetLongEnumerable(reader, field, fieldUpdates));
+                                fieldsConsumer.AddNumericField(fieldInfo, GetInt64Enumerable(reader, field, fieldUpdates));
                             }
 
                             //        System.out.println("[" + Thread.currentThread().getName() + "] RAU.writeFieldUpdates: applying binary updates; seg=" + info + " updates=" + dvUpdates.binaryDVUpdates);
@@ -665,7 +665,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        private IEnumerable<long?> GetLongEnumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates)
+        /// <summary>
+        /// NOTE: This was getLongEnumerable() in Lucene
+        /// </summary>
+        private IEnumerable<long?> GetInt64Enumerable(SegmentReader reader, string field, NumericDocValuesFieldUpdates fieldUpdates)
         {
             int maxDoc = reader.MaxDoc;
             IBits DocsWithField = reader.GetDocsWithField(field);

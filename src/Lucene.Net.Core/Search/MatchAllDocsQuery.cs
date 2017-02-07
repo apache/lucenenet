@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
 
         public override int GetHashCode()
         {
-            return Number.FloatToIntBits(Boost) ^ 0x1AA71190;
+            return Number.SingleToInt32Bits(Boost) ^ 0x1AA71190;
         }
     }
 }

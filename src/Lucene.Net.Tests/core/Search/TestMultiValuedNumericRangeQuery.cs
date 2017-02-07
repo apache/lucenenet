@@ -76,7 +76,7 @@ namespace Lucene.Net.Search
                     upper = a;
                 }
                 TermRangeQuery cq = TermRangeQuery.NewStringRange("asc", lower.ToString(format), upper.ToString(format), true, true);
-                NumericRangeQuery<int> tq = NumericRangeQuery.NewIntRange("trie", lower, upper, true, true);
+                NumericRangeQuery<int> tq = NumericRangeQuery.NewInt32Range("trie", lower, upper, true, true);
                 TopDocs trTopDocs = searcher.Search(cq, 1);
                 TopDocs nrTopDocs = searcher.Search(tq, 1);
                 Assert.AreEqual(trTopDocs.TotalHits, nrTopDocs.TotalHits, "Returned count for NumericRangeQuery and TermRangeQuery must be equal");

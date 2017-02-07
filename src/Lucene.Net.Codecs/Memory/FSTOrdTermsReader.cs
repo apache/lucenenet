@@ -69,16 +69,16 @@ namespace Lucene.Net.Codecs.Memory
                 SeekDir(blockIn);
 
                 FieldInfos fieldInfos = state.FieldInfos;
-                int numFields = blockIn.ReadVInt();
+                int numFields = blockIn.ReadVInt32();
                 for (int i = 0; i < numFields; i++)
                 {
-                    FieldInfo fieldInfo = fieldInfos.FieldInfo(blockIn.ReadVInt());
+                    FieldInfo fieldInfo = fieldInfos.FieldInfo(blockIn.ReadVInt32());
                     bool hasFreq = fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY;
-                    long numTerms = blockIn.ReadVLong();
-                    long sumTotalTermFreq = hasFreq ? blockIn.ReadVLong() : -1;
-                    long sumDocFreq = blockIn.ReadVLong();
-                    int docCount = blockIn.ReadVInt();
-                    int longsSize = blockIn.ReadVInt();
+                    long numTerms = blockIn.ReadVInt64();
+                    long sumTotalTermFreq = hasFreq ? blockIn.ReadVInt64() : -1;
+                    long sumDocFreq = blockIn.ReadVInt64();
+                    int docCount = blockIn.ReadVInt32();
+                    int longsSize = blockIn.ReadVInt32();
                     var index = new FST<long?>(indexIn, PositiveIntOutputs.Singleton);
 
                     var current = new TermsReader(this, fieldInfo, blockIn, numTerms, sumTotalTermFreq, sumDocFreq, docCount, longsSize, index);
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 @in.Seek(@in.Length - 8);
             }
-            @in.Seek(@in.ReadLong());
+            @in.Seek(@in.ReadInt64());
         }
 
         private void CheckFieldSummary(SegmentInfo info, IndexInput indexIn, IndexInput blockIn, TermsReader field, TermsReader previous)
@@ -221,9 +221,9 @@ namespace Lucene.Net.Codecs.Memory
                 int numBlocks = (int)(numTerms + INTERVAL - 1) / INTERVAL;
                 this.numSkipInfo = longsSize + 3;
                 this.skipInfo = new long[numBlocks * numSkipInfo];
-                this.statsBlock = new byte[(int)blockIn.ReadVLong()];
-                this.metaLongsBlock = new byte[(int)blockIn.ReadVLong()];
-                this.metaBytesBlock = new byte[(int)blockIn.ReadVLong()];
+                this.statsBlock = new byte[(int)blockIn.ReadVInt64()];
+                this.metaLongsBlock = new byte[(int)blockIn.ReadVInt64()];
+                this.metaBytesBlock = new byte[(int)blockIn.ReadVInt64()];
 
                 int last = 0, next = 0;
                 for (int i = 1; i < numBlocks; i++)
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Memory
                     next = numSkipInfo * i;
                     for (int j = 0; j < numSkipInfo; j++)
                     {
-                        skipInfo[next + j] = skipInfo[last + j] + blockIn.ReadVLong();
+                        skipInfo[next + j] = skipInfo[last + j] + blockIn.ReadVInt64();
                     }
                     last = next;
                 }
@@ -408,7 +408,7 @@ namespace Lucene.Net.Codecs.Memory
                     statsReader.Position = statsFP;
                     for (int i = 0; i < INTERVAL && !statsReader.Eof; i++)
                     {
-                        int code = statsReader.ReadVInt();
+                        int code = statsReader.ReadVInt32();
                         if (outerInstance.HasFreqs)
                         {
                             docFreq_Renamed[i] = ((int)((uint)code >> 1));
@@ -418,7 +418,7 @@ namespace Lucene.Net.Codecs.Memory
                             }
                             else
                             {
-                                totalTermFreq_Renamed[i] = docFreq_Renamed[i] + statsReader.ReadVLong();
+                                totalTermFreq_Renamed[i] = docFreq_Renamed[i] + statsReader.ReadVInt64();
                             }
                         }
                         else
@@ -438,18 +438,18 @@ namespace Lucene.Net.Codecs.Memory
                     metaLongsReader.Position = metaLongsFP;
                     for (int j = 0; j < outerInstance.longsSize; j++)
                     {
-                        longs[0][j] = outerInstance.skipInfo[offset + 3 + j] + metaLongsReader.ReadVLong();
+                        longs[0][j] = outerInstance.skipInfo[offset + 3 + j] + metaLongsReader.ReadVInt64();
                     }
                     bytesStart[0] = metaBytesFP;
-                    bytesLength[0] = (int)metaLongsReader.ReadVLong();
+                    bytesLength[0] = (int)metaLongsReader.ReadVInt64();
                     for (int i = 1; i < INTERVAL && !metaLongsReader.Eof; i++)
                     {
                         for (int j = 0; j < outerInstance.longsSize; j++)
                         {
-                            longs[i][j] = longs[i - 1][j] + metaLongsReader.ReadVLong();
+                            longs[i][j] = longs[i - 1][j] + metaLongsReader.ReadVInt64();
                         }
                         bytesStart[i] = bytesStart[i - 1] + bytesLength[i - 1];
-                        bytesLength[i] = (int)metaLongsReader.ReadVLong();
+                        bytesLength[i] = (int)metaLongsReader.ReadVInt64();
                     }
                 }
 

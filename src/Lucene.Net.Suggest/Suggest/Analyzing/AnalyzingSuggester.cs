@@ -339,13 +339,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 // First by analyzed form:
                 readerA.Reset(a.Bytes, a.Offset, a.Length);
-                scratchA.Length = (ushort)readerA.ReadShort();
+                scratchA.Length = (ushort)readerA.ReadInt16();
                 scratchA.Bytes = a.Bytes;
                 scratchA.Offset = readerA.Position;
 
                 readerB.Reset(b.Bytes, b.Offset, b.Length);
                 scratchB.Bytes = b.Bytes;
-                scratchB.Length = (ushort)readerB.ReadShort();
+                scratchB.Length = (ushort)readerB.ReadInt16();
                 scratchB.Offset = readerB.Position;
 
                 int cmp = scratchA.CompareTo(scratchB);
@@ -357,8 +357,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 readerB.SkipBytes(scratchB.Length);
 
                 // Next by cost:
-                long aCost = readerA.ReadInt();
-                long bCost = readerB.ReadInt();
+                long aCost = readerA.ReadInt32();
+                long bCost = readerB.ReadInt32();
                 Debug.Assert(DecodeWeight(aCost) >= 0);
                 Debug.Assert(DecodeWeight(bCost) >= 0);
                 if (aCost < bCost)
@@ -373,8 +373,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 // Finally by surface form:
                 if (hasPayloads)
                 {
-                    scratchA.Length = (ushort)readerA.ReadShort();
-                    scratchB.Length = (ushort)readerB.ReadShort();
+                    scratchA.Length = (ushort)readerA.ReadInt16();
+                    scratchB.Length = (ushort)readerB.ReadInt16();
                     scratchA.Offset = readerA.Position;
                     scratchB.Offset = readerB.Position;
                 }
@@ -462,11 +462,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                         output.Reset(buffer);
 
-                        output.WriteShort((short)analyzedLength);
+                        output.WriteInt16((short)analyzedLength);
 
                         output.WriteBytes(scratch.Bytes, scratch.Offset, scratch.Length);
 
-                        output.WriteInt(EncodeWeight(iterator.Weight));
+                        output.WriteInt32(EncodeWeight(iterator.Weight));
 
                         if (hasPayloads)
                         {
@@ -478,7 +478,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                         "surface form cannot contain unit separator character U+001F; this character is reserved");
                                 }
                             }
-                            output.WriteShort((short)surfaceForm.Length);
+                            output.WriteInt16((short)surfaceForm.Length);
                             output.WriteBytes(surfaceForm.Bytes, surfaceForm.Offset, surfaceForm.Length);
                             output.WriteBytes(payload.Bytes, payload.Offset, payload.Length);
                         }
@@ -524,17 +524,17 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 while (reader.Read(scratch))
                 {
                     input.Reset(scratch.Bytes, scratch.Offset, scratch.Length);
-                    ushort analyzedLength = (ushort)input.ReadShort();
+                    ushort analyzedLength = (ushort)input.ReadInt16();
                     analyzed.Grow(analyzedLength + 2);
                     input.ReadBytes(analyzed.Bytes, 0, analyzedLength);
                     analyzed.Length = analyzedLength;
 
-                    long cost = input.ReadInt();
+                    long cost = input.ReadInt32();
 
                     surface.Bytes = scratch.Bytes;
                     if (hasPayloads)
                     {
-                        surface.Length = (ushort)input.ReadShort();
+                        surface.Length = (ushort)input.ReadInt16();
                         surface.Offset = input.Position;
                     }
                     else
@@ -584,7 +584,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     analyzed.Bytes[analyzed.Offset + analyzed.Length + 1] = (byte)dedup;
                     analyzed.Length += 2;
 
-                    Util.Fst.Util.ToIntsRef(analyzed, scratchInts);
+                    Util.Fst.Util.ToInt32sRef(analyzed, scratchInts);
                     //System.out.println("ADD: " + scratchInts + " -> " + cost + ": " + surface.utf8ToString());
                     if (!hasPayloads)
                     {
@@ -626,23 +626,23 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override bool Store(DataOutput output)
         {
-            output.WriteVLong(count);
+            output.WriteVInt64(count);
             if (fst == null)
             {
                 return false;
             }
 
             fst.Save(output);
-            output.WriteVInt(maxAnalyzedPathsForOneInput);
+            output.WriteVInt32(maxAnalyzedPathsForOneInput);
             output.WriteByte((byte)(hasPayloads ? 1 : 0));
             return true;
         }
 
         public override bool Load(DataInput input)
         {
-            count = input.ReadVLong();
+            count = input.ReadVInt64();
             this.fst = new FST<PairOutputs<long?, BytesRef>.Pair>(input, new PairOutputs<long?, BytesRef>(PositiveIntOutputs.Singleton, ByteSequenceOutputs.Singleton));
-            maxAnalyzedPathsForOneInput = input.ReadVInt();
+            maxAnalyzedPathsForOneInput = input.ReadVInt32();
             hasPayloads = input.ReadByte() == 1;
             return true;
         }

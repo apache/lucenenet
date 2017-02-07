@@ -28,7 +28,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInts"/> and makes
+    /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInt32s"/> and makes
     /// those values available as other numeric types, casting as needed.
     /// StrVal of the value is not the <see cref="int"/> value, but its <see cref="string"/> (displayed) value
     /// </summary>
@@ -114,7 +114,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = m_cache.GetInts(readerContext.AtomicReader, m_field, parser, true);
+            var arr = m_cache.GetInt32s(readerContext.AtomicReader, m_field, parser, true);
             var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
 
             return new IntDocValuesAnonymousInnerClassHelper(this, this, arr, valid);

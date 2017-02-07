@@ -45,9 +45,15 @@ namespace Lucene.Net.Util
                 this.m_blockSize = blockSize;
             }
 
-            public abstract void RecycleIntBlocks(int[][] blocks, int start, int end);
+            /// <summary>
+            /// NOTE: This was recycleIntBlocks() in Lucene
+            /// </summary>
+            public abstract void RecycleInt32Blocks(int[][] blocks, int start, int end);
 
-            public virtual int[] GetIntBlock() // LUCENENET TODO: Rename GetInt32Block() ?
+            /// <summary>
+            /// NOTE: This was getIntBlock() in Lucene
+            /// </summary>
+            public virtual int[] GetInt32Block()
             {
                 return new int[m_blockSize];
             }
@@ -65,7 +71,10 @@ namespace Lucene.Net.Util
             {
             }
 
-            public override void RecycleIntBlocks(int[][] blocks, int start, int end)
+            /// <summary>
+            /// NOTE: This was recycleIntBlocks() in Lucene
+            /// </summary>
+            public override void RecycleInt32Blocks(int[][] blocks, int start, int end)
             {
             }
         }
@@ -86,8 +95,11 @@ namespace Lucene.Net.Util
         private int bufferUpto = -1;
 
         /// <summary>
-        /// Pointer to the current position in head buffer </summary>
-        public int IntUpto { get; set; }
+        /// Pointer to the current position in head buffer
+        /// <para/>
+        /// NOTE: This was intUpto in Lucene
+        /// </summary>
+        public int Int32Upto { get; set; }
 
         /// <summary>
         /// Current head buffer </summary>
@@ -101,8 +113,11 @@ namespace Lucene.Net.Util
         private int[] buffer;
 
         /// <summary>
-        /// Current head offset </summary>
-        public int IntOffset { get; set; }
+        /// Current head offset 
+        /// <para/>
+        /// NOTE: This was intOffset in Lucene
+        /// </summary>
+        public int Int32Offset { get; set; }
 
         private readonly Allocator allocator;
 
@@ -120,8 +135,8 @@ namespace Lucene.Net.Util
         public IntBlockPool(Allocator allocator)
         {
             // set defaults
-            IntUpto = INT_BLOCK_SIZE;
-            IntOffset = -INT_BLOCK_SIZE;
+            Int32Upto = INT_BLOCK_SIZE;
+            Int32Offset = -INT_BLOCK_SIZE;
 
             this.allocator = allocator;
         }
@@ -157,29 +172,29 @@ namespace Lucene.Net.Util
                         Arrays.Fill(buffers[i], 0);
                     }
                     // Partial zero fill the final buffer
-                    Arrays.Fill(buffers[bufferUpto], 0, IntUpto, 0);
+                    Arrays.Fill(buffers[bufferUpto], 0, Int32Upto, 0);
                 }
 
                 if (bufferUpto > 0 || !reuseFirst)
                 {
                     int offset = reuseFirst ? 1 : 0;
                     // Recycle all but the first buffer
-                    allocator.RecycleIntBlocks(buffers, offset, 1 + bufferUpto);
+                    allocator.RecycleInt32Blocks(buffers, offset, 1 + bufferUpto);
                     Arrays.Fill(buffers, offset, bufferUpto + 1, null);
                 }
                 if (reuseFirst)
                 {
                     // Re-use the first buffer
                     bufferUpto = 0;
-                    IntUpto = 0;
-                    IntOffset = 0;
+                    Int32Upto = 0;
+                    Int32Offset = 0;
                     buffer = buffers[0];
                 }
                 else
                 {
                     bufferUpto = -1;
-                    IntUpto = INT_BLOCK_SIZE;
-                    IntOffset = -INT_BLOCK_SIZE;
+                    Int32Upto = INT_BLOCK_SIZE;
+                    Int32Offset = -INT_BLOCK_SIZE;
                     buffer = null;
                 }
             }
@@ -199,11 +214,11 @@ namespace Lucene.Net.Util
                 Array.Copy(buffers, 0, newBuffers, 0, buffers.Length);
                 buffers = newBuffers;
             }
-            buffer = buffers[1 + bufferUpto] = allocator.GetIntBlock();
+            buffer = buffers[1 + bufferUpto] = allocator.GetInt32Block();
             bufferUpto++;
 
-            IntUpto = 0;
-            IntOffset += INT_BLOCK_SIZE;
+            Int32Upto = 0;
+            Int32Offset += INT_BLOCK_SIZE;
         }
 
         /// <summary>
@@ -211,15 +226,15 @@ namespace Lucene.Net.Util
         /// <seealso cref= SliceReader </seealso>
         private int NewSlice(int size)
         {
-            if (IntUpto > INT_BLOCK_SIZE - size)
+            if (Int32Upto > INT_BLOCK_SIZE - size)
             {
                 NextBuffer();
                 Debug.Assert(AssertSliceBuffer(buffer));
             }
 
-            int upto = IntUpto;
-            IntUpto += size;
-            buffer[IntUpto - 1] = 1;
+            int upto = Int32Upto;
+            Int32Upto += size;
+            buffer[Int32Upto - 1] = 1;
             return upto;
         }
 
@@ -260,20 +275,20 @@ namespace Lucene.Net.Util
             int newLevel = NEXT_LEVEL_ARRAY[level - 1];
             int newSize = LEVEL_SIZE_ARRAY[newLevel];
             // Maybe allocate another block
-            if (IntUpto > INT_BLOCK_SIZE - newSize)
+            if (Int32Upto > INT_BLOCK_SIZE - newSize)
             {
                 NextBuffer();
                 Debug.Assert(AssertSliceBuffer(buffer));
             }
 
-            int newUpto = IntUpto;
-            int offset = newUpto + IntOffset;
-            IntUpto += newSize;
+            int newUpto = Int32Upto;
+            int offset = newUpto + Int32Offset;
+            Int32Upto += newSize;
             // Write forwarding address at end of last slice:
             slice[sliceOffset] = offset;
 
             // Write new level:
-            buffer[IntUpto - 1] = newLevel;
+            buffer[Int32Upto - 1] = newLevel;
 
             return newUpto;
         }
@@ -301,8 +316,10 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Writes the given value into the slice and resizes the slice if needed
+            /// <para/>
+            /// NOTE: This was writeInt() in Lucene
             /// </summary>
-            public virtual void WriteInt(int value) // LUCENENET TODO: rename WriteInt32 ?
+            public virtual void WriteInt32(int value)
             {
                 int[] ints = pool.buffers[offset >> INT_BLOCK_SHIFT];
                 Debug.Assert(ints != null);
@@ -312,7 +329,7 @@ namespace Lucene.Net.Util
                     // End of slice; allocate a new one
                     relativeOffset = pool.AllocSlice(ints, relativeOffset);
                     ints = pool.buffer;
-                    offset = relativeOffset + pool.IntOffset;
+                    offset = relativeOffset + pool.Int32Offset;
                 }
                 ints[relativeOffset] = value;
                 offset++;
@@ -324,7 +341,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual int StartNewSlice()
             {
-                return offset = pool.NewSlice(FIRST_LEVEL_SIZE) + pool.IntOffset;
+                return offset = pool.NewSlice(FIRST_LEVEL_SIZE) + pool.Int32Offset;
             }
 
             /// <summary>
@@ -403,9 +420,12 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Reads the next int from the current slice and returns it. </summary>
+            /// Reads the next int from the current slice and returns it. 
+            /// <para/>
+            /// NOTE: This was readInt() in Lucene
+            /// </summary>
             /// <seealso cref= SliceReader#endOfSlice() </seealso>
-            public int ReadInt() // LUCENENET TODO: Rename ReadInt32() ?
+            public int ReadInt32()
             {
                 Debug.Assert(!EndOfSlice());
                 Debug.Assert(upto <= limit);

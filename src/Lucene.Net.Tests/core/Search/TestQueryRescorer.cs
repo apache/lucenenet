@@ -586,7 +586,7 @@ namespace Lucene.Net.Search
                     return false;
                 }
                 FixedScoreQuery other = (FixedScoreQuery)o;
-                return Number.FloatToIntBits(Boost) == Number.FloatToIntBits(other.Boost) && Reverse == other.Reverse && Arrays.Equals(IdToNum, other.IdToNum);
+                return Number.SingleToInt32Bits(Boost) == Number.SingleToInt32Bits(other.Boost) && Reverse == other.Reverse && Arrays.Equals(IdToNum, other.IdToNum);
             }
 
             public override object Clone()

@@ -53,8 +53,8 @@ namespace Lucene.Net.Index
             for (int i = 0; i < COUNT; i++)
             {
                 int i1 = INTS[i] = random.Next();
-                bdo.WriteVInt(i1);
-                bdo.WriteInt(i1);
+                bdo.WriteVInt32(i1);
+                bdo.WriteInt32(i1);
 
                 long l1;
                 if (Rarely())
@@ -66,8 +66,8 @@ namespace Lucene.Net.Index
                 {
                     l1 = LONGS[i] = TestUtil.NextLong(random, 0, long.MaxValue);
                 }
-                bdo.WriteVLong(l1);
-                bdo.WriteLong(l1);
+                bdo.WriteVInt64(l1);
+                bdo.WriteInt64(l1);
             }
         }
 
@@ -81,14 +81,14 @@ namespace Lucene.Net.Index
 
         private void CheckReads(DataInput @is, Type expectedEx)
         {
-            Assert.AreEqual(128, @is.ReadVInt());
-            Assert.AreEqual(16383, @is.ReadVInt());
-            Assert.AreEqual(16384, @is.ReadVInt());
-            Assert.AreEqual(16385, @is.ReadVInt());
-            Assert.AreEqual(int.MaxValue, @is.ReadVInt());
-            Assert.AreEqual(-1, @is.ReadVInt());
-            Assert.AreEqual((long)int.MaxValue, @is.ReadVLong());
-            Assert.AreEqual(long.MaxValue, @is.ReadVLong());
+            Assert.AreEqual(128, @is.ReadVInt32());
+            Assert.AreEqual(16383, @is.ReadVInt32());
+            Assert.AreEqual(16384, @is.ReadVInt32());
+            Assert.AreEqual(16385, @is.ReadVInt32());
+            Assert.AreEqual(int.MaxValue, @is.ReadVInt32());
+            Assert.AreEqual(-1, @is.ReadVInt32());
+            Assert.AreEqual((long)int.MaxValue, @is.ReadVInt64());
+            Assert.AreEqual(long.MaxValue, @is.ReadVInt64());
             Assert.AreEqual("Lucene", @is.ReadString());
 
             Assert.AreEqual("\u00BF", @is.ReadString());
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 
             try
             {
-                @is.ReadVInt();
+                @is.ReadVInt32();
                 Assert.Fail("Should throw " + expectedEx.Name);
             }
             catch (Exception e)
@@ -114,11 +114,11 @@ namespace Lucene.Net.Index
                 Assert.IsTrue(e.Message.StartsWith("Invalid vInt"));
                 Assert.IsTrue(expectedEx.IsInstanceOfType(e));
             }
-            Assert.AreEqual(1, @is.ReadVInt()); // guard value
+            Assert.AreEqual(1, @is.ReadVInt32()); // guard value
 
             try
             {
-                @is.ReadVLong();
+                @is.ReadVInt64();
                 Assert.Fail("Should throw " + expectedEx.Name);
             }
             catch (Exception e)
@@ -126,17 +126,17 @@ namespace Lucene.Net.Index
                 Assert.IsTrue(e.Message.StartsWith("Invalid vLong"));
                 Assert.IsTrue(expectedEx.IsInstanceOfType(e));
             }
-            Assert.AreEqual(1L, @is.ReadVLong()); // guard value
+            Assert.AreEqual(1L, @is.ReadVInt64()); // guard value
         }
 
         private void CheckRandomReads(DataInput @is)
         {
             for (int i = 0; i < COUNT; i++)
             {
-                Assert.AreEqual(INTS[i], @is.ReadVInt());
-                Assert.AreEqual(INTS[i], @is.ReadInt());
-                Assert.AreEqual(LONGS[i], @is.ReadVLong());
-                Assert.AreEqual(LONGS[i], @is.ReadLong());
+                Assert.AreEqual(INTS[i], @is.ReadVInt32());
+                Assert.AreEqual(INTS[i], @is.ReadInt32());
+                Assert.AreEqual(LONGS[i], @is.ReadVInt64());
+                Assert.AreEqual(LONGS[i], @is.ReadInt64());
             }
         }
 

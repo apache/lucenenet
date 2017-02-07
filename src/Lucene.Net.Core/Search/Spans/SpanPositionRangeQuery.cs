@@ -112,7 +112,7 @@ namespace Lucene.Net.Search.Spans
         {
             int h = m_match.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
-            h ^= Number.FloatToIntBits(Boost) ^ m_end ^ m_start; // LUCENENET TODO: This was FloatToRawIntBits in the original
+            h ^= Number.SingleToInt32Bits(Boost) ^ m_end ^ m_start; // LUCENENET TODO: This was FloatToRawIntBits in the original
             return h;
         }
     }

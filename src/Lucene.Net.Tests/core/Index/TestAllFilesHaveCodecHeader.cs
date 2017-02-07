@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                 try
                 {
                     @in = dir.OpenInput(file, NewIOContext(Random()));
-                    int val = @in.ReadInt();
+                    int val = @in.ReadInt32();
                     Assert.AreEqual(CodecUtil.CODEC_MAGIC, val, file + " has no codec header, instead found: " + val);
                     success = true;
                 }

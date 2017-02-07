@@ -102,13 +102,13 @@ namespace Lucene.Net.Index
             {
                 if (input.FilePointer < input.Length)
                 {
-                    int code = input.ReadVInt();
+                    int code = input.ReadVInt32();
                     if ((code & 1) != 0)
                     {
                         field = input.ReadString();
                     }
                     int prefix = Number.URShift(code, 1);
-                    int suffix = input.ReadVInt();
+                    int suffix = input.ReadVInt32();
                     bytes.Grow(prefix + suffix);
                     input.ReadBytes(bytes.Bytes, prefix, suffix);
                     bytes.Length = prefix + suffix;
@@ -154,14 +154,14 @@ namespace Lucene.Net.Index
                     int suffix = term.Bytes.Length - prefix;
                     if (term.Field.Equals(lastTerm.Field))
                     {
-                        output.WriteVInt(prefix << 1);
+                        output.WriteVInt32(prefix << 1);
                     }
                     else
                     {
-                        output.WriteVInt(prefix << 1 | 1);
+                        output.WriteVInt32(prefix << 1 | 1);
                         output.WriteString(term.Field);
                     }
-                    output.WriteVInt(suffix);
+                    output.WriteVInt32(suffix);
                     output.WriteBytes(term.Bytes.Bytes, term.Bytes.Offset + prefix, suffix);
                     lastTerm.Bytes.CopyBytes(term.Bytes);
                     lastTerm.Field = term.Field;

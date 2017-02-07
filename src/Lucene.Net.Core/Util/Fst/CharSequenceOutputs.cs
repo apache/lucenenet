@@ -134,17 +134,17 @@ namespace Lucene.Net.Util.Fst
         public override void Write(CharsRef prefix, DataOutput @out)
         {
             Debug.Assert(prefix != null);
-            @out.WriteVInt(prefix.Length);
+            @out.WriteVInt32(prefix.Length);
             // TODO: maybe UTF8?
             for (int idx = 0; idx < prefix.Length; idx++)
             {
-                @out.WriteVInt(prefix.Chars[prefix.Offset + idx]);
+                @out.WriteVInt32(prefix.Chars[prefix.Offset + idx]);
             }
         }
 
         public override CharsRef Read(DataInput @in)
         {
-            int len = @in.ReadVInt();
+            int len = @in.ReadVInt32();
             if (len == 0)
             {
                 return NO_OUTPUT;
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util.Fst
                 CharsRef output = new CharsRef(len);
                 for (int idx = 0; idx < len; idx++)
                 {
-                    output.Chars[idx] = (char)@in.ReadVInt();
+                    output.Chars[idx] = (char)@in.ReadVInt32();
                 }
                 output.Length = len;
                 return output;

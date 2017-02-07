@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 PulsingPostingsWriter.VERSION_START,
                 PulsingPostingsWriter.VERSION_CURRENT);
 
-            _maxPositions = termsIn.ReadVInt();
+            _maxPositions = termsIn.ReadVInt32();
             _wrappedPostingsReader.Init(termsIn);
 
             if (_wrappedPostingsReader is PulsingPostingsReader || _version < PulsingPostingsWriter.VERSION_META_ARRAY)
@@ -79,11 +79,11 @@ namespace Lucene.Net.Codecs.Pulsing
                         _version,
                         PulsingPostingsWriter.VERSION_CURRENT);
 
-                    var numField = input.ReadVInt();
+                    var numField = input.ReadVInt32();
                     for (var i = 0; i < numField; i++)
                     {
-                        var fieldNum = input.ReadVInt();
-                        var longsSize = input.ReadVInt();
+                        var fieldNum = input.ReadVInt32();
+                        var longsSize = input.ReadVInt32();
                         _fields.Add(fieldNum, longsSize);
                     }
                 }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 // Inlined into terms dict -- just read the byte[] blob in,
                 // but don't decode it now (we only decode when a DocsEnum
                 // or D&PEnum is pulled):
-                termState2.PostingsSize = input.ReadVInt();
+                termState2.PostingsSize = input.ReadVInt32();
                 if (termState2.Postings == null || termState2.Postings.Length < termState2.PostingsSize)
                 {
                     termState2.Postings = new byte[ArrayUtil.Oversize(termState2.PostingsSize, 1)];
@@ -202,7 +202,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
                 for (var i = 0; i < longsSize; i++)
                 {
-                    termState2.Longs[i] = input.ReadVLong();
+                    termState2.Longs[i] = input.ReadVInt64();
                 }
                 termState2.PostingsSize = -1;
                 termState2.WrappedTermState.DocFreq = termState2.DocFreq;
@@ -368,7 +368,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     if (_postings.Eof)
                         return _docId = NO_MORE_DOCS;
 
-                    var code = _postings.ReadVInt();
+                    var code = _postings.ReadVInt32();
                     if (_indexOptions == IndexOptions.DOCS_ONLY)
                     {
                         _accum += code;
@@ -376,7 +376,7 @@ namespace Lucene.Net.Codecs.Pulsing
                     else
                     {
                         _accum += (int)((uint)code >> 1); ; // shift off low bit
-                        _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt();
+                        _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
 
                         if (_indexOptions.Value.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
                         {
@@ -385,15 +385,15 @@ namespace Lucene.Net.Codecs.Pulsing
                             {
                                 for (var pos = 0; pos < _freq; pos++)
                                 {
-                                    var posCode = _postings.ReadVInt();
+                                    var posCode = _postings.ReadVInt32();
                                     if ((posCode & 1) != 0)
                                     {
-                                        _payloadLength = _postings.ReadVInt();
+                                        _payloadLength = _postings.ReadVInt32();
                                     }
-                                    if (_storeOffsets && (_postings.ReadVInt() & 1) != 0)
+                                    if (_storeOffsets && (_postings.ReadVInt32() & 1) != 0)
                                     {
                                         // new offset length
-                                        _postings.ReadVInt();
+                                        _postings.ReadVInt32();
                                     }
                                     if (_payloadLength != 0)
                                     {
@@ -406,11 +406,11 @@ namespace Lucene.Net.Codecs.Pulsing
                                 for (var pos = 0; pos < _freq; pos++)
                                 {
                                     // TODO: skipVInt
-                                    _postings.ReadVInt();
-                                    if (_storeOffsets && (_postings.ReadVInt() & 1) != 0)
+                                    _postings.ReadVInt32();
+                                    if (_storeOffsets && (_postings.ReadVInt32() & 1) != 0)
                                     {
                                         // new offset length
-                                        _postings.ReadVInt();
+                                        _postings.ReadVInt32();
                                     }
                                 }
                             }
@@ -518,9 +518,9 @@ namespace Lucene.Net.Codecs.Pulsing
                         return _docId = NO_MORE_DOCS;
                     }
 
-                    var code = _postings.ReadVInt();
+                    var code = _postings.ReadVInt32();
                     _accum += (int)((uint)code >> 1); // shift off low bit 
-                    _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt();
+                    _freq = (code & 1) != 0 ? 1 : _postings.ReadVInt32();
                     _posPending = _freq;
                     _startOffset = _storeOffsets ? 0 : -1; // always return -1 if no offsets are stored
 
@@ -558,26 +558,26 @@ namespace Lucene.Net.Codecs.Pulsing
                     {
                         _postings.SkipBytes(_payloadLength);
                     }
-                    int code = _postings.ReadVInt();
+                    int code = _postings.ReadVInt32();
                     if ((code & 1) != 0)
                     {
-                        _payloadLength = _postings.ReadVInt();
+                        _payloadLength = _postings.ReadVInt32();
                     }
                     _position += (int)((uint)code >> 1);
                     _payloadRetrieved = false;
                 }
                 else
                 {
-                    _position += _postings.ReadVInt();
+                    _position += _postings.ReadVInt32();
                 }
 
                 if (_storeOffsets)
                 {
-                    int offsetCode = _postings.ReadVInt();
+                    int offsetCode = _postings.ReadVInt32();
                     if ((offsetCode & 1) != 0)
                     {
                         // new offset length
-                        _offsetLength = _postings.ReadVInt();
+                        _offsetLength = _postings.ReadVInt32();
                     }
                     _startOffset += (int)((uint)offsetCode >> 1);
                 }

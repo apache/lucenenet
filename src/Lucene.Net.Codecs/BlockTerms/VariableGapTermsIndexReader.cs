@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 SeekDir(_input, _dirOffset);
 
                 // Read directory
-                var numFields = _input.ReadVInt();
+                var numFields = _input.ReadVInt32();
                 if (numFields < 0)
                 {
                     throw new CorruptIndexException("invalid numFields: " + numFields + " (resource=" + _input + ")");
@@ -78,8 +78,8 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 for (var i = 0; i < numFields; i++)
                 {
-                    var field = _input.ReadVInt();
-                    var indexStart = _input.ReadVLong();
+                    var field = _input.ReadVInt32();
+                    var indexStart = _input.ReadVInt64();
                     var fieldInfo = fieldInfos.FieldInfo(field);
                     
                     try
@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 VariableGapTermsIndexWriter.VERSION_START, VariableGapTermsIndexWriter.VERSION_CURRENT);
             if (version < VariableGapTermsIndexWriter.VERSION_APPEND_ONLY)
             {
-                _dirOffset = input.ReadLong();
+                _dirOffset = input.ReadInt64();
             }
             return version;
         }
@@ -218,7 +218,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         if (count == outerInstance._indexDivisor)
                         {
-                            builder.Add(Util.Fst.Util.ToIntsRef(result.Input, scratchIntsRef), result.Output);
+                            builder.Add(Util.Fst.Util.ToInt32sRef(result.Input, scratchIntsRef), result.Output);
                             count = 0;
                         }
                         count++;
@@ -252,12 +252,12 @@ namespace Lucene.Net.Codecs.BlockTerms
             if (_version >= VariableGapTermsIndexWriter.VERSION_CHECKSUM)
             {
                 input.Seek(input.Length - CodecUtil.FooterLength() - 8);
-                dirOffset = input.ReadLong();
+                dirOffset = input.ReadInt64();
             }
             else if (_version >= VariableGapTermsIndexWriter.VERSION_APPEND_ONLY)
             {
                 input.Seek(input.Length - 8);
-                dirOffset = input.ReadLong();
+                dirOffset = input.ReadInt64();
             }
             input.Seek(dirOffset);
         }

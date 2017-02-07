@@ -63,7 +63,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 _fieldInfos = state.FieldInfos;
                 WriteHeader(m_output);
-                m_output.WriteInt(_termIndexInterval);
+                m_output.WriteInt32(_termIndexInterval);
                 success = true;
             }
             finally
@@ -246,18 +246,18 @@ namespace Lucene.Net.Codecs.BlockTerms
                         }
                     }
 
-                    m_output.WriteVInt(nonNullFieldCount);
+                    m_output.WriteVInt32(nonNullFieldCount);
                     for (int i = 0; i < fieldCount; i++)
                     {
                         SimpleFieldWriter field = _fields[i];
                         if (field.numIndexTerms > 0)
                         {
-                            m_output.WriteVInt(field.fieldInfo.Number);
-                            m_output.WriteVInt(field.numIndexTerms);
-                            m_output.WriteVLong(field.termsStart);
-                            m_output.WriteVLong(field.indexStart);
-                            m_output.WriteVLong(field.packedIndexStart);
-                            m_output.WriteVLong(field.packedOffsetsStart);
+                            m_output.WriteVInt32(field.fieldInfo.Number);
+                            m_output.WriteVInt32(field.numIndexTerms);
+                            m_output.WriteVInt64(field.termsStart);
+                            m_output.WriteVInt64(field.indexStart);
+                            m_output.WriteVInt64(field.packedIndexStart);
+                            m_output.WriteVInt64(field.packedOffsetsStart);
                         }
                     }
                     WriteTrailer(dirStart);
@@ -281,7 +281,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private void WriteTrailer(long dirStart)
         {
-            m_output.WriteLong(dirStart);
+            m_output.WriteInt64(dirStart);
         }
     }
 }

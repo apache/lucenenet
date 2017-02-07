@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains <see cref="long"/> field values from <see cref="IFieldCache.GetLongs"/> and makes those
+    /// Obtains <see cref="long"/> field values from <see cref="IFieldCache.GetInt64s"/> and makes those
     /// values available as other numeric types, casting as needed.
     /// </summary>
     public class LongFieldSource : FieldCacheSource
@@ -66,7 +66,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
-            var arr = m_cache.GetLongs(readerContext.AtomicReader, m_field, m_parser, true);
+            var arr = m_cache.GetInt64s(readerContext.AtomicReader, m_field, m_parser, true);
             var valid = m_cache.GetDocsWithField(readerContext.AtomicReader, m_field);
             return new LongDocValuesAnonymousInnerClassHelper(this, this, arr, valid);
         }

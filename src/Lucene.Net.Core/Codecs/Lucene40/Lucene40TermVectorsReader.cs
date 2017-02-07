@@ -197,10 +197,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
             SeekTvx(startDocID);
 
-            long tvdPosition = tvx.ReadLong();
+            long tvdPosition = tvx.ReadInt64();
             tvd.Seek(tvdPosition);
 
-            long tvfPosition = tvx.ReadLong();
+            long tvfPosition = tvx.ReadInt64();
             tvf.Seek(tvfPosition);
 
             long lastTvdPosition = tvdPosition;
@@ -213,8 +213,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 Debug.Assert(docID <= numTotalDocs);
                 if (docID < numTotalDocs)
                 {
-                    tvdPosition = tvx.ReadLong();
-                    tvfPosition = tvx.ReadLong();
+                    tvdPosition = tvx.ReadInt64();
+                    tvfPosition = tvx.ReadInt64();
                 }
                 else
                 {
@@ -257,9 +257,9 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 this.outerInstance = outerInstance;
                 outerInstance.SeekTvx(docID);
-                outerInstance.tvd.Seek(outerInstance.tvx.ReadLong());
+                outerInstance.tvd.Seek(outerInstance.tvx.ReadInt64());
 
-                int fieldCount = outerInstance.tvd.ReadVInt();
+                int fieldCount = outerInstance.tvd.ReadVInt32();
                 Debug.Assert(fieldCount >= 0);
                 if (fieldCount != 0)
                 {
@@ -267,16 +267,16 @@ namespace Lucene.Net.Codecs.Lucene40
                     fieldFPs = new long[fieldCount];
                     for (int fieldUpto = 0; fieldUpto < fieldCount; fieldUpto++)
                     {
-                        int fieldNumber = outerInstance.tvd.ReadVInt();
+                        int fieldNumber = outerInstance.tvd.ReadVInt32();
                         fieldNumbers[fieldUpto] = fieldNumber;
                         fieldNumberToIndex[fieldNumber] = fieldUpto;
                     }
 
-                    long position = outerInstance.tvx.ReadLong();
+                    long position = outerInstance.tvx.ReadInt64();
                     fieldFPs[0] = position;
                     for (int fieldUpto = 1; fieldUpto < fieldCount; fieldUpto++)
                     {
-                        position += outerInstance.tvd.ReadVLong();
+                        position += outerInstance.tvd.ReadVInt64();
                         fieldFPs[fieldUpto] = position;
                     }
                 }
@@ -353,7 +353,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 this.outerInstance = outerInstance;
                 outerInstance.tvf.Seek(tvfFP);
-                numTerms = outerInstance.tvf.ReadVInt();
+                numTerms = outerInstance.tvf.ReadVInt32();
                 byte bits = outerInstance.tvf.ReadByte();
                 storePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
                 storeOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
@@ -542,12 +542,12 @@ namespace Lucene.Net.Codecs.Lucene40
                     return null;
                 }
                 term.CopyBytes(lastTerm);
-                int start = tvf.ReadVInt();
-                int deltaLen = tvf.ReadVInt();
+                int start = tvf.ReadVInt32();
+                int deltaLen = tvf.ReadVInt32();
                 term.Length = start + deltaLen;
                 term.Grow(term.Length);
                 tvf.ReadBytes(term.Bytes, start, deltaLen);
-                freq = tvf.ReadVInt();
+                freq = tvf.ReadVInt32();
 
                 if (storePayloads)
                 {
@@ -557,13 +557,13 @@ namespace Lucene.Net.Codecs.Lucene40
                     int pos = 0;
                     for (int posUpto = 0; posUpto < freq; posUpto++)
                     {
-                        int code = tvf.ReadVInt();
+                        int code = tvf.ReadVInt32();
                         pos += (int)((uint)code >> 1);
                         positions[posUpto] = pos;
                         if ((code & 1) != 0)
                         {
                             // length change
-                            lastPayloadLength = tvf.ReadVInt();
+                            lastPayloadLength = tvf.ReadVInt32();
                         }
                         payloadOffsets[posUpto] = totalPayloadLength;
                         totalPayloadLength += lastPayloadLength;
@@ -581,7 +581,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     int pos = 0;
                     for (int posUpto = 0; posUpto < freq; posUpto++)
                     {
-                        pos += tvf.ReadVInt();
+                        pos += tvf.ReadVInt32();
                         positions[posUpto] = pos;
                     }
                 }
@@ -593,8 +593,8 @@ namespace Lucene.Net.Codecs.Lucene40
                     int offset = 0;
                     for (int posUpto = 0; posUpto < freq; posUpto++)
                     {
-                        startOffsets[posUpto] = offset + tvf.ReadVInt();
-                        offset = endOffsets[posUpto] = startOffsets[posUpto] + tvf.ReadVInt();
+                        startOffsets[posUpto] = offset + tvf.ReadVInt32();
+                        offset = endOffsets[posUpto] = startOffsets[posUpto] + tvf.ReadVInt32();
                     }
                 }
 

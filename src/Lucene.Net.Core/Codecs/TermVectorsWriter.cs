@@ -162,12 +162,12 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    int code = positions.ReadVInt();
+                    int code = positions.ReadVInt32();
                     position += (int)((uint)code >> 1);
                     if ((code & 1) != 0)
                     {
                         // this position has a payload
-                        int payloadLength = positions.ReadVInt();
+                        int payloadLength = positions.ReadVInt32();
 
                         if (payload == null)
                         {
@@ -195,8 +195,8 @@ namespace Lucene.Net.Codecs
                 }
                 else
                 {
-                    startOffset = lastOffset + offsets.ReadVInt();
-                    endOffset = startOffset + offsets.ReadVInt();
+                    startOffset = lastOffset + offsets.ReadVInt32();
+                    endOffset = startOffset + offsets.ReadVInt32();
                     lastOffset = endOffset;
                 }
                 AddPosition(position, startOffset, endOffset, thisPayload);

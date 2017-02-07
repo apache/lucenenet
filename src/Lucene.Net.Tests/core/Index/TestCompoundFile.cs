@@ -681,7 +681,7 @@ namespace Lucene.Net.Index
                 IndexOutput os = csw.CreateOutput("seg_" + j + "_foo.txt", NewIOContext(Random()));
                 for (int i = 0; i < size; i++)
                 {
-                    os.WriteInt(i * j);
+                    os.WriteInt32(i * j);
                 }
                 os.Dispose();
                 string[] listAll = newDir.ListAll();
@@ -701,7 +701,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(size * 4, openInput.Length);
                 for (int i = 0; i < size; i++)
                 {
-                    Assert.AreEqual(i * j, openInput.ReadInt());
+                    Assert.AreEqual(i * j, openInput.ReadInt32());
                 }
 
                 openInput.Dispose();
@@ -723,7 +723,7 @@ namespace Lucene.Net.Index
             CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
             CreateSequenceFile(newDir, "d1", (sbyte)0, 15);
             IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
-            @out.WriteInt(0);
+            @out.WriteInt32(0);
             @out.Dispose();
             Assert.AreEqual(1, csw.ListAll().Length);
             Assert.AreEqual("d.xyz", csw.ListAll()[0]);
@@ -759,8 +759,8 @@ namespace Lucene.Net.Index
             CompoundFileDirectory nested = new CompoundFileDirectory(newDir, "b.cfs", NewIOContext(Random()), true);
             IndexOutput @out = nested.CreateOutput("b.xyz", NewIOContext(Random()));
             IndexOutput out1 = nested.CreateOutput("b_1.xyz", NewIOContext(Random()));
-            @out.WriteInt(0);
-            out1.WriteInt(1);
+            @out.WriteInt32(0);
+            out1.WriteInt32(1);
             @out.Dispose();
             out1.Dispose();
             nested.Dispose();
@@ -778,10 +778,10 @@ namespace Lucene.Net.Index
 
             Assert.AreEqual(2, nested.ListAll().Length);
             IndexInput openInput = nested.OpenInput("b.xyz", NewIOContext(Random()));
-            Assert.AreEqual(0, openInput.ReadInt());
+            Assert.AreEqual(0, openInput.ReadInt32());
             openInput.Dispose();
             openInput = nested.OpenInput("b_1.xyz", NewIOContext(Random()));
-            Assert.AreEqual(1, openInput.ReadInt());
+            Assert.AreEqual(1, openInput.ReadInt32());
             openInput.Dispose();
             nested.Dispose();
             csw.Dispose();
@@ -794,7 +794,7 @@ namespace Lucene.Net.Index
             Directory newDir = NewDirectory();
             CompoundFileDirectory csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), true);
             IndexOutput @out = csw.CreateOutput("d.xyz", NewIOContext(Random()));
-            @out.WriteInt(0);
+            @out.WriteInt32(0);
             @out.Dispose();
 
             csw.Dispose();
@@ -803,7 +803,7 @@ namespace Lucene.Net.Index
 
             csw = new CompoundFileDirectory(newDir, "d.cfs", NewIOContext(Random()), false);
             IndexInput openInput = csw.OpenInput("d.xyz", NewIOContext(Random()));
-            Assert.AreEqual(0, openInput.ReadInt());
+            Assert.AreEqual(0, openInput.ReadInt32());
             openInput.Dispose();
             csw.Dispose();
             // close a second time - must have no effect according to IDisposable

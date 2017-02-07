@@ -67,37 +67,37 @@ namespace Lucene.Net.Util.Packed
                         break;
 
                     case 2:
-                        rawValue = @in.ReadShort();
+                        rawValue = @in.ReadInt16();
                         break;
 
                     case 3:
-                        rawValue = ((long)@in.ReadShort() << 8) | (@in.ReadByte() & 0xFFL);
+                        rawValue = ((long)@in.ReadInt16() << 8) | (@in.ReadByte() & 0xFFL);
                         break;
 
                     case 4:
-                        rawValue = @in.ReadInt();
+                        rawValue = @in.ReadInt32();
                         break;
 
                     case 5:
-                        rawValue = ((long)@in.ReadInt() << 8) | (@in.ReadByte() & 0xFFL);
+                        rawValue = ((long)@in.ReadInt32() << 8) | (@in.ReadByte() & 0xFFL);
                         break;
 
                     case 6:
-                        rawValue = ((long)@in.ReadInt() << 16) | (@in.ReadShort() & 0xFFFFL);
+                        rawValue = ((long)@in.ReadInt32() << 16) | (@in.ReadInt16() & 0xFFFFL);
                         break;
 
                     case 7:
-                        rawValue = ((long)@in.ReadInt() << 24) | ((@in.ReadShort() & 0xFFFFL) << 8) | (@in.ReadByte() & 0xFFL);
+                        rawValue = ((long)@in.ReadInt32() << 24) | ((@in.ReadInt16() & 0xFFFFL) << 8) | (@in.ReadByte() & 0xFFL);
                         break;
 
                     case 8:
-                        rawValue = @in.ReadLong();
+                        rawValue = @in.ReadInt64();
                         break;
 
                     case 9:
                         // We must be very careful not to shift out relevant bits. So we account for right shift
                         // we would normally do on return here, and reset it.
-                        rawValue = (@in.ReadLong() << (8 - shiftRightBits)) | ((int)((uint)(@in.ReadByte() & 0xFFL) >> shiftRightBits));
+                        rawValue = (@in.ReadInt64() << (8 - shiftRightBits)) | ((int)((uint)(@in.ReadByte() & 0xFFL) >> shiftRightBits));
                         shiftRightBits = 0;
                         break;
 

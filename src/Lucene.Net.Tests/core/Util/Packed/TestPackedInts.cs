@@ -135,9 +135,9 @@ namespace Lucene.Net.Util.Packed
                         IndexInput @in = d.OpenInput("out.bin", NewIOContext(Random()));
                         // header = codec header | bitsPerValue | valueCount | format
                         CodecUtil.CheckHeader(@in, PackedInts.CODEC_NAME, PackedInts.VERSION_START, PackedInts.VERSION_CURRENT); // codec header
-                        Assert.AreEqual(w.BitsPerValue, @in.ReadVInt());
-                        Assert.AreEqual(valueCount, @in.ReadVInt());
-                        Assert.AreEqual(w.Format.Id, @in.ReadVInt());
+                        Assert.AreEqual(w.BitsPerValue, @in.ReadVInt32());
+                        Assert.AreEqual(valueCount, @in.ReadVInt32());
+                        Assert.AreEqual(w.Format.Id, @in.ReadVInt32());
                         Assert.AreEqual(startFp, @in.FilePointer);
                         @in.Dispose();
                     }
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util.Packed
                             LongsRef next = r.Next(count);
                             for (int k = 0; k < next.Length; ++k)
                             {
-                                Assert.AreEqual(values[i + k], next.Longs[next.Offset + k], "index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name);
+                                Assert.AreEqual(values[i + k], next.Int64s[next.Offset + k], "index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name);
                             }
                             i += next.Length;
                         }
@@ -213,7 +213,7 @@ namespace Lucene.Net.Util.Packed
             IndexOutput @out = dir.CreateOutput("tests.bin", NewIOContext(Random()));
             for (int i = 0; i < valueCount; ++i)
             {
-                @out.WriteLong(0);
+                @out.WriteInt64(0);
             }
             @out.Dispose();
             IndexInput @in = dir.OpenInput("tests.bin", NewIOContext(Random()));
@@ -1004,12 +1004,12 @@ namespace Lucene.Net.Util.Packed
 
                     PackedInts.IEncoder encoder = PackedInts.GetEncoder(format, PackedInts.VERSION_CURRENT, bpv);
                     PackedInts.IDecoder decoder = PackedInts.GetDecoder(format, PackedInts.VERSION_CURRENT, bpv);
-                    int longBlockCount = encoder.LongBlockCount;
-                    int longValueCount = encoder.LongValueCount;
+                    int longBlockCount = encoder.Int64BlockCount;
+                    int longValueCount = encoder.Int64ValueCount;
                     int byteBlockCount = encoder.ByteBlockCount;
                     int byteValueCount = encoder.ByteValueCount;
-                    Assert.AreEqual(longBlockCount, decoder.LongBlockCount);
-                    Assert.AreEqual(longValueCount, decoder.LongValueCount);
+                    Assert.AreEqual(longBlockCount, decoder.Int64BlockCount);
+                    Assert.AreEqual(longValueCount, decoder.Int64ValueCount);
                     Assert.AreEqual(byteBlockCount, decoder.ByteBlockCount);
                     Assert.AreEqual(byteValueCount, decoder.ByteValueCount);
 
@@ -1068,7 +1068,7 @@ namespace Lucene.Net.Util.Packed
 
                     // 4. byte[] decoding
                     byte[] byteBlocks = new byte[8 * blocks.Length];
-                    ByteBuffer.Wrap(byteBlocks).AsLongBuffer().Put(blocks);
+                    ByteBuffer.Wrap(byteBlocks).AsInt64Buffer().Put(blocks);
                     long[] values2 = new long[valuesOffset + longIterations * longValueCount];
                     decoder.Decode(byteBlocks, blocksOffset * 8, values2, valuesOffset, byteIterations);
                     foreach (long value in values2)
@@ -1087,7 +1087,7 @@ namespace Lucene.Net.Util.Packed
                     // 5. byte[] encoding
                     byte[] blocks3_ = new byte[8 * (blocksOffset2 + blocksLen)];
                     encoder.Encode(values, valuesOffset, blocks3_, 8 * blocksOffset2, byteIterations);
-                    assertEquals(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap(blocks3_).AsLongBuffer());
+                    assertEquals(msg, LongBuffer.Wrap(blocks2), ByteBuffer.Wrap(blocks3_).AsInt64Buffer());
                     // test encoding from int[]
                     if (bpv <= 32)
                     {
@@ -1274,7 +1274,7 @@ namespace Lucene.Net.Util.Packed
             long totalBits = 0;
             for (int i = 0; i < longs.Length; ++i)
             {
-                pout.WriteLong(longs[i], bitsPerValues[i]);
+                pout.WriteInt64(longs[i], bitsPerValues[i]);
                 totalBits += bitsPerValues[i];
                 if (skip[i])
                 {
@@ -1289,7 +1289,7 @@ namespace Lucene.Net.Util.Packed
             PackedDataInput pin = new PackedDataInput(@in);
             for (int i = 0; i < longs.Length; ++i)
             {
-                Assert.AreEqual(longs[i], pin.ReadLong(bitsPerValues[i]), "" + i);
+                Assert.AreEqual(longs[i], pin.ReadInt64(bitsPerValues[i]), "" + i);
                 if (skip[i])
                 {
                     pin.SkipToNextByte();
@@ -1365,7 +1365,7 @@ namespace Lucene.Net.Util.Packed
                         LongsRef nextValues = it.Next(TestUtil.NextInt(Random(), 1, 1024));
                         for (int j = 0; j < nextValues.Length; ++j)
                         {
-                            Assert.AreEqual(values[i + j], nextValues.Longs[nextValues.Offset + j], "" + (i + j));
+                            Assert.AreEqual(values[i + j], nextValues.Int64s[nextValues.Offset + j], "" + (i + j));
                         }
                         i += nextValues.Length;
                     }

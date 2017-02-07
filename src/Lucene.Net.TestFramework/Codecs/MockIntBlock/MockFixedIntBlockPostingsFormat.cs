@@ -106,7 +106,7 @@ namespace Lucene.Net.Codecs.IntBlock
                     {
                         for (int i = 0; i < buffer.Length; i++)
                         {
-                            buffer[i] = @in.ReadVInt();
+                            buffer[i] = @in.ReadVInt32();
                         }
                     }
                 }
@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.IntBlock
             {
                 for (int i = 0; i < m_buffer.Length; i++)
                 {
-                    m_output.WriteVInt(m_buffer[i]);
+                    m_output.WriteVInt32(m_buffer[i]);
                 }
             }
         }

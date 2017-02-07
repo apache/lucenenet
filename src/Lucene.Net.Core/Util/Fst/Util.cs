@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Fst
             T output = fst.Outputs.NoOutput;
             for (int i = 0; i < input.Length; i++)
             {
-                if (fst.FindTargetArc(input.Ints[input.Offset + i], arc, arc, fstReader) == null)
+                if (fst.FindTargetArc(input.Int32s[input.Offset + i], arc, arc, fstReader) == null)
                 {
                     return default(T);
                 }
@@ -165,7 +165,7 @@ namespace Lucene.Net.Util.Fst
                 if (FST<long?>.TargetHasArcs(arc))
                 {
                     //System.out.println("  targetHasArcs");
-                    if (result.Ints.Length == upto)
+                    if (result.Int32s.Length == upto)
                     {
                         result.Grow(1 + upto);
                     }
@@ -225,7 +225,7 @@ namespace Lucene.Net.Util.Fst
                         }
 
                         fst.ReadNextRealArc(arc, @in);
-                        result.Ints[upto++] = arc.Label;
+                        result.Int32s[upto++] = arc.Label;
                         output += arc.Output.Value;
                     }
                     else
@@ -245,7 +245,7 @@ namespace Lucene.Net.Util.Fst
                                 // Recurse on this arc:
                                 //System.out.println("  match!  break");
                                 output = minArcOutput;
-                                result.Ints[upto++] = arc.Label;
+                                result.Int32s[upto++] = arc.Label;
                                 break;
                             }
                             else if (minArcOutput > targetOutput)
@@ -259,7 +259,7 @@ namespace Lucene.Net.Util.Fst
                                 {
                                     // Recurse on previous arc:
                                     arc.CopyFrom(prevArc);
-                                    result.Ints[upto++] = arc.Label;
+                                    result.Int32s[upto++] = arc.Label;
                                     output += arc.Output.Value;
                                     //System.out.println("    recurse prev label=" + (char) arc.label + " output=" + output);
                                     break;
@@ -270,7 +270,7 @@ namespace Lucene.Net.Util.Fst
                                 // Recurse on this arc:
                                 output = minArcOutput;
                                 //System.out.println("    recurse last label=" + (char) arc.label + " output=" + output);
-                                result.Ints[upto++] = arc.Label;
+                                result.Int32s[upto++] = arc.Label;
                                 break;
                             }
                             else
@@ -402,7 +402,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         // Tie break by alpha sort on the input:
                         path.Input.Grow(path.Input.Length + 1);
-                        path.Input.Ints[path.Input.Length++] = path.Arc.Label;
+                        path.Input.Int32s[path.Input.Length++] = path.Arc.Label;
                         int cmp = bottom.Input.CompareTo(path.Input);
                         path.Input.Length--;
 
@@ -425,8 +425,8 @@ namespace Lucene.Net.Util.Fst
                 // copy over the current input to the new input
                 // and add the arc.label to the end
                 IntsRef newInput = new IntsRef(path.Input.Length + 1);
-                Array.Copy(path.Input.Ints, 0, newInput.Ints, 0, path.Input.Length);
-                newInput.Ints[path.Input.Length] = path.Arc.Label;
+                Array.Copy(path.Input.Int32s, 0, newInput.Int32s, 0, path.Input.Length);
+                newInput.Int32s[path.Input.Length] = path.Arc.Label;
                 newInput.Length = path.Input.Length + 1;
                 FSTPath<T> newPath = new FSTPath<T>(cost, path.Arc, newInput);
 
@@ -625,7 +625,7 @@ namespace Lucene.Net.Util.Fst
                         else
                         {
                             path.Input.Grow(1 + path.Input.Length);
-                            path.Input.Ints[path.Input.Length] = path.Arc.Label;
+                            path.Input.Int32s[path.Input.Length] = path.Arc.Label;
                             path.Input.Length++;
                             path.Cost = fst.Outputs.Add(path.Cost, path.Arc.Output);
                         }
@@ -986,7 +986,7 @@ namespace Lucene.Net.Util.Fst
             scratch.Grow(charLimit);
             for (int idx = 0; idx < charLimit; idx++)
             {
-                scratch.Ints[idx] = (int)s[idx];
+                scratch.Int32s[idx] = (int)s[idx];
             }
             return scratch;
         }
@@ -1005,7 +1005,7 @@ namespace Lucene.Net.Util.Fst
             {
                 scratch.Grow(intIdx + 1);
                 int utf32 = Character.CodePointAt(s, charIdx);
-                scratch.Ints[intIdx] = utf32;
+                scratch.Int32s[intIdx] = utf32;
                 charIdx += Character.CharCount(utf32);
                 intIdx++;
             }
@@ -1027,7 +1027,7 @@ namespace Lucene.Net.Util.Fst
             {
                 scratch.Grow(intIdx + 1);
                 int utf32 = Character.CodePointAt(s, charIdx, charLimit);
-                scratch.Ints[intIdx] = utf32;
+                scratch.Int32s[intIdx] = utf32;
                 charIdx += Character.CharCount(utf32);
                 intIdx++;
             }
@@ -1037,14 +1037,16 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Just takes unsigned byte values from the BytesRef and
-        ///  converts into an IntsRef.
+        /// converts into an IntsRef.
+        /// <para/>
+        /// NOTE: This was toIntsRef() in Lucene
         /// </summary>
-        public static IntsRef ToIntsRef(BytesRef input, IntsRef scratch)
+        public static IntsRef ToInt32sRef(BytesRef input, IntsRef scratch)
         {
             scratch.Grow(input.Length);
             for (int i = 0; i < input.Length; i++)
             {
-                scratch.Ints[i] = input.Bytes[i + input.Offset] & 0xFF;
+                scratch.Int32s[i] = input.Bytes[i + input.Offset] & 0xFF;
             }
             scratch.Length = input.Length;
             return scratch;
@@ -1059,7 +1061,7 @@ namespace Lucene.Net.Util.Fst
             scratch.Grow(input.Length);
             for (int i = 0; i < input.Length; i++)
             {
-                int value = input.Ints[i + input.Offset];
+                int value = input.Int32s[i + input.Offset];
                 // NOTE: we allow -128 to 255
                 Debug.Assert(value >= sbyte.MinValue && value <= 255, "value " + value + " doesn't fit into byte");
                 scratch.Bytes[i] = (byte)value;

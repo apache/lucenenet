@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (int i = 0; i < 256; i++)
             {
-                float floatNorm = SmallFloat.Byte315ToFloat((sbyte)i);
+                float floatNorm = SmallFloat.Byte315ToSingle((sbyte)i);
                 NORM_TABLE[i] = 1.0f / (floatNorm * floatNorm);
             }
         }
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search.Similarities
         /// Encodes the length to a byte via SmallFloat. </summary>
         protected internal virtual sbyte EncodeNormValue(float boost, float length) // LUCENENET TODO: Can this be byte?
         {
-            return SmallFloat.FloatToByte315((boost / (float)Math.Sqrt(length)));
+            return SmallFloat.SingleToByte315((boost / (float)Math.Sqrt(length)));
         }
 
         // ----------------------------- Static methods ------------------------------

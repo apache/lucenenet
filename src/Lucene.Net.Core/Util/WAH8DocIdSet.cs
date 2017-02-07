@@ -330,11 +330,11 @@ namespace Lucene.Net.Util
                 @out.WriteByte((byte)(sbyte)token);
                 if (cleanLengthMinus2 > 0x03)
                 {
-                    @out.WriteVInt((int)((uint)cleanLengthMinus2 >> 2));
+                    @out.WriteVInt32((int)((uint)cleanLengthMinus2 >> 2));
                 }
                 if (dirtyLength > 0x07)
                 {
-                    @out.WriteVInt((int)((uint)dirtyLength >> 3));
+                    @out.WriteVInt32((int)((uint)dirtyLength >> 3));
                 }
             }
 
@@ -616,7 +616,7 @@ namespace Lucene.Net.Util
             int startPosition = @in.Position;
             if ((len & 0x04) != 0)
             {
-                len = (len & 0x03) | (@in.ReadVInt() << 2);
+                len = (len & 0x03) | (@in.ReadVInt32() << 2);
             }
             if (startPosition != 1)
             {
@@ -630,7 +630,7 @@ namespace Lucene.Net.Util
             int len = token & 0x0F;
             if ((len & 0x08) != 0)
             {
-                len = (len & 0x07) | (@in.ReadVInt() << 3);
+                len = (len & 0x07) | (@in.ReadVInt32() << 3);
             }
             return len;
         }

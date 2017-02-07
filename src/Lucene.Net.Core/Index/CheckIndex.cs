@@ -588,7 +588,7 @@ namespace Lucene.Net.Index
             int format = 0;
             try
             {
-                format = input.ReadInt();
+                format = input.ReadInt32();
             }
             catch (Exception t)
             {

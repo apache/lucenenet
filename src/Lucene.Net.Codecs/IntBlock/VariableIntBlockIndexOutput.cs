@@ -58,7 +58,7 @@ namespace Lucene.Net.Codecs.IntBlock
         protected VariableIntBlockIndexOutput(IndexOutput output, int maxBlockSize)
         {
             this.m_output = output;
-            this.m_output.WriteInt(maxBlockSize);
+            this.m_output.WriteInt32(maxBlockSize);
         }
 
         /// <summary>
@@ -109,21 +109,21 @@ namespace Lucene.Net.Codecs.IntBlock
                 Debug.Assert(upto >= 0);
                 if (absolute)
                 {
-                    indexOut.WriteVInt(upto);
-                    indexOut.WriteVLong(fp);
+                    indexOut.WriteVInt32(upto);
+                    indexOut.WriteVInt64(fp);
                 }
                 else if (fp == lastFP)
                 {
                     // same block
                     Debug.Assert(upto >= lastUpto);
                     int uptoDelta = upto - lastUpto;
-                    indexOut.WriteVInt(uptoDelta << 1 | 1);
+                    indexOut.WriteVInt32(uptoDelta << 1 | 1);
                 }
                 else
                 {
                     // new block
-                    indexOut.WriteVInt(upto << 1);
-                    indexOut.WriteVLong(fp - lastFP);
+                    indexOut.WriteVInt32(upto << 1);
+                    indexOut.WriteVInt64(fp - lastFP);
                 }
                 lastUpto = upto;
                 lastFP = fp;

@@ -98,8 +98,8 @@ namespace Lucene.Net.Util.Packed
             // bulk get
             Debug.Assert(index % valuesPerBlock == 0);
             PackedInts.IDecoder decoder = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            Debug.Assert(decoder.LongBlockCount == 1);
-            Debug.Assert(decoder.LongValueCount == valuesPerBlock);
+            Debug.Assert(decoder.Int64BlockCount == 1);
+            Debug.Assert(decoder.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             decoder.Decode(blocks, blockIndex, arr, off, nblocks);
@@ -149,8 +149,8 @@ namespace Lucene.Net.Util.Packed
             // bulk set
             Debug.Assert(index % valuesPerBlock == 0);
             BulkOperation op = BulkOperation.Of(PackedInts.Format.PACKED_SINGLE_BLOCK, m_bitsPerValue);
-            Debug.Assert(op.LongBlockCount == 1);
-            Debug.Assert(op.LongValueCount == valuesPerBlock);
+            Debug.Assert(op.Int64BlockCount == 1);
+            Debug.Assert(op.Int64ValueCount == valuesPerBlock);
             int blockIndex = index / valuesPerBlock;
             int nblocks = (index + len) / valuesPerBlock - blockIndex;
             op.Encode(arr, off, blocks, blockIndex, nblocks);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Util.Packed
             Packed64SingleBlock reader = Create(valueCount, bitsPerValue);
             for (int i = 0; i < reader.blocks.Length; ++i)
             {
-                reader.blocks[i] = @in.ReadLong();
+                reader.blocks[i] = @in.ReadInt64();
             }
             return reader;
         }

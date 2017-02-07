@@ -87,9 +87,9 @@ namespace Lucene.Net.Codecs.Lucene42
 
         internal virtual void AddNumericField(FieldInfo field, IEnumerable<long?> values, bool optimizeStorage)
         {
-            Meta.WriteVInt(field.Number);
+            Meta.WriteVInt32(field.Number);
             Meta.WriteByte((byte)Lucene42DocValuesProducer.NUMBER);
-            Meta.WriteLong(Data.FilePointer);
+            Meta.WriteInt64(Data.FilePointer);
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -157,16 +157,16 @@ namespace Lucene.Net.Codecs.Lucene42
                     Meta.WriteByte((byte)Lucene42DocValuesProducer.TABLE_COMPRESSED); // table-compressed
                     long[] decode = uniqueValues.ToArray(/*new long?[uniqueValues.Count]*/);
                     var encode = new Dictionary<long, int>();
-                    Data.WriteVInt(decode.Length);
+                    Data.WriteVInt32(decode.Length);
                     for (int i = 0; i < decode.Length; i++)
                     {
-                        Data.WriteLong(decode[i]);
+                        Data.WriteInt64(decode[i]);
                         encode[decode[i]] = i;
                     }
 
-                    Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                    Data.WriteVInt(formatAndBits.Format.Id);
-                    Data.WriteVInt(formatAndBits.BitsPerValue);
+                    Meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                    Data.WriteVInt32(formatAndBits.Format.Id);
+                    Data.WriteVInt32(formatAndBits.BitsPerValue);
 
                     PackedInts.Writer writer = PackedInts.GetWriterNoHeader(Data, formatAndBits.Format, MaxDoc, formatAndBits.BitsPerValue, PackedInts.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
@@ -179,10 +179,10 @@ namespace Lucene.Net.Codecs.Lucene42
             else if (gcd != 0 && gcd != 1)
             {
                 Meta.WriteByte((byte)Lucene42DocValuesProducer.GCD_COMPRESSED);
-                Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                Data.WriteLong(minValue);
-                Data.WriteLong(gcd);
-                Data.WriteVInt(Lucene42DocValuesProducer.BLOCK_SIZE);
+                Meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                Data.WriteInt64(minValue);
+                Data.WriteInt64(gcd);
+                Data.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
 
                 BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
                 foreach (long? nv in values)
@@ -196,8 +196,8 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 Meta.WriteByte((byte)Lucene42DocValuesProducer.DELTA_COMPRESSED); // delta-compressed
 
-                Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                Data.WriteVInt(Lucene42DocValuesProducer.BLOCK_SIZE);
+                Meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                Data.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
 
                 BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
                 foreach (long? nv in values)
@@ -217,7 +217,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     if (Meta != null)
                     {
-                        Meta.WriteVInt(-1); // write EOF marker
+                        Meta.WriteVInt32(-1); // write EOF marker
                     }
                     success = true;
                 }
@@ -238,7 +238,7 @@ namespace Lucene.Net.Codecs.Lucene42
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)
         {
             // write the byte[] data
-            Meta.WriteVInt(field.Number);
+            Meta.WriteVInt32(field.Number);
             Meta.WriteByte((byte)Lucene42DocValuesProducer.BYTES);
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
@@ -257,17 +257,17 @@ namespace Lucene.Net.Codecs.Lucene42
                     Data.WriteBytes(v.Bytes, v.Offset, v.Length);
                 }
             }
-            Meta.WriteLong(startFP);
-            Meta.WriteLong(Data.FilePointer - startFP);
-            Meta.WriteVInt(minLength);
-            Meta.WriteVInt(maxLength);
+            Meta.WriteInt64(startFP);
+            Meta.WriteInt64(Data.FilePointer - startFP);
+            Meta.WriteVInt32(minLength);
+            Meta.WriteVInt32(maxLength);
 
             // if minLength == maxLength, its a fixed-length byte[], we are done (the addresses are implicit)
             // otherwise, we need to record the length fields...
             if (minLength != maxLength)
             {
-                Meta.WriteVInt(PackedInts.VERSION_CURRENT);
-                Meta.WriteVInt(Lucene42DocValuesProducer.BLOCK_SIZE);
+                Meta.WriteVInt32(PackedInts.VERSION_CURRENT);
+                Meta.WriteVInt32(Lucene42DocValuesProducer.BLOCK_SIZE);
 
                 MonotonicBlockPackedWriter writer = new MonotonicBlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
                 long addr = 0;
@@ -285,16 +285,16 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private void WriteFST(FieldInfo field, IEnumerable<BytesRef> values)
         {
-            Meta.WriteVInt(field.Number);
+            Meta.WriteVInt32(field.Number);
             Meta.WriteByte((byte)Lucene42DocValuesProducer.FST);
-            Meta.WriteLong(Data.FilePointer);
+            Meta.WriteInt64(Data.FilePointer);
             PositiveIntOutputs outputs = PositiveIntOutputs.Singleton;
             Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
             IntsRef scratch = new IntsRef();
             long ord = 0;
             foreach (BytesRef v in values)
             {
-                builder.Add(Util.ToIntsRef(v, scratch), ord);
+                builder.Add(Util.ToInt32sRef(v, scratch), ord);
                 ord++;
             }
 
@@ -303,7 +303,7 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 fst.Save(Data);
             }
-            Meta.WriteVLong(ord);
+            Meta.WriteVInt64(ord);
         }
 
         public override void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
@@ -450,7 +450,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     Ords.MoveNext();
                     long ord = Ords.Current.Value;
-                    @out.WriteVLong(ord - lastOrd);
+                    @out.WriteVInt64(ord - lastOrd);
                     lastOrd = ord;
                 }
             }

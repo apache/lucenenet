@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Compressing
 
                 if (version >= CompressingStoredFieldsWriter.VERSION_CHECKSUM)
                 {
-                    maxPointer = indexStream.ReadVLong();
+                    maxPointer = indexStream.ReadVInt64();
                     CodecUtil.CheckFooter(indexStream);
                 }
                 else
@@ -141,13 +141,13 @@ namespace Lucene.Net.Codecs.Compressing
 
                 if (version >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS)
                 {
-                    chunkSize = fieldsStream.ReadVInt();
+                    chunkSize = fieldsStream.ReadVInt32();
                 }
                 else
                 {
                     chunkSize = -1;
                 }
-                packedIntsVersion = fieldsStream.ReadVInt();
+                packedIntsVersion = fieldsStream.ReadVInt32();
                 decompressor = compressionMode.NewDecompressor();
                 this.bytes = new BytesRef();
 
@@ -188,14 +188,14 @@ namespace Lucene.Net.Codecs.Compressing
             switch (bits & CompressingStoredFieldsWriter.TYPE_MASK)
             {
                 case CompressingStoredFieldsWriter.BYTE_ARR:
-                    int length = @in.ReadVInt();
+                    int length = @in.ReadVInt32();
                     var data = new byte[length];
                     @in.ReadBytes(data, 0, length);
                     visitor.BinaryField(info, data);
                     break;
 
                 case CompressingStoredFieldsWriter.STRING:
-                    length = @in.ReadVInt();
+                    length = @in.ReadVInt32();
                     data = new byte[length];
                     @in.ReadBytes(data, 0, length);
 #pragma warning disable 612, 618
@@ -204,19 +204,19 @@ namespace Lucene.Net.Codecs.Compressing
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_INT:
-                    visitor.Int32Field(info, @in.ReadInt());
+                    visitor.Int32Field(info, @in.ReadInt32());
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_FLOAT:
-                    visitor.SingleField(info, Number.IntBitsToFloat(@in.ReadInt()));
+                    visitor.SingleField(info, Number.Int32BitsToSingle(@in.ReadInt32()));
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_LONG:
-                    visitor.Int64Field(info, @in.ReadLong());
+                    visitor.Int64Field(info, @in.ReadInt64());
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_DOUBLE:
-                    visitor.DoubleField(info, BitConverter.Int64BitsToDouble(@in.ReadLong()));
+                    visitor.DoubleField(info, BitConverter.Int64BitsToDouble(@in.ReadInt64()));
                     break;
 
                 default:
@@ -230,18 +230,18 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 case CompressingStoredFieldsWriter.BYTE_ARR:
                 case CompressingStoredFieldsWriter.STRING:
-                    int length = @in.ReadVInt();
+                    int length = @in.ReadVInt32();
                     @in.SkipBytes(length);
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_INT:
                 case CompressingStoredFieldsWriter.NUMERIC_FLOAT:
-                    @in.ReadInt();
+                    @in.ReadInt32();
                     break;
 
                 case CompressingStoredFieldsWriter.NUMERIC_LONG:
                 case CompressingStoredFieldsWriter.NUMERIC_DOUBLE:
-                    @in.ReadLong();
+                    @in.ReadInt64();
                     break;
 
                 default:
@@ -253,8 +253,8 @@ namespace Lucene.Net.Codecs.Compressing
         {
             fieldsStream.Seek(indexReader.GetStartPointer(docID));
 
-            int docBase = fieldsStream.ReadVInt();
-            int chunkDocs = fieldsStream.ReadVInt();
+            int docBase = fieldsStream.ReadVInt32();
+            int chunkDocs = fieldsStream.ReadVInt32();
             if (docID < docBase || docID >= docBase + chunkDocs || docBase + chunkDocs > numDocs)
             {
                 throw new CorruptIndexException("Corrupted: docID=" + docID + ", docBase=" + docBase + ", chunkDocs=" + chunkDocs + ", numDocs=" + numDocs + " (resource=" + fieldsStream + ")");
@@ -263,17 +263,17 @@ namespace Lucene.Net.Codecs.Compressing
             int numStoredFields, offset, length, totalLength;
             if (chunkDocs == 1)
             {
-                numStoredFields = fieldsStream.ReadVInt();
+                numStoredFields = fieldsStream.ReadVInt32();
                 offset = 0;
-                length = fieldsStream.ReadVInt();
+                length = fieldsStream.ReadVInt32();
                 totalLength = length;
             }
             else
             {
-                int bitsPerStoredFields = fieldsStream.ReadVInt();
+                int bitsPerStoredFields = fieldsStream.ReadVInt32();
                 if (bitsPerStoredFields == 0)
                 {
-                    numStoredFields = fieldsStream.ReadVInt();
+                    numStoredFields = fieldsStream.ReadVInt32();
                 }
                 else if (bitsPerStoredFields > 31)
                 {
@@ -287,10 +287,10 @@ namespace Lucene.Net.Codecs.Compressing
                     fieldsStream.Seek(filePointer + PackedInts.Format.PACKED.ByteCount(packedIntsVersion, chunkDocs, bitsPerStoredFields));
                 }
 
-                int bitsPerLength = fieldsStream.ReadVInt();
+                int bitsPerLength = fieldsStream.ReadVInt32();
                 if (bitsPerLength == 0)
                 {
-                    length = fieldsStream.ReadVInt();
+                    length = fieldsStream.ReadVInt32();
                     offset = (docID - docBase) * length;
                     totalLength = chunkDocs * length;
                 }
@@ -346,7 +346,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             for (int fieldIDX = 0; fieldIDX < numStoredFields; fieldIDX++)
             {
-                long infoAndBits = documentInput.ReadVLong();
+                long infoAndBits = documentInput.ReadVInt64();
                 int fieldNumber = (int)((long)((ulong)infoAndBits >> CompressingStoredFieldsWriter.TYPE_BITS));
                 FieldInfo fieldInfo = fieldInfos.FieldInfo(fieldNumber);
 
@@ -507,8 +507,8 @@ namespace Lucene.Net.Codecs.Compressing
                 Debug.Assert(doc >= this.docBase + this.chunkDocs, doc + " " + this.docBase + " " + this.chunkDocs);
                 fieldsStream.Seek(outerInstance.indexReader.GetStartPointer(doc));
 
-                int docBase = fieldsStream.ReadVInt();
-                int chunkDocs = fieldsStream.ReadVInt();
+                int docBase = fieldsStream.ReadVInt32();
+                int chunkDocs = fieldsStream.ReadVInt32();
                 if (docBase < this.docBase + this.chunkDocs || docBase + chunkDocs > outerInstance.numDocs)
                 {
                     throw new CorruptIndexException("Corrupted: current docBase=" + this.docBase + ", current numDocs=" + this.chunkDocs + ", new docBase=" + docBase + ", new numDocs=" + chunkDocs + " (resource=" + fieldsStream + ")");
@@ -525,15 +525,15 @@ namespace Lucene.Net.Codecs.Compressing
 
                 if (chunkDocs == 1)
                 {
-                    numStoredFields[0] = fieldsStream.ReadVInt();
-                    lengths[0] = fieldsStream.ReadVInt();
+                    numStoredFields[0] = fieldsStream.ReadVInt32();
+                    lengths[0] = fieldsStream.ReadVInt32();
                 }
                 else
                 {
-                    int bitsPerStoredFields = fieldsStream.ReadVInt();
+                    int bitsPerStoredFields = fieldsStream.ReadVInt32();
                     if (bitsPerStoredFields == 0)
                     {
-                        Arrays.Fill(numStoredFields, 0, chunkDocs, fieldsStream.ReadVInt());
+                        Arrays.Fill(numStoredFields, 0, chunkDocs, fieldsStream.ReadVInt32());
                     }
                     else if (bitsPerStoredFields > 31)
                     {
@@ -548,10 +548,10 @@ namespace Lucene.Net.Codecs.Compressing
                         }
                     }
 
-                    int bitsPerLength = fieldsStream.ReadVInt();
+                    int bitsPerLength = fieldsStream.ReadVInt32();
                     if (bitsPerLength == 0)
                     {
-                        Arrays.Fill(lengths, 0, chunkDocs, fieldsStream.ReadVInt());
+                        Arrays.Fill(lengths, 0, chunkDocs, fieldsStream.ReadVInt32());
                     }
                     else if (bitsPerLength > 31)
                     {
