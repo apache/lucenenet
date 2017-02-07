@@ -274,7 +274,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                 char curChar = input[i];
                 if (codePointMultiplier > 0)
                 {
-                    codePoint += HexToInt(curChar) * codePointMultiplier;
+                    codePoint += HexToInt32(curChar) * codePointMultiplier;
                     codePointMultiplier = (int)((uint)codePointMultiplier >> 4);
                     if (codePointMultiplier == 0)
                     {
@@ -329,8 +329,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
 
         /// <summary>
         /// Returns the numeric value of the hexadecimal character
+        /// <para/>
+        /// NOTE: This was hexToInt() in Lucene
         /// </summary>
-        private static int HexToInt(char c)
+        private static int HexToInt32(char c)
         {
             if ('0' <= c && c <= '9')
             {
