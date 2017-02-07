@@ -24,7 +24,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     /// <summary>
     /// A simple <see cref="float"/> function with a single argument
     /// </summary>
-    public abstract class SimpleFloatFunction : SingleFunction
+    public abstract class SimpleFloatFunction : SingularFunction
     {
         public SimpleFloatFunction(ValueSource source)
             : base(source)

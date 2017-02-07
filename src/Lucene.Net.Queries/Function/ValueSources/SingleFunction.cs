@@ -21,13 +21,15 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// A function with a single argument
+    /// A function with a single argument.
+    /// <para/>
+    /// NOTE: This was SingleFunction in Lucene, changed to avoid conusion with operations on the datatype <see cref="System.Single"/>.
     /// </summary>
-    public abstract class SingleFunction : ValueSource
+    public abstract class SingularFunction : ValueSource
     {
         protected readonly ValueSource m_source;
 
-        public SingleFunction(ValueSource source)
+        public SingularFunction(ValueSource source)
         {
             this.m_source = source;
         }
@@ -46,7 +48,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override bool Equals(object o)
         {
-            var other = o as SingleFunction;
+            var other = o as SingularFunction;
             if (other == null)
                 return false;
             return Name.Equals(other.Name) 
