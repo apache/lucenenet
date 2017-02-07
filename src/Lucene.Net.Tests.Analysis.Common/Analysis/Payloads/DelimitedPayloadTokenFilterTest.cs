@@ -76,7 +76,7 @@ namespace Lucene.Net.Analysis.Payloads
         public virtual void TestFloatEncoding()
         {
             string test = "The quick|1.0 red|2.0 fox|3.5 jumped|0.5 over the lazy|5 brown|99.3 dogs|83.7";
-            DelimitedPayloadTokenFilter filter = new DelimitedPayloadTokenFilter(new MockTokenizer(new StringReader(test), MockTokenizer.WHITESPACE, false), '|', new FloatEncoder());
+            DelimitedPayloadTokenFilter filter = new DelimitedPayloadTokenFilter(new MockTokenizer(new StringReader(test), MockTokenizer.WHITESPACE, false), '|', new SingleEncoder());
             ICharTermAttribute termAtt = filter.GetAttribute<ICharTermAttribute>();
             IPayloadAttribute payAtt = filter.GetAttribute<IPayloadAttribute>();
             filter.Reset();

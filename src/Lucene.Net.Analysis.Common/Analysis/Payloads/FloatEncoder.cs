@@ -22,9 +22,11 @@ namespace Lucene.Net.Analysis.Payloads
 
     /// <summary>
     /// Encode a character array <see cref="float"/> as a <see cref="BytesRef"/>.
+    /// <para/>
+    /// NOTE: This was FloatEncoder in Lucene
     /// </summary>
     /// <seealso cref="PayloadHelper.EncodeSingle(float, byte[], int)"/>
-    public class FloatEncoder : AbstractEncoder, IPayloadEncoder
+    public class SingleEncoder : AbstractEncoder, IPayloadEncoder
     {
         public override BytesRef Encode(char[] buffer, int offset, int length)
         {

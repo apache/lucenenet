@@ -62,7 +62,7 @@ namespace Lucene.Net.Analysis.Payloads
         {
             if (encoderClass.Equals("float"))
             {
-                encoder = new FloatEncoder();
+                encoder = new SingleEncoder();
             }
             else if (encoderClass.Equals("integer"))
             {
