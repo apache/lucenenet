@@ -64,12 +64,12 @@ namespace Lucene.Net.Search.Spell
             // in "distributed spellcheck", and its inefficient in other ways too...
 
             // cheaper to do this up front once
-            targetPoints = ToIntsRef(target);
-            otherPoints = ToIntsRef(other);
+            targetPoints = ToInt32sRef(target);
+            otherPoints = ToInt32sRef(other);
             n = targetPoints.Length;
             int m = otherPoints.Length;
 
-            d = ReturnRectangularIntArray(n + 1, m + 1);
+            d = ReturnRectangularInt32Array(n + 1, m + 1);
 
             if (n == 0 || m == 0)
             {
@@ -121,7 +121,10 @@ namespace Lucene.Net.Search.Spell
             return 1.0f - ((float)d[n][m] / Math.Min(m, n));
         }
 
-        private static IntsRef ToIntsRef(string s)
+        /// <summary>
+        /// NOTE: This was toIntsRef() in Lucene
+        /// </summary>
+        private static IntsRef ToInt32sRef(string s)
         {
             var @ref = new IntsRef(s.Length); // worst case
             int utf16Len = s.Length;
@@ -132,7 +135,8 @@ namespace Lucene.Net.Search.Spell
             return @ref;
         }
 
-        private static int[][] ReturnRectangularIntArray(int size1, int size2)
+        // LUCENENET TODO: Move to Support ?
+        private static int[][] ReturnRectangularInt32Array(int size1, int size2)
         {
             int[][] array;
             if (size1 > -1)
