@@ -73,9 +73,9 @@ namespace Lucene.Net.Index
                 return iterator;
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
-                Terms terms = base.Terms(field);
+                Terms terms = base.GetTerms(field);
                 return terms == null ? null : new AssertingTerms(terms);
             }
         }

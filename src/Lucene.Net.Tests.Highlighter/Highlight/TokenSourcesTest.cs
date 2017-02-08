@@ -374,7 +374,7 @@ namespace Lucene.Net.Search.Highlight
                 // Do this twice, once passing true and then passing
                 // false: they are entirely different code paths
                 // under-the-hood:
-                TokenStream ts = TokenSources.GetTokenStream(reader.GetTermVectors(0).Terms("field"), i == 0);
+                TokenStream ts = TokenSources.GetTokenStream(reader.GetTermVectors(0).GetTerms("field"), i == 0);
 
                 ICharTermAttribute termAtt = ts.GetAttribute<ICharTermAttribute>();
                 IPositionIncrementAttribute posIncAtt = ts.GetAttribute<IPositionIncrementAttribute>();

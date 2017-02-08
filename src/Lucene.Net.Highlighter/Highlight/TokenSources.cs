@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Highlight
             TokenStream ts = null;
 
             Fields vectors = reader.GetTermVectors(docId);
-            Terms vector = vectors?.Terms(field);
+            Terms vector = vectors?.GetTerms(field);
             if (vector != null)
             {
                 ts = GetTokenStream(vector);
@@ -131,7 +131,7 @@ namespace Lucene.Net.Search.Highlight
             TokenStream ts = null;
 
             Fields vectors = reader.GetTermVectors(docId);
-            Terms vector = vectors?.Terms(field);
+            Terms vector = vectors?.GetTerms(field);
             if (vector != null)
             {
                 ts = GetTokenStream(vector);
@@ -302,7 +302,7 @@ namespace Lucene.Net.Search.Highlight
                 return null;
             }
 
-            Terms vector = vectors.Terms(field);
+            Terms vector = vectors.GetTerms(field);
             if (vector == null) {
                 return null;
             }

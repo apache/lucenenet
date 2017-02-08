@@ -734,7 +734,7 @@ namespace Lucene.Net.Codecs.SimpleText
             return _fields.Keys.GetEnumerator();
         }
 
-        public override Terms Terms(string field)
+        public override Terms GetTerms(string field)
         {
             lock (this)
             {

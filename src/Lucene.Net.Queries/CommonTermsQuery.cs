@@ -260,7 +260,7 @@ namespace Lucene.Net.Queries
                 {
                     Term term = queryTerms[i];
                     TermContext termContext = contextArray[i];
-                    Terms terms = fields.Terms(term.Field);
+                    Terms terms = fields.GetTerms(term.Field);
                     if (terms == null)
                     {
                         // field does not exist

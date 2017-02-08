@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
 
                     Fields tfvFields = reader.GetTermVectors(i);
                     Assert.IsNotNull(tfvFields, "i=" + i);
-                    Terms tfv = tfvFields.Terms("utf8");
+                    Terms tfv = tfvFields.GetTerms("utf8");
                     Assert.IsNotNull(tfv, "docID=" + i + " index=" + oldName);
                 }
                 else
@@ -744,7 +744,7 @@ namespace Lucene.Net.Index
             {
                 Directory dir = OldIndexDirs[name];
                 IndexReader r = DirectoryReader.Open(dir);
-                TermsEnum terms = MultiFields.GetFields(r).Terms("content").GetIterator(null);
+                TermsEnum terms = MultiFields.GetFields(r).GetTerms("content").GetIterator(null);
                 BytesRef t = terms.Next();
                 Assert.IsNotNull(t);
 

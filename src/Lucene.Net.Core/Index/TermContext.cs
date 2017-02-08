@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
                 Fields fields = ctx.AtomicReader.Fields;
                 if (fields != null)
                 {
-                    Terms terms = fields.Terms(field);
+                    Terms terms = fields.GetTerms(field);
                     if (terms != null)
                     {
                         TermsEnum termsEnum = terms.GetIterator(null);

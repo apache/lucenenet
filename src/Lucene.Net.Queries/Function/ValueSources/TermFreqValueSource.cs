@@ -47,7 +47,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             Fields fields = readerContext.AtomicReader.Fields;
-            Terms terms = fields.Terms(m_indexedField);
+            Terms terms = fields.GetTerms(m_indexedField);
 
             return new Int32DocValuesAnonymousInnerClassHelper(this, this, terms);
         }

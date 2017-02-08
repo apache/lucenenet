@@ -109,17 +109,17 @@ namespace Lucene.Net.Index
             fe.MoveNext();
             string f = fe.Current;
             Assert.AreEqual("field1", f);
-            CheckTerms(fields.Terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
+            CheckTerms(fields.GetTerms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
 
             fe.MoveNext();
             f = fe.Current;
             Assert.AreEqual("field2", f);
-            CheckTerms(fields.Terms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
+            CheckTerms(fields.GetTerms(f), liveDocs, "brown", "fox", "jumps", "quick", "the");
 
             fe.MoveNext();
             f = fe.Current;
             Assert.AreEqual("field3", f);
-            CheckTerms(fields.Terms(f), liveDocs, "dog", "fox", "jumps", "lazy", "over", "the");
+            CheckTerms(fields.GetTerms(f), liveDocs, "dog", "fox", "jumps", "lazy", "over", "the");
 
             Assert.IsFalse(fe.MoveNext());
         }

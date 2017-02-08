@@ -899,7 +899,7 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.Reader;
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
-            Terms terms = sub.Fields.Terms("field");
+            Terms terms = sub.Fields.GetTerms("field");
             Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton();
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
             TermsEnum te = terms.Intersect(ca, null);
@@ -957,7 +957,7 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.Reader;
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
-            Terms terms = sub.Fields.Terms("field");
+            Terms terms = sub.Fields.GetTerms("field");
 
             Automaton automaton = (new RegExp(".*d", RegExp.NONE)).ToAutomaton();
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
@@ -1013,7 +1013,7 @@ namespace Lucene.Net.Index
             DirectoryReader r = w.Reader;
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
-            Terms terms = sub.Fields.Terms("field");
+            Terms terms = sub.Fields.GetTerms("field");
 
             Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton(); // accept ALL
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);

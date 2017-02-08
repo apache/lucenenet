@@ -304,7 +304,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
                 FieldInfo fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
                 if (fieldInfo == null)

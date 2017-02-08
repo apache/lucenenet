@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
             }
             foreach (string field in fields)
             {
-                Terms terms = fields.Terms(field);
+                Terms terms = fields.GetTerms(field);
                 if (terms == null)
                 {
                     continue;

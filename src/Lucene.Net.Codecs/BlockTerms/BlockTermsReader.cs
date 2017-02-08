@@ -248,7 +248,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             return _fields.Keys.GetEnumerator();
         }
 
-        public override Terms Terms(string field)
+        public override Terms GetTerms(string field)
         {
             Debug.Assert(field != null);
 

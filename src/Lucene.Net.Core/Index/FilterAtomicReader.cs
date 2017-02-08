@@ -81,9 +81,9 @@ namespace Lucene.Net.Index
                 return m_input.GetEnumerator();
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
-                return m_input.Terms(field);
+                return m_input.GetTerms(field);
             }
 
             public override int Count

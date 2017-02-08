@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
             Document newDoc2 = reader.Document(1);
             Assert.IsTrue(newDoc2 != null);
             Assert.IsTrue(DocHelper.NumFields(newDoc2) == DocHelper.NumFields(doc2) - DocHelper.Unstored.Count);
-            Terms vector = reader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
+            Terms vector = reader.GetTermVectors(0).GetTerms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(vector);
 
             reader.Dispose();
@@ -662,15 +662,15 @@ namespace Lucene.Net.Index
             {
                 fenum2.MoveNext();
                 Assert.AreEqual(field1, fenum2.Current, "Different fields");
-                Terms terms1 = fields1.Terms(field1);
+                Terms terms1 = fields1.GetTerms(field1);
                 if (terms1 == null)
                 {
-                    Assert.IsNull(fields2.Terms(field1));
+                    Assert.IsNull(fields2.GetTerms(field1));
                     continue;
                 }
                 TermsEnum enum1 = terms1.GetIterator(null);
 
-                Terms terms2 = fields2.Terms(field1);
+                Terms terms2 = fields2.GetTerms(field1);
                 Assert.IsNotNull(terms2);
                 TermsEnum enum2 = terms2.GetIterator(null);
 

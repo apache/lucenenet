@@ -57,9 +57,9 @@ namespace Lucene.Net.Index.Sorter
                 this.infos = infos;
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
-                Terms terms = this.m_input.Terms(field);
+                Terms terms = this.m_input.GetTerms(field);
                 if (terms == null)
                 {
                     return null;

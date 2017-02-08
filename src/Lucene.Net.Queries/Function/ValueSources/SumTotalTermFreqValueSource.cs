@@ -63,7 +63,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 {
                     continue;
                 }
-                Terms terms = fields.Terms(m_indexedField);
+                Terms terms = fields.GetTerms(m_indexedField);
                 if (terms == null)
                 {
                     continue;

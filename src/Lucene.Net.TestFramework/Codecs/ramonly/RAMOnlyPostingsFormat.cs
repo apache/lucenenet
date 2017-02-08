@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs.ramonly
         {
             internal readonly IDictionary<string, RAMField> FieldToTerms = new SortedDictionary<string, RAMField>();
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
                 return FieldToTerms[field];
             }

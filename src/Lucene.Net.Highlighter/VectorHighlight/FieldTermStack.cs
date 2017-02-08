@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.VectorHighlight
                 return;
             }
 
-            Terms vector = vectors.Terms(fieldName);
+            Terms vector = vectors.GetTerms(fieldName);
             if (vector == null)
             {
                 // null snippet

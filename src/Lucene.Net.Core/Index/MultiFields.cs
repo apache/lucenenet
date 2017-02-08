@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                return fields.Terms(field);
+                return fields.GetTerms(field);
             }
         }
 
@@ -244,7 +244,7 @@ namespace Lucene.Net.Index
             return new MergedIterator<string>(subIterators);
         }
 
-        public override Terms Terms(string field)
+        public override Terms GetTerms(string field)
         {
             Terms result;
             terms.TryGetValue(field, out result);
@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
             // Gather all sub-readers that share this field
             for (int i = 0; i < subs.Length; i++)
             {
-                Terms terms = subs[i].Terms(field);
+                Terms terms = subs[i].GetTerms(field);
                 if (terms != null)
                 {
                     subs2.Add(terms);

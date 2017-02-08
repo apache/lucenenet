@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
             Fields fields = MultiFields.GetFields(Reader);
             foreach (string field in fields)
             {
-                Terms terms = fields.Terms(field);
+                Terms terms = fields.GetTerms(field);
                 Assert.IsNotNull(terms);
                 TermsEnum termsEnum = terms.GetIterator(null);
                 while (termsEnum.Next() != null)
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTermVectors()
         {
-            Terms result = Reader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
+            Terms result = Reader.GetTermVectors(0).GetTerms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(result);
             Assert.AreEqual(3, result.Count);
             TermsEnum termsEnum = result.GetIterator(null);

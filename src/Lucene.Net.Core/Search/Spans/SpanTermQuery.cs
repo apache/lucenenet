@@ -132,7 +132,7 @@ namespace Lucene.Net.Search.Spans
                 Fields fields = context.AtomicReader.Fields;
                 if (fields != null)
                 {
-                    Terms terms = fields.Terms(m_term.Field);
+                    Terms terms = fields.GetTerms(m_term.Field);
                     if (terms != null)
                     {
                         TermsEnum termsEnum = terms.GetIterator(null);

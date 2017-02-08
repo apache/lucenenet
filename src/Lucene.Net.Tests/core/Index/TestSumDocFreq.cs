@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 
             foreach (string f in fields)
             {
-                Terms terms = fields.Terms(f);
+                Terms terms = fields.GetTerms(f);
                 long sumDocFreq = terms.SumDocFreq;
                 if (sumDocFreq == -1)
                 {

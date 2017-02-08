@@ -280,7 +280,7 @@ namespace Lucene.Net.Codecs
             return fields.Keys.GetEnumerator();
         }
 
-        public override Terms Terms(string field)
+        public override Terms GetTerms(string field)
         {
             Debug.Assert(field != null);
             FieldReader ret;
@@ -533,7 +533,7 @@ namespace Lucene.Net.Codecs
         internal BytesRef NO_OUTPUT;
 
         /// <summary>
-        /// BlockTree's implementation of <seealso cref="Terms"/>. </summary>
+        /// BlockTree's implementation of <seealso cref="GetTerms"/>. </summary>
         public sealed class FieldReader : Terms
         {
             private readonly BlockTreeTermsReader outerInstance;

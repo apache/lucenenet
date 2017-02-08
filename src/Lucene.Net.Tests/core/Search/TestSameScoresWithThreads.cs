@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
             w.Dispose();
 
             IndexSearcher s = NewSearcher(r);
-            Terms terms = MultiFields.GetFields(r).Terms("body");
+            Terms terms = MultiFields.GetFields(r).GetTerms("body");
             int termCount = 0;
             TermsEnum termsEnum = terms.GetIterator(null);
             while (termsEnum.Next() != null)

@@ -48,10 +48,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get the <seealso cref="Terms"/> for this field.  this will return
+        /// Get the <seealso cref="GetTerms"/> for this field.  this will return
         ///  null if the field does not exist.
         /// </summary>
-        public abstract Terms Terms(string field); // LUCENENET TODO: Rename GetTerms() ?
+        public abstract Terms GetTerms(string field);
 
         /// <summary>
         /// Gets the number of fields or -1 if the number of
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
                 long numTerms = 0;
                 foreach (string field in this)
                 {
-                    Terms terms = Terms(field);
+                    Terms terms = GetTerms(field);
                     if (terms != null)
                     {
                         long termCount = terms.Count;

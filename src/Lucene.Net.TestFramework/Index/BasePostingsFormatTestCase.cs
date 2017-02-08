@@ -1145,7 +1145,7 @@ namespace Lucene.Net.Index
                     termState = termStates[idx];
                 }
 
-                Terms terms = fieldsSource.Terms(fieldAndTerm.Field);
+                Terms terms = fieldsSource.GetTerms(fieldAndTerm.Field);
                 Assert.IsNotNull(terms);
                 termsEnum = terms.GetIterator(null);
 

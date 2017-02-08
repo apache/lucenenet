@@ -105,7 +105,7 @@ namespace Lucene.Net.Misc
                 {
                     throw new Exception("field " + field + " not found");
                 }
-                Terms terms = fields.Terms(field);
+                Terms terms = fields.GetTerms(field);
                 if (terms != null)
                 {
                     TermsEnum termsEnum = terms.GetIterator(null);
@@ -123,7 +123,7 @@ namespace Lucene.Net.Misc
                 tiq = new TermStatsQueue(numTerms, comparer);
                 foreach (string fieldName in fields)
                 {
-                    Terms terms = fields.Terms(fieldName);
+                    Terms terms = fields.GetTerms(fieldName);
                     if (terms != null)
                     {
                         tiq.Fill(fieldName, terms.GetIterator(null));

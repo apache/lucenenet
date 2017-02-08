@@ -215,9 +215,9 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
-                return OuterInstance.HasField(field) ? base.Terms(field) : null;
+                return OuterInstance.HasField(field) ? base.GetTerms(field) : null;
             }
         }
     }

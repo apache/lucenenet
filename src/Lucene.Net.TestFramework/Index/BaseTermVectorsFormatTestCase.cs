@@ -498,7 +498,7 @@ namespace Lucene.Net.Index
 
             for (int i = 0; i < doc.FieldNames.Length; ++i)
             {
-                AssertEquals(doc.TokenStreams[i], doc.FieldTypes[i], fields.Terms(doc.FieldNames[i]));
+                AssertEquals(doc.TokenStreams[i], doc.FieldTypes[i], fields.GetTerms(doc.FieldNames[i]));
             }
         }
 

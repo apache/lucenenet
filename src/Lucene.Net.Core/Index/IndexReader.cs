@@ -461,7 +461,7 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
-            return vectors.Terms(field);
+            return vectors.GetTerms(field);
         }
 
         /// <summary>

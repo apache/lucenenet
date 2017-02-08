@@ -1890,7 +1890,7 @@ namespace Lucene.Net.Util
                 string field = leftEnum.Current;
                 rightEnum.MoveNext();
                 Assert.AreEqual(field, rightEnum.Current, info);
-                AssertTermsEquals(info, leftReader, leftFields.Terms(field), rightFields.Terms(field), deep);
+                AssertTermsEquals(info, leftReader, leftFields.GetTerms(field), rightFields.GetTerms(field), deep);
             }
             Assert.IsFalse(rightEnum.MoveNext());
         }

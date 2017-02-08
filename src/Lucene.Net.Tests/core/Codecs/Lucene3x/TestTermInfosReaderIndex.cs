@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             Fields fields = MultiFields.GetFields(reader);
             foreach (string field in fields)
             {
-                Terms terms = fields.Terms(field);
+                Terms terms = fields.GetTerms(field);
                 Assert.IsNotNull(terms);
                 TermsEnum termsEnum = terms.GetIterator(null);
                 while (termsEnum.Next() != null)

@@ -235,11 +235,11 @@ namespace Lucene.Net.Codecs.Perfield
                 return fields.Keys.GetEnumerator();
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
                 FieldsProducer fieldsProducer;
                 fields.TryGetValue(field, out fieldsProducer);
-                return fieldsProducer == null ? null : fieldsProducer.Terms(field);
+                return fieldsProducer == null ? null : fieldsProducer.GetTerms(field);
             }
 
             public override int Count

@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            Terms vector = r.GetTermVectors(0).Terms("field");
+            Terms vector = r.GetTermVectors(0).GetTerms("field");
             Assert.IsNotNull(vector);
             TermsEnum termsEnum = vector.GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").GetIterator(null);
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);
@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").GetIterator(null);
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").GetIterator(null);
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);
@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").GetIterator(null);
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
             Assert.AreEqual(2, termsEnum.TotalTermFreq);
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").GetIterator(null);
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 
@@ -336,7 +336,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").GetIterator(null);
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 
@@ -380,7 +380,7 @@ namespace Lucene.Net.Index
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            TermsEnum termsEnum = r.GetTermVectors(0).Terms("field").GetIterator(null);
+            TermsEnum termsEnum = r.GetTermVectors(0).GetTerms("field").GetIterator(null);
             Assert.IsNotNull(termsEnum.Next());
             DocsAndPositionsEnum dpEnum = termsEnum.DocsAndPositions(null, null);
 

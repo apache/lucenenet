@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             return fields.Keys.GetEnumerator();
         }
 
-        public override Terms Terms(string field)
+        public override Terms GetTerms(string field)
         {
             Terms ret;
             preTerms.TryGetValue(field, out ret);

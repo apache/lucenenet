@@ -418,9 +418,9 @@ namespace Lucene.Net.Search.Highlight
             {
                 public DelegatingFilterFields(Fields fields) : base(fields) { }
 
-                public override Terms Terms(string field)
+                public override Terms GetTerms(string field)
                 {
-                    return base.Terms(DelegatingAtomicReader.FIELD_NAME);
+                    return base.GetTerms(DelegatingAtomicReader.FIELD_NAME);
                 }
 
                 public override IEnumerator<string> GetEnumerator()

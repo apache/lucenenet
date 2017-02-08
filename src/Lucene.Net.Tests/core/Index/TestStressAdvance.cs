@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
                         bDocIDs.Add(docID);
                     }
                 }
-                TermsEnum te = GetOnlySegmentReader(r).Fields.Terms("field").GetIterator(null);
+                TermsEnum te = GetOnlySegmentReader(r).Fields.GetTerms("field").GetIterator(null);
 
                 DocsEnum de = null;
                 for (int iter2 = 0; iter2 < 10; iter2++)

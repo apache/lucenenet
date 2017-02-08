@@ -1070,7 +1070,7 @@ namespace Lucene.Net.Codecs.Memory
                 return Collections.UnmodifiableSet<string>(_fields.Keys).GetEnumerator();
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
                 return _fields[field];
             }

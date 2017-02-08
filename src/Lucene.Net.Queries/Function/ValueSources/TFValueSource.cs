@@ -54,7 +54,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
         public override FunctionValues GetValues(IDictionary context, AtomicReaderContext readerContext)
         {
             var fields = readerContext.AtomicReader.Fields;
-            var terms = fields.Terms(m_indexedField);
+            var terms = fields.GetTerms(m_indexedField);
             var searcher = (IndexSearcher)context["searcher"];
             var similarity = IDFValueSource.AsTFIDF(searcher.Similarity, m_indexedField);
             if (similarity == null)

@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
                         // only add if the reader responsible for that field name is the current:
                         if (fieldToReader[field].Equals(reader))
                         {
-                            this.fields.AddField(field, readerFields.Terms(field));
+                            this.fields.AddField(field, readerFields.GetTerms(field));
                         }
                     }
                 }
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
                 return fields.Keys.GetEnumerator();
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
                 Terms ret;
                 fields.TryGetValue(field, out ret);

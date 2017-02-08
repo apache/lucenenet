@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
                     {
                         Debug.Assert(currentField == null || currentField.CompareTo(term.Field) < 0);
                         currentField = term.Field;
-                        Terms terms = fields.Terms(currentField);
+                        Terms terms = fields.GetTerms(currentField);
                         if (terms != null)
                         {
                             termsEnum = terms.GetIterator(termsEnum);
@@ -586,7 +586,7 @@ namespace Lucene.Net.Index
                         // if we change the code to process updates in terms order, enable this assert
                         //        assert currentField == null || currentField.compareTo(term.field()) < 0;
                         currentField = term.Field;
-                        Terms terms = fields.Terms(currentField);
+                        Terms terms = fields.GetTerms(currentField);
                         if (terms != null)
                         {
                             termsEnum = terms.GetIterator(termsEnum);

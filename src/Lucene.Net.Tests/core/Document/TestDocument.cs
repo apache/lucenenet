@@ -406,7 +406,7 @@ namespace Lucene.Net.Documents
             foreach (string field in new string[] { "tv", "tv_pos", "tv_off", "tv_pos_off" })
             {
                 Fields tvFields = r.GetTermVectors(0);
-                Terms tvs = tvFields.Terms(field);
+                Terms tvs = tvFields.GetTerms(field);
                 Assert.IsNotNull(tvs);
                 Assert.AreEqual(2, tvs.Count);
                 TermsEnum tvsEnum = tvs.GetIterator(null);

@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 foreach (string field in fields)
                 {
-                    this.fields[field] = new DirectField(state, field, fields.Terms(field), minSkipCount, lowFreqCutoff);
+                    this.fields[field] = new DirectField(state, field, fields.GetTerms(field), minSkipCount, lowFreqCutoff);
                 }
             }
 
@@ -146,7 +146,7 @@ namespace Lucene.Net.Codecs.Memory
                 return Collections.UnmodifiableSet<string>(fields.Keys).GetEnumerator();
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
                 return fields[field];
             }

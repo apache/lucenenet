@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 int termCount = 0;
                 foreach (string field in fields)
                 {
-                    Terms terms = fields.Terms(field);
+                    Terms terms = fields.GetTerms(field);
                     Assert.IsNotNull(terms);
                     TermsEnum termsEnum = terms.GetIterator(null);
                     BytesRef text;

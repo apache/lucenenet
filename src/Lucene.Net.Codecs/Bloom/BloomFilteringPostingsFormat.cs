@@ -186,13 +186,13 @@ namespace Lucene.Net.Codecs.Bloom
                 _delegateFieldsProducer.Dispose();
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
                 var filter = _bloomsByFieldName[field];
                 if (filter == null)
-                    return _delegateFieldsProducer.Terms(field);
+                    return _delegateFieldsProducer.GetTerms(field);
                 
-                var result = _delegateFieldsProducer.Terms(field);
+                var result = _delegateFieldsProducer.GetTerms(field);
                 return result == null ? null : new BloomFilteredTerms(result, filter);
             }
 

@@ -144,7 +144,7 @@ namespace Lucene.Net.Search
             Fields vectors = searcher.IndexReader.GetTermVectors(hits[0].Doc);
             Assert.IsNotNull(vectors);
             Assert.AreEqual(1, vectors.Count);
-            Terms vector = vectors.Terms("field");
+            Terms vector = vectors.GetTerms("field");
             Assert.IsNotNull(vector);
             Assert.AreEqual(1, vector.Count);
             TermsEnum termsEnum = vector.GetIterator(null);
@@ -202,7 +202,7 @@ namespace Lucene.Net.Search
             int numDocs = r.NumDocs;
             for (int i = 0; i < numDocs; i++)
             {
-                Assert.IsNotNull(r.GetTermVectors(i).Terms("c"), "term vectors should not have been null for document " + i);
+                Assert.IsNotNull(r.GetTermVectors(i).GetTerms("c"), "term vectors should not have been null for document " + i);
             }
             r.Dispose();
         }

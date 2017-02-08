@@ -110,7 +110,7 @@ namespace Lucene.Net.Index
             {
                 return 0;
             }
-            Terms terms = fields.Terms(term.Field);
+            Terms terms = fields.GetTerms(term.Field);
             if (terms == null)
             {
                 return 0;
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
             {
                 return 0;
             }
-            Terms terms = fields.Terms(term.Field);
+            Terms terms = fields.GetTerms(term.Field);
             if (terms == null)
             {
                 return 0;
@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
             {
                 return null;
             }
-            return fields.Terms(field);
+            return fields.GetTerms(field);
         }
 
         /// <summary>
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
             Fields fields = Fields;
             if (fields != null)
             {
-                Terms terms = fields.Terms(term.Field);
+                Terms terms = fields.GetTerms(term.Field);
                 if (terms != null)
                 {
                     TermsEnum termsEnum = terms.GetIterator(null);
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             Fields fields = Fields;
             if (fields != null)
             {
-                Terms terms = fields.Terms(term.Field);
+                Terms terms = fields.GetTerms(term.Field);
                 if (terms != null)
                 {
                     TermsEnum termsEnum = terms.GetIterator(null);

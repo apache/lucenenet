@@ -366,10 +366,10 @@ namespace Lucene.Net.Index
                 Assert.IsNull(MultiFields.GetFields(r2));
                 return;
             }
-            Terms terms1 = f1.Terms(idField);
+            Terms terms1 = f1.GetTerms(idField);
             if (terms1 == null)
             {
-                Assert.IsTrue(MultiFields.GetFields(r2) == null || MultiFields.GetFields(r2).Terms(idField) == null);
+                Assert.IsTrue(MultiFields.GetFields(r2) == null || MultiFields.GetFields(r2).GetTerms(idField) == null);
                 return;
             }
             TermsEnum termsEnum = terms1.GetIterator(null);
@@ -394,7 +394,7 @@ namespace Lucene.Net.Index
                 }
                 return;
             }
-            Terms terms2 = fields.Terms(idField);
+            Terms terms2 = fields.GetTerms(idField);
             TermsEnum termsEnum2 = terms2.GetIterator(null);
 
             DocsEnum termDocs1 = null;
@@ -465,7 +465,7 @@ namespace Lucene.Net.Index
                         foreach (string field in tv1)
                         {
                             Console.WriteLine("    " + field + ":");
-                            Terms terms3 = tv1.Terms(field);
+                            Terms terms3 = tv1.GetTerms(field);
                             Assert.IsNotNull(terms3);
                             TermsEnum termsEnum3 = terms3.GetIterator(null);
                             BytesRef term2;
@@ -504,7 +504,7 @@ namespace Lucene.Net.Index
                         foreach (string field in tv2)
                         {
                             Console.WriteLine("    " + field + ":");
-                            Terms terms3 = tv2.Terms(field);
+                            Terms terms3 = tv2.GetTerms(field);
                             Assert.IsNotNull(terms3);
                             TermsEnum termsEnum3 = terms3.GetIterator(null);
                             BytesRef term2;
@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                         field1 = fields1Enum.Current;
-                        Terms terms = fields1.Terms(field1);
+                        Terms terms = fields1.GetTerms(field1);
                         if (terms == null)
                         {
                             continue;
@@ -614,7 +614,7 @@ namespace Lucene.Net.Index
                             break;
                         }
                         field2 = fields2Enum.Current;
-                        Terms terms = fields2.Terms(field2);
+                        Terms terms = fields2.GetTerms(field2);
                         if (terms == null)
                         {
                             continue;
@@ -715,11 +715,11 @@ namespace Lucene.Net.Index
                 string field2 = fieldsEnum2.Current;
                 Assert.AreEqual(field1, field2);
 
-                Terms terms1 = d1.Terms(field1);
+                Terms terms1 = d1.GetTerms(field1);
                 Assert.IsNotNull(terms1);
                 TermsEnum termsEnum1 = terms1.GetIterator(null);
 
-                Terms terms2 = d2.Terms(field2);
+                Terms terms2 = d2.GetTerms(field2);
                 Assert.IsNotNull(terms2);
                 TermsEnum termsEnum2 = terms2.GetIterator(null);
 

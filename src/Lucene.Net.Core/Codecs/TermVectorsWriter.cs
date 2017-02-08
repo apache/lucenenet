@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs
                 Debug.Assert(lastFieldName == null || fieldName.CompareTo(lastFieldName) > 0, "lastFieldName=" + lastFieldName + " fieldName=" + fieldName);
                 lastFieldName = fieldName;
 
-                Terms terms = vectors.Terms(fieldName);
+                Terms terms = vectors.GetTerms(fieldName);
                 if (terms == null)
                 {
                     // FieldsEnum shouldn't lie...

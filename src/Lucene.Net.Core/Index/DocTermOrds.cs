@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
                 {
                     return null;
                 }
-                Terms terms = fields.Terms(m_field);
+                Terms terms = fields.GetTerms(m_field);
                 if (terms == null)
                 {
                     return null;
@@ -345,7 +345,7 @@ namespace Lucene.Net.Index
                 // No terms
                 return;
             }
-            Terms terms = fields.Terms(m_field);
+            Terms terms = fields.GetTerms(m_field);
             if (terms == null)
             {
                 // No terms
@@ -750,7 +750,7 @@ namespace Lucene.Net.Index
 
                 InitializeInstanceFields();
                 Debug.Assert(outerInstance.m_indexedTermsArray != null);
-                termsEnum = reader.Fields.Terms(outerInstance.m_field).GetIterator(null);
+                termsEnum = reader.Fields.GetTerms(outerInstance.m_field).GetIterator(null);
             }
 
             public override IComparer<BytesRef> Comparer

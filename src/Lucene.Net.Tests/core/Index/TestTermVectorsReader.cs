@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
             TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
             for (int j = 0; j < 5; j++)
             {
-                Terms vector = reader.Get(j).Terms(TestFields[0]);
+                Terms vector = reader.Get(j).GetTerms(TestFields[0]);
                 Assert.IsNotNull(vector);
                 Assert.AreEqual(TestTerms.Length, vector.Count);
                 TermsEnum termsEnum = vector.GetIterator(null);
@@ -270,7 +270,7 @@ namespace Lucene.Net.Index
             TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
             for (int j = 0; j < 5; j++)
             {
-                Terms vector = reader.Get(j).Terms(TestFields[0]);
+                Terms vector = reader.Get(j).GetTerms(TestFields[0]);
                 Assert.IsNotNull(vector);
                 Assert.AreEqual(TestTerms.Length, vector.Count);
                 TermsEnum termsEnum = vector.GetIterator(null);
@@ -300,7 +300,7 @@ namespace Lucene.Net.Index
         {
             TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
             //BytesRef[] terms; // LUCENENET NOTE: Not used in Lucene
-            Terms vector = reader.Get(0).Terms(TestFields[0]);
+            Terms vector = reader.Get(0).GetTerms(TestFields[0]);
             Assert.IsNotNull(vector);
             Assert.AreEqual(TestTerms.Length, vector.Count);
             TermsEnum termsEnum = vector.GetIterator(null);
@@ -340,7 +340,7 @@ namespace Lucene.Net.Index
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, dpEnum.NextDoc());
             }
 
-            Terms freqVector = reader.Get(0).Terms(TestFields[1]); //no pos, no offset
+            Terms freqVector = reader.Get(0).GetTerms(TestFields[1]); //no pos, no offset
             Assert.IsNotNull(freqVector);
             Assert.AreEqual(TestTerms.Length, freqVector.Count);
             termsEnum = freqVector.GetIterator(null);
@@ -362,7 +362,7 @@ namespace Lucene.Net.Index
         public virtual void TestOffsetReader()
         {
             TermVectorsReader reader = Codec.Default.TermVectorsFormat.VectorsReader(Dir, Seg.Info, FieldInfos, NewIOContext(Random()));
-            Terms vector = reader.Get(0).Terms(TestFields[0]);
+            Terms vector = reader.Get(0).GetTerms(TestFields[0]);
             Assert.IsNotNull(vector);
             TermsEnum termsEnum = vector.GetIterator(null);
             Assert.IsNotNull(termsEnum);

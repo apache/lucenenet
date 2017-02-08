@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Sinks
             w.Dispose();
 
             IndexReader r = DirectoryReader.Open(dir);
-            Terms vector = r.GetTermVectors(0).Terms("field");
+            Terms vector = r.GetTermVectors(0).GetTerms("field");
             assertEquals(1, vector.Count);
             TermsEnum termsEnum = vector.GetIterator(null);
             termsEnum.Next();

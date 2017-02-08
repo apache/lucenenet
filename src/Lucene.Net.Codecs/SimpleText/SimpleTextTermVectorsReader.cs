@@ -288,7 +288,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return _fields.Keys.GetEnumerator();
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
                 return _fields.ContainsKey(field) ? _fields[field] : null;
             }

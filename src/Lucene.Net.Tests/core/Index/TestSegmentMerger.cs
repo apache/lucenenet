@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             //System.out.println("stored size: " + stored.Size());
             Assert.AreEqual(3, tvCount, "We do not have 3 fields that were indexed with term vector");
 
-            Terms vector = mergedReader.GetTermVectors(0).Terms(DocHelper.TEXT_FIELD_2_KEY);
+            Terms vector = mergedReader.GetTermVectors(0).GetTerms(DocHelper.TEXT_FIELD_2_KEY);
             Assert.IsNotNull(vector);
             Assert.AreEqual(3, vector.Count);
             TermsEnum termsEnum = vector.GetIterator(null);

@@ -72,7 +72,7 @@ namespace Lucene.Net.Sandbox.Queries
         private FixedBitSet CorrectBits(AtomicReader reader, IBits acceptDocs)
         {
             FixedBitSet bits = new FixedBitSet(reader.MaxDoc); //assume all are INvalid
-            Terms terms = reader.Fields.Terms(fieldName);
+            Terms terms = reader.Fields.GetTerms(fieldName);
 
             if (terms == null)
             {
@@ -122,7 +122,7 @@ namespace Lucene.Net.Sandbox.Queries
         {
             FixedBitSet bits = new FixedBitSet(reader.MaxDoc);
             bits.Set(0, reader.MaxDoc); //assume all are valid
-            Terms terms = reader.Fields.Terms(fieldName);
+            Terms terms = reader.Fields.GetTerms(fieldName);
 
             if (terms == null)
             {

@@ -318,7 +318,7 @@ namespace Lucene.Net.Index
                         bool tv = counter % 2 == 1 && fieldID != 9;
                         if (tv)
                         {
-                            Terms tfv = r.GetTermVectors(docID).Terms(name);
+                            Terms tfv = r.GetTermVectors(docID).GetTerms(name);
                             Assert.IsNotNull(tfv);
                             TermsEnum termsEnum = tfv.GetIterator(null);
                             Assert.AreEqual(new BytesRef("" + counter), termsEnum.Next());
@@ -342,7 +342,7 @@ namespace Lucene.Net.Index
                         else
                         {
                             Fields vectors = r.GetTermVectors(docID);
-                            Assert.IsTrue(vectors == null || vectors.Terms(name) == null);
+                            Assert.IsTrue(vectors == null || vectors.GetTerms(name) == null);
                         }
 
                         BooleanQuery bq = new BooleanQuery();

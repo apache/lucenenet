@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs
             {
                 FieldInfo info = mergeState.FieldInfos.FieldInfo(field);
                 Debug.Assert(info != null, "FieldInfo for field is null: " + field);
-                Terms terms = fields.Terms(field);
+                Terms terms = fields.GetTerms(field);
                 if (terms != null)
                 {
                     TermsConsumer termsConsumer = AddField(info);

@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Index
                 // assert fields.terms(field) != null;
                 computedFieldCount++;
 
-                Terms terms = fields.Terms(field);
+                Terms terms = fields.GetTerms(field);
                 if (terms == null)
                 {
                     continue;
@@ -1443,7 +1443,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                Terms fieldTerms = fields.Terms(field);
+                Terms fieldTerms = fields.GetTerms(field);
                 if (fieldTerms == null)
                 {
                     // Unusual: the FieldsEnum returned a field but
@@ -1467,7 +1467,7 @@ namespace Lucene.Net.Index
 
                     if (sumTotalTermFreq != 0)
                     {
-                        long v = fields.Terms(field).SumTotalTermFreq;
+                        long v = fields.GetTerms(field).SumTotalTermFreq;
                         if (v != -1 && sumTotalTermFreq != v)
                         {
                             throw new Exception("sumTotalTermFreq for field " + field + "=" + v + " != recomputed sumTotalTermFreq=" + sumTotalTermFreq);
@@ -1476,7 +1476,7 @@ namespace Lucene.Net.Index
 
                     if (sumDocFreq != 0)
                     {
-                        long v = fields.Terms(field).SumDocFreq;
+                        long v = fields.GetTerms(field).SumDocFreq;
                         if (v != -1 && sumDocFreq != v)
                         {
                             throw new Exception("sumDocFreq for field " + field + "=" + v + " != recomputed sumDocFreq=" + sumDocFreq);
@@ -1518,7 +1518,7 @@ namespace Lucene.Net.Index
 
                     if ((status.DelTermCount + status.TermCount) - termCountStart > 0)
                     {
-                        termCount = fields.Terms(field).Count;
+                        termCount = fields.GetTerms(field).Count;
 
                         if (termCount != -1 && termCount != status.DelTermCount + status.TermCount - termCountStart)
                         {
@@ -2132,13 +2132,13 @@ namespace Lucene.Net.Index
 
                             if (crossCheckTermVectors)
                             {
-                                Terms terms = tfv.Terms(field);
+                                Terms terms = tfv.GetTerms(field);
                                 termsEnum = terms.GetIterator(termsEnum);
                                 bool postingsHasFreq = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS;
                                 bool postingsHasPayload = fieldInfo.HasPayloads;
                                 bool vectorsHasPayload = terms.HasPayloads;
 
-                                Terms postingsTerms = postingsFields.Terms(field);
+                                Terms postingsTerms = postingsFields.GetTerms(field);
                                 if (postingsTerms == null)
                                 {
                                     throw new Exception("vector field=" + field + " does not exist in postings; doc=" + j);

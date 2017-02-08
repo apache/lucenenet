@@ -247,7 +247,7 @@ namespace Lucene.Net.Index
             Fields fields = reader.Fields;
             foreach (string field in fields)
             {
-                Terms terms = fields.Terms(field);
+                Terms terms = fields.GetTerms(field);
                 Assert.IsNotNull(terms);
                 TermsEnum tis = terms.GetIterator(null);
                 while (tis.Next() != null)

@@ -153,7 +153,7 @@ namespace Lucene.Net.Index.Memory
                     }
                 }
 
-                public override Terms Terms(string field)
+                public override Terms GetTerms(string field)
                 {
                     var searchField = new KeyValuePair<string, Info>(field, null);
                     int i = Array.BinarySearch(outerInstance.outerInstance.sortedFields, searchField, new TermComparer<string, Info>());

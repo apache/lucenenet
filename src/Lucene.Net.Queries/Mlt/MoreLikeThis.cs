@@ -507,7 +507,7 @@ namespace Lucene.Net.Queries.Mlt
                 Terms vector;
                 if (vectors != null)
                 {
-                    vector = vectors.Terms(fieldName);
+                    vector = vectors.GetTerms(fieldName);
                 }
                 else
                 {

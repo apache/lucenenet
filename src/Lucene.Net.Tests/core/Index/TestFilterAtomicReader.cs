@@ -48,9 +48,9 @@ namespace Lucene.Net.Index
                 {
                 }
 
-                public override Terms Terms(string field)
+                public override Terms GetTerms(string field)
                 {
-                    return new TestTerms(base.Terms(field));
+                    return new TestTerms(base.GetTerms(field));
                 }
             }
 

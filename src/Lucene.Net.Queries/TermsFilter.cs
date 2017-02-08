@@ -234,7 +234,7 @@ namespace Lucene.Net.Queries
             DocsEnum docs = null;
             foreach (TermsAndField termsAndField in this.termsAndFields)
             {
-                if ((terms = fields.Terms(termsAndField.field)) != null)
+                if ((terms = fields.GetTerms(termsAndField.field)) != null)
                 {
                     termsEnum = terms.GetIterator(termsEnum); // this won't return null
                     for (int i = termsAndField.start; i < termsAndField.end; i++)

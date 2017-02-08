@@ -131,7 +131,7 @@ namespace Lucene.Net.Index.Memory
             Fields memFields = memIndexReader.Fields;
             foreach (string field in competitor.Fields)
             {
-                Terms memTerms = memFields.Terms(field);
+                Terms memTerms = memFields.GetTerms(field);
                 Terms iwTerms = memIndexReader.Terms(field);
                 if (iwTerms == null)
                 {

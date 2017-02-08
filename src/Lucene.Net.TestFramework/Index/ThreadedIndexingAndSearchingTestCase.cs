@@ -472,7 +472,7 @@ namespace Lucene.Net.Index
                                 {
                                     continue;
                                 }
-                                Terms terms = fields.Terms("body");
+                                Terms terms = fields.GetTerms("body");
                                 if (terms == null)
                                 {
                                     continue;

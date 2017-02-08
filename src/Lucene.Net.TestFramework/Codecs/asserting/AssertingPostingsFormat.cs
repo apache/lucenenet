@@ -81,9 +81,9 @@ namespace Lucene.Net.Codecs.asserting
                 return iterator;
             }
 
-            public override Terms Terms(string field)
+            public override Terms GetTerms(string field)
             {
-                Terms terms = @in.Terms(field);
+                Terms terms = @in.GetTerms(field);
                 return terms == null ? null : new AssertingAtomicReader.AssertingTerms(terms);
             }
 

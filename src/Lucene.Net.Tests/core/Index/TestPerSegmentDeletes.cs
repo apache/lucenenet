@@ -245,7 +245,7 @@ namespace Lucene.Net.Index
         public virtual int[] ToDocsArray(Term term, IBits bits, IndexReader reader)
         {
             Fields fields = MultiFields.GetFields(reader);
-            Terms cterms = fields.Terms(term.Field);
+            Terms cterms = fields.GetTerms(term.Field);
             TermsEnum ctermsEnum = cterms.GetIterator(null);
             if (ctermsEnum.SeekExact(new BytesRef(term.Text())))
             {

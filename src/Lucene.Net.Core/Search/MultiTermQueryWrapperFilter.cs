@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
                 return null;
             }
 
-            Terms terms = fields.Terms(m_query.m_field);
+            Terms terms = fields.GetTerms(m_query.m_field);
             if (terms == null)
             {
                 // field does not exist
