@@ -30,7 +30,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// </summary>
     public class Cl2oTaxonomyWriterCache : ITaxonomyWriterCache
     {
-        private const int LockTimeOut = 1000;
+        private const int LOCK_TIMEOUT = 1000;
         private readonly ReaderWriterLockSlim @lock = new ReaderWriterLockSlim();
         private readonly int initialCapcity, numHashArrays;
         private readonly float loadFactor;
@@ -50,7 +50,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public virtual void Clear()
         {
-            if (@lock.TryEnterWriteLock(LockTimeOut))
+            if (@lock.TryEnterWriteLock(LOCK_TIMEOUT))
             {
                 try
                 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public virtual int Get(FacetLabel categoryPath)
         {
-            if (@lock.TryEnterReadLock(LockTimeOut))
+            if (@lock.TryEnterReadLock(LOCK_TIMEOUT))
             {
                 try
                 {
@@ -106,7 +106,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         public virtual bool Put(FacetLabel categoryPath, int ordinal)
         {
-            if (@lock.TryEnterWriteLock(LockTimeOut))
+            if (@lock.TryEnterWriteLock(LOCK_TIMEOUT))
             {
                 try
                 {

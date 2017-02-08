@@ -43,7 +43,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     {
         private const long serialVersionUID = 1L;
 
-        private const int DefaultBlockSize = 32 * 1024; // 32 KB default size
+        private const int DEFAULT_BLOCK_SIZE = 32 * 1024; // 32 KB default size
 
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -76,7 +76,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         internal int length_Renamed;
 
         public CharBlockArray()
-            : this(DefaultBlockSize)
+            : this(DEFAULT_BLOCK_SIZE)
         {
         }
 
