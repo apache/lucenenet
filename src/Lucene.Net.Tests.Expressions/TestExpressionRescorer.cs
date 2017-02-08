@@ -72,7 +72,7 @@ namespace Lucene.Net.Tests.Expressions
 			// Now, rescore:
 			Expression e = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			SimpleBindings bindings = new SimpleBindings();
-			bindings.Add(new SortField("popularity", SortFieldType.INT));
+			bindings.Add(new SortField("popularity", SortFieldType.INT32));
 			bindings.Add(new SortField("_score", SortFieldType.SCORE));
 			Rescorer rescorer = e.GetRescorer(bindings);
 			hits = rescorer.Rescore(searcher, hits, 10);

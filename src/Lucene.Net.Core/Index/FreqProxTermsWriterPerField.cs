@@ -364,18 +364,18 @@ namespace Lucene.Net.Index
 
             internal override int BytesPerPosting()
             {
-                int bytes = ParallelPostingsArray.BYTES_PER_POSTING + 2 * RamUsageEstimator.NUM_BYTES_INT;
+                int bytes = ParallelPostingsArray.BYTES_PER_POSTING + 2 * RamUsageEstimator.NUM_BYTES_INT32;
                 if (lastPositions != null)
                 {
-                    bytes += RamUsageEstimator.NUM_BYTES_INT;
+                    bytes += RamUsageEstimator.NUM_BYTES_INT32;
                 }
                 if (lastOffsets != null)
                 {
-                    bytes += RamUsageEstimator.NUM_BYTES_INT;
+                    bytes += RamUsageEstimator.NUM_BYTES_INT32;
                 }
                 if (termFreqs != null)
                 {
-                    bytes += RamUsageEstimator.NUM_BYTES_INT;
+                    bytes += RamUsageEstimator.NUM_BYTES_INT32;
                 }
 
                 return bytes;

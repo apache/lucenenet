@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
     internal class FrozenBufferedUpdates
     {
         /* Query we often undercount (say 24 bytes), plus int. */
-        internal static readonly int BYTES_PER_DEL_QUERY = RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_INT + 24;
+        internal static readonly int BYTES_PER_DEL_QUERY = RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_INT32 + 24;
 
         // Terms, in sorted order:
         internal readonly PrefixCodedTerms terms;

@@ -52,7 +52,7 @@ namespace Lucene.Net.Documents
     /// <code>IntField</code>, use <seealso cref="NumericRangeQuery"/> or {@link
     /// NumericRangeFilter}.  To sort according to a
     /// <code>IntField</code>, use the normal numeric sort types, eg
-    /// <seealso cref="Lucene.Net.Search.SortField.Type#INT"/>. <code>IntField</code>
+    /// <seealso cref="Lucene.Net.Search.SortFieldType.INT32"/>. <code>IntField</code>
     /// values can also be loaded directly from <seealso cref="IFieldCache"/>.</p>
     ///
     /// <p>You may add the same field name as an <code>IntField</code> to
@@ -123,14 +123,14 @@ namespace Lucene.Net.Documents
             TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericType = NumericType.INT;
+            TYPE_NOT_STORED.NumericType = NumericType.INT32;
             TYPE_NOT_STORED.Freeze();
 
             TYPE_STORED.IsIndexed = true;
             TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericType = NumericType.INT;
+            TYPE_STORED.NumericType = NumericType.INT32;
             TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
@@ -161,13 +161,13 @@ namespace Lucene.Net.Documents
         ///  <param name="name"> field name </param>
         ///  <param name="value"> 32-bit integer value </param>
         ///  <param name="type"> customized field type: must have <seealso cref="FieldType#numericType()"/>
-        ///         of <seealso cref="NumericType#INT"/>. </param>
+        ///         of <seealso cref="NumericType.INT32"/>. </param>
         ///  <exception cref="IllegalArgumentException"> if the field name or type is null, or
         ///          if the field type does not have a INT numericType() </exception>
         public Int32Field(string name, int value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericType != NumericType.INT)
+            if (type.NumericType != NumericType.INT32)
             {
                 throw new System.ArgumentException("type.NumericType must be INT but got " + type.NumericType);
             }

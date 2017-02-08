@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
          * String: 2*OBJ_HEADER + 4*INT + PTR + string.length*CHAR
          * T: OBJ_HEADER
          */
-        private static readonly int RAW_SIZE_IN_BYTES = 8 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 8 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 8 * RamUsageEstimator.NUM_BYTES_INT;
+        private static readonly int RAW_SIZE_IN_BYTES = 8 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 8 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 8 * RamUsageEstimator.NUM_BYTES_INT32;
 
         internal readonly DocValuesFieldUpdates.Type type;
         internal readonly Term term;
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
         public sealed class BinaryDocValuesUpdate : DocValuesUpdate
         {
             /* Size of BytesRef: 2*INT + ARRAY_HEADER + PTR */
-            private static readonly long RAW_VALUE_SIZE_IN_BYTES = RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+            private static readonly long RAW_VALUE_SIZE_IN_BYTES = RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT32 + RamUsageEstimator.NUM_BYTES_OBJECT_REF;
 
             internal static readonly BytesRef MISSING = new BytesRef();
 
@@ -106,7 +106,7 @@ namespace Lucene.Net.Index
 
             internal override long ValueSizeInBytes()
             {
-                return RamUsageEstimator.NUM_BYTES_LONG;
+                return RamUsageEstimator.NUM_BYTES_INT64;
             }
         }
     }

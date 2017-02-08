@@ -62,7 +62,7 @@ namespace Lucene.Net.Documents
     /// <code>LongField</code>, use <seealso cref="NumericRangeQuery"/> or {@link
     /// NumericRangeFilter}.  To sort according to a
     /// <code>LongField</code>, use the normal numeric sort types, eg
-    /// <seealso cref="Lucene.Net.Search.SortField.Type#LONG"/>. <code>LongField</code>
+    /// <seealso cref="Lucene.Net.Search.SortFieldType.INT64"/>. <code>LongField</code>
     /// values can also be loaded directly from <seealso cref="FieldCache"/>.</p>
     ///
     /// <p>You may add the same field name as an <code>LongField</code> to
@@ -133,14 +133,14 @@ namespace Lucene.Net.Documents
             TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericType = NumericType.LONG;
+            TYPE_NOT_STORED.NumericType = NumericType.INT64;
             TYPE_NOT_STORED.Freeze();
 
             TYPE_STORED.IsIndexed = true;
             TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericType = NumericType.LONG;
+            TYPE_STORED.NumericType = NumericType.INT64;
             TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
@@ -169,15 +169,15 @@ namespace Lucene.Net.Documents
         /// Expert: allows you to customize the {@link
         ///  FieldType}. </summary>
         ///  <param name="name"> field name </param>
-        ///  <param name="value"> 64-bit long value </param>
+        ///  <param name="value"> 64-bit <see cref="long"/> value </param>
         ///  <param name="type"> customized field type: must have <seealso cref="FieldType#numericType()"/>
-        ///         of <seealso cref="NumericType#LONG"/>. </param>
+        ///         of <seealso cref="NumericType.INT64"/>. </param>
         ///  <exception cref="IllegalArgumentException"> if the field name or type is null, or
         ///          if the field type does not have a LONG numericType() </exception>
         public Int64Field(string name, long value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericType != NumericType.LONG)
+            if (type.NumericType != NumericType.INT64)
             {
                 throw new System.ArgumentException("type.numericType() must be LONG but got " + type.NumericType);
             }

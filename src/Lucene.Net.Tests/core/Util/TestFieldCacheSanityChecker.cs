@@ -126,7 +126,7 @@ namespace Lucene.Net.Util
             cache.GetDoubles(ReaderB, "theDouble", FieldCache.DEFAULT_DOUBLE_PARSER, false);
 
             cache.GetInt32s(ReaderX, "theInt", false);
-            cache.GetInt32s(ReaderX, "theInt", FieldCache.DEFAULT_INT_PARSER, false);
+            cache.GetInt32s(ReaderX, "theInt", FieldCache.DEFAULT_INT32_PARSER, false);
 
             // // //
 
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util
             IFieldCache cache = FieldCache.DEFAULT;
             cache.PurgeAllCaches();
 
-            cache.GetInt32s(ReaderX, "theInt", FieldCache.DEFAULT_INT_PARSER, false);
+            cache.GetInt32s(ReaderX, "theInt", FieldCache.DEFAULT_INT32_PARSER, false);
             cache.GetTerms(ReaderX, "theInt", false);
 #pragma warning disable 612, 618
             cache.GetBytes(ReaderX, "theByte", false);

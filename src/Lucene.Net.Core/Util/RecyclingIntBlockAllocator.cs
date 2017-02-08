@@ -72,13 +72,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="RecyclingInt32BlockAllocator"/> with a block size of
-        /// <seealso cref="Int32BlockPool#INT_BLOCK_SIZE"/>, upper buffered docs limit of
-        /// <seealso cref="#DEFAULT_BUFFERED_BLOCKS"/> ({@value #DEFAULT_BUFFERED_BLOCKS}).
+        /// Creates a new <see cref="RecyclingInt32BlockAllocator"/> with a block size of
+        /// <see cref="Int32BlockPool.INT32_BLOCK_SIZE"/>, upper buffered docs limit of
+        /// <see cref="DEFAULT_BUFFERED_BLOCKS"/>.
         ///
         /// </summary>
         public RecyclingInt32BlockAllocator()
-            : this(Int32BlockPool.INT_BLOCK_SIZE, 64, Counter.NewCounter(false))
+            : this(Int32BlockPool.INT32_BLOCK_SIZE, 64, Counter.NewCounter(false))
         {
         }
 
@@ -89,7 +89,7 @@ namespace Lucene.Net.Util
         {
             if (freeBlocks == 0)
             {
-                bytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
+                bytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT32);
                 return new int[m_blockSize];
             }
             int[] b = freeByteBlocks[--freeBlocks];
@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
             {
                 blocks[i] = null;
             }
-            bytesUsed.AddAndGet(-(end - stop) * (m_blockSize * RamUsageEstimator.NUM_BYTES_INT));
+            bytesUsed.AddAndGet(-(end - stop) * (m_blockSize * RamUsageEstimator.NUM_BYTES_INT32));
             Debug.Assert(bytesUsed.Get() >= 0);
         }
 
@@ -167,7 +167,7 @@ namespace Lucene.Net.Util
             {
                 freeByteBlocks[--freeBlocks] = null;
             }
-            bytesUsed.AddAndGet(-count * m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
+            bytesUsed.AddAndGet(-count * m_blockSize * RamUsageEstimator.NUM_BYTES_INT32);
             Debug.Assert(bytesUsed.Get() >= 0);
             return count;
         }

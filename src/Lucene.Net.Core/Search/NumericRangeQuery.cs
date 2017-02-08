@@ -287,11 +287,25 @@ namespace Lucene.Net.Search
         internal readonly bool minInclusive, maxInclusive;
 
         // used to handle float/double infinity correcty
-        internal static readonly long LONG_NEGATIVE_INFINITY = NumericUtils.DoubleToSortableInt64(double.NegativeInfinity);
+        /// <summary>
+        /// NOTE: This was LONG_NEGATIVE_INFINITY in Lucene
+        /// </summary>
+        internal static readonly long INT64_NEGATIVE_INFINITY = NumericUtils.DoubleToSortableInt64(double.NegativeInfinity);
 
-        internal static readonly long LONG_POSITIVE_INFINITY = NumericUtils.DoubleToSortableInt64(double.PositiveInfinity);
-        internal static readonly int INT_NEGATIVE_INFINITY = NumericUtils.SingleToSortableInt32(float.NegativeInfinity);
-        internal static readonly int INT_POSITIVE_INFINITY = NumericUtils.SingleToSortableInt32(float.PositiveInfinity);
+        /// <summary>
+        /// NOTE: This was LONG_NEGATIVE_INFINITY in Lucene
+        /// </summary>
+        internal static readonly long INT64_POSITIVE_INFINITY = NumericUtils.DoubleToSortableInt64(double.PositiveInfinity);
+
+        /// <summary>
+        /// NOTE: This was INT_NEGATIVE_INFINITY in Lucene
+        /// </summary>
+        internal static readonly int INT32_NEGATIVE_INFINITY = NumericUtils.SingleToSortableInt32(float.NegativeInfinity);
+
+        /// <summary>
+        /// NOTE: This was INT_POSITIVE_INFINITY in Lucene
+        /// </summary>
+        internal static readonly int INT32_POSITIVE_INFINITY = NumericUtils.SingleToSortableInt32(float.PositiveInfinity);
 
         /// <summary>
         /// Subclass of FilteredTermsEnum for enumerating all terms that match the
@@ -318,19 +332,19 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
                 switch (this.outerInstance.dataType)
                 {
-                    case NumericType.LONG:
+                    case NumericType.INT64:
                     case NumericType.DOUBLE:
                         {
                             // lower
                             long minBound;
-                            if (this.outerInstance.dataType == NumericType.LONG)
+                            if (this.outerInstance.dataType == NumericType.INT64)
                             {
                                 minBound = (this.outerInstance.min == null) ? long.MinValue : Convert.ToInt64(this.outerInstance.min.Value);
                             }
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
-                                minBound = (this.outerInstance.min == null) ? LONG_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value));
+                                minBound = (this.outerInstance.min == null) ? INT64_NEGATIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.min.Value));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
                             {
@@ -343,14 +357,14 @@ namespace Lucene.Net.Search
 
                             // upper
                             long maxBound;
-                            if (this.outerInstance.dataType == NumericType.LONG)
+                            if (this.outerInstance.dataType == NumericType.INT64)
                             {
                                 maxBound = (this.outerInstance.max == null) ? long.MaxValue : Convert.ToInt64(this.outerInstance.max);
                             }
                             else
                             {
                                 Debug.Assert(this.outerInstance.dataType == NumericType.DOUBLE);
-                                maxBound = (this.outerInstance.max == null) ? LONG_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max));
+                                maxBound = (this.outerInstance.max == null) ? INT64_POSITIVE_INFINITY : NumericUtils.DoubleToSortableInt64(Convert.ToDouble(this.outerInstance.max));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
                             {
@@ -365,19 +379,19 @@ namespace Lucene.Net.Search
                             break;
                         }
 
-                    case NumericType.INT:
-                    case NumericType.FLOAT:
+                    case NumericType.INT32:
+                    case NumericType.SINGLE:
                         {
                             // lower
                             int minBound;
-                            if (this.outerInstance.dataType == NumericType.INT)
+                            if (this.outerInstance.dataType == NumericType.INT32)
                             {
                                 minBound = (this.outerInstance.min == null) ? int.MinValue : Convert.ToInt32(this.outerInstance.min);
                             }
                             else
                             {
-                                Debug.Assert(this.outerInstance.dataType == NumericType.FLOAT);
-                                minBound = (this.outerInstance.min == null) ? INT_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min));
+                                Debug.Assert(this.outerInstance.dataType == NumericType.SINGLE);
+                                minBound = (this.outerInstance.min == null) ? INT32_NEGATIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.min));
                             }
                             if (!this.outerInstance.minInclusive && this.outerInstance.min != null)
                             {
@@ -390,14 +404,14 @@ namespace Lucene.Net.Search
 
                             // upper
                             int maxBound;
-                            if (this.outerInstance.dataType == NumericType.INT)
+                            if (this.outerInstance.dataType == NumericType.INT32)
                             {
                                 maxBound = (this.outerInstance.max == null) ? int.MaxValue : Convert.ToInt32(this.outerInstance.max);
                             }
                             else
                             {
-                                Debug.Assert(this.outerInstance.dataType == NumericType.FLOAT);
-                                maxBound = (this.outerInstance.max == null) ? INT_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max));
+                                Debug.Assert(this.outerInstance.dataType == NumericType.SINGLE);
+                                maxBound = (this.outerInstance.max == null) ? INT32_POSITIVE_INFINITY : NumericUtils.SingleToSortableInt32(Convert.ToSingle(this.outerInstance.max));
                             }
                             if (!this.outerInstance.maxInclusive && this.outerInstance.max != null)
                             {
@@ -519,7 +533,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static NumericRangeQuery<long> NewInt64Range(string field, int precisionStep, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<long>(field, precisionStep, NumericType.LONG, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<long>(field, precisionStep, NumericType.INT64, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary>
@@ -533,7 +547,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static NumericRangeQuery<long> NewInt64Range(string field, long? min, long? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<long>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.LONG, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<long>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.INT64, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary>
@@ -547,7 +561,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static NumericRangeQuery<int> NewInt32Range(string field, int precisionStep, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<int>(field, precisionStep, NumericType.INT, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<int>(field, precisionStep, NumericType.INT32, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary>
@@ -561,7 +575,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static NumericRangeQuery<int> NewInt32Range(string field, int? min, int? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<int>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.INT, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<int>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.INT32, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary>
@@ -605,7 +619,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static NumericRangeQuery<float> NewSingleRange(string field, int precisionStep, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<float>(field, precisionStep, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<float>(field, precisionStep, NumericType.SINGLE, min, max, minInclusive, maxInclusive);
         }
 
         /// <summary>
@@ -621,7 +635,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public static NumericRangeQuery<float> NewSingleRange(string field, float? min, float? max, bool minInclusive, bool maxInclusive)
         {
-            return new NumericRangeQuery<float>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.FLOAT, min, max, minInclusive, maxInclusive);
+            return new NumericRangeQuery<float>(field, NumericUtils.PRECISION_STEP_DEFAULT, NumericType.SINGLE, min, max, minInclusive, maxInclusive);
         }
     }
 }

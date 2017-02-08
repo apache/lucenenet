@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
     ///
     /// While normally term ords are type long, in this API they are
     /// int as the internal representation here cannot address
-    /// more than MAX_INT unique terms.  Also, typically this
+    /// more than MAX_INT32 unique terms.  Also, typically this
     /// class is used on fields with relatively few unique terms
     /// vs the number of documents.  In addition, there is an
     /// internal limit (16 MB) on how many bytes each chunk of

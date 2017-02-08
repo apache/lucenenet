@@ -406,16 +406,25 @@ namespace Lucene.Net.Documents
     public enum NumericType
     {
         /// <summary>
-        /// 32-bit integer numeric type </summary>
-        INT,
+        /// 32-bit integer numeric type
+        /// <para/>
+        /// NOTE: This was INT in Lucene
+        /// </summary>
+        INT32,
 
         /// <summary>
-        /// 64-bit long numeric type </summary>
-        LONG,
+        /// 64-bit long numeric type
+        /// <para/>
+        /// NOTE: This was LONG in Lucene
+        /// </summary>
+        INT64,
 
         /// <summary>
-        /// 32-bit float numeric type </summary>
-        FLOAT,
+        /// 32-bit float numeric type
+        /// <para/>
+        /// NOTE: This was FLOAT in Lucene
+        /// </summary>
+        SINGLE,
 
         /// <summary>
         /// 64-bit double numeric type </summary>

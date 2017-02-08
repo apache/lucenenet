@@ -39,7 +39,7 @@ namespace Lucene.Net.Index.Sorter
         public override void SetUp()
         {
             base.SetUp();
-            sort = new Sort(new SortField("ndv1", SortFieldType.LONG));
+            sort = new Sort(new SortField("ndv1", SortFieldType.INT64));
         }
 
         private Document RandomDocument()
@@ -96,7 +96,7 @@ namespace Lucene.Net.Index.Sorter
         {
             CreateRandomIndexes(5);
             int numHits = TestUtil.NextInt(Random(), 1, numDocs / 10);
-            Sort sort = new Sort(new SortField("ndv1", SortFieldType.LONG, false));
+            Sort sort = new Sort(new SortField("ndv1", SortFieldType.INT64, false));
             bool fillFields = Random().nextBoolean();
             bool trackDocScores = Random().nextBoolean();
             bool trackMaxScore = Random().nextBoolean();
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index.Sorter
             // different sorter than the one specified in the ctor.
             CreateRandomIndexes(5);
             int numHits = TestUtil.NextInt(Random(), 1, numDocs / 10);
-            Sort sort = new Sort(new SortField("ndv2", SortFieldType.LONG, false));
+            Sort sort = new Sort(new SortField("ndv2", SortFieldType.INT64, false));
             bool fillFields = Random().nextBoolean();
             bool trackDocScores = Random().nextBoolean();
             bool trackMaxScore = Random().nextBoolean();
@@ -137,7 +137,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 TermQuery query = new TermQuery(new Term("s", RandomInts.RandomFrom(Random(), terms)));
                 searcher.Search(query, collector1);
-                Sort different = new Sort(new SortField("ndv2", SortFieldType.LONG));
+                Sort different = new Sort(new SortField("ndv2", SortFieldType.INT64));
                 searcher.Search(query, new EarlyTerminatingSortingCollectorHelper(collector2, different, numHits));
 
 

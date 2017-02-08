@@ -213,13 +213,13 @@ namespace Lucene.Net.Analysis.Synonym
                 }
                 if (count == endOffsets.Length)
                 {
-                    int[] next = new int[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_INT)];
+                    int[] next = new int[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_INT32)];
                     Array.Copy(endOffsets, 0, next, 0, count);
                     endOffsets = next;
                 }
                 if (count == posLengths.Length)
                 {
-                    int[] next = new int[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_INT)];
+                    int[] next = new int[ArrayUtil.Oversize(1 + count, RamUsageEstimator.NUM_BYTES_INT32)];
                     Array.Copy(posLengths, 0, next, 0, count);
                     posLengths = next;
                 }

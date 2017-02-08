@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
             for (int queryIdx = 0; queryIdx < @in.queries.Length; queryIdx++)
             {
                 Query query = @in.queries[queryIdx];
-                queries[query] = BufferedUpdates.MAX_INT;
+                queries[query] = BufferedUpdates.MAX_INT32;
             }
 
             foreach (NumericDocValuesUpdate nu in @in.numericDVUpdates)

@@ -38,9 +38,21 @@ namespace Lucene.Net.Codecs.Compressing
 
         internal const int STRING = 0x00;
         internal const int BYTE_ARR = 0x01;
-        internal const int NUMERIC_INT = 0x02;
-        internal const int NUMERIC_FLOAT = 0x03;
-        internal const int NUMERIC_LONG = 0x04;
+
+        /// <summary>
+        /// NOTE: This was NUMERIC_INT in Lucene
+        /// </summary>
+        internal const int NUMERIC_INT32 = 0x02;
+
+        /// <summary>
+        /// NOTE: This was NUMERIC_FLOAT in Lucene
+        /// </summary>
+        internal const int NUMERIC_SINGLE = 0x03;
+
+        /// <summary>
+        /// NOTE:This was NUMERIC_LONG in Lucene
+        /// </summary>
+        internal const int NUMERIC_INT64 = 0x04;
         internal const int NUMERIC_DOUBLE = 0x05;
 
         internal static readonly int TYPE_BITS = PackedInt32s.BitsRequired(NUMERIC_DOUBLE);
@@ -270,15 +282,15 @@ namespace Lucene.Net.Codecs.Compressing
                     double dummyDouble;
                     if (sbyte.TryParse(numStr, out dummySbyte) || short.TryParse(numStr, out dummyShort) || int.TryParse(numStr, out dummyInt))
                     {
-                        bits = NUMERIC_INT;
+                        bits = NUMERIC_INT32;
                     }
                     else if (long.TryParse(numStr, out dummyLong))
                     {
-                        bits = NUMERIC_LONG;
+                        bits = NUMERIC_INT64;
                     }
                     else if (float.TryParse(numStr, out dummyFloat))
                     {
-                        bits = NUMERIC_FLOAT;
+                        bits = NUMERIC_SINGLE;
                     }
                     else if (double.TryParse(numStr, out dummyDouble))
                     {
@@ -293,15 +305,15 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     if (number is sbyte || number is short || number is int)
                     {
-                        bits = NUMERIC_INT;
+                        bits = NUMERIC_INT32;
                     }
                     else if (number is long)
                     {
-                        bits = NUMERIC_LONG;
+                        bits = NUMERIC_INT64;
                     }
                     else if (number is float)
                     {
-                        bits = NUMERIC_FLOAT;
+                        bits = NUMERIC_SINGLE;
                     }
                     else if (number is double)
                     {
@@ -361,15 +373,15 @@ namespace Lucene.Net.Codecs.Compressing
                     if (sbyte.TryParse(numStr, out dummySbyte) || short.TryParse(numStr, out dummyShort) ||
                         int.TryParse(numStr, out dummyInt))
                     {
-                        bits = NUMERIC_INT;
+                        bits = NUMERIC_INT32;
                     }
                     else if (long.TryParse(numStr, out dummyLong))
                     {
-                        bits = NUMERIC_LONG;
+                        bits = NUMERIC_INT64;
                     }
                     else if (float.TryParse(numStr, out dummyFloat))
                     {
-                        bits = NUMERIC_FLOAT;
+                        bits = NUMERIC_SINGLE;
                     }
                     else if (double.TryParse(numStr, out dummyDouble))
                     {

@@ -52,7 +52,7 @@ namespace Lucene.Net.Documents
     /// <code>FloatField</code>, use <seealso cref="NumericRangeQuery"/> or {@link
     /// NumericRangeFilter}.  To sort according to a
     /// <code>FloatField</code>, use the normal numeric sort types, eg
-    /// <seealso cref="Lucene.Net.Search.SortField.Type#FLOAT"/>. <code>FloatField</code>
+    /// <seealso cref="Lucene.Net.Search.SortFieldType.SINGLE"/>. <code>FloatField</code>
     /// values can also be loaded directly from <seealso cref="IFieldCache"/>.</p>
     ///
     /// <p>You may add the same field name as an <code>FloatField</code> to
@@ -123,14 +123,14 @@ namespace Lucene.Net.Documents
             TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericType = NumericType.FLOAT;
+            TYPE_NOT_STORED.NumericType = NumericType.SINGLE;
             TYPE_NOT_STORED.Freeze();
 
             TYPE_STORED.IsIndexed = true;
             TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericType = NumericType.FLOAT;
+            TYPE_STORED.NumericType = NumericType.SINGLE;
             TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
@@ -159,15 +159,15 @@ namespace Lucene.Net.Documents
         /// Expert: allows you to customize the {@link
         ///  FieldType}. </summary>
         ///  <param name="name"> field name </param>
-        ///  <param name="value"> 32-bit float value </param>
+        ///  <param name="value"> 32-bit <see cref="float"/> value </param>
         ///  <param name="type"> customized field type: must have <seealso cref="FieldType#numericType()"/>
-        ///         of <seealso cref="NumericType#FLOAT"/>. </param>
+        ///         of <seealso cref="NumericType.SINGLE"/>. </param>
         ///  <exception cref="IllegalArgumentException"> if the field name or type is null, or
         ///          if the field type does not have a FLOAT numericType() </exception>
         public SingleField(string name, float value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericType != NumericType.FLOAT)
+            if (type.NumericType != NumericType.SINGLE)
             {
                 throw new System.ArgumentException("type.numericType() must be FLOAT but got " + type.NumericType);
             }

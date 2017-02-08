@@ -576,15 +576,15 @@ namespace Lucene.Net.Documents
                 object val = m_fieldsData;
                 switch (numericType)
                 {
-                    case NumericType.INT:
+                    case NumericType.INT32:
                         nts.SetInt32Value(Convert.ToInt32(val));
                         break;
 
-                    case NumericType.LONG:
+                    case NumericType.INT64:
                         nts.SetInt64Value(Convert.ToInt64(val));
                         break;
 
-                    case NumericType.FLOAT:
+                    case NumericType.SINGLE:
                         nts.SetSingleValue(Convert.ToSingle(val));
                         break;
 

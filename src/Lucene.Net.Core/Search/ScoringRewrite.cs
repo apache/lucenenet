@@ -207,7 +207,7 @@ namespace Lucene.Net.Search
             public override int[] Init()
             {
                 int[] ord = base.Init();
-                boost = new float[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_FLOAT)];
+                boost = new float[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_SINGLE)];
                 termState = new TermContext[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                 Debug.Assert(termState.Length >= ord.Length && boost.Length >= ord.Length);
                 return ord;

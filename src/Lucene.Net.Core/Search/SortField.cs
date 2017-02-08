@@ -67,9 +67,9 @@ namespace Lucene.Net.Search
                     }
                 }
 #pragma warning disable 612, 618
-                else if (type != SortFieldType.BYTE && type != SortFieldType.SHORT
+                else if (type != SortFieldType.BYTE && type != SortFieldType.INT16
 #pragma warning restore 612, 618
-                    && type != SortFieldType.INT && type != SortFieldType.FLOAT && type != SortFieldType.LONG && type != SortFieldType.DOUBLE)
+                    && type != SortFieldType.INT32 && type != SortFieldType.SINGLE && type != SortFieldType.INT64 && type != SortFieldType.DOUBLE)
                 {
                     throw new System.ArgumentException("Missing value only works for numeric or STRING types");
                 }
@@ -132,16 +132,16 @@ namespace Lucene.Net.Search
         {
             if (parser is FieldCache.IInt32Parser)
             {
-                InitFieldType(field, SortFieldType.INT);
+                InitFieldType(field, SortFieldType.INT32);
             }
             else if (parser is FieldCache.ISingleParser)
             {
-                InitFieldType(field, SortFieldType.FLOAT);
+                InitFieldType(field, SortFieldType.SINGLE);
             }
             else if (parser is FieldCache.IInt16Parser)
             {
 #pragma warning disable 612, 618
-                InitFieldType(field, SortFieldType.SHORT);
+                InitFieldType(field, SortFieldType.INT16);
             }
             else if (parser is FieldCache.IByteParser)
             {
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search
             }
             else if (parser is FieldCache.IInt64Parser)
             {
-                InitFieldType(field, SortFieldType.LONG);
+                InitFieldType(field, SortFieldType.INT64);
             }
             else if (parser is FieldCache.IDoubleParser)
             {
@@ -272,7 +272,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the type of contents in the field. </summary>
-        /// <returns> One of the constants SCORE, DOC, STRING, INT or FLOAT. </returns>
+        /// <returns> One of <see cref="SortFieldType.SCORE"/>, <see cref="SortFieldType.DOC"/>, 
+        /// <see cref="SortFieldType.STRING"/>, <see cref="SortFieldType.INT32"/> or <see cref="SortFieldType.SINGLE"/>. </returns>
         public virtual SortFieldType Type
         {
             get
@@ -342,20 +343,20 @@ namespace Lucene.Net.Search
                     buffer.Append("<byte: \"").Append(field).Append("\">");
                     break;
 
-                case SortFieldType.SHORT:
+                case SortFieldType.INT16:
 #pragma warning restore 612, 618
                     buffer.Append("<short: \"").Append(field).Append("\">");
                     break;
 
-                case SortFieldType.INT:
+                case SortFieldType.INT32:
                     buffer.Append("<int" + ": \"").Append(field).Append("\">");
                     break;
 
-                case SortFieldType.LONG:
+                case SortFieldType.INT64:
                     buffer.Append("<long: \"").Append(field).Append("\">");
                     break;
 
-                case SortFieldType.FLOAT:
+                case SortFieldType.SINGLE:
                     buffer.Append("<float" + ": \"").Append(field).Append("\">");
                     break;
 
@@ -466,13 +467,13 @@ namespace Lucene.Net.Search
                 case SortFieldType.DOC:
                     return new FieldComparer.DocComparer(numHits);
 
-                case SortFieldType.INT:
+                case SortFieldType.INT32:
                     return new FieldComparer.Int32Comparer(numHits, field, parser, (int?)m_missingValue);
 
-                case SortFieldType.FLOAT:
+                case SortFieldType.SINGLE:
                     return new FieldComparer.SingleComparer(numHits, field, parser, (float?)m_missingValue);
 
-                case SortFieldType.LONG:
+                case SortFieldType.INT64:
                     return new FieldComparer.Int64Comparer(numHits, field, parser, (long?)m_missingValue);
 
                 case SortFieldType.DOUBLE:
@@ -482,7 +483,7 @@ namespace Lucene.Net.Search
                 case SortFieldType.BYTE:
                     return new FieldComparer.ByteComparer(numHits, field, parser, (sbyte?)m_missingValue);
 
-                case SortFieldType.SHORT:
+                case SortFieldType.INT16:
                     return new FieldComparer.Int16Comparer(numHits, field, parser, (short?)m_missingValue);
 #pragma warning restore 612, 618
 
@@ -553,20 +554,26 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Sort using term values as encoded Integers.  Sort values are Integer and
         /// lower values are at the front.
+        /// <para/>
+        /// NOTE: This was INT in Lucene
         /// </summary>
-        INT, // LUCENENET TODO: Rename to INT32 ?
+        INT32,
 
         /// <summary>
         /// Sort using term values as encoded Floats.  Sort values are Float and
         /// lower values are at the front.
+        /// <para/>
+        /// NOTE: This was FLOAT in Lucene
         /// </summary>
-        FLOAT, // LUCENENET TODO: Rename to SINGLE ?
+        SINGLE,
 
         /// <summary>
         /// Sort using term values as encoded Longs.  Sort values are Long and
         /// lower values are at the front.
+        /// <para/>
+        /// NOTE: This was LONG in Lucene
         /// </summary>
-        LONG,  // LUCENENET TODO: Rename to INT64 ?
+        INT64,
 
         /// <summary>
         /// Sort using term values as encoded Doubles.  Sort values are Double and
@@ -577,9 +584,11 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Sort using term values as encoded Shorts.  Sort values are Short and
         /// lower values are at the front.
+        /// <para/>
+        /// NOTE: This was SHORT in Lucene
         /// </summary>
         [System.Obsolete]
-        SHORT, // LUCENENET TODO: Rename to INT16 ?
+        INT16,
 
         /// <summary>
         /// Sort using a custom Comparer.  Sort values are any Comparable and

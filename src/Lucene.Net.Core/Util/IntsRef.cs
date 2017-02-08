@@ -24,9 +24,9 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Represents int[], as a slice (offset + length) into an
-    /// existing int[].  The <seealso cref="#ints"/> member should never be null; use
-    /// <seealso cref="#EMPTY_INTS"/> if necessary.
+    /// Represents <see cref="T:int[]"/>, as a slice (offset + length) into an
+    /// existing <see cref="T:int[]"/>.  The <see cref="Int32s"/> member should never be null; use
+    /// <see cref="EMPTY_INT32S"/> if necessary.
     /// <para/>
     /// NOTE: This was IntsRef in Lucene
     /// 
@@ -35,8 +35,11 @@ namespace Lucene.Net.Util
     public sealed class Int32sRef : IComparable<Int32sRef>
     {
         /// <summary>
-        /// An empty integer array for convenience </summary>
-        public static readonly int[] EMPTY_INTS = new int[0];
+        /// An empty integer array for convenience
+        /// <para/>
+        /// NOTE: This was EMPTY_INTS in Lucene
+        /// </summary>
+        public static readonly int[] EMPTY_INT32S = new int[0];
 
         /// <summary>
         /// The contents of the IntsRef. Should never be {@code null}. 
@@ -68,10 +71,10 @@ namespace Lucene.Net.Util
         public int Length { get; set; }
 
         /// <summary>
-        /// Create a IntsRef with <seealso cref="#EMPTY_INTS"/> </summary>
+        /// Create a IntsRef with <see cref="EMPTY_INT32S"/> </summary>
         public Int32sRef()
         {
-            ints = EMPTY_INTS;
+            ints = EMPTY_INT32S;
         }
 
         /// <summary>

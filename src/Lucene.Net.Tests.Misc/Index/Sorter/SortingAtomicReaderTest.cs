@@ -30,7 +30,7 @@ namespace Lucene.Net.Index.Sorter
         {
 
             // sort the index by id (as integer, in NUMERIC_DV_FIELD)
-            Sort sort = new Sort(new SortField(NUMERIC_DV_FIELD, SortFieldType.INT));
+            Sort sort = new Sort(new SortField(NUMERIC_DV_FIELD, SortFieldType.INT32));
             Sorter.DocMap docMap = new Sorter(sort).Sort(reader);
 
             // Sorter.compute also sorts the values

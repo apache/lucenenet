@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
 
             internal override int BytesPerPosting()
             {
-                return base.BytesPerPosting() + 3 * RamUsageEstimator.NUM_BYTES_INT;
+                return base.BytesPerPosting() + 3 * RamUsageEstimator.NUM_BYTES_INT32;
             }
         }
     }

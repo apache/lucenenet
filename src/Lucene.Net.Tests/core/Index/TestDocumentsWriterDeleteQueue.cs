@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
                 DeleteSlice slice = updateThread.Slice;
                 queue.UpdateSlice(slice);
                 BufferedUpdates deletes = updateThread.Deletes;
-                slice.Apply(deletes, BufferedUpdates.MAX_INT);
+                slice.Apply(deletes, BufferedUpdates.MAX_INT32);
                 assertEquals(uniqueValues, new HashSet<Term>(deletes.terms.Keys));
             }
             queue.TryApplyGlobalSlice();
@@ -294,7 +294,7 @@ namespace Lucene.Net.Index
                     Term term = new Term("id", Ids[i].ToString());
                     Queue.Add(term, Slice);
                     Assert.IsTrue(Slice.IsTailItem(term));
-                    Slice.Apply(Deletes, BufferedUpdates.MAX_INT);
+                    Slice.Apply(Deletes, BufferedUpdates.MAX_INT32);
                 }
             }
         }

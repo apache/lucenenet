@@ -108,7 +108,7 @@ namespace Lucene.Net.Util.Packed
 
         protected virtual long BaseRamBytesUsed()
         {
-            return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_LONG + 3 * RamUsageEstimator.NUM_BYTES_INT;
+            return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_INT64 + 3 * RamUsageEstimator.NUM_BYTES_INT32;
         }
 
         /// <summary>

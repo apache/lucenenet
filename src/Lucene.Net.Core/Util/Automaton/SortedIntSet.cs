@@ -166,7 +166,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (map.Count > values.Length)
                 {
-                    int size = ArrayUtil.Oversize(map.Count, RamUsageEstimator.NUM_BYTES_INT);
+                    int size = ArrayUtil.Oversize(map.Count, RamUsageEstimator.NUM_BYTES_INT32);
                     values = new int[size];
                     counts = new int[size];
                 }

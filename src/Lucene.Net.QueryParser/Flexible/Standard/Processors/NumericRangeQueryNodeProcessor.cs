@@ -114,11 +114,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                             switch (numericConfig.Type)
                             {
-                                case NumericType.LONG:
+                                case NumericType.INT64:
                                     if (upperNumber != null) upperNumber = Convert.ToInt64(upperNumber);
                                     if (lowerNumber != null) lowerNumber = Convert.ToInt64(lowerNumber);
                                     break;
-                                case NumericType.INT:
+                                case NumericType.INT32:
                                     if (upperNumber != null) upperNumber = Convert.ToInt32(upperNumber);
                                     if (lowerNumber != null) lowerNumber = Convert.ToInt32(lowerNumber);
                                     break;
@@ -126,7 +126,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                                     if (upperNumber != null) upperNumber = Convert.ToDouble(upperNumber);
                                     if (lowerNumber != null) lowerNumber = Convert.ToDouble(lowerNumber);
                                     break;
-                                case NumericType.FLOAT:
+                                case NumericType.SINGLE:
                                     if (upperNumber != null) upperNumber = Convert.ToSingle(upperNumber);
                                     if (lowerNumber != null) lowerNumber = Convert.ToSingle(lowerNumber);
                                     break;

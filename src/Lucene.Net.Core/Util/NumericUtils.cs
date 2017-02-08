@@ -75,27 +75,37 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Longs are stored at lower precision by shifting off lower bits. The shift count is
-        /// stored as <code>SHIFT_START_LONG+shift</code> in the first byte
+        /// stored as <c>SHIFT_START_INT64+shift</c> in the first byte
+        /// <para/>
+        /// NOTE: This was SHIFT_START_LONG in Lucene
         /// </summary>
-        public const char SHIFT_START_LONG = (char)0x20;
+        public const char SHIFT_START_INT64 = (char)0x20;
 
         /// <summary>
         /// The maximum term length (used for <code>byte[]</code> buffer size)
-        /// for encoding <code>long</code> values. </summary>
-        /// <seealso cref= #longToPrefixCodedBytes </seealso>
-        public const int BUF_SIZE_LONG = 63 / 7 + 2;
+        /// for encoding <see cref="long"/> values.
+        /// <para/>
+        /// NOTE: This was BUF_SIZE_LONG in Lucene
+        /// </summary>
+        /// <seealso cref="Int64ToPrefixCodedBytes(long, int, BytesRef)"/>
+        public const int BUF_SIZE_INT64 = 63 / 7 + 2;
 
         /// <summary>
         /// Integers are stored at lower precision by shifting off lower bits. The shift count is
-        /// stored as <code>SHIFT_START_INT+shift</code> in the first byte
+        /// stored as <code>SHIFT_START_INT32+shift</code> in the first byte
+        /// <para/>
+        /// NOTE: This was SHIFT_START_INT in Lucene
         /// </summary>
-        public const byte SHIFT_START_INT = 0x60;
+        public const byte SHIFT_START_INT32 = 0x60;
 
         /// <summary>
-        /// The maximum term length (used for <code>byte[]</code> buffer size)
-        /// for encoding <code>int</code> values. </summary>
-        /// <seealso cref= #intToPrefixCodedBytes </seealso>
-        public const int BUF_SIZE_INT = 31 / 7 + 2;
+        /// The maximum term length (used for <see cref="T:byte[]"/> buffer size)
+        /// for encoding <see cref="int"/> values.
+        /// <para/>
+        /// NOTE: This was BUF_SIZE_INT in Lucene
+        /// </summary>
+        /// <seealso cref="Int32ToPrefixCodedBytes(int, int, BytesRef)"/>
+        public const int BUF_SIZE_INT32 = 31 / 7 + 2;
 
         /// <summary>
         /// Returns prefix coded bits after reducing the precision by <code>shift</code> bits.
@@ -148,9 +158,9 @@ namespace Lucene.Net.Util
             bytes.Length = nChars + 1; // one extra for the byte that contains the shift info
             if (bytes.Bytes.Length < bytes.Length)
             {
-                bytes.Bytes = new byte[NumericUtils.BUF_SIZE_LONG]; // use the max
+                bytes.Bytes = new byte[NumericUtils.BUF_SIZE_INT64]; // use the max
             }
-            bytes.Bytes[0] = (byte)(SHIFT_START_LONG + shift);
+            bytes.Bytes[0] = (byte)(SHIFT_START_INT64 + shift);
             ulong sortableBits = BitConverter.ToUInt64(BitConverter.GetBytes(val), 0) ^ 0x8000000000000000L;
             sortableBits = sortableBits >> shift;
             while (nChars > 0)
@@ -183,9 +193,9 @@ namespace Lucene.Net.Util
             bytes.Length = nChars + 1; // one extra for the byte that contains the shift info
             if (bytes.Bytes.Length < bytes.Length)
             {
-                bytes.Bytes = new byte[NumericUtils.BUF_SIZE_LONG]; // use the max
+                bytes.Bytes = new byte[NumericUtils.BUF_SIZE_INT64]; // use the max
             }
-            bytes.Bytes[0] = (byte)(SHIFT_START_INT + shift);
+            bytes.Bytes[0] = (byte)(SHIFT_START_INT32 + shift);
             int sortableBits = val ^ unchecked((int)0x80000000);
             sortableBits = Number.URShift(sortableBits, shift);
             while (nChars > 0)
@@ -206,7 +216,7 @@ namespace Lucene.Net.Util
         /// not correctly prefix encoded. </exception>
         public static int GetPrefixCodedInt64Shift(BytesRef val)
         {
-            int shift = val.Bytes[val.Offset] - SHIFT_START_LONG;
+            int shift = val.Bytes[val.Offset] - SHIFT_START_INT64;
             if (shift > 63 || shift < 0)
             {
                 throw new System.FormatException("Invalid shift value (" + shift + ") in prefixCoded bytes (is encoded value really an INT?)");
@@ -223,7 +233,7 @@ namespace Lucene.Net.Util
         /// not correctly prefix encoded. </exception>
         public static int GetPrefixCodedInt32Shift(BytesRef val)
         {
-            int shift = val.Bytes[val.Offset] - SHIFT_START_INT;
+            int shift = val.Bytes[val.Offset] - SHIFT_START_INT32;
             if (shift > 31 || shift < 0)
             {
                 throw new System.FormatException("Invalid shift value in prefixCoded bytes (is encoded value really an INT?)");
@@ -482,7 +492,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void AddRange(long min, long max, int shift)
             {
-                BytesRef minBytes = new BytesRef(BUF_SIZE_LONG), maxBytes = new BytesRef(BUF_SIZE_LONG);
+                BytesRef minBytes = new BytesRef(BUF_SIZE_INT64), maxBytes = new BytesRef(BUF_SIZE_INT64);
                 Int64ToPrefixCodedBytes(min, shift, minBytes);
                 Int64ToPrefixCodedBytes(max, shift, maxBytes);
                 AddRange(minBytes, maxBytes);
@@ -515,7 +525,7 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void AddRange(int min, int max, int shift)
             {
-                BytesRef minBytes = new BytesRef(BUF_SIZE_INT), maxBytes = new BytesRef(BUF_SIZE_INT);
+                BytesRef minBytes = new BytesRef(BUF_SIZE_INT32), maxBytes = new BytesRef(BUF_SIZE_INT32);
                 Int32ToPrefixCodedBytes(min, shift, minBytes);
                 Int32ToPrefixCodedBytes(max, shift, maxBytes);
                 AddRange(minBytes, maxBytes);

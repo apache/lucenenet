@@ -90,17 +90,17 @@ namespace Lucene.Net.Expressions
             SortField field = (SortField)o;
             switch (field.Type)
             {
-                case SortFieldType.INT:
+                case SortFieldType.INT32:
                     {
                         return new Int32FieldSource(field.Field, (FieldCache.IInt32Parser)field.Parser);
                     }
 
-                case SortFieldType.LONG:
+                case SortFieldType.INT64:
                     {
                         return new Int64FieldSource(field.Field, (FieldCache.IInt64Parser)field.Parser);
                     }
 
-                case SortFieldType.FLOAT:
+                case SortFieldType.SINGLE:
                     {
                         return new SingleFieldSource(field.Field, (FieldCache.ISingleParser)field.Parser);
                     }

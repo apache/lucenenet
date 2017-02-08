@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
 #pragma warning disable 612, 618
-            Sort sort = new Sort(new SortField("value", SortFieldType.SHORT));
+            Sort sort = new Sort(new SortField("value", SortFieldType.INT16));
 #pragma warning restore 612, 618
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -390,7 +390,7 @@ namespace Lucene.Net.Search
 
             IndexSearcher searcher = NewSearcher(ir);
 #pragma warning disable 612, 618
-            Sort sort = new Sort(new SortField("value", SortFieldType.SHORT, true));
+            Sort sort = new Sort(new SortField("value", SortFieldType.INT16, true));
 #pragma warning restore 612, 618
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
@@ -428,7 +428,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.INT));
+            Sort sort = new Sort(new SortField("value", SortFieldType.INT32));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -465,7 +465,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.INT, true));
+            Sort sort = new Sort(new SortField("value", SortFieldType.INT32, true));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -500,7 +500,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.INT));
+            Sort sort = new Sort(new SortField("value", SortFieldType.INT32));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -534,7 +534,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            SortField sortField = new SortField("value", SortFieldType.INT);
+            SortField sortField = new SortField("value", SortFieldType.INT32);
             sortField.MissingValue = int.MaxValue;
             Sort sort = new Sort(sortField);
 
@@ -572,7 +572,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.LONG));
+            Sort sort = new Sort(new SortField("value", SortFieldType.INT64));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -609,7 +609,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.LONG, true));
+            Sort sort = new Sort(new SortField("value", SortFieldType.INT64, true));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -644,7 +644,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.LONG));
+            Sort sort = new Sort(new SortField("value", SortFieldType.INT64));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -678,7 +678,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            SortField sortField = new SortField("value", SortFieldType.LONG);
+            SortField sortField = new SortField("value", SortFieldType.INT64);
             sortField.MissingValue = long.MaxValue;
             Sort sort = new Sort(sortField);
 
@@ -716,7 +716,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.FLOAT));
+            Sort sort = new Sort(new SortField("value", SortFieldType.SINGLE));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -753,7 +753,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.FLOAT, true));
+            Sort sort = new Sort(new SortField("value", SortFieldType.SINGLE, true));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -788,7 +788,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            Sort sort = new Sort(new SortField("value", SortFieldType.FLOAT));
+            Sort sort = new Sort(new SortField("value", SortFieldType.SINGLE));
 
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(3, td.TotalHits);
@@ -822,7 +822,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             IndexSearcher searcher = NewSearcher(ir);
-            SortField sortField = new SortField("value", SortFieldType.FLOAT);
+            SortField sortField = new SortField("value", SortFieldType.SINGLE);
             sortField.MissingValue = float.MaxValue;
             Sort sort = new Sort(sortField);
 

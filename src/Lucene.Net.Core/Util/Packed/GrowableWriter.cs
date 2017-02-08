@@ -152,8 +152,8 @@ namespace Lucene.Net.Util.Packed
             return RamUsageEstimator.AlignObjectSize(
                 RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
                 + RamUsageEstimator.NUM_BYTES_OBJECT_REF 
-                + RamUsageEstimator.NUM_BYTES_LONG 
-                + RamUsageEstimator.NUM_BYTES_FLOAT) 
+                + RamUsageEstimator.NUM_BYTES_INT64 
+                + RamUsageEstimator.NUM_BYTES_SINGLE) 
                 + current.RamBytesUsed();
         }
 

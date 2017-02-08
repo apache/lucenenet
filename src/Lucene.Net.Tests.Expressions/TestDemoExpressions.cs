@@ -76,7 +76,7 @@ namespace Lucene.Net.Tests.Expressions
 			// we use SimpleBindings: which just maps variables to SortField instances
 			SimpleBindings bindings = new SimpleBindings();
 			bindings.Add(new SortField("_score", SortFieldType.SCORE));
-			bindings.Add(new SortField("popularity", SortFieldType.INT));
+			bindings.Add(new SortField("popularity", SortFieldType.INT32));
 			// create a sort field and sort by it (reverse order)
 			Sort sort = new Sort(expr.GetSortField(bindings, true));
 			Query query = new TermQuery(new Term("body", "contents"));

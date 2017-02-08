@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
             this.bytesStartArray = bytesStartArray;
             bytesStart = bytesStartArray.Init();
             bytesUsed = bytesStartArray.BytesUsed() == null ? Counter.NewCounter() : bytesStartArray.BytesUsed();
-            bytesUsed.AddAndGet(hashSize * RamUsageEstimator.NUM_BYTES_INT);
+            bytesUsed.AddAndGet(hashSize * RamUsageEstimator.NUM_BYTES_INT32);
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace Lucene.Net.Util
             }
             if (newSize != hashSize)
             {
-                bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * -(hashSize - newSize));
+                bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT32 * -(hashSize - newSize));
                 hashSize = newSize;
                 ids = new int[hashSize];
                 Arrays.Fill(ids, -1);
@@ -282,7 +282,7 @@ namespace Lucene.Net.Util
         {
             Clear(true);
             ids = null;
-            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * -hashSize);
+            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT32 * -hashSize);
         }
 
         /// <summary>
@@ -453,7 +453,7 @@ namespace Lucene.Net.Util
         private void Rehash(int newSize, bool hashOnData)
         {
             int newMask = newSize - 1;
-            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * (newSize));
+            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT32 * (newSize));
             int[] newHash = new int[newSize];
             Arrays.Fill(newHash, -1);
             for (int i = 0; i < hashSize; i++)
@@ -504,7 +504,7 @@ namespace Lucene.Net.Util
             }
 
             hashMask = newMask;
-            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * (-ids.Length));
+            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT32 * (-ids.Length));
             ids = newHash;
             hashSize = newSize;
             hashHalfSize = newSize / 2;
@@ -531,7 +531,7 @@ namespace Lucene.Net.Util
             if (ids == null)
             {
                 ids = new int[hashSize];
-                bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT * hashSize);
+                bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_INT32 * hashSize);
             }
         }
 
@@ -637,7 +637,7 @@ namespace Lucene.Net.Util
 
             public override int[] Init()
             {
-                return bytesStart = new int[ArrayUtil.Oversize(m_initSize, RamUsageEstimator.NUM_BYTES_INT)];
+                return bytesStart = new int[ArrayUtil.Oversize(m_initSize, RamUsageEstimator.NUM_BYTES_INT32)];
             }
 
             public override Counter BytesUsed()

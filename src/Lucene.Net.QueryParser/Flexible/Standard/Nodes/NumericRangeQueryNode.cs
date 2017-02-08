@@ -55,11 +55,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
         {
             if (number is long)
             {
-                return NumericType.LONG;
+                return NumericType.INT64;
             }
             else if (number is int)
             {
-                return NumericType.INT;
+                return NumericType.INT32;
             }
             else if (number is double)
             {
@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
             else if (number is float)
             {
-                return NumericType.FLOAT;
+                return NumericType.SINGLE;
             }
             else
             {

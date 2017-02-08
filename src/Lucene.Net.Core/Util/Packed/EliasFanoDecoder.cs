@@ -27,7 +27,10 @@ namespace Lucene.Net.Util.Packed
     /// </summary>
     public class EliasFanoDecoder
     {
-        private static readonly int LOG2_LONG_SIZE = Number.NumberOfTrailingZeros((sizeof(long) * 8));
+        /// <summary>
+        /// NOTE: This was LOG2_LONG_SIZE in Lucene
+        /// </summary>
+        private static readonly int LOG2_INT64_SIZE = Number.NumberOfTrailingZeros((sizeof(long) * 8));
 
         private readonly EliasFanoEncoder efEncoder;
         private readonly long numEncoded;
@@ -115,7 +118,7 @@ namespace Lucene.Net.Util.Packed
                 return 0;
             }
             long bitPos = packIndex * numBits;
-            int index = (int)((long)((ulong)bitPos >> LOG2_LONG_SIZE));
+            int index = (int)((long)((ulong)bitPos >> LOG2_INT64_SIZE));
             int bitPosAtIndex = (int)(bitPos & ((sizeof(long) * 8) - 1));
             long value = (long)((ulong)longArray[index] >> bitPosAtIndex);
             if ((bitPosAtIndex + numBits) > (sizeof(long) * 8))
@@ -187,7 +190,7 @@ namespace Lucene.Net.Util.Packed
                 return false;
             }
             setBitForIndex += 1;
-            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_INT64_SIZE));
             curHighLong = (long)((ulong)efEncoder.upperLongs[highIndex] >> CurrentRightShift);
             return true;
         }
@@ -202,7 +205,7 @@ namespace Lucene.Net.Util.Packed
         {
             setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
             //assert getCurrentRightShift() == 0;
-            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_INT64_SIZE));
             curHighLong = efEncoder.upperLongs[highIndex];
         }
 
@@ -299,7 +302,7 @@ namespace Lucene.Net.Util.Packed
             }
             setBitForIndex += 1; // the high bit at setBitForIndex belongs to the unary code for efIndex
 
-            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+            int highIndex = (int)((long)((ulong)setBitForIndex >> LOG2_INT64_SIZE));
             long upperLong = efEncoder.upperLongs[highIndex];
             curHighLong = (long)((ulong)upperLong >> ((int)(setBitForIndex & ((sizeof(long) * 8) - 1)))); // may contain the unary 1 bit for efIndex
 
@@ -319,7 +322,7 @@ namespace Lucene.Net.Util.Packed
                 {
                     setBitForIndex = UnPackValue(efEncoder.upperZeroBitPositionIndex, efEncoder.nIndexEntryBits, indexEntryIndex, indexMask);
                     efIndex = setBitForIndex - indexHighValue; // the high bit at setBitForIndex belongs to the unary code for efIndex
-                    highIndex = (int)(((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+                    highIndex = (int)(((ulong)setBitForIndex >> LOG2_INT64_SIZE));
                     upperLong = efEncoder.upperLongs[highIndex];
                     curHighLong = (long)((ulong)upperLong >> ((int)(setBitForIndex & ((sizeof(long) * 8) - 1)))); // may contain the unary 1 bit for efIndex
                 }
@@ -339,7 +342,7 @@ namespace Lucene.Net.Util.Packed
                 }
                 setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
                 // highIndex = (int)(setBitForIndex >>> LOG2_LONG_SIZE);
-                Debug.Assert((highIndex + 1) == (int)((long)((ulong)setBitForIndex >> LOG2_LONG_SIZE)));
+                Debug.Assert((highIndex + 1) == (int)((long)((ulong)setBitForIndex >> LOG2_INT64_SIZE)));
                 highIndex += 1;
                 upperLong = efEncoder.upperLongs[highIndex];
                 curHighLong = upperLong;
@@ -350,7 +353,7 @@ namespace Lucene.Net.Util.Packed
             while (curHighLong == 0L)
             {
                 setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
-                Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+                Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_INT64_SIZE));
                 highIndex += 1;
                 upperLong = efEncoder.upperLongs[highIndex];
                 curHighLong = upperLong;
@@ -374,14 +377,14 @@ namespace Lucene.Net.Util.Packed
 
                 if ((setBitForIndex & ((sizeof(long) * 8) - 1)) == 0L) // exhausted curHighLong
                 {
-                    Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+                    Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_INT64_SIZE));
                     highIndex += 1;
                     upperLong = efEncoder.upperLongs[highIndex];
                     curHighLong = upperLong;
                 }
                 else
                 {
-                    Debug.Assert(highIndex == (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+                    Debug.Assert(highIndex == (int)((ulong)setBitForIndex >> LOG2_INT64_SIZE));
                     curHighLong = (long)((ulong)upperLong >> ((int)(setBitForIndex & ((sizeof(long) * 8) - 1))));
                 }
                 // curHighLong has enough clear bits to reach highTarget, and may not have enough set bits.
@@ -389,7 +392,7 @@ namespace Lucene.Net.Util.Packed
                 while (curHighLong == 0L)
                 {
                     setBitForIndex += (sizeof(long) * 8) - (setBitForIndex & ((sizeof(long) * 8) - 1));
-                    Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE));
+                    Debug.Assert((highIndex + 1) == (int)((ulong)setBitForIndex >> LOG2_INT64_SIZE));
                     highIndex += 1;
                     upperLong = efEncoder.upperLongs[highIndex];
                     curHighLong = upperLong;
@@ -444,7 +447,7 @@ namespace Lucene.Net.Util.Packed
                 return false;
             }
             setBitForIndex -= 1;
-            int highIndex = (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE);
+            int highIndex = (int)((ulong)setBitForIndex >> LOG2_INT64_SIZE);
             curHighLong = efEncoder.upperLongs[highIndex] << CurrentLeftShift;
             return true;
         }
@@ -459,7 +462,7 @@ namespace Lucene.Net.Util.Packed
         {
             setBitForIndex -= (setBitForIndex & ((sizeof(long) * 8) - 1)) + 1;
             //assert getCurrentLeftShift() == 0;
-            int highIndex = (int)((ulong)setBitForIndex >> LOG2_LONG_SIZE);
+            int highIndex = (int)((ulong)setBitForIndex >> LOG2_INT64_SIZE);
             curHighLong = efEncoder.upperLongs[highIndex];
         }
 

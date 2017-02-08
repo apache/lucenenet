@@ -182,10 +182,10 @@ namespace Lucene.Net.Search
             IList<SortField> sortFields = new List<SortField>();
             sortFields.Add(new SortField("string", SortFieldType.STRING, true));
             sortFields.Add(new SortField("string", SortFieldType.STRING, false));
-            sortFields.Add(new SortField("int", SortFieldType.INT, true));
-            sortFields.Add(new SortField("int", SortFieldType.INT, false));
-            sortFields.Add(new SortField("float", SortFieldType.FLOAT, true));
-            sortFields.Add(new SortField("float", SortFieldType.FLOAT, false));
+            sortFields.Add(new SortField("int", SortFieldType.INT32, true));
+            sortFields.Add(new SortField("int", SortFieldType.INT32, false));
+            sortFields.Add(new SortField("float", SortFieldType.SINGLE, true));
+            sortFields.Add(new SortField("float", SortFieldType.SINGLE, false));
             sortFields.Add(new SortField(null, SortFieldType.SCORE, true));
             sortFields.Add(new SortField(null, SortFieldType.SCORE, false));
             sortFields.Add(new SortField(null, SortFieldType.DOC, true));

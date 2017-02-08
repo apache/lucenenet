@@ -244,7 +244,7 @@ namespace Lucene.Net.Util.Fst
 
             // NOTE: only reads most recent format; we don't have
             // back-compat promise for FSTs (they are experimental):
-            version = CodecUtil.CheckHeader(@in, FST.FILE_FORMAT_NAME, FST.VERSION_PACKED, FST.VERSION_VINT_TARGET);
+            version = CodecUtil.CheckHeader(@in, FST.FILE_FORMAT_NAME, FST.VERSION_PACKED, FST.VERSION_VINT32_TARGET);
             packed = @in.ReadByte() == 1;
             if (@in.ReadByte() == 1)
             {
@@ -920,7 +920,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     // array: jump straight to end
                     arc.NumArcs = @in.ReadVInt32();
-                    if (packed || version >= FST.VERSION_VINT_TARGET)
+                    if (packed || version >= FST.VERSION_VINT32_TARGET)
                     {
                         arc.BytesPerArc = @in.ReadVInt32();
                     }
@@ -979,7 +979,7 @@ namespace Lucene.Net.Util.Fst
         private long ReadUnpackedNodeTarget(FST.BytesReader @in)
         {
             long target;
-            if (version < FST.VERSION_VINT_TARGET)
+            if (version < FST.VERSION_VINT32_TARGET)
             {
                 target = @in.ReadInt32();
             }
@@ -1040,7 +1040,7 @@ namespace Lucene.Net.Util.Fst
                 //System.out.println("  fixedArray");
                 // this is first arc in a fixed-array
                 arc.NumArcs = @in.ReadVInt32();
-                if (packed || version >= FST.VERSION_VINT_TARGET)
+                if (packed || version >= FST.VERSION_VINT32_TARGET)
                 {
                     arc.BytesPerArc = @in.ReadVInt32();
                 }
@@ -1121,7 +1121,7 @@ namespace Lucene.Net.Util.Fst
                     @in.ReadVInt32();
 
                     // Skip bytesPerArc:
-                    if (packed || version >= FST.VERSION_VINT_TARGET)
+                    if (packed || version >= FST.VERSION_VINT32_TARGET)
                     {
                         @in.ReadVInt32();
                     }
@@ -1341,7 +1341,7 @@ namespace Lucene.Net.Util.Fst
             {
                 // Arcs are full array; do binary search:
                 arc.NumArcs = @in.ReadVInt32();
-                if (packed || version >= FST.VERSION_VINT_TARGET)
+                if (packed || version >= FST.VERSION_VINT32_TARGET)
                 {
                     arc.BytesPerArc = @in.ReadVInt32();
                 }
@@ -2117,14 +2117,18 @@ namespace Lucene.Net.Util.Fst
         internal const int VERSION_START = 0;
 
         /// <summary>
-        /// Changed numBytesPerArc for array'd case from byte to int.
+        /// Changed numBytesPerArc for array'd case from byte to <see cref="int"/>.
+        /// <para/>
+        /// NOTE: This was VERSION_INT_NUM_BYTES_PER_ARC in Lucene
         /// </summary>
-        internal const int VERSION_INT_NUM_BYTES_PER_ARC = 1;
+        internal const int VERSION_INT32_NUM_BYTES_PER_ARC = 1;
 
         /// <summary>
-        /// Write BYTE2 labels as 2-byte short, not vInt.
+        /// Write BYTE2 labels as 2-byte <see cref="short"/>, not v<see cref="int"/>.
+        /// <para/>
+        /// NOTE: This was VERSION_SHORT_BYTE2_LABELS in Lucene
         /// </summary>
-        internal const int VERSION_SHORT_BYTE2_LABELS = 2;
+        internal const int VERSION_INT16_BYTE2_LABELS = 2;
 
         /// <summary>
         /// Added optional packed format.
@@ -2132,12 +2136,14 @@ namespace Lucene.Net.Util.Fst
         internal const int VERSION_PACKED = 3;
 
         /// <summary>
-        /// Changed from int to vInt for encoding arc targets.
-        /// Also changed maxBytesPerArc from int to vInt in the array case.
+        /// Changed from <see cref="int"/> to v<see cref="int"/> for encoding arc targets.
+        /// Also changed maxBytesPerArc from int to v<see cref="int"/> in the array case.
+        /// <para/>
+        /// NOTE: This was VERSION_VINT_TARGET in Lucene
         /// </summary>
-        internal const int VERSION_VINT_TARGET = 4;
+        internal const int VERSION_VINT32_TARGET = 4;
 
-        internal const int VERSION_CURRENT = VERSION_VINT_TARGET;
+        internal const int VERSION_CURRENT = VERSION_VINT32_TARGET;
 
         // Never serialized; just used to represent the virtual
         // final node w/ no arcs:

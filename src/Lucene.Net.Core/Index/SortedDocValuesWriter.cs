@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
                 // 1. when indexing, when hash is 50% full, rehash() suddenly needs 2*size ints.
                 //    TODO: can this same OOM happen in THPF?
                 // 2. when flushing, we need 1 int per value (slot in the ordMap).
-                iwBytesUsed.AddAndGet(2 * RamUsageEstimator.NUM_BYTES_INT);
+                iwBytesUsed.AddAndGet(2 * RamUsageEstimator.NUM_BYTES_INT32);
             }
 
             pending.Add(termID);

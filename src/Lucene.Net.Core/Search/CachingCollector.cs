@@ -52,7 +52,11 @@ namespace Lucene.Net.Search
         private const int MAX_ARRAY_SIZE = 512 * 1024;
 
         private const int INITIAL_ARRAY_SIZE = 128;
-        private static readonly int[] EMPTY_INT_ARRAY = new int[0];
+
+        /// <summary>
+        /// NOTE: This was EMPTY_INT_ARRAY in Lucene
+        /// </summary>
+        private static readonly int[] EMPTY_INT32_ARRAY = new int[0];
 
         private class SegStart
         {
@@ -202,7 +206,7 @@ namespace Lucene.Net.Search
                 int curUpto = 0;
                 int curBase = 0;
                 int chunkUpto = 0;
-                m_curDocs = EMPTY_INT_ARRAY;
+                m_curDocs = EMPTY_INT32_ARRAY;
                 foreach (SegStart seg in m_cachedSegs)
                 {
                     other.SetNextReader(seg.ReaderContext);
@@ -309,7 +313,7 @@ namespace Lucene.Net.Search
                 int curUpto = 0;
                 int curbase = 0;
                 int chunkUpto = 0;
-                m_curDocs = EMPTY_INT_ARRAY;
+                m_curDocs = EMPTY_INT32_ARRAY;
                 foreach (SegStart seg in m_cachedSegs)
                 {
                     other.SetNextReader(seg.ReaderContext);
@@ -448,10 +452,10 @@ namespace Lucene.Net.Search
             m_curDocs = new int[INITIAL_ARRAY_SIZE];
             m_cachedDocs.Add(m_curDocs);
 
-            int bytesPerDoc = RamUsageEstimator.NUM_BYTES_INT;
+            int bytesPerDoc = RamUsageEstimator.NUM_BYTES_INT32;
             if (cacheScores)
             {
-                bytesPerDoc += RamUsageEstimator.NUM_BYTES_FLOAT;
+                bytesPerDoc += RamUsageEstimator.NUM_BYTES_SINGLE;
             }
             m_maxDocsToCache = (int)((maxRAMMB * 1024 * 1024) / bytesPerDoc);
         }

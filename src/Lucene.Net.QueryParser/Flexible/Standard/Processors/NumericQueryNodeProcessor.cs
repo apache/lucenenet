@@ -100,16 +100,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                                 switch (numericConfig.Type)
                                 {
-                                    case NumericType.LONG:
+                                    case NumericType.INT64:
                                         number = Convert.ToInt64(number);
                                         break;
-                                    case NumericType.INT:
+                                    case NumericType.INT32:
                                         number = Convert.ToInt32(number);
                                         break;
                                     case NumericType.DOUBLE:
                                         number = Convert.ToDouble(number);
                                         break;
-                                    case NumericType.FLOAT:
+                                    case NumericType.SINGLE:
                                         number = Convert.ToSingle(number);
                                         break;
                                 }

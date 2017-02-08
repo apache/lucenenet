@@ -903,7 +903,7 @@ namespace Lucene.Net.Util
         /// Return the memory usage of this class in bytes. </summary>
         public long RamBytesUsed()
         {
-            return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_INT) 
+            return RamUsageEstimator.AlignObjectSize(3 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_INT32) 
                 + RamUsageEstimator.SizeOf(data) 
                 + positions.RamBytesUsed() 
                 + wordNums.RamBytesUsed();

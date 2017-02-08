@@ -61,10 +61,26 @@ namespace Lucene.Net.Util
         public const int NUM_BYTES_BOOLEAN = 1;
         public const int NUM_BYTES_BYTE = 1;
         public const int NUM_BYTES_CHAR = 2;
-        public const int NUM_BYTES_SHORT = 2;
-        public const int NUM_BYTES_INT = 4;
-        public const int NUM_BYTES_FLOAT = 4;
-        public const int NUM_BYTES_LONG = 8;
+
+        /// <summary>
+        /// NOTE: This was NUM_BYTES_SHORT in Lucene
+        /// </summary>
+        public const int NUM_BYTES_INT16 = 2;
+
+        /// <summary>
+        /// NOTE: This was NUM_BYTES_INT in Lucene
+        /// </summary>
+        public const int NUM_BYTES_INT32 = 4;
+
+        /// <summary>
+        /// NOTE: This was NUM_BYTES_FLOAT in Lucene
+        /// </summary>
+        public const int NUM_BYTES_SINGLE = 4;
+
+        /// <summary>
+        /// NOTE: This was NUM_BYTES_LONG in Lucene
+        /// </summary>
+        public const int NUM_BYTES_INT64 = 8;
         public const int NUM_BYTES_DOUBLE = 8;
 
         /// <summary>
@@ -100,17 +116,17 @@ namespace Lucene.Net.Util
             primitiveSizes[typeof(bool)] = Convert.ToInt32(NUM_BYTES_BOOLEAN);
             primitiveSizes[typeof(sbyte)] = Convert.ToInt32(NUM_BYTES_BYTE);
             primitiveSizes[typeof(char)] = Convert.ToInt32(NUM_BYTES_CHAR);
-            primitiveSizes[typeof(short)] = Convert.ToInt32(NUM_BYTES_SHORT);
-            primitiveSizes[typeof(int)] = Convert.ToInt32(NUM_BYTES_INT);
-            primitiveSizes[typeof(float)] = Convert.ToInt32(NUM_BYTES_FLOAT);
+            primitiveSizes[typeof(short)] = Convert.ToInt32(NUM_BYTES_INT16);
+            primitiveSizes[typeof(int)] = Convert.ToInt32(NUM_BYTES_INT32);
+            primitiveSizes[typeof(float)] = Convert.ToInt32(NUM_BYTES_SINGLE);
             primitiveSizes[typeof(double)] = Convert.ToInt32(NUM_BYTES_DOUBLE);
-            primitiveSizes[typeof(long)] = Convert.ToInt32(NUM_BYTES_LONG);
+            primitiveSizes[typeof(long)] = Convert.ToInt32(NUM_BYTES_INT64);
 
             // Initialize empirically measured defaults. We'll modify them to the current
             // JVM settings later on if possible.
             int referenceSize = Constants.JRE_IS_64BIT ? 8 : 4;
             int objectHeader = Constants.JRE_IS_64BIT ? 16 : 8;
-            // The following is objectHeader + NUM_BYTES_INT, but aligned (object alignment)
+            // The following is objectHeader + NUM_BYTES_INT32, but aligned (object alignment)
             // so on 64 bit JVMs it'll be align(16 + 4, @8) = 24.
             int arrayHeader = Constants.JRE_IS_64BIT ? 24 : 12;
             int objectAlignment = Constants.JRE_IS_64BIT ? 8 : 4;
@@ -305,28 +321,28 @@ namespace Lucene.Net.Util
         /// Returns the size in bytes of the short[] object. </summary>
         public static long SizeOf(short[] arr)
         {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_SHORT * arr.Length);
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT16 * arr.Length);
         }
 
         /// <summary>
         /// Returns the size in bytes of the int[] object. </summary>
         public static long SizeOf(int[] arr)
         {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT * arr.Length);
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT32 * arr.Length);
         }
 
         /// <summary>
         /// Returns the size in bytes of the float[] object. </summary>
         public static long SizeOf(float[] arr)
         {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_FLOAT * arr.Length);
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_SINGLE * arr.Length);
         }
 
         /// <summary>
         /// Returns the size in bytes of the long[] object. </summary>
         public static long SizeOf(long[] arr)
         {
-            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_LONG * arr.Length);
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT64 * arr.Length);
         }
 
         /// <summary>

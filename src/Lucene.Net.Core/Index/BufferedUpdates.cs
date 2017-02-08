@@ -49,19 +49,19 @@ namespace Lucene.Net.Index
            Term's text is String (OBJ_HEADER + 4*INT + POINTER +
            OBJ_HEADER + string.length*CHAR).  Integer is
            OBJ_HEADER + INT. */
-        internal static readonly int BYTES_PER_DEL_TERM = 9 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 7 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 10 * RamUsageEstimator.NUM_BYTES_INT;
+        internal static readonly int BYTES_PER_DEL_TERM = 9 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 7 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 10 * RamUsageEstimator.NUM_BYTES_INT32;
 
         /* Rough logic: del docIDs are List<Integer>.  Say list
            allocates ~2X size (2*POINTER).  Integer is OBJ_HEADER
            + int */
-        internal static readonly int BYTES_PER_DEL_DOCID = 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
+        internal static readonly int BYTES_PER_DEL_DOCID = 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT32;
 
         /* Rough logic: HashMap has an array[Entry] w/ varying
            load factor (say 2 * POINTER).  Entry is object w/
            Query key, Integer val, int hash, Entry next
            (OBJ_HEADER + 3*POINTER + INT).  Query we often
            undercount (say 24 bytes).  Integer is OBJ_HEADER + INT. */
-        internal static readonly int BYTES_PER_DEL_QUERY = 5 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT + 24;
+        internal static readonly int BYTES_PER_DEL_QUERY = 5 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + 2 * RamUsageEstimator.NUM_BYTES_INT32 + 24;
 
         /* Rough logic: NumericUpdate calculates its actual size,
          * including the update Term and DV field (String). The
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
          * LinkedHashMap (val) is counted as OBJ_HEADER, array[Entry] ref + header, 4*INT, 1*FLOAT,
          * Set (entrySet) (2*OBJ_HEADER + ARRAY_HEADER + 2*POINTER + 4*INT + FLOAT)
          */
-        internal static readonly int BYTES_PER_NUMERIC_FIELD_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 5 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_FLOAT;
+        internal static readonly int BYTES_PER_NUMERIC_FIELD_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 5 * RamUsageEstimator.NUM_BYTES_INT32 + RamUsageEstimator.NUM_BYTES_SINGLE;
 
         /* Rough logic: Incremented when we see another Term for an already updated
          * field.
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
          * Term (key) is counted only as POINTER.
          * NumericUpdate (val) counts its own size and isn't accounted for here.
          */
-        internal static readonly int BYTES_PER_NUMERIC_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
+        internal static readonly int BYTES_PER_NUMERIC_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT32;
 
         /* Rough logic: BinaryUpdate calculates its actual size,
          * including the update Term and DV field (String). The
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
          * LinkedHashMap (val) is counted as OBJ_HEADER, array[Entry] ref + header, 4*INT, 1*FLOAT,
          * Set (entrySet) (2*OBJ_HEADER + ARRAY_HEADER + 2*POINTER + 4*INT + FLOAT)
          */
-        internal static readonly int BYTES_PER_BINARY_FIELD_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 5 * RamUsageEstimator.NUM_BYTES_INT + RamUsageEstimator.NUM_BYTES_FLOAT;
+        internal static readonly int BYTES_PER_BINARY_FIELD_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + 3 * RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + 5 * RamUsageEstimator.NUM_BYTES_INT32 + RamUsageEstimator.NUM_BYTES_SINGLE;
 
         /* Rough logic: Incremented when we see another Term for an already updated
          * field.
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
          * Term (key) is counted only as POINTER.
          * BinaryUpdate (val) counts its own size and isn't accounted for here.
          */
-        internal static readonly int BYTES_PER_BINARY_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT;
+        internal static readonly int BYTES_PER_BINARY_UPDATE_ENTRY = 7 * RamUsageEstimator.NUM_BYTES_OBJECT_REF + RamUsageEstimator.NUM_BYTES_OBJECT_HEADER + RamUsageEstimator.NUM_BYTES_INT32;
 
         internal readonly AtomicInt32 numTermDeletes = new AtomicInt32();
         internal readonly AtomicInt32 numNumericUpdates = new AtomicInt32();
@@ -143,7 +143,10 @@ namespace Lucene.Net.Index
         // only once).
         internal readonly IDictionary<string, LinkedHashMap<Term, BinaryDocValuesUpdate>> binaryUpdates = new Dictionary<string, LinkedHashMap<Term, BinaryDocValuesUpdate>>();
 
-        public static readonly int MAX_INT = Convert.ToInt32(int.MaxValue);
+        /// <summary>
+        /// NOTE: This was MAX_INT in Lucene
+        /// </summary>
+        public static readonly int MAX_INT32 = Convert.ToInt32(int.MaxValue);
 
         internal readonly AtomicInt64 bytesUsed;
 

@@ -91,7 +91,11 @@ namespace Lucene.Net.Util.Packed
         internal readonly long lowerBitsMask;
         internal readonly long[] upperLongs;
         internal readonly long[] lowerLongs;
-        private static readonly int LOG2_LONG_SIZE = Number.NumberOfTrailingZeros(sizeof(long) * 8);
+
+        /// <summary>
+        /// NOTE: This was LOG2_LONG_SIZE in Lucene
+        /// </summary>
+        private static readonly int LOG2_INT64_SIZE = Number.NumberOfTrailingZeros(sizeof(long) * 8);
 
         internal long numEncoded = 0L;
         internal long lastEncoded = 0L;
@@ -213,7 +217,7 @@ namespace Lucene.Net.Util.Packed
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
             Debug.Assert(numBits >= 0, numBits.ToString());
-            return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_LONG_SIZE);
+            return (long)((ulong)(numBits + (sizeof(long) * 8 - 1)) >> LOG2_INT64_SIZE);
         }
 
         /// <summary>
@@ -258,7 +262,7 @@ namespace Lucene.Net.Util.Packed
         private void EncodeUpperBits(long highValue)
         {
             long nextHighBitNum = numEncoded + highValue; // sequence of unary gaps
-            upperLongs[(int)((long)((ulong)nextHighBitNum >> LOG2_LONG_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
+            upperLongs[(int)((long)((ulong)nextHighBitNum >> LOG2_INT64_SIZE))] |= (1L << (int)(nextHighBitNum & ((sizeof(long) * 8) - 1)));
         }
 
         private void EncodeLowerBits(long lowValue)
@@ -271,7 +275,7 @@ namespace Lucene.Net.Util.Packed
             if (numBits != 0)
             {
                 long bitPos = numBits * packIndex;
-                int index = (int)((long)((ulong)bitPos >> LOG2_LONG_SIZE));
+                int index = (int)((long)((ulong)bitPos >> LOG2_INT64_SIZE));
                 int bitPosAtIndex = (int)(bitPos & ((sizeof(long) * 8) - 1));
                 longArray[index] |= (value << bitPosAtIndex);
                 if ((bitPosAtIndex + numBits) > (sizeof(long) * 8))

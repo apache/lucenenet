@@ -24,10 +24,10 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Represents long[], as a slice (offset + length) into an
-    ///  existing long[].  The <seealso cref="#longs"/> member should never be null; use
-    ///  <seealso cref="#EMPTY_LONGS"/> if necessary.
-    ///  <para/>
+    /// Represents <see cref="T:long[]"/>, as a slice (offset + length) into an
+    /// existing <see cref="T:long[]"/>.  The <see cref="Int64s"/> member should never be null; use
+    /// <see cref="EMPTY_INT64S"/> if necessary.
+    /// <para/>
     /// NOTE: This was LongsRef in Lucene
     ///
     ///  @lucene.internal
@@ -35,8 +35,11 @@ namespace Lucene.Net.Util
     public sealed class Int64sRef : IComparable<Int64sRef>
     {
         /// <summary>
-        /// An empty long array for convenience </summary>
-        public static readonly long[] EMPTY_LONGS = new long[0];
+        /// An empty long array for convenience
+        /// <para/>
+        /// NOTE: This was EMPTY_LONGS in Lucene
+        /// </summary>
+        public static readonly long[] EMPTY_INT64S = new long[0];
 
         /// <summary>
         /// The contents of the LongsRef. Should never be {@code null}. 
@@ -68,10 +71,10 @@ namespace Lucene.Net.Util
         public int Length { get; set; }
 
         /// <summary>
-        /// Create a LongsRef with <seealso cref="#EMPTY_LONGS"/> </summary>
+        /// Create a LongsRef with <see cref="EMPTY_INT64S"/> </summary>
         public Int64sRef()
         {
-            longs = EMPTY_LONGS;
+            longs = EMPTY_INT64S;
         }
 
         /// <summary>

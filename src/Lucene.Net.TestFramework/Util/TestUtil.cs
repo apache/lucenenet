@@ -1058,15 +1058,15 @@ namespace Lucene.Net.Util
                 {
                     switch (numType)
                     {
-                        case NumericType.INT:
+                        case NumericType.INT32:
                             field2 = new Int32Field(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
                             break;
 
-                        case NumericType.FLOAT:
+                        case NumericType.SINGLE:
                             field2 = new SingleField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
                             break;
 
-                        case NumericType.LONG:
+                        case NumericType.INT64:
                             field2 = new Int64Field(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
                             break;
 

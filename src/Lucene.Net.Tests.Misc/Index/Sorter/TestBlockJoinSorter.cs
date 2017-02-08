@@ -71,8 +71,8 @@ namespace Lucene.Net.Index.Sorter
 
             NumericDocValues childValues = reader.GetNumericDocValues("child_val");
 
-            Sort parentSort = new Sort(new SortField("parent_val", SortFieldType.LONG));
-            Sort childSort = new Sort(new SortField("child_val", SortFieldType.LONG));
+            Sort parentSort = new Sort(new SortField("parent_val", SortFieldType.INT64));
+            Sort childSort = new Sort(new SortField("child_val", SortFieldType.INT64));
 
             Sort sort = new Sort(new SortField("custom", new BlockJoinComparerSource(parentsFilter, parentSort, childSort)));
             Sorter sorter = new Sorter(sort);

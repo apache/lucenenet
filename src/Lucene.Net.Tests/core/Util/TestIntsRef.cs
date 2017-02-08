@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
         public virtual void TestEmpty()
         {
             Int32sRef i = new Int32sRef();
-            Assert.AreEqual(Int32sRef.EMPTY_INTS, i.Int32s);
+            Assert.AreEqual(Int32sRef.EMPTY_INT32S, i.Int32s);
             Assert.AreEqual(0, i.Offset);
             Assert.AreEqual(0, i.Length);
         }

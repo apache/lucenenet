@@ -440,7 +440,7 @@ namespace Lucene.Net.Search
                     lower = upper;
                     upper = a;
                 }
-                BytesRef lowerBytes = new BytesRef(NumericUtils.BUF_SIZE_LONG), upperBytes = new BytesRef(NumericUtils.BUF_SIZE_LONG);
+                BytesRef lowerBytes = new BytesRef(NumericUtils.BUF_SIZE_INT64), upperBytes = new BytesRef(NumericUtils.BUF_SIZE_INT64);
                 NumericUtils.Int64ToPrefixCodedBytes(lower, 0, lowerBytes);
                 NumericUtils.Int64ToPrefixCodedBytes(upper, 0, upperBytes);
 
@@ -689,7 +689,7 @@ namespace Lucene.Net.Search
                     upper = a;
                 }
                 Query tq = NumericRangeQuery.NewInt64Range(field, precisionStep, lower, upper, true, true);
-                TopDocs topDocs = Searcher.Search(tq, null, NoDocs, new Sort(new SortField(field, SortFieldType.LONG, true)));
+                TopDocs topDocs = Searcher.Search(tq, null, NoDocs, new Sort(new SortField(field, SortFieldType.INT64, true)));
                 if (topDocs.TotalHits == 0)
                 {
                     continue;

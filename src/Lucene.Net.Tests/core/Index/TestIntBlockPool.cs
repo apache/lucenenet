@@ -65,7 +65,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     pool.Reset(true, true);
-                    Assert.AreEqual(Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT, bytesUsed.Get());
+                    Assert.AreEqual(Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32, bytesUsed.Get());
                 }
             }
         }
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
                 else
                 {
                     pool.Reset(true, true);
-                    Assert.AreEqual(Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT, bytesUsed.Get());
+                    Assert.AreEqual(Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32, bytesUsed.Get());
                 }
             }
         }
@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
             internal readonly Counter BytesUsed;
 
             public ByteTrackingAllocator(Counter bytesUsed)
-                : this(Int32BlockPool.INT_BLOCK_SIZE, bytesUsed)
+                : this(Int32BlockPool.INT32_BLOCK_SIZE, bytesUsed)
             {
             }
 
@@ -144,13 +144,13 @@ namespace Lucene.Net.Index
 
             public override int[] GetInt32Block()
             {
-                BytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT);
+                BytesUsed.AddAndGet(m_blockSize * RamUsageEstimator.NUM_BYTES_INT32);
                 return new int[m_blockSize];
             }
 
             public override void RecycleInt32Blocks(int[][] blocks, int start, int end)
             {
-                BytesUsed.AddAndGet(-((end - start) * m_blockSize * RamUsageEstimator.NUM_BYTES_INT));
+                BytesUsed.AddAndGet(-((end - start) * m_blockSize * RamUsageEstimator.NUM_BYTES_INT32));
             }
         }
 

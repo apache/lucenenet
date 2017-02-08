@@ -221,10 +221,10 @@ namespace Lucene.Net.Util.Packed
         {
             return RamUsageEstimator.NUM_BYTES_OBJECT_HEADER 
                 + 2 * RamUsageEstimator.NUM_BYTES_OBJECT_REF 
-                + 2 * RamUsageEstimator.NUM_BYTES_INT 
-                + 2 * RamUsageEstimator.NUM_BYTES_INT 
-                + RamUsageEstimator.NUM_BYTES_FLOAT 
-                + RamUsageEstimator.NUM_BYTES_LONG; // valuesBytes -  acceptable overhead -  pageShift, pageMask -  the 2 offsets -  the 2 arrays
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32 
+                + 2 * RamUsageEstimator.NUM_BYTES_INT32 
+                + RamUsageEstimator.NUM_BYTES_SINGLE 
+                + RamUsageEstimator.NUM_BYTES_INT64; // valuesBytes -  acceptable overhead -  pageShift, pageMask -  the 2 offsets -  the 2 arrays
         }
 
         /// <summary>

@@ -65,7 +65,7 @@ namespace Lucene.Net.Util.Packed
 
         protected override long BaseRamBytesUsed()
         {
-            return base.BaseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_FLOAT;
+            return base.BaseRamBytesUsed() + RamUsageEstimator.NUM_BYTES_SINGLE;
         }
     }
 }

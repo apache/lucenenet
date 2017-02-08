@@ -166,9 +166,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             while ((randomInt = Convert.ToInt32(NormalizeNumber(Math.Abs(Random().nextInt())))) == 0)
                 ;
 
-            randomNumberMap.Put(NumericType.LONG.ToString(), randomLong);
-            randomNumberMap.Put(NumericType.INT.ToString(), randomInt);
-            randomNumberMap.Put(NumericType.FLOAT.ToString(), randomFloat);
+            randomNumberMap.Put(NumericType.INT64.ToString(), randomLong);
+            randomNumberMap.Put(NumericType.INT32.ToString(), randomInt);
+            randomNumberMap.Put(NumericType.SINGLE.ToString(), randomFloat);
             randomNumberMap.Put(NumericType.DOUBLE.ToString(), randomDouble);
             randomNumberMap.Put(DATE_FIELD_NAME, randomDate);
 
@@ -199,13 +199,13 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
                 switch (type)
                 {
-                    case NumericType.INT:
+                    case NumericType.INT32:
                         field = new Int32Field(type.ToString(), 0, ft2);
                         break;
-                    case NumericType.FLOAT:
+                    case NumericType.SINGLE:
                         field = new SingleField(type.ToString(), 0.0f, ft2);
                         break;
-                    case NumericType.LONG:
+                    case NumericType.INT64:
                         field = new Int64Field(type.ToString(), 0L, ft2);
                         break;
                     case NumericType.DOUBLE:
@@ -221,7 +221,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             }
 
             numericConfigMap.Put(DATE_FIELD_NAME, new NumericConfig(PRECISION_STEP,
-                DATE_FORMAT, NumericType.LONG));
+                DATE_FORMAT, NumericType.INT64));
             FieldType ft = new FieldType(Int64Field.TYPE_NOT_STORED);
             ft.IsStored = (true);
             ft.NumericPrecisionStep = (PRECISION_STEP);
@@ -260,7 +260,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                     /*Number*/
                     object number = RANDOM_NUMBER_MAP[fieldName];
 
-                    if (NumericType.LONG.ToString().equals(fieldName)
+                    if (NumericType.INT64.ToString().equals(fieldName)
                         || DATE_FIELD_NAME.equals(fieldName))
                     {
                         number = -Convert.ToInt64(number);
@@ -271,12 +271,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                         number = -Convert.ToDouble(number);
 
                     }
-                    else if (NumericType.FLOAT.ToString().equals(fieldName))
+                    else if (NumericType.SINGLE.ToString().equals(fieldName))
                     {
                         number = -Convert.ToSingle(number);
 
                     }
-                    else if (NumericType.INT.ToString().equals(fieldName))
+                    else if (NumericType.INT32.ToString().equals(fieldName))
                     {
                         number = -Convert.ToInt32(number);
 
@@ -306,16 +306,16 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
             numericFieldMap[NumericType.DOUBLE.ToString()].SetDoubleValue(Convert.ToDouble(
                 number));
 
-            number = GetNumberType(numberType, NumericType.INT.ToString());
-            numericFieldMap[NumericType.INT.ToString()].SetInt32Value(Convert.ToInt32(
+            number = GetNumberType(numberType, NumericType.INT32.ToString());
+            numericFieldMap[NumericType.INT32.ToString()].SetInt32Value(Convert.ToInt32(
                 number));
 
-            number = GetNumberType(numberType, NumericType.LONG.ToString());
-            numericFieldMap[NumericType.LONG.ToString()].SetInt64Value(Convert.ToInt64(
+            number = GetNumberType(numberType, NumericType.INT64.ToString());
+            numericFieldMap[NumericType.INT64.ToString()].SetInt64Value(Convert.ToInt64(
                 number));
 
-            number = GetNumberType(numberType, NumericType.FLOAT.ToString());
-            numericFieldMap[NumericType.FLOAT.ToString()].SetSingleValue(Convert.ToSingle(
+            number = GetNumberType(numberType, NumericType.SINGLE.ToString());
+            numericFieldMap[NumericType.SINGLE.ToString()].SetSingleValue(Convert.ToSingle(
                 number));
 
             number = GetNumberType(numberType, DATE_FIELD_NAME);

@@ -406,7 +406,7 @@ namespace Lucene.Net.Search.Grouping
                 }
             }
             // Break ties:
-            sortFields.Add(new SortField("id", SortFieldType.INT));
+            sortFields.Add(new SortField("id", SortFieldType.INT32));
             return new Sort(sortFields.ToArray(/*new SortField[sortFields.size()]*/));
         }
 

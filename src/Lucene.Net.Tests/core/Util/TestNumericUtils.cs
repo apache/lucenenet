@@ -31,7 +31,7 @@ namespace Lucene.Net.Util
         public virtual void TestLongConversionAndOrdering()
         {
             // generate a series of encoded longs, each numerical one bigger than the one before
-            BytesRef last = null, act = new BytesRef(NumericUtils.BUF_SIZE_LONG);
+            BytesRef last = null, act = new BytesRef(NumericUtils.BUF_SIZE_INT64);
             for (long l = -100000L; l < 100000L; l++)
             {
                 NumericUtils.Int64ToPrefixCodedBytes(l, 0, act);
@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
                 Assert.AreEqual(l, NumericUtils.PrefixCodedToInt64(act), "forward and back conversion should generate same long");
                 // next step
                 last = act;
-                act = new BytesRef(NumericUtils.BUF_SIZE_LONG);
+                act = new BytesRef(NumericUtils.BUF_SIZE_INT64);
             }
         }
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
         public virtual void TestIntConversionAndOrdering()
         {
             // generate a series of encoded ints, each numerical one bigger than the one before
-            BytesRef last = null, act = new BytesRef(NumericUtils.BUF_SIZE_INT);
+            BytesRef last = null, act = new BytesRef(NumericUtils.BUF_SIZE_INT32);
             for (int i = -100000; i < 100000; i++)
             {
                 NumericUtils.Int32ToPrefixCodedBytes(i, 0, act);
@@ -67,7 +67,7 @@ namespace Lucene.Net.Util
                 Assert.AreEqual(i, NumericUtils.PrefixCodedToInt32(act), "forward and back conversion should generate same int");
                 // next step
                 last = act;
-                act = new BytesRef(NumericUtils.BUF_SIZE_INT);
+                act = new BytesRef(NumericUtils.BUF_SIZE_INT32);
             }
         }
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Util
 
             for (int i = 0; i < vals.Length; i++)
             {
-                prefixVals[i] = new BytesRef(NumericUtils.BUF_SIZE_LONG);
+                prefixVals[i] = new BytesRef(NumericUtils.BUF_SIZE_INT64);
                 NumericUtils.Int64ToPrefixCodedBytes(vals[i], 0, prefixVals[i]);
 
                 // check forward and back conversion
@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
             }
 
             // check the prefix encoding, lower precision should have the difference to original value equal to the lower removed bits
-            BytesRef @ref = new BytesRef(NumericUtils.BUF_SIZE_LONG);
+            BytesRef @ref = new BytesRef(NumericUtils.BUF_SIZE_INT64);
             for (int i = 0; i < vals.Length; i++)
             {
                 for (int j = 0; j < 64; j++)
@@ -127,7 +127,7 @@ namespace Lucene.Net.Util
 
             for (int i = 0; i < vals.Length; i++)
             {
-                prefixVals[i] = new BytesRef(NumericUtils.BUF_SIZE_INT);
+                prefixVals[i] = new BytesRef(NumericUtils.BUF_SIZE_INT32);
                 NumericUtils.Int32ToPrefixCodedBytes(vals[i], 0, prefixVals[i]);
 
                 // check forward and back conversion
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util
             }
 
             // check the prefix encoding, lower precision should have the difference to original value equal to the lower removed bits
-            BytesRef @ref = new BytesRef(NumericUtils.BUF_SIZE_LONG);
+            BytesRef @ref = new BytesRef(NumericUtils.BUF_SIZE_INT64);
             for (int i = 0; i < vals.Length; i++)
             {
                 for (int j = 0; j < 32; j++)

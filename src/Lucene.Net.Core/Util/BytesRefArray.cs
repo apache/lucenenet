@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
         {
             this.pool = new ByteBlockPool(new ByteBlockPool.DirectTrackingAllocator(bytesUsed));
             pool.NextBuffer();
-            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + RamUsageEstimator.NUM_BYTES_INT);
+            bytesUsed.AddAndGet(RamUsageEstimator.NUM_BYTES_ARRAY_HEADER + RamUsageEstimator.NUM_BYTES_INT32);
             this.bytesUsed = bytesUsed;
         }
 
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
             {
                 int oldLen = offsets.Length;
                 offsets = ArrayUtil.Grow(offsets, offsets.Length + 1);
-                bytesUsed.AddAndGet((offsets.Length - oldLen) * RamUsageEstimator.NUM_BYTES_INT);
+                bytesUsed.AddAndGet((offsets.Length - oldLen) * RamUsageEstimator.NUM_BYTES_INT32);
             }
             pool.Append(bytes);
             offsets[lastElement++] = currentOffset;

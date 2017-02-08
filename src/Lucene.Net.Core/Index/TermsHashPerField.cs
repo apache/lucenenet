@@ -112,8 +112,8 @@ namespace Lucene.Net.Index
         {
             Debug.Assert(stream < streamCount);
             int intStart = postingsArray.intStarts[termID];
-            int[] ints = intPool.Buffers[intStart >> Int32BlockPool.INT_BLOCK_SHIFT];
-            int upto = intStart & Int32BlockPool.INT_BLOCK_MASK;
+            int[] ints = intPool.Buffers[intStart >> Int32BlockPool.INT32_BLOCK_SHIFT];
+            int upto = intStart & Int32BlockPool.INT32_BLOCK_MASK;
             reader.Init(bytePool, postingsArray.byteStarts[termID] + stream * ByteBlockPool.FIRST_LEVEL_SIZE, ints[upto + stream]);
         }
 
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                 // First time we are seeing this token since we last
                 // flushed the hash.
                 // Init stream slices
-                if (numPostingInt + intPool.Int32Upto > Int32BlockPool.INT_BLOCK_SIZE)
+                if (numPostingInt + intPool.Int32Upto > Int32BlockPool.INT32_BLOCK_SIZE)
                 {
                     intPool.NextBuffer();
                 }
@@ -189,8 +189,8 @@ namespace Lucene.Net.Index
             {
                 termID = (-termID) - 1;
                 int intStart = postingsArray.intStarts[termID];
-                intUptos = intPool.Buffers[intStart >> Int32BlockPool.INT_BLOCK_SHIFT];
-                intUptoStart = intStart & Int32BlockPool.INT_BLOCK_MASK;
+                intUptos = intPool.Buffers[intStart >> Int32BlockPool.INT32_BLOCK_SHIFT];
+                intUptoStart = intStart & Int32BlockPool.INT32_BLOCK_MASK;
                 consumer.AddTerm(termID);
             }
         }
@@ -235,7 +235,7 @@ namespace Lucene.Net.Index
             {
                 bytesHash.ByteStart(termID);
                 // Init stream slices
-                if (numPostingInt + intPool.Int32Upto > Int32BlockPool.INT_BLOCK_SIZE)
+                if (numPostingInt + intPool.Int32Upto > Int32BlockPool.INT32_BLOCK_SIZE)
                 {
                     intPool.NextBuffer();
                 }
@@ -264,8 +264,8 @@ namespace Lucene.Net.Index
             {
                 termID = (-termID) - 1;
                 int intStart = postingsArray.intStarts[termID];
-                intUptos = intPool.Buffers[intStart >> Int32BlockPool.INT_BLOCK_SHIFT];
-                intUptoStart = intStart & Int32BlockPool.INT_BLOCK_MASK;
+                intUptos = intPool.Buffers[intStart >> Int32BlockPool.INT32_BLOCK_SHIFT];
+                intUptoStart = intStart & Int32BlockPool.INT32_BLOCK_MASK;
                 consumer.AddTerm(termID);
             }
 

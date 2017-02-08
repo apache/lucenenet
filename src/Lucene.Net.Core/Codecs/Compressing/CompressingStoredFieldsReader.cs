@@ -203,15 +203,15 @@ namespace Lucene.Net.Codecs.Compressing
 #pragma warning restore 612, 618
                     break;
 
-                case CompressingStoredFieldsWriter.NUMERIC_INT:
+                case CompressingStoredFieldsWriter.NUMERIC_INT32:
                     visitor.Int32Field(info, @in.ReadInt32());
                     break;
 
-                case CompressingStoredFieldsWriter.NUMERIC_FLOAT:
+                case CompressingStoredFieldsWriter.NUMERIC_SINGLE:
                     visitor.SingleField(info, Number.Int32BitsToSingle(@in.ReadInt32()));
                     break;
 
-                case CompressingStoredFieldsWriter.NUMERIC_LONG:
+                case CompressingStoredFieldsWriter.NUMERIC_INT64:
                     visitor.Int64Field(info, @in.ReadInt64());
                     break;
 
@@ -234,12 +234,12 @@ namespace Lucene.Net.Codecs.Compressing
                     @in.SkipBytes(length);
                     break;
 
-                case CompressingStoredFieldsWriter.NUMERIC_INT:
-                case CompressingStoredFieldsWriter.NUMERIC_FLOAT:
+                case CompressingStoredFieldsWriter.NUMERIC_INT32:
+                case CompressingStoredFieldsWriter.NUMERIC_SINGLE:
                     @in.ReadInt32();
                     break;
 
-                case CompressingStoredFieldsWriter.NUMERIC_LONG:
+                case CompressingStoredFieldsWriter.NUMERIC_INT64:
                 case CompressingStoredFieldsWriter.NUMERIC_DOUBLE:
                     @in.ReadInt64();
                     break;

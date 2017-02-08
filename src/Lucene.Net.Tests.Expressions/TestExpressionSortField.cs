@@ -13,7 +13,7 @@ namespace Lucene.Net.Tests.Expressions
 			Expression expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			SimpleBindings bindings = new SimpleBindings();
 			bindings.Add(new SortField("_score", SortFieldType.SCORE));
-			bindings.Add(new SortField("popularity", SortFieldType.INT));
+			bindings.Add(new SortField("popularity", SortFieldType.INT32));
 			SortField sf = expr.GetSortField(bindings, true);
 			AreEqual("<expr \"sqrt(_score) + ln(popularity)\">!", sf.ToString());
 		}
@@ -24,10 +24,10 @@ namespace Lucene.Net.Tests.Expressions
 			Expression expr = JavascriptCompiler.Compile("sqrt(_score) + ln(popularity)");
 			SimpleBindings bindings = new SimpleBindings();
 			bindings.Add(new SortField("_score", SortFieldType.SCORE));
-			bindings.Add(new SortField("popularity", SortFieldType.INT));
+			bindings.Add(new SortField("popularity", SortFieldType.INT32));
 			SimpleBindings otherBindings = new SimpleBindings();
-			otherBindings.Add(new SortField("_score", SortFieldType.LONG));
-			otherBindings.Add(new SortField("popularity", SortFieldType.INT));
+			otherBindings.Add(new SortField("_score", SortFieldType.INT64));
+			otherBindings.Add(new SortField("popularity", SortFieldType.INT32));
 			SortField sf1 = expr.GetSortField(bindings, true);
 			// different order
 			SortField sf2 = expr.GetSortField(bindings, false);
@@ -68,7 +68,7 @@ namespace Lucene.Net.Tests.Expressions
 			// several variables
 			Expression exprI = JavascriptCompiler.Compile("b / c + e * g");
 			bindings.Add(new SortField("_score", SortFieldType.SCORE));
-			bindings.Add(new SortField("intfield", SortFieldType.INT));
+			bindings.Add(new SortField("intfield", SortFieldType.INT32));
 			bindings.Add("a", exprA);
 			bindings.Add("b", exprB);
 			bindings.Add("c", exprC);

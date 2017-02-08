@@ -1315,7 +1315,7 @@ namespace Lucene.Net.Facet
             DrillSidewaysResult r = ds.Search(ddq, 10); // this used to fail on IllegalArgEx
             Assert.AreEqual(0, r.Hits.TotalHits);
 
-            r = ds.Search(ddq, null, null, 10, new Sort(new SortField("foo", SortFieldType.INT)), false, false); // this used to fail on IllegalArgEx
+            r = ds.Search(ddq, null, null, 10, new Sort(new SortField("foo", SortFieldType.INT32)), false, false); // this used to fail on IllegalArgEx
             Assert.AreEqual(0, r.Hits.TotalHits);
 
             IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);

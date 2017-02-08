@@ -96,11 +96,11 @@ namespace Lucene.Net.Tests.Expressions
             {
                 bool reversed = Random().NextBoolean();
                 SortField[] fields =
-				{ new SortField("int", SortFieldType.INT, reversed
-				    ), new SortField("long", SortFieldType.LONG, reversed), new SortField("float", 
-				        SortFieldType.FLOAT, reversed), new SortField("double", SortFieldType.DOUBLE, 
-				            reversed), new SortField("intdocvalues", SortFieldType.INT, reversed), new SortField
-				                ("floatdocvalues", SortFieldType.FLOAT, reversed), new SortField("score", SortFieldType.SCORE) };
+				{ new SortField("int", SortFieldType.INT32, reversed
+				    ), new SortField("long", SortFieldType.INT64, reversed), new SortField("float", 
+				        SortFieldType.SINGLE, reversed), new SortField("double", SortFieldType.DOUBLE, 
+				            reversed), new SortField("intdocvalues", SortFieldType.INT32, reversed), new SortField
+				                ("floatdocvalues", SortFieldType.SINGLE, reversed), new SortField("score", SortFieldType.SCORE) };
                 //TODO: Add Shuffle extension
                 //Collections.Shuffle(Arrays.AsList(fields), Random());
                 int numSorts = TestUtil.NextInt(Random(), 1, fields.Length);

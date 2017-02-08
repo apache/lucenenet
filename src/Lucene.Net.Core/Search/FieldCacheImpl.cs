@@ -555,8 +555,8 @@ namespace Lucene.Net.Search
                 if (parser == null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
-                    // setting parser = DEFAULT_SHORT_PARSER) so cache
-                    // key includes DEFAULT_SHORT_PARSER:
+                    // setting parser = DEFAULT_INT16_PARSER) so cache
+                    // key includes DEFAULT_INT16_PARSER:
                     return wrapper.GetBytes(reader, key.field, FieldCache.DEFAULT_BYTE_PARSER, setDocsWithField);
                 }
 
@@ -699,9 +699,9 @@ namespace Lucene.Net.Search
                 if (parser == null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
-                    // setting parser = DEFAULT_SHORT_PARSER) so cache
-                    // key includes DEFAULT_SHORT_PARSER:
-                    return wrapper.GetInt16s(reader, key.field, FieldCache.DEFAULT_SHORT_PARSER, setDocsWithField);
+                    // setting parser = DEFAULT_INT16_PARSER) so cache
+                    // key includes DEFAULT_INT16_PARSER:
+                    return wrapper.GetInt16s(reader, key.field, FieldCache.DEFAULT_INT16_PARSER, setDocsWithField);
                 }
 
                 values = new short[maxDoc];
@@ -873,16 +873,16 @@ namespace Lucene.Net.Search
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser =
-                    // DEFAULT_INT_PARSER/NUMERIC_UTILS_INT_PARSER) so
+                    // DEFAULT_INT32_PARSER/NUMERIC_UTILS_INT32_PARSER) so
                     // cache key includes
-                    // DEFAULT_INT_PARSER/NUMERIC_UTILS_INT_PARSER:
+                    // DEFAULT_INT32_PARSER/NUMERIC_UTILS_INT32_PARSER:
                     try
                     {
-                        return wrapper.GetInt32s(reader, key.field, FieldCache.DEFAULT_INT_PARSER, setDocsWithField);
+                        return wrapper.GetInt32s(reader, key.field, FieldCache.DEFAULT_INT32_PARSER, setDocsWithField);
                     }
                     catch (System.FormatException)
                     {
-                        return wrapper.GetInt32s(reader, key.field, FieldCache.NUMERIC_UTILS_INT_PARSER, setDocsWithField);
+                        return wrapper.GetInt32s(reader, key.field, FieldCache.NUMERIC_UTILS_INT32_PARSER, setDocsWithField);
                     }
                 }
 
@@ -931,7 +931,7 @@ namespace Lucene.Net.Search
                     {
                         // Lazy alloc so for the numeric field case
                         // (which will hit a System.FormatException
-                        // when we first try the DEFAULT_INT_PARSER),
+                        // when we first try the DEFAULT_INT32_PARSER),
                         // we don't double-alloc:
                         int startBitsPerValue;
                         // Make sure than missing values (0) can be stored without resizing
@@ -1144,16 +1144,16 @@ namespace Lucene.Net.Search
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser =
-                    // DEFAULT_FLOAT_PARSER/NUMERIC_UTILS_FLOAT_PARSER) so
+                    // DEFAULT_SINGLE_PARSER/NUMERIC_UTILS_SINGLE_PARSER) so
                     // cache key includes
-                    // DEFAULT_FLOAT_PARSER/NUMERIC_UTILS_FLOAT_PARSER:
+                    // DEFAULT_SINGLE_PARSER/NUMERIC_UTILS_SINGLE_PARSER:
                     try
                     {
-                        return wrapper.GetSingles(reader, key.field, FieldCache.DEFAULT_FLOAT_PARSER, setDocsWithField);
+                        return wrapper.GetSingles(reader, key.field, FieldCache.DEFAULT_SINGLE_PARSER, setDocsWithField);
                     }
                     catch (System.FormatException)
                     {
-                        return wrapper.GetSingles(reader, key.field, FieldCache.NUMERIC_UTILS_FLOAT_PARSER, setDocsWithField);
+                        return wrapper.GetSingles(reader, key.field, FieldCache.NUMERIC_UTILS_SINGLE_PARSER, setDocsWithField);
                     }
                 }
 
@@ -1202,7 +1202,7 @@ namespace Lucene.Net.Search
                     {
                         // Lazy alloc so for the numeric field case
                         // (which will hit a System.FormatException
-                        // when we first try the DEFAULT_INT_PARSER),
+                        // when we first try the DEFAULT_INT32_PARSER),
                         // we don't double-alloc:
                         values = new float[reader.MaxDoc];
                         valuesRef.Set(values);
@@ -1315,16 +1315,16 @@ namespace Lucene.Net.Search
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser =
-                    // DEFAULT_LONG_PARSER/NUMERIC_UTILS_LONG_PARSER) so
+                    // DEFAULT_INT64_PARSER/NUMERIC_UTILS_INT64_PARSER) so
                     // cache key includes
-                    // DEFAULT_LONG_PARSER/NUMERIC_UTILS_LONG_PARSER:
+                    // DEFAULT_INT64_PARSER/NUMERIC_UTILS_INT64_PARSER:
                     try
                     {
-                        return wrapper.GetInt64s(reader, key.field, FieldCache.DEFAULT_LONG_PARSER, setDocsWithField);
+                        return wrapper.GetInt64s(reader, key.field, FieldCache.DEFAULT_INT64_PARSER, setDocsWithField);
                     }
                     catch (System.FormatException)
                     {
-                        return wrapper.GetInt64s(reader, key.field, FieldCache.NUMERIC_UTILS_LONG_PARSER, setDocsWithField);
+                        return wrapper.GetInt64s(reader, key.field, FieldCache.NUMERIC_UTILS_INT64_PARSER, setDocsWithField);
                     }
                 }
 
@@ -1373,7 +1373,7 @@ namespace Lucene.Net.Search
                     {
                         // Lazy alloc so for the numeric field case
                         // (which will hit a System.FormatException
-                        // when we first try the DEFAULT_INT_PARSER),
+                        // when we first try the DEFAULT_INT32_PARSER),
                         // we don't double-alloc:
                         int startBitsPerValue;
                         // Make sure than missing values (0) can be stored without resizing
@@ -1545,7 +1545,7 @@ namespace Lucene.Net.Search
                     {
                         // Lazy alloc so for the numeric field case
                         // (which will hit a System.FormatException
-                        // when we first try the DEFAULT_INT_PARSER),
+                        // when we first try the DEFAULT_INT32_PARSER),
                         // we don't double-alloc:
                         values = new double[reader.MaxDoc];
                         valuesRef.Set(values);

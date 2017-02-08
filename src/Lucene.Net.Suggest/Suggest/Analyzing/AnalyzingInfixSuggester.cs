@@ -106,7 +106,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         /// <summary>
         /// How we sort the postings and search results. </summary>
-        private static readonly Sort SORT = new Sort(new SortField("weight", SortFieldType.LONG, true));
+        private static readonly Sort SORT = new Sort(new SortField("weight", SortFieldType.INT64, true));
 
         /// <summary>
         /// Create a new instance, loading from a previously built

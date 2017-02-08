@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
                 // 1. when indexing, when hash is 50% full, rehash() suddenly needs 2*size ints.
                 //    TODO: can this same OOM happen in THPF?
                 // 2. when flushing, we need 1 int per value (slot in the ordMap).
-                iwBytesUsed.AddAndGet(2 * RamUsageEstimator.NUM_BYTES_INT);
+                iwBytesUsed.AddAndGet(2 * RamUsageEstimator.NUM_BYTES_INT32);
             }
 
             if (currentUpto == currentValues.Length)
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
                 currentValues = ArrayUtil.Grow(currentValues, currentValues.Length + 1);
                 // reserve additional space for max # values per-doc
                 // when flushing, we need an int[] to sort the mapped-ords within the doc
-                iwBytesUsed.AddAndGet((currentValues.Length - currentUpto) * 2 * RamUsageEstimator.NUM_BYTES_INT);
+                iwBytesUsed.AddAndGet((currentValues.Length - currentUpto) * 2 * RamUsageEstimator.NUM_BYTES_INT32);
             }
 
             currentValues[currentUpto] = termID;

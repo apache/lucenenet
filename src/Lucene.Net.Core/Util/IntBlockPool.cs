@@ -30,13 +30,24 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class Int32BlockPool
     {
-        public static readonly int INT_BLOCK_SHIFT = 13;
-        public static readonly int INT_BLOCK_SIZE = 1 << INT_BLOCK_SHIFT;
-        public static readonly int INT_BLOCK_MASK = INT_BLOCK_SIZE - 1;
+        /// <summary>
+        /// NOTE: This was INT_BLOCK_SHIFT in Lucene
+        /// </summary>
+        public static readonly int INT32_BLOCK_SHIFT = 13;
+
+        /// <summary>
+        /// NOTE: This was INT_BLOCK_SIZE in Lucene
+        /// </summary>
+        public static readonly int INT32_BLOCK_SIZE = 1 << INT32_BLOCK_SHIFT;
+
+        /// <summary>
+        /// NOTE: This was INT_BLOCK_MASK in Lucene
+        /// </summary>
+        public static readonly int INT32_BLOCK_MASK = INT32_BLOCK_SIZE - 1;
 
         /// <summary>
         /// Abstract class for allocating and freeing int
-        ///  blocks.
+        /// blocks.
         /// </summary>
         public abstract class Allocator
         {
@@ -69,7 +80,7 @@ namespace Lucene.Net.Util
             /// Creates a new <seealso cref="DirectAllocator"/> with a default block size
             /// </summary>
             public DirectAllocator()
-                : base(INT_BLOCK_SIZE)
+                : base(INT32_BLOCK_SIZE)
             {
             }
 
@@ -137,8 +148,8 @@ namespace Lucene.Net.Util
         public Int32BlockPool(Allocator allocator)
         {
             // set defaults
-            Int32Upto = INT_BLOCK_SIZE;
-            Int32Offset = -INT_BLOCK_SIZE;
+            Int32Upto = INT32_BLOCK_SIZE;
+            Int32Offset = -INT32_BLOCK_SIZE;
 
             this.allocator = allocator;
         }
@@ -195,8 +206,8 @@ namespace Lucene.Net.Util
                 else
                 {
                     bufferUpto = -1;
-                    Int32Upto = INT_BLOCK_SIZE;
-                    Int32Offset = -INT_BLOCK_SIZE;
+                    Int32Upto = INT32_BLOCK_SIZE;
+                    Int32Offset = -INT32_BLOCK_SIZE;
                     buffer = null;
                 }
             }
@@ -220,7 +231,7 @@ namespace Lucene.Net.Util
             bufferUpto++;
 
             Int32Upto = 0;
-            Int32Offset += INT_BLOCK_SIZE;
+            Int32Offset += INT32_BLOCK_SIZE;
         }
 
         /// <summary>
@@ -228,7 +239,7 @@ namespace Lucene.Net.Util
         /// <seealso cref= SliceReader </seealso>
         private int NewSlice(int size)
         {
-            if (Int32Upto > INT_BLOCK_SIZE - size)
+            if (Int32Upto > INT32_BLOCK_SIZE - size)
             {
                 NextBuffer();
                 Debug.Assert(AssertSliceBuffer(buffer));
@@ -277,7 +288,7 @@ namespace Lucene.Net.Util
             int newLevel = NEXT_LEVEL_ARRAY[level - 1];
             int newSize = LEVEL_SIZE_ARRAY[newLevel];
             // Maybe allocate another block
-            if (Int32Upto > INT_BLOCK_SIZE - newSize)
+            if (Int32Upto > INT32_BLOCK_SIZE - newSize)
             {
                 NextBuffer();
                 Debug.Assert(AssertSliceBuffer(buffer));
@@ -323,9 +334,9 @@ namespace Lucene.Net.Util
             /// </summary>
             public virtual void WriteInt32(int value)
             {
-                int[] ints = pool.buffers[offset >> INT_BLOCK_SHIFT];
+                int[] ints = pool.buffers[offset >> INT32_BLOCK_SHIFT];
                 Debug.Assert(ints != null);
-                int relativeOffset = offset & INT_BLOCK_MASK;
+                int relativeOffset = offset & INT32_BLOCK_MASK;
                 if (ints[relativeOffset] != 0)
                 {
                     // End of slice; allocate a new one
@@ -389,20 +400,20 @@ namespace Lucene.Net.Util
             /// </summary>
             public void Reset(int startOffset, int endOffset)
             {
-                bufferUpto = startOffset / INT_BLOCK_SIZE;
-                bufferOffset = bufferUpto * INT_BLOCK_SIZE;
+                bufferUpto = startOffset / INT32_BLOCK_SIZE;
+                bufferOffset = bufferUpto * INT32_BLOCK_SIZE;
                 this.end = endOffset;
                 upto = startOffset;
                 level = 1;
 
                 buffer = pool.buffers[bufferUpto];
-                upto = startOffset & INT_BLOCK_MASK;
+                upto = startOffset & INT32_BLOCK_MASK;
 
                 int firstSize = Int32BlockPool.LEVEL_SIZE_ARRAY[0];
                 if (startOffset + firstSize >= endOffset)
                 {
                     // There is only this one slice to read
-                    limit = endOffset & INT_BLOCK_MASK;
+                    limit = endOffset & INT32_BLOCK_MASK;
                 }
                 else
                 {
@@ -445,11 +456,11 @@ namespace Lucene.Net.Util
                 level = NEXT_LEVEL_ARRAY[level - 1];
                 int newSize = LEVEL_SIZE_ARRAY[level];
 
-                bufferUpto = nextIndex / INT_BLOCK_SIZE;
-                bufferOffset = bufferUpto * INT_BLOCK_SIZE;
+                bufferUpto = nextIndex / INT32_BLOCK_SIZE;
+                bufferOffset = bufferUpto * INT32_BLOCK_SIZE;
 
                 buffer = pool.Buffers[bufferUpto];
-                upto = nextIndex & INT_BLOCK_MASK;
+                upto = nextIndex & INT32_BLOCK_MASK;
 
                 if (nextIndex + newSize >= end)
                 {

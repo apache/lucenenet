@@ -482,7 +482,7 @@ namespace Lucene.Net.Util
             /// tested -- if two cache entries have different parsers or datatypes but
             /// the cached values are the same Object (== not just equal()) this method
             /// does not consider that a red flag.  this allows for subtle variations
-            /// in the way a Parser is specified (null vs DEFAULT_LONG_PARSER, etc...)
+            /// in the way a Parser is specified (null vs DEFAULT_INT64_PARSER, etc...)
             /// </p>
             /// </summary>
             public static readonly InsanityType VALUEMISMATCH = new InsanityType("VALUEMISMATCH");

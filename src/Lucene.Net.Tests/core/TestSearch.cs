@@ -141,7 +141,7 @@ namespace Lucene.Net
 
             ScoreDoc[] hits = null;
 
-            Sort sort = new Sort(SortField.FIELD_SCORE, new SortField("id", SortFieldType.INT));
+            Sort sort = new Sort(SortField.FIELD_SCORE, new SortField("id", SortFieldType.INT32));
 
             foreach (Query query in BuildQueries())
             {

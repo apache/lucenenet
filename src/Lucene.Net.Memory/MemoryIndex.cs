@@ -215,10 +215,10 @@ namespace Lucene.Net.Index.Memory
             this.storeOffsets = storeOffsets;
             this.bytesUsed = Counter.NewCounter();
             int maxBufferedByteBlocks = (int)((maxReusedBytes / 2) / ByteBlockPool.BYTE_BLOCK_SIZE);
-            int maxBufferedIntBlocks = (int)((maxReusedBytes - (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE)) / (Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT));
-            Debug.Assert((maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT) <= maxReusedBytes);
+            int maxBufferedIntBlocks = (int)((maxReusedBytes - (maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE)) / (Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32));
+            Debug.Assert((maxBufferedByteBlocks * ByteBlockPool.BYTE_BLOCK_SIZE) + (maxBufferedIntBlocks * Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32) <= maxReusedBytes);
             byteBlockPool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, maxBufferedByteBlocks, bytesUsed));
-            intBlockPool = new Int32BlockPool(new RecyclingInt32BlockAllocator(Int32BlockPool.INT_BLOCK_SIZE, maxBufferedIntBlocks, bytesUsed));
+            intBlockPool = new Int32BlockPool(new RecyclingInt32BlockAllocator(Int32BlockPool.INT32_BLOCK_SIZE, maxBufferedIntBlocks, bytesUsed));
             postingsWriter = new Int32BlockPool.SliceWriter(intBlockPool);
         }
 
@@ -730,9 +730,9 @@ namespace Lucene.Net.Index.Memory
             public override int[] Init()
             {
                 int[] ord = base.Init();
-                start = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT)];
-                end = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT)];
-                freq = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT)];
+                start = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT32)];
+                end = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT32)];
+                freq = new int[ArrayUtil.Oversize(ord.Length, RamUsageEstimator.NUM_BYTES_INT32)];
                 Debug.Assert(start.Length >= ord.Length);
                 Debug.Assert(end.Length >= ord.Length);
                 Debug.Assert(freq.Length >= ord.Length);

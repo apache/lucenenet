@@ -495,7 +495,7 @@ namespace Lucene.Net.Tests.Join
                 sortFields.Add(new SortField(prefix + Random().Next(numFields), SortFieldType.STRING, Random().NextBoolean()));
             }
             // Break ties:
-            sortFields.Add(new SortField(prefix + "ID", SortFieldType.INT));
+            sortFields.Add(new SortField(prefix + "ID", SortFieldType.INT32));
             return new Sort(sortFields.ToArray());
         }
 

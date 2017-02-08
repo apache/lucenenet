@@ -713,7 +713,7 @@ namespace Lucene.Net.Index
             private readonly Counter bytesUsed;
 
             public Int32BlockAllocator(Counter bytesUsed)
-                : base(Int32BlockPool.INT_BLOCK_SIZE)
+                : base(Int32BlockPool.INT32_BLOCK_SIZE)
             {
                 this.bytesUsed = bytesUsed;
             }
@@ -722,14 +722,14 @@ namespace Lucene.Net.Index
 
             public override int[] GetInt32Block()
             {
-                int[] b = new int[Int32BlockPool.INT_BLOCK_SIZE];
-                bytesUsed.AddAndGet(Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT);
+                int[] b = new int[Int32BlockPool.INT32_BLOCK_SIZE];
+                bytesUsed.AddAndGet(Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32);
                 return b;
             }
 
             public override void RecycleInt32Blocks(int[][] blocks, int offset, int length)
             {
-                bytesUsed.AddAndGet(-(length * (Int32BlockPool.INT_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT)));
+                bytesUsed.AddAndGet(-(length * (Int32BlockPool.INT32_BLOCK_SIZE * RamUsageEstimator.NUM_BYTES_INT32)));
             }
         }
 

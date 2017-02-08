@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
                         answer = Convert.ToSingle(f);
                         nf = new SingleField("nf", f, Field.Store.NO);
                         sf = new StoredField("nf", f);
-                        typeAnswer = NumericType.FLOAT;
+                        typeAnswer = NumericType.SINGLE;
                     }
                     else
                     {
@@ -306,7 +306,7 @@ namespace Lucene.Net.Index
                         answer = Convert.ToInt32(i);
                         nf = new Int32Field("nf", i, Field.Store.NO);
                         sf = new StoredField("nf", i);
-                        typeAnswer = NumericType.INT;
+                        typeAnswer = NumericType.INT32;
                     }
                     else
                     {
@@ -314,7 +314,7 @@ namespace Lucene.Net.Index
                         answer = Convert.ToInt64(l);
                         nf = new Int64Field("nf", l, Field.Store.NO);
                         sf = new StoredField("nf", l);
-                        typeAnswer = NumericType.LONG;
+                        typeAnswer = NumericType.INT64;
                     }
                 }
                 doc.Add(nf);

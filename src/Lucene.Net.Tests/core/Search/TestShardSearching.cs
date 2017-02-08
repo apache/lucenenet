@@ -262,7 +262,7 @@ namespace Lucene.Net.Search
                                 }
                                 else if (what == 2)
                                 {
-                                    sort = new Sort(new SortField[] { new SortField("docid", SortFieldType.INT, Random().NextBoolean()) });
+                                    sort = new Sort(new SortField[] { new SortField("docid", SortFieldType.INT32, Random().NextBoolean()) });
                                 }
                                 else
                                 {

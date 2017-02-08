@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
                     if (UpdateSlice(globalSlice))
                     {
                         //          System.out.println(Thread.currentThread() + ": apply globalSlice");
-                        globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT);
+                        globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT32);
                     }
                 }
                 finally
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
                 if (globalSlice.sliceTail != currentTail)
                 {
                     globalSlice.sliceTail = currentTail;
-                    globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT);
+                    globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT32);
                 }
 
                 FrozenBufferedUpdates packet = new FrozenBufferedUpdates(globalBufferedUpdates, false);
@@ -496,7 +496,7 @@ namespace Lucene.Net.Index
                 if (globalSlice.sliceTail != currentTail)
                 {
                     globalSlice.sliceTail = currentTail;
-                    globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT);
+                    globalSlice.Apply(globalBufferedUpdates, BufferedUpdates.MAX_INT32);
                 }
                 return globalBufferedUpdates.Any();
             }

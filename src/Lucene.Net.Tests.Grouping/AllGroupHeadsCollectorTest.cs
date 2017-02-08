@@ -123,7 +123,7 @@ namespace Lucene.Net.Search.Grouping
             w.Dispose();
             int maxDoc = reader.MaxDoc;
 
-            Sort sortWithinGroup = new Sort(new SortField("id_1", SortFieldType.INT, true));
+            Sort sortWithinGroup = new Sort(new SortField("id_1", SortFieldType.INT32, true));
             var allGroupHeadsCollector = CreateRandomCollector(groupField, sortWithinGroup, canUseIDV, valueType);
             indexSearcher.Search(new TermQuery(new Term("content", "random")), allGroupHeadsCollector);
             assertTrue(ArrayContains(new int[] { 2, 3, 5, 7 }, allGroupHeadsCollector.RetrieveGroupHeads()));
@@ -549,7 +549,7 @@ namespace Lucene.Net.Search.Grouping
             }
             else if (!scoreOnly)
             {
-                sortFields.Add(new SortField("id", SortFieldType.INT));
+                sortFields.Add(new SortField("id", SortFieldType.INT32));
             }
             return new Sort(sortFields.ToArray(/*new SortField[sortFields.size()]*/));
         }

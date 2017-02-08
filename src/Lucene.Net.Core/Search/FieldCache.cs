@@ -572,7 +572,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IInt16Parser DEFAULT_SHORT_PARSER = new AnonymousInt16Parser(); // LUCENENET TODO: Rename DEFAULT_INT16_PARSER
+        /// <summary>
+        /// NOTE: This was DEFAULT_SHORT_PARSER in Lucene
+        /// </summary>
+        public static readonly IInt16Parser DEFAULT_INT16_PARSER = new AnonymousInt16Parser();
 
 
         private sealed class AnonymousInt16Parser : IInt16Parser
@@ -591,7 +594,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(IFieldCache).FullName + ".DEFAULT_SHORT_PARSER"; // LUCENENET TODO: Rename DEFAULT_INT16_PARSER
+                return typeof(IFieldCache).FullName + ".DEFAULT_INT16_PARSER";
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -600,7 +603,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IInt32Parser DEFAULT_INT_PARSER = new AnonymousInt32Parser(); // LUCENENET TODO: Rename DEFAULT_INT32_PARSER
+        /// <summary>
+        /// NOTE: This was DEFAULT_INT_PARSER in Lucene
+        /// </summary>
+        public static readonly IInt32Parser DEFAULT_INT32_PARSER = new AnonymousInt32Parser();
 
         private sealed class AnonymousInt32Parser : IInt32Parser
         {
@@ -623,11 +629,14 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(IFieldCache).FullName + ".DEFAULT_INT_PARSER"; // LUCENENET TODO: Rename DEFAULT_INT32_PARSER
+                return typeof(IFieldCache).FullName + ".DEFAULT_INT32_PARSER";
             }
         }
 
-        public static readonly ISingleParser DEFAULT_FLOAT_PARSER = new AnonymousSingleParser();  // LUCENENET TODO: Rename DEFAULT_SINGLE_PARSER
+        /// <summary>
+        /// NOTE: This was DEFAULT_FLOAT_PARSER in Lucene
+        /// </summary>
+        public static readonly ISingleParser DEFAULT_SINGLE_PARSER = new AnonymousSingleParser();
 
         private sealed class AnonymousSingleParser : ISingleParser
         {
@@ -654,11 +663,14 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(IFieldCache).FullName + ".DEFAULT_FLOAT_PARSER"; // LUCENENET TODO: Rename DEFAULT_SINGLE_PARSER
+                return typeof(IFieldCache).FullName + ".DEFAULT_SINGLE_PARSER";
             }
         }
 
-        public static readonly IInt64Parser DEFAULT_LONG_PARSER = new AnonymousInt64Parser(); // LUCENENET TODO: Rename DEFAULT_INT64_PARSER
+        /// <summary>
+        /// NOTE: This was DEFAULT_LONG_PARSER in Lucene
+        /// </summary>
+        public static readonly IInt64Parser DEFAULT_INT64_PARSER = new AnonymousInt64Parser();
 
         private sealed class AnonymousInt64Parser : IInt64Parser
         {
@@ -681,7 +693,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(IFieldCache).FullName + ".DEFAULT_LONG_PARSER"; // LUCENENET TODO: Rename DEFAULT_INT64_PARSER
+                return typeof(IFieldCache).FullName + ".DEFAULT_INT64_PARSER";
             }
         }
 
@@ -709,7 +721,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IInt32Parser NUMERIC_UTILS_INT_PARSER = new AnonymousNumericUtilsInt32Parser(); // LUCENENET TODO: Rename NUMERIC_UTILS_INT32_PARSER
+        /// <summary>
+        /// NOTE: This was NUMERIC_UTILS_INT_PARSER in Lucene
+        /// </summary>
+        public static readonly IInt32Parser NUMERIC_UTILS_INT32_PARSER = new AnonymousNumericUtilsInt32Parser();
 
         private sealed class AnonymousNumericUtilsInt32Parser : IInt32Parser
         {
@@ -728,11 +743,14 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_INT_PARSER";
+                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_INT32_PARSER";
             }
         }
 
-        public static readonly ISingleParser NUMERIC_UTILS_FLOAT_PARSER = new AnonymousNumericUtilsSingleParser(); // LUCENENET TODO: Rename NUMERIC_UTILS_SINGLE_PARSER
+        /// <summary>
+        /// NOTE: This was NUMERIC_UTILS_FLOAT_PARSER in Lucene
+        /// </summary>
+        public static readonly ISingleParser NUMERIC_UTILS_SINGLE_PARSER = new AnonymousNumericUtilsSingleParser();
 
         private sealed class AnonymousNumericUtilsSingleParser : ISingleParser
         {
@@ -746,7 +764,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_FLOAT_PARSER";
+                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_SINGLE_PARSER";
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -755,7 +773,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IInt64Parser NUMERIC_UTILS_LONG_PARSER = new AnonymousNumericUtilsInt64Parser(); // LUCENENET TODO: Rename NUMERIC_UTILS_INT64_PARSER
+        /// <summary>
+        /// NOTE: This was NUMERIC_UTILS_LONG_PARSER in Lucene
+        /// </summary>
+        public static readonly IInt64Parser NUMERIC_UTILS_INT64_PARSER = new AnonymousNumericUtilsInt64Parser();
 
         private sealed class AnonymousNumericUtilsInt64Parser : IInt64Parser
         {
@@ -769,7 +790,7 @@ namespace Lucene.Net.Search
 
             public override string ToString()
             {
-                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_LONG_PARSER";
+                return typeof(IFieldCache).FullName + ".NUMERIC_UTILS_INT64_PARSER";
             }
 
             public TermsEnum TermsEnum(Terms terms)

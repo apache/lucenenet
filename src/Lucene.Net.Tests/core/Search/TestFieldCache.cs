@@ -211,7 +211,7 @@ namespace Lucene.Net.Search
 
             FieldCache.Int64s longs = cache.GetInt64s(Reader, "theLong", Random().NextBoolean());
             Assert.AreSame(longs, cache.GetInt64s(Reader, "theLong", Random().NextBoolean()), "Second request to cache return same array");
-            Assert.AreSame(longs, cache.GetInt64s(Reader, "theLong", FieldCache.DEFAULT_LONG_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
+            Assert.AreSame(longs, cache.GetInt64s(Reader, "theLong", FieldCache.DEFAULT_INT64_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Assert.IsTrue(longs.Get(i) == (long.MaxValue - i), longs.Get(i) + " does not equal: " + (long.MaxValue - i) + " i=" + i);
@@ -228,7 +228,7 @@ namespace Lucene.Net.Search
 
             FieldCache.Int16s shorts = cache.GetInt16s(Reader, "theShort", Random().NextBoolean());
             Assert.AreSame(shorts, cache.GetInt16s(Reader, "theShort", Random().NextBoolean()), "Second request to cache return same array");
-            Assert.AreSame(shorts, cache.GetInt16s(Reader, "theShort", FieldCache.DEFAULT_SHORT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
+            Assert.AreSame(shorts, cache.GetInt16s(Reader, "theShort", FieldCache.DEFAULT_INT16_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Assert.IsTrue(shorts.Get(i) == (short)(short.MaxValue - i), shorts.Get(i) + " does not equal: " + (short.MaxValue - i));
@@ -237,7 +237,7 @@ namespace Lucene.Net.Search
 
             FieldCache.Int32s ints = cache.GetInt32s(Reader, "theInt", Random().NextBoolean());
             Assert.AreSame(ints, cache.GetInt32s(Reader, "theInt", Random().NextBoolean()), "Second request to cache return same array");
-            Assert.AreSame(ints, cache.GetInt32s(Reader, "theInt", FieldCache.DEFAULT_INT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
+            Assert.AreSame(ints, cache.GetInt32s(Reader, "theInt", FieldCache.DEFAULT_INT32_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Assert.IsTrue(ints.Get(i) == (int.MaxValue - i), ints.Get(i) + " does not equal: " + (int.MaxValue - i));
@@ -245,7 +245,7 @@ namespace Lucene.Net.Search
 
             FieldCache.Singles floats = cache.GetSingles(Reader, "theFloat", Random().NextBoolean());
             Assert.AreSame(floats, cache.GetSingles(Reader, "theFloat", Random().NextBoolean()), "Second request to cache return same array");
-            Assert.AreSame(floats, cache.GetSingles(Reader, "theFloat", FieldCache.DEFAULT_FLOAT_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
+            Assert.AreSame(floats, cache.GetSingles(Reader, "theFloat", FieldCache.DEFAULT_SINGLE_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Assert.IsTrue(floats.Get(i) == (float.MaxValue - i), floats.Get(i) + " does not equal: " + (float.MaxValue - i));
