@@ -332,7 +332,13 @@ namespace Lucene.Net.Util
         //[Test, LuceneNetSpecific]
         public virtual void TestForMembersAcceptingOrReturningIEnumerable(Type typeFromTargetAssembly)
         {
-            var names = GetMembersAcceptingOrReturningType(typeof(IEnumerable<>), typeFromTargetAssembly.Assembly, false);
+            TestForMembersAcceptingOrReturningIEnumerable(typeFromTargetAssembly, null);
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestForMembersAcceptingOrReturningIEnumerable(Type typeFromTargetAssembly, string exceptionRegex)
+        {
+            var names = GetMembersAcceptingOrReturningType(typeof(IEnumerable<>), typeFromTargetAssembly.Assembly, false, exceptionRegex);
 
             //if (VERBOSE)
             //{
@@ -348,9 +354,15 @@ namespace Lucene.Net.Util
         //[Test, LuceneNetSpecific]
         public virtual void TestForMembersAcceptingOrReturningListOrDictionary(Type typeFromTargetAssembly)
         {
+            TestForMembersAcceptingOrReturningListOrDictionary(typeFromTargetAssembly, null);
+        }
+
+        //[Test, LuceneNetSpecific]
+        public virtual void TestForMembersAcceptingOrReturningListOrDictionary(Type typeFromTargetAssembly, string exceptionRegex)
+        {
             var names = new List<string>();
-            names.AddRange(GetMembersAcceptingOrReturningType(typeof(List<>), typeFromTargetAssembly.Assembly, true));
-            names.AddRange(GetMembersAcceptingOrReturningType(typeof(Dictionary<,>), typeFromTargetAssembly.Assembly, true));
+            names.AddRange(GetMembersAcceptingOrReturningType(typeof(List<>), typeFromTargetAssembly.Assembly, true, exceptionRegex));
+            names.AddRange(GetMembersAcceptingOrReturningType(typeof(Dictionary<,>), typeFromTargetAssembly.Assembly, true, exceptionRegex));
 
             //if (VERBOSE)
             //{
@@ -389,8 +401,12 @@ namespace Lucene.Net.Util
                     if ((field.IsPrivate || field.IsAssembly) && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
                     {
                         var name = string.Concat(c.FullName, ".", field.Name);
-                        bool hasExceptions = !string.IsNullOrWhiteSpace(exceptionRegex);
-                        if (!hasExceptions || (hasExceptions && !Regex.IsMatch(name, exceptionRegex)))
+                        //bool hasExceptions = !string.IsNullOrWhiteSpace(exceptionRegex);
+                        //if (!hasExceptions || (hasExceptions && !Regex.IsMatch(name, exceptionRegex)))
+                        //{
+                        //    result.Add(name);
+                        //}
+                        if (!IsException(name, exceptionRegex))
                         {
                             result.Add(name);
                         }
@@ -929,6 +945,12 @@ namespace Lucene.Net.Util
                 (setMethod != null && !setMethod.IsPrivate));
         }
 
+        private static bool IsException(string name, string exceptionRegex)
+        {
+            bool hasExceptions = !string.IsNullOrWhiteSpace(exceptionRegex);
+            return (hasExceptions && Regex.IsMatch(name, exceptionRegex));
+        }
+
         /// <summary>
         /// Some parameters were incorrectly changed from List to IEnumerable during the port. This is
         /// to track down constructor and method parameters and property and method return types
@@ -936,7 +958,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns></returns>
-        private static IEnumerable<string> GetMembersAcceptingOrReturningType(Type lookFor, Assembly assembly, bool publiclyVisibleOnly)
+        private static IEnumerable<string> GetMembersAcceptingOrReturningType(Type lookFor, Assembly assembly, bool publiclyVisibleOnly, string exceptionRegex)
         {
             var result = new List<string>();
 
@@ -966,7 +988,12 @@ namespace Lucene.Net.Util
                                     && method.ReturnParameter.ParameterType.IsGenericType
                                     && method.ReturnParameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor))
                                 {
-                                    result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
+                                    var name = string.Concat(t.FullName, ".", member.Name, "()");
+
+                                    if (!IsException(name, exceptionRegex))
+                                    {
+                                        result.Add(name);
+                                    }
                                 }
 
                                 var parameters = method.GetParameters();
@@ -977,7 +1004,12 @@ namespace Lucene.Net.Util
                                         && parameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
                                         && member.DeclaringType.Equals(t.UnderlyingSystemType))
                                     {
-                                        result.Add(string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name));
+                                        var name = string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name);
+
+                                        if (!IsException(name, exceptionRegex))
+                                        {
+                                            result.Add(name);
+                                        }
                                     }
                                 }
                             }
@@ -996,7 +1028,12 @@ namespace Lucene.Net.Util
                                         && parameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
                                         && member.DeclaringType.Equals(t.UnderlyingSystemType))
                                     {
-                                        result.Add(string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name));
+                                        var name = string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name);
+
+                                        if (!IsException(name, exceptionRegex))
+                                        {
+                                            result.Add(name);
+                                        }
                                     }
                                 }
                             }
@@ -1006,7 +1043,12 @@ namespace Lucene.Net.Util
                             && ((PropertyInfo)member).PropertyType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
                             && (!publiclyVisibleOnly || IsNonPrivateProperty((PropertyInfo)member)))
                         {
-                            result.Add(string.Concat(t.FullName, ".", member.Name));
+                            var name = string.Concat(string.Concat(t.FullName, ".", member.Name));
+
+                            if (!IsException(name, exceptionRegex))
+                            {
+                                result.Add(name);
+                            }
                         }
                         //else if (member.MemberType == MemberTypes.Field
                         //    && ((FieldInfo)member).FieldType.IsGenericType

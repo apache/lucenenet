@@ -121,7 +121,7 @@ namespace Lucene.Net
         [TestCase(typeof(Lucene.Net.Analysis.Analyzer))]
         public override void TestForMembersAcceptingOrReturningListOrDictionary(Type typeFromTargetAssembly)
         {
-            base.TestForMembersAcceptingOrReturningListOrDictionary(typeFromTargetAssembly);
+            base.TestForMembersAcceptingOrReturningListOrDictionary(typeFromTargetAssembly, @"Support\.Arrays\.AsList");
         }
     }
 }
