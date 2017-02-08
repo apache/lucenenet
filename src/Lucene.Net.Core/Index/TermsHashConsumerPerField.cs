@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -29,6 +31,7 @@ namespace Lucene.Net.Index
 
         internal abstract void Finish();
 
+        [ExceptionToNetNumericConvention]
         internal abstract void SkippingLongTerm();
 
         internal abstract void Start(IIndexableField field);

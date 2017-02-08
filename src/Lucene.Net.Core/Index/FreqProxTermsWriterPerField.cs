@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -83,6 +84,7 @@ namespace Lucene.Net.Index
 
         internal bool hasPayloads;
 
+        [ExceptionToNetNumericConvention]
         internal override void SkippingLongTerm()
         {
         }

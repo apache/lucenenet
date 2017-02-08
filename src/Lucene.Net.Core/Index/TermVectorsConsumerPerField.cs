@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 
@@ -316,6 +317,7 @@ namespace Lucene.Net.Index
             WriteProx(postings, termID);
         }
 
+        [ExceptionToNetNumericConvention]
         internal override void SkippingLongTerm()
         {
         }
