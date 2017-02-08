@@ -349,8 +349,8 @@ namespace Lucene.Net.Util
         public virtual void TestForMembersAcceptingOrReturningListOrDictionary(Type typeFromTargetAssembly)
         {
             var names = new List<string>();
-            names.AddRange(GetMembersAcceptingOrReturningType(typeof(List<>), typeFromTargetAssembly.Assembly, false));
-            names.AddRange(GetMembersAcceptingOrReturningType(typeof(Dictionary<,>), typeFromTargetAssembly.Assembly, false));
+            names.AddRange(GetMembersAcceptingOrReturningType(typeof(List<>), typeFromTargetAssembly.Assembly, true));
+            names.AddRange(GetMembersAcceptingOrReturningType(typeof(Dictionary<,>), typeFromTargetAssembly.Assembly, true));
 
             //if (VERBOSE)
             //{
