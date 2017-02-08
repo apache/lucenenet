@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.VectorHighlight
             StringBuilder text = new StringBuilder(TEXT);
             //BreakIterator bi = BreakIterator.getWordInstance(Locale.ROOT);
             //BreakIterator bi = new WordBreakIterator(CultureInfo.CurrentCulture);
-            BreakIterator bi = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, CultureInfo.InvariantCulture);
+            BreakIterator bi = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, CultureInfo.InvariantCulture) { EnableHacks = true };
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
             int start = TEXT.IndexOf("formance");
@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.VectorHighlight
             StringBuilder text = new StringBuilder(TEXT);
             // we test this with default locale, its randomized by LuceneTestCase
             //BreakIterator bi = BreakIterator.getSentenceInstance(Locale.getDefault());
-            BreakIterator bi = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.CurrentCulture);
+            BreakIterator bi = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.CurrentCulture) { EnableHacks = true };
             IBoundaryScanner scanner = new BreakIteratorBoundaryScanner(bi);
 
             int start = TEXT.IndexOf("any application");

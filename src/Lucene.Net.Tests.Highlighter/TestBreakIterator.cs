@@ -37,7 +37,7 @@ namespace Lucene.Net.Search
         private BreakIterator GetWordInstance(CultureInfo locale)
         {
             //return new WordBreakIterator(locale);
-            return new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, locale);
+            return new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, locale) { EnableHacks = true };
         }
 
         private BreakIterator GetSentenceInstance(CultureInfo locale)
