@@ -77,7 +77,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Default max chunk size. </summary>
         /// <seealso cref= #MMapDirectory(File, LockFactory, int) </seealso>
-        public static readonly int DEFAULT_MAX_BUFF = Constants.JRE_IS_64BIT ? (1 << 30) : (1 << 28);
+        public static readonly int DEFAULT_MAX_BUFF = Constants.RUNTIME_IS_64BIT ? (1 << 30) : (1 << 28);
 
         private readonly int chunkSizePower;
 

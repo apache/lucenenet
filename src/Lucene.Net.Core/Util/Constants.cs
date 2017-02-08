@@ -34,17 +34,31 @@ namespace Lucene.Net.Util
         {
         }
 
-        /// <summary>
-        /// The value of <tt>System.getProperty("java.version")</tt>. * </summary>
-        public static readonly string JAVA_VERSION = AppSettings.Get("java.version", "");
-
-        public static readonly string JAVA_VENDOR = AppSettings.Get("java.vendor", "");
-        public static readonly string JVM_VENDOR = AppSettings.Get("java.vm.vendor", "");
-        public static readonly string JVM_VERSION = AppSettings.Get("java.vm.version", "");
-        public static readonly string JVM_NAME = AppSettings.Get("java.vm.name", "");
+        // LUCENENET NOTE: IMPORTANT - this line must be placed before RUNTIME_VERSION so it can be parsed.
+        private static Regex VERSION_PARSER = new Regex(@"(\d+\.\d+\.\d+\.\d+)", RegexOptions.Compiled);
 
         /// <summary>
-        /// The value of <tt>System.getProperty("os.name")</tt>. * </summary>
+#if NETSTANDARD
+        /// The value of the version parsed from <see cref="RuntimeInformation.FrameworkDescription"/>.
+#else
+        /// The value of <see cref="Environment.Version"/>.
+#endif
+        /// <para/>
+        /// NOTE: This was JAVA_VERSION in Lucene
+        /// </summary>
+        public static readonly string RUNTIME_VERSION = GetEnvironmentVariable("RUNTIME_VERSION", "?");
+
+
+        /// <summary>
+        /// NOTE: This was JAVA_VENDOR in Lucene
+        /// </summary>
+        public static readonly string RUNTIME_VENDOR = "Microsoft"; // AppSettings.Get("java.vendor", "");
+        //public static readonly string JVM_VENDOR = AppSettings.Get("java.vm.vendor", "");
+        //public static readonly string JVM_VERSION = AppSettings.Get("java.vm.version", "");
+        //public static readonly string JVM_NAME = AppSettings.Get("java.vm.name", "");
+
+        /// <summary>
+        /// The value of <see cref="Environment.GetEnvironmentVariable(string)"/> with parameter "OS".</summary>
         public static readonly string OS_NAME = GetEnvironmentVariable("OS", "Windows_NT") ?? "Linux";
 
         /// <summary>
@@ -70,27 +84,29 @@ namespace Lucene.Net.Util
         public static readonly string OS_ARCH = GetEnvironmentVariable("PROCESSOR_ARCHITECTURE", "x86");
         public static readonly string OS_VERSION = GetEnvironmentVariable("OS_VERSION", "?");
 
-        [Obsolete("We are not running on Java for heavens sake")]
-        public static readonly bool JRE_IS_MINIMUM_JAVA6 = (bool)new bool?(true); // prevent inlining in foreign class files
-
-        [Obsolete("We are not running on Java for heavens sake")]
-        public static readonly bool JRE_IS_MINIMUM_JAVA7 = (bool)new bool?(true); // prevent inlining in foreign class files
-
-        [Obsolete("We are not running on Java for heavens sake")]
-        public static readonly bool JRE_IS_MINIMUM_JAVA8;
+        //[Obsolete("We are not running on Java for heavens sake")]
+        //public static readonly bool JRE_IS_MINIMUM_JAVA6 = (bool)new bool?(true); // prevent inlining in foreign class files
 
         //[Obsolete("We are not running on Java for heavens sake")]
-        public static readonly bool JRE_IS_64BIT; // LUCENENET NOTE: We still need this constant to indicate 64 bit runtime.
+        //public static readonly bool JRE_IS_MINIMUM_JAVA7 = (bool)new bool?(true); // prevent inlining in foreign class files
+
+        //[Obsolete("We are not running on Java for heavens sake")]
+        //public static readonly bool JRE_IS_MINIMUM_JAVA8;
+
+        /// <summary>
+        /// NOTE: This was JRE_IS_64BIT in Lucene
+        /// </summary>
+        public static readonly bool RUNTIME_IS_64BIT; // LUCENENET NOTE: We still need this constant to indicate 64 bit runtime.
 
         static Constants()
         {
             if (IntPtr.Size == 8)
             {
-                JRE_IS_64BIT = true;// 64 bit machine
+                RUNTIME_IS_64BIT = true;// 64 bit machine
             }
             else if (IntPtr.Size == 4)
             {
-                JRE_IS_64BIT = false;// 32 bit machine
+                RUNTIME_IS_64BIT = false;// 32 bit machine
             }
 
             try
@@ -130,7 +146,7 @@ namespace Lucene.Net.Util
                 }
               }
             }
-            JRE_IS_64BIT = is64Bit;
+            RUNTIME_IS_64BIT = is64Bit;
 
             // this method only exists in Java 8:
             bool v8 = true;
@@ -190,8 +206,9 @@ namespace Lucene.Net.Util
         }
 
         private static Regex MAIN_VERSION_WITHOUT_ALPHA_BETA = new Regex("\\.", RegexOptions.Compiled);
+        
 
-        #region MEDIUM-TRUST Support
+#region MEDIUM-TRUST Support
 
         private static string GetEnvironmentVariable(string variable, string defaultValueOnSecurityException)
         {
@@ -208,9 +225,19 @@ namespace Lucene.Net.Util
 				
 #if NETSTANDARD
                 if (variable == "PROCESSOR_ARCHITECTURE") {
+                    
                     return RuntimeInformation.OSArchitecture.ToString();
                 }
 #endif
+
+                if (variable == "RUNTIME_VERSION")
+                {
+#if NETSTANDARD
+                    return ExtractString(RuntimeInformation.FrameworkDescription, VERSION_PARSER);
+#else
+                    return Environment.Version.ToString();
+#endif
+                }
 
                 return System.Environment.GetEnvironmentVariable(variable);
             }
@@ -221,5 +248,17 @@ namespace Lucene.Net.Util
         }
 
 #endregion MEDIUM-TRUST Support
+
+        // LUCENENET TODO: Move to Support ?
+        /// <summary>
+        /// Extracts the first group matched with the regex as a new string.
+        /// </summary>
+        /// <param name="input">The string to examine</param>
+        /// <param name="pattern">A regex object to use to extract the string</param>
+        private static string ExtractString(string input, Regex pattern)
+        {
+            Match m = pattern.Match(input);
+            return (m.Groups.Count > 1) ? m.Groups[1].Value : string.Empty;
+        }
     }
 }

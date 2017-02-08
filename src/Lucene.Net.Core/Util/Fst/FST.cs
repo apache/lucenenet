@@ -2070,7 +2070,7 @@ namespace Lucene.Net.Util.Fst
     /// </summary>
     public sealed class FST
     {
-        public static readonly int DEFAULT_MAX_BLOCK_BITS = Constants.JRE_IS_64BIT ? 30 : 28;
+        public static readonly int DEFAULT_MAX_BLOCK_BITS = Constants.RUNTIME_IS_64BIT ? 30 : 28;
 
         public FST()
         { }

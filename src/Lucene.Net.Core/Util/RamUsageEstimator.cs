@@ -36,9 +36,9 @@ namespace Lucene.Net.Util
     /// @lucene.internal </seealso>
     public sealed class RamUsageEstimator
     {
-        /// <summary>
-        /// JVM info string for debugging and reports. </summary>
-        public static readonly string JVM_INFO_STRING;
+        ///// <summary>
+        ///// JVM info string for debugging and reports. </summary>
+        //public static readonly string JVM_INFO_STRING; // LUCENENET specific - this is not being used
 
         /// <summary>
         /// One kilobyte bytes. </summary>
@@ -124,12 +124,12 @@ namespace Lucene.Net.Util
 
             // Initialize empirically measured defaults. We'll modify them to the current
             // JVM settings later on if possible.
-            int referenceSize = Constants.JRE_IS_64BIT ? 8 : 4;
-            int objectHeader = Constants.JRE_IS_64BIT ? 16 : 8;
+            int referenceSize = Constants.RUNTIME_IS_64BIT ? 8 : 4;
+            int objectHeader = Constants.RUNTIME_IS_64BIT ? 16 : 8;
             // The following is objectHeader + NUM_BYTES_INT32, but aligned (object alignment)
             // so on 64 bit JVMs it'll be align(16 + 4, @8) = 24.
-            int arrayHeader = Constants.JRE_IS_64BIT ? 24 : 12;
-            int objectAlignment = Constants.JRE_IS_64BIT ? 8 : 4;
+            int arrayHeader = Constants.RUNTIME_IS_64BIT ? 24 : 12;
+            int objectAlignment = Constants.RUNTIME_IS_64BIT ? 8 : 4;
 
 
             /* LUCENENET TODO
@@ -163,8 +163,8 @@ namespace Lucene.Net.Util
 
             // "best guess" based on reference size. We will attempt to modify
             // these to exact values if there is supported infrastructure.
-            objectHeader = Constants.JRE_IS_64BIT ? (8 + referenceSize) : 8;
-		    arrayHeader = Constants.JRE_IS_64BIT ? (8 + 2 * referenceSize) : 12;
+            objectHeader = Constants.RUNTIME_IS_64BIT ? (8 + referenceSize) : 8;
+		    arrayHeader = Constants.RUNTIME_IS_64BIT ? (8 + 2 * referenceSize) : 12;
 
             /* LUCENENET TODO
              
@@ -234,7 +234,8 @@ namespace Lucene.Net.Util
 
             NUM_BYTES_OBJECT_ALIGNMENT = objectAlignment;
 
-            JVM_INFO_STRING = "[JVM: " + Constants.JVM_NAME + ", " + Constants.JVM_VERSION + ", " + Constants.JVM_VENDOR + ", " + Constants.JAVA_VENDOR + ", " + Constants.JAVA_VERSION + "]";
+            // LUCENENET specific - this is not being used
+            //JVM_INFO_STRING = "[JVM: " + Constants.JVM_NAME + ", " + Constants.JVM_VERSION + ", " + Constants.JVM_VENDOR + ", " + Constants.JAVA_VENDOR + ", " + Constants.JAVA_VERSION + "]";
         }
 
         /// <summary>

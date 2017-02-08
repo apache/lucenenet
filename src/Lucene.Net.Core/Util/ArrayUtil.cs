@@ -210,7 +210,7 @@ namespace Lucene.Net.Util
                 return int.MaxValue;
             }
 
-            if (Constants.JRE_IS_64BIT)
+            if (Constants.RUNTIME_IS_64BIT)
             {
                 // round up to 8 byte alignment in 64bit env
                 switch (bytesPerElement)

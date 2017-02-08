@@ -4846,8 +4846,8 @@ namespace Lucene.Net.Index
             diagnostics["os"] = Constants.OS_NAME;
             diagnostics["os.arch"] = Constants.OS_ARCH;
             diagnostics["os.version"] = Constants.OS_VERSION;
-            diagnostics["java.version"] = Constants.JAVA_VERSION;
-            diagnostics["java.vendor"] = Constants.JAVA_VENDOR;
+            diagnostics["java.version"] = Constants.RUNTIME_VERSION;
+            diagnostics["java.vendor"] = Constants.RUNTIME_VENDOR;
             diagnostics["timestamp"] = Convert.ToString((DateTime.Now));
             if (details != null)
             {

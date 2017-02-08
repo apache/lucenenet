@@ -109,7 +109,7 @@ namespace Lucene.Net.Util
             //}
 
             Assert.IsTrue(RamUsageEstimator.NUM_BYTES_OBJECT_REF == 4 || RamUsageEstimator.NUM_BYTES_OBJECT_REF == 8);
-            if (!Constants.JRE_IS_64BIT)
+            if (!Constants.RUNTIME_IS_64BIT)
             {
                 assertEquals("For 32bit JVMs, reference size must always be 4?", 4, RamUsageEstimator.NUM_BYTES_OBJECT_REF);
             }
