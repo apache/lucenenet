@@ -35,19 +35,37 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts a 32 bit float to an 8 bit float.
+        /// Converts a 32 bit <see cref="float"/> to an 8 bit <see cref="float"/>.
         /// <br>Values less than zero are all mapped to zero.
         /// <br>Values are truncated (rounded down) to the nearest 8 bit value.
         /// <br>Values between zero and the smallest representable value
         /// are rounded up.
-        /// <para/>
-        /// NOTE: This was floatToByte() in Lucene
         /// </summary>
-        /// <param name="f"> the 32 bit float to be converted to an 8 bit float (byte) </param>
+        /// <param name="f"> the 32 bit <see cref="float"/> to be converted to an 8 bit <see cref="float"/> (<see cref="byte"/>)  </param>
         /// <param name="numMantissaBits"> the number of mantissa bits to use in the byte, with the remainder to be used in the exponent </param>
         /// <param name="zeroExp"> the zero-point in the range of exponent values </param>
         /// <returns> the 8 bit float representation </returns>
-        public static sbyte SingleToByte(float f, int numMantissaBits, int zeroExp) // LUCENENET TODO: can we remove the sbyte?
+        // LUCENENET specific overload for CLS compliance
+        public static byte SingleToByte(float f, int numMantissaBits, int zeroExp)
+        {
+            return (byte)SingleToSByte(f, numMantissaBits, zeroExp);
+        }
+
+        /// <summary>
+        /// Converts a 32 bit <see cref="float"/> to an 8 bit <see cref="float"/>.
+        /// <para/>Values less than zero are all mapped to zero.
+        /// <para/>Values are truncated (rounded down) to the nearest 8 bit value.
+        /// <para/>Values between zero and the smallest representable value
+        /// are rounded up.
+        /// <para/>
+        /// NOTE: This was floatToByte() in Lucene
+        /// </summary>
+        /// <param name="f"> the 32 bit <see cref="float"/> to be converted to an 8 bit <see cref="float"/> (<see cref="sbyte"/>) </param>
+        /// <param name="numMantissaBits"> the number of mantissa bits to use in the byte, with the remainder to be used in the exponent </param>
+        /// <param name="zeroExp"> the zero-point in the range of exponent values </param>
+        /// <returns> the 8 bit float representation </returns>
+        [CLSCompliant(false)]
+        public static sbyte SingleToSByte(float f, int numMantissaBits, int zeroExp)
         {
             // Adjustment from a float zero exponent to our zero exponent,
             // shifted over to our exponent position.
@@ -69,11 +87,23 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Converts an 8 bit float to a 32 bit float. 
+        /// Converts an 8 bit <see cref="float"/> to a 32 bit <see cref="float"/>. 
         /// <para/>
         /// NOTE: This was byteToFloat() in Lucene
         /// </summary>
-        public static float ByteToSingle(sbyte b, int numMantissaBits, int zeroExp) // LUCENENET TODO: can we remove the sbyte?
+        // LUCENENET specific overload for CLS compliance
+        public static float ByteToSingle(byte b, int numMantissaBits, int zeroExp)
+        {
+            return SByteToSingle((sbyte)b, numMantissaBits, zeroExp);
+        }
+
+        /// <summary>
+        /// Converts an 8 bit <see cref="float"/> to a 32 bit <see cref="float"/>. 
+        /// <para/>
+        /// NOTE: This was byteToFloat() in Lucene
+        /// </summary>
+        [CLSCompliant(false)]
+        public static float SByteToSingle(sbyte b, int numMantissaBits, int zeroExp)
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)
@@ -93,14 +123,29 @@ namespace Lucene.Net.Util
         //
 
         /// <summary>
-        /// floatToByte(b, mantissaBits=3, zeroExponent=15)
-        /// <br>smallest non-zero value = 5.820766E-10
-        /// <br>largest value = 7.5161928E9
-        /// <br>epsilon = 0.125
+        /// SingleToSByte((byte)b, mantissaBits=3, zeroExponent=15)
+        /// <para/>smallest non-zero value = 5.820766E-10
+        /// <para/>largest value = 7.5161928E9
+        /// <para/>epsilon = 0.125
         /// <para/>
         /// NOTE: This was floatToByte315() in Lucene
         /// </summary>
-        public static sbyte SingleToByte315(float f) // LUCENENET TODO: can we remove the sbyte?
+        // LUCENENET specific overload for CLS compliance
+        public static byte SingleToByte315(float f)
+        {
+            return (byte)SingleToSByte315(f);
+        }
+
+        /// <summary>
+        /// SingleToSByte(b, mantissaBits=3, zeroExponent=15)
+        /// <para/>smallest non-zero value = 5.820766E-10
+        /// <para/>largest value = 7.5161928E9
+        /// <para/>epsilon = 0.125
+        /// <para/>
+        /// NOTE: This was floatToByte315() in Lucene
+        /// </summary>
+        [CLSCompliant(false)]
+        public static sbyte SingleToSByte315(float f) 
         {
             int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
             int smallfloat = bits >> (24 - 3);
@@ -116,11 +161,23 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// byteToFloat(b, mantissaBits=3, zeroExponent=15) 
+        /// ByteToSingle(b, mantissaBits=3, zeroExponent=15) 
         /// <para/>
         /// NOTE: This was byte315ToFloat() in Lucene
         /// </summary>
-        public static float Byte315ToSingle(sbyte b) // LUCENENET TODO: can we remove the sbyte?
+        // LUCENENET specific overload for CLS compliance
+        public static float Byte315ToSingle(byte b)
+        {
+            return SByte315ToSingle((sbyte)b);
+        }
+
+        /// <summary>
+        /// SByteToSingle(b, mantissaBits=3, zeroExponent=15) 
+        /// <para/>
+        /// NOTE: This was byte315ToFloat() in Lucene
+        /// </summary>
+        [CLSCompliant(false)]
+        public static float SByte315ToSingle(sbyte b)
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)
@@ -134,14 +191,29 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// floatToByte(b, mantissaBits=5, zeroExponent=2)
-        /// <br>smallest nonzero value = 0.033203125
-        /// <br>largest value = 1984.0
-        /// <br>epsilon = 0.03125
+        /// SingleToByte(b, mantissaBits=5, zeroExponent=2)
+        /// <para/>smallest nonzero value = 0.033203125
+        /// <para/>largest value = 1984.0
+        /// <para/>epsilon = 0.03125
         /// <para/>
         /// NOTE: This was floatToByte52() in Lucene
         /// </summary>
-        public static sbyte SingleToByte52(float f) // LUCENENET TODO: can we remove the sbyte?
+        // LUCENENET specific overload for CLS compliance
+        public static byte SingleToByte52(float f)
+        {
+            return (byte)SingleToSByte315(f);
+        }
+
+        /// <summary>
+        /// SingleToSByte(b, mantissaBits=5, zeroExponent=2)
+        /// <para/>smallest nonzero value = 0.033203125
+        /// <para/>largest value = 1984.0
+        /// <para/>epsilon = 0.03125
+        /// <para/>
+        /// NOTE: This was floatToByte52() in Lucene
+        /// </summary>
+        [CLSCompliant(false)]
+        public static sbyte SingleToSByte52(float f)
         {
             int bits = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
             int smallfloat = bits >> (24 - 5);
@@ -157,11 +229,23 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// byteToFloat(b, mantissaBits=5, zeroExponent=2) 
+        /// ByteToFloat(b, mantissaBits=5, zeroExponent=2) 
         /// <para/>
         /// NOTE: This was byte52ToFloat() in Lucene
         /// </summary>
-        public static float Byte52ToSingle(sbyte b) // LUCENENET TODO: can we remove the sbyte?
+        // LUCENENET specific overload for CLS compliance
+        public static float Byte52ToSingle(byte b)
+        {
+            return SByte52ToSingle((sbyte)b);
+        }
+
+        /// <summary>
+        /// SByteToFloat(b, mantissaBits=5, zeroExponent=2) 
+        /// <para/>
+        /// NOTE: This was byte52ToFloat() in Lucene
+        /// </summary>
+        [CLSCompliant(false)]
+        public static float SByte52ToSingle(sbyte b)
         {
             // on Java1.5 & 1.6 JVMs, prebuilding a decoding array and doing a lookup
             // is only a little bit faster (anywhere from 0% to 7%)

@@ -54,7 +54,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (int i = 0; i < 256; i++)
             {
-                NORM_TABLE[i] = SmallSingle.Byte315ToSingle((sbyte)i);
+                NORM_TABLE[i] = SmallSingle.SByte315ToSingle((sbyte)i);
             }
         }
 
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search.Similarities
         /// <seealso cref= Lucene.Net.Util.SmallSingle </seealso>
         public override sealed long EncodeNormValue(float f)
         {
-            return SmallSingle.SingleToByte315(f);
+            return SmallSingle.SingleToSByte315(f);
         }
 
         /// <summary>

@@ -106,13 +106,13 @@ namespace Lucene.Net.Util
             for (int i = 0; i < 256; i++)
             {
                 float f1 = Orig_byteToFloat((sbyte)i);
-                float f2 = SmallSingle.ByteToSingle((sbyte)i, 3, 15);
-                float f3 = SmallSingle.Byte315ToSingle((sbyte)i);
+                float f2 = SmallSingle.SByteToSingle((sbyte)i, 3, 15);
+                float f3 = SmallSingle.SByte315ToSingle((sbyte)i);
                 Assert.AreEqual(f1, f2, 0.0);
                 Assert.AreEqual(f2, f3, 0.0);
 
-                float f4 = SmallSingle.ByteToSingle((sbyte)i, 5, 2);
-                float f5 = SmallSingle.Byte52ToSingle((sbyte)i);
+                float f4 = SmallSingle.SByteToSingle((sbyte)i, 5, 2);
+                float f5 = SmallSingle.SByte52ToSingle((sbyte)i);
                 Assert.AreEqual(f4, f5, 0.0);
             }
         }
@@ -122,19 +122,19 @@ namespace Lucene.Net.Util
         {
             Assert.AreEqual(0, Orig_floatToByte_v13(5.8123817E-10f)); // verify the old bug (see LUCENE-2937)
             Assert.AreEqual(1, Orig_floatToByte(5.8123817E-10f)); // verify it's fixed in this test code
-            Assert.AreEqual(1, SmallSingle.SingleToByte315(5.8123817E-10f)); // verify it's fixed
+            Assert.AreEqual(1, SmallSingle.SingleToSByte315(5.8123817E-10f)); // verify it's fixed
 
             // test some constants
-            Assert.AreEqual(0, SmallSingle.SingleToByte315(0));
+            Assert.AreEqual(0, SmallSingle.SingleToSByte315(0));
             //Java's Float.MIN_VALUE equals C#'s float.Epsilon
-            Assert.AreEqual(1, SmallSingle.SingleToByte315(float.Epsilon)); // underflow rounds up to smallest positive
-            Assert.AreEqual(255, SmallSingle.SingleToByte315(float.MaxValue) & 0xff); // overflow rounds down to largest positive
-            Assert.AreEqual(255, SmallSingle.SingleToByte315(float.PositiveInfinity) & 0xff);
+            Assert.AreEqual(1, SmallSingle.SingleToSByte315(float.Epsilon)); // underflow rounds up to smallest positive
+            Assert.AreEqual(255, SmallSingle.SingleToSByte315(float.MaxValue) & 0xff); // overflow rounds down to largest positive
+            Assert.AreEqual(255, SmallSingle.SingleToSByte315(float.PositiveInfinity) & 0xff);
 
             // all negatives map to 0
-            Assert.AreEqual(0, SmallSingle.SingleToByte315(-float.Epsilon));
-            Assert.AreEqual(0, SmallSingle.SingleToByte315(-float.MaxValue));
-            Assert.AreEqual(0, SmallSingle.SingleToByte315(float.NegativeInfinity));
+            Assert.AreEqual(0, SmallSingle.SingleToSByte315(-float.Epsilon));
+            Assert.AreEqual(0, SmallSingle.SingleToSByte315(-float.MaxValue));
+            Assert.AreEqual(0, SmallSingle.SingleToSByte315(float.NegativeInfinity));
 
             // up iterations for more exhaustive test after changing something
             int num = AtLeast(100000);
@@ -146,13 +146,13 @@ namespace Lucene.Net.Util
                     continue;
                 }
                 sbyte b1 = Orig_floatToByte(f);
-                sbyte b2 = SmallSingle.SingleToByte(f, 3, 15);
-                sbyte b3 = SmallSingle.SingleToByte315(f);
+                sbyte b2 = SmallSingle.SingleToSByte(f, 3, 15);
+                sbyte b3 = SmallSingle.SingleToSByte315(f);
                 Assert.AreEqual(b1, b2);
                 Assert.AreEqual(b2, b3);
 
-                sbyte b4 = SmallSingle.SingleToByte(f, 5, 2);
-                sbyte b5 = SmallSingle.SingleToByte52(f);
+                sbyte b4 = SmallSingle.SingleToSByte(f, 5, 2);
+                sbyte b5 = SmallSingle.SingleToSByte52(f);
                 Assert.AreEqual(b4, b5);
             }
         }

@@ -108,7 +108,7 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         protected internal virtual sbyte EncodeNormValue(float boost, int fieldLength) // LUCENENET TODO: Can we use byte?
         {
-            return SmallSingle.SingleToByte315(boost / (float)Math.Sqrt(fieldLength));
+            return SmallSingle.SingleToSByte315(boost / (float)Math.Sqrt(fieldLength));
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace Lucene.Net.Search.Similarities
         {
             for (int i = 0; i < 256; i++)
             {
-                float f = SmallSingle.Byte315ToSingle((sbyte)i);
+                float f = SmallSingle.SByte315ToSingle((sbyte)i);
                 NORM_TABLE[i] = 1.0f / (f * f);
             }
         }
