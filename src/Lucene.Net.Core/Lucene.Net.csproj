@@ -73,7 +73,6 @@
     <Compile Include="Analysis\TokenAttributes\PositionLengthAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\ITermToBytesRefAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\ITypeAttribute.cs" />
-    <Compile Include="Analysis\TokenAttributes\TermToBytesRefAttribute.cs" />
     <Compile Include="Analysis\TokenAttributes\TypeAttribute.cs" />
     <Compile Include="Analysis\TokenFilter.cs" />
     <Compile Include="Analysis\Tokenizer.cs" />
