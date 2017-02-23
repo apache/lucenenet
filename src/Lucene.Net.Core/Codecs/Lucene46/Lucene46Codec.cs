@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene46
         /// <summary>
         /// Sole constructor. </summary>
         public Lucene46Codec()
-            : base("Lucene46")
+            : base()
         {
             postingsFormat = new PerFieldPostingsFormatAnonymousInnerClassHelper(this);
             docValuesFormat = new PerFieldDocValuesFormatAnonymousInnerClassHelper(this);

@@ -29,6 +29,7 @@ namespace Lucene.Net.Codecs.Compressing.dummy
     /// CompressionCodec that does not compress data, useful for testing. </summary>
     // In its own package to make sure the oal.codecs.compressing classes are
     // visible enough to let people write their own CompressionMode
+    [CodecName("DummyCompressingStoredFields")]
     public class DummyCompressingCodec : CompressingCodec
     {
         public static readonly CompressionMode DUMMY = new CompressionModeAnonymousInnerClassHelper();
@@ -98,7 +99,7 @@ namespace Lucene.Net.Codecs.Compressing.dummy
         /// <summary>
         /// Constructor that allows to configure the chunk size. </summary>
         public DummyCompressingCodec(int chunkSize, bool withSegmentSuffix)
-            : base("DummyCompressingStoredFields", withSegmentSuffix ? "DummyCompressingStoredFields" : "", DUMMY, chunkSize)
+            : base(withSegmentSuffix ? "DummyCompressingStoredFields" : "", DUMMY, chunkSize)
         {
         }
 

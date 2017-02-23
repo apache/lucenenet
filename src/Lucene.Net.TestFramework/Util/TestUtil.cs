@@ -74,6 +74,7 @@ namespace Lucene.Net.Util
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
     using TopDocs = Lucene.Net.Search.TopDocs;
+    using Codecs;
 
     /// <summary>
     /// General utility methods for Lucene unit tests.
@@ -825,6 +826,7 @@ namespace Lucene.Net.Util
             return new Lucene46CodecAnonymousInnerClassHelper(format);
         }
 
+        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
             private PostingsFormat Format;
@@ -857,6 +859,7 @@ namespace Lucene.Net.Util
             return new Lucene46CodecAnonymousInnerClassHelper2(format);
         }
 
+        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
             private DocValuesFormat Format;

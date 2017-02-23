@@ -616,6 +616,10 @@
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
     <Compile Include="Support\CharacterIterator.cs" />
+    <Compile Include="Support\Codecs\CodecNameAttribute.cs" />
+    <Compile Include="Support\Codecs\DocValuesFormatNameAttribute.cs" />
+    <Compile Include="Support\Codecs\ICodecFactory.cs" />
+    <Compile Include="Support\Codecs\PostingsFormatNameAttribute.cs" />
     <Compile Include="Support\Compatibility\BinaryReaderDataInput.cs" />
     <Compile Include="Support\Compatibility\BinaryWriterDataOutput.cs" />
     <Compile Include="Support\Compatibility\Collections.cs" />
@@ -625,6 +629,7 @@
     <Compile Include="Support\CultureContext.cs" />
     <Compile Include="Support\DataInputStream.cs" />
     <Compile Include="Support\DataOutputStream.cs" />
+    <Compile Include="Support\Codecs\DefaultCodecFactory.cs" />
     <Compile Include="Support\ExceptionToClassNameConventionAttribute.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
     <Compile Include="Support\HashHelpers.cs" />
@@ -639,6 +644,7 @@
     <Compile Include="Support\IdentityWeakReference.cs" />
     <Compile Include="Support\DictionaryExtensions.cs" />
     <Compile Include="Support\ExceptionToNetNumericConventionAttribute.cs" />
+    <Compile Include="Support\INamedServiceFactory.cs" />
     <Compile Include="Support\IResourceManagerFactory.cs" />
     <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Support\LinkedHashMap.cs" />
@@ -687,6 +693,9 @@
     <Compile Include="Support\SharpZipLib.cs" />
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
+    <Compile Include="Support\Util\IServiceListable.cs" />
+    <Compile Include="Support\Util\NamedServiceFactory.cs" />
+    <Compile Include="Support\Util\ServiceNameAttribute.cs" />
     <Compile Include="Support\ValueHashSet.cs" />
     <Compile Include="Support\ValueList.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
@@ -874,6 +883,7 @@
     <Compile Include="Util\WAH8DocIdSet.cs" />
     <Compile Include="Util\WeakIdentityMap.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

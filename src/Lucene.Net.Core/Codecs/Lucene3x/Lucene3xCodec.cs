@@ -33,7 +33,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     public class Lucene3xCodec : Codec
     {
         public Lucene3xCodec()
-            : base("Lucene3x")
+            : base()
         {
         }
 

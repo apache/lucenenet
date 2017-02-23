@@ -127,6 +127,7 @@ namespace Lucene.Net.Codecs.Perfield
             directory.Dispose();
         }
 
+        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
             private readonly TestPerFieldDocValuesFormat OuterInstance;

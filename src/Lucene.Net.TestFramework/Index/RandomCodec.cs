@@ -1,11 +1,12 @@
+using Lucene.Net.Support;
+using Lucene.Net.Codecs;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
+    
     using AssertingDocValuesFormat = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat;
     using AssertingPostingsFormat = Lucene.Net.Codecs.asserting.AssertingPostingsFormat;
 
@@ -63,6 +64,7 @@ namespace Lucene.Net.Index
     /// documents in different orders and the test will still be deterministic
     /// and reproducable.
     /// </summary>
+    [CodecName("Lucene46")]
     public class RandomCodec : Lucene46Codec
     {
         /// <summary>
@@ -136,6 +138,7 @@ namespace Lucene.Net.Index
             int maxItemsPerBlock = 2 * (Math.Max(2, minItemsPerBlock - 1)) + random.Next(100);
             int lowFreqCutoff = TestUtil.NextInt(random, 2, 100);
 
+            // LUCENENET TODO: Finish RandomCodec implementation
             Add(avoidCodecs,
                 new Lucene41PostingsFormat(minItemsPerBlock, maxItemsPerBlock),
                 /*

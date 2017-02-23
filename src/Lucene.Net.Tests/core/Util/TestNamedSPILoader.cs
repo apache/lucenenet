@@ -53,7 +53,7 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestAvailableServices()
         {
-            ISet<string> codecs = Codec.AvailableCodecs();
+            var codecs = Codec.AvailableCodecs();
             Assert.IsTrue(codecs.Contains("Lucene46"));
         }
     }

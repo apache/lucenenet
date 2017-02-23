@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -260,6 +260,7 @@
     <Compile Include="Codecs\ramonly\RAMOnlyPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Codecs\TestCodecFactory.cs" />
     <Compile Include="Index\AlcoholicMergePolicy.cs">
       <SubType>Code</SubType>
     </Compile>

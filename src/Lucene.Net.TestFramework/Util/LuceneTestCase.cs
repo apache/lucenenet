@@ -595,6 +595,8 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
+
+
         }
 
         /// <summary>
@@ -606,7 +608,16 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
-            CleanupTemporaryFiles();
+            CleanupTemporaryFiles(); // LUCENENET TODO: Move this to OneTimeTearDown()? Calling it here deletes files too early.
+        }
+
+        [OneTimeSetUp]
+        public virtual void OneTimeSetUp()
+        {
+            if (!Codec.GetCodecFactory().GetType().Equals(typeof(Codecs.TestCodecFactory)))
+            {
+                Codec.SetCodecFactory(new Codecs.TestCodecFactory());
+            }
         }
 
         // -----------------------------------------------------------------

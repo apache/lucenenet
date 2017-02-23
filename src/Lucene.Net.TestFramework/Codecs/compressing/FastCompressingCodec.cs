@@ -22,12 +22,13 @@ namespace Lucene.Net.Codecs.Compressing
 
     /// <summary>
     /// CompressionCodec that uses <seealso cref="CompressionMode#FAST"/> </summary>
+    [CodecName("FastCompressingStoredFields")]
     public class FastCompressingCodec : CompressingCodec
     {
         /// <summary>
         /// Constructor that allows to configure the chunk size. </summary>
         public FastCompressingCodec(int chunkSize, bool withSegmentSuffix)
-            : base("FastCompressingStoredFields", withSegmentSuffix ? "FastCompressingStoredFields" : "", CompressionMode.FAST, chunkSize)
+            : base(withSegmentSuffix ? "FastCompressingStoredFields" : "", CompressionMode.FAST, chunkSize)
         {
         }
 

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
@@ -649,6 +650,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
             private readonly TestNumericDocValuesUpdates OuterInstance;
@@ -1402,6 +1404,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
             private readonly TestNumericDocValuesUpdates OuterInstance;
@@ -1417,6 +1420,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper3 : Lucene46Codec
         {
             private readonly TestNumericDocValuesUpdates OuterInstance;

@@ -56,8 +56,8 @@ namespace Lucene.Net.Codecs
         /// create a no-arg ctor and pass the delegate codec
         /// and a unique name to this ctor.
         /// </summary>
-        protected internal FilterCodec(string name, Codec @delegate)
-            : base(name)
+        protected internal FilterCodec(Codec @delegate)
+            : base()
         {
             this.m_delegate = @delegate;
         }

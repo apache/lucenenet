@@ -36,7 +36,7 @@
         private readonly DocValuesFormat _dvFormat = new SimpleTextDocValuesFormat();
 
         public SimpleTextCodec() 
-            : base("SimpleText")
+            : base()
         {
         }
 

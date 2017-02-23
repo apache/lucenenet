@@ -1,3 +1,4 @@
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -1128,6 +1129,7 @@ namespace Lucene.Net.Index
             aux2.Dispose();
         }
 
+        [CodecName("Lucene46")]
         private sealed class CustomPerFieldCodec : Lucene46Codec
         {
             internal readonly PostingsFormat SimpleTextFormat;
@@ -1192,10 +1194,11 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
+        [CodecName("NotRegistered")]
         private sealed class UnRegisteredCodec : FilterCodec
         {
             public UnRegisteredCodec()
-                : base("NotRegistered", new Lucene46Codec())
+                : base(new Lucene46Codec())
             {
             }
         }

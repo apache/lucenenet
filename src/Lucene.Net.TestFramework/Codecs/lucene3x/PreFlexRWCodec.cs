@@ -24,6 +24,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental
     /// </summary>
 #pragma warning disable 612, 618
+    [CodecName("Lucene3x")]
     public class PreFlexRWCodec : Lucene3xCodec
     {
         private readonly PostingsFormat Postings = new PreFlexRWPostingsFormat();

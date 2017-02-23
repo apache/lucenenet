@@ -25,6 +25,7 @@ namespace Lucene.Net.Codecs.Lucene45
     /// Read-write version of <seealso cref="Lucene45Codec"/> for testing.
     /// </summary>
 #pragma warning disable 612, 618
+    [CodecName("Lucene45")]
     public class Lucene45RWCodec : Lucene45Codec
     {
         private readonly FieldInfosFormat fieldInfosFormat;

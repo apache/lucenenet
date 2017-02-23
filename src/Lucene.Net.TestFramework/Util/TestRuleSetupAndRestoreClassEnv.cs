@@ -6,6 +6,7 @@ using System.Threading;
 
 namespace Lucene.Net.Util
 {
+    using Codecs;
     //using AssumptionViolatedException = org.junit.@internal.AssumptionViolatedException;
     using Lucene.Net.Randomized.Generators;
 
@@ -445,6 +446,7 @@ namespace Lucene.Net.Util
           }
         }*/
 
+        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
             private readonly TestRuleSetupAndRestoreClassEnv OuterInstance;

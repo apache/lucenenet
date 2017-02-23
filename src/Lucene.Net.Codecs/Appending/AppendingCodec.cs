@@ -35,7 +35,7 @@ namespace Lucene.Net.Codecs.Appending
         private readonly PostingsFormat _postings = new AppendingPostingsFormat();
 
         public AppendingCodec() 
-            : base("Appending", new Lucene40Codec())
+            : base(new Lucene40Codec())
         {
         }
 

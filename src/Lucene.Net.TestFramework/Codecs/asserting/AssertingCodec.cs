@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.asserting
         private readonly NormsFormat Norms = new AssertingNormsFormat();
 
         public AssertingCodec()
-            : base("Asserting", new Lucene46Codec())
+            : base(new Lucene46Codec())
         {
         }
 
