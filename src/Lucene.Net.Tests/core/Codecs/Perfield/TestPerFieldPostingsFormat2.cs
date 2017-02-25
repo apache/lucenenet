@@ -197,7 +197,6 @@ namespace Lucene.Net.Codecs.Perfield
             reader.Dispose();
         }
 
-        [CodecName("Lucene46")]
         private class MockCodec : Lucene46Codec
         {
             internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
@@ -221,7 +220,6 @@ namespace Lucene.Net.Codecs.Perfield
             }
         }
 
-        [CodecName("Lucene46")]
         private class MockCodec2 : Lucene46Codec
         {
             internal readonly PostingsFormat Lucene40 = new Lucene41PostingsFormat();
@@ -286,7 +284,6 @@ namespace Lucene.Net.Codecs.Perfield
             DoTestMixedPostings(codec);
         }
 
-        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
             private readonly TestPerFieldPostingsFormat2 OuterInstance;
@@ -320,7 +317,6 @@ namespace Lucene.Net.Codecs.Perfield
           DoTestMixedPostings(codec);
         }
 
-        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
             private readonly TestPerFieldPostingsFormat2 OuterInstance;

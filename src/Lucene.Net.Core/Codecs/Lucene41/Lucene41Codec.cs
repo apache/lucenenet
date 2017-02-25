@@ -42,6 +42,7 @@ namespace Lucene.Net.Codecs.Lucene41
     /// @deprecated Only for reading old 4.0 segments
     /// @lucene.experimental
     [Obsolete("Only for reading old 4.0 segments")]
+    [CodecName("Lucene41")] // LUCENENET specific - using CodecName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Lucene41Codec : Codec
     {
         // TODO: slightly evil

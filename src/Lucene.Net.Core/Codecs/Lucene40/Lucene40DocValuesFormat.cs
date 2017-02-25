@@ -118,6 +118,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </ul> </summary>
     /// @deprecated Only for reading old 4.0 and 4.1 segments
     [Obsolete("Only for reading old 4.0 and 4.1 segments")]
+    [DocValuesFormatName("Lucene40")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Lucene40DocValuesFormat : DocValuesFormat
     // NOTE: not registered in SPI, doesnt respect segment suffix, etc
     // for back compat only!

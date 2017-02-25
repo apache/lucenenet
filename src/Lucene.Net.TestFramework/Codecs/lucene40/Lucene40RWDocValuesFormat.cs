@@ -24,7 +24,6 @@ namespace Lucene.Net.Codecs.Lucene40
     /// <summary>
     /// Read-write version of <seealso cref="Lucene40DocValuesFormat"/> for testing </summary>
 #pragma warning disable 612, 618
-    [DocValuesFormatName("Lucene40")]
     public class Lucene40RWDocValuesFormat : Lucene40DocValuesFormat
     {
         private readonly bool _oldFormatImpersonationIsActive;

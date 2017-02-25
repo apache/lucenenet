@@ -40,6 +40,7 @@ namespace Lucene.Net.Codecs.Lucene42
     // if they are backwards compatible or smallish we can probably do the backwards in the postingsreader
     // (it writes a minor version, etc).
     [Obsolete("Only for reading old 4.2 segments")]
+    [CodecName("Lucene42")] // LUCENENET specific - using CodecName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Lucene42Codec : Codec
     {
         private readonly StoredFieldsFormat fieldsFormat = new Lucene41StoredFieldsFormat();
@@ -67,7 +68,6 @@ namespace Lucene.Net.Codecs.Lucene42
 
         private readonly DocValuesFormat docValuesFormat;
 
-        [IgnoreDocValuesFormat]
         private class PerFieldDocValuesFormatAnonymousInnerClassHelper : PerFieldDocValuesFormat
         {
             private readonly Lucene42Codec outerInstance;

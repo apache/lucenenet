@@ -148,6 +148,7 @@ namespace Lucene.Net.Codecs.Lucene45
     /// </ol>
     /// @lucene.experimental
     /// </summary>
+    [DocValuesFormatName("Lucene45")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class Lucene45DocValuesFormat : DocValuesFormat
     {
         /// <summary>

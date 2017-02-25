@@ -41,7 +41,6 @@ namespace Lucene.Net
 
     public class TestExternalCodecs : LuceneTestCase
     {
-        [CodecName("Lucene46")]
         private sealed class CustomPerFieldCodec : Lucene46Codec
         {
 

@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs.Memory
 
     /// <summary>
     /// In-memory docvalues format </summary>
+    [DocValuesFormatName("Memory")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class MemoryDocValuesFormat : DocValuesFormat
     {
         /// <summary>Maximum length for each binary doc values field. </summary>

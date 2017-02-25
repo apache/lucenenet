@@ -116,6 +116,7 @@
     ///  @lucene.experimental
     /// </para>
     /// </summary>
+    [DocValuesFormatName("SimpleText")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class SimpleTextDocValuesFormat : DocValuesFormat
     {
         public SimpleTextDocValuesFormat() 

@@ -36,6 +36,7 @@ namespace Lucene.Net.Codecs.Lucene46
     // NOTE: if we make largish changes in a minor release, easier to just make Lucene46Codec or whatever
     // if they are backwards compatible or smallish we can probably do the backwards in the postingsreader
     // (it writes a minor version, etc).
+    [CodecName("Lucene46")]
     public class Lucene46Codec : Codec
     {
         private readonly StoredFieldsFormat fieldsFormat = new Lucene41StoredFieldsFormat();
@@ -63,7 +64,6 @@ namespace Lucene.Net.Codecs.Lucene46
 
         private readonly DocValuesFormat docValuesFormat;
 
-        [IgnoreDocValuesFormat]
         private class PerFieldDocValuesFormatAnonymousInnerClassHelper : PerFieldDocValuesFormat
         {
             private readonly Lucene46Codec outerInstance;

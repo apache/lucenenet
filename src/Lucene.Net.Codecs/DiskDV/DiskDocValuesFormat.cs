@@ -28,6 +28,7 @@ namespace Lucene.Net.Codecs.DiskDV
     ///
     /// @lucene.experimental
     /// </summary>
+    [DocValuesFormatName("Disk")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class DiskDocValuesFormat : DocValuesFormat
     {
         public DiskDocValuesFormat() 

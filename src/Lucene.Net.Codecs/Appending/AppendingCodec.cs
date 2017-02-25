@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.Appending
     [Obsolete(
         "This codec is read-only: as the functionality has been folded into the default codec. Its only for convenience to read old segments."
         )]
+    [CodecName("Appending")] // LUCENENET specific - using CodecName attribute to ensure the default name passed from subclasses is the same as this class name
     public class AppendingCodec : FilterCodec
     {
         private readonly PostingsFormat _postings = new AppendingPostingsFormat();

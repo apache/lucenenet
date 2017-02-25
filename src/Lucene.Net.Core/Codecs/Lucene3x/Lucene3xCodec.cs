@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// Supports the Lucene 3.x index format (readonly) </summary>
     /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
+    [CodecName("Lucene3x")] // LUCENENET specific - using CodecName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Lucene3xCodec : Codec
     {
         public Lucene3xCodec()
@@ -59,8 +60,6 @@ namespace Lucene.Net.Codecs.Lucene3x
         // 3.x doesn't support docvalues
         private readonly DocValuesFormat docValuesFormat = new DocValuesFormatAnonymousInnerClassHelper();
 
-        [IgnoreDocValuesFormat]
-        [DocValuesFormatName("Lucene3x")]
         private class DocValuesFormatAnonymousInnerClassHelper : DocValuesFormat
         {
             public DocValuesFormatAnonymousInnerClassHelper()

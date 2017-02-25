@@ -24,6 +24,7 @@
     /// @lucene.experimental
     /// </para>
     /// </summary>
+    [CodecName("SimpleText")] // LUCENENET specific - using CodecName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class SimpleTextCodec : Codec
     {
         private readonly PostingsFormat _postings = new SimpleTextPostingsFormat();

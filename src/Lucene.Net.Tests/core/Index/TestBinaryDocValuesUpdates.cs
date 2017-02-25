@@ -692,7 +692,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
             private readonly TestBinaryDocValuesUpdates OuterInstance;
@@ -1488,7 +1487,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
             private readonly TestBinaryDocValuesUpdates OuterInstance;
@@ -1504,7 +1502,6 @@ namespace Lucene.Net.Index
             }
         }
 
-        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper3 : Lucene46Codec
         {
             private readonly TestBinaryDocValuesUpdates OuterInstance;

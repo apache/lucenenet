@@ -22,6 +22,7 @@ namespace Lucene.Net.Codecs.asserting
     /// <summary>
     /// Acts like <seealso cref="Lucene46Codec"/> but with additional asserts.
     /// </summary>
+    [CodecName("Asserting")]
     public sealed class AssertingCodec : FilterCodec
     {
         private readonly PostingsFormat Postings = new AssertingPostingsFormat();

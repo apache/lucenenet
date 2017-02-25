@@ -446,7 +446,6 @@ namespace Lucene.Net.Util
           }
         }*/
 
-        [CodecName("Lucene46")]
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
             private readonly TestRuleSetupAndRestoreClassEnv OuterInstance;

@@ -1129,7 +1129,6 @@ namespace Lucene.Net.Index
             aux2.Dispose();
         }
 
-        [CodecName("Lucene46")]
         private sealed class CustomPerFieldCodec : Lucene46Codec
         {
             internal readonly PostingsFormat SimpleTextFormat;

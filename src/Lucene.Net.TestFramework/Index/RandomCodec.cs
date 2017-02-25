@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
     /// documents in different orders and the test will still be deterministic
     /// and reproducable.
     /// </summary>
-    [CodecName("Lucene46")]
+    [IgnoreCodec] // LUCENENET TODO: I believe this codec should be not ignored in the test environment and should be used in place of Lucene46 codec.
     public class RandomCodec : Lucene46Codec
     {
         /// <summary>

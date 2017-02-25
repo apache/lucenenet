@@ -119,6 +119,7 @@ namespace Lucene.Net.Codecs.Lucene42
     /// </ul> </summary>
     /// @deprecated Only for reading old 4.2 segments
     [Obsolete("Only for reading old 4.2 segments")]
+    [DocValuesFormatName("Lucene42")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Lucene42DocValuesFormat : DocValuesFormat
     {
         /// <summary>
