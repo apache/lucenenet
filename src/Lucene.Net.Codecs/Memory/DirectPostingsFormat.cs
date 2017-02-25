@@ -72,6 +72,7 @@ namespace Lucene.Net.Codecs.Memory
     /// @lucene.experimental 
     /// </para>
     /// </summary>
+    [PostingsFormatName("Direct")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class DirectPostingsFormat : PostingsFormat
     {
         private readonly int _minSkipCount;
@@ -94,7 +95,8 @@ namespace Lucene.Net.Codecs.Memory
         ///  to hold all docs, freqs, position and offsets; terms
         ///  with higher docFreq will use separate arrays. 
         /// </summary>
-        public DirectPostingsFormat(int minSkipCount, int lowFreqCutoff) : base("Direct")
+        public DirectPostingsFormat(int minSkipCount, int lowFreqCutoff) 
+            : base()
         {
             _minSkipCount = minSkipCount;
             _lowFreqCutoff = lowFreqCutoff;

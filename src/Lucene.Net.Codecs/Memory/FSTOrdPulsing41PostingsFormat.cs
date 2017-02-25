@@ -28,7 +28,7 @@
     /// FSTOrd + Pulsing41
     ///  @lucene.experimental 
     /// </summary>
-
+    [PostingsFormatName("FSTOrdPulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class FSTOrdPulsing41PostingsFormat : PostingsFormat
     {
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
@@ -40,7 +40,7 @@
         }
 
         public FSTOrdPulsing41PostingsFormat(int freqCutoff) 
-            : base("FSTOrdPulsing41")
+            : base()
         {
             _wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();
             _freqCutoff = freqCutoff;

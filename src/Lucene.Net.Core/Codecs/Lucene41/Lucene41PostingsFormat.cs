@@ -343,7 +343,7 @@ namespace Lucene.Net.Codecs.Lucene41
     ///
     /// @lucene.experimental
     /// </summary>
-
+    [PostingsFormatName("Lucene41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class Lucene41PostingsFormat : PostingsFormat
     {
         /// <summary>
@@ -389,7 +389,7 @@ namespace Lucene.Net.Codecs.Lucene41
         ///  maxBlockSize} passed to block terms dictionary. </summary>
         ///  <seealso cref= BlockTreeTermsWriter#BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)  </seealso>
         public Lucene41PostingsFormat(int minTermBlockSize, int maxTermBlockSize)
-            : base("Lucene41")
+            : base()
         {
             this.minTermBlockSize = minTermBlockSize;
             Debug.Assert(minTermBlockSize > 1);

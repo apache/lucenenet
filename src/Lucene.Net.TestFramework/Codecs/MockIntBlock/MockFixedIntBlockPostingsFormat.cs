@@ -28,6 +28,7 @@ namespace Lucene.Net.Codecs.IntBlock
     /// sized int block encoders is working.The int encoder
     /// used here just writes each block as a series of vInt.
     /// </summary>
+    [PostingsFormatName("MockFixedIntBlock")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class MockFixedIntBlockPostingsFormat : PostingsFormat
     {
         private readonly int blockSize;
@@ -38,7 +39,7 @@ namespace Lucene.Net.Codecs.IntBlock
         }
 
         public MockFixedIntBlockPostingsFormat(int blockSize)
-            : base("MockFixedIntBlock")
+            : base()
         {
             this.blockSize = blockSize;
         }

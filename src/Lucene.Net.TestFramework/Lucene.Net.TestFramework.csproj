@@ -262,6 +262,7 @@
     </Compile>
     <Compile Include="Codecs\TestCodecFactory.cs" />
     <Compile Include="Codecs\TestDocValuesFormatFactory.cs" />
+    <Compile Include="Codecs\TestPostingsFormatFactory.cs" />
     <Compile Include="Index\AlcoholicMergePolicy.cs">
       <SubType>Code</SubType>
     </Compile>

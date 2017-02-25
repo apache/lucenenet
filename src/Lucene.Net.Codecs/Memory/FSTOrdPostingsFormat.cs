@@ -26,10 +26,11 @@
     /// <summary>
     /// FSTOrd term dict + Lucene41PBF
     /// </summary>
+    [PostingsFormatName("FSTOrd41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class FSTOrdPostingsFormat : PostingsFormat
     {
         public FSTOrdPostingsFormat() 
-            : base("FSTOrd41")
+            : base()
         {
         }
 

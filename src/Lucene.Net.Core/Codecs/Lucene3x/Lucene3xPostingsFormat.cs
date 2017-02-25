@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// before 4.0.
     /// @lucene.experimental
     [Obsolete("(4.0) this is only used to read indexes created")]
+    [PostingsFormatName("Lucene3x")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     internal class Lucene3xPostingsFormat : PostingsFormat
     {
         /// <summary>
@@ -49,7 +50,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public const string PROX_EXTENSION = "prx";
 
         public Lucene3xPostingsFormat()
-            : base("Lucene3x")
+            : base()
         {
         }
 

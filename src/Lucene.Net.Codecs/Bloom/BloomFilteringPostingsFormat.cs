@@ -57,9 +57,11 @@ namespace Lucene.Net.Codecs.Bloom
     ///
     ///  @lucene.experimental
     /// </summary>
+    [PostingsFormatName("BloomFilter")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class BloomFilteringPostingsFormat : PostingsFormat
     {
-        public static readonly string BLOOM_CODEC_NAME = "BloomFilter";
+        // LUCENENET specific - removed this static variable because our name is determined by the PostingsFormatNameAttribute
+        //public static readonly string BLOOM_CODEC_NAME = "BloomFilter";
         public static readonly int VERSION_START = 1;
         public static readonly int VERSION_CHECKSUM = 2;
         public static readonly int VERSION_CURRENT = VERSION_CHECKSUM;
@@ -79,7 +81,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// <param name="delegatePostingsFormat">The PostingsFormat that records all the non-bloom filter data i.e. postings info.</param>
         /// <param name="bloomFilterFactory">The {@link BloomFilterFactory} responsible for sizing BloomFilters appropriately</param>
         public BloomFilteringPostingsFormat(PostingsFormat delegatePostingsFormat,
-            BloomFilterFactory bloomFilterFactory) : base(BLOOM_CODEC_NAME)
+            BloomFilterFactory bloomFilterFactory) : base()
         {
             _delegatePostingsFormat = delegatePostingsFormat;
             _bloomFilterFactory = bloomFilterFactory;
@@ -104,7 +106,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// do not use at Write-time in application code.
         /// </summary>
         public BloomFilteringPostingsFormat() 
-            : base(BLOOM_CODEC_NAME)
+            : base()
         {
         }
 
@@ -119,16 +121,18 @@ namespace Lucene.Net.Codecs.Bloom
 
         public override FieldsProducer FieldsProducer(SegmentReadState state)
         {
-            return new BloomFilteredFieldsProducer(state);
+            return new BloomFilteredFieldsProducer(this, state);
         }
 
         internal class BloomFilteredFieldsProducer : FieldsProducer
         {
+            private readonly BloomFilteringPostingsFormat outerInstance;
             private readonly FieldsProducer _delegateFieldsProducer;
             private readonly HashMap<string, FuzzySet> _bloomsByFieldName = new HashMap<string, FuzzySet>();
 
-            public BloomFilteredFieldsProducer(SegmentReadState state)
+            public BloomFilteredFieldsProducer(BloomFilteringPostingsFormat outerInstance, SegmentReadState state)
             {
+                this.outerInstance = outerInstance;
                 var bloomFileName = IndexFileNames.SegmentFileName(
                     state.SegmentInfo.Name, state.SegmentSuffix, BLOOM_EXTENSION);
                 ChecksumIndexInput bloomIn = null;
@@ -136,7 +140,7 @@ namespace Lucene.Net.Codecs.Bloom
                 try
                 {
                     bloomIn = state.Directory.OpenChecksumInput(bloomFileName, state.Context);
-                    var version = CodecUtil.CheckHeader(bloomIn, BLOOM_CODEC_NAME, VERSION_START, VERSION_CURRENT);
+                    var version = CodecUtil.CheckHeader(bloomIn, /*BLOOM_CODEC_NAME*/ outerInstance.Name, VERSION_START, VERSION_CURRENT);
                     // Load the hash function used in the BloomFilter
                     // hashFunction = HashFunction.forName(bloomIn.readString());
                     // Load the delegate postings format
@@ -451,7 +455,7 @@ namespace Lucene.Net.Codecs.Bloom
                 try
                 {
                     bloomOutput = _state.Directory.CreateOutput(bloomFileName, _state.Context);
-                    CodecUtil.WriteHeader(bloomOutput, BLOOM_CODEC_NAME, VERSION_CURRENT);
+                    CodecUtil.WriteHeader(bloomOutput, /*BLOOM_CODEC_NAME*/ outerInstance.Name, VERSION_CURRENT);
                     // remember the name of the postings format we will delegate to
                     bloomOutput.WriteString(outerInstance._delegatePostingsFormat.Name);
 

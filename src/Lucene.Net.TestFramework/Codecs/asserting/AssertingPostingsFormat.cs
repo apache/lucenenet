@@ -35,12 +35,13 @@ namespace Lucene.Net.Codecs.asserting
     /// <summary>
     /// Just like <seealso cref="Lucene41PostingsFormat"/> but with additional asserts.
     /// </summary>
+    [PostingsFormatName("Asserting")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class AssertingPostingsFormat : PostingsFormat
     {
         private readonly PostingsFormat @in = new Lucene41PostingsFormat();
 
         public AssertingPostingsFormat()
-            : base("Asserting")
+            : base()
         {
         }
 

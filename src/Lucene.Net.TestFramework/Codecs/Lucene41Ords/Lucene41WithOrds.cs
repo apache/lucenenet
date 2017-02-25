@@ -5,10 +5,11 @@ using Lucene.Net.Util;
 
 namespace Lucene.Net.Codecs.Lucene41Ords
 {
+    [PostingsFormatName("Lucene41WithOrds")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class Lucene41WithOrds : PostingsFormat
     {
         public Lucene41WithOrds()
-            : base("Lucene41WithOrds")
+            : base()
         {
         }
 

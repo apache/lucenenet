@@ -211,6 +211,7 @@ namespace Lucene.Net.Codecs.Lucene40
     // BlockTreeTermsDict around Lucene40PostingsBaseFormat; ie
     // we should not duplicate the code from that class here:
     [Obsolete("Only for reading old 4.0 segments")]
+    [PostingsFormatName("Lucene40")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Lucene40PostingsFormat : PostingsFormat
     {
         /// <summary>
@@ -236,7 +237,7 @@ namespace Lucene.Net.Codecs.Lucene40
         ///  maxBlockSize} passed to block terms dictionary. </summary>
         ///  <seealso cref= BlockTreeTermsWriter#BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)  </seealso>
         private Lucene40PostingsFormat(int minBlockSize, int maxBlockSize)
-            : base("Lucene40")
+            : base()
         {
             this.m_minBlockSize = minBlockSize;
             Debug.Assert(minBlockSize > 1);

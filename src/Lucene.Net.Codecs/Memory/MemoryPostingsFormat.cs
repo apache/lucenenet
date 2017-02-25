@@ -71,6 +71,7 @@ namespace Lucene.Net.Codecs.Memory
     // TODO: Maybe name this 'Cached' or something to reflect
     // the reality that it is actually written to disk, but
     // loads itself in ram?
+    [PostingsFormatName("Memory")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class MemoryPostingsFormat : PostingsFormat
     {
         private readonly bool doPackFST;
@@ -88,7 +89,7 @@ namespace Lucene.Net.Codecs.Memory
         /// <param name="acceptableOverheadRatio"> allowable overhead for packed ints
         ///        during FST construction. </param>
         public MemoryPostingsFormat(bool doPackFST, float acceptableOverheadRatio) 
-            : base("Memory")
+            : base()
         {
             this.doPackFST = doPackFST;
             this.acceptableOverheadRatio = acceptableOverheadRatio;

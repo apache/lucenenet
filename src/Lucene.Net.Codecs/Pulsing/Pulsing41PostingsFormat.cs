@@ -24,6 +24,7 @@ namespace Lucene.Net.Codecs.Pulsing
     /// 
     /// @lucene.experimental 
     /// </summary>
+    [PostingsFormatName("Pulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Pulsing41PostingsFormat : PulsingPostingsFormat
     {
         /// <summary>Inlines docFreq=1 terms, otherwise uses the normal "Lucene41" format.</summary>
@@ -40,7 +41,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         /// <summary>Inlines docFreq=<code>freqCutoff</code> terms, otherwise uses the normal "Lucene41" format.</summary>
         public Pulsing41PostingsFormat(int freqCutoff, int minBlockSize, int maxBlockSize) 
-            : base("Pulsing41", new Lucene41PostingsBaseFormat(), freqCutoff, minBlockSize, maxBlockSize)
+            : base(new Lucene41PostingsBaseFormat(), freqCutoff, minBlockSize, maxBlockSize)
         {
         }
     }

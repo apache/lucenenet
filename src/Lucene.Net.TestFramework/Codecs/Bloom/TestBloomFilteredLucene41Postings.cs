@@ -27,6 +27,7 @@ namespace Lucene.Net.Codecs.Bloom
     /// APPLICATION This is not a realistic application of Bloom Filters as they
     /// ordinarily are larger and operate on only primary key type fields.
     /// </summary>
+    [PostingsFormatName("TestBloomFilteredLucene41Postings")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class TestBloomFilteredLucene41Postings : PostingsFormat
     {
         private BloomFilteringPostingsFormat @delegate;
@@ -49,7 +50,7 @@ namespace Lucene.Net.Codecs.Bloom
         }
 
         public TestBloomFilteredLucene41Postings()
-                : base("TestBloomFilteredLucene41Postings")
+            : base()
         {
             @delegate = new BloomFilteringPostingsFormat(new Lucene41PostingsFormat(),
                 new LowMemoryBloomFactory());

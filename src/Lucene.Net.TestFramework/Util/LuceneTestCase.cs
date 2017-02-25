@@ -612,19 +612,20 @@ namespace Lucene.Net.Util
             CleanupTemporaryFiles(); // LUCENENET TODO: Move this to OneTimeTearDown()? Calling it here deletes files too early.
         }
 
+        // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once
+        private static readonly TestCodecFactory TEST_CODEC_FACTORY = new TestCodecFactory();
+        private static readonly TestDocValuesFormatFactory TEST_DOCVALUES_FORMAT_FACTORY = new TestDocValuesFormatFactory();
+        private static readonly TestPostingsFormatFactory TEST_POSTINGS_FORMAT_FACTORY = new TestPostingsFormatFactory();
+
+
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeSetUp]
         public virtual void OneTimeSetUp()
         {
-            // Setup the factories to scan the test framework assembly for codecs/docvaluesformats/postingsformats
-            if (!Codec.GetCodecFactory().GetType().Equals(typeof(Codecs.TestCodecFactory)))
-            {
-                Codec.SetCodecFactory(new Codecs.TestCodecFactory());
-            }
-            if (!DocValuesFormat.GetDocValuesFormatFactory().GetType().Equals(typeof(Codecs.TestDocValuesFormatFactory)))
-            {
-                DocValuesFormat.SetDocValuesFormatFactory(new Codecs.TestDocValuesFormatFactory());
-            }
+            // Setup the factories
+            Codec.SetCodecFactory(TEST_CODEC_FACTORY);
+            DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
+            PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
         }
 
         // -----------------------------------------------------------------

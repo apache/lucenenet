@@ -28,10 +28,11 @@ namespace Lucene.Net.Codecs.MockSep
     /// This is here just to test the core sep codec
     /// classes.
     /// </summary>
+    [PostingsFormatName("MockSep")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class MockSepPostingsFormat : PostingsFormat
     {
         public MockSepPostingsFormat()
-            : base("MockSep")
+            : base()
         {
         }
 

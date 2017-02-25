@@ -43,12 +43,13 @@ namespace Lucene.Net.Codecs.Perfield // LUCENENET TODO: Rename namespace to PerF
     /// filenames would look like <tt>_1_Lucene40_0.prx</tt>. </summary>
     /// <seealso cref= ServiceLoader
     /// @lucene.experimental </seealso>
-
+    [PostingsFormatName("PerField40")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public abstract class PerFieldPostingsFormat : PostingsFormat
     {
-        /// <summary>
-        /// Name of this <seealso cref="PostingsFormat"/>. </summary>
-        public static readonly string PER_FIELD_NAME = "PerField40";
+        // LUCENENET specific - removed this static variable because our name is determined by the PostingsFormatNameAttribute
+        ///// <summary>
+        ///// Name of this <seealso cref="PostingsFormat"/>. </summary>
+        //public static readonly string PER_FIELD_NAME = "PerField40";
 
         /// <summary>
         /// <seealso cref="FieldInfo"/> attribute name used to store the
@@ -65,7 +66,7 @@ namespace Lucene.Net.Codecs.Perfield // LUCENENET TODO: Rename namespace to PerF
         /// <summary>
         /// Sole constructor. </summary>
         public PerFieldPostingsFormat()
-            : base(PER_FIELD_NAME)
+            : base()
         {
         }
 

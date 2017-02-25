@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.ramonly
     ///
     ///  NOTE: this codec sorts terms by reverse-unicode-order!
     /// </summary>
-
+    [PostingsFormatName("RAMOnly")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class RAMOnlyPostingsFormat : PostingsFormat
     {
         // For fun, test that we can override how terms are
@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.ramonly
         }
 
         public RAMOnlyPostingsFormat()
-            : base("RAMOnly")
+            : base()
         {
         }
 

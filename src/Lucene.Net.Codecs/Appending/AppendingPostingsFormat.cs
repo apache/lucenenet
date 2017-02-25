@@ -24,12 +24,14 @@ namespace Lucene.Net.Codecs.Appending
     /// <summary>
     /// Appending Postigns Implementation
     /// </summary>
+    [PostingsFormatName("Appending")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     internal class AppendingPostingsFormat : PostingsFormat
     {
-        public static string CODEC_NAME = "Appending";
+        //// LUCENENET specific - removed this static variable because our name is determined by the PostingsFormatNameAttribute
+        //public static string CODEC_NAME = "Appending";
 
         public AppendingPostingsFormat() 
-            : base(CODEC_NAME)
+            : base()
         {}
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)

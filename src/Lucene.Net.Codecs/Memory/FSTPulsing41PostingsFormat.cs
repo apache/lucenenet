@@ -29,6 +29,7 @@
     ///  FST does no delta encoding here!
     ///  @lucene.experimental 
     /// </summary>
+    [PostingsFormatName("FSTPulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class FSTPulsing41PostingsFormat : PostingsFormat
     {
         private readonly PostingsBaseFormat _wrappedPostingsBaseFormat;
@@ -40,7 +41,7 @@
         }
 
         public FSTPulsing41PostingsFormat(int freqCutoff) 
-            : base("FSTPulsing41")
+            : base()
         {
             _wrappedPostingsBaseFormat = new Lucene41PostingsBaseFormat();
             _freqCutoff = freqCutoff;

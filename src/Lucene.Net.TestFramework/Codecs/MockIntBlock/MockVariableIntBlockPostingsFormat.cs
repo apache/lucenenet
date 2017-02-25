@@ -30,10 +30,11 @@ namespace Lucene.Net.Codecs.IntBlock
     /// used here writes baseBlockSize ints at once, if the first
     /// int is &lt;= 3, else 2* baseBlockSize.
     /// </summary>
+    [PostingsFormatName("MockVariableIntBlock")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class MockVariableIntBlockPostingsFormat : PostingsFormat
     {
         private readonly int baseBlockSize;
-
+        
         public MockVariableIntBlockPostingsFormat()
             : this(1)
         {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Codecs.IntBlock
         }
 
         public MockVariableIntBlockPostingsFormat(int baseBlockSize)
-            : base("MockVariableIntBlock")
+            : base()
         {
             this.baseBlockSize = baseBlockSize;
         }
