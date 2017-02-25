@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs
             m_docValuesFormatNameToTypeMap.TryGetValue(name, out codecType);
             if (codecType == null)
             {
-                throw new InvalidOperationException(string.Format("DocValuesFormat '{0}' cannot be loaded. If the format is not " +
+                throw new ArgumentException(string.Format("DocValuesFormat '{0}' cannot be loaded. If the format is not " +
                     "in a Lucene.Net assembly, you must subclass DefaultDocValuesFormatFactory and call ScanForDocValuesFormats() with the " +
                     "target assembly from the subclass constructor.", name));
             }

@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs
             m_postingsFormatNameToTypeMap.TryGetValue(name, out codecType);
             if (codecType == null)
             {
-                throw new InvalidOperationException(string.Format("PostingsFormat '{0}' cannot be loaded. If the format is not " +
+                throw new ArgumentException(string.Format("PostingsFormat '{0}' cannot be loaded. If the format is not " +
                     "in a Lucene.Net assembly, you must subclass DefaultPostingsFormatFactory and call ScanForPostingsFormats() with the " +
                     "target assembly from the subclass constructor.", name));
             }

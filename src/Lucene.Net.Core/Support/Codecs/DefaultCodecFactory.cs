@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs
             m_codecNameToTypeMap.TryGetValue(name, out codecType);
             if (codecType == null)
             {
-                throw new InvalidOperationException(string.Format("Codec '{0}' cannot be loaded. If the codec is not " +
+                throw new ArgumentException(string.Format("Codec '{0}' cannot be loaded. If the codec is not " +
                     "in a Lucene.Net assembly, you must subclass DefaultCodecFactory and call ScanForCodecs() with the " + 
                     "target assembly from the subclass constructor.", name));
             }
