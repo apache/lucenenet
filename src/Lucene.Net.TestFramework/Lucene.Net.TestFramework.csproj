@@ -232,16 +232,16 @@
     <Compile Include="Codecs\Lucene41\Lucene41RWCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene42\Lucene42DocValuesConsumer.cs">
+    <Compile Include="Codecs\Lucene42\Lucene42DocValuesConsumer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene42\Lucene42FieldInfosWriter.cs">
+    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene42\Lucene42RWCodec.cs">
+    <Compile Include="Codecs\Lucene42\Lucene42RWCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene42\Lucene42RWDocValuesFormat.cs">
+    <Compile Include="Codecs\Lucene42\Lucene42RWDocValuesFormat.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\lucene45\Lucene45RWCodec.cs">
