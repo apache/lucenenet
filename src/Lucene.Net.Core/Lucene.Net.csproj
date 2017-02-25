@@ -617,8 +617,13 @@
     <Compile Include="Support\Arrays.cs" />
     <Compile Include="Support\CharacterIterator.cs" />
     <Compile Include="Support\Codecs\CodecNameAttribute.cs" />
+    <Compile Include="Support\Codecs\DefaultDocValuesFormatFactory.cs" />
     <Compile Include="Support\Codecs\DocValuesFormatNameAttribute.cs" />
     <Compile Include="Support\Codecs\ICodecFactory.cs" />
+    <Compile Include="Support\Codecs\IDocValuesFormatFactory.cs" />
+    <Compile Include="Support\Codecs\IgnoreCodecAttribute.cs" />
+    <Compile Include="Support\Codecs\IgnoreDocValuesFormatAttribute.cs" />
+    <Compile Include="Support\Codecs\IgnorePostingsFormatAttribute.cs" />
     <Compile Include="Support\Codecs\PostingsFormatNameAttribute.cs" />
     <Compile Include="Support\Compatibility\BinaryReaderDataInput.cs" />
     <Compile Include="Support\Compatibility\BinaryWriterDataOutput.cs" />
@@ -693,6 +698,7 @@
     <Compile Include="Support\SharpZipLib.cs" />
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
+    <Compile Include="Support\Util\IgnoreServiceAttribute.cs" />
     <Compile Include="Support\Util\IServiceListable.cs" />
     <Compile Include="Support\Util\NamedServiceFactory.cs" />
     <Compile Include="Support\Util\ServiceNameAttribute.cs" />

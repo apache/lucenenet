@@ -59,10 +59,12 @@ namespace Lucene.Net.Codecs.Lucene3x
         // 3.x doesn't support docvalues
         private readonly DocValuesFormat docValuesFormat = new DocValuesFormatAnonymousInnerClassHelper();
 
+        [IgnoreDocValuesFormat]
+        [DocValuesFormatName("Lucene3x")]
         private class DocValuesFormatAnonymousInnerClassHelper : DocValuesFormat
         {
             public DocValuesFormatAnonymousInnerClassHelper()
-                : base("Lucene3x")
+                : base()
             {
             }
 

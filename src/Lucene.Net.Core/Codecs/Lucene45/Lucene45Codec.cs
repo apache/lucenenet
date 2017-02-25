@@ -69,6 +69,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         private readonly DocValuesFormat docValuesFormat;
 
+        [IgnoreDocValuesFormat]
         private class PerFieldDocValuesFormatAnonymousInnerClassHelper : PerFieldDocValuesFormat
         {
             private readonly Lucene45Codec outerInstance;

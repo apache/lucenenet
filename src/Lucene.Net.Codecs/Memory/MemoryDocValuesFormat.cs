@@ -46,7 +46,7 @@ namespace Lucene.Net.Codecs.Memory
         ///        
         /// @lucene.experimental </param>
         public MemoryDocValuesFormat(float acceptableOverheadRatio) 
-            : base("Memory")
+            : base()
         {
             this.acceptableOverheadRatio = acceptableOverheadRatio;
         }

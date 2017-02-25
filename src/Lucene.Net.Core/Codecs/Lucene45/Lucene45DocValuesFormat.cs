@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene45
         /// <summary>
         /// Sole Constructor </summary>
         public Lucene45DocValuesFormat()
-            : base("Lucene45")
+            : base()
         {
         }
 

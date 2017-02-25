@@ -64,7 +64,7 @@
         /// <summary>
         /// Sole constructor. </summary>
         public DirectDocValuesFormat() 
-            : base("Direct")
+            : base()
         {
         }
 

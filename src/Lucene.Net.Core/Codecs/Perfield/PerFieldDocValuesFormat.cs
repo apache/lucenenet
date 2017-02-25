@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Lucene.Net.Codecs.Perfield
+namespace Lucene.Net.Codecs.Perfield // LUCENENET TODO: Rename namespace to PerField
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -49,12 +49,13 @@ namespace Lucene.Net.Codecs.Perfield
     /// filenames would look like <tt>_1_Lucene40_0.dat</tt>. </summary>
     /// <seealso cref= ServiceLoader
     /// @lucene.experimental </seealso>
-
+    [DocValuesFormatName("PerFieldDV40")]
     public abstract class PerFieldDocValuesFormat : DocValuesFormat
     {
-        /// <summary>
-        /// Name of this <seealso cref="PostingsFormat"/>. </summary>
-        public static readonly string PER_FIELD_NAME = "PerFieldDV40";
+        // LUCENENET specific: Removing this static variable, since name is now determined by the DocValuesFormatNameAttribute.
+        ///// <summary>
+        ///// Name of this <seealso cref="PostingsFormat"/>. </summary>
+        //public static readonly string PER_FIELD_NAME = "PerFieldDV40";
 
         /// <summary>
         /// <seealso cref="FieldInfo"/> attribute name used to store the
@@ -71,7 +72,7 @@ namespace Lucene.Net.Codecs.Perfield
         /// <summary>
         /// Sole constructor. </summary>
         public PerFieldDocValuesFormat()
-            : base(PER_FIELD_NAME)
+            : base()
         {
         }
 

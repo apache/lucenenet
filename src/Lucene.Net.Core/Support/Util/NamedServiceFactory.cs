@@ -46,7 +46,8 @@ namespace Lucene.Net.Util
                 type != null &&
                 type.IsPublic &&
                 !type.IsAbstract &&
-                typeof(TService).GetTypeInfo().IsAssignableFrom(type);
+                typeof(TService).GetTypeInfo().IsAssignableFrom(type) &&
+                type.GetCustomAttributes(typeof(IgnoreServiceAttribute), inherit: true).Length == 0;
         }
 
         /// <summary>

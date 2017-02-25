@@ -40,12 +40,13 @@ namespace Lucene.Net.Codecs.asserting
     /// <summary>
     /// Just like <seealso cref="Lucene45DocValuesFormat"/> but with additional asserts.
     /// </summary>
+    [DocValuesFormatName("Asserting")]
     public class AssertingDocValuesFormat : DocValuesFormat
     {
         private readonly DocValuesFormat @in = new Lucene45DocValuesFormat();
 
         public AssertingDocValuesFormat()
-            : base("Asserting")
+            : base()
         {
         }
 

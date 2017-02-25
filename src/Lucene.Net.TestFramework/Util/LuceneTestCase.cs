@@ -18,6 +18,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized;
@@ -611,12 +612,18 @@ namespace Lucene.Net.Util
             CleanupTemporaryFiles(); // LUCENENET TODO: Move this to OneTimeTearDown()? Calling it here deletes files too early.
         }
 
+        // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeSetUp]
         public virtual void OneTimeSetUp()
         {
+            // Setup the factories to scan the test framework assembly for codecs/docvaluesformats/postingsformats
             if (!Codec.GetCodecFactory().GetType().Equals(typeof(Codecs.TestCodecFactory)))
             {
                 Codec.SetCodecFactory(new Codecs.TestCodecFactory());
+            }
+            if (!DocValuesFormat.GetDocValuesFormatFactory().GetType().Equals(typeof(Codecs.TestDocValuesFormatFactory)))
+            {
+                DocValuesFormat.SetDocValuesFormatFactory(new Codecs.TestDocValuesFormatFactory());
             }
         }
 

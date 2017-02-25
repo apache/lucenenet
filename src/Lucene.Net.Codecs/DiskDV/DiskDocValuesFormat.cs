@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.DiskDV
     public sealed class DiskDocValuesFormat : DocValuesFormat
     {
         public DiskDocValuesFormat() 
-            : base("Disk")
+            : base()
         {
         }
 

@@ -119,7 +119,7 @@
     public class SimpleTextDocValuesFormat : DocValuesFormat
     {
         public SimpleTextDocValuesFormat() 
-            : base("SimpleText")
+            : base()
         {
         }
 

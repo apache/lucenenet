@@ -144,7 +144,7 @@ namespace Lucene.Net.Codecs.Lucene42
         ///
         /// @lucene.experimental </param>
         public Lucene42DocValuesFormat(float acceptableOverheadRatio)
-            : base("Lucene42")
+            : base()
         {
             this.m_acceptableOverheadRatio = acceptableOverheadRatio;
         }
