@@ -4,7 +4,7 @@ using System.Threading;
 using Lucene.Net.Support;
 using NUnit.Framework;
 
-namespace Lucene.Net.Util.junitcompat
+namespace Lucene.Net.Util.JunitCompat
 {
 
 	/*

@@ -13,7 +13,7 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void TestReadFully()
         {
-            const string READFULLY_TEST_FILE = "Lucene.Net.Tests.core.Support.ReadFully.txt";
+            const string READFULLY_TEST_FILE = "Lucene.Net.Tests.Support.ReadFully.txt";
             byte[] buffer = new byte[1367];
 
             Stream @in = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(READFULLY_TEST_FILE);

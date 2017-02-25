@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace Lucene.Net.Util.junitcompat
+namespace Lucene.Net.Util.JunitCompat
 {
 
 	using After = org.junit.After;

@@ -1,4 +1,4 @@
-namespace Lucene.Net.Util.junitcompat
+namespace Lucene.Net.Util.JunitCompat
 {
 
 	/*
@@ -18,19 +18,11 @@ namespace Lucene.Net.Util.junitcompat
 	 * limitations under the License.
 	 */
 
-	/// <summary>
-	/// A pointcut-like definition where we should trigger
-	/// an assumption or error.
-	/// </summary>
-	public enum SorePoint
+	public enum SoreType
 	{
-	  // STATIC_INITIALIZER, // I assume this will result in JUnit failure to load a suite.
-	  BEFORE_CLASS,
-	  INITIALIZER,
-	  RULE,
-	  BEFORE,
-	  TEST,
-	  AFTER,
-	  AFTER_CLASS
+	  ASSUMPTION,
+	  FAILURE,
+	  ERROR
 	}
+
 }

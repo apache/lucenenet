@@ -1,4 +1,4 @@
-namespace Lucene.Net.Util.junitcompat
+namespace Lucene.Net.Util.JunitCompat
 {
 
 

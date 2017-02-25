@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Util.junitcompat
+namespace Lucene.Net.Util.JunitCompat
 {
 
 	/*

@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-namespace Lucene.Net.Util.junitcompat
+namespace Lucene.Net.Util.JunitCompat
 {
 
 	using Codec = Lucene.Net.Codecs.Codec;
