@@ -257,7 +257,7 @@
     <Compile Include="Codecs\MockSep\MockSingleIntIndexInput.cs" />
     <Compile Include="Codecs\MockSep\MockSingleIntIndexOutput.cs" />
     <Compile Include="Codecs\NestedPulsing\NestedPulsingPostingsFormat.cs" />
-    <Compile Include="Codecs\ramonly\RAMOnlyPostingsFormat.cs">
+    <Compile Include="Codecs\RAMOnly\RAMOnlyPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\TestCodecFactory.cs" />

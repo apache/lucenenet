@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Lucene.Net.Codecs.ramonly
+namespace Lucene.Net.Codecs.RAMOnly
 {
     using Lucene.Net.Support;
     using IBits = Lucene.Net.Util.IBits;
