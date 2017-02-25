@@ -229,7 +229,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\Lucene41Ords\Lucene41WithOrds.cs" />
-    <Compile Include="Codecs\lucene41\Lucene41RWCodec.cs">
+    <Compile Include="Codecs\Lucene41\Lucene41RWCodec.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\lucene42\Lucene42DocValuesConsumer.cs">
