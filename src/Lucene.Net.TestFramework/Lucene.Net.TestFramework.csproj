@@ -156,52 +156,52 @@
     <Compile Include="Codecs\Compressing\HighCompressionCompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWCodec.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWFieldInfosFormat.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWFieldInfosFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWFieldInfosReader.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWFieldInfosReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWFieldInfosWriter.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWFieldInfosWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWFieldsWriter.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWFieldsWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWNormsConsumer.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWNormsConsumer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWNormsFormat.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWNormsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWPostingsFormat.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWSegmentInfoFormat.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWSegmentInfoFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWSegmentInfoWriter.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWSegmentInfoWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWSkipListWriter.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWSkipListWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWStoredFieldsFormat.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWStoredFieldsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWStoredFieldsWriter.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWStoredFieldsWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWTermVectorsFormat.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWTermVectorsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\PreFlexRWTermVectorsWriter.cs">
+    <Compile Include="Codecs\Lucene3x\PreFlexRWTermVectorsWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene3x\TermInfosWriter.cs">
+    <Compile Include="Codecs\Lucene3x\TermInfosWriter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\lucene40\Lucene40DocValuesWriter.cs">
