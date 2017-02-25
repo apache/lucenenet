@@ -434,7 +434,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\ApiScanTestBase.cs" />
-    <Compile Include="Util\automaton\AutomatonTestUtil.cs">
+    <Compile Include="Util\Automaton\AutomatonTestUtil.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\BaseDocIdSetTestCase.cs">
