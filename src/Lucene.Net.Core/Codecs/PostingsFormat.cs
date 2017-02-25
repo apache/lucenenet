@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs
         /// Creates a new postings format.
         /// <para/>
         /// The provided name will be written into the index segment in some configurations
-        /// (such as when using <see cref="Perfield.PerFieldPostingsFormat"/>): in such configurations,
+        /// (such as when using <see cref="PerField.PerFieldPostingsFormat"/>): in such configurations,
         /// for the segment to be read this class should be registered by subclassing <see cref="DefaultPostingsFormatFactory"/> and
         /// calling <see cref="DefaultPostingsFormatFactory.ScanForPostingsFormats(System.Reflection.Assembly)"/> in the class constructor. 
         /// The new <see cref="IPostingsFormatFactory"/> can be registered by calling <see cref="SetPostingsFormatFactory"/> at application startup.</summary>

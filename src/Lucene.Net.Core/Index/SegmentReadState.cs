@@ -19,7 +19,7 @@ namespace Lucene.Net.Index
 
     using Directory = Lucene.Net.Store.Directory;
     using IOContext = Lucene.Net.Store.IOContext;
-    using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat; // javadocs
+    using PerFieldPostingsFormat = Lucene.Net.Codecs.PerField.PerFieldPostingsFormat; // javadocs
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat; // javadocs
 
     /// <summary>

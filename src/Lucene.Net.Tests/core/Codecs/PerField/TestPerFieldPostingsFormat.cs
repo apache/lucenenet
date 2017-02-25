@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Codecs.Perfield
+namespace Lucene.Net.Codecs.PerField
 {
     using NUnit.Framework;
 

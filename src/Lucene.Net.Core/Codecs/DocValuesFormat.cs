@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs
         /// Creates a new docvalues format.
         /// <para/>
         /// The provided name will be written into the index segment in some configurations
-        /// (such as when using <see cref="Codecs.Perfield.PerFieldDocValuesFormat"/>): in such configurations,
+        /// (such as when using <see cref="Codecs.PerField.PerFieldDocValuesFormat"/>): in such configurations,
         /// for the segment to be read this class should be registered by subclassing <see cref="DefaultDocValuesFormatFactory"/> and
         /// calling <see cref="DefaultDocValuesFormatFactory.ScanForDocValuesFormats(System.Reflection.Assembly)"/> in the class constructor.
         /// The new <see cref="IDocValuesFormatFactory"/> can be registered by calling <see cref="SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>

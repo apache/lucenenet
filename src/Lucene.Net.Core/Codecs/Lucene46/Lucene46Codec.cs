@@ -21,8 +21,8 @@ namespace Lucene.Net.Codecs.Lucene46
     using Lucene41StoredFieldsFormat = Lucene.Net.Codecs.Lucene41.Lucene41StoredFieldsFormat;
     using Lucene42NormsFormat = Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat;
     using Lucene42TermVectorsFormat = Lucene.Net.Codecs.Lucene42.Lucene42TermVectorsFormat;
-    using PerFieldDocValuesFormat = Lucene.Net.Codecs.Perfield.PerFieldDocValuesFormat;
-    using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat;
+    using PerFieldDocValuesFormat = Lucene.Net.Codecs.PerField.PerFieldDocValuesFormat;
+    using PerFieldPostingsFormat = Lucene.Net.Codecs.PerField.PerFieldPostingsFormat;
 
     /// <summary>
     /// Implements the Lucene 4.6 index format, with configurable per-field postings

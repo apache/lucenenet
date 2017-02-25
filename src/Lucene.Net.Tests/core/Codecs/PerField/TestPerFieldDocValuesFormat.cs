@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Lucene.Net.Documents;
 
-namespace Lucene.Net.Codecs.Perfield
+namespace Lucene.Net.Codecs.PerField
 {
     using Lucene.Net.Index;
     using NUnit.Framework;

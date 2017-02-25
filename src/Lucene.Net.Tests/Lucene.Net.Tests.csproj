@@ -185,9 +185,9 @@
     <Compile Include="core\Codecs\Lucene41\TestLucene41StoredFieldsFormat.cs" />
     <Compile Include="core\Codecs\Lucene42\TestLucene42DocValuesFormat.cs" />
     <Compile Include="core\Codecs\Lucene45\TestLucene45DocValuesFormat.cs" />
-    <Compile Include="core\Codecs\Perfield\TestPerFieldDocValuesFormat.cs" />
-    <Compile Include="core\Codecs\Perfield\TestPerFieldPostingsFormat.cs" />
-    <Compile Include="core\Codecs\Perfield\TestPerFieldPostingsFormat2.cs" />
+    <Compile Include="core\Codecs\PerField\TestPerFieldDocValuesFormat.cs" />
+    <Compile Include="core\Codecs\PerField\TestPerFieldPostingsFormat.cs" />
+    <Compile Include="core\Codecs\PerField\TestPerFieldPostingsFormat2.cs" />
     <Compile Include="core\Document\TestBinaryDocument.cs" />
     <Compile Include="core\Document\TestDateTools.cs" />
     <Compile Include="core\Document\TestDocument.cs" />

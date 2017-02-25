@@ -65,8 +65,8 @@ namespace Lucene.Net.Util
     using MergeScheduler = Lucene.Net.Index.MergeScheduler;
     using MultiFields = Lucene.Net.Index.MultiFields;
     using NumericDocValuesField = NumericDocValuesField;
-    using PerFieldDocValuesFormat = Lucene.Net.Codecs.Perfield.PerFieldDocValuesFormat;
-    using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat;
+    using PerFieldDocValuesFormat = Lucene.Net.Codecs.PerField.PerFieldDocValuesFormat;
+    using PerFieldPostingsFormat = Lucene.Net.Codecs.PerField.PerFieldPostingsFormat;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using SortedDocValuesField = SortedDocValuesField;

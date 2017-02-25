@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Lucene.Net.Codecs.Perfield // LUCENENET TODO: Rename namespace to PerField
+namespace Lucene.Net.Codecs.PerField
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

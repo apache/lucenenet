@@ -19,7 +19,7 @@ namespace Lucene.Net.Codecs.Lucene40
      * limitations under the License.
      */
 
-    using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat;
+    using PerFieldPostingsFormat = Lucene.Net.Codecs.PerField.PerFieldPostingsFormat;
 
     /// <summary>
     /// Implements the Lucene 4.0 index format, with configurable per-field postings formats.

@@ -181,8 +181,8 @@
     <Compile Include="Codecs\MultiLevelSkipListReader.cs" />
     <Compile Include="Codecs\MultiLevelSkipListWriter.cs" />
     <Compile Include="Codecs\NormsFormat.cs" />
-    <Compile Include="Codecs\Perfield\PerFieldDocValuesFormat.cs" />
-    <Compile Include="Codecs\Perfield\PerFieldPostingsFormat.cs" />
+    <Compile Include="Codecs\PerField\PerFieldDocValuesFormat.cs" />
+    <Compile Include="Codecs\PerField\PerFieldPostingsFormat.cs" />
     <Compile Include="Codecs\PostingsBaseFormat.cs" />
     <Compile Include="Codecs\PostingsConsumer.cs" />
     <Compile Include="Codecs\PostingsFormat.cs" />

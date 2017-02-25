@@ -13,7 +13,7 @@ using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using Lucene.Net.Store;
 
-namespace Lucene.Net.Codecs.Perfield
+namespace Lucene.Net.Codecs.PerField
 {
     /*
     * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -29,7 +29,7 @@ namespace Lucene.Net.Codecs.Lucene41
     using Lucene40NormsFormat = Lucene.Net.Codecs.Lucene40.Lucene40NormsFormat;
     using Lucene40SegmentInfoFormat = Lucene.Net.Codecs.Lucene40.Lucene40SegmentInfoFormat;
     using Lucene40TermVectorsFormat = Lucene.Net.Codecs.Lucene40.Lucene40TermVectorsFormat;
-    using PerFieldPostingsFormat = Lucene.Net.Codecs.Perfield.PerFieldPostingsFormat;
+    using PerFieldPostingsFormat = Lucene.Net.Codecs.PerField.PerFieldPostingsFormat;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
