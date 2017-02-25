@@ -332,9 +332,6 @@
     <Compile Include="Randomized\Generators\RandomInts.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Randomized\IllegalStateException.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Randomized\InternalAssumptionViolatedException.cs">
       <SubType>Code</SubType>
     </Compile>

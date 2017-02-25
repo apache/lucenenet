@@ -102,7 +102,7 @@ namespace Lucene.Net.Randomized
                                 " and must not be shared.  The current thread is " + Thread.CurrentThread.Name + ".";
 
                 throw new InvalidOperationException(message,
-                    new IllegalStateException("The instance was illegally accessed\n" + this.trace));
+                    new Exception("The instance was illegally accessed\n" + this.trace));
             }
         }
 

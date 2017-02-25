@@ -131,7 +131,7 @@ namespace Lucene.Net.Randomized
                 var message = "No context information for thread," + thread.Name + ". " +
                             "Is this thread running under a " + typeof(RandomizedRunner).Name + " context? ";
 
-                throw new IllegalStateException(message);
+                throw new InvalidOperationException(message);
             }
 
             lock (context.contextLock)
