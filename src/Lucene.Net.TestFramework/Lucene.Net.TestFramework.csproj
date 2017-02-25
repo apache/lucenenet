@@ -122,22 +122,22 @@
     <Compile Include="Attributes\HasTimeoutAttribute.cs" />
     <Compile Include="Attributes\LongRunningTestAttribute.cs" />
     <Compile Include="Attributes\LuceneNetSpecificAttribute.cs" />
-    <Compile Include="Codecs\asserting\AssertingCodec.cs">
+    <Compile Include="Codecs\Asserting\AssertingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\asserting\AssertingDocValuesFormat.cs">
+    <Compile Include="Codecs\Asserting\AssertingDocValuesFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\asserting\AssertingNormsFormat.cs">
+    <Compile Include="Codecs\Asserting\AssertingNormsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\asserting\AssertingPostingsFormat.cs">
+    <Compile Include="Codecs\Asserting\AssertingPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\asserting\AssertingStoredFieldsFormat.cs">
+    <Compile Include="Codecs\Asserting\AssertingStoredFieldsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\asserting\AssertingTermVectorsFormat.cs">
+    <Compile Include="Codecs\Asserting\AssertingTermVectorsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\Bloom\TestBloomFilteredLucene41Postings.cs" />

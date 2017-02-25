@@ -7,8 +7,8 @@ using System.Diagnostics;
 namespace Lucene.Net.Index
 {
     
-    using AssertingDocValuesFormat = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat;
-    using AssertingPostingsFormat = Lucene.Net.Codecs.asserting.AssertingPostingsFormat;
+    using AssertingDocValuesFormat = Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat;
+    using AssertingPostingsFormat = Lucene.Net.Codecs.Asserting.AssertingPostingsFormat;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more

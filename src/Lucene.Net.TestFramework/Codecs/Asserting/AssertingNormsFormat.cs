@@ -1,8 +1,8 @@
 using System.Diagnostics;
 
-namespace Lucene.Net.Codecs.asserting
+namespace Lucene.Net.Codecs.Asserting
 {
-    using AssertingDocValuesProducer = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat.AssertingDocValuesProducer;
+    using AssertingDocValuesProducer = Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat.AssertingDocValuesProducer;
 
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.asserting
          * limitations under the License.
          */
 
-    using AssertingNormsConsumer = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat.AssertingNormsConsumer;
+    using AssertingNormsConsumer = Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat.AssertingNormsConsumer;
     using Lucene42NormsFormat = Lucene.Net.Codecs.Lucene42.Lucene42NormsFormat;
     using SegmentReadState = Lucene.Net.Index.SegmentReadState;
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;

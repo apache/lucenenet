@@ -1,4 +1,4 @@
-namespace Lucene.Net.Codecs.asserting
+namespace Lucene.Net.Codecs.Asserting
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

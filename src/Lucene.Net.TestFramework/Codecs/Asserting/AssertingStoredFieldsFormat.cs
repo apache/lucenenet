@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace Lucene.Net.Codecs.asserting
+namespace Lucene.Net.Codecs.Asserting
 {
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;

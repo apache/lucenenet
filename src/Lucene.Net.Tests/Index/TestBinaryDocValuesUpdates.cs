@@ -12,7 +12,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.IO;
     using System.Threading;
-    using AssertingDocValuesFormat = Lucene.Net.Codecs.asserting.AssertingDocValuesFormat;
+    using AssertingDocValuesFormat = Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat;
     using BinaryDocValuesField = BinaryDocValuesField;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;

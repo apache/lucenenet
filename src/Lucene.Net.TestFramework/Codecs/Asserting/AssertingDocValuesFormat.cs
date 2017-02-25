@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Lucene.Net.Codecs.asserting
+namespace Lucene.Net.Codecs.Asserting
 {
     using System;
     using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
