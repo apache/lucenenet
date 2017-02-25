@@ -244,7 +244,7 @@
     <Compile Include="Codecs\Lucene42\Lucene42RWDocValuesFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene45\Lucene45RWCodec.cs">
+    <Compile Include="Codecs\Lucene45\Lucene45RWCodec.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\MissingOrdRemapper.cs">
