@@ -141,19 +141,19 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\Bloom\TestBloomFilteredLucene41Postings.cs" />
-    <Compile Include="Codecs\compressing\CompressingCodec.cs">
+    <Compile Include="Codecs\Compressing\CompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\compressing\dummy\DummyCompressingCodec.cs">
+    <Compile Include="Codecs\Compressing\Dummy\DummyCompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\compressing\FastCompressingCodec.cs">
+    <Compile Include="Codecs\Compressing\FastCompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\compressing\FastDecompressionCompressingCodec.cs">
+    <Compile Include="Codecs\Compressing\FastDecompressionCompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\compressing\HighCompressionCompressingCodec.cs">
+    <Compile Include="Codecs\Compressing\HighCompressionCompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\lucene3x\PreFlexRWCodec.cs">

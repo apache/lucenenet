@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace Lucene.Net.Codecs.Compressing.dummy
+namespace Lucene.Net.Codecs.Compressing.Dummy
 {
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using BytesRef = Lucene.Net.Util.BytesRef;

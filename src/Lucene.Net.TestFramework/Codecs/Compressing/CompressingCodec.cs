@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Compressing
          * limitations under the License.
          */
 
-    using DummyCompressingCodec = Lucene.Net.Codecs.Compressing.dummy.DummyCompressingCodec;
+    using DummyCompressingCodec = Lucene.Net.Codecs.Compressing.Dummy.DummyCompressingCodec;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
 
     //using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
