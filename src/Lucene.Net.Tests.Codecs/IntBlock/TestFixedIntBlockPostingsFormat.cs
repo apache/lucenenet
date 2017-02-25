@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Index;
+﻿using Lucene.Net.Codecs.MockIntBlock;
+using Lucene.Net.Index;
 using Lucene.Net.Util;
 using NUnit.Framework;
 

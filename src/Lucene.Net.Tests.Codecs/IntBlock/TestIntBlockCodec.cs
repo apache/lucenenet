@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Codecs.Sep;
+﻿using Lucene.Net.Codecs.MockIntBlock;
+using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;

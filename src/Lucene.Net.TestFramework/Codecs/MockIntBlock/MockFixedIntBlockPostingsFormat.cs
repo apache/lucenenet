@@ -1,10 +1,11 @@
 ﻿using Lucene.Net.Codecs.BlockTerms;
+using Lucene.Net.Codecs.IntBlock;
 using Lucene.Net.Codecs.Sep;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 
-namespace Lucene.Net.Codecs.IntBlock
+namespace Lucene.Net.Codecs.MockIntBlock
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
