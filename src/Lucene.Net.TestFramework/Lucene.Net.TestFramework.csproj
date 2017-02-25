@@ -446,7 +446,7 @@
     <Compile Include="Util\FailOnNonBulkMergesInfoStream.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\fst\FSTTester.cs">
+    <Compile Include="Util\Fst\FSTTester.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\LineFileDocs.cs">
