@@ -204,28 +204,28 @@
     <Compile Include="Codecs\Lucene3x\TermInfosWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene40\Lucene40DocValuesWriter.cs">
+    <Compile Include="Codecs\Lucene40\Lucene40DocValuesWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene40\Lucene40FieldInfosWriter.cs">
+    <Compile Include="Codecs\Lucene40\Lucene40FieldInfosWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene40\Lucene40PostingsWriter.cs">
+    <Compile Include="Codecs\Lucene40\Lucene40PostingsWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene40\Lucene40RWCodec.cs">
+    <Compile Include="Codecs\Lucene40\Lucene40RWCodec.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene40\Lucene40RWDocValuesFormat.cs">
+    <Compile Include="Codecs\Lucene40\Lucene40RWDocValuesFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene40\Lucene40RWNormsFormat.cs">
+    <Compile Include="Codecs\Lucene40\Lucene40RWNormsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene40\Lucene40RWPostingsFormat.cs">
+    <Compile Include="Codecs\Lucene40\Lucene40RWPostingsFormat.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Codecs\lucene40\Lucene40SkipListWriter.cs">
+    <Compile Include="Codecs\Lucene40\Lucene40SkipListWriter.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\Lucene41Ords\Lucene41WithOrds.cs" />
