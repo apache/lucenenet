@@ -66,8 +66,10 @@ namespace Lucene.Net.Search
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             Dir = NewDirectory();
             RandomIndexWriter iw = new RandomIndexWriter(Random(), Dir, Similarity, TimeZone);
             int numDocs = AtLeast(300);

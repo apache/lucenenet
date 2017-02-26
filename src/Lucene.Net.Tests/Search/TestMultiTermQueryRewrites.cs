@@ -52,8 +52,10 @@ namespace Lucene.Net.Search
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             Dir = NewDirectory();
             Sdir1 = NewDirectory();
             Sdir2 = NewDirectory();

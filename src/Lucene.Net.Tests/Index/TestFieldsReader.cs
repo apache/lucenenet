@@ -49,8 +49,10 @@ namespace Lucene.Net.Index
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             TestDoc = new Document();
             FieldInfos = new FieldInfos.Builder();
             DocHelper.SetupDoc(TestDoc);

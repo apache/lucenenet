@@ -100,8 +100,10 @@ namespace Lucene.Net.Search.Spans
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             SimplePayloadAnalyzer = new AnalyzerAnonymousInnerClassHelper();
 
             Directory = NewDirectory();

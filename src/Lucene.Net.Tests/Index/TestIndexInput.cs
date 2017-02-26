@@ -43,8 +43,10 @@ namespace Lucene.Net.Index
         internal static byte[] RANDOM_TEST_BYTES;
 
         [OneTimeSetUp]
-        public static void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             Random random = Random();
             INTS = new int[COUNT];
             LONGS = new long[COUNT];

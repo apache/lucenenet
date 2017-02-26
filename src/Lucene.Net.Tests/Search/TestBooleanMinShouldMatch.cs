@@ -49,8 +49,10 @@ namespace Lucene.Net.Search
         /// Is non-static because NewStringField is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             string[] data = new string[] { "A 1 2 3 4 5 6", "Z       4 5 6", null, "B   2   4 5 6", "Y     3   5 6", null, "C     3     6", "X       4 5 6" };
 
             Index = NewDirectory();

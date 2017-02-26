@@ -120,7 +120,7 @@ namespace Lucene.Net.Search.Payloads
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));

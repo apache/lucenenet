@@ -56,8 +56,10 @@ namespace Lucene.Net.Search
         private static Directory Directory;
 
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             Directory = NewDirectory();
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, analyzer, Similarity, TimeZone);

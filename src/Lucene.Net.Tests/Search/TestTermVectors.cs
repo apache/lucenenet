@@ -52,8 +52,10 @@ namespace Lucene.Net.Search
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true)).SetMergePolicy(NewLogMergePolicy()));
             //writer.setNoCFSRatio(1.0);

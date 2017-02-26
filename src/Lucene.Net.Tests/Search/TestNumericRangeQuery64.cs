@@ -66,8 +66,10 @@ namespace Lucene.Net.Search
         /// Is non-static because NewIndexWriterConfig is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             NoDocs = AtLeast(4096);
             Distance = (1L << 60) / NoDocs;
             Directory = NewDirectory();
