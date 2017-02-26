@@ -38,6 +38,7 @@ packages/
 TestResults/
 test-files/analysis/data/
 [Nn]u[Gg]et[Pp]ackages/
+out.dot
 
 # NuGet v3's project.json files produces more ignoreable files
 *.nuget.props
