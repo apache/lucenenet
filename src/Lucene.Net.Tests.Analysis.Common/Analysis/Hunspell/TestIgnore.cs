@@ -23,8 +23,9 @@ namespace Lucene.Net.Analysis.Hunspell
     {
 
         [OneTimeSetUp]
-        public static void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
             Init("ignore.aff", "ignore.dic");
         }
         [Test]

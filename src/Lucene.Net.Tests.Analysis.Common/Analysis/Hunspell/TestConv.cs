@@ -22,8 +22,9 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestConv : StemmerTestBase
     {
         [OneTimeSetUp]
-        public static void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
             Init("conv.aff", "conv.dic");
         }
         [Test]

@@ -61,9 +61,11 @@ namespace Lucene.Net.Search
         /// LUCENENET specific
         /// Is non-static because ClassEnvRule is no longer static.
         /// </summary>
-        [SetUp]
-        public void BeforeClass()
+        [OneTimeSetUp]
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             Random random = Random();
             Directory = NewDirectory();
             Stopword = "" + RandomChar();
@@ -106,7 +108,7 @@ namespace Lucene.Net.Search
             iw.Dispose();
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public void AfterClass()
         {
             Reader.Dispose();

@@ -50,8 +50,10 @@ namespace Lucene.Net.Facet.Taxonomy
         /// Is non-static because Similarity and TimeZone are not static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             dir = NewDirectory();
             taxoDir = NewDirectory();
             // preparations - index, taxonomy, content

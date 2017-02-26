@@ -30,8 +30,9 @@ namespace Lucene.Net.Analysis.Hunspell
         private static Dictionary dictionary;
 
         [OneTimeSetUp]
-        public static void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
             System.IO.Stream affixStream = typeof(TestStemmer).getResourceAsStream("simple.aff");
             System.IO.Stream dictStream = typeof(TestStemmer).getResourceAsStream("simple.dic");
             try
@@ -45,7 +46,7 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         [OneTimeTearDown]
-        public static void afterClass()
+        public static void AfterClass()
         {
             dictionary = null;
         }

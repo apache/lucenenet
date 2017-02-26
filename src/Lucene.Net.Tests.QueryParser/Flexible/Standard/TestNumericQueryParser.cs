@@ -74,8 +74,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             ANALYZER = new MockAnalyzer(Random());
 
             qp = new StandardQueryParser(ANALYZER);

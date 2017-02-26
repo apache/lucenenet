@@ -39,8 +39,10 @@ namespace Lucene.Net.QueryParsers.Xml
         private static IndexSearcher searcher;
 
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             // TODO: rewrite test (this needs to set QueryParser.enablePositionIncrements, too, for work with CURRENT):
             Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, true, MockTokenFilter.ENGLISH_STOPSET);
             //initialize the parser

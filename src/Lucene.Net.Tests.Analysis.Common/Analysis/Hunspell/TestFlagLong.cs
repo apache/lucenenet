@@ -22,8 +22,9 @@ namespace Lucene.Net.Analysis.Hunspell
     public class TestFlagLong : StemmerTestBase
     {
         [OneTimeSetUp]
-        public static void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
             Init("flaglong.aff", "flaglong.dic");
         }
         [Test]

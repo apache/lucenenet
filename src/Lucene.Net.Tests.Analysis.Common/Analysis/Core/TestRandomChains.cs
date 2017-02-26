@@ -181,8 +181,10 @@ namespace Lucene.Net.Analysis.Core
         }
 
         [OneTimeSetUp]
-        public static void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
+
             IEnumerable<Type> analysisClasses = typeof(StandardAnalyzer).GetTypeInfo().Assembly.GetTypes()
                 .Where(c => {
                     var typeInfo = c.GetTypeInfo();
