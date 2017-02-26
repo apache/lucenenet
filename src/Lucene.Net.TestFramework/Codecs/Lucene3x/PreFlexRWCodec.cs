@@ -26,44 +26,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning disable 612, 618
     public class PreFlexRWCodec : Lucene3xCodec
     {
-        private readonly PostingsFormat Postings = new PreFlexRWPostingsFormat();
-        private readonly Lucene3xNormsFormat Norms = new PreFlexRWNormsFormat();
-        private readonly FieldInfosFormat FieldInfos = new PreFlexRWFieldInfosFormat();
-        private readonly TermVectorsFormat TermVectors = new PreFlexRWTermVectorsFormat();
-        private readonly SegmentInfoFormat SegmentInfos = new PreFlexRWSegmentInfoFormat();
-        private readonly StoredFieldsFormat StoredFields = new PreFlexRWStoredFieldsFormat();
-        private readonly bool _oldFormatImpersonationIsActive;
-
-        /// <summary>
-        /// LUCENENET specific
-        /// Creates the codec with OldFormatImpersonationIsActive = true.
-        /// </summary>
-        /// <remarks>
-        /// Added so that SPIClassIterator can locate this Codec.  The iterator
-        /// only recognises classes that have empty constructors.
-        /// </remarks>
-        public PreFlexRWCodec()
-            : this(true)
-        { }
-
-        /// <summary>
-        /// </summary>
-        /// <param name="oldFormatImpersonationIsActive">
-        /// LUCENENET specific
-        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
-        /// </param>
-        public PreFlexRWCodec(bool oldFormatImpersonationIsActive) : base()
-        {
-            _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
-        }
+        private readonly PostingsFormat postings = new PreFlexRWPostingsFormat();
+        private readonly Lucene3xNormsFormat norms = new PreFlexRWNormsFormat();
+        private readonly FieldInfosFormat fieldInfos = new PreFlexRWFieldInfosFormat();
+        private readonly TermVectorsFormat termVectors = new PreFlexRWTermVectorsFormat();
+        private readonly SegmentInfoFormat segmentInfos = new PreFlexRWSegmentInfoFormat();
+        private readonly StoredFieldsFormat storedFields = new PreFlexRWStoredFieldsFormat();
 
         public override PostingsFormat PostingsFormat
         {
             get
             {
-                if (_oldFormatImpersonationIsActive)
+                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
                 {
-                    return Postings;
+                    return postings;
                 }
                 else
                 {
@@ -76,9 +52,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (_oldFormatImpersonationIsActive)
+                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
                 {
-                    return Norms;
+                    return norms;
                 }
                 else
                 {
@@ -91,9 +67,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (_oldFormatImpersonationIsActive)
+                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
                 {
-                    return SegmentInfos;
+                    return segmentInfos;
                 }
                 else
                 {
@@ -106,9 +82,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (_oldFormatImpersonationIsActive)
+                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
                 {
-                    return FieldInfos;
+                    return fieldInfos;
                 }
                 else
                 {
@@ -121,9 +97,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (_oldFormatImpersonationIsActive)
+                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
                 {
-                    return TermVectors;
+                    return termVectors;
                 }
                 else
                 {
@@ -136,9 +112,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                if (_oldFormatImpersonationIsActive)
+                if (LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
                 {
-                    return StoredFields;
+                    return storedFields;
                 }
                 else
                 {

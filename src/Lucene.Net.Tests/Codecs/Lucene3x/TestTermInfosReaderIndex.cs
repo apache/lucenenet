@@ -66,12 +66,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// we will manually instantiate preflex-rw here
-        /// 
-        /// LUCENENET specific
-        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
             // NOTE: turn off compound file, this test will open some index files directly.
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
@@ -84,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             Directory = NewDirectory();
 
-            config.SetCodec(new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE));
+            config.SetCodec(new PreFlexRWCodec());
             LogMergePolicy mp = NewLogMergePolicy();
             // NOTE: turn off compound file, this test will open some index files directly.
             mp.NoCFSRatio = 0.0;
@@ -97,7 +94,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             string segment = r.SegmentName;
             r.Dispose();
 
-            FieldInfosReader infosReader = (new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)).FieldInfosFormat.FieldInfosReader;
+            FieldInfosReader infosReader = (new PreFlexRWCodec()).FieldInfosFormat.FieldInfosReader;
             FieldInfos fieldInfos = infosReader.Read(Directory, segment, "", IOContext.READ_ONCE);
             string segmentFileName = IndexFileNames.SegmentFileName(segment, "", Lucene3xPostingsFormat.TERMS_INDEX_EXTENSION);
             long tiiFileLength = Directory.FileLength(segmentFileName);

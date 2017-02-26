@@ -1116,19 +1116,18 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpdateOldSegments()
         {
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-
             Codec[] oldCodecs = new Codec[] {
-                new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
-                new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
-                new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
-                new Lucene45RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                new Lucene40RWCodec(),
+                new Lucene41RWCodec(),
+                new Lucene42RWCodec(),
+                new Lucene45RWCodec()
             };
             Directory dir = NewDirectory();
 
             // create a segment with an old Codec
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
             IndexWriter writer = new IndexWriter(dir, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "doc", Store.NO));
@@ -1138,11 +1137,6 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Split from <see cref="TestUpdateOldSegments"/> because OLD_FORMAT_IMPERSONATION_IS_ACTIVE
-        /// is no longer static and the existing codecs have to be remade.
-        /// </summary>
         [Test, LuceneNetSpecific]
         public virtual void TestUpdateOldSegments_OldFormatNotActive()
         {
@@ -1151,10 +1145,10 @@ namespace Lucene.Net.Index
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
 
             Codec[] oldCodecs = new Codec[] {
-                new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
-                new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
-                new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE),
-                new Lucene45RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
+                new Lucene40RWCodec(),
+                new Lucene41RWCodec(),
+                new Lucene42RWCodec(),
+                new Lucene45RWCodec()
             };
 
             Directory dir = NewDirectory();

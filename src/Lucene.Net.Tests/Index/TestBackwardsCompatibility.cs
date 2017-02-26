@@ -201,7 +201,7 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
             Assert.IsFalse(OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "test infra is broken!");
             IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);

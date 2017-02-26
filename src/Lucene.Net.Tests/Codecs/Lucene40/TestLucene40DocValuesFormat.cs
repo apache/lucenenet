@@ -26,13 +26,12 @@ namespace Lucene.Net.Codecs.Lucene40
     /// </summary>
     public class TestLucene40DocValuesFormat : BaseDocValuesFormatTestCase
     {
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
-        /// </summary>
+        private readonly Codec codec = new Lucene40RWCodec();
+
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
 
@@ -40,8 +39,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             get
             {
-                Assert.True(OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "Expecting that this is true");
-                return new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
+                return codec;
             }
         }
 

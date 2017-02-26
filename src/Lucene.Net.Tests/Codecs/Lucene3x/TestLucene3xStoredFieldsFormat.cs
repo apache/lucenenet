@@ -26,13 +26,10 @@ namespace Lucene.Net.Codecs.Lucene3x
     [TestFixture]
     public class TestLucene3xStoredFieldsFormat : BaseStoredFieldsFormatTestCase
     {
-        /// <summary>
-        /// LUCENENET specific
-        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
-        /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
         }
 
@@ -40,8 +37,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             get
             {
-                Assert.IsTrue(OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "This should have been set up in the test fixture");
-                return new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
+                return new PreFlexRWCodec();
             }
         }
 
@@ -105,7 +101,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             base.TestEmptyDocs();
         }
 
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(40000)]
+#endif
+        [Test, HasTimeout]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();

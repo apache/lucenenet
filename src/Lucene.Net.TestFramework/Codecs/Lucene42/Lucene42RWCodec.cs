@@ -25,50 +25,18 @@ namespace Lucene.Net.Codecs.Lucene42
 #pragma warning disable 612, 618
     public class Lucene42RWCodec : Lucene42Codec
     {
-        private readonly DocValuesFormat Dv;
+        private readonly DocValuesFormat Dv = new Lucene42RWDocValuesFormat();
         private readonly NormsFormat Norms = new Lucene42NormsFormat();
-        private readonly FieldInfosFormat fieldInfosFormat;
 
-        /// <summary>
-        /// LUCENENET specific
-        /// Creates the codec with OldFormatImpersonationIsActive = true.
-        /// </summary>
-        /// <remarks>
-        /// Added so that SPIClassIterator can locate this Codec.  The iterator
-        /// only recognises classes that have empty constructors.
-        /// </remarks>
-        public Lucene42RWCodec()
-            : this(true)
-        { }
-
-        /// <param name="oldFormatImpersonationIsActive">
-        /// LUCENENET specific
-        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
-        /// </param>
-        public Lucene42RWCodec(bool oldFormatImpersonationIsActive) : base()
-        {
-            Dv = new Lucene42RWDocValuesFormat(oldFormatImpersonationIsActive);
-            fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousInnerClassHelper(oldFormatImpersonationIsActive);
-        }
+        private readonly FieldInfosFormat fieldInfosFormat = new Lucene42FieldInfosFormatAnonymousInnerClassHelper();
 
         private class Lucene42FieldInfosFormatAnonymousInnerClassHelper : Lucene42FieldInfosFormat
         {
-            private readonly bool _oldFormatImpersonationIsActive;
-
-            /// <param name="oldFormatImpersonationIsActive">
-            /// LUCENENET specific
-            /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
-            /// </param>
-            public Lucene42FieldInfosFormatAnonymousInnerClassHelper(bool oldFormatImpersonationIsActive) : base()
-            {
-                _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
-            }
-
             public override FieldInfosWriter FieldInfosWriter
             {
                 get
                 {
-                    if (!_oldFormatImpersonationIsActive)
+                    if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
                     {
                         return base.FieldInfosWriter;
                     }

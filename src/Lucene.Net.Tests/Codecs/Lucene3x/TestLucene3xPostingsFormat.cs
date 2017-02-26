@@ -27,19 +27,23 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// </summary>
     public class TestLucene3xPostingsFormat : BasePostingsFormatTestCase
     {
-        private readonly Codec Codec_Renamed;
+        private readonly Codec codec = new PreFlexRWCodec();
 
-        public TestLucene3xPostingsFormat() : base()
+        /// <summary>
+        /// we will manually instantiate preflex-rw here
+        /// </summary>
+        public override void SetUp()
         {
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true; // explicitly instantiates ancient codec
-            Codec_Renamed = new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
+            base.SetUp();
+            LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
         }
+
 
         protected override Codec Codec
         {
             get
             {
-                return Codec_Renamed;
+                return codec;
             }
         }
 

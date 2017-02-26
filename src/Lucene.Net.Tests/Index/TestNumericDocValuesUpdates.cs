@@ -1068,15 +1068,14 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestUpdateOldSegments()
         {
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-
-            Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE), new Lucene41RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE), new Lucene42RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE), new Lucene45RWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE) };
+            Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec(), new Lucene45RWCodec() };
             Directory dir = NewDirectory();
 
             bool oldValue = OLD_FORMAT_IMPERSONATION_IS_ACTIVE;
             // create a segment with an old Codec
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
             IndexWriter writer = new IndexWriter(dir, conf);
             Document doc = new Document();
             doc.Add(new StringField("id", "doc", Store.NO));

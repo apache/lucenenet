@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Index
 {
@@ -129,9 +130,9 @@ namespace Lucene.Net.Index
         internal static IDictionary<string, Directory> OldIndexDirs;
 
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
-            Assert.IsFalse(OLD_FORMAT_IMPERSONATION_IS_ACTIVE, "test infra is broken!");
+            assertFalse("test infra is broken!", OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
             IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
             names.AddRange(Arrays.AsList(OldNames));
             names.AddRange(Arrays.AsList(OldSingleSegmentNames));
@@ -237,13 +238,12 @@ namespace Lucene.Net.Index
                     writer = null;
                 }
 
-                MemoryStream bos = new MemoryStream(1024);
+                StringBuilder bos = new StringBuilder();
                 CheckIndex checker = new CheckIndex(dir);
-#pragma warning disable 612, 618
-                checker.InfoStream = new StreamWriter(bos.ToString(), false, IOUtils.CHARSET_UTF_8);
-#pragma warning restore 612, 618
+                checker.InfoStream = new StringWriter(bos);
                 CheckIndex.Status indexStatus = checker.DoCheckIndex();
                 Assert.IsFalse(indexStatus.Clean);
+                checker.InfoStream.Flush();
                 Assert.IsTrue(bos.ToString().Contains(typeof(IndexFormatTooOldException).Name));
 
                 dir.Dispose();
@@ -585,7 +585,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(44, hits.Length, "wrong number of hits");
             d = searcher.Doc(hits[0].Doc);
             DoTestHits(hits, 44, searcher.IndexReader);
-            Assert.AreEqual("wrong first document", "21", d.Get("id"));
+            assertEquals("wrong first document", "21", d.Get("id"));
             reader.Dispose();
         }
 

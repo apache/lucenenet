@@ -34,13 +34,11 @@ namespace Lucene.Net.Codecs.Lucene3x
     {
         /// <summary>
         /// we will manually instantiate preflex-rw here
-        /// 
-        /// LUCENENET specific
-        /// Is non-static because OLD_FORMAT_IMPERSONATION_IS_ACTIVE is no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClass()
+        public override void BeforeClass()
         {
+            base.BeforeClass();
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
         }
 
@@ -351,7 +349,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             Directory dir = NewDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                .SetCodec(new PreFlexRWCodec(OLD_FORMAT_IMPERSONATION_IS_ACTIVE)));
+                .SetCodec(new PreFlexRWCodec()));
 
             int numField = TestUtil.NextInt(Random(), 2, 5);
 

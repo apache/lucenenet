@@ -204,7 +204,6 @@ namespace Lucene.Net.Util
 
         public LuceneTestCase()
         {
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
             ClassEnvRule = new TestRuleSetupAndRestoreClassEnv();
             String directory = Paths.TempDirectory;
             TEMP_DIR = new System.IO.FileInfo(directory);
@@ -428,11 +427,8 @@ namespace Lucene.Net.Util
         /// specific tests on demand.
         ///
         /// @lucene.internal
-        /// 
-        /// LUCENENET specific
-        /// Is non-static to remove inter-class dependencies on this variable
         /// </summary>
-        public bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE { get; protected set; }
+        public static bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
 
         // -----------------------------------------------------------------
         // Class level (suite) rules.
@@ -596,8 +592,6 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
-
-
         }
 
         /// <summary>
@@ -620,8 +614,10 @@ namespace Lucene.Net.Util
 
         // LUCENENET specific method for setting up dependency injection of test classes.
         [OneTimeSetUp]
-        public virtual void OneTimeSetUp()
+        public virtual void BeforeClass()
         {
+            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+
             // Setup the factories
             Codec.SetCodecFactory(TEST_CODEC_FACTORY);
             DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
@@ -1333,8 +1329,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// LUCENENET specific
-        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
-        /// is now non-static.
+        /// Is non-static.
         /// </summary>
         public Field NewStringField(string name, string value, Field.Store stored)
         {
@@ -1343,8 +1338,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// LUCENENET specific
-        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
-        /// is now non-static.
+        /// Is non-static.
         /// </summary>
         public Field NewTextField(string name, string value, Field.Store stored)
         {
@@ -1353,8 +1347,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// LUCENENET specific
-        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
-        /// is now non-static.
+        /// Is non-static.
         /// </summary>
         public Field NewStringField(Random random, string name, string value, Field.Store stored)
         {
@@ -1363,8 +1356,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// LUCENENET specific
-        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
-        /// is also non-static to reduce hidden dependencies on this variable.
+        /// Is non-static.
         /// </summary>
         public Field NewTextField(Random random, string name, string value, Field.Store stored)
         {
@@ -1373,8 +1365,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// LUCENENET specific
-        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
-        /// is now non-static.
+        /// Is non-static.
         /// </summary>
         public Field NewField(string name, string value, FieldType type)
         {
@@ -1383,8 +1374,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// LUCENENET specific
-        /// Is non-static because <see cref="OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/>
-        /// is now non-static.
+        /// Is non-static.
         /// </summary>
         public Field NewField(Random random, string name, string value, FieldType type)
         {

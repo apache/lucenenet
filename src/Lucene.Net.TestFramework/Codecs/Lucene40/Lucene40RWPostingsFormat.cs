@@ -26,32 +26,9 @@ namespace Lucene.Net.Codecs.Lucene40
 #pragma warning disable 612, 618
     public class Lucene40RWPostingsFormat : Lucene40PostingsFormat
     {
-        private readonly bool _oldFormatImpersonationIsActive;
-
-        /// <summary>
-        /// LUCENENET specific
-        /// Creates the codec with OldFormatImpersonationIsActive = true.
-        /// </summary>
-        /// <remarks>
-        /// Added so that SPIClassIterator can locate this Codec.  The iterator
-        /// only recognises classes that have empty constructors.
-        /// </remarks>
-        public Lucene40RWPostingsFormat()
-            : this(true)
-        { }
-
-        /// <param name="oldFormatImpersonationIsActive">
-        /// LUCENENET specific
-        /// Added to remove dependency on then-static <see cref="LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE"/> 
-        /// </param>
-        public Lucene40RWPostingsFormat(bool oldFormatImpersonationIsActive) : base()
-        {
-            _oldFormatImpersonationIsActive = oldFormatImpersonationIsActive;
-        }
-
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
-            if (!_oldFormatImpersonationIsActive)
+            if (!LuceneTestCase.OLD_FORMAT_IMPERSONATION_IS_ACTIVE)
             {
                 return base.FieldsConsumer(state);
             }
