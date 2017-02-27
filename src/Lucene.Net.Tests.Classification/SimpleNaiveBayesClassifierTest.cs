@@ -31,8 +31,7 @@ namespace Lucene.Net.Classification
      * Testcase for {@link SimpleNaiveBayesClassifier}
      */
     // TODO : eventually remove this if / when fallback methods exist for all un-supportable codec methods (see LUCENE-4872)
-    // [Util.LuceneTestCase.SuppressCodecs("Lucene3x")] TODO : seems like we lost ability to pass in params in SupressCodecs constructor
-    [SuppressCodecs]
+    [SuppressCodecs("Lucene3x")]
     public class SimpleNaiveBayesClassifierTest : ClassificationTestBase<BytesRef>
     {
         [Test]

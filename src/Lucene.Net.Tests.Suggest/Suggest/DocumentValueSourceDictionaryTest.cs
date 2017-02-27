@@ -31,6 +31,7 @@ namespace Lucene.Net.Search.Suggest
      * limitations under the License.
      */
 
+    [SuppressCodecs("Lucene3x")]
     public class DocumentValueSourceDictionaryTest : LuceneTestCase
     {
         static readonly string FIELD_NAME = "f1";

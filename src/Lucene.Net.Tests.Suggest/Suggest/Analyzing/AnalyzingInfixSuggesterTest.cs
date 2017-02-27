@@ -36,7 +36,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
 
     // Test requires postings offsets:
-    //@SuppressCodecs({ "Lucene3x","MockFixedIntBlock","MockVariableIntBlock","MockSep","MockRandom"})
+    [SuppressCodecs("Lucene3x", "MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom")]
     public class AnalyzingInfixSuggesterTest : LuceneTestCase
     {
         public void TestBasic()

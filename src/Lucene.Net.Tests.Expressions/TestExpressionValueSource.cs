@@ -11,6 +11,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Expressions
 {
+    [SuppressCodecs("Lucene3x")]
 	public class TestExpressionValueSource : Util.LuceneTestCase
 	{
 		internal DirectoryReader reader;

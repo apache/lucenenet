@@ -26,6 +26,7 @@ namespace Lucene.Net.Collation
      * limitations under the License.
      */
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
 	public class TestCollationKeyAnalyzer : CollationTestBase
 	{

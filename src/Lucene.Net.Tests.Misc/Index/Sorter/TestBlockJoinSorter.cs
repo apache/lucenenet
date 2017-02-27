@@ -11,6 +11,7 @@ using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index.Sorter
 {
+    [SuppressCodecs("Lucene3x")]
     public class TestBlockJoinSorter : LuceneTestCase
     {
         private class FixedBitSetCachingWrapperFilter : CachingWrapperFilter

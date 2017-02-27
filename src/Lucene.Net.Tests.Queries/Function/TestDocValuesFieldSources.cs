@@ -14,7 +14,7 @@ using System.Globalization;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
-    // [Util.LuceneTestCase.SuppressCodecs("Lucene3x")]
+    [SuppressCodecs("Lucene3x")]
     public class TestDocValuesFieldSources : LuceneTestCase
     {
         private void DoTest(DocValuesType type)

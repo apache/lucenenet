@@ -36,7 +36,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
 
     [TestFixture]
-    [SuppressCodecs]
+    [SuppressCodecs("SimpleText", "Lucene3x")]
     public class TestTaxonomyCombined : FacetTestCase
     {
 

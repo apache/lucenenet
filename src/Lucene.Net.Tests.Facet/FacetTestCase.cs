@@ -39,6 +39,7 @@ namespace Lucene.Net.Facet
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
+    [SuppressCodecs("Lucene3x")]
     [TestFixture]
     public abstract class FacetTestCase : LuceneTestCase
     {

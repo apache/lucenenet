@@ -8,6 +8,7 @@ using System;
 
 namespace Lucene.Net.Misc
 {
+    [SuppressCodecs("Lucene3x")]
     public class TestHighFreqTerms : LuceneTestCase
     {
         private static IndexWriter writer = null;

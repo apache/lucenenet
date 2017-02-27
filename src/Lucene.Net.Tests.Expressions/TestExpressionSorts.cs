@@ -19,6 +19,7 @@ namespace Lucene.Net.Tests.Expressions
     /// Tests some basic expressions against different queries,
     /// and fieldcache/docvalues fields against an equivalent sort.
     /// </remarks>
+    [SuppressCodecs("Lucene3x")]
     public class TestExpressionSorts : Util.LuceneTestCase
     {
         private Directory dir;

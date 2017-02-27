@@ -32,6 +32,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
      * limitations under the License.
      */
 
+    [SuppressCodecs("Lucene3x")] // binary terms
     [TestFixture]
     public class TestAnalyzingQueryParser : LuceneTestCase
     {

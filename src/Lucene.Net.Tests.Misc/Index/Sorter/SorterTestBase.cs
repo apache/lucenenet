@@ -31,6 +31,7 @@ namespace Lucene.Net.Index.Sorter
      * limitations under the License.
      */
 
+    [SuppressCodecs("Lucene3x")]
     public abstract class SorterTestBase : LuceneTestCase
     {
         internal class NormsSimilarity : Similarity

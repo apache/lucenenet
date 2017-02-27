@@ -12,7 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-//@SuppressCodecs("Lucene3x")
+
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
     /*
@@ -32,6 +32,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
      * limitations under the License.
      */
 
+    [SuppressCodecs("Lucene3x")]
     public class TestFreeTextSuggester : LuceneTestCase
     {
         [Test]

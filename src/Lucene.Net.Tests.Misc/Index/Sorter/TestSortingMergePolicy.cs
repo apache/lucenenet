@@ -26,7 +26,8 @@ namespace Lucene.Net.Index.Sorter
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
+    
+    [SuppressCodecs("Lucene3x")]
     public class TestSortingMergePolicy : LuceneTestCase
     {
         private List<string> terms;

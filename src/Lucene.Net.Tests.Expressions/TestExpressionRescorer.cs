@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Expressions
 {
+    [SuppressCodecs("Lucene3x")]
 	public class TestExpressionRescorer : Lucene.Net.Util.LuceneTestCase
 	{
 		internal IndexSearcher searcher;

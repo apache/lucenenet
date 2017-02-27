@@ -11,8 +11,9 @@ using Expression = System.Linq.Expressions.Expression;
 
 namespace Lucene.Net.Tests.Expressions
 {
-	/// <summary>simple demo of using expressions</summary>
-	public class TestDemoExpressions : Util.LuceneTestCase
+    /// <summary>simple demo of using expressions</summary>
+    [SuppressCodecs("Lucene3x")]
+    public class TestDemoExpressions : Util.LuceneTestCase
 	{
 		internal IndexSearcher searcher;
 

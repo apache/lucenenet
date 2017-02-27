@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries.Function
 {
-    // [Util.LuceneTestCase.SuppressCodecs("Lucene3x")]
+    [SuppressCodecs("Lucene3x")]
     public class TestLongNormValueSource : LuceneTestCase
     {
         internal static Directory dir;

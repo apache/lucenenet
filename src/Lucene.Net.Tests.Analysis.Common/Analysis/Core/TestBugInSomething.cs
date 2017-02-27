@@ -29,7 +29,8 @@ namespace Lucene.Net.Analysis.Core
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
+    
+    [SuppressCodecs("Direct")]
     public class TestBugInSomething : BaseTokenStreamTestCase
     {
         [Test]

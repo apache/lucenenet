@@ -27,6 +27,7 @@ namespace Lucene.Net.Index.Sorter
      * limitations under the License.
      */
 
+    [SuppressCodecs("Lucene3x")]
     public class TestEarlyTermination : LuceneTestCase
     {
         private int numDocs;
