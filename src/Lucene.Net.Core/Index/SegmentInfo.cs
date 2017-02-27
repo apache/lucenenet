@@ -341,7 +341,9 @@ namespace Lucene.Net.Index
             }
             else
             {
-                return attributes[key];
+                string attribute;
+                attributes.TryGetValue(key, out attribute);
+                return attribute;
             }
         }
 
