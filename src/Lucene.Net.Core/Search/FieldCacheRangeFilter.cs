@@ -757,7 +757,6 @@ namespace Lucene.Net.Search
         /// long fields containing exactly one numeric term in the field. The range can be half-open by setting one
         /// of the values to <code>null</code>.
         /// </summary>
-        // LUCENENET TODO: Rename NewInt64Range
         public static FieldCacheRangeFilter<long?> NewInt64Range(string field, long? lowerVal, long? upperVal, bool includeLower, bool includeUpper)
         {
             return NewInt64Range(field, null, lowerVal, upperVal, includeLower, includeUpper);
