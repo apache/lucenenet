@@ -73,12 +73,14 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSort_1()
         {
+            fail("This test deadlocks when other tests in Lucene.Net.Tests are run at the same time (need to investigate which ones and why)");
             TestSort(false);
         }
 
         [Test]
         public virtual void TestSort_2()
         {
+            fail("This test deadlocks when other tests in Lucene.Net.Tests are run at the same time (need to investigate which ones and why)");
             TestSort(true);
         }
 
