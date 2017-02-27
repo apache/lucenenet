@@ -131,6 +131,8 @@ namespace Lucene.Net.Index
         [OneTimeSetUp]
         public override void BeforeClass()
         {
+            base.BeforeClass();
+
             assertFalse("test infra is broken!", OLD_FORMAT_IMPERSONATION_IS_ACTIVE);
             IList<string> names = new List<string>(OldNames.Length + OldSingleSegmentNames.Length);
             names.AddRange(Arrays.AsList(OldNames));
@@ -148,7 +150,7 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public void AfterClass()
+        public override void AfterClass()
         {
             foreach (Directory d in OldIndexDirs.Values)
             {
@@ -156,9 +158,10 @@ namespace Lucene.Net.Index
             }
             OldIndexDirs = null;
             base.TearDown();
+            base.AfterClass();
         }
 
-        public override void TearDown()
+        public override void TearDown() // LUCENENET TODO: Fix teardown for directories
         {
             // LUCENENET: We don't want our temp directory deleted until after
             // all of the tests in the class run. So we need to override this and

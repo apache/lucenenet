@@ -168,7 +168,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             Reader.Dispose();
             Reader = null;
@@ -176,6 +176,7 @@ namespace Lucene.Net.Search
             Directory = null;
             UnicodeStrings = null;
             MultiValued = null;
+            base.AfterClass();
         }
 
         [Test]

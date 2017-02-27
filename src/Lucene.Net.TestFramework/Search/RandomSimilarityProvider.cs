@@ -74,7 +74,6 @@ namespace Lucene.Net.Search
             ShouldQueryNorm = random.NextBoolean();
             KnownSims = new List<Similarity>(AllSims);
             Collections.Shuffle(KnownSims, random);
-            //Collections.shuffle(KnownSims, random);
         }
 
         public override float Coord(int overlap, int maxOverlap)

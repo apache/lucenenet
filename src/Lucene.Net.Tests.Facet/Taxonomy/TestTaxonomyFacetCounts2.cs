@@ -86,9 +86,10 @@ namespace Lucene.Net.Facet.Taxonomy
         private static IDictionary<string, int?> allExpectedCounts, termExpectedCounts;
 
         [OneTimeTearDown]
-        public static void AfterClassCountingFacetsAggregatorTest()
+        public override void AfterClass() // LUCENENET specific - renamed from AfterClassCountingFacetsAggregatorTest() to ensure calling order
         {
             IOUtils.Close(indexDir, taxoDir);
+            base.AfterClass();
         }
 
         private static IList<FacetField> RandomCategories(Random random)
@@ -246,8 +247,10 @@ namespace Lucene.Net.Facet.Taxonomy
         }
 
         [OneTimeSetUp]
-        public void BeforeClassCountingFacetsAggregatorTest()
+        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassCountingFacetsAggregatorTest() to ensure calling order
         {
+            base.BeforeClass();
+
             indexDir = NewDirectory();
             taxoDir = NewDirectory();
 

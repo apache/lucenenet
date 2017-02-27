@@ -70,11 +70,10 @@ namespace Lucene.Net.QueryParsers.Xml
             writer.Dispose();
             reader = DirectoryReader.Open(dir);
             searcher = NewSearcher(reader);
-
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             reader.Dispose();
             dir.Dispose();
@@ -82,6 +81,7 @@ namespace Lucene.Net.QueryParsers.Xml
             searcher = null;
             dir = null;
             builder = null;
+            base.AfterClass();
         }
 
         [Test]

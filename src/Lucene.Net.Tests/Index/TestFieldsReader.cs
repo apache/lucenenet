@@ -70,12 +70,13 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             Dir.Dispose();
             Dir = null;
             FieldInfos = null;
             TestDoc = null;
+            base.AfterClass();
         }
 
         [Test]

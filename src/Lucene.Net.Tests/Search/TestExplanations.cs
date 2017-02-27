@@ -64,13 +64,14 @@ namespace Lucene.Net.Search
         public const string ALTFIELD = "alt";
 
         [OneTimeTearDown]
-        public static void AfterClassTestExplanations()
+        public override void AfterClass() // LUCENENET specific - renamed from AfterClassTestExplanations() to ensure calling order
         {
             Searcher = null;
             Reader.Dispose();
             Reader = null;
             Directory.Dispose();
             Directory = null;
+            base.AfterClass();
         }
 
         /// <summary>
@@ -79,8 +80,10 @@ namespace Lucene.Net.Search
         /// NewStringField are no longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClassTestExplanations()
+        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassTestExplanations() to ensure calling order
         {
+            base.BeforeClass();
+
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
             for (int i = 0; i < DocFields.Length; i++)

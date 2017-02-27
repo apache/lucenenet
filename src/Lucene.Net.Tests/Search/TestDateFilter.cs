@@ -42,8 +42,10 @@ namespace Lucene.Net.Search
     {
         ///
         [OneTimeSetUp]
-        public virtual void TestBefore()
+        public override void BeforeClass() // LUCENENET specific - renamed from TestBefore() to ensure calling order vs base class
         {
+            base.BeforeClass();
+
             // create an index
             Directory indexStore = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), indexStore, Similarity, TimeZone);
@@ -106,7 +108,7 @@ namespace Lucene.Net.Search
 
         ///
         [OneTimeTearDown]
-        public virtual void TestAfter()
+        public override void AfterClass() // LUCENENET specific - renamed from TestAfter() to ensure calling order vs base class
         {
             // create an index
             Directory indexStore = NewDirectory();
@@ -160,6 +162,8 @@ namespace Lucene.Net.Search
             Assert.AreEqual(0, result.Length);
             reader.Dispose();
             indexStore.Dispose();
+
+            base.AfterClass();
         }
     }
 }

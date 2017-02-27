@@ -34,8 +34,10 @@ namespace Lucene.Net.Index.Sorter
         };
 
         [OneTimeSetUp]
-        public void BeforeClassSorterUtilTest()
+        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassSorterUtilTest() to ensure calling order vs base class
         {
+            base.BeforeClass();
+
             // only read the values of the undeleted documents, since after addIndexes,
             // the deleted ones will be dropped from the index.
             IBits liveDocs = reader.LiveDocs;

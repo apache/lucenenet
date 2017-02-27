@@ -57,7 +57,7 @@ namespace Lucene.Net.Facet
 
       
         [OneTimeTearDown]
-        public static void AfterClassDrillDownQueryTest()
+        public override void AfterClass() // LUCENENET specific - renamed from AfterClassDrillDownQueryTest() to ensure calling order
         {
             IOUtils.Close(reader, taxo, dir, taxoDir);
             reader = null;
@@ -65,11 +65,15 @@ namespace Lucene.Net.Facet
             dir = null;
             taxoDir = null;
             config = null;
+
+            base.AfterClass();
         }
 
         [OneTimeSetUp]
-        public void BeforeClassDrillDownQueryTest()
+        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassDrillDownQueryTest() to ensure calling order
         {
+            base.BeforeClass();
+
             dir = NewDirectory();
             Random r = Random();
             RandomIndexWriter writer = new RandomIndexWriter(r, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(r, MockTokenizer.KEYWORD, false)));

@@ -214,8 +214,10 @@ namespace Lucene.Net.Index.Sorter
         }
 
         [OneTimeSetUp]
-        public void BeforeClassSorterTestBase()
+        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassSorterTestBase() to ensure calling order vs base class
         {
+            base.BeforeClass();
+
             dir = NewDirectory();
             int numDocs = AtLeast(20);
             CreateIndex(dir, numDocs, Random());
@@ -224,10 +226,12 @@ namespace Lucene.Net.Index.Sorter
         }
 
         [OneTimeTearDown]
-        public static void AfterClassSorterTestBase()
+        public override void AfterClass() // LUCENENET specific - renamed from AfterClassSorterTestBase() to ensure calling order vs base class
         {
             reader.Dispose();
             dir.Dispose();
+
+            base.AfterClass();
         }
 
         // [Test] // LUCENENET NOTE: For now, we are overriding this test in every subclass to pull it into the right context for the subclass

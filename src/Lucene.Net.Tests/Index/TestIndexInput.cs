@@ -74,11 +74,12 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             INTS = null;
             LONGS = null;
             RANDOM_TEST_BYTES = null;
+            base.AfterClass();
         }
 
         private void CheckReads(DataInput @is, Type expectedEx)

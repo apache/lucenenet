@@ -47,10 +47,11 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             LineDocFile.Dispose();
             LineDocFile = null;
+            base.AfterClass();
         }
 
         [Test]

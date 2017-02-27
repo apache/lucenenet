@@ -114,7 +114,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             atomicReader.Dispose();
             Dir.Dispose();
@@ -122,6 +122,7 @@ namespace Lucene.Net.Search
             atomicReader = null;
             r = null;
             Dir = null;
+            base.AfterClass();
         }
 
         private static void AddSome(Document doc, string[] values)

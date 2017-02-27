@@ -33,9 +33,10 @@ namespace Lucene.Net.QueryParsers.Util
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             qpAnalyzer = null;
+            base.AfterClass();
         }
 
         public sealed class QPTestFilter : TokenFilter

@@ -122,6 +122,8 @@ namespace Lucene.Net.Search.Payloads
         [OneTimeSetUp]
         public override void BeforeClass()
         {
+            base.BeforeClass();
+
             Directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), Directory, NewIndexWriterConfig(TEST_VERSION_CURRENT, new PayloadAnalyzer()).SetSimilarity(similarity).SetMergePolicy(NewLogMergePolicy()));
             //writer.infoStream = System.out;
@@ -143,13 +145,14 @@ namespace Lucene.Net.Search.Payloads
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             Searcher = null;
             Reader.Dispose();
             Reader = null;
             Directory.Dispose();
             Directory = null;
+            base.AfterClass();
         }
 
         [Test]

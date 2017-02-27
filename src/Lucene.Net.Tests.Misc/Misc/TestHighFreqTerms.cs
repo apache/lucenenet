@@ -16,8 +16,10 @@ namespace Lucene.Net.Misc
         private static IndexReader reader = null;
 
         [OneTimeSetUp]
-        public void SetUpClass()
+        public override void BeforeClass() // LUCENENET specific - renamed from SetUpClass() to ensure calling order vs base class
         {
+            base.BeforeClass();
+
             dir = NewDirectory();
             writer = new IndexWriter(dir, NewIndexWriterConfig(Random(),
                TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
@@ -28,13 +30,15 @@ namespace Lucene.Net.Misc
         }
 
         [OneTimeTearDown]
-        public static void TearDownClass()
+        public override void AfterClass() // LUCENENET specific - renamed from TearDownClass() to ensure calling order vs base class
         {
             reader.Dispose();
             dir.Dispose();
             dir = null;
             reader = null;
             writer = null;
+
+            base.AfterClass();
         }
         /******************** Tests for getHighFreqTerms **********************************/
 

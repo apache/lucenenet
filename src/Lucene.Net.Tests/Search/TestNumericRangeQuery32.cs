@@ -137,13 +137,14 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             Searcher = null;
             Reader.Dispose();
             Reader = null;
             Directory.Dispose();
             Directory = null;
+            base.AfterClass();
         }
 
         [SetUp]

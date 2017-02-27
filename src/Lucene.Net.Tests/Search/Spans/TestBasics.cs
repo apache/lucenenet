@@ -134,7 +134,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             Reader.Dispose();
             Directory.Dispose();
@@ -142,6 +142,7 @@ namespace Lucene.Net.Search.Spans
             Reader = null;
             Directory = null;
             SimplePayloadAnalyzer = null;
+            base.AfterClass();
         }
 
         [Test]

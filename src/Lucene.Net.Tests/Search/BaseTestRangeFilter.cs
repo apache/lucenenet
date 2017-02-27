@@ -101,8 +101,10 @@ namespace Lucene.Net.Search
         /// longer static.
         /// </summary>
         [OneTimeSetUp]
-        public void BeforeClassBaseTestRangeFilter()
+        public override void BeforeClass() // LUCENENET specific: renamed from BeforeClassBaseTestRangeFilter() so we can override to control the order of execution
         {
+            base.BeforeClass();
+
             MaxId = AtLeast(500);
             SignedIndexDir = new TestIndex(Random(), int.MaxValue, int.MinValue, true);
             UnsignedIndexDir = new TestIndex(Random(), int.MaxValue, 0, false);
@@ -111,7 +113,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public static void AfterClassBaseTestRangeFilter()
+        public override void AfterClass() // LUCENENET specific: renamed from AfterClassBaseTestRangeFilter() so we can override to control the order of execution
         {
             SignedIndexReader.Dispose();
             UnsignedIndexReader.Dispose();
@@ -121,6 +123,7 @@ namespace Lucene.Net.Search
             UnsignedIndexReader = null;
             SignedIndexDir = null;
             UnsignedIndexDir = null;
+            base.AfterClass();
         }
 
         /// <summary>

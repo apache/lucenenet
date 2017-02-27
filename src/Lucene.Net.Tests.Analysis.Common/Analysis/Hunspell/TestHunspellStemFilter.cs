@@ -46,9 +46,10 @@ namespace Lucene.Net.Analysis.Hunspell
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             dictionary = null;
+            base.AfterClass();
         }
 
         /// <summary>

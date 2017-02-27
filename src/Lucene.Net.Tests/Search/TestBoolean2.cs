@@ -123,7 +123,7 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             Reader.Dispose();
             LittleReader.Dispose();
@@ -135,6 +135,7 @@ namespace Lucene.Net.Search
             Dir2 = null;
             Directory = null;
             BigSearcher = null;
+            base.AfterClass();
         }
 
         private static string[] DocFields = new string[] { "w1 w2 w3 w4 w5", "w1 w3 w2 w3", "w1 xx w2 yy w3", "w1 w3 xx w2 yy w3" };

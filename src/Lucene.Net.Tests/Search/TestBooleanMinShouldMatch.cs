@@ -77,13 +77,14 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             s = null;
             r.Dispose();
             r = null;
             Index.Dispose();
             Index = null;
+            base.AfterClass();
         }
 
         public virtual void VerifyNrHits(Query q, int expected)

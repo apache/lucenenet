@@ -268,7 +268,7 @@ namespace Lucene.Net.Util
             //TimeZone = testTimeZone.Equals("random") ? randomTimeZone : TimeZone.getTimeZone(testTimeZone);
             //TimeZone.Default = TimeZone;
 
-            similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(new Random(1));
+            similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(random);
             
             // Check codec restrictions once at class level.
             try

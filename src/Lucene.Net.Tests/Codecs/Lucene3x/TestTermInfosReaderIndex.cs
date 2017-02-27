@@ -70,6 +70,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         [OneTimeSetUp]
         public override void BeforeClass()
         {
+            base.BeforeClass();
+
             // NOTE: turn off compound file, this test will open some index files directly.
             OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
             IndexWriterConfig config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false)).SetUseCompoundFile(false);
@@ -112,7 +114,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             TermEnum.Dispose();
             Reader.Dispose();
@@ -122,6 +124,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             Directory = null;
             Index = null;
             SampleTerms = null;
+            base.AfterClass();
         }
 
         [Test]

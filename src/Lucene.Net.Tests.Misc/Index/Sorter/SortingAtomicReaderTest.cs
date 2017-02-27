@@ -26,8 +26,9 @@ namespace Lucene.Net.Index.Sorter
     public class SortingAtomicReaderTest : SorterTestBase
     {
         [OneTimeSetUp]
-        public static void BeforeClassSortingAtomicReaderTest()
+        public override void BeforeClass() // LUCENENET specific - renamed from BeforeClassSortingAtomicReaderTest() to ensure calling order vs base class
         {
+            base.BeforeClass();
 
             // sort the index by id (as integer, in NUMERIC_DV_FIELD)
             Sort sort = new Sort(new SortField(NUMERIC_DV_FIELD, SortFieldType.INT32));

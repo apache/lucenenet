@@ -81,13 +81,14 @@ namespace Lucene.Net.Search.Spans
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             Searcher = null;
             Reader.Dispose();
             Reader = null;
             Directory.Dispose();
             Directory = null;
+            base.AfterClass();
         }
 
         protected internal virtual void Check(SpanQuery q, int[] docs)

@@ -37,8 +37,10 @@ namespace Lucene.Net.Search
         private static IndexSearcher s;
 
         [OneTimeSetUp]
-        public void MakeIndex()
+        public override void BeforeClass() // LUCENENET specific - renamed from MakeIndex() to ensure calling order
         {
+            base.BeforeClass();
+
             Dir = new RAMDirectory();
             RandomIndexWriter w = new RandomIndexWriter(Random(), Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy()));
             // make sure we have more than one segment occationally
@@ -59,12 +61,14 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public static void Finish()
+        public override void AfterClass() // LUCENENET specific - renamed from Finish() to ensure calling order
         {
             s.IndexReader.Dispose();
             s = null;
             Dir.Dispose();
             Dir = null;
+
+            base.AfterClass();
         }
 
         private class CountingCollector : ICollector

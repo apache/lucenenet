@@ -368,8 +368,10 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeSetUp]
-        public static void CreatePostings()
+        public override void BeforeClass() // Renamed from CreatePostings to ensure the base class setup is called before this one
         {
+            base.BeforeClass();
+
             TotalPostings = 0;
             TotalPayloadBytes = 0;
             Fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>();
@@ -486,12 +488,13 @@ namespace Lucene.Net.Index
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             AllTerms = null;
             FieldInfos = null;
             Fields = null;
             GlobalLiveDocs = null;
+            base.AfterClass();
         }
 
         // TODO maybe instead of @BeforeClass just make a single test run: build postings & index & test it?

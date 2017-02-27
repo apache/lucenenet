@@ -96,12 +96,14 @@ namespace Lucene.Net.Search
         }
 
         [OneTimeTearDown]
-        public static void AfterClass()
+        public override void AfterClass()
         {
             Reader.Dispose();
             Directory.Dispose();
             Reader = null;
             Directory = null;
+
+            base.AfterClass();
         }
 
         // In a single doc, for the same field, mix the term
