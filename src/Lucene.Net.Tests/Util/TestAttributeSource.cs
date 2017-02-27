@@ -165,7 +165,9 @@ namespace Lucene.Net.Util
             {
             }
 
-            // LUCENENET TODO: Finish implementation
+
+            // LUCENENET NOTE: Invalid type won't compile because
+            // of the generic constraint, so this test is not necessary in .NET.
 
             /*try
             {
