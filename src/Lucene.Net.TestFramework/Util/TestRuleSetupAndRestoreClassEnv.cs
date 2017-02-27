@@ -14,6 +14,7 @@ namespace Lucene.Net.Util
     using Codecs.Lucene41;
     using Codecs.Lucene42;
     using Codecs.Lucene45;
+    using Codecs.MockRandom;
     using Codecs.SimpleText;
     using JavaCompatibility;
     //using AssumptionViolatedException = org.junit.@internal.AssumptionViolatedException;
@@ -195,11 +196,10 @@ namespace Lucene.Net.Util
                 {
                     format = PostingsFormat.ForName("Lucene41");
                 }
-                // LUCENENET TODO: Implement MockRandomPostingsFormat
-                //else if ("MockRandom".Equals(LuceneTestCase.TEST_POSTINGSFORMAT))
-                //{
-                //    format = new MockRandomPostingsFormat(new Random(random.Next()));
-                //}
+                else if ("MockRandom".Equals(LuceneTestCase.TEST_POSTINGSFORMAT))
+                {
+                    format = new MockRandomPostingsFormat(new Random(random.Next()));
+                }
                 else
                 {
                     format = PostingsFormat.ForName(LuceneTestCase.TEST_POSTINGSFORMAT);

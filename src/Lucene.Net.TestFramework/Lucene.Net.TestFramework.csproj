@@ -252,6 +252,7 @@
     </Compile>
     <Compile Include="Codecs\MockIntBlock\MockFixedIntBlockPostingsFormat.cs" />
     <Compile Include="Codecs\MockIntBlock\MockVariableIntBlockPostingsFormat.cs" />
+    <Compile Include="Codecs\MockRandom\MockRandomPostingsFormat.cs" />
     <Compile Include="Codecs\MockSep\MockSepPostingsFormat.cs" />
     <Compile Include="Codecs\MockSep\MockSingleIntFactory.cs" />
     <Compile Include="Codecs\MockSep\MockSingleIntIndexInput.cs" />
