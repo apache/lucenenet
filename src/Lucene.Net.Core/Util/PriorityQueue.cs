@@ -309,7 +309,7 @@ namespace Lucene.Net.Util
         /// this method returns the internal heap array as T[].
         /// @lucene.internal
         /// </summary>
-        protected T[] GetHeapArray()
+        protected T[] GetHeapArray() // LUCENENET TODO: Change to HeapArray property (writable)
         {
             return heap;
         }
