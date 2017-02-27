@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if FEATURE_COLLATION
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Icu;
@@ -151,3 +152,4 @@ namespace Lucene.Net.Collation
 		}
 	}
 }
+#endif

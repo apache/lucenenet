@@ -1,4 +1,5 @@
-﻿using Icu.Collation;
+﻿#if FEATURE_COLLATION
+using Icu.Collation;
 using Lucene.Net.Collation.TokenAttributes;
 using Lucene.Net.Util;
 using System.Reflection;
@@ -103,3 +104,4 @@ namespace Lucene.Net.Collation
 		}
 	}
 }
+#endif

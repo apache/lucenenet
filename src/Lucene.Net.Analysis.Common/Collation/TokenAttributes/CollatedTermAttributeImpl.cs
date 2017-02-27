@@ -1,4 +1,5 @@
-﻿using Icu.Collation;
+﻿#if FEATURE_COLLATION
+using Icu.Collation;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 
@@ -53,3 +54,4 @@ namespace Lucene.Net.Collation.TokenAttributes
 		}
 	}
 }
+#endif
