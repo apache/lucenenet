@@ -71,7 +71,7 @@ namespace Lucene.Net.Search
             Stopword = "" + RandomChar();
             CharacterRunAutomaton stopset = new CharacterRunAutomaton(BasicAutomata.MakeString(Stopword));
             Analyzer = new MockAnalyzer(random, MockTokenizer.WHITESPACE, false, stopset);
-            RandomIndexWriter iw = new RandomIndexWriter(random, Directory, Analyzer, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter iw = new RandomIndexWriter(random, Directory, Analyzer, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             Field id = new StringField("id", "", Field.Store.NO);
             Field field = new TextField("field", "", Field.Store.NO);

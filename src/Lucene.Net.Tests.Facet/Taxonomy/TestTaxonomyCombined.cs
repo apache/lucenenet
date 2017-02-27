@@ -15,7 +15,6 @@ namespace Lucene.Net.Facet.Taxonomy
     using Directory = Lucene.Net.Store.Directory;
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

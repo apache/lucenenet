@@ -35,7 +35,6 @@ namespace Lucene.Net.Facet
     using TaxonomyFacetCounts = Lucene.Net.Facet.Taxonomy.TaxonomyFacetCounts;
     using TaxonomyReader = Lucene.Net.Facet.Taxonomy.TaxonomyReader;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
 

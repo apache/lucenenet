@@ -49,7 +49,6 @@ namespace Lucene.Net.Search
     using Directory = Lucene.Net.Store.Directory;
     using NRTCachingDirectory = Lucene.Net.Store.NRTCachingDirectory;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using TestUtil = Lucene.Net.Util.TestUtil;
     //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;

@@ -320,6 +320,7 @@
     <Compile Include="Index\ThreadedIndexingAndSearchingTestCase.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="JavaCompatibility\AbstractBeforeAfterRule.cs" />
     <Compile Include="Randomized\Attributes\SeedAttribute.cs">
       <SubType>Code</SubType>
     </Compile>

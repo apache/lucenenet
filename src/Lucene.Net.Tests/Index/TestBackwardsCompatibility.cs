@@ -59,7 +59,6 @@ namespace Lucene.Net.Index
     using Constants = Lucene.Net.Util.Constants;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using SuppressCodecs = Lucene.Net.Util.LuceneTestCase.SuppressCodecs;
     using StringHelper = Lucene.Net.Util.StringHelper;
     using TestUtil = Lucene.Net.Util.TestUtil;
 

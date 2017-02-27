@@ -682,7 +682,7 @@ namespace Lucene.Net.Index
                 int docWithVectors = Random().Next(numDocs);
                 Document emptyDoc = new Document();
                 Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
                 RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), 20, options);
                 for (int i = 0; i < numDocs; ++i)
                 {
@@ -729,7 +729,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 using (Directory dir = NewDirectory())
-                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone))
+                using (RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
                 {
                     RandomDocument doc = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 2), AtLeast(20000),
                         options);
@@ -747,7 +747,7 @@ namespace Lucene.Net.Index
             foreach (Options options in ValidOptions())
             {
                 Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
                 RandomDocument doc = docFactory.NewDocument(AtLeast(100), 5, options);
                 writer.AddDocument(doc.ToDocument());
                 IndexReader reader = writer.Reader;
@@ -774,7 +774,7 @@ namespace Lucene.Net.Index
                     }
                     using (Directory dir = NewDirectory())
                     {
-                        using (var writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone))
+                        using (var writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone))
                         {
                             RandomDocument doc1 = docFactory.NewDocument(numFields, 20, options1);
                             RandomDocument doc2 = docFactory.NewDocument(numFields, 20, options2);
@@ -804,7 +804,7 @@ namespace Lucene.Net.Index
                 docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), TestUtil.NextInt(Random(), 10, 50), RandomOptions());
             }
             Directory dir = NewDirectory();
-            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             for (int i = 0; i < numDocs; ++i)
             {
                 writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
@@ -839,7 +839,7 @@ namespace Lucene.Net.Index
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), AtLeast(10), options);
                 }
                 Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
                 for (int i = 0; i < numDocs; ++i)
                 {
                     writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));
@@ -884,7 +884,7 @@ namespace Lucene.Net.Index
                     docs[i] = docFactory.NewDocument(TestUtil.NextInt(Random(), 1, 3), AtLeast(10), options);
                 }
                 Directory dir = NewDirectory();
-                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+                RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
                 for (int i = 0; i < numDocs; ++i)
                 {
                     writer.AddDocument(AddId(docs[i].ToDocument(), "" + i));

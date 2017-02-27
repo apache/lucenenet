@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
         public virtual void TestNumericField()
         {
             Directory dir = NewDirectory();
-            var w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            var w = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             var numDocs = AtLeast(500);
             var answers = new object[numDocs];
             NumericType[] typeAnswers = new NumericType[numDocs];
@@ -351,7 +351,7 @@ namespace Lucene.Net.Index
         public virtual void TestIndexedBit()
         {
             Directory dir = NewDirectory();
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             Document doc = new Document();
             FieldType onlyStored = new FieldType();
             onlyStored.IsStored = true;
@@ -769,7 +769,7 @@ namespace Lucene.Net.Index
             }
             w.Commit();
             w.Dispose();
-            w = new RandomIndexWriter(Random(), dir, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            w = new RandomIndexWriter(Random(), dir, ClassEnvRule.similarity, ClassEnvRule.timeZone);
             w.ForceMerge(TestUtil.NextInt(Random(), 1, 3));
             w.Commit();
             w.Dispose();

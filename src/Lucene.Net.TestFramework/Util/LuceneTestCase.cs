@@ -256,9 +256,9 @@ namespace Lucene.Net.Util
         /// (because they are expensive, for example).
         /// </summary>
         [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-        public class SuppressCodecs : System.Attribute
+        public class SuppressCodecsAttribute : System.Attribute
         {
-            public SuppressCodecs(params string[] value)
+            public SuppressCodecsAttribute(params string[] value)
             {
                 this.Value = value;
             }
@@ -454,7 +454,7 @@ namespace Lucene.Net.Util
         /// Exposed because <see cref="TestRuleSetupAndRestoreClassEnv"/> is
         /// internal and this field is needed by other classes.
         /// </summary>
-        public Similarity Similarity { get { return ClassEnvRule.Similarity; } }
+        public Similarity Similarity { get { return ClassEnvRule.similarity; } }
 
         /// <summary>
         /// Gets the Timezone from the Class Environment setup rule
@@ -463,7 +463,7 @@ namespace Lucene.Net.Util
         /// Exposed because <see cref="TestRuleSetupAndRestoreClassEnv"/> is
         /// internal and this field is needed by other classes.
         /// </summary>
-        public TimeZoneInfo TimeZone { get { return ClassEnvRule.TimeZone; } }
+        public TimeZoneInfo TimeZone { get { return ClassEnvRule.timeZone; } }
 
         // LUCENENET TODO
         /// <summary>
@@ -603,7 +603,7 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
-            CleanupTemporaryFiles(); // LUCENENET TODO: Move this to OneTimeTearDown()? Calling it here deletes files too early.
+            CleanupTemporaryFiles(); // LUCENENET TODO: Move this to OneTimeTearDown()? Calling it here deletes shared files too early.
         }
 
         // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once
@@ -616,12 +616,20 @@ namespace Lucene.Net.Util
         [OneTimeSetUp]
         public virtual void BeforeClass()
         {
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
-
             // Setup the factories
             Codec.SetCodecFactory(TEST_CODEC_FACTORY);
             DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
             PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
+
+            // IMPORTANT: Call this line after calling Codec.SetCodecFactory() because both
+            // of them change Codec.Default
+            ClassEnvRule.Before(this);
+        }
+
+        [OneTimeTearDown]
+        public virtual void AfterClass()
+        {
+            ClassEnvRule.After(this);
         }
 
         // -----------------------------------------------------------------
@@ -900,7 +908,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public IndexWriterConfig NewIndexWriterConfig(Random r, LuceneVersion v, Analyzer a)
         {
-            return NewIndexWriterConfig(r, v, a, ClassEnvRule.Similarity, ClassEnvRule.TimeZone);
+            return NewIndexWriterConfig(r, v, a, ClassEnvRule.similarity, ClassEnvRule.timeZone);
         }
 
         /// <summary>
@@ -1657,7 +1665,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public IndexSearcher NewSearcher(IndexReader r)
         {
-            return NewSearcher(r, ClassEnvRule.Similarity);
+            return NewSearcher(r, ClassEnvRule.similarity);
         }
 
         /// <param name="similarity">
@@ -1693,7 +1701,7 @@ namespace Lucene.Net.Util
 
         public IndexSearcher NewSearcher(IndexReader r, bool maybeWrap, bool wrapWithAssertions)
         {
-            return NewSearcher(r, maybeWrap, wrapWithAssertions, ClassEnvRule.Similarity);
+            return NewSearcher(r, maybeWrap, wrapWithAssertions, ClassEnvRule.similarity);
         }
 
         /// <summary>
