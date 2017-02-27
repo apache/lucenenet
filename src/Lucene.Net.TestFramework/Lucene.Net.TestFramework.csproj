@@ -141,6 +141,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Codecs\Bloom\TestBloomFilteredLucene41Postings.cs" />
+    <Compile Include="Codecs\CheapBastard\CheapBastardCodec.cs" />
     <Compile Include="Codecs\Compressing\CompressingCodec.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -8,6 +8,7 @@ namespace Lucene.Net.Util
 {
     using Codecs;
     using Codecs.Asserting;
+    using Codecs.CheapBastard;
     using Codecs.Compressing;
     using Codecs.Lucene3x;
     using Codecs.Lucene40;
@@ -221,12 +222,11 @@ namespace Lucene.Net.Util
             {
                 codec = new SimpleTextCodec();
             }
-            // LUCENENET TODO: Implement CheapBastardCodec
-            //else if ("CheapBastard".equals(LuceneTestCase.TEST_CODEC) || ("random".equals(LuceneTestCase.TEST_CODEC) && randomVal == 8 && !ShouldAvoidCodec("CheapBastard") && !ShouldAvoidCodec("Lucene41")))
-            //{
-            //    // we also avoid this codec if Lucene41 is avoided, since thats the postings format it uses.
-            //    codec = new CheapBastardCodec();
-            //}
+            else if ("CheapBastard".equals(LuceneTestCase.TEST_CODEC) || ("random".equals(LuceneTestCase.TEST_CODEC) && randomVal == 8 && !ShouldAvoidCodec("CheapBastard") && !ShouldAvoidCodec("Lucene41")))
+            {
+                // we also avoid this codec if Lucene41 is avoided, since thats the postings format it uses.
+                codec = new CheapBastardCodec();
+            }
             else if ("Asserting".Equals(LuceneTestCase.TEST_CODEC) || ("random".Equals(LuceneTestCase.TEST_CODEC) && randomVal == 6 && !ShouldAvoidCodec("Asserting")))
             {
                 codec = new AssertingCodec();
