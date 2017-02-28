@@ -1,15 +1,15 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Expressions;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.Tests.Expressions
+namespace Lucene.Net.Expressions
 {
     [SuppressCodecs("Lucene3x")]
-	public class TestExpressionRescorer : Lucene.Net.Util.LuceneTestCase
+	public class TestExpressionRescorer : LuceneTestCase
 	{
 		internal IndexSearcher searcher;
 

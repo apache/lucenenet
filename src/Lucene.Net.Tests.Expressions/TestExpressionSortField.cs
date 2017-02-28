@@ -1,11 +1,11 @@
-using Lucene.Net.Expressions;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.Tests.Expressions
+namespace Lucene.Net.Expressions
 {
-	public class TestExpressionSortField : Util.LuceneTestCase
+    public class TestExpressionSortField : LuceneTestCase
 	{
 		[Test]
 		public virtual void TestToString()

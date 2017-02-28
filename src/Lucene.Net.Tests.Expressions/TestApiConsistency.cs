@@ -3,7 +3,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 
-namespace Lucene.Net.Tests.Expressions
+namespace Lucene.Net.Expressions
 {
     /// <summary>
     /// LUCENENET specific tests for ensuring API conventions are followed

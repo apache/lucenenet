@@ -1,10 +1,9 @@
-using Lucene.Net.Expressions;
-using Lucene.Net.Expressions.JS;
+using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.Tests.Expressions.JS
+namespace Lucene.Net.Expressions.JS
 {
-	public class TestJavascriptOperations : Util.LuceneTestCase
+    public class TestJavascriptOperations : LuceneTestCase
 	{
 		
 		private void AssertEvaluatesTo(string expression, long expected)

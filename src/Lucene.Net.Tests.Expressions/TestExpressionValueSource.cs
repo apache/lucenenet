@@ -1,18 +1,18 @@
-using System.Collections.Generic;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
-using Lucene.Net.Expressions;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using NUnit.Framework;
+using System.Collections.Generic;
 
-namespace Lucene.Net.Tests.Expressions
+namespace Lucene.Net.Expressions
 {
     [SuppressCodecs("Lucene3x")]
-	public class TestExpressionValueSource : Util.LuceneTestCase
+	public class TestExpressionValueSource : LuceneTestCase
 	{
 		internal DirectoryReader reader;
 

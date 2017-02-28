@@ -1,13 +1,13 @@
-using System;
-using Lucene.Net.Expressions;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 
-namespace Lucene.Net.Tests.Expressions
+namespace Lucene.Net.Expressions
 {
-	/// <summary>Tests validation of bindings</summary>
-	public class TestExpressionValidation : Util.LuceneTestCase
+    /// <summary>Tests validation of bindings</summary>
+    public class TestExpressionValidation : LuceneTestCase
 	{
 		[Test]
 		public virtual void TestValidExternals()

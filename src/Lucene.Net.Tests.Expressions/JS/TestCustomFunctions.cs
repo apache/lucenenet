@@ -1,16 +1,15 @@
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq.Expressions;
 using System.Reflection;
-using Lucene.Net.Expressions.JS;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
-namespace Lucene.Net.Tests.Expressions.JS
+namespace Lucene.Net.Expressions.JS
 {
-	[TestFixture]
-	public class TestCustomFunctions : Util.LuceneTestCase
+    [TestFixture]
+	public class TestCustomFunctions : LuceneTestCase
 	{
 		private static double DELTA = 0.0000001;
 

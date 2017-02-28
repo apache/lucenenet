@@ -1,10 +1,10 @@
-using System;
-using Lucene.Net.Expressions.JS;
+using Lucene.Net.Util;
 using NUnit.Framework;
+using System;
 
-namespace Lucene.Net.Tests.Expressions.JS
+namespace Lucene.Net.Expressions.JS
 {
-	public class TestJavascriptCompiler : Util.LuceneTestCase
+    public class TestJavascriptCompiler : LuceneTestCase
 	{
 		[Test]
 		public virtual void TestValidCompiles()

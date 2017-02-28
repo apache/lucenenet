@@ -7,7 +7,7 @@
     <ProjectGuid>{F4873D95-4300-4E83-AFFA-EF796495D0F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Tests.Expressions</RootNamespace>
+    <RootNamespace>Lucene.Net.Expressions</RootNamespace>
     <AssemblyName>Lucene.Net.Tests.Expressions</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

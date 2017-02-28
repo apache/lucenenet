@@ -1,5 +1,4 @@
 using Lucene.Net.Documents;
-using Lucene.Net.Expressions;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized.Generators;
@@ -9,7 +8,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 
-namespace Lucene.Net.Tests.Expressions
+namespace Lucene.Net.Expressions
 {
     /// <summary>
     /// Tests some basic expressions against different queries,
@@ -20,7 +19,7 @@ namespace Lucene.Net.Tests.Expressions
     /// and fieldcache/docvalues fields against an equivalent sort.
     /// </remarks>
     [SuppressCodecs("Lucene3x")]
-    public class TestExpressionSorts : Util.LuceneTestCase
+    public class TestExpressionSorts : LuceneTestCase
     {
         private Directory dir;
 

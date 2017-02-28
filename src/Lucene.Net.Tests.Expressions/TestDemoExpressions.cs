@@ -1,19 +1,18 @@
-using System;
-using System.Text;
 using Lucene.Net.Documents;
-using Lucene.Net.Expressions;
 using Lucene.Net.Expressions.JS;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using NUnit.Framework;
-using Expression = System.Linq.Expressions.Expression;
+using System;
+using System.Text;
 
-namespace Lucene.Net.Tests.Expressions
+namespace Lucene.Net.Expressions
 {
     /// <summary>simple demo of using expressions</summary>
     [SuppressCodecs("Lucene3x")]
-    public class TestDemoExpressions : Util.LuceneTestCase
+    public class TestDemoExpressions : LuceneTestCase
 	{
 		internal IndexSearcher searcher;
 
