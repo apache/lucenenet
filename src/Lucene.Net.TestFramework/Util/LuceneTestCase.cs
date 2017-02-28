@@ -592,6 +592,15 @@ namespace Lucene.Net.Util
         {
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
+
+            if (LuceneTestCase.VERBOSE)
+            {
+                Console.Write("Culture: ");
+                Console.WriteLine(this.ClassEnvRule.locale.Name);
+
+                Console.Write("Time Zone: ");
+                Console.WriteLine(this.ClassEnvRule.timeZone.DisplayName);
+            }
         }
 
         /// <summary>
