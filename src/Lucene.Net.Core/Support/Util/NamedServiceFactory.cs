@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Lucene.Net.Util
@@ -44,10 +45,10 @@ namespace Lucene.Net.Util
         {
             return
                 type != null &&
-                type.IsPublic &&
-                !type.IsAbstract &&
+                type.GetTypeInfo().IsPublic &&
+                !type.GetTypeInfo().IsAbstract &&
                 typeof(TService).GetTypeInfo().IsAssignableFrom(type) &&
-                type.GetCustomAttributes(typeof(IgnoreServiceAttribute), inherit: true).Length == 0;
+                type.GetTypeInfo().GetCustomAttribute<IgnoreServiceAttribute>(inherit: true) == null;
         }
 
         /// <summary>
@@ -57,11 +58,11 @@ namespace Lucene.Net.Util
         /// <returns>The canonical name of the service or the name provided in the corresponding name attribute, if supplied.</returns>
         public static string GetServiceName(Type type)
         {
-            // Check for CodecName attribute
-            object[] nameAttributes = type.GetCustomAttributes(typeof(ServiceNameAttribute), inherit: true);
-            if (nameAttributes.Length > 0)
+            // Check for ServiceName attribute
+            var nameAttributes = type.GetTypeInfo().GetCustomAttributes(typeof(ServiceNameAttribute), inherit: true);
+            if (nameAttributes.Any())
             {
-                ServiceNameAttribute nameAttribute = nameAttributes[0] as ServiceNameAttribute;
+                ServiceNameAttribute nameAttribute = nameAttributes.FirstOrDefault() as ServiceNameAttribute;
                 if (nameAttribute != null)
                 {
                     string name = nameAttribute.Name;
