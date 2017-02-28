@@ -4,6 +4,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -305,19 +306,19 @@ namespace Lucene.Net.Expressions.JS
                         if (bitwiseOps.Any(s => sourceText.Contains(s)))
                         {
                             int val;
-                            if (int.TryParse(text, out val))
+                            if (int.TryParse(text, NumberStyles.Integer, CultureInfo.InvariantCulture, out val))
                             {
                                 gen.Emit(OpCodes.Ldc_I4, val);
                             }
                             else
                             {
-                                gen.Emit(OpCodes.Ldc_I8,long.Parse(text));
+                                gen.Emit(OpCodes.Ldc_I8,long.Parse(text, CultureInfo.InvariantCulture));
                                 gen.Emit(OpCodes.Conv_Ovf_U4_Un);
                             }
                         }
                         else
                         {
-                            gen.Emit(OpCodes.Ldc_R8, double.Parse(text));
+                            gen.Emit(OpCodes.Ldc_R8, double.Parse(text, CultureInfo.InvariantCulture));
                         }
                         break;
                     }
