@@ -244,15 +244,5 @@ namespace Lucene.Net.Util
                 return v1 * multiplier;
             }
         }
-
-        protected virtual CultureInfo randomLocale(Random random)
-        {
-            return RandomInts.RandomFrom(random, CultureInfoSupport.GetNeutralAndSpecificCultures());
-        }
-
-        protected virtual TimeZoneInfo randomTimeZone(Random random)
-        {
-            return RandomInts.RandomFrom(random, TimeZoneInfo.GetSystemTimeZones());
-        }
     }
 }

@@ -1433,46 +1433,45 @@ namespace Lucene.Net.Util
             return new Field(name, value, newType);
         }
 
-        /* LUCENE TODO: removing until use is shown
+        /// <summary>
+        /// Return a random Locale from the available locales on the system. </summary>
+        /// <seealso cref= "https://issues.apache.org/jira/browse/LUCENE-4020" </seealso>
+        public static CultureInfo RandomLocale(Random random)
+        {
+            return RandomInts.RandomFrom(random, CultureInfoSupport.GetNeutralAndSpecificCultures());
+        }
 
-            /// <summary>
-            /// Return a random Locale from the available locales on the system. </summary>
-            /// <seealso cref= "https://issues.apache.org/jira/browse/LUCENE-4020" </seealso>
-            public static CultureInfo RandomLocale(Random random)
-            {
-                CultureInfo[] locales = CultureInfo.GetCultures();
-                return locales[random.Next(locales.Length)];
-            }
-            /// <summary>
-            /// Return a random TimeZone from the available timezones on the system </summary>
-            /// <seealso cref= "https://issues.apache.org/jira/browse/LUCENE-4020"  </seealso>
-            public static TimeZone RandomTimeZone(Random random)
-            {
-                string[] tzIds = TimeZone.AvailableIDs;
-                return TimeZone.getTimeZone(tzIds[random.Next(tzIds.Length)]);
-            }
+        /// <summary>
+        /// Return a random TimeZone from the available timezones on the system </summary>
+        /// <seealso cref= "https://issues.apache.org/jira/browse/LUCENE-4020"  </seealso>
+        public static TimeZoneInfo RandomTimeZone(Random random)
+        {
+            return RandomInts.RandomFrom(random, TimeZoneInfo.GetSystemTimeZones());
+        }
 
-            /// <summary>
-            /// return a Locale object equivalent to its programmatic name </summary>
-            public static Locale LocaleForName(string localeName)
-            {
-                string[] elements = localeName.Split("\\_");
-                switch (elements.Length)
-                {
-                    case 4: // fallthrough for special cases
-                    case 3:
-                    return new Locale(elements[0], elements[1], elements[2]);
+        /// <summary>
+        /// return a Locale object equivalent to its programmatic name </summary>
+        public static CultureInfo LocaleForName(string localeName)
+        {
+            return new CultureInfo(localeName);
 
-                    case 2:
-                    return new Locale(elements[0], elements[1]);
+            //string[] elements = Regex.Split(localeName, "\\_", RegexOptions.Compiled);
+            //switch (elements.Length)
+            //{
+            //    case 4: // fallthrough for special cases
+            //    case 3:
+            //    return new Locale(elements[0], elements[1], elements[2]);
 
-                    case 1:
-                    return new Locale(elements[0]);
+            //    case 2:
+            //    return new Locale(elements[0], elements[1]);
 
-                    default:
-                    throw new System.ArgumentException("Invalid Locale: " + localeName);
-                }
-            }*/
+            //    case 1:
+            //    return new Locale(elements[0]);
+
+            //    default:
+            //    throw new System.ArgumentException("Invalid Locale: " + localeName);
+            //}
+        }
 
         public static bool DefaultCodecSupportsDocValues()
         {
