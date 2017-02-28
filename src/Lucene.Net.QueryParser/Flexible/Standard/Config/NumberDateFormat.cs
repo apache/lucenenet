@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public override string Format(object number)
         {
-            return new DateTime(EPOCH).AddMilliseconds(Convert.ToInt64(number)).ToString(GetDateFormat(), this.locale);
+            return new DateTime(EPOCH).AddMilliseconds(Convert.ToInt64(number, CultureInfo.InvariantCulture)).ToString(GetDateFormat(), this.locale);
         }
 
         /// <summary>
