@@ -12,19 +12,14 @@
     "define": [ "NETSTANDARD", "FEATURE_TASKMERGESCHEDULER" ],
     "compile": {
       "exclude": [
-        "Util/Cache",
         "Util/JunitCompat"
       ],
       "excludeFiles": [
         "TestApiConsistency.cs",
         "TestMergeSchedulerExternal.cs",
         "TestWorstCaseTestBehavior.cs",
-        "Index/TestBackwardsCompatibility.cs",
-        "Index/TestBackwardsCompatibility3x.cs",
         "Index/TestConcurrentMergeScheduler.cs",
-        "Index/TestFlushByRamOrCountsPolicy.cs",
         "Search/TestControlledRealTimeReopenThread.cs",
-        "Search/TestFieldCache.cs",
         "Support/BigObject.cs",
         "Support/CollisionTester.cs",
         "Support/SmallObject.cs",
@@ -42,7 +37,6 @@
         "Support/TestWeakDictionary.cs",
         "Support/TestWeakDictionaryBehavior.cs",
         "Support/TestWeakDictionaryPerformance.cs",
-        "Util/TestMathUtil.cs",
         "Util/TestMaxFailuresRule.cs"
       ]
     },

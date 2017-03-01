@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Index
@@ -141,7 +142,7 @@ namespace Lucene.Net.Index
             foreach (string name in names)
             {
                 DirectoryInfo dir = CreateTempDir(name);
-                using (Stream zipFileStream = this.GetType().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + "index." + name + ".zip"))
+                using (Stream zipFileStream = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + "index." + name + ".zip"))
                 {
                     TestUtil.Unzip(zipFileStream, dir);
                 }
@@ -180,7 +181,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: index " + UnsupportedNames[i]);
                 }
                 DirectoryInfo oldIndexDir = CreateTempDir(UnsupportedNames[i]);
-                using (Stream dataFile = this.GetType().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + "unsupported." + UnsupportedNames[i] + ".zip"))
+                using (Stream dataFile = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + "unsupported." + UnsupportedNames[i] + ".zip"))
                 {
                     TestUtil.Unzip(dataFile, oldIndexDir);
                 }
@@ -967,7 +968,7 @@ namespace Lucene.Net.Index
         public virtual void TestSurrogates()
         {
             DirectoryInfo oldIndexDir = CreateTempDir("surrogates");
-            using (Stream dataFile = this.GetType().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + SurrogatesIndexName))
+            using (Stream dataFile = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + SurrogatesIndexName))
             {
                 TestUtil.Unzip(dataFile, oldIndexDir);
             }
@@ -1029,7 +1030,7 @@ namespace Lucene.Net.Index
         public virtual void TestNegativePositions()
         {
             DirectoryInfo oldIndexDir = CreateTempDir("negatives");
-            using (Stream dataFile = this.GetType().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + Bogus24IndexName))
+            using (Stream dataFile = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + Bogus24IndexName))
             {
                 TestUtil.Unzip(dataFile, oldIndexDir);
             }
