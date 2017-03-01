@@ -20,21 +20,20 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     /// <summary>
-    /// A Token's lexical type. The Default value is "word".
+    /// A <see cref="Token"/>'s lexical type. The Default value is "word".
     /// </summary>
     public interface ITypeAttribute : IAttribute
     {
         /// <summary>
-        /// the default type </summary>
-
-        /// <summary>
-        /// Set the lexical type. </summary>
-        /// <seealso cref= #type()  </seealso>
+        /// Gets or Sets the lexical type. </summary>
         string Type { get; set; }
     }
 
     public static class TypeAttribute_Fields
     {
+        /// <summary>
+        /// the default type
+        /// </summary>
         public const string DEFAULT_TYPE = "word";
     }
 }

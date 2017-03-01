@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
     /// <summary>
-    /// Default implementation of <seealso cref="CharTermAttribute"/>. </summary>
+    /// Default implementation of <see cref="ICharTermAttribute"/>. </summary>
     public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute
 #if FEATURE_CLONEABLE
         , ICloneable
@@ -374,12 +374,13 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         /// <summary>
         /// Returns solely the term text as specified by the
-        /// <seealso cref="CharSequence"/> interface.
-        /// <p>this method changed the behavior with Lucene 3.1,
+        /// <see cref="ICharSequence"/> interface.
+        /// <para/>
+        /// this method changed the behavior with Lucene 3.1,
         /// before it returned a String representation of the whole
         /// term with all attributes.
         /// this affects especially the
-        /// <seealso cref="Lucene.Net.Analysis.Token"/> subclass.
+        /// <see cref="Lucene.Net.Analysis.Token"/> subclass.
         /// </summary>
         public override string ToString()
         {

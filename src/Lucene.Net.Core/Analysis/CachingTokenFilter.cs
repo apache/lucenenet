@@ -22,13 +22,13 @@ namespace Lucene.Net.Analysis
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /// <summary>
-    /// this class can be used if the token attributes of a TokenStream
+    /// This class can be used if the token attributes of a <see cref="TokenStream"/>
     /// are intended to be consumed more than once. It caches
     /// all token attribute states locally in a List.
     ///
-    /// <P>CachingTokenFilter implements the optional method
-    /// <seealso cref="TokenStream#reset()"/>, which repositions the
-    /// stream to the first Token.
+    /// <para/><see cref="CachingTokenFilter"/> implements the optional method
+    /// <see cref="TokenStream.Reset()"/>, which repositions the
+    /// stream to the first <see cref="Token"/>.
     /// </summary>
     public sealed class CachingTokenFilter : TokenFilter
     {
@@ -37,9 +37,9 @@ namespace Lucene.Net.Analysis
         private AttributeSource.State finalState;
 
         /// <summary>
-        /// Create a new CachingTokenFilter around <code>input</code>,
+        /// Create a new <see cref="CachingTokenFilter"/> around <paramref name="input"/>,
         /// caching its token attributes, which can be replayed again
-        /// after a call to <seealso cref="#reset()"/>.
+        /// after a call to <see cref="Reset()"/>.
         /// </summary>
         public CachingTokenFilter(TokenStream input)
             : base(input)
@@ -76,10 +76,10 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Rewinds the iterator to the beginning of the cached list.
-        /// <p>
-        /// Note that this does not call reset() on the wrapped tokenstream ever, even
-        /// the first time. You should reset() the inner tokenstream before wrapping
-        /// it with CachingTokenFilter.
+        /// <para/>
+        /// Note that this does not call <see cref="Reset()"/> on the wrapped tokenstream ever, even
+        /// the first time. You should <see cref="Reset()"/> the inner tokenstream before wrapping
+        /// it with <see cref="CachingTokenFilter"/>.
         /// </summary>
         public override void Reset()
         {

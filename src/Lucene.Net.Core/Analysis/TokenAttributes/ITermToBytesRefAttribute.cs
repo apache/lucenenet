@@ -22,48 +22,49 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// this attribute is requested by TermsHashPerField to index the contents.
-    /// this attribute can be used to customize the final byte[] encoding of terms.
-    /// <p>
-    /// Consumers of this attribute call <seealso cref="#getBytesRef()"/> up-front, and then
-    /// invoke <seealso cref="#fillBytesRef()"/> for each term. Example:
-    /// <pre class="prettyprint">
-    ///   final TermToBytesRefAttribute termAtt = tokenStream.getAttribute(TermToBytesRefAttribute.class);
-    ///   final BytesRef bytes = termAtt.getBytesRef();
+    /// This attribute is requested by TermsHashPerField to index the contents.
+    /// This attribute can be used to customize the final byte[] encoding of terms.
+    /// <para/>
+    /// Consumers of this attribute call <see cref="BytesRef"/> up-front, and then
+    /// invoke <see cref="FillBytesRef()"/> for each term. Example:
+    /// <code>
+    ///   TermToBytesRefAttribute termAtt = tokenStream.GetAttribute&lt;TermToBytesRefAttribute&gt;;
+    ///   BytesRef bytes = termAtt.BytesRef;
     ///
-    ///   while (tokenStream.IncrementToken() {
-    ///
-    ///     // you must call termAtt.fillBytesRef() before doing something with the bytes.
+    ///   while (tokenStream.IncrementToken()
+    ///   {
+    ///     // you must call termAtt.FillBytesRef() before doing something with the bytes.
     ///     // this encodes the term value (internally it might be a char[], etc) into the bytes.
-    ///     int hashCode = termAtt.fillBytesRef();
+    ///     int hashCode = termAtt.FillBytesRef();
     ///
-    ///     if (isInteresting(bytes)) {
-    ///
+    ///     if (IsInteresting(bytes))
+    ///     {
     ///       // because the bytes are reused by the attribute (like CharTermAttribute's char[] buffer),
     ///       // you should make a copy if you need persistent access to the bytes, otherwise they will
     ///       // be rewritten across calls to IncrementToken()
     ///
-    ///       doSomethingWith(new BytesRef(bytes));
+    ///       DoSomethingWith(new BytesRef(bytes));
     ///     }
     ///   }
     ///   ...
-    /// </pre>
+    /// </code>
     /// @lucene.experimental this is a very expert API, please use
-    /// <seealso cref="CharTermAttributeImpl"/> and its implementation of this method
+    /// <see cref="CharTermAttribute"/> and its implementation of this method
     /// for UTF-8 terms.
     /// </summary>
     public interface ITermToBytesRefAttribute : IAttribute
     {
         /// <summary>
-        /// Updates the bytes <seealso cref="#getBytesRef()"/> to contain this term's
+        /// Updates the bytes <see cref="Util.BytesRef"/> to contain this term's
         /// final encoding.
         /// </summary>
         void FillBytesRef();
 
         /// <summary>
-        /// Retrieve this attribute's BytesRef. The bytes are updated
-        /// from the current term when the consumer calls <seealso cref="#fillBytesRef()"/>. </summary>
-        /// <returns> this Attributes internal BytesRef. </returns>
+        /// Retrieve this attribute's <see cref="Util.BytesRef"/>. The bytes are updated
+        /// from the current term when the consumer calls <see cref="FillBytesRef()"/>.
+        /// </summary>
+        /// <returns> this <see cref="Util.IAttribute"/>s internal <see cref="Util.BytesRef"/>. </returns>
         BytesRef BytesRef { get; }
     }
 }

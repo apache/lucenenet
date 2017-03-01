@@ -24,22 +24,22 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// The payload of a Token.
-    /// <p>
+    /// <para/>
     /// The payload is stored in the index at each position, and can
     /// be used to influence scoring when using Payload-based queries
-    /// in the <seealso cref="Lucene.Net.Search.Payloads"/> and
-    /// <seealso cref="Lucene.Net.Search.Spans"/> packages.
-    /// <p>
+    /// in the <see cref="Lucene.Net.Search.Payloads"/> and
+    /// <see cref="Lucene.Net.Search.Spans"/> namespaces.
+    /// <para/>
     /// NOTE: because the payload will be stored at each position, its usually
     /// best to use the minimum number of bytes necessary. Some codec implementations
     /// may optimize payload storage when all payloads have the same length.
     /// </summary>
-    /// <seealso cref= DocsAndPositionsEnum </seealso>
+    /// <seealso cref="Index.DocsAndPositionsEnum"/>
     public interface IPayloadAttribute : IAttribute
     {
         /// <summary>
-        /// Returns this Token's payload. </summary>
-        /// <seealso cref= #setPayload(BytesRef) </seealso>
+        /// Gets or Sets this <see cref="Token"/>'s payload.
+        /// </summary>
         BytesRef Payload { get; set; }
     }
 }

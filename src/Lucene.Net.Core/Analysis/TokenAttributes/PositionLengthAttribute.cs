@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
-    /// Default implementation of <seealso cref="PositionLengthAttribute"/>. </summary>
+    /// Default implementation of <see cref="IPositionLengthAttribute"/>. </summary>
     public class PositionLengthAttribute : Attribute, IPositionLengthAttribute
     {
         private int positionLength = 1;

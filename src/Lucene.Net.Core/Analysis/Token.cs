@@ -28,92 +28,93 @@ namespace Lucene.Net.Analysis
     using IAttributeReflector = Lucene.Net.Util.IAttributeReflector;
 
     /// <summary>
-    ///  A Token is an occurrence of a term from the text of a field.  It consists of
-    ///  a term's text, the start and end offset of the term in the text of the field,
-    ///  and a type string.
-    ///  <p>
-    ///  The start and end offsets permit applications to re-associate a token with
-    ///  its source text, e.g., to display highlighted query terms in a document
-    ///  browser, or to show matching text fragments in a <abbr title="KeyWord In Context">KWIC</abbr>
-    ///  display, etc.
-    ///  <p>
-    ///  The type is a string, assigned by a lexical analyzer
-    ///  (a.k.a. tokenizer), naming the lexical or syntactic class that the token
-    ///  belongs to.  For example an end of sentence marker token might be implemented
-    ///  with type "eos".  The default token type is "word".
-    ///  <p>
-    ///  A Token can optionally have metadata (a.k.a. payload) in the form of a variable
-    ///  length byte array. Use <seealso cref="DocsAndPositionsEnum#getPayload()"/> to retrieve the
-    ///  payloads from the index.
+    /// A <see cref="Token"/> is an occurrence of a term from the text of a field.  It consists of
+    /// a term's text, the start and end offset of the term in the text of the field,
+    /// and a type string.
+    /// <para/>
+    /// The start and end offsets permit applications to re-associate a token with
+    /// its source text, e.g., to display highlighted query terms in a document
+    /// browser, or to show matching text fragments in a KWIC (KeyWord In Context)
+    /// display, etc.
+    /// <para/>
+    /// The type is a string, assigned by a lexical analyzer
+    /// (a.k.a. tokenizer), naming the lexical or syntactic class that the token
+    /// belongs to.  For example an end of sentence marker token might be implemented
+    /// with type "eos".  The default token type is "word".
+    /// <para/>
+    /// A Token can optionally have metadata (a.k.a. payload) in the form of a variable
+    /// length byte array. Use <see cref="Index.DocsAndPositionsEnum.GetPayload()"/> to retrieve the
+    /// payloads from the index.
     ///
-    ///  <br><br>
+    /// <para/><para/>
     ///
-    ///  <p><b>NOTE:</b> As of 2.9, Token implements all <seealso cref="Attribute"/> interfaces
-    ///  that are part of core Lucene and can be found in the {@code tokenattributes} subpackage.
-    ///  Even though it is not necessary to use Token anymore, with the new TokenStream API it can
-    ///  be used as convenience class that implements all <seealso cref="Attribute"/>s, which is especially useful
-    ///  to easily switch from the old to the new TokenStream API.
+    /// <para/><b>NOTE:</b> As of 2.9, Token implements all <see cref="IAttribute"/> interfaces
+    /// that are part of core Lucene and can be found in the <see cref="TokenAttributes"/> namespace.
+    /// Even though it is not necessary to use <see cref="Token"/> anymore, with the new <see cref="TokenStream"/> API it can
+    /// be used as convenience class that implements all <see cref="IAttribute"/>s, which is especially useful
+    /// to easily switch from the old to the new <see cref="TokenStream"/> API.
     ///
-    ///  <br><br>
+    /// <para/><para/>
     ///
-    ///  <p>Tokenizers and TokenFilters should try to re-use a Token
-    ///  instance when possible for best performance, by
-    ///  implementing the <seealso cref="TokenStream#IncrementToken()"/> API.
-    ///  Failing that, to create a new Token you should first use
-    ///  one of the constructors that starts with null text.  To load
-    ///  the token from a char[] use <seealso cref="#copyBuffer(char[], int, int)"/>.
-    ///  To load from a String use <seealso cref="#SetEmpty()"/> followed by <seealso cref="#append(CharSequence)"/> or <seealso cref="#append(CharSequence, int, int)"/>.
-    ///  Alternatively you can get the Token's termBuffer by calling either <seealso cref="#buffer()"/>,
-    ///  if you know that your text is shorter than the capacity of the termBuffer
-    ///  or <seealso cref="#resizeBuffer(int)"/>, if there is any possibility
-    ///  that you may need to grow the buffer. Fill in the characters of your term into this
-    ///  buffer, with <seealso cref="string#getChars(int, int, char[], int)"/> if loading from a string,
-    ///  or with <seealso cref="System#arraycopy(Object, int, Object, int, int)"/>, and finally call <seealso cref="#setLength(int)"/> to
-    ///  set the length of the term text.  See <a target="_top"
-    ///  href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
-    ///  for details.</p>
-    ///  <p>Typical Token reuse patterns:
-    ///  <ul>
-    ///  <li> Copying text from a string (type is reset to <seealso cref="#DEFAULT_TYPE"/> if not specified):<br/>
-    ///  <pre class="prettyprint">
-    ///    return reusableToken.reinit(string, startOffset, endOffset[, type]);
-    ///  </pre>
-    ///  </li>
-    ///  <li> Copying some text from a string (type is reset to <seealso cref="#DEFAULT_TYPE"/> if not specified):<br/>
-    ///  <pre class="prettyprint">
-    ///    return reusableToken.reinit(string, 0, string.length(), startOffset, endOffset[, type]);
-    ///  </pre>
-    ///  </li>
-    ///  </li>
-    ///  <li> Copying text from char[] buffer (type is reset to <seealso cref="#DEFAULT_TYPE"/> if not specified):<br/>
-    ///  <pre class="prettyprint">
-    ///    return reusableToken.reinit(buffer, 0, buffer.length, startOffset, endOffset[, type]);
-    ///  </pre>
-    ///  </li>
-    ///  <li> Copying some text from a char[] buffer (type is reset to <seealso cref="#DEFAULT_TYPE"/> if not specified):<br/>
-    ///  <pre class="prettyprint">
-    ///    return reusableToken.reinit(buffer, start, end - start, startOffset, endOffset[, type]);
-    ///  </pre>
-    ///  </li>
-    ///  <li> Copying from one one Token to another (type is reset to <seealso cref="#DEFAULT_TYPE"/> if not specified):<br/>
-    ///  <pre class="prettyprint">
-    ///    return reusableToken.reinit(source.buffer(), 0, source.length(), source.StartOffset, source.EndOffset[, source.type()]);
-    ///  </pre>
-    ///  </li>
-    ///  </ul>
-    ///  A few things to note:
-    ///  <ul>
-    ///  <li>clear() initializes all of the fields to default values. this was changed in contrast to Lucene 2.4, but should affect no one.</li>
-    ///  <li>Because <code>TokenStreams</code> can be chained, one cannot assume that the <code>Token's</code> current type is correct.</li>
-    ///  <li>The startOffset and endOffset represent the start and offset in the source text, so be careful in adjusting them.</li>
-    ///  <li>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</li>
-    ///  </ul>
-    ///  </p>
-    ///  <p>
-    ///  <b>Please note:</b> With Lucene 3.1, the <code><seealso cref="#toString toString()"/></code> method had to be changed to match the
-    ///  <seealso cref="CharSequence"/> interface introduced by the interface <seealso cref="Lucene.Net.Analysis.tokenattributes.CharTermAttribute"/>.
-    ///  this method now only prints the term text, no additional information anymore.
-    ///  </p>
+    /// <para><see cref="Tokenizer"/>s and <see cref="TokenFilter"/>s should try to re-use a <see cref="Token"/>
+    /// instance when possible for best performance, by
+    /// implementing the <see cref="TokenStream.IncrementToken()"/> API.
+    /// Failing that, to create a new <see cref="Token"/> you should first use
+    /// one of the constructors that starts with null text.  To load
+    /// the token from a char[] use <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>.
+    /// To load from a <see cref="string"/> use <see cref="ICharTermAttribute.SetEmpty()"/> followed by 
+    /// <see cref="ICharTermAttribute.Append(string)"/> or <see cref="ICharTermAttribute.Append(string, int, int)"/>.
+    /// Alternatively you can get the <see cref="Token"/>'s termBuffer by calling either <see cref="ICharTermAttribute.Buffer"/>,
+    /// if you know that your text is shorter than the capacity of the termBuffer
+    /// or <see cref="ICharTermAttribute.ResizeBuffer(int)"/>, if there is any possibility
+    /// that you may need to grow the buffer. Fill in the characters of your term into this
+    /// buffer, with <see cref="string.ToCharArray(int, int)"/> if loading from a string,
+    /// or with <see cref="System.Array.Copy(System.Array, int, System.Array, int, int)"/>, 
+    /// and finally call <see cref="ICharTermAttribute.SetLength(int)"/> to
+    /// set the length of the term text.  See <a target="_top"
+    /// href="https://issues.apache.org/jira/browse/LUCENE-969">LUCENE-969</a>
+    /// for details.</para>
+    /// <para>Typical Token reuse patterns:
+    /// <list type="bullet">
+    ///     <item> Copying text from a string (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <code>
+    ///         return reusableToken.Reinit(string, startOffset, endOffset[, type]);
+    ///     </code>
+    ///     </item>
+    ///     <item> Copying some text from a string (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <code>
+    ///         return reusableToken.Reinit(string, 0, string.Length, startOffset, endOffset[, type]);
+    ///     </code>
+    ///     </item>
+    ///     <item> Copying text from char[] buffer (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <code>
+    ///         return reusableToken.Reinit(buffer, 0, buffer.Length, startOffset, endOffset[, type]);
+    ///     </code>
+    ///     </item>
+    ///     <item> Copying some text from a char[] buffer (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <code>
+    ///         return reusableToken.Reinit(buffer, start, end - start, startOffset, endOffset[, type]);
+    ///     </code>
+    ///     </item>
+    ///     <item> Copying from one one <see cref="Token"/> to another (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <code>
+    ///         return reusableToken.Reinit(source.Buffer, 0, source.Length, source.StartOffset, source.EndOffset[, source.Type]);
+    ///     </code>
+    ///     </item>
+    /// </list>
+    /// A few things to note:
+    /// <list type="bullet">
+    ///     <item><see cref="Clear()"/> initializes all of the fields to default values. this was changed in contrast to Lucene 2.4, but should affect no one.</item>
+    ///     <item>Because <see cref="TokenStream"/>s can be chained, one cannot assume that the <see cref="Token"/>'s current type is correct.</item>
+    ///     <item>The startOffset and endOffset represent the start and offset in the source text, so be careful in adjusting them.</item>
+    ///     <item>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</item>
+    /// </list>
+    /// </para>
+    /// <para>
+    /// <b>Please note:</b> With Lucene 3.1, the <see cref="CharTermAttribute.ToString()"/> method had to be changed to match the
+    /// <see cref="Support.ICharSequence"/> interface introduced by the interface <see cref="ICharTermAttribute"/>.
+    /// this method now only prints the term text, no additional information anymore.
+    /// </para>
     /// </summary>
     public class Token : CharTermAttribute, ITypeAttribute, IPositionIncrementAttribute, IFlagsAttribute, IOffsetAttribute, IPayloadAttribute, IPositionLengthAttribute
     {
@@ -125,16 +126,18 @@ namespace Lucene.Net.Analysis
         private int positionLength = 1;
 
         /// <summary>
-        /// Constructs a Token will null text. </summary>
+        /// Constructs a <see cref="Token"/> will null text. </summary>
         public Token()
         {
+            string s = "fooobar";
+            s.ToCharArray();
         }
 
         /// <summary>
-        /// Constructs a Token with null text and start & end
-        ///  offsets. </summary>
-        ///  <param name="start"> start offset in the source text </param>
-        ///  <param name="end"> end offset in the source text  </param>
+        /// Constructs a <see cref="Token"/> with null text and start &amp; end
+        /// offsets. </summary>
+        /// <param name="start"> start offset in the source text </param>
+        /// <param name="end"> end offset in the source text  </param>
         public Token(int start, int end)
         {
             CheckOffsets(start, end);
@@ -143,11 +146,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Constructs a Token with null text and start & end
-        ///  offsets plus the Token type. </summary>
-        ///  <param name="start"> start offset in the source text </param>
-        ///  <param name="end"> end offset in the source text </param>
-        ///  <param name="typ"> the lexical type of this Token  </param>
+        /// Constructs a <see cref="Token"/> with null text and start &amp; end
+        /// offsets plus the <see cref="Token"/> type. </summary>
+        /// <param name="start"> start offset in the source text </param>
+        /// <param name="end"> end offset in the source text </param>
+        /// <param name="typ"> the lexical type of this <see cref="Token"/>  </param>
         public Token(int start, int end, string typ)
         {
             CheckOffsets(start, end);
@@ -157,11 +160,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Constructs a Token with null text and start & end
-        ///  offsets plus flags. NOTE: flags is EXPERIMENTAL. </summary>
-        ///  <param name="start"> start offset in the source text </param>
-        ///  <param name="end"> end offset in the source text </param>
-        ///  <param name="flags"> The bits to set for this token </param>
+        /// Constructs a <see cref="Token"/> with null text and start &amp; end
+        /// offsets plus flags. NOTE: flags is EXPERIMENTAL. </summary>
+        /// <param name="start"> start offset in the source text </param>
+        /// <param name="end"> end offset in the source text </param>
+        /// <param name="flags"> The bits to set for this token </param>
         public Token(int start, int end, int flags)
         {
             CheckOffsets(start, end);
@@ -171,14 +174,14 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Constructs a Token with the given term text, and start
-        ///  & end offsets.  The type defaults to "word."
-        ///  <b>NOTE:</b> for better indexing speed you should
-        ///  instead use the char[] termBuffer methods to set the
-        ///  term text. </summary>
-        ///  <param name="text"> term text </param>
-        ///  <param name="start"> start offset in the source text </param>
-        ///  <param name="end"> end offset in the source text </param>
+        /// Constructs a <see cref="Token"/> with the given term text, and start
+        /// &amp; end offsets.  The type defaults to "word."
+        /// <b>NOTE:</b> for better indexing speed you should
+        /// instead use the char[] termBuffer methods to set the
+        /// term text. </summary>
+        /// <param name="text"> term text </param>
+        /// <param name="start"> start offset in the source text </param>
+        /// <param name="end"> end offset in the source text </param>
         public Token(string text, int start, int end)
         {
             CheckOffsets(start, end);
@@ -188,14 +191,14 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Constructs a Token with the given text, start and end
-        ///  offsets, & type.  <b>NOTE:</b> for better indexing
-        ///  speed you should instead use the char[] termBuffer
-        ///  methods to set the term text. </summary>
-        ///  <param name="text"> term text </param>
-        ///  <param name="start"> start offset in the source text </param>
-        ///  <param name="end"> end offset in the source text </param>
-        ///  <param name="typ"> token type </param>
+        /// Constructs a <see cref="Token"/> with the given text, start and end
+        /// offsets, &amp; type.  <b>NOTE:</b> for better indexing
+        /// speed you should instead use the char[] termBuffer
+        /// methods to set the term text. </summary>
+        /// <param name="text"> term text </param>
+        /// <param name="start"> start offset in the source text </param>
+        /// <param name="end"> end offset in the source text </param>
+        /// <param name="typ"> token type </param>
         public Token(string text, int start, int end, string typ)
         {
             CheckOffsets(start, end);
@@ -206,10 +209,10 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        ///  Constructs a Token with the given text, start and end
-        ///  offsets, & type.  <b>NOTE:</b> for better indexing
-        ///  speed you should instead use the char[] termBuffer
-        ///  methods to set the term text. </summary>
+        /// Constructs a <see cref="Token"/> with the given text, start and end
+        /// offsets, &amp; type.  <b>NOTE:</b> for better indexing
+        /// speed you should instead use the char[] termBuffer
+        /// methods to set the term text. </summary>
         /// <param name="text"> term text </param>
         /// <param name="start"> start offset in the source text </param>
         /// <param name="end"> end offset in the source text </param>
@@ -224,9 +227,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        ///  Constructs a Token with the given term buffer (offset
-        ///  & length), start and end
-        ///  offsets </summary>
+        /// Constructs a <see cref="Token"/> with the given term buffer (offset
+        /// &amp; length), start and end offsets
+        /// </summary>
         /// <param name="startTermBuffer"> buffer containing term text </param>
         /// <param name="termBufferOffset"> the index in the buffer of the first character </param>
         /// <param name="termBufferLength"> number of valid characters in the buffer </param>
@@ -241,8 +244,10 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// {@inheritDoc} </summary>
-        /// <seealso cref= PositionIncrementAttribute </seealso>
+        /// Gets or Sets the position increment (the distance from the prior term). The default value is one.
+        /// </summary>
+        /// <exception cref="System.ArgumentException"> if value is set to a negative value. </exception>
+        /// <seealso cref="IPositionIncrementAttribute"/>
         public virtual int PositionIncrement
         {
             set
@@ -260,8 +265,14 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// {@inheritDoc} </summary>
-        /// <seealso cref= PositionLengthAttribute </seealso>
+        /// Gets or Sets the position length of this <see cref="Token"/> (how many positions this token
+        /// spans).
+        /// <para/>
+        /// The default value is one.
+        /// </summary>
+        /// <exception cref="System.ArgumentException"> if value
+        ///         is set to zero or negative. </exception>
+        /// <seealso cref="IPositionLengthAttribute"/>
         public virtual int PositionLength
         {
             set
@@ -275,24 +286,41 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// {@inheritDoc} </summary>
-        /// <seealso cref= OffsetAttribute </seealso>
+        /// Returns this <see cref="Token"/>'s starting offset, the position of the first character
+        /// corresponding to this token in the source text.
+        /// <para/>
+        /// Note that the difference between <see cref="EndOffset"/> and <see cref="StartOffset"/>
+        /// may not be equal to termText.Length, as the term text may have been altered by a
+        /// stemmer or some other filter.
+        /// </summary>
+        /// <seealso cref="SetOffset(int, int)"/>
+        /// <seealso cref="IOffsetAttribute"/>
         public int StartOffset
         {
             get { return startOffset; }
         }
 
         /// <summary>
-        /// {@inheritDoc} </summary>
-        /// <seealso cref= OffsetAttribute </seealso>
+        /// Returns this <see cref="Token"/>'s ending offset, one greater than the position of the
+        /// last character corresponding to this token in the source text. The length
+        /// of the token in the source text is (<code>EndOffset</code> - <see cref="StartOffset"/>).
+        /// </summary>
+        /// <seealso cref="SetOffset(int, int)"/>
+        /// <seealso cref="IOffsetAttribute"/>
         public int EndOffset
         {
             get { return endOffset; }
         }
 
         /// <summary>
-        /// {@inheritDoc} </summary>
-        /// <seealso cref= OffsetAttribute </seealso>
+        /// Set the starting and ending offset.
+        /// </summary>
+        /// <exception cref="System.ArgumentException"> If <paramref name="startOffset"/> or <paramref name="endOffset"/>
+        ///         are negative, or if <paramref name="startOffset"/> is greater than
+        ///         <paramref name="endOffset"/> </exception>
+        /// <seealso cref="StartOffset"/>
+        /// <seealso cref="EndOffset"/>
+        /// <seealso cref="IOffsetAttribute"/>
         public virtual void SetOffset(int startOffset, int endOffset)
         {
             CheckOffsets(startOffset, endOffset);
@@ -300,7 +328,7 @@ namespace Lucene.Net.Analysis
             this.endOffset = endOffset;
         }
 
-        /// <summary>Returns this Token's lexical type.  Defaults to "word". </summary>
+        /// <summary>Gets or Sets this <see cref="Token"/>'s lexical type.  Defaults to "word". </summary>
         public string Type
         {
             get { return type; }
@@ -308,8 +336,12 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// {@inheritDoc} </summary>
-        /// <seealso cref= FlagsAttribute </seealso>
+        /// Get the bitset for any bits that have been set.
+        /// <para/>
+        /// This is completely distinct from <see cref="ITypeAttribute.Type" />, although they do share similar purposes.
+        /// The flags can be used to encode information about the token for use by other <see cref="Lucene.Net.Analysis.TokenFilter" />s.
+        /// </summary>
+        /// <seealso cref="IFlagsAttribute"/>
         public virtual int Flags
         {
             get
@@ -323,8 +355,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// {@inheritDoc} </summary>
-        /// <seealso cref= PayloadAttribute </seealso>
+        /// Gets or Sets this <see cref="Token"/>'s payload.
+        /// </summary>
+        /// <seealso cref="IPayloadAttribute"/>
         public virtual BytesRef Payload
         {
             get
@@ -363,10 +396,10 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Makes a clone, but replaces the term buffer &
-        /// start/end offset in the process.  this is more
+        /// Makes a clone, but replaces the term buffer &amp;
+        /// start/end offset in the process.  This is more
         /// efficient than doing a full clone (and then calling
-        /// <seealso cref="#copyBuffer"/>) because it saves a wasted copy of the old
+        /// <see cref="ICharTermAttribute.CopyBuffer"/>) because it saves a wasted copy of the old
         /// termBuffer.
         /// </summary>
         public virtual Token Clone(char[] newTermBuffer, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
@@ -431,11 +464,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Shorthand for calling <seealso cref="#clear"/>,
-        ///  <seealso cref="#copyBuffer(char[], int, int)"/>,
-        ///  <seealso cref="#setOffset"/>,
-        ///  <seealso cref="#setType"/> </summary>
-        ///  <returns> this Token instance  </returns>
+        /// Shorthand for calling <see cref="Clear"/>,
+        /// <see cref="CopyBuffer(char[], int, int)"/>,
+        /// <see cref="SetOffset"/>,
+        /// <see cref="Type"/> (set) </summary>
+        /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(char[] newTermBuffer, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset, string newType)
         {
             CheckOffsets(newStartOffset, newEndOffset);
@@ -450,11 +483,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Shorthand for calling <seealso cref="#clear"/>,
-        ///  <seealso cref="#copyBuffer(char[], int, int)"/>,
-        ///  <seealso cref="#setOffset"/>,
-        ///  <seealso cref="#setType"/> on Token.DEFAULT_TYPE </summary>
-        ///  <returns> this Token instance  </returns>
+        /// Shorthand for calling <see cref="Clear"/>,
+        /// <see cref="CopyBuffer(char[], int, int)"/>,
+        /// <see cref="SetOffset"/>,
+        /// <see cref="Type"/> (set) on <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> </summary>
+        /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(char[] newTermBuffer, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
         {
             CheckOffsets(newStartOffset, newEndOffset);
@@ -467,11 +500,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Shorthand for calling <seealso cref="#clear"/>,
-        ///  <seealso cref="#append(CharSequence)"/>,
-        ///  <seealso cref="#setOffset"/>,
-        ///  <seealso cref="#setType"/> </summary>
-        ///  <returns> this Token instance  </returns>
+        /// Shorthand for calling <see cref="Clear"/>,
+        /// <see cref="Append(string)"/>,
+        /// <see cref="SetOffset"/>,
+        /// <see cref="Type"/> (set) </summary>
+        /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(string newTerm, int newStartOffset, int newEndOffset, string newType)
         {
             CheckOffsets(newStartOffset, newEndOffset);
@@ -484,11 +517,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Shorthand for calling <seealso cref="#clear"/>,
-        ///  <seealso cref="#append(CharSequence, int, int)"/>,
-        ///  <seealso cref="#setOffset"/>,
-        ///  <seealso cref="#setType"/> </summary>
-        ///  <returns> this Token instance  </returns>
+        /// Shorthand for calling <see cref="Clear"/>,
+        /// <see cref="Append(string, int, int)"/>,
+        /// <see cref="SetOffset"/>,
+        /// <see cref="Type"/> (set) </summary>
+        /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(string newTerm, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset, string newType)
         {
             CheckOffsets(newStartOffset, newEndOffset);
@@ -501,11 +534,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Shorthand for calling <seealso cref="#clear"/>,
-        ///  <seealso cref="#append(CharSequence)"/>,
-        ///  <seealso cref="#setOffset"/>,
-        ///  <seealso cref="#setType"/> on Token.DEFAULT_TYPE </summary>
-        ///  <returns> this Token instance  </returns>
+        /// Shorthand for calling <see cref="Clear"/>,
+        /// <see cref="Append(string)"/>,
+        /// <see cref="SetOffset"/>,
+        /// <see cref="Type"/> (set) on <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> </summary>
+        /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(string newTerm, int newStartOffset, int newEndOffset)
         {
             CheckOffsets(newStartOffset, newEndOffset);
@@ -518,11 +551,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Shorthand for calling <seealso cref="#clear"/>,
-        ///  <seealso cref="#append(CharSequence, int, int)"/>,
-        ///  <seealso cref="#setOffset"/>,
-        ///  <seealso cref="#setType"/> on Token.DEFAULT_TYPE </summary>
-        ///  <returns> this Token instance  </returns>
+        /// Shorthand for calling <see cref="Clear"/>,
+        /// <see cref="Append(string, int, int)"/>,
+        /// <see cref="SetOffset"/>,
+        /// <see cref="Type"/> (set) on <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> </summary>
+        /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(string newTerm, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
         {
             CheckOffsets(newStartOffset, newEndOffset);
@@ -536,7 +569,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Copy the prototype token's fields into this one. Note: Payloads are shared. </summary>
-        /// <param name="prototype"> source Token to copy fields from </param>
+        /// <param name="prototype"> source <see cref="Token"/> to copy fields from </param>
         public virtual void Reinit(Token prototype)
         {
             CopyBuffer(prototype.Buffer, 0, prototype.Length);
@@ -550,7 +583,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Copy the prototype token's fields into this one, with a different term. Note: Payloads are shared. </summary>
-        /// <param name="prototype"> existing Token </param>
+        /// <param name="prototype"> existing <see cref="Token"/> </param>
         /// <param name="newTerm"> new term text </param>
         public virtual void Reinit(Token prototype, string newTerm)
         {
@@ -565,7 +598,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Copy the prototype token's fields into this one, with a different term. Note: Payloads are shared. </summary>
-        /// <param name="prototype"> existing Token </param>
+        /// <param name="prototype"> existing <see cref="Token"/> </param>
         /// <param name="newTermBuffer"> buffer containing new term text </param>
         /// <param name="offset"> the index in the buffer of the first character </param>
         /// <param name="length"> number of valid characters in the buffer </param>
@@ -623,7 +656,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Convenience factory that returns <code>Token</code> as implementation for the basic
+        /// Convenience factory that returns <see cref="Token"/> as implementation for the basic
         /// attributes and return the default impl (with &quot;Impl&quot; appended) for all other
         /// attributes.
         /// @since 3.0
@@ -631,7 +664,7 @@ namespace Lucene.Net.Analysis
         public static readonly AttributeSource.AttributeFactory TOKEN_ATTRIBUTE_FACTORY = new TokenAttributeFactory(AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY);
 
         /// <summary>
-        /// <b>Expert:</b> Creates a TokenAttributeFactory returning <seealso cref="Token"/> as instance for the basic attributes
+        /// <b>Expert:</b> Creates a <see cref="TokenAttributeFactory"/> returning <see cref="Token"/> as instance for the basic attributes
         /// and for all other attributes calls the given delegate factory.
         /// @since 3.0
         /// </summary>
@@ -640,7 +673,7 @@ namespace Lucene.Net.Analysis
             internal readonly AttributeSource.AttributeFactory @delegate;
 
             /// <summary>
-            /// <b>Expert</b>: Creates an AttributeFactory returning <seealso cref="Token"/> as instance for the basic attributes
+            /// <b>Expert</b>: Creates an <see cref="AttributeSource.AttributeFactory"/> returning <see cref="Token"/> as instance for the basic attributes
             /// and for all other attributes calls the given delegate factory.
             /// </summary>
             public TokenAttributeFactory(AttributeSource.AttributeFactory @delegate)

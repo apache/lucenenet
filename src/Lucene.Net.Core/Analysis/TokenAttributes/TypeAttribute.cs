@@ -23,8 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
-    /// Default implementation of <seealso cref="TypeAttribute"/>. </summary>
-
+    /// Default implementation of <see cref="ITypeAttribute"/>. </summary>
     public class TypeAttribute : Attribute, ITypeAttribute
 #if FEATURE_CLONEABLE
         , ICloneable
@@ -33,14 +32,14 @@ namespace Lucene.Net.Analysis.TokenAttributes
         private string type;
 
         /// <summary>
-        /// Initialize this attribute with <seealso cref="TypeAttribute#DEFAULT_TYPE"/> </summary>
+        /// Initialize this attribute with <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> </summary>
         public TypeAttribute()
             : this(TypeAttribute_Fields.DEFAULT_TYPE)
         {
         }
 
         /// <summary>
-        /// Initialize this attribute with <code>type</code> </summary>
+        /// Initialize this attribute with <paramref name="type"/> </summary>
         public TypeAttribute(string type)
         {
             this.type = type;

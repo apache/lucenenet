@@ -18,10 +18,11 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// A TokenFilter is a TokenStream whose input is another TokenStream.
-    ///  <p>
-    ///  this is an abstract class; subclasses must override <seealso cref="#IncrementToken()"/>. </summary>
-    ///  <seealso cref= TokenStream </seealso>
+    /// A <see cref="TokenFilter"/> is a <see cref="TokenStream"/> whose input is another <see cref="TokenStream"/>.
+    /// <para/>
+    /// This is an abstract class; subclasses must override <see cref="TokenStream.IncrementToken()"/>.
+    /// </summary>
+    /// <seealso cref="TokenStream"/>
     public abstract class TokenFilter : TokenStream
     {
         /// <summary>
@@ -37,23 +38,40 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// {@inheritDoc}
-        /// <p>
+        /// This method is called by the consumer after the last token has been
+        /// consumed, after <see cref="IncrementToken()"/> returned <c>false</c>
+        /// (using the new <see cref="TokenStream"/> API). Streams implementing the old API
+        /// should upgrade to use this feature.
+        /// <para/>
+        /// This method can be used to perform any end-of-stream operations, such as
+        /// setting the final offset of a stream. The final offset of a stream might
+        /// differ from the offset of the last token eg in case one or more whitespaces
+        /// followed after the last token, but a WhitespaceTokenizer was used.
+        /// <para/>
+        /// Additionally any skipped positions (such as those removed by a stopfilter)
+        /// can be applied to the position increment, or any adjustment of other
+        /// attributes where the end-of-stream value may be important.
+        /// <para/>
         /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
-        /// be sure to call <code>super.end()</code> first when overriding this method.
+        /// be sure to call <c>base.End()</c> first when overriding this method.
         /// </summary>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurs </exception>
         public override void End()
         {
             m_input.End();
         }
 
         /// <summary>
-        /// {@inheritDoc}
-        /// <p>
+        /// Releases resources associated with this stream.
+        /// <para/>
+        /// If you override this method, always call <c>base.Dispose()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on reuse).
+        /// <para/>
         /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
-        /// be sure to call <code>super.Dispose()</code> when overriding this method.
+        /// be sure to call <c>base.Dispose()</c> when overriding this method.
         /// </summary>
         public override void Dispose()
         {
@@ -62,7 +80,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// This method is called by a consumer before it begins consumption using
-        /// <see cref="IncrementToken()"/>.
+        /// <see cref="TokenStream.IncrementToken()"/>.
         /// <para/>
         /// Resets this stream to a clean state. Stateful implementations must implement
         /// this method so that they can be reused, just as if they had been created fresh.

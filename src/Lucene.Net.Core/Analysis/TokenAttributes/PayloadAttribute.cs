@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// Default implementation of <seealso cref="PayloadAttribute"/>. </summary>
+    /// Default implementation of <see cref="IPayloadAttribute"/>. </summary>
     public class PayloadAttribute : Attribute, IPayloadAttribute
     {
         private BytesRef payload;

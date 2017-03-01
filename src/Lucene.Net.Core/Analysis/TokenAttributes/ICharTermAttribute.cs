@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     */
 
     /// <summary>
-    /// The term text of a Token.
+    /// The term text of a <see cref="Token"/>.
     /// </summary>
     public interface ICharTermAttribute : IAttribute, ICharSequence
 #if FEATURE_CLONEABLE
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
         char[] Buffer { get; }
 
         /// <summary>
-        /// Grows the termBuffer to at least size newSize, preserving the
+        /// Grows the termBuffer to at least size <paramref name="newSize"/>, preserving the
         /// existing content. </summary>
         /// <param name="newSize"> minimum size of the new termBuffer </param>
         /// <returns> newly created termBuffer with length >= newSize </returns>

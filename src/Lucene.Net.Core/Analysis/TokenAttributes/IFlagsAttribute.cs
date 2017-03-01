@@ -21,18 +21,20 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary> This attribute can be used to pass different flags down the <see cref="Tokenizer" /> chain,
     /// eg from one TokenFilter to another one.
+    /// <para/>
+    /// This is completely distinct from <see cref="TypeAttribute"/>, although they do share similar purposes.
+    /// The flags can be used to encode information about the token for use by other 
+    /// <see cref="TokenFilter"/>s.
+    /// @lucene.experimental While we think this is here to stay, we may want to change it to be a long.
     /// </summary>
     public interface IFlagsAttribute : IAttribute
     {
-        /// <summary> EXPERIMENTAL:  While we think this is here to stay, we may want to change it to be a long.
-        /// <p/>
-        ///
-        /// Get the bitset for any bits that have been set.  This is completely distinct from <see cref="ITypeAttribute.Type()" />, although they do share similar purposes.
+        /// <summary>
+        /// Get the bitset for any bits that have been set.
+        /// <para/>
+        /// This is completely distinct from <see cref="ITypeAttribute.Type" />, although they do share similar purposes.
         /// The flags can be used to encode information about the token for use by other <see cref="Lucene.Net.Analysis.TokenFilter" />s.
-        ///
-        ///
         /// </summary>
-        /// <value> The bits </value>
         int Flags { get; set; }
     }
 }

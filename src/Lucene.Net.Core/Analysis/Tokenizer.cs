@@ -22,22 +22,22 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// A Tokenizer is a TokenStream whose input is a TextReader.
-    ///  <p>
-    ///  this is an abstract class; subclasses must override <seealso cref="#IncrementToken()"/>
-    ///  <p>
-    ///  NOTE: Subclasses overriding <seealso cref="#IncrementToken()"/> must
-    ///  call <seealso cref="AttributeSource#ClearAttributes()"/> before
-    ///  setting attributes.
+    /// A <see cref="Tokenizer"/> is a <see cref="TokenStream"/> whose input is a <see cref="TextReader"/>.
+    /// <para/>
+    /// This is an abstract class; subclasses must override <seealso cref="#IncrementToken()"/>
+    /// <para/>
+    /// NOTE: Subclasses overriding <see cref="TokenStream.IncrementToken()"/> must
+    /// call <see cref="Util.AttributeSource.ClearAttributes()"/> before
+    /// setting attributes.
     /// </summary>
     public abstract class Tokenizer : TokenStream
     {
         /// <summary>
-        /// The text source for this Tokenizer. </summary>
+        /// The text source for this <see cref="Tokenizer"/>. </summary>
         protected TextReader m_input = ILLEGAL_STATE_READER;
 
         /// <summary>
-        /// Pending reader: not actually assigned to input until reset() </summary>
+        /// Pending reader: not actually assigned to input until <see cref="Reset()"/> </summary>
         private TextReader inputPending = ILLEGAL_STATE_READER;
 
         /// <summary>
@@ -52,7 +52,8 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Construct a token stream processing the given input using the given AttributeFactory. </summary>
+        /// Construct a token stream processing the given input using the given <see cref="Util.AttributeSource.AttributeFactory"/>.
+        /// </summary>
         protected internal Tokenizer(AttributeFactory factory, TextReader input)
             : base(factory)
         {
@@ -64,12 +65,17 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// {@inheritDoc}
-        /// <p>
-        /// <b>NOTE:</b>
-        /// The default implementation closes the input TextReader, so
-        /// be sure to call <code>super.Dispose()</code> when overriding this method.
+        /// Releases resources associated with this stream.
+        /// <para/>
+        /// If you override this method, always call <c>base.Dispose()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on reuse).
         /// </summary>
+        /// <remarks>
+        /// <b>NOTE:</b>
+        /// The default implementation closes the input <see cref="TextReader"/>, so
+        /// be sure to call <c>base.Dispose()</c> when overriding this method.
+        /// </remarks>
         public override void Dispose()
         {
             m_input.Dispose();
@@ -80,20 +86,20 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Return the corrected offset. If <seealso cref="#input"/> is a <seealso cref="CharFilter"/> subclass
-        /// this method calls <seealso cref="CharFilter#correctOffset"/>, else returns <code>currentOff</code>. </summary>
+        /// Return the corrected offset. If <see cref="m_input"/> is a <see cref="CharFilter"/> subclass
+        /// this method calls <see cref="CharFilter.CorrectOffset"/>, else returns <paramref name="currentOff"/>. </summary>
         /// <param name="currentOff"> offset as seen in the output </param>
         /// <returns> corrected offset based on the input </returns>
-        /// <seealso> cref= CharFilter#correctOffset </seealso>
+        /// <seealso cref="CharFilter.CorrectOffset(int)"/>
         protected internal int CorrectOffset(int currentOff)
         {
             return (m_input is CharFilter) ? ((CharFilter)m_input).CorrectOffset(currentOff) : currentOff;
         }
 
         /// <summary>
-        /// Expert: Set a new reader on the Tokenizer.  Typically, an
-        ///  analyzer (in its tokenStream method) will use
-        ///  this to re-use a previously created tokenizer.
+        /// Expert: Set a new reader on the <see cref="Tokenizer"/>. Typically, an
+        /// analyzer (in its tokenStream method) will use
+        /// this to re-use a previously created tokenizer.
         /// </summary>
         public void SetReader(TextReader input)
         {

@@ -18,7 +18,8 @@ namespace Lucene.Net.Analysis.TokenAttributes
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
+    
+    // LUCENENET TODO: Remove this type (it doesn't exist in Lucene 4.8.0)
     /// <summary> The term text of a Token.</summary>
     public interface ITermAttribute : IAttribute
     {

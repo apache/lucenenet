@@ -20,34 +20,37 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     /// <summary>
-    /// The start and end character offset of a Token.
+    /// The start and end character offset of a <see cref="Token"/>.
     /// </summary>
     public interface IOffsetAttribute : IAttribute
     {
         /// <summary>
-        /// Returns this Token's starting offset, the position of the first character
+        /// Returns this <see cref="Token"/>'s starting offset, the position of the first character
         /// corresponding to this token in the source text.
-        /// <p>
-        /// Note that the difference between <seealso cref="#EndOffset()"/> and <code>StartOffset()</code>
-        /// may not be equal to termText.length(), as the term text may have been altered by a
-        /// stemmer or some other filter. </summary>
-        /// <seealso cref= #SetOffset(int, int)  </seealso>
+        /// <para/>
+        /// Note that the difference between <see cref="EndOffset"/> and <see cref="StartOffset"/>
+        /// may not be equal to termText.Length, as the term text may have been altered by a
+        /// stemmer or some other filter.
+        /// </summary>
+        /// <seealso cref="SetOffset(int, int)"/>
         int StartOffset { get; }
 
         /// <summary>
-        /// Set the starting and ending offset. </summary>
-        /// <exception cref="IllegalArgumentException"> If <code>startOffset</code> or <code>endOffset</code>
-        ///         are negative, or if <code>startOffset</code> is greater than
-        ///         <code>endOffset</code> </exception>
-        /// <seealso cref= #StartOffset() </seealso>
-        /// <seealso cref= #EndOffset() </seealso>
+        /// Set the starting and ending offset.
+        /// </summary>
+        /// <exception cref="System.ArgumentException"> If <paramref name="startOffset"/> or <paramref name="endOffset"/>
+        ///         are negative, or if <paramref name="startOffset"/> is greater than
+        ///         <paramref name="endOffset"/> </exception>
+        /// <seealso cref="StartOffset"/>
+        /// <seealso cref="EndOffset"/>
         void SetOffset(int startOffset, int endOffset);
 
         /// <summary>
-        /// Returns this Token's ending offset, one greater than the position of the
+        /// Returns this <see cref="Token"/>'s ending offset, one greater than the position of the
         /// last character corresponding to this token in the source text. The length
-        /// of the token in the source text is (<code>EndOffset()</code> - <seealso cref="#StartOffset()"/>). </summary>
-        /// <seealso cref= #SetOffset(int, int) </seealso>
+        /// of the token in the source text is (<code>EndOffset</code> - <see cref="StartOffset"/>).
+        /// </summary>
+        /// <seealso cref="SetOffset(int, int)"/>
         int EndOffset { get; }
     }
 }

@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
-    /// Default implementation of <seealso cref="OffsetAttribute"/>. </summary>
+    /// Default implementation of <see cref="IOffsetAttribute"/>. </summary>
     public class OffsetAttribute : Attribute, IOffsetAttribute
     {
         private int startOffset;

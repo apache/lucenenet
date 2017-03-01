@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
     using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
-    /// Default implementation of <seealso cref="KeywordAttribute"/>. </summary>
+    /// Default implementation of <see cref="IKeywordAttribute"/>. </summary>
     public sealed class KeywordAttribute : Attribute, IKeywordAttribute
     {
         private bool keyword;

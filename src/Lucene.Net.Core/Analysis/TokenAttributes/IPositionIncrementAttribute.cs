@@ -21,39 +21,36 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Determines the position of this token
-    /// relative to the previous Token in a TokenStream, used in phrase
+    /// relative to the previous <see cref="Token"/> in a <see cref="TokenStream"/>, used in phrase
     /// searching.
     ///
-    /// <p>The default value is one.
+    /// <para/>The default value is one.
     ///
-    /// <p>Some common uses for this are:<ul>
-    ///
-    /// <li>Set it to zero to put multiple terms in the same position.  this is
+    /// <para/>Some common uses for this are:
+    /// 
+    /// <list type="bullet">
+    /// <item>Set it to zero to put multiple terms in the same position.  this is
     /// useful if, e.g., a word has multiple stems.  Searches for phrases
     /// including either stem will match.  In this case, all but the first stem's
     /// increment should be set to zero: the increment of the first instance
     /// should be one.  Repeating a token with an increment of zero can also be
-    /// used to boost the scores of matches on that token.
+    /// used to boost the scores of matches on that token.</item>
     ///
-    /// <li>Set it to values greater than one to inhibit exact phrase matches.
+    /// <item>Set it to values greater than one to inhibit exact phrase matches.
     /// If, for example, one does not want phrases to match across removed stop
     /// words, then one could build a stop word filter that removes stop words and
     /// also sets the increment to the number of stop words removed before each
     /// non-stop word.  Then exact phrase queries will only match when the terms
-    /// occur with no intervening stop words.
-    ///
-    /// </ul>
+    /// occur with no intervening stop words.</item>
+    /// </list>
     /// </summary>
-    /// <seealso cref= Lucene.Net.Index.DocsAndPositionsEnum </seealso>
+    /// <seealso cref="Lucene.Net.Index.DocsAndPositionsEnum"/>
     public interface IPositionIncrementAttribute : IAttribute
     {
         /// <summary>
-        /// Set the position increment. The default value is one.
+        /// Gets or Sets the position increment (the distance from the prior term). The default value is one.
         /// </summary>
-        /// <param name="positionIncrement"> the distance from the prior term </param>
-        /// <exception cref="IllegalArgumentException"> if <code>positionIncrement</code>
-        ///         is negative. </exception>
-        /// <seealso cref= #getPositionIncrement() </seealso>
+        /// <exception cref="System.ArgumentException"> if value is set to a negative value. </exception>
         int PositionIncrement { set; get; }
     }
 }

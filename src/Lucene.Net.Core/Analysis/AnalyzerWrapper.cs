@@ -21,70 +21,69 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// Extension to <seealso cref="Analyzer"/> suitable for Analyzers which wrap
-    /// other Analyzers.
-    /// <p/>
-    /// <seealso cref="#getWrappedAnalyzer(String)"/> allows the Analyzer
-    /// to wrap multiple Analyzers which are selected on a per field basis.
-    /// <p/>
-    /// <seealso cref="#wrapComponents(String, Analyzer.TokenStreamComponents)"/> allows the
-    /// TokenStreamComponents of the wrapped Analyzer to then be wrapped
-    /// (such as adding a new <seealso cref="TokenFilter"/> to form new TokenStreamComponents.
+    /// Extension to <see cref="Analyzer"/> suitable for <see cref="Analyzer"/>s which wrap
+    /// other <see cref="Analyzer"/>s.
+    /// <para/>
+    /// <see cref="GetWrappedAnalyzer(string)"/> allows the <see cref="Analyzer"/>
+    /// to wrap multiple <see cref="Analyzer"/>s which are selected on a per field basis.
+    /// <para/>
+    /// <see cref="WrapComponents(string, Analyzer.TokenStreamComponents)"/> allows the
+    /// <see cref="Analyzer.TokenStreamComponents"/> of the wrapped <see cref="Analyzer"/> to then be wrapped
+    /// (such as adding a new <see cref="TokenFilter"/> to form new <see cref="Analyzer.TokenStreamComponents"/>).
     /// </summary>
     public abstract class AnalyzerWrapper : Analyzer
     {
         /// <summary>
-        /// Creates a new AnalyzerWrapper.  Since the <seealso cref="Analyzer.ReuseStrategy"/> of
-        /// the wrapped Analyzers are unknown, <seealso cref="#PER_FIELD_REUSE_STRATEGY"/> is assumed. </summary>
-        /// @deprecated Use <seealso cref="#AnalyzerWrapper(Analyzer.ReuseStrategy)"/>
-        /// and specify a valid <seealso cref="Analyzer.ReuseStrategy"/>, probably retrieved from the
-        /// wrapped analyzer using <seealso cref="#getReuseStrategy()"/>.
-        [Obsolete]
+        /// Creates a new <see cref="AnalyzerWrapper"/>.  Since the <see cref="Analyzer.ReuseStrategy"/> of
+        /// the wrapped <see cref="Analyzer"/>s are unknown, <see cref="Analyzer.PER_FIELD_REUSE_STRATEGY"/> is assumed.
+        /// </summary>
+        [Obsolete("Use AnalyzerWrapper(Analyzer.ReuseStrategy) and specify a valid Analyzer.ReuseStrategy, probably retrieved from the wrapped analyzer using Analyzer.Strategy.")]
         protected internal AnalyzerWrapper()
             : this(PER_FIELD_REUSE_STRATEGY)
         {
         }
 
         /// <summary>
-        /// Creates a new AnalyzerWrapper with the given reuse strategy.
-        /// <p>If you want to wrap a single delegate Analyzer you can probably
+        /// Creates a new <see cref="AnalyzerWrapper"/> with the given reuse strategy.
+        /// <para/>If you want to wrap a single delegate <see cref="Analyzer"/> you can probably
         /// reuse its strategy when instantiating this subclass:
-        /// {@code super(delegate.getReuseStrategy());}.
-        /// <p>If you choose different analyzers per field, use
-        /// <seealso cref="#PER_FIELD_REUSE_STRATEGY"/>. </summary>
-        /// <seealso cref= #getReuseStrategy() </seealso>
+        /// <c>base(innerAnalyzer.Strategy)</c>.
+        /// <para/>If you choose different analyzers per field, use
+        /// <see cref="Analyzer.PER_FIELD_REUSE_STRATEGY"/>.
+        /// </summary>
+        /// <seealso cref="Analyzer.Strategy"/>
         protected internal AnalyzerWrapper(ReuseStrategy reuseStrategy)
             : base(reuseStrategy)
         {
         }
 
         /// <summary>
-        /// Retrieves the wrapped Analyzer appropriate for analyzing the field with
+        /// Retrieves the wrapped <see cref="Analyzer"/> appropriate for analyzing the field with
         /// the given name
         /// </summary>
         /// <param name="fieldName"> Name of the field which is to be analyzed </param>
-        /// <returns> Analyzer for the field with the given name.  Assumed to be non-null </returns>
+        /// <returns> <see cref="Analyzer"/> for the field with the given name.  Assumed to be non-null </returns>
         protected abstract Analyzer GetWrappedAnalyzer(string fieldName);
 
         /// <summary>
-        /// Wraps / alters the given TokenStreamComponents, taken from the wrapped
-        /// Analyzer, to form new components. It is through this method that new
-        /// TokenFilters can be added by AnalyzerWrappers. By default, the given
+        /// Wraps / alters the given <see cref="Analyzer.TokenStreamComponents"/>, taken from the wrapped
+        /// <see cref="Analyzer"/>, to form new components. It is through this method that new
+        /// <see cref="TokenFilter"/>s can be added by <see cref="AnalyzerWrapper"/>s. By default, the given
         /// components are returned.
         /// </summary>
         /// <param name="fieldName">
         ///          Name of the field which is to be analyzed </param>
         /// <param name="components">
-        ///          TokenStreamComponents taken from the wrapped Analyzer </param>
-        /// <returns> Wrapped / altered TokenStreamComponents. </returns>
+        ///          <see cref="Analyzer.TokenStreamComponents"/> taken from the wrapped <see cref="Analyzer"/> </param>
+        /// <returns> Wrapped / altered <see cref="Analyzer.TokenStreamComponents"/>. </returns>
         protected virtual TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
         {
             return components;
         }
 
         /// <summary>
-        /// Wraps / alters the given TextReader. Through this method AnalyzerWrappers can
-        /// implement <seealso cref="#initReader(String, Reader)"/>. By default, the given reader
+        /// Wraps / alters the given <see cref="TextReader"/>. Through this method <see cref="AnalyzerWrapper"/>s can
+        /// implement <see cref="InitReader(string, TextReader)"/>. By default, the given reader
         /// is returned.
         /// </summary>
         /// <param name="fieldName">

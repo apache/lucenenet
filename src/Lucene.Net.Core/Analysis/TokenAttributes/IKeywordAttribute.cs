@@ -20,21 +20,18 @@ namespace Lucene.Net.Analysis.TokenAttributes
      */
 
     /// <summary>
-    /// this attribute can be used to mark a token as a keyword. Keyword aware
-    /// <seealso cref="TokenStream"/>s can decide to modify a token based on the return value
-    /// of <seealso cref="#isKeyword()"/> if the token is modified. Stemming filters for
+    /// This attribute can be used to mark a token as a keyword. Keyword aware
+    /// <see cref="TokenStream"/>s can decide to modify a token based on the return value
+    /// of <see cref="IsKeyword"/> if the token is modified. Stemming filters for
     /// instance can use this attribute to conditionally skip a term if
-    /// <seealso cref="#isKeyword()"/> returns <code>true</code>.
+    /// <see cref="IsKeyword"/> returns <c>true</c>.
     /// </summary>
     public interface IKeywordAttribute : IAttribute
     {
         /// <summary>
-        /// Returns <code>true</code> if the current token is a keyword, otherwise
-        /// <code>false</code>
+        /// Gets or Sets whether the current token is a keyword. <c>true</c> if the current token is a keyword, otherwise
+        /// <c>false</c>.
         /// </summary>
-        /// <returns> <code>true</code> if the current token is a keyword, otherwise
-        ///         <code>false</code> </returns>
-        /// <seealso cref= #setKeyword(boolean) </seealso>
         bool IsKeyword { get; set; }
     }
 }

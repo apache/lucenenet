@@ -30,11 +30,11 @@ namespace Lucene.Net.Analysis
     // TODO: maybe also toFST?  then we can translate atts into FST outputs/weights
 
     /// <summary>
-    /// Consumes a TokenStream and creates an <seealso cref="Automaton"/>
-    ///  where the transition labels are UTF8 bytes (or Unicode
-    ///  code points if unicodeArcs is true) from the {@link
-    ///  TermToBytesRefAttribute}.  Between tokens we insert
-    ///  POS_SEP and for holes we insert HOLE.
+    /// Consumes a <see cref="TokenStream"/> and creates an <see cref="Automaton"/>
+    /// where the transition labels are UTF8 bytes (or Unicode
+    /// code points if unicodeArcs is true) from the <see cref="ITermToBytesRefAttribute"/>.
+    /// Between tokens we insert
+    /// <see cref="POS_SEP"/> and for holes we insert <see cref="HOLE"/>.
     ///
     /// @lucene.experimental
     /// </summary>
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Whether to generate holes in the automaton for missing positions, <code>true</code> by default. </summary>
+        /// Whether to generate holes in the automaton for missing positions, <c>true</c> by default. </summary>
         public virtual bool PreservePositionIncrements
         {
             get
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Whether to make transition labels Unicode code points instead of UTF8 bytes,
-        ///  <code>false</code> by default
+        /// <c>false</c> by default
         /// </summary>
         public virtual bool UnicodeArcs
         {
@@ -114,9 +114,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Subclass & implement this if you need to change the
-        ///  token (such as escaping certain bytes) before it's
-        ///  turned into a graph.
+        /// Subclass &amp; implement this if you need to change the
+        /// token (such as escaping certain bytes) before it's
+        /// turned into a graph.
         /// </summary>
         protected internal virtual BytesRef ChangeToken(BytesRef @in)
         {
@@ -132,11 +132,10 @@ namespace Lucene.Net.Analysis
         public const int HOLE = 0x001e;
 
         /// <summary>
-        /// Pulls the graph (including {@link
-        ///  PositionLengthAttribute}) from the provided {@link
-        ///  TokenStream}, and creates the corresponding
-        ///  automaton where arcs are bytes (or Unicode code points
-        ///  if unicodeArcs = true) from each term.
+        /// Pulls the graph (including <see cref="IPositionLengthAttribute"/>
+        /// from the provided <see cref="TokenStream"/>, and creates the corresponding
+        /// automaton where arcs are bytes (or Unicode code points
+        /// if unicodeArcs = true) from each term.
         /// </summary>
         public virtual Automaton ToAutomaton(TokenStream @in)
         {

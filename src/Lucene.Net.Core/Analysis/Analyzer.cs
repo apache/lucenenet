@@ -25,56 +25,55 @@ namespace Lucene.Net.Analysis
     using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 
     /// <summary>
-    /// An Analyzer builds TokenStreams, which analyze text.  It thus represents a
+    /// An <see cref="Analyzer"/> builds <see cref="Analysis.TokenStream"/>s, which analyze text.  It thus represents a
     /// policy for extracting index terms from text.
-    /// <p>
+    /// <para/>
     /// In order to define what analysis is done, subclasses must define their
-    /// <seealso cref="TokenStreamComponents TokenStreamComponents"/> in <seealso cref="#createComponents(String, Reader)"/>.
-    /// The components are then reused in each call to <seealso cref="#tokenStream(String, Reader)"/>.
-    /// <p>
+    /// <see cref="TokenStreamComponents"/> in <see cref="CreateComponents(string, TextReader)"/>.
+    /// The components are then reused in each call to <see cref="TokenStream(string, TextReader)"/>.
+    /// <para/>
     /// Simple example:
-    /// <pre class="prettyprint">
-    /// Analyzer analyzer = new Analyzer() {
-    ///   protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader) {
+    /// <code>
+    /// Analyzer analyzer = new Analyzer.NewAnonymous((fieldName, reader) => 
+    /// {
     ///     Tokenizer source = new FooTokenizer(reader);
     ///     TokenStream filter = new FooFilter(source);
     ///     filter = new BarFilter(filter);
     ///     return new TokenStreamComponents(source, filter);
-    ///   }
-    /// };
-    /// </pre>
-    /// For more examples, see the <seealso cref="Lucene.Net.Analysis Analysis package documentation"/>.
-    /// <p>
+    /// });
+    /// </code>
+    /// For more examples, see the <see cref="Lucene.Net.Analysis"/> namespace documentation.
+    /// <para/>
     /// For some concrete implementations bundled with Lucene, look in the analysis modules:
-    /// <ul>
-    ///   <li><a href="{@docRoot}/../analyzers-common/overview-summary.html">Common</a>:
-    ///       Analyzers for indexing content in different languages and domains.
-    ///   <li><a href="{@docRoot}/../analyzers-icu/overview-summary.html">ICU</a>:
-    ///       Exposes functionality from ICU to Apache Lucene.
-    ///   <li><a href="{@docRoot}/../analyzers-kuromoji/overview-summary.html">Kuromoji</a>:
-    ///       Morphological analyzer for Japanese text.
-    ///   <li><a href="{@docRoot}/../analyzers-morfologik/overview-summary.html">Morfologik</a>:
-    ///       Dictionary-driven lemmatization for the Polish language.
-    ///   <li><a href="{@docRoot}/../analyzers-phonetic/overview-summary.html">Phonetic</a>:
-    ///       Analysis for indexing phonetic signatures (for sounds-alike search).
-    ///   <li><a href="{@docRoot}/../analyzers-smartcn/overview-summary.html">Smart Chinese</a>:
-    ///       Analyzer for Simplified Chinese, which indexes words.
-    ///   <li><a href="{@docRoot}/../analyzers-stempel/overview-summary.html">Stempel</a>:
-    ///       Algorithmic Stemmer for the Polish Language.
-    ///   <li><a href="{@docRoot}/../analyzers-uima/overview-summary.html">UIMA</a>:
-    ///       Analysis integration with Apache UIMA.
-    /// </ul>
+    /// <list type="bullet">
+    ///   <item>Common:
+    ///       Analyzers for indexing content in different languages and domains.</item>
+    ///   <item>ICU:
+    ///       Exposes functionality from ICU to Apache Lucene.</item>
+    ///   <item>Kuromoji:
+    ///       Morphological analyzer for Japanese text.</item>
+    ///   <item>Morfologik:
+    ///       Dictionary-driven lemmatization for the Polish language.</item>
+    ///   <item>Phonetic:
+    ///       Analysis for indexing phonetic signatures (for sounds-alike search).</item>
+    ///   <item>Smart Chinese:
+    ///       Analyzer for Simplified Chinese, which indexes words.</item>
+    ///   <item>Stempel:
+    ///       Algorithmic Stemmer for the Polish Language.</item>
+    ///   <item>UIMA:
+    ///       Analysis integration with Apache UIMA.</item>
+    /// </list>
     /// </summary>
     public abstract class Analyzer : IDisposable
     {
         private readonly ReuseStrategy reuseStrategy;
 
-        // non final as it gets nulled if closed; pkg private for access by ReuseStrategy's final helper methods:
+        // non readonly as it gets nulled if closed; internal for access by ReuseStrategy's final helper methods:
         internal DisposableThreadLocal<object> storedValue = new DisposableThreadLocal<object>();
 
         /// <summary>
-        /// Create a new Analyzer, reusing the same set of components per-thread
-        /// across calls to <seealso cref="#tokenStream(String, Reader)"/>.
+        /// Create a new <see cref="Analyzer"/>, reusing the same set of components per-thread
+        /// across calls to <see cref="TokenStream(string, TextReader)"/>.
         /// </summary>
         public Analyzer()
             : this(GLOBAL_REUSE_STRATEGY)
@@ -82,12 +81,12 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Expert: create a new Analyzer with a custom <seealso cref="ReuseStrategy"/>.
-        /// <p>
+        /// Expert: create a new Analyzer with a custom <see cref="ReuseStrategy"/>.
+        /// <para/>
         /// NOTE: if you just want to reuse on a per-field basis, its easier to
-        /// use a subclass of <seealso cref="AnalyzerWrapper"/> such as
-        /// <a href="{@docRoot}/../analyzers-common/Lucene.Net.Analysis/miscellaneous/PerFieldAnalyzerWrapper.html">
-        /// PerFieldAnalyerWrapper</a> instead.
+        /// use a subclass of <see cref="AnalyzerWrapper"/> such as
+        /// <c>Lucene.Net.Analysis.Common.Miscellaneous.PerFieldAnalyzerWrapper</c>
+        /// instead.
         /// </summary>
         public Analyzer(ReuseStrategy reuseStrategy)
         {
@@ -150,38 +149,38 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="TokenStreamComponents"/> instance for this analyzer.
+        /// Creates a new <see cref="TokenStreamComponents"/> instance for this analyzer.
         /// </summary>
         /// <param name="fieldName">
         ///          the name of the fields content passed to the
-        ///          <seealso cref="TokenStreamComponents"/> sink as a reader </param>
+        ///          <see cref="TokenStreamComponents"/> sink as a reader </param>
         /// <param name="reader">
-        ///          the reader passed to the <seealso cref="Tokenizer"/> constructor </param>
-        /// <returns> the <seealso cref="TokenStreamComponents"/> for this analyzer. </returns>
+        ///          the reader passed to the <see cref="Tokenizer"/> constructor </param>
+        /// <returns> the <see cref="TokenStreamComponents"/> for this analyzer. </returns>
         protected internal abstract TokenStreamComponents CreateComponents(string fieldName, TextReader reader);
 
         /// <summary>
-        /// Returns a TokenStream suitable for <code>fieldName</code>, tokenizing
-        /// the contents of <code>text</code>.
-        /// <p>
-        /// this method uses <seealso cref="#createComponents(String, Reader)"/> to obtain an
-        /// instance of <seealso cref="TokenStreamComponents"/>. It returns the sink of the
+        /// Returns a <see cref="TokenStream"/> suitable for <paramref name="fieldName"/>, tokenizing
+        /// the contents of <c>text</c>.
+        /// <para/>
+        /// This method uses <see cref="CreateComponents(string, TextReader)"/> to obtain an
+        /// instance of <see cref="TokenStreamComponents"/>. It returns the sink of the
         /// components and stores the components internally. Subsequent calls to this
         /// method will reuse the previously stored components after resetting them
-        /// through <seealso cref="TokenStreamComponents#setReader(Reader)"/>.
-        /// <p>
+        /// through <see cref="TokenStreamComponents.SetReader(TextReader)"/>.
+        /// <para/>
         /// <b>NOTE:</b> After calling this method, the consumer must follow the
-        /// workflow described in <seealso cref="TokenStream"/> to properly consume its contents.
-        /// See the <seealso cref="Lucene.Net.Analysis Analysis package documentation"/> for
+        /// workflow described in <see cref="Analysis.TokenStream"/> to properly consume its contents.
+        /// See the <see cref="Lucene.Net.Analysis"/> namespace documentation for
         /// some examples demonstrating this.
         /// </summary>
-        /// <param name="fieldName"> the name of the field the created TokenStream is used for </param>
-        /// <param name="text"> the String the streams source reads from </param>
-        /// <returns> TokenStream for iterating the analyzed content of <code>reader</code> </returns>
-        /// <exception cref="AlreadyClosedException"> if the Analyzer is closed. </exception>
+        /// <param name="fieldName"> the name of the field the created <see cref="Analysis.TokenStream"/> is used for </param>
+        /// <param name="reader"> the reader the streams source reads from </param>
+        /// <returns> <see cref="Analysis.TokenStream"/> for iterating the analyzed content of <see cref="TextReader"/> </returns>
+        /// <exception cref="AlreadyClosedException"> if the Analyzer is disposed. </exception>
         /// <exception cref="IOException"> if an i/o error occurs (may rarely happen for strings). </exception>
-        /// <seealso cref= #tokenStream(String, Reader) </seealso>
-        public TokenStream TokenStream(string fieldName, TextReader reader)
+        /// <seealso cref="TokenStream(string, string)"/>
+        public TokenStream TokenStream(string fieldName, TextReader reader) // LUCENENET TODO: Rename GetTokenStream ?
         {
             TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
             TextReader r = InitReader(fieldName, reader);
@@ -197,7 +196,28 @@ namespace Lucene.Net.Analysis
             return components.TokenStream;
         }
 
-        public TokenStream TokenStream(string fieldName, string text)
+        /// <summary>
+        /// Returns a <see cref="Analysis.TokenStream"/> suitable for <paramref name="fieldName"/>, tokenizing
+        /// the contents of <paramref name="text"/>.
+        /// <para/>
+        /// This method uses <see cref="CreateComponents(string, TextReader)"/> to obtain an
+        /// instance of <see cref="TokenStreamComponents"/>. It returns the sink of the
+        /// components and stores the components internally. Subsequent calls to this
+        /// method will reuse the previously stored components after resetting them
+        /// through <see cref="TokenStreamComponents.SetReader(TextReader)"/>.
+        /// <para/>
+        /// <b>NOTE:</b> After calling this method, the consumer must follow the 
+        /// workflow described in <see cref="Analysis.TokenStream"/> to properly consume its contents.
+        /// See the <see cref="Lucene.Net.Analysis"/> namespace documentation for
+        /// some examples demonstrating this.
+        /// </summary>
+        /// <param name="fieldName">the name of the field the created <see cref="Analysis.TokenStream"/> is used for</param>
+        /// <param name="text">the <see cref="string"/> the streams source reads from </param>
+        /// <returns><see cref="Analysis.TokenStream"/> for iterating the analyzed content of <paramref name="reader"/></returns>
+        /// <exception cref="AlreadyClosedException"> if the Analyzer is disposed. </exception>
+        /// <exception cref="IOException"> if an i/o error occurs (may rarely happen for strings). </exception>
+        /// <seealso cref="TokenStream(string, TextReader)"/>
+        public TokenStream TokenStream(string fieldName, string text) // LUCENENET TODO: Rename GetTokenStream ?
         {
             TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
             ReusableStringReader strReader =
@@ -220,53 +240,53 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Override this if you want to add a CharFilter chain.
-        /// <p>
-        /// The default implementation returns <code>reader</code>
+        /// Override this if you want to add a <see cref="CharFilter"/> chain.
+        /// <para/>
+        /// The default implementation returns <paramref name="reader"/>
         /// unchanged.
         /// </summary>
-        /// <param name="fieldName"> IndexableField name being indexed </param>
-        /// <param name="reader"> original TextReader </param>
-        /// <returns> reader, optionally decorated with CharFilter(s) </returns>
+        /// <param name="fieldName"> <see cref="Index.IIndexableField"/> name being indexed </param>
+        /// <param name="reader"> original <see cref="TextReader"/> </param>
+        /// <returns> reader, optionally decorated with <see cref="CharFilter"/>(s) </returns>
         protected internal virtual TextReader InitReader(string fieldName, TextReader reader)
         {
             return reader;
         }
 
         /// <summary>
-        /// Invoked before indexing a IndexableField instance if
-        /// terms have already been added to that field.  this allows custom
+        /// Invoked before indexing a <see cref="Index.IIndexableField"/> instance if
+        /// terms have already been added to that field.  This allows custom
         /// analyzers to place an automatic position increment gap between
-        /// IndexbleField instances using the same field name.  The default value
+        /// <see cref="Index.IIndexableField"/> instances using the same field name.  The default value
         /// position increment gap is 0.  With a 0 position increment gap and
         /// the typical default token position increment of 1, all terms in a field,
-        /// including across IndexableField instances, are in successive positions, allowing
-        /// exact PhraseQuery matches, for instance, across IndexableField instance boundaries.
+        /// including across <see cref="Index.IIndexableField"/> instances, are in successive positions, allowing
+        /// exact <see cref="Search.PhraseQuery"/> matches, for instance, across <see cref="Index.IIndexableField"/> instance boundaries.
         /// </summary>
-        /// <param name="fieldName"> IndexableField name being indexed. </param>
-        /// <returns> position increment gap, added to the next token emitted from <seealso cref="#tokenStream(String,Reader)"/>.
-        ///         this value must be {@code >= 0}. </returns>
+        /// <param name="fieldName"> <see cref="Index.IIndexableField"/> name being indexed. </param>
+        /// <returns> position increment gap, added to the next token emitted from <see cref="TokenStream(string, TextReader)"/>.
+        ///         this value must be <c>&gt;= 0</c>.</returns>
         public virtual int GetPositionIncrementGap(string fieldName)
         {
             return 0;
         }
 
         /// <summary>
-        /// Just like <seealso cref="#getPositionIncrementGap"/>, except for
-        /// Token offsets instead.  By default this returns 1.
+        /// Just like <see cref="GetPositionIncrementGap"/>, except for
+        /// <see cref="Token"/> offsets instead.  By default this returns 1.
         /// this method is only called if the field
         /// produced at least one token for indexing.
         /// </summary>
         /// <param name="fieldName"> the field just indexed </param>
-        /// <returns> offset gap, added to the next token emitted from <seealso cref="#tokenStream(String,Reader)"/>.
-        ///         this value must be {@code >= 0}. </returns>
+        /// <returns> offset gap, added to the next token emitted from <see cref="TokenStream(string, TextReader)"/>.
+        ///         this value must be <c>&gt;= 0</c>. </returns>
         public virtual int GetOffsetGap(string fieldName)
         {
             return 1;
         }
 
         /// <summary>
-        /// Returns the used <seealso cref="ReuseStrategy"/>.
+        /// Returns the used <see cref="ReuseStrategy"/>.
         /// </summary>
         public ReuseStrategy Strategy
         {
@@ -277,7 +297,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Frees persistent resources used by this Analyzer </summary>
+        /// Frees persistent resources used by this <see cref="Analyzer"/> </summary>
         public virtual void Dispose()
         {
             if (storedValue != null)
@@ -288,11 +308,11 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// this class encapsulates the outer components of a token stream. It provides
-        /// access to the source (<seealso cref="Tokenizer"/>) and the outer end (sink), an
-        /// instance of <seealso cref="TokenFilter"/> which also serves as the
-        /// <seealso cref="TokenStream"/> returned by
-        /// <seealso cref="Analyzer#tokenStream(String, Reader)"/>.
+        /// This class encapsulates the outer components of a token stream. It provides
+        /// access to the source (<see cref="Analysis.Tokenizer"/>) and the outer end (sink), an
+        /// instance of <see cref="TokenFilter"/> which also serves as the
+        /// <see cref="Analysis.TokenStream"/> returned by
+        /// <seealso cref="Analyzer.TokenStream(string, TextReader)"/>.
         /// </summary>
         public class TokenStreamComponents
         {
@@ -303,16 +323,16 @@ namespace Lucene.Net.Analysis
 
             /// <summary>
             /// Sink tokenstream, such as the outer tokenfilter decorating
-            /// the chain. this can be the source if there are no filters.
+            /// the chain. This can be the source if there are no filters.
             /// </summary>
             protected readonly TokenStream m_sink;
 
             /// <summary>
-            /// Internal cache only used by <seealso cref="Analyzer#tokenStream(String, String)"/>. </summary>
+            /// Internal cache only used by <see cref="Analyzer.TokenStream(string, string)"/>. </summary>
             internal ReusableStringReader reusableStringReader;
 
             /// <summary>
-            /// Creates a new <seealso cref="TokenStreamComponents"/> instance.
+            /// Creates a new <see cref="TokenStreamComponents"/> instance.
             /// </summary>
             /// <param name="source">
             ///          the analyzer's tokenizer </param>
@@ -325,7 +345,7 @@ namespace Lucene.Net.Analysis
             }
 
             /// <summary>
-            /// Creates a new <seealso cref="TokenStreamComponents"/> instance.
+            /// Creates a new <see cref="TokenStreamComponents"/> instance.
             /// </summary>
             /// <param name="source">
             ///          the analyzer's tokenizer </param>
@@ -349,9 +369,9 @@ namespace Lucene.Net.Analysis
             }
 
             /// <summary>
-            /// Returns the sink <seealso cref="TokenStream"/>
+            /// Returns the sink <see cref="Analysis.TokenStream"/>
             /// </summary>
-            /// <returns> the sink <seealso cref="TokenStream"/> </returns>
+            /// <returns> the sink <see cref="Analysis.TokenStream"/> </returns>
             public virtual TokenStream TokenStream
             {
                 get
@@ -361,9 +381,9 @@ namespace Lucene.Net.Analysis
             }
 
             /// <summary>
-            /// Returns the component's <seealso cref="Tokenizer"/>
+            /// Returns the component's <see cref="Analysis.Tokenizer"/>
             /// </summary>
-            /// <returns> Component's <seealso cref="Tokenizer"/> </returns>
+            /// <returns> Component's <see cref="Analysis.Tokenizer"/> </returns>
             public virtual Tokenizer Tokenizer
             {
                 get
@@ -374,36 +394,36 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Strategy defining how TokenStreamComponents are reused per call to
-        /// <seealso cref="Analyzer#tokenStream(String, java.io.Reader)"/>.
+        /// Strategy defining how <see cref="TokenStreamComponents"/> are reused per call to
+        /// <see cref="Analyzer.TokenStream(string, TextReader)"/>.
         /// </summary>
         public abstract class ReuseStrategy
         {
             /// <summary>
-            /// Gets the reusable TokenStreamComponents for the field with the given name.
+            /// Gets the reusable <see cref="TokenStreamComponents"/> for the field with the given name.
             /// </summary>
-            /// <param name="analyzer"> Analyzer from which to get the reused components. Use
-            ///        <seealso cref="#getStoredValue(Analyzer)"/> and <seealso cref="#setStoredValue(Analyzer, Object)"/>
-            ///        to access the data on the Analyzer. </param>
-            /// <param name="fieldName"> Name of the field whose reusable TokenStreamComponents
+            /// <param name="analyzer"> <see cref="Analyzer"/> from which to get the reused components. Use
+            ///        <see cref="GetStoredValue(Analyzer)"/> and <see cref="SetStoredValue(Analyzer, object)"/>
+            ///        to access the data on the <see cref="Analyzer"/>. </param>
+            /// <param name="fieldName"> Name of the field whose reusable <see cref="TokenStreamComponents"/>
             ///        are to be retrieved </param>
-            /// <returns> Reusable TokenStreamComponents for the field, or {@code null}
+            /// <returns> Reusable <see cref="TokenStreamComponents"/> for the field, or <c>null</c>
             ///         if there was no previous components for the field </returns>
             public abstract TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName);
 
             /// <summary>
-            /// Stores the given TokenStreamComponents as the reusable components for the
+            /// Stores the given <see cref="TokenStreamComponents"/> as the reusable components for the
             /// field with the give name.
             /// </summary>
-            /// <param name="fieldName"> Name of the field whose TokenStreamComponents are being set </param>
-            /// <param name="components"> TokenStreamComponents which are to be reused for the field </param>
+            /// <param name="fieldName"> Name of the field whose <see cref="TokenStreamComponents"/> are being set </param>
+            /// <param name="components"> <see cref="TokenStreamComponents"/> which are to be reused for the field </param>
             public abstract void SetReusableComponents(Analyzer analyzer, string fieldName, TokenStreamComponents components);
 
             /// <summary>
             /// Returns the currently stored value.
             /// </summary>
-            /// <returns> Currently stored value or {@code null} if no value is stored </returns>
-            /// <exception cref="AlreadyClosedException"> if the Analyzer is closed. </exception>
+            /// <returns> Currently stored value or <c>null</c> if no value is stored </returns>
+            /// <exception cref="AlreadyClosedException"> if the <see cref="Analyzer"/> is closed. </exception>
             protected internal object GetStoredValue(Analyzer analyzer)
             {
                 if (analyzer.storedValue == null)
@@ -417,7 +437,7 @@ namespace Lucene.Net.Analysis
             /// Sets the stored value.
             /// </summary>
             /// <param name="storedValue"> Value to store </param>
-            /// <exception cref="AlreadyClosedException"> if the Analyzer is closed. </exception>
+            /// <exception cref="AlreadyClosedException"> if the <see cref="Analyzer"/> is closed. </exception>
             protected internal void SetStoredValue(Analyzer analyzer, object storedValue)
             {
                 if (analyzer.storedValue == null)
@@ -429,7 +449,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// A predefined <seealso cref="ReuseStrategy"/>  that reuses the same components for
+        /// A predefined <see cref="ReuseStrategy"/>  that reuses the same components for
         /// every field.
         /// </summary>
         public static readonly ReuseStrategy GLOBAL_REUSE_STRATEGY =
@@ -438,16 +458,17 @@ namespace Lucene.Net.Analysis
 #pragma warning restore 612, 618
 
         /// <summary>
-        /// Implementation of <seealso cref="ReuseStrategy"/> that reuses the same components for
+        /// Implementation of <see cref="ReuseStrategy"/> that reuses the same components for
         /// every field. </summary>
-        /// @deprecated this implementation class will be hidden in Lucene 5.0.
-        ///   Use <seealso cref="Analyzer#GLOBAL_REUSE_STRATEGY"/> instead!
-        [Obsolete("this implementation class will be hidden in Lucene 5.0.")]
+        [Obsolete("this implementation class will be hidden in Lucene 5.0. Use Analyzer.GLOBAL_REUSE_STRATEGY instead!")]
         public sealed class GlobalReuseStrategy : ReuseStrategy
-        /// <summary>
-        /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
-        /// @deprecated Don't create instances of this class, use <seealso cref="Analyzer#GLOBAL_REUSE_STRATEGY"/>
         {
+            /// <summary>
+            /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
+            [Obsolete("Don't create instances of this class, use Analyzer.GLOBAL_REUSE_STRATEGY")]
+            public GlobalReuseStrategy()
+            { }
+
             public override TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName)
             {
                 return (TokenStreamComponents)GetStoredValue(analyzer);
@@ -460,8 +481,8 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// A predefined <seealso cref="ReuseStrategy"/> that reuses components per-field by
-        /// maintaining a Map of TokenStreamComponent per field name.
+        /// A predefined <see cref="ReuseStrategy"/> that reuses components per-field by
+        /// maintaining a Map of <see cref="TokenStreamComponents"/> per field name.
         /// </summary>
         public static readonly ReuseStrategy PER_FIELD_REUSE_STRATEGY =
 #pragma warning disable 612, 618
@@ -469,17 +490,17 @@ namespace Lucene.Net.Analysis
 #pragma warning restore 612, 618
 
         /// <summary>
-        /// Implementation of <seealso cref="ReuseStrategy"/> that reuses components per-field by
-        /// maintaining a Map of TokenStreamComponent per field name. </summary>
-        /// @deprecated this implementation class will be hidden in Lucene 5.0.
-        ///   Use <seealso cref="Analyzer#PER_FIELD_REUSE_STRATEGY"/> instead!
-        [Obsolete("this implementation class will be hidden in Lucene 5.0.")]
+        /// Implementation of <see cref="ReuseStrategy"/> that reuses components per-field by
+        /// maintaining a Map of <see cref="TokenStreamComponents"/> per field name.
+        /// </summary>
+        [Obsolete("this implementation class will be hidden in Lucene 5.0. Use Analyzer.PER_FIELD_REUSE_STRATEGY instead!")]
         public class PerFieldReuseStrategy : ReuseStrategy
+
         /// <summary>
-        /// Sole constructor. (For invocation by subclass constructors, typically implicit.) </summary>
-        /// @deprecated Don't create instances of this class, use <seealso cref="Analyzer#PER_FIELD_REUSE_STRATEGY"/>
+        /// Sole constructor. (For invocation by subclass constructors, typically implicit.)
+        /// </summary>
         {
-            [Obsolete]
+            [Obsolete("Don't create instances of this class, use Analyzer.PER_FIELD_REUSE_STRATEGY")]
             public PerFieldReuseStrategy()
             {
             }

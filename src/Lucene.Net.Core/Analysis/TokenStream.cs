@@ -26,63 +26,62 @@ namespace Lucene.Net.Analysis
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /// <summary>
-    /// A <code>TokenStream</code> enumerates the sequence of tokens, either from
-    /// <seealso cref="Field"/>s of a <seealso cref="Document"/> or from query text.
-    /// <p>
+    /// A <see cref="TokenStream"/> enumerates the sequence of tokens, either from
+    /// <see cref="Documents.Field"/>s of a <see cref="Documents.Document"/> or from query text.
+    /// <para/>
     /// this is an abstract class; concrete subclasses are:
-    /// <ul>
-    /// <li><seealso cref="Tokenizer"/>, a <code>TokenStream</code> whose input is a TextReader; and
-    /// <li><seealso cref="TokenFilter"/>, a <code>TokenStream</code> whose input is another
-    /// <code>TokenStream</code>.
-    /// </ul>
-    /// A new <code>TokenStream</code> API has been introduced with Lucene 2.9. this API
-    /// has moved from being <seealso cref="Token"/>-based to <seealso cref="Attribute"/>-based. While
-    /// <seealso cref="Token"/> still exists in 2.9 as a convenience class, the preferred way
-    /// to store the information of a <seealso cref="Token"/> is to use <seealso cref="AttributeImpl"/>s.
-    /// <p>
-    /// <code>TokenStream</code> now extends <seealso cref="AttributeSource"/>, which provides
-    /// access to all of the token <seealso cref="Attribute"/>s for the <code>TokenStream</code>.
-    /// Note that only one instance per <seealso cref="AttributeImpl"/> is created and reused
-    /// for every token. this approach reduces object creation and allows local
-    /// caching of references to the <seealso cref="AttributeImpl"/>s. See
-    /// <seealso cref="#IncrementToken()"/> for further details.
-    /// <p>
-    /// <b>The workflow of the new <code>TokenStream</code> API is as follows:</b>
-    /// <ol>
-    /// <li>Instantiation of <code>TokenStream</code>/<seealso cref="TokenFilter"/>s which add/get
-    /// attributes to/from the <seealso cref="AttributeSource"/>.
-    /// <li>The consumer calls <seealso cref="TokenStream#reset()"/>.
-    /// <li>The consumer retrieves attributes from the stream and stores local
-    /// references to all attributes it wants to access.
-    /// <li>The consumer calls <seealso cref="#IncrementToken()"/> until it returns false
-    /// consuming the attributes after each call.
-    /// <li>The consumer calls <seealso cref="#end()"/> so that any end-of-stream operations
-    /// can be performed.
-    /// <li>The consumer calls <seealso cref="#close()"/> to release any resource when finished
-    /// using the <code>TokenStream</code>.
-    /// </ol>
+    /// <list type="bullet">
+    ///     <item><see cref="Tokenizer"/>, a <see cref="TokenStream"/> whose input is a <see cref="System.IO.TextReader"/>; and</item>
+    ///     <item><see cref="TokenFilter"/>, a <see cref="TokenStream"/> whose input is another
+    ///         <see cref="TokenStream"/>.</item>
+    /// </list>
+    /// A new <see cref="TokenStream"/> API has been introduced with Lucene 2.9. this API
+    /// has moved from being <see cref="Token"/>-based to <see cref="Util.IAttribute"/>-based. While
+    /// <see cref="Token"/> still exists in 2.9 as a convenience class, the preferred way
+    /// to store the information of a <see cref="Token"/> is to use <see cref="Attribute"/>s.
+    /// <para/>
+    /// <see cref="TokenStream"/> now extends <see cref="AttributeSource"/>, which provides
+    /// access to all of the token <see cref="Util.IAttribute"/>s for the <see cref="TokenStream"/>.
+    /// Note that only one instance per <see cref="Attribute"/> is created and reused
+    /// for every token. This approach reduces object creation and allows local
+    /// caching of references to the <see cref="Attribute"/>s. See
+    /// <see cref="IncrementToken()"/> for further details.
+    /// <para/>
+    /// <b>The workflow of the new <see cref="TokenStream"/> API is as follows:</b>
+    /// <list type="number">
+    ///     <item>Instantiation of <see cref="TokenStream"/>/<see cref="TokenFilter"/>s which add/get
+    ///         attributes to/from the <see cref="AttributeSource"/>.</item>
+    ///     <item>The consumer calls <see cref="TokenStream.Reset()"/>.</item>
+    ///     <item>The consumer retrieves attributes from the stream and stores local
+    ///         references to all attributes it wants to access.</item>
+    ///     <item>The consumer calls <see cref="IncrementToken()"/> until it returns false
+    ///         consuming the attributes after each call.</item>
+    ///     <item>The consumer calls <see cref="End()"/> so that any end-of-stream operations
+    ///         can be performed.</item>
+    ///     <item>The consumer calls <see cref="Dispose()"/> to release any resource when finished
+    ///         using the <see cref="TokenStream"/>.</item>
+    /// </list>
     /// To make sure that filters and consumers know which attributes are available,
     /// the attributes must be added during instantiation. Filters and consumers are
     /// not required to check for availability of attributes in
-    /// <seealso cref="#IncrementToken()"/>.
-    /// <p>
-    /// You can find some example code for the new API in the analysis package level
-    /// Javadoc.
-    /// <p>
-    /// Sometimes it is desirable to capture a current state of a <code>TokenStream</code>,
-    /// e.g., for buffering purposes (see <seealso cref="CachingTokenFilter"/>,
+    /// <see cref="IncrementToken()"/>.
+    /// <para/>
+    /// You can find some example code for the new API in the analysis 
+    /// documentation.
+    /// <para/>
+    /// Sometimes it is desirable to capture a current state of a <see cref="TokenStream"/>,
+    /// e.g., for buffering purposes (see <see cref="CachingTokenFilter"/>,
     /// TeeSinkTokenFilter). For this usecase
-    /// <seealso cref="AttributeSource#captureState"/> and <seealso cref="AttributeSource#restoreState"/>
+    /// <see cref="AttributeSource.CaptureState"/> and <see cref="AttributeSource.RestoreState"/>
     /// can be used.
-    /// <p>The {@code TokenStream}-API in Lucene is based on the decorator pattern.
-    /// Therefore all non-abstract subclasses must be final or have at least a final
-    /// implementation of <seealso cref="#incrementToken"/>! this is checked when Java
-    /// assertions are enabled.
+    /// <para/>The <see cref="TokenStream"/>-API in Lucene is based on the decorator pattern.
+    /// Therefore all non-abstract subclasses must be sealed or have at least a sealed
+    /// implementation of <see cref="IncrementToken()"/>! This is checked when assertions are enabled.
     /// </summary>
     public abstract class TokenStream : AttributeSource, IDisposable
     {
         /// <summary>
-        /// A TokenStream using the default attribute factory.
+        /// A <see cref="TokenStream"/> using the default attribute factory.
         /// </summary>
         protected TokenStream()
         {
@@ -90,7 +89,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// A TokenStream that uses the same attributes as the supplied one.
+        /// A <see cref="TokenStream"/> that uses the same attributes as the supplied one.
         /// </summary>
         protected TokenStream(AttributeSource input)
             : base(input)
@@ -99,7 +98,8 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// A TokenStream using the supplied AttributeFactory for creating new <seealso cref="Attribute"/> instances.
+        /// A <see cref="TokenStream"/> using the supplied <see cref="AttributeSource.AttributeFactory"/> 
+        /// for creating new <see cref="Util.IAttribute"/> instances.
         /// </summary>
         protected TokenStream(AttributeFactory factory)
             : base(factory)
@@ -154,23 +154,23 @@ namespace Lucene.Net.Analysis
         public abstract bool IncrementToken();
 
         /// <summary>
-        /// this method is called by the consumer after the last token has been
-        /// consumed, after <seealso cref="#IncrementToken()"/> returned <code>false</code>
-        /// (using the new <code>TokenStream</code> API). Streams implementing the old API
+        /// This method is called by the consumer after the last token has been
+        /// consumed, after <see cref="IncrementToken()"/> returned <c>false</c>
+        /// (using the new <see cref="TokenStream"/> API). Streams implementing the old API
         /// should upgrade to use this feature.
-        /// <p/>
-        /// this method can be used to perform any end-of-stream operations, such as
+        /// <para/>
+        /// This method can be used to perform any end-of-stream operations, such as
         /// setting the final offset of a stream. The final offset of a stream might
         /// differ from the offset of the last token eg in case one or more whitespaces
         /// followed after the last token, but a WhitespaceTokenizer was used.
-        /// <p>
+        /// <para/>
         /// Additionally any skipped positions (such as those removed by a stopfilter)
         /// can be applied to the position increment, or any adjustment of other
         /// attributes where the end-of-stream value may be important.
-        /// <p>
-        /// If you override this method, always call {@code super.end()}.
+        /// <para/>
+        /// If you override this method, always call <c>base.End();</c>.
         /// </summary>
-        /// <exception cref="IOException"> If an I/O error occurs </exception>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurs </exception>
         public virtual void End()
         {
             ClearAttributes(); // LUCENE-3849: don't consume dirty atts
@@ -199,10 +199,10 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Releases resources associated with this stream.
-        /// <p>
-        /// If you override this method, always call {@code super.Dispose()}, otherwise
-        /// some internal state will not be correctly reset (e.g., <seealso cref="Tokenizer"/> will
-        /// throw <seealso cref="IllegalStateException"/> on reuse).
+        /// <para/>
+        /// If you override this method, always call <c>base.Dispose()</c>, otherwise
+        /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
+        /// throw <see cref="InvalidOperationException"/> on reuse).
         /// </summary>
         public virtual void Dispose()
         {

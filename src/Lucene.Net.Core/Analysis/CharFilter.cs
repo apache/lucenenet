@@ -21,21 +21,20 @@ namespace Lucene.Net.Analysis
      */
 
     /// <summary>
-    /// Subclasses of CharFilter can be chained to filter a TextReader
-    /// They can be used as <seealso cref="TextReader"/> with additional offset
-    /// correction. <seealso cref="Tokenizer"/>s will automatically use <seealso cref="#correctOffset"/>
-    /// if a CharFilter subclass is used.
-    /// <p>
-    /// this class is abstract: at a minimum you must implement <seealso cref="#read(char[], int, int)"/>,
-    /// transforming the input in some way from <seealso cref="#input"/>, and <seealso cref="#correct(int)"/>
+    /// Subclasses of <see cref="CharFilter"/> can be chained to filter a <see cref="TextReader"/>
+    /// They can be used as <see cref="TextReader"/> with additional offset
+    /// correction. <see cref="Tokenizer"/>s will automatically use <see cref="CorrectOffset"/>
+    /// if a <see cref="CharFilter"/> subclass is used.
+    /// <para/>
+    /// This class is abstract: at a minimum you must implement <see cref="TextReader.Read(char[], int, int)"/>,
+    /// transforming the input in some way from <see cref="m_input"/>, and <seealso cref="Correct(int)"/>
     /// to adjust the offsets to match the originals.
-    /// <p>
+    /// <para/>
     /// You can optionally provide more efficient implementations of additional methods
-    /// like <seealso cref="#read()"/>, <seealso cref="#read(char[])"/>, <seealso cref="#read(java.nio.CharBuffer)"/>,
-    /// but this is not required.
-    /// <p>
-    /// For examples and integration with <seealso cref="Analyzer"/>, see the
-    /// <seealso cref="Lucene.Net.Analysis Analysis package documentation"/>.
+    /// like <see cref="TextReader.Read()"/>, but this is not required.
+    /// <para/>
+    /// For examples and integration with <see cref="Analyzer"/>, see the
+    /// <see cref="Lucene.Net.Analysis"/> namespace documentation.
     /// </summary>
     // the way java.io.FilterReader should work!
     public abstract class CharFilter : TextReader
@@ -46,8 +45,8 @@ namespace Lucene.Net.Analysis
         protected internal readonly TextReader m_input;
 
         /// <summary>
-        /// Create a new CharFilter wrapping the provided reader. </summary>
-        /// <param name="input"> a TextReader, can also be a CharFilter for chaining. </param>
+        /// Create a new <see cref="CharFilter"/> wrapping the provided reader. </summary>
+        /// <param name="input"> a <see cref="TextReader"/>, can also be a <see cref="CharFilter"/> for chaining. </param>
         public CharFilter(TextReader input)
         {
             this.m_input = input;
@@ -55,10 +54,10 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Closes the underlying input stream.
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b>
-        /// The default implementation closes the input TextReader, so
-        /// be sure to call <code>super.Dispose()</code> when overriding this method.
+        /// The default implementation closes the input <see cref="TextReader"/>, so
+        /// be sure to call <c>base.Dispose()</c> when overriding this method.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -75,7 +74,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Chains the corrected offset through the input
-        /// CharFilter(s).
+        /// <see cref="CharFilter"/>(s).
         /// </summary>
         public int CorrectOffset(int currentOff)
         {
@@ -110,9 +109,10 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Tells whether this stream is ready to be read.
-        /// 
-        /// True if the next read() is guaranteed not to block for input, false otherwise. Note that returning false does not guarantee that the next read will block.
-        /// 
+        /// <para/>
+        /// True if the next <see cref="TextReader.Read()"/> is guaranteed not to block for input, false otherwise. Note 
+        /// that returning false does not guarantee that the next read will block.
+        /// <para/>
         /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
         /// </summary>
         public virtual bool Ready()
@@ -121,8 +121,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Tells whether this stream supports the mark() operation. The default implementation always returns false. Subclasses should override this method.
-        /// 
+        /// Tells whether this stream supports the <see cref="Mark(int)"/> operation. The default implementation always 
+        /// returns false. Subclasses should override this method.
+        /// <para/>
         /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
         /// </summary>
         /// <returns>true if and only if this stream supports the mark operation.</returns>
@@ -132,8 +133,9 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Marks the present position in the stream. Subsequent calls to reset() will attempt to reposition the stream to this point. Not all character-input streams support the mark() operation.
-        /// 
+        /// Marks the present position in the stream. Subsequent calls to <see cref="Reset"/> will attempt to 
+        /// reposition the stream to this point. Not all character-input streams support the <see cref="Mark(int)"/> operation.
+        /// <para/>
         /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
         /// </summary>
         /// <param name="readAheadLimit">Limit on the number of characters that may be read while still preserving the mark. After 
