@@ -366,17 +366,6 @@ namespace Lucene.Net.Documents
             return result.ToString();
         }
 
-        // LUCENENET TODO: Cleanup
-        /// <summary>
-        /// {@inheritDoc}
-        /// <p>
-        /// The default is <code>null</code> (no docValues) </summary>
-        /// <seealso cref= #setDocValueType(Lucene.Net.Index.FieldInfo.DocValuesType) </seealso>
-        /*public override DocValuesType DocValueType()
-        {
-          return DocValueType_Renamed;
-        }*/
-
         /// <summary>
         /// Set's the field's DocValuesType </summary>
         /// <param name="type"> DocValues type, or null if no DocValues should be stored. </param>
