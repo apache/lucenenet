@@ -170,7 +170,7 @@ namespace Lucene.Net.Search.Spans
             //If this doesn't work, hash all elemnts together instead. This version was used to reduce time complexity
             int h = clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count);
             h ^= (h << 10) | ((int)(((uint)h) >> 23));
-            h ^= Number.SingleToInt32Bits(Boost);
+            h ^= Number.SingleToRawInt32Bits(Boost);
             return h;
         }
 
