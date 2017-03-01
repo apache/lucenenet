@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
         {
             if (upto > 0)
             {
-                @in.Update((byte[])(Array)buffer, 0, upto); // LUCENENET TODO: remove cast
+                @in.Update(buffer, 0, upto);
             }
             upto = 0;
         }
