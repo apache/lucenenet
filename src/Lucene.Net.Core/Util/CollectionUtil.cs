@@ -61,7 +61,7 @@ namespace Lucene.Net.Util
 
             protected override void Swap(int i, int j)
             {
-                list = list.Swap(i, j); // LUCENENET TODO: Could be more efficient
+                list.Swap(i, j);
             }
 
             protected override int Compare(int i, int j)
@@ -103,7 +103,7 @@ namespace Lucene.Net.Util
 
             protected override void Swap(int i, int j)
             {
-                list = list.Swap(i, j); // LUCENENET TODO: Could be more efficient
+                list.Swap(i, j);
             }
 
             protected override void Copy(int src, int dest)
