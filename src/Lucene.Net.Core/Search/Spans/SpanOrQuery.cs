@@ -33,7 +33,9 @@ namespace Lucene.Net.Search.Spans
     /// Matches the union of its clauses. </summary>
     public class SpanOrQuery : SpanQuery
     {
-        private readonly IList<SpanQuery> clauses;
+        // LUCENENET NOTE: The hash code needs to be made from the hash codes of all elements. 
+        // So, we force all subclasses to use ValueList<SpanQuery> instead of IList<SpanQuery> to ensure that logic is in place.
+        private readonly ValueList<SpanQuery> clauses;
         private string field;
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace Lucene.Net.Search.Spans
         public SpanOrQuery(params SpanQuery[] clauses)
         {
             // copy clauses array into an ArrayList
-            this.clauses = new List<SpanQuery>(clauses.Length);
+            this.clauses = new ValueList<SpanQuery>(clauses.Length);
             for (int i = 0; i < clauses.Length; i++)
             {
                 AddClause(clauses[i]);
@@ -157,7 +159,7 @@ namespace Lucene.Net.Search.Spans
 
             SpanOrQuery that = (SpanOrQuery)o;
 
-            if (!clauses.SequenceEqual(that.clauses))
+            if (!clauses.Equals(that.clauses))
             {
                 return false;
             }
@@ -168,7 +170,7 @@ namespace Lucene.Net.Search.Spans
         public override int GetHashCode()
         {
             //If this doesn't work, hash all elemnts together instead. This version was used to reduce time complexity
-            int h = clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count);
+            int h = clauses.GetHashCode();
             h ^= (h << 10) | ((int)(((uint)h) >> 23));
             h ^= Number.SingleToRawInt32Bits(Boost);
             return h;
