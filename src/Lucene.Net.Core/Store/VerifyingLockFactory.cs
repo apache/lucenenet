@@ -51,9 +51,9 @@ namespace Lucene.Net.Store
                 this.@lock = @lock;
             }
 
-            private void Verify(sbyte message) // LUCENENET TODO: sbyte unnecessary here
+            private void Verify(byte message)
             {
-                outerInstance.@out.WriteByte((byte)message);
+                outerInstance.@out.WriteByte(message);
                 outerInstance.@out.Flush();
                 int ret = outerInstance.@in.ReadByte();
                 if (ret < 0)
@@ -73,7 +73,7 @@ namespace Lucene.Net.Store
                     bool obtained = @lock.Obtain();
                     if (obtained)
                     {
-                        Verify((sbyte)1);
+                        Verify((byte)1);
                     }
                     return obtained;
                 }
@@ -96,7 +96,7 @@ namespace Lucene.Net.Store
                 {
                     if (IsLocked)
                     {
-                        Verify((sbyte)0);
+                        Verify((byte)0);
                         @lock.Release();
                     }
                 }
