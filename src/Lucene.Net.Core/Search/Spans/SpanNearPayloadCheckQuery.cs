@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search.Spans
@@ -117,7 +118,8 @@ namespace Lucene.Net.Search.Spans
             }
 
             SpanNearPayloadCheckQuery other = (SpanNearPayloadCheckQuery)o;
-            return this.m_payloadToMatch.Equals(other.m_payloadToMatch) && this.m_match.Equals(other.m_match) && this.Boost == other.Boost;
+            // LUCENENET NOTE: Need to call SequenceEqual() to compare equality of all contained values
+            return this.m_payloadToMatch.SequenceEqual(other.m_payloadToMatch) && this.m_match.Equals(other.m_match) && this.Boost == other.Boost;
         }
 
         public override int GetHashCode()
@@ -125,7 +127,7 @@ namespace Lucene.Net.Search.Spans
             int h = m_match.GetHashCode();
             h ^= (h << 8) | ((int)((uint)h >> 25)); // reversible
             //TODO: is this right?
-            h ^= m_payloadToMatch.GetHashCode();
+            h ^= m_payloadToMatch.GetValueHashCode(); // LUCENENET NOTE: Need to call GetValueHashCode() to combine the hash codes of all contained values
             h ^= Number.SingleToRawInt32Bits(Boost);
             return h;
         }
