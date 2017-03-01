@@ -34,7 +34,7 @@ namespace Lucene.Net.Store
 
         public override void WriteByte(byte b)
         {
-            _writer.Write(unchecked((byte)b)); // LUCENENET TODO: Remove unnecessary cast, unchecked ?
+            _writer.Write(b);
         }
 
         public override void WriteBytes(byte[] b, int offset, int length)
