@@ -36,7 +36,9 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanNearQuery : SpanQuery
     {
-        protected readonly IList<SpanQuery> m_clauses;
+        // LUCENENET NOTE: The hash code needs to be made from the hash codes of all elements. 
+        // So, we force all subclasses to use ValueList<SpanQuery> instead of IList<SpanQuery> to ensure that logic is in place.
+        protected readonly ValueList<SpanQuery> m_clauses;
         protected int m_slop;
         protected bool m_inOrder;
 
@@ -60,7 +62,7 @@ namespace Lucene.Net.Search.Spans
         public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder, bool collectPayloads)
         {
             // copy clauses array into an ArrayList
-            this.m_clauses = new List<SpanQuery>(clauses.Length);
+            this.m_clauses = new ValueList<SpanQuery>(clauses.Length);
             for (int i = 0; i < clauses.Length; i++)
             {
                 SpanQuery clause = clauses[i];
@@ -233,11 +235,10 @@ namespace Lucene.Net.Search.Spans
             return Boost == spanNearQuery.Boost;
         }
 
-        public override int GetHashCode() // LUCENENET TODO: Check whether this hash code algorithm is close enough to the original to work
+        public override int GetHashCode()
         {
             int result;
-            //If this doesn't work, hash all elements together. This version was used to improve the speed of hashing
-            result = HashHelpers.CombineHashCodes(m_clauses.First().GetHashCode(), m_clauses.Last().GetHashCode(), m_clauses.Count);
+            result = m_clauses.GetHashCode();
             // Mix bits before folding in things like boost, since it could cancel the
             // last element of clauses.  this particular mix also serves to
             // differentiate SpanNearQuery hashcodes from others.
