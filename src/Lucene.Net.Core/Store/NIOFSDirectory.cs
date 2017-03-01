@@ -198,7 +198,7 @@ namespace Lucene.Net.Store
             protected override void NewBuffer(byte[] newBuffer)
             {
                 base.NewBuffer(newBuffer);
-                byteBuf = ByteBuffer.Wrap((byte[])(Array)newBuffer); // LUCENENET TODO: remove unnecessary cast
+                byteBuf = ByteBuffer.Wrap(newBuffer);
             }
 
             protected override void ReadInternal(byte[] b, int offset, int len)
