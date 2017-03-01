@@ -106,16 +106,16 @@ namespace Lucene.Net.Search.Similarities
         /// Lucene's default implementation.  If you change this, then you should
         /// change <seealso cref="#decodeNormValue(byte)"/> to match.
         /// </summary>
-        protected internal virtual sbyte EncodeNormValue(float boost, int fieldLength) // LUCENENET TODO: Can we use byte?
+        protected internal virtual byte EncodeNormValue(float boost, int fieldLength) 
         {
-            return SmallSingle.SingleToSByte315(boost / (float)Math.Sqrt(fieldLength));
+            return SmallSingle.SingleToByte315(boost / (float)Math.Sqrt(fieldLength));
         }
 
         /// <summary>
         /// The default implementation returns <code>1 / f<sup>2</sup></code>
         /// where <code>f</code> is <seealso cref="SmallSingle#byte315ToFloat(byte)"/>.
         /// </summary>
-        protected internal virtual float DecodeNormValue(sbyte b) // LUCENENET TODO: Can we use byte?
+        protected internal virtual float DecodeNormValue(byte b)
         {
             return NORM_TABLE[b & 0xFF];
         }
@@ -230,7 +230,7 @@ namespace Lucene.Net.Search.Similarities
             float[] cache = new float[256];
             for (int i = 0; i < cache.Length; i++)
             {
-                cache[i] = k1 * ((1 - b) + b * DecodeNormValue((sbyte)i) / avgdl);
+                cache[i] = k1 * ((1 - b) + b * DecodeNormValue((byte)i) / avgdl);
             }
             return new BM25Stats(collectionStats.Field, idf, queryBoost, avgdl, cache);
         }
@@ -362,7 +362,7 @@ namespace Lucene.Net.Search.Similarities
             }
             else
             {
-                float doclen = DecodeNormValue((sbyte)norms.Get(doc));
+                float doclen = DecodeNormValue((byte)norms.Get(doc));
                 tfNormExpl.AddDetail(new Explanation(b, "parameter b"));
                 tfNormExpl.AddDetail(new Explanation(stats.Avgdl, "avgFieldLength"));
                 tfNormExpl.AddDetail(new Explanation(doclen, "fieldLength"));
