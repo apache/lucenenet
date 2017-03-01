@@ -191,8 +191,8 @@ namespace Lucene.Net.Search
         public virtual IndexSearcher Acquire(long version)
         {
             EnsureOpen();
-            SearcherTracker tracker = _searchers[version]; // LUCENENET TODO: Throws exception when non-match instead of returning null
-            if (tracker != null && tracker.Searcher.IndexReader.TryIncRef())
+            SearcherTracker tracker;
+            if (_searchers.TryGetValue(version, out tracker) && tracker != null && tracker.Searcher.IndexReader.TryIncRef())
             {
                 return tracker.Searcher;
             }
