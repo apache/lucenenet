@@ -76,7 +76,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             /// </summary>
             public override short Int16Val(int doc)
             {
-                return (short)arr.Get(doc);
+                return (short)(sbyte)arr.Get(doc);
             }
 
             /// <summary>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             /// </summary>
             public override float SingleVal(int doc)
             {
-                return (float)arr.Get(doc);
+                return (float)(sbyte)arr.Get(doc);
             }
 
             /// <summary>
@@ -92,7 +92,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
             /// </summary>
             public override int Int32Val(int doc)
             {
-                return (int)arr.Get(doc);
+                return (int)(sbyte)arr.Get(doc);
             }
 
             /// <summary>
@@ -100,17 +100,17 @@ namespace Lucene.Net.Queries.Function.ValueSources
             /// </summary>
             public override long Int64Val(int doc)
             {
-                return (long)arr.Get(doc);
+                return (long)(sbyte)arr.Get(doc);
             }
 
             public override double DoubleVal(int doc)
             {
-                return (double)arr.Get(doc);
+                return (double)(sbyte)arr.Get(doc);
             }
 
             public override string StrVal(int doc)
             {
-                return Convert.ToString(arr.Get(doc));
+                return Convert.ToString((sbyte)arr.Get(doc));
             }
 
             public override string ToString(int doc)
@@ -120,7 +120,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
             public override object ObjectVal(int doc)
             {
-                return arr.Get(doc); // TODO: valid?
+                return (sbyte)arr.Get(doc); // TODO: valid?
             }
 
         }

@@ -380,7 +380,7 @@ namespace Lucene.Net.Search
 
             public override int CompareBottom(int doc)
             {
-                sbyte v2 = currentReaderValues.Get(doc);
+                sbyte v2 = (sbyte)currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
@@ -393,7 +393,7 @@ namespace Lucene.Net.Search
 
             public override void Copy(int slot, int doc)
             {
-                sbyte v2 = currentReaderValues.Get(doc);
+                sbyte v2 = (sbyte)currentReaderValues.Get(doc);
                 // Test for v2 == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && v2 == 0 && !m_docsWithField.Get(doc))
@@ -428,7 +428,7 @@ namespace Lucene.Net.Search
 
             public override int CompareTop(int doc)
             {
-                sbyte docValue = currentReaderValues.Get(doc);
+                sbyte docValue = (sbyte)currentReaderValues.Get(doc);
                 // Test for docValue == 0 to save Bits.get method call for
                 // the common case (doc has value and value is non-zero):
                 if (m_docsWithField != null && docValue == 0 && !m_docsWithField.Get(doc))

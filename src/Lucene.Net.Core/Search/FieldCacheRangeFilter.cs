@@ -261,7 +261,7 @@ namespace Lucene.Net.Search
 
                 protected internal override bool MatchDoc(int doc)
                 {
-                    sbyte value = values.Get(doc);
+                    sbyte value = (sbyte)values.Get(doc);
                     return value >= inclusiveLowerPoint && value <= inclusiveUpperPoint;
                 }
             }

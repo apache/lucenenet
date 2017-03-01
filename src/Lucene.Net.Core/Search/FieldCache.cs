@@ -370,13 +370,13 @@ namespace Lucene.Net.Search
     {
         public abstract class Bytes
         {
-            public abstract sbyte Get(int docID); // LUCENENET TODO: can this be byte?
+            public abstract byte Get(int docID);
 
             public static readonly Bytes EMPTY = new EmptyBytes();
 
             public sealed class EmptyBytes : Bytes
             {
-                public override sbyte Get(int docID) // LUCENENET TODO: can this be byte?
+                public override byte Get(int docID)
                 {
                     return 0;
                 }
@@ -494,7 +494,7 @@ namespace Lucene.Net.Search
 
         public interface IByteParser : IParser
         {
-            sbyte ParseByte(BytesRef term); // LUCENENET TODO: can this be byte?
+            byte ParseByte(BytesRef term);
         }
 
         /// <summary>
@@ -552,13 +552,13 @@ namespace Lucene.Net.Search
 
         private sealed class AnonymousByteParser : IByteParser
         {
-            public sbyte ParseByte(BytesRef term)
+            public byte ParseByte(BytesRef term)
             {
                 // TODO: would be far better to directly parse from
                 // UTF8 bytes... but really users should use
                 // IntField, instead, which already decodes
                 // directly from byte[]
-                return sbyte.Parse(term.Utf8ToString(), CultureInfo.InvariantCulture);
+                return (byte)sbyte.Parse(term.Utf8ToString(), CultureInfo.InvariantCulture);
             }
 
             public override string ToString()

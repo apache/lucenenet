@@ -141,7 +141,7 @@ namespace Lucene.Net.Index
                         {
 #pragma warning disable 612, 618
                             case 0:
-                                Assert.AreEqual((long)(sbyte)Numbers[docID], FieldCache.DEFAULT.GetBytes(Ar, "number", false).Get(docID));
+                                Assert.AreEqual((long)(sbyte)Numbers[docID], (sbyte)FieldCache.DEFAULT.GetBytes(Ar, "number", false).Get(docID));
                                 break;
 
                             case 1:

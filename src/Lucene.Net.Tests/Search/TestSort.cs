@@ -1617,9 +1617,9 @@ namespace Lucene.Net.Search
                 this.OuterInstance = outerInstance;
             }
 
-            public sbyte ParseByte(BytesRef term)
+            public byte ParseByte(BytesRef term)
             {
-                return (sbyte)(term.Bytes[term.Offset] - 'A');
+                return (byte)(term.Bytes[term.Offset] - 'A');
             }
 
             public TermsEnum TermsEnum(Terms terms)

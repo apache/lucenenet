@@ -519,9 +519,9 @@ namespace Lucene.Net.Search
                 this.valuesIn = valuesIn;
             }
 
-            public override sbyte Get(int docID)
+            public override byte Get(int docID)
             {
-                return (sbyte)valuesIn.Get(docID);
+                return (byte)valuesIn.Get(docID);
             }
         }
 
@@ -534,9 +534,9 @@ namespace Lucene.Net.Search
                 this.values = values;
             }
 
-            public override sbyte Get(int docID)
+            public override byte Get(int docID)
             {
-                return values[docID];
+                return (byte)values[docID];
             }
         }
 
@@ -589,7 +589,7 @@ namespace Lucene.Net.Search
 
                 protected override void VisitTerm(BytesRef term)
                 {
-                    currentValue = parser.ParseByte(term);
+                    currentValue = (sbyte)parser.ParseByte(term);
                 }
 
                 protected override void VisitDoc(int docID)

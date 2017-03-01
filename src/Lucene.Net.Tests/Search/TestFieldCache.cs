@@ -226,7 +226,7 @@ namespace Lucene.Net.Search
             Assert.AreSame(bytes, cache.GetBytes(Reader, "theByte", FieldCache.DEFAULT_BYTE_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
             for (int i = 0; i < NUM_DOCS; i++)
             {
-                Assert.IsTrue(bytes.Get(i) == (sbyte)(sbyte.MaxValue - i), bytes.Get(i) + " does not equal: " + (sbyte.MaxValue - i));
+                Assert.IsTrue((sbyte)bytes.Get(i) == (sbyte)(sbyte.MaxValue - i), (sbyte)bytes.Get(i) + " does not equal: " + (sbyte.MaxValue - i));
             }
 
             FieldCache.Int16s shorts = cache.GetInt16s(Reader, "theShort", Random().NextBoolean());
