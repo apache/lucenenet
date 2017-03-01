@@ -119,7 +119,11 @@ namespace Lucene.Net.Util
         // Writes random byte/s into PagedBytes via
         // .getDataOutput(), then verifies with
         // PagedBytes.getDataInput():
-        [Test, LongRunningTest]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(90000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestDataInputOutput2()
         {
             Random random = Random();
