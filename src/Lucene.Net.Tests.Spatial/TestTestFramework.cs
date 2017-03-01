@@ -53,12 +53,16 @@ namespace Lucene.Net.Spatial
             assertEquals(SpatialOperation.Intersects, sf.args.Operation);
         }
 
-        [Test]
-        public virtual void SpatialExample_Mem()
-        {
-            //kind of a hack so that SpatialExample is tested despite
-            // it not starting or ending with "Test".
-            SpatialExample.Main(null);
-        }
+        // LUCENENET specific - we don't nee to worry about the naming convention
+        // because the [Test] attribute will cause the test to run regardless. 
+        // So, this is a duplicate test to SpatialExample.Test() and not needed.
+
+        //[Test]
+        //public virtual void SpatialExample_Mem()
+        //{
+        //    //kind of a hack so that SpatialExample is tested despite
+        //    // it not starting or ending with "Test".
+        //    SpatialExample.Main(null);
+        //}
     }
 }

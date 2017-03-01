@@ -39,11 +39,13 @@ namespace Lucene.Net.Spatial
     /// </summary>
     public class SpatialExample : LuceneTestCase
     {
-        //Note: Test invoked via TestTestFramework.spatialExample()
-        public static void Main(String[] args)
-        {
-            new SpatialExample().Test();
-        }
+        // LUCENENET specific: removed this because the test will run
+        // with only an attribute, it doesn't need to worry about a convention
+        ////Note: Test invoked via TestTestFramework.spatialExample()
+        //public static void Main(String[] args)
+        //{
+        //    new SpatialExample().Test();
+        //}
 
         [Test]
         public virtual void Test()
