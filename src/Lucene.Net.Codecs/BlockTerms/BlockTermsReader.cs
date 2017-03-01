@@ -252,7 +252,9 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             Debug.Assert(field != null);
 
-            return _fields[field];
+            FieldReader result;
+            _fields.TryGetValue(field, out result);
+            return result;
         }
 
         public override int Count

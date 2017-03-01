@@ -150,9 +150,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override Terms GetTerms(string field)
         {
-            Terms ret;
-            preTerms.TryGetValue(field, out ret);
-            return ret;
+            Terms result;
+            preTerms.TryGetValue(field, out result);
+            return result;
         }
 
         public override int Count

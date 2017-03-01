@@ -111,7 +111,9 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override Terms GetTerms(string field)
             {
-                return FieldToTerms[field];
+                RAMField result;
+                FieldToTerms.TryGetValue(field, out result);
+                return result;
             }
 
             public override int Count

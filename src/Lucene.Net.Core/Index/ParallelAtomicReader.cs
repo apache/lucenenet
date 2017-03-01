@@ -210,9 +210,9 @@ namespace Lucene.Net.Index
 
             public override Terms GetTerms(string field)
             {
-                Terms ret;
-                fields.TryGetValue(field, out ret);
-                return ret;
+                Terms result;
+                fields.TryGetValue(field, out result);
+                return result;
             }
 
             public override int Count

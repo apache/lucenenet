@@ -192,12 +192,16 @@ namespace Lucene.Net.Codecs.Bloom
 
             public override Terms GetTerms(string field)
             {
-                var filter = _bloomsByFieldName[field];
-                if (filter == null)
+                FuzzySet filter;
+                if (!_bloomsByFieldName.TryGetValue(field, out filter) || filter == null)
+                {
                     return _delegateFieldsProducer.GetTerms(field);
-                
-                var result = _delegateFieldsProducer.GetTerms(field);
-                return result == null ? null : new BloomFilteredTerms(result, filter);
+                }
+                else
+                {
+                    var result = _delegateFieldsProducer.GetTerms(field);
+                    return result == null ? null : new BloomFilteredTerms(result, filter);
+                }
             }
 
             public override int Count

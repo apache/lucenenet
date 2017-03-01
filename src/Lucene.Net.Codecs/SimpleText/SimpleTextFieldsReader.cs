@@ -739,19 +739,20 @@ namespace Lucene.Net.Codecs.SimpleText
             lock (this)
             {
                 SimpleTextTerms terms;
-                if (_termsCache.TryGetValue(field, out terms))
+                if (!_termsCache.TryGetValue(field, out terms) || terms == null)
                 {
-                    return terms;
+                    long? fp;
+                    if (!_fields.TryGetValue(field, out fp) || !fp.HasValue)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        terms = new SimpleTextTerms(this, field, fp.Value, _maxDoc);
+                        _termsCache[field] = terms;
+                    }
                 }
 
-                long? fp;
-                if (!_fields.TryGetValue(field, out fp) || !fp.HasValue)
-                {
-                    return null;
-                }
-
-                terms = new SimpleTextTerms(this, field, fp.Value, _maxDoc);
-                _termsCache[field] = (SimpleTextTerms) terms;
                 return terms;
             }
         }

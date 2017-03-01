@@ -290,7 +290,9 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override Terms GetTerms(string field)
             {
-                return _fields.ContainsKey(field) ? _fields[field] : null;
+                SimpleTVTerms result;
+                _fields.TryGetValue(field, out result);
+                return result;
             }
 
             public override int Count

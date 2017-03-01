@@ -165,7 +165,9 @@ namespace Lucene.Net.Codecs.Memory
         public override Terms GetTerms(string field)
         {
             Debug.Assert(field != null);
-            return fields[field];
+            TermsReader result;
+            fields.TryGetValue(field, out result);
+            return result;
         }
 
         public override int Count

@@ -239,8 +239,12 @@ namespace Lucene.Net.Codecs.PerField
             public override Terms GetTerms(string field)
             {
                 FieldsProducer fieldsProducer;
-                fields.TryGetValue(field, out fieldsProducer);
-                return fieldsProducer == null ? null : fieldsProducer.GetTerms(field);
+                if (fields.TryGetValue(field, out fieldsProducer) && fieldsProducer != null)
+                {
+                    return fieldsProducer.GetTerms(field);
+                }
+                
+                return null;
             }
 
             public override int Count
