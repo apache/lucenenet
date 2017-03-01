@@ -149,7 +149,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Holds term ords for documents. </summary>
-        protected sbyte[][] m_tnums = new sbyte[256][]; // LUCENENET TODO: can this be byte??
+        [CLSCompliant(false)] // LUCENENET NOTE: Since jagged arrays are not CLS compliant anyway, this would need to be byte[,] to be CLS compliant - not sure it is worth the effort
+        protected sbyte[][] m_tnums = new sbyte[256][];
 
         /// <summary>
         /// Total bytes (sum of term lengths) for all indexed terms. </summary>
