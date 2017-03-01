@@ -95,6 +95,61 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
+        /// Creates a new instance with the ability to specify the body of the <see cref="CreateComponents(string, TextReader)"/>
+        /// method through the <paramref name="createComponents"/> argument.
+        /// Simple example: 
+        /// <code>
+        ///     var analyzer = Analyzer.NewAnonymous((fieldName, reader) => 
+        ///     {
+        ///         Tokenizer source = new FooTokenizer(reader);
+        ///         TokenStream filter = new FooFilter(source);
+        ///         filter = new BarFilter(filter);
+        ///         return new TokenStreamComponents(source, filter);
+        ///     });
+        /// </code>
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        /// <param name="createComponents">
+        /// An delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/> 
+        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
+        /// returns the <seealso cref="TokenStreamComponents"/> for this analyzer.
+        /// </param>
+        /// <returns> A new <see cref="AnonymousAnalyzer"/> instance.</returns>
+        public static Analyzer NewAnonymous(Func<string, TextReader, TokenStreamComponents> createComponents)
+        {
+            return NewAnonymous(createComponents, GLOBAL_REUSE_STRATEGY);
+        }
+
+        /// <summary>
+        /// Creates a new instance with the ability to specify the body of the <see cref="CreateComponents(string, TextReader)"/>
+        /// method through the <paramref name="createComponents"/> argument and allows the use of a <see cref="ReuseStrategy"/>.
+        /// Simple example: 
+        /// <code>
+        ///     var analyzer = Analyzer.NewAnonymous((fieldName, reader) => 
+        ///     {
+        ///         Tokenizer source = new FooTokenizer(reader);
+        ///         TokenStream filter = new FooFilter(source);
+        ///         filter = new BarFilter(filter);
+        ///         return new TokenStreamComponents(source, filter);
+        ///     }, reuseStrategy);
+        /// </code>
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        /// <param name="createComponents">
+        /// An delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/> 
+        /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
+        /// returns the <seealso cref="TokenStreamComponents"/> for this analyzer.
+        /// </param>
+        /// <param name="reuseStrategy">A custom <see cref="ReuseStrategy"/> instance.</param>
+        /// <returns> A new <see cref="AnonymousAnalyzer"/> instance.</returns>
+        public static Analyzer NewAnonymous(Func<string, TextReader, TokenStreamComponents> createComponents, ReuseStrategy reuseStrategy)
+        {
+            return new AnonymousAnalyzer(createComponents, reuseStrategy);
+        }
+
+        /// <summary>
         /// Creates a new <seealso cref="TokenStreamComponents"/> instance for this analyzer.
         /// </summary>
         /// <param name="fieldName">
@@ -450,6 +505,30 @@ namespace Lucene.Net.Analysis
                     SetStoredValue(analyzer, componentsPerField);
                 }
                 componentsPerField[fieldName] = components;
+            }
+        }
+
+        /// <summary>
+        /// LUCENENET specific helper class to mimick Java's ability to create anonymous classes.
+        /// Clearly, the design of <see cref="Analyzer"/> took this feature of Java into consideration.
+        /// Since it doesn't exist in .NET, we can use a delegate method to call the constructor of
+        /// this concrete instance to fake it (by calling <see cref="Analyzer.NewAnonymous"/>).
+        /// </summary>
+        private class AnonymousAnalyzer : Analyzer
+        {
+            private readonly Func<string, TextReader, TokenStreamComponents> createComponents;
+
+            public AnonymousAnalyzer(Func<string, TextReader, TokenStreamComponents> createComponents, ReuseStrategy reuseStrategy)
+                : base(reuseStrategy)
+            {
+                if (createComponents == null)
+                    throw new ArgumentNullException("createComponents");
+                this.createComponents = createComponents;
+            }
+
+            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            {
+                return createComponents(fieldName, reader);
             }
         }
     }
