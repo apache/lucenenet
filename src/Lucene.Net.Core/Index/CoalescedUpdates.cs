@@ -66,17 +66,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        //LUCENE TO-DO Is this right???
         public virtual IEnumerable<Term> TermsIterable()
         {
             return new IterableAnonymousInnerClassHelper(this);
-            /*foreach (IEnumerable<Term> iterable in Iterables)
-            {
-                foreach (Term t in iterable)
-                {
-                    yield return t;
-                }
-            }*/
         }
 
         private class IterableAnonymousInnerClassHelper : IEnumerable<Term>
@@ -104,13 +96,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        //LUCENE TO-DO Is this right???
         public virtual IEnumerable<QueryAndLimit> QueriesIterable()
         {
-            /*foreach (KeyValuePair<Query, int> entry in Queries)
-            {
-                yield return new QueryAndLimit(entry.Key, entry.Value);
-            }*/
             return new IterableAnonymousInnerClassHelper2(this);
         }
 
