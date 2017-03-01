@@ -96,20 +96,26 @@ namespace Lucene.Net.Support
             return (ch != 0);
         }
 
-        public byte ReadByte() // LUCENENET TODO: Rename ReadSByte() ... change this to int the same as Stream.ReadByte() ? (since putting sbyte here is ugly)
-        {
-            int ch = @in.ReadByte();
-            if (ch < 0)
-                throw new EndOfStreamException();
-            return (byte)(ch);
-        }
-
-        public int ReadUnsignedByte() // LUCENET TODO: Rename ReadByte() after above method is fixed
+        /// <summary>
+        /// NOTE: This was readByte() in the JDK
+        /// </summary>
+        public int ReadSByte()
         {
             int ch = @in.ReadByte();
             if (ch < 0)
                 throw new EndOfStreamException();
             return ch;
+        }
+
+        /// <summary>
+        /// NOTE: This was readUnsignedByte() in the JDK
+        /// </summary>
+        public byte ReadByte()
+        {
+            int ch = @in.ReadByte();
+            if (ch < 0)
+                throw new EndOfStreamException();
+            return (byte)ch;
         }
 
         /// <summary>

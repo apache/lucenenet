@@ -9,8 +9,16 @@
         void ReadFully(byte[] b, int off, int len);
         int SkipBytes(int n);
         bool ReadBoolean();
+
+        /// <summary>
+        /// NOTE: This was readByte() in the JDK
+        /// </summary>
+        int ReadSByte();
+
+        /// <summary>
+        /// NOTE: This was readUnsignedByte() in the JDK
+        /// </summary>
         byte ReadByte();
-        int ReadUnsignedByte();
 
         /// <summary>
         /// NOTE: This was readShort() in the JDK
