@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -86,15 +87,15 @@ namespace Lucene.Net.Index
         // note: we have to sync this map even though its just for debugging/toString,
         // otherwise DWPT's .toString() calls that iterate over the map can
         // cause concurrentmodificationexception if indexwriter's infostream is on
-        private readonly IDictionary<string, PostingsFormat> previousMappings = new ConcurrentHashMapWrapper<string, PostingsFormat>(new Dictionary<string, PostingsFormat>());
+        private readonly IDictionary<string, PostingsFormat> previousMappings = new ConcurrentDictionary<string, PostingsFormat>();
 
-        private IDictionary<string, DocValuesFormat> previousDVMappings = new ConcurrentHashMapWrapper<string, DocValuesFormat>(new Dictionary<string, DocValuesFormat>());
+        private IDictionary<string, DocValuesFormat> previousDVMappings = new ConcurrentDictionary<string, DocValuesFormat>();
         private readonly int perFieldSeed;
 
         public override PostingsFormat GetPostingsFormatForField(string name)
         {
-            PostingsFormat codec = previousMappings[name];
-            if (codec == null)
+            PostingsFormat codec;
+            if (!previousMappings.TryGetValue(name, out codec) || codec == null)
             {
                 codec = formats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % formats.Count];
                 if (codec is SimpleTextPostingsFormat && perFieldSeed % 5 != 0)
@@ -111,8 +112,8 @@ namespace Lucene.Net.Index
 
         public override DocValuesFormat GetDocValuesFormatForField(string name)
         {
-            DocValuesFormat codec = previousDVMappings[name];
-            if (codec == null)
+            DocValuesFormat codec;
+            if (!previousDVMappings.TryGetValue(name, out codec) || codec == null)
             {
                 codec = dvFormats[Math.Abs(perFieldSeed ^ name.GetHashCode()) % dvFormats.Count];
                 if (codec is SimpleTextDocValuesFormat && perFieldSeed % 5 != 0)
@@ -214,7 +215,8 @@ namespace Lucene.Net.Index
 
         public override string ToString()
         {
-            return base.ToString() + ": " + previousMappings.ToString() + ", docValues:" + previousDVMappings.ToString();
+            // LUCENENET NOTE: using toString() extension method on dictionaries to print out their contents
+            return base.ToString() + ": " + previousMappings.toString() + ", docValues:" + previousDVMappings.toString();
         }
     }
 }
