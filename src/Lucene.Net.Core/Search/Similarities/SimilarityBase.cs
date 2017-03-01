@@ -259,16 +259,16 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// Decodes a normalization factor (document length) stored in an index. </summary>
         /// <seealso cref= #encodeNormValue(float,float) </seealso>
-        protected internal virtual float DecodeNormValue(sbyte norm) // LUCENENET TODO: Can this be byte?
+        protected internal virtual float DecodeNormValue(byte norm)
         {
             return NORM_TABLE[norm & 0xFF]; // & 0xFF maps negative bytes to positive above 127
         }
 
         /// <summary>
         /// Encodes the length to a byte via SmallFloat. </summary>
-        protected internal virtual sbyte EncodeNormValue(float boost, float length) // LUCENENET TODO: Can this be byte?
+        protected internal virtual byte EncodeNormValue(float boost, float length)
         {
-            return SmallSingle.SingleToSByte315((boost / (float)Math.Sqrt(length)));
+            return SmallSingle.SingleToByte315((boost / (float)Math.Sqrt(length)));
         }
 
         // ----------------------------- Static methods ------------------------------
@@ -307,12 +307,12 @@ namespace Lucene.Net.Search.Similarities
             public override float Score(int doc, float freq)
             {
                 // We have to supply something in case norms are omitted
-                return outerInstance.Score(stats, freq, norms == null ? 1F : outerInstance.DecodeNormValue((sbyte)norms.Get(doc)));
+                return outerInstance.Score(stats, freq, norms == null ? 1F : outerInstance.DecodeNormValue((byte)norms.Get(doc)));
             }
 
             public override Explanation Explain(int doc, Explanation freq)
             {
-                return outerInstance.Explain(stats, doc, freq, norms == null ? 1F : outerInstance.DecodeNormValue((sbyte)norms.Get(doc)));
+                return outerInstance.Explain(stats, doc, freq, norms == null ? 1F : outerInstance.DecodeNormValue((byte)norms.Get(doc)));
             }
 
             public override float ComputeSlopFactor(int distance)
