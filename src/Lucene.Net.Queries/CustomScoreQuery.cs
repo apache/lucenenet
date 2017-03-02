@@ -420,7 +420,11 @@ namespace Lucene.Net.Queries
         /// <para/>
         /// Note: only has effect when the <see cref="ValueSource"/> part is not <c>null</c>.
         /// </summary>
-        public virtual bool IsStrict { get; set; }
+        public virtual bool IsStrict
+        {
+            get { return strict; }
+            set { strict = value; }
+        }
 
 
         /// <summary>
