@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Util;
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis.Payloads
 {
@@ -30,7 +31,7 @@ namespace Lucene.Net.Analysis.Payloads
     {
         public override BytesRef Encode(char[] buffer, int offset, int length)
         {
-            float payload = float.Parse(new string(buffer, offset, length)); //TODO: improve this so that we don't have to new Strings
+            float payload = float.Parse(new string(buffer, offset, length), CultureInfo.InvariantCulture); //TODO: improve this so that we don't have to new Strings
             byte[] bytes = PayloadHelper.EncodeSingle(payload);
             BytesRef result = new BytesRef(bytes);
             return result;
