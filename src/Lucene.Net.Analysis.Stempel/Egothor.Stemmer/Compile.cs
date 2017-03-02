@@ -107,8 +107,7 @@ namespace Egothor.Stemmer
                 qq++;
             }
 
-            // LUCENENET TODO: Is this any different than Encoding.UTF8?
-            //String charset = System.getProperty("egothor.stemmer.charset", "UTF-8");
+            string charset = SystemProperties.GetProperty("egothor.stemmer.charset", "UTF-8");
 
             char[] optimizer = new char[args[0].Length - qq];
             for (int i = 0; i < optimizer.Length; i++)
@@ -129,7 +128,7 @@ namespace Egothor.Stemmer
 
                 Console.WriteLine(args[i]);
                 using (@in = new StreamReader(
-                    new FileStream(args[i], FileMode.Open, FileAccess.Read), Encoding.UTF8))
+                    new FileStream(args[i], FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset)))
                 {
                     for (string line = @in.ReadLine(); line != null; line = @in.ReadLine())
                     {

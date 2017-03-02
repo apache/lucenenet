@@ -132,7 +132,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Parser
                                  int[][] expectedTokenSequences,
                                  string[] tokenImage)
         {
-            //String eol = System.getProperty("line.separator", "\n");
             string eol = Environment.NewLine;
             StringBuilder expected = new StringBuilder();
             int maxSize = 0;

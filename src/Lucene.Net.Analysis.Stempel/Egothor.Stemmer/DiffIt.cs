@@ -113,9 +113,8 @@ namespace Egothor.Stemmer
                 TextReader @in;
                 // System.out.println("[" + args[i] + "]");
                 Diff diff = new Diff(ins, del, rep, nop);
-                // LUCENENET TODO: Is using Encoding.UTF8 good enough?
-                //String charset = System.getProperty("egothor.stemmer.charset", "UTF-8");
-                @in = new StreamReader(new FileStream(args[i], FileMode.Open, FileAccess.Read), Encoding.UTF8);
+                string charset = SystemProperties.GetProperty("egothor.stemmer.charset", "UTF-8");
+                @in = new StreamReader(new FileStream(args[i], FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset));
                 for (string line = @in.ReadLine(); line != null; line = @in.ReadLine())
                 {
                     try
