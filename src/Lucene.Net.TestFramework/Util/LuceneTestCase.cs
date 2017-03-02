@@ -299,7 +299,7 @@ namespace Lucene.Net.Util
         /// True if and only if tests are run in verbose mode. If this flag is false
         /// tests are not expected to print any messages.
         /// </summary>
-        public static readonly bool VERBOSE = RandomizedTest.SystemPropertyAsBoolean("tests.verbose",
+        public static readonly bool VERBOSE = SystemProperties.GetPropertyAsBoolean("tests.verbose",
 #if DEBUG
  true
 #else
@@ -309,13 +309,13 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// TODO: javadoc? </summary>
-        public static readonly bool INFOSTREAM = RandomizedTest.SystemPropertyAsBoolean("tests.infostream", VERBOSE);
+        public static readonly bool INFOSTREAM = SystemProperties.GetPropertyAsBoolean("tests.infostream", VERBOSE);
 
         /// <summary>
         /// A random multiplier which you should use when writing random tests:
         /// multiply it by the number of iterations to scale your tests (for nightly builds).
         /// </summary>
-        public static readonly int RANDOM_MULTIPLIER = RandomizedTest.SystemPropertyAsInt("tests.multiplier", 1);
+        public static readonly int RANDOM_MULTIPLIER = SystemProperties.GetPropertyAsInt("tests.multiplier", 1);
 
         /// <summary>
         /// TODO: javadoc? </summary>
@@ -327,39 +327,39 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Gets the codec to run tests with. </summary>
-        public static readonly string TEST_CODEC = Configuration.GetAppSetting("tests.codec", "random");
+        public static readonly string TEST_CODEC = SystemProperties.GetProperty("tests.codec", "random");
 
         /// <summary>
         /// Gets the postingsFormat to run tests with. </summary>
-        public static readonly string TEST_POSTINGSFORMAT = Configuration.GetAppSetting("tests.postingsformat", "random");
+        public static readonly string TEST_POSTINGSFORMAT = SystemProperties.GetProperty("tests.postingsformat", "random");
 
         /// <summary>
         /// Gets the docValuesFormat to run tests with </summary>
-        public static readonly string TEST_DOCVALUESFORMAT = Configuration.GetAppSetting("tests.docvaluesformat", "random");
+        public static readonly string TEST_DOCVALUESFORMAT = SystemProperties.GetProperty("tests.docvaluesformat", "random");
 
         /// <summary>
         /// Gets the directory to run tests with </summary>
-        public static readonly string TEST_DIRECTORY = Configuration.GetAppSetting("tests.directory", "random");
+        public static readonly string TEST_DIRECTORY = SystemProperties.GetProperty("tests.directory", "random");
 
         /// <summary>
         /// the line file used by LineFileDocs </summary>
-        public static readonly string TEST_LINE_DOCS_FILE = Configuration.GetAppSetting("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
+        public static readonly string TEST_LINE_DOCS_FILE = SystemProperties.GetProperty("tests.linedocsfile", DEFAULT_LINE_DOCS_FILE);
 
         /// <summary>
         /// Whether or not <seealso cref="Nightly"/> tests should run. </summary>
-        public static readonly bool TEST_NIGHTLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_NIGHTLY, false);
+        public static readonly bool TEST_NIGHTLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_NIGHTLY, false);
 
         /// <summary>
         /// Whether or not <seealso cref="Weekly"/> tests should run. </summary>
-        public static readonly bool TEST_WEEKLY = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_WEEKLY, false);
+        public static readonly bool TEST_WEEKLY = SystemProperties.GetPropertyAsBoolean(SYSPROP_WEEKLY, false);
 
         /// <summary>
         /// Whether or not <seealso cref="AwaitsFix"/> tests should run. </summary>
-        public static readonly bool TEST_AWAITSFIX = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
+        public static readonly bool TEST_AWAITSFIX = SystemProperties.GetPropertyAsBoolean(SYSPROP_AWAITSFIX, false);
 
         /// <summary>
         /// Whether or not <seealso cref="Slow"/> tests should run. </summary>
-        public static readonly bool TEST_SLOW = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_SLOW, false);
+        public static readonly bool TEST_SLOW = SystemProperties.GetPropertyAsBoolean(SYSPROP_SLOW, false);
 
         /// <summary>
         /// Throttling, see <seealso cref="MockDirectoryWrapper#setThrottling(Throttling)"/>. </summary>
@@ -374,13 +374,13 @@ namespace Lucene.Net.Util
             bool defaultValue = false;
             foreach (string property in Arrays.AsList("tests.leaveTemporary", "tests.leavetemporary", "tests.leavetmpdir", "solr.test.leavetmpdir")) // Solr's legacy -  default -  lowercase -  ANT tasks's (junit4) flag.
             {
-                defaultValue |= RandomizedTest.SystemPropertyAsBoolean(property, false);
+                defaultValue |= SystemProperties.GetPropertyAsBoolean(property, false);
             }
             LEAVE_TEMPORARY = defaultValue;
             CORE_DIRECTORIES = new List<string>(FS_DIRECTORIES);
             CORE_DIRECTORIES.Add("RAMDirectory");
-            int maxFailures = RandomizedTest.SystemPropertyAsInt(SYSPROP_MAXFAILURES, int.MaxValue);
-            bool failFast = RandomizedTest.SystemPropertyAsBoolean(SYSPROP_FAILFAST, false);
+            int maxFailures = SystemProperties.GetPropertyAsInt(SYSPROP_MAXFAILURES, int.MaxValue);
+            bool failFast = SystemProperties.GetPropertyAsBoolean(SYSPROP_FAILFAST, false);
 
             if (failFast)
             {
@@ -393,8 +393,6 @@ namespace Lucene.Net.Util
                     Console.Out.Write(typeof(LuceneTestCase).Name + " WARNING: Property '" + SYSPROP_MAXFAILURES + "'=" + maxFailures + ", 'failfast' is" + " ignored.");
                 }
             }
-
-            AppSettings.Set("tests.seed", Random().NextLong().ToString());
 
             //IgnoreAfterMaxFailuresDelegate = new AtomicReference<TestRuleIgnoreAfterMaxFailures>(new TestRuleIgnoreAfterMaxFailures(maxFailures));
             //IgnoreAfterMaxFailures = TestRuleDelegate.Of(IgnoreAfterMaxFailuresDelegate);

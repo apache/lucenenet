@@ -54,16 +54,16 @@ namespace Lucene.Net.Util
             {
                 if (s_tempDirectory == null)
                 {
-                    string tempDirectory = AppSettings.Get("tempDir", "");
+                    string tempDirectory = SystemProperties.GetProperty("lucene.temp.dir");
 
-                    if (string.IsNullOrEmpty(tempDirectory) ||
-                        !Directory.Exists(tempDirectory))
+                    if (string.IsNullOrEmpty(tempDirectory))
                     {
                         tempDirectory = CombinePath(Path.GetTempPath(), "lucene-net");
-
-                        if (!Directory.Exists(tempDirectory))
-                            Directory.CreateDirectory(tempDirectory);
                     }
+
+                    if (!Directory.Exists(tempDirectory))
+                        Directory.CreateDirectory(tempDirectory);
+
                     s_tempDirectory = tempDirectory;
                 }
 
