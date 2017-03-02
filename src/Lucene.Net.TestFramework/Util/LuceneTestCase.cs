@@ -315,7 +315,7 @@ namespace Lucene.Net.Util
         /// A random multiplier which you should use when writing random tests:
         /// multiply it by the number of iterations to scale your tests (for nightly builds).
         /// </summary>
-        public static readonly int RANDOM_MULTIPLIER = SystemProperties.GetPropertyAsInt("tests.multiplier", 1);
+        public static readonly int RANDOM_MULTIPLIER = SystemProperties.GetPropertyAsInt32("tests.multiplier", 1);
 
         /// <summary>
         /// TODO: javadoc? </summary>
@@ -379,7 +379,7 @@ namespace Lucene.Net.Util
             LEAVE_TEMPORARY = defaultValue;
             CORE_DIRECTORIES = new List<string>(FS_DIRECTORIES);
             CORE_DIRECTORIES.Add("RAMDirectory");
-            int maxFailures = SystemProperties.GetPropertyAsInt(SYSPROP_MAXFAILURES, int.MaxValue);
+            int maxFailures = SystemProperties.GetPropertyAsInt32(SYSPROP_MAXFAILURES, int.MaxValue);
             bool failFast = SystemProperties.GetPropertyAsBoolean(SYSPROP_FAILFAST, false);
 
             if (failFast)
