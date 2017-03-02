@@ -1,6 +1,7 @@
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Expressions.JS
 {
@@ -141,15 +142,27 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestCosMethod()
         {
+            //AssertEvaluatesTo("cos(0)", 1);
+            //AssertEvaluatesTo("cos(" + Math.PI / 2 + ")", 0);
+            //AssertEvaluatesTo("cos(" + -Math.PI / 2 + ")", 0);
+            //AssertEvaluatesTo("cos(" + Math.PI / 4 + ")", 0.7071068);
+            //AssertEvaluatesTo("cos(" + -Math.PI / 4 + ")", 0.7071068);
+            //AssertEvaluatesTo("cos(" + Math.PI * 2 / 3 + ")", -0.5);
+            //AssertEvaluatesTo("cos(" + -Math.PI * 2 / 3 + ")", -0.5);
+            //AssertEvaluatesTo("cos(" + Math.PI / 6 + ")", 0.8660254);
+            //AssertEvaluatesTo("cos(" + -Math.PI / 6 + ")", 0.8660254);
+
+            // LUCENENET specific - need to apply invariant culture to the string concatenation
+            // to ensure the numeric formatting is correct, otherwise it may look like the wrong number of parameters
             AssertEvaluatesTo("cos(0)", 1);
-            AssertEvaluatesTo("cos(" + Math.PI / 2 + ")", 0);
-            AssertEvaluatesTo("cos(" + -Math.PI / 2 + ")", 0);
-            AssertEvaluatesTo("cos(" + Math.PI / 4 + ")", 0.7071068);
-            AssertEvaluatesTo("cos(" + -Math.PI / 4 + ")", 0.7071068);
-            AssertEvaluatesTo("cos(" + Math.PI * 2 / 3 + ")", -0.5);
-            AssertEvaluatesTo("cos(" + -Math.PI * 2 / 3 + ")", -0.5);
-            AssertEvaluatesTo("cos(" + Math.PI / 6 + ")", 0.8660254);
-            AssertEvaluatesTo("cos(" + -Math.PI / 6 + ")", 0.8660254);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "cos({0})", Math.PI / 2), 0);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "cos({0})", -Math.PI / 2), 0);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "cos({0})", Math.PI / 4), 0.7071068);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "cos({0})", -Math.PI / 4), 0.7071068);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "cos({0})", Math.PI * 2 / 3), -0.5);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "cos({0})", -Math.PI * 2 / 3), -0.5);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "cos({0})", Math.PI / 6), 0.8660254);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "cos({0})", -Math.PI / 6), 0.8660254);
         }
 
         [Test]
@@ -199,7 +212,10 @@ namespace Lucene.Net.Expressions.JS
         public virtual void TestLnMethod()
         {
             AssertEvaluatesTo("ln(0)", double.NegativeInfinity);
-            AssertEvaluatesTo("ln(" + Math.E + ")", 1);
+
+            // LUCENENET specific - need to apply invariant culture to the string concatenation
+            // to ensure the numeric formatting is correct, otherwise it may look like the wrong number of parameters
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "ln({0})", Math.E), 1);
             AssertEvaluatesTo("ln(-1)", double.NaN);
             AssertEvaluatesTo("ln(1)", 0);
             AssertEvaluatesTo("ln(0.5)", -0.69314718056);
@@ -266,15 +282,27 @@ namespace Lucene.Net.Expressions.JS
         [Test]
         public virtual void TestSinMethod()
         {
+            //AssertEvaluatesTo("sin(0)", 0);
+            //AssertEvaluatesTo("sin(" + Math.PI / 2 + ")", 1);
+            //AssertEvaluatesTo("sin(" + -Math.PI / 2 + ")", -1);
+            //AssertEvaluatesTo("sin(" + Math.PI / 4 + ")", 0.7071068);
+            //AssertEvaluatesTo("sin(" + -Math.PI / 4 + ")", -0.7071068);
+            //AssertEvaluatesTo("sin(" + Math.PI * 2 / 3 + ")", 0.8660254);
+            //AssertEvaluatesTo("sin(" + -Math.PI * 2 / 3 + ")", -0.8660254);
+            //AssertEvaluatesTo("sin(" + Math.PI / 6 + ")", 0.5);
+            //AssertEvaluatesTo("sin(" + -Math.PI / 6 + ")", -0.5);
+
+            // LUCENENET specific - need to apply invariant culture to the string concatenation
+            // to ensure the numeric formatting is correct, otherwise it may look like the wrong number of parameters
             AssertEvaluatesTo("sin(0)", 0);
-            AssertEvaluatesTo("sin(" + Math.PI / 2 + ")", 1);
-            AssertEvaluatesTo("sin(" + -Math.PI / 2 + ")", -1);
-            AssertEvaluatesTo("sin(" + Math.PI / 4 + ")", 0.7071068);
-            AssertEvaluatesTo("sin(" + -Math.PI / 4 + ")", -0.7071068);
-            AssertEvaluatesTo("sin(" + Math.PI * 2 / 3 + ")", 0.8660254);
-            AssertEvaluatesTo("sin(" + -Math.PI * 2 / 3 + ")", -0.8660254);
-            AssertEvaluatesTo("sin(" + Math.PI / 6 + ")", 0.5);
-            AssertEvaluatesTo("sin(" + -Math.PI / 6 + ")", -0.5);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", Math.PI / 2), 1);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI / 2), - 1);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", Math.PI / 4), 0.7071068);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI / 4), -0.7071068);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", Math.PI * 2 / 3), 0.8660254);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI * 2 / 3), - 0.8660254);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", Math.PI / 6), 0.5);
+            AssertEvaluatesTo(string.Format(CultureInfo.InvariantCulture, "sin({0})", -Math.PI / 6), -0.5);
         }
 
         [Test]
