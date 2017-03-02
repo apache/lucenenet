@@ -53,9 +53,9 @@ namespace Lucene.Net.Util
         /// NOTE: This was JAVA_VENDOR in Lucene
         /// </summary>
         public static readonly string RUNTIME_VENDOR = "Microsoft"; // AppSettings.Get("java.vendor", "");
-        //public static readonly string JVM_VENDOR = AppSettings.Get("java.vm.vendor", "");
-        //public static readonly string JVM_VERSION = AppSettings.Get("java.vm.version", "");
-        //public static readonly string JVM_NAME = AppSettings.Get("java.vm.name", "");
+        //public static readonly string JVM_VENDOR = GetEnvironmentVariable("java.vm.vendor", "");
+        //public static readonly string JVM_VERSION = GetEnvironmentVariable("java.vm.version", "");
+        //public static readonly string JVM_NAME = GetEnvironmentVariable("java.vm.name", "");
 
         /// <summary>
         /// The value of <see cref="Environment.GetEnvironmentVariable(string)"/> with parameter "OS".</summary>

@@ -192,6 +192,12 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Pass this as the seed to <seealso cref="#murmurhash3_x86_32"/>. </summary>
 
+        // Poached from Guava: set a different salt/seed
+        // for each JVM instance, to frustrate hash key collision
+        // denial of service attacks, and to catch any places that
+        // somehow rely on hash function/order across JVM
+        // instances:
+
         //Singleton-esque member. Only created once
         private static int good_fast_hash_seed;
 
@@ -201,8 +207,16 @@ namespace Lucene.Net.Util
             {
                 if (good_fast_hash_seed == 0)
                 {
-                    //LUCENE TO-DO No idea if this works
-                    var prop = AppSettings.Get("tests.seed", null); // LUCNENET TODO: change to Environment.GetEnvironmentVariable ?
+                    string prop;
+                    try
+                    {
+                        prop = Environment.GetEnvironmentVariable("tests.seed");
+                    }
+                    catch (System.Security.SecurityException)
+                    {
+                        prop = null;
+                    }
+
                     if (prop != null)
                     {
                         // So if there is a test failure that relied on hash
