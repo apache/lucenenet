@@ -103,7 +103,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 foreach (long? nv in values)
                 {
                     // TODO: support this as MemoryDVFormat (and be smart about missing maybe)
-                    long v = nv == null ? 0 : (long)nv;
+                    long v = nv.GetValueOrDefault();
 
                     if (gcd != 1)
                     {
@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     Meta.WriteByte((byte)Lucene42DocValuesProducer.UNCOMPRESSED); // uncompressed
                     foreach (long? nv in values)
                     {
-                        Data.WriteByte(nv == null ? (byte)0 : (byte)nv);
+                        Data.WriteByte((byte)nv.GetValueOrDefault());
                     }
                 }
                 else
@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(Data, formatAndBits.Format, MaxDoc, formatAndBits.BitsPerValue, PackedInt32s.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
                     {
-                        writer.Add(encode[nv == null ? 0 : (long)nv]);
+                        writer.Add(encode[nv.GetValueOrDefault()]);
                     }
                     writer.Finish();
                 }
@@ -187,8 +187,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
                 foreach (long? nv in values)
                 {
-                    long value = nv == null ? 0 : (long)nv;
-                    writer.Add((value - minValue) / gcd);
+                    writer.Add((nv.GetValueOrDefault() - minValue) / gcd);
                 }
                 writer.Finish();
             }
@@ -202,7 +201,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 BlockPackedWriter writer = new BlockPackedWriter(Data, Lucene42DocValuesProducer.BLOCK_SIZE);
                 foreach (long? nv in values)
                 {
-                    writer.Add(nv == null ? 0 : (long)nv);
+                    writer.Add(nv.GetValueOrDefault());
                 }
                 writer.Finish();
             }

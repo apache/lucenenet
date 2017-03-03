@@ -220,8 +220,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     BlockPackedWriter quotientWriter = new BlockPackedWriter(data, BLOCK_SIZE);
                     foreach (long? nv in values)
                     {
-                        long value = nv == null ? 0 : nv.Value;
-                        quotientWriter.Add((value - minValue) / gcd);
+                        quotientWriter.Add((nv.GetValueOrDefault() - minValue) / gcd);
                     }
                     quotientWriter.Finish();
                     break;
@@ -230,7 +229,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     BlockPackedWriter writer = new BlockPackedWriter(data, BLOCK_SIZE);
                     foreach (long? nv in values)
                     {
-                        writer.Add(nv == null ? 0 : nv.Value);
+                        writer.Add(nv.GetValueOrDefault());
                     }
                     writer.Finish();
                     break;
@@ -250,7 +249,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     PackedInt32s.Writer ordsWriter = PackedInt32s.GetWriterNoHeader(data, PackedInt32s.Format.PACKED, (int)count, bitsRequired, PackedInt32s.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
                     {
-                        ordsWriter.Add(encode[nv == null ? 0 : nv.Value]);
+                        ordsWriter.Add(encode[nv.GetValueOrDefault()]);
                     }
                     ordsWriter.Finish();
                     break;

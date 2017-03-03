@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.SimpleText
             // second pass to write the values
             foreach (var n in values)
             {
-                long value = n == null ? 0 : n.Value;
+                long value = n.GetValueOrDefault();
 
                 Debug.Assert(value >= minValue);
 

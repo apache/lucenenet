@@ -116,7 +116,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 byteWidth = 1;
             }
-            else if (minValue >= short.MinValue && maxValue <= short.MaxValue)
+            else if (minValue >= short.MinValue && maxValue <= short.MaxValue) // LUCENENET TODO: Shouldn't this be ushort?
             {
                 byteWidth = 2;
             }
@@ -132,15 +132,7 @@ namespace Lucene.Net.Codecs.Memory
 
             foreach (var nv in values)
             {
-                long v;
-                if (nv != null)
-                {
-                    v = nv.Value;
-                }
-                else
-                {
-                    v = 0;
-                }
+                long v = nv.GetValueOrDefault();
 
                 switch (byteWidth)
                 {

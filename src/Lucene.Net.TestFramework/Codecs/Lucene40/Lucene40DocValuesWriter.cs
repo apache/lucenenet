@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs.Lucene40
             long maxValue = long.MinValue;
             foreach (long? n in values)
             {
-                long v = n == null ? 0 : (long)n;
+                long v = n.GetValueOrDefault();
                 minValue = Math.Min(minValue, v);
                 maxValue = Math.Max(maxValue, v);
             }
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // fits in a byte[], would be more than 4bpv, just write byte[]
                     AddBytesField(field, data, values);
                 }
-                else if (minValue >= short.MinValue && maxValue <= short.MaxValue && PackedInt32s.BitsRequired(maxValue - minValue) > 8)
+                else if (minValue >= short.MinValue && maxValue <= short.MaxValue && PackedInt32s.BitsRequired(maxValue - minValue) > 8) // LUCENENET TODO: Shouldn't this be ushort.MinValue & MaxValue?
                 {
                     // fits in a short[], would be more than 8bpv, just write short[]
                     AddShortsField(field, data, values);
@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene40
             output.WriteInt32(1); // size
             foreach (long? n in values)
             {
-                output.WriteByte(n == null ? (byte)0 : (byte)n);
+                output.WriteByte((byte)n.GetValueOrDefault());
             }
         }
 
@@ -119,7 +119,7 @@ namespace Lucene.Net.Codecs.Lucene40
             output.WriteInt32(2); // size
             foreach (long? n in values)
             {
-                output.WriteInt16(n == null ? (short)0 : (short)n);
+                output.WriteInt16((short)n.GetValueOrDefault());
             }
         }
 
@@ -130,7 +130,7 @@ namespace Lucene.Net.Codecs.Lucene40
             output.WriteInt32(4); // size
             foreach (long? n in values)
             {
-                output.WriteInt32(n == null ? 0 : (int)n);
+                output.WriteInt32((int)n.GetValueOrDefault());
             }
         }
 
@@ -148,7 +148,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 output.WriteByte((byte)Lucene40DocValuesFormat.VAR_INTS_FIXED_64);
                 foreach (long? n in values)
                 {
-                    output.WriteInt64(n == null ? 0 : n.Value);
+                    output.WriteInt64(n.GetValueOrDefault());
                 }
             }
             else
@@ -160,8 +160,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 PackedInt32s.Writer writer = PackedInt32s.GetWriter(output, State.SegmentInfo.DocCount, PackedInt32s.BitsRequired(delta), PackedInt32s.DEFAULT);
                 foreach (long? n in values)
                 {
-                    long v = n == null ? 0 : (long)n;
-                    writer.Add(v - minValue);
+                    writer.Add(n.GetValueOrDefault() - minValue);
                 }
                 writer.Finish();
             }

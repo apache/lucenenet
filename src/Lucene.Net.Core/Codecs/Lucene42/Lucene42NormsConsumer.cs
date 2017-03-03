@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     meta.WriteByte((byte)UNCOMPRESSED); // uncompressed
                     foreach (long? nv in values)
                     {
-                        data.WriteByte(nv == null ? (byte)0 : (byte)(sbyte)nv.Value);
+                        data.WriteByte((byte)nv.GetValueOrDefault());
                     }
                 }
                 else
@@ -161,7 +161,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     PackedInt32s.Writer writer = PackedInt32s.GetWriterNoHeader(data, formatAndBits.Format, maxDoc, formatAndBits.BitsPerValue, PackedInt32s.DEFAULT_BUFFER_SIZE);
                     foreach (long? nv in values)
                     {
-                        writer.Add(encode[nv == null ? 0 : nv.Value]);
+                        writer.Add(encode[nv.GetValueOrDefault()]);
                     }
                     writer.Finish();
                 }
@@ -177,8 +177,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 var writer = new BlockPackedWriter(data, BLOCK_SIZE);
                 foreach (long? nv in values)
                 {
-                    long value = nv == null ? 0 : nv.Value;
-                    writer.Add((value - minValue) / gcd);
+                    writer.Add((nv.GetValueOrDefault() - minValue) / gcd);
                 }
                 writer.Finish();
             }
@@ -192,7 +191,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 var writer = new BlockPackedWriter(data, BLOCK_SIZE);
                 foreach (long? nv in values)
                 {
-                    writer.Add(nv == null ? 0 : nv.Value);
+                    writer.Add(nv.GetValueOrDefault());
                 }
                 writer.Finish();
             }
