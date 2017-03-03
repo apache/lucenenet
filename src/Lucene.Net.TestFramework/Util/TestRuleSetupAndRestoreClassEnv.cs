@@ -257,7 +257,7 @@ namespace Lucene.Net.Util
 
             // TimeZone.getDefault will set user.timezone to the default timezone of the user's locale.
             // So store the original property value and restore it at end.
-            restoreProperties["user.timezone"] = System.Environment.GetEnvironmentVariable("user.timezone");
+            restoreProperties["user.timezone"] = SystemProperties.GetProperty("user.timezone");
             savedTimeZone = testInstance.TimeZone;
             TimeZoneInfo randomTimeZone = LuceneTestCase.RandomTimeZone(random);
             timeZone = testTimeZone.Equals("random") ? randomTimeZone : TimeZoneInfo.FindSystemTimeZoneById(testTimeZone);
@@ -364,17 +364,10 @@ namespace Lucene.Net.Util
         /// </summary>
         public override void After(LuceneTestCase testInstance)
         {
-            //foreach (KeyValuePair<string, string> e in restoreProperties)
-            //{
-            //    if (e.Value == null)
-            //    {
-            //        System.ClearProperty(e.Key);
-            //    }
-            //    else
-            //    {
-            //        System.setProperty(e.Key, e.Value);
-            //    }
-            //}
+            foreach (KeyValuePair<string, string> e in restoreProperties)
+            {
+                SystemProperties.SetProperty(e.Key, e.Value);
+            }
             restoreProperties.Clear();
 
             Codec.Default = savedCodec;
