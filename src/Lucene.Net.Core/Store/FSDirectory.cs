@@ -188,9 +188,7 @@ namespace Lucene.Net.Store
             }
             else
             {
-                //NIOFSDirectory is not implemented in Lucene.Net
-                //return new NIOFSDirectory(path, lockFactory);
-                return new SimpleFSDirectory(path, lockFactory); // LUCENENET TODO: NIOFSDirectory IS implemented in .NET - switch back to original
+                return new NIOFSDirectory(path, lockFactory);
             }
         }
 
