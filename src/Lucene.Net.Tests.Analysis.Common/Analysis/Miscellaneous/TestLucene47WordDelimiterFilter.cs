@@ -56,7 +56,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsets()
         {
-            int flags = WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS | WordDelimiterFilter.CATENATE_ALL | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
+                | WordDelimiterFlags.CATENATE_ALL 
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+                | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             // test that subwords and catenated subwords have
             // the correct offsets.
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("foo-bar", 5, 12)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
@@ -71,7 +76,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange()
         {
-            int flags = WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS | WordDelimiterFilter.CATENATE_ALL | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
+                | WordDelimiterFlags.CATENATE_ALL 
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+                | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("übelkeit)", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
             AssertTokenStreamContents(wdf, new string[] { "übelkeit" }, new int[] { 7 }, new int[] { 15 });
@@ -80,7 +90,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange2()
         {
-            int flags = WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS | WordDelimiterFilter.CATENATE_ALL | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
+                | WordDelimiterFlags.CATENATE_ALL 
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+                | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("(übelkeit", 7, 17)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
             AssertTokenStreamContents(wdf, new string[] { "übelkeit" }, new int[] { 8 }, new int[] { 17 });
@@ -89,7 +104,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange3()
         {
-            int flags = WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS | WordDelimiterFilter.CATENATE_ALL | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
+                | WordDelimiterFlags.CATENATE_ALL 
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+                | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("(übelkeit", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
             AssertTokenStreamContents(wdf, new string[] { "übelkeit" }, new int[] { 8 }, new int[] { 16 });
@@ -98,7 +118,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestOffsetChange4()
         {
-            int flags = WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS | WordDelimiterFilter.CATENATE_ALL | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
+                | WordDelimiterFlags.CATENATE_ALL 
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+                | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             TokenFilter wdf = new Lucene47WordDelimiterFilter(new SingleTokenTokenStream(new Token("(foo,bar)", 7, 16)), WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
             AssertTokenStreamContents(wdf, new string[] { "foo", "bar", "foobar" }, new int[] { 8, 12, 8 }, new int[] { 11, 15, 15 }, null, null, null, null, false);
@@ -106,7 +131,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public virtual void DoSplit(string input, params string[] output)
         {
-            int flags = WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+                | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             MockTokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.KEYWORD, false);
             TokenFilter wdf = new Lucene47WordDelimiterFilter(tokenizer, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, flags, null);
 
@@ -151,8 +180,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public virtual void DoSplitPossessive(int stemPossessive, string input, params string[] output)
         {
-            int flags = WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS;
-            flags |= (stemPossessive == 1) ? WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE : 0;
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS;
+            flags |= (stemPossessive == 1) ? WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE : 0;
             MockTokenizer tokenizer = new MockTokenizer(new StringReader(input), MockTokenizer.KEYWORD, false);
             TokenFilter wdf = new Lucene47WordDelimiterFilter(tokenizer, flags, null);
 
@@ -206,7 +238,12 @@ namespace Lucene.Net.Analysis.Miscellaneous
         [Test]
         public virtual void TestPositionIncrements()
         {
-            int flags = WordDelimiterFilter.GENERATE_WORD_PARTS | WordDelimiterFilter.GENERATE_NUMBER_PARTS | WordDelimiterFilter.CATENATE_ALL | WordDelimiterFilter.SPLIT_ON_CASE_CHANGE | WordDelimiterFilter.SPLIT_ON_NUMERICS | WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+            WordDelimiterFlags flags = WordDelimiterFlags.GENERATE_WORD_PARTS 
+                | WordDelimiterFlags.GENERATE_NUMBER_PARTS 
+                | WordDelimiterFlags.CATENATE_ALL 
+                | WordDelimiterFlags.SPLIT_ON_CASE_CHANGE 
+                | WordDelimiterFlags.SPLIT_ON_NUMERICS 
+                | WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             CharArraySet protWords = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "NUTCH" }, false);
 
             /* analyzer that uses whitespace + wdf */
@@ -246,10 +283,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             private readonly TestLucene47WordDelimiterFilter outerInstance;
 
-            private int flags;
+            private WordDelimiterFlags flags;
             private CharArraySet protWords;
 
-            public AnalyzerAnonymousInnerClassHelper(TestLucene47WordDelimiterFilter outerInstance, int flags, CharArraySet protWords)
+            public AnalyzerAnonymousInnerClassHelper(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protWords)
             {
                 this.outerInstance = outerInstance;
                 this.flags = flags;
@@ -267,10 +304,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             private readonly TestLucene47WordDelimiterFilter outerInstance;
 
-            private int flags;
+            private WordDelimiterFlags flags;
             private CharArraySet protWords;
 
-            public AnalyzerAnonymousInnerClassHelper2(TestLucene47WordDelimiterFilter outerInstance, int flags, CharArraySet protWords)
+            public AnalyzerAnonymousInnerClassHelper2(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protWords)
             {
                 this.outerInstance = outerInstance;
                 this.flags = flags;
@@ -288,10 +325,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             private readonly TestLucene47WordDelimiterFilter outerInstance;
 
-            private int flags;
+            private WordDelimiterFlags flags;
             private CharArraySet protWords;
 
-            public AnalyzerAnonymousInnerClassHelper3(TestLucene47WordDelimiterFilter outerInstance, int flags, CharArraySet protWords)
+            public AnalyzerAnonymousInnerClassHelper3(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protWords)
             {
                 this.outerInstance = outerInstance;
                 this.flags = flags;
@@ -314,7 +351,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             int numIterations = AtLeast(5);
             for (int i = 0; i < numIterations; i++)
             {
-                int flags = Random().Next(512);
+                WordDelimiterFlags flags = (WordDelimiterFlags)Random().Next(512);
                 CharArraySet protectedWords;
                 if (Random().nextBoolean())
                 {
@@ -334,10 +371,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             private readonly TestLucene47WordDelimiterFilter outerInstance;
 
-            private int flags;
+            private WordDelimiterFlags flags;
             private CharArraySet protectedWords;
 
-            public AnalyzerAnonymousInnerClassHelper4(TestLucene47WordDelimiterFilter outerInstance, int flags, CharArraySet protectedWords)
+            public AnalyzerAnonymousInnerClassHelper4(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protectedWords)
             {
                 this.outerInstance = outerInstance;
                 this.flags = flags;
@@ -357,7 +394,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             Random random = Random();
             for (int i = 0; i < 512; i++)
             {
-                int flags = i;
+                WordDelimiterFlags flags = (WordDelimiterFlags)i;
                 CharArraySet protectedWords;
                 if (random.nextBoolean())
                 {
@@ -378,10 +415,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             private readonly TestLucene47WordDelimiterFilter outerInstance;
 
-            private int flags;
+            private WordDelimiterFlags flags;
             private CharArraySet protectedWords;
 
-            public AnalyzerAnonymousInnerClassHelper5(TestLucene47WordDelimiterFilter outerInstance, int flags, CharArraySet protectedWords)
+            public AnalyzerAnonymousInnerClassHelper5(TestLucene47WordDelimiterFilter outerInstance, WordDelimiterFlags flags, CharArraySet protectedWords)
             {
                 this.outerInstance = outerInstance;
                 this.flags = flags;

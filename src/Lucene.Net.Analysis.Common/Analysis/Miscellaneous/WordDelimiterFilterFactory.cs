@@ -47,7 +47,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private readonly string wordFiles;
         private readonly string types;
-        private readonly int flags;
+        private readonly WordDelimiterFlags flags;
         private byte[] typeTable = null;
         private CharArraySet protectedWords = null;
 
@@ -57,42 +57,42 @@ namespace Lucene.Net.Analysis.Miscellaneous
             : base(args)
         {
             AssureMatchVersion();
-            int flags = 0;
+            WordDelimiterFlags flags = 0;
             if (GetInt32(args, "generateWordParts", 1) != 0)
             {
-                flags |= WordDelimiterFilter.GENERATE_WORD_PARTS;
+                flags |= WordDelimiterFlags.GENERATE_WORD_PARTS;
             }
             if (GetInt32(args, "generateNumberParts", 1) != 0)
             {
-                flags |= WordDelimiterFilter.GENERATE_NUMBER_PARTS;
+                flags |= WordDelimiterFlags.GENERATE_NUMBER_PARTS;
             }
             if (GetInt32(args, "catenateWords", 0) != 0)
             {
-                flags |= WordDelimiterFilter.CATENATE_WORDS;
+                flags |= WordDelimiterFlags.CATENATE_WORDS;
             }
             if (GetInt32(args, "catenateNumbers", 0) != 0)
             {
-                flags |= WordDelimiterFilter.CATENATE_NUMBERS;
+                flags |= WordDelimiterFlags.CATENATE_NUMBERS;
             }
             if (GetInt32(args, "catenateAll", 0) != 0)
             {
-                flags |= WordDelimiterFilter.CATENATE_ALL;
+                flags |= WordDelimiterFlags.CATENATE_ALL;
             }
             if (GetInt32(args, "splitOnCaseChange", 1) != 0)
             {
-                flags |= WordDelimiterFilter.SPLIT_ON_CASE_CHANGE;
+                flags |= WordDelimiterFlags.SPLIT_ON_CASE_CHANGE;
             }
             if (GetInt32(args, "splitOnNumerics", 1) != 0)
             {
-                flags |= WordDelimiterFilter.SPLIT_ON_NUMERICS;
+                flags |= WordDelimiterFlags.SPLIT_ON_NUMERICS;
             }
             if (GetInt32(args, "preserveOriginal", 0) != 0)
             {
-                flags |= WordDelimiterFilter.PRESERVE_ORIGINAL;
+                flags |= WordDelimiterFlags.PRESERVE_ORIGINAL;
             }
             if (GetInt32(args, "stemEnglishPossessive", 1) != 0)
             {
-                flags |= WordDelimiterFilter.STEM_ENGLISH_POSSESSIVE;
+                flags |= WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE;
             }
             wordFiles = Get(args, PROTECTED_TOKENS);
             types = Get(args, TYPES);

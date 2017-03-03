@@ -357,7 +357,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 Tokenizer tokenizer = new WikipediaTokenizer(reader);
                 TokenStream stream = new SopTokenFilter(tokenizer);
-                stream = new WordDelimiterFilter(TEST_VERSION_CURRENT, stream, table, -50, protWords);
+                stream = new WordDelimiterFilter(TEST_VERSION_CURRENT, stream, table, (WordDelimiterFlags)(object)-50, protWords);
                 stream = new SopTokenFilter(stream);
                 return new TokenStreamComponents(tokenizer, stream);
             }

@@ -38,66 +38,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public const int ALPHA = 0x03;
         public const int ALPHANUM = 0x07;
 
-        /// <summary>
-        /// Causes parts of words to be generated:
-        /// <p/>
-        /// "PowerShot" => "Power" "Shot"
-        /// </summary>
-        public const int GENERATE_WORD_PARTS = 1;
-
-        /// <summary>
-        /// Causes number subwords to be generated:
-        /// <p/>
-        /// "500-42" => "500" "42"
-        /// </summary>
-        public const int GENERATE_NUMBER_PARTS = 2;
-
-        /// <summary>
-        /// Causes maximum runs of word parts to be catenated:
-        /// <p/>
-        /// "wi-fi" => "wifi"
-        /// </summary>
-        public const int CATENATE_WORDS = 4;
-
-        /// <summary>
-        /// Causes maximum runs of word parts to be catenated:
-        /// <p/>
-        /// "wi-fi" => "wifi"
-        /// </summary>
-        public const int CATENATE_NUMBERS = 8;
-
-        /// <summary>
-        /// Causes all subword parts to be catenated:
-        /// <p/>
-        /// "wi-fi-4000" => "wifi4000"
-        /// </summary>
-        public const int CATENATE_ALL = 16;
-
-        /// <summary>
-        /// Causes original words are preserved and added to the subword list (Defaults to false)
-        /// <p/>
-        /// "500-42" => "500" "42" "500-42"
-        /// </summary>
-        public const int PRESERVE_ORIGINAL = 32;
-
-        /// <summary>
-        /// If not set, causes case changes to be ignored (subwords will only be generated
-        /// given SUBWORD_DELIM tokens)
-        /// </summary>
-        public const int SPLIT_ON_CASE_CHANGE = 64;
-
-        /// <summary>
-        /// If not set, causes numeric changes to be ignored (subwords will only be generated
-        /// given SUBWORD_DELIM tokens).
-        /// </summary>
-        public const int SPLIT_ON_NUMERICS = 128;
-
-        /// <summary>
-        /// Causes trailing "'s" to be removed for each subword
-        /// <p/>
-        /// "O'Neil's" => "O", "Neil"
-        /// </summary>
-        public const int STEM_ENGLISH_POSSESSIVE = 256;
+        // LUCENENET specific - made flags into their own [Flags] enum named WordDelimiterFlags and de-nested from this type
 
         /// <summary>
         /// If not null is the set of tokens to protect from being delimited
@@ -105,7 +46,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         private readonly CharArraySet protWords;
 
-        private readonly int flags;
+        private readonly WordDelimiterFlags flags;
 
         private readonly ICharTermAttribute termAttribute;
         private readonly IOffsetAttribute offsetAttribute;
@@ -148,7 +89,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="charTypeTable"> table containing character types </param>
         /// <param name="configurationFlags"> Flags configuring the filter </param>
         /// <param name="protWords"> If not null is the set of tokens to protect from being delimited </param>
-        public Lucene47WordDelimiterFilter(TokenStream @in, byte[] charTypeTable, int configurationFlags, CharArraySet protWords)
+        public Lucene47WordDelimiterFilter(TokenStream @in, byte[] charTypeTable, WordDelimiterFlags configurationFlags, CharArraySet protWords)
             : base(@in)
         {
             termAttribute = AddAttribute<ICharTermAttribute>();
@@ -160,7 +101,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             this.flags = configurationFlags;
             this.protWords = protWords;
-            this.iterator = new WordDelimiterIterator(charTypeTable, Has(SPLIT_ON_CASE_CHANGE), Has(SPLIT_ON_NUMERICS), Has(STEM_ENGLISH_POSSESSIVE));
+            this.iterator = new WordDelimiterIterator(charTypeTable, Has(WordDelimiterFlags.SPLIT_ON_CASE_CHANGE), Has(WordDelimiterFlags.SPLIT_ON_NUMERICS), Has(WordDelimiterFlags.STEM_ENGLISH_POSSESSIVE));
         }
 
         /// <summary>
@@ -170,7 +111,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <param name="in"> <see cref="TokenStream"/> to be filtered </param>
         /// <param name="configurationFlags"> Flags configuring the filter </param>
         /// <param name="protWords"> If not null is the set of tokens to protect from being delimited </param>
-        public Lucene47WordDelimiterFilter(TokenStream @in, int configurationFlags, CharArraySet protWords)
+        public Lucene47WordDelimiterFilter(TokenStream @in, WordDelimiterFlags configurationFlags, CharArraySet protWords)
             : this(@in, WordDelimiterIterator.DEFAULT_WORD_DELIM_TABLE, configurationFlags, protWords)
         {
         }
@@ -204,7 +145,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     }
 
                     // word of simply delimiters
-                    if (iterator.end == WordDelimiterIterator.DONE && !Has(PRESERVE_ORIGINAL))
+                    if (iterator.end == WordDelimiterIterator.DONE && !Has(WordDelimiterFlags.PRESERVE_ORIGINAL))
                     {
                         // if the posInc is 1, simply ignore it in the accumulation
                         if (posIncAttribute.PositionIncrement == 1)
@@ -217,10 +158,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     SaveState();
 
                     hasOutputToken = false;
-                    hasOutputFollowingOriginal = !Has(PRESERVE_ORIGINAL);
+                    hasOutputFollowingOriginal = !Has(WordDelimiterFlags.PRESERVE_ORIGINAL);
                     lastConcatCount = 0;
 
-                    if (Has(PRESERVE_ORIGINAL))
+                    if (Has(WordDelimiterFlags.PRESERVE_ORIGINAL))
                     {
                         posIncAttribute.PositionIncrement = accumPosInc;
                         accumPosInc = 0;
@@ -287,7 +228,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 }
 
                 // add all subwords (catenateAll)
-                if (Has(CATENATE_ALL))
+                if (Has(WordDelimiterFlags.CATENATE_ALL))
                 {
                     Concatenate(concatAll);
                 }
@@ -378,7 +319,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> <c>true</c> if concatenation should occur, <c>false</c> otherwise </returns>
         private bool ShouldConcatenate(int wordType)
         {
-            return (Has(CATENATE_WORDS) && IsAlpha(wordType)) || (Has(CATENATE_NUMBERS) && IsDigit(wordType));
+            return (Has(WordDelimiterFlags.CATENATE_WORDS) && IsAlpha(wordType)) || (Has(WordDelimiterFlags.CATENATE_NUMBERS) && IsDigit(wordType));
         }
 
         /// <summary>
@@ -388,7 +329,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// <returns> <c>true</c> if a word/number part should be generated, <c>false</c> otherwise </returns>
         private bool ShouldGenerateParts(int wordType)
         {
-            return (Has(GENERATE_WORD_PARTS) && IsAlpha(wordType)) || (Has(GENERATE_NUMBER_PARTS) && IsDigit(wordType));
+            return (Has(WordDelimiterFlags.GENERATE_WORD_PARTS) && IsAlpha(wordType)) || (Has(WordDelimiterFlags.GENERATE_NUMBER_PARTS) && IsDigit(wordType));
         }
 
         /// <summary>
@@ -511,7 +452,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         /// </summary>
         /// <param name="flag"> Flag to see if set </param>
         /// <returns> <c>true</c> if flag is set </returns>
-        private bool Has(int flag)
+        private bool Has(WordDelimiterFlags flag)
         {
             return (flags & flag) != 0;
         }
