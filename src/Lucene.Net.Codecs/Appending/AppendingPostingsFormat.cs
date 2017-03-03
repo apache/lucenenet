@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs.Appending
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
-            throw new NotImplementedException("This codec can only be used for reading");
+            throw new NotSupportedException("This codec can only be used for reading");
         }
 
         public override FieldsProducer FieldsProducer(SegmentReadState state)
