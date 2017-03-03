@@ -596,7 +596,6 @@
     <Compile Include="Store\SingleInstanceLockFactory.cs" />
     <Compile Include="Store\TrackingDirectoryWrapper.cs" />
     <Compile Include="Store\VerifyingLockFactory.cs" />
-    <Compile Include="Support\AppSettings.cs" />
     <Compile Include="Support\AtomicBoolean.cs" />
     <Compile Include="Support\AtomicInteger.cs" />
     <Compile Include="Support\AtomicLong.cs" />
@@ -631,7 +630,6 @@
     <Compile Include="Support\Compatibility\Collections.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
-    <Compile Include="Support\Configuration\Configuration.cs" />
     <Compile Include="Support\CultureContext.cs" />
     <Compile Include="Support\DataInputStream.cs" />
     <Compile Include="Support\DataOutputStream.cs" />

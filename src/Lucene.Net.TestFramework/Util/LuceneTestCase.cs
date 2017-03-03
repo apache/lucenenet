@@ -36,7 +36,6 @@ using System.Reflection;
 namespace Lucene.Net.Util
 {
     using Lucene.Net.TestFramework.Support;
-    using Support.Configuration;
     using System.IO;
     using System.Reflection;
     using AlcoholicMergePolicy = Lucene.Net.Index.AlcoholicMergePolicy;
