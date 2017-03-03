@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="ITypeAttribute"/>. </summary>
-    public class TypeAttribute : Attribute, ITypeAttribute
+    public partial class TypeAttribute : Attribute, ITypeAttribute
 #if FEATURE_CLONEABLE
         , ICloneable
 #endif
@@ -32,9 +32,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
         private string type;
 
         /// <summary>
-        /// Initialize this attribute with <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> </summary>
+        /// Initialize this attribute with <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         public TypeAttribute()
-            : this(TypeAttribute_Fields.DEFAULT_TYPE)
+            : this(TypeAttribute.DEFAULT_TYPE)
         {
         }
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         public override void Clear()
         {
-            type = TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TypeAttribute.DEFAULT_TYPE;
         }
 
         public override bool Equals(object other)

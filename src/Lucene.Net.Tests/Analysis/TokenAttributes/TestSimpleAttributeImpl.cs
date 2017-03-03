@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             TestUtil.AssertAttributeReflection(new PositionIncrementAttribute(), Collections.SingletonMap(typeof(IPositionIncrementAttribute).Name + "#positionIncrement", (object)1));
             TestUtil.AssertAttributeReflection(new PositionLengthAttribute(), Collections.SingletonMap(typeof(IPositionLengthAttribute).Name + "#positionLength", (object)1));
             TestUtil.AssertAttributeReflection(new FlagsAttribute(), Collections.SingletonMap(typeof(IFlagsAttribute).Name + "#flags", (object)0));
-            TestUtil.AssertAttributeReflection(new TypeAttribute(), Collections.SingletonMap(typeof(ITypeAttribute).Name + "#type", (object)TypeAttribute_Fields.DEFAULT_TYPE));
+            TestUtil.AssertAttributeReflection(new TypeAttribute(), Collections.SingletonMap(typeof(ITypeAttribute).Name + "#type", (object)TypeAttribute.DEFAULT_TYPE));
             TestUtil.AssertAttributeReflection(new PayloadAttribute(), Collections.SingletonMap(typeof(IPayloadAttribute).Name + "#payload", (object)null));
             TestUtil.AssertAttributeReflection(new KeywordAttribute(), Collections.SingletonMap(typeof(IKeywordAttribute).Name + "#keyword", (object)false));
             TestUtil.AssertAttributeReflection(new OffsetAttribute(), new Dictionary<string, object>()

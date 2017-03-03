@@ -280,7 +280,7 @@ namespace Lucene.Net.Analysis
                 { typeof(IOffsetAttribute).Name + "#endOffset", 22 },
                 { typeof(IPositionIncrementAttribute).Name + "#positionIncrement", 1 },
                 { typeof(IPayloadAttribute).Name + "#payload", null },
-                { typeof(ITypeAttribute).Name + "#type", TypeAttribute_Fields.DEFAULT_TYPE },
+                { typeof(ITypeAttribute).Name + "#type", TypeAttribute.DEFAULT_TYPE },
                 { typeof(IFlagsAttribute).Name + "#flags", 8 }
             });
         }

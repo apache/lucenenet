@@ -76,27 +76,27 @@ namespace Lucene.Net.Analysis
     /// for details.</para>
     /// <para>Typical Token reuse patterns:
     /// <list type="bullet">
-    ///     <item> Copying text from a string (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <item> Copying text from a string (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(string, startOffset, endOffset[, type]);
     ///     </code>
     ///     </item>
-    ///     <item> Copying some text from a string (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <item> Copying some text from a string (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(string, 0, string.Length, startOffset, endOffset[, type]);
     ///     </code>
     ///     </item>
-    ///     <item> Copying text from char[] buffer (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <item> Copying text from char[] buffer (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(buffer, 0, buffer.Length, startOffset, endOffset[, type]);
     ///     </code>
     ///     </item>
-    ///     <item> Copying some text from a char[] buffer (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <item> Copying some text from a char[] buffer (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(buffer, start, end - start, startOffset, endOffset[, type]);
     ///     </code>
     ///     </item>
-    ///     <item> Copying from one one <see cref="Token"/> to another (type is reset to <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> if not specified):
+    ///     <item> Copying from one one <see cref="Token"/> to another (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(source.Buffer, 0, source.Length, source.StartOffset, source.EndOffset[, source.Type]);
     ///     </code>
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis
     public class Token : CharTermAttribute, ITypeAttribute, IPositionIncrementAttribute, IFlagsAttribute, IOffsetAttribute, IPayloadAttribute, IPositionLengthAttribute
     {
         private int startOffset, endOffset;
-        private string type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
+        private string type = TypeAttribute.DEFAULT_TYPE;
         private int flags;
         private BytesRef payload;
         private int positionIncrement = 1;
@@ -381,7 +381,7 @@ namespace Lucene.Net.Analysis
             positionIncrement = 1;
             flags = 0;
             startOffset = endOffset = 0;
-            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
         }
 
         public override object Clone()
@@ -460,7 +460,7 @@ namespace Lucene.Net.Analysis
             positionIncrement = 1;
             flags = 0;
             startOffset = endOffset = 0;
-            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
         }
 
         /// <summary>
@@ -486,7 +486,7 @@ namespace Lucene.Net.Analysis
         /// Shorthand for calling <see cref="Clear"/>,
         /// <see cref="CopyBuffer(char[], int, int)"/>,
         /// <see cref="SetOffset"/>,
-        /// <see cref="Type"/> (set) on <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> </summary>
+        /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(char[] newTermBuffer, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
         {
@@ -495,7 +495,7 @@ namespace Lucene.Net.Analysis
             CopyBuffer(newTermBuffer, newTermOffset, newTermLength);
             startOffset = newStartOffset;
             endOffset = newEndOffset;
-            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
             return this;
         }
 
@@ -537,7 +537,7 @@ namespace Lucene.Net.Analysis
         /// Shorthand for calling <see cref="Clear"/>,
         /// <see cref="Append(string)"/>,
         /// <see cref="SetOffset"/>,
-        /// <see cref="Type"/> (set) on <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> </summary>
+        /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(string newTerm, int newStartOffset, int newEndOffset)
         {
@@ -546,7 +546,7 @@ namespace Lucene.Net.Analysis
             Append(newTerm);
             startOffset = newStartOffset;
             endOffset = newEndOffset;
-            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
             return this;
         }
 
@@ -554,7 +554,7 @@ namespace Lucene.Net.Analysis
         /// Shorthand for calling <see cref="Clear"/>,
         /// <see cref="Append(string, int, int)"/>,
         /// <see cref="SetOffset"/>,
-        /// <see cref="Type"/> (set) on <see cref="TypeAttribute_Fields.DEFAULT_TYPE"/> </summary>
+        /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
         public virtual Token Reinit(string newTerm, int newTermOffset, int newTermLength, int newStartOffset, int newEndOffset)
         {
@@ -563,7 +563,7 @@ namespace Lucene.Net.Analysis
             Append(newTerm, newTermOffset, newTermOffset + newTermLength);
             startOffset = newStartOffset;
             endOffset = newEndOffset;
-            type = TokenAttributes.TypeAttribute_Fields.DEFAULT_TYPE;
+            type = TokenAttributes.TypeAttribute.DEFAULT_TYPE;
             return this;
         }
 

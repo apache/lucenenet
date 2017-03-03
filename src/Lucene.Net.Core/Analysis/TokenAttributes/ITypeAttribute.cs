@@ -29,7 +29,13 @@ namespace Lucene.Net.Analysis.TokenAttributes
         string Type { get; set; }
     }
 
-    public static class TypeAttribute_Fields
+    // LUCENENET specific - since we can't add a field to an interface,
+    // the concrete type was made into a partial class so we can keep
+    // this together in the same file as the interface.
+    // 
+    // The syntax is the same as it was in Lucene -
+    // TypeAttribute.DEFAULT_TYPE.
+    public partial class TypeAttribute
     {
         /// <summary>
         /// the default type
