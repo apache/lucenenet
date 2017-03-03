@@ -121,8 +121,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         storePayloads = false;
                     }
-                    // LUCENE TO-DO
-                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, isIndexed && !omitNorms ? DocValuesType.NUMERIC : default(DocValuesType), Collections.EmptyMap<string, string>());
+                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, 
+                        omitNorms, storePayloads, indexOptions, null, 
+                        isIndexed && !omitNorms ? DocValuesType.NUMERIC : default(DocValuesType), 
+                        Collections.EmptyMap<string, string>());
                 }
 
                 if (input.FilePointer != input.Length)
