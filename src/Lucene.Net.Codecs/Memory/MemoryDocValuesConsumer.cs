@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Memory
 
                     if (gcd != 1)
                     {
-                        if (v < long.MinValue/2 || v > long.MaxValue/2)
+                        if (v < long.MinValue / 2 || v > long.MaxValue / 2)
                         {
                             // in that case v - minValue might overflow and make the GCD computation return
                             // wrong results. Since these extreme values are unlikely, we just discard
@@ -169,7 +169,7 @@ namespace Lucene.Net.Codecs.Memory
                     meta.WriteByte(MemoryDocValuesProducer.UNCOMPRESSED); // uncompressed
                     foreach (var nv in values)
                     {
-                        data.WriteByte(!nv.HasValue ? (byte)0 : (byte)nv.Value);
+                        data.WriteByte((byte)nv.GetValueOrDefault());
                     }
                 }
                 else
@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.Memory
                         formatAndBits.BitsPerValue, PackedInt32s.DEFAULT_BUFFER_SIZE);
                     foreach (var nv in values)
                     {
-                        var v = encode[nv.HasValue ? nv.Value : 0];
+                        var v = encode[nv.GetValueOrDefault()];
 
                         writer.Add((long)v);
                     }
@@ -211,7 +211,7 @@ namespace Lucene.Net.Codecs.Memory
                 var writer = new BlockPackedWriter(data, MemoryDocValuesProducer.BLOCK_SIZE);
                 foreach (var nv in values)
                 {
-                    writer.Add((nv.Value - minValue)/gcd);
+                    writer.Add((nv.GetValueOrDefault() - minValue) / gcd);
                 }
                 writer.Finish();
             }
@@ -465,7 +465,7 @@ namespace Lucene.Net.Codecs.Memory
                 if (!counts.MoveNext())
                     return false;
 
-                int count = (int) counts.Current;
+                int count = (int)counts.Current;
                 int maxSize = count * 9; // worst case
                 if (maxSize > buffer.Length)
                 {
@@ -473,7 +473,6 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 EncodeValues(count);
-                
 
                 _current.Bytes = buffer;
                 _current.Offset = 0;
