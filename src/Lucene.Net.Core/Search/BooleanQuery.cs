@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
+        private ValueList<BooleanClause> clauses = new ValueList<BooleanClause>();
         private readonly bool disableCoord;
 
         /// <summary>
@@ -585,7 +585,7 @@ namespace Lucene.Net.Search
         public override object Clone()
         {
             BooleanQuery clone = (BooleanQuery)base.Clone();
-            clone.clauses = (EquatableList<BooleanClause>)this.clauses.Clone();
+            clone.clauses = (ValueList<BooleanClause>)this.clauses.Clone();
             return clone;
         }
 
@@ -666,16 +666,17 @@ namespace Lucene.Net.Search
             }
             BooleanQuery other = (BooleanQuery)o;
             return this.Boost == other.Boost 
-                && this.clauses.SequenceEqual(other.clauses) 
+                && this.clauses.Equals(other.clauses) 
                 && this.MinimumNumberShouldMatch == other.MinimumNumberShouldMatch 
                 && this.disableCoord == other.disableCoord;
         }
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
-        public override int GetHashCode() // LUCENENET TODO: Fix hashcode logic.
+        public override int GetHashCode()
         {
-            return Number.SingleToInt32Bits(Boost) ^ (clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count)) + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
+            return Number.SingleToInt32Bits(Boost) ^ clauses.GetHashCode()
+                + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
         }
     }
 }

@@ -28,6 +28,11 @@ namespace Lucene.Net.Support
             : base(collection)
         { }
 
+        public object Clone()
+        {
+            return new ValueList<T>(this);
+        }
+
         public override bool Equals(object obj)
         {
             if (obj == this)
