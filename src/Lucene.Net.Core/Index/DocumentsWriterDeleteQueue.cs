@@ -373,7 +373,7 @@ namespace Lucene.Net.Index
         internal class Node // LUCENENET specific - made internal instead of private because it is used in internal APIs
         {
             internal /*volatile*/ Node next;
-            internal readonly object item; // LUCENENET TODO: Can we make this generic like the original?
+            internal readonly object item;
 
             internal Node(object item)
             {
