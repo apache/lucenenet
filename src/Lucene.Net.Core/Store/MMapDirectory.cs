@@ -259,9 +259,6 @@ namespace Lucene.Net.Store
                 this.outerInstance = outerInstance;
                 this.useUnmapHack = outerInstance.UseUnmap;
                 this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
-
-                //Called here to let buffers get set up
-                base.Seek(0L);
             }
 
             public override sealed void Dispose()

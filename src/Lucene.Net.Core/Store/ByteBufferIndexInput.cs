@@ -64,22 +64,29 @@ namespace Lucene.Net.Store
         internal ByteBufferIndexInput(string resourceDescription, ByteBuffer[] buffers, long length, int chunkSizePower, bool trackClones)
             : base(resourceDescription)
         {
-            this.buffers = buffers;
+            //this.buffers = buffers;
             this.length = length;
             this.chunkSizePower = chunkSizePower;
             this.chunkSizeMask = (1L << chunkSizePower) - 1L;
             this.clones = trackClones ? WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper>.NewConcurrentHashMap() : null;
 
             Debug.Assert(chunkSizePower >= 0 && chunkSizePower <= 30);
-            //assert((long)((ulong)length >> chunkSizePower)) < int.MaxValue; // LUCENENET TODO: why isn't this in place?
+            Debug.Assert(((long)((ulong)length >> chunkSizePower)) < int.MaxValue);
 
-            //Seek(0L); // LUCENENET TODO: why isn't this in place?
+            // LUCENENET specific: MMapIndexInput calls SetBuffers() to populate
+            // the buffers, so we need to skip that call if it is null here, and
+            // do the seek inside SetBuffers()
+            if (buffers != null)
+            {
+                SetBuffers(buffers);
+            }
         }
 
         // LUCENENET specific for encapsulating buffers field.
         internal void SetBuffers(ByteBuffer[] buffers) // necessary for MMapIndexInput
         {
             this.buffers = buffers;
+            Seek(0L);
         }
 
 
