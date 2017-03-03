@@ -89,16 +89,16 @@ namespace Lucene.Net.Index
                 get { return numericDVUpdates.Count + binaryDVUpdates.Count; }
             }
 
-            internal virtual AbstractDocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdates.Type type)
+            internal virtual AbstractDocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdatesType type)
             {
                 switch (type)
                 {
-                    case DocValuesFieldUpdates.Type.NUMERIC:
+                    case DocValuesFieldUpdatesType.NUMERIC:
                         NumericDocValuesFieldUpdates num;
                         numericDVUpdates.TryGetValue(field, out num);
                         return num;
 
-                    case DocValuesFieldUpdates.Type.BINARY:
+                    case DocValuesFieldUpdatesType.BINARY:
                         BinaryDocValuesFieldUpdates bin;
                         binaryDVUpdates.TryGetValue(field, out bin);
                         return bin;
@@ -108,18 +108,18 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual AbstractDocValuesFieldUpdates NewUpdates(string field, DocValuesFieldUpdates.Type type, int maxDoc)
+            internal virtual AbstractDocValuesFieldUpdates NewUpdates(string field, DocValuesFieldUpdatesType type, int maxDoc)
             {
                 switch (type)
                 {
-                    case DocValuesFieldUpdates.Type.NUMERIC:
+                    case DocValuesFieldUpdatesType.NUMERIC:
                         NumericDocValuesFieldUpdates numericUpdates;
                         Debug.Assert(!numericDVUpdates.TryGetValue(field, out numericUpdates));
                         numericUpdates = new NumericDocValuesFieldUpdates(field, maxDoc);
                         numericDVUpdates[field] = numericUpdates;
                         return numericUpdates;
 
-                    case DocValuesFieldUpdates.Type.BINARY:
+                    case DocValuesFieldUpdatesType.BINARY:
                         BinaryDocValuesFieldUpdates binaryUpdates;
                         Debug.Assert(!binaryDVUpdates.TryGetValue(field, out binaryUpdates));
                         binaryUpdates = new BinaryDocValuesFieldUpdates(field, maxDoc);
@@ -138,9 +138,9 @@ namespace Lucene.Net.Index
         }
 
         internal readonly string field;
-        internal readonly DocValuesFieldUpdates.Type type;
+        internal readonly DocValuesFieldUpdatesType type;
 
-        protected internal AbstractDocValuesFieldUpdates(string field, DocValuesFieldUpdates.Type type)
+        protected internal AbstractDocValuesFieldUpdates(string field, DocValuesFieldUpdatesType type)
         {
             this.field = field;
             this.type = type;
@@ -171,16 +171,11 @@ namespace Lucene.Net.Index
         public abstract bool Any();
     }
 
-    // LUCENENET specific class used to nest Type enumeration into the correct place
+    // LUCENENET specific - de-nested Type enumeration and renamed DocValuesFieldUpdatesType
     // primarily so it doesn't conflict with System.Type.
-    public class DocValuesFieldUpdates
+    public enum DocValuesFieldUpdatesType
     {
-        private DocValuesFieldUpdates() { } // Disallow creation
-
-        public enum Type
-        {
-            NUMERIC,
-            BINARY
-        }
+        NUMERIC,
+        BINARY
     }
 }
