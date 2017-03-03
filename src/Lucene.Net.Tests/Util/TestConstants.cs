@@ -44,7 +44,7 @@ namespace Lucene.Net.Util
         public virtual void TestBuildSetup()
         {
             // common-build.xml sets lucene.version, if not, we skip this test!
-            string version = AppSettings.Get("lucene.version", null);
+            string version = SystemProperties.GetProperty("lucene.version", null);
             if (version == null)
             {
                 Console.WriteLine("Null lucene.version test property. You should run the tests with the official Lucene build file");
