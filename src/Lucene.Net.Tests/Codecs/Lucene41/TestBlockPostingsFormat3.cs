@@ -1,3 +1,4 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -149,7 +150,7 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             private readonly TestBlockPostingsFormat3 OuterInstance;
 
-            public AnalyzerAnonymousInnerClassHelper(TestBlockPostingsFormat3 outerInstance, Analyzer.ReuseStrategy PER_FIELD_REUSE_STRATEGY)
+            public AnalyzerAnonymousInnerClassHelper(TestBlockPostingsFormat3 outerInstance, ReuseStrategy PER_FIELD_REUSE_STRATEGY)
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
                 this.OuterInstance = outerInstance;

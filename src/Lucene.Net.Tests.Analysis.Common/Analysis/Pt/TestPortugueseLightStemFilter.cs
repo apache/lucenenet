@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Pt
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
-                return new Analyzer.TokenStreamComponents(source, new PortugueseLightStemFilter(sink));
+                return new TokenStreamComponents(source, new PortugueseLightStemFilter(sink));
             }
         }
 

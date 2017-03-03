@@ -216,7 +216,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // appear first:
             assertEquals("abcd", r.ElementAt(0).Key.toString());
         }
-        internal class TestGraphDupsTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class TestGraphDupsTokenStreamComponents : TokenStreamComponents
         {
             private readonly FuzzySuggesterTest outerInstance;
             internal int tokenStreamCounter = 0;
@@ -314,7 +314,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertTrue(!result.Any());
         }
 
-        internal class TestInputPathRequiredTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class TestInputPathRequiredTokenStreamComponents : TokenStreamComponents
         {
             private readonly FuzzySuggesterTest outerInstance;
             internal int tokenStreamCounter = 0;
@@ -422,7 +422,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         } 
         */
 
-        internal class UsualTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class UsualTokenStreamComponents : TokenStreamComponents
         {
             private readonly FuzzySuggesterTest outerInstance;
             internal int count;

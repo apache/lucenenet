@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Snowball
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new Analyzer.TokenStreamComponents(tokenizer, new SnowballFilter(tokenizer, lang));
+                return new TokenStreamComponents(tokenizer, new SnowballFilter(tokenizer, lang));
             }
         }
 
@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis.Snowball
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(reader);
-                return new Analyzer.TokenStreamComponents(t, new SnowballFilter(t, snowballLanguage));
+                return new TokenStreamComponents(t, new SnowballFilter(t, snowballLanguage));
             }
         }
     }

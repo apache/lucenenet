@@ -1,3 +1,4 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;

@@ -307,146 +307,8 @@ namespace Lucene.Net.Analysis
             }
         }
 
-        /// <summary>
-        /// This class encapsulates the outer components of a token stream. It provides
-        /// access to the source (<see cref="Analysis.Tokenizer"/>) and the outer end (sink), an
-        /// instance of <see cref="TokenFilter"/> which also serves as the
-        /// <see cref="Analysis.TokenStream"/> returned by
-        /// <seealso cref="Analyzer.GetTokenStream(string, TextReader)"/>.
-        /// </summary>
-        public class TokenStreamComponents
-        {
-            /// <summary>
-            /// Original source of the tokens.
-            /// </summary>
-            protected readonly Tokenizer m_source;
-
-            /// <summary>
-            /// Sink tokenstream, such as the outer tokenfilter decorating
-            /// the chain. This can be the source if there are no filters.
-            /// </summary>
-            protected readonly TokenStream m_sink;
-
-            /// <summary>
-            /// Internal cache only used by <see cref="Analyzer.GetTokenStream(string, string)"/>. </summary>
-            internal ReusableStringReader reusableStringReader;
-
-            /// <summary>
-            /// Creates a new <see cref="TokenStreamComponents"/> instance.
-            /// </summary>
-            /// <param name="source">
-            ///          the analyzer's tokenizer </param>
-            /// <param name="result">
-            ///          the analyzer's resulting token stream </param>
-            public TokenStreamComponents(Tokenizer source, TokenStream result)
-            {
-                this.m_source = source;
-                this.m_sink = result;
-            }
-
-            /// <summary>
-            /// Creates a new <see cref="TokenStreamComponents"/> instance.
-            /// </summary>
-            /// <param name="source">
-            ///          the analyzer's tokenizer </param>
-            public TokenStreamComponents(Tokenizer source)
-            {
-                this.m_source = source;
-                this.m_sink = source;
-            }
-
-            /// <summary>
-            /// Resets the encapsulated components with the given reader. If the components
-            /// cannot be reset, an Exception should be thrown.
-            /// </summary>
-            /// <param name="reader">
-            ///          a reader to reset the source component </param>
-            /// <exception cref="IOException">
-            ///           if the component's reset method throws an <seealso cref="IOException"/> </exception>
-            protected internal virtual void SetReader(TextReader reader)
-            {
-                m_source.SetReader(reader);
-            }
-
-            /// <summary>
-            /// Returns the sink <see cref="Analysis.TokenStream"/>
-            /// </summary>
-            /// <returns> the sink <see cref="Analysis.TokenStream"/> </returns>
-            public virtual TokenStream TokenStream
-            {
-                get
-                {
-                    return m_sink;
-                }
-            }
-
-            /// <summary>
-            /// Returns the component's <see cref="Analysis.Tokenizer"/>
-            /// </summary>
-            /// <returns> Component's <see cref="Analysis.Tokenizer"/> </returns>
-            public virtual Tokenizer Tokenizer
-            {
-                get
-                {
-                    return m_source;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Strategy defining how <see cref="TokenStreamComponents"/> are reused per call to
-        /// <see cref="Analyzer.GetTokenStream(string, TextReader)"/>.
-        /// </summary>
-        public abstract class ReuseStrategy
-        {
-            /// <summary>
-            /// Gets the reusable <see cref="TokenStreamComponents"/> for the field with the given name.
-            /// </summary>
-            /// <param name="analyzer"> <see cref="Analyzer"/> from which to get the reused components. Use
-            ///        <see cref="GetStoredValue(Analyzer)"/> and <see cref="SetStoredValue(Analyzer, object)"/>
-            ///        to access the data on the <see cref="Analyzer"/>. </param>
-            /// <param name="fieldName"> Name of the field whose reusable <see cref="TokenStreamComponents"/>
-            ///        are to be retrieved </param>
-            /// <returns> Reusable <see cref="TokenStreamComponents"/> for the field, or <c>null</c>
-            ///         if there was no previous components for the field </returns>
-            public abstract TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName);
-
-            /// <summary>
-            /// Stores the given <see cref="TokenStreamComponents"/> as the reusable components for the
-            /// field with the give name.
-            /// </summary>
-            /// <param name="fieldName"> Name of the field whose <see cref="TokenStreamComponents"/> are being set </param>
-            /// <param name="components"> <see cref="TokenStreamComponents"/> which are to be reused for the field </param>
-            public abstract void SetReusableComponents(Analyzer analyzer, string fieldName, TokenStreamComponents components);
-
-            /// <summary>
-            /// Returns the currently stored value.
-            /// </summary>
-            /// <returns> Currently stored value or <c>null</c> if no value is stored </returns>
-            /// <exception cref="AlreadyClosedException"> if the <see cref="Analyzer"/> is closed. </exception>
-            protected internal object GetStoredValue(Analyzer analyzer)
-            {
-                if (analyzer.storedValue == null)
-                {
-                    throw new AlreadyClosedException("this Analyzer is closed");
-                }
-                return analyzer.storedValue.Get();
-            }
-
-            /// <summary>
-            /// Sets the stored value.
-            /// </summary>
-            /// <param name="storedValue"> Value to store </param>
-            /// <exception cref="AlreadyClosedException"> if the <see cref="Analyzer"/> is closed. </exception>
-            protected internal void SetStoredValue(Analyzer analyzer, object storedValue)
-            {
-                if (analyzer.storedValue == null)
-                {
-                    throw new AlreadyClosedException("this Analyzer is closed");
-                }
-                analyzer.storedValue.Set(storedValue);
-            }
-        }
+        // LUCENENET specific - de-nested TokenStreamComponents and ReuseStrategy
+        // so they don't need to be qualified when used outside of Analyzer subclasses.
 
         /// <summary>
         /// A predefined <see cref="ReuseStrategy"/>  that reuses the same components for
@@ -551,6 +413,147 @@ namespace Lucene.Net.Analysis
             {
                 return createComponents(fieldName, reader);
             }
+        }
+    }
+
+    /// <summary>
+    /// This class encapsulates the outer components of a token stream. It provides
+    /// access to the source (<see cref="Analysis.Tokenizer"/>) and the outer end (sink), an
+    /// instance of <see cref="TokenFilter"/> which also serves as the
+    /// <see cref="Analysis.TokenStream"/> returned by
+    /// <seealso cref="Analyzer.GetTokenStream(string, TextReader)"/>.
+    /// </summary>
+    public class TokenStreamComponents
+    {
+        /// <summary>
+        /// Original source of the tokens.
+        /// </summary>
+        protected readonly Tokenizer m_source;
+
+        /// <summary>
+        /// Sink tokenstream, such as the outer tokenfilter decorating
+        /// the chain. This can be the source if there are no filters.
+        /// </summary>
+        protected readonly TokenStream m_sink;
+
+        /// <summary>
+        /// Internal cache only used by <see cref="Analyzer.GetTokenStream(string, string)"/>. </summary>
+        internal ReusableStringReader reusableStringReader;
+
+        /// <summary>
+        /// Creates a new <see cref="TokenStreamComponents"/> instance.
+        /// </summary>
+        /// <param name="source">
+        ///          the analyzer's tokenizer </param>
+        /// <param name="result">
+        ///          the analyzer's resulting token stream </param>
+        public TokenStreamComponents(Tokenizer source, TokenStream result)
+        {
+            this.m_source = source;
+            this.m_sink = result;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="TokenStreamComponents"/> instance.
+        /// </summary>
+        /// <param name="source">
+        ///          the analyzer's tokenizer </param>
+        public TokenStreamComponents(Tokenizer source)
+        {
+            this.m_source = source;
+            this.m_sink = source;
+        }
+
+        /// <summary>
+        /// Resets the encapsulated components with the given reader. If the components
+        /// cannot be reset, an Exception should be thrown.
+        /// </summary>
+        /// <param name="reader">
+        ///          a reader to reset the source component </param>
+        /// <exception cref="IOException">
+        ///           if the component's reset method throws an <seealso cref="IOException"/> </exception>
+        protected internal virtual void SetReader(TextReader reader)
+        {
+            m_source.SetReader(reader);
+        }
+
+        /// <summary>
+        /// Returns the sink <see cref="Analysis.TokenStream"/>
+        /// </summary>
+        /// <returns> the sink <see cref="Analysis.TokenStream"/> </returns>
+        public virtual TokenStream TokenStream
+        {
+            get
+            {
+                return m_sink;
+            }
+        }
+
+        /// <summary>
+        /// Returns the component's <see cref="Analysis.Tokenizer"/>
+        /// </summary>
+        /// <returns> Component's <see cref="Analysis.Tokenizer"/> </returns>
+        public virtual Tokenizer Tokenizer
+        {
+            get
+            {
+                return m_source;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Strategy defining how <see cref="TokenStreamComponents"/> are reused per call to
+    /// <see cref="Analyzer.GetTokenStream(string, TextReader)"/>.
+    /// </summary>
+    public abstract class ReuseStrategy
+    {
+        /// <summary>
+        /// Gets the reusable <see cref="TokenStreamComponents"/> for the field with the given name.
+        /// </summary>
+        /// <param name="analyzer"> <see cref="Analyzer"/> from which to get the reused components. Use
+        ///        <see cref="GetStoredValue(Analyzer)"/> and <see cref="SetStoredValue(Analyzer, object)"/>
+        ///        to access the data on the <see cref="Analyzer"/>. </param>
+        /// <param name="fieldName"> Name of the field whose reusable <see cref="TokenStreamComponents"/>
+        ///        are to be retrieved </param>
+        /// <returns> Reusable <see cref="TokenStreamComponents"/> for the field, or <c>null</c>
+        ///         if there was no previous components for the field </returns>
+        public abstract TokenStreamComponents GetReusableComponents(Analyzer analyzer, string fieldName);
+
+        /// <summary>
+        /// Stores the given <see cref="TokenStreamComponents"/> as the reusable components for the
+        /// field with the give name.
+        /// </summary>
+        /// <param name="fieldName"> Name of the field whose <see cref="TokenStreamComponents"/> are being set </param>
+        /// <param name="components"> <see cref="TokenStreamComponents"/> which are to be reused for the field </param>
+        public abstract void SetReusableComponents(Analyzer analyzer, string fieldName, TokenStreamComponents components);
+
+        /// <summary>
+        /// Returns the currently stored value.
+        /// </summary>
+        /// <returns> Currently stored value or <c>null</c> if no value is stored </returns>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="Analyzer"/> is closed. </exception>
+        protected internal object GetStoredValue(Analyzer analyzer)
+        {
+            if (analyzer.storedValue == null)
+            {
+                throw new AlreadyClosedException("this Analyzer is closed");
+            }
+            return analyzer.storedValue.Get();
+        }
+
+        /// <summary>
+        /// Sets the stored value.
+        /// </summary>
+        /// <param name="storedValue"> Value to store </param>
+        /// <exception cref="AlreadyClosedException"> if the <see cref="Analyzer"/> is closed. </exception>
+        protected internal void SetStoredValue(Analyzer analyzer, object storedValue)
+        {
+            if (analyzer.storedValue == null)
+            {
+                throw new AlreadyClosedException("this Analyzer is closed");
+            }
+            analyzer.storedValue.Set(storedValue);
         }
     }
 }

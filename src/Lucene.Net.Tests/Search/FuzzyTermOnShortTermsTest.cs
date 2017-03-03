@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search

@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             private readonly AnalyzingInfixSuggester outerInstance;
 
-            public AnalyzerWrapperAnonymousInnerClassHelper(AnalyzingInfixSuggester outerInstance, Analyzer.ReuseStrategy reuseStrategy)
+            public AnalyzerWrapperAnonymousInnerClassHelper(AnalyzingInfixSuggester outerInstance, ReuseStrategy reuseStrategy)
                 : base(reuseStrategy)
             {
                 this.outerInstance = outerInstance;

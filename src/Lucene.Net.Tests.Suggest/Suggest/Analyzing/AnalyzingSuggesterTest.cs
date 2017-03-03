@@ -266,7 +266,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertEquals("abcd", r.ElementAt(0).Key.toString());
         }
 
-        internal class TestGraphDupsTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class TestGraphDupsTokenStreamComponents : TokenStreamComponents
         {
             private readonly AnalyzingSuggesterTest outerInstance;
             internal int tokenStreamCounter = 0;
@@ -356,7 +356,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertEquals(10, results.ElementAt(1).Value);
         }
 
-        internal class TestInputPathRequiredTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class TestInputPathRequiredTokenStreamComponents : TokenStreamComponents
         {
             private readonly AnalyzingSuggesterTest outerInstance;
             internal int tokenStreamCounter = 0;
@@ -469,7 +469,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         } 
         */
 
-        internal class UsualTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class UsualTokenStreamComponents : TokenStreamComponents
         {
             private readonly AnalyzingSuggesterTest outerInstance;
             internal int count;
@@ -1171,7 +1171,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertEquals(3, results.ElementAt(2).Value);
         }
 
-        internal class TestDupSurfaceFormsMissingResultsTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class TestDupSurfaceFormsMissingResultsTokenStreamComponents : TokenStreamComponents
         {
             private readonly AnalyzingSuggesterTest outerInstance;
             public TestDupSurfaceFormsMissingResultsTokenStreamComponents(AnalyzingSuggesterTest outerInstance, Tokenizer tokenizer)
@@ -1250,7 +1250,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertEquals("nellie", results.ElementAt(1).Key);
             assertEquals(5, results.ElementAt(1).Value);
         }
-        internal class TestDupSurfaceFormsMissingResults2TokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class TestDupSurfaceFormsMissingResults2TokenStreamComponents : TokenStreamComponents
         {
             internal int count;
             public TestDupSurfaceFormsMissingResults2TokenStreamComponents(Tokenizer tokenizer)
@@ -1335,7 +1335,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertEquals(5, results.ElementAt(1).Value);
         }
 
-        internal class Test0ByteKeysTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class Test0ByteKeysTokenStreamComponents : TokenStreamComponents
         {
             internal int tokenStreamCounter = 0;
             internal TokenStream[] tokenStreams = new TokenStream[] {
@@ -1422,7 +1422,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             assertEquals("[i love lucy/7]", suggester.DoLookup("i ", false, 3).toString());
         }
 
-        internal class TestTooManyExpressionsTokenStreamComponents : Analyzer.TokenStreamComponents
+        internal class TestTooManyExpressionsTokenStreamComponents : TokenStreamComponents
         {
             public TestTooManyExpressionsTokenStreamComponents(Tokenizer tokenizer)
                 : base(tokenizer)

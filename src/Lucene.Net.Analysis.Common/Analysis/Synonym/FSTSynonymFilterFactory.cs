@@ -115,7 +115,7 @@ namespace Lucene.Net.Analysis.Synonym
                 Tokenizer tokenizer = factory == null ? new WhitespaceTokenizer(LuceneVersion.LUCENE_CURRENT, reader) : factory.Create(reader);
                 TokenStream stream = outerInstance.ignoreCase ? (TokenStream)new LowerCaseFilter(LuceneVersion.LUCENE_CURRENT, tokenizer) : tokenizer;
 #pragma warning restore 612, 618
-                return new Analyzer.TokenStreamComponents(tokenizer, stream);
+                return new TokenStreamComponents(tokenizer, stream);
             }
         }
 

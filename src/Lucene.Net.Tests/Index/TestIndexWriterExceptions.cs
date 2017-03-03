@@ -1,3 +1,4 @@
+using Lucene.Net.Analysis;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -537,7 +538,7 @@ namespace Lucene.Net.Index
         {
             private readonly TestIndexWriterExceptions OuterInstance;
 
-            public TEJBFAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, Analyzer.ReuseStrategy PER_FIELD_REUSE_STRATEGY)
+            public TEJBFAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, ReuseStrategy PER_FIELD_REUSE_STRATEGY)
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
                 this.OuterInstance = outerInstance;
@@ -878,7 +879,7 @@ namespace Lucene.Net.Index
         {
             private readonly TestIndexWriterExceptions OuterInstance;
 
-            public TDWEAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, Analyzer.ReuseStrategy PER_FIELD_REUSE_STRATEGY)
+            public TDWEAnalyzerAnonymousInnerClassHelper(TestIndexWriterExceptions outerInstance, ReuseStrategy PER_FIELD_REUSE_STRATEGY)
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
                 this.OuterInstance = outerInstance;
@@ -977,7 +978,7 @@ namespace Lucene.Net.Index
         {
             private readonly TestIndexWriterExceptions OuterInstance;
 
-            public AnalyzerAnonymousInnerClassHelper2(TestIndexWriterExceptions outerInstance, Analyzer.ReuseStrategy PER_FIELD_REUSE_STRATEGY)
+            public AnalyzerAnonymousInnerClassHelper2(TestIndexWriterExceptions outerInstance, ReuseStrategy PER_FIELD_REUSE_STRATEGY)
                 : base(PER_FIELD_REUSE_STRATEGY)
             {
                 this.OuterInstance = outerInstance;

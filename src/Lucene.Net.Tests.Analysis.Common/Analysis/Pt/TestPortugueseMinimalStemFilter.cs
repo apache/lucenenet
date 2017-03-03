@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Pt
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenStream sink = new SetKeywordMarkerFilter(source, exclusionSet);
-                return new Analyzer.TokenStreamComponents(source, new PortugueseMinimalStemFilter(sink));
+                return new TokenStreamComponents(source, new PortugueseMinimalStemFilter(sink));
             }
         }
 
@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Pt
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
-                return new Analyzer.TokenStreamComponents(tokenizer, new PortugueseMinimalStemFilter(tokenizer));
+                return new TokenStreamComponents(tokenizer, new PortugueseMinimalStemFilter(tokenizer));
             }
         }
     }
