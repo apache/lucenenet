@@ -1,4 +1,6 @@
 using System;
+using Lucene.Net.Support;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
 {
@@ -309,9 +311,11 @@ namespace Lucene.Net.Util
         /// this method returns the internal heap array as T[].
         /// @lucene.internal
         /// </summary>
-        protected T[] GetHeapArray() // LUCENENET TODO: Change to HeapArray property (writable)
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        protected T[] HeapArray
         {
-            return heap;
+            get { return heap; }
         }
     }
 }
