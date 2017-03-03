@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
         // array:
         private int count;
 
-        protected RollingBuffer() // LUCENENET TODO: Remove ? not used
+        protected RollingBuffer()
         {
             for (var idx = 0; idx < buffer.Length; idx++)
             {
