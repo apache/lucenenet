@@ -707,20 +707,20 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override bool HasFreqs
             {
-                get { return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; } // LUCENENET TODO: Possible exception when IndexOptions is null
+                get { return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
             public override bool HasOffsets
             {
                 get
                 {
-                    return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; // LUCENENET TODO: Possible exception when IndexOptions is null
+                    return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 }
             }
 
             public override bool HasPositions
             {
-                get { return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; } // LUCENENET TODO: Possible exception when IndexOptions is null
+                get { return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; } 
             }
 
             public override bool HasPayloads
