@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
     /// </summary>
     internal class BinaryDocValuesFieldUpdates : AbstractDocValuesFieldUpdates
     {
-        internal sealed class Iterator : AbstractDocValuesFieldUpdates.IIterator
+        new internal sealed class Iterator : AbstractDocValuesFieldUpdates.Iterator
         {
             private readonly PagedGrowableWriter offsets;
             private readonly int size;
@@ -60,7 +60,7 @@ namespace Lucene.Net.Index
                 value = (BytesRef)values.Clone();
             }
 
-            public object Value
+            public override object Value
             {
                 get
                 {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public int NextDoc()
+            public override int NextDoc()
             {
                 if (idx >= size)
                 {
@@ -107,12 +107,12 @@ namespace Lucene.Net.Index
                 return doc;
             }
 
-            public int Doc
+            public override int Doc
             {
                 get { return doc; }
             }
 
-            public void Reset()
+            public override void Reset()
             {
                 doc = -1;
                 offset = -1;
@@ -173,7 +173,7 @@ namespace Lucene.Net.Index
             ++size;
         }
 
-        public override AbstractDocValuesFieldUpdates.IIterator GetIterator()
+        public override AbstractDocValuesFieldUpdates.Iterator GetIterator()
         {
             PagedMutable docs = this.docs;
             PagedGrowableWriter offsets = this.offsets;

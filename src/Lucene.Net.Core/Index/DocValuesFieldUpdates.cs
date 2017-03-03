@@ -34,33 +34,30 @@ namespace Lucene.Net.Index
         /// updates are returned by this iterator, and the documents are returned in
         /// increasing order.
         /// </summary>
-        public interface IIterator // LUCENENET TODO: should this be renamed to IEnumerator?
+        public abstract class Iterator
         {
-            // LUCENENET TODO: This was an abstract class in the original source (and internal)
-            // Should we make this an abstract classs here? And should it be public (and nested in DocValuesFieldUpdates)?
-
             /// <summary>
             /// Returns the next document which has an update, or
             /// <seealso cref="DocIdSetIterator#NO_MORE_DOCS"/> if there are no more documents to
             /// return.
             /// </summary>
-            int NextDoc();
+            public abstract int NextDoc();
 
             /// <summary>
             /// Returns the current document this iterator is on. </summary>
-            int Doc { get; }
+            public abstract int Doc { get; }
 
             /// <summary>
             /// Returns the value of the document returned from <seealso cref="#nextDoc()"/>. A
             /// {@code null} value means that it was unset for this document.
             /// </summary>
-            object Value { get; } // LUCENENET TODO: Should this interface be made generic?
+            public abstract object Value { get; }
 
             /// <summary>
             /// Reset the iterator's state. Should be called before <seealso cref="#nextDoc()"/>
             /// and <seealso cref="#value()"/>.
             /// </summary>
-            void Reset();
+            public abstract void Reset();
         }
 
         public class Container
@@ -156,10 +153,10 @@ namespace Lucene.Net.Index
         public abstract void Add(int doc, object value);
 
         /// <summary>
-        /// Returns an <seealso cref="IIterator"/> over the updated documents and their
+        /// Returns an <seealso cref="Iterator"/> over the updated documents and their
         /// values.
         /// </summary>
-        public abstract IIterator GetIterator();
+        public abstract Iterator GetIterator();
 
         /// <summary>
         /// Merge with another <seealso cref="AbstractDocValuesFieldUpdates"/>. this is called for a
