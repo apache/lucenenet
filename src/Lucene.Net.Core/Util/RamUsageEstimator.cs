@@ -963,7 +963,7 @@ namespace Lucene.Net.Util
 
                 public void Reset()
                 {
-                    throw new NotImplementedException();
+                    throw new NotSupportedException();
                 }
 
                 public void Dispose()

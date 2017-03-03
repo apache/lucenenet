@@ -541,7 +541,7 @@ namespace Lucene.Net.Index
 
             public void Reset()
             {
-                throw new NotImplementedException();
+                throw new NotSupportedException();
             }
         }
 

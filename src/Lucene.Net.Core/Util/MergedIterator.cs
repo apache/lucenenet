@@ -111,7 +111,7 @@ namespace Lucene.Net.Util
 
         public void Reset()
         {
-            throw new NotImplementedException();// LUCENENET TODO: change to NotSupportedException
+            throw new NotSupportedException();
         }
 
         public void Dispose()

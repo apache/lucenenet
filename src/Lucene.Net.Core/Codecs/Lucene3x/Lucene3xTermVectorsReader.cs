@@ -307,7 +307,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
                 public void Reset()
                 {
-                    throw new NotImplementedException();
+                    throw new NotSupportedException();
                 }
 
                 public void Dispose()

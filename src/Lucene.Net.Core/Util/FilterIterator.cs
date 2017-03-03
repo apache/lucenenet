@@ -62,7 +62,7 @@ namespace Lucene.Net.Util
 
         public void Reset()
         {
-            throw new NotImplementedException(); // LUCENENET TODO: Change to NotSupportedException
+            throw new NotSupportedException();
         }
 
         private bool SetNext()
