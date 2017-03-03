@@ -175,19 +175,19 @@ namespace Lucene.Net.Analysis
 				doc.Add(new TextField("contents", sortData[i][1], Field.Store.NO));
 				if (sortData[i][2] != null)
 				{
-					doc.Add(new TextField("US", usAnalyzer.TokenStream("US", new StringReader(sortData[i][2]))));
+					doc.Add(new TextField("US", usAnalyzer.GetTokenStream("US", new StringReader(sortData[i][2]))));
 				}
 				if (sortData[i][3] != null)
 				{
-					doc.Add(new TextField("France", franceAnalyzer.TokenStream("France", new StringReader(sortData[i][3]))));
+					doc.Add(new TextField("France", franceAnalyzer.GetTokenStream("France", new StringReader(sortData[i][3]))));
 				}
 				if (sortData[i][4] != null)
 				{
-					doc.Add(new TextField("Sweden", swedenAnalyzer.TokenStream("Sweden", new StringReader(sortData[i][4]))));
+					doc.Add(new TextField("Sweden", swedenAnalyzer.GetTokenStream("Sweden", new StringReader(sortData[i][4]))));
 				}
 				if (sortData[i][5] != null)
 				{
-					doc.Add(new TextField("Denmark", denmarkAnalyzer.TokenStream("Denmark", new StringReader(sortData[i][5]))));
+					doc.Add(new TextField("Denmark", denmarkAnalyzer.GetTokenStream("Denmark", new StringReader(sortData[i][5]))));
 				}
 				writer.AddDocument(doc);
 			}
@@ -248,7 +248,7 @@ namespace Lucene.Net.Analysis
 			{
 				string term = TestUtil.RandomSimpleString(Random());
 				IOException priorException = null;
-				TokenStream ts = analyzer.TokenStream("fake", new StringReader(term));
+				TokenStream ts = analyzer.GetTokenStream("fake", new StringReader(term));
 				try
 				{
 					ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
@@ -309,7 +309,7 @@ namespace Lucene.Net.Analysis
 						string term = mapping.Key;
 						BytesRef expected = mapping.Value;
 						IOException priorException = null;
-						TokenStream ts = this.Analyzer.TokenStream("fake", new StringReader(term));
+						TokenStream ts = this.Analyzer.GetTokenStream("fake", new StringReader(term));
 						try
 						{
 							ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();

@@ -232,7 +232,7 @@ namespace Lucene.Net.Search.Highlight
         private String highlightField(Query query, String fieldName, String text)
         {
             TokenStream tokenStream = new MockAnalyzer(Random(), MockTokenizer.SIMPLE, true, MockTokenFilter.ENGLISH_STOPSET)
-                .TokenStream(fieldName, text);
+                .GetTokenStream(fieldName, text);
             // Assuming "<B>", "</B>" used to highlight
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter();
             QueryScorer scorer = new QueryScorer(query, fieldName, FIELD_NAME);
@@ -256,7 +256,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
@@ -339,7 +339,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
@@ -369,7 +369,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
@@ -399,7 +399,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
@@ -427,7 +427,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
@@ -455,7 +455,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
@@ -483,7 +483,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
@@ -513,7 +513,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).GetField(NUMERIC_FIELD_NAME).GetNumericValue().toString();
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
@@ -542,7 +542,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
@@ -567,7 +567,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
                 QueryScorer scorer = new QueryScorer(query, FIELD_NAME);
                 Highlighter highlighter = new Highlighter(this, scorer);
 
@@ -600,7 +600,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleSpanFragmenter(scorer, 5));
 
@@ -624,7 +624,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleSpanFragmenter(scorer, 20));
 
@@ -658,7 +658,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
 
@@ -735,7 +735,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 String result = highlighter.GetBestFragments(tokenStream, text, maxNumFragmentsRequired,
                     "...");
@@ -933,7 +933,7 @@ namespace Lucene.Net.Search.Highlight
                 int maxNumFragmentsRequired = 2;
                 String fragmentSeparator = "...";
                 QueryScorer scorer = new QueryScorer(query, HighlighterTest.FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(HighlighterTest.FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(HighlighterTest.FIELD_NAME, text);
 
                 Highlighter highlighter = new Highlighter(this, scorer);
 
@@ -958,7 +958,7 @@ namespace Lucene.Net.Search.Highlight
                 int maxNumFragmentsRequired = 2;
                 String fragmentSeparator = "...";
                 QueryScorer scorer = new QueryScorer(query, null);
-                TokenStream tokenStream = analyzer.TokenStream(HighlighterTest.FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(HighlighterTest.FIELD_NAME, text);
 
                 Highlighter highlighter = new Highlighter(this, scorer);
 
@@ -983,7 +983,7 @@ namespace Lucene.Net.Search.Highlight
                 int maxNumFragmentsRequired = 2;
                 String fragmentSeparator = "...";
                 QueryScorer scorer = new QueryScorer(query, "random_field", HighlighterTest.FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(HighlighterTest.FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(HighlighterTest.FIELD_NAME, text);
 
                 Highlighter highlighter = new Highlighter(this, scorer);
 
@@ -1149,7 +1149,7 @@ namespace Lucene.Net.Search.Highlight
                 for (int i = 0; i < hits.TotalHits; i++)
                 {
                     String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                    TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                    TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                     Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME,
                         this);
@@ -1209,7 +1209,7 @@ namespace Lucene.Net.Search.Highlight
                 Highlighter highlighter = instance.GetHighlighter(wTerms, this);// new
                                                                                 // Highlighter(new
                                                                                 // QueryTermScorer(wTerms));
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, texts[0]);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, texts[0]);
                 highlighter.TextFragmenter = (new SimpleFragmenter(2));
 
                 String result = highlighter.GetBestFragment(tokenStream, texts[0]).Trim();
@@ -1218,7 +1218,7 @@ namespace Lucene.Net.Search.Highlight
 
                 // readjust weights
                 wTerms[1].Weight = (50f);
-                tokenStream = analyzer.TokenStream(FIELD_NAME, texts[0]);
+                tokenStream = analyzer.GetTokenStream(FIELD_NAME, texts[0]);
                 highlighter = instance.GetHighlighter(wTerms, this);
                 highlighter.TextFragmenter = (new SimpleFragmenter(2));
 
@@ -1252,7 +1252,7 @@ namespace Lucene.Net.Search.Highlight
                 Highlighter highlighter = instance.GetHighlighter(query, null, this);
 
                 // Get 3 best fragments and separate with a "..."
-                TokenStream tokenStream = analyzer.TokenStream(null, s);
+                TokenStream tokenStream = analyzer.GetTokenStream(null, s);
 
                 String result = highlighter.GetBestFragments(tokenStream, s, 3, "...");
                 String expectedResult = "<B>football</B>-<B>soccer</B> in the euro 2004 <B>footie</B> competition";
@@ -1276,7 +1276,7 @@ namespace Lucene.Net.Search.Highlight
                 for (int i = 0; i < hits.TotalHits; i++)
                 {
                     String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                    TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                    TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
                     Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME,
                         this);
                     String result = highlighter.GetBestFragment(tokenStream, text);
@@ -1299,7 +1299,7 @@ namespace Lucene.Net.Search.Highlight
                 for (int i = 0; i < hits.TotalHits; i++)
                 {
                     String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                    TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                    TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                     Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME,
                         this);// new Highlighter(this, new
@@ -1307,7 +1307,7 @@ namespace Lucene.Net.Search.Highlight
                     highlighter.TextFragmenter = (new SimpleFragmenter(20));
                     String[] stringResults = highlighter.GetBestFragments(tokenStream, text, 10);
 
-                    tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                    tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
                     TextFragment[] fragmentResults = highlighter.GetBestTextFragments(tokenStream, text,
                         true, 10);
 
@@ -1338,7 +1338,7 @@ namespace Lucene.Net.Search.Highlight
             {
                 numHighlights = 0;
                 doSearching(new TermQuery(new Term(FIELD_NAME, "meat")));
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, texts[0]);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, texts[0]);
                 Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME,
                     this);// new Highlighter(this, new
                           // QueryTermScorer(query));
@@ -1453,7 +1453,7 @@ namespace Lucene.Net.Search.Highlight
                 for (int i = 0; i < hits.TotalHits; i++)
                 {
                     String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                    TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                    TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
                     Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME, this, false);
 
                     highlighter.TextFragmenter = (new SimpleFragmenter(40));
@@ -1482,7 +1482,7 @@ namespace Lucene.Net.Search.Highlight
 
                 foreach (String text in texts)
                 {
-                    TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                    TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
                     Highlighter highlighter = instance.GetHighlighter(query, FIELD_NAME,
                         this);
                     String result = highlighter.GetBestFragment(tokenStream, text);
@@ -1508,7 +1508,7 @@ namespace Lucene.Net.Search.Highlight
             Highlighter highlighter = new Highlighter(this, new SimpleHTMLEncoder(), new TestEncodingScorerAnonymousHelper(this));
 
             highlighter.TextFragmenter = (new SimpleFragmenter(2000));
-            TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, rawDocContent);
+            TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, rawDocContent);
 
             String encodedSnippet = highlighter.GetBestFragments(tokenStream, rawDocContent, 1, "");
             // An ugly bit of XML creation:
@@ -1940,7 +1940,7 @@ namespace Lucene.Net.Search.Highlight
             for (int i = 0; i < hits.TotalHits; i++)
             {
                 String text = searcher.Doc(hits.ScoreDocs[i].Doc).Get(FIELD_NAME);
-                TokenStream tokenStream = analyzer.TokenStream(FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
                 QueryScorer scorer = new QueryScorer(query, FIELD_NAME);
                 Highlighter highlighter = new Highlighter(this, scorer);
 
@@ -2249,7 +2249,7 @@ namespace Lucene.Net.Search.Highlight
                 int maxNumFragmentsRequired = 2;
                 String fragmentSeparator = "...";
                 IScorer scorer = null;
-                TokenStream tokenStream = analyzer.TokenStream(HighlighterTest.FIELD_NAME, text);
+                TokenStream tokenStream = analyzer.GetTokenStream(HighlighterTest.FIELD_NAME, text);
                 if (mode == QUERY)
                 {
                     scorer = new QueryScorer(query);

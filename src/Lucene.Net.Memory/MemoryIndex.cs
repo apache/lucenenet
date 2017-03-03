@@ -249,7 +249,7 @@ namespace Lucene.Net.Index.Memory
             TokenStream stream;
             try
             {
-                stream = analyzer.TokenStream(fieldName, text);
+                stream = analyzer.GetTokenStream(fieldName, text);
             }
             catch (IOException ex)
             {

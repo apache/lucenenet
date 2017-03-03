@@ -430,19 +430,19 @@ namespace Lucene.Net.Analysis
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements)
         {
             CheckResetException(a, input);
-            AssertTokenStreamContents(a.TokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, null, input.Length);
+            AssertTokenStreamContents(a.GetTokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, null, input.Length);
         }
 
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths)
         {
             CheckResetException(a, input);
-            AssertTokenStreamContents(a.TokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length);
+            AssertTokenStreamContents(a.GetTokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length);
         }
 
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output, int[] startOffsets, int[] endOffsets, string[] types, int[] posIncrements, int[] posLengths, bool offsetsAreCorrect)
         {
             CheckResetException(a, input);
-            AssertTokenStreamContents(a.TokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length, offsetsAreCorrect);
+            AssertTokenStreamContents(a.GetTokenStream("dummy", new StringReader(input)), output, startOffsets, endOffsets, types, posIncrements, posLengths, input.Length, offsetsAreCorrect);
         }
 
         public static void AssertAnalyzesTo(Analyzer a, string input, string[] output)
@@ -477,7 +477,7 @@ namespace Lucene.Net.Analysis
 
         internal static void CheckResetException(Analyzer a, string input)
         {
-            TokenStream ts = a.TokenStream("bogus", new StringReader(input));
+            TokenStream ts = a.GetTokenStream("bogus", new StringReader(input));
             try
             {
                 if (ts.IncrementToken())
@@ -515,7 +515,7 @@ namespace Lucene.Net.Analysis
             }
 
             // check for a missing Close()
-            ts = a.TokenStream("bogus", new StringReader(input));
+            ts = a.GetTokenStream("bogus", new StringReader(input));
             ts.Reset();
             while (ts.IncrementToken())
             {
@@ -523,7 +523,7 @@ namespace Lucene.Net.Analysis
             ts.End();
             try
             {
-                ts = a.TokenStream("bogus", new StringReader(input));
+                ts = a.GetTokenStream("bogus", new StringReader(input));
                 Assert.Fail("didn't get expected exception when Close() not called");
             }
             catch (Exception)
@@ -926,7 +926,7 @@ namespace Lucene.Net.Analysis
             StringReader reader = new StringReader(text);
 
             TokenStream ts;
-            using (ts = a.TokenStream("dummy", useCharFilter ? (TextReader) new MockCharFilter(reader, remainder) : reader))
+            using (ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader) new MockCharFilter(reader, remainder) : reader))
             {
                  termAtt = ts.HasAttribute<ICharTermAttribute>()
                     ? ts.GetAttribute<ICharTermAttribute>()
@@ -1002,7 +1002,7 @@ namespace Lucene.Net.Analysis
                             // currently allow it, so, we must call
                             // a.TokenStream inside the try since we may
                             // hit the exc on init:
-                            ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(evilReader, remainder) : evilReader);
+                            ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(evilReader, remainder) : evilReader);
                             ts.Reset();
                             while (ts.IncrementToken()) ;
                             Assert.Fail("did not hit exception");
@@ -1044,7 +1044,7 @@ namespace Lucene.Net.Analysis
                         }
 
                         reader = new StringReader(text);
-                        ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
+                        ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
                         ts.Reset();
                         for (int tokenCount = 0; tokenCount < numTokensToRead; tokenCount++)
                         {
@@ -1097,7 +1097,7 @@ namespace Lucene.Net.Analysis
                 reader = new MockReaderWrapper(random, text);
             }
 
-            ts = a.TokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
+            ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader)new MockCharFilter(reader, remainder) : reader);
             if (typeAtt != null && posIncAtt != null && posLengthAtt != null && offsetAtt != null)
             {
                 // offset + pos + posLength + type
@@ -1150,7 +1150,7 @@ namespace Lucene.Net.Analysis
         protected internal virtual string ToDot(Analyzer a, string inputText)
         {
             StringWriter sw = new StringWriter();
-            TokenStream ts = a.TokenStream("field", new StringReader(inputText));
+            TokenStream ts = a.GetTokenStream("field", new StringReader(inputText));
             ts.Reset();
             (new TokenStreamToDot(inputText, ts, /*new StreamWriter(*/(TextWriter)sw/*)*/)).ToDot();
             return sw.ToString();
@@ -1160,7 +1160,7 @@ namespace Lucene.Net.Analysis
         {
             using (StreamWriter w = new StreamWriter(new FileStream(localFileName, FileMode.Open), Encoding.UTF8))
             {
-                TokenStream ts = a.TokenStream("field", new StringReader(inputText));
+                TokenStream ts = a.GetTokenStream("field", new StringReader(inputText));
                 ts.Reset();
                 (new TokenStreamToDot(inputText, ts,/* new PrintWriter(*/w/*)*/)).ToDot();    
             }

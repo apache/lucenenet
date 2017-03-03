@@ -206,7 +206,7 @@ namespace Lucene.Net.Util
             TokenStream source = null;
             try
             {
-                source = analyzer.TokenStream(field, new StringReader(queryText));
+                source = analyzer.GetTokenStream(field, new StringReader(queryText));
                 source.Reset();
                 buffer = new CachingTokenFilter(source);
                 buffer.Reset();

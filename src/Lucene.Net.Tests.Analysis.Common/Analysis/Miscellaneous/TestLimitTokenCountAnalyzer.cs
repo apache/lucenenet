@@ -39,14 +39,14 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 Analyzer a = new LimitTokenCountAnalyzer(mock, 2, consumeAll);
 
                 // dont use assertAnalyzesTo here, as the end offset is not the end of the string (unless consumeAll is true, in which case its correct)!
-                AssertTokenStreamContents(a.TokenStream("dummy", "1  2     3  4  5"), new string[] { "1", "2" }, new int[] { 0, 3 }, new int[] { 1, 4 }, consumeAll ? (int?)16 : null);
-                AssertTokenStreamContents(a.TokenStream("dummy", "1 2 3 4 5"), new string[] { "1", "2" }, new int[] { 0, 2 }, new int[] { 1, 3 }, consumeAll ? (int?)9 : null);
+                AssertTokenStreamContents(a.GetTokenStream("dummy", "1  2     3  4  5"), new string[] { "1", "2" }, new int[] { 0, 3 }, new int[] { 1, 4 }, consumeAll ? (int?)16 : null);
+                AssertTokenStreamContents(a.GetTokenStream("dummy", "1 2 3 4 5"), new string[] { "1", "2" }, new int[] { 0, 2 }, new int[] { 1, 3 }, consumeAll ? (int?)9 : null);
 
                 // less than the limit, ensure we behave correctly
-                AssertTokenStreamContents(a.TokenStream("dummy", "1  "), new string[] { "1" }, new int[] { 0 }, new int[] { 1 }, (consumeAll ? (int?)3 : null));
+                AssertTokenStreamContents(a.GetTokenStream("dummy", "1  "), new string[] { "1" }, new int[] { 0 }, new int[] { 1 }, (consumeAll ? (int?)3 : null));
 
                 // equal to limit
-                AssertTokenStreamContents(a.TokenStream("dummy", "1  2  "), new string[] { "1", "2" }, new int[] { 0, 3 }, new int[] { 1, 4 }, consumeAll ? (int?)6 : null);
+                AssertTokenStreamContents(a.GetTokenStream("dummy", "1  2  "), new string[] { "1", "2" }, new int[] { 0, 3 }, new int[] { 1, 4 }, consumeAll ? (int?)6 : null);
             }
         }
 

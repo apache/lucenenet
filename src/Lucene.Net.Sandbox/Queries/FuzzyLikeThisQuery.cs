@@ -196,7 +196,7 @@ namespace Lucene.Net.Sandbox.Queries
             {
                 return;
             }
-            TokenStream ts = analyzer.TokenStream(f.fieldName, f.queryString);
+            TokenStream ts = analyzer.GetTokenStream(f.fieldName, f.queryString);
             try
             {
                 ICharTermAttribute termAtt = ts.AddAttribute<ICharTermAttribute>();

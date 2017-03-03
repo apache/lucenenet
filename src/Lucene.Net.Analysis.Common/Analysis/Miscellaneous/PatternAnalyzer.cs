@@ -219,8 +219,8 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Creates a token stream that tokenizes all the text in the given SetReader;
-        /// This implementation forwards to <see cref="Analyzer.TokenStream(string, TextReader)"/> and is
-        /// less efficient than <see cref="Analyzer.TokenStream(string, TextReader)"/>.
+        /// This implementation forwards to <see cref="Analyzer.GetTokenStream(string, TextReader)"/> and is
+        /// less efficient than <see cref="Analyzer.GetTokenStream(string, TextReader)"/>.
         /// </summary>
         /// <param name="fieldName">
         ///            the name of the field to tokenize (currently ignored). </param>

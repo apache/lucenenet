@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis.Util
             for (var i = 0; i < num; i++)
             {
                 var s = TestUtil.RandomUnicodeString(Random());
-                var ts = analyzer.TokenStream("foo", s);
+                var ts = analyzer.GetTokenStream("foo", s);
                 try
                 {
                     ts.Reset();
@@ -187,7 +187,7 @@ namespace Lucene.Net.Analysis.Util
             for (var i = 0; i < num; i++)
             {
                 var s = TestUtil.RandomUnicodeString(Random());
-                var ts = analyzer.TokenStream("foo", s);
+                var ts = analyzer.GetTokenStream("foo", s);
                 try
                 {
                     ts.Reset();

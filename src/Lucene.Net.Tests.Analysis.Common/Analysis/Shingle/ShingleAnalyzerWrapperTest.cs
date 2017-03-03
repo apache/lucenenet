@@ -91,7 +91,7 @@ namespace Lucene.Net.Analysis.Shingle
         {
             PhraseQuery q = new PhraseQuery();
 
-            TokenStream ts = analyzer.TokenStream("content", "this sentence");
+            TokenStream ts = analyzer.GetTokenStream("content", "this sentence");
             try
             {
                 int j = -1;
@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Shingle
         {
             BooleanQuery q = new BooleanQuery();
 
-            TokenStream ts = analyzer.TokenStream("content", "test sentence");
+            TokenStream ts = analyzer.GetTokenStream("content", "test sentence");
             try
             {
                 ICharTermAttribute termAtt = ts.AddAttribute<ICharTermAttribute>();

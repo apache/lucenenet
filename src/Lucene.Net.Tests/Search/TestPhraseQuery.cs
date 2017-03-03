@@ -660,7 +660,7 @@ namespace Lucene.Net.Search
                             }
                         }
                         IOException priorException = null;
-                        TokenStream ts = analyzer.TokenStream("ignore", new StringReader(term));
+                        TokenStream ts = analyzer.GetTokenStream("ignore", new StringReader(term));
                         try
                         {
                             ICharTermAttribute termAttr = ts.AddAttribute<ICharTermAttribute>();

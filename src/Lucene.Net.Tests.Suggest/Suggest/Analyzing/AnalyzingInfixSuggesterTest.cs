@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             protected internal override object Highlight(string text, IEnumerable<string> matchedTokens, string prefixToken)
             {
-                TokenStream ts = m_queryAnalyzer.TokenStream("text", new StringReader(text));
+                TokenStream ts = m_queryAnalyzer.GetTokenStream("text", new StringReader(text));
                 try
                 {
                     ICharTermAttribute termAtt = ts.AddAttribute<ICharTermAttribute>();

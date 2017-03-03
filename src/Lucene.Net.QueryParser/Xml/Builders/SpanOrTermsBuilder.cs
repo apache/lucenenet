@@ -48,7 +48,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             TokenStream ts = null;
             try
             {
-                ts = analyzer.TokenStream(fieldName, value);
+                ts = analyzer.GetTokenStream(fieldName, value);
                 ITermToBytesRefAttribute termAtt = ts.AddAttribute<ITermToBytesRefAttribute>();
                 BytesRef bytes = termAtt.BytesRef;
                 ts.Reset();

@@ -106,7 +106,7 @@ namespace Lucene.Net.Analysis
             Analyzer a = new MockAnalyzer(Random(), single, false);
             AssertAnalyzesTo(a, "foobar", new string[] { "fo", "ob", "ar" }, new int[] { 0, 2, 4 }, new int[] { 2, 4, 6 });
             // make sure when last term is a "partial" match that End() is correct
-            AssertTokenStreamContents(a.TokenStream("bogus", new StringReader("fooba")), new string[] { "fo", "ob" }, new int[] { 0, 2 }, new int[] { 2, 4 }, new int[] { 1, 1 }, new int?(5));
+            AssertTokenStreamContents(a.GetTokenStream("bogus", new StringReader("fooba")), new string[] { "fo", "ob" }, new int[] { 0, 2 }, new int[] { 2, 4 }, new int[] { 1, 1 }, new int?(5));
             CheckRandomData(Random(), a, 100);
         }
 
@@ -119,7 +119,7 @@ namespace Lucene.Net.Analysis
             Analyzer a = new MockAnalyzer(Random(), single, false);
             AssertAnalyzesTo(a, "foobar", new string[] { "foo", "bar" }, new int[] { 0, 3 }, new int[] { 3, 6 });
             // make sure when last term is a "partial" match that End() is correct
-            AssertTokenStreamContents(a.TokenStream("bogus", new StringReader("fooba")), new string[] { "foo" }, new int[] { 0 }, new int[] { 3 }, new int[] { 1 }, new int?(5));
+            AssertTokenStreamContents(a.GetTokenStream("bogus", new StringReader("fooba")), new string[] { "foo" }, new int[] { 0 }, new int[] { 3 }, new int[] { 1 }, new int?(5));
             CheckRandomData(Random(), a, 100);
         }
 
@@ -170,8 +170,8 @@ namespace Lucene.Net.Analysis
         public virtual void TestTooLongToken()
         {
             Analyzer whitespace = new AnalyzerAnonymousInnerClassHelper(this);
-            AssertTokenStreamContents(whitespace.TokenStream("bogus", new StringReader("test 123 toolong ok ")), new string[] { "test", "123", "toolo", "ng", "ok" }, new int[] { 0, 5, 9, 14, 17 }, new int[] { 4, 8, 14, 16, 19 }, new int?(20));
-            AssertTokenStreamContents(whitespace.TokenStream("bogus", new StringReader("test 123 toolo")), new string[] { "test", "123", "toolo" }, new int[] { 0, 5, 9 }, new int[] { 4, 8, 14 }, new int?(14));
+            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolong ok ")), new string[] { "test", "123", "toolo", "ng", "ok" }, new int[] { 0, 5, 9, 14, 17 }, new int[] { 4, 8, 14, 16, 19 }, new int?(20));
+            AssertTokenStreamContents(whitespace.GetTokenStream("bogus", new StringReader("test 123 toolo")), new string[] { "test", "123", "toolo" }, new int[] { 0, 5, 9 }, new int[] { 4, 8, 14 }, new int?(14));
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
@@ -197,7 +197,7 @@ namespace Lucene.Net.Analysis
 
             Analyzer analyzer = new MockAnalyzer(Random());
             Exception priorException = null;
-            TokenStream stream = analyzer.TokenStream("dummy", new StringReader(testString));
+            TokenStream stream = analyzer.GetTokenStream("dummy", new StringReader(testString));
             try
             {
                 stream.Reset();
@@ -282,7 +282,7 @@ namespace Lucene.Net.Analysis
                 MockCharFilter charfilter = new MockCharFilter(reader, 2);
                 MockAnalyzer analyzer = new MockAnalyzer(Random());
                 Exception priorException = null;
-                TokenStream ts = analyzer.TokenStream("bogus", charfilter.m_input);
+                TokenStream ts = analyzer.GetTokenStream("bogus", charfilter.m_input);
                 try
                 {
                     ts.Reset();

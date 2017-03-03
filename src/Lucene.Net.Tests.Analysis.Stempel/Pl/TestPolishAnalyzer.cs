@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Pl
             var text = "zyaolz 96619727 p";
             var reader = new StringReader(text);
             int remainder = 2;
-            using (var ts = a.TokenStream("dummy", (TextReader)new MockCharFilter(reader, remainder)))
+            using (var ts = a.GetTokenStream("dummy", (TextReader)new MockCharFilter(reader, remainder)))
             {
                 ts.Reset();
 

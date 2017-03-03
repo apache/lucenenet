@@ -68,7 +68,7 @@ namespace Lucene.Net.Search.Highlight
         /// <exception cref="InvalidTokenOffsetsException">thrown if any token's EndOffset exceeds the provided text's length</exception>
         public string GetBestFragment(Analyzer analyzer, string fieldName, string text)
         {
-            TokenStream tokenStream = analyzer.TokenStream(fieldName, text);
+            TokenStream tokenStream = analyzer.GetTokenStream(fieldName, text);
             return GetBestFragment(tokenStream, text);
         }
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Search.Highlight
             string text,
             int maxNumFragments)
         {
-            TokenStream tokenStream = analyzer.TokenStream(fieldName, text);
+            TokenStream tokenStream = analyzer.GetTokenStream(fieldName, text);
             return GetBestFragments(tokenStream, text, maxNumFragments);
         }
 

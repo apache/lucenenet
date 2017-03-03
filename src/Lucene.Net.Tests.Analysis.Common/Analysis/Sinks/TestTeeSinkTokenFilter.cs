@@ -99,7 +99,7 @@ namespace Lucene.Net.Analysis.Sinks
             Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false);
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
-            TokenStream tokenStream = analyzer.TokenStream("field", "abcd   ");
+            TokenStream tokenStream = analyzer.GetTokenStream("field", "abcd   ");
             TeeSinkTokenFilter tee = new TeeSinkTokenFilter(tokenStream);
             TokenStream sink = tee.NewSinkTokenStream();
             FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);

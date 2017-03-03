@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// In order to define what analysis is done, subclasses must define their
     /// <see cref="TokenStreamComponents"/> in <see cref="CreateComponents(string, TextReader)"/>.
-    /// The components are then reused in each call to <see cref="TokenStream(string, TextReader)"/>.
+    /// The components are then reused in each call to <see cref="GetTokenStream(string, TextReader)"/>.
     /// <para/>
     /// Simple example:
     /// <code>
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Create a new <see cref="Analyzer"/>, reusing the same set of components per-thread
-        /// across calls to <see cref="TokenStream(string, TextReader)"/>.
+        /// across calls to <see cref="GetTokenStream(string, TextReader)"/>.
         /// </summary>
         public Analyzer()
             : this(GLOBAL_REUSE_STRATEGY)
@@ -179,8 +179,8 @@ namespace Lucene.Net.Analysis
         /// <returns> <see cref="Analysis.TokenStream"/> for iterating the analyzed content of <see cref="TextReader"/> </returns>
         /// <exception cref="AlreadyClosedException"> if the Analyzer is disposed. </exception>
         /// <exception cref="IOException"> if an i/o error occurs (may rarely happen for strings). </exception>
-        /// <seealso cref="TokenStream(string, string)"/>
-        public TokenStream TokenStream(string fieldName, TextReader reader) // LUCENENET TODO: Rename GetTokenStream ?
+        /// <seealso cref="GetTokenStream(string, string)"/>
+        public TokenStream GetTokenStream(string fieldName, TextReader reader)
         {
             TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
             TextReader r = InitReader(fieldName, reader);
@@ -216,8 +216,8 @@ namespace Lucene.Net.Analysis
         /// <returns><see cref="Analysis.TokenStream"/> for iterating the analyzed content of <paramref name="reader"/></returns>
         /// <exception cref="AlreadyClosedException"> if the Analyzer is disposed. </exception>
         /// <exception cref="IOException"> if an i/o error occurs (may rarely happen for strings). </exception>
-        /// <seealso cref="TokenStream(string, TextReader)"/>
-        public TokenStream TokenStream(string fieldName, string text) // LUCENENET TODO: Rename GetTokenStream ?
+        /// <seealso cref="GetTokenStream(string, TextReader)"/>
+        public TokenStream GetTokenStream(string fieldName, string text)
         {
             TokenStreamComponents components = reuseStrategy.GetReusableComponents(this, fieldName);
             ReusableStringReader strReader =
@@ -264,7 +264,7 @@ namespace Lucene.Net.Analysis
         /// exact <see cref="Search.PhraseQuery"/> matches, for instance, across <see cref="Index.IIndexableField"/> instance boundaries.
         /// </summary>
         /// <param name="fieldName"> <see cref="Index.IIndexableField"/> name being indexed. </param>
-        /// <returns> position increment gap, added to the next token emitted from <see cref="TokenStream(string, TextReader)"/>.
+        /// <returns> position increment gap, added to the next token emitted from <see cref="GetTokenStream(string, TextReader)"/>.
         ///         this value must be <c>&gt;= 0</c>.</returns>
         public virtual int GetPositionIncrementGap(string fieldName)
         {
@@ -278,7 +278,7 @@ namespace Lucene.Net.Analysis
         /// produced at least one token for indexing.
         /// </summary>
         /// <param name="fieldName"> the field just indexed </param>
-        /// <returns> offset gap, added to the next token emitted from <see cref="TokenStream(string, TextReader)"/>.
+        /// <returns> offset gap, added to the next token emitted from <see cref="GetTokenStream(string, TextReader)"/>.
         ///         this value must be <c>&gt;= 0</c>. </returns>
         public virtual int GetOffsetGap(string fieldName)
         {
@@ -312,7 +312,7 @@ namespace Lucene.Net.Analysis
         /// access to the source (<see cref="Analysis.Tokenizer"/>) and the outer end (sink), an
         /// instance of <see cref="TokenFilter"/> which also serves as the
         /// <see cref="Analysis.TokenStream"/> returned by
-        /// <seealso cref="Analyzer.TokenStream(string, TextReader)"/>.
+        /// <seealso cref="Analyzer.GetTokenStream(string, TextReader)"/>.
         /// </summary>
         public class TokenStreamComponents
         {
@@ -328,7 +328,7 @@ namespace Lucene.Net.Analysis
             protected readonly TokenStream m_sink;
 
             /// <summary>
-            /// Internal cache only used by <see cref="Analyzer.TokenStream(string, string)"/>. </summary>
+            /// Internal cache only used by <see cref="Analyzer.GetTokenStream(string, string)"/>. </summary>
             internal ReusableStringReader reusableStringReader;
 
             /// <summary>
@@ -395,7 +395,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Strategy defining how <see cref="TokenStreamComponents"/> are reused per call to
-        /// <see cref="Analyzer.TokenStream(string, TextReader)"/>.
+        /// <see cref="Analyzer.GetTokenStream(string, TextReader)"/>.
         /// </summary>
         public abstract class ReuseStrategy
         {

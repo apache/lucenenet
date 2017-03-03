@@ -64,10 +64,10 @@ namespace Lucene.Net.Analysis.Query
         {
             // Note: an empty list of fields passed in
             protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader, Collections.EmptyList<string>(), 1);
-            TokenStream protectedTokenStream = protectedAnalyzer.TokenStream("variedField", "quick");
+            TokenStream protectedTokenStream = protectedAnalyzer.GetTokenStream("variedField", "quick");
             AssertTokenStreamContents(protectedTokenStream, new string[] { "quick" });
 
-            protectedTokenStream = protectedAnalyzer.TokenStream("repetitiveField", "boring");
+            protectedTokenStream = protectedAnalyzer.GetTokenStream("repetitiveField", "boring");
             AssertTokenStreamContents(protectedTokenStream, new string[] { "boring" });
         }
 
@@ -75,7 +75,7 @@ namespace Lucene.Net.Analysis.Query
         public virtual void TestDefaultStopwordsAllFields()
         {
             protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader);
-            TokenStream protectedTokenStream = protectedAnalyzer.TokenStream("repetitiveField", "boring");
+            TokenStream protectedTokenStream = protectedAnalyzer.GetTokenStream("repetitiveField", "boring");
             AssertTokenStreamContents(protectedTokenStream, new string[0]); // Default stop word filtering will remove boring
         }
 
@@ -84,16 +84,16 @@ namespace Lucene.Net.Analysis.Query
         {
             protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader, 1f / 2f);
 
-            TokenStream protectedTokenStream = protectedAnalyzer.TokenStream("repetitiveField", "boring");
+            TokenStream protectedTokenStream = protectedAnalyzer.GetTokenStream("repetitiveField", "boring");
             // A filter on terms in > one half of docs remove boring
             AssertTokenStreamContents(protectedTokenStream, new string[0]);
 
-            protectedTokenStream = protectedAnalyzer.TokenStream("repetitiveField", "vaguelyboring");
+            protectedTokenStream = protectedAnalyzer.GetTokenStream("repetitiveField", "vaguelyboring");
             // A filter on terms in > half of docs should not remove vaguelyBoring
             AssertTokenStreamContents(protectedTokenStream, new string[] { "vaguelyboring" });
 
             protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader, 1f / 4f);
-            protectedTokenStream = protectedAnalyzer.TokenStream("repetitiveField", "vaguelyboring");
+            protectedTokenStream = protectedAnalyzer.GetTokenStream("repetitiveField", "vaguelyboring");
             // A filter on terms in > quarter of docs should remove vaguelyBoring
             AssertTokenStreamContents(protectedTokenStream, new string[0]);
         }
@@ -102,12 +102,12 @@ namespace Lucene.Net.Analysis.Query
         public virtual void TestStopwordsPerFieldMaxPercentDocs()
         {
             protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader, Arrays.AsList("variedField"), 1f / 2f);
-            TokenStream protectedTokenStream = protectedAnalyzer.TokenStream("repetitiveField", "boring");
+            TokenStream protectedTokenStream = protectedAnalyzer.GetTokenStream("repetitiveField", "boring");
             // A filter on one Field should not affect queries on another
             AssertTokenStreamContents(protectedTokenStream, new string[] { "boring" });
 
             protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader, Arrays.AsList("variedField", "repetitiveField"), 1f / 2f);
-            protectedTokenStream = protectedAnalyzer.TokenStream("repetitiveField", "boring");
+            protectedTokenStream = protectedAnalyzer.GetTokenStream("repetitiveField", "boring");
             // A filter on the right Field should affect queries on it
             AssertTokenStreamContents(protectedTokenStream, new string[0]);
         }
@@ -129,11 +129,11 @@ namespace Lucene.Net.Analysis.Query
         {
             protectedAnalyzer = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, appAnalyzer, reader, Arrays.AsList("repetitiveField"), 10);
 
-            TokenStream protectedTokenStream = protectedAnalyzer.TokenStream("repetitiveField", "boring");
+            TokenStream protectedTokenStream = protectedAnalyzer.GetTokenStream("repetitiveField", "boring");
             // Check filter set up OK
             AssertTokenStreamContents(protectedTokenStream, new string[0]);
 
-            protectedTokenStream = protectedAnalyzer.TokenStream("variedField", "boring");
+            protectedTokenStream = protectedAnalyzer.GetTokenStream("variedField", "boring");
             // Filter should not prevent stopwords in one field being used in another
             AssertTokenStreamContents(protectedTokenStream, new string[] { "boring" });
         }
@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Query
         public virtual void TestTokenStream()
         {
             QueryAutoStopWordAnalyzer a = new QueryAutoStopWordAnalyzer(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false), reader, 10);
-            TokenStream ts = a.TokenStream("repetitiveField", "this boring");
+            TokenStream ts = a.GetTokenStream("repetitiveField", "this boring");
             AssertTokenStreamContents(ts, new string[] { "this" });
         }
     }

@@ -76,7 +76,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                     TokenStream ts = null;
                     try
                     {
-                        ts = analyzer.TokenStream(field, stopWords);
+                        ts = analyzer.GetTokenStream(field, stopWords);
                         ICharTermAttribute termAtt = ts.AddAttribute<ICharTermAttribute>();
                         ts.Reset();
                         while (ts.IncrementToken())

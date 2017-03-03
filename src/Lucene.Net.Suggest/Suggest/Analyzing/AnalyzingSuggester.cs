@@ -950,7 +950,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         {
             // Analyze surface form:
             Automaton automaton = null;
-            TokenStream ts = indexAnalyzer.TokenStream("", surfaceForm.Utf8ToString());
+            TokenStream ts = indexAnalyzer.GetTokenStream("", surfaceForm.Utf8ToString());
             try
             {
 
@@ -984,7 +984,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             // TODO: is there a Reader from a CharSequence?
             // Turn tokenstream into automaton:
             Automaton automaton = null;
-            TokenStream ts = queryAnalyzer.TokenStream("", key);
+            TokenStream ts = queryAnalyzer.GetTokenStream("", key);
             try
             {
                 automaton = (TokenStreamToAutomaton).ToAutomaton(ts);

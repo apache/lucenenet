@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
 
             public TokenStream GetTokenStream(Analyzer analyzer)
             {
-                return GetReaderValue() != null ? analyzer.TokenStream(Name, GetReaderValue()) : analyzer.TokenStream(Name, new StringReader(GetStringValue()));
+                return GetReaderValue() != null ? analyzer.GetTokenStream(Name, GetReaderValue()) : analyzer.GetTokenStream(Name, new StringReader(GetStringValue()));
             }
         }
 

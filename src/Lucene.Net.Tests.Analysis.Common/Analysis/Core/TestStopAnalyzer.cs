@@ -44,7 +44,7 @@ namespace Lucene.Net.Analysis.Core
         public virtual void TestDefaults()
         {
             assertTrue(stop != null);
-            TokenStream stream = stop.TokenStream("test", "This is a test of the english stop analyzer");
+            TokenStream stream = stop.GetTokenStream("test", "This is a test of the english stop analyzer");
             try
             {
                 assertTrue(stream != null);
@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Core
         {
             CharArraySet stopWordsSet = new CharArraySet(TEST_VERSION_CURRENT, new string[] { "good", "test", "analyzer" }, false);
             StopAnalyzer newStop = new StopAnalyzer(TEST_VERSION_CURRENT, stopWordsSet);
-            TokenStream stream = newStop.TokenStream("test", "This is a good test of the english stop analyzer");
+            TokenStream stream = newStop.GetTokenStream("test", "This is a good test of the english stop analyzer");
             try
             {
                 assertNotNull(stream);
@@ -95,7 +95,7 @@ namespace Lucene.Net.Analysis.Core
             StopAnalyzer newStop = new StopAnalyzer(TEST_VERSION_CURRENT, stopWordsSet);
             string s = "This is a good test of the english stop analyzer with positions";
             int[] expectedIncr = new int[] { 1, 1, 1, 3, 1, 1, 1, 2, 1 };
-            TokenStream stream = newStop.TokenStream("test", s);
+            TokenStream stream = newStop.GetTokenStream("test", s);
             try
             {
                 assertNotNull(stream);

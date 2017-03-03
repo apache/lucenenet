@@ -548,7 +548,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 // if there are multi-term matches, we have to initialize the "fake" enum for each document
                 if (automata.Length > 0)
                 {
-                    DocsAndPositionsEnum dp = MultiTermHighlighting.GetDocsEnum(analyzer.TokenStream(field, content), automata);
+                    DocsAndPositionsEnum dp = MultiTermHighlighting.GetDocsEnum(analyzer.GetTokenStream(field, content), automata);
                     dp.Advance(doc - subContext.DocBase);
                     postings[terms.Length - 1] = dp; // last term is the multiterm matcher
                 }

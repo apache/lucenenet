@@ -425,7 +425,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             try
             {
-                ts = m_queryAnalyzer.TokenStream("", new StringReader(key));
+                ts = m_queryAnalyzer.GetTokenStream("", new StringReader(key));
 
                 //long t0 = System.currentTimeMillis();
                 ts.Reset();
@@ -630,7 +630,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// </summary>
         protected internal virtual object Highlight(string text, IEnumerable<string> matchedTokens, string prefixToken)
         {
-            TokenStream ts = m_queryAnalyzer.TokenStream("text", new StringReader(text));
+            TokenStream ts = m_queryAnalyzer.GetTokenStream("text", new StringReader(text));
             try
             {
                 var termAtt = ts.AddAttribute<ICharTermAttribute>();

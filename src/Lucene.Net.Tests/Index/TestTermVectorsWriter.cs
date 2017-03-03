@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             Document doc = new Document();
             IOException priorException = null;
-            TokenStream stream = analyzer.TokenStream("field", new StringReader("abcd   "));
+            TokenStream stream = analyzer.GetTokenStream("field", new StringReader("abcd   "));
             try
             {
                 stream.Reset(); // TODO: weird to reset before wrapping with CachingTokenFilter... correct?

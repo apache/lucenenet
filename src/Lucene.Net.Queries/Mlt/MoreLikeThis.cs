@@ -584,7 +584,7 @@ namespace Lucene.Net.Queries.Mlt
             {
                 throw new System.NotSupportedException("To use MoreLikeThis without " + "term vectors, you must provide an Analyzer");
             }
-            var ts = Analyzer.TokenStream(fieldName, r);
+            var ts = Analyzer.GetTokenStream(fieldName, r);
             try
             {
                 int tokenCount = 0;

@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 IOException priorException = null;
-                TokenStream ts = a.TokenStream("foo", new StringReader(s));
+                TokenStream ts = a.GetTokenStream("foo", new StringReader(s));
                 try
                 {
                     ITermToBytesRefAttribute termAtt = ts.GetAttribute<ITermToBytesRefAttribute>();

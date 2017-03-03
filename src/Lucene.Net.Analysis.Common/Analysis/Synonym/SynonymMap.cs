@@ -360,7 +360,7 @@ namespace Lucene.Net.Analysis.Synonym
             public virtual CharsRef Analyze(string text, CharsRef reuse)
             {
                 IOException priorException = null;
-                TokenStream ts = analyzer.TokenStream("", text);
+                TokenStream ts = analyzer.GetTokenStream("", text);
                 try
                 {
                     var termAtt = ts.AddAttribute<ICharTermAttribute>();

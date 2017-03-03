@@ -620,12 +620,12 @@ namespace Lucene.Net.Documents
             }
             else if (GetReaderValue() != null)
             {
-                return analyzer.TokenStream(Name, GetReaderValue());
+                return analyzer.GetTokenStream(Name, GetReaderValue());
             }
             else if (GetStringValue() != null)
             {
                 TextReader sr = new StringReader(GetStringValue());
-                return analyzer.TokenStream(Name, sr);
+                return analyzer.GetTokenStream(Name, sr);
             }
 
             throw new System.ArgumentException("Field must have either TokenStream, String, Reader or Number value; got " + this);

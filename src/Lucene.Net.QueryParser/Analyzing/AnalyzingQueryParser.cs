@@ -165,7 +165,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             TokenStream stream = null;
             try
             {
-                stream = Analyzer.TokenStream(field, chunk);
+                stream = Analyzer.GetTokenStream(field, chunk);
                 stream.Reset();
                 ICharTermAttribute termAtt = stream.GetAttribute<ICharTermAttribute>();
                 // get first and hopefully only output token

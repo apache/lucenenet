@@ -112,7 +112,7 @@ namespace Lucene.Net.Classification
         {
             ICollection<string> result = new LinkedList<string>();
             foreach (string textFieldName in _textFieldNames) {
-                TokenStream tokenStream = _analyzer.TokenStream(textFieldName, new StringReader(doc));
+                TokenStream tokenStream = _analyzer.GetTokenStream(textFieldName, new StringReader(doc));
                 try 
                 {
                     ICharTermAttribute charTermAttribute = tokenStream.AddAttribute<ICharTermAttribute>();

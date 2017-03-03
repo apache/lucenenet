@@ -96,7 +96,7 @@ namespace Lucene.Net.Analysis.Core
         [Test]
         public virtual void TestOffsets()
         {
-            TokenStream stream = (new KeywordAnalyzer()).TokenStream("field", new StringReader("abcd"));
+            TokenStream stream = (new KeywordAnalyzer()).GetTokenStream("field", new StringReader("abcd"));
             try
             {
                 IOffsetAttribute offsetAtt = stream.AddAttribute<IOffsetAttribute>();

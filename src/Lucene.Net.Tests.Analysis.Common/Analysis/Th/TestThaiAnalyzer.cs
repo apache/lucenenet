@@ -154,10 +154,10 @@ namespace Lucene.Net.Analysis.Th
             ThaiAnalyzer analyzer = new ThaiAnalyzer(LuceneVersion.LUCENE_30);
 #pragma warning restore 612, 618
             // just consume
-            TokenStream ts = analyzer.TokenStream("dummy", "ภาษาไทย");
+            TokenStream ts = analyzer.GetTokenStream("dummy", "ภาษาไทย");
             AssertTokenStreamContents(ts, new string[] { "ภาษา", "ไทย" });
             // this consumer adds flagsAtt, which this analyzer does not use. 
-            ts = analyzer.TokenStream("dummy", "ภาษาไทย");
+            ts = analyzer.GetTokenStream("dummy", "ภาษาไทย");
             ts.AddAttribute<IFlagsAttribute>();
             AssertTokenStreamContents(ts, new string[] { "ภาษา", "ไทย" });
         }

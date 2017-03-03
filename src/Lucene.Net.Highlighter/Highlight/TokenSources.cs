@@ -340,7 +340,7 @@ namespace Lucene.Net.Search.Highlight
         {
             try
             {
-                return analyzer.TokenStream(field, contents);
+                return analyzer.GetTokenStream(field, contents);
             }
             catch (IOException ex)
             {

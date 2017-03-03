@@ -370,7 +370,7 @@ namespace Lucene.Net.Documents
             doc.Add(new Field("indexed", "abc xyz", Field.Store.NO, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("tokenized", "abc xyz", Field.Store.NO, Field.Index.ANALYZED));
             doc.Add(new Field("tokenized_reader", new StringReader("abc xyz")));
-            doc.Add(new Field("tokenized_tokenstream", w.w.Analyzer.TokenStream("tokenized_tokenstream", new StringReader("abc xyz"))));
+            doc.Add(new Field("tokenized_tokenstream", w.w.Analyzer.GetTokenStream("tokenized_tokenstream", new StringReader("abc xyz"))));
             doc.Add(new Field("binary", new byte[10]));
             doc.Add(new Field("tv", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.YES));
             doc.Add(new Field("tv_pos", "abc xyz", Field.Store.NO, Field.Index.ANALYZED, Field.TermVector.WITH_POSITIONS));

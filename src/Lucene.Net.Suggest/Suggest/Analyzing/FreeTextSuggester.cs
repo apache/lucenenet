@@ -532,7 +532,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 throw new System.ArgumentException("this suggester doesn't support contexts");
             }
 
-            TokenStream ts = queryAnalyzer.TokenStream("", key.ToString());
+            TokenStream ts = queryAnalyzer.GetTokenStream("", key.ToString());
             try
             {
                 ITermToBytesRefAttribute termBytesAtt = ts.AddAttribute<ITermToBytesRefAttribute>();

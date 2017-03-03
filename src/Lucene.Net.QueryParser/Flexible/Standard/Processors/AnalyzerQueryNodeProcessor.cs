@@ -116,7 +116,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 TokenStream source = null;
                 try
                 {
-                    source = this.analyzer.TokenStream(field, text);
+                    source = this.analyzer.GetTokenStream(field, text);
                     source.Reset();
                     buffer = new CachingTokenFilter(source);
 

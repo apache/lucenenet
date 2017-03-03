@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < 1000; i++)
             {
                 string s = TestUtil.RandomSimpleString(random);
-                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+                assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
             }
         }
 
@@ -98,7 +98,7 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < numIterations; i++)
             {
                 string s = TestUtil.RandomSimpleString(random, maxLength);
-                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+                assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
             }
         }
 
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < 1000; i++)
             {
                 string s = TestUtil.RandomHtmlishString(random, 20);
-                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+                assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
             }
         }
 
@@ -159,7 +159,7 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < numIterations; i++)
             {
                 string s = TestUtil.RandomHtmlishString(random, maxLength);
-                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+                assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
             }
         }
 
@@ -188,7 +188,7 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < 1000; i++)
             {
                 string s = TestUtil.RandomUnicodeString(random);
-                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+                assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
             }
         }
 
@@ -220,7 +220,7 @@ namespace Lucene.Net.Analysis.Core
             for (int i = 0; i < numIterations; i++)
             {
                 string s = TestUtil.RandomUnicodeString(random, maxLength);
-                assertEquals(s, left.TokenStream("foo", newStringReader(s)), right.TokenStream("foo", newStringReader(s)));
+                assertEquals(s, left.GetTokenStream("foo", newStringReader(s)), right.GetTokenStream("foo", newStringReader(s)));
             }
         }
 

@@ -171,7 +171,7 @@ namespace Lucene.Net.Search.VectorHighlight
         {
             List<BytesRef> bytesRefs = new List<BytesRef>();
 
-            TokenStream tokenStream = analyzer.TokenStream(field, text);
+            TokenStream tokenStream = analyzer.GetTokenStream(field, text);
             try
             {
                 ITermToBytesRefAttribute termAttribute = tokenStream.GetAttribute<ITermToBytesRefAttribute>();

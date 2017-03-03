@@ -36,7 +36,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new WhitespaceAnalyzer(TEST_VERSION_CURRENT), analyzerPerField);
 
-            TokenStream tokenStream = analyzer.TokenStream("field", text);
+            TokenStream tokenStream = analyzer.GetTokenStream("field", text);
             try
             {
                 ICharTermAttribute termAtt = tokenStream.GetAttribute<ICharTermAttribute>();
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 IOUtils.CloseWhileHandlingException(tokenStream);
             }
 
-            tokenStream = analyzer.TokenStream("special", text);
+            tokenStream = analyzer.GetTokenStream("special", text);
             try
             {
                 ICharTermAttribute termAtt = tokenStream.GetAttribute<ICharTermAttribute>();

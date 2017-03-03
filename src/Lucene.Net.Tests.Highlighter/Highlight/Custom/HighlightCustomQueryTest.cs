@@ -78,7 +78,7 @@ namespace Lucene.Net.Search.Highlight.Custom
             String text)
         {
             TokenStream tokenStream = new MockAnalyzer(Random(), MockTokenizer.SIMPLE,
-                true, MockTokenFilter.ENGLISH_STOPSET).TokenStream(fieldName, text);
+                true, MockTokenFilter.ENGLISH_STOPSET).GetTokenStream(fieldName, text);
             // Assuming "<B>", "</B>" used to highlight
             SimpleHTMLFormatter formatter = new SimpleHTMLFormatter();
             MyQueryScorer scorer = new MyQueryScorer(query, fieldName, FIELD_NAME);

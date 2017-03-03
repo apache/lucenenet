@@ -123,11 +123,11 @@ namespace Lucene.Net.Analysis.Miscellaneous
             AssertAnalyzesTo(analyzer, document, expected);
 
             // analysis with a "FastStringReader"
-            TokenStream ts = analyzer.TokenStream("dummy", new PatternAnalyzer.FastStringReader(document));
+            TokenStream ts = analyzer.GetTokenStream("dummy", new PatternAnalyzer.FastStringReader(document));
             AssertTokenStreamContents(ts, expected);
 
             // analysis of a String, uses PatternAnalyzer.tokenStream(String, String)
-            TokenStream ts2 = analyzer.TokenStream("dummy", new StringReader(document));
+            TokenStream ts2 = analyzer.GetTokenStream("dummy", new StringReader(document));
             AssertTokenStreamContents(ts2, expected);
         }
 

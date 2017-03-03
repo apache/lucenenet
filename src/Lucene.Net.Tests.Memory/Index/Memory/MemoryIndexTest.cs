@@ -388,7 +388,7 @@ namespace Lucene.Net.Index.Memory
             SpanQuery wrappedquery = new SpanMultiTermQueryWrapper<RegexpQuery>(regex);
 
             MemoryIndex mindex = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
-            mindex.AddField("field", new MockAnalyzer(Random()).TokenStream("field", "hello there"));
+            mindex.AddField("field", new MockAnalyzer(Random()).GetTokenStream("field", "hello there"));
 
             // This throws an NPE
             assertEquals(0, mindex.Search(wrappedquery), 0.00001f);
@@ -402,7 +402,7 @@ namespace Lucene.Net.Index.Memory
             SpanQuery wrappedquery = new SpanOrQuery(new SpanMultiTermQueryWrapper<RegexpQuery>(regex));
 
             MemoryIndex mindex = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
-            mindex.AddField("field", new MockAnalyzer(Random()).TokenStream("field", "hello there"));
+            mindex.AddField("field", new MockAnalyzer(Random()).GetTokenStream("field", "hello there"));
 
             // This passes though
             assertEquals(0, mindex.Search(wrappedquery), 0.00001f);
