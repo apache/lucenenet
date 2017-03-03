@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                         bool segAllDeletes;
                         try
                         {
-                            AbstractDocValuesFieldUpdates.Container dvUpdates = new AbstractDocValuesFieldUpdates.Container();
+                            DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
                             if (coalescedUpdates != null)
                             {
                                 //System.out.println("    del coalesced");
@@ -331,7 +331,7 @@ namespace Lucene.Net.Index
                             {
                                 delCount += (int)ApplyTermDeletes(coalescedUpdates.TermsIterable(), rld, reader);
                                 delCount += (int)ApplyQueryDeletes(coalescedUpdates.QueriesIterable(), rld, reader);
-                                AbstractDocValuesFieldUpdates.Container dvUpdates = new AbstractDocValuesFieldUpdates.Container();
+                                DocValuesFieldUpdates.Container dvUpdates = new DocValuesFieldUpdates.Container();
                                 ApplyDocValuesUpdates(coalescedUpdates.numericDVUpdates, rld, reader, dvUpdates);
                                 ApplyDocValuesUpdates(coalescedUpdates.binaryDVUpdates, rld, reader, dvUpdates);
                                 if (dvUpdates.Any())
@@ -540,7 +540,7 @@ namespace Lucene.Net.Index
         }
 
         // DocValues updates
-        private void ApplyDocValuesUpdates<T1>(IEnumerable<T1> updates, ReadersAndUpdates rld, SegmentReader reader, AbstractDocValuesFieldUpdates.Container dvUpdatesContainer) where T1 : DocValuesUpdate
+        private void ApplyDocValuesUpdates<T1>(IEnumerable<T1> updates, ReadersAndUpdates rld, SegmentReader reader, DocValuesFieldUpdates.Container dvUpdatesContainer) where T1 : DocValuesUpdate
         {
             lock (this)
             {
@@ -611,7 +611,7 @@ namespace Lucene.Net.Index
 
                         //System.out.println("BDS: got docsEnum=" + docsEnum);
 
-                        AbstractDocValuesFieldUpdates dvUpdates = dvUpdatesContainer.GetUpdates(update.field, update.type);
+                        DocValuesFieldUpdates dvUpdates = dvUpdatesContainer.GetUpdates(update.field, update.type);
                         if (dvUpdates == null)
                         {
                             dvUpdates = dvUpdatesContainer.NewUpdates(update.field, update.type, reader.MaxDoc);

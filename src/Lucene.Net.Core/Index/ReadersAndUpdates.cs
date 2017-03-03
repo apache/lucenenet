@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
         // updates on the merged segment too.
         private bool isMerging = false;
 
-        private readonly IDictionary<string, AbstractDocValuesFieldUpdates> mergingDVUpdates = new Dictionary<string, AbstractDocValuesFieldUpdates>();
+        private readonly IDictionary<string, DocValuesFieldUpdates> mergingDVUpdates = new Dictionary<string, DocValuesFieldUpdates>();
 
         public ReadersAndUpdates(IndexWriter writer, SegmentCommitInfo info)
         {
@@ -448,7 +448,7 @@ namespace Lucene.Net.Index
         }
 
         // Writes field updates (new _X_N updates files) to the directory
-        public virtual void WriteFieldUpdates(Directory dir, AbstractDocValuesFieldUpdates.Container dvUpdates)
+        public virtual void WriteFieldUpdates(Directory dir, DocValuesFieldUpdates.Container dvUpdates)
         {
             lock (this)
             {
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
                 {
                     foreach (KeyValuePair<string, NumericDocValuesFieldUpdates> e in dvUpdates.numericDVUpdates)
                     {
-                        AbstractDocValuesFieldUpdates updates;
+                        DocValuesFieldUpdates updates;
                         if (!mergingDVUpdates.TryGetValue(e.Key, out updates))
                         {
                             mergingDVUpdates[e.Key] = e.Value;
@@ -606,7 +606,7 @@ namespace Lucene.Net.Index
                     }
                     foreach (KeyValuePair<string, BinaryDocValuesFieldUpdates> e in dvUpdates.binaryDVUpdates)
                     {
-                        AbstractDocValuesFieldUpdates updates;
+                        DocValuesFieldUpdates updates;
                         if (!mergingDVUpdates.TryGetValue(e.Key, out updates))
                         {
                             mergingDVUpdates[e.Key] = e.Value;
@@ -938,7 +938,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns updates that came in while this segment was merging. </summary>
-        public virtual IDictionary<string, AbstractDocValuesFieldUpdates> MergingFieldUpdates
+        public virtual IDictionary<string, DocValuesFieldUpdates> MergingFieldUpdates
         {
             get
             {

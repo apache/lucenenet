@@ -25,9 +25,9 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    internal abstract class AbstractDocValuesFieldUpdates // LUCENENET specific - Added Abstract prefix for the internal type
+    internal abstract class DocValuesFieldUpdates
     {
-        // LUCENENET specific: moved Type enum to new class named DocValuesFieldUpdates (the original name of this class)
+        // LUCENENET specific: de-nested Type enum and renamed DocValuesFieldUpdatesType
 
         /// <summary>
         /// An iterator over documents and their updated values. Only documents with
@@ -89,7 +89,7 @@ namespace Lucene.Net.Index
                 get { return numericDVUpdates.Count + binaryDVUpdates.Count; }
             }
 
-            internal virtual AbstractDocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdatesType type)
+            internal virtual DocValuesFieldUpdates GetUpdates(string field, DocValuesFieldUpdatesType type)
             {
                 switch (type)
                 {
@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal virtual AbstractDocValuesFieldUpdates NewUpdates(string field, DocValuesFieldUpdatesType type, int maxDoc)
+            internal virtual DocValuesFieldUpdates NewUpdates(string field, DocValuesFieldUpdatesType type, int maxDoc)
             {
                 switch (type)
                 {
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
         internal readonly string field;
         internal readonly DocValuesFieldUpdatesType type;
 
-        protected internal AbstractDocValuesFieldUpdates(string field, DocValuesFieldUpdatesType type)
+        protected internal DocValuesFieldUpdates(string field, DocValuesFieldUpdatesType type)
         {
             this.field = field;
             this.type = type;
@@ -159,11 +159,11 @@ namespace Lucene.Net.Index
         public abstract Iterator GetIterator();
 
         /// <summary>
-        /// Merge with another <seealso cref="AbstractDocValuesFieldUpdates"/>. this is called for a
+        /// Merge with another <seealso cref="DocValuesFieldUpdates"/>. this is called for a
         /// segment which received updates while it was being merged. The given updates
         /// should override whatever updates are in that instance.
         /// </summary>
-        public abstract void Merge(AbstractDocValuesFieldUpdates other);
+        public abstract void Merge(DocValuesFieldUpdates other);
 
         /// <summary>
         /// Returns true if this instance contains any updates. </summary>

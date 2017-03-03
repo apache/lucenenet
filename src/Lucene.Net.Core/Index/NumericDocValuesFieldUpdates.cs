@@ -30,14 +30,14 @@ namespace Lucene.Net.Index
     using PagedMutable = Lucene.Net.Util.Packed.PagedMutable;
 
     /// <summary>
-    /// A <seealso cref="AbstractDocValuesFieldUpdates"/> which holds updates of documents, of a single
+    /// A <seealso cref="DocValuesFieldUpdates"/> which holds updates of documents, of a single
     /// <seealso cref="NumericDocValuesField"/>.
     ///
     /// @lucene.experimental
     /// </summary>
-    internal class NumericDocValuesFieldUpdates : AbstractDocValuesFieldUpdates
+    internal class NumericDocValuesFieldUpdates : DocValuesFieldUpdates
     {
-        new internal sealed class Iterator : AbstractDocValuesFieldUpdates.Iterator
+        new internal sealed class Iterator : DocValuesFieldUpdates.Iterator
         {
             private readonly int size;
             private readonly PagedGrowableWriter values;
@@ -145,7 +145,7 @@ namespace Lucene.Net.Index
             ++size;
         }
 
-        public override AbstractDocValuesFieldUpdates.Iterator GetIterator()
+        public override DocValuesFieldUpdates.Iterator GetIterator()
         {
             PagedMutable docs = this.docs;
             PagedGrowableWriter values = this.values;
@@ -208,7 +208,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override void Merge(AbstractDocValuesFieldUpdates other)
+        public override void Merge(DocValuesFieldUpdates other)
         {
             Debug.Assert(other is NumericDocValuesFieldUpdates);
             NumericDocValuesFieldUpdates otherUpdates = (NumericDocValuesFieldUpdates)other;

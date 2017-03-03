@@ -4017,9 +4017,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void SkipDeletedDoc(AbstractDocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc)
+        private void SkipDeletedDoc(DocValuesFieldUpdates.Iterator[] updatesIters, int deletedDoc)
         {
-            foreach (AbstractDocValuesFieldUpdates.Iterator iter in updatesIters)
+            foreach (DocValuesFieldUpdates.Iterator iter in updatesIters)
             {
                 if (iter.Doc == deletedDoc)
                 {
@@ -4058,12 +4058,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, AbstractDocValuesFieldUpdates[] dvFieldUpdates, AbstractDocValuesFieldUpdates.Iterator[] updatesIters, int curDoc)
+        private void MaybeApplyMergedDVUpdates(MergePolicy.OneMerge merge, MergeState mergeState, int docUpto, MergedDeletesAndUpdates holder, string[] mergingFields, DocValuesFieldUpdates[] dvFieldUpdates, DocValuesFieldUpdates.Iterator[] updatesIters, int curDoc)
         {
             int newDoc = -1;
             for (int idx = 0; idx < mergingFields.Length; idx++)
             {
-                AbstractDocValuesFieldUpdates.Iterator updatesIter = updatesIters[idx];
+                DocValuesFieldUpdates.Iterator updatesIter = updatesIters[idx];
                 if (updatesIter.Doc == curDoc) // document has an update
                 {
                     if (holder.mergedDeletesAndUpdates == null)
@@ -4074,7 +4074,7 @@ namespace Lucene.Net.Index
                     {
                         newDoc = holder.docMap.Map(docUpto);
                     }
-                    AbstractDocValuesFieldUpdates dvUpdates = dvFieldUpdates[idx];
+                    DocValuesFieldUpdates dvUpdates = dvFieldUpdates[idx];
                     dvUpdates.Add(newDoc, updatesIter.Value);
                     updatesIter.NextDoc(); // advance to next document
                 }
@@ -4116,7 +4116,7 @@ namespace Lucene.Net.Index
 
                 // Lazy init (only when we find a delete to carry over):
                 MergedDeletesAndUpdates holder = new MergedDeletesAndUpdates();
-                AbstractDocValuesFieldUpdates.Container mergedDVUpdates = new AbstractDocValuesFieldUpdates.Container();
+                DocValuesFieldUpdates.Container mergedDVUpdates = new DocValuesFieldUpdates.Container();
 
                 for (int i = 0; i < sourceSegments.Count; i++)
                 {
@@ -4128,10 +4128,10 @@ namespace Lucene.Net.Index
                     // We hold a ref so it should still be in the pool:
                     Debug.Assert(rld != null, "seg=" + info.Info.Name);
                     IBits currentLiveDocs = rld.LiveDocs;
-                    IDictionary<string, AbstractDocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
+                    IDictionary<string, DocValuesFieldUpdates> mergingFieldUpdates = rld.MergingFieldUpdates;
                     string[] mergingFields;
-                    AbstractDocValuesFieldUpdates[] dvFieldUpdates;
-                    AbstractDocValuesFieldUpdates.Iterator[] updatesIters;
+                    DocValuesFieldUpdates[] dvFieldUpdates;
+                    DocValuesFieldUpdates.Iterator[] updatesIters;
                     if (mergingFieldUpdates.Count == 0)
                     {
                         mergingFields = null;
@@ -4141,13 +4141,13 @@ namespace Lucene.Net.Index
                     else
                     {
                         mergingFields = new string[mergingFieldUpdates.Count];
-                        dvFieldUpdates = new AbstractDocValuesFieldUpdates[mergingFieldUpdates.Count];
-                        updatesIters = new AbstractDocValuesFieldUpdates.Iterator[mergingFieldUpdates.Count];
+                        dvFieldUpdates = new DocValuesFieldUpdates[mergingFieldUpdates.Count];
+                        updatesIters = new DocValuesFieldUpdates.Iterator[mergingFieldUpdates.Count];
                         int idx = 0;
-                        foreach (KeyValuePair<string, AbstractDocValuesFieldUpdates> e in mergingFieldUpdates)
+                        foreach (KeyValuePair<string, DocValuesFieldUpdates> e in mergingFieldUpdates)
                         {
                             string field = e.Key;
-                            AbstractDocValuesFieldUpdates updates = e.Value;
+                            DocValuesFieldUpdates updates = e.Value;
                             mergingFields[idx] = field;
                             dvFieldUpdates[idx] = mergedDVUpdates.GetUpdates(field, updates.type);
                             if (dvFieldUpdates[idx] == null)
