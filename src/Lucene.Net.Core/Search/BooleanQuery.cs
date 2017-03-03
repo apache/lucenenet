@@ -673,7 +673,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
-        public override int GetHashCode()
+        public override int GetHashCode() // LUCENENET TODO: Fix hashcode logic.
         {
             return Number.SingleToInt32Bits(Boost) ^ (clauses.Count == 0 ? 0 : HashHelpers.CombineHashCodes(clauses.First().GetHashCode(), clauses.Last().GetHashCode(), clauses.Count)) + MinimumNumberShouldMatch + (disableCoord ? 17 : 0);
         }

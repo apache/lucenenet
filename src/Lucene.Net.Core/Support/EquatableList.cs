@@ -31,6 +31,7 @@ namespace Lucene.Net.Support
     /// <see cref="IEquatable{T}"/>.</summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
     
+    // LUCENENET TODO: Merge with ValueList<T> (similar functionality)
     public class EquatableList<T> : System.Collections.Generic.List<T>,
                                     IEquatable<System.Collections.Generic.IEnumerable<T>>
     {
