@@ -306,6 +306,10 @@ namespace Lucene.Net.Analysis.Core
             { typeof(CharArrayMap<string>), new StringCharArrayMapArgProducer() },
             { typeof(StemmerOverrideFilter.StemmerOverrideMap), new StemmerOverrideMapArgProducer() },
             { typeof(SynonymMap), new SynonymMapArgProducer() },
+            { typeof(WordDelimiterFlags), new AnonymousProducer((random) => {
+                int max = Enum.GetValues(typeof(WordDelimiterFlags)).Cast<int>().Sum();
+                return (WordDelimiterFlags)random.Next(0, max + 1);
+            }) }, // WordDelimiterFilter
         };
 
         private class IntArgProducer : IArgProducer
@@ -316,6 +320,23 @@ namespace Lucene.Net.Analysis.Core
                 // (e.g. allocate enormous arrays)
                 // return Integer.valueOf(random.nextInt());
                 return TestUtil.NextInt(random, -100, 100);
+            }
+        }
+
+        private class AnonymousProducer : IArgProducer
+        {
+            private readonly Func<Random, object> create;
+
+            public AnonymousProducer(Func<Random, object> create)
+            {
+                if (create == null)
+                    throw new ArgumentNullException("create");
+                this.create = create;
+            }
+
+            public object Create(Random random)
+            {
+                return create(random);
             }
         }
 
