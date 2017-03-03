@@ -27,7 +27,7 @@ namespace Lucene.Net.Store
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class AlreadyClosedException : System.Exception // LUCENENET TODO: Replace with ObjectDisposedException and comment out
+    public class AlreadyClosedException : InvalidOperationException // LUCENENET TODO: Replace with ObjectDisposedException and comment out (ObjectDisposedException inherits InvalidOperationException, so it should work great)
     {
         public AlreadyClosedException(string message)
             : base(message)
