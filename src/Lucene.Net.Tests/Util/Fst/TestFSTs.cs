@@ -273,8 +273,15 @@ namespace Lucene.Net.Util.Fst
         [Test, LongRunningTest, HasTimeout] // 45 minutes to be on the safe side
         public virtual void TestRandomWords()
         {
-            fail("This test is somehow crashing NUnit and causing it not to complete");
-            TestRandomWords(1000, AtLeast(2));
+            // LUCENENET specific: NUnit will crash with an OOM if we do the full test
+            // with verbosity enabled. So, making this a manual setting that can be
+            // turned on if, and only if, needed for debugging. If the setting is turned
+            // on, we are decresing the number of iterations by 9/10, which seems to
+            // keep it from crashing.
+            bool isVerbose = false; // Enable manually
+            int maxNumWords = isVerbose ? 500 : 1000;
+          
+            TestRandomWords(maxNumWords, AtLeast(2), isVerbose);
             //testRandomWords(100, 1);
         }
 
@@ -290,7 +297,7 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        private void TestRandomWords(int maxNumWords, int numIter)
+        private void TestRandomWords(int maxNumWords, int numIter, bool VERBOSE)
         {
             Random random = new Random(Random().Next());
             for (int iter = 0; iter < numIter; iter++)
@@ -318,7 +325,7 @@ namespace Lucene.Net.Util.Fst
         [Ignore("LUCENENET TODO: This test will take around 10-14 hours to finish. It was marked with a Nightly attribute in the original Java source, but we don't currently have a corresponding attribute")]
         public virtual void TestBigSet()
         {
-            TestRandomWords(TestUtil.NextInt(Random(), 50000, 60000), 1);
+            TestRandomWords(TestUtil.NextInt(Random(), 50000, 60000), 1, false);
         }
 
         // Build FST for all unique terms in the test line docs
