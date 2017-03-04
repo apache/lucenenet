@@ -163,13 +163,14 @@ namespace Lucene.Net.Index
                     normsProducer = null;
                 }
 
-                StoredFieldsFormat sff = si.Info.Codec.StoredFieldsFormat;
+                // LUCENENET TODO: Not sure why this catch block is swallowing AccessViolationException, 
+                // because it didn't exist in Lucene. Is it really needed?
 
 #if !NETSTANDARD
                 try
                 {
 #endif
-                    fieldsReaderOrig = sff.FieldsReader(cfsDir, si.Info, fieldInfos, context);
+                    fieldsReaderOrig = si.Info.Codec.StoredFieldsFormat.FieldsReader(cfsDir, si.Info, fieldInfos, context);
 #if !NETSTANDARD
                 }
 #pragma warning disable 168
@@ -178,7 +179,6 @@ namespace Lucene.Net.Index
                 {
                 }
 #endif
-                //FieldsReaderOrig = si.Info.Codec.StoredFieldsFormat().FieldsReader(cfsDir, si.Info, fieldInfos, context);
 
                 if (fieldInfos.HasVectors) // open term vector files only as needed
                 {
@@ -293,7 +293,10 @@ namespace Lucene.Net.Index
         /// Returns approximate RAM bytes used </summary>
         public long RamBytesUsed()
         {
-            return ((normsProducer != null) ? normsProducer.RamBytesUsed() : 0) + ((fields != null) ? fields.RamBytesUsed() : 0) + ((fieldsReaderOrig != null) ? fieldsReaderOrig.RamBytesUsed() : 0) + ((termVectorsReaderOrig != null) ? termVectorsReaderOrig.RamBytesUsed() : 0);
+            return ((normsProducer != null) ? normsProducer.RamBytesUsed() : 0) + 
+                ((fields != null) ? fields.RamBytesUsed() : 0) + 
+                ((fieldsReaderOrig != null) ? fieldsReaderOrig.RamBytesUsed() : 0) + 
+                ((termVectorsReaderOrig != null) ? termVectorsReaderOrig.RamBytesUsed() : 0);
         }
     }
 }
