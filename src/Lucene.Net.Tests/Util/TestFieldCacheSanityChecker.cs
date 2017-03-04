@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using NUnit.Framework;
 using System;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.Util
@@ -64,13 +65,13 @@ namespace Lucene.Net.Util
             for (int i = 0; i < NUM_DOCS; i++)
             {
                 Document doc = new Document();
-                doc.Add(NewStringField("theLong", Convert.ToString(theLong--), Field.Store.NO));
-                doc.Add(NewStringField("theDouble", theDouble.ToString("R"), Field.Store.NO));
+                doc.Add(NewStringField("theLong", Convert.ToString(theLong--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theDouble", theDouble.ToString("R", CultureInfo.InvariantCulture), Field.Store.NO));
                 theDouble--;
-                doc.Add(NewStringField("theByte", Convert.ToString(theByte--), Field.Store.NO));
-                doc.Add(NewStringField("theShort", Convert.ToString(theShort--), Field.Store.NO));
-                doc.Add(NewStringField("theInt", Convert.ToString(theInt--), Field.Store.NO));
-                doc.Add(NewStringField("theFloat", Convert.ToString(theFloat--), Field.Store.NO));
+                doc.Add(NewStringField("theByte", Convert.ToString(theByte--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theShort", Convert.ToString(theShort--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theInt", Convert.ToString(theInt--, CultureInfo.InvariantCulture), Field.Store.NO));
+                doc.Add(NewStringField("theFloat", Convert.ToString(theFloat--, CultureInfo.InvariantCulture), Field.Store.NO));
                 if (0 == i % 3)
                 {
                     wA.AddDocument(doc);
