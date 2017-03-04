@@ -107,7 +107,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             private readonly SimpleTextFieldsReader _outerInstance;
 
-            private readonly IndexOptions _indexOptions;
+            private readonly IndexOptions? _indexOptions;
             private int _docFreq;
             private long _totalTermFreq;
             private long _docsStart;
@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.SimpleText
             private readonly BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> _fstEnum;
 
             public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance,
-                FST<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> fst, IndexOptions indexOptions)
+                FST<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> fst, IndexOptions? indexOptions)
             {
                 _outerInstance = outerInstance;
                 _indexOptions = indexOptions;
@@ -210,7 +210,7 @@ namespace Lucene.Net.Codecs.SimpleText
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
             {
 
-                if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                if (_indexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     // Positions were not indexed
                     return null;
@@ -225,7 +225,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     docsAndPositionsEnum = new SimpleTextDocsAndPositionsEnum(_outerInstance);
                 }
-                return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions, _docFreq);
+                return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions.GetValueOrDefault(), _docFreq);
             }
 
             public override IComparer<BytesRef> Comparer
@@ -675,8 +675,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
-                return (_fst != null && _fieldInfo.IndexOptions.HasValue) 
-                    ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.IndexOptions.Value) 
+                return (_fst != null) 
+                    ? new SimpleTextTermsEnum(_outerInstance, _fst, _fieldInfo.IndexOptions) 
                     : TermsEnum.EMPTY;
             }
 
