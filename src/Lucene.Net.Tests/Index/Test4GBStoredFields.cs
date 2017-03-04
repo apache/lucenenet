@@ -41,7 +41,7 @@ namespace Lucene.Net.Index
     {
         [Ignore("//LUCENENET NOTE: This was marked Nightly in Java")]
         [Test]
-        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("4GBStoredFields")));
             dir.Throttling = MockDirectoryWrapper.Throttling_e.NEVER;
@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
             var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(scheduler)
+                            .SetMergeScheduler(newScheduler())
                             .SetMergePolicy(NewLogMergePolicy(false, 10))
                             .SetOpenMode(OpenMode.CREATE);
             IndexWriter w = new IndexWriter(dir, config);

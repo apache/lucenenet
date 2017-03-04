@@ -1,8 +1,9 @@
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -177,7 +178,7 @@ namespace Lucene.Net.Index
 
         // Test the case where a merge results in no doc at all
         [Test]
-        public virtual void TestMergeDocCount0([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+        public virtual void TestMergeDocCount0([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory dir = NewDirectory();
 
@@ -203,7 +204,7 @@ namespace Lucene.Net.Index
                 .SetOpenMode(OpenMode.APPEND)
                 .SetMaxBufferedDocs(10)
                 .SetMergePolicy(ldmp)
-                .SetMergeScheduler(scheduler);
+                .SetMergeScheduler(newScheduler());
             writer = new IndexWriter(dir, config);
 
             // merge factor is changed, so check invariants after all adds

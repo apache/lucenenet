@@ -1,10 +1,11 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
     using Document = Documents.Document;
@@ -52,7 +53,7 @@ namespace Lucene.Net.Index
     {
         [Ignore("Very slow. Enable manually by removing Ignore.")]
         [Test]
-        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+        public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BPostingsBytes1"));
             if (dir is MockDirectoryWrapper)
@@ -63,7 +64,7 @@ namespace Lucene.Net.Index
             var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(scheduler)
+                            .SetMergeScheduler(newScheduler())
                             .SetMergePolicy(NewLogMergePolicy(false, 10))
                             .SetOpenMode(OpenMode.CREATE);
             IndexWriter w = new IndexWriter(dir, config);

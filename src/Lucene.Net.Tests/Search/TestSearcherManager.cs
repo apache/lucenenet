@@ -434,11 +434,11 @@ namespace Lucene.Net.Search
         }
 
         [Test]
-        public virtual void TestReferenceDecrementIllegally([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+        public virtual void TestReferenceDecrementIllegally([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory dir = NewDirectory();
             var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
-                            .SetMergeScheduler(scheduler);
+                            .SetMergeScheduler(newScheduler());
             IndexWriter writer = new IndexWriter(dir, config);
             SearcherManager sm = new SearcherManager(writer, false, new SearcherFactory());
             writer.AddDocument(new Document());

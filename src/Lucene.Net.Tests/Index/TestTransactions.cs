@@ -110,44 +110,44 @@ namespace Lucene.Net.Index
 
         private class IndexerThread : TimedThread
         {
-            private readonly TestTransactions OuterInstance;
-            private IConcurrentMergeScheduler _scheduler1;
-            private IConcurrentMergeScheduler _scheduler2;
-            internal Directory Dir1;
-            internal Directory Dir2;
+            private readonly TestTransactions outerInstance;
+            private Func<IConcurrentMergeScheduler> newScheduler1;
+            private Func<IConcurrentMergeScheduler> newScheduler2;
+            internal Directory dir1;
+            internal Directory dir2;
             internal object @lock;
-            internal int NextID;
+            internal int nextID;
 
             public IndexerThread(TestTransactions outerInstance, object @lock, 
                 Directory dir1, Directory dir2,
-                IConcurrentMergeScheduler scheduler1, IConcurrentMergeScheduler scheduler2, 
+                Func<IConcurrentMergeScheduler> newScheduler1, Func<IConcurrentMergeScheduler> newScheduler2,
                 TimedThread[] threads)
                 : base(threads)
             {
-                _scheduler1 = scheduler1;
-                _scheduler2 = scheduler2;
-                this.OuterInstance = outerInstance;
+                this.newScheduler1 = newScheduler1;
+                this.newScheduler2 = newScheduler2;
+                this.outerInstance = outerInstance;
                 this.@lock = @lock;
-                this.Dir1 = dir1;
-                this.Dir2 = dir2;
+                this.dir1 = dir1;
+                this.dir2 = dir2;
             }
 
             public override void DoWork()
             {
-                var config = OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config = outerInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                                 .SetMaxBufferedDocs(3)
-                                .SetMergeScheduler(_scheduler1)
+                                .SetMergeScheduler(newScheduler1())
                                 .SetMergePolicy(NewLogMergePolicy(2));
-                IndexWriter writer1 = new IndexWriter(Dir1, config);
+                IndexWriter writer1 = new IndexWriter(dir1, config);
                 ((IConcurrentMergeScheduler)writer1.Config.MergeScheduler).SetSuppressExceptions();
 
                 // Intentionally use different params so flush/merge
                 // happen @ different times
-                var config2 = OuterInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                var config2 = outerInstance.NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                                 .SetMaxBufferedDocs(2)
-                                .SetMergeScheduler(_scheduler2)
+                                .SetMergeScheduler(newScheduler2())
                                 .SetMergePolicy(NewLogMergePolicy(3));
-                IndexWriter writer2 = new IndexWriter(Dir2, config2);
+                IndexWriter writer2 = new IndexWriter(dir2, config2);
                 ((IConcurrentMergeScheduler)writer2.Config.MergeScheduler).SetSuppressExceptions();
 
                 Update(writer1);
@@ -201,13 +201,13 @@ namespace Lucene.Net.Index
                 {
                     Document d = new Document();
                     int n = Random().Next();
-                    d.Add(OuterInstance.NewField("id", Convert.ToString(NextID++), customType));
-                    d.Add(OuterInstance.NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
+                    d.Add(outerInstance.NewField("id", Convert.ToString(nextID++), customType));
+                    d.Add(outerInstance.NewTextField("contents", English.IntToEnglish(n), Field.Store.NO));
                     writer.AddDocument(d);
                 }
 
                 // Delete 5 docs:
-                int deleteID = NextID - 1;
+                int deleteID = nextID - 1;
                 for (int j = 0; j < 5; j++)
                 {
                     writer.DeleteDocuments(new Term("id", "" + deleteID));
@@ -218,16 +218,16 @@ namespace Lucene.Net.Index
 
         private class SearcherThread : TimedThread
         {
-            internal Directory Dir1;
-            internal Directory Dir2;
+            internal Directory dir1;
+            internal Directory dir2;
             internal object @lock;
 
             public SearcherThread(object @lock, Directory dir1, Directory dir2, TimedThread[] threads)
                 : base(threads)
             {
                 this.@lock = @lock;
-                this.Dir1 = dir1;
-                this.Dir2 = dir2;
+                this.dir1 = dir1;
+                this.dir2 = dir2;
             }
 
             public override void DoWork()
@@ -237,8 +237,8 @@ namespace Lucene.Net.Index
                 {
                     try
                     {
-                        r1 = DirectoryReader.Open(Dir1);
-                        r2 = DirectoryReader.Open(Dir2);
+                        r1 = DirectoryReader.Open(dir1);
+                        r2 = DirectoryReader.Open(dir2);
                     }
                     catch (IOException e)
                     {
@@ -279,10 +279,10 @@ namespace Lucene.Net.Index
             writer.Dispose();
         }
 
-        [Test, Sequential]
+        [Test]
         public virtual void TestTransactions_Mem(
-            [ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler1, 
-            [ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler2)
+            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler1,
+            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler2)
         {
             Console.WriteLine("Start test");
             // we cant use non-ramdir on windows, because this test needs to double-write.
@@ -306,7 +306,8 @@ namespace Lucene.Net.Index
             TimedThread[] threads = new TimedThread[3];
             int numThread = 0;
 
-            IndexerThread indexerThread = new IndexerThread(this, this, dir1, dir2, scheduler1, scheduler2, threads);
+            IndexerThread indexerThread = new IndexerThread(this, this, dir1, dir2, newScheduler1, newScheduler2, threads);
+
             threads[numThread++] = indexerThread;
             indexerThread.Start();
 

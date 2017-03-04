@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     {
         // indexes Integer.MAX_VALUE docs with a fixed binary field
         [Test]
-        public virtual void TestFixedSorted([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+        public virtual void TestFixedSorted([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BFixedSorted"));
             if (dir is MockDirectoryWrapper)
@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                                 .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                                 .SetRAMBufferSizeMB(256.0)
-                                .SetMergeScheduler(scheduler)
+                                .SetMergeScheduler(newScheduler())
                                 .SetMergePolicy(NewLogMergePolicy(false, 10))
                                 .SetOpenMode(OpenMode.CREATE));
 
@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
 
         // indexes Integer.MAX_VALUE docs with a fixed binary field
         [Test]
-        public virtual void Test2BOrds([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+        public virtual void Test2BOrds([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BOrds"));
             if (dir is MockDirectoryWrapper)
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
             var config = new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                             .SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH)
                             .SetRAMBufferSizeMB(256.0)
-                            .SetMergeScheduler(scheduler)
+                            .SetMergeScheduler(newScheduler())
                             .SetMergePolicy(NewLogMergePolicy(false, 10))
                             .SetOpenMode(OpenMode.CREATE);
             IndexWriter w = new IndexWriter(dir, config);

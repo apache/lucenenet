@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
         */
 
         [Test]
-        public virtual void TestStressIndexAndSearching([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+        public virtual void TestStressIndexAndSearching([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory directory = NewDirectory();
             MockDirectoryWrapper wrapper = directory as MockDirectoryWrapper;
@@ -230,7 +230,7 @@ namespace Lucene.Net.Index
                 wrapper.AssertNoUnrefencedFilesOnClose = true;
             }
 
-            RunStressTest(directory, scheduler);
+            RunStressTest(directory, newScheduler());
             directory.Dispose();
         }
     }

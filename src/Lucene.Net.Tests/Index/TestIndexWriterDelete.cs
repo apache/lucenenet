@@ -6,14 +6,14 @@ using System.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
+using System.IO;
+using Lucene.Net.Util;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
-    using Util;
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -544,23 +544,23 @@ namespace Lucene.Net.Index
 
         [Test]
         public virtual void TestDeletesOnDiskFull(
-            [ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
-            DoTestOperationsOnDiskFull(scheduler, false);
+            DoTestOperationsOnDiskFull(newScheduler, false);
         }
 
         [Test]
         public virtual void TestUpdatesOnDiskFull(
-            [ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+            [ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
-            DoTestOperationsOnDiskFull(scheduler, true);
+            DoTestOperationsOnDiskFull(newScheduler, true);
         }
 
         /// <summary>
         /// Make sure if modifier tries to commit but hits disk full that modifier
         /// remains consistent and usable. Similar to TestIndexReader.testDiskFull().
         /// </summary>
-        private void DoTestOperationsOnDiskFull(IConcurrentMergeScheduler scheduler, bool updates)
+        private void DoTestOperationsOnDiskFull(Func<IConcurrentMergeScheduler> newScheduler, bool updates)
         {
             Term searchTerm = new Term("content", "aaa");
             int START_COUNT = 157;
@@ -605,9 +605,13 @@ namespace Lucene.Net.Index
                 var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false))
                                 .SetMaxBufferedDocs(1000)
                                 .SetMaxBufferedDeleteTerms(1000)
-                                .SetMergeScheduler(scheduler);
+                                .SetMergeScheduler(newScheduler());
 
-                scheduler.SetSuppressExceptions();
+                IConcurrentMergeScheduler scheduler = config.MergeScheduler as IConcurrentMergeScheduler;
+                if (scheduler != null)
+                {
+                    scheduler.SetSuppressExceptions();
+                }
 
                 IndexWriter modifier = new IndexWriter(dir, config);
 

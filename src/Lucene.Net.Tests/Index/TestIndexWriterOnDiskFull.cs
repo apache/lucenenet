@@ -631,12 +631,12 @@ namespace Lucene.Net.Index
         // an IndexWriter (hit during DW.ThreadState.Init()) is
         // OK:
         [Test]
-        public virtual void TestImmediateDiskFull([ValueSource(typeof(ConcurrentMergeSchedulers), "Values")]IConcurrentMergeScheduler scheduler)
+        public virtual void TestImmediateDiskFull([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = NewMockDirectory();
             var config = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
                             .SetMaxBufferedDocs(2)
-                            .SetMergeScheduler(scheduler);
+                            .SetMergeScheduler(newScheduler());
             IndexWriter writer = new IndexWriter(dir, config);
             dir.MaxSizeInBytes = Math.Max(1, dir.RecomputedActualSizeInBytes);
             Document doc = new Document();

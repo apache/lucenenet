@@ -2846,17 +2846,19 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Contains a list of all the IConcurrentMergeSchedulers to be tested.
+        /// Contains a list of all the Func&lt;IConcurrentMergeSchedulers&gt; to be tested.
+        /// Delegate method allows them to be created on their target thread instead of the test thread
+        /// and also ensures a separate instance is created in each case (which can affect the result of the test).
         /// 
         /// LUCENENET specific
         /// </summary>
-        public static class ConcurrentMergeSchedulers
+        public static class ConcurrentMergeSchedulerFactories
         {
-            public static readonly IConcurrentMergeScheduler[] Values = new IConcurrentMergeScheduler[] {
+            public static readonly Func<IConcurrentMergeScheduler>[] Values = new Func<IConcurrentMergeScheduler>[] {
 #if !NETSTANDARD
-                new ConcurrentMergeScheduler(),
+                () => new ConcurrentMergeScheduler(),
 #endif
-                new TaskMergeScheduler()
+                () => new TaskMergeScheduler()
             };
         }
     }
