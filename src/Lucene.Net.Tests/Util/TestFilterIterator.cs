@@ -216,22 +216,24 @@ namespace Lucene.Net.Util
             }
         }
 
-        [Test]
-        public virtual void TestUnmodifiable()
-        {
-            IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper8(this, Set.GetEnumerator());
-            it.MoveNext();
-            Assert.AreEqual("a", it.Current);
-            try
-            {
-                it.Reset();
-                Assert.Fail("Should throw UnsupportedOperationException");
-            }
-            catch (NotImplementedException)
-            {
-                // pass
-            }
-        }
+        //// LUCENENET specific: .NET doesn't support Remove(), so this test doesn't apply
+        //[Test]
+        //public virtual void TestUnmodifiable()
+        //{
+        //    IEnumerator<string> it = new FilterIteratorAnonymousInnerClassHelper8(this, Set.GetEnumerator());
+        //    it.MoveNext();
+        //    Assert.AreEqual("a", it.Current);
+        //    try
+        //    {
+                
+        //        it.Remove(); 
+        //        Assert.Fail("Should throw UnsupportedOperationException");
+        //    }
+        //    catch (NotSupportedException)
+        //    {
+        //        // pass
+        //    }
+        //}
 
         private class FilterIteratorAnonymousInnerClassHelper8 : FilterIterator<string>
         {

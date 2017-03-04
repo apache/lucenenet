@@ -60,9 +60,10 @@ namespace Lucene.Net.Util
             return true;
         }
 
+        // LUCENENET specific - seems logical to call reset on the underlying implementation
         public void Reset()
         {
-            throw new NotSupportedException();
+            iter.Reset();
         }
 
         private bool SetNext()
