@@ -397,14 +397,13 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 _iterator = newTerms.EntrySet().GetEnumerator();
 
-                try
-                {
-                    _iterator.MoveNext();
-                    return _iterator.Current.Key.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
-                }
-                catch
+                if (!_iterator.MoveNext())
                 {
                     return SeekStatus.END;
+                }
+                else
+                {
+                    return _iterator.Current.Key.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
                 }
             }
 
@@ -415,13 +414,12 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override BytesRef Next()
             {
-                try
+                if (_iterator.MoveNext())
                 {
-                    _iterator.MoveNext();
                     _current = _iterator.Current;
                     return _current.Key;
                 }
-                catch
+                else
                 {
                     return null;
                 }
