@@ -386,24 +386,28 @@ namespace Lucene.Net.Codecs.SimpleText
             internal SimpleTVTermsEnum(SortedDictionary<BytesRef, SimpleTVPostings> terms)
             {
                 _terms = terms;
-                _iterator = terms.EntrySet().GetEnumerator();
+                _iterator = terms.GetEnumerator();
             }
 
             public override SeekStatus SeekCeil(BytesRef text)
             {
-                var newTerms = new SortedDictionary<BytesRef, SimpleTVPostings>();
+                var newTerms = new SortedDictionary<BytesRef, SimpleTVPostings>(_terms.Comparer);
                 foreach (var p in _terms.Where(p => p.Key.CompareTo(text) >= 0))
                     newTerms.Add(p.Key, p.Value);
 
-                _iterator = newTerms.EntrySet().GetEnumerator();
+                _iterator = newTerms.GetEnumerator();
 
-                if (!_iterator.MoveNext())
+                // LUCENENET specific: Since in .NET we don't have a HasNext() method, we need
+                // to call Next() and check the result if it is null instead. Since we need
+                // to check the result of Next() anyway for the Equals() comparison, this makes sense here.
+                var next = Next();
+                if (next == null)
                 {
                     return SeekStatus.END;
                 }
                 else
                 {
-                    return _iterator.Current.Key.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+                    return next.Equals(text) ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
                 }
             }
 
