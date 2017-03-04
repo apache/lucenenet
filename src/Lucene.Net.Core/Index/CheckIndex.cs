@@ -729,7 +729,7 @@ namespace Lucene.Net.Index
                     segInfoStat.Diagnostics = diagnostics;
                     if (diagnostics.Count > 0)
                     {
-                        Msg(infoStream, "    diagnostics = " + diagnostics);
+                        Msg(infoStream, "    diagnostics = " + Arrays.ToString(diagnostics));
                     }
 
                     if (!info.HasDeletions)
