@@ -73,23 +73,40 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestSort_1()
         {
-            fail("This test deadlocks when other tests in Lucene.Net.Tests are run at the same time (need to investigate which ones and why)");
-            TestSort(false);
+            // LUCENENET specific: NUnit will crash with an OOM if we do the full test
+            // with verbosity enabled. So, making this a manual setting that can be
+            // turned on if, and only if, needed for debugging. If the setting is turned
+            // on, we are decresing the number of docs to 50, which seems to
+            // keep it from crashing.
+            bool isVerbose = false;
+
+            TestSort(false, isVerbose);
         }
 
         [Test]
         public virtual void TestSort_2()
         {
-            fail("This test deadlocks when other tests in Lucene.Net.Tests are run at the same time (need to investigate which ones and why)");
-            TestSort(true);
+            // LUCENENET specific: NUnit will crash with an OOM if we do the full test
+            // with verbosity enabled. So, making this a manual setting that can be
+            // turned on if, and only if, needed for debugging. If the setting is turned
+            // on, we are decresing the number of docs to 50, which seems to
+            // keep it from crashing.
+            bool isVerbose = false;
+
+            TestSort(true, isVerbose);
         }
 
-        internal virtual void TestSort(bool useFrom)
+        internal virtual void TestSort(bool useFrom, bool VERBOSE)
         {
             IndexReader reader = null;
             Directory dir = null;
 
-            int numDocs = AtLeast(1000);
+            if (!VERBOSE)
+            {
+                Console.WriteLine("Verbosity disabled. Enable manually if needed.");
+            }
+
+            int numDocs = VERBOSE ? AtLeast(50) : AtLeast(1000);
             //final int numDocs = AtLeast(50);
 
             string[] tokens = new string[] { "a", "b", "c", "d", "e" };
