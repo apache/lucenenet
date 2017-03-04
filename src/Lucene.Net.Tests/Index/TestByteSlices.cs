@@ -1,11 +1,10 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
 using System;
 
 namespace Lucene.Net.Index
 {
-    using Attributes;
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-
     using ByteBlockPool = Lucene.Net.Util.ByteBlockPool;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using RecyclingByteBlockAllocator = Lucene.Net.Util.RecyclingByteBlockAllocator;
@@ -33,7 +32,16 @@ namespace Lucene.Net.Index
         [Test, HasTimeout]
         public virtual void TestBasic()
         {
-            fail("This test is somehow crashing NUnit and causing it not to complete");
+            // LUCENENET specific: NUnit will crash with an OOM if we do the full test
+            // with verbosity enabled. So, making this a manual setting that can be
+            // turned on if, and only if, needed for debugging. If the setting is turned
+            // on, we are decresing the number of iterations by 1/3, which seems to
+            // keep it from crashing.
+            bool isVerbose = false;
+            if (!isVerbose)
+            {
+                Console.WriteLine("Verbosity disabled to keep NUnit from running out of memory - enable manually");
+            }
 
             ByteBlockPool pool = new ByteBlockPool(new RecyclingByteBlockAllocator(ByteBlockPool.BYTE_BLOCK_SIZE, Random().Next(100)));
 
@@ -55,7 +63,13 @@ namespace Lucene.Net.Index
                     counters[stream] = 0;
                 }
 
-                int num = AtLeast(3000);
+                // LUCENENET NOTE: Since upgrading to NUnit 3, this test
+                // will crash if VERBOSE is true because of an OutOfMemoryException.
+                // This not only keeps this test from finishing, it crashes NUnit
+                // and no other tests will run.
+                // So, we need to allocate a smaller size to ensure this
+                // doesn't happen with verbosity enabled.
+                int num = isVerbose ? AtLeast(2000) : AtLeast(3000);
                 for (int iter = 0; iter < num; iter++)
                 {
                     int stream;
@@ -68,7 +82,7 @@ namespace Lucene.Net.Index
                         stream = Random().Next(NUM_STREAM);
                     }
 
-                    if (VERBOSE)
+                    if (isVerbose)
                     {
                         Console.WriteLine("write stream=" + stream);
                     }
@@ -77,7 +91,7 @@ namespace Lucene.Net.Index
                     {
                         int spot = pool.NewSlice(ByteBlockPool.FIRST_LEVEL_SIZE);
                         starts[stream] = uptos[stream] = spot + pool.ByteOffset;
-                        if (VERBOSE)
+                        if (isVerbose)
                         {
                             Console.WriteLine("  init to " + starts[stream]);
                         }
@@ -100,7 +114,7 @@ namespace Lucene.Net.Index
 
                     for (int j = 0; j < numValue; j++)
                     {
-                        if (VERBOSE)
+                        if (isVerbose)
                         {
                             Console.WriteLine("    write " + (counters[stream] + j));
                         }
@@ -110,7 +124,7 @@ namespace Lucene.Net.Index
                     }
                     counters[stream] += numValue;
                     uptos[stream] = writer.Address;
-                    if (VERBOSE)
+                    if (isVerbose)
                     {
                         Console.WriteLine("    addr now " + uptos[stream]);
                     }
@@ -118,7 +132,7 @@ namespace Lucene.Net.Index
 
                 for (int stream = 0; stream < NUM_STREAM; stream++)
                 {
-                    if (VERBOSE)
+                    if (isVerbose)
                     {
                         Console.WriteLine("  stream=" + stream + " count=" + counters[stream]);
                     }
