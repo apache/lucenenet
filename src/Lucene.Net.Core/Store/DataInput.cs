@@ -156,7 +156,7 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new System.IO.IOException("Invalid vInt detected (too many bits)");
+            throw new System.IO.IOException("Invalid vInt32 detected (too many bits)");
         }
 
         /// <summary>
