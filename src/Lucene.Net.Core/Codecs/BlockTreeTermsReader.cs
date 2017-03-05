@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
@@ -1192,7 +1193,7 @@ namespace Lucene.Net.Codecs
                     return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, currentFrame.termState, skipDocs, reuse, flags);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(IBits skipDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits skipDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
                     if (outerInstance.fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {
@@ -2617,7 +2618,7 @@ namespace Lucene.Net.Codecs
                     return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, currentFrame.state, skipDocs, reuse, flags);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(IBits skipDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits skipDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
                     if (outerInstance.fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                     {

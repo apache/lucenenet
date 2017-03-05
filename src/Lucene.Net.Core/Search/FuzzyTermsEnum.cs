@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -308,7 +309,7 @@ namespace Lucene.Net.Search
             return actualEnum.Docs(liveDocs, reuse, flags);
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
             return actualEnum.DocsAndPositions(liveDocs, reuse, flags);
         }

@@ -1,3 +1,5 @@
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -5,7 +7,7 @@ using System.Linq;
 
 namespace Lucene.Net.Codecs.RAMOnly
 {
-    using Lucene.Net.Support;
+    
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
@@ -501,7 +503,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 return new RAMDocsEnum(RamField.TermToDocs[Current], liveDocs);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 return new RAMDocsAndPositionsEnum(RamField.TermToDocs[Current], liveDocs);
             }

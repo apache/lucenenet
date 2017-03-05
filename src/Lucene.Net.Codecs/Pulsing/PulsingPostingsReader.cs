@@ -265,7 +265,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo field, BlockTermState termState, IBits liveDocs,
             DocsAndPositionsEnum reuse,
-            int flags)
+            DocsAndPositionsFlags flags)
         {
 
             var termState2 = (PulsingTermState) termState;

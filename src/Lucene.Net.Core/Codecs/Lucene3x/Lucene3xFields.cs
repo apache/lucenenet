@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1096,7 +1097,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return docsEnum.Reset(termEnum, liveDocs);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 PreDocsAndPositionsEnum docsPosEnum;
                 if (fieldInfo.IndexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)

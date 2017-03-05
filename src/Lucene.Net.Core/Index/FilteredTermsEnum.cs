@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
             return tenum.Docs(bits, reuse, flags);
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(IBits bits, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(IBits bits, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
             return tenum.DocsAndPositions(bits, reuse, flags);
         }

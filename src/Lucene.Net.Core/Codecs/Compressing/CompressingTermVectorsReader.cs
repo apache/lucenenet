@@ -1020,14 +1020,14 @@ namespace Lucene.Net.Codecs.Compressing
                 return docsEnum;
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 if (positions == null && startOffsets == null)
                 {
                     return null;
                 }
                 // TODO: slightly sheisty
-                return (DocsAndPositionsEnum)Docs(liveDocs, reuse, flags);
+                return (DocsAndPositionsEnum)Docs(liveDocs, reuse, (int)flags);
             }
         }
 

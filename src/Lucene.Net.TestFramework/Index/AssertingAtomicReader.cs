@@ -142,7 +142,7 @@ namespace Lucene.Net.Index
                 return docs == null ? null : new AssertingDocsEnum(docs);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 Debug.Assert(State == State_e.POSITIONED, "docsAndPositions(...) called on unpositioned TermsEnum");
 

@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -1262,7 +1263,7 @@ namespace Lucene.Net.Codecs.Lucene45
                     throw new System.NotSupportedException();
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
                     throw new System.NotSupportedException();
                 }

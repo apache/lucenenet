@@ -530,7 +530,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
             MultiDocsAndPositionsEnum docsAndPositionsEnum;
             // Can only reuse if incoming enum is also a MultiDocsAndPositionsEnum

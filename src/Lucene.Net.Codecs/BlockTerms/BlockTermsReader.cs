@@ -759,7 +759,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
-                    int flags)
+                    DocsAndPositionsFlags flags)
                 {
                     if (_fieldReader._fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {

@@ -846,7 +846,7 @@ namespace Lucene.Net.Codecs.Memory
                 throw new NotSupportedException();
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 throw new NotSupportedException();
             }

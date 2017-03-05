@@ -251,12 +251,12 @@ namespace Lucene.Net.Codecs.Lucene41
 
         // TODO: specialize to liveDocs vs not
 
-        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
             bool indexHasOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
             bool indexHasPayloads = fieldInfo.HasPayloads;
 
-            if ((!indexHasOffsets || (flags & DocsAndPositionsEnum.FLAG_OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsEnum.FLAG_PAYLOADS) == 0))
+            if ((!indexHasOffsets || (flags & DocsAndPositionsFlags.OFFSETS) == 0) && (!indexHasPayloads || (flags & DocsAndPositionsFlags.PAYLOADS) == 0))
             {
                 BlockDocsAndPositionsEnum docsAndPositionsEnum;
                 if (reuse is BlockDocsAndPositionsEnum)
@@ -1188,7 +1188,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return docIn == startDocIn && indexHasOffsets == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
-            public EverythingEnum Reset(IBits liveDocs, Lucene41PostingsWriter.Int32BlockTermState termState, int flags)
+            public EverythingEnum Reset(IBits liveDocs, Lucene41PostingsWriter.Int32BlockTermState termState, DocsAndPositionsFlags flags)
             {
                 this.liveDocs = liveDocs;
                 // if (DEBUG) {
@@ -1226,8 +1226,8 @@ namespace Lucene.Net.Codecs.Lucene41
                     lastPosBlockFP = posTermStartFP + termState.lastPosBlockOffset;
                 }
 
-                this.needsOffsets = (flags & DocsAndPositionsEnum.FLAG_OFFSETS) != 0;
-                this.needsPayloads = (flags & DocsAndPositionsEnum.FLAG_PAYLOADS) != 0;
+                this.needsOffsets = (flags & DocsAndPositionsFlags.OFFSETS) != 0;
+                this.needsPayloads = (flags & DocsAndPositionsFlags.PAYLOADS) != 0;
 
                 doc = -1;
                 accum = 0;

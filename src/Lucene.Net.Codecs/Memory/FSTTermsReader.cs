@@ -1,10 +1,10 @@
-﻿using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using System.Diagnostics;
-    using Lucene.Net.Util.Fst;
-
+﻿using Lucene.Net.Index;
 using Lucene.Net.Support;
+using Lucene.Net.Util.Fst;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lucene.Net.Codecs.Memory
 {
@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.Memory
                     return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, state, liveDocs, reuse, flags);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
                     if (!outerInstance.HasPositions)
                     {

@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -20,23 +22,36 @@ namespace Lucene.Net.Index
     // javadocs
     using BytesRef = Lucene.Net.Util.BytesRef;
 
+    // LUCENENET specific - converted constants from DocsAndPositionsEnum
+    // into a flags enum.
+    [Flags]
+    public enum DocsAndPositionsFlags
+    {
+        /// <summary>
+        /// Flag to pass to <see cref="TermsEnum.DocsAndPositions(Util.IBits, DocsAndPositionsEnum, DocsAndPositionsFlags)"/> 
+        /// if you require that no offsets and payloads will be returned.
+        /// </summary>
+        NONE = 0x0,
+
+        /// <summary>
+        /// Flag to pass to <see cref="TermsEnum.DocsAndPositions(Util.IBits, DocsAndPositionsEnum, DocsAndPositionsFlags)"/>
+        /// if you require offsets in the returned enum.
+        /// </summary>
+        OFFSETS = 0x1, // LUCENENET specific - renamed from FLAG_OFFSETS since FLAG_ makes it redundant
+
+        /// <summary>
+        /// Flag to pass to  <see cref="TermsEnum.DocsAndPositions(Util.IBits, DocsAndPositionsEnum, DocsAndPositionsFlags)"/>
+        /// if you require payloads in the returned enum.
+        /// </summary>
+        PAYLOADS = 0x2 // LUCENENET specific - renamed from FLAG_PAYLOADS since FLAG_ makes it redundant
+    }
+
+
     /// <summary>
     /// Also iterates through positions. </summary>
     public abstract class DocsAndPositionsEnum : DocsEnum
     {
-        // LUCENENET TODO: Make the following into a [Flags] enum
-
-        /// <summary>
-        /// Flag to pass to <seealso cref="TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)"/>
-        ///  if you require offsets in the returned enum.
-        /// </summary>
-        public static readonly int FLAG_OFFSETS = 0x1;
-
-        /// <summary>
-        /// Flag to pass to  <seealso cref="TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)"/>
-        ///  if you require payloads in the returned enum.
-        /// </summary>
-        public static readonly int FLAG_PAYLOADS = 0x2;
+        // LUCENENET specific - made flags into their own [Flags] enum named DocsAndPositionsFlags and de-nested from this type
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -48,31 +63,31 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the next position.  You should only call this
-        ///  up to <seealso cref="DocsEnum#freq()"/> times else
-        ///  the behavior is not defined.  If positions were not
-        ///  indexed this will return -1; this only happens if
-        ///  offsets were indexed and you passed needsOffset=true
-        ///  when pulling the enum.
+        /// up to <see cref="DocsEnum.Freq"/> times else
+        /// the behavior is not defined.  If positions were not
+        /// indexed this will return -1; this only happens if
+        /// offsets were indexed and you passed needsOffset=true
+        /// when pulling the enum.
         /// </summary>
         public abstract int NextPosition();
 
         /// <summary>
         /// Returns start offset for the current position, or -1
-        ///  if offsets were not indexed.
+        /// if offsets were not indexed.
         /// </summary>
         public abstract int StartOffset { get; }
 
         /// <summary>
         /// Returns end offset for the current position, or -1 if
-        ///  offsets were not indexed.
+        /// offsets were not indexed.
         /// </summary>
         public abstract int EndOffset { get; }
 
         /// <summary>
         /// Returns the payload at this position, or null if no
-        ///  payload was indexed. You should not modify anything
-        ///  (neither members of the returned BytesRef nor bytes
-        ///  in the byte[]).
+        /// payload was indexed. You should not modify anything
+        /// (neither members of the returned BytesRef nor bytes
+        /// in the byte[]).
         /// </summary>
         public abstract BytesRef GetPayload();
     }

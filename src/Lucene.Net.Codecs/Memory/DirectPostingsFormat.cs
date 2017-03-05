@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1165,7 +1166,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
-                    int flags)
+                    DocsAndPositionsFlags flags)
                 {
                     if (!outerInstance.hasPos)
                     {
@@ -1814,7 +1815,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
-                    int flags)
+                    DocsAndPositionsFlags flags)
                 {
                     if (!outerInstance.hasPos)
                     {

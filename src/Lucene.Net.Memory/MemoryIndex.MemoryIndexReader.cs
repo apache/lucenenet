@@ -379,7 +379,7 @@ namespace Lucene.Net.Index.Memory
                     return ((MemoryDocsEnum)reuse).Reset(liveDocs, info.sliceArray.freq[info.sortedTerms[termUpto]]);
                 }
 
-                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+                public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
                     if (reuse == null || !(reuse is MemoryDocsAndPositionsEnum))
                     {

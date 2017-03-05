@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
         ///  <seealso cref= #getTermPositionsEnum(IndexReader, Bits, String, BytesRef, int)  </seealso>
         public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term)
         {
-            return GetTermPositionsEnum(r, liveDocs, field, term, DocsAndPositionsEnum.FLAG_OFFSETS | DocsAndPositionsEnum.FLAG_PAYLOADS);
+            return GetTermPositionsEnum(r, liveDocs, field, term, DocsAndPositionsFlags.OFFSETS | DocsAndPositionsFlags.PAYLOADS);
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
         ///  exist or positions were not indexed. See {@link
         ///  TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)}.
         /// </summary>
-        public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, int flags)
+        public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsAndPositionsFlags flags)
         {
             Debug.Assert(field != null);
             Debug.Assert(term != null);

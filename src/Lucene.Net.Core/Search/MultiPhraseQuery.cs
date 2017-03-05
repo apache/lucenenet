@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -270,7 +271,7 @@ namespace Lucene.Net.Search
                             return null;
                         }
                         termsEnum.SeekExact(term.Bytes, termState);
-                        postingsEnum = termsEnum.DocsAndPositions(liveDocs, null, DocsEnum.FLAG_NONE);
+                        postingsEnum = termsEnum.DocsAndPositions(liveDocs, null, DocsAndPositionsFlags.NONE);
 
                         if (postingsEnum == null)
                         {
@@ -598,7 +599,7 @@ namespace Lucene.Net.Search
                     continue;
                 }
                 termsEnum.SeekExact(term.Bytes, termState);
-                DocsAndPositionsEnum postings = termsEnum.DocsAndPositions(liveDocs, null, DocsEnum.FLAG_NONE);
+                DocsAndPositionsEnum postings = termsEnum.DocsAndPositions(liveDocs, null, DocsAndPositionsFlags.NONE);
                 if (postings == null)
                 {
                     // term does exist, but has no positions

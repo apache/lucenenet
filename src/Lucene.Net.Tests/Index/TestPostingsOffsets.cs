@@ -350,7 +350,7 @@ namespace Lucene.Net.Index
                         }
 
                         // explicitly exclude offsets here
-                        docsAndPositions = termsEnum.DocsAndPositions(null, docsAndPositions, DocsAndPositionsEnum.FLAG_PAYLOADS);
+                        docsAndPositions = termsEnum.DocsAndPositions(null, docsAndPositions, DocsAndPositionsFlags.PAYLOADS);
                         Assert.IsNotNull(docsAndPositions);
                         //System.out.println("    doc/freq/pos");
                         while ((doc = docsAndPositions.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)

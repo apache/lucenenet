@@ -386,7 +386,7 @@ namespace Lucene.Net.Codecs.Bloom
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs,
-                    DocsAndPositionsEnum reuse, int flags)
+                    DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
                 {
                     return Delegate.DocsAndPositions(liveDocs, reuse, flags);
                 }

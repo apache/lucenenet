@@ -1115,7 +1115,7 @@ namespace Lucene.Net.Util
             {
                 if (random.NextBoolean())
                 {
-                    int posFlags;
+                    DocsAndPositionsFlags posFlags;
                     switch (random.Next(4))
                     {
                         case 0:
@@ -1123,15 +1123,15 @@ namespace Lucene.Net.Util
                             break;
 
                         case 1:
-                            posFlags = DocsAndPositionsEnum.FLAG_OFFSETS;
+                            posFlags = DocsAndPositionsFlags.OFFSETS;
                             break;
 
                         case 2:
-                            posFlags = DocsAndPositionsEnum.FLAG_PAYLOADS;
+                            posFlags = DocsAndPositionsFlags.PAYLOADS;
                             break;
 
                         default:
-                            posFlags = DocsAndPositionsEnum.FLAG_OFFSETS | DocsAndPositionsEnum.FLAG_PAYLOADS;
+                            posFlags = DocsAndPositionsFlags.OFFSETS | DocsAndPositionsFlags.PAYLOADS;
                             break;
                     }
                     // TODO: cast to DocsAndPositionsEnum?

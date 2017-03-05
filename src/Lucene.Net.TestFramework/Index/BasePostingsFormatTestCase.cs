@@ -726,14 +726,14 @@ namespace Lucene.Net.Index
                         prevDocsEnum = threadState.ReuseDocsAndPositionsEnum;
                     }
 
-                    int flags = 0;
+                    DocsAndPositionsFlags flags = 0;
                     if (alwaysTestMax || Random().NextBoolean())
                     {
-                        flags |= DocsAndPositionsEnum.FLAG_OFFSETS;
+                        flags |= DocsAndPositionsFlags.OFFSETS;
                     }
                     if (alwaysTestMax || Random().NextBoolean())
                     {
-                        flags |= DocsAndPositionsEnum.FLAG_PAYLOADS;
+                        flags |= DocsAndPositionsFlags.PAYLOADS;
                     }
 
                     if (VERBOSE)
@@ -767,14 +767,14 @@ namespace Lucene.Net.Index
                     prevDocsEnum = threadState.ReuseDocsAndPositionsEnum;
                 }
 
-                int flags = 0;
+                DocsAndPositionsFlags flags = 0;
                 if (alwaysTestMax || doCheckOffsets || Random().Next(3) == 1)
                 {
-                    flags |= DocsAndPositionsEnum.FLAG_OFFSETS;
+                    flags |= DocsAndPositionsFlags.OFFSETS;
                 }
                 if (alwaysTestMax || doCheckPayloads || Random().Next(3) == 1)
                 {
-                    flags |= DocsAndPositionsEnum.FLAG_PAYLOADS;
+                    flags |= DocsAndPositionsFlags.PAYLOADS;
                 }
 
                 if (VERBOSE)

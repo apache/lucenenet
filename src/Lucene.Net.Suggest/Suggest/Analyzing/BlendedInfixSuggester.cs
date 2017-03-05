@@ -268,7 +268,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 if (matchedTokens.Contains(docTerm) || docTerm.StartsWith(prefixToken, StringComparison.Ordinal))
                 {
-                    DocsAndPositionsEnum docPosEnum = it.DocsAndPositions(null, null, DocsAndPositionsEnum.FLAG_OFFSETS);
+                    DocsAndPositionsEnum docPosEnum = it.DocsAndPositions(null, null, DocsAndPositionsFlags.OFFSETS);
                     docPosEnum.NextDoc();
 
                     // use the first occurrence of the term

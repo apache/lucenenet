@@ -134,7 +134,7 @@ namespace Lucene.Net.Index
             throw new System.NotSupportedException();
         }
 
-        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+        public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
             throw new System.NotSupportedException();
         }

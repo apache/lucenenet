@@ -268,7 +268,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         public override DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState bTermState,
-            IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
         {
 
             Debug.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);

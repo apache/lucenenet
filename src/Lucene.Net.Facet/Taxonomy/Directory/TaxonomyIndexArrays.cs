@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -153,7 +154,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // it's ok to use MultiFields because we only iterate on one posting list.
             // breaking it to loop over the leaves() only complicates code for no
             // apparent gain.
-            DocsAndPositionsEnum positions = MultiFields.GetTermPositionsEnum(reader, null, Consts.FIELD_PAYLOADS, Consts.PAYLOAD_PARENT_BYTES_REF, DocsAndPositionsEnum.FLAG_PAYLOADS);
+            DocsAndPositionsEnum positions = MultiFields.GetTermPositionsEnum(reader, null, Consts.FIELD_PAYLOADS, Consts.PAYLOAD_PARENT_BYTES_REF, DocsAndPositionsFlags.PAYLOADS);
 
             // shouldn't really happen, if it does, something's wrong
             if (positions == null || positions.Advance(first) == DocIdSetIterator.NO_MORE_DOCS)

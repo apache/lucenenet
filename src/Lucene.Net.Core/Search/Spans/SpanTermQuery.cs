@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -168,7 +169,7 @@ namespace Lucene.Net.Search.Spans
             TermsEnum termsEnum_ = context.AtomicReader.Terms(m_term.Field).GetIterator(null);
             termsEnum_.SeekExact(m_term.Bytes, state);
 
-            DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsEnum.FLAG_PAYLOADS);
+            DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsFlags.PAYLOADS);
 
             if (postings != null)
             {

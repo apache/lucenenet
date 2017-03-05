@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -183,7 +184,7 @@ namespace Lucene.Net.Codecs
                 {
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
-                    postingsEnumIn = (MultiDocsAndPositionsEnum)termsEnum.DocsAndPositions(null, postingsEnumIn, DocsAndPositionsEnum.FLAG_PAYLOADS);
+                    postingsEnumIn = (MultiDocsAndPositionsEnum)termsEnum.DocsAndPositions(null, postingsEnumIn, DocsAndPositionsFlags.PAYLOADS);
                     Debug.Assert(postingsEnumIn != null);
                     postingsEnum.Reset(postingsEnumIn);
 

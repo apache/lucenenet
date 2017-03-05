@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Index;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -457,7 +457,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 return e;
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 var postings = _current.Value;
                 if (postings.positions == null && postings.startOffsets == null)

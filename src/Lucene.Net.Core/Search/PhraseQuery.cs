@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -356,7 +357,7 @@ namespace Lucene.Net.Search
                         return null;
                     }
                     te.SeekExact(t.Bytes, state);
-                    DocsAndPositionsEnum postingsEnum = te.DocsAndPositions(liveDocs, null, DocsEnum.FLAG_NONE);
+                    DocsAndPositionsEnum postingsEnum = te.DocsAndPositions(liveDocs, null, DocsAndPositionsFlags.NONE);
 
                     // PhraseQuery on a field that did not index
                     // positions.

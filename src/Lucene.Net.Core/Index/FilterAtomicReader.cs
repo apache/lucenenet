@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
                 return m_input.Docs(liveDocs, reuse, flags);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 return m_input.DocsAndPositions(liveDocs, reuse, flags);
             }

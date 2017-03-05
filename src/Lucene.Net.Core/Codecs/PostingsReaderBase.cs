@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System;
 
 namespace Lucene.Net.Codecs
@@ -77,7 +78,7 @@ namespace Lucene.Net.Codecs
         /// Must fully consume state, since after this call that
         ///  TermState may be reused.
         /// </summary>
-        public abstract DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState state, IBits skipDocs, DocsAndPositionsEnum reuse, int flags);
+        public abstract DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState state, IBits skipDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags);
 
         /// <summary>
         /// Returns approximate RAM bytes used </summary>

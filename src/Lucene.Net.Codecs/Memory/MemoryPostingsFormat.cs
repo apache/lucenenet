@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util.Fst;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -843,7 +844,7 @@ namespace Lucene.Net.Codecs.Memory
                 return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq_Renamed);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 bool hasOffsets = field.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 if (field.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)

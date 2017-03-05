@@ -218,11 +218,11 @@ namespace Lucene.Net.Index
         ///  <seealso cref= #docsAndPositions(Bits, DocsAndPositionsEnum, int)  </seealso>
         public DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse)
         {
-            return DocsAndPositions(liveDocs, reuse, DocsAndPositionsEnum.FLAG_OFFSETS | DocsAndPositionsEnum.FLAG_PAYLOADS);
+            return DocsAndPositions(liveDocs, reuse, DocsAndPositionsFlags.OFFSETS | DocsAndPositionsFlags.PAYLOADS);
         }
 
         /// <summary>
-        /// Get <seealso cref="DocsAndPositionsEnum"/> for the current term,
+        /// Get <see cref="DocsAndPositionsEnum"/> for the current term,
         ///  with control over whether offsets and payloads are
         ///  required.  Some codecs may be able to optimize their
         ///  implementation when offsets and/or payloads are not required.
@@ -233,9 +233,9 @@ namespace Lucene.Net.Index
         ///  be returned </param>
         ///  <param name="reuse"> pass a prior DocsAndPositionsEnum for possible reuse </param>
         ///  <param name="flags"> specifies which optional per-position values you
-        ///         require; see <seealso cref="DocsAndPositionsEnum#FLAG_OFFSETS"/> and
-        ///         <seealso cref="DocsAndPositionsEnum#FLAG_PAYLOADS"/>.  </param>
-        public abstract DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags);
+        ///         require; see <see cref="DocsAndPositionsFlags.OFFSETS"/> and
+        ///         <see cref="DocsAndPositionsFlags.PAYLOADS"/>.  </param>
+        public abstract DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags);
 
         /// <summary>
         /// Expert: Returns the TermsEnums internal state to position the TermsEnum
@@ -325,7 +325,7 @@ namespace Lucene.Net.Index
                 throw new InvalidOperationException("this method should never be called");
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 throw new InvalidOperationException("this method should never be called");
             }

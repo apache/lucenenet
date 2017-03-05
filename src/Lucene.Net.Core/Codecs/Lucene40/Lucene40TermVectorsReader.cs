@@ -1,7 +1,8 @@
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -638,7 +639,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return docsEnum;
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 if (!storePositions && !storeOffsets)
                 {

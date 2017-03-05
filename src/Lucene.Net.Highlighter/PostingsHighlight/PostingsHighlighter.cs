@@ -628,7 +628,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                     {
                         continue; // term not found
                     }
-                    de = postings[i] = termsEnum.DocsAndPositions(null, null, DocsAndPositionsEnum.FLAG_OFFSETS);
+                    de = postings[i] = termsEnum.DocsAndPositions(null, null, DocsAndPositionsFlags.OFFSETS);
                     if (de == null)
                     {
                         // no positions available

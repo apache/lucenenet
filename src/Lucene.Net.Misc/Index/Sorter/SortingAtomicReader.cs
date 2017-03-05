@@ -162,7 +162,7 @@ namespace Lucene.Net.Index.Sorter
                 return new SortingDocsEnum(docMap.Count, wrapReuse, inDocs, withFreqs, docMap);
             }
 
-            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, int flags)
+            public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
                 DocsAndPositionsEnum inReuse;
                 SortingDocsAndPositionsEnum wrapReuse;
