@@ -54,6 +54,8 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestSearchAfter : LuceneTestCaseWithReducedFloatPrecision
     {
+        private bool isVerbose = false;
+
         private Directory Dir;
         private IndexReader Reader;
         private IndexSearcher Searcher;
@@ -172,7 +174,7 @@ namespace Lucene.Net.Search
                 }
                 Document document = new Document();
                 document.Add(new StoredField("id", "" + i));
-                if (VERBOSE)
+                if (isVerbose)
                 {
                     Console.WriteLine("  add doc id=" + i);
                 }
@@ -182,7 +184,7 @@ namespace Lucene.Net.Search
                     if (Random().Next(5) != 4)
                     {
                         document.Add(field);
-                        if (VERBOSE)
+                        if (isVerbose)
                         {
                             Console.WriteLine("    " + field);
                         }
@@ -199,7 +201,7 @@ namespace Lucene.Net.Search
             Reader = iw.Reader;
             iw.Dispose();
             Searcher = NewSearcher(Reader);
-            if (VERBOSE)
+            if (isVerbose)
             {
                 Console.WriteLine("  searcher=" + Searcher);
             }
@@ -220,12 +222,18 @@ namespace Lucene.Net.Search
         [Test, LongRunningTest, HasTimeout]
         public virtual void TestQueries()
         {
-            fail("This test is somehow crashing NUnit and causing it not to complete");
+            // LUCENENET specific: NUnit will crash with an OOM if we do the full test
+            // with verbosity enabled. So, making this a manual setting that can be
+            // turned on if, and only if, needed for debugging. If the setting is turned
+            // on, we are decresing the number of iterations to only 1, which seems to
+            // keep it from crashing.
+
+            // Enable verbosity at the top of this file: isVerbose = true;
 
             // because the first page has a null 'after', we get a normal collector.
             // so we need to run the test a few times to ensure we will collect multiple
             // pages.
-            int n = AtLeast(20);
+            int n = isVerbose ? 1 : AtLeast(20);
             for (int i = 0; i < n; i++)
             {
                 Filter odd = new QueryWrapperFilter(new TermQuery(new Term("oddeven", "odd")));
@@ -273,7 +281,7 @@ namespace Lucene.Net.Search
             int maxDoc = Searcher.IndexReader.MaxDoc;
             TopDocs all;
             int pageSize = TestUtil.NextInt(Random(), 1, maxDoc * 2);
-            if (VERBOSE)
+            if (isVerbose)
             {
                 Console.WriteLine("\nassertQuery " + (Iter++) + ": query=" + query + " filter=" + filter + " sort=" + sort + " pageSize=" + pageSize);
             }
@@ -291,7 +299,7 @@ namespace Lucene.Net.Search
             {
                 all = Searcher.Search(query, filter, maxDoc, sort, doScores, doMaxScore);
             }
-            if (VERBOSE)
+            if (isVerbose)
             {
                 Console.WriteLine("  all.TotalHits=" + all.TotalHits);
                 int upto = 0;
@@ -307,7 +315,7 @@ namespace Lucene.Net.Search
                 TopDocs paged;
                 if (sort == null)
                 {
-                    if (VERBOSE)
+                    if (isVerbose)
                     {
                         Console.WriteLine("  iter lastBottom=" + lastBottom);
                     }
@@ -315,7 +323,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    if (VERBOSE)
+                    if (isVerbose)
                     {
                         Console.WriteLine("  iter lastBottom=" + lastBottom);
                     }
@@ -328,7 +336,7 @@ namespace Lucene.Net.Search
                         paged = Searcher.SearchAfter(lastBottom, query, filter, pageSize, sort, doScores, doMaxScore);
                     }
                 }
-                if (VERBOSE)
+                if (isVerbose)
                 {
                     Console.WriteLine("    " + paged.ScoreDocs.Length + " hits on page");
                 }
@@ -351,7 +359,7 @@ namespace Lucene.Net.Search
             {
                 ScoreDoc sd1 = all.ScoreDocs[pageStart + i];
                 ScoreDoc sd2 = paged.ScoreDocs[i];
-                if (VERBOSE)
+                if (isVerbose)
                 {
                     Console.WriteLine("    hit " + (pageStart + i));
                     Console.WriteLine("      expected id=" + Searcher.Doc(sd1.Doc).Get("id") + " " + sd1);
