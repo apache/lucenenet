@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Support.Configuration;
+using NUnit.Framework;
 
 
 namespace Lucene.Net.TestFramework.Support
