@@ -591,14 +591,23 @@ namespace Lucene.Net.Util
             // LUCENENET TODO: Not sure how to convert these
             //ParentChainCallRule.SetupCalled = true;
 
-            if (LuceneTestCase.VERBOSE)
-            {
-                Console.Write("Culture: ");
-                Console.WriteLine(this.ClassEnvRule.locale.Name);
+            // LUCENENET: Printing out randomized context regardless
+            // of whether verbose is enabled (since we need it for debugging,
+            // but the verbose output can crash tests).
+            //if (LuceneTestCase.VERBOSE)
+            //{
+            Console.Write("Culture: ");
+            Console.WriteLine(this.ClassEnvRule.locale.Name);
 
-                Console.Write("Time Zone: ");
-                Console.WriteLine(this.ClassEnvRule.timeZone.DisplayName);
-            }
+            Console.Write("Time Zone: ");
+            Console.WriteLine(this.ClassEnvRule.timeZone.DisplayName);
+
+            Console.Write("Default Codec: ");
+            Console.WriteLine(this.ClassEnvRule.codec.Name);
+
+            Console.Write("Default Similarity: ");
+            Console.WriteLine(this.ClassEnvRule.similarity.ToString());
+            //}
         }
 
         /// <summary>
