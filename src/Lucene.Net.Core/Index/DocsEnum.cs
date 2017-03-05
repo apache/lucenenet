@@ -29,6 +29,8 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class DocsEnum : DocIdSetIterator
     {
+        // LUCENENET TODO: Make the following into a [Flags] enum
+
         /// <summary>
         /// Flag to pass to <seealso cref="TermsEnum#docs(Bits,DocsEnum,int)"/> if you don't
         /// require term frequencies in the returned enum. When passed to

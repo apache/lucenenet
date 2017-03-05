@@ -43,6 +43,8 @@ namespace Lucene.Net.Analysis.Cjk
     /// </summary>
     public sealed class CJKBigramFilter : TokenFilter
     {
+        // LUCENENET TODO: Make the following into a [Flags] enum
+
         // configuration
         /// <summary>
         /// bigram flag for Han Ideographs </summary>

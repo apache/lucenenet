@@ -334,6 +334,8 @@ namespace Lucene.Net.Util.Automaton
             REGEXP_INTERVAL
         }
 
+        // LUCENENET TODO: Make the following into a [Flags] enum
+
         /// <summary>
         /// Syntax flag, enables intersection (<tt>&amp;</tt>).
         /// </summary>

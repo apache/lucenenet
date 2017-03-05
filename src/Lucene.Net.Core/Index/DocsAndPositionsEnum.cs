@@ -24,6 +24,8 @@ namespace Lucene.Net.Index
     /// Also iterates through positions. </summary>
     public abstract class DocsAndPositionsEnum : DocsEnum
     {
+        // LUCENENET TODO: Make the following into a [Flags] enum
+
         /// <summary>
         /// Flag to pass to <seealso cref="TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)"/>
         ///  if you require offsets in the returned enum.
