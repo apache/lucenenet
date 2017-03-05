@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lucene.Net.Util
 {
@@ -782,26 +783,80 @@ namespace Lucene.Net.Util
             return result;
         }
 
-        // LUCENENET specific - replaced NaturalComparer<T> with Comparer<T>.Default
-        //private class NaturalComparerImpl<T> : IComparer<T> where T : IComparable<T>
-        //{
-        //    internal NaturalComparerImpl()
-        //    {
-        //    }
+        // LUCENENET specific - we don't have an IComparable<T> constraint -
+        // the logic of GetNaturalComparer<T> handles that so we just
+        // do a cast here.
+        private class NaturalComparer<T> : IComparer<T> //where T : IComparable<T>
+        {
+            internal NaturalComparer()
+            {
+            }
 
-        //    public virtual int Compare(T o1, T o2)
-        //    {
-        //        return o1.CompareTo(o2);
-        //    }
-        //}
+            public virtual int Compare(T o1, T o2)
+            {
+                return ((IComparable<T>)o1).CompareTo(o2);
+            }
+        }
 
         /// <summary>
-        /// Get the natural <seealso cref="Comparer"/> for the provided object class. </summary>
-        public static IComparer<T> NaturalComparer<T>()
+        /// LUCENENET specific - we need custom handling for sorting strings the same
+        /// way they were sorted in Java.
+        /// </summary>
+        private class StringOrdinalComparer : IComparer<string> 
+        {
+            internal StringOrdinalComparer()
+            {
+            }
+
+            public virtual int Compare(string o1, string o2)
+            {
+                return string.CompareOrdinal(o1, o2);
+            }
+        }
+
+        /// <summary>
+        /// A comparer that uses the <see cref="string.CompareOrdinal(string, string)"/> method to make
+        /// string comparisons, which provides a culture-insensitive sort operation (similar to Java's default
+        /// string comparision).
+        /// </summary>
+        public static readonly IComparer<string> STRING_ORDINAL_COMPARER = new StringOrdinalComparer();
+
+        /// <summary>
+        /// Get the natural <seealso cref="Comparer"/> for the provided object class.
+        /// <para/>
+        /// The comparer returned depends on the <typeparam name="T"/> argument:
+        /// <list type="number">
+        ///     <item>If the type is <see cref="string"/>, the comparer returned uses
+        ///         the <see cref="string.CompareOrdinal(string, string)"/> to make the comparison
+        ///         to ensure that the current culture doesn't affect the results. This is the
+        ///         default string comparison used in Java, and what Lucene's design depends on.</item>
+        ///     <item>If the type implements <see cref="IComparable{T}"/>, the comparer uses
+        ///         <see cref="IComparable{T}.CompareTo(T)"/> for the comparison. This allows
+        ///         the use of types with custom comparison schemes.</item>
+        ///     <item>If neither of the above conditions are true, will default to <see cref="Comparer{T}.Default"/>.</item>
+        /// </list>
+        /// <para/>
+        /// NOTE: This was naturalComparer() in Lucene
+        /// </summary>
+        public static IComparer<T> GetNaturalComparer<T>()
             //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
+            // LUCENENET specific - we need to ensure that strings are compared
+            // in a culture-insenitive manner.
+            if (typeof(T).Equals(typeof(string)))
+            {
+                return (IComparer<T>)STRING_ORDINAL_COMPARER;
+            }
+            // LUCENENET specific - Only return the NaturalComparer if the type
+            // implements IComparable<T>, otherwise use Comparer<T>.Default.
+            // This allows the comparison to be customized, but it is not mandatory
+            // to implement IComparable<T>.
+            else if (typeof(IComparable<T>).GetTypeInfo().IsAssignableFrom(typeof(T)))
+            {
+                return new NaturalComparer<T>();
+            }
+
             return Comparer<T>.Default;
-            //return (IComparer<T>)new NaturalComparerImpl<T>();
         }
 
         /// <summary>
@@ -849,7 +904,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            IntroSort(a, fromIndex, toIndex, ArrayUtil.NaturalComparer<T>());
+            IntroSort(a, fromIndex, toIndex, ArrayUtil.GetNaturalComparer<T>());
         }
 
         /// <summary>
@@ -897,7 +952,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            TimSort(a, fromIndex, toIndex, ArrayUtil.NaturalComparer<T>());
+            TimSort(a, fromIndex, toIndex, ArrayUtil.GetNaturalComparer<T>());
         }
 
         /// <summary>

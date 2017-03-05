@@ -166,7 +166,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            IntroSort(list, ArrayUtil.NaturalComparer<T>());
+            IntroSort(list, ArrayUtil.GetNaturalComparer<T>());
         }
 
         // Tim sorts:
@@ -202,7 +202,7 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-            TimSort(list, ArrayUtil.NaturalComparer<T>());
+            TimSort(list, ArrayUtil.GetNaturalComparer<T>());
         }
     }
 }

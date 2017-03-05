@@ -1,4 +1,4 @@
-using Lucene.Net.Randomized.Generators;
+﻿using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -97,7 +97,10 @@ namespace Lucene.Net.Util
                     stringList.Add(randomRealisticUnicodeString);
                 }
 
-                stringList.Sort();
+                // LUCENENET NOTE: Must sort using ArrayUtil.GetNaturalComparator<T>()
+                // to ensure culture isn't taken into consideration during the sort,
+                // which will match the sort order of BytesRef.UTF8SortedAsUTF16Comparer.
+                CollectionUtil.TimSort(stringList);
 #pragma warning disable 612, 618
                 IBytesRefIterator iter = list.GetIterator(BytesRef.UTF8SortedAsUTF16Comparer);
 #pragma warning restore 612, 618
