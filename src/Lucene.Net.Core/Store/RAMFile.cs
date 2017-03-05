@@ -83,11 +83,14 @@ namespace Lucene.Net.Store
             }
         }
 
-        protected internal int NumBuffers()
+        protected internal int NumBuffers
         {
-            lock (this)
+            get
             {
-                return m_buffers.Count;
+                lock (this)
+                {
+                    return m_buffers.Count;
+                }
             }
         }
 

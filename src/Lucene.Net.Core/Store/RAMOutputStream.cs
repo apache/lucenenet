@@ -182,7 +182,7 @@ namespace Lucene.Net.Store
 
         private void SwitchCurrentBuffer()
         {
-            if (currentBufferIndex == file.NumBuffers())
+            if (currentBufferIndex == file.NumBuffers)
             {
                 currentBuffer = file.AddBuffer(BUFFER_SIZE);
             }
@@ -221,7 +221,7 @@ namespace Lucene.Net.Store
         /// Returns byte usage of all buffers. </summary>
         public virtual long SizeInBytes()
         {
-            return (long)file.NumBuffers() * (long)BUFFER_SIZE;
+            return (long)file.NumBuffers * (long)BUFFER_SIZE;
         }
 
         public override long Checksum

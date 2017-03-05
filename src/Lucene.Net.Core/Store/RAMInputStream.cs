@@ -96,7 +96,7 @@ namespace Lucene.Net.Store
         private void SwitchCurrentBuffer(bool enforceEOF)
         {
             bufferStart = (long)BUFFER_SIZE * (long)currentBufferIndex;
-            if (currentBufferIndex >= file.NumBuffers())
+            if (currentBufferIndex >= file.NumBuffers)
             {
                 // end of file reached, no more buffers left
                 if (enforceEOF)
