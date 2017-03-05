@@ -247,8 +247,8 @@ namespace Lucene.Net.Expressions.JS
                         ITree identifier = current.GetChild(0);
                         string call = identifier.Text;
                         int arguments = current.ChildCount - 1;
-                        MethodInfo method = functions[call];
-                        if (method == null)
+                        MethodInfo method;
+                        if (!functions.TryGetValue(call, out method) || method == null)
                         {
                             throw new ArgumentException("Unrecognized method call (" + call + ").");
                         }
