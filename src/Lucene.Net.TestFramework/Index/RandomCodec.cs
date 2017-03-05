@@ -1,3 +1,4 @@
+using Lucene.Net.Codecs;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
@@ -64,6 +65,7 @@ namespace Lucene.Net.Index
     /// documents in different orders and the test will still be deterministic
     /// and reproducable.
     /// </summary>
+    [IgnoreCodec] // LUCENENET specific - we don't want this codec to replace Lucene46Codec during testing - some of these codecs are read-only
     public class RandomCodec : Lucene46Codec
     {
         /// <summary>
