@@ -419,7 +419,7 @@ namespace Lucene.Net.Index
                         }
                         Assert.AreEqual(expected, actual);
                         Assert.AreEqual(1, te.DocFreq);
-                        docsEnum = TestUtil.Docs(Random(), te, null, docsEnum, DocsEnum.FLAG_NONE);
+                        docsEnum = TestUtil.Docs(Random(), te, null, docsEnum, DocsFlags.NONE);
                         int docID = docsEnum.NextDoc();
                         Assert.IsTrue(docID != DocIdSetIterator.NO_MORE_DOCS);
                         Assert.AreEqual(docIDToID.Get(docID), (int)termToID[expected]);
@@ -904,25 +904,25 @@ namespace Lucene.Net.Index
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
             TermsEnum te = terms.Intersect(ca, null);
             Assert.AreEqual("aaa", te.Next().Utf8ToString());
-            Assert.AreEqual(0, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(0, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.AreEqual("bbb", te.Next().Utf8ToString());
-            Assert.AreEqual(1, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(1, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.AreEqual("ccc", te.Next().Utf8ToString());
-            Assert.AreEqual(2, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(2, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.IsNull(te.Next());
 
             te = terms.Intersect(ca, new BytesRef("abc"));
             Assert.AreEqual("bbb", te.Next().Utf8ToString());
-            Assert.AreEqual(1, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(1, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.AreEqual("ccc", te.Next().Utf8ToString());
-            Assert.AreEqual(2, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(2, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.IsNull(te.Next());
 
             te = terms.Intersect(ca, new BytesRef("aaa"));
             Assert.AreEqual("bbb", te.Next().Utf8ToString());
-            Assert.AreEqual(1, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(1, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.AreEqual("ccc", te.Next().Utf8ToString());
-            Assert.AreEqual(2, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(2, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.IsNull(te.Next());
 
             r.Dispose();
@@ -966,17 +966,17 @@ namespace Lucene.Net.Index
             // should seek to startTerm
             te = terms.Intersect(ca, new BytesRef("aad"));
             Assert.AreEqual("abd", te.Next().Utf8ToString());
-            Assert.AreEqual(1, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(1, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.AreEqual("acd", te.Next().Utf8ToString());
-            Assert.AreEqual(2, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(2, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.AreEqual("bcd", te.Next().Utf8ToString());
-            Assert.AreEqual(3, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(3, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.IsNull(te.Next());
 
             // should fail to find ceil label on second arc, rewind
             te = terms.Intersect(ca, new BytesRef("add"));
             Assert.AreEqual("bcd", te.Next().Utf8ToString());
-            Assert.AreEqual(3, te.Docs(null, null, DocsEnum.FLAG_NONE).NextDoc());
+            Assert.AreEqual(3, te.Docs(null, null, DocsFlags.NONE).NextDoc());
             Assert.IsNull(te.Next());
 
             // should reach end
@@ -1022,12 +1022,12 @@ namespace Lucene.Net.Index
             DocsEnum de;
 
             Assert.AreEqual("", te.Next().Utf8ToString());
-            de = te.Docs(null, null, DocsEnum.FLAG_NONE);
+            de = te.Docs(null, null, DocsFlags.NONE);
             Assert.AreEqual(0, de.NextDoc());
             Assert.AreEqual(1, de.NextDoc());
 
             Assert.AreEqual("abc", te.Next().Utf8ToString());
-            de = te.Docs(null, null, DocsEnum.FLAG_NONE);
+            de = te.Docs(null, null, DocsFlags.NONE);
             Assert.AreEqual(0, de.NextDoc());
             Assert.AreEqual(1, de.NextDoc());
 
@@ -1037,7 +1037,7 @@ namespace Lucene.Net.Index
             te = terms.Intersect(ca, new BytesRef(""));
 
             Assert.AreEqual("abc", te.Next().Utf8ToString());
-            de = te.Docs(null, null, DocsEnum.FLAG_NONE);
+            de = te.Docs(null, null, DocsFlags.NONE);
             Assert.AreEqual(0, de.NextDoc());
             Assert.AreEqual(1, de.NextDoc());
 

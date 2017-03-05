@@ -322,7 +322,7 @@ namespace Lucene.Net.Index.Memory
             MemoryIndex memory = new MemoryIndex(Random().nextBoolean(), Random().nextInt(50) * 1024 * 1024);
             memory.AddField("foo", "bar", analyzer);
             AtomicReader reader = (AtomicReader)memory.CreateSearcher().IndexReader;
-            DocsEnum disi = TestUtil.Docs(Random(), reader, "foo", new BytesRef("bar"), null, null, DocsEnum.FLAG_NONE);
+            DocsEnum disi = TestUtil.Docs(Random(), reader, "foo", new BytesRef("bar"), null, null, DocsFlags.NONE);
             int docid = disi.DocID;
             assertEquals(-1, docid);
             assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -330,7 +330,7 @@ namespace Lucene.Net.Index.Memory
             // now reuse and check again
             TermsEnum te = reader.Terms("foo").GetIterator(null);
             assertTrue(te.SeekExact(new BytesRef("bar")));
-            disi = te.Docs(null, disi, DocsEnum.FLAG_NONE);
+            disi = te.Docs(null, disi, DocsFlags.NONE);
             docid = disi.DocID;
             assertEquals(-1, docid);
             assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);

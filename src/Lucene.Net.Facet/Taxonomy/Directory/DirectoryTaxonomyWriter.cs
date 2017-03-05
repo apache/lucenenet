@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
@@ -810,7 +811,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                                     // is sufficient to call next(), and then doc(), exactly once with no
                                     // 'validation' checks.
                                     FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(t.Utf8ToString()));
-                                    docsEnum = termsEnum.Docs(null, docsEnum, DocsEnum.FLAG_NONE);
+                                    docsEnum = termsEnum.Docs(null, docsEnum, DocsFlags.NONE);
                                     bool res = cache.Put(cp, docsEnum.NextDoc() + ctx.DocBase);
                                     Debug.Assert(!res, "entries should not have been evicted from the cache");
                                 }
@@ -923,7 +924,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     {
                         FacetLabel cp = new FacetLabel(FacetsConfig.StringToPath(te.Term.Utf8ToString()));
                         int ordinal = AddCategory(cp);
-                        docs = te.Docs(null, docs, DocsEnum.FLAG_NONE);
+                        docs = te.Docs(null, docs, DocsFlags.NONE);
                         ordinalMap.AddMapping(docs.NextDoc() + @base, ordinal);
                     }
                     @base += ar.MaxDoc; // no deletions, so we're ok

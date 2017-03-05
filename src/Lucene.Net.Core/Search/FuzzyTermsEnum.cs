@@ -304,7 +304,7 @@ namespace Lucene.Net.Search
             get { return actualEnum.TotalTermFreq; }
         }
 
-        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             return actualEnum.Docs(liveDocs, reuse, flags);
         }

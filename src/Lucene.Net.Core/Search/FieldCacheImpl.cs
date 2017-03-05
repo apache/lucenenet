@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
@@ -413,7 +414,7 @@ namespace Lucene.Net.Search
                             break;
                         }
                         VisitTerm(term);
-                        docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
+                        docs = termsEnum.Docs(null, docs, DocsFlags.NONE);
                         while (true)
                         {
                             int docID = docs.NextDoc();
@@ -1024,7 +1025,7 @@ namespace Lucene.Net.Search
                             res = new FixedBitSet(maxDoc);
                         }
 
-                        docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
+                        docs = termsEnum.Docs(null, docs, DocsFlags.NONE);
                         // TODO: use bulk API
                         while (true)
                         {
@@ -1723,7 +1724,7 @@ namespace Lucene.Net.Search
                         }
 
                         termOrdToBytesOffset.Add(bytes.CopyUsingLengthPrefix(term));
-                        docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
+                        docs = termsEnum.Docs(null, docs, DocsFlags.NONE);
                         while (true)
                         {
                             int docID = docs.NextDoc();
@@ -1885,7 +1886,7 @@ namespace Lucene.Net.Search
                             break;
                         }
                         long pointer = bytes.CopyUsingLengthPrefix(term);
-                        docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
+                        docs = termsEnum.Docs(null, docs, DocsFlags.NONE);
                         while (true)
                         {
                             int docID = docs.NextDoc();

@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term)
         {
-            return GetTermDocsEnum(r, liveDocs, field, term, DocsEnum.FLAG_FREQS);
+            return GetTermDocsEnum(r, liveDocs, field, term, DocsFlags.FREQS);
         }
 
         /// <summary>
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
         ///  return null if the field or term does not exist.  See {@link
         ///  TermsEnum#docs(Bits,DocsEnum,int)}.
         /// </summary>
-        public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, int flags)
+        public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsFlags flags)
         {
             Debug.Assert(field != null);
             Debug.Assert(term != null);

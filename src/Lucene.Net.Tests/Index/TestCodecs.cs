@@ -422,7 +422,7 @@ namespace Lucene.Net.Index
                 // internal state:
                 for (int iter = 0; iter < 2; iter++)
                 {
-                    docsEnum = TestUtil.Docs(Random(), termsEnum, null, docsEnum, DocsEnum.FLAG_NONE);
+                    docsEnum = TestUtil.Docs(Random(), termsEnum, null, docsEnum, DocsFlags.NONE);
                     Assert.AreEqual(terms[i].Docs[0], docsEnum.NextDoc());
                     Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.NextDoc());
                 }
@@ -660,7 +660,7 @@ namespace Lucene.Net.Index
                     Assert.AreEqual(term2.Docs.Length, termsEnum.DocFreq);
                     if (field.OmitTF)
                     {
-                        this.VerifyDocs(term2.Docs, term2.Positions, TestUtil.Docs(Random(), termsEnum, null, null, DocsEnum.FLAG_NONE), false);
+                        this.VerifyDocs(term2.Docs, term2.Positions, TestUtil.Docs(Random(), termsEnum, null, null, DocsFlags.NONE), false);
                     }
                     else
                     {
@@ -689,7 +689,7 @@ namespace Lucene.Net.Index
                         Assert.AreEqual(term2.Docs.Length, termsEnum.DocFreq);
                         if (field.OmitTF)
                         {
-                            this.VerifyDocs(term2.Docs, term2.Positions, TestUtil.Docs(Random(), termsEnum, null, null, DocsEnum.FLAG_NONE), false);
+                            this.VerifyDocs(term2.Docs, term2.Positions, TestUtil.Docs(Random(), termsEnum, null, null, DocsFlags.NONE), false);
                         }
                         else
                         {
@@ -764,14 +764,14 @@ namespace Lucene.Net.Index
                                 }
                                 else
                                 {
-                                    docs = docsAndFreqs = TestUtil.Docs(Random(), termsEnum, null, null, DocsEnum.FLAG_FREQS);
+                                    docs = docsAndFreqs = TestUtil.Docs(Random(), termsEnum, null, null, DocsFlags.FREQS);
                                 }
                             }
                             else
                             {
                                 postings = null;
                                 docsAndFreqs = null;
-                                docs = TestUtil.Docs(Random(), termsEnum, null, null, DocsEnum.FLAG_NONE);
+                                docs = TestUtil.Docs(Random(), termsEnum, null, null, DocsFlags.NONE);
                             }
                             Assert.IsNotNull(docs);
                             int upto2 = -1;

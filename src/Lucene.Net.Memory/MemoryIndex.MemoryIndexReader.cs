@@ -370,7 +370,7 @@ namespace Lucene.Net.Index.Memory
                     get { return info.sliceArray.freq[info.sortedTerms[termUpto]]; }
                 }
 
-                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     if (reuse == null || !(reuse is MemoryDocsEnum))
                     {

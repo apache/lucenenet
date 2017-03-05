@@ -720,7 +720,7 @@ namespace Lucene.Net.Tests.Join
                                 termsEnum = terms.GetIterator(termsEnum);
                                 if (termsEnum.SeekExact(joinValue))
                                 {
-                                    docsEnum = termsEnum.Docs(slowCompositeReader.LiveDocs, docsEnum, DocsEnum.FLAG_NONE);
+                                    docsEnum = termsEnum.Docs(slowCompositeReader.LiveDocs, docsEnum, DocsFlags.NONE);
                                     JoinScore joinScore = joinValueToJoinScores[joinValue];
 
                                     for (int doc = docsEnum.NextDoc();

@@ -1092,7 +1092,7 @@ namespace Lucene.Net.Util
         // Returns a DocsEnum, but randomly sometimes uses a
         // DocsAndFreqsEnum, DocsAndPositionsEnum.  Returns null
         // if field/term doesn't exist:
-        public static DocsEnum Docs(Random random, IndexReader r, string field, BytesRef term, IBits liveDocs, DocsEnum reuse, int flags)
+        public static DocsEnum Docs(Random random, IndexReader r, string field, BytesRef term, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             Terms terms = MultiFields.GetTerms(r, field);
             if (terms == null)
@@ -1109,7 +1109,7 @@ namespace Lucene.Net.Util
 
         // Returns a DocsEnum from a positioned TermsEnum, but
         // randomly sometimes uses a DocsAndFreqsEnum, DocsAndPositionsEnum.
-        public static DocsEnum Docs(Random random, TermsEnum termsEnum, IBits liveDocs, DocsEnum reuse, int flags)
+        public static DocsEnum Docs(Random random, TermsEnum termsEnum, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             if (random.NextBoolean())
             {
@@ -1141,7 +1141,7 @@ namespace Lucene.Net.Util
                         return docsAndPositions;
                     }
                 }
-                flags |= DocsEnum.FLAG_FREQS;
+                flags |= DocsFlags.FREQS;
             }
             return termsEnum.Docs(liveDocs, reuse, flags);
         }

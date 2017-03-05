@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
                 TermsEnum te = terms.GetIterator(null);
                 while (te.Next() != null)
                 {
-                    DocsEnum de = TestUtil.Docs(Random(), te, null, null, DocsEnum.FLAG_NONE);
+                    DocsEnum de = TestUtil.Docs(Random(), te, null, null, DocsFlags.NONE);
                     while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         visited.Set(de.DocID);

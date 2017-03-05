@@ -128,7 +128,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 Debug.Assert(State == State_e.POSITIONED, "docs(...) called on unpositioned TermsEnum");
 

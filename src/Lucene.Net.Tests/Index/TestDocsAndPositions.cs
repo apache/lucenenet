@@ -251,7 +251,7 @@ namespace Lucene.Net.Index
                 foreach (AtomicReaderContext context in topReaderContext.Leaves)
                 {
                     int maxDoc = context.AtomicReader.MaxDoc;
-                    DocsEnum docsEnum = TestUtil.Docs(Random(), context.Reader, FieldName, bytes, null, null, DocsEnum.FLAG_FREQS);
+                    DocsEnum docsEnum = TestUtil.Docs(Random(), context.Reader, FieldName, bytes, null, null, DocsFlags.FREQS);
                     if (FindNext(freqInDoc, context.DocBase, context.DocBase + maxDoc) == int.MaxValue)
                     {
                         Assert.IsNull(docsEnum);
@@ -383,7 +383,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             DirectoryReader reader = writer.Reader;
             AtomicReader r = GetOnlySegmentReader(reader);
-            DocsEnum disi = TestUtil.Docs(Random(), r, "foo", new BytesRef("bar"), null, null, DocsEnum.FLAG_NONE);
+            DocsEnum disi = TestUtil.Docs(Random(), r, "foo", new BytesRef("bar"), null, null, DocsFlags.NONE);
             int docid = disi.DocID;
             Assert.AreEqual(-1, docid);
             Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -391,7 +391,7 @@ namespace Lucene.Net.Index
             // now reuse and check again
             TermsEnum te = r.Terms("foo").GetIterator(null);
             Assert.IsTrue(te.SeekExact(new BytesRef("bar")));
-            disi = TestUtil.Docs(Random(), te, null, disi, DocsEnum.FLAG_NONE);
+            disi = TestUtil.Docs(Random(), te, null, disi, DocsFlags.NONE);
             docid = disi.DocID;
             Assert.AreEqual(-1, docid);
             Assert.IsTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);

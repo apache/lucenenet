@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
 
             TermsEnum terms = reader.Fields.GetTerms(DocHelper.TEXT_FIELD_2_KEY).GetIterator(null);
             terms.SeekCeil(new BytesRef("field"));
-            DocsEnum termDocs = TestUtil.Docs(Random(), terms, reader.LiveDocs, null, DocsEnum.FLAG_FREQS);
+            DocsEnum termDocs = TestUtil.Docs(Random(), terms, reader.LiveDocs, null, DocsFlags.FREQS);
             if (termDocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
                 int docId = termDocs.DocID;
@@ -148,7 +148,7 @@ namespace Lucene.Net.Index
 
             IndexReader reader = DirectoryReader.Open(dir, indexDivisor);
 
-            DocsEnum tdocs = TestUtil.Docs(Random(), reader, ta.Field, new BytesRef(ta.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            DocsEnum tdocs = TestUtil.Docs(Random(), reader, ta.Field, new BytesRef(ta.Text()), MultiFields.GetLiveDocs(reader), null, DocsFlags.FREQS);
 
             // without optimization (assumption skipInterval == 16)
 
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
             // exactly skipInterval documents and therefore with optimization
 
             // with next
-            tdocs = TestUtil.Docs(Random(), reader, tb.Field, new BytesRef(tb.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            tdocs = TestUtil.Docs(Random(), reader, tb.Field, new BytesRef(tb.Text()), MultiFields.GetLiveDocs(reader), null, DocsFlags.FREQS);
 
             Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(10, tdocs.DocID);
@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
             Assert.IsFalse(tdocs.Advance(26) != DocIdSetIterator.NO_MORE_DOCS);
 
             // without next
-            tdocs = TestUtil.Docs(Random(), reader, tb.Field, new BytesRef(tb.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            tdocs = TestUtil.Docs(Random(), reader, tb.Field, new BytesRef(tb.Text()), MultiFields.GetLiveDocs(reader), null, DocsFlags.FREQS);
 
             Assert.IsTrue(tdocs.Advance(5) != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(10, tdocs.DocID);
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
             // much more than skipInterval documents and therefore with optimization
 
             // with next
-            tdocs = TestUtil.Docs(Random(), reader, tc.Field, new BytesRef(tc.Text()), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            tdocs = TestUtil.Docs(Random(), reader, tc.Field, new BytesRef(tc.Text()), MultiFields.GetLiveDocs(reader), null, DocsFlags.FREQS);
 
             Assert.IsTrue(tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(26, tdocs.DocID);

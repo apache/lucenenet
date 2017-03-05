@@ -219,7 +219,7 @@ namespace Lucene.Net.Codecs.Pulsing
         }
 
         public override DocsEnum Docs(FieldInfo field, BlockTermState termState, IBits liveDocs, DocsEnum reuse,
-            int flags)
+            DocsFlags flags)
         {
             var termState2 = (PulsingTermState) termState;
             if (termState2.PostingsSize != -1)

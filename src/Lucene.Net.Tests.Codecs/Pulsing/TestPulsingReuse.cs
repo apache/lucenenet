@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.Pulsing
             TermsEnum te = segment.Terms("foo").GetIterator(null);
             while (te.Next() != null)
             {
-                reuse = te.Docs(null, reuse, DocsEnum.FLAG_NONE);
+                reuse = te.Docs(null, reuse, DocsFlags.NONE);
                 allEnums[reuse] = true;
             }
 
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Pulsing
             TermsEnum te = segment.Terms("foo").GetIterator(null);
             while (te.Next() != null)
             {
-                reuse = te.Docs(null, reuse, DocsEnum.FLAG_NONE);
+                reuse = te.Docs(null, reuse, DocsFlags.NONE);
                 allEnums[reuse] = true;
             }
 

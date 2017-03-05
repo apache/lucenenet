@@ -61,7 +61,7 @@ namespace Lucene.Net.Index
 
             Assert.IsNull(MultiFields.GetTermPositionsEnum(reader, null, "foo", new BytesRef("test")));
 
-            DocsEnum de = TestUtil.Docs(Random(), reader, "foo", new BytesRef("test"), null, null, DocsEnum.FLAG_FREQS);
+            DocsEnum de = TestUtil.Docs(Random(), reader, "foo", new BytesRef("test"), null, null, DocsFlags.FREQS);
             while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {
                 Assert.AreEqual(2, de.Freq);

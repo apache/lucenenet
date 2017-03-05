@@ -521,7 +521,7 @@ namespace Lucene.Net.Index
         private void VerifyTermDocs(Directory dir, Term term, int numDocs)
         {
             IndexReader reader = DirectoryReader.Open(dir);
-            DocsEnum docsEnum = TestUtil.Docs(Random(), reader, term.Field, term.Bytes, null, null, DocsEnum.FLAG_NONE);
+            DocsEnum docsEnum = TestUtil.Docs(Random(), reader, term.Field, term.Bytes, null, null, DocsFlags.NONE);
             int count = 0;
             while (docsEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
             {

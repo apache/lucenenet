@@ -200,7 +200,7 @@ namespace Lucene.Net.Index
             get { return tenum.Ord; }
         }
 
-        public override DocsEnum Docs(IBits bits, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(IBits bits, DocsEnum reuse, DocsFlags flags)
         {
             return tenum.Docs(bits, reuse, flags);
         }

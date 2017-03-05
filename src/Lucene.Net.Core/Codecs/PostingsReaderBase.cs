@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs
         /// Must fully consume state, since after this call that
         ///  TermState may be reused.
         /// </summary>
-        public abstract DocsEnum Docs(FieldInfo fieldInfo, BlockTermState state, IBits skipDocs, DocsEnum reuse, int flags);
+        public abstract DocsEnum Docs(FieldInfo fieldInfo, BlockTermState state, IBits skipDocs, DocsEnum reuse, DocsFlags flags);
 
         /// <summary>
         /// Must fully consume state, since after this call that

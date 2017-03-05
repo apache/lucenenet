@@ -1063,7 +1063,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!
@@ -1769,7 +1769,7 @@ namespace Lucene.Net.Codecs.Memory
                     }
                 }
 
-                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     // TODO: implement reuse, something like Pulsing:
                     // it's hairy!

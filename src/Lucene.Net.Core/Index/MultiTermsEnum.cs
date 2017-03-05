@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             MultiDocsEnum docsEnum;
             // Can only reuse if incoming enum is also a MultiDocsEnum
@@ -608,7 +608,7 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (entry.Terms.Docs(b, null, DocsEnum.FLAG_NONE) != null)
+                    if (entry.Terms.Docs(b, null, DocsFlags.NONE) != null)
                     {
                         // At least one of our subs does not store
                         // offsets or positions -- we can't correctly

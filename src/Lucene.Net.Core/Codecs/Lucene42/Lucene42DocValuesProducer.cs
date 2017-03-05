@@ -822,7 +822,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 get { throw new System.NotSupportedException(); }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 throw new System.NotSupportedException();
             }

@@ -755,7 +755,7 @@ namespace Lucene.Net.Index
                     {
                         prevDocsEnum = threadState.ReuseDocsEnum;
                     }
-                    threadState.ReuseDocsEnum = termsEnum.Docs(liveDocs, prevDocsEnum, doCheckFreqs ? DocsEnum.FLAG_FREQS : DocsEnum.FLAG_NONE);
+                    threadState.ReuseDocsEnum = termsEnum.Docs(liveDocs, prevDocsEnum, doCheckFreqs ? DocsFlags.FREQS : DocsFlags.NONE);
                     docsEnum = threadState.ReuseDocsEnum;
                     docsAndPositionsEnum = null;
                 }

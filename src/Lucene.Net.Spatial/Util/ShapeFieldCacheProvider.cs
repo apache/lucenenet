@@ -81,7 +81,7 @@ namespace Lucene.Net.Spatial.Util
                         T shape = ReadShape(term);
                         if (shape != null)
                         {
-                            docs = te.Docs(null, docs, DocsEnum.FLAG_NONE);
+                            docs = te.Docs(null, docs, DocsFlags.NONE);
                             int docid = docs.NextDoc();
                             while (docid != DocIdSetIterator.NO_MORE_DOCS)
                             {

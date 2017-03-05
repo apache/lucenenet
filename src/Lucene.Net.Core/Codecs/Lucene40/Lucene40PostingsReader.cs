@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             if (CanReuse(reuse, liveDocs))
             {

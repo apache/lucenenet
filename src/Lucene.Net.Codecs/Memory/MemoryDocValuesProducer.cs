@@ -841,7 +841,7 @@ namespace Lucene.Net.Codecs.Memory
                 get { throw new NotSupportedException(); }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 throw new NotSupportedException();
             }

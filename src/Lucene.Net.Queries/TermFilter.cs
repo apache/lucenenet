@@ -80,7 +80,7 @@ namespace Lucene.Net.Queries
 
             public override DocIdSetIterator GetIterator()
             {
-                return termsEnum.Docs(acceptDocs, null, DocsEnum.FLAG_NONE);
+                return termsEnum.Docs(acceptDocs, null, DocsFlags.NONE);
             }
         }
 

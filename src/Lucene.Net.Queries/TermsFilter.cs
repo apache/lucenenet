@@ -243,7 +243,7 @@ namespace Lucene.Net.Queries
                         spare.Length = offsets[i + 1] - offsets[i];
                         if (termsEnum.SeekExact(spare))
                         {
-                            docs = termsEnum.Docs(acceptDocs, docs, DocsEnum.FLAG_NONE); // no freq since we don't need them
+                            docs = termsEnum.Docs(acceptDocs, docs, DocsFlags.NONE); // no freq since we don't need them
                             if (result == null)
                             {
                                 if (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)

@@ -752,7 +752,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                 }
 
-                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     DecodeMetaData();
                     return _blockTermsReader._postingsReader.Docs(_fieldReader._fieldInfo, _state, liveDocs, reuse, flags);

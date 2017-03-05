@@ -653,7 +653,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, reader.NumDocs);
             Term t = new Term("field", "a");
             Assert.AreEqual(1, reader.DocFreq(t));
-            DocsEnum td = TestUtil.Docs(Random(), reader, "field", new BytesRef("a"), MultiFields.GetLiveDocs(reader), null, DocsEnum.FLAG_FREQS);
+            DocsEnum td = TestUtil.Docs(Random(), reader, "field", new BytesRef("a"), MultiFields.GetLiveDocs(reader), null, DocsFlags.FREQS);
             td.NextDoc();
             Assert.AreEqual(128 * 1024, td.Freq);
             reader.Dispose();
@@ -1541,12 +1541,12 @@ namespace Lucene.Net.Index
             Assert.AreEqual("value", ir.Document(2).Get("string"));
 
             // test that the terms were indexed.
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc1field1"), null, null, DocsEnum.FLAG_NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc2field1"), null, null, DocsEnum.FLAG_NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc3field1"), null, null, DocsEnum.FLAG_NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc1field2"), null, null, DocsEnum.FLAG_NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc2field2"), null, null, DocsEnum.FLAG_NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
-            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc3field2"), null, null, DocsEnum.FLAG_NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc1field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc2field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random(), ir, "binary", new BytesRef("doc3field1"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc1field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc2field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+            Assert.IsTrue(TestUtil.Docs(Random(), ir, "string", new BytesRef("doc3field2"), null, null, DocsFlags.NONE).NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
             ir.Dispose();
             dir.Dispose();
@@ -1586,7 +1586,7 @@ namespace Lucene.Net.Index
             int count = 0;
             while (t.Next() != null)
             {
-                DocsEnum docs = TestUtil.Docs(Random(), t, null, null, DocsEnum.FLAG_NONE);
+                DocsEnum docs = TestUtil.Docs(Random(), t, null, null, DocsFlags.NONE);
                 Assert.AreEqual(0, docs.NextDoc());
                 Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docs.NextDoc());
                 count++;

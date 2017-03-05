@@ -1079,7 +1079,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get { return -1; }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 PreDocsEnum docsEnum;
                 if (reuse == null || !(reuse is PreDocsEnum))

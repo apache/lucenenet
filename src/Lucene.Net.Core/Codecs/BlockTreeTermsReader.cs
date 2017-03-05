@@ -1187,7 +1187,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     currentFrame.DecodeMetaData();
                     return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, currentFrame.termState, skipDocs, reuse, flags);
@@ -2605,7 +2605,7 @@ namespace Lucene.Net.Codecs
                     }
                 }
 
-                public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits skipDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     Debug.Assert(!eof);
                     //if (DEBUG) {

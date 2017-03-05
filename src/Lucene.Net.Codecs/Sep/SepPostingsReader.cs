@@ -243,7 +243,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState bTermState, IBits liveDocs, DocsEnum reuse,
-            int flags)
+            DocsFlags flags)
         {
             var termState = (SepTermState)bTermState;
 

@@ -1,3 +1,4 @@
+using Lucene.Net.Index;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -124,7 +125,7 @@ namespace Lucene.Net.Search
                 {
                     // System.out.println("  iter termCount=" + termCount + " term=" +
                     // enumerator.term().toBytesString());
-                    docsEnum = termsEnum.Docs(acceptDocs, docsEnum, DocsEnum.FLAG_NONE);
+                    docsEnum = termsEnum.Docs(acceptDocs, docsEnum, DocsFlags.NONE);
                     int docid;
                     while ((docid = docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                     {

@@ -1305,7 +1305,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            DocsEnum docsNoDel = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
+                            DocsEnum docsNoDel = termsEnum.Docs(null, docs, DocsFlags.NONE);
                             docCount = 0;
                             totalTermFreq = -1;
                             while (docsNoDel.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
@@ -1417,7 +1417,7 @@ namespace Lucene.Net.Index
                         for (int idx = 0; idx < 7; idx++)
                         {
                             int skipDocID = (int)(((idx + 1) * (long)maxDoc) / 8);
-                            docs = termsEnum.Docs(liveDocs, docs, DocsEnum.FLAG_NONE);
+                            docs = termsEnum.Docs(liveDocs, docs, DocsFlags.NONE);
                             int docID = docs.Advance(skipDocID);
                             if (docID == DocIdSetIterator.NO_MORE_DOCS)
                             {
@@ -1501,7 +1501,7 @@ namespace Lucene.Net.Index
                         }
 
                         int expectedDocFreq = termsEnum.DocFreq;
-                        DocsEnum d = termsEnum.Docs(null, null, DocsEnum.FLAG_NONE);
+                        DocsEnum d = termsEnum.Docs(null, null, DocsFlags.NONE);
                         int docFreq = 0;
                         while (d.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                         {
@@ -1551,7 +1551,7 @@ namespace Lucene.Net.Index
                                     throw new Exception("seek to existing term " + seekTerms[i] + " failed");
                                 }
 
-                                docs = termsEnum.Docs(liveDocs, docs, DocsEnum.FLAG_NONE);
+                                docs = termsEnum.Docs(liveDocs, docs, DocsFlags.NONE);
                                 if (docs == null)
                                 {
                                     throw new Exception("null DocsEnum from to existing term " + seekTerms[i]);
@@ -1573,7 +1573,7 @@ namespace Lucene.Net.Index
                                 }
 
                                 totDocFreq += termsEnum.DocFreq;
-                                docs = termsEnum.Docs(null, docs, DocsEnum.FLAG_NONE);
+                                docs = termsEnum.Docs(null, docs, DocsFlags.NONE);
                                 if (docs == null)
                                 {
                                     throw new Exception("null DocsEnum from to existing term " + seekTerms[i]);

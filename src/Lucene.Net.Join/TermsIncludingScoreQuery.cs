@@ -284,7 +284,7 @@ namespace Lucene.Net.Join
                     _scoreUpto = _upto;
                     if (_termsEnum.SeekExact(outerInstance._terms.Get(outerInstance._ords[_upto++], _spare)))
                     {
-                        docsEnum = _reuse = _termsEnum.Docs(_acceptDocs, _reuse, DocsEnum.FLAG_NONE);
+                        docsEnum = _reuse = _termsEnum.Docs(_acceptDocs, _reuse, DocsFlags.NONE);
                     }
                 }
             }
@@ -388,7 +388,7 @@ namespace Lucene.Net.Join
                 {
                     if (termsEnum.SeekExact(m_outerInstance._terms.Get(m_outerInstance._ords[i], spare)))
                     {
-                        docsEnum = termsEnum.Docs(acceptDocs, docsEnum, FLAG_NONE);
+                        docsEnum = termsEnum.Docs(acceptDocs, docsEnum, DocsFlags.NONE);
                         float score = m_outerInstance._scores[m_outerInstance._ords[i]];
                         for (int doc = docsEnum.NextDoc();
                             doc != NO_MORE_DOCS;
@@ -452,7 +452,7 @@ namespace Lucene.Net.Join
                 {
                     if (termsEnum.SeekExact(m_outerInstance._terms.Get(m_outerInstance._ords[i], spare)))
                     {
-                        docsEnum = termsEnum.Docs(acceptDocs, docsEnum, FLAG_NONE);
+                        docsEnum = termsEnum.Docs(acceptDocs, docsEnum, DocsFlags.NONE);
                         float score = m_outerInstance._scores[m_outerInstance._ords[i]];
                         for (int doc = docsEnum.NextDoc();
                             doc != NO_MORE_DOCS;

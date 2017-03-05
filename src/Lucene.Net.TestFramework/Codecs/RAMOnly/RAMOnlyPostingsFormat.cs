@@ -498,7 +498,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 get { return RamField.TermToDocs[Current].TotalTermFreq; }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 return new RAMDocsEnum(RamField.TermToDocs[Current], liveDocs);
             }

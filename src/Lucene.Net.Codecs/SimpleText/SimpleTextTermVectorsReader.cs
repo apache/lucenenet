@@ -449,11 +449,11 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return _current.Value.freq; }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 // TODO: reuse
                 var e = new SimpleTVDocsEnum();
-                e.Reset(liveDocs, (flags & DocsEnum.FLAG_FREQS) == 0 ? 1 : _current.Value.freq);
+                e.Reset(liveDocs, (flags & DocsFlags.FREQS) == 0 ? 1 : _current.Value.freq);
                 return e;
             }
 

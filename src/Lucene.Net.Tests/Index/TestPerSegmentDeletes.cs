@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
             TermsEnum ctermsEnum = cterms.GetIterator(null);
             if (ctermsEnum.SeekExact(new BytesRef(term.Text())))
             {
-                DocsEnum docsEnum = TestUtil.Docs(Random(), ctermsEnum, bits, null, DocsEnum.FLAG_NONE);
+                DocsEnum docsEnum = TestUtil.Docs(Random(), ctermsEnum, bits, null, DocsFlags.NONE);
                 return ToArray(docsEnum);
             }
             return null;

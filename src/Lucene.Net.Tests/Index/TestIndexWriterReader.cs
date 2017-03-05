@@ -1266,7 +1266,7 @@ namespace Lucene.Net.Index
             SegmentReader r = GetOnlySegmentReader(DirectoryReader.Open(w, true));
             try
             {
-                TestUtil.Docs(Random(), r, "f", new BytesRef("val"), null, null, DocsEnum.FLAG_NONE);
+                TestUtil.Docs(Random(), r, "f", new BytesRef("val"), null, null, DocsFlags.NONE);
                 Assert.Fail("should have failed to seek since terms index was not loaded.");
             }
 #pragma warning disable 168

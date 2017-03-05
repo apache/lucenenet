@@ -140,7 +140,7 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 DocsEnum inReuse;
                 SortingDocsEnum wrapReuse;
@@ -158,7 +158,7 @@ namespace Lucene.Net.Index.Sorter
                 }
 
                 DocsEnum inDocs = m_input.Docs(NewToOld(liveDocs), inReuse, flags);
-                bool withFreqs = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsEnum.FLAG_FREQS) != 0;
+                bool withFreqs = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && (flags & DocsFlags.FREQS) != 0;
                 return new SortingDocsEnum(docMap.Count, wrapReuse, inDocs, withFreqs, docMap);
             }
 

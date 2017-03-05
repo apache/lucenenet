@@ -476,7 +476,7 @@ namespace Lucene.Net.Codecs.Memory
                     get { return state.TotalTermFreq; }
                 }
 
-                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     DecodeMetaData();
                     return outerInstance.outerInstance.postingsReader.Docs(outerInstance.fieldInfo, state, liveDocs, reuse, flags);

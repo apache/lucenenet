@@ -391,7 +391,7 @@ namespace Lucene.Net.Codecs.Bloom
                     return Delegate.DocsAndPositions(liveDocs, reuse, flags);
                 }
 
-                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+                public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     return Delegate.Docs(liveDocs, reuse, flags);
                 }

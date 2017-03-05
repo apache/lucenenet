@@ -633,7 +633,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get { return termAndPostings[currentTerm].Freq; }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags) // ignored
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags) // ignored
             {
                 TVDocsEnum docsEnum;
                 if (reuse != null && reuse is TVDocsEnum)

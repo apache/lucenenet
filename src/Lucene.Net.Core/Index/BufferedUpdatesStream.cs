@@ -503,7 +503,7 @@ namespace Lucene.Net.Index
                     if (termsEnum.SeekExact(term.Bytes))
                     {
                         // we don't need term frequencies for this
-                        DocsEnum docsEnum = termsEnum.Docs(rld.LiveDocs, docs, DocsEnum.FLAG_NONE);
+                        DocsEnum docsEnum = termsEnum.Docs(rld.LiveDocs, docs, DocsFlags.NONE);
                         //System.out.println("BDS: got docsEnum=" + docsEnum);
 
                         if (docsEnum != null)
@@ -607,7 +607,7 @@ namespace Lucene.Net.Index
                     if (termsEnum.SeekExact(term.Bytes))
                     {
                         // we don't need term frequencies for this
-                        DocsEnum docsEnum = termsEnum.Docs(rld.LiveDocs, docs, DocsEnum.FLAG_NONE);
+                        DocsEnum docsEnum = termsEnum.Docs(rld.LiveDocs, docs, DocsFlags.NONE);
 
                         //System.out.println("BDS: got docsEnum=" + docsEnum);
 

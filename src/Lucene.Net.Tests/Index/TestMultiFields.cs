@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: seek term=" + UnicodeUtil.ToHexString(term.Utf8ToString()) + " " + term);
                     }
 
-                    DocsEnum docsEnum = TestUtil.Docs(Random(), reader, "field", term, liveDocs, null, DocsEnum.FLAG_NONE);
+                    DocsEnum docsEnum = TestUtil.Docs(Random(), reader, "field", term, liveDocs, null, DocsFlags.NONE);
                     Assert.IsNotNull(docsEnum);
 
                     foreach (int docID in docs[term])
@@ -197,8 +197,8 @@ namespace Lucene.Net.Index
             w.AddDocument(d);
             IndexReader r = w.Reader;
             w.Dispose();
-            DocsEnum d1 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsEnum.FLAG_NONE);
-            DocsEnum d2 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsEnum.FLAG_NONE);
+            DocsEnum d1 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsFlags.NONE);
+            DocsEnum d2 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsFlags.NONE);
             Assert.AreEqual(0, d1.NextDoc());
             Assert.AreEqual(0, d2.NextDoc());
             r.Dispose();

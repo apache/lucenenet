@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < iter; i++)
             {
                 tenum.SeekCeil(new BytesRef("val"));
-                tdocs = TestUtil.Docs(random, tenum, MultiFields.GetLiveDocs(reader), tdocs, DocsEnum.FLAG_NONE);
+                tdocs = TestUtil.Docs(random, tenum, MultiFields.GetLiveDocs(reader), tdocs, DocsFlags.NONE);
                 while (tdocs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                 {
                     ret += tdocs.DocID;

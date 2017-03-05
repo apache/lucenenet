@@ -112,7 +112,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 //WARN: keep this specialization in sync
                 Debug.Assert(m_termsEnum != null);
-                m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsEnum.FLAG_NONE);
+                m_docsEnum = m_termsEnum.Docs(m_acceptDocs, m_docsEnum, DocsFlags.NONE);
                 int docid;
                 while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {
@@ -128,7 +128,7 @@ namespace Lucene.Net.Spatial.Prefix
         protected void collectDocs(Collector collector) throws IOException {
           //WARN: keep this specialization in sync
           assert termsEnum != null;
-          docsEnum = termsEnum.docs(acceptDocs, docsEnum, DocsEnum.FLAG_NONE);
+          docsEnum = termsEnum.docs(acceptDocs, docsEnum, DocsFlags.NONE);
           int docid;
           while ((docid = docsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
             collector.collect(docid);

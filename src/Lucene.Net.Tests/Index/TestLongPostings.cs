@@ -455,12 +455,12 @@ namespace Lucene.Net.Index
 
                 if (options == IndexOptions.DOCS_ONLY)
                 {
-                    docs = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_NONE);
+                    docs = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsFlags.NONE);
                     postings = null;
                 }
                 else
                 {
-                    docs = postings = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsEnum.FLAG_FREQS);
+                    docs = postings = TestUtil.Docs(Random(), r, "field", new BytesRef(term), null, null, DocsFlags.FREQS);
                     Debug.Assert(postings != null);
                 }
                 Debug.Assert(docs != null);

@@ -90,7 +90,7 @@ namespace Lucene.Net.Sandbox.Queries
                 }
                 else
                 {
-                    docs = termsEnum.Docs(acceptDocs, docs, DocsEnum.FLAG_NONE);
+                    docs = termsEnum.Docs(acceptDocs, docs, DocsFlags.NONE);
                     int doc = docs.NextDoc();
                     if (doc != DocIdSetIterator.NO_MORE_DOCS)
                     {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Sandbox.Queries
                     if (termsEnum.DocFreq > 1)
                     {
                         // unset potential duplicates
-                        docs = termsEnum.Docs(acceptDocs, docs, DocsEnum.FLAG_NONE);
+                        docs = termsEnum.Docs(acceptDocs, docs, DocsFlags.NONE);
                         int doc = docs.NextDoc();
                         if (doc != DocIdSetIterator.NO_MORE_DOCS)
                         {

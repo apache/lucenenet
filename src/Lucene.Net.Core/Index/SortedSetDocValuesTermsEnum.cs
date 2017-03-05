@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
             get { return -1; }
         }
 
-        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             throw new System.NotSupportedException();
         }

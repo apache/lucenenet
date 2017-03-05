@@ -193,7 +193,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 get { return _indexOptions == IndexOptions.DOCS_ONLY ? -1 : _totalTermFreq; }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 SimpleTextDocsEnum docsEnum;
                 if (reuse != null && reuse is SimpleTextDocsEnum && ((SimpleTextDocsEnum) reuse).CanReuse(_outerInstance._input))

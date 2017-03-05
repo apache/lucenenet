@@ -283,7 +283,7 @@ namespace Lucene.Net.Index
                     //System.out.println("Term: " + term);
                     Assert.AreEqual(TestTerms[i], term);
 
-                    docsEnum = TestUtil.Docs(Random(), termsEnum, null, docsEnum, DocsEnum.FLAG_NONE);
+                    docsEnum = TestUtil.Docs(Random(), termsEnum, null, docsEnum, DocsFlags.NONE);
                     Assert.IsNotNull(docsEnum);
                     int doc = docsEnum.DocID;
                     Assert.AreEqual(-1, doc);

@@ -190,7 +190,7 @@ namespace Lucene.Net.Spatial.Prefix
             {
                 SmallDocSet set = null;
 
-                m_docsEnum = m_termsEnum.Docs(acceptContains, m_docsEnum, DocsEnum.FLAG_NONE);
+                m_docsEnum = m_termsEnum.Docs(acceptContains, m_docsEnum, DocsFlags.NONE);
                 int docid;
                 while ((docid = m_docsEnum.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                 {

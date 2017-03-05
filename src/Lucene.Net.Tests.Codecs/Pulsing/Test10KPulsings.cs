@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 //string expected = df.format(i);
                 string expected = i.ToString("00000", CultureInfo.InvariantCulture);
                 assertEquals(expected, te.Next().Utf8ToString());
-                de = TestUtil.Docs(Random(), te, null, de, DocsEnum.FLAG_NONE);
+                de = TestUtil.Docs(Random(), te, null, de, DocsFlags.NONE);
                 assertTrue(de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 assertEquals(DocIdSetIterator.NO_MORE_DOCS, de.NextDoc());
             }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 //string expected = df.format(i);
                 string expected = i.ToString("00000", CultureInfo.InvariantCulture);
                 assertEquals(expected, te.Next().Utf8ToString());
-                de = TestUtil.Docs(Random(), te, null, de, DocsEnum.FLAG_NONE);
+                de = TestUtil.Docs(Random(), te, null, de, DocsFlags.NONE);
                 assertTrue(de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 assertEquals(DocIdSetIterator.NO_MORE_DOCS, de.NextDoc());
             }

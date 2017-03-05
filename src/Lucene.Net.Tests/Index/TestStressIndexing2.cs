@@ -386,7 +386,7 @@ namespace Lucene.Net.Index
                 DocsEnum docs = null;
                 while (termsEnum.Next() != null)
                 {
-                    docs = TestUtil.Docs(Random(), termsEnum, liveDocs, docs, DocsEnum.FLAG_NONE);
+                    docs = TestUtil.Docs(Random(), termsEnum, liveDocs, docs, DocsFlags.NONE);
                     while (docs.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         Assert.Fail("r1 is not empty but r2 is");
@@ -409,10 +409,10 @@ namespace Lucene.Net.Index
                     break;
                 }
 
-                termDocs1 = TestUtil.Docs(Random(), termsEnum, liveDocs1, termDocs1, DocsEnum.FLAG_NONE);
+                termDocs1 = TestUtil.Docs(Random(), termsEnum, liveDocs1, termDocs1, DocsFlags.NONE);
                 if (termsEnum2.SeekExact(term))
                 {
-                    termDocs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, termDocs2, DocsEnum.FLAG_NONE);
+                    termDocs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, termDocs2, DocsFlags.NONE);
                 }
                 else
                 {
@@ -485,7 +485,7 @@ namespace Lucene.Net.Index
                                 }
                                 else
                                 {
-                                    dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsEnum.FLAG_FREQS);
+                                    dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsFlags.FREQS);
                                     Assert.IsNotNull(dEnum);
                                     Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                                     int freq = dEnum.Freq;
@@ -524,7 +524,7 @@ namespace Lucene.Net.Index
                                 }
                                 else
                                 {
-                                    dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsEnum.FLAG_FREQS);
+                                    dEnum = TestUtil.Docs(Random(), termsEnum3, null, dEnum, DocsFlags.FREQS);
                                     Assert.IsNotNull(dEnum);
                                     Assert.IsTrue(dEnum.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                                     int freq = dEnum.Freq;
@@ -588,7 +588,7 @@ namespace Lucene.Net.Index
                     }
 
                     //System.out.println("TEST: term1=" + term1);
-                    docs1 = TestUtil.Docs(Random(), termsEnum1, liveDocs1, docs1, DocsEnum.FLAG_FREQS);
+                    docs1 = TestUtil.Docs(Random(), termsEnum1, liveDocs1, docs1, DocsFlags.FREQS);
                     while (docs1.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         int d = docs1.DocID;
@@ -630,7 +630,7 @@ namespace Lucene.Net.Index
                     }
 
                     //System.out.println("TEST: term1=" + term1);
-                    docs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, docs2, DocsEnum.FLAG_FREQS);
+                    docs2 = TestUtil.Docs(Random(), termsEnum2, liveDocs2, docs2, DocsFlags.FREQS);
                     while (docs2.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         int d = r2r1[docs2.DocID];
@@ -778,8 +778,8 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        dEnum1 = TestUtil.Docs(Random(), termsEnum1, null, dEnum1, DocsEnum.FLAG_FREQS);
-                        dEnum2 = TestUtil.Docs(Random(), termsEnum2, null, dEnum2, DocsEnum.FLAG_FREQS);
+                        dEnum1 = TestUtil.Docs(Random(), termsEnum1, null, dEnum1, DocsFlags.FREQS);
+                        dEnum2 = TestUtil.Docs(Random(), termsEnum2, null, dEnum2, DocsFlags.FREQS);
                         Assert.IsNotNull(dEnum1);
                         Assert.IsNotNull(dEnum2);
                         int docID1 = dEnum1.NextDoc();

@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
         }
 
-        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, int flags)
+        public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState termState, IBits liveDocs, DocsEnum reuse, DocsFlags flags)
         {
             BlockDocsEnum docsEnum;
             if (reuse is BlockDocsEnum)
@@ -355,7 +355,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 return docIn == startDocIn && indexHasFreq == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS) && indexHasPos == (fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) && indexHasPayloads == fieldInfo.HasPayloads;
             }
 
-            public DocsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.Int32BlockTermState termState, int flags)
+            public DocsEnum Reset(IBits liveDocs, Lucene41PostingsWriter.Int32BlockTermState termState, DocsFlags flags)
             {
                 this.liveDocs = liveDocs;
                 // if (DEBUG) {
@@ -377,7 +377,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 }
 
                 doc = -1;
-                this.needsFreq = (flags & DocsEnum.FLAG_FREQS) != 0;
+                this.needsFreq = (flags & DocsFlags.FREQS) != 0;
                 if (!indexHasFreq)
                 {
                     Arrays.Fill(freqBuffer, 1);

@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -20,7 +22,23 @@ namespace Lucene.Net.Index
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
-    // javadocs
+    // LUCENENET specific - converted constants from DocsEnum
+    // into a flags enum.
+    [Flags]
+    public enum DocsFlags
+    {
+        /// <summary>
+        /// Flag to pass to <see cref="TermsEnum.Docs(Util.IBits, DocsEnum, DocsFlags)"/> if you don't
+        /// require term frequencies in the returned enum.
+        /// </summary>
+        NONE = 0x0,
+
+        /// <summary>
+        /// Flag to pass to <see cref="TermsEnum.Docs(Util.IBits, DocsEnum, DocsFlags)"/>
+        /// if you require term frequencies in the returned enum.
+        /// </summary>
+        FREQS = 0x1
+    }
 
     /// <summary>
     /// Iterates through the documents and term freqs.
@@ -29,21 +47,7 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class DocsEnum : DocIdSetIterator
     {
-        // LUCENENET TODO: Make the following into a [Flags] enum
-
-        /// <summary>
-        /// Flag to pass to <seealso cref="TermsEnum#docs(Bits,DocsEnum,int)"/> if you don't
-        /// require term frequencies in the returned enum. When passed to
-        /// <seealso cref="TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)"/> means
-        /// that no offsets and payloads will be returned.
-        /// </summary>
-        public static readonly int FLAG_NONE = 0x0;
-
-        /// <summary>
-        /// Flag to pass to <seealso cref="TermsEnum#docs(Bits,DocsEnum,int)"/>
-        ///  if you require term frequencies in the returned enum.
-        /// </summary>
-        public static readonly int FLAG_FREQS = 0x1;
+        // LUCENENET specific - made flags into their own [Flags] enum named DocsFlags and de-nested from this type
 
         private AttributeSource atts = null;
 

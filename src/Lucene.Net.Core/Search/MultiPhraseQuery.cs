@@ -276,7 +276,7 @@ namespace Lucene.Net.Search
                         if (postingsEnum == null)
                         {
                             // term does exist, but has no positions
-                            Debug.Assert(termsEnum.Docs(liveDocs, null, DocsEnum.FLAG_NONE) != null, "termstate found but no term exists in reader");
+                            Debug.Assert(termsEnum.Docs(liveDocs, null, DocsFlags.NONE) != null, "termstate found but no term exists in reader");
                             throw new InvalidOperationException("field \"" + term.Field + "\" was indexed without position data; cannot run PhraseQuery (term=" + term.Text() + ")");
                         }
 

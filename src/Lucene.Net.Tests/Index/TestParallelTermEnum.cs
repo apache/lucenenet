@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
                 BytesRef b = te.Next();
                 Assert.IsNotNull(b);
                 Assert.AreEqual(t, b.Utf8ToString());
-                DocsEnum td = TestUtil.Docs(Random(), te, liveDocs, null, DocsEnum.FLAG_NONE);
+                DocsEnum td = TestUtil.Docs(Random(), te, liveDocs, null, DocsFlags.NONE);
                 Assert.IsTrue(td.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
                 Assert.AreEqual(0, td.DocID);
                 Assert.AreEqual(td.NextDoc(), DocIdSetIterator.NO_MORE_DOCS);

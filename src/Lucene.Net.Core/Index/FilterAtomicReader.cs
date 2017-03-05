@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
                 get { return m_input.TotalTermFreq; }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 return m_input.Docs(liveDocs, reuse, flags);
             }

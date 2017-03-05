@@ -101,11 +101,11 @@ namespace Lucene.Net.Index
                         Console.WriteLine("\nTEST: iter=" + iter + " iter2=" + iter2);
                     }
                     Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.SeekCeil(new BytesRef("a")));
-                    de = TestUtil.Docs(Random(), te, null, de, DocsEnum.FLAG_NONE);
+                    de = TestUtil.Docs(Random(), te, null, de, DocsFlags.NONE);
                     TestOne(de, aDocIDs);
 
                     Assert.AreEqual(TermsEnum.SeekStatus.FOUND, te.SeekCeil(new BytesRef("b")));
-                    de = TestUtil.Docs(Random(), te, null, de, DocsEnum.FLAG_NONE);
+                    de = TestUtil.Docs(Random(), te, null, de, DocsFlags.NONE);
                     TestOne(de, bDocIDs);
                 }
 

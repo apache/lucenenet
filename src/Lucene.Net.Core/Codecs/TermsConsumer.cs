@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs
                 {
                     // We can pass null for liveDocs, because the
                     // mapping enum will skip the non-live docs:
-                    docsEnumIn = (MultiDocsEnum)termsEnum.Docs(null, docsEnumIn, Index.DocsEnum.FLAG_NONE);
+                    docsEnumIn = (MultiDocsEnum)termsEnum.Docs(null, docsEnumIn, DocsFlags.NONE);
                     if (docsEnumIn != null)
                     {
                         docsEnum.Reset(docsEnumIn);

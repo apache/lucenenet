@@ -439,7 +439,7 @@ namespace Lucene.Net.Index
                 int df = te.DocFreq;
                 if (df <= m_maxTermDocFreq)
                 {
-                    m_docsEnum = te.Docs(liveDocs, m_docsEnum, DocsEnum.FLAG_NONE);
+                    m_docsEnum = te.Docs(liveDocs, m_docsEnum, DocsFlags.NONE);
 
                     // dF, but takes deletions into account
                     int actualDF = 0;
@@ -762,7 +762,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 return termsEnum.Docs(liveDocs, reuse, flags);
             }

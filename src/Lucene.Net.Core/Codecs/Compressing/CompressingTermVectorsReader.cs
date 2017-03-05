@@ -1004,7 +1004,7 @@ namespace Lucene.Net.Codecs.Compressing
                 get { return termFreqs[ord]; }
             }
 
-            public override sealed DocsEnum Docs(IBits liveDocs, DocsEnum reuse, int flags)
+            public override sealed DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
             {
                 TVDocsEnum docsEnum;
                 if (reuse != null && reuse is TVDocsEnum)
@@ -1027,7 +1027,7 @@ namespace Lucene.Net.Codecs.Compressing
                     return null;
                 }
                 // TODO: slightly sheisty
-                return (DocsAndPositionsEnum)Docs(liveDocs, reuse, (int)flags);
+                return (DocsAndPositionsEnum)Docs(liveDocs, reuse, (DocsFlags)flags);
             }
         }
 
