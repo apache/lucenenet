@@ -47,7 +47,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 try
                 {
-                    new RegExp(regexp, RegExp.NONE);
+                    new RegExp(regexp, RegExpSyntax.NONE);
                     return regexp;
                 }
 #pragma warning disable 168
@@ -370,13 +370,13 @@ namespace Lucene.Net.Util.Automaton
         public static Automaton RandomAutomaton(Random random)
         {
             // get two random Automata from regexps
-            Automaton a1 = (new RegExp(AutomatonTestUtil.RandomRegexp(random), RegExp.NONE)).ToAutomaton();
+            Automaton a1 = (new RegExp(AutomatonTestUtil.RandomRegexp(random), RegExpSyntax.NONE)).ToAutomaton();
             if (random.NextBoolean())
             {
                 a1 = BasicOperations.Complement(a1);
             }
 
-            Automaton a2 = (new RegExp(AutomatonTestUtil.RandomRegexp(random), RegExp.NONE)).ToAutomaton();
+            Automaton a2 = (new RegExp(AutomatonTestUtil.RandomRegexp(random), RegExpSyntax.NONE)).ToAutomaton();
             if (random.NextBoolean())
             {
                 a2 = BasicOperations.Complement(a2);

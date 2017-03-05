@@ -1,3 +1,4 @@
+using Lucene.Net.Util.Automaton;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -69,7 +70,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="term"> regular expression. </param>
         public RegexpQuery(Term term)
-            : this(term, RegExp.ALL)
+            : this(term, RegExpSyntax.ALL)
         {
         }
 
@@ -77,8 +78,8 @@ namespace Lucene.Net.Search
         /// Constructs a query for terms matching <code>term</code>.
         /// </summary>
         /// <param name="term"> regular expression. </param>
-        /// <param name="flags"> optional RegExp features from <seealso cref="RegExp"/> </param>
-        public RegexpQuery(Term term, int flags)
+        /// <param name="flags"> optional RegExp features from <see cref="RegExpSyntax"/> </param>
+        public RegexpQuery(Term term, RegExpSyntax flags)
             : this(term, flags, defaultProvider)
         {
         }
@@ -87,9 +88,9 @@ namespace Lucene.Net.Search
         /// Constructs a query for terms matching <code>term</code>.
         /// </summary>
         /// <param name="term"> regular expression. </param>
-        /// <param name="flags"> optional RegExp features from <seealso cref="RegExp"/> </param>
+        /// <param name="flags"> optional RegExp features from <see cref="RegExpSyntax"/> </param>
         /// <param name="provider"> custom AutomatonProvider for named automata </param>
-        public RegexpQuery(Term term, int flags, IAutomatonProvider provider)
+        public RegexpQuery(Term term, RegExpSyntax flags, IAutomatonProvider provider)
             : base(term, (new RegExp(term.Text(), flags)).ToAutomaton(provider))
         {
         }

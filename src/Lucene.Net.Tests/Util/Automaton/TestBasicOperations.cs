@@ -146,7 +146,7 @@ namespace Lucene.Net.Util.Automaton
             int ITER2 = AtLeast(100);
             for (int i = 0; i < ITER1; i++)
             {
-                RegExp re = new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExp.NONE);
+                RegExp re = new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExpSyntax.NONE);
                 Automaton a = re.ToAutomaton();
                 Assert.IsFalse(BasicOperations.IsEmpty(a));
 

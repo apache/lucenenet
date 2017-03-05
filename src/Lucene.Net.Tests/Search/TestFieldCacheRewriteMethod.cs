@@ -1,7 +1,9 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Util.Automaton;
+using NUnit.Framework;
+
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Attributes;
-    using NUnit.Framework;
     using RegExp = Lucene.Net.Util.Automaton.RegExp;
 
     /*
@@ -33,10 +35,10 @@ namespace Lucene.Net.Search
         /// Test fieldcache rewrite against filter rewrite </summary>
         protected internal override void AssertSame(string regexp)
         {
-            RegexpQuery fieldCache = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
+            RegexpQuery fieldCache = new RegexpQuery(new Term(FieldName, regexp), RegExpSyntax.NONE);
             fieldCache.MultiTermRewriteMethod = (new FieldCacheRewriteMethod());
 
-            RegexpQuery filter = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
+            RegexpQuery filter = new RegexpQuery(new Term(FieldName, regexp), RegExpSyntax.NONE);
             filter.MultiTermRewriteMethod = (MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE);
 
             TopDocs fieldCacheDocs = Searcher1.Search(fieldCache, 25);
@@ -48,9 +50,9 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestEquals()
         {
-            RegexpQuery a1 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExp.NONE);
-            RegexpQuery a2 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExp.NONE);
-            RegexpQuery b = new RegexpQuery(new Term(FieldName, "[bB]"), RegExp.NONE);
+            RegexpQuery a1 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExpSyntax.NONE);
+            RegexpQuery a2 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExpSyntax.NONE);
+            RegexpQuery b = new RegexpQuery(new Term(FieldName, "[bB]"), RegExpSyntax.NONE);
             Assert.AreEqual(a1, a2);
             Assert.IsFalse(a1.Equals(b));
 

@@ -25,6 +25,7 @@ using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -1966,7 +1967,7 @@ namespace Lucene.Net.Util
                 for (int i = 0; i < numIntersections; i++)
                 {
                     string re = AutomatonTestUtil.RandomRegexp(Random());
-                    CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExp.NONE)).ToAutomaton());
+                    CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExpSyntax.NONE)).ToAutomaton());
                     if (automaton.Type == CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
                     {
                         // TODO: test start term too

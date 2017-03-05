@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Util.Automaton;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
@@ -111,7 +112,7 @@ namespace Lucene.Net.Search
         {
             private readonly Automaton Automaton;
 
-            internal DumbRegexpQuery(Term term, int flags)
+            internal DumbRegexpQuery(Term term, RegExpSyntax flags)
                 : base(term.Field)
             {
                 RegExp re = new RegExp(term.Text(), flags);
@@ -182,8 +183,8 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal virtual void AssertSame(string regexp)
         {
-            RegexpQuery smart = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
-            DumbRegexpQuery dumb = new DumbRegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
+            RegexpQuery smart = new RegexpQuery(new Term(FieldName, regexp), RegExpSyntax.NONE);
+            DumbRegexpQuery dumb = new DumbRegexpQuery(new Term(FieldName, regexp), RegExpSyntax.NONE);
 
             TopDocs smartDocs = Searcher1.Search(smart, 25);
             TopDocs dumbDocs = Searcher2.Search(dumb, 25);

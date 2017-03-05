@@ -488,7 +488,7 @@ namespace Lucene.Net.Analysis.Hunspell
                         throw new System.NotSupportedException("Too many patterns, please report this to dev@lucene.apache.org");
                     }
                     seenPatterns[regex] = patternIndex;
-                    CharacterRunAutomaton pattern = new CharacterRunAutomaton((new RegExp(regex, RegExp.NONE)).ToAutomaton());
+                    CharacterRunAutomaton pattern = new CharacterRunAutomaton((new RegExp(regex, RegExpSyntax.NONE)).ToAutomaton());
                     patterns.Add(pattern);
                 }
 

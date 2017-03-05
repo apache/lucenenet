@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
+using Lucene.Net.Util.Automaton;
 
 namespace Lucene.Net.Index
 {
@@ -900,7 +901,7 @@ namespace Lucene.Net.Index
             w.Dispose();
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
-            Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton();
+            Automaton automaton = (new RegExp(".*", RegExpSyntax.NONE)).ToAutomaton();
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
             TermsEnum te = terms.Intersect(ca, null);
             Assert.AreEqual("aaa", te.Next().Utf8ToString());
@@ -959,7 +960,7 @@ namespace Lucene.Net.Index
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
 
-            Automaton automaton = (new RegExp(".*d", RegExp.NONE)).ToAutomaton();
+            Automaton automaton = (new RegExp(".*d", RegExpSyntax.NONE)).ToAutomaton();
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
             TermsEnum te;
 
@@ -1015,7 +1016,7 @@ namespace Lucene.Net.Index
             AtomicReader sub = GetOnlySegmentReader(r);
             Terms terms = sub.Fields.GetTerms("field");
 
-            Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton(); // accept ALL
+            Automaton automaton = (new RegExp(".*", RegExpSyntax.NONE)).ToAutomaton(); // accept ALL
             CompiledAutomaton ca = new CompiledAutomaton(automaton, false, false);
 
             TermsEnum te = terms.Intersect(ca, null);

@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < NumIterations; i++)
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random());
-                Automaton automaton = (new RegExp(reg, RegExp.NONE)).ToAutomaton();
+                Automaton automaton = (new RegExp(reg, RegExpSyntax.NONE)).ToAutomaton();
                 IList<BytesRef> matchedTerms = new List<BytesRef>();
                 foreach (BytesRef t in Terms)
                 {
@@ -123,7 +123,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < NumIterations; i++)
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random());
-                Automaton automaton = (new RegExp(reg, RegExp.NONE)).ToAutomaton();
+                Automaton automaton = (new RegExp(reg, RegExpSyntax.NONE)).ToAutomaton();
                 TermsEnum te = MultiFields.GetTerms(Reader, "field").GetIterator(null);
                 IList<BytesRef> unsortedTerms = new List<BytesRef>(Terms);
                 Collections.Shuffle(unsortedTerms);
@@ -186,7 +186,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < NumIterations; i++)
             {
                 string reg = AutomatonTestUtil.RandomRegexp(Random());
-                Automaton automaton = (new RegExp(reg, RegExp.NONE)).ToAutomaton();
+                Automaton automaton = (new RegExp(reg, RegExpSyntax.NONE)).ToAutomaton();
                 CompiledAutomaton ca = new CompiledAutomaton(automaton, SpecialOperations.IsFinite(automaton), false);
                 TermsEnum te = MultiFields.GetTerms(Reader, "field").Intersect(ca, null);
                 Automaton expected = BasicOperations.Intersection(TermsAutomaton, automaton);

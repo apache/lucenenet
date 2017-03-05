@@ -1,6 +1,7 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -383,7 +384,7 @@ namespace Lucene.Net.Util.Fst
                 BytesRef term;
                 int ord = 0;
 
-                Automaton automaton = (new RegExp(".*", RegExp.NONE)).ToAutomaton();
+                Automaton automaton = (new RegExp(".*", RegExpSyntax.NONE)).ToAutomaton();
                 TermsEnum termsEnum2 = terms.Intersect(new CompiledAutomaton(automaton, false, false), null);
 
                 while ((term = termsEnum.Next()) != null)

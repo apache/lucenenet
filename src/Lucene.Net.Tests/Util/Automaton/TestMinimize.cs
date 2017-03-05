@@ -66,7 +66,7 @@ namespace Lucene.Net.Util.Automaton
         [Test]
         public virtual void TestMinimizeHuge()
         {
-            (new RegExp("+-*(A|.....|BC)*]", RegExp.NONE)).ToAutomaton();
+            (new RegExp("+-*(A|.....|BC)*]", RegExpSyntax.NONE)).ToAutomaton();
         }
     }
 }

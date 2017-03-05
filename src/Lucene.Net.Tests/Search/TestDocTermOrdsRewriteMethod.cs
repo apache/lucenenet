@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Util.Automaton;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -134,9 +135,9 @@ namespace Lucene.Net.Search
         /// </summary>
         protected internal virtual void AssertSame(string regexp)
         {
-            RegexpQuery docValues = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
+            RegexpQuery docValues = new RegexpQuery(new Term(FieldName, regexp), RegExpSyntax.NONE);
             docValues.MultiTermRewriteMethod = (new DocTermOrdsRewriteMethod());
-            RegexpQuery inverted = new RegexpQuery(new Term(FieldName, regexp), RegExp.NONE);
+            RegexpQuery inverted = new RegexpQuery(new Term(FieldName, regexp), RegExpSyntax.NONE);
 
             TopDocs invertedDocs = Searcher1.Search(inverted, 25);
             TopDocs docValuesDocs = Searcher2.Search(docValues, 25);
@@ -147,9 +148,9 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void TestEquals()
         {
-            RegexpQuery a1 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExp.NONE);
-            RegexpQuery a2 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExp.NONE);
-            RegexpQuery b = new RegexpQuery(new Term(FieldName, "[bB]"), RegExp.NONE);
+            RegexpQuery a1 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExpSyntax.NONE);
+            RegexpQuery a2 = new RegexpQuery(new Term(FieldName, "[aA]"), RegExpSyntax.NONE);
+            RegexpQuery b = new RegexpQuery(new Term(FieldName, "[bB]"), RegExpSyntax.NONE);
             Assert.AreEqual(a1, a2);
             Assert.IsFalse(a1.Equals(b));
 

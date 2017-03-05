@@ -1,9 +1,10 @@
+using Lucene.Net.Util.Automaton;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using IAutomatonProvider = Lucene.Net.Util.Automaton.IAutomatonProvider;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
@@ -116,7 +117,7 @@ namespace Lucene.Net.Search
         public virtual void TestCustomProvider()
         {
             IAutomatonProvider myProvider = new AutomatonProviderAnonymousInnerClassHelper(this);
-            RegexpQuery query = new RegexpQuery(NewTerm("<quickBrown>"), RegExp.ALL, myProvider);
+            RegexpQuery query = new RegexpQuery(NewTerm("<quickBrown>"), RegExpSyntax.ALL, myProvider);
             Assert.AreEqual(1, Searcher.Search(query, 5).TotalHits);
         }
 

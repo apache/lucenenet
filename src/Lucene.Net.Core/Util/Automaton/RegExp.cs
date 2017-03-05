@@ -34,6 +34,54 @@ using System.Text;
 
 namespace Lucene.Net.Util.Automaton
 {
+    // LUCENENET specific - converted constants from RegExp
+    // into a flags enum.
+    [Flags]
+    public enum RegExpSyntax
+    {
+        /// <summary>
+        /// Syntax flag, enables intersection (<c>&amp;</c>).
+        /// </summary>
+        INTERSECTION = 0x0001,
+
+        /// <summary>
+        /// Syntax flag, enables complement (<c>~</c>).
+        /// </summary>
+        COMPLEMENT = 0x0002,
+
+        /// <summary>
+        /// Syntax flag, enables empty language (<c>#</c>).
+        /// </summary>
+        EMPTY = 0x0004,
+
+        /// <summary>
+        /// Syntax flag, enables anystring (<c>@</c>).
+        /// </summary>
+        ANYSTRING = 0x0008,
+
+        /// <summary>
+        /// Syntax flag, enables named automata (<c>&lt;</c>identifier<c>&gt;</c>).
+        /// </summary>
+        AUTOMATON = 0x0010,
+
+        /// <summary>
+        /// Syntax flag, enables numerical intervals (
+        /// <c>&lt;<i>n</i>-<i>m</i>&gt;</c>).
+        /// </summary>
+        INTERVAL = 0x0020,
+
+        /// <summary>
+        /// Syntax flag, enables all optional regexp syntax.
+        /// </summary>
+        ALL = 0xffff,
+
+        /// <summary>
+        /// Syntax flag, enables no optional regexp syntax.
+        /// </summary>
+        NONE = 0x0000
+    }
+
+
     /// <summary>
     /// Regular Expression extension to <code>Automaton</code>.
     /// <p>
@@ -334,48 +382,8 @@ namespace Lucene.Net.Util.Automaton
             REGEXP_INTERVAL
         }
 
-        // LUCENENET TODO: Make the following into a [Flags] enum
+        // LUCENENET specific - made flags into their own [Flags] enum named RegExpSyntax and de-nested from this type
 
-        /// <summary>
-        /// Syntax flag, enables intersection (<tt>&amp;</tt>).
-        /// </summary>
-        public const int INTERSECTION = 0x0001;
-
-        /// <summary>
-        /// Syntax flag, enables complement (<tt>~</tt>).
-        /// </summary>
-        public const int COMPLEMENT = 0x0002;
-
-        /// <summary>
-        /// Syntax flag, enables empty language (<tt>#</tt>).
-        /// </summary>
-        public const int EMPTY = 0x0004;
-
-        /// <summary>
-        /// Syntax flag, enables anystring (<tt>@</tt>).
-        /// </summary>
-        public const int ANYSTRING = 0x0008;
-
-        /// <summary>
-        /// Syntax flag, enables named automata (<tt>&lt;</tt>identifier<tt>&gt;</tt>).
-        /// </summary>
-        public const int AUTOMATON = 0x0010;
-
-        /// <summary>
-        /// Syntax flag, enables numerical intervals (
-        /// <tt>&lt;<i>n</i>-<i>m</i>&gt;</tt>).
-        /// </summary>
-        public const int INTERVAL = 0x0020;
-
-        /// <summary>
-        /// Syntax flag, enables all optional regexp syntax.
-        /// </summary>
-        public const int ALL = 0xffff;
-
-        /// <summary>
-        /// Syntax flag, enables no optional regexp syntax.
-        /// </summary>
-        public const int NONE = 0x0000;
 
         private static bool allow_mutation = false;
 
@@ -387,7 +395,7 @@ namespace Lucene.Net.Util.Automaton
         internal int from, to;
 
         internal string b;
-        internal int flags;
+        internal RegExpSyntax flags;
         internal int pos;
 
         internal RegExp()
@@ -395,26 +403,26 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Constructs new <code>RegExp</code> from a string. Same as
-        /// <code>RegExp(s, ALL)</code>.
+        /// Constructs new <see cref="RegExp"/> from a string. Same as
+        /// <c>RegExp(s, RegExpSyntax.ALL)</c>.
         /// </summary>
         /// <param name="s"> regexp string </param>
-        /// <exception cref="IllegalArgumentException"> if an error occured while parsing the
+        /// <exception cref="ArgumentException"> if an error occured while parsing the
         ///              regular expression </exception>
         public RegExp(string s)
-            : this(s, ALL)
+            : this(s, RegExpSyntax.ALL)
         {
         }
 
         /// <summary>
-        /// Constructs new <code>RegExp</code> from a string.
+        /// Constructs new <see cref="RegExp"/> from a string.
         /// </summary>
         /// <param name="s"> regexp string </param>
-        /// <param name="syntax_flags"> boolean 'or' of optional syntax constructs to be
+        /// <param name="syntax_flags"> boolean 'or' of optional <see cref="RegExpSyntax"/> constructs to be
         ///          enabled </param>
-        /// <exception cref="IllegalArgumentException"> if an error occured while parsing the
+        /// <exception cref="ArgumentException"> if an error occured while parsing the
         ///              regular expression </exception>
-        public RegExp(string s, int syntax_flags)
+        public RegExp(string s, RegExpSyntax syntax_flags)
         {
             b = s;
             flags = syntax_flags;
@@ -995,7 +1003,7 @@ namespace Lucene.Net.Util.Automaton
             return ch;
         }
 
-        private bool Check(int flag)
+        private bool Check(RegExpSyntax flag)
         {
             return (flags & flag) != 0;
         }
@@ -1013,7 +1021,7 @@ namespace Lucene.Net.Util.Automaton
         internal RegExp ParseInterExp()
         {
             RegExp e = ParseConcatExp();
-            if (Check(INTERSECTION) && Match('&'))
+            if (Check(RegExpSyntax.INTERSECTION) && Match('&'))
             {
                 e = MakeIntersection(e, ParseInterExp());
             }
@@ -1023,7 +1031,7 @@ namespace Lucene.Net.Util.Automaton
         internal RegExp ParseConcatExp()
         {
             RegExp e = ParseRepeatExp();
-            if (More() && !Peek(")|") && (!Check(INTERSECTION) || !Peek("&")))
+            if (More() && !Peek(")|") && (!Check(RegExpSyntax.INTERSECTION) || !Peek("&")))
             {
                 e = MakeConcatenation(e, ParseConcatExp());
             }
@@ -1095,7 +1103,7 @@ namespace Lucene.Net.Util.Automaton
 
         internal RegExp ParseComplExp()
         {
-            if (Check(COMPLEMENT) && Match('~'))
+            if (Check(RegExpSyntax.COMPLEMENT) && Match('~'))
             {
                 return MakeComplement(ParseComplExp());
             }
@@ -1160,11 +1168,11 @@ namespace Lucene.Net.Util.Automaton
             {
                 return MakeAnyChar();
             }
-            else if (Check(EMPTY) && Match('#'))
+            else if (Check(RegExpSyntax.EMPTY) && Match('#'))
             {
                 return MakeEmpty();
             }
-            else if (Check(ANYSTRING) && Match('@'))
+            else if (Check(RegExpSyntax.ANYSTRING) && Match('@'))
             {
                 return MakeAnyString();
             }
@@ -1194,7 +1202,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 return e;
             }
-            else if ((Check(AUTOMATON) || Check(INTERVAL)) && Match('<'))
+            else if ((Check(RegExpSyntax.AUTOMATON) || Check(RegExpSyntax.INTERVAL)) && Match('<'))
             {
                 int start = pos;
                 while (More() && !Peek(">"))
@@ -1209,7 +1217,7 @@ namespace Lucene.Net.Util.Automaton
                 int i = s.IndexOf('-');
                 if (i == -1)
                 {
-                    if (!Check(AUTOMATON))
+                    if (!Check(RegExpSyntax.AUTOMATON))
                     {
                         throw new System.ArgumentException("interval syntax error at position " + (pos - 1));
                     }
@@ -1217,7 +1225,7 @@ namespace Lucene.Net.Util.Automaton
                 }
                 else
                 {
-                    if (!Check(INTERVAL))
+                    if (!Check(RegExpSyntax.INTERVAL))
                     {
                         throw new System.ArgumentException("illegal identifier at position " + (pos - 1));
                     }

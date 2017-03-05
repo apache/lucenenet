@@ -3,6 +3,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Support;
+using Lucene.Net.Util.Automaton;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -218,7 +219,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 for (int i = 0; i < numIntersections; i++)
                 {
                     string re = AutomatonTestUtil.RandomRegexp(Random());
-                    CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExp.NONE)).ToAutomaton());
+                    CompiledAutomaton automaton = new CompiledAutomaton((new RegExp(re, RegExpSyntax.NONE)).ToAutomaton());
                     if (automaton.Type == CompiledAutomaton.AUTOMATON_TYPE.NORMAL)
                     {
                         // TODO: test start term too

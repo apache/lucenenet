@@ -242,7 +242,7 @@ namespace Lucene.Net.Util.Automaton
             int num = AtLeast(250);
             for (int i = 0; i < num; i++)
             {
-                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExp.NONE)).ToAutomaton());
+                AssertAutomaton((new RegExp(AutomatonTestUtil.RandomRegexp(Random()), RegExpSyntax.NONE)).ToAutomaton());
             }
         }
 
