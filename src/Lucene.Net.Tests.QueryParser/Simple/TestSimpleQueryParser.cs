@@ -54,7 +54,7 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <param name="text"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        private Query Parse(string text, SimpleQueryParser.Operator flags)
+        private Query Parse(string text, Operator flags)
         {
             Analyzer analyzer = new MockAnalyzer(Random());
             SimpleQueryParser parser = new SimpleQueryParser(analyzer, new HashMap<string, float>() { { "field", 1f } }, flags);
@@ -591,7 +591,7 @@ namespace Lucene.Net.QueryParsers.Simple
         }
 
         /** helper to parse a query with keyword analyzer across "field" */
-        private Query ParseKeyword(string text, SimpleQueryParser.Operator flags)
+        private Query ParseKeyword(string text, Operator flags)
         {
             Analyzer analyzer = new MockAnalyzer(Random(), MockTokenizer.KEYWORD, false);
             SimpleQueryParser parser = new SimpleQueryParser(analyzer,
@@ -605,7 +605,7 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestDisablePhrase()
         {
             Query expected = new TermQuery(new Term("field", "\"test\""));
-            assertEquals(expected, ParseKeyword("\"test\"", ~SimpleQueryParser.Operator.PHRASE_OPERATOR));
+            assertEquals(expected, ParseKeyword("\"test\"", ~Operator.PHRASE_OPERATOR));
         }
 
         /** test the ability to enable/disable prefix operator */
@@ -613,7 +613,7 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestDisablePrefix()
         {
             Query expected = new TermQuery(new Term("field", "test*"));
-            assertEquals(expected, ParseKeyword("test*", ~SimpleQueryParser.Operator.PREFIX_OPERATOR));
+            assertEquals(expected, ParseKeyword("test*", ~Operator.PREFIX_OPERATOR));
         }
 
         /** test the ability to enable/disable AND operator */
@@ -621,9 +621,9 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestDisableAND()
         {
             Query expected = new TermQuery(new Term("field", "foo+bar"));
-            assertEquals(expected, ParseKeyword("foo+bar", ~SimpleQueryParser.Operator.AND_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo+bar", ~Operator.AND_OPERATOR));
             expected = new TermQuery(new Term("field", "+foo+bar"));
-            assertEquals(expected, ParseKeyword("+foo+bar", ~SimpleQueryParser.Operator.AND_OPERATOR));
+            assertEquals(expected, ParseKeyword("+foo+bar", ~Operator.AND_OPERATOR));
         }
 
         /** test the ability to enable/disable OR operator */
@@ -631,9 +631,9 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestDisableOR()
         {
             Query expected = new TermQuery(new Term("field", "foo|bar"));
-            assertEquals(expected, ParseKeyword("foo|bar", ~SimpleQueryParser.Operator.OR_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo|bar", ~Operator.OR_OPERATOR));
             expected = new TermQuery(new Term("field", "|foo|bar"));
-            assertEquals(expected, ParseKeyword("|foo|bar", ~SimpleQueryParser.Operator.OR_OPERATOR));
+            assertEquals(expected, ParseKeyword("|foo|bar", ~Operator.OR_OPERATOR));
         }
 
         /** test the ability to enable/disable NOT operator */
@@ -641,7 +641,7 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestDisableNOT()
         {
             Query expected = new TermQuery(new Term("field", "-foo"));
-            assertEquals(expected, ParseKeyword("-foo", ~SimpleQueryParser.Operator.NOT_OPERATOR));
+            assertEquals(expected, ParseKeyword("-foo", ~Operator.NOT_OPERATOR));
         }
 
         /** test the ability to enable/disable precedence operators */
@@ -649,9 +649,9 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestDisablePrecedence()
         {
             Query expected = new TermQuery(new Term("field", "(foo)"));
-            assertEquals(expected, ParseKeyword("(foo)", ~SimpleQueryParser.Operator.PRECEDENCE_OPERATORS));
+            assertEquals(expected, ParseKeyword("(foo)", ~Operator.PRECEDENCE_OPERATORS));
             expected = new TermQuery(new Term("field", ")foo("));
-            assertEquals(expected, ParseKeyword(")foo(", ~SimpleQueryParser.Operator.PRECEDENCE_OPERATORS));
+            assertEquals(expected, ParseKeyword(")foo(", ~Operator.PRECEDENCE_OPERATORS));
         }
 
         /** test the ability to enable/disable escape operators */
@@ -659,27 +659,27 @@ namespace Lucene.Net.QueryParsers.Simple
         public virtual void TestDisableEscape()
         {
             Query expected = new TermQuery(new Term("field", "foo\\bar"));
-            assertEquals(expected, ParseKeyword("foo\\bar", ~SimpleQueryParser.Operator.ESCAPE_OPERATOR));
-            assertEquals(expected, ParseKeyword("(foo\\bar)", ~SimpleQueryParser.Operator.ESCAPE_OPERATOR));
-            assertEquals(expected, ParseKeyword("\"foo\\bar\"", ~SimpleQueryParser.Operator.ESCAPE_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo\\bar", ~Operator.ESCAPE_OPERATOR));
+            assertEquals(expected, ParseKeyword("(foo\\bar)", ~Operator.ESCAPE_OPERATOR));
+            assertEquals(expected, ParseKeyword("\"foo\\bar\"", ~Operator.ESCAPE_OPERATOR));
         }
 
         [Test]
         public virtual void TestDisableWhitespace()
         {
             Query expected = new TermQuery(new Term("field", "foo foo"));
-            assertEquals(expected, ParseKeyword("foo foo", ~SimpleQueryParser.Operator.WHITESPACE_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo foo", ~Operator.WHITESPACE_OPERATOR));
             expected = new TermQuery(new Term("field", " foo foo\n "));
-            assertEquals(expected, ParseKeyword(" foo foo\n ", ~SimpleQueryParser.Operator.WHITESPACE_OPERATOR));
+            assertEquals(expected, ParseKeyword(" foo foo\n ", ~Operator.WHITESPACE_OPERATOR));
             expected = new TermQuery(new Term("field", "\t\tfoo foo foo"));
-            assertEquals(expected, ParseKeyword("\t\tfoo foo foo", ~SimpleQueryParser.Operator.WHITESPACE_OPERATOR));
+            assertEquals(expected, ParseKeyword("\t\tfoo foo foo", ~Operator.WHITESPACE_OPERATOR));
         }
 
         [Test]
         public virtual void TestDisableFuzziness()
         {
             Query expected = new TermQuery(new Term("field", "foo~1"));
-            assertEquals(expected, ParseKeyword("foo~1", ~SimpleQueryParser.Operator.FUZZY_OPERATOR));
+            assertEquals(expected, ParseKeyword("foo~1", ~Operator.FUZZY_OPERATOR));
         }
 
         [Test]
@@ -692,7 +692,7 @@ namespace Lucene.Net.QueryParsers.Simple
             BooleanQuery expected = new BooleanQuery();
             expected.Add(expectedPhrase, Occur.MUST);
             expected.Add(new TermQuery(new Term("field", "~2")), Occur.MUST);
-            assertEquals(expected, Parse("\"foo bar\"~2", ~SimpleQueryParser.Operator.NEAR_OPERATOR));
+            assertEquals(expected, Parse("\"foo bar\"~2", ~Operator.NEAR_OPERATOR));
         }
 
         // we aren't supposed to barf on any input...
@@ -703,7 +703,7 @@ namespace Lucene.Net.QueryParsers.Simple
             {
                 string query = TestUtil.RandomUnicodeString(Random());
                 Parse(query); // no exception
-                ParseKeyword(query, (SimpleQueryParser.Operator)TestUtil.NextInt(Random(), 0, 1024)); // no exception
+                ParseKeyword(query, (Operator)TestUtil.NextInt(Random(), 0, 1024)); // no exception
             }
         }
 
@@ -721,7 +721,7 @@ namespace Lucene.Net.QueryParsers.Simple
                     sb.append(chars[Random().Next(chars.Length)]);
                 }
                 Parse(sb.toString()); // no exception
-                ParseKeyword(sb.toString(), (SimpleQueryParser.Operator)TestUtil.NextInt(Random(), 0, 1024)); // no exception
+                ParseKeyword(sb.toString(), (Operator)TestUtil.NextInt(Random(), 0, 1024)); // no exception
             }
         }
     }

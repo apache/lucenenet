@@ -28,6 +28,33 @@ namespace Lucene.Net.QueryParsers.Simple
      * limitations under the License.
      */
 
+    // LUCENENET specific - converted constants from SimpleQueryParser
+    // into a flags enum.
+    [Flags]
+    public enum Operator
+    {
+        /// <summary>Enables <c>AND</c> operator (+)</summary>
+        AND_OPERATOR = 1 << 0,
+        /// <summary>Enables <c>NOT</c> operator (-)</summary>
+        NOT_OPERATOR = 1 << 1,
+        /// <summary>Enables <c>OR</c> operator (|)</summary>
+        OR_OPERATOR = 1 << 2,
+        /// <summary>Enables <c>PREFIX</c> operator (*)</summary>
+        PREFIX_OPERATOR = 1 << 3,
+        /// <summary>Enables <c>PHRASE</c> operator (")</summary>
+        PHRASE_OPERATOR = 1 << 4,
+        /// <summary>Enables <c>PRECEDENCE</c> operators: <c>(</c> and <c>)</c></summary>
+        PRECEDENCE_OPERATORS = 1 << 5,
+        /// <summary>Enables <c>ESCAPE</c> operator (\)</summary>
+        ESCAPE_OPERATOR = 1 << 6,
+        /// <summary>Enables <c>WHITESPACE</c> operators: ' ' '\n' '\r' '\t'</summary>
+        WHITESPACE_OPERATOR = 1 << 7,
+        /// <summary>Enables <c>FUZZY</c> operators: (~) on single terms</summary>
+        FUZZY_OPERATOR = 1 << 8,
+        /// <summary>Enables <c>NEAR</c> operators: (~) on phrases</summary>
+        NEAR_OPERATOR = 1 << 9
+    }
+
     /// <summary>
     /// <see cref="SimpleQueryParser"/> is used to parse human readable query syntax.
     /// <para/>
@@ -95,36 +122,10 @@ namespace Lucene.Net.QueryParsers.Simple
         /// <summary>Map of fields to query against with their weights</summary>
         protected readonly IDictionary<string, float> m_weights;
 
-        // LUCENENET specific - Made the int operator constants into a [Flags] enum
-        // to make them easier to pass in .NET.
+        // LUCENENET specific - made flags into their own [Flags] enum named Operator and de-nested from this type
 
         /// <summary>flags to the parser (to turn features on/off)</summary>
         protected readonly Operator m_flags;
-
-        [Flags]
-        public enum Operator : int
-        {
-            /// <summary>Enables <c>AND</c> operator (+)</summary>
-            AND_OPERATOR = 1 << 0,
-            /// <summary>Enables <c>NOT</c> operator (-)</summary>
-            NOT_OPERATOR = 1 << 1,
-            /// <summary>Enables <c>OR</c> operator (|)</summary>
-            OR_OPERATOR = 1 << 2,
-            /// <summary>Enables <c>PREFIX</c> operator (*)</summary>
-            PREFIX_OPERATOR = 1 << 3,
-            /// <summary>Enables <c>PHRASE</c> operator (")</summary>
-            PHRASE_OPERATOR = 1 << 4,
-            /// <summary>Enables <c>PRECEDENCE</c> operators: <c>(</c> and <c>)</c></summary>
-            PRECEDENCE_OPERATORS = 1 << 5,
-            /// <summary>Enables <c>ESCAPE</c> operator (\)</summary>
-            ESCAPE_OPERATOR = 1 << 6,
-            /// <summary>Enables <c>WHITESPACE</c> operators: ' ' '\n' '\r' '\t'</summary>
-            WHITESPACE_OPERATOR = 1 << 7,
-            /// <summary>Enables <c>FUZZY</c> operators: (~) on single terms</summary>
-            FUZZY_OPERATOR = 1 << 8,
-            /// <summary>Enables <c>NEAR</c> operators: (~) on phrases</summary>
-            NEAR_OPERATOR = 1 << 9
-        }
 
         private Occur defaultOperator = Occur.SHOULD;
 
@@ -136,9 +137,7 @@ namespace Lucene.Net.QueryParsers.Simple
 
         /// <summary>Creates a new parser searching over multiple fields with different weights.</summary>
         public SimpleQueryParser(Analyzer analyzer, IDictionary<string, float> weights)
-            // LUCENENET HACK: There doesn't seem to be a way to cast -1 to Operator directly
-            // like you can with a number that exists in the Enum, so parsing instead.
-            : this(analyzer, weights, (Operator)Enum.Parse(typeof(Operator), "-1"))
+            : this(analyzer, weights, (Operator)(-1))
         {
         }
 
