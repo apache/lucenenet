@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -156,7 +157,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (c >= 0x21 && c <= 0x7e && c != '\\' && c != '"')
             {
-                b.Append(c);
+                b.AppendCodePoint(c);
             }
             else
             {
@@ -230,7 +231,8 @@ namespace Lucene.Net.Util.Automaton
         {
             public int Compare(Transition t1, Transition t2)
             {
-                if (t1.to != t2.to)
+                //if (t1.to != t2.to)
+                if (!ReferenceEquals(t1.to, t2.to))
                 {
                     if (t1.to.number < t2.to.number)
                     {
@@ -284,7 +286,8 @@ namespace Lucene.Net.Util.Automaton
                 {
                     return 1;
                 }
-                if (t1.to != t2.to)
+                //if (t1.to != t2.to)
+                if (!ReferenceEquals(t1.to, t2.to))
                 {
                     if (t1.to.number < t2.to.number)
                     {
