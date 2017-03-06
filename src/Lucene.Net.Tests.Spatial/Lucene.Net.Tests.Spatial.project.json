@@ -1,10 +1,11 @@
-{
+﻿{
   "runtimes": {
     "win": {}
   },
   "dependencies": {
     "NUnit": "3.5.0",
-    "Spatial4n.Core.NTS": "0.4.1-beta"
+    "Spatial4n.Core": "0.4.1.1-beta",
+    "Spatial4n.Core.NTS": "0.4.1.1-beta"
   },
   "frameworks": {
     "net451": {}
