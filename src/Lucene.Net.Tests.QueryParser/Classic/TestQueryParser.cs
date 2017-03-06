@@ -86,14 +86,14 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             Debug.Assert(cqpC is QueryParser);
             QueryParser qp = (QueryParser)cqpC;
-            qp.DefaultOperator = QueryParserBase.Operator.OR;
+            qp.DefaultOperator = Operator.OR;
         }
 
         public override void SetDefaultOperatorAND(ICommonQueryParserConfiguration cqpC)
         {
             Debug.Assert(cqpC is QueryParser);
             QueryParser qp = (QueryParser)cqpC;
-            qp.DefaultOperator = QueryParserBase.Operator.AND;
+            qp.DefaultOperator = Operator.AND;
         }
 
         public override void SetAnalyzeRangeTerms(ICommonQueryParserConfiguration cqpC, bool value)
@@ -363,7 +363,7 @@ namespace Lucene.Net.QueryParsers.Classic
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockSynonymAnalyzer());
             assertEquals(expected, qp.Parse("dogs"));
             assertEquals(expected, qp.Parse("\"dogs\""));
-            qp.DefaultOperator = (QueryParserBase.Operator.AND);
+            qp.DefaultOperator = (Operator.AND);
             assertEquals(expected, qp.Parse("dogs"));
             assertEquals(expected, qp.Parse("\"dogs\""));
             expected.Boost = (2.0f);
@@ -382,7 +382,7 @@ namespace Lucene.Net.QueryParsers.Classic
             expected.Add(new Index.Term[] { new Index.Term("field", "dogs"), new Index.Term("field", "dog") });
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockSynonymAnalyzer());
             assertEquals(expected, qp.Parse("\"old dogs\""));
-            qp.DefaultOperator = (QueryParserBase.Operator.AND);
+            qp.DefaultOperator = (Operator.AND);
             assertEquals(expected, qp.Parse("\"old dogs\""));
             expected.Boost = (2.0f);
             assertEquals(expected, qp.Parse("\"old dogs\"^2"));
@@ -449,7 +449,7 @@ namespace Lucene.Net.QueryParsers.Classic
             expected.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
             assertEquals(expected, qp.Parse("国"));
-            qp.DefaultOperator = (QueryParserBase.Operator.AND);
+            qp.DefaultOperator = (Operator.AND);
             assertEquals(expected, qp.Parse("国"));
             expected.Boost = (2.0f);
             assertEquals(expected, qp.Parse("国^2"));
@@ -508,7 +508,7 @@ namespace Lucene.Net.QueryParsers.Classic
             inner.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
             expected.Add(inner, Occur.MUST);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
-            qp.DefaultOperator = (QueryParserBase.Operator.AND);
+            qp.DefaultOperator = (Operator.AND);
             assertEquals(expected, qp.Parse("中国"));
             expected.Boost = (2.0f);
             assertEquals(expected, qp.Parse("中国^2"));
@@ -531,7 +531,7 @@ namespace Lucene.Net.QueryParsers.Classic
             inner2.Add(new TermQuery(new Index.Term("field", "國")), Occur.SHOULD);
             expected.Add(inner2, Occur.MUST);
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
-            qp.DefaultOperator = (QueryParserBase.Operator.AND);
+            qp.DefaultOperator = (Operator.AND);
             assertEquals(expected, qp.Parse("中国国"));
             expected.Boost = (2.0f);
             assertEquals(expected, qp.Parse("中国国^2"));
@@ -544,7 +544,7 @@ namespace Lucene.Net.QueryParsers.Classic
             expected.Add(new Index.Term("field", "中"));
             expected.Add(new Index.Term[] { new Index.Term("field", "国"), new Index.Term("field", "國") });
             QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "field", new MockCJKSynonymAnalyzer());
-            qp.DefaultOperator = (QueryParserBase.Operator.AND);
+            qp.DefaultOperator = (Operator.AND);
             assertEquals(expected, qp.Parse("\"中国\""));
             expected.Boost = (2.0f);
             assertEquals(expected, qp.Parse("\"中国\"^2"));

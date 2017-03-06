@@ -31,6 +31,19 @@ namespace Lucene.Net.QueryParsers.Classic
      * limitations under the License.
      */
 
+    // LUCENENET specific: In Java, this was part of the QueryParser class,
+    // but it has been de-nested to make usage syntax shorter.
+
+    /// <summary>
+    /// The default operator for parsing queries. 
+    /// Use <see cref="QueryParserBase.DefaultOperator"/> to change it.
+    /// </summary>
+    public enum Operator
+    {
+        OR,
+        AND
+    }
+
     /// <summary>
     /// This class is overridden by <see cref="QueryParser"/>.
     /// </summary>
@@ -54,11 +67,11 @@ namespace Lucene.Net.QueryParsers.Classic
         // the nested class:
         
         /// <summary>
-        /// Alternative form of <see cref="QueryParserBase.Operator.AND"/> 
+        /// Alternative form of <see cref="Operator.AND"/> 
         /// </summary>
         public const Operator AND_OPERATOR = Operator.AND;
         /// <summary>
-        /// Alternative form of <see cref="QueryParserBase.Operator.OR"/> 
+        /// Alternative form of <see cref="Operator.OR"/> 
         /// </summary>
         public const Operator OR_OPERATOR = Operator.OR;
 
@@ -68,19 +81,7 @@ namespace Lucene.Net.QueryParsers.Classic
         //Operator operator_Renamed = OR_OPERATOR;
 
 
-        // Note: In Java, this was part of the QueryParser class. 
-        // However, in .NET we need to put it here for the constants
-        // defined above.
-
-        /// <summary>
-        /// The default operator for parsing queries. 
-        /// Use <see cref="QueryParserBase.DefaultOperator"/> to change it.
-        /// </summary>
-        public enum Operator
-        {
-            OR,
-            AND
-        }
+        
 
         //bool lowercaseExpandedTerms = true;
         //MultiTermQuery.RewriteMethod multiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;

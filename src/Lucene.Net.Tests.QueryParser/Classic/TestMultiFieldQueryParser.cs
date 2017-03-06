@@ -321,7 +321,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
                 MultiFieldQueryParser mfqp =
                   new MultiFieldQueryParser(TEST_VERSION_CURRENT, new string[] { "body" }, analyzer);
-                mfqp.DefaultOperator = QueryParser.Operator.AND;
+                mfqp.DefaultOperator = Operator.AND;
                 Query q = mfqp.Parse("the footest");
                 using (IndexReader ir = DirectoryReader.Open(ramDir))
                 {
