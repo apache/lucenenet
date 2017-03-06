@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis.Cjk
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(t, new CJKBigramFilter(t, 0xff, true));
+                return new TokenStreamComponents(t, new CJKBigramFilter(t, (CJKScript)0xff, true));
             }
         }
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Analysis.Cjk
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(t, new CJKBigramFilter(t, CJKBigramFilter.HAN));
+                return new TokenStreamComponents(t, new CJKBigramFilter(t, CJKScript.HAN));
             }
         }
 
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis.Cjk
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(t, new CJKBigramFilter(t, 0xff, false));
+                return new TokenStreamComponents(t, new CJKBigramFilter(t, (CJKScript)0xff, false));
             }
         }
 
@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Cjk
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new StandardTokenizer(TEST_VERSION_CURRENT, reader);
-                return new TokenStreamComponents(t, new CJKBigramFilter(t, CJKBigramFilter.HAN, true));
+                return new TokenStreamComponents(t, new CJKBigramFilter(t, CJKScript.HAN, true));
             }
         }
 

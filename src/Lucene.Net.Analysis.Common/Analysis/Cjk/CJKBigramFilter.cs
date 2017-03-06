@@ -22,19 +22,41 @@ namespace Lucene.Net.Analysis.Cjk
 	 * limitations under the License.
 	 */
 
+    // LUCENENET specific - converted constants from CJKBigramFilter
+    // into a flags enum.
+    [System.Flags]
+    public enum CJKScript
+    {
+        /// <summary>
+        /// bigram flag for Han Ideographs </summary>
+        HAN = 1,
+        /// <summary>
+        /// bigram flag for Hiragana </summary>
+        HIRAGANA = 2,
+        /// <summary>
+        /// bigram flag for Katakana </summary>
+        KATAKANA = 4,
+        /// <summary>
+        /// bigram flag for Hangul </summary>
+        HANGUL = 8,
+        /// <summary>
+        /// bigram flag for all scripts </summary>
+        ALL = 0xff
+    }
+
     /// <summary>
     /// Forms bigrams of CJK terms that are generated from <see cref="StandardTokenizer"/>
     /// or ICUTokenizer.
     /// <para>
     /// CJK types are set by these tokenizers, but you can also use 
-    /// <see cref="CJKBigramFilter(TokenStream, int)"/> to explicitly control which
+    /// <see cref="CJKBigramFilter(TokenStream, CJKScript)"/> to explicitly control which
     /// of the CJK scripts are turned into bigrams.
     /// </para>
     /// <para>
     /// By default, when a CJK character has no adjacent characters to form
     /// a bigram, it is output in unigram form. If you want to always output
     /// both unigrams and bigrams, set the <code>outputUnigrams</code>
-    /// flag in <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int, bool)"/>.
+    /// flag in <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, CJKScript, bool)"/>.
     /// This can be used for a combined unigram+bigram approach.
     /// </para>
     /// <para>
@@ -43,21 +65,9 @@ namespace Lucene.Net.Analysis.Cjk
     /// </summary>
     public sealed class CJKBigramFilter : TokenFilter
     {
-        // LUCENENET TODO: Make the following into a [Flags] enum
-
         // configuration
-        /// <summary>
-        /// bigram flag for Han Ideographs </summary>
-        public const int HAN = 1;
-        /// <summary>
-        /// bigram flag for Hiragana </summary>
-        public const int HIRAGANA = 2;
-        /// <summary>
-        /// bigram flag for Katakana </summary>
-        public const int KATAKANA = 4;
-        /// <summary>
-        /// bigram flag for Hangul </summary>
-        public const int HANGUL = 8;
+
+        // LUCENENET specific - made flags into their own [Flags] enum named CJKScript and de-nested from this type
 
         /// <summary>
         /// when we emit a bigram, its then marked as this type </summary>
@@ -107,12 +117,12 @@ namespace Lucene.Net.Analysis.Cjk
 
         /// <summary>
         /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int)">
-        ///       CJKBigramFilter(in, HAN | HIRAGANA | KATAKANA | HANGUL)</see>
+        ///       CJKBigramFilter(@in, CJKScript.HAN | CJKScript.HIRAGANA | CJKScript.KATAKANA | CJKScript.HANGUL)</see>
         /// </summary>
         /// <param name="in">
         ///          Input <see cref="TokenStream"/> </param>
         public CJKBigramFilter(TokenStream @in)
-              : this(@in, HAN | HIRAGANA | KATAKANA | HANGUL)
+              : this(@in, CJKScript.HAN | CJKScript.HIRAGANA | CJKScript.KATAKANA | CJKScript.HANGUL)
         {
         }
 
@@ -122,9 +132,9 @@ namespace Lucene.Net.Analysis.Cjk
         /// </summary>
         /// <param name="in">
         ///          Input <see cref="TokenStream"/> </param>
-        /// <param name="flags"> OR'ed set from <see cref="CJKBigramFilter.HAN"/>, <see cref="CJKBigramFilter.HIRAGANA"/>, 
-        ///        <see cref="CJKBigramFilter.KATAKANA"/>, <see cref="CJKBigramFilter.HANGUL"/> </param>
-        public CJKBigramFilter(TokenStream @in, int flags)
+        /// <param name="flags"> OR'ed set from <see cref="CJKScript.HAN"/>, <see cref="CJKScript.HIRAGANA"/>, 
+        ///        <see cref="CJKScript.KATAKANA"/>, <see cref="CJKScript.HANGUL"/> </param>
+        public CJKBigramFilter(TokenStream @in, CJKScript flags)
               : this(@in, flags, false)
         {
         }
@@ -134,18 +144,18 @@ namespace Lucene.Net.Analysis.Cjk
         /// and whether or not unigrams should also be output. </summary>
         /// <param name="in">
         ///          Input <see cref="TokenStream"/> </param>
-        /// <param name="flags"> OR'ed set from <see cref="CJKBigramFilter.HAN"/>, <see cref="CJKBigramFilter.HIRAGANA"/>, 
-        ///        <see cref="CJKBigramFilter.KATAKANA"/>, <see cref="CJKBigramFilter.HANGUL"/> </param>
+        /// <param name="flags"> OR'ed set from <see cref="CJKScript.HAN"/>, <see cref="CJKScript.HIRAGANA"/>, 
+        ///        <see cref="CJKScript.KATAKANA"/>, <see cref="CJKScript.HANGUL"/> </param>
         /// <param name="outputUnigrams"> true if unigrams for the selected writing systems should also be output.
         ///        when this is false, this is only done when there are no adjacent characters to form
         ///        a bigram. </param>
-        public CJKBigramFilter(TokenStream @in, int flags, bool outputUnigrams)
+        public CJKBigramFilter(TokenStream @in, CJKScript flags, bool outputUnigrams)
               : base(@in)
         {
-            doHan = (flags & HAN) == 0 ? NO : HAN_TYPE;
-            doHiragana = (flags & HIRAGANA) == 0 ? NO : HIRAGANA_TYPE;
-            doKatakana = (flags & KATAKANA) == 0 ? NO : KATAKANA_TYPE;
-            doHangul = (flags & HANGUL) == 0 ? NO : HANGUL_TYPE;
+            doHan = (flags & CJKScript.HAN) == 0 ? NO : HAN_TYPE;
+            doHiragana = (flags & CJKScript.HIRAGANA) == 0 ? NO : HIRAGANA_TYPE;
+            doKatakana = (flags & CJKScript.KATAKANA) == 0 ? NO : KATAKANA_TYPE;
+            doHangul = (flags & CJKScript.HANGUL) == 0 ? NO : HANGUL_TYPE;
             this.outputUnigrams = outputUnigrams;
             this.termAtt = AddAttribute<ICharTermAttribute>();
             this.typeAtt = AddAttribute<ITypeAttribute>();

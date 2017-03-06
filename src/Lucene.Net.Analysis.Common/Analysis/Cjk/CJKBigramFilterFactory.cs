@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Cjk
     /// </summary>
     public class CJKBigramFilterFactory : TokenFilterFactory
     {
-        private readonly int flags;
+        private readonly CJKScript flags;
         private readonly bool outputUnigrams;
 
         /// <summary>
@@ -45,22 +45,22 @@ namespace Lucene.Net.Analysis.Cjk
         public CJKBigramFilterFactory(IDictionary<string, string> args)
               : base(args)
         {
-            int flags = 0;
+            CJKScript flags = 0;
             if (GetBoolean(args, "han", true))
             {
-                flags |= CJKBigramFilter.HAN;
+                flags |= CJKScript.HAN;
             }
             if (GetBoolean(args, "hiragana", true))
             {
-                flags |= CJKBigramFilter.HIRAGANA;
+                flags |= CJKScript.HIRAGANA;
             }
             if (GetBoolean(args, "katakana", true))
             {
-                flags |= CJKBigramFilter.KATAKANA;
+                flags |= CJKScript.KATAKANA;
             }
             if (GetBoolean(args, "hangul", true))
             {
-                flags |= CJKBigramFilter.HANGUL;
+                flags |= CJKScript.HANGUL;
             }
             this.flags = flags;
             this.outputUnigrams = GetBoolean(args, "outputUnigrams", false);
