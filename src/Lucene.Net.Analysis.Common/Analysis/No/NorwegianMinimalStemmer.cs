@@ -67,16 +67,16 @@ namespace Lucene.Net.Analysis.No
 
         /// <summary>
         /// Creates a new <see cref="NorwegianMinimalStemmer"/> </summary>
-        /// <param name="flags"> set to <see cref="NorwegianLightStemmer.BOKMAAL"/>, 
-        ///                     <see cref="NorwegianLightStemmer.NYNORSK"/>, or both. </param>
-        public NorwegianMinimalStemmer(int flags)
+        /// <param name="flags"> set to <see cref="NorwegianStandard.BOKMAAL"/>, 
+        ///                     <see cref="NorwegianStandard.NYNORSK"/>, or both. </param>
+        public NorwegianMinimalStemmer(NorwegianStandard flags)
         {
-            if (flags <= 0 || flags > NorwegianLightStemmer.BOKMAAL + NorwegianLightStemmer.NYNORSK)
+            if (flags <= 0 || flags > (int)NorwegianStandard.BOKMAAL + NorwegianStandard.NYNORSK)
             {
                 throw new System.ArgumentException("invalid flags");
             }
-            useBokmaal = (flags & NorwegianLightStemmer.BOKMAAL) != 0;
-            useNynorsk = (flags & NorwegianLightStemmer.NYNORSK) != 0;
+            useBokmaal = (flags & NorwegianStandard.BOKMAAL) != 0;
+            useNynorsk = (flags & NorwegianStandard.NYNORSK) != 0;
         }
 
         public virtual int Stem(char[] s, int len)

@@ -40,7 +40,7 @@ namespace Lucene.Net.Analysis.No
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(source, NorwegianLightStemmer.BOKMAAL));
+                return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(source, NorwegianStandard.BOKMAAL));
             }
         }
 
@@ -73,7 +73,7 @@ namespace Lucene.Net.Analysis.No
             protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer source = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-                return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(source, NorwegianLightStemmer.NYNORSK));
+                return new TokenStreamComponents(source, new NorwegianMinimalStemFilter(source, NorwegianStandard.NYNORSK));
             }
         }
 

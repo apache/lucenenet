@@ -54,6 +54,17 @@ namespace Lucene.Net.Analysis.No
 	 * POSSIBILITY OF SUCH DAMAGE.
 	 */
 
+    [System.Flags]
+    public enum NorwegianStandard
+    {
+        /// <summary>
+        /// Constant to remove Bokmål-specific endings </summary>
+        BOKMAAL = 1,
+        /// <summary>
+        /// Constant to remove Nynorsk-specific endings </summary>
+        NYNORSK = 2
+    }
+
     /// <summary>
     /// Light Stemmer for Norwegian.
     /// <para>
@@ -64,29 +75,22 @@ namespace Lucene.Net.Analysis.No
     /// </summary>
     public class NorwegianLightStemmer
     {
-        // LUCENENET TODO: Convert the following into a [Flags] enum
-
-        /// <summary>
-        /// Constant to remove Bokmål-specific endings </summary>
-        public const int BOKMAAL = 1;
-        /// <summary>
-        /// Constant to remove Nynorsk-specific endings </summary>
-        public const int NYNORSK = 2;
+        // LUCENENET specific - made flags into their own [Flags] enum named NorwegianStandard and de-nested from this type
 
         private readonly bool useBokmaal;
         private readonly bool useNynorsk;
 
         /// <summary>
         /// Creates a new <see cref="NorwegianLightStemmer"/> </summary>
-        /// <param name="flags"> set to <see cref="BOKMAAL"/>, <see cref="NYNORSK"/>, or both. </param>
-        public NorwegianLightStemmer(int flags)
+        /// <param name="flags"> set to <see cref="NorwegianStandard.BOKMAAL"/>, <see cref="NorwegianStandard.NYNORSK"/>, or both. </param>
+        public NorwegianLightStemmer(NorwegianStandard flags)
         {
-            if (flags <= 0 || flags > BOKMAAL + NYNORSK)
+            if (flags <= 0 || flags > (int)NorwegianStandard.BOKMAAL + NorwegianStandard.NYNORSK)
             {
                 throw new System.ArgumentException("invalid flags");
             }
-            useBokmaal = (flags & BOKMAAL) != 0;
-            useNynorsk = (flags & NYNORSK) != 0;
+            useBokmaal = (flags & NorwegianStandard.BOKMAAL) != 0;
+            useNynorsk = (flags & NorwegianStandard.NYNORSK) != 0;
         }
 
         public virtual int Stem(char[] s, int len)

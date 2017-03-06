@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis.No
         /// NorwegianMinimalStemFilter(input, BOKMAAL)
         /// </summary>
         public NorwegianMinimalStemFilter(TokenStream input)
-            : this(input, NorwegianLightStemmer.BOKMAAL)
+            : this(input, NorwegianStandard.BOKMAAL)
         {
         }
 
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.No
         /// <param name="input"> the source <see cref="TokenStream"/> to filter </param>
         /// <param name="flags"> set to <see cref="NorwegianLightStemmer.BOKMAAL"/>, 
         ///                     <see cref="NorwegianLightStemmer.NYNORSK"/>, or both. </param>
-        public NorwegianMinimalStemFilter(TokenStream input, int flags)
+        public NorwegianMinimalStemFilter(TokenStream input, NorwegianStandard flags)
             : base(input)
         {
             this.stemmer = new NorwegianMinimalStemmer(flags);

@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.No
     /// </summary>
     public class NorwegianLightStemFilterFactory : TokenFilterFactory
     {
-        private readonly int flags;
+        private readonly NorwegianStandard flags;
 
         /// <summary>
         /// Creates a new <see cref="NorwegianLightStemFilterFactory"/> </summary>
@@ -43,15 +43,15 @@ namespace Lucene.Net.Analysis.No
             string variant = Get(args, "variant");
             if (variant == null || "nb".Equals(variant))
             {
-                flags = NorwegianLightStemmer.BOKMAAL;
+                flags = NorwegianStandard.BOKMAAL;
             }
             else if ("nn".Equals(variant))
             {
-                flags = NorwegianLightStemmer.NYNORSK;
+                flags = NorwegianStandard.NYNORSK;
             }
             else if ("no".Equals(variant))
             {
-                flags = NorwegianLightStemmer.BOKMAAL | NorwegianLightStemmer.NYNORSK;
+                flags = NorwegianStandard.BOKMAAL | NorwegianStandard.NYNORSK;
             }
             else
             {
