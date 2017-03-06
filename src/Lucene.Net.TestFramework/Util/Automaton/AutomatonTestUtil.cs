@@ -1,7 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using System.Diagnostics;
 
 namespace Lucene.Net.Util.Automaton
 {
@@ -191,7 +191,7 @@ namespace Lucene.Net.Util.Automaton
                 }
             }
 
-            Assert.True(code >= t.Min && code <= t.Max && (code < UnicodeUtil.UNI_SUR_HIGH_START || code > UnicodeUtil.UNI_SUR_LOW_END), "code=" + code + " min=" + t.Min + " max=" + t.Max);
+            Debug.Assert(code >= t.Min && code <= t.Max && (code < UnicodeUtil.UNI_SUR_HIGH_START || code > UnicodeUtil.UNI_SUR_LOW_END), "code=" + code + " min=" + t.Min + " max=" + t.Max);
             return code;
         }
 
@@ -204,17 +204,17 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public class RandomAcceptedStrings
         {
-            internal readonly IDictionary<Transition, bool?> LeadsToAccept;
+            internal readonly IDictionary<Transition, bool?> leadsToAccept;
             internal readonly Automaton a;
 
             private class ArrivingTransition
             {
-                internal readonly State From;
+                internal readonly State from;
                 internal readonly Transition t;
 
                 public ArrivingTransition(State from, Transition t)
                 {
-                    this.From = from;
+                    this.from = from;
                     this.t = t;
                 }
             }
@@ -222,15 +222,15 @@ namespace Lucene.Net.Util.Automaton
             public RandomAcceptedStrings(Automaton a)
             {
                 this.a = a;
-                if (!String.IsNullOrEmpty(a.Singleton))
+                if (a.IsSingleton)
                 {
-                    LeadsToAccept = null;
+                    leadsToAccept = null;
                     return;
                 }
 
                 // must use IdentityHashmap because two Transitions w/
                 // different start nodes can be considered the same
-                LeadsToAccept = new IdentityHashMap<Transition, bool?>();
+                leadsToAccept = new IdentityHashMap<Transition, bool?>();
                 IDictionary<State, IList<ArrivingTransition>> allArriving = new Dictionary<State, IList<ArrivingTransition>>();
 
                 LinkedList<State> q = new LinkedList<State>();
@@ -244,11 +244,11 @@ namespace Lucene.Net.Util.Automaton
                     {
                         Transition t = s.TransitionsArray[i];
                         IList<ArrivingTransition> tl;
-                        allArriving.TryGetValue(t.Dest, out tl);
+                        allArriving.TryGetValue(t.to, out tl);
                         if (tl == null)
                         {
                             tl = new List<ArrivingTransition>();
-                            allArriving[t.Dest] = tl;
+                            allArriving[t.to] = tl;
                         }
                         tl.Add(new ArrivingTransition(s, t));
                     }
@@ -271,12 +271,12 @@ namespace Lucene.Net.Util.Automaton
                     {
                         foreach (ArrivingTransition at in arriving)
                         {
-                            State from = at.From;
+                            State from = at.from;
                             if (!seen.Contains(from))
                             {
                                 q.AddLast(from);
                                 seen.Add(from);
-                                LeadsToAccept[at.t] = true;
+                                leadsToAccept[at.t] = true;
                             }
                         }
                     }
@@ -294,18 +294,18 @@ namespace Lucene.Net.Util.Automaton
                     int charUpto = 0;
                     while (charUpto < s.Length)
                     {
-                        int cp = Character.CodePointAt(s, charUpto);
+                        int cp = s.CodePointAt(charUpto);
                         charUpto += Character.CharCount(cp);
                         soFar.Add(cp);
                     }
                 }
                 else
                 {
-                    var s = a.GetInitialState();
+                    var s = a.initial;
 
                     while (true)
                     {
-                        if (s.Accept)
+                        if (s.accept)
                         {
                             if (s.numTransitions == 0)
                             {
@@ -337,7 +337,7 @@ namespace Lucene.Net.Util.Automaton
                             for (int i = 0; i < s.numTransitions; i++)
                             {
                                 Transition t0 = s.TransitionsArray[i];
-                                if (LeadsToAccept.ContainsKey(t0))
+                                if (leadsToAccept.ContainsKey(t0))
                                 {
                                     toAccept.Add(t0);
                                 }
@@ -357,7 +357,7 @@ namespace Lucene.Net.Util.Automaton
                             t = s.TransitionsArray[r.Next(s.numTransitions)];
                         }
                         soFar.Add(GetRandomCodePoint(r, t));
-                        s = t.Dest;
+                        s = t.to;
                     }
                 }
 
@@ -438,7 +438,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static void MinimizeSimple(Automaton a)
         {
-            if (!String.IsNullOrEmpty(a.Singleton))
+            if (a.IsSingleton)
             {
                 return;
             }
@@ -451,7 +451,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static void DeterminizeSimple(Automaton a)
         {
-            if (a.IsDeterministic || a.IsSingleton)
+            if (a.deterministic || a.IsSingleton)
             {
                 return;
             }
@@ -482,9 +482,9 @@ namespace Lucene.Net.Util.Automaton
                 State r = newstate[s];
                 foreach (State q in s)
                 {
-                    if (q.Accept)
+                    if (q.accept)
                     {
-                        r.Accept = true;
+                        r.accept = true;
                         break;
                     }
                 }
@@ -495,7 +495,7 @@ namespace Lucene.Net.Util.Automaton
                     {
                         foreach (Transition t in q.GetTransitions())
                         {
-                            if (t.Min <= points[n] && points[n] <= t.Max)
+                            if (t.min <= points[n] && points[n] <= t.max)
                             {
                                 p.Add(t.to);
                             }
@@ -521,7 +521,7 @@ namespace Lucene.Net.Util.Automaton
                     r.AddTransition(new Transition(min, max, q_));
                 }
             }
-            a.IsDeterministic = true;
+            a.deterministic = true;
             a.ClearNumberedStates();
             a.RemoveDeadTransitions();
         }
@@ -534,11 +534,11 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static bool IsFiniteSlow(Automaton a)
         {
-            if (!String.IsNullOrEmpty(a.Singleton))
+            if (a.IsSingleton)
             {
                 return true;
             }
-            return IsFiniteSlow(a.GetInitialState(), new HashSet<State>());
+            return IsFiniteSlow(a.initial, new HashSet<State>());
         }
 
         /// <summary>
@@ -552,7 +552,7 @@ namespace Lucene.Net.Util.Automaton
             path.Add(s);
             foreach (Transition t in s.GetTransitions())
             {
-                if (path.Contains(t.Dest) || !IsFiniteSlow(t.Dest, path))
+                if (path.Contains(t.to) || !IsFiniteSlow(t.to, path))
                 {
                     return false;
                 }
@@ -569,7 +569,7 @@ namespace Lucene.Net.Util.Automaton
         {
             int numStates = a.GetNumberOfStates();
             a.ClearNumberedStates(); // force recomputation of cached numbered states
-            Assert.True(numStates == a.GetNumberOfStates(), "automaton has " + (numStates - a.GetNumberOfStates()) + " detached states");
+            Debug.Assert(numStates == a.GetNumberOfStates(), "automaton has " + (numStates - a.GetNumberOfStates()) + " detached states");
         }
     }
 }
