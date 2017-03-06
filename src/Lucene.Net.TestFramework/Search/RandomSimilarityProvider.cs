@@ -60,31 +60,31 @@ namespace Lucene.Net.Search
     /// </summary>
     public class RandomSimilarityProvider : PerFieldSimilarityWrapper
     {
-        internal readonly DefaultSimilarity DefaultSim = new DefaultSimilarity();
-        internal readonly IList<Similarity> KnownSims;
-        internal IDictionary<string, Similarity> PreviousMappings = new Dictionary<string, Similarity>();
-        internal readonly int PerFieldSeed;
-        internal readonly int CoordType; // 0 = no coord, 1 = coord, 2 = crazy coord
-        internal readonly bool ShouldQueryNorm;
+        internal readonly DefaultSimilarity defaultSim = new DefaultSimilarity();
+        internal readonly IList<Similarity> knownSims;
+        internal IDictionary<string, Similarity> previousMappings = new Dictionary<string, Similarity>();
+        internal readonly int perFieldSeed;
+        internal readonly int coordType; // 0 = no coord, 1 = coord, 2 = crazy coord
+        internal readonly bool shouldQueryNorm;
 
         public RandomSimilarityProvider(Random random)
         {
-            PerFieldSeed = random.Next();
-            CoordType = random.Next(3);
-            ShouldQueryNorm = random.NextBoolean();
-            KnownSims = new List<Similarity>(AllSims);
-            Collections.Shuffle(KnownSims, random);
+            perFieldSeed = random.Next();
+            coordType = random.Next(3);
+            shouldQueryNorm = random.NextBoolean();
+            knownSims = new List<Similarity>(AllSims);
+            Collections.Shuffle(knownSims, random);
         }
 
         public override float Coord(int overlap, int maxOverlap)
         {
-            if (CoordType == 0)
+            if (coordType == 0)
             {
                 return 1.0f;
             }
-            else if (CoordType == 1)
+            else if (coordType == 1)
             {
-                return DefaultSim.Coord(overlap, maxOverlap);
+                return defaultSim.Coord(overlap, maxOverlap);
             }
             else
             {
@@ -94,9 +94,9 @@ namespace Lucene.Net.Search
 
         public override float QueryNorm(float sumOfSquaredWeights)
         {
-            if (ShouldQueryNorm)
+            if (shouldQueryNorm)
             {
-                return DefaultSim.QueryNorm(sumOfSquaredWeights);
+                return defaultSim.QueryNorm(sumOfSquaredWeights);
             }
             else
             {
@@ -110,11 +110,10 @@ namespace Lucene.Net.Search
             {
                 Debug.Assert(field != null);
                 Similarity sim;
-                PreviousMappings.TryGetValue(field, out sim);
-                if (sim == null)
+                if (!previousMappings.TryGetValue(field, out sim) || sim == null)
                 {
-                    sim = KnownSims[Math.Max(0, Math.Abs(PerFieldSeed ^ field.GetHashCode())) % KnownSims.Count];
-                    PreviousMappings[field] = sim;
+                    sim = knownSims[Math.Max(0, Math.Abs(perFieldSeed ^ field.GetHashCode())) % knownSims.Count];
+                    previousMappings[field] = sim;
                 }
                 return sim;
             }
@@ -179,11 +178,11 @@ namespace Lucene.Net.Search
             lock (this)
             {
                 string coordMethod;
-                if (CoordType == 0)
+                if (coordType == 0)
                 {
                     coordMethod = "no";
                 }
-                else if (CoordType == 1)
+                else if (coordType == 1)
                 {
                     coordMethod = "yes";
                 }
@@ -191,7 +190,7 @@ namespace Lucene.Net.Search
                 {
                     coordMethod = "crazy";
                 }
-                return "RandomSimilarityProvider(queryNorm=" + ShouldQueryNorm + ",coord=" + coordMethod + "): " + PreviousMappings.ToString();
+                return "RandomSimilarityProvider(queryNorm=" + shouldQueryNorm + ",coord=" + coordMethod + "): " + Arrays.ToString(previousMappings);
             }
         }
     }
