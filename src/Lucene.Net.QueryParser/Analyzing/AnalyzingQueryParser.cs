@@ -193,7 +193,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                     if (null != multipleOutputs)
                     {
                         throw new ParseException(
-                            string.Format(Locale, @"Analyzer created multiple terms for ""{0}"": {1}", chunk, multipleOutputs.ToString()));
+                            string.Format(@"Analyzer created multiple terms for ""{0}"": {1}", chunk, multipleOutputs.ToString()));
                     }
                 }
                 else
@@ -201,13 +201,13 @@ namespace Lucene.Net.QueryParsers.Analyzing
                     // nothing returned by analyzer.  Was it a stop word and the user accidentally
                     // used an analyzer with stop words?
                     stream.End();
-                    throw new ParseException(string.Format(Locale, @"Analyzer returned nothing for ""{0}""", chunk));
+                    throw new ParseException(string.Format(@"Analyzer returned nothing for ""{0}""", chunk));
                 }
             }
             catch (System.IO.IOException /*e*/)
             {
                 throw new ParseException(
-                    string.Format(Locale, @"IO error while trying to analyze single term: ""{0}""", termStr));
+                    string.Format(@"IO error while trying to analyze single term: ""{0}""", termStr));
             }
             finally
             {
