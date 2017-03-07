@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -151,20 +152,20 @@ namespace Lucene.Net.QueryParsers.Xml
         public static float GetAttribute(XmlElement element, string attributeName, float deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToSingle(result);
+            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToSingle(result, CultureInfo.InvariantCulture);
         }
 
         public static int GetAttribute(XmlElement element, string attributeName, int deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToInt32(result);
+            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToInt32(result, CultureInfo.InvariantCulture);
         }
 
         public static bool GetAttribute(XmlElement element, string attributeName,
                                            bool deflt)
         {
             string result = element.GetAttribute(attributeName);
-            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToBoolean(result);
+            return (result == null) || ("".Equals(result)) ? deflt : Convert.ToBoolean(result, CultureInfo.InvariantCulture);
         }
 
         /* Returns text of node and all child nodes - without markup */
