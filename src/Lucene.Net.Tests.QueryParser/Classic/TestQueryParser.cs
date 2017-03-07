@@ -8,7 +8,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using System.Reflection;
+using System.Globalization;
 
 namespace Lucene.Net.QueryParsers.Classic
 {
@@ -175,11 +175,11 @@ namespace Lucene.Net.QueryParsers.Classic
                     float fms = FuzzyMinSim;
                     try
                     {
-                        fms = float.Parse(fuzzySlop.Image.Substring(1, fuzzySlop.Image.Length - 2));
+                        fms = float.Parse(fuzzySlop.Image.Substring(1, fuzzySlop.Image.Length - 2), CultureInfo.InvariantCulture);
                     }
                     catch (Exception /*ignored*/) { }
-                    float value = float.Parse(termImage);
-                    return GetRangeQuery(qfield, (value - fms / 2.0f).ToString(), (value + fms / 2.0f).ToString(), true, true);
+                    float value = float.Parse(termImage, CultureInfo.InvariantCulture);
+                    return GetRangeQuery(qfield, (value - fms / 2.0f).ToString(CultureInfo.InvariantCulture), (value + fms / 2.0f).ToString(CultureInfo.InvariantCulture), true, true);
                 }
                 return base.HandleBareFuzzy(qfield, fuzzySlop, termImage);
             }
