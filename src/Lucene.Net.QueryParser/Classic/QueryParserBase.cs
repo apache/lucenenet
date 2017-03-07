@@ -837,7 +837,15 @@ namespace Lucene.Net.QueryParsers.Classic
             float fms = FuzzyMinSim;
             try
             {
-                fms = float.Parse(fuzzySlop.Image.Substring(1), Locale);
+                // LUCENENET NOTE: Apparently a "feature" of Lucene is to always
+                // use "." as the decimal specifier for fuzzy slop, even if the culture uses
+                // a different one, such as ",".
+
+                // LUCENENET TODO: It would probably be more intuitive to use
+                // the current Locale to specify the decimal identifier than
+                // to hard code it to be ".", but this would differ from Java Lucene.
+                // Perhaps just make it a non-default option?
+                fms = float.Parse(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
             }
             catch (Exception /*ignored*/) { }
             if (fms < 0.0f)
@@ -860,7 +868,15 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 try
                 {
-                    s = (int)float.Parse(fuzzySlop.Image.Substring(1), Locale);
+                    // LUCENENET NOTE: Apparently a "feature" of Lucene is to always
+                    // use "." as the decimal specifier for fuzzy slop, even if the culture uses
+                    // a different one, such as ",".
+
+                    // LUCENENET TODO: It would probably be more intuitive to use
+                    // the current Locale to specify the decimal identifier than
+                    // to hard code it to be ".", but this would differ from Java Lucene.
+                    // Perhaps just make it a non-default option?
+                    s = (int)float.Parse(fuzzySlop.Image.Substring(1), CultureInfo.InvariantCulture);
                 }
                 catch (Exception /*ignored*/) { }
             }
@@ -882,6 +898,7 @@ namespace Lucene.Net.QueryParsers.Classic
                     // LUCENENET TODO: It would probably be more intuitive to use
                     // the current Locale to specify the decimal identifier than
                     // to hard code it to be ".", but this would differ from Java Lucene.
+                    // Perhaps just make it a non-default option?
                     f = float.Parse(boost.Image, CultureInfo.InvariantCulture);
                 }
                 catch (Exception /*ignored*/)
