@@ -877,7 +877,14 @@ namespace Lucene.Net.QueryParsers.Classic
                 float f = (float)1.0;
                 try
                 {
-                    f = float.Parse(boost.Image, Locale);
+                    // LUCENENET NOTE: Apparently a "feature" of Lucene is to always
+                    // use "." as the decimal specifier for boost, even if the culture uses
+                    // a different one, such as ",".
+
+                    // LUCENENET TODO: It would probably be more intuitive to use
+                    // the current Locale to specify the decimal identifier than
+                    // to hard code it to be ".", but this would differ from Java Lucene.
+                    f = float.Parse(boost.Image, CultureInfo.InvariantCulture);
                 }
                 catch (Exception /*ignored*/)
                 {
