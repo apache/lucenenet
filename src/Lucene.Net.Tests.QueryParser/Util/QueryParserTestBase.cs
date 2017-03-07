@@ -647,13 +647,9 @@ namespace Lucene.Net.QueryParsers.Util
         /// <summary>for testing DateTools support</summary>
         private string GetDate(string s, DateTools.Resolution resolution)
         {
-            // TODO: Is this the correct way to parse the string?
-            DateTime d = DateTime.Parse(s, System.Globalization.CultureInfo.InvariantCulture);
-            return GetDate(d, resolution);
-
-            //// we use the default Locale since LuceneTestCase randomizes it
-            //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());
-            //return GetDate(df.Parse(s), resolution);      
+            // we use the default Locale since LuceneTestCase randomizes it
+            DateTime d = DateTime.ParseExact(s, CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture);
+            return GetDate(d, resolution);   
         }
 
         /// <summary>for testing DateTools support</summary>
@@ -664,8 +660,10 @@ namespace Lucene.Net.QueryParsers.Util
 
         private string GetLocalizedDate(int year, int month, int day)
         {
-            DateTime d = new DateTime(year, month, day, 23, 59, 59, 999);
-            return d.ToString("d");
+            // we use the default Locale/TZ since LuceneTestCase randomizes it
+            DateTime date = new GregorianCalendar().ToDateTime(year, month, day, 23, 59, 59, 999);
+            date = TimeZoneInfo.ConvertTime(date, TimeZoneInfo.Local);
+            return date.ToString("d");
 
             //// we use the default Locale/TZ since LuceneTestCase randomizes it
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());

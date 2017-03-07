@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Do not catch this exception in your code, it means you are using methods that you should no longer use.
         /// </summary>
-        public class MethodRemovedUseAnother : Exception {}
+        public class MethodRemovedUseAnother : Exception { }
 
         protected const int CONJ_NONE = 0;
         protected const int CONJ_AND = 1;
@@ -65,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Classic
 
         // make it possible to call setDefaultOperator() without accessing
         // the nested class:
-        
+
         /// <summary>
         /// Alternative form of <see cref="Operator.AND"/> 
         /// </summary>
@@ -81,14 +81,9 @@ namespace Lucene.Net.QueryParsers.Classic
         //Operator operator_Renamed = OR_OPERATOR;
 
 
-        
-
         //bool lowercaseExpandedTerms = true;
         //MultiTermQuery.RewriteMethod multiTermRewriteMethod = MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT;
         //bool allowLeadingWildcard = false;
-
-        // LUCENENET-423 - DateRange differences with Java and .NET
-        private bool _useJavaStyleDateRangeParsing = false;
 
         protected string m_field;
         //int phraseSlop = 0;
@@ -98,7 +93,7 @@ namespace Lucene.Net.QueryParsers.Classic
         //TimeZoneInfo timeZone = TimeZoneInfo.Local;
 
         // TODO: Work out what the default date resolution SHOULD be (was null in Java, which isn't valid for an enum type)
-        
+
         /// <summary>
         /// the default date resolution
         /// </summary>
@@ -450,51 +445,54 @@ namespace Lucene.Net.QueryParsers.Classic
                 part2 = part2 == null ? null : Locale.TextInfo.ToLower(part2);
             }
 
-            try
-            {
-                DateTime d1, d2;
-                if (_useJavaStyleDateRangeParsing)
-                {
-                    // LUCENENET TODO: This doesn't emulate java perfectly.
-                    // Java allows parsing of the string up to the end of the pattern
-                    // and then ignores everything else.  .NET will throw an exception, 
-                    // so this will fail in those cases, though the code below is clear
-                    // that users can only specify the date, not the time.
-                    var shortFormat = Locale.DateTimeFormat.ShortDatePattern;
-                    d1 = DateTime.ParseExact(part1, shortFormat, Locale);
-                    d2 = DateTime.ParseExact(part2, shortFormat, Locale);
-                }
-                else
-                {
-                    d1 = DateTime.Parse(part1, Locale);
-                    d2 = DateTime.Parse(part2, Locale);
-                }
+            string shortDateFormat = Locale.DateTimeFormat.ShortDatePattern;
+            DateTime d1;
+            DateTime d2 = DateTime.MaxValue; // We really don't care what we set this to, but we need something or the compiler will complain below
+            DateTools.Resolution resolution = GetDateResolution(field);
 
+            // LUCENENET specific: This doesn't emulate java perfectly.
+            // See LUCENENET-423 - DateRange differences with Java and .NET
+
+            // Java allows parsing of the string up to the end of the pattern
+            // and then ignores everything else.  .NET will throw an exception, 
+            // so this will fail in those cases, though the code below is clear
+            // that users can only specify the date, not the time. Unfortunately,
+            // the date format is much more strict in .NET.
+
+            // To emulate Java more precisely, it is possible to make a custom format
+            // by calling Locale.DateTimeFormat.SetAllDateTimePatterns(string[], char)
+            // that contains all of the formats that you need to support and setting
+            // the Locale.DateTimeFormat.ShortDatePattern to be the same as the second
+            // parameter of SetAllDateTimePatterns.
+
+            // LUCENENET TODO: Try to make setting custom formats easier by adding
+            // another configuration setting (IList<string> of date formats).
+            // Also consider making a IsStrictDateFormat setting which allows toggling
+            // to DateTime.TryParse(part1, Locale, DateTimeStyles.None, out d1);
+            // rather than TryParseExact
+
+            if (DateTime.TryParseExact(part1, shortDateFormat, Locale, DateTimeStyles.None, out d1))
+            {
+                part1 = DateTools.DateToString(d1, resolution);
+            }
+
+            if (DateTime.TryParseExact(part2, shortDateFormat, Locale, DateTimeStyles.None, out d2))
+            {
                 if (endInclusive)
                 {
                     // The user can only specify the date, not the time, so make sure
                     // the time is set to the latest possible time of that date to really
                     // include all documents:
 
-                    // LUCENENET TODO: Try to work out if the Time Zone is pertinent here or
-                    // whether it should just be removed from the API entirely.
-                    // In Java:
-                    // Calendar cal = Calendar.getInstance(timeZone, locale);
-                    
+                    d2 = TimeZoneInfo.ConvertTime(d2, TimeZone);
                     var cal = Locale.Calendar;
                     d2 = cal.AddHours(d2, 23);
                     d2 = cal.AddMinutes(d2, 59);
                     d2 = cal.AddSeconds(d2, 59);
                     d2 = cal.AddMilliseconds(d2, 999);
                 }
-                DateTools.Resolution resolution = GetDateResolution(field);
 
-                part1 = DateTools.DateToString(d1, resolution);
                 part2 = DateTools.DateToString(d2, resolution);
-
-            }
-            catch (Exception)
-            {
             }
 
             return NewRangeQuery(field, part1, part2, startInclusive, endInclusive);

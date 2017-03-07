@@ -61,8 +61,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 FieldQueryNode upper = (FieldQueryNode)termRangeNode.UpperBound;
                 FieldQueryNode lower = (FieldQueryNode)termRangeNode.LowerBound;
 
-                // LUCENENET TODO: Add a NOT_SET value so we have a logical default?
-                DateTools.Resolution dateRes = DateTools.Resolution.MINUTE/* = null*/;
+                // LUCENENET specific - set to 0 (instead of null), since it doesn't correspond to any valid setting
+                DateTools.Resolution dateRes = 0/* = null*/;
                 bool inclusive = false;
                 CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
 
@@ -104,21 +104,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
 
                 try
                 {
-                    //DateFormat df = DateFormat.GetDateInstance(DateFormat.SHORT, locale);
-                    //df.setLenient(true);
+                    string shortDateFormat = locale.DateTimeFormat.ShortDatePattern;
+                    DateTime d1;
+                    DateTime d2 = DateTime.MaxValue; // We really don't care what we set this to, but we need something or the compiler will complain below
 
-                    if (part1.Length > 0)
+                    if (DateTime.TryParseExact(part1, shortDateFormat, locale, DateTimeStyles.None, out d1))
                     {
-                        //DateTime d1 = df.parse(part1);
-                        DateTime d1 = DateTime.Parse(part1, locale);
                         part1 = DateTools.DateToString(d1, dateRes);
                         lower.Text = new StringCharSequenceWrapper(part1);
                     }
 
-                    if (part2.Length > 0)
+                    if (DateTime.TryParseExact(part2, shortDateFormat, locale, DateTimeStyles.None, out d2))
                     {
-                        //DateTime d2 = df.parse(part2);
-                        DateTime d2 = DateTime.Parse(part2, locale);
                         if (inclusive)
                         {
                             // The user can only specify the date, not the time, so make sure
@@ -133,6 +130,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                             //cal.set(Calendar.MILLISECOND, 999);
                             //d2 = cal.getTime();
 
+                            d2 = TimeZoneInfo.ConvertTime(d2, timeZone);
                             var cal = locale.Calendar;
                             d2 = cal.AddHours(d2, 23);
                             d2 = cal.AddMinutes(d2, 59);
@@ -143,6 +141,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                         part2 = DateTools.DateToString(d2, dateRes);
                         upper.Text = new StringCharSequenceWrapper(part2);
                     }
+
                 }
 #pragma warning disable 168
                 catch (Exception e)
