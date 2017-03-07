@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Search;
 using Lucene.Net.Util;
 using System;
+using System.Globalization;
 using System.Xml;
 
 namespace Lucene.Net.QueryParsers.Xml.Builders
@@ -100,25 +101,25 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
                 if (type.Equals("int", StringComparison.OrdinalIgnoreCase))
                 {
                     filter = NumericRangeQuery.NewInt32Range(field, precisionStep, Convert
-                        .ToInt32(lowerTerm), Convert.ToInt32(upperTerm), lowerInclusive,
+                        .ToInt32(lowerTerm, CultureInfo.InvariantCulture), Convert.ToInt32(upperTerm, CultureInfo.InvariantCulture), lowerInclusive,
                         upperInclusive);
                 }
                 else if (type.Equals("long", StringComparison.OrdinalIgnoreCase))
                 {
                     filter = NumericRangeQuery.NewInt64Range(field, precisionStep, Convert
-                        .ToInt64(lowerTerm), Convert.ToInt64(upperTerm), lowerInclusive,
+                        .ToInt64(lowerTerm, CultureInfo.InvariantCulture), Convert.ToInt64(upperTerm, CultureInfo.InvariantCulture), lowerInclusive,
                         upperInclusive);
                 }
                 else if (type.Equals("double", StringComparison.OrdinalIgnoreCase))
                 {
                     filter = NumericRangeQuery.NewDoubleRange(field, precisionStep, Convert
-                        .ToDouble(lowerTerm), Convert.ToDouble(upperTerm), lowerInclusive,
+                        .ToDouble(lowerTerm, CultureInfo.InvariantCulture), Convert.ToDouble(upperTerm, CultureInfo.InvariantCulture), lowerInclusive,
                         upperInclusive);
                 }
                 else if (type.Equals("float", StringComparison.OrdinalIgnoreCase))
                 {
                     filter = NumericRangeQuery.NewSingleRange(field, precisionStep, Convert
-                        .ToSingle(lowerTerm), Convert.ToSingle(upperTerm), lowerInclusive,
+                        .ToSingle(lowerTerm, CultureInfo.InvariantCulture), Convert.ToSingle(upperTerm, CultureInfo.InvariantCulture), lowerInclusive,
                         upperInclusive);
                 }
                 else
