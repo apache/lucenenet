@@ -125,7 +125,7 @@ namespace Lucene.Net.Spatial
                 //store it too; the format is up to you
                 //  (assume point in this example)
                 IPoint pt = (IPoint)shape;
-                doc.Add(new StoredField(strategy.FieldName, pt.X + " " + pt.Y));
+                doc.Add(new StoredField(strategy.FieldName, pt.X.ToString(CultureInfo.InvariantCulture) + " " + pt.Y.ToString(CultureInfo.InvariantCulture)));
             }
 
             return doc;
