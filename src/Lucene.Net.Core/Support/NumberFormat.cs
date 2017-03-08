@@ -75,6 +75,11 @@ namespace Lucene.Net.Support
             return decimal.Parse(source, locale);
         }
 
+        public override string ToString()
+        {
+            return base.ToString() + " - " + GetNumberFormat() + " - " + locale.ToString();
+        }
+
         // LUCENENET TODO: Add additional functionality to edit the NumberFormatInfo
         // properties, which provides somewhat similar functionality to the below Java
         // getters and setters.

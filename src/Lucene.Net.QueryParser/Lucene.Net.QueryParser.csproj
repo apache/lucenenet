@@ -279,6 +279,7 @@
     <EmbeddedResource Include="Flexible\Core\Messages\QueryParserMessagesBundle.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>QueryParserMessagesBundle.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
