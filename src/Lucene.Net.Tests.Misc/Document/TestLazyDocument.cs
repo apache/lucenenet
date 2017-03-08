@@ -117,7 +117,7 @@ namespace Lucene.Net.Documents
                     }
                 }
                 Console.WriteLine("numFieldValues == " + numFieldValues);
-                assertEquals("numFieldValues", 1 + (NUM_VALUES * FIELDS.Length), // LUCENENET TODO: Failing here 1 too small, but what field is the + 1 here supposed to represent?
+                assertEquals("numFieldValues", 1 + (NUM_VALUES * FIELDS.Length),
                              numFieldValues);
 
                 foreach (string field in fieldValueCounts.Keys)

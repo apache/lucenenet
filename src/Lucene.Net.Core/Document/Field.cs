@@ -499,16 +499,11 @@ namespace Lucene.Net.Documents
 
         public virtual object GetNumericValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            // LUCENENET TODO: There was no expensive conversion from string in the original
-            string str = m_fieldsData as string;
-            if (str != null)
-            {
-                long ret;
-                if (long.TryParse(str, out ret))
-                {
-                    return ret;
-                }
-            }
+            // LUCENENET NOTE: Originally, there was a conversion from string to a numeric value here.
+            // This was causing the Lucene.Net.Documents.TestLazyDocument.TestLazy() test (in Lucene.Net.Tests.Misc) to fail.
+            // It is important that if numeric data is provided as a string to the field that it remains a string or the
+            // wrong StoredFieldsVisitor method will be called (in this case it was calling Int64Field() instead of StringField()).
+            // This is an extremely difficult thing to track down and very confusing to end users.
 
             if (m_fieldsData is int || m_fieldsData is float || m_fieldsData is double || m_fieldsData is long)
             {
