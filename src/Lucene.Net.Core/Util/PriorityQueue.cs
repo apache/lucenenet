@@ -1,5 +1,6 @@
-using System;
 using Lucene.Net.Support;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Util
@@ -84,7 +85,7 @@ namespace Lucene.Net.Util
             {
                 // If sentinel objects are supported, populate the queue with them
                 T sentinel = GetSentinelObject();
-                if (sentinel != null)
+                if (!EqualityComparer<T>.Default.Equals(sentinel, default(T)))
                 {
                     heap[1] = sentinel;
                     for (int i = 2; i < heap.Length; i++)
