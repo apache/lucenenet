@@ -9,6 +9,7 @@ using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection;
 
 namespace Lucene.Net.QueryParsers.Classic
 {
@@ -144,7 +145,7 @@ namespace Lucene.Net.QueryParsers.Classic
         {
             try
             {
-                typeof(QueryParser).GetConstructor(new Type[] { typeof(ICharStream) });
+                typeof(QueryParser).GetTypeInfo().GetConstructor(new Type[] { typeof(ICharStream) });
                 fail("please switch public QueryParser(CharStream) to be protected");
             }
             catch (Exception /*nsme*/)
@@ -153,7 +154,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
             try
             {
-                typeof(QueryParser).GetConstructor(new Type[] { typeof(QueryParserTokenManager) });
+                typeof(QueryParser).GetTypeInfo().GetConstructor(new Type[] { typeof(QueryParserTokenManager) });
                 fail("please switch public QueryParser(QueryParserTokenManager) to be protected");
             }
             catch (Exception /*nsme*/)
