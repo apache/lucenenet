@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
@@ -42,10 +43,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
     {
         //private static readonly long serialVersionUID = 964823936071308283L;
 
-        // The .NET ticks representing January 1, 1970 0:00:00, also known as the "epoch".
+        // The .NET ticks representing January 1, 1970 0:00:00 GMT, also known as the "epoch".
         public const long EPOCH = 621355968000000000;
 
-        private readonly string dateFormat;
+        private string dateFormat;
         private readonly DateFormat dateStyle;
         private readonly DateFormat timeStyle;
         private TimeZoneInfo timeZone = TimeZoneInfo.Local;
@@ -93,10 +94,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
         {
             // Try exact format first, if it fails, do a loose DateTime.Parse
             DateTime d;
-            if (!DateTime.TryParseExact(source, GetDateFormat(), this.locale, DateTimeStyles.None, out d))
-            {
-                d = DateTime.Parse(source, this.locale);
-            }
+            d = DateTime.ParseExact(source, GetDateFormat(), this.locale, DateTimeStyles.None);
 
             return (d - new DateTime(EPOCH)).TotalMilliseconds;
         }
@@ -106,16 +104,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             return new DateTime(EPOCH).AddMilliseconds(Convert.ToInt64(number, CultureInfo.InvariantCulture)).ToString(GetDateFormat(), this.locale);
         }
 
+        public void SetDateFormat(string dateFormat)
+        {
+            this.dateFormat = dateFormat;
+        }
+
         /// <summary>
         /// Returns the .NET date format that will be used to Format the date.
-        /// Note that parsing the date uses <see cref="DateTime.Parse(string, IFormatProvider)"/>, which
-        /// does not require a format.
+        /// Note that parsing the date uses <see cref="DateTime.ParseExact(string, string, IFormatProvider)"/>.
         /// </summary>
         // LUCENENET specific
         public string GetDateFormat()
         {
             if (dateFormat != null) return dateFormat;
 
+            return GetDateFormat(this.dateStyle, this.timeStyle, this.locale);
+        }
+
+        public static string GetDateFormat(DateFormat dateStyle, DateFormat timeStyle, CultureInfo locale)
+        {
             string datePattern = "", timePattern = "";
 
             switch (dateStyle)
@@ -146,10 +153,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
                     timePattern = locale.DateTimeFormat.LongTimePattern;
                     break;
                 case DateFormat.LONG:
-                    timePattern = locale.DateTimeFormat.LongTimePattern.Replace(" K", "") + " K"; // LUCENENET specific: Time zone info not being added to match behavior of Java
+                    timePattern = locale.DateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z";
                     break;
                 case DateFormat.FULL:
-                    timePattern = locale.DateTimeFormat.LongTimePattern.Replace(" K", "") + " K"; // LUCENENET TODO: Time zone info not being added to match behavior of Java, but Java doc is unclear on what the difference is between this and LONG
+                    timePattern = locale.DateTimeFormat.LongTimePattern.Replace("z", "").Trim() + " z"; // LUCENENET TODO: Time zone info not being added to match behavior of Java, but Java doc is unclear on what the difference is between this and LONG
                     break;
             }
 
