@@ -193,7 +193,7 @@ namespace Lucene.Net
 
         public static bool containsAll<T>(this ISet<T> s, IEnumerable<T> list)
         {
-            return list.Any(s.Contains);
+            return s.IsSupersetOf(list);
         }
 
         public static bool remove<T>(this ISet<T> s, T item)
