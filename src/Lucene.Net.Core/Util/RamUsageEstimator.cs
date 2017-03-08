@@ -111,16 +111,19 @@ namespace Lucene.Net.Util
 
         static RamUsageEstimator()
         {
-            // LUCENENET TODO: Add sizes for the other primitive types
             primitiveSizes = new HashMap<Type, int>(8);
             primitiveSizes[typeof(bool)] = Convert.ToInt32(NUM_BYTES_BOOLEAN);
             primitiveSizes[typeof(sbyte)] = Convert.ToInt32(NUM_BYTES_BYTE);
+            primitiveSizes[typeof(byte)] = Convert.ToInt32(NUM_BYTES_BYTE);
             primitiveSizes[typeof(char)] = Convert.ToInt32(NUM_BYTES_CHAR);
             primitiveSizes[typeof(short)] = Convert.ToInt32(NUM_BYTES_INT16);
+            primitiveSizes[typeof(ushort)] = Convert.ToInt32(NUM_BYTES_INT16);
             primitiveSizes[typeof(int)] = Convert.ToInt32(NUM_BYTES_INT32);
+            primitiveSizes[typeof(uint)] = Convert.ToInt32(NUM_BYTES_INT32);
             primitiveSizes[typeof(float)] = Convert.ToInt32(NUM_BYTES_SINGLE);
             primitiveSizes[typeof(double)] = Convert.ToInt32(NUM_BYTES_DOUBLE);
             primitiveSizes[typeof(long)] = Convert.ToInt32(NUM_BYTES_INT64);
+            primitiveSizes[typeof(ulong)] = Convert.ToInt32(NUM_BYTES_INT64);
 
             // Initialize empirically measured defaults. We'll modify them to the current
             // JVM settings later on if possible.
