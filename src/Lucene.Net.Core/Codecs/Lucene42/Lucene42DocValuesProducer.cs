@@ -170,7 +170,9 @@ namespace Lucene.Net.Codecs.Lucene42
                 int fieldType = meta.ReadByte();
                 if (fieldType == NUMBER)
                 {
-                    var entry = new NumericEntry {Offset = meta.ReadInt64(), Format = (sbyte)meta.ReadByte()};
+                    var entry = new NumericEntry();
+                    entry.Offset = meta.ReadInt64();
+                    entry.Format = (sbyte)meta.ReadByte();
                     switch (entry.Format)
                     {
                         case DELTA_COMPRESSED:
@@ -222,8 +224,7 @@ namespace Lucene.Net.Codecs.Lucene42
             lock (this)
             {
                 NumericDocValues instance;
-                numericInstances.TryGetValue(field.Number, out instance);
-                if (instance == null)
+                if (!numericInstances.TryGetValue(field.Number, out instance) || instance == null)
                 {
                     instance = LoadNumeric(field);
                     numericInstances[field.Number] = instance;
@@ -289,7 +290,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     return new NumericDocValuesAnonymousInnerClassHelper3(min, mult, quotientReader);
 
                 default:
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException(); // LUCENENET TODO: This was AssertionError in Lucene - does this need a fix?
             }
         }
 
@@ -349,7 +350,7 @@ namespace Lucene.Net.Codecs.Lucene42
             lock (this)
             {
                 BinaryDocValues instance;
-                if (!binaryInstances.TryGetValue(field.Number, out instance))
+                if (!binaryInstances.TryGetValue(field.Number, out instance) || instance == null)
                 {
                     instance = LoadBinary(field);
                     binaryInstances[field.Number] = instance;
@@ -421,7 +422,7 @@ namespace Lucene.Net.Codecs.Lucene42
             FST<long?> instance;
             lock (this)
             {
-                if (!fstInstances.TryGetValue(field.Number, out instance))
+                if (!fstInstances.TryGetValue(field.Number, out instance) || instance == null)
                 {
                     data.Seek(entry.Offset);
                     instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
@@ -484,7 +485,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
                 catch (System.IO.IOException bogus)
                 {
-                    throw bogus;
+                    throw new Exception(bogus.ToString(), bogus);
                 }
             }
 
@@ -499,16 +500,16 @@ namespace Lucene.Net.Codecs.Lucene42
                     }
                     else if (o.Input.Equals(key))
                     {
-                        return (int)o.Output;
+                        return (int)o.Output.GetValueOrDefault();
                     }
                     else
                     {
-                        return (int)-o.Output - 1;
+                        return (int)-o.Output.GetValueOrDefault() - 1;
                     }
                 }
                 catch (System.IO.IOException bogus)
                 {
-                    throw bogus;
+                    throw new Exception(bogus.ToString(), bogus);
                 }
             }
 
@@ -536,10 +537,10 @@ namespace Lucene.Net.Codecs.Lucene42
             FST<long?> instance;
             lock (this)
             {
-                if (!fstInstances.TryGetValue(field.Number, out instance))
+                if (!fstInstances.TryGetValue(field.Number, out instance) || instance == null)
                 {
                     data.Seek(entry.Offset);
-                    instance = new FST<long?>((DataInput)data, Lucene.Net.Util.Fst.PositiveInt32Outputs.Singleton);
+                    instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
                     ramBytesUsed.AddAndGet(instance.SizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
@@ -636,11 +637,11 @@ namespace Lucene.Net.Codecs.Lucene42
                     }
                     else if (o.Input.Equals(key))
                     {
-                        return (int)o.Output.Value;
+                        return (int)o.Output.GetValueOrDefault();
                     }
                     else
                     {
-                        return -o.Output.Value - 1;
+                        return -o.Output.GetValueOrDefault() - 1;
                     }
                 }
                 catch (System.IO.IOException bogus)
@@ -809,7 +810,7 @@ namespace Lucene.Net.Codecs.Lucene42
 
             public override long Ord
             {
-                get { return @in.Current.Output.Value; }
+                get { return @in.Current.Output.GetValueOrDefault(); }
             }
 
             public override int DocFreq

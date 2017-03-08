@@ -55,7 +55,9 @@ namespace Lucene.Net.Codecs.Lucene42
             bool success = false;
             try
             {
-                CodecUtil.CheckHeader(input, Lucene42FieldInfosFormat.CODEC_NAME, Lucene42FieldInfosFormat.FORMAT_START, Lucene42FieldInfosFormat.FORMAT_CURRENT);
+                CodecUtil.CheckHeader(input, Lucene42FieldInfosFormat.CODEC_NAME, 
+                                            Lucene42FieldInfosFormat.FORMAT_START, 
+                                            Lucene42FieldInfosFormat.FORMAT_CURRENT);
 
                 int size = input.ReadVInt32(); //read in the size
                 FieldInfo[] infos = new FieldInfo[size];
@@ -64,7 +66,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     string name = input.ReadString();
                     int fieldNumber = input.ReadVInt32();
-                    byte bits = input.ReadByte();
+                    sbyte bits = (sbyte)input.ReadByte();
                     bool isIndexed = (bits & Lucene42FieldInfosFormat.IS_INDEXED) != 0;
                     bool storeTermVector = (bits & Lucene42FieldInfosFormat.STORE_TERMVECTOR) != 0;
                     bool omitNorms = (bits & Lucene42FieldInfosFormat.OMIT_NORMS) != 0;
@@ -92,11 +94,12 @@ namespace Lucene.Net.Codecs.Lucene42
                     }
 
                     // DV Types are packed in one byte
-                    byte val = input.ReadByte();
+                    sbyte val = (sbyte)input.ReadByte();
                     DocValuesType? docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
                     DocValuesType? normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
-                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.UnmodifiableMap(attributes));
+                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, 
+                        omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.UnmodifiableMap(attributes));
                 }
 
                 CodecUtil.CheckEOF(input);
