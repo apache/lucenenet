@@ -6,6 +6,7 @@ using Lucene.Net.Analysis.Compound.Hyphenation;
 using Lucene.Net.Analysis.Hunspell;
 using Lucene.Net.Analysis.Miscellaneous;
 using Lucene.Net.Analysis.NGram;
+using Lucene.Net.Analysis.No;
 using Lucene.Net.Analysis.Path;
 using Lucene.Net.Analysis.Payloads;
 using Lucene.Net.Analysis.Snowball;
@@ -310,6 +311,14 @@ namespace Lucene.Net.Analysis.Core
                 int max = Enum.GetValues(typeof(WordDelimiterFlags)).Cast<int>().Sum();
                 return (WordDelimiterFlags)random.Next(0, max + 1);
             }) }, // WordDelimiterFilter
+            { typeof(NorwegianStandard), new AnonymousProducer((random) => {
+                int max = Enum.GetValues(typeof(NorwegianStandard)).Cast<int>().Sum();
+                return (NorwegianStandard)random.Next(0, max + 1);
+            }) },
+            { typeof(CJKScript), new AnonymousProducer((random) => {
+                int max = Enum.GetValues(typeof(CJKScript)).Cast<int>().Sum();
+                return (CJKScript)random.Next(0, max + 1);
+            }) },
         };
 
         private class IntArgProducer : IArgProducer
