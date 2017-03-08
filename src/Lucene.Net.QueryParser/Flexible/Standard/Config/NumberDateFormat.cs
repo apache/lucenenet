@@ -91,7 +91,14 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
 
         public override object Parse(string source)
         {
-            return (DateTime.Parse(source, this.locale) - new DateTime(EPOCH)).TotalMilliseconds;
+            // Try exact format first, if it fails, do a loose DateTime.Parse
+            DateTime d;
+            if (!DateTime.TryParseExact(source, GetDateFormat(), this.locale, DateTimeStyles.None, out d))
+            {
+                d = DateTime.Parse(source, this.locale);
+            }
+
+            return (d - new DateTime(EPOCH)).TotalMilliseconds;
         }
 
         public override string Format(object number)
@@ -139,10 +146,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
                     timePattern = locale.DateTimeFormat.LongTimePattern;
                     break;
                 case DateFormat.LONG:
-                    timePattern = locale.DateTimeFormat.LongTimePattern; // LUCENENET TODO: Time zone info not being added
+                    timePattern = locale.DateTimeFormat.LongTimePattern.Replace(" K", "") + " K"; // LUCENENET specific: Time zone info not being added to match behavior of Java
                     break;
                 case DateFormat.FULL:
-                    timePattern = locale.DateTimeFormat.LongTimePattern; // LUCENENET TODO: Time zone info not being added, but Java doc is unclear on what the difference is between this and LONG
+                    timePattern = locale.DateTimeFormat.LongTimePattern.Replace(" K", "") + " K"; // LUCENENET TODO: Time zone info not being added to match behavior of Java, but Java doc is unclear on what the difference is between this and LONG
                     break;
             }
 
