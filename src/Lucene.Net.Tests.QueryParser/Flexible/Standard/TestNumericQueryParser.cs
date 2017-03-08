@@ -112,10 +112,18 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 //dateFormat.applyPattern(dateFormat.toPattern() + " G s Z yyyy");
                 //dateFormat.setTimeZone(TIMEZONE);
 
+                // assumes localized date pattern will have at least year, month, day,
+                // hour, minute
                 DATE_FORMAT = new NumberDateFormat(DATE_STYLE, TIME_STYLE, LOCALE)
                 {
                     TimeZone = TIMEZONE
                 };
+
+                // not all date patterns includes era, full year, timezone and second,
+                // so we add them here
+                DATE_FORMAT.SetDateFormat(DATE_FORMAT.GetDateFormat() + " g s z yyyy");
+
+
                 dateFormat = DATE_FORMAT.GetDateFormat();
 
                 do
@@ -451,7 +459,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 //    EscapeQuerySyntax.Type.STRING).toString();
 
                 lowerDateStr = ESCAPER.Escape(
-                            DATE_FORMAT.Format(Convert.ToInt64(lowerDateNumber)),
+                            DATE_FORMAT.Format(Convert.ToInt64(lowerDateNumber, CultureInfo.InvariantCulture)),
                             LOCALE,
                             EscapeQuerySyntaxType.STRING).toString();
             }
@@ -467,7 +475,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 //      EscapeQuerySyntax.Type.STRING).toString();
 
                 upperDateStr = ESCAPER.Escape(
-                                DATE_FORMAT.Format(Convert.ToInt64(upperDateNumber)),
+                                DATE_FORMAT.Format(Convert.ToInt64(upperDateNumber, CultureInfo.InvariantCulture)),
                                 LOCALE,
                                 EscapeQuerySyntaxType.STRING).toString();
             }
