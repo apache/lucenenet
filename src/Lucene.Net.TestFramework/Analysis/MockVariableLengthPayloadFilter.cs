@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis
         {
             if (m_input.IncrementToken())
             {
-                Random.NextBytes((byte[])(Array)Bytes);
+                Random.NextBytes(Bytes);
                 Payload.Length = Random.Next(MAXLENGTH);
                 PayloadAtt.Payload = Payload;
                 return true;

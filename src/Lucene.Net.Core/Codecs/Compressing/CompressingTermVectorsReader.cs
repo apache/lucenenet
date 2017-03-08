@@ -814,7 +814,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     termsEnum = new TVTermsEnum();
                 }
-                termsEnum.Reset(numTerms, flags, prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex, payloadBytes, new ByteArrayDataInput((byte[])(Array)termBytes.Bytes, termBytes.Offset, termBytes.Length));
+                termsEnum.Reset(numTerms, flags, prefixLengths, suffixLengths, termFreqs, positionIndex, positions, startOffsets, lengths, payloadIndex, payloadBytes, new ByteArrayDataInput(termBytes.Bytes, termBytes.Offset, termBytes.Length));
                 return termsEnum;
             }
 

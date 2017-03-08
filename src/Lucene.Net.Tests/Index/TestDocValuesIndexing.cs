@@ -442,7 +442,7 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             byte[] bytes = new byte[100000];
             BytesRef b = new BytesRef(bytes);
-            Random().NextBytes((byte[])(Array)bytes);
+            Random().NextBytes(bytes);
             doc.Add(new SortedSetDocValuesField("dv", b));
             try
             {

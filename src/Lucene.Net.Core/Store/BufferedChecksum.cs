@@ -68,7 +68,7 @@ namespace Lucene.Net.Store
             if (len >= buffer.Length)
             {
                 Flush();
-                @in.Update((byte[])(Array)b, off, len);
+                @in.Update(b, off, len);
             }
             else
             {

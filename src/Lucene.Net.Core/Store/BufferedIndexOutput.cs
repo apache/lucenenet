@@ -92,7 +92,7 @@ namespace Lucene.Net.Store
                         Flush();
                     }
                     // and write data at once
-                    crc.Update((byte[])(Array)b, offset, length);
+                    crc.Update(b, offset, length);
                     FlushBuffer(b, offset, length);
                     bufferStart += length;
                 }
@@ -121,7 +121,7 @@ namespace Lucene.Net.Store
 
         public override void Flush()
         {
-            crc.Update((byte[])(Array)buffer, 0, bufferPosition);
+            crc.Update(buffer, 0, bufferPosition);
             FlushBuffer(buffer, bufferPosition);
             bufferStart += bufferPosition;
             bufferPosition = 0;

@@ -463,7 +463,7 @@ namespace Lucene.Net.Util
                     return EMPTY;
                 }
                 WriteSequence();
-                byte[] data = Arrays.CopyOf((byte[])(Array)@out.Bytes, @out.Length);
+                byte[] data = Arrays.CopyOf(@out.Bytes, @out.Length);
 
                 // Now build the index
                 int valueCount = (numSequences - 1) / indexInterval + 1;

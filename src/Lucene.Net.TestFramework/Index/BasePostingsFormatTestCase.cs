@@ -260,7 +260,7 @@ namespace Lucene.Net.Index
                     if (FixedPayloads)
                     {
                         Payload_Renamed.Length = PayloadSize;
-                        Random.NextBytes((byte[])(Array)Payload_Renamed.Bytes);
+                        Random.NextBytes(Payload_Renamed.Bytes);
                     }
                     else
                     {
@@ -268,7 +268,7 @@ namespace Lucene.Net.Index
                         if (thisPayloadSize != 0)
                         {
                             Payload_Renamed.Length = PayloadSize;
-                            Random.NextBytes((byte[])(Array)Payload_Renamed.Bytes);
+                            Random.NextBytes(Payload_Renamed.Bytes);
                         }
                         else
                         {

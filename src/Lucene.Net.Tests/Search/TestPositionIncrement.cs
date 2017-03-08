@@ -280,7 +280,7 @@ namespace Lucene.Net.Search
                     count++;
                     if (VERBOSE)
                     {
-                        Console.WriteLine("  payload: " + Encoding.UTF8.GetString((byte[])(Array)bytes));
+                        Console.WriteLine("  payload: " + Encoding.UTF8.GetString(bytes));
                     }
                 }
             }

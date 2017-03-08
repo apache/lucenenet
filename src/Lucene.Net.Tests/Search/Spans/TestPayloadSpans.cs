@@ -322,7 +322,7 @@ namespace Lucene.Net.Search.Spans
                     var payloads = spans.GetPayload();
                     foreach (var payload in payloads)
                     {
-                        payloadSet.Add(Encoding.UTF8.GetString((byte[])(Array)payload));
+                        payloadSet.Add(Encoding.UTF8.GetString(payload));
                     }
                 }
             }
@@ -401,7 +401,7 @@ namespace Lucene.Net.Search.Spans
                 Console.WriteLine("Num payloads:" + payloads.Count);
                 foreach (var bytes in payloads)
                 {
-                    Console.WriteLine(Encoding.UTF8.GetString((byte[])(Array)bytes));
+                    Console.WriteLine(Encoding.UTF8.GetString(bytes));
                 }
             }
             reader.Dispose();
@@ -484,7 +484,7 @@ namespace Lucene.Net.Search.Spans
                         Console.WriteLine("payloads for span:" + payload.Count);
                         foreach (var bytes in payload)
                         {
-                            Console.WriteLine("doc:" + spans.Doc + " s:" + spans.Start + " e:" + spans.End + " " + Encoding.UTF8.GetString((byte[])(Array)bytes));
+                            Console.WriteLine("doc:" + spans.Doc + " s:" + spans.Start + " e:" + spans.End + " " + Encoding.UTF8.GetString(bytes));
                         }
                     }
 

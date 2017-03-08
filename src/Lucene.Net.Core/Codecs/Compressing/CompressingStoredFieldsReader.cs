@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Compressing
                     data = new byte[length];
                     @in.ReadBytes(data, 0, length);
 #pragma warning disable 612, 618
-                    visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)data));
+                    visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString(data));
 #pragma warning restore 612, 618
                     break;
 
@@ -341,7 +341,7 @@ namespace Lucene.Net.Codecs.Compressing
                 BytesRef bytes = totalLength <= BUFFER_REUSE_THRESHOLD ? this.bytes : new BytesRef();
                 decompressor.Decompress(fieldsStream, totalLength, offset, length, bytes);
                 Debug.Assert(bytes.Length == length);
-                documentInput = new ByteArrayDataInput((byte[])(Array)bytes.Bytes, bytes.Offset, bytes.Length);
+                documentInput = new ByteArrayDataInput(bytes.Bytes, bytes.Offset, bytes.Length);
             }
 
             for (int fieldIDX = 0; fieldIDX < numStoredFields; fieldIDX++)

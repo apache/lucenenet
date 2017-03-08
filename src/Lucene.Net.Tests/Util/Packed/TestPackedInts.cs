@@ -1350,7 +1350,7 @@ namespace Lucene.Net.Util.Packed
                 byte[] buf = new byte[(int)fp];
                 in1.ReadBytes(buf, 0, (int)fp);
                 in1.Seek(0L);
-                ByteArrayDataInput in2 = new ByteArrayDataInput((byte[])(Array)buf);
+                ByteArrayDataInput in2 = new ByteArrayDataInput(buf);
                 DataInput @in = Random().NextBoolean() ? (DataInput)in1 : in2;
                 BlockPackedReaderIterator it = new BlockPackedReaderIterator(@in, PackedInt32s.VERSION_CURRENT, blockSize, valueCount);
                 for (int i = 0; i < valueCount; )

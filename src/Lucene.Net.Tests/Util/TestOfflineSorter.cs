@@ -118,7 +118,7 @@ namespace Lucene.Net.Util
             while (howMuchData > 0)
             {
                 byte[] current = new byte[Random().Next(256)];
-                Random().NextBytes((byte[])(Array)current);
+                Random().NextBytes(current);
                 data.Add(current);
                 howMuchData -= current.Length;
             }

@@ -572,7 +572,7 @@ namespace Lucene.Net.Index
                 this.Pool = pool;
                 Payload = pool.Get();
                 OuterInstance.GenerateRandomData(Payload);
-                Term = Encoding.UTF8.GetString((byte[])(Array)Payload);
+                Term = Encoding.UTF8.GetString(Payload);
                 First = true;
                 PayloadAtt = AddAttribute<IPayloadAttribute>();
                 TermAtt = AddAttribute<ICharTermAttribute>();

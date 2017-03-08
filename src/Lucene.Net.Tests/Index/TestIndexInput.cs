@@ -180,7 +180,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestByteArrayDataInput()
         {
-            ByteArrayDataInput @is = new ByteArrayDataInput((byte[])(Array)READ_TEST_BYTES);
+            ByteArrayDataInput @is = new ByteArrayDataInput(READ_TEST_BYTES);
             CheckReads(@is, typeof(Exception));
             @is = new ByteArrayDataInput(RANDOM_TEST_BYTES);
             CheckRandomReads(@is);

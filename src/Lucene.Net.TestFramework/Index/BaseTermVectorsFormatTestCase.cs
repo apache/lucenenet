@@ -174,7 +174,7 @@ namespace Lucene.Net.Index
                 return null;
             }
             BytesRef payload = new BytesRef(len);
-            Random().NextBytes((byte[])(Array)payload.Bytes);
+            Random().NextBytes(payload.Bytes);
             payload.Length = len;
             return payload;
         }

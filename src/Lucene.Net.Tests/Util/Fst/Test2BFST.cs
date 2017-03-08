@@ -187,7 +187,7 @@ namespace Lucene.Net.Util.Fst
                             {
                                 Console.WriteLine(i + "...: ");
                             }
-                            r.NextBytes((byte[])(Array)outputBytes);
+                            r.NextBytes(outputBytes);
                             Assert.AreEqual(output, Util.Get(fst, input));
                             NextInput(r, ints);
                         }
@@ -206,7 +206,7 @@ namespace Lucene.Net.Util.Fst
                                 break;
                             }
                             Assert.AreEqual(input, pair.Input);
-                            r.NextBytes((byte[])(Array)outputBytes);
+                            r.NextBytes(outputBytes);
                             Assert.AreEqual(output, pair.Output);
                             upto++;
                             NextInput(r, ints);

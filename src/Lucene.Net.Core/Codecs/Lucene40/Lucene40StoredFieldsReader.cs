@@ -229,7 +229,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 else
                 {
 #pragma warning disable 612, 618
-                    visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString((byte[])(Array)bytes));
+                    visitor.StringField(info, IOUtils.CHARSET_UTF_8.GetString(bytes));
 #pragma warning restore 612, 618
                 }
             }

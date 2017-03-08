@@ -157,7 +157,7 @@ namespace Lucene.Net.Index
                 for (int i = 0; i < reader.MaxDoc; i++)
                 {
                     dv.Get(i, scratch);
-                    input.Reset((byte[])(Array)scratch.Bytes, scratch.Offset, scratch.Length);
+                    input.Reset(scratch.Bytes, scratch.Offset, scratch.Length);
                     Assert.AreEqual(expectedValue % 65535, input.ReadVInt32());
                     Assert.IsTrue(input.Eof);
                     expectedValue++;

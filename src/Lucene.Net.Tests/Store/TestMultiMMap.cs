@@ -279,7 +279,7 @@ namespace Lucene.Net.Store
                 MMapDirectory mmapDir = new MMapDirectory(CreateTempDir("testSeekEnd"), null, 1 << i);
                 IndexOutput io = mmapDir.CreateOutput("bytes", NewIOContext(Random()));
                 var bytes = new byte[1 << i];
-                Random().NextBytes((byte[])(Array)bytes);
+                Random().NextBytes(bytes);
                 io.WriteBytes(bytes, bytes.Length);
                 io.Dispose();
                 IndexInput ii = mmapDir.OpenInput("bytes", NewIOContext(Random()));

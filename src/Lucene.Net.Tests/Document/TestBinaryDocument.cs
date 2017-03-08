@@ -74,7 +74,7 @@ namespace Lucene.Net.Documents
             BytesRef bytes = docFromReader.GetBinaryValue("binaryStored");
             Assert.IsNotNull(bytes);
 
-            string binaryFldStoredTest = Encoding.UTF8.GetString((byte[])(Array)bytes.Bytes).Substring(bytes.Offset, bytes.Length);
+            string binaryFldStoredTest = Encoding.UTF8.GetString(bytes.Bytes).Substring(bytes.Offset, bytes.Length);
             //new string(bytes.Bytes, bytes.Offset, bytes.Length, IOUtils.CHARSET_UTF_8);
             Assert.IsTrue(binaryFldStoredTest.Equals(BinaryValStored));
 

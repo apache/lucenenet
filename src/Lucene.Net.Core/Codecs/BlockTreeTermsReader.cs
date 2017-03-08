@@ -569,7 +569,7 @@ namespace Lucene.Net.Codecs
                 //   System.out.println("BTTR: seg=" + segment + " field=" + fieldInfo.name + " rootBlockCode=" + rootCode + " divisor=" + indexDivisor);
                 // }
 
-                rootBlockFP = (int)((uint)(new ByteArrayDataInput((byte[])(Array)rootCode.Bytes, rootCode.Offset, rootCode.Length)).ReadVInt64() >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
+                rootBlockFP = (int)((uint)(new ByteArrayDataInput(rootCode.Bytes, rootCode.Offset, rootCode.Length)).ReadVInt64() >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
 
                 if (indexIn != null)
                 {
@@ -1388,7 +1388,7 @@ namespace Lucene.Net.Codecs
                             }
 
                             byte[] suffixBytes = currentFrame.suffixBytes;
-                            byte[] commonSuffixBytes = (byte[])(Array)compiledAutomaton.CommonSuffixRef.Bytes;
+                            byte[] commonSuffixBytes = compiledAutomaton.CommonSuffixRef.Bytes;
 
                             int lenInPrefix = compiledAutomaton.CommonSuffixRef.Length - currentFrame.suffix;
                             Debug.Assert(compiledAutomaton.CommonSuffixRef.Offset == 0);
@@ -1763,7 +1763,7 @@ namespace Lucene.Net.Codecs
                 // Pushes a frame we seek'd to
                 internal Frame PushFrame(FST.Arc<BytesRef> arc, BytesRef frameData, int length)
                 {
-                    scratchReader.Reset((byte[])(Array)frameData.Bytes, frameData.Offset, frameData.Length);
+                    scratchReader.Reset(frameData.Bytes, frameData.Offset, frameData.Length);
                     long code = scratchReader.ReadVInt64();
                     long fpSeek = (long)((ulong)code >> BlockTreeTermsWriter.OUTPUT_FLAGS_NUM_BITS);
                     Frame f = GetFrame(1 + currentFrame.ord);
