@@ -194,12 +194,12 @@ namespace Lucene.Net.Search
             m_reverseMul = new int[numComparers];
         }
 
-        public virtual FieldComparer[] GetComparers()
+        public virtual FieldComparer[] GetComparers() // LUCENENET TODO: Change to property
         {
             return m_comparers;
         }
 
-        public virtual int[] GetReverseMul()
+        public virtual int[] GetReverseMul() // LUCENENET TODO: Change to property
         {
             return m_reverseMul;
         }
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the SortFields being used by this hit queue. </summary>
-        internal virtual SortField[] GetFields()
+        internal virtual SortField[] GetFields() // LUCENENET TODO: Change to property
         {
             return m_fields;
         }
