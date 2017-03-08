@@ -421,7 +421,11 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(120000)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestAddIndexesAndDoDeletesThreads()
         {
             const int numIter = 2;
