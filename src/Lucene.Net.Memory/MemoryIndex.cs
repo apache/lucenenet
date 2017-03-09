@@ -253,7 +253,7 @@ namespace Lucene.Net.Index.Memory
             }
             catch (IOException ex)
             {
-                throw new Exception(ex.Message, ex);
+                throw new Exception(ex.ToString(), ex);
             }
 
             AddField(fieldName, stream, 1.0f, analyzer.GetPositionIncrementGap(fieldName), analyzer.GetOffsetGap(fieldName));
@@ -477,9 +477,9 @@ namespace Lucene.Net.Index.Memory
                     sortedFields = null; // invalidate sorted view, if any
                 }
             } // can never happen
-            catch (Exception /*e*/)
+            catch (Exception e)
             {
-                throw;
+                throw new Exception(e.ToString(), e);
             }
             finally
             {
@@ -490,9 +490,9 @@ namespace Lucene.Net.Index.Memory
                         stream.Dispose();
                     }
                 }
-                catch (IOException /*e2*/)
+                catch (IOException e2)
                 {
-                    throw;
+                    throw new Exception(e2.ToString(), e2);
                 }
             }
         }
@@ -534,9 +534,9 @@ namespace Lucene.Net.Index.Memory
                 float score = scores[0];
                 return score;
             } // can never happen (RAMDirectory)
-            catch (IOException /*e*/)
+            catch (IOException e)
             {
-                throw;
+                throw new Exception(e.ToString(), e);
             }
             finally
             {

@@ -940,6 +940,18 @@ namespace Lucene.Net.Search
                     {
                         current = service.Take().Result;
                     }
+#if !NETSTANDARD
+                    catch (System.Threading.ThreadInterruptedException)
+                    {
+                        throw;
+                    }
+#endif
+                    catch (Exception e)
+                    {
+                        // LUCENENET NOTE: We need to re-throw this as Exception to 
+                        // ensure it is not caught in the wrong place
+                        throw new Exception(e.ToString(), e);
+                    }
                     finally
                     {
                         --numTasks;

@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException ioe)
                 {
-                    throw new Exception(ioe.Message, ioe);
+                    throw new Exception(ioe.ToString(), ioe);
                 }
                 while (Environment.TickCount < END_TIME)
                 {

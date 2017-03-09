@@ -492,7 +492,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 catch (IOException bogus)
                 {
-                    throw new Exception(bogus.Message, bogus);
+                    throw new Exception(bogus.ToString(), bogus);
                 }
             }
 
@@ -516,7 +516,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 catch (IOException bogus)
                 {
-                    throw new Exception(bogus.Message, bogus);
+                    throw new Exception(bogus.ToString(), bogus);
                 }
             }
 
@@ -629,7 +629,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 catch (IOException bogus)
                 {
-                    throw new Exception(bogus.Message, bogus);
+                    throw new Exception(bogus.ToString(), bogus);
                 }
             }
 
@@ -653,7 +653,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 catch (IOException bogus)
                 {
-                    throw new Exception(bogus.Message, bogus);
+                    throw new Exception(bogus.ToString(), bogus);
                 }
             }
 

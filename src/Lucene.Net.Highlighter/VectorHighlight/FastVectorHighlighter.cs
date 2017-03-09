@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.VectorHighlight
             catch (IOException e)
             {
                 // should never be thrown when reader is null
-                throw new Exception(e.Message, e);
+                throw new Exception(e.ToString(), e);
             }
         }
 

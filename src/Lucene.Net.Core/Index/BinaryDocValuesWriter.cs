@@ -97,7 +97,7 @@ namespace Lucene.Net.Index
             catch (System.IO.IOException ioe)
             {
                 // Should never happen!
-                throw new Exception(ioe.Message, ioe);
+                throw new Exception(ioe.ToString(), ioe);
             }
             docsWithField = FixedBitSet.EnsureCapacity(docsWithField, docID);
             docsWithField.Set(docID);
@@ -151,7 +151,15 @@ namespace Lucene.Net.Index
                     var value = new BytesRef();
                     value.Grow(length);
                     value.Length = length;
-                    bytesIterator.ReadBytes(value.Bytes, value.Offset, value.Length);
+                    try
+                    {
+                        bytesIterator.ReadBytes(value.Bytes, value.Offset, value.Length);
+                    }
+                    catch (System.IO.IOException ioe)
+                    {
+                        // Should never happen!
+                        throw new Exception(ioe.ToString(), ioe);
+                    }
 
                     if (docsWithField.Get(upto))
                     {

@@ -101,7 +101,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     }
                     catch (IOException e)
                     {
-                        throw new Exception(e.Message, e);
+                        throw new Exception(e.ToString(), e);
                     }
                 }
             }
@@ -312,7 +312,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     catch (IOException e)
                     {
                         // shouldn't happen - if it does, let the test fail on uncaught exception.
-                        throw new Exception(e.Message, e);
+                        throw new Exception(e.ToString(), e);
                     }
                 }
             }

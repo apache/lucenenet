@@ -165,7 +165,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             catch (IOException e)
             {
-                throw new Exception(e.Message, e);
+                throw new Exception(e.ToString(), e);
             }
         }
 
@@ -209,7 +209,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             catch (IOException e)
             {
                 // Should never happen, but anyway.
-                throw new Exception(e.Message, e);
+                throw new Exception(e.ToString(), e);
             }
 
             // No match.
@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             catch (IOException e)
             {
                 // Should never happen, but anyway.
-                throw new Exception(e.Message, e);
+                throw new Exception(e.ToString(), e);
             }
         }
 

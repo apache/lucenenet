@@ -3268,7 +3268,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }
@@ -3460,7 +3460,7 @@ namespace Lucene.Net.Index
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }

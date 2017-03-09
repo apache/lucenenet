@@ -1351,7 +1351,7 @@ namespace Lucene.Net.Index
                         }
                         catch (IOException ioe)
                         {
-                            throw new Exception(ioe.Message, ioe);
+                            throw new Exception(ioe.ToString(), ioe);
                         }
                     }
 
@@ -1384,7 +1384,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
                 try
                 {
@@ -1392,7 +1392,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }

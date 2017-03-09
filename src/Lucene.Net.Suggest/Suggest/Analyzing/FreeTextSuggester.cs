@@ -497,7 +497,15 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, /* ignored */ bool onlyMorePopular, int num)
         {
-            return DoLookup(key, contexts, num);
+            try
+            {
+                return DoLookup(key, contexts, num);
+            }
+            catch (IOException ioe)
+            {
+                // bogus:
+                throw new Exception(ioe.ToString(), ioe);
+            }
         }
 
         public override long Count
@@ -651,7 +659,14 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     // match the prefix portion exactly
                     //Pair<Long,BytesRef> prefixOutput = null;
                     long? prefixOutput = null;
-                    prefixOutput = LookupPrefix(fst, bytesReader, token, arc);
+                    try
+                    {
+                        prefixOutput = LookupPrefix(fst, bytesReader, token, arc);
+                    }
+                    catch (IOException bogus)
+                    {
+                        throw new Exception(bogus.ToString(), bogus);
+                    }
                     //System.out.println("  prefixOutput=" + prefixOutput);
 
                     if (prefixOutput == null)
@@ -725,7 +740,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     }
                     catch (IOException bogus)
                     {
-                        throw new Exception(bogus.Message, bogus);
+                        throw new Exception(bogus.ToString(), bogus);
                     }
 
                     int prefixLength = token.Length;

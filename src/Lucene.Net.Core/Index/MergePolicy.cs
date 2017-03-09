@@ -304,7 +304,7 @@ namespace Lucene.Net.Index
                         }
                         catch (ThreadInterruptedException ie)
                         {
-                            throw new Exception(ie.Message, ie);
+                            throw new Exception(ie.ToString(), ie);
                         }
 #endif
                         if (aborted)

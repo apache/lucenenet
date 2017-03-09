@@ -494,9 +494,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = 0;
                     result.Length = buffer.Length;
                 }
-                catch (Exception)
+                catch (System.IO.IOException e)
                 {
-                    throw;
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }
@@ -564,9 +564,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = 0;
                     result.Length = length;
                 }
-                catch (Exception)
+                catch (System.IO.IOException e)
                 {
-                    throw;
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }
@@ -853,11 +853,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     @in.Seek(offset + (index >> 3));
                     return (@in.ReadByte() & (1 << (index & 7))) != 0;
                 }
-#pragma warning disable 168
-                catch (Exception e)
-#pragma warning restore 168
+                catch (System.IO.IOException e)
                 {
-                    throw;
+                    throw new Exception(e.ToString(), e);
                 }
             }
 
@@ -1037,11 +1035,9 @@ namespace Lucene.Net.Codecs.Lucene45
                     result.Offset = term.Offset;
                     result.Length = term.Length;
                 }
-#pragma warning disable 168
-                catch (Exception e)
-#pragma warning restore 168
+                catch (System.IO.IOException e)
                 {
-                    throw;
+                    throw new Exception(e.ToString(), e);
                 }
             }
 
@@ -1063,9 +1059,9 @@ namespace Lucene.Net.Codecs.Lucene45
                         return -termsEnum.Ord - 1;
                     }
                 }
-                catch (Exception)
+                catch (System.IO.IOException bogus)
                 {
-                    throw;
+                    throw new Exception(bogus.ToString(), bogus);
                 }
             }
 
@@ -1075,9 +1071,9 @@ namespace Lucene.Net.Codecs.Lucene45
                 {
                     return GetTermsEnum((IndexInput)data.Clone());
                 }
-                catch (Exception)
+                catch (System.IO.IOException e)
                 {
-                    throw;
+                    throw new Exception(e.ToString(), e);
                 }
             }
 

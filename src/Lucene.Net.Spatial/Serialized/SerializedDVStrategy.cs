@@ -72,7 +72,7 @@ namespace Lucene.Net.Spatial.Serialized
             }
             catch (IOException e)
             {
-                throw new SerializedDVStrategyException(e.Message, e);
+                throw new Exception(e.ToString(), e);
             }
             this.indexLastBufSize = bytesRef.Length;//cache heuristic
             return new Field[] { new BinaryDocValuesField(FieldName, bytesRef) };
@@ -308,7 +308,7 @@ namespace Lucene.Net.Spatial.Serialized
                     }
                     catch (IOException e)
                     {
-                        throw new SerializedDVStrategyException(e.Message, e);
+                        throw new Exception(e.ToString(), e);
                     }
                 }
 
@@ -347,21 +347,5 @@ namespace Lucene.Net.Spatial.Serialized
             }
 
         }//ShapeDocValueSource
-    }
-
-    /// <summary>
-    /// LUCENENET: Exception thrown when an operation fails in
-    /// SerializedDVStrategy. Replaces generic ApplicationException that is
-    /// not supported on .NET Core.
-    /// </summary>
-    public class SerializedDVStrategyException : Exception
-    {
-        public SerializedDVStrategyException(string message) 
-            : base(message)
-        { }
-
-        public SerializedDVStrategyException(string message, Exception innerException)
-            : base(message, innerException)
-        { }
     }
 }

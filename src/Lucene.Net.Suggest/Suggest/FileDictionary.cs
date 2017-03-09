@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Suggest
             this.fieldDelimiter = fieldDelimiter;
         }
 
-        public virtual IInputIterator EntryIterator
+        public virtual IInputIterator EntryIterator // LUCENENET TODO: Change to GetEntryIterator()
         {
             get
             {
@@ -119,9 +119,9 @@ namespace Lucene.Net.Search.Suggest
                 {
                     return new FileIterator(this);
                 }
-                catch (IOException)
+                catch (IOException e)
                 {
-                    throw new Exception();
+                    throw new Exception(e.ToString(), e);
                 }
             }
         }

@@ -159,7 +159,7 @@ namespace Lucene.Net.Search
             }
             catch (IOException e)
             {
-                throw new Exception(e.Message, e);
+                throw new Exception(e.ToString(), e);
             }
         }
 
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
             }
             catch (IOException ex)
             {
-                throw new Exception(ex.Message, ex);
+                throw new Exception(ex.ToString(), ex);
             }
         }
 
@@ -386,7 +386,7 @@ namespace Lucene.Net.Search
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
             }
 
@@ -510,7 +510,7 @@ namespace Lucene.Net.Search
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
             }
 

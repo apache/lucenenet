@@ -198,9 +198,9 @@ namespace Lucene.Net.Facet.Taxonomy
                     {
                         return scorer.GetScore();
                     }
-                    catch (Exception /*exception*/)
+                    catch (System.IO.IOException exception)
                     {
-                        throw;
+                        throw new Exception(exception.ToString(), exception);
                     }
                 }
             }

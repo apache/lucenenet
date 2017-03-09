@@ -1085,7 +1085,7 @@ namespace Lucene.Net.Index
                 }
                 catch (System.IO.IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
                 result.Bytes = @ref.Bytes;
                 result.Offset = @ref.Offset;
@@ -1115,7 +1115,7 @@ namespace Lucene.Net.Index
                 }
                 catch (System.IO.IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
             }
 

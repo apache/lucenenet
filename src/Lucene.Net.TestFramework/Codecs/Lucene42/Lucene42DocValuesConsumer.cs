@@ -420,7 +420,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
                 catch (IOException bogus)
                 {
-                    throw new Exception(bogus.Message, bogus);
+                    throw new Exception(bogus.ToString(), bogus);
                 }
 
                 @ref.Bytes = Buffer;

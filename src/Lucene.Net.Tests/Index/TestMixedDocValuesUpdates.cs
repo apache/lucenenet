@@ -422,7 +422,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
                 finally
                 {
@@ -436,7 +436,7 @@ namespace Lucene.Net.Index
                         {
                             if (success) // suppress this exception only if there was another exception
                             {
-                                throw new Exception(e.Message, e);
+                                throw new Exception(e.ToString(), e);
                             }
                         }
                     }

@@ -162,7 +162,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             catch (IOException bogus)
             {
-                throw new Exception(bogus.Message, bogus);
+                throw new Exception(bogus.ToString(), bogus);
             }
 
             if (prefixOutput == null)
@@ -192,7 +192,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             catch (IOException bogus)
             {
-                throw new Exception(bogus.Message, bogus);
+                throw new Exception(bogus.ToString(), bogus);
             }
 
             BytesRef suffix = new BytesRef(8);
@@ -253,7 +253,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             }
             catch (IOException bogus)
             {
-                throw new Exception(bogus.Message, bogus);
+                throw new Exception(bogus.ToString(), bogus);
             }
             if (result == null || !arc.IsFinal)
             {

@@ -581,7 +581,7 @@ namespace Lucene.Net.Index
                 catch (Exception t)
                 {
                     Failed = true;
-                    throw new Exception(t.Message, t);
+                    throw new Exception(t.toString(), t);
                 }
             }
 

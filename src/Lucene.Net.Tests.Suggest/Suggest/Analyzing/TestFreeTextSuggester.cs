@@ -164,7 +164,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 catch (IOException ioe)
                 {
-                    throw new Exception(ioe.Message, ioe);
+                    throw new Exception(ioe.ToString(), ioe);
                 }
                 if (doc == null)
                 {
@@ -210,7 +210,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        [Ignore("Ignored test.")]
+        [Ignore("Ignored in Lucene")]
         public void TestWiki()
         {
             LineFileDocs lfd = new LineFileDocs(null, "/lucenedata/enwiki/enwiki-20120502-lines-1k.txt", false);

@@ -212,7 +212,7 @@ namespace Lucene.Net.Search
                 }
                 catch (IOException ioe)
                 {
-                    throw new Exception(ioe.Message, ioe);
+                    throw new Exception(ioe.ToString(), ioe);
                 }
             }
         }

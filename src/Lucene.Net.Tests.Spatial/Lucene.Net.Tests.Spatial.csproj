@@ -56,7 +56,6 @@
     <Compile Include="SpatialMatchConcern.cs" />
     <Compile Include="SpatialTestCase.cs" />
     <Compile Include="SpatialTestData.cs" />
-    <Compile Include="SpatialTestException.cs" />
     <Compile Include="SpatialTestQuery.cs" />
     <Compile Include="StrategyTestCase.cs" />
     <Compile Include="TestApiConsistency.cs" />

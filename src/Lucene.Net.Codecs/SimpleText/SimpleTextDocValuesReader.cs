@@ -171,27 +171,34 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long Get(int docId)
             {
-                if (docId < 0 || docId >= _outerInstance.maxDoc)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) +
-                                                       "; got " + docId);
-
-                _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
-                SimpleTextUtil.ReadLine(_input, _scratch);
-
-
-                decimal bd;
                 try
                 {
-                    // LUCNENENET: .NET doesn't have a way to specify a pattern with decimal, but all of the standard ones are built in.
-                    bd = decimal.Parse(_scratch.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
-                }
-                catch (FormatException ex)
-                {
-                    throw new CorruptIndexException("failed to parse long value (resource=" + _input + ")", ex);
-                }
+                    if (docId < 0 || docId >= _outerInstance.maxDoc)
+                        throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) +
+                                                           "; got " + docId);
 
-                SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
-                return (long)BigInteger.Add(new BigInteger(_field.MinValue), new BigInteger(bd));
+                    _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * docId);
+                    SimpleTextUtil.ReadLine(_input, _scratch);
+
+
+                    decimal bd;
+                    try
+                    {
+                        // LUCNENENET: .NET doesn't have a way to specify a pattern with decimal, but all of the standard ones are built in.
+                        bd = decimal.Parse(_scratch.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
+                    }
+                    catch (FormatException ex)
+                    {
+                        throw new CorruptIndexException("failed to parse long value (resource=" + _input + ")", ex);
+                    }
+
+                    SimpleTextUtil.ReadLine(_input, _scratch); // read the line telling us if its real or not
+                    return (long)BigInteger.Add(new BigInteger(_field.MinValue), new BigInteger(bd));
+                }
+                catch (System.IO.IOException ioe)
+                {
+                    throw new Exception(ioe.ToString(), ioe);
+                }
             }
         }
 
@@ -222,10 +229,17 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public bool Get(int index)
             {
-                _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * index);
-                SimpleTextUtil.ReadLine(_input, _scratch); // data
-                SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
-                return _scratch.Bytes[_scratch.Offset] == (sbyte)'T';
+                try
+                {
+                    _input.Seek(_field.DataStartFilePointer + (1 + _field.Pattern.Length + 2) * index);
+                    SimpleTextUtil.ReadLine(_input, _scratch); // data
+                    SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
+                    return _scratch.Bytes[_scratch.Offset] == (byte)'T';
+                }
+                catch (System.IO.IOException e)
+                {
+                    throw new Exception(e.ToString(), e);
+                }
             }
 
             public int Length
@@ -263,29 +277,36 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override void Get(int docId, BytesRef result)
             {
-                if (docId < 0 || docId >= _outerInstance.maxDoc)
-                    throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) +
-                                                       "; got " + docId);
-
-                _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
-                SimpleTextUtil.ReadLine(_input, _scratch);
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
-                int len;
                 try
                 {
-                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
-                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
-                }
-                catch (FormatException ex)
-                {
-                    throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
-                }
+                    if (docId < 0 || docId >= _outerInstance.maxDoc)
+                        throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) +
+                                                           "; got " + docId);
 
-                result.Bytes = new byte[len];
-                result.Offset = 0;
-                result.Length = len;
-                _input.ReadBytes(result.Bytes, 0, len);
+                    _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * docId);
+                    SimpleTextUtil.ReadLine(_input, _scratch);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                    int len;
+                    try
+                    {
+                        // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                        len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                            _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
+                    }
+                    catch (FormatException ex)
+                    {
+                        throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
+                    }
+
+                    result.Bytes = new byte[len];
+                    result.Offset = 0;
+                    result.Length = len;
+                    _input.ReadBytes(result.Bytes, 0, len);
+                }
+                catch (System.IO.IOException ioe)
+                {
+                    throw new Exception(ioe.ToString(), ioe);
+                }
             }
         }
 
@@ -317,26 +338,33 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public bool Get(int index)
             {
-                _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * index);
-                SimpleTextUtil.ReadLine(_input, _scratch);
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
-                int len;
                 try
                 {
-                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Number, CultureInfo.InvariantCulture);
-                }
-                catch (FormatException ex)
-                {
-                    throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
-                }
+                    _input.Seek(_field.DataStartFilePointer + (9 + _field.Pattern.Length + _field.MaxLength + 2) * index);
+                    SimpleTextUtil.ReadLine(_input, _scratch);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH));
+                    int len;
+                    try
+                    {
+                        len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                            _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Number, CultureInfo.InvariantCulture);
+                    }
+                    catch (FormatException ex)
+                    {
+                        throw new CorruptIndexException("failed to parse int value (resource=" + _input + ")", ex);
+                    }
 
-                // skip past bytes
-                var bytes = new byte[len];
-                _input.ReadBytes(bytes, 0, len);
-                SimpleTextUtil.ReadLine(_input, _scratch); // newline
-                SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
-                return _scratch.Bytes[_scratch.Offset] == (sbyte)'T';
+                    // skip past bytes
+                    var bytes = new byte[len];
+                    _input.ReadBytes(bytes, 0, len);
+                    SimpleTextUtil.ReadLine(_input, _scratch); // newline
+                    SimpleTextUtil.ReadLine(_input, _scratch); // 'T' or 'F'
+                    return _scratch.Bytes[_scratch.Offset] == (byte)'T';
+                }
+                catch (System.IO.IOException ioe)
+                {
+                    throw new Exception(ioe.ToString(), ioe);
+                }
             }
 
             public int Length
@@ -386,50 +414,64 @@ namespace Lucene.Net.Codecs.SimpleText
                                                        docId);
                 }
 
-                _input.Seek(_field.DataStartFilePointer + _field.NumValues * (9 + _field.Pattern.Length + _field.MaxLength) +
-                         docId * (1 + _field.OrdPattern.Length));
-                SimpleTextUtil.ReadLine(_input, _scratch);
                 try
                 {
-                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
-                    return int.Parse(_scratch.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture) - 1;
+                    _input.Seek(_field.DataStartFilePointer + _field.NumValues * (9 + _field.Pattern.Length + _field.MaxLength) +
+                             docId * (1 + _field.OrdPattern.Length));
+                    SimpleTextUtil.ReadLine(_input, _scratch);
+                    try
+                    {
+                        // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                        return int.Parse(_scratch.Utf8ToString(), NumberStyles.Integer, CultureInfo.InvariantCulture) - 1;
+                    }
+                    catch (Exception pe)
+                    {
+                        var e = new CorruptIndexException("failed to parse ord (resource=" + _input + ")", pe);
+                        throw e;
+                    }
                 }
-                catch (Exception pe)
+                catch (System.IO.IOException ioe)
                 {
-                    var e = new CorruptIndexException("failed to parse ord (resource=" + _input + ")", pe);
-                    throw e;
+                    throw new Exception(ioe.ToString(), ioe);
                 }
             }
 
             public override void LookupOrd(int ord, BytesRef result)
             {
-                if (ord < 0 || ord >= _field.NumValues)
-                {
-                    throw new IndexOutOfRangeException("ord must be 0 .. " + (_field.NumValues - 1) + "; got " +
-                                                              ord);
-                }
-                _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
-                SimpleTextUtil.ReadLine(_input, _scratch);
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH),
-                    "got " + _scratch.Utf8ToString() + " in=" + _input);
-                int len;
                 try
                 {
-                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
-                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
+                    if (ord < 0 || ord >= _field.NumValues)
+                    {
+                        throw new IndexOutOfRangeException("ord must be 0 .. " + (_field.NumValues - 1) + "; got " +
+                                                                  ord);
+                    }
+                    _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
+                    SimpleTextUtil.ReadLine(_input, _scratch);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH),
+                        "got " + _scratch.Utf8ToString() + " in=" + _input);
+                    int len;
+                    try
+                    {
+                        // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                        len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                            _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
 
+                    }
+                    catch (Exception pe)
+                    {
+                        var e = new CorruptIndexException("failed to parse int length (resource=" + _input + ")", pe);
+                        throw e;
+                    }
+
+                    result.Bytes = new byte[len];
+                    result.Offset = 0;
+                    result.Length = len;
+                    _input.ReadBytes(result.Bytes, 0, len);
                 }
-                catch (Exception pe)
+                catch (System.IO.IOException ioe)
                 {
-                    var e = new CorruptIndexException("failed to parse int length (resource=" + _input + ")", pe);
-                    throw e;
+                    throw new Exception(ioe.ToString(), ioe);
                 }
-
-                result.Bytes = new byte[len];
-                result.Offset = 0;
-                result.Length = len;
-                _input.ReadBytes(result.Bytes, 0, len);
             }
 
             public override int ValueCount
@@ -487,43 +529,56 @@ namespace Lucene.Net.Codecs.SimpleText
                     throw new IndexOutOfRangeException("docID must be 0 .. " + (_outerInstance.maxDoc - 1) + "; got " +
                                                         docID);
 
-
-                _input.Seek(_field.DataStartFilePointer + _field.NumValues * (9 + _field.Pattern.Length + _field.MaxLength) +
-                            docID * (1 + _field.OrdPattern.Length));
-                SimpleTextUtil.ReadLine(_input, _scratch);
-                var ordList = _scratch.Utf8ToString().Trim();
-                _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                _currentIndex = 0;
+                try
+                {
+                    _input.Seek(_field.DataStartFilePointer + _field.NumValues * (9 + _field.Pattern.Length + _field.MaxLength) +
+                                docID * (1 + _field.OrdPattern.Length));
+                    SimpleTextUtil.ReadLine(_input, _scratch);
+                    var ordList = _scratch.Utf8ToString().Trim();
+                    _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    _currentIndex = 0;
+                }
+                catch (System.IO.IOException ioe)
+                {
+                    throw new Exception(ioe.ToString(), ioe);
+                }
             }
 
             public override void LookupOrd(long ord, BytesRef result)
             {
-                if (ord < 0 || ord >= _field.NumValues)
-                {
-                    throw new IndexOutOfRangeException("ord must be 0 .. " + (_field.NumValues - 1) + "; got " + ord);
-                }
-
-                _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
-                SimpleTextUtil.ReadLine(_input, _scratch);
-                Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH),
-                    "got " + _scratch.Utf8ToString() + " in=" + _input);
-                int len;
                 try
                 {
-                    // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
-                    len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
-                        _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
-                }
-                catch (Exception pe)
-                {
-                    var e = new CorruptIndexException("failed to parse int length (resource=" + _input + ")", pe);
-                    throw e;
-                }
+                    if (ord < 0 || ord >= _field.NumValues)
+                    {
+                        throw new IndexOutOfRangeException("ord must be 0 .. " + (_field.NumValues - 1) + "; got " + ord);
+                    }
 
-                result.Bytes = new byte[len];
-                result.Offset = 0;
-                result.Length = len;
-                _input.ReadBytes(result.Bytes, 0, len);
+                    _input.Seek(_field.DataStartFilePointer + ord * (9 + _field.Pattern.Length + _field.MaxLength));
+                    SimpleTextUtil.ReadLine(_input, _scratch);
+                    Debug.Assert(StringHelper.StartsWith(_scratch, SimpleTextDocValuesWriter.LENGTH),
+                        "got " + _scratch.Utf8ToString() + " in=" + _input);
+                    int len;
+                    try
+                    {
+                        // LUCNENENET: .NET doesn't have a way to specify a pattern with integer, but all of the standard ones are built in.
+                        len = int.Parse(Encoding.UTF8.GetString(_scratch.Bytes, _scratch.Offset + SimpleTextDocValuesWriter.LENGTH.Length,
+                            _scratch.Length - SimpleTextDocValuesWriter.LENGTH.Length), NumberStyles.Integer, CultureInfo.InvariantCulture);
+                    }
+                    catch (Exception pe)
+                    {
+                        var e = new CorruptIndexException("failed to parse int length (resource=" + _input + ")", pe);
+                        throw e;
+                    }
+
+                    result.Bytes = new byte[len];
+                    result.Offset = 0;
+                    result.Length = len;
+                    _input.ReadBytes(result.Bytes, 0, len);
+                }
+                catch (System.IO.IOException ioe)
+                {
+                    throw new Exception(ioe.ToString(), ioe);
+                }
             }
 
             public override long ValueCount

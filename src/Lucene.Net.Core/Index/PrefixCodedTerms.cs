@@ -78,9 +78,9 @@ namespace Lucene.Net.Index
                 {
                     input = new RAMInputStream("PrefixCodedTermsIterator", buffer);
                 }
-                catch (System.IO.IOException)
+                catch (System.IO.IOException e)
                 {
-                    throw;
+                    throw new Exception(e.ToString(), e);
                 }
             }
 
@@ -102,17 +102,25 @@ namespace Lucene.Net.Index
             {
                 if (input.FilePointer < input.Length)
                 {
-                    int code = input.ReadVInt32();
-                    if ((code & 1) != 0)
+                    try
                     {
-                        field = input.ReadString();
+                        int code = input.ReadVInt32();
+                        if ((code & 1) != 0)
+                        {
+                            field = input.ReadString();
+                        }
+                        int prefix = Number.URShift(code, 1);
+                        int suffix = input.ReadVInt32();
+                        bytes.Grow(prefix + suffix);
+                        input.ReadBytes(bytes.Bytes, prefix, suffix);
+                        bytes.Length = prefix + suffix;
+                        term.Set(field, bytes);
                     }
-                    int prefix = Number.URShift(code, 1);
-                    int suffix = input.ReadVInt32();
-                    bytes.Grow(prefix + suffix);
-                    input.ReadBytes(bytes.Bytes, prefix, suffix);
-                    bytes.Length = prefix + suffix;
-                    term.Set(field, bytes);
+                    catch (IOException e)
+                    {
+                        throw new Exception(e.ToString(), e);
+                    }
+
                     return true;
                 }
                 return false;
@@ -168,7 +176,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
             }
 
@@ -183,7 +191,7 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
             }
 

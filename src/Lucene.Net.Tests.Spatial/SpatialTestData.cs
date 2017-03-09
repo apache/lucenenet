@@ -54,7 +54,7 @@ namespace Lucene.Net.Spatial
                     SpatialTestData data = new SpatialTestData();
                     String[] vals = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
                     if (vals.Length != 3)
-                        throw new ArgumentException("bad format; expecting 3 tab-separated values for line: " + line);
+                        throw new Exception("bad format; expecting 3 tab-separated values for line: " + line);
                     data.id = vals[0];
                     data.name = vals[1];
                     try
@@ -63,7 +63,7 @@ namespace Lucene.Net.Spatial
                     }
                     catch (ParseException e)
                     {
-                        throw new SpatialTestException(e.Message, e);
+                        throw new Exception(e.ToString(), e);
                     }
                     results.Add(data);
                 }

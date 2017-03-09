@@ -151,7 +151,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.Message, e);
+                    throw new Exception(e.ToString(), e);
                 }
                 finally
                 {

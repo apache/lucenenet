@@ -48,10 +48,17 @@ namespace Lucene.Net.Expressions
             // TODO: might be cleaner to lazy-init 'source' and set scorer after?
 
             Debug.Assert(readerContext != null);
-            var context = new Dictionary<string, object>();
-            Debug.Assert(scorer != null);
-            context["scorer"] = scorer;
-            scores = source.GetValues(context, readerContext);
+            try
+            {
+                var context = new Dictionary<string, object>();
+                Debug.Assert(scorer != null);
+                context["scorer"] = scorer;
+                scores = source.GetValues(context, readerContext);
+            }
+            catch (System.IO.IOException e)
+            {
+                throw new Exception(e.ToString(), e);
+            }
         }
 
         public override int Compare(int slot1, int slot2)

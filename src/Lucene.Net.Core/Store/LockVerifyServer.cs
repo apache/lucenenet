@@ -178,6 +178,10 @@ namespace Lucene.Net.Store
                             }
                         }
                     }
+                    catch (IOException ioe)
+                    {
+                        throw new Exception(ioe.ToString(), ioe);
+                    }
                     catch (Exception e)
                     {
                         throw e;

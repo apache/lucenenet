@@ -111,7 +111,7 @@ namespace Lucene.Net.Store
                     }
                     catch (IOException e)
                     {
-                        throw new Exception(e.Message, e);
+                        throw new Exception(e.ToString(), e);
                     }
                 }
             }
@@ -150,7 +150,7 @@ namespace Lucene.Net.Store
                             {
                                 if (!e.Message.Contains("still open for writing"))
                                 {
-                                    throw new Exception(e.Message, e);
+                                    throw new Exception(e.ToString(), e);
                                 }
                             }
                             if (Random().NextBoolean())
@@ -161,7 +161,7 @@ namespace Lucene.Net.Store
                     }
                     catch (IOException e)
                     {
-                        throw new Exception(e.Message, e);
+                        throw new Exception(e.ToString(), e);
                     }
                 }
             }

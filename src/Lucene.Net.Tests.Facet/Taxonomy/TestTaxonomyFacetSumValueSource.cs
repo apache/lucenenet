@@ -401,7 +401,7 @@ namespace Lucene.Net.Facet.Taxonomy
                     }
                     catch (IOException exception)
                     {
-                        throw new Exception(exception.Message, exception);
+                        throw new Exception(exception.ToString(), exception);
                     }
                 }
             }

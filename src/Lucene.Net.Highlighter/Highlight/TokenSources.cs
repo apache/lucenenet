@@ -344,7 +344,7 @@ namespace Lucene.Net.Search.Highlight
             }
             catch (IOException ex)
             {
-                throw new Exception(ex.Message, ex);
+                throw new Exception(ex.ToString(), ex);
             }
         }
     }

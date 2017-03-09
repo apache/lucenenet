@@ -472,7 +472,14 @@ namespace Lucene.Net.Codecs.Memory
                     buffer = ArrayUtil.Grow(buffer, maxSize);
                 }
 
-                EncodeValues(count);
+                try
+                {
+                    EncodeValues(count);
+                }
+                catch (System.IO.IOException bogus)
+                {
+                    throw new Exception(bogus.ToString(), bogus);
+                }
 
                 _current.Bytes = buffer;
                 _current.Offset = 0;
