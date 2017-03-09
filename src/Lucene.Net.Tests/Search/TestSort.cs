@@ -1268,8 +1268,8 @@ namespace Lucene.Net.Search
             TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
             Assert.AreEqual(2, td.TotalHits);
             // numeric order
-            Assert.AreEqual("0", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
-            Assert.AreEqual("0", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
+            Assert.AreEqual("-0", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+            Assert.AreEqual("+0", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 
             ir.Dispose();
             dir.Dispose();
