@@ -312,6 +312,11 @@ namespace Lucene.Net.Spatial.Serialized
                     }
                 }
 
+                public override Explanation Explain(int doc)
+                {
+                    return new Explanation(float.NaN, ToString(doc));
+                }
+
                 public override string ToString(int doc)
                 {
                     return outerInstance.GetDescription() + "=" + ObjectVal(doc);//TODO truncate?
