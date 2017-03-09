@@ -1,10 +1,11 @@
-using System;
+using NUnit.Framework;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using System;
+using System.Globalization;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using CollectionStatistics = Lucene.Net.Search.CollectionStatistics;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
@@ -41,8 +42,8 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestCustomNorms : LuceneTestCase
     {
-        internal readonly string FloatTestField = "normsTestFloat";
-        internal readonly string ExceptionTestField = "normsTestExcp";
+        internal readonly string floatTestField = "normsTestFloat";
+        internal readonly string exceptionTestField = "normsTestExcp";
 
         [Test]
         public virtual void TestFloatNorms()
@@ -60,14 +61,14 @@ namespace Lucene.Net.Index
             for (int i = 0; i < num; i++)
             {
                 Document doc = docs.NextDoc();
-                float nextFloat = (float)Random().NextDouble();
+                float nextFloat = Random().nextFloat();
                 // Cast to a double to get more precision output to the string.
-                Field f = new TextField(FloatTestField, "" + (double)nextFloat, Field.Store.YES);
+                Field f = new TextField(floatTestField, "" + ((double)nextFloat).ToString(CultureInfo.InvariantCulture), Field.Store.YES);
                 f.Boost = nextFloat;
 
                 doc.Add(f);
                 writer.AddDocument(doc);
-                doc.RemoveField(FloatTestField);
+                doc.RemoveField(floatTestField);
                 if (Rarely())
                 {
                     writer.Commit();
@@ -76,12 +77,12 @@ namespace Lucene.Net.Index
             writer.Commit();
             writer.Dispose();
             AtomicReader open = SlowCompositeReaderWrapper.Wrap(DirectoryReader.Open(dir));
-            NumericDocValues norms = open.GetNormValues(FloatTestField);
+            NumericDocValues norms = open.GetNormValues(floatTestField);
             Assert.IsNotNull(norms);
             for (int i = 0; i < open.MaxDoc; i++)
             {
                 Document document = open.Document(i);
-                float expected = Convert.ToSingle(document.Get(FloatTestField));
+                float expected = Convert.ToSingle(document.Get(floatTestField), CultureInfo.InvariantCulture);
                 Assert.AreEqual(expected, Number.Int32BitsToSingle((int)norms.Get(i)), 0.0f);
             }
             open.Dispose();
@@ -91,11 +92,11 @@ namespace Lucene.Net.Index
 
         public class MySimProvider : PerFieldSimilarityWrapper
         {
-            private readonly TestCustomNorms OuterInstance;
+            private readonly TestCustomNorms outerInstance;
 
             public MySimProvider(TestCustomNorms outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             internal Similarity @delegate = new DefaultSimilarity();
@@ -107,7 +108,7 @@ namespace Lucene.Net.Index
 
             public override Similarity Get(string field)
             {
-                if (OuterInstance.FloatTestField.Equals(field))
+                if (outerInstance.floatTestField.Equals(field, StringComparison.Ordinal))
                 {
                     return new FloatEncodingBoostSimilarity();
                 }
