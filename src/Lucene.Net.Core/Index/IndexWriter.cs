@@ -2163,6 +2163,11 @@ namespace Lucene.Net.Index
                             int size = mergeExceptions.Count;
                             for (int i = 0; i < size; i++)
                             {
+                                // LUCENENET TODO: Perhaps it would make more sense to throw an Exception (IOException??)
+                                // that has an AggregateException passed as its innerException argument.
+                                // But, need to investigate what type of exceptions this should throw and make sure 
+                                // the exception thrown here is caught in the right places, if necessary.
+
                                 MergePolicy.OneMerge merge = mergeExceptions[i];
                                 if (merge.MaxNumSegments != -1)
                                 {
