@@ -270,16 +270,14 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual string GetStringValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return m_fieldsData == null ? null : m_fieldsData.ToString();
-
-            /*if (FieldsData is string || FieldsData is Number)
+            if (m_fieldsData is string || m_fieldsData is int || m_fieldsData is float || m_fieldsData is double || m_fieldsData is long)
             {
-            return FieldsData.ToString();
+                return m_fieldsData.ToString();
             }
             else
             {
                 return null;
-            }*/
+            }
         }
 
         /// <summary>
