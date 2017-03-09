@@ -84,7 +84,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public void RemoveField(string name)
         {
-            for (int i = 0; i < fields.Count - 1; i++)
+            for (int i = 0; i < fields.Count; i++)
             {
                 IIndexableField field = fields[i];
 
