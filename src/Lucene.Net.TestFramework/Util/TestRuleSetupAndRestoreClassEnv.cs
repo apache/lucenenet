@@ -266,7 +266,7 @@ namespace Lucene.Net.Util
             //TimeZoneInfo.ConvertTime() // LUCENENET TODO: Everywhere TimeZoneInfo is supposed to be used, use this method to convert a dateTime object to the time zone
 
             similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(random);
-            
+
             // Check codec restrictions once at class level.
             try
             {

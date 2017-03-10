@@ -325,8 +325,9 @@ namespace Lucene.Net.Util
             //}
 
             Assert.IsFalse(names.Any(), names.Count() + " members that are type nullable enum detected. " +
-                "Nullable enum parameters, fields, methods, and properties should be eliminated, either by " +
-                "eliminating the logic that depends on 'null' or by adding a NOT_SET=0 state to the enum.");
+                "Nullable enum parameters, fields, methods, and properties should be eliminated (where possible), either by " +
+                "eliminating the logic that depends on 'null'. Sometimes, it makes sense to keep a nullable enum parameter. " +
+                "In those cases, mark the member with the [ExceptionToNullableEnumConvention] attribute.");
         }
 
         //[Test, LuceneNetSpecific]
@@ -865,6 +866,12 @@ namespace Lucene.Net.Util
                 foreach (var member in members)
                 {
                     if (member.Name.StartsWith("<")) // Ignore auto-generated methods
+                    {
+                        continue;
+                    }
+
+                    // Ignore properties, methods, and events with IgnoreNetNumericConventionAttribute
+                    if (System.Attribute.IsDefined(member, typeof(ExceptionToNullableEnumConvention)))
                     {
                         continue;
                     }
