@@ -85,10 +85,10 @@ namespace Lucene.Net.Spatial
 
         public override void SetUp()
         {
-            base.SetUp();
             SpatialStrategy strategy = ((Param)(RandomInts.RandomFrom(Random(), Parameters()))[0]).strategy;
             this.ctx = strategy.SpatialContext;
             this.strategy = strategy;
+            base.SetUp();
         }
 
 
