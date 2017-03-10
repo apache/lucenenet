@@ -485,6 +485,14 @@ namespace Lucene.Net.Util
                 seen.Add(ob);
 
                 Type obClazz = ob.GetType();
+
+                if (obClazz.Equals(typeof(string)))
+                {
+                    // LUCENENET specific - we can get a closer estimate of a string
+                    // by using simple math. Reference: http://stackoverflow.com/a/8171099.
+                    // This fixes the TestSanity test.
+                    totalSize += (2 * (((string)ob).Length + 1));
+                }
                 if (obClazz.IsArray)
                 {
                     /*
