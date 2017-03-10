@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
@@ -115,6 +116,7 @@ namespace Lucene.Net.Codecs.SimpleText
             
             private readonly BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> _fstEnum;
 
+            [ExceptionToNullableEnumConvention]
             public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance,
                 FST<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> fst, IndexOptions? indexOptions)
             {

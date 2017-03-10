@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -157,9 +158,10 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
+        [ExceptionToNullableEnumConvention]
         public virtual Index.DocValuesType? DocValuesType(string dvType)
         {
-            return "false".Equals(dvType) ? null : (Index.DocValuesType?)Enum.Parse(typeof(Index.DocValuesType), dvType);
+            return "false".Equals(dvType) ? null : (Index.DocValuesType?)Enum.Parse(typeof(Index.DocValuesType), dvType, true);
         }
 
         private string ReadString(int offset, BytesRef scratch)
