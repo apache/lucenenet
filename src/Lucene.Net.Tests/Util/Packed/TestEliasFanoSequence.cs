@@ -306,7 +306,7 @@ namespace Lucene.Net.Util.Packed
 
 #if !NETSTANDARD
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(50000)]
+        [Timeout(120000)]
 #endif
         [Test, LongRunningTest, HasTimeout, LuceneNetSpecific]
         public virtual void TestMonotoneSequencesLonger()

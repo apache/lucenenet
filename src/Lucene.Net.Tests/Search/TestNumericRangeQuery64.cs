@@ -1,11 +1,11 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
+using NUnit.Framework;
 using System;
 using System.Diagnostics;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Index;
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -709,7 +709,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestSorting_8bit()
         {
             TestSorting(8);
