@@ -2326,7 +2326,8 @@ namespace Lucene.Net.Index
                 }
                 int numValues = TestUtil.NextInt(Random(), 0, maxValuesPerDoc);
                 // create a random set of strings
-                SortedSet<string> values = new SortedSet<string>();
+                // LUCENENET specific: Must use natural comparator to ensure culture insensitive sort order.
+                SortedSet<string> values = new SortedSet<string>(Util.ArrayUtil.GetNaturalComparer<string>());
                 for (int v = 0; v < numValues; v++)
                 {
                     values.Add(TestUtil.RandomSimpleString(Random(), length));
