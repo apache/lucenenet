@@ -60,7 +60,8 @@ namespace Lucene.Net.Search
         private IndexReader Reader;
         private IndexSearcher Searcher;
 
-        internal bool SupportsDocValues = Codec.Default.Name.Equals("Lucene3x") == false;
+        // LUCENENET specific - need to execute this AFTER the base setup, or it won't be right
+        //internal bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x") == false;
         private int Iter;
         private IList<SortField> AllSortFields;
 
@@ -68,6 +69,10 @@ namespace Lucene.Net.Search
         public override void SetUp()
         {
             base.SetUp();
+
+            // LUCENENET specific: Moved this logic here to ensure that it is executed
+            // after the class is setup - a field is way to early to execute this.
+            bool supportsDocValues = Codec.Default.Name.Equals("Lucene3x") == false;
 
             AllSortFields = new List<SortField>(Arrays.AsList(new SortField[] {
 #pragma warning disable 612,618
@@ -94,9 +99,20 @@ namespace Lucene.Net.Search
                 SortField.FIELD_DOC
             }));
 
-            if (SupportsDocValues)
+            if (supportsDocValues)
             {
-                AllSortFields.AddRange(Arrays.AsList(new SortField[] { new SortField("intdocvalues", SortFieldType.INT32, false), new SortField("floatdocvalues", SortFieldType.SINGLE, false), new SortField("sortedbytesdocvalues", SortFieldType.STRING, false), new SortField("sortedbytesdocvaluesval", SortFieldType.STRING_VAL, false), new SortField("straightbytesdocvalues", SortFieldType.STRING_VAL, false), new SortField("intdocvalues", SortFieldType.INT32, true), new SortField("floatdocvalues", SortFieldType.SINGLE, true), new SortField("sortedbytesdocvalues", SortFieldType.STRING, true), new SortField("sortedbytesdocvaluesval", SortFieldType.STRING_VAL, true), new SortField("straightbytesdocvalues", SortFieldType.STRING_VAL, true) }));
+                AllSortFields.AddRange(Arrays.AsList(new SortField[] {
+                    new SortField("intdocvalues", SortFieldType.INT32, false),
+                    new SortField("floatdocvalues", SortFieldType.SINGLE, false),
+                    new SortField("sortedbytesdocvalues", SortFieldType.STRING, false),
+                    new SortField("sortedbytesdocvaluesval", SortFieldType.STRING_VAL, false),
+                    new SortField("straightbytesdocvalues", SortFieldType.STRING_VAL, false),
+                    new SortField("intdocvalues", SortFieldType.INT32, true),
+                    new SortField("floatdocvalues", SortFieldType.SINGLE, true),
+                    new SortField("sortedbytesdocvalues", SortFieldType.STRING, true),
+                    new SortField("sortedbytesdocvaluesval", SortFieldType.STRING_VAL, true),
+                    new SortField("straightbytesdocvalues", SortFieldType.STRING_VAL, true)
+                }));
             }
 
             // Also test missing first / last for the "string" sorts:
@@ -164,7 +180,7 @@ namespace Lucene.Net.Search
                 fields.Add(NewStringField("bytesval", TestUtil.RandomRealisticUnicodeString(Random()), Field.Store.NO));
                 fields.Add(new DoubleField("double", Random().NextDouble(), Field.Store.NO));
 
-                if (SupportsDocValues)
+                if (supportsDocValues)
                 {
                     fields.Add(new NumericDocValuesField("intdocvalues", Random().Next()));
                     fields.Add(new SingleDocValuesField("floatdocvalues", (float)Random().NextDouble()));
