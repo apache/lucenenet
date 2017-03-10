@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
@@ -234,6 +235,7 @@ namespace Lucene.Net.Index.Sorter
             this.sort = sort;
         }
 
+        [ExceptionToNullableEnumConvention]
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
         {
             return SortedMergeSpecification(@in.FindMerges(mergeTrigger, segmentInfos));
