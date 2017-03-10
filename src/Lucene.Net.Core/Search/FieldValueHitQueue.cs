@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
                 return hitA.Doc > hitB.Doc;
             }
 
-            public override bool LessThan(Entry a, Entry b)
+            public override bool LessThan(Entry a, Entry b) // LUCENENET TODO: Calls itself (remove?)
             {
                 return LessThan(a, b);
             }
@@ -129,7 +129,7 @@ namespace Lucene.Net.Search
                 return hitA.Doc > hitB.Doc;
             }
 
-            public override bool LessThan(Entry a, Entry b)
+            public override bool LessThan(Entry a, Entry b) // LUCENENET TODO: Calls itself (remove?)
             {
                 return LessThan(a, b);
             }

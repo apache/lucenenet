@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this may return null if the field does not exist. </summary>
-        public Terms Terms(string field)
+        public Terms Terms(string field) // LUCENENET TODO: Change to GetTerms()
         {
             Fields fields = Fields;
             if (fields == null)
@@ -203,7 +203,7 @@ namespace Lucene.Net.Index
         ///  this will return null if either the field or
         ///  term does not exist. </summary>
         ///  <seealso cref= TermsEnum#docs(Bits, DocsEnum)  </seealso>
-        public DocsEnum TermDocsEnum(Term term)
+        public DocsEnum TermDocsEnum(Term term) // LUCENENET TODO: Change to GetTermDocsEnum()
         {
             Debug.Assert(term.Field != null);
             Debug.Assert(term.Bytes != null);

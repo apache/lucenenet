@@ -549,7 +549,7 @@ namespace Lucene.Net.Search
         {
             if (sort == null)
             {
-                throw new System.NullReferenceException("Sort must not be null");
+                throw new System.NullReferenceException("Sort must not be null"); // LUCENENET TODO: Should this be ArgumentNullException??
             }
 
             int limit = reader.MaxDoc;

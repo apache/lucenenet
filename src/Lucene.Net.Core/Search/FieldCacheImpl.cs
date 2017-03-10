@@ -260,7 +260,7 @@ namespace Lucene.Net.Search
                 object readerKey = reader.CoreCacheKey;
                 lock (readerCache)
                 {
-                    innerCache = readerCache[readerKey];
+                    innerCache = readerCache[readerKey]; // LUCENENET TODO: Possible exception
                     if (innerCache == null)
                     {
                         // First time this reader is using FieldCache
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected abstract TermsEnum TermsEnum(Terms terms);
+            protected abstract TermsEnum TermsEnum(Terms terms); // LUCENENET TODO: Change to GetTermsEnum()
 
             protected abstract void VisitTerm(BytesRef term);
 
