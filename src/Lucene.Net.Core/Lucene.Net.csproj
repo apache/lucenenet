@@ -666,6 +666,7 @@
     <Compile Include="Support\ReentrantLock.cs" />
     <Compile Include="Support\SafeTextWriterWrapper.cs" />
     <Compile Include="Support\SetExtensions.cs" />
+    <Compile Include="Support\SignedZeroComparer.cs" />
     <Compile Include="Support\StreamUtils.cs" />
     <Compile Include="Support\StringBuilderExtensions.cs" />
     <Compile Include="Support\StringCharacterIterator.cs" />

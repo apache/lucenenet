@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
@@ -725,6 +726,38 @@ namespace Lucene.Net.Search
             Assert.AreEqual("4.2", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
             Assert.AreEqual("30.1", searcher.Doc(td.ScoreDocs[2].Doc).Get("value"));
             AssertNoFieldCaches();
+
+            ir.Dispose();
+            dir.Dispose();
+        }
+
+        /// <summary>
+        /// Tests sorting on type double with +/- zero </summary>
+        [Test, LuceneNetSpecific]
+        public virtual void TestFloatSignedZero()
+        {
+            Directory dir = NewDirectory();
+            RandomIndexWriter writer = new RandomIndexWriter(Random(), dir, Similarity, TimeZone);
+            Document doc = new Document();
+            doc.Add(new SingleDocValuesField("value", +0f));
+            doc.Add(NewStringField("value", "+0", Field.Store.YES));
+            writer.AddDocument(doc);
+            doc = new Document();
+            doc.Add(new SingleDocValuesField("value", -0f));
+            doc.Add(NewStringField("value", "-0", Field.Store.YES));
+            writer.AddDocument(doc);
+            doc = new Document();
+            IndexReader ir = writer.Reader;
+            writer.Dispose();
+
+            IndexSearcher searcher = NewSearcher(ir);
+            Sort sort = new Sort(new SortField("value", SortFieldType.SINGLE));
+
+            TopDocs td = searcher.Search(new MatchAllDocsQuery(), 10, sort);
+            Assert.AreEqual(2, td.TotalHits);
+            // numeric order
+            Assert.AreEqual("-0", searcher.Doc(td.ScoreDocs[0].Doc).Get("value"));
+            Assert.AreEqual("+0", searcher.Doc(td.ScoreDocs[1].Doc).Get("value"));
 
             ir.Dispose();
             dir.Dispose();

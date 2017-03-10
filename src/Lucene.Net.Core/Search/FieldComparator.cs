@@ -317,6 +317,11 @@ namespace Lucene.Net.Search
         /// <returns> value in this slot </returns>
         public abstract IComparable this[int slot] { get; }
 
+
+        internal static readonly IComparer<double> SIGNED_ZERO_COMPARER = new SignedZeroComparer();
+
+        
+
         /// <summary>
         /// Base FieldComparer class for numeric types
         /// </summary>
@@ -461,7 +466,20 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                return values[slot1].CompareTo(values[slot2]);
+                double v1 = values[slot1];
+                double v2 = values[slot2];
+
+                int c = v1.CompareTo(v2);
+
+                if (c == 0 && v1 == 0)
+                {
+                    // LUCENENET specific special case:
+                    // In case of zero, we may have a "positive 0" or "negative 0"
+                    // to tie-break.
+                    c = SIGNED_ZERO_COMPARER.Compare(v1, v2);
+                }
+
+                return c;
             }
 
             public override int CompareBottom(int doc)
@@ -549,7 +567,20 @@ namespace Lucene.Net.Search
 
             public override int Compare(int slot1, int slot2)
             {
-                return values[slot1].CompareTo(values[slot2]);
+                float v1 = values[slot1];
+                float v2 = values[slot2];
+
+                int c = v1.CompareTo(v2);
+
+                if (c == 0 && v1 == 0)
+                {
+                    // LUCENENET specific special case:
+                    // In case of zero, we may have a "positive 0" or "negative 0"
+                    // to tie-break.
+                    c = SIGNED_ZERO_COMPARER.Compare(v1, v2);
+                }
+
+                return c;
             }
 
             public override int CompareBottom(int doc)

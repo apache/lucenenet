@@ -653,7 +653,10 @@ namespace Lucene.Net.Search
                 // LUCENENET: We parse to double first and then cast to float, which allows us to parse 
                 // double.MaxValue.ToString("R") (resulting in Infinity). This is how it worked in Java
                 // and the TestFieldCache.TestInfoStream() test depends on this behavior to pass.
-                return (float)double.Parse(term.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
+
+                // We also need to use the same logic as DEFAULT_DOUBLE_PARSER to ensure we have signed zero
+                // support, so just call it directly rather than duplicating the logic here.
+                return (float)DEFAULT_DOUBLE_PARSER.ParseDouble(term);
             }
 
             public TermsEnum TermsEnum(Terms terms)
@@ -707,7 +710,18 @@ namespace Lucene.Net.Search
                 // UTF8 bytes... but really users should use
                 // DoubleField, instead, which already decodes
                 // directly from byte[]
-                return double.Parse(term.Utf8ToString(), NumberStyles.Float, CultureInfo.InvariantCulture);
+                string text = term.Utf8ToString();
+                double value = double.Parse(text, NumberStyles.Float, CultureInfo.InvariantCulture);
+
+                // LUCENENET specific special case - check whether a negative
+                // zero was passed in and, if so, convert the sign. Unfotunately, double.Parse()
+                // doesn't take care of this for us.
+                if (value == 0 && text.TrimStart().StartsWith("-", StringComparison.Ordinal))
+                {
+                    value = -0d; // Hard-coding the value in case double.Parse() works right someday (which would break if we did value * -1)
+                }
+
+                return value;
             }
 
             public TermsEnum TermsEnum(Terms terms)
