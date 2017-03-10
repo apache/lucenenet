@@ -761,7 +761,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     for (int i = 0; i < visibleUpto; i++)
                     {
                         Input input = inputs.ElementAt(i);
-                        string[] inputTerms = Regex.Split(input.term.Utf8ToString(), "\\s");
+                        string[] inputTerms = Regex.Split(input.term.Utf8ToString(), "\\s", RegexOptions.Compiled);
                         bool match = false;
                         for (int j = 0; j < queryTerms.Length; j++)
                         {
@@ -770,7 +770,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                                 // Exact match
                                 for (int k = 0; k < inputTerms.Length; k++)
                                 {
-                                    if (inputTerms[k].equals(queryTerms[j]))
+                                    if (inputTerms[k].Equals(queryTerms[j], StringComparison.Ordinal))
                                     {
                                         match = true;
                                         break;
@@ -890,7 +890,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     if (j < queryTerms.Length - 1 || lastPrefix == false)
                     {
                         //System.out.println("      check exact");
-                        if (inputTerm.Equals(queryTerm))
+                        if (inputTerm.Equals(queryTerm, StringComparison.Ordinal))
                         {
                             b.Append("<b>");
                             b.Append(inputTerm);
@@ -899,7 +899,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                             break;
                         }
                     }
-                    else if (inputTerm.StartsWith(queryTerm))
+                    else if (inputTerm.StartsWith(queryTerm, StringComparison.Ordinal))
                     {
                         b.Append("<b>");
                         b.Append(queryTerm);
