@@ -1639,8 +1639,8 @@ namespace Lucene.Net.Util.Fst
             Random random = Random();
             int numWords = AtLeast(1000);
 
-            SortedDictionary<string, long> slowCompletor = new SortedDictionary<string, long>();
-            SortedSet<string> allPrefixes = new SortedSet<string>();
+            SortedDictionary<string, long> slowCompletor = new SortedDictionary<string, long>(ArrayUtil.STRING_ORDINAL_COMPARER);
+            SortedSet<string> allPrefixes = new SortedSet<string>(ArrayUtil.STRING_ORDINAL_COMPARER);
 
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
@@ -1708,7 +1708,7 @@ namespace Lucene.Net.Util.Fst
                 // TODO: could be faster... but its slowCompletor for a reason
                 foreach (KeyValuePair<string, long> e in slowCompletor)
                 {
-                    if (e.Key.StartsWith(prefix))
+                    if (e.Key.StartsWith(prefix, StringComparison.Ordinal))
                     {
                         //System.out.println("  consider " + e.getKey());
                         matches.Add(new Util.Result<long?>(Util.ToInt32sRef(new BytesRef(e.Key.Substring(prefix.Length)), new Int32sRef()), e.Value - prefixOutput));
@@ -1778,8 +1778,8 @@ namespace Lucene.Net.Util.Fst
         {
             int numWords = AtLeast(1000);
 
-            SortedDictionary<string, TwoLongs> slowCompletor = new SortedDictionary<string, TwoLongs>();
-            SortedSet<string> allPrefixes = new SortedSet<string>();
+            SortedDictionary<string, TwoLongs> slowCompletor = new SortedDictionary<string, TwoLongs>(ArrayUtil.STRING_ORDINAL_COMPARER);
+            SortedSet<string> allPrefixes = new SortedSet<string>(ArrayUtil.STRING_ORDINAL_COMPARER);
 
             PairOutputs<long?, long?> outputs = new PairOutputs<long?, long?>(PositiveInt32Outputs.Singleton, PositiveInt32Outputs.Singleton); // output -  weight
             Builder<Pair> builder = new Builder<Pair>(FST.INPUT_TYPE.BYTE1, outputs);
@@ -1850,7 +1850,7 @@ namespace Lucene.Net.Util.Fst
                 // TODO: could be faster... but its slowCompletor for a reason
                 foreach (KeyValuePair<string, TwoLongs> e in slowCompletor)
                 {
-                    if (e.Key.StartsWith(prefix))
+                    if (e.Key.StartsWith(prefix, StringComparison.Ordinal))
                     {
                         //System.out.println("  consider " + e.getKey());
                         matches.Add(new Util.Result<Pair>(Util.ToInt32sRef(new BytesRef(e.Key.Substring(prefix.Length)), new Int32sRef()),
