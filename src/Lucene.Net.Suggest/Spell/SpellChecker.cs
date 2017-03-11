@@ -516,7 +516,7 @@ namespace Lucene.Net.Search.Spell
                     {
                         foreach (AtomicReaderContext ctx in reader.Leaves)
                         {
-                            Terms terms = ctx.AtomicReader.Terms(F_WORD);
+                            Terms terms = ctx.AtomicReader.GetTerms(F_WORD);
                             if (terms != null)
                             {
                                 termsEnums.Add(terms.GetIterator(null));

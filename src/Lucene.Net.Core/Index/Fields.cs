@@ -48,8 +48,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get the <seealso cref="GetTerms"/> for this field.  this will return
-        ///  null if the field does not exist.
+        /// Get the <see cref="Terms"/> for this field.  this will return
+        /// null if the field does not exist.
         /// </summary>
         public abstract Terms GetTerms(string field);
 

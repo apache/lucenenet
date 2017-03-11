@@ -418,10 +418,10 @@ namespace Lucene.Net.Index
             Assert.IsNull(pr.Document(0).Get("f4"));
             // check that fields are there
             AtomicReader slow = SlowCompositeReaderWrapper.Wrap(pr);
-            Assert.IsNotNull(slow.Terms("f1"));
-            Assert.IsNotNull(slow.Terms("f2"));
-            Assert.IsNotNull(slow.Terms("f3"));
-            Assert.IsNotNull(slow.Terms("f4"));
+            Assert.IsNotNull(slow.GetTerms("f1"));
+            Assert.IsNotNull(slow.GetTerms("f2"));
+            Assert.IsNotNull(slow.GetTerms("f3"));
+            Assert.IsNotNull(slow.GetTerms("f4"));
             pr.Dispose();
 
             // no stored fields at all
@@ -432,10 +432,10 @@ namespace Lucene.Net.Index
             Assert.IsNull(pr.Document(0).Get("f4"));
             // check that fields are there
             slow = SlowCompositeReaderWrapper.Wrap(pr);
-            Assert.IsNull(slow.Terms("f1"));
-            Assert.IsNull(slow.Terms("f2"));
-            Assert.IsNotNull(slow.Terms("f3"));
-            Assert.IsNotNull(slow.Terms("f4"));
+            Assert.IsNull(slow.GetTerms("f1"));
+            Assert.IsNull(slow.GetTerms("f2"));
+            Assert.IsNotNull(slow.GetTerms("f3"));
+            Assert.IsNotNull(slow.GetTerms("f4"));
             pr.Dispose();
 
             // without overlapping
@@ -446,10 +446,10 @@ namespace Lucene.Net.Index
             Assert.IsNull(pr.Document(0).Get("f4"));
             // check that fields are there
             slow = SlowCompositeReaderWrapper.Wrap(pr);
-            Assert.IsNull(slow.Terms("f1"));
-            Assert.IsNull(slow.Terms("f2"));
-            Assert.IsNotNull(slow.Terms("f3"));
-            Assert.IsNotNull(slow.Terms("f4"));
+            Assert.IsNull(slow.GetTerms("f1"));
+            Assert.IsNull(slow.GetTerms("f2"));
+            Assert.IsNotNull(slow.GetTerms("f3"));
+            Assert.IsNotNull(slow.GetTerms("f4"));
             pr.Dispose();
 
             // no main readers

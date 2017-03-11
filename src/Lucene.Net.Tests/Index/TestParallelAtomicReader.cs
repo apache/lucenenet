@@ -223,10 +223,10 @@ namespace Lucene.Net.Index
             Assert.IsNull(pr.Document(0).Get("f3"));
             Assert.IsNull(pr.Document(0).Get("f4"));
             // check that fields are there
-            Assert.IsNotNull(pr.Terms("f1"));
-            Assert.IsNotNull(pr.Terms("f2"));
-            Assert.IsNotNull(pr.Terms("f3"));
-            Assert.IsNotNull(pr.Terms("f4"));
+            Assert.IsNotNull(pr.GetTerms("f1"));
+            Assert.IsNotNull(pr.GetTerms("f2"));
+            Assert.IsNotNull(pr.GetTerms("f3"));
+            Assert.IsNotNull(pr.GetTerms("f4"));
             pr.Dispose();
 
             // no stored fields at all
@@ -236,10 +236,10 @@ namespace Lucene.Net.Index
             Assert.IsNull(pr.Document(0).Get("f3"));
             Assert.IsNull(pr.Document(0).Get("f4"));
             // check that fields are there
-            Assert.IsNull(pr.Terms("f1"));
-            Assert.IsNull(pr.Terms("f2"));
-            Assert.IsNotNull(pr.Terms("f3"));
-            Assert.IsNotNull(pr.Terms("f4"));
+            Assert.IsNull(pr.GetTerms("f1"));
+            Assert.IsNull(pr.GetTerms("f2"));
+            Assert.IsNotNull(pr.GetTerms("f3"));
+            Assert.IsNotNull(pr.GetTerms("f4"));
             pr.Dispose();
 
             // without overlapping
@@ -249,10 +249,10 @@ namespace Lucene.Net.Index
             Assert.IsNull(pr.Document(0).Get("f3"));
             Assert.IsNull(pr.Document(0).Get("f4"));
             // check that fields are there
-            Assert.IsNull(pr.Terms("f1"));
-            Assert.IsNull(pr.Terms("f2"));
-            Assert.IsNotNull(pr.Terms("f3"));
-            Assert.IsNotNull(pr.Terms("f4"));
+            Assert.IsNull(pr.GetTerms("f1"));
+            Assert.IsNull(pr.GetTerms("f2"));
+            Assert.IsNotNull(pr.GetTerms("f3"));
+            Assert.IsNotNull(pr.GetTerms("f4"));
             pr.Dispose();
 
             // no main readers

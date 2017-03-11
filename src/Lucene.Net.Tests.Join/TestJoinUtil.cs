@@ -707,7 +707,7 @@ namespace Lucene.Net.Tests.Join
                     if (scoreDocsInOrder)
                     {
                         AtomicReader slowCompositeReader = SlowCompositeReaderWrapper.Wrap(toSearcher.IndexReader);
-                        Terms terms = slowCompositeReader.Terms(toField);
+                        Terms terms = slowCompositeReader.GetTerms(toField);
                         if (terms != null)
                         {
                             DocsEnum docsEnum = null;

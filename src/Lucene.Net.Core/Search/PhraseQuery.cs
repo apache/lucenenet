@@ -338,7 +338,7 @@ namespace Lucene.Net.Search
                 IBits liveDocs = acceptDocs;
                 PostingsAndFreq[] postingsFreqs = new PostingsAndFreq[outerInstance.terms.Count];
 
-                Terms fieldTerms = reader.Terms(outerInstance.field);
+                Terms fieldTerms = reader.GetTerms(outerInstance.field);
                 if (fieldTerms == null)
                 {
                     return null;

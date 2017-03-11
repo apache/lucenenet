@@ -1297,7 +1297,7 @@ namespace Lucene.Net.Index
             foreach (KeyValuePair<string, string> entry in entrySet)
             {
                 // pk lookup
-                DocsEnum termDocsEnum = slowR.TermDocsEnum(new Term("id", entry.Key));
+                DocsEnum termDocsEnum = slowR.GetTermDocsEnum(new Term("id", entry.Key));
                 int docId = termDocsEnum.NextDoc();
                 expected = new BytesRef(entry.Value);
                 docValues.Get(docId, actual);

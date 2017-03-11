@@ -524,7 +524,7 @@ namespace Lucene.Net.Search
             {
                 bool nullBitset = Random().Next(10) == 5;
                 AtomicReader reader = context.AtomicReader;
-                DocsEnum termDocsEnum = reader.TermDocsEnum(new Term("field", "0"));
+                DocsEnum termDocsEnum = reader.GetTermDocsEnum(new Term("field", "0"));
                 if (termDocsEnum == null)
                 {
                     return null; // no docs -- return null
@@ -590,7 +590,7 @@ namespace Lucene.Net.Search
                 public override DocIdSetIterator GetIterator()
                 {
                     Assert.IsTrue(NullBitset, "iterator should not be called if bitset is present");
-                    return Reader.TermDocsEnum(new Term("field", "0"));
+                    return Reader.GetTermDocsEnum(new Term("field", "0"));
                 }
             }
         }
@@ -666,7 +666,7 @@ namespace Lucene.Net.Search
 
                 public override DocIdSetIterator GetIterator()
                 {
-                    DocsEnum termDocsEnum = ((AtomicReader)Context.Reader).TermDocsEnum(new Term("field", "0"));
+                    DocsEnum termDocsEnum = ((AtomicReader)Context.Reader).GetTermDocsEnum(new Term("field", "0"));
                     if (termDocsEnum == null)
                     {
                         return null;

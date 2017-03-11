@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
             {
                 if (info.IsIndexed)
                 {
-                    reader.Terms(info.Name);
+                    reader.GetTerms(info.Name);
                     indexedCount++;
 
                     if (info.HasNorms)

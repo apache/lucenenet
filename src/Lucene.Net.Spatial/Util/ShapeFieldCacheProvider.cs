@@ -70,7 +70,7 @@ namespace Lucene.Net.Spatial.Util
                 idx = new ShapeFieldCache<T>(reader.MaxDoc, m_defaultSize);
                 int count = 0;
                 DocsEnum docs = null;
-                Terms terms = reader.Terms(m_shapeField);
+                Terms terms = reader.GetTerms(m_shapeField);
                 TermsEnum te = null;
                 if (terms != null)
                 {

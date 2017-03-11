@@ -132,7 +132,7 @@ namespace Lucene.Net.Index.Memory
             foreach (string field in competitor.Fields)
             {
                 Terms memTerms = memFields.GetTerms(field);
-                Terms iwTerms = memIndexReader.Terms(field);
+                Terms iwTerms = memIndexReader.GetTerms(field);
                 if (iwTerms == null)
                 {
                     assertNull(memTerms);
@@ -328,7 +328,7 @@ namespace Lucene.Net.Index.Memory
             assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
 
             // now reuse and check again
-            TermsEnum te = reader.Terms("foo").GetIterator(null);
+            TermsEnum te = reader.GetTerms("foo").GetIterator(null);
             assertTrue(te.SeekExact(new BytesRef("bar")));
             disi = te.Docs(null, disi, DocsFlags.NONE);
             docid = disi.DocID;
@@ -359,8 +359,8 @@ namespace Lucene.Net.Index.Memory
             { // check reuse
                 memory.AddField("foo", "bar", analyzer);
                 AtomicReader reader = (AtomicReader)memory.CreateSearcher().IndexReader;
-                assertEquals(1, reader.Terms("foo").SumTotalTermFreq);
-                DocsAndPositionsEnum disi = reader.TermPositionsEnum(new Term("foo", "bar"));
+                assertEquals(1, reader.GetTerms("foo").SumTotalTermFreq);
+                DocsAndPositionsEnum disi = reader.GetTermPositionsEnum(new Term("foo", "bar"));
                 int docid = disi.DocID;
                 assertEquals(-1, docid);
                 assertTrue(disi.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
@@ -369,7 +369,7 @@ namespace Lucene.Net.Index.Memory
                 assertEquals(3, disi.EndOffset);
 
                 // now reuse and check again
-                TermsEnum te = reader.Terms("foo").GetIterator(null);
+                TermsEnum te = reader.GetTerms("foo").GetIterator(null);
                 assertTrue(te.SeekExact(new BytesRef("bar")));
                 disi = te.DocsAndPositions(null, disi);
                 docid = disi.DocID;
@@ -416,7 +416,7 @@ namespace Lucene.Net.Index.Memory
             mindex.AddField("field", "the quick brown fox", mockAnalyzer);
             mindex.AddField("field", "jumps over the", mockAnalyzer);
             AtomicReader reader = (AtomicReader)mindex.CreateSearcher().IndexReader;
-            assertEquals(7, reader.Terms("field").SumTotalTermFreq);
+            assertEquals(7, reader.GetTerms("field").SumTotalTermFreq);
             PhraseQuery query = new PhraseQuery();
             query.Add(new Term("field", "fox"));
             query.Add(new Term("field", "jumps"));
@@ -439,9 +439,9 @@ namespace Lucene.Net.Index.Memory
             AtomicReader reader = (AtomicReader)mindex.CreateSearcher().IndexReader;
             assertNull(reader.GetNumericDocValues("not-in-index"));
             assertNull(reader.GetNormValues("not-in-index"));
-            assertNull(reader.TermDocsEnum(new Term("not-in-index", "foo")));
-            assertNull(reader.TermPositionsEnum(new Term("not-in-index", "foo")));
-            assertNull(reader.Terms("not-in-index"));
+            assertNull(reader.GetTermDocsEnum(new Term("not-in-index", "foo")));
+            assertNull(reader.GetTermPositionsEnum(new Term("not-in-index", "foo")));
+            assertNull(reader.GetTerms("not-in-index"));
         }
 
         [Test]

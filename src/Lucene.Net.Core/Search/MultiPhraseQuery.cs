@@ -219,7 +219,7 @@ namespace Lucene.Net.Search
 
                 PhraseQuery.PostingsAndFreq[] postingsFreqs = new PhraseQuery.PostingsAndFreq[outerInstance.termArrays.Count];
 
-                Terms fieldTerms = reader.Terms(outerInstance.field);
+                Terms fieldTerms = reader.GetTerms(outerInstance.field);
                 if (fieldTerms == null)
                 {
                     return null;

@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene40
             foreach (AtomicReaderContext ctx in open.Leaves)
             {
                 AtomicReader indexReader = (AtomicReader)ctx.Reader;
-                Terms terms = indexReader.Terms("body");
+                Terms terms = indexReader.GetTerms("body");
                 TermsEnum iterator = terms.GetIterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
                 MatchNoBits bits = new MatchNoBits(indexReader.MaxDoc);
@@ -97,7 +97,7 @@ namespace Lucene.Net.Codecs.Lucene40
             DirectoryReader open = DirectoryReader.Open(dir);
             foreach (AtomicReaderContext ctx in open.Leaves)
             {
-                Terms terms = ((AtomicReader)ctx.Reader).Terms("body");
+                Terms terms = ((AtomicReader)ctx.Reader).GetTerms("body");
                 TermsEnum iterator = terms.GetIterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
                 MatchNoBits bits = new MatchNoBits(open.MaxDoc);
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             foreach (AtomicReaderContext ctx in leaves)
             {
-                Terms terms = ((AtomicReader)ctx.Reader).Terms("body");
+                Terms terms = ((AtomicReader)ctx.Reader).GetTerms("body");
                 TermsEnum iterator = terms.GetIterator(null);
                 IdentityHashMap<DocsEnum, bool?> enums = new IdentityHashMap<DocsEnum, bool?>();
                 MatchNoBits bits = new MatchNoBits(firstReader.MaxDoc);
@@ -187,7 +187,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 return null;
             }
             AtomicReader indexReader = (AtomicReader)readers[Random().Next(readers.Count)].Reader;
-            Terms terms = indexReader.Terms(field);
+            Terms terms = indexReader.GetTerms(field);
             if (terms == null)
             {
                 return null;

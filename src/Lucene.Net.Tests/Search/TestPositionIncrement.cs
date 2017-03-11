@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
             IndexReader readerFromWriter = writer.Reader;
             AtomicReader r = SlowCompositeReaderWrapper.Wrap(readerFromWriter);
 
-            DocsAndPositionsEnum tp = r.TermPositionsEnum(new Term("content", "a"));
+            DocsAndPositionsEnum tp = r.GetTermPositionsEnum(new Term("content", "a"));
 
             int count = 0;
             Assert.IsTrue(tp.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);

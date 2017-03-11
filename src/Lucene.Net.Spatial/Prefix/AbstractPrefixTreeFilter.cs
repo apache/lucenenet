@@ -101,7 +101,7 @@ namespace Lucene.Net.Spatial.Prefix
                 AtomicReader reader = context.AtomicReader;
                 this.m_acceptDocs = acceptDocs;
                 m_maxDoc = reader.MaxDoc;
-                Terms terms = reader.Terms(outerInstance.m_fieldName);
+                Terms terms = reader.GetTerms(outerInstance.m_fieldName);
                 if (terms != null)
                 {
                     m_termsEnum = terms.GetIterator(null);

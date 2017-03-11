@@ -689,7 +689,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             DirectoryReader reader = writer.Reader;
             AtomicReader sr = SlowCompositeReaderWrapper.Wrap(reader);
-            DocsAndPositionsEnum de = sr.TermPositionsEnum(new Term("field", "withPayload"));
+            DocsAndPositionsEnum de = sr.GetTermPositionsEnum(new Term("field", "withPayload"));
             de.NextDoc();
             de.NextPosition();
             Assert.AreEqual(new BytesRef("test"), de.GetPayload());
@@ -726,7 +726,7 @@ namespace Lucene.Net.Index
             writer.AddDocument(doc);
             DirectoryReader reader = writer.Reader;
             SegmentReader sr = GetOnlySegmentReader(reader);
-            DocsAndPositionsEnum de = sr.TermPositionsEnum(new Term("field", "withPayload"));
+            DocsAndPositionsEnum de = sr.GetTermPositionsEnum(new Term("field", "withPayload"));
             de.NextDoc();
             de.NextPosition();
             Assert.AreEqual(new BytesRef("test"), de.GetPayload());

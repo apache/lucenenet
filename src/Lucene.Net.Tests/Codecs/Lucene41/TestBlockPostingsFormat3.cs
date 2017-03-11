@@ -183,12 +183,12 @@ namespace Lucene.Net.Codecs.Lucene41
             foreach (AtomicReaderContext leaf in ir.Leaves)
             {
                 AtomicReader leafReader = (AtomicReader)leaf.Reader;
-                AssertTerms(leafReader.Terms("field1docs"), leafReader.Terms("field2freqs"), true);
-                AssertTerms(leafReader.Terms("field3positions"), leafReader.Terms("field4offsets"), true);
-                AssertTerms(leafReader.Terms("field4offsets"), leafReader.Terms("field5payloadsFixed"), true);
-                AssertTerms(leafReader.Terms("field5payloadsFixed"), leafReader.Terms("field6payloadsVariable"), true);
-                AssertTerms(leafReader.Terms("field6payloadsVariable"), leafReader.Terms("field7payloadsFixedOffsets"), true);
-                AssertTerms(leafReader.Terms("field7payloadsFixedOffsets"), leafReader.Terms("field8payloadsVariableOffsets"), true);
+                AssertTerms(leafReader.GetTerms("field1docs"), leafReader.GetTerms("field2freqs"), true);
+                AssertTerms(leafReader.GetTerms("field3positions"), leafReader.GetTerms("field4offsets"), true);
+                AssertTerms(leafReader.GetTerms("field4offsets"), leafReader.GetTerms("field5payloadsFixed"), true);
+                AssertTerms(leafReader.GetTerms("field5payloadsFixed"), leafReader.GetTerms("field6payloadsVariable"), true);
+                AssertTerms(leafReader.GetTerms("field6payloadsVariable"), leafReader.GetTerms("field7payloadsFixedOffsets"), true);
+                AssertTerms(leafReader.GetTerms("field7payloadsFixedOffsets"), leafReader.GetTerms("field8payloadsVariableOffsets"), true);
             }
             ir.Dispose();
         }

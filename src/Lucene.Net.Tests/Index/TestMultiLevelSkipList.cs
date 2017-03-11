@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < 2; i++)
             {
                 Counter = 0;
-                DocsAndPositionsEnum tp = reader.TermPositionsEnum(term);
+                DocsAndPositionsEnum tp = reader.GetTermPositionsEnum(term);
                 CheckSkipTo(tp, 14, 185); // no skips
                 CheckSkipTo(tp, 17, 190); // one skip on level 0
                 CheckSkipTo(tp, 287, 200); // one skip on level 1, two on level 0

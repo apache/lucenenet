@@ -53,7 +53,7 @@ namespace Lucene.Net.Queries
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
         {
-            Terms terms = context.AtomicReader.Terms(term.Field);
+            Terms terms = context.AtomicReader.GetTerms(term.Field);
             if (terms == null)
             {
                 return null;

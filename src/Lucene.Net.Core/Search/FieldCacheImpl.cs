@@ -387,7 +387,7 @@ namespace Lucene.Net.Search
             public virtual void DoUninvert(AtomicReader reader, string field, bool setDocsWithField)
             {
                 int maxDoc = reader.MaxDoc;
-                Terms terms = reader.Terms(field);
+                Terms terms = reader.GetTerms(field);
                 if (terms != null)
                 {
                     if (setDocsWithField)
@@ -1000,7 +1000,7 @@ namespace Lucene.Net.Search
 
                 // Visit all docs that have terms for this field
                 FixedBitSet res = null;
-                Terms terms = reader.Terms(field);
+                Terms terms = reader.GetTerms(field);
                 if (terms != null)
                 {
                     int termsDocCount = terms.DocCount;
@@ -1652,7 +1652,7 @@ namespace Lucene.Net.Search
             {
                 int maxDoc = reader.MaxDoc;
 
-                Terms terms = reader.Terms(key.field);
+                Terms terms = reader.GetTerms(key.field);
 
                 float acceptableOverheadRatio = (float)((float?)key.custom);
 
@@ -1825,7 +1825,7 @@ namespace Lucene.Net.Search
                 // that instead, to avoid insanity
 
                 int maxDoc = reader.MaxDoc;
-                Terms terms = reader.Terms(key.field);
+                Terms terms = reader.GetTerms(key.field);
 
                 float acceptableOverheadRatio = (float)((float?)key.custom);
 

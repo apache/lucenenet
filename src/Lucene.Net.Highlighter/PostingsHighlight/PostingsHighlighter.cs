@@ -533,7 +533,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                 // if the segment has changed, we must initialize new enums.
                 if (leaf != lastLeaf)
                 {
-                    Terms t = r.Terms(field);
+                    Terms t = r.GetTerms(field);
                     if (t != null)
                     {
                         termsEnum = t.GetIterator(null);

@@ -439,7 +439,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     DocsEnum docs = null; // reuse
                     foreach (AtomicReaderContext ctx in reader.Leaves)
                     {
-                        Terms terms = ctx.AtomicReader.Terms(Consts.FULL);
+                        Terms terms = ctx.AtomicReader.GetTerms(Consts.FULL);
                         if (terms != null)
                         {
                             termsEnum = terms.GetIterator(termsEnum);
@@ -796,7 +796,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     DocsEnum docsEnum = null;
                     foreach (AtomicReaderContext ctx in reader.Leaves)
                     {
-                        Terms terms = ctx.AtomicReader.Terms(Consts.FULL);
+                        Terms terms = ctx.AtomicReader.GetTerms(Consts.FULL);
                         if (terms != null) // cannot really happen, but be on the safe side
                         {
                             termsEnum = terms.GetIterator(termsEnum);
@@ -918,7 +918,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 foreach (AtomicReaderContext ctx in r.Leaves)
                 {
                     AtomicReader ar = ctx.AtomicReader;
-                    Terms terms = ar.Terms(Consts.FULL);
+                    Terms terms = ar.GetTerms(Consts.FULL);
                     te = terms.GetIterator(te);
                     while (te.Next() != null)
                     {

@@ -166,7 +166,7 @@ namespace Lucene.Net.Search.Spans
                 return TermSpans.EMPTY_TERM_SPANS;
             }
 
-            TermsEnum termsEnum_ = context.AtomicReader.Terms(m_term.Field).GetIterator(null);
+            TermsEnum termsEnum_ = context.AtomicReader.GetTerms(m_term.Field).GetIterator(null);
             termsEnum_.SeekExact(m_term.Bytes, state);
 
             DocsAndPositionsEnum postings = termsEnum_.DocsAndPositions(acceptDocs, null, DocsAndPositionsFlags.PAYLOADS);

@@ -170,7 +170,7 @@ namespace Lucene.Net.Join
             
             public override Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs)
             {
-                Terms terms = context.AtomicReader.Terms(outerInstance._field);
+                Terms terms = context.AtomicReader.GetTerms(outerInstance._field);
                 if (terms == null)
                 {
                     return null;
@@ -195,7 +195,7 @@ namespace Lucene.Net.Join
                     return base.GetBulkScorer(context, scoreDocsInOrder, acceptDocs);
                 }
 
-                Terms terms = context.AtomicReader.Terms(outerInstance._field);
+                Terms terms = context.AtomicReader.GetTerms(outerInstance._field);
                 if (terms == null)
                 {
                     return null;

@@ -133,7 +133,7 @@ namespace Lucene.Net.Index
             DirectoryReader ir = iw.Reader;
             Assert.AreEqual(1, ir.Leaves.Count);
             AtomicReader air = (AtomicReader)ir.Leaves[0].Reader;
-            Terms terms = air.Terms("field");
+            Terms terms = air.GetTerms("field");
             // numTerms-1 because there cannot be a term 0 with 0 postings:
             Assert.AreEqual(numTerms - 1, terms.Count);
             TermsEnum termsEnum = terms.GetIterator(null);

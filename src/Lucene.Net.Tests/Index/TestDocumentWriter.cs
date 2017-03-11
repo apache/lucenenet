@@ -278,18 +278,18 @@ namespace Lucene.Net.Index
             writer.Dispose();
             SegmentReader reader = new SegmentReader(info, DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR, NewIOContext(Random()));
 
-            DocsAndPositionsEnum termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term1"));
+            DocsAndPositionsEnum termPositions = reader.GetTermPositionsEnum(new Term("preanalyzed", "term1"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(1, termPositions.Freq);
             Assert.AreEqual(0, termPositions.NextPosition());
 
-            termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term2"));
+            termPositions = reader.GetTermPositionsEnum(new Term("preanalyzed", "term2"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(2, termPositions.Freq);
             Assert.AreEqual(1, termPositions.NextPosition());
             Assert.AreEqual(3, termPositions.NextPosition());
 
-            termPositions = reader.TermPositionsEnum(new Term("preanalyzed", "term3"));
+            termPositions = reader.GetTermPositionsEnum(new Term("preanalyzed", "term3"));
             Assert.IsTrue(termPositions.NextDoc() != DocIdSetIterator.NO_MORE_DOCS);
             Assert.AreEqual(1, termPositions.Freq);
             Assert.AreEqual(2, termPositions.NextPosition());

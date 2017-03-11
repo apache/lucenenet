@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
 
         public override sealed long GetSumDocFreq(string field)
         {
-            Terms terms = Terms(field);
+            Terms terms = GetTerms(field);
             if (terms == null)
             {
                 return 0;
@@ -168,7 +168,7 @@ namespace Lucene.Net.Index
 
         public override sealed int GetDocCount(string field)
         {
-            Terms terms = Terms(field);
+            Terms terms = GetTerms(field);
             if (terms == null)
             {
                 return 0;
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
 
         public override sealed long GetSumTotalTermFreq(string field)
         {
-            Terms terms = Terms(field);
+            Terms terms = GetTerms(field);
             if (terms == null)
             {
                 return 0;
@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this may return null if the field does not exist. </summary>
-        public Terms Terms(string field) // LUCENENET TODO: Change to GetTerms()
+        public Terms GetTerms(string field) // LUCENENET specific: Renamed from Terms()
         {
             Fields fields = Fields;
             if (fields == null)
@@ -203,7 +203,7 @@ namespace Lucene.Net.Index
         ///  this will return null if either the field or
         ///  term does not exist. </summary>
         ///  <seealso cref= TermsEnum#docs(Bits, DocsEnum)  </seealso>
-        public DocsEnum TermDocsEnum(Term term) // LUCENENET TODO: Change to GetTermDocsEnum()
+        public DocsEnum GetTermDocsEnum(Term term) // LUCENENET specific: Renamed from TermDocsEnum()
         {
             Debug.Assert(term.Field != null);
             Debug.Assert(term.Bytes != null);
@@ -228,7 +228,7 @@ namespace Lucene.Net.Index
         ///  term.  this will return null if the
         ///  field or term does not exist or positions weren't indexed. </summary>
         ///  <seealso cref= TermsEnum#docsAndPositions(Bits, DocsAndPositionsEnum)  </seealso>
-        public DocsAndPositionsEnum TermPositionsEnum(Term term)
+        public DocsAndPositionsEnum GetTermPositionsEnum(Term term) // LUCENENET specific: Renamed from TermPositionsEnum()
         {
             Debug.Assert(term.Field != null);
             Debug.Assert(term.Bytes != null);

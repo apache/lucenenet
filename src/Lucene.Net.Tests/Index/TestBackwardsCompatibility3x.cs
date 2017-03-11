@@ -1043,7 +1043,7 @@ namespace Lucene.Net.Index
             TopDocs td = @is.Search(pq, 10);
             Assert.AreEqual(1, td.TotalHits);
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(ir);
-            DocsAndPositionsEnum de = wrapper.TermPositionsEnum(new Term("field3", "broken"));
+            DocsAndPositionsEnum de = wrapper.GetTermPositionsEnum(new Term("field3", "broken"));
             Debug.Assert(de != null);
             Assert.AreEqual(0, de.NextDoc());
             Assert.AreEqual(0, de.NextPosition());
