@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -21,7 +22,6 @@ namespace Lucene.Net.Codecs.Lucene40
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using CorruptIndexException = Lucene.Net.Index.CorruptIndexException;
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfo = Lucene.Net.Index.FieldInfo;
@@ -120,12 +120,12 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        /// <exception cref="AlreadyClosedException"> if this FieldsReader is closed </exception>
+        /// <exception cref="ObjectDisposedException"> if this FieldsReader is closed </exception>
         private void EnsureOpen()
         {
             if (closed)
             {
-                throw new AlreadyClosedException("this FieldsReader is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this FieldsReader is closed");
             }
         }
 

@@ -48,7 +48,7 @@ namespace Lucene.Net.Store
                     Assert.Fail("did not hit expected exception");
                 }
 #pragma warning disable 168
-                catch (AlreadyClosedException ace)
+                catch (ObjectDisposedException ace)
 #pragma warning restore 168
                 {
                 }

@@ -2,6 +2,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 
 namespace Lucene.Net.Analysis
 {
@@ -21,8 +22,6 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 
     /// <summary>
     /// An <see cref="Analyzer"/> builds <see cref="Analysis.TokenStream"/>s, which analyze text.  It thus represents a
@@ -177,7 +176,7 @@ namespace Lucene.Net.Analysis
         /// <param name="fieldName"> the name of the field the created <see cref="Analysis.TokenStream"/> is used for </param>
         /// <param name="reader"> the reader the streams source reads from </param>
         /// <returns> <see cref="Analysis.TokenStream"/> for iterating the analyzed content of <see cref="TextReader"/> </returns>
-        /// <exception cref="AlreadyClosedException"> if the Analyzer is disposed. </exception>
+        /// <exception cref="ObjectDisposedException"> if the Analyzer is disposed. </exception>
         /// <exception cref="IOException"> if an i/o error occurs (may rarely happen for strings). </exception>
         /// <seealso cref="GetTokenStream(string, string)"/>
         public TokenStream GetTokenStream(string fieldName, TextReader reader)
@@ -214,7 +213,7 @@ namespace Lucene.Net.Analysis
         /// <param name="fieldName">the name of the field the created <see cref="Analysis.TokenStream"/> is used for</param>
         /// <param name="text">the <see cref="string"/> the streams source reads from </param>
         /// <returns><see cref="Analysis.TokenStream"/> for iterating the analyzed content of <paramref name="reader"/></returns>
-        /// <exception cref="AlreadyClosedException"> if the Analyzer is disposed. </exception>
+        /// <exception cref="ObjectDisposedException"> if the Analyzer is disposed. </exception>
         /// <exception cref="IOException"> if an i/o error occurs (may rarely happen for strings). </exception>
         /// <seealso cref="GetTokenStream(string, TextReader)"/>
         public TokenStream GetTokenStream(string fieldName, string text)
@@ -532,12 +531,12 @@ namespace Lucene.Net.Analysis
         /// Returns the currently stored value.
         /// </summary>
         /// <returns> Currently stored value or <c>null</c> if no value is stored </returns>
-        /// <exception cref="AlreadyClosedException"> if the <see cref="Analyzer"/> is closed. </exception>
+        /// <exception cref="ObjectDisposedException"> if the <see cref="Analyzer"/> is closed. </exception>
         protected internal object GetStoredValue(Analyzer analyzer)
         {
             if (analyzer.storedValue == null)
             {
-                throw new AlreadyClosedException("this Analyzer is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this Analyzer is closed");
             }
             return analyzer.storedValue.Get();
         }
@@ -546,12 +545,12 @@ namespace Lucene.Net.Analysis
         /// Sets the stored value.
         /// </summary>
         /// <param name="storedValue"> Value to store </param>
-        /// <exception cref="AlreadyClosedException"> if the <see cref="Analyzer"/> is closed. </exception>
+        /// <exception cref="ObjectDisposedException"> if the <see cref="Analyzer"/> is closed. </exception>
         protected internal void SetStoredValue(Analyzer analyzer, object storedValue)
         {
             if (analyzer.storedValue == null)
             {
-                throw new AlreadyClosedException("this Analyzer is closed");
+                throw new ObjectDisposedException("this Analyzer is closed");
             }
             analyzer.storedValue.Set(storedValue);
         }

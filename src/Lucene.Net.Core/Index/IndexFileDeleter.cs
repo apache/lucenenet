@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Reflection;
 
 namespace Lucene.Net.Index
 {
@@ -24,7 +25,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using CollectionUtil = Lucene.Net.Util.CollectionUtil;
     using Directory = Lucene.Net.Store.Directory;
     using InfoStream = Lucene.Net.Util.InfoStream;
@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
         {
             if (writer == null)
             {
-                throw new AlreadyClosedException("this IndexWriter is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexWriter is closed");
             }
             else
             {

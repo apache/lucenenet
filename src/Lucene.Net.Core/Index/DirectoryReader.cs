@@ -231,7 +231,7 @@ namespace Lucene.Net.Index
         /// <p><b>NOTE</b>: Once the writer is closed, any
         /// outstanding readers may continue to be used.  However,
         /// if you attempt to reopen any of those readers, you'll
-        /// hit an <seealso cref="Lucene.Net.Store.AlreadyClosedException"/>.</p>
+        /// hit an <seealso cref="System.ObjectDisposedException"/>.</p>
         /// </summary>
         /// <returns> DirectoryReader that covers entire index plus all
         /// changes made so far by this IndexWriter instance, or

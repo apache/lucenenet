@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
@@ -23,7 +24,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using DocumentStoredFieldVisitor = DocumentStoredFieldVisitor;
@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
             // still close the reader if it was made invalid by a child:
             if (refCount.Get() <= 0)
             {
-                throw new AlreadyClosedException("this IndexReader is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexReader is closed");
             }
 
             int rc = refCount.DecrementAndGet();
@@ -307,20 +307,20 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Throws AlreadyClosedException if this IndexReader or any
+        /// Throws ObjectDisposedException if this IndexReader or any
         /// of its child readers is closed, otherwise returns.
         /// </summary>
         protected internal void EnsureOpen()
         {
             if (refCount.Get() <= 0)
             {
-                throw new AlreadyClosedException("this IndexReader is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexReader is closed");
             }
             // the happens before rule on reading the refCount, which must be after the fake write,
             // ensures that we see the value:
             if (closedByChild)
             {
-                throw new AlreadyClosedException("this IndexReader cannot be used anymore as one of its child readers was closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexReader cannot be used anymore as one of its child readers was closed");
             }
         }
 

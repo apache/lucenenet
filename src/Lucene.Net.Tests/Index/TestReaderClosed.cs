@@ -3,7 +3,6 @@ using Lucene.Net.Documents;
 namespace Lucene.Net.Index
 {
     using NUnit.Framework;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -74,7 +73,7 @@ namespace Lucene.Net.Index
                 searcher.Search(query, 5);
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ace)
+            catch (System.ObjectDisposedException ace)
 #pragma warning restore 168
             {
                 // expected
@@ -97,9 +96,12 @@ namespace Lucene.Net.Index
             {
                 searcher.Search(query, 5);
             }
-            catch (AlreadyClosedException ace)
+            catch (System.ObjectDisposedException ace)
             {
-                Assert.AreEqual("this IndexReader cannot be used anymore as one of its child readers was closed", ace.Message);
+                //Assert.AreEqual("this IndexReader cannot be used anymore as one of its child readers was closed", ace.Message);
+                // LUCENENET specific - ObjectDisposedExeption appends the type of object to the end of the message,
+                // so we need to check the start of the message only.
+                assertTrue(ace.Message.StartsWith("this IndexReader cannot be used anymore as one of its child readers was closed"));
             }
             finally
             {

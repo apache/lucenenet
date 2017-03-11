@@ -87,7 +87,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <exception cref="IllegalArgumentException">
         ///           if context is <code>null</code> </exception>
-        /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
+        /// <exception cref="System.ObjectDisposedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
         public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext context)
         {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <exception cref="ArgumentException">
         ///           if context is <code>null</code> </exception>
-        /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
+        /// <exception cref="System.ObjectDisposedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
         public void SetRateLimiter(RateLimiter mergeWriteRateLimiter, IOContext.UsageContext context)
         {
@@ -143,9 +143,9 @@ namespace Lucene.Net.Store
         /// <summary>
         /// See <seealso cref="#setMaxWriteMBPerSec"/>.
         /// </summary>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="System.ArgumentException">
         ///           if context is <code>null</code> </exception>
-        /// <exception cref="AlreadyClosedException"> if the <seealso cref="Directory"/> is already closed
+        /// <exception cref="System.ObjectDisposedException"> if the <seealso cref="Directory"/> is already closed
         /// @lucene.experimental </exception>
         public double GetMaxWriteMBPerSec(IOContext.UsageContext context)
         {

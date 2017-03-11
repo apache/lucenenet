@@ -12,7 +12,6 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.Collections.Concurrent;
     using Util;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
@@ -846,10 +845,10 @@ namespace Lucene.Net.Index
             try
             {
                 DirectoryReader.OpenIfChanged(r);
-                Assert.Fail("failed to hit AlreadyClosedException");
+                Assert.Fail("failed to hit ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ace)
+            catch (ObjectDisposedException ace)
 #pragma warning restore 168
             {
                 // expected

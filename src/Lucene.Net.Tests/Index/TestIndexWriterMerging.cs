@@ -26,7 +26,6 @@ namespace Lucene.Net.Index
         /// limitations under the License.
         */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -459,7 +458,7 @@ namespace Lucene.Net.Index
                             FinalWriter.AddDocument(Doc);
                         }
 #pragma warning disable 168
-                        catch (AlreadyClosedException e)
+                        catch (ObjectDisposedException e)
 #pragma warning restore 168
                         {
                             done = true;

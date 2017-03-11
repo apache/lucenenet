@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lucene.Net.Search
 {
@@ -21,8 +22,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 
     /// <summary>
     /// Utility class to safely share instances of a certain type across multiple
@@ -60,7 +59,7 @@ namespace Lucene.Net.Search
         {
             if (current == null)
             {
-                throw new AlreadyClosedException(REFERENCE_MANAGER_IS_CLOSED_MSG);
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
             }
         }
 
@@ -84,14 +83,14 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Refresh the given reference if needed. Returns {@code null} if no refresh
         /// was needed, otherwise a new refreshed reference. </summary>
-        /// <exception cref="AlreadyClosedException"> if the reference manager has been <seealso cref="#close() closed"/>. </exception>
+        /// <exception cref="ObjectDisposedException"> if the reference manager has been <seealso cref="#close() closed"/>. </exception>
         /// <exception cref="IOException"> if the refresh operation failed </exception>
         protected abstract G RefreshIfNeeded(G referenceToRefresh);
 
         /// <summary>
         /// Try to increment reference counting on the given reference. Return true if
         /// the operation was successful. </summary>
-        /// <exception cref="AlreadyClosedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
+        /// <exception cref="ObjectDisposedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
         protected abstract bool TryIncRef(G reference);
 
         /// <summary>
@@ -99,7 +98,7 @@ namespace Lucene.Net.Search
         /// call to <seealso cref="#release"/>; it's best to do so in a finally clause, and set
         /// the reference to {@code null} to prevent accidental usage after it has been
         /// released. </summary>
-        /// <exception cref="AlreadyClosedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
+        /// <exception cref="ObjectDisposedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
         public G Acquire()
         {
             G @ref;
@@ -108,7 +107,7 @@ namespace Lucene.Net.Search
             {
                 if ((@ref = current) == null)
                 {
-                    throw new AlreadyClosedException(REFERENCE_MANAGER_IS_CLOSED_MSG);
+                    throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, REFERENCE_MANAGER_IS_CLOSED_MSG);
                 }
                 if (TryIncRef(@ref))
                 {
@@ -146,7 +145,7 @@ namespace Lucene.Net.Search
         /// Applications should not <seealso cref="#acquire() acquire"/> new references from this
         /// manager once this method has been called. <seealso cref="#acquire() Acquiring"/> a
         /// resource on a closed <seealso cref="ReferenceManager"/> will throw an
-        /// <seealso cref="AlreadyClosedException"/>.
+        /// <seealso cref="ObjectDisposedException"/>.
         /// </p>
         /// </summary>
         /// <exception cref="IOException">
@@ -244,7 +243,7 @@ namespace Lucene.Net.Search
         /// thread is currently refreshing.
         /// </p> </summary>
         /// <exception cref="IOException"> if refreshing the resource causes an <seealso cref="IOException"/> </exception>
-        /// <exception cref="AlreadyClosedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
+        /// <exception cref="ObjectDisposedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
         public bool MaybeRefresh()
         {
             EnsureOpen();
@@ -277,7 +276,7 @@ namespace Lucene.Net.Search
         /// will return a refreshed instance. Otherwise, consider using the
         /// non-blocking <seealso cref="#maybeRefresh()"/>. </summary>
         /// <exception cref="IOException"> if refreshing the resource causes an <seealso cref="IOException"/> </exception>
-        /// <exception cref="AlreadyClosedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
+        /// <exception cref="ObjectDisposedException"> if the reference manager has been <seealso cref="#close() closed"/>.  </exception>
         public void MaybeRefreshBlocking()
         {
             EnsureOpen();

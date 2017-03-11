@@ -15,7 +15,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using OpenMode = Lucene.Net.Index.OpenMode;
     using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using RAMDirectory = Lucene.Net.Store.RAMDirectory;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -119,9 +118,9 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             try
             {
                 var tmpSize = ltr.Count;
-                Fail("An AlreadyClosedException should have been thrown here");
+                Fail("An ObjectDisposedException should have been thrown here");
             }
-            catch (AlreadyClosedException)
+            catch (ObjectDisposedException)
             {
                 // good!
             }

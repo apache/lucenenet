@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using System.Reflection;
 
 namespace Lucene.Net.Index
 {
@@ -24,7 +25,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BinaryDocValuesUpdate = Lucene.Net.Index.DocValuesUpdate.BinaryDocValuesUpdate;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -236,7 +236,7 @@ namespace Lucene.Net.Index
         {
             if (closed)
             {
-                throw new AlreadyClosedException("this IndexWriter is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexWriter is closed");
             }
         }
 

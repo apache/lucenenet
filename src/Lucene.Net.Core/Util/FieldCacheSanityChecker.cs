@@ -24,7 +24,6 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using IndexReader = Lucene.Net.Index.IndexReader;
 
     /// <summary>
@@ -292,7 +291,7 @@ namespace Lucene.Net.Util
             {
                 var obj = all[i];
                 // TODO: We don't check closed readers here (as getTopReaderContext
-                // throws AlreadyClosedException), what should we do? Reflection?
+                // throws ObjectDisposedException), what should we do? Reflection?
                 var reader = obj as IndexReader;
                 if (reader != null)
                 {
@@ -307,7 +306,7 @@ namespace Lucene.Net.Util
                             }
                         }
                     }
-                    catch (AlreadyClosedException)
+                    catch (System.ObjectDisposedException)
                     {
                         // ignore this reader
                     }

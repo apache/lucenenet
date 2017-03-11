@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 
@@ -28,7 +29,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -334,7 +334,7 @@ namespace Lucene.Net.Index
         /// <p><b>NOTE</b>: Once the writer is closed, any
         /// outstanding readers may continue to be used.  However,
         /// if you attempt to reopen any of those readers, you'll
-        /// hit an <seealso cref="AlreadyClosedException"/>.</p>
+        /// hit an <seealso cref="ObjectDisposedException"/>.</p>
         ///
         /// @lucene.experimental
         /// </summary>
@@ -743,31 +743,31 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Used internally to throw an <seealso cref="AlreadyClosedException"/> if this
+        /// Used internally to throw an <seealso cref="ObjectDisposedException"/> if this
         /// IndexWriter has been closed or is in the process of closing.
         /// </summary>
         /// <param name="failIfClosing">
         ///          if true, also fail when {@code IndexWriter} is in the process of
         ///          closing ({@code closing=true}) but not yet done closing (
         ///          {@code closed=false}) </param>
-        /// <exception cref="AlreadyClosedException">
+        /// <exception cref="ObjectDisposedException">
         ///           if this IndexWriter is closed or in the process of closing </exception>
         protected internal void EnsureOpen(bool failIfClosing)
         {
             if (closed || (failIfClosing && closing))
             {
-                throw new AlreadyClosedException("this IndexWriter is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexWriter is closed");
             }
         }
 
         /// <summary>
         /// Used internally to throw an {@link
-        /// AlreadyClosedException} if this IndexWriter has been
+        /// ObjectDisposedException} if this IndexWriter has been
         /// closed ({@code closed=true}) or is in the process of
         /// closing ({@code closing=true}).
         /// <p>
         /// Calls <seealso cref="#ensureOpen(boolean) ensureOpen(true)"/>. </summary>
-        /// <exception cref="AlreadyClosedException"> if this IndexWriter is closed </exception>
+        /// <exception cref="ObjectDisposedException"> if this IndexWriter is closed </exception>
         protected internal void EnsureOpen()
         {
             EnsureOpen(true);
@@ -2790,7 +2790,7 @@ namespace Lucene.Net.Index
                     // It's fine if a new one attempts to start because from our
                     // caller above the call will see that we are in the
                     // process of closing, and will throw an
-                    // AlreadyClosedException.
+                    // ObjectDisposedException.
                     WaitForMerges();
                 }
             }

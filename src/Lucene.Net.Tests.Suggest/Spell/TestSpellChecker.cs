@@ -411,7 +411,7 @@ namespace Lucene.Net.Search.Spell
                 //    spellChecker.Dispose();
                 //    fail("spellchecker was already closed");
                 //}
-                //catch (AlreadyClosedException e)
+                //catch (ObjectDisposedException e)
                 //{
                 //    // expected
                 //}
@@ -420,7 +420,7 @@ namespace Lucene.Net.Search.Spell
                     CheckCommonSuggestions(r);
                     fail("spellchecker was already closed");
                 }
-                catch (AlreadyClosedException /*e*/)
+                catch (ObjectDisposedException /*e*/)
                 {
                     // expected
                 }
@@ -430,7 +430,7 @@ namespace Lucene.Net.Search.Spell
                     spellChecker.ClearIndex();
                     fail("spellchecker was already closed");
                 }
-                catch (AlreadyClosedException /*e*/)
+                catch (ObjectDisposedException /*e*/)
                 {
                     // expected
                 }
@@ -440,7 +440,7 @@ namespace Lucene.Net.Search.Spell
                     spellChecker.IndexDictionary(new LuceneDictionary(r, field), NewIndexWriterConfig(TEST_VERSION_CURRENT, null), false);
                     fail("spellchecker was already closed");
                 }
-                catch (AlreadyClosedException /*e*/)
+                catch (ObjectDisposedException /*e*/)
                 {
                     // expected
                 }
@@ -450,7 +450,7 @@ namespace Lucene.Net.Search.Spell
                     spellChecker.SetSpellIndex(spellindex);
                     fail("spellchecker was already closed");
                 }
-                catch (AlreadyClosedException /*e*/)
+                catch (ObjectDisposedException /*e*/)
                 {
                     // expected
                 }
@@ -600,7 +600,7 @@ namespace Lucene.Net.Search.Spell
 
                             Thread.Sleep(10);// don't starve refresh()'s CPU, which sleeps every 50 bytes for 1 ms
                         }
-                        catch (AlreadyClosedException /*e*/)
+                        catch (ObjectDisposedException /*e*/)
                         {
                             return;
                         }

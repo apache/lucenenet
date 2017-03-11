@@ -9,7 +9,6 @@ namespace Lucene.Net.Search
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Support;
     using NUnit.Framework;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
@@ -314,7 +313,7 @@ namespace Lucene.Net.Search
                 Assert.Fail("already closed");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ex)
+            catch (ObjectDisposedException ex)
 #pragma warning restore 168
             {
                 // expected
@@ -403,7 +402,7 @@ namespace Lucene.Net.Search
                     SearcherManager.MaybeRefresh();
                     Success.Set(true);
                 }
-                catch (AlreadyClosedException)
+                catch (ObjectDisposedException)
                 {
                     // expected
                 }
@@ -479,7 +478,7 @@ namespace Lucene.Net.Search
                 sm.Acquire();
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException e)
+            catch (ObjectDisposedException e)
 #pragma warning restore 168
             {
                 // ok
@@ -491,7 +490,7 @@ namespace Lucene.Net.Search
                 sm.MaybeRefresh();
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException e)
+            catch (ObjectDisposedException e)
 #pragma warning restore 168
             {
                 // ok

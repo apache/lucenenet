@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Search
 {
@@ -22,7 +23,6 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
@@ -139,7 +139,7 @@ namespace Lucene.Net.Search
         {
             if (_closed)
             {
-                throw new AlreadyClosedException("this SearcherLifetimeManager instance is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this SearcherLifetimeManager instance is closed");
             }
         }
 

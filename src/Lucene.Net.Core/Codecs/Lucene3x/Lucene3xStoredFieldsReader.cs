@@ -1,7 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
-using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
+using System.Reflection;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 
 namespace Lucene.Net.Codecs.Lucene3x
@@ -228,12 +228,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        /// <exception cref="AlreadyClosedException"> if this FieldsReader is closed </exception>
+        /// <exception cref="ObjectDisposedException"> if this FieldsReader is closed </exception>
         private void EnsureOpen()
         {
             if (closed)
             {
-                throw new AlreadyClosedException("this FieldsReader is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this FieldsReader is closed");
             }
         }
 

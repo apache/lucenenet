@@ -23,7 +23,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
@@ -488,7 +487,7 @@ namespace Lucene.Net.Index
                     writer.DecRefDeleter(segmentInfos);
                 }
 #pragma warning disable 168
-                catch (AlreadyClosedException ex)
+                catch (ObjectDisposedException ex)
 #pragma warning restore 168
                 {
                     // this is OK, it just means our original writer was

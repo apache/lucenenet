@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Threading;
 
 namespace Lucene.Net.Facet.Taxonomy
@@ -22,8 +23,6 @@ namespace Lucene.Net.Facet.Taxonomy
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
 
     /// <summary>
     /// TaxonomyReader is the read-only interface with which the faceted-search
@@ -160,13 +159,13 @@ namespace Lucene.Net.Facet.Taxonomy
         protected abstract TaxonomyReader DoOpenIfChanged();
 
         /// <summary>
-        /// Throws <see cref="AlreadyClosedException"/> if this <see cref="Index.IndexReader"/> is disposed
+        /// Throws <see cref="ObjectDisposedException"/> if this <see cref="Index.IndexReader"/> is disposed
         /// </summary>
         protected void EnsureOpen()
         {
             if (RefCount <= 0)
             {
-                throw new AlreadyClosedException("this TaxonomyReader is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this TaxonomyReader is closed");
             }
         }
 

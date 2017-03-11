@@ -73,10 +73,10 @@ namespace Lucene.Net.Store
             try
             {
                 one.ReadVInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass
@@ -84,10 +84,10 @@ namespace Lucene.Net.Store
             try
             {
                 two.ReadVInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass
@@ -95,10 +95,10 @@ namespace Lucene.Net.Store
             try
             {
                 three.ReadVInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass
@@ -125,10 +125,10 @@ namespace Lucene.Net.Store
             try
             {
                 two.ReadVInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass
@@ -156,10 +156,10 @@ namespace Lucene.Net.Store
             try
             {
                 one.ReadInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass
@@ -167,10 +167,10 @@ namespace Lucene.Net.Store
             try
             {
                 two.ReadInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass
@@ -178,10 +178,10 @@ namespace Lucene.Net.Store
             try
             {
                 three.ReadInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass
@@ -189,10 +189,10 @@ namespace Lucene.Net.Store
             try
             {
                 four.ReadInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass
@@ -221,10 +221,10 @@ namespace Lucene.Net.Store
             try
             {
                 one.ReadInt32();
-                Assert.Fail("Must throw AlreadyClosedException");
+                Assert.Fail("Must throw ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException ignore)
+            catch (ObjectDisposedException ignore)
 #pragma warning restore 168
             {
                 // pass

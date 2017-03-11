@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Codecs.SimpleText
 {
@@ -24,7 +25,6 @@ namespace Lucene.Net.Codecs.SimpleText
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Store.AlreadyClosedException;
     using ArrayUtil = Util.ArrayUtil;
     using BufferedChecksumIndexInput = Store.BufferedChecksumIndexInput;
     using BytesRef = Util.BytesRef;
@@ -232,7 +232,7 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             if (_input == null)
             {
-                throw new AlreadyClosedException("this TermVectorsReader is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this TermVectorsReader is closed");
             }
             return new SimpleTextTermVectorsReader(_offsets, (IndexInput)_input.Clone());
         }

@@ -11,7 +11,6 @@ namespace Lucene.Net.Index
 {
     //using Slow = Lucene.Net.Util.LuceneTestCase.Slow;
     
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -60,7 +59,7 @@ namespace Lucene.Net.Index
 
             internal bool DiskFull;
             internal Exception Error;
-            internal AlreadyClosedException Ace;
+            internal ObjectDisposedException Ace;
             internal IndexWriter Writer;
             internal bool NoErrors;
             internal volatile int AddCount;
@@ -767,7 +766,7 @@ namespace Lucene.Net.Index
                                     }
                                     WriterRef.Value.Commit();
                                 }
-                                catch (AlreadyClosedException)
+                                catch (ObjectDisposedException)
                                 {
                                     // ok
                                 }
@@ -790,7 +789,7 @@ namespace Lucene.Net.Index
                                 {
                                     WriterRef.Value.AddDocument(Docs.NextDoc());
                                 }
-                                catch (AlreadyClosedException)
+                                catch (ObjectDisposedException)
                                 {
                                     // ok
                                 }

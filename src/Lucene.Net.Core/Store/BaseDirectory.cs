@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lucene.Net.Store
 {
@@ -82,7 +83,7 @@ namespace Lucene.Net.Store
         {
             if (!IsOpen)
             {
-                throw new AlreadyClosedException("this Directory is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this Directory is closed");
             }
         }
     }

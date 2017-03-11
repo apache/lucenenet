@@ -1,4 +1,3 @@
-using System.Linq;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using Lucene.Net.Support;
@@ -7,6 +6,8 @@ using Lucene.Net.Util.Packed;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -173,12 +174,12 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        /// <exception cref="AlreadyClosedException"> if this TermVectorsReader is closed </exception>
+        /// <exception cref="ObjectDisposedException"> if this TermVectorsReader is closed </exception>
         private void EnsureOpen()
         {
             if (closed)
             {
-                throw new Exception("this FieldsReader is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this FieldsReader is closed");
             }
         }
 
@@ -735,7 +736,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             public override Terms GetTerms(string field)
             {
-                FieldInfo fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
+                Index.FieldInfo fieldInfo = outerInstance.fieldInfos.FieldInfo(field);
                 if (fieldInfo == null)
                 {
                     return null;

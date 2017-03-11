@@ -240,7 +240,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // Do a commit(). Here was a bug - if tw had a reader open, it should
             // be reopened after the commit. However, in our case the reader should
             // not be open (as explained above) but because it was not set to null,
-            // we forgot that, tried to reopen it, and got an AlreadyClosedException.
+            // we forgot that, tried to reopen it, and got an ObjectDisposedException.
             tw.Commit();
             Assert.AreEqual(ExpectedCategories.Length + 1, tw.Count);
             tw.Dispose();

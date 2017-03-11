@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.IO;
+using System.Reflection;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
@@ -28,7 +29,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using LockObtainFailedException = Lucene.Net.Store.LockObtainFailedException; // javadocs
@@ -534,13 +534,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         /// <summary>
         /// Verifies that this instance wasn't closed, or throws
-        /// <see cref="AlreadyClosedException"/> if it is.
+        /// <see cref="ObjectDisposedException"/> if it is.
         /// </summary>
         protected internal void EnsureOpen()
         {
             if (isClosed)
             {
-                throw new AlreadyClosedException("The taxonomy writer has already been closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "The taxonomy writer has already been closed");
             }
         }
 
@@ -1102,7 +1102,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         /// <summary>
         /// Rollback changes to the taxonomy writer and closes the instance. Following
         /// this method the instance becomes unusable (calling any of its API methods
-        /// will yield an <see cref="AlreadyClosedException"/>).
+        /// will yield an <see cref="ObjectDisposedException"/>).
         /// </summary>
         public virtual void Rollback()
         {

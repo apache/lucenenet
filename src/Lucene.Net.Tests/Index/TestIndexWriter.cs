@@ -32,7 +32,6 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
     using System.Diagnostics;
     using System.IO;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
@@ -248,10 +247,10 @@ namespace Lucene.Net.Index
             try
             {
                 AddDoc(writer);
-                Assert.Fail("did not hit AlreadyClosedException");
+                Assert.Fail("did not hit ObjectDisposedException");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException e)
+            catch (ObjectDisposedException e)
 #pragma warning restore 168
             {
                 // expected

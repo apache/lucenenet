@@ -6,7 +6,6 @@ namespace Lucene.Net.Index
     using Lucene.Net.Randomized.Generators;
     using Lucene.Net.Search;
     using NUnit.Framework;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -250,7 +249,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("Subreader should be already closed because inner reader was closed!");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException e)
+            catch (ObjectDisposedException e)
 #pragma warning restore 168
             {
                 // pass
@@ -262,7 +261,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("ParallelCompositeReader should be already closed because inner reader was closed!");
             }
 #pragma warning disable 168
-            catch (AlreadyClosedException e)
+            catch (ObjectDisposedException e)
 #pragma warning restore 168
             {
                 // pass

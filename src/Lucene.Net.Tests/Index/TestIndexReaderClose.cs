@@ -6,7 +6,6 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
     using NUnit.Framework;
     using System;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
@@ -91,7 +90,7 @@ namespace Lucene.Net.Index
                     Assert.Fail("we are closed");
                 }
 #pragma warning disable 168
-                catch (AlreadyClosedException ex)
+                catch (ObjectDisposedException ex)
 #pragma warning restore 168
                 {
                 }

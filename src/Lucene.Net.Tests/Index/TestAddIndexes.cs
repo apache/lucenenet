@@ -27,7 +27,6 @@ namespace Lucene.Net.Index
     * limitations under the License.
     */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
@@ -860,7 +859,7 @@ namespace Lucene.Net.Index
 
             internal override void Handle(Exception t)
             {
-                if (!(t is AlreadyClosedException) && !(t is System.NullReferenceException))
+                if (!(t is ObjectDisposedException) && !(t is System.NullReferenceException))
                 {
                     Console.Error.WriteLine(t.StackTrace);
                     lock (Failures)
@@ -952,7 +951,7 @@ namespace Lucene.Net.Index
             {
                 bool report = true;
 
-                if (t is AlreadyClosedException || t is MergePolicy.MergeAbortedException || t is System.NullReferenceException)
+                if (t is ObjectDisposedException || t is MergePolicy.MergeAbortedException || t is System.NullReferenceException)
                 {
                     report = !DidClose;
                 }

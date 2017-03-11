@@ -31,7 +31,7 @@ namespace Lucene.Net.Store
     /// resource, but positioned independently. Lucene never closes cloned
     /// {@code IndexInput}s, it will only do this on the original one.
     /// The original instance must take care that cloned instances throw
-    /// <seealso cref="AlreadyClosedException"/> when the original one is closed.
+    /// <seealso cref="ObjectDisposedException"/> when the original one is closed.
     /// </summary>
     /// <seealso cref= Directory </seealso>
     public abstract class IndexInput : DataInput, IDisposable
@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
         /// <p><b>Warning:</b> Lucene never closes cloned
         /// {@code IndexInput}s, it will only do this on the original one.
         /// The original instance must take care that cloned instances throw
-        /// <seealso cref="AlreadyClosedException"/> when the original one is closed.
+        /// <seealso cref="ObjectDisposedException"/> when the original one is closed.
         /// </summary>
         public override object Clone()
         {

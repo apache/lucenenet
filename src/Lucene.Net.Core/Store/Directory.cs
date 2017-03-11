@@ -274,7 +274,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        /// <exception cref="AlreadyClosedException"> if this Directory is closed </exception>
+        /// <exception cref="ObjectDisposedException"> if this Directory is closed </exception>
         protected internal virtual void EnsureOpen()
         {
         }

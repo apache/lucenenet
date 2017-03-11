@@ -4,6 +4,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lucene.Net.Index
 {
@@ -24,7 +25,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Codec = Lucene.Net.Codecs.Codec;
     using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
     using Directory = Lucene.Net.Store.Directory;
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
                     return;
                 }
             }
-            throw new AlreadyClosedException("SegmentCoreReaders is already closed");
+            throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "SegmentCoreReaders is already closed");
         }
 
         internal NumericDocValues GetNormValues(FieldInfo fi)

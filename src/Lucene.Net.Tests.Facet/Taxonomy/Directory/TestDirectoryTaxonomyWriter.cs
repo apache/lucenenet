@@ -23,7 +23,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using SegmentInfos = Lucene.Net.Index.SegmentInfos;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using AlreadyClosedException = Lucene.Net.Store.AlreadyClosedException;
     using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -153,7 +152,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 dtw.AddCategory(new FacetLabel("a"));
                 Fail("should not have succeeded to add a category following rollback.");
             }
-            catch (AlreadyClosedException)
+            catch (ObjectDisposedException)
             {
                 // expected
             }
@@ -186,7 +185,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 dtw.AddCategory(new FacetLabel("a"));
                 Fail("should not have succeeded to add a category following close.");
             }
-            catch (AlreadyClosedException)
+            catch (ObjectDisposedException)
             {
                 // expected
             }

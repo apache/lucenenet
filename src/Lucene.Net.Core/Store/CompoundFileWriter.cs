@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Store
 {
@@ -201,7 +202,7 @@ namespace Lucene.Net.Store
         {
             if (closed)
             {
-                throw new AlreadyClosedException("CFS Directory is already closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "CFS Directory is already closed");
             }
         }
 

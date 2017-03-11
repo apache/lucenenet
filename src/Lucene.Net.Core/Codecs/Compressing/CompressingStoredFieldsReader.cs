@@ -2,6 +2,7 @@ using Lucene.Net.Codecs.Lucene40;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lucene.Net.Codecs.Compressing
 {
@@ -162,12 +163,12 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        /// <exception cref="AlreadyClosedException"> if this FieldsReader is closed </exception>
+        /// <exception cref="ObjectDisposedException"> if this FieldsReader is closed </exception>
         private void EnsureOpen()
         {
             if (closed)
             {
-                throw new Exception("this FieldsReader is closed");
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this FieldsReader is closed");
             }
         }
 
