@@ -206,15 +206,19 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         private XmlReaderSettings GetXmlReaderSettings()
         {
             return
-#if FEATURE_DTD_PROCESSING
+
                 new XmlReaderSettings
                 {
+                    // DTD Processing currently is
+                    // not supported in .NET Standard but will come back in .NET Standard 2.0.
+                    // https://github.com/dotnet/corefx/issues/4376.
+#if FEATURE_DTD_PROCESSING
                     DtdProcessing = DtdProcessing.Parse,
                     XmlResolver = new DtdResolver()
-                };
 #else
-                new XmlReaderSettings();
+                    DtdProcessing = DtdProcessing.Ignore
 #endif
+                };
         }
 
         private IDictionary<string, string> GetAttributes(XmlReader node)

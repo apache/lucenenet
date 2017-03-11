@@ -178,15 +178,19 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         {
             // LUCENENET TODO: Create overloads that allow XmlReaderSettings to be passed in.
             var xmlReaderSettings =
-#if FEATURE_DTD_PROCESSING
                 new XmlReaderSettings
                 {
+                    // DTD Processing currently is
+                    // not supported in .NET Standard but will come back in .NET Standard 2.0.
+                    // https://github.com/dotnet/corefx/issues/4376.
+#if FEATURE_DTD_PROCESSING
                     DtdProcessing = DtdProcessing.Parse,
                     XmlResolver = new PatternParser.DtdResolver()
-                };
 #else
-                new XmlReaderSettings();
+                    DtdProcessing = DtdProcessing.Ignore
 #endif
+                };
+
             using (var reader = XmlReader.Create(new StreamReader(source, encoding), xmlReaderSettings))
             {
                 LoadPatterns(reader);

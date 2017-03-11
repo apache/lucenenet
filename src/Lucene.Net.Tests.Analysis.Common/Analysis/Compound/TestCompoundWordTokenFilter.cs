@@ -37,7 +37,6 @@ namespace Lucene.Net.Analysis.Compound
         }
 
         [Test]
-        [DtdProcessingTest]
         public virtual void TestHyphenationCompoundWordsDA()
         {
             CharArraySet dict = makeDictionary("læse", "hest");
@@ -53,7 +52,6 @@ namespace Lucene.Net.Analysis.Compound
         }
 
         [Test]
-        [DtdProcessingTest]
         public virtual void TestHyphenationCompoundWordsDELongestMatch()
         {
             CharArraySet dict = makeDictionary("basketball", "basket", "ball", "kurv");
@@ -74,7 +72,6 @@ namespace Lucene.Net.Analysis.Compound
         /// This can be controlled with the min/max subword size.
         /// </summary>
         [Test]
-        [DtdProcessingTest]
         public virtual void TestHyphenationOnly()
         {
             //InputSource @is = new InputSource(this.GetType().getResource("da_UTF8.xml").toExternalForm());
@@ -283,7 +280,6 @@ namespace Lucene.Net.Analysis.Compound
         /// <summary>
         /// blast some random strings through the analyzer </summary>
         [Test]
-        [DtdProcessingTest]
         public virtual void TestRandomStrings()
         {
             CharArraySet dict = makeDictionary("a", "e", "i", "o", "u", "y", "bc", "def");
@@ -341,7 +337,6 @@ namespace Lucene.Net.Analysis.Compound
         }
 
         [Test]
-        [DtdProcessingTest]
         public virtual void TestEmptyTerm()
         {
             CharArraySet dict = makeDictionary("a", "e", "i", "o", "u", "y", "bc", "def");

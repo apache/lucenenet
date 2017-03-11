@@ -31,7 +31,6 @@ namespace Lucene.Net.Analysis.Compound
         /// Ensure the factory works with hyphenation grammar+dictionary: using default options.
         /// </summary>
         [Test]
-        [DtdProcessingTest]
         public virtual void TestHyphenationWithDictionary()
         {
             TextReader reader = new StringReader("min veninde som er lidt af en læsehest");
@@ -47,7 +46,6 @@ namespace Lucene.Net.Analysis.Compound
         /// its generally necessary to tweak these, or you get lots of expansions.
         /// </summary>
         [Test]
-        [DtdProcessingTest]
         public virtual void TestHyphenationOnly()
         {
             TextReader reader = new StringReader("basketballkurv");
