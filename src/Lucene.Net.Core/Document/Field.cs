@@ -89,11 +89,11 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentNullException("name", "name cannot be null");
             }
-            this.m_name = name;
             if (type == null)
             {
                 throw new System.ArgumentNullException("type", "type cannot be null");
             }
+            this.m_name = name;
             this.m_type = type;
         }
 
@@ -152,6 +152,10 @@ namespace Lucene.Net.Documents
             if (tokenStream == null)
             {
                 throw new System.ArgumentNullException("tokenStream","tokenStream cannot be null");
+            }
+            if (type == null)
+            {
+                throw new System.ArgumentNullException("type", "type cannot be null");
             }
             if (!type.IsIndexed || !type.IsTokenized)
             {
@@ -219,6 +223,10 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentNullException("name", "name cannot be null");
             }
+            if (type == null)
+            {
+                throw new System.ArgumentNullException("type", "type cannot be null");
+            }
             if (type.IsIndexed)
             {
                 throw new System.ArgumentException("Fields with BytesRef values cannot be indexed");
@@ -248,6 +256,10 @@ namespace Lucene.Net.Documents
             if (value == null)
             {
                 throw new System.ArgumentNullException("value", "value cannot be null");
+            }
+            if (type == null)
+            {
+                throw new System.ArgumentNullException("type", "type cannot be null");
             }
             if (!type.IsStored && !type.IsIndexed)
             {
@@ -710,7 +722,7 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Specifies whether and how a field should be indexed.
         /// <summary>Specifies whether and how a field should be indexed. </summary>
-        [Obsolete]
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public enum Index
         {
             /// <summary>Do not index the field value. This field can thus not be searched,
@@ -757,8 +769,10 @@ namespace Lucene.Net.Documents
             ANALYZED_NO_NORMS,
         }
 
-        /// <summary>Specifies whether and how a field should have term vectors. </summary>
-        [Obsolete]
+        /// <summary>
+        /// Specifies whether and how a field should have term vectors.
+        /// </summary>
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public enum TermVector
         {
             /// <summary>Do not store term vectors. </summary>
