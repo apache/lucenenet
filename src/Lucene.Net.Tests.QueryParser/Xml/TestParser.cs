@@ -31,7 +31,12 @@ namespace Lucene.Net.QueryParsers.Xml
 
     public class TestParser : LuceneTestCase
     {
-        internal const string RESOURCE_PATH = "Lucene.Net.QueryParsers.Xml.";
+        internal const string RESOURCE_PATH =
+#if NETSTANDARD
+            "Lucene.Net.Tests.QueryParser.Xml.";
+#else
+            "Lucene.Net.QueryParsers.Xml.";
+#endif
 
         private static CoreParser builder;
         private static Store.Directory dir;
