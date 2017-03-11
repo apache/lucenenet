@@ -402,7 +402,7 @@ namespace Lucene.Net.Queries.Mlt
                 {
                     query.Add(tq, Occur.SHOULD);
                 }
-                catch (BooleanQuery.TooManyClauses)
+                catch (BooleanQuery.TooManyClausesException)
                 {
                     break;
                 }

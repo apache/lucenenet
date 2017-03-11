@@ -51,9 +51,9 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        public class TooManyClauses : Exception // LUCENENET TODO: Rename TooManyClausesException ? (.NET convention)
+        public class TooManyClausesException : Exception // LUCENENET specific - added Exception suffix
         {
-            public TooManyClauses()
+            public TooManyClausesException()
                 : base("maxClauseCount is set to " + maxClauseCount)
             {
             }
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Adds a clause to a boolean query.
         /// </summary>
-        /// <exception cref="TooManyClauses"> if the new number of clauses exceeds the maximum clause number </exception>
+        /// <exception cref="TooManyClausesException"> if the new number of clauses exceeds the maximum clause number </exception>
         /// <seealso cref= #getMaxClauseCount() </seealso>
         public virtual void Add(Query query, Occur occur)
         {
@@ -158,13 +158,13 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Adds a clause to a boolean query. </summary>
-        /// <exception cref="TooManyClauses"> if the new number of clauses exceeds the maximum clause number </exception>
+        /// <exception cref="TooManyClausesException"> if the new number of clauses exceeds the maximum clause number </exception>
         /// <seealso cref= #getMaxClauseCount() </seealso>
         public virtual void Add(BooleanClause clause)
         {
             if (clauses.Count >= maxClauseCount)
             {
-                throw new TooManyClauses();
+                throw new TooManyClausesException();
             }
 
             clauses.Add(clause);

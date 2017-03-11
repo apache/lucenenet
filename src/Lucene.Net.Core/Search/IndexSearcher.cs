@@ -252,7 +252,7 @@ namespace Lucene.Net.Search
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n)
         {
@@ -268,7 +268,7 @@ namespace Lucene.Net.Search
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n)
         {
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search
         /// Finds the top <code>n</code>
         /// hits for <code>query</code>.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs Search(Query query, int n)
         {
@@ -290,7 +290,7 @@ namespace Lucene.Net.Search
         /// Finds the top <code>n</code>
         /// hits for <code>query</code>, applying <code>filter</code> if non-null.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs Search(Query query, Filter filter, int n)
         {
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search
         /// <param name="query"> to match documents </param>
         /// <param name="filter"> if non-null, used to permit documents to be collected. </param>
         /// <param name="results"> to receive hits </param>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual void Search(Query query, Filter filter, ICollector results)
         {
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search
         ///
         /// <p><seealso cref="ICollector#collect(int)"/> is called for every matching document.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual void Search(Query query, ICollector results)
         {
@@ -335,7 +335,7 @@ namespace Lucene.Net.Search
         /// <seealso cref="IndexSearcher#search(Query,Filter,int,Sort,boolean,boolean)"/> to
         /// control scoring.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
         {
@@ -354,7 +354,7 @@ namespace Lucene.Net.Search
         /// <code>true</code> then the maximum score over all
         /// collected hits will be computed.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
@@ -370,7 +370,7 @@ namespace Lucene.Net.Search
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort)
         {
@@ -404,7 +404,7 @@ namespace Lucene.Net.Search
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n, Sort sort)
         {
@@ -431,7 +431,7 @@ namespace Lucene.Net.Search
         /// <code>true</code> then the maximum score over all
         /// collected hits will be computed.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
@@ -450,7 +450,7 @@ namespace Lucene.Net.Search
         ///
         /// <p>Applications should usually call <seealso cref="IndexSearcher#search(Query,int)"/> or
         /// <seealso cref="IndexSearcher#search(Query,Filter,int)"/> instead. </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected virtual TopDocs Search(Weight weight, ScoreDoc after, int nDocs)
         {
@@ -507,7 +507,7 @@ namespace Lucene.Net.Search
         ///
         /// <p>Applications should usually call <seealso cref="IndexSearcher#search(Query,int)"/> or
         /// <seealso cref="IndexSearcher#search(Query,Filter,int)"/> instead. </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc after, int nDocs)
         {
@@ -533,7 +533,7 @@ namespace Lucene.Net.Search
         /// <p>Applications should usually call {@link
         /// IndexSearcher#search(Query,Filter,int,Sort)} instead.
         /// </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore)
         {
@@ -627,7 +627,7 @@ namespace Lucene.Net.Search
         ///          to match documents </param>
         /// <param name="collector">
         ///          to receive hits </param>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
         {
@@ -664,7 +664,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: called to re-write queries into primitive queries. </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         public virtual Query Rewrite(Query original)
         {
@@ -700,7 +700,7 @@ namespace Lucene.Net.Search
         /// Computing an explanation is as expensive as executing the query over the
         /// entire index.
         /// <p>Applications should call <seealso cref="IndexSearcher#explain(Query, int)"/>. </summary>
-        /// <exception cref="BooleanQuery.TooManyClauses"> If a query would exceed
+        /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
         ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
         protected virtual Explanation Explain(Weight weight, int doc)
         {

@@ -265,7 +265,7 @@ namespace Lucene.Net.Search
                 MultiSearcherDupls.Rewrite(mtq);
                 Assert.Fail("Should throw BooleanQuery.TooManyClauses");
             }
-            catch (BooleanQuery.TooManyClauses e)
+            catch (BooleanQuery.TooManyClausesException e)
             {
                 //  Maybe remove this assert in later versions, when internal API changes:
                 Assert.AreEqual("CheckMaxClauseCount", new StackTrace(e, false).GetFrames()[0].GetMethod().Name); //, "Should throw BooleanQuery.TooManyClauses with a stacktrace containing checkMaxClauseCount()");

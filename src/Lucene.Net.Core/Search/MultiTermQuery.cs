@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
     /// <p><b>NOTE</b>: if <seealso cref="#setRewriteMethod"/> is either
     /// <seealso cref="#CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE"/> or {@link
     /// #SCORING_BOOLEAN_QUERY_REWRITE}, you may encounter a
-    /// <seealso cref="BooleanQuery.TooManyClauses"/> exception during
+    /// <seealso cref="BooleanQuery.TooManyClausesException"/> exception during
     /// searching, which happens when the number of terms to be
     /// searched exceeds {@link
     /// BooleanQuery#getMaxClauseCount()}.  Setting {@link
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
         ///  <p> this method is faster than the BooleanQuery
         ///  rewrite methods when the number of matched terms or
         ///  matched documents is non-trivial. Also, it will never
-        ///  hit an errant <seealso cref="BooleanQuery.TooManyClauses"/>
+        ///  hit an errant <seealso cref="BooleanQuery.TooManyClausesException"/>
         ///  exception.
         /// </summary>
         ///  <seealso cref= #setRewriteMethod  </seealso>

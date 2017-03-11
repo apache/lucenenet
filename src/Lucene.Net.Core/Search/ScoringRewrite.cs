@@ -78,7 +78,7 @@ namespace Lucene.Net.Search
             {
                 if (count > BooleanQuery.MaxClauseCount)
                 {
-                    throw new BooleanQuery.TooManyClauses();
+                    throw new BooleanQuery.TooManyClausesException();
                 }
             }
         }

@@ -63,7 +63,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         {
                             bQuery.Add(query, GetModifierValue(child));
                         }
-                        catch (BooleanQuery.TooManyClauses ex)
+                        catch (BooleanQuery.TooManyClausesException ex)
                         {
                             throw new QueryNodeException(new Message(
                                 QueryParserMessages.TOO_MANY_BOOLEAN_CLAUSES, BooleanQuery

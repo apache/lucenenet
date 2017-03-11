@@ -179,7 +179,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 throw new ParseException("Cannot parse '" + query + "': " + tme.Message, tme);
             }
-            catch (BooleanQuery.TooManyClauses tmc)
+            catch (BooleanQuery.TooManyClausesException tmc)
             {
                 throw new ParseException("Cannot parse '" + query + "': too many boolean clauses", tmc);
             }
@@ -256,7 +256,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// By default QueryParser uses <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
         /// when creating a <see cref="PrefixQuery"/>, <see cref="WildcardQuery"/> or <see cref="TermRangeQuery"/>. This implementation is generally preferable because it
         /// a) Runs faster b) Does not have the scarcity of terms unduly influence score
-        /// c) avoids any <see cref="BooleanQuery.TooManyClauses"/> exception.
+        /// c) avoids any <see cref="BooleanQuery.TooManyClausesException"/> exception.
         /// However, if your application really needs to use the
         /// old-fashioned <see cref="BooleanQuery"/> expansion rewriting and the above
         /// points are not relevant then use this to change

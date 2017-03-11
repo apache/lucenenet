@@ -57,7 +57,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Builders
                         {
                             bQuery.Add(query, Occur.SHOULD);
                         }
-                        catch (BooleanQuery.TooManyClauses ex)
+                        catch (BooleanQuery.TooManyClausesException ex)
                         {
                             throw new QueryNodeException(new Message(
                                 /*
