@@ -20,25 +20,26 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// Field that stores a per-document <code>byte</code> value for scoring,
+    /// Field that stores a per-document <see cref="byte"/> value for scoring,
     /// sorting or value retrieval. Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   document.add(new ByteDocValuesField(name, (byte) 22));
-    /// </pre>
-    ///
+    /// <code>
+    ///   document.Add(new ByteDocValuesField(name, (byte) 22));
+    /// </code>
+    /// 
+    /// <para/>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance.
+    /// separate <see cref="StoredField"/> instance.
     /// </summary>
-    /// <seealso cref="NumericDocValues"/>
+    /// <seealso cref="NumericDocValuesField"/>
     [Obsolete("Use NumericDocValuesField instead")]
     public class ByteDocValuesField : NumericDocValuesField
     {
         /// <summary>
-        /// Creates a new DocValues field with the specified 8-bit byte value </summary>
+        /// Creates a new <see cref="Index.DocValues"/> field with the specified 8-bit byte value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 8-bit byte value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// <exception cref="ArgumentNullException"> if the field name is null. </exception>
         public ByteDocValuesField(string name, byte value)
             : base(name, value)
         {

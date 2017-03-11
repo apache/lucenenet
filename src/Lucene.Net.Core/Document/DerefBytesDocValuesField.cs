@@ -22,46 +22,47 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// Field that stores
-    /// a per-document <seealso cref="BytesRef"/> value. Here's an example usage:
+    /// a per-document <see cref="BytesRef"/> value. Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   document.add(new DerefBytesDocValuesField(name, new BytesRef("hello")));
-    /// </pre>
+    /// <code>
+    ///   document.Add(new DerefBytesDocValuesField(name, new BytesRef("hello")));
+    /// </code>
     ///
+    /// <para/>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance.
+    /// separate <see cref="StoredField"/> instance.
     /// </summary>
-    /// <seealso cref="BinaryDocValues"/>
+    /// <seealso cref="Index.BinaryDocValues"/>
     [Obsolete("Use BinaryDocValuesField instead.")]
     public class DerefBytesDocValuesField : BinaryDocValuesField
     {
         /// <summary>
-        /// Type for bytes DocValues: all with the same length
+        /// Type for bytes <see cref="Index.DocValues"/>: all with the same length
         /// </summary>
         public static readonly FieldType TYPE_FIXED_LEN = BinaryDocValuesField.fType;
 
         /// <summary>
-        /// Type for bytes DocValues: can have variable lengths
+        /// Type for bytes <see cref="Index.DocValues"/>: can have variable lengths
         /// </summary>
         public static readonly FieldType TYPE_VAR_LEN = BinaryDocValuesField.fType;
 
         /// <summary>
-        /// Create a new fixed or variable-length DocValues field. </summary>
+        /// Create a new fixed or variable-length <see cref="Index.DocValues"/> field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
         public DerefBytesDocValuesField(string name, BytesRef bytes)
             : base(name, bytes)
         {
         }
 
         /// <summary>
-        /// Create a new fixed or variable length DocValues field.
-        /// <p> </summary>
+        /// Create a new fixed or variable length <see cref="Index.DocValues"/> field.
+        /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
         /// <param name="isFixedLength"> (ignored) </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
         public DerefBytesDocValuesField(string name, BytesRef bytes, bool isFixedLength)
             : base(name, bytes)
         {

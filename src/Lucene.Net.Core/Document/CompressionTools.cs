@@ -23,11 +23,10 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// Simple utility class providing static methods to
-    ///  compress and decompress binary data for stored fields.
-    ///  this class uses java.util.zip.Deflater and Inflater
-    ///  classes to compress and decompress.
+    /// compress and decompress binary data for stored fields.
+    /// this class uses the <see cref="System.IO.Compression.DeflateStream"/>
+    /// class to compress and decompress.
     /// </summary>
-
     public class CompressionTools
     {
         // Export only static methods
@@ -36,8 +35,8 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Compresses the specified byte range using the
-        ///  specified compressionLevel 
+        /// Compresses the specified <see cref="byte"/> range using the
+        /// specified <paramref name="compressionLevel"/>.
         /// </summary>
         public static byte[] Compress(byte[] value, int offset, int length, CompressionLevel compressionLevel)
         {
@@ -55,7 +54,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Compresses the specified byte range, with default Optimal level 
+        /// Compresses the specified <see cref="byte"/> range, with default <see cref="CompressionLevel.Optimal"/> level 
         /// </summary>
         public static byte[] Compress(byte[] value, int offset, int length)
         {
@@ -63,22 +62,22 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Compresses all bytes in the array, with default Optimal level </summary>
+        /// Compresses all <see cref="byte"/>s in the array, with default <see cref="CompressionLevel.Optimal"/> level </summary>
         public static byte[] Compress(byte[] value)
         {
             return Compress(value, 0, value.Length, CompressionLevel.Optimal);
         }
 
         /// <summary>
-        /// Compresses the String value, with default BEST_COMPRESSION level </summary>
+        /// Compresses the <see cref="string"/> value, with default <see cref="CompressionLevel.Optimal"/> level </summary>
         public static byte[] CompressString(string value)
         {
             return CompressString(value, CompressionLevel.Optimal);
         }
 
         /// <summary>
-        /// Compresses the String value using the specified
-        ///  compressionLevel.
+        /// Compresses the <see cref="string"/> value using the specified
+        /// <paramref name="compressionLevel"/>.
         /// </summary>
         public static byte[] CompressString(string value, CompressionLevel compressionLevel)
         {
@@ -88,8 +87,8 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Decompress the byte array previously returned by
-        ///  compress (referenced by the provided BytesRef)
+        /// Decompress the <see cref="byte"/> array previously returned by
+        /// compress (referenced by the provided <see cref="BytesRef"/>)
         /// </summary>
         public static byte[] Decompress(BytesRef bytes)
         {
@@ -97,8 +96,8 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Decompress the byte array previously returned by
-        ///  compress
+        /// Decompress the <see cref="byte"/> array previously returned by
+        /// compress
         /// </summary>
         public static byte[] Decompress(byte[] value)
         {
@@ -106,8 +105,8 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Decompress the byte array previously returned by
-        ///  compress
+        /// Decompress the <see cref="byte"/> array previously returned by
+        /// compress
         /// </summary>
         public static byte[] Decompress(byte[] value, int offset, int length)
         {
@@ -129,8 +128,8 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Decompress the byte array previously returned by
-        ///  compressString back into a String
+        /// Decompress the <see cref="byte"/> array previously returned by
+        /// <see cref="CompressString(string)"/> back into a <see cref="string"/>
         /// </summary>
         public static string DecompressString(byte[] value)
         {
@@ -138,8 +137,8 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Decompress the byte array previously returned by
-        ///  compressString back into a String
+        /// Decompress the <see cref="byte"/> array previously returned by
+        /// <see cref="CompressString(string)"/> back into a <see cref="string"/>
         /// </summary>
         public static string DecompressString(byte[] value, int offset, int length)
         {
@@ -150,8 +149,8 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Decompress the byte array (referenced by the provided BytesRef)
-        ///  previously returned by compressString back into a String
+        /// Decompress the <see cref="byte"/> array (referenced by the provided <see cref="BytesRef"/>)
+        /// previously returned by <see cref="CompressString(string)"/> back into a <see cref="string"/>
         /// </summary>
         public static string DecompressString(BytesRef bytes)
         {

@@ -21,89 +21,91 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// <p>
-    /// Field that indexes <code>int</code> values
+    /// <para>
+    /// Field that indexes <see cref="int"/> values
     /// for efficient range filtering and sorting. Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    /// document.add(new IntField(name, 6, Field.Store.NO));
-    /// </pre>
+    /// <code>
+    ///     document.Add(new Int32Field(name, 6, Field.Store.NO));
+    /// </code>
     ///
-    /// For optimal performance, re-use the <code>IntField</code> and
-    /// <seealso cref="Document"/> instance for more than one document:
+    /// For optimal performance, re-use the <see cref="Int32Field"/> and
+    /// <see cref="Document"/> instance for more than one document:
     ///
-    /// <pre class="prettyprint">
-    ///  IntField field = new IntField(name, 6, Field.Store.NO);
-    ///  Document document = new Document();
-    ///  document.add(field);
+    /// <code>
+    ///     Int32Field field = new Int32Field(name, 6, Field.Store.NO);
+    ///     Document document = new Document();
+    ///     document.Add(field);
     ///
-    ///  for(all documents) {
-    ///    ...
-    ///    field.setIntValue(value)
-    ///    writer.addDocument(document);
-    ///    ...
-    ///  }
-    /// </pre>
+    ///     for (all documents) 
+    ///     {
+    ///         ...
+    ///         field.SetInt32Value(value)
+    ///         writer.AddDocument(document);
+    ///         ...
+    ///     }
+    /// </code>
     ///
-    /// See also <seealso cref="Int64Field"/>, <seealso cref="SingleField"/>, {@link
-    /// DoubleField}.</p>
+    /// See also <see cref="Int64Field"/>, <see cref="SingleField"/>, 
+    /// <see cref="DoubleField"/>.</para>
     ///
-    /// <p>To perform range querying or filtering against a
-    /// <code>IntField</code>, use <seealso cref="NumericRangeQuery"/> or {@link
-    /// NumericRangeFilter}.  To sort according to a
-    /// <code>IntField</code>, use the normal numeric sort types, eg
-    /// <seealso cref="Lucene.Net.Search.SortFieldType.INT32"/>. <code>IntField</code>
-    /// values can also be loaded directly from <seealso cref="IFieldCache"/>.</p>
+    /// <para>To perform range querying or filtering against a
+    /// <see cref="Int32Field"/>, use <see cref="Search.NumericRangeQuery{T}"/> or 
+    /// <see cref="Search.NumericRangeFilter{T}"/>.  To sort according to a
+    /// <see cref="Int32Field"/>, use the normal numeric sort types, eg
+    /// <see cref="Lucene.Net.Search.SortFieldType.INT32"/>. <see cref="Int32Field"/>
+    /// values can also be loaded directly from <see cref="Search.IFieldCache"/>.</para>
     ///
-    /// <p>You may add the same field name as an <code>IntField</code> to
+    /// <para>You may add the same field name as an <see cref="Int32Field"/> to
     /// the same document more than once.  Range querying and
     /// filtering will be the logical OR of all values; so a range query
     /// will hit all documents that have at least one value in
     /// the range. However sort behavior is not defined.  If you need to sort,
-    /// you should separately index a single-valued <code>IntField</code>.</p>
+    /// you should separately index a single-valued <see cref="Int32Field"/>.</para>
     ///
-    /// <p>An <code>IntField</code> will consume somewhat more disk space
+    /// <para>An <see cref="Int32Field"/> will consume somewhat more disk space
     /// in the index than an ordinary single-valued field.
     /// However, for a typical index that includes substantial
     /// textual content per document, this increase will likely
-    /// be in the noise. </p>
+    /// be in the noise. </para>
     ///
-    /// <p>Within Lucene, each numeric value is indexed as a
+    /// <para>Within Lucene, each numeric value is indexed as a
     /// <em>trie</em> structure, where each term is logically
     /// assigned to larger and larger pre-defined brackets (which
     /// are simply lower-precision representations of the value).
     /// The step size between each successive bracket is called the
-    /// <code>precisionStep</code>, measured in bits.  Smaller
-    /// <code>precisionStep</code> values result in larger number
+    /// <c>precisionStep</c>, measured in bits.  Smaller
+    /// <c>precisionStep</c> values result in larger number
     /// of brackets, which consumes more disk space in the index
     /// but may result in faster range search performance.  The
     /// default value, 4, was selected for a reasonable tradeoff
     /// of disk space consumption versus performance.  You can
-    /// create a custom <seealso cref="FieldType"/> and invoke the {@link
-    /// FieldType#setNumericPrecisionStep} method if you'd
+    /// create a custom <see cref="FieldType"/> and invoke the 
+    /// <see cref="FieldType.NumericPrecisionStep"/> setter if you'd
     /// like to change the value.  Note that you must also
-    /// specify a congruent value when creating {@link
-    /// NumericRangeQuery} or <seealso cref="NumericRangeFilter"/>.
+    /// specify a congruent value when creating 
+    /// <see cref="Search.NumericRangeQuery{T}"/> or <see cref="Search.NumericRangeFilter{T}"/>.
     /// For low cardinality fields larger precision steps are good.
     /// If the cardinality is &lt; 100, it is fair
-    /// to use <seealso cref="Integer#MAX_VALUE"/>, which produces one
-    /// term per value.</p>
+    /// to use <see cref="int.MaxValue"/>, which produces one
+    /// term per value.</para>
     ///
-    /// <p>For more information on the internals of numeric trie
-    /// indexing, including the <a
-    /// href="../search/NumericRangeQuery.html#precisionStepDesc"><code>precisionStep</code></a>
-    /// configuration, see <seealso cref="NumericRangeQuery"/>. The format of
-    /// indexed values is described in <seealso cref="NumericUtils"/>.</p>
+    /// <para>For more information on the internals of numeric trie
+    /// indexing, including the <see cref="Search.NumericRangeQuery{T}.PrecisionStep"/> <a
+    /// href="../search/NumericRangeQuery.html#precisionStepDesc"><c>precisionStep</c></a>
+    /// configuration, see <see cref="Search.NumericRangeQuery{T}"/>. The format of
+    /// indexed values is described in <see cref="Util.NumericUtils"/>.</para>
     ///
-    /// <p>If you only need to sort by numeric value, and never
+    /// <para>If you only need to sort by numeric value, and never
     /// run range querying/filtering, you can index using a
-    /// <code>precisionStep</code> of <seealso cref="Integer#MAX_VALUE"/>.
-    /// this will minimize disk space consumed. </p>
+    /// <c>precisionStep</c> of <see cref="int.MaxValue"/>.
+    /// this will minimize disk space consumed. </para>
     ///
-    /// <p>More advanced users can instead use {@link
-    /// NumericTokenStream} directly, when indexing numbers. this
+    /// <para>More advanced users can instead use 
+    /// <see cref="Analysis.NumericTokenStream"/> directly, 
+    /// when indexing numbers. this
     /// class is a wrapper around this token stream type for
-    /// easier, more intuitive usage.</p>
+    /// easier, more intuitive usage.</para>
     /// <para>
     /// NOTE: This was IntField in Lucene
     /// </para>
@@ -112,7 +114,7 @@ namespace Lucene.Net.Documents
     public sealed class Int32Field : Field
     {
         /// <summary>
-        /// Type for an IntField that is not stored:
+        /// Type for an <see cref="Int32Field"/> that is not stored:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
         public static readonly FieldType TYPE_NOT_STORED = new FieldType();
@@ -136,19 +138,20 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Type for a stored IntField:
+        /// Type for a stored <see cref="Int32Field"/>:
         /// normalization factors, frequencies, and positions are omitted.
         /// </summary>
         public static readonly FieldType TYPE_STORED = new FieldType();
 
         /// <summary>
-        /// Creates a stored or un-stored IntField with the provided value
-        ///  and default <code>precisionStep</code> {@link
-        ///  NumericUtils#PRECISION_STEP_DEFAULT} (4). </summary>
-        ///  <param name="name"> field name </param>
-        ///  <param name="value"> 32-bit integer value </param>
-        ///  <param name="stored"> Store.YES if the content should also be stored </param>
-        ///  <exception cref="IllegalArgumentException"> if the field name is null. </exception>
+        /// Creates a stored or un-stored <see cref="Int32Field"/> with the provided value
+        /// and default <c>precisionStep</c> 
+        /// <see cref="Util.NumericUtils.PRECISION_STEP_DEFAULT"/> (4). 
+        /// </summary>
+        /// <param name="name"> field name </param>
+        /// <param name="value"> 32-bit <see cref="int"/> value </param>
+        /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>. </exception>
         public Int32Field(string name, int value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
@@ -156,14 +159,16 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Expert: allows you to customize the {@link
-        ///  FieldType}. </summary>
-        ///  <param name="name"> field name </param>
-        ///  <param name="value"> 32-bit integer value </param>
-        ///  <param name="type"> customized field type: must have <seealso cref="FieldType#numericType()"/>
-        ///         of <seealso cref="NumericType.INT32"/>. </param>
-        ///  <exception cref="IllegalArgumentException"> if the field name or type is null, or
-        ///          if the field type does not have a INT numericType() </exception>
+        /// Expert: allows you to customize the 
+        /// <see cref="FieldType"/>.
+        /// </summary>
+        /// <param name="name"> field name </param>
+        /// <param name="value"> 32-bit <see cref="int"/> value </param>
+        /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
+        ///         of <see cref="NumericType.INT32"/>. </param>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentException">if the field type does not have a 
+        ///         <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT32"/> </exception>
         public Int32Field(string name, int value, FieldType type)
             : base(name, type)
         {

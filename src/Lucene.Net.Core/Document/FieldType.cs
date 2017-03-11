@@ -44,7 +44,7 @@ namespace Lucene.Net.Documents
         private DocValuesType? docValueType;
 
         /// <summary>
-        /// Create a new mutable FieldType with all of the properties from <code>ref</code>
+        /// Create a new mutable <see cref="FieldType"/> with all of the properties from <paramref name="ref"/>
         /// </summary>
         public FieldType(FieldType @ref)
         {
@@ -63,7 +63,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create a new FieldType with default properties.
+        /// Create a new <see cref="FieldType"/> with default properties.
         /// </summary>
         public FieldType()
         {
@@ -73,13 +73,13 @@ namespace Lucene.Net.Documents
         {
             if (frozen)
             {
-                throw new Exception("this FieldType is already frozen and cannot be changed");
+                throw new InvalidOperationException("this FieldType is already frozen and cannot be changed");
             }
         }
 
         /// <summary>
         /// Prevents future changes. Note, it is recommended that this is called once
-        /// the FieldTypes's properties have been set, to prevent unintentional state
+        /// the <see cref="FieldType"/>'s properties have been set, to prevent unintentional state
         /// changes.
         /// </summary>
         public virtual void Freeze()
@@ -88,11 +88,10 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set to <code>true</code> to index (invert) this field. </summary>
-        /// <param name="value"> true if this field should be indexed. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Set to <c>true</c> to index (invert) this field. The default is <c>false</c>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #indexed() </seealso>
         public virtual bool IsIndexed
         {
             get { return this.indexed; }
@@ -104,11 +103,10 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set to <code>true</code> to store this field. </summary>
-        /// <param name="value"> true if this field should be stored. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Set to <c>true</c> to store this field. The default is <c>false</c>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #stored() </seealso>
         public virtual bool IsStored
         {
             get
@@ -123,12 +121,11 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set to <code>true</code> to tokenize this field's contents via the
-        /// configured <seealso cref="Analyzer"/>. </summary>
-        /// <param name="value"> true if this field should be tokenized. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Set to <c>true</c> to tokenize this field's contents via the
+        /// configured <see cref="Analysis.Analyzer"/>. The default is <c>false</c>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #tokenized() </seealso>
         public virtual bool IsTokenized
         {
             get
@@ -143,12 +140,11 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set to <code>true</code> if this field's indexed form should be also stored
-        /// into term vectors. </summary>
-        /// <param name="value"> true if this field should store term vectors. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Set to <c>true</c> if this field's indexed form should be also stored
+        /// into term vectors. The default is <c>false</c>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #storeTermVectors() </seealso>
         public virtual bool StoreTermVectors
         {
             get { return this.storeTermVectors; }
@@ -161,12 +157,11 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set to <code>true</code> to also store token character offsets into the term
-        /// vector for this field. </summary>
-        /// <param name="value"> true if this field should store term vector offsets. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Set to <c>true</c> to also store token character offsets into the term
+        /// vector for this field. The default is <c>false</c>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #storeTermVectorOffsets() </seealso>
         public virtual bool StoreTermVectorOffsets
         {
             get
@@ -181,12 +176,11 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set to <code>true</code> to also store token positions into the term
-        /// vector for this field. </summary>
-        /// <param name="value"> true if this field should store term vector positions. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Set to <c>true</c> to also store token positions into the term
+        /// vector for this field. The default is <c>false</c>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #storeTermVectorPositions() </seealso>
         public virtual bool StoreTermVectorPositions
         {
             get
@@ -201,12 +195,11 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set to <code>true</code> to also store token payloads into the term
-        /// vector for this field. </summary>
-        /// <param name="value"> true if this field should store term vector payloads. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Set to <c>true</c> to also store token payloads into the term
+        /// vector for this field. The default is <c>false</c>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #storeTermVectorPayloads() </seealso>
         public virtual bool StoreTermVectorPayloads
         {
             get
@@ -221,11 +214,10 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set to <code>true</code> to omit normalization values for the field. </summary>
-        /// <param name="value"> true if this field should omit norms. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Set to <c>true</c> to omit normalization values for the field. The default is <c>false</c>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #omitNorms() </seealso>
         public virtual bool OmitNorms
         {
             get { return this.omitNorms; }
@@ -237,12 +229,13 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Sets the indexing options for the field: </summary>
-        /// <param name="value"> indexing options </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Sets the indexing options for the field. 
+        /// <para/>
+        /// The default is <see cref="IndexOptions.DOCS_AND_FREQS_AND_POSITIONS"/>.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #indexOptions() </seealso>
-        // LUCENENET TODO: Can we remove the nullable here?
+        // LUCENENET TODO: Can we remove the nullable here? Note this has a default of DOCS_AND_FREQS_AND_POSITIONS
         public virtual IndexOptions? IndexOptions
         {
             get
@@ -257,12 +250,12 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Specifies the field's numeric type. </summary>
-        /// <param name="type"> numeric type, or null if the field has no numeric type. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Specifies the field's numeric type, or set to <c>null</c> if the field has no numeric type.
+        /// If non-null then the field's value will be indexed numerically so that 
+        /// <see cref="Search.NumericRangeQuery"/> can be used at search time.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #numericType() </seealso>
-        // LUCENENET TODO: Can we remove the nullable here?
         public virtual NumericType? NumericType
         {
             get
@@ -277,14 +270,21 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Sets the numeric precision step for the field. </summary>
-        /// <param name="precisionStep"> numeric precision step for the field </param>
+        /// Sets the numeric precision step for the field.
+        /// <para/>
+        /// This has no effect if <see cref="NumericType"/> returns <c>null</c>.
+        /// <para/>
+        /// The default is <see cref="NumericUtils.PRECISION_STEP_DEFAULT"/>.
+        /// </summary>
         /// <exception cref="ArgumentException"> if precisionStep is less than 1. </exception>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #numericPrecisionStep() </seealso>
         public virtual int NumericPrecisionStep
         {
+            get
+            {
+                return numericPrecisionStep;
+            }
             set
             {
                 CheckIfFrozen();
@@ -294,14 +294,10 @@ namespace Lucene.Net.Documents
                 }
                 this.numericPrecisionStep = value;
             }
-            get
-            {
-                return numericPrecisionStep;
-            }
         }
 
         /// <summary>
-        /// Prints a Field for human consumption. </summary>
+        /// Prints a <see cref="FieldType"/> for human consumption. </summary>
         public override sealed string ToString()
         {
             var result = new StringBuilder();
@@ -367,11 +363,12 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Set's the field's DocValuesType </summary>
-        /// <param name="type"> DocValues type, or null if no DocValues should be stored. </param>
-        /// <exception cref="InvalidOperationException"> if this FieldType is frozen against
+        /// Sets the field's <see cref="DocValuesType"/>, or set to <c>null</c> if no <see cref="DocValues"/> should be stored.
+        /// <para/>
+        /// The default is <c>null</c> (no <see cref="DocValues"/>).
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        /// <seealso cref= #docValueType() </seealso>
         public virtual DocValuesType? DocValueType
         {
             get
@@ -391,7 +388,6 @@ namespace Lucene.Net.Documents
     /// Data type of the numeric value
     /// @since 3.2
     /// </summary>
-    // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
     public enum NumericType
     {
         /// <summary>

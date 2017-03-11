@@ -25,18 +25,18 @@ namespace Lucene.Net.Documents
     /// them by date, which makes them suitable for use as field values
     /// and search terms.
     ///
-    /// <P>this class also helps you to limit the resolution of your dates. Do not
+    /// <para/>This class also helps you to limit the resolution of your dates. Do not
     /// save dates with a finer resolution than you really need, as then
-    /// <seealso cref="TermRangeQuery"/> and <seealso cref="PrefixQuery"/> will require more memory and become slower.
+    /// <see cref="Search.TermRangeQuery"/> and <see cref="Search.PrefixQuery"/> will require more memory and become slower.
     ///
-    /// <P>
-    /// Another approach is <seealso cref="NumericUtils"/>, which provides
+    /// <para/>
+    /// Another approach is <see cref="Util.NumericUtils"/>, which provides
     /// a sortable binary representation (prefix encoded) of numeric values, which
     /// date/time are.
-    /// For indexing a <seealso cref="Date"/> or <seealso cref="Calendar"/>, just get the unix timestamp as
-    /// <code>long</code> using <seealso cref="Date#getTime"/> or <seealso cref="Calendar#getTimeInMillis"/> and
-    /// index this as a numeric value with <seealso cref="Int64Field"/>
-    /// and use <seealso cref="NumericRangeQuery"/> to query it.
+    /// 
+    /// For indexing a <see cref="DateTime"/>, just get the <see cref="DateTime.Ticks"/> and index
+    /// this as a numeric value with <see cref="Int64Field"/> and use <see cref="Search.NumericRangeQuery{T}"/>
+    /// to query it.
     /// </summary>
     public static class DateTools
     {
@@ -48,16 +48,17 @@ namespace Lucene.Net.Documents
         private static readonly string SECOND_FORMAT = "yyyyMMddHHmmss";
         private static readonly string MILLISECOND_FORMAT = "yyyyMMddHHmmssfff";
 
-        private static readonly System.Globalization.Calendar calInstance = new System.Globalization.GregorianCalendar();
+        // LUCENENET - not used
+        //private static readonly System.Globalization.Calendar calInstance = new System.Globalization.GregorianCalendar();
 
         /// <summary>
-        /// Converts a Date to a string suitable for indexing.
+        /// Converts a <see cref="DateTime"/> to a string suitable for indexing.
         /// </summary>
         /// <param name="date"> the date to be converted </param>
         /// <param name="resolution"> the desired resolution, see
-        ///  <seealso cref="#round(Date, DateTools.Resolution)"/> </param>
-        /// <returns> a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,
-        ///  depending on <code>resolution</code>; using GMT as timezone  </returns>
+        /// <see cref="Round(DateTime, DateTools.Resolution)"/> </param>
+        /// <returns> a string in format <c>yyyyMMddHHmmssSSS</c> or shorter,
+        /// depending on <paramref name="resolution"/>; using GMT as timezone  </returns>
         public static string DateToString(DateTime date, Resolution resolution)
         {
             return TimeToString(date.Ticks / TimeSpan.TicksPerMillisecond, resolution);
@@ -66,11 +67,11 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Converts a millisecond time to a string suitable for indexing.
         /// </summary>
-        /// <param name="time"> the date expressed as milliseconds since January 1, 1970, 00:00:00 GMT </param>
+        /// <param name="time"> the date expressed as milliseconds since January 1, 1970, 00:00:00 GMT (also known as the "epoch") </param>
         /// <param name="resolution"> the desired resolution, see
-        ///  <seealso cref="#round(long, DateTools.Resolution)"/> </param>
-        /// <returns> a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,
-        ///  depending on <code>resolution</code>; using GMT as timezone </returns>
+        /// <see cref="Round(long, DateTools.Resolution)"/> </param>
+        /// <returns> a string in format <c>yyyyMMddHHmmssSSS</c> or shorter,
+        /// depending on <paramref name="resolution"/>; using GMT as timezone </returns>
         public static string TimeToString(long time, Resolution resolution)
         {
             DateTime date = new DateTime(Round(time, resolution));
@@ -108,28 +109,28 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Converts a string produced by <code>timeToString</code> or
-        /// <code>dateToString</code> back to a time, represented as the
-        /// number of milliseconds since January 1, 1970, 00:00:00 GMT.
+        /// Converts a string produced by <see cref="TimeToString(long, Resolution)"/> or
+        /// <see cref="DateToString(DateTime, Resolution)"/> back to a time, represented as the
+        /// number of milliseconds since January 1, 1970, 00:00:00 GMT (also known as the "epoch").
         /// </summary>
         /// <param name="dateString"> the date string to be converted </param>
-        /// <returns> the number of milliseconds since January 1, 1970, 00:00:00 GMT </returns>
-        /// <exception cref="ParseException"> if <code>dateString</code> is not in the
-        ///  expected format  </exception>
+        /// <returns> the number of milliseconds since January 1, 1970, 00:00:00 GMT (also known as the "epoch")</returns>
+        /// <exception cref="FormatException"> if <paramref name="dateString"/> is not in the
+        /// expected format </exception>
         public static long StringToTime(string dateString)
         {
             return StringToDate(dateString).Ticks;
         }
 
         /// <summary>
-        /// Converts a string produced by <code>timeToString</code> or
-        /// <code>dateToString</code> back to a time, represented as a
-        /// Date object.
+        /// Converts a string produced by <see cref="TimeToString(long, Resolution)"/> or
+        /// <see cref="DateToString(DateTime, Resolution)"/> back to a time, represented as a
+        /// <see cref="DateTime"/> object.
         /// </summary>
         /// <param name="dateString"> the date string to be converted </param>
-        /// <returns> the parsed time as a Date object </returns>
-        /// <exception cref="ParseException"> if <code>dateString</code> is not in the
-        ///  expected format  </exception>
+        /// <returns> the parsed time as a <see cref="DateTime"/> object </returns>
+        /// <exception cref="FormatException"> if <paramref name="dateString"/> is not in the
+        /// expected format </exception>
         public static DateTime StringToDate(string dateString)
         {
             DateTime date;
@@ -196,27 +197,30 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Limit a date's resolution. For example, the date <code>2004-09-21 13:50:11</code>
-        /// will be changed to <code>2004-09-01 00:00:00</code> when using
-        /// <code>Resolution.MONTH</code>.
+        /// Limit a date's resolution. For example, the date <c>2004-09-21 13:50:11</c>
+        /// will be changed to <c>2004-09-01 00:00:00</c> when using
+        /// <see cref="Resolution.MONTH"/>.
         /// </summary>
+        /// <param name="date"> the date to be rounded </param>
         /// <param name="resolution"> The desired resolution of the date to be returned </param>
-        /// <returns> the date with all values more precise than <code>resolution</code>
-        ///  set to 0 or 1 </returns>
+        /// <returns> the date with all values more precise than <paramref name="resolution"/>
+        /// set to 0 or 1 </returns>
         public static DateTime Round(DateTime date, Resolution resolution)
         {
             return new DateTime(Round(date.Ticks / TimeSpan.TicksPerMillisecond, resolution));
         }
 
         /// <summary>
-        /// Limit a date's resolution. For example, the date <code>1095767411000</code>
+        /// Limit a date's resolution. For example, the date <c>1095767411000</c>
         /// (which represents 2004-09-21 13:50:11) will be changed to
-        /// <code>1093989600000</code> (2004-09-01 00:00:00) when using
-        /// <code>Resolution.MONTH</code>.
+        /// <c>1093989600000</c> (2004-09-01 00:00:00) when using
+        /// <see cref="Resolution.MONTH"/>.
         /// </summary>
+        /// <param name="time"> the time to be rounded </param>
         /// <param name="resolution"> The desired resolution of the date to be returned </param>
-        /// <returns> the date with all values more precise than <code>resolution</code>
-        ///  set to 0 or 1, expressed as milliseconds since January 1, 1970, 00:00:00 GMT </returns>
+        /// <returns> the date with all values more precise than <paramref name="resolution"/>
+        /// set to 0 or 1, expressed as milliseconds since January 1, 1970, 00:00:00 GMT 
+        /// (also known as the "epoch")</returns>
         public static long Round(long time, Resolution resolution)
         {
             DateTime dt = new DateTime(time * TimeSpan.TicksPerMillisecond);

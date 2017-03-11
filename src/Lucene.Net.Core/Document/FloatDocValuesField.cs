@@ -18,11 +18,11 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// Syntactic sugar for encoding floats as NumericDocValues
-    /// via <seealso cref="Float#floatToRawIntBits(float)"/>.
+    /// Syntactic sugar for encoding floats as <see cref="Index.NumericDocValues"/>
+    /// via <see cref="Support.Number.SingleToRawInt32Bits(float)"/>.
     /// <para>
     /// Per-document floating point values can be retrieved via
-    /// <seealso cref="IFieldCache#getFloats(AtomicReader, String, boolean)"/>.</para>
+    /// <seealso cref="Search.IFieldCache.GetSingles(Lucene.Net.Index.AtomicReader, string, bool)"/>.</para>
     /// <para>
     /// <b>NOTE</b>: In most all cases this will be rather inefficient,
     /// requiring four bytes per document. Consider encoding floating
@@ -38,7 +38,7 @@ namespace Lucene.Net.Documents
         /// Creates a new DocValues field with the specified 32-bit <see cref="float"/> value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 32-bit <see cref="float"/> value </param>
-        /// <exception cref="ArgumentException"> if the field name is null </exception>
+        /// <exception cref="System.ArgumentNullException"> if the field name is <c>null</c> </exception>
         public SingleDocValuesField(string name, float value)
             : base(name, Support.Number.SingleToInt32Bits(value))
         {
@@ -51,7 +51,7 @@ namespace Lucene.Net.Documents
 
         public override void SetInt64Value(long value)
         {
-            throw new System.ArgumentException("cannot change value type from Float to Long");
+            throw new System.ArgumentException("cannot change value type from System.Single to System.Int64");
         }
     }
 }

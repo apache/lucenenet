@@ -19,16 +19,13 @@ namespace Lucene.Net.Documents
      * limitations under the License.
      */
 
-    // javadocs
-    // javadocs
-
     /// <summary>
-    /// Syntactic sugar for encoding doubles as NumericDocValues
-    /// via <seealso cref="Double#doubleToRawLongBits(double)"/>.
-    /// 
+    /// Syntactic sugar for encoding doubles as <see cref="Index.NumericDocValues"/>
+    /// via <see cref="Support.Number.DoubleToRawInt64Bits(double)"/>.
+    /// <para/>
     /// Per-document double values can be retrieved via
-    /// <seealso cref="IFieldCache#getDoubles(AtomicReader, String, boolean)"/>.
-    /// 
+    /// <see cref="Search.IFieldCache.GetDoubles(Lucene.Net.Index.AtomicReader, string, bool)"/>.
+    /// <para/>
     /// <b>NOTE</b>: In most all cases this will be rather inefficient,
     /// requiring eight bytes per document. Consider encoding double
     /// values yourself with only as much precision as you require.
@@ -36,10 +33,10 @@ namespace Lucene.Net.Documents
     public class DoubleDocValuesField : NumericDocValuesField
     {
         /// <summary>
-        /// Creates a new DocValues field with the specified 64-bit double value </summary>
+        /// Creates a new <see cref="Index.DocValues"/> field with the specified 64-bit double value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 64-bit double value </param>
-        /// <exception cref="ArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field name is <c>null</c> </exception>
         public DoubleDocValuesField(string name, double value)
             : base(name, BitConverter.DoubleToInt64Bits(value))
         {
@@ -52,7 +49,7 @@ namespace Lucene.Net.Documents
 
         public override void SetInt64Value(long value)
         {
-            throw new System.ArgumentException("cannot change value type from Double to Long");
+            throw new System.ArgumentException("cannot change value type from System.Double to System.Int64");
         }
     }
 }

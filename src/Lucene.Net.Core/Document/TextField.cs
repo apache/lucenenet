@@ -22,10 +22,9 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// A field that is indexed and tokenized, without term
-    ///  vectors.  For example this would be used on a 'body'
-    ///  field, that contains the bulk of a document's text.
+    /// vectors.  For example this would be used on a 'body'
+    /// field, that contains the bulk of a document's text.
     /// </summary>
-
     public sealed class TextField : Field
     {
         /// <summary>
@@ -51,33 +50,31 @@ namespace Lucene.Net.Documents
         // TODO: add sugar for term vectors...?
 
         /// <summary>
-        /// Creates a new un-stored TextField with TextReader value. </summary>
+        /// Creates a new un-stored <see cref="TextField"/> with <see cref="TextReader"/> value. </summary>
         /// <param name="name"> field name </param>
-        /// <param name="reader"> reader value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
-        /// <exception cref="NullPointerException"> if the reader is null </exception>
+        /// <param name="reader"> <see cref="TextReader"/> value </param>
+        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="reader"/> is <c>null</c> </exception>
         public TextField(string name, TextReader reader)
             : base(name, reader, TYPE_NOT_STORED)
         {
         }
 
         /// <summary>
-        /// Creates a new TextField with String value. </summary>
+        /// Creates a new <see cref="TextField"/> with <see cref="string"/> value. </summary>
         /// <param name="name"> field name </param>
-        /// <param name="value"> string value </param>
-        /// <param name="store"> Store.YES if the content should also be stored </param>
-        /// <exception cref="IllegalArgumentException"> if the field name or value is null. </exception>
+        /// <param name="value"> <see cref="string"/> value </param>
+        /// <param name="store"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
+        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
         public TextField(string name, string value, Store store)
             : base(name, value, store == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
         }
 
         /// <summary>
-        /// Creates a new un-stored TextField with TokenStream value. </summary>
+        /// Creates a new un-stored <see cref="TextField"/> with <see cref="TokenStream"/> value. </summary>
         /// <param name="name"> field name </param>
-        /// <param name="stream"> TokenStream value </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null. </exception>
-        /// <exception cref="NullPointerException"> if the tokenStream is null </exception>
+        /// <param name="stream"> <see cref="TokenStream"/> value </param>
+        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="stream"/> is <c>null</c>. </exception>
         public TextField(string name, TokenStream stream)
             : base(name, stream, TYPE_NOT_STORED)
         {

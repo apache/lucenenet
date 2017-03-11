@@ -21,23 +21,23 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// <p>
+    /// <para>
     /// Field that stores
-    /// a per-document <seealso cref="BytesRef"/> value, indexed for
+    /// a per-document <see cref="BytesRef"/> value, indexed for
     /// sorting.  Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   document.add(new SortedDocValuesField(name, new BytesRef("hello")));
-    /// </pre></p>
+    /// <code>
+    ///     document.Add(new SortedDocValuesField(name, new BytesRef("hello")));
+    /// </code></para>
     ///
-    /// <p>
+    /// <para>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance.</p>
+    /// separate <see cref="StoredField"/> instance.</para>
     /// </summary>
     public class SortedDocValuesField : Field
     {
         /// <summary>
-        /// Type for sorted bytes DocValues
+        /// Type for sorted bytes <see cref="DocValues"/>
         /// </summary>
         public static readonly FieldType TYPE = new FieldType();
 
@@ -48,10 +48,10 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create a new sorted DocValues field. </summary>
+        /// Create a new sorted <see cref="DocValues"/> field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
-        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
+        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
         public SortedDocValuesField(string name, BytesRef bytes)
             : base(name, TYPE)
         {

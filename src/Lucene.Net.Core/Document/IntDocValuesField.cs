@@ -20,15 +20,15 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    ///  Field that stores a per-document <code>int</code> value for scoring,
+    /// Field that stores a per-document <see cref="int"/> value for scoring,
     /// sorting or value retrieval. Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   document.add(new IntDocValuesField(name, 22));
-    /// </pre>
+    /// <code>
+    ///     document.Add(new Int32DocValuesField(name, 22));
+    /// </code>
     ///
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance. 
+    /// separate <see cref="StoredField"/> instance. 
     /// <para/>
     /// NOTE: This was IntDocValuesField in Lucene
     /// </summary>
@@ -40,7 +40,7 @@ namespace Lucene.Net.Documents
         /// Creates a new DocValues field with the specified 32-bit <see cref="int"/> value </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> 32-bit <see cref="int"/> value </param>
-        /// <exception cref="ArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
         public Int32DocValuesField(string name, int value)
             : base(name, value)
         {

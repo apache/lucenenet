@@ -26,16 +26,16 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// Documents are the unit of indexing and search.
-    ///
+    /// <para/>
     /// A Document is a set of fields.  Each field has a name and a textual value.
-    /// A field may be <seealso cref="Lucene.Net.Index.IIndexableFieldType#stored() stored"/> with the document, in which
+    /// A field may be stored (<see cref="IIndexableFieldType.IsStored"/>) with the document, in which
     /// case it is returned with search hits on the document.  Thus each document
     /// should typically contain one or more stored fields which uniquely identify
     /// it.
-    ///
-    /// <p>Note that fields which are <i>not</i> <seealso cref="Lucene.Net.Index.IIndexableFieldType#stored() stored"/> are
-    /// <i>not</i> available in documents retrieved from the index, e.g. with {@link
-    /// ScoreDoc#doc} or <seealso cref="IndexReader#document(int)"/>.</p>
+    /// <para/>
+    /// Note that fields which are <i>not</i> <see cref="Lucene.Net.Index.IIndexableFieldType.IsStored"/> are
+    /// <i>not</i> available in documents retrieved from the index, e.g. with 
+    /// <see cref="Search.ScoreDoc.Doc"/> or <see cref="IndexReader.Document(int)"/>.
     /// </summary>
     public sealed class Document : IEnumerable<IIndexableField>
     {
@@ -58,14 +58,14 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// <p>Adds a field to a document.  Several fields may be added with
+        /// <para>Adds a field to a document.  Several fields may be added with
         /// the same name.  In this case, if the fields are indexed, their text is
-        /// treated as though appended for the purposes of search.</p>
-        /// <p> Note that add like the removeField(s) methods only makes sense
+        /// treated as though appended for the purposes of search.</para>
+        /// <para> Note that add like the <see cref="RemoveField(string)"/> and <see cref="RemoveFields(string)"/> methods only makes sense
         /// prior to adding a document to an index. These methods cannot
         /// be used to change the content of an existing index! In order to achieve this,
         /// a document has to be deleted from an index and a new changed version of that
-        /// document has to be added.</p>
+        /// document has to be added.</para>
         /// </summary>
         public void Add(IIndexableField field)
         {
@@ -73,14 +73,14 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// <p>Removes field with the specified name from the document.
+        /// <para>Removes field with the specified name from the document.
         /// If multiple fields exist with this name, this method removes the first field that has been added.
-        /// If there is no field with the specified name, the document remains unchanged.</p>
-        /// <p> Note that the removeField(s) methods like the add method only make sense
+        /// If there is no field with the specified name, the document remains unchanged.</para>
+        /// <para> Note that the <see cref="RemoveField(string)"/> and <see cref="RemoveFields(string)"/> methods like the add method only make sense
         /// prior to adding a document to an index. These methods cannot
         /// be used to change the content of an existing index! In order to achieve this,
         /// a document has to be deleted from an index and a new changed version of that
-        /// document has to be added.</p>
+        /// document has to be added.</para>
         /// </summary>
         public void RemoveField(string name)
         {
@@ -97,13 +97,13 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// <p>Removes all fields with the given name from the document.
-        /// If there is no field with the specified name, the document remains unchanged.</p>
-        /// <p> Note that the removeField(s) methods like the add method only make sense
+        /// <para>Removes all fields with the given name from the document.
+        /// If there is no field with the specified name, the document remains unchanged.</para>
+        /// <para> Note that the <see cref="RemoveField(string)"/> and <see cref="RemoveFields(string)"/> methods like the add method only make sense
         /// prior to adding a document to an index. These methods cannot
         /// be used to change the content of an existing index! In order to achieve this,
         /// a document has to be deleted from an index and a new changed version of that
-        /// document has to be added.</p>
+        /// document has to be added.</para>
         /// </summary>
         public void RemoveFields(string name)
         {
@@ -120,12 +120,12 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns an array of byte arrays for of the fields that have the name specified
-        /// as the method parameter.  this method returns an empty
+        /// as the method parameter. This method returns an empty
         /// array when there are no matching fields.  It never
-        /// returns null.
+        /// returns <c>null</c>.
         /// </summary>
         /// <param name="name"> the name of the field </param>
-        /// <returns> a <code>BytesRef[]</code> of binary field values </returns>
+        /// <returns> a <see cref="T:BytesRef[]"/> of binary field values </returns>
         public BytesRef[] GetBinaryValues(string name)
         {
             var result = new List<BytesRef>();
@@ -148,12 +148,12 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns an array of bytes for the first (or only) field that has the name
-        /// specified as the method parameter. this method will return <code>null</code>
+        /// specified as the method parameter. this method will return <c>null</c>
         /// if no binary fields with the specified name are available.
         /// There may be non-binary fields with the same name.
         /// </summary>
         /// <param name="name"> the name of the field. </param>
-        /// <returns> a <code>BytesRef</code> containing the binary field value or <code>null</code> </returns>
+        /// <returns> a <see cref="BytesRef"/> containing the binary field value or <c>null</c> </returns>
         public BytesRef GetBinaryValue(string name)
         {
             foreach (IIndexableField field in fields)
@@ -172,7 +172,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns a field with the given name if any exist in this document, or
-        /// null.  If multiple fields exists with this name, this method returns the
+        /// <c>null</c>. If multiple fields exists with this name, this method returns the
         /// first value added.
         /// </summary>
         public IIndexableField GetField(string name)
@@ -188,12 +188,12 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Returns an array of <seealso cref="IIndexableField"/>s with the given name.
+        /// Returns an array of <see cref="IIndexableField"/>s with the given name.
         /// this method returns an empty array when there are no
-        /// matching fields.  It never returns null.
+        /// matching fields. It never returns <c>null</c>.
         /// </summary>
         /// <param name="name"> the name of the field </param>
-        /// <returns> a <code>IndexableField[]</code> array </returns>
+        /// <returns> a <see cref="T:IndexableField[]"/> array </returns>
         public IIndexableField[] GetFields(string name)
         {
             var result = new List<IIndexableField>();
@@ -210,10 +210,11 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns a List of all the fields in a document.
-        /// <p>Note that fields which are <i>not</i> stored are
+        /// <para>Note that fields which are <i>not</i> stored are
         /// <i>not</i> available in documents retrieved from the
-        /// index, e.g. <seealso cref="IndexSearcher#doc(int)"/> or {@link
-        /// IndexReader#document(int)}.</p>
+        /// index, e.g. <see cref="Search.IndexSearcher.Doc(int)"/> or 
+        /// <see cref="IndexReader.Document(int)"/>.
+        /// </para>
         /// </summary>
         public IList<IIndexableField> Fields
         {
@@ -227,13 +228,13 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns an array of values of the field specified as the method parameter.
-        /// this method returns an empty array when there are no
-        /// matching fields.  It never returns null.
-        /// For <seealso cref="Int32Field"/>, <seealso cref="Int64Field"/>, {@link
-        /// FloatField} and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
-        /// the actual numeric field instances back, use <seealso cref="#getFields"/>. </summary>
+        /// This method returns an empty array when there are no
+        /// matching fields. It never returns <c>null</c>.
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
+        /// the actual numeric field instances back, use <see cref="GetFields(string)"/>. </summary>
         /// <param name="name"> the name of the field </param>
-        /// <returns> a <code>String[]</code> of field values </returns>
+        /// <returns> a <see cref="T:string[]"/> of field values </returns>
         public string[] GetValues(string name)
         {
             var result = new List<string>();
@@ -255,12 +256,12 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns the string value of the field with the given name if any exist in
-        /// this document, or null.  If multiple fields exist with this name, this
+        /// this document, or <c>null</c>.  If multiple fields exist with this name, this
         /// method returns the first value added. If only binary fields with this name
-        /// exist, returns null.
-        /// For <seealso cref="Int32Field"/>, <seealso cref="Int64Field"/>, {@link
-        /// FloatField} and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
-        /// the actual numeric field instance back, use <seealso cref="#getField"/>.
+        /// exist, returns <c>null</c>.
+        /// For <see cref="Int32Field"/>, <see cref="Int64Field"/>, 
+        /// <see cref="SingleField"/> and <seealso cref="DoubleField"/> it returns the string value of the number. If you want
+        /// the actual numeric field instance back, use <see cref="GetField(string)"/>.
         /// </summary>
         public string Get(string name)
         {

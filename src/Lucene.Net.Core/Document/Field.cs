@@ -27,23 +27,24 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// Expert: directly create a field for a document.  Most
-    /// users should use one of the sugar subclasses: {@link
-    /// IntField}, <seealso cref="Int64Field"/>, <seealso cref="SingleField"/>, {@link
-    /// DoubleField}, <seealso cref="BinaryDocValuesField"/>, {@link
-    /// NumericDocValuesField}, <seealso cref="SortedDocValuesField"/>, {@link
-    /// StringField}, <seealso cref="TextField"/>, <seealso cref="StoredField"/>.
+    /// users should use one of the sugar subclasses: <see cref="Int32Field"/>, 
+    /// <see cref="Int64Field"/>, <see cref="SingleField"/>, <see cref="DoubleField"/>, 
+    /// <see cref="BinaryDocValuesField"/>, <see cref="NumericDocValuesField"/>,
+    /// <see cref="SortedDocValuesField"/>, <see cref="StringField"/>,
+    /// <see cref="TextField"/>, <see cref="StoredField"/>.
     ///
-    /// <p/> A field is a section of a Document. Each field has three
+    /// <para/> A field is a section of a <see cref="Document"/>. Each field has three
     /// parts: name, type and value. Values may be text
-    /// (String, TextReader or pre-analyzed TokenStream), binary
-    /// (byte[]), or numeric (a Number).  Fields are optionally stored in the
+    /// (<see cref="string"/>, <see cref="TextReader"/> or pre-analyzed <see cref="TokenStream"/>), binary
+    /// (<see cref="T:byte[]"/>), or numeric (<see cref="int"/>, <see cref="long"/>, <see cref="float"/>, or <see cref="double"/>). 
+    /// Fields are optionally stored in the
     /// index, so that they may be returned with hits on the document.
     ///
-    /// <p/>
-    /// NOTE: the field type is an <seealso cref="IIndexableFieldType"/>.  Making changes
-    /// to the state of the IndexableFieldType will impact any
+    /// <para/>
+    /// NOTE: the field type is an <see cref="IIndexableFieldType"/>.  Making changes
+    /// to the state of the <see cref="IIndexableFieldType"/> will impact any
     /// Field it is used in.  It is strongly recommended that no
-    /// changes be made after Field instantiation.
+    /// changes be made after <see cref="Field"/> instantiation.
     /// </summary>
     public class Field : IIndexableField
     {
@@ -62,9 +63,9 @@ namespace Lucene.Net.Documents
         protected object m_fieldsData;
 
         /// <summary>
-        /// Pre-analyzed tokenStream for indexed fields; this is
-        /// separate from fieldsData because you are allowed to
-        /// have both; eg maybe field has a String value but you
+        /// Pre-analyzed <see cref="TokenStream"/> for indexed fields; this is
+        /// separate from <see cref="m_fieldsData"/> because you are allowed to
+        /// have both; eg maybe field has a <see cref="string"/> value but you
         /// customize how it's tokenized
         /// </summary>
         protected TokenStream m_tokenStream;
@@ -73,16 +74,17 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Field's boost </summary>
-        /// <seealso cref= #boost() </seealso>
+        /// <seealso cref="Boost"/>
         protected float m_boost = 1.0f;
 
         /// <summary>
         /// Expert: creates a field with no initial value.
-        /// Intended only for custom Field subclasses. </summary>
+        /// Intended only for custom <see cref="Field"/> subclasses.
+        /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="ArgumentNullException"> if either the name or type
-        ///         is null. </exception>
+        /// <exception cref="ArgumentNullException"> if either the <paramref name="name"/> or <paramref name="type"/>
+        ///         is <c>null</c>. </exception>
         protected internal Field(string name, FieldType type)
         {
             if (name == null)
@@ -98,14 +100,14 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create field with TextReader value. </summary>
+        /// Create field with <see cref="TextReader"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="reader"> reader value </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="ArgumentNullException"> if either the name or type
-        ///         is null, or if the field's type is stored(), or
-        ///         if tokenized() is false. </exception>
-        /// <exception cref="ArgumentNullException"> if the reader is null </exception>
+        /// <exception cref="ArgumentException"> if <see cref="FieldType.IsStored"/> is true, or
+        ///         if <see cref="FieldType.IsTokenized"/> is false. </exception>
+        /// <exception cref="ArgumentNullException"> if either the <paramref name="name"/> or <paramref name="type"/>
+        ///         is <c>null</c>, or if the reader is <c>null</c> </exception>
         public Field(string name, TextReader reader, FieldType type)
         {
             if (name == null)
@@ -135,14 +137,14 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create field with TokenStream value. </summary>
+        /// Create field with <see cref="TokenStream"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="tokenStream"> TokenStream value </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="ArgumentException"> if either the name or type
-        ///         is null, or if the field's type is stored(), or
-        ///         if tokenized() is false, or if indexed() is false. </exception>
-        /// <exception cref="ArgumentNullException"> if the tokenStream is null </exception>
+        /// <exception cref="ArgumentException"> if <see cref="FieldType.IsStored"/> is true, or
+        ///         if <see cref="FieldType.IsTokenized"/> is false, or if <see cref="FieldType.IsIndexed"/> is false. </exception>
+        /// <exception cref="ArgumentNullException"> if either the <paramref name="name"/> or <paramref name="type"/>
+        ///         is <c>null</c>, or if the <paramref name="tokenStream"/> is <c>null</c> </exception>
         public Field(string name, TokenStream tokenStream, FieldType type)
         {
             if (name == null)
@@ -151,7 +153,7 @@ namespace Lucene.Net.Documents
             }
             if (tokenStream == null)
             {
-                throw new System.ArgumentNullException("tokenStream","tokenStream cannot be null");
+                throw new System.ArgumentNullException("tokenStream", "tokenStream cannot be null");
             }
             if (type == null)
             {
@@ -175,14 +177,15 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Create field with binary value.
         ///
-        /// <p>NOTE: the provided byte[] is not copied so be sure
-        /// not to change it until you're done with this field. </summary>
+        /// <para/>NOTE: the provided <see cref="T:byte[]"/> is not copied so be sure
+        /// not to change it until you're done with this field.
+        /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> byte array pointing to binary content (not copied) </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="ArgumentException"> if the field name is null,
-        ///         or the field's type is indexed() </exception>
-        /// <exception cref="ArgumentNullException"> if the type is null </exception>
+        /// <exception cref="ArgumentException"> if the <see cref="FieldType.IsIndexed"/> is true </exception>
+        /// <exception cref="ArgumentNullException"> the field <paramref name="name"/> is <c>null</c>,
+        ///         or if the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, byte[] value, FieldType type)
             : this(name, value, 0, value.Length, type)
         {
@@ -191,16 +194,17 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Create field with binary value.
         ///
-        /// <p>NOTE: the provided byte[] is not copied so be sure
-        /// not to change it until you're done with this field. </summary>
+        /// <para/>NOTE: the provided <see cref="T:byte[]"/> is not copied so be sure
+        /// not to change it until you're done with this field.
+        /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> byte array pointing to binary content (not copied) </param>
         /// <param name="offset"> starting position of the byte array </param>
         /// <param name="length"> valid length of the byte array </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="ArgumentException"> if the field name is null,
-        ///         or the field's type is indexed() </exception>
-        /// <exception cref="ArgumentNullException"> if the type is null </exception>
+        /// <exception cref="ArgumentException"> if the <see cref="FieldType.IsIndexed"/> is true </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>,
+        ///         or the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, byte[] value, int offset, int length, FieldType type)
             : this(name, new BytesRef(value, offset, length), type)
         {
@@ -209,14 +213,15 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Create field with binary value.
         ///
-        /// <p>NOTE: the provided BytesRef is not copied so be sure
-        /// not to change it until you're done with this field. </summary>
+        /// <para/>NOTE: the provided BytesRef is not copied so be sure
+        /// not to change it until you're done with this field.
+        /// </summary>
         /// <param name="name"> field name </param>
         /// <param name="bytes"> BytesRef pointing to binary content (not copied) </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="ArgumentException"> if the field name is null,
-        ///         or the field's type is indexed() </exception>
-        /// <exception cref="ArgumentNullException"> if the type is null </exception>
+        /// <exception cref="ArgumentException"> if the <see cref="FieldType.IsIndexed"/> is true </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c>,
+        ///         or the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, BytesRef bytes, FieldType type)
         {
             if (name == null)
@@ -239,14 +244,14 @@ namespace Lucene.Net.Documents
         // TODO: allow direct construction of int, long, float, double value too..?
 
         /// <summary>
-        /// Create field with String value. </summary>
+        /// Create field with <see cref="string"/> value. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> string value </param>
         /// <param name="type"> field type </param>
-        /// <exception cref="ArgumentException"> if either the name or value
-        ///         is null, or if the field's type is neither indexed() nor stored(),
+        /// <exception cref="ArgumentException"> if the field's type is neither indexed() nor stored(),
         ///         or if indexed() is false but storeTermVectors() is true. </exception>
-        /// <exception cref="ArgumentNullException"> if the type is null </exception>
+        /// <exception cref="ArgumentNullException"> if either the <paramref name="name"/> or <paramref name="value"/>
+        ///         is <c>null</c>, or if the <paramref name="type"/> is <c>null</c> </exception>
         public Field(string name, string value, FieldType type)
         {
             if (name == null)
@@ -276,7 +281,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// The value of the field as a string, or null. If null, the <see cref="TextReader"/> value or
+        /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
         /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
         /// <see cref="GetBinaryValue()"/> must be set.
         /// </summary>
@@ -293,7 +298,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// The value of the field as a <see cref="TextReader"/>, or null. If null, the string value or
+        /// The value of the field as a <see cref="TextReader"/>, or <c>null</c>. If <c>null</c>, the <see cref="string"/> value or
         /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
         /// <see cref="GetBinaryValue()"/> must be set.
         /// </summary>
@@ -303,8 +308,8 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// The TokenStream for this field to be used when indexing, or null. If null,
-        /// the TextReader value or String value is analyzed to produce the indexed tokens.
+        /// The <see cref="TokenStream"/> for this field to be used when indexing, or <c>null</c>. If <c>null</c>,
+        /// the <see cref="TextReader"/> value or <see cref="string"/> value is analyzed to produce the indexed tokens.
         /// </summary>
         public virtual TokenStream GetTokenStreamValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
@@ -312,20 +317,20 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// <p>
-        /// Expert: change the value of this field. this can be used during indexing to
-        /// re-use a single Field instance to improve indexing speed by avoiding GC
-        /// cost of new'ing and reclaiming Field instances. Typically a single
-        /// <seealso cref="Document"/> instance is re-used as well. this helps most on small
+        /// <para>
+        /// Expert: change the value of this field. This can be used during indexing to
+        /// re-use a single <see cref="Field"/> instance to improve indexing speed by avoiding GC
+        /// cost of new'ing and reclaiming <see cref="Field"/> instances. Typically a single
+        /// <see cref="Document"/> instance is re-used as well. This helps most on small
         /// documents.
-        /// </p>
+        /// </para>
         ///
-        /// <p>
-        /// Each Field instance should only be used once within a single
-        /// <seealso cref="Document"/> instance. See <a
+        /// <para>
+        /// Each <see cref="Field"/> instance should only be used once within a single
+        /// <see cref="Document"/> instance. See <a
         /// href="http://wiki.apache.org/lucene-java/ImproveIndexingSpeed"
         /// >ImproveIndexingSpeed</a> for details.
-        /// </p>
+        /// </para>
         /// </summary>
         public virtual void SetStringValue(string value)
         {
@@ -353,7 +358,7 @@ namespace Lucene.Net.Documents
         /// Expert: change the value of this field. See
         /// <see cref="SetStringValue(string)"/>.
         ///
-        /// <p>NOTE: the provided BytesRef is not copied so be sure
+        /// <para/>NOTE: the provided <see cref="BytesRef"/> is not copied so be sure
         /// not to change it until you're done with this field.
         /// </summary>
         public virtual void SetBytesValue(BytesRef value)
@@ -462,8 +467,8 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Expert: sets the token stream to be used for indexing and causes
-        /// isIndexed() and isTokenized() to return true. May be combined with stored
-        /// values from stringValue() or getBinaryValue()
+        /// <see cref="FieldType.IsIndexed"/> and <see cref="FieldType.IsTokenized"/> to return true. May be combined with stored
+        /// values from <see cref="GetStringValue()"/> or <see cref="GetBinaryValue()"/>
         /// </summary>
         public virtual void SetTokenStream(TokenStream tokenStream)
         {
@@ -478,15 +483,19 @@ namespace Lucene.Net.Documents
             this.m_tokenStream = tokenStream;
         }
 
+        /// <summary>
+        /// The field's name
+        /// </summary>
         public virtual string Name
         {
             get { return m_name; }
         }
 
         /// <summary>
-        /// Gets or sets the boost factor on this field. </summary>
+        /// Gets or sets the boost factor on this field.
+        /// </summary>
         /// <remarks>The default value is <c>1.0f</c> (no boost).</remarks>
-        /// <exception cref="ArgumentException"> if this field is not indexed,
+        /// <exception cref="ArgumentException"> (setter only) if this field is not indexed,
         ///         or if it omits norms. </exception>
         public virtual float Boost
         {
@@ -536,7 +545,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Prints a Field for human consumption. </summary>
+        /// Prints a <see cref="Field"/> for human consumption. </summary>
         public override string ToString()
         {
             StringBuilder result = new StringBuilder();
@@ -555,7 +564,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Returns the <seealso cref="FieldType"/> for this field. </summary>
+        /// Returns the <see cref="Documents.FieldType"/> for this field. </summary>
         public virtual IIndexableFieldType FieldType
         {
             get { return m_type; }
@@ -650,9 +659,9 @@ namespace Lucene.Net.Documents
             internal string value = null;
 
             /// <summary>
-            /// Creates a new TokenStream that returns a String as single token.
-            /// <p>Warning: Does not initialize the value, you must call
-            /// <seealso cref="#setValue(String)"/> afterwards!
+            /// Creates a new <see cref="TokenStream"/> that returns a <see cref="string"/> as single token.
+            /// <para/>Warning: Does not initialize the value, you must call
+            /// <see cref="SetValue(string)"/> afterwards!
             /// </summary>
             internal StringTokenStream()
             {
@@ -720,8 +729,8 @@ namespace Lucene.Net.Documents
         //
 
         /// <summary>
-        /// Specifies whether and how a field should be indexed.
-        /// <summary>Specifies whether and how a field should be indexed. </summary>
+        /// Specifies whether and how a field should be indexed. 
+        /// </summary>
         [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public enum Index
         {
@@ -732,12 +741,12 @@ namespace Lucene.Net.Documents
             NO,
 
             /// <summary>Index the tokens produced by running the field's
-            /// value through an Analyzer.  This is useful for
+            /// value through an <see cref="Analyzer"/>.  This is useful for
             /// common text.
             /// </summary>
             ANALYZED,
 
-            /// <summary>Index the field's value without using an Analyzer, so it can be searched.
+            /// <summary>Index the field's value without using an <see cref="Analyzer"/>, so it can be searched.
             /// As no analyzer is used the value will be stored as a single term. This is
             /// useful for unique Ids like product numbers.
             /// </summary>
@@ -746,7 +755,7 @@ namespace Lucene.Net.Documents
             /// <summary>Expert: Index the field's value without an Analyzer,
             /// and also disable the storing of norms.  Note that you
             /// can also separately enable/disable norms by setting
-            /// <see cref="AbstractField.OmitNorms" />.  No norms means that
+            /// <see cref="FieldType.OmitNorms" />.  No norms means that
             /// index-time field and document boosting and field
             /// length normalization are disabled.  The benefit is
             /// less memory usage as norms take up one byte of RAM
@@ -770,48 +779,46 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Specifies whether and how a field should have term vectors.
+        /// Specifies whether and how a field should have term vectors. 
         /// </summary>
         [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public enum TermVector
         {
-            /// <summary>Do not store term vectors. </summary>
+            /// <summary>
+            /// Do not store term vectors. 
+            /// </summary>
             NO,
 
-            /// <summary>Store the term vectors of each document. A term vector is a list
+            /// <summary>
+            /// Store the term vectors of each document. A term vector is a list
             /// of the document's terms and their number of occurrences in that document.
             /// </summary>
             YES,
 
-            /// <summary> Store the term vector + token position information
-            ///
+            /// <summary>
+            /// Store the term vector + token position information
             /// </summary>
-            /// <seealso cref="YES">
-            /// </seealso>
+            /// <seealso cref="YES"/>
             WITH_POSITIONS,
 
-            /// <summary> Store the term vector + Token offset information
-            ///
+            /// <summary>
+            /// Store the term vector + Token offset information
             /// </summary>
-            /// <seealso cref="YES">
-            /// </seealso>
+            /// <seealso cref="YES"/>
             WITH_OFFSETS,
 
-            /// <summary> Store the term vector + Token position and offset information
-            ///
+            /// <summary>
+            /// Store the term vector + Token position and offset information
             /// </summary>
-            /// <seealso cref="YES">
-            /// </seealso>
-            /// <seealso cref="WITH_POSITIONS">
-            /// </seealso>
-            /// <seealso cref="WITH_OFFSETS">
-            /// </seealso>
+            /// <seealso cref="YES"/>
+            /// <seealso cref="WITH_POSITIONS"/>
+            /// <seealso cref="WITH_OFFSETS"/>
             WITH_POSITIONS_OFFSETS,
         }
 
         /// <summary>
         /// Translates the pre-4.0 enums for specifying how a
-        /// field should be indexed into the 4.0 {@link FieldType}
+        /// field should be indexed into the 4.0 <see cref="Documents.FieldType"/>
         /// approach.
         /// </summary>
         [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
@@ -879,7 +886,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create a field by specifying its name, value and how it will
+        /// Create a field by specifying its <paramref name="name"/>, <paramref name="value"/> and how it will
         /// be saved in the index. Term vectors will not be stored in the index.
         /// </summary>
         /// <param name="name">The name of the field</param>
@@ -896,7 +903,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create a field by specifying its name, value and how it will
+        /// Create a field by specifying its <paramref name="name"/>, <paramref name="value"/> and how it will
         /// be saved in the index.
         /// </summary>
         /// <param name="name">The name of the field</param>
@@ -1007,6 +1014,10 @@ namespace Lucene.Net.Documents
         }
     }
 
+    /// <summary>
+    /// LUCENENET specific extension methods to add functionality to enumerations
+    /// that mimic Lucene
+    /// </summary>
     public static class FieldExtensions
     {
         public static bool IsStored(this Field.Store store)

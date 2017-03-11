@@ -21,50 +21,51 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// <p>
+    /// <para>
     /// Field that stores
-    /// a per-document <seealso cref="BytesRef"/> value, indexed for
+    /// a per-document <see cref="BytesRef"/> value, indexed for
     /// sorting.  Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   document.add(new SortedBytesDocValuesField(name, new BytesRef("hello")));
-    /// </pre>
+    /// <code>
+    ///     document.Add(new SortedBytesDocValuesField(name, new BytesRef("hello")));
+    /// </code>
+    /// </para>
     ///
-    /// <p>
+    /// <para>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance.
+    /// separate <see cref="StoredField"/> instance.
+    /// </para>
     /// </summary>
-    /// <seealso cref= SortedDocValues </seealso>
-    /// @deprecated Use <seealso cref="SortedDocValuesField"/> instead.
+    /// <seealso cref="SortedDocValuesField"/>
     [Obsolete("Use SortedDocValuesField instead.")]
     public class SortedBytesDocValuesField : SortedDocValuesField
     {
         /// <summary>
-        /// Type for sorted bytes DocValues: all with the same length
+        /// Type for sorted bytes <see cref="Index.DocValues"/>: all with the same length
         /// </summary>
         public static readonly FieldType TYPE_FIXED_LEN = SortedDocValuesField.TYPE;
 
         /// <summary>
-        /// Type for sorted bytes DocValues: can have variable lengths
+        /// Type for sorted bytes <see cref="Index.DocValues"/>: can have variable lengths
         /// </summary>
         public static readonly FieldType TYPE_VAR_LEN = SortedDocValuesField.TYPE;
 
         /// <summary>
-        /// Create a new fixed or variable-length sorted DocValues field. </summary>
+        /// Create a new fixed or variable-length sorted <see cref="Index.DocValues"/> field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
         public SortedBytesDocValuesField(string name, BytesRef bytes)
             : base(name, bytes)
         {
         }
 
         /// <summary>
-        /// Create a new fixed or variable length sorted DocValues field. </summary>
+        /// Create a new fixed or variable length sorted <see cref="Index.DocValues"/> field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
         /// <param name="isFixedLength"> (ignored) </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
         public SortedBytesDocValuesField(string name, BytesRef bytes, bool isFixedLength)
             : base(name, bytes)
         {

@@ -20,30 +20,30 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// <p>
-    /// Field that stores a per-document <code>long</code> value for scoring,
+    /// <para>
+    /// Field that stores a per-document <see cref="long"/> value for scoring,
     /// sorting or value retrieval. Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   document.add(new LongDocValuesField(name, 22L));
-    /// </pre></p>
+    /// <code>
+    ///     document.Add(new Int64DocValuesField(name, 22L));
+    /// </code></para>
     ///
-    /// <p>
+    /// <para>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance.</p>
+    /// separate <see cref="StoredField"/> instance.</para>
     /// <para>
     /// NOTE: This was LongDocValuesField in Lucene
     /// </para>
     /// </summary>
-    /// <seealso cref="NumericDocValues"/>
+    /// <seealso cref="NumericDocValuesField"/>
     [Obsolete("Use NumericDocValuesField instead")]
     public class Int64DocValuesField : NumericDocValuesField
     {
         /// <summary>
-        /// Creates a new DocValues field with the specified 64-bit long value </summary>
+        /// Creates a new DocValues field with the specified 64-bit <see cref="long"/> value </summary>
         /// <param name="name"> field name </param>
-        /// <param name="value"> 64-bit long value </param>
-        /// <exception cref="ArgumentException"> if the field name is null </exception>
+        /// <param name="value"> 64-bit <see cref="long"/> value </param>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
         public Int64DocValuesField(string name, long value)
             : base(name, value)
         {

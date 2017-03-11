@@ -21,25 +21,25 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// Field that stores a per-document <seealso cref="BytesRef"/> value.
-    /// 
+    /// Field that stores a per-document <see cref="BytesRef"/> value.
+    /// <para/>
     /// The values are stored directly with no sharing, which is a good fit when
     /// the fields don't share (many) values, such as a title field.  If values
-    /// may be shared and sorted it's better to use <seealso cref="SortedDocValuesField"/>.
+    /// may be shared and sorted it's better to use <see cref="SortedDocValuesField"/>.
     /// Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   document.add(new BinaryDocValuesField(name, new BytesRef("hello")));
-    /// </pre>
-    ///
+    /// <code>
+    ///   document.Add(new BinaryDocValuesField(name, new BytesRef("hello")));
+    /// </code>
+    /// <para/>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance.
+    /// separate <see cref="StoredField"/> instance.
     /// </summary>
     /// <seealso cref="BinaryDocValues"/>
     public class BinaryDocValuesField : Field
     {
         /// <summary>
-        /// Type for straight bytes DocValues.
+        /// Type for straight bytes <see cref="DocValues"/>.
         /// </summary>
         public static readonly FieldType fType = new FieldType();
 
@@ -50,10 +50,10 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create a new binary DocValues field. </summary>
+        /// Create a new binary <see cref="DocValues"/> field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="value"> binary content </param>
-        /// <exception cref="ArgumentNullException"> if the field name is null </exception>
+        /// <exception cref="System.ArgumentNullException"> if the field name is null </exception>
         public BinaryDocValuesField(string name, BytesRef value)
             : base(name, fType)
         {

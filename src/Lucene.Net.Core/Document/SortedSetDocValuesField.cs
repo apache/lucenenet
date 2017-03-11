@@ -21,25 +21,25 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// <p>
+    /// <para>
     /// Field that stores
-    /// a set of per-document <seealso cref="BytesRef"/> values, indexed for
+    /// a set of per-document <see cref="BytesRef"/> values, indexed for
     /// faceting,grouping,joining.  Here's an example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   document.add(new SortedSetDocValuesField(name, new BytesRef("hello")));
-    ///   document.add(new SortedSetDocValuesField(name, new BytesRef("world")));
-    /// </pre>
+    /// <code>
+    ///     document.Add(new SortedSetDocValuesField(name, new BytesRef("hello")));
+    ///     document.Add(new SortedSetDocValuesField(name, new BytesRef("world")));
+    /// </code>
+    /// </para>
     ///
-    /// <p>
+    /// <para>
     /// If you also need to store the value, you should add a
-    /// separate <seealso cref="StoredField"/> instance.
-    ///
+    /// separate <see cref="StoredField"/> instance.</para>
     /// </summary>
     public class SortedSetDocValuesField : Field
     {
         /// <summary>
-        /// Type for sorted bytes DocValues
+        /// Type for sorted bytes <see cref="DocValues"/>
         /// </summary>
         public static readonly FieldType TYPE = new FieldType();
 
@@ -50,10 +50,10 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Create a new sorted DocValues field. </summary>
+        /// Create a new sorted <see cref="DocValues"/> field. </summary>
         /// <param name="name"> field name </param>
         /// <param name="bytes"> binary content </param>
-        /// <exception cref="IllegalArgumentException"> if the field name is null </exception>
+        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> is <c>null</c> </exception>
         public SortedSetDocValuesField(string name, BytesRef bytes)
             : base(name, TYPE)
         {

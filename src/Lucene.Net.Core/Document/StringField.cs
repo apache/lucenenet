@@ -21,22 +21,22 @@ namespace Lucene.Net.Documents
 
     /// <summary>
     /// A field that is indexed but not tokenized: the entire
-    ///  String value is indexed as a single token.  For example
-    ///  this might be used for a 'country' field or an 'id'
-    ///  field, or any field that you intend to use for sorting
-    ///  or access through the field cache.
+    /// <see cref="string"/> value is indexed as a single token.  For example
+    /// this might be used for a 'country' field or an 'id'
+    /// field, or any field that you intend to use for sorting
+    /// or access through the field cache.
     /// </summary>
     public sealed class StringField : Field
     {
         /// <summary>
         /// Indexed, not tokenized, omits norms, indexes
-        ///  DOCS_ONLY, not stored.
+        /// <see cref="IndexOptions.DOCS_ONLY"/>, not stored.
         /// </summary>
         public static readonly FieldType TYPE_NOT_STORED = new FieldType();
 
         /// <summary>
         /// Indexed, not tokenized, omits norms, indexes
-        ///  DOCS_ONLY, stored
+        /// <see cref="IndexOptions.DOCS_ONLY"/>, stored
         /// </summary>
         public static readonly FieldType TYPE_STORED = new FieldType();
 
@@ -57,12 +57,12 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Creates a new StringField (a field that is indexed but not tokenized)
+        /// Creates a new <see cref="StringField"/> (a field that is indexed but not tokenized)
         /// </summary>
-        ///  <param name="name"> field name </param>
-        ///  <param name="value"> String value </param>
-        ///  <param name="stored"> Store.YES if the content should also be stored </param>
-        ///  <exception cref="ArgumentException"> if the field name or value is null. </exception>
+        /// <param name="name"> field name </param>
+        /// <param name="value"> <see cref="string"/> value </param>
+        /// <param name="stored"> <see cref="Field.Store.YES"/> if the content should also be stored </param>
+        /// <exception cref="System.ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="value"/> is <c>null</c>. </exception>
         public StringField(string name, string value, Store stored)
             : base(name, value, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {

@@ -21,24 +21,23 @@ namespace Lucene.Net.Documents
      */
 
     /// <summary>
-    /// A <seealso cref="StoredFieldVisitor"/> that creates a {@link
-    ///  Document} containing all stored fields, or only specific
-    ///  requested fields provided to <seealso cref="#DocumentStoredFieldVisitor(Set)"/>.
-    ///  <p>
-    ///  this is used by <seealso cref="IndexReader#document(int)"/> to load a
-    ///  document.
+    /// A <see cref="StoredFieldVisitor"/> that creates a 
+    /// <see cref="Document"/> containing all stored fields, or only specific
+    /// requested fields provided to <see cref="DocumentStoredFieldVisitor.DocumentStoredFieldVisitor(ISet{string})"/>.
+    /// <para/>
+    /// This is used by <see cref="IndexReader.Document(int)"/> to load a
+    /// document.
     ///
     /// @lucene.experimental
     /// </summary>
-
     public class DocumentStoredFieldVisitor : StoredFieldVisitor
     {
         private readonly Documents.Document doc = new Documents.Document();
         private readonly ISet<string> fieldsToAdd;
 
         /// <summary>
-        /// Load only fields named in the provided <code>Set&lt;String&gt;</code>. </summary>
-        /// <param name="fieldsToAdd"> Set of fields to load, or <code>null</code> (all fields). </param>
+        /// Load only fields named in the provided <see cref="ISet{String}"/>. </summary>
+        /// <param name="fieldsToAdd"> Set of fields to load, or <c>null</c> (all fields). </param>
         public DocumentStoredFieldVisitor(ISet<string> fieldsToAdd)
         {
             this.fieldsToAdd = fieldsToAdd;
