@@ -402,7 +402,7 @@ namespace Lucene.Net.Search
                         }
                     }
 
-                    TermsEnum termsEnum = TermsEnum(terms);
+                    TermsEnum termsEnum = GetTermsEnum(terms);
 
                     DocsEnum docs = null;
                     FixedBitSet docsWithField = null;
@@ -437,7 +437,7 @@ namespace Lucene.Net.Search
                 }
             }
 
-            protected abstract TermsEnum TermsEnum(Terms terms); // LUCENENET TODO: Change to GetTermsEnum()
+            protected abstract TermsEnum GetTermsEnum(Terms terms); // LUCENENET specific - renamed from TermsEnum()
 
             protected abstract void VisitTerm(BytesRef term);
 
@@ -598,7 +598,7 @@ namespace Lucene.Net.Search
                     values[docID] = currentValue;
                 }
 
-                protected override TermsEnum TermsEnum(Terms terms)
+                protected override TermsEnum GetTermsEnum(Terms terms)
                 {
                     return parser.TermsEnum(terms);
                 }
@@ -743,7 +743,7 @@ namespace Lucene.Net.Search
                     values[docID] = currentValue;
                 }
 
-                protected override TermsEnum TermsEnum(Terms terms)
+                protected override TermsEnum GetTermsEnum(Terms terms)
                 {
                     return parser.TermsEnum(terms);
                 }
@@ -960,7 +960,7 @@ namespace Lucene.Net.Search
                     values.Set(docID, (currentValue - minValue) & 0xFFFFFFFFL);
                 }
 
-                protected override TermsEnum TermsEnum(Terms terms)
+                protected override TermsEnum GetTermsEnum(Terms terms)
                 {
                     return parser.TermsEnum(terms);
                 }
@@ -1215,7 +1215,7 @@ namespace Lucene.Net.Search
                     values[docID] = currentValue;
                 }
 
-                protected override TermsEnum TermsEnum(Terms terms)
+                protected override TermsEnum GetTermsEnum(Terms terms)
                 {
                     return parser.TermsEnum(terms);
                 }
@@ -1402,7 +1402,7 @@ namespace Lucene.Net.Search
                     values.Set(docID, currentValue - minValue);
                 }
 
-                protected override TermsEnum TermsEnum(Terms terms)
+                protected override TermsEnum GetTermsEnum(Terms terms)
                 {
                     return parser.TermsEnum(terms);
                 }
@@ -1558,7 +1558,7 @@ namespace Lucene.Net.Search
                     values[docID] = currentValue;
                 }
 
-                protected override TermsEnum TermsEnum(Terms terms)
+                protected override TermsEnum GetTermsEnum(Terms terms)
                 {
                     return parser.TermsEnum(terms);
                 }
