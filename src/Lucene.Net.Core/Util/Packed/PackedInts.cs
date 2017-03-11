@@ -338,13 +338,15 @@ namespace Lucene.Net.Util.Packed
                 return bitsPerValue >= 1 && bitsPerValue <= 64;
             }
 
-            public virtual float OverheadPerValue(int bitsPerValue) // LUCENENET TODO: Debug.Assert missing
+            public virtual float OverheadPerValue(int bitsPerValue)
             {
+                Debug.Assert(IsSupported(bitsPerValue));
                 return 0f;
             }
 
-            public virtual float OverheadRatio(int bitsPerValue) // LUCENENET TODO: Debug.Assert missing
+            public virtual float OverheadRatio(int bitsPerValue)
             {
+                Debug.Assert(IsSupported(bitsPerValue));
                 return OverheadPerValue(bitsPerValue) / bitsPerValue;
             }
         }
