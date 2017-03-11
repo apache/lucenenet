@@ -91,9 +91,8 @@ namespace Lucene.Net.Store
                     t.Join();
                 }
 
-                //LUCENE TO-DO Not sure if equivalent?
                 // cleanup sysprop
-                //System.clearProperty("lockverifyserver.port");
+                System.Environment.SetEnvironmentVariable("lockverifyserver.port", null);
 
                 Console.WriteLine("Server terminated.");
             }
