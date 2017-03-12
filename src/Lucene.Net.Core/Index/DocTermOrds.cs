@@ -616,20 +616,19 @@ namespace Lucene.Net.Index
                                 if (target.Length <= pos + len)
                                 {
                                     int newlen = target.Length;
-                                    /// <summary>
-                                    ///* we don't have to worry about the array getting too large
-                                    /// since the "pos" param will overflow first (only 24 bits available)
-                                    /// if ((newlen<<1) <= 0) {
-                                    ///  // overflow...
-                                    ///  newlen = Integer.MAX_VALUE;
-                                    ///  if (newlen <= pos + len) {
-                                    ///    throw new SolrException(400,"Too many terms to uninvert field!");
-                                    ///  }
-                                    /// } else {
-                                    ///  while (newlen <= pos + len) newlen<<=1;  // doubling strategy
-                                    /// }
-                                    /// ***
-                                    /// </summary>
+
+                                    //* we don't have to worry about the array getting too large
+                                    // since the "pos" param will overflow first (only 24 bits available)
+                                    // if ((newlen<<1) <= 0) {
+                                    //  // overflow...
+                                    //  newlen = Integer.MAX_VALUE;
+                                    //  if (newlen <= pos + len) {
+                                    //    throw new SolrException(400,"Too many terms to uninvert field!");
+                                    //  }
+                                    // } else {
+                                    //  while (newlen <= pos + len) newlen<<=1;  // doubling strategy
+                                    // }
+                                    //
                                     while (newlen <= pos + len) // doubling strategy
                                     {
                                         newlen <<= 1;
