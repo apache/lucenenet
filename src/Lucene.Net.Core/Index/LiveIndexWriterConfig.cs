@@ -68,7 +68,7 @@ namespace Lucene.Net.Index
         /// <see cref="Index.OpenMode"/> that <see cref="IndexWriter"/> is opened
         /// with.
         /// </summary>
-        internal OpenMode? openMode; // LUCENENET TODO: Can we eliminate the nullable? If so, make volatile again.
+        internal volatile OpenMode openMode;
 
         /// <summary>
         /// <see cref="Search.Similarities.Similarity"/> to use when encoding norms. </summary>
@@ -471,7 +471,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Gets the <see cref="Index.OpenMode"/> set by <see cref="IndexWriterConfig.OpenMode"/> setter. </summary>
-        public virtual OpenMode? OpenMode
+        public virtual OpenMode OpenMode
         {
             get
             {

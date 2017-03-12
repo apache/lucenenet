@@ -227,7 +227,7 @@ namespace Lucene.Net.Support
         /// <param name="config">this <see cref="IndexWriterConfig"/> instance</param>
         /// <param name="openMode"></param>
         /// <returns>this <see cref="IndexWriterConfig"/> instance</returns>
-        public static IndexWriterConfig SetOpenMode(this IndexWriterConfig config, OpenMode? openMode)
+        public static IndexWriterConfig SetOpenMode(this IndexWriterConfig config, OpenMode openMode)
         {
             config.OpenMode = openMode;
             return config;

@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
         /// </summary>
         // LUCENENET NOTE: We cannot override a getter and add a setter, 
         // so must declare it new. See: http://stackoverflow.com/q/82437
-        new public OpenMode? OpenMode // LUCENENET TODO: Make non-nullable if possible
+        new public OpenMode OpenMode
         {
             get
             {
@@ -215,10 +215,11 @@ namespace Lucene.Net.Index
             }
             set
             {
-                if (value == null)
-                {
-                    throw new System.ArgumentException("openMode must not be null");
-                }
+                // LUCENENET specific - making non-nullable, so we don't need to worry about this.
+                //if (value == null)
+                //{
+                //    throw new System.ArgumentException("openMode must not be null");
+                //}
                 this.openMode = value;
             }
         }

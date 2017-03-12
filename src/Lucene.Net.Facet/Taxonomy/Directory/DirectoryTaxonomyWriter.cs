@@ -191,7 +191,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             // after we opened the writer, and the index is locked, it's safe to check
             // the commit data and read the index epoch
-            openMode = config.OpenMode.HasValue ? config.OpenMode.Value : OpenMode.CREATE_OR_APPEND;
+            openMode = config.OpenMode;
             if (!DirectoryReader.IndexExists(directory))
             {
                 indexEpoch = 1;
