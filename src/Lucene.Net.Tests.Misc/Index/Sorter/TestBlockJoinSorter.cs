@@ -8,6 +8,7 @@ using Lucene.Net.Analysis;
 using Lucene.Net.Util;
 using Lucene.Net.Search;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index.Sorter
 {

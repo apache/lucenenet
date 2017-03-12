@@ -1,5 +1,6 @@
 using System;
 using Lucene.Net.Codecs;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net

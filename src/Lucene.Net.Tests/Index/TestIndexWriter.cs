@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -2772,7 +2773,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             SetOnce<IndexWriter> iwRef = new SetOnce<IndexWriter>();
-            iwc.InfoStream = new RandomIndexWriter.TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousInnerClassHelper(this, iwRef));
+            iwc.SetInfoStream(new RandomIndexWriter.TestPointInfoStream(iwc.InfoStream, new TestPointAnonymousInnerClassHelper(this, iwRef)));
             IndexWriter evilWriter = new IndexWriter(dir, iwc);
             iwRef.Set(evilWriter);
             for (int i = 0; i < 1000; i++)

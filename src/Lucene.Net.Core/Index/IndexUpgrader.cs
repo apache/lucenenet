@@ -189,8 +189,8 @@ namespace Lucene.Net.Index
             }
 
             IndexWriterConfig c = (IndexWriterConfig)iwc.Clone();
-            c.SetMergePolicy(new UpgradeIndexMergePolicy(c.MergePolicy));
-            c.SetIndexDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
+            c.MergePolicy = new UpgradeIndexMergePolicy(c.MergePolicy);
+            c.IndexDeletionPolicy = new KeepOnlyLastCommitDeletionPolicy();
 
             IndexWriter w = new IndexWriter(dir, c);
             try

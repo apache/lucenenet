@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-    using System.IO;
     using BaseDirectory = Lucene.Net.Store.BaseDirectory;
     using BufferedIndexInput = Lucene.Net.Store.BufferedIndexInput;
     using Directory = Lucene.Net.Store.Directory;

@@ -16,10 +16,11 @@
  */
 
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;

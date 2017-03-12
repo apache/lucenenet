@@ -1,10 +1,11 @@
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;

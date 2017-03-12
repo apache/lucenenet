@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using Field = Lucene.Net.Documents.Field;
 
 namespace Lucene.Net.Codecs.Compressing

@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
 
         private static IndexWriterConfig NewDefaultConfig(LuceneVersion version)
         {
-            return (new IndexWriterConfig(version, null)).SetOpenMode(OpenMode.CREATE);
+            return (new IndexWriterConfig(version, null) { OpenMode = OpenMode.CREATE });
         }
 
         public PKIndexSplitter(Directory input, Directory dir1, Directory dir2, Filter docsInFirstIndex, IndexWriterConfig config1, IndexWriterConfig config2)

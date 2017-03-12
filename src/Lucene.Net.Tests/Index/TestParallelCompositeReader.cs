@@ -1,11 +1,12 @@
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Search;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Search;
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;

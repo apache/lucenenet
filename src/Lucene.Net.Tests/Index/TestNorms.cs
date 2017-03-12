@@ -1,5 +1,6 @@
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {

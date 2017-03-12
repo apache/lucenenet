@@ -1,11 +1,12 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Index
 {
-    using System.Text.RegularExpressions;
-    using Attributes;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;

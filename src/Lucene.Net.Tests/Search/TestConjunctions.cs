@@ -1,9 +1,9 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

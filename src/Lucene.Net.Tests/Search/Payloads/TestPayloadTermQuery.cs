@@ -1,5 +1,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search.Payloads
 {

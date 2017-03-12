@@ -4,14 +4,13 @@ using System.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
-    using System.Threading;
     using AssertingDocValuesFormat = Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat;
     using BinaryDocValuesField = BinaryDocValuesField;
     using IBits = Lucene.Net.Util.IBits;

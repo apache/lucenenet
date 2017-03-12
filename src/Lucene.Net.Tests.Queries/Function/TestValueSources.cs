@@ -9,6 +9,7 @@ using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Similarities;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 

@@ -3,6 +3,7 @@ using Lucene.Net.Codecs.Lucene45;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;

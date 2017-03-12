@@ -1,9 +1,10 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search.Spans
 {
-    using Lucene.Net.Index;
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;

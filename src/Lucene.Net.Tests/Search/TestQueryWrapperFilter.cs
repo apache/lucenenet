@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
 
     /*

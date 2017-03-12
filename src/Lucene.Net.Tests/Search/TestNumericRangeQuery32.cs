@@ -1,11 +1,11 @@
 using System;
 using System.Diagnostics;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Index;
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;

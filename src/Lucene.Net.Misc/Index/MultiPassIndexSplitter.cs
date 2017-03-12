@@ -107,8 +107,8 @@ namespace Lucene.Net.Index
                         }
                     }
                 }
-                using (IndexWriter w = new IndexWriter(outputs[i], new IndexWriterConfig(version, null)
-                   .SetOpenMode(OpenMode.CREATE)))
+                using (IndexWriter w = new IndexWriter(outputs[i], 
+                    new IndexWriterConfig(version, null) { OpenMode = OpenMode.CREATE }))
                 {
                     Console.Error.WriteLine("Writing part " + (i + 1) + " ...");
                     // pass the subreaders directly, as our wrapper's numDocs/hasDeletetions are not up-to-date

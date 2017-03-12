@@ -1,10 +1,10 @@
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search.Spans
 {
-    using Lucene.Net.Search;
-    using NUnit.Framework;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;

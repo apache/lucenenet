@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Text;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search
 {

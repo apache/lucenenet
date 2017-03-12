@@ -1,10 +1,9 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Analysis;
-    
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

@@ -588,7 +588,7 @@ namespace Lucene.Net.Index
 
             if (VERBOSE)
             {
-                conf.InfoStream = new PrintStreamInfoStreamAnonymousInnerClassHelper(this, Console.Out);
+                conf.SetInfoStream(new PrintStreamInfoStreamAnonymousInnerClassHelper(this, Console.Out));
             }
             Writer = new IndexWriter(Dir, conf);
             TestUtil.ReduceOpenFiles(Writer);

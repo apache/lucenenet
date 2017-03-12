@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 
         public static IndexWriter MockIndexWriter(Directory dir, IndexWriterConfig conf, TestPoint testPoint)
         {
-            conf.InfoStream = new TestPointInfoStream(conf.InfoStream, testPoint);
+            conf.SetInfoStream(new TestPointInfoStream(conf.InfoStream, testPoint));
             return new IndexWriter(dir, conf);
         }
 

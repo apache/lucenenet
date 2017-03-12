@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
             ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
             StreamWriter infoPrintStream = new StreamWriter(infoBytes, Encoding.UTF8);
             PrintStreamInfoStream printStreamInfoStream = new PrintStreamInfoStream(infoPrintStream);
-            c.InfoStream = printStreamInfoStream;
+            c.SetInfoStream(printStreamInfoStream);
             writer = new IndexWriter(dir, c);
             Document doc = new Document();
             doc.Add(NewField("distinctiveFieldName", "aaa ", StoredTextType));
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
             ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
             StreamWriter infoPrintStream = new StreamWriter(infoBytes, Encoding.UTF8);
             PrintStreamInfoStream printStreamInfoStream = new PrintStreamInfoStream(infoPrintStream);
-            c.InfoStream = printStreamInfoStream;
+            c.SetInfoStream(printStreamInfoStream);
             writer = new IndexWriter(dir, c);
             Document doc = new Document();
             doc.Add(NewField("boringFieldName", "aaa ", StoredTextType));

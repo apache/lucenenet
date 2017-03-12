@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Diagnostics;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {

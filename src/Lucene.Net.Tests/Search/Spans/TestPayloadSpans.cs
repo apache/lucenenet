@@ -1,15 +1,15 @@
 using Lucene.Net.Analysis;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using System.IO;
 
 namespace Lucene.Net.Search.Spans
 {
-    using NUnit.Framework;
-    using System.IO;
-
     /*
         /// Copyright 2004 The Apache Software Foundation
         ///

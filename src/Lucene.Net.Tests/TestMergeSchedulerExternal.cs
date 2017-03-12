@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net

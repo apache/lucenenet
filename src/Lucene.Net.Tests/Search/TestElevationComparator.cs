@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Index;
-    using Lucene.Net.Store;
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using Document = Documents.Document;

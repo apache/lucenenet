@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Support;
 using Lucene.Net.Documents;
 
 namespace Lucene.Net.Codecs.PerField

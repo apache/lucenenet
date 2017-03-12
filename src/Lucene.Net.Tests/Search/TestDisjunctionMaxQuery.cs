@@ -1,11 +1,11 @@
 using System;
 using System.Globalization;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Index;
-    using NUnit.Framework;
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;

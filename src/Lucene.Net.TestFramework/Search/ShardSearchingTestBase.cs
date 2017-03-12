@@ -547,7 +547,7 @@ namespace Lucene.Net.Search
                 iwc.SetOpenMode(OpenMode.CREATE);
                 if (VERBOSE)
                 {
-                    iwc.InfoStream = new PrintStreamInfoStream(Console.Out);
+                    iwc.SetInfoStream(new PrintStreamInfoStream(Console.Out));
                 }
                 Writer = new IndexWriter(Dir, iwc);
                 Mgr = new SearcherManager(Writer, true, null);

@@ -31,29 +31,44 @@ namespace Lucene.Net.Index
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
     /// <summary>
-    /// Holds all the configuration that is used to create an <seealso cref="IndexWriter"/>.
-    /// Once <seealso cref="IndexWriter"/> has been created with this object, changes to this
-    /// object will not affect the <seealso cref="IndexWriter"/> instance. For that, use
-    /// <seealso cref="LiveIndexWriterConfig"/> that is returned from <seealso cref="IndexWriter#getConfig()"/>.
+    /// Holds all the configuration that is used to create an <see cref="IndexWriter"/>.
+    /// Once <see cref="IndexWriter"/> has been created with this object, changes to this
+    /// object will not affect the <see cref="IndexWriter"/> instance. For that, use
+    /// <see cref="LiveIndexWriterConfig"/> that is returned from <see cref="IndexWriter.Config"/>.
     ///
-    /// <p>
-    /// All setter methods return <seealso cref="IndexWriterConfig"/> to allow chaining
-    /// settings conveniently, for example:
-    ///
-    /// <pre class="prettyprint">
-    /// IndexWriterConfig conf = new IndexWriterConfig(analyzer);
-    /// conf.setter1().setter2();
-    /// </pre>
+    /// <para/>
+    /// LUCENENET NOTE: Unlike Lucene, we use property setters instead of setter methods.
+    /// In C#, this allows you to initialize the <see cref="IndexWriterConfig"/>
+    /// using the language features of C#, for example:
+    /// <code>
+    ///     IndexWriterConfig conf = new IndexWriterConfig(analyzer)
+    ///     {
+    ///         Codec = Lucene46Codec(),
+    ///         OpenMode = OpenMode.CREATE
+    ///     };
+    /// </code>
+    /// 
+    /// However, if you prefer to match the syntax of Lucene using chained setter methods, 
+    /// there are extension methods in the Lucene.Net.Support namespace. Example usage:
+    /// <code>
+    ///     using Lucene.Net.Support;
+    ///     
+    ///     ..
+    ///     
+    ///     IndexWriterConfig conf = new IndexWriterConfig(analyzer)
+    ///         .SetCodec(new Lucene46Codec())
+    ///         .SetOpenMode(OpenMode.CREATE);
+    /// </code>
+    /// 
+    /// @since 3.1
     /// </summary>
-    /// <seealso cref= IndexWriter#getConfig()
-    ///
-    /// @since 3.1 </seealso>
+    /// <seealso cref="IndexWriter.Config"/>
     public sealed class IndexWriterConfig : LiveIndexWriterConfig
     {
         // LUCENENET specific: De-nested OpenMode enum from this class to prevent naming conflict
 
         /// <summary>
-        /// Default value is 32. Change using <seealso cref="#setTermIndexInterval(int)"/>. </summary>
+        /// Default value is 32. Change using <see cref="LiveIndexWriterConfig.TermIndexInterval"/> setter. </summary>
         public static readonly int DEFAULT_TERM_INDEX_INTERVAL = 32; // TODO: this should be private to the codec, not settable here
 
         /// <summary>
@@ -77,45 +92,45 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Default value for the write lock timeout (1,000 ms).
         /// </summary>
-        /// <seealso cref= #setDefaultWriteLockTimeout(long) </seealso>
+        /// <see cref="DefaultWriteLockTimeout"/>
         public static long WRITE_LOCK_TIMEOUT = 1000;
 
         /// <summary>
-        /// Default setting for <seealso cref="#setReaderPooling"/>. </summary>
+        /// Default setting for <see cref="ReaderPooling"/>. </summary>
         public static readonly bool DEFAULT_READER_POOLING = false;
 
         /// <summary>
-        /// Default value is 1. Change using <seealso cref="#setReaderTermsIndexDivisor(int)"/>. </summary>
+        /// Default value is 1. Change using <see cref="LiveIndexWriterConfig.ReaderTermsIndexDivisor"/> setter. </summary>
         public static readonly int DEFAULT_READER_TERMS_INDEX_DIVISOR = DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR;
 
         /// <summary>
-        /// Default value is 1945. Change using <seealso cref="#setRAMPerThreadHardLimitMB(int)"/> </summary>
+        /// Default value is 1945. Change using <see cref="RAMPerThreadHardLimitMB"/> setter. </summary>
         public static readonly int DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB = 1945;
 
         /// <summary>
         /// The maximum number of simultaneous threads that may be
-        ///  indexing documents at once in IndexWriter; if more
-        ///  than this many threads arrive they will wait for
-        ///  others to finish. Default value is 8.
+        /// indexing documents at once in <see cref="IndexWriter"/>; if more
+        /// than this many threads arrive they will wait for
+        /// others to finish. Default value is 8.
         /// </summary>
         public static readonly int DEFAULT_MAX_THREAD_STATES = 8;
 
         /// <summary>
         /// Default value for compound file system for newly written segments
-        ///  (set to <code>true</code>). For batch indexing with very large
-        ///  ram buffers use <code>false</code>
+        /// (set to <c>true</c>). For batch indexing with very large
+        /// ram buffers use <c>false</c>
         /// </summary>
         public static readonly bool DEFAULT_USE_COMPOUND_FILE_SYSTEM = true;
 
         /// <summary>
-        /// Default value for calling <seealso cref="AtomicReader#checkIntegrity()"/> before
-        ///  merging segments (set to <code>false</code>). You can set this
-        ///  to <code>true</code> for additional safety.
+        /// Default value for calling <see cref="AtomicReader.CheckIntegrity()"/> before
+        /// merging segments (set to <c>false</c>). You can set this
+        /// to <c>true</c> for additional safety.
         /// </summary>
         public static readonly bool DEFAULT_CHECK_INTEGRITY_AT_MERGE = false;
 
         /// <summary>
-        /// Sets the default (for any instance) maximum time to wait for a write lock
+        /// Gets or sets the default (for any instance) maximum time to wait for a write lock
         /// (in milliseconds).
         /// </summary>
         public static long DefaultWriteLockTimeout
@@ -135,9 +150,9 @@ namespace Lucene.Net.Index
         private SetOnce<IndexWriter> writer = new SetOnce<IndexWriter>();
 
         /// <summary>
-        /// Sets the <seealso cref="IndexWriter"/> this config is attached to.
+        /// Gets or sets the <see cref="IndexWriter"/> this config is attached to.
         /// </summary>
-        /// <exception cref="AlreadySetException">
+        /// <exception cref="Util.SetOnce{T}.AlreadySetException">
         ///           if this config is already attached to a writer. </exception>
         internal IndexWriterConfig SetIndexWriter(IndexWriter writer)
         {
@@ -147,15 +162,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Creates a new config that with defaults that match the specified
-        /// <seealso cref="LuceneVersion"/> as well as the default {@link
-        /// Analyzer}. If matchVersion is >= {@link
-        /// Version#LUCENE_32}, <seealso cref="TieredMergePolicy"/> is used
-        /// for merging; else <seealso cref="LogByteSizeMergePolicy"/>.
-        /// Note that <seealso cref="TieredMergePolicy"/> is free to select
+        /// <see cref="LuceneVersion"/> as well as the default 
+        /// <see cref="Analyzer"/>. If <paramref name="matchVersion"/> is &gt;= 
+        /// <see cref="LuceneVersion.LUCENE_32"/>, <see cref="TieredMergePolicy"/> is used
+        /// for merging; else <see cref="LogByteSizeMergePolicy"/>.
+        /// Note that <see cref="TieredMergePolicy"/> is free to select
         /// non-contiguous merges, which means docIDs may not
         /// remain monotonic over time.  If this is a problem you
-        /// should switch to <seealso cref="LogByteSizeMergePolicy"/> or
-        /// <seealso cref="LogDocMergePolicy"/>.
+        /// should switch to <see cref="LogByteSizeMergePolicy"/> or
+        /// <see cref="LogDocMergePolicy"/>.
         /// </summary>
         public IndexWriterConfig(LuceneVersion matchVersion, Analyzer analyzer)
             : base(analyzer, matchVersion)
@@ -164,281 +179,282 @@ namespace Lucene.Net.Index
 
         public object Clone()
         {
-            try
-            {
-                IndexWriterConfig clone = (IndexWriterConfig)this.MemberwiseClone();
+            IndexWriterConfig clone = (IndexWriterConfig)this.MemberwiseClone();
 
-                clone.writer = (SetOnce<IndexWriter>)writer.Clone();
+            clone.writer = (SetOnce<IndexWriter>)writer.Clone();
 
-                // Mostly shallow clone, but do a deepish clone of
-                // certain objects that have state that cannot be shared
-                // across IW instances:
-                clone.delPolicy = (IndexDeletionPolicy)delPolicy.Clone();
-                clone.flushPolicy = (FlushPolicy)flushPolicy.Clone();
-                clone.indexerThreadPool = (DocumentsWriterPerThreadPool)indexerThreadPool.Clone();
-                // we clone the infoStream because some impls might have state variables
-                // such as line numbers, message throughput, ...
-                clone.infoStream = (InfoStream)infoStream.Clone();
-                clone.mergePolicy = (MergePolicy)mergePolicy.Clone();
-                clone.mergeScheduler = mergeScheduler.Clone();
+            // Mostly shallow clone, but do a deepish clone of
+            // certain objects that have state that cannot be shared
+            // across IW instances:
+            clone.delPolicy = (IndexDeletionPolicy)delPolicy.Clone();
+            clone.flushPolicy = (FlushPolicy)flushPolicy.Clone();
+            clone.indexerThreadPool = (DocumentsWriterPerThreadPool)indexerThreadPool.Clone();
+            // we clone the infoStream because some impls might have state variables
+            // such as line numbers, message throughput, ...
+            clone.infoStream = (InfoStream)infoStream.Clone();
+            clone.mergePolicy = (MergePolicy)mergePolicy.Clone();
+            clone.mergeScheduler = mergeScheduler.Clone();
 
-                return clone;
-            }
-            catch
-            {
-                // .NET port: no need to deal with checked exceptions here
-                throw;
-            }
+            return clone;
+
+            // LUCENENET specific - no need to deal with checked exceptions here
         }
 
         /// <summary>
-        /// Specifies <seealso cref="OpenMode"/> of the index.
+        /// Specifies <see cref="Index.OpenMode"/> of the index.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        public IndexWriterConfig SetOpenMode(OpenMode? openMode)
-        {
-            if (openMode == null)
-            {
-                throw new System.ArgumentException("openMode must not be null");
-            }
-            this.openMode = openMode;
-            return this;
-        }
-
-        public override OpenMode? OpenMode // LUCENENET TODO: Make non-nullable if possible
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public OpenMode? OpenMode // LUCENENET TODO: Make non-nullable if possible
         {
             get
             {
                 return openMode;
             }
+            set
+            {
+                if (value == null)
+                {
+                    throw new System.ArgumentException("openMode must not be null");
+                }
+                this.openMode = value;
+            }
         }
 
         /// <summary>
-        /// Expert: allows an optional <seealso cref="Index.IndexDeletionPolicy"/> implementation to be
+        /// Expert: allows an optional <see cref="Index.IndexDeletionPolicy"/> implementation to be
         /// specified. You can use this to control when prior commits are deleted from
-        /// the index. The default policy is <seealso cref="KeepOnlyLastCommitDeletionPolicy"/>
+        /// the index. The default policy is <see cref="KeepOnlyLastCommitDeletionPolicy"/>
         /// which removes all prior commits as soon as a new commit is done (this
         /// matches behavior before 2.2). Creating your own policy can allow you to
         /// explicitly keep previous "point in time" commits alive in the index for
         /// some time, to allow readers to refresh to the new commit without having the
-        /// old commit deleted out from under them. this is necessary on filesystems
+        /// old commit deleted out from under them. This is necessary on filesystems
         /// like NFS that do not support "delete on last close" semantics, which
         /// Lucene's "point in time" search normally relies on.
-        /// <p>
-        /// <b>NOTE:</b> the deletion policy cannot be null.
+        /// <para/>
+        /// <b>NOTE:</b> the deletion policy cannot be <c>null</c>.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>Only takes effect when IndexWriter is first created.
         /// </summary>
-        public IndexWriterConfig SetIndexDeletionPolicy(IndexDeletionPolicy deletionPolicy)
-        {
-            if (deletionPolicy == null)
-            {
-                throw new System.ArgumentException("indexDeletionPolicy must not be null");
-            }
-            this.delPolicy = deletionPolicy;
-            return this;
-        }
-
-        public override IndexDeletionPolicy IndexDeletionPolicy
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public IndexDeletionPolicy IndexDeletionPolicy
         {
             get
             {
                 return delPolicy;
             }
+            set
+            {
+                if (value == null)
+                {
+                    throw new System.ArgumentException("indexDeletionPolicy must not be null");
+                }
+                this.delPolicy = value;
+            }
         }
 
         /// <summary>
-        /// Expert: allows to open a certain commit point. The default is null which
+        /// Expert: allows to open a certain commit point. The default is <c>null</c> which
         /// opens the latest commit point.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        public IndexWriterConfig SetIndexCommit(IndexCommit commit)
-        {
-            this.commit = commit;
-            return this;
-        }
-
-        public override IndexCommit IndexCommit
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public IndexCommit IndexCommit
         {
             get
             {
                 return commit;
             }
+            set
+            {
+                this.commit = value;
+            }
         }
 
         /// <summary>
-        /// Expert: set the <seealso cref="Similarity"/> implementation used by this IndexWriter.
-        /// <p>
-        /// <b>NOTE:</b> the similarity cannot be null.
+        /// Expert: set the <see cref="Search.Similarities.Similarity"/> implementation used by this <see cref="IndexWriter"/>.
+        /// <para/>
+        /// <b>NOTE:</b> the similarity cannot be <c>null</c>.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        public IndexWriterConfig SetSimilarity(Similarity similarity) // LUCENENET TODO: Make this (and other setters on this class) a property setter? It would make it consistent with IndexSearcher and make it more .NET like
-        {
-            if (similarity == null)
-            {
-                throw new System.ArgumentException("similarity must not be null");
-            }
-            this.similarity = similarity;
-            return this;
-        }
-
-        public override Similarity Similarity
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public Similarity Similarity
         {
             get
             {
                 return similarity;
             }
-        }
-
-        /// <summary>
-        /// Expert: sets the merge scheduler used by this writer. The default is
-        /// <seealso cref="ConcurrentMergeScheduler"/>.
-        /// <p>
-        /// <b>NOTE:</b> the merge scheduler cannot be null.
-        ///
-        /// <p>Only takes effect when IndexWriter is first created.
-        /// </summary>
-        public IndexWriterConfig SetMergeScheduler(IMergeScheduler mergeScheduler)
-        {
-            if (mergeScheduler == null)
+            set
             {
-                throw new System.ArgumentException("mergeScheduler must not be null");
+                if (value == null)
+                {
+                    throw new System.ArgumentException("similarity must not be null");
+                }
+                this.similarity = value;
             }
-            this.mergeScheduler = mergeScheduler;
-            return this;
         }
 
-        public override IMergeScheduler MergeScheduler
+
+#if NETSTANDARD
+        /// <summary>
+        /// Expert: Gets or sets the merge scheduler used by this writer. The default is
+        /// <see cref="TaskMergeScheduler"/>.
+        /// <para/>
+        /// <b>NOTE:</b> the merge scheduler cannot be <c>null</c>.
+        ///
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
+        /// </summary>
+#else
+        /// <summary>
+        /// Expert: Gets or sets the merge scheduler used by this writer. The default is
+        /// <see cref="ConcurrentMergeScheduler"/>.
+        /// <para/>
+        /// <b>NOTE:</b> the merge scheduler cannot be <c>null</c>.
+        ///
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
+        /// </summary>
+#endif
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public IMergeScheduler MergeScheduler
         {
             get
             {
                 return mergeScheduler;
             }
+            set
+            {
+                if (value == null)
+                {
+                    throw new System.ArgumentException("mergeScheduler must not be null");
+                }
+                this.mergeScheduler = value;
+            }
         }
 
         /// <summary>
-        /// Sets the maximum time to wait for a write lock (in milliseconds) for this
-        /// instance. You can change the default value for all instances by calling
-        /// <seealso cref="#setDefaultWriteLockTimeout(long)"/>.
+        /// Gets or sets the maximum time to wait for a write lock (in milliseconds) for this
+        /// instance. You can change the default value for all instances by calling the
+        /// <see cref="DefaultWriteLockTimeout"/> setter.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        public IndexWriterConfig SetWriteLockTimeout(long writeLockTimeout)
-        {
-            this.writeLockTimeout = writeLockTimeout;
-            return this;
-        }
-
-        public override long WriteLockTimeout
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public long WriteLockTimeout
         {
             get
             {
                 return writeLockTimeout;
             }
+            set
+            {
+                this.writeLockTimeout = value;
+            }
         }
 
         /// <summary>
-        /// Expert: <seealso cref="MergePolicy"/> is invoked whenever there are changes to the
-        /// segments in the index. Its role is to select which merges to do, if any,
-        /// and return a <seealso cref="MergePolicy.MergeSpecification"/> describing the merges.
-        /// It also selects merges to do for forceMerge.
+        /// Gets or sets the <see cref="Codecs.Codec"/>.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>
+        /// Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        public IndexWriterConfig SetMergePolicy(MergePolicy mergePolicy)
-        {
-            if (mergePolicy == null)
-            {
-                throw new System.ArgumentException("mergePolicy must not be null");
-            }
-            this.mergePolicy = mergePolicy;
-            return this;
-        }
-
-        /// <summary>
-        /// Set the <seealso cref="Codec"/>.
-        ///
-        /// <p>
-        /// Only takes effect when IndexWriter is first created.
-        /// </summary>
-        public IndexWriterConfig SetCodec(Codec codec)
-        {
-            if (codec == null)
-            {
-                throw new System.ArgumentException("codec must not be null");
-            }
-            this.codec = codec;
-            return this;
-        }
-
-        public override Codec Codec
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public Codec Codec
         {
             get
             {
                 return codec;
             }
+            set
+            {
+                if (value == null)
+                {
+                    throw new System.ArgumentException("codec must not be null");
+                }
+                this.codec = value;
+            }
         }
 
-        public override MergePolicy MergePolicy
+        /// <summary>
+        /// Expert: <see cref="Index.MergePolicy"/> is invoked whenever there are changes to the
+        /// segments in the index. Its role is to select which merges to do, if any,
+        /// and return a <see cref="MergePolicy.MergeSpecification"/> describing the merges.
+        /// It also selects merges to do for forceMerge.
+        ///
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
+        /// </summary>
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public MergePolicy MergePolicy
         {
             get
             {
                 return mergePolicy;
             }
+            set
+            {
+                if (value == null)
+                {
+                    throw new System.ArgumentException("mergePolicy must not be null");
+                }
+                this.mergePolicy = value;
+            }
         }
 
         /// <summary>
-        /// Expert: Sets the <seealso cref="DocumentsWriterPerThreadPool"/> instance used by the
-        /// IndexWriter to assign thread-states to incoming indexing threads. If no
-        /// <seealso cref="DocumentsWriterPerThreadPool"/> is set <seealso cref="IndexWriter"/> will use
-        /// <seealso cref="ThreadAffinityDocumentsWriterThreadPool"/> with max number of
-        /// thread-states set to <seealso cref="#DEFAULT_MAX_THREAD_STATES"/> (see
-        /// <seealso cref="#DEFAULT_MAX_THREAD_STATES"/>).
-        /// </p>
-        /// <p>
-        /// NOTE: The given <seealso cref="DocumentsWriterPerThreadPool"/> instance must not be used with
-        /// other <seealso cref="IndexWriter"/> instances once it has been initialized / associated with an
-        /// <seealso cref="IndexWriter"/>.
-        /// </p>
-        /// <p>
-        /// NOTE: this only takes effect when IndexWriter is first created.</p>
+        /// Expert: Gets or sets the <see cref="DocumentsWriterPerThreadPool"/> instance used by the
+        /// <see cref="IndexWriter"/> to assign thread-states to incoming indexing threads. If no
+        /// <see cref="DocumentsWriterPerThreadPool"/> is set <see cref="IndexWriter"/> will use
+        /// <see cref="ThreadAffinityDocumentsWriterThreadPool"/> with max number of
+        /// thread-states set to <see cref="DEFAULT_MAX_THREAD_STATES"/> (see
+        /// <see cref="DEFAULT_MAX_THREAD_STATES"/>).
+        /// <para>
+        /// NOTE: The given <see cref="DocumentsWriterPerThreadPool"/> instance must not be used with
+        /// other <see cref="IndexWriter"/> instances once it has been initialized / associated with an
+        /// <see cref="IndexWriter"/>.
+        /// </para>
+        /// <para>
+        /// NOTE: this only takes effect when <see cref="IndexWriter"/> is first created.</para>
         /// </summary>
-        internal IndexWriterConfig SetIndexerThreadPool(DocumentsWriterPerThreadPool threadPool)
-        {
-            if (threadPool == null)
-            {
-                throw new System.ArgumentException("threadPool must not be null");
-            }
-            this.indexerThreadPool = threadPool;
-            return this;
-        }
-
-        internal override DocumentsWriterPerThreadPool IndexerThreadPool
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new internal DocumentsWriterPerThreadPool IndexerThreadPool
         {
             get
             {
                 return indexerThreadPool;
             }
+            set
+            {
+                if (value == null)
+                {
+                    throw new System.ArgumentException("threadPool must not be null");
+                }
+                this.indexerThreadPool = value;
+            }
         }
 
         /// <summary>
-        /// Sets the max number of simultaneous threads that may be indexing documents
-        /// at once in IndexWriter. Values &lt; 1 are invalid and if passed
-        /// <code>maxThreadStates</code> will be set to
-        /// <seealso cref="#DEFAULT_MAX_THREAD_STATES"/>.
+        /// Gets or sets the max number of simultaneous threads that may be indexing documents
+        /// at once in <see cref="IndexWriter"/>. Values &lt; 1 are invalid and if passed
+        /// <c>maxThreadStates</c> will be set to
+        /// <see cref="DEFAULT_MAX_THREAD_STATES"/>.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        public IndexWriterConfig SetMaxThreadStates(int maxThreadStates)
-        {
-            this.indexerThreadPool = new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates);
-            return this;
-        }
-
-        public override int MaxThreadStates
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public int MaxThreadStates
         {
             get
             {
@@ -451,192 +467,201 @@ namespace Lucene.Net.Index
                     throw new InvalidOperationException(cce.Message, cce);
                 }
             }
+            set
+            {
+                this.indexerThreadPool = new ThreadAffinityDocumentsWriterThreadPool(value);
+            }
         }
 
         /// <summary>
-        /// By default, IndexWriter does not pool the
-        ///  SegmentReaders it must open for deletions and
-        ///  merging, unless a near-real-time reader has been
-        ///  obtained by calling <seealso cref="DirectoryReader#open(IndexWriter, boolean)"/>.
-        ///  this method lets you enable pooling without getting a
-        ///  near-real-time reader.  NOTE: if you set this to
-        ///  false, IndexWriter will still pool readers once
-        ///  <seealso cref="DirectoryReader#open(IndexWriter, boolean)"/> is called.
+        /// By default, <see cref="IndexWriter"/> does not pool the
+        /// <see cref="SegmentReader"/>s it must open for deletions and
+        /// merging, unless a near-real-time reader has been
+        /// obtained by calling <see cref="DirectoryReader.Open(IndexWriter, bool)"/>.
+        /// this setting lets you enable pooling without getting a
+        /// near-real-time reader.  NOTE: if you set this to
+        /// <c>false</c>, <see cref="IndexWriter"/> will still pool readers once
+        /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/> is called.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        public IndexWriterConfig SetReaderPooling(bool readerPooling)
-        {
-            this.readerPooling = readerPooling;
-            return this;
-        }
-
-        public override bool ReaderPooling
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public bool ReaderPooling // LUCENENET TODO: Rename UseReaderPooling
         {
             get
             {
                 return readerPooling;
             }
+            set
+            {
+                this.readerPooling = value;
+            }
         }
 
         /// <summary>
-        /// Expert: sets the <seealso cref="DocConsumer"/> chain to be used to process documents.
+        /// Expert: Gets or sets the <see cref="DocConsumer"/> chain to be used to process documents.
         ///
-        /// <p>Only takes effect when IndexWriter is first created.
+        /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>
-        internal IndexWriterConfig SetIndexingChain(IndexingChain indexingChain)
-        {
-            if (indexingChain == null)
-            {
-                throw new System.ArgumentException("indexingChain must not be null");
-            }
-            this.indexingChain = indexingChain;
-            return this;
-        }
-
-        internal override IndexingChain IndexingChain
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new internal IndexingChain IndexingChain
         {
             get
             {
                 return indexingChain;
             }
-        }
-
-        /// <summary>
-        /// Expert: Controls when segments are flushed to disk during indexing.
-        /// The <seealso cref="FlushPolicy"/> initialized during <seealso cref="IndexWriter"/> instantiation and once initialized
-        /// the given instance is bound to this <seealso cref="IndexWriter"/> and should not be used with another writer. </summary>
-        /// <seealso cref= #setMaxBufferedDeleteTerms(int) </seealso>
-        /// <seealso cref= #setMaxBufferedDocs(int) </seealso>
-        /// <seealso cref= #setRAMBufferSizeMB(double) </seealso>
-        internal IndexWriterConfig SetFlushPolicy(FlushPolicy flushPolicy)
-        {
-            if (flushPolicy == null)
+            set
             {
-                throw new System.ArgumentException("flushPolicy must not be null");
+                if (value == null)
+                {
+                    throw new System.ArgumentException("indexingChain must not be null");
+                }
+                this.indexingChain = value;
             }
-            this.flushPolicy = flushPolicy;
-            return this;
         }
 
         /// <summary>
-        /// Expert: Sets the maximum memory consumption per thread triggering a forced
-        /// flush if exceeded. A <seealso cref="DocumentsWriterPerThread"/> is forcefully flushed
-        /// once it exceeds this limit even if the <seealso cref="#getRAMBufferSizeMB()"/> has
-        /// not been exceeded. this is a safety limit to prevent a
-        /// <seealso cref="DocumentsWriterPerThread"/> from address space exhaustion due to its
+        /// Expert: Gets or sets the maximum memory consumption per thread triggering a forced
+        /// flush if exceeded. A <see cref="DocumentsWriterPerThread"/> is forcefully flushed
+        /// once it exceeds this limit even if the <see cref="LiveIndexWriterConfig.RAMBufferSizeMB"/> has
+        /// not been exceeded. This is a safety limit to prevent a
+        /// <see cref="DocumentsWriterPerThread"/> from address space exhaustion due to its
         /// internal 32 bit signed integer based memory addressing.
-        /// The given value must be less that 2GB (2048MB)
+        /// The given value must be less that 2GB (2048MB).
         /// </summary>
-        /// <seealso cref= #DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB </seealso>
-        public IndexWriterConfig SetRAMPerThreadHardLimitMB(int perThreadHardLimitMB)
-        {
-            if (perThreadHardLimitMB <= 0 || perThreadHardLimitMB >= 2048)
-            {
-                throw new System.ArgumentException("PerThreadHardLimit must be greater than 0 and less than 2048MB");
-            }
-            this.perThreadHardLimitMB = perThreadHardLimitMB;
-            return this;
-        }
-
-        public override int RAMPerThreadHardLimitMB
+        /// <seealso cref="DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB"/>
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new public int RAMPerThreadHardLimitMB
         {
             get
             {
                 return perThreadHardLimitMB;
             }
+            set
+            {
+                if (value <= 0 || value >= 2048)
+                {
+                    throw new System.ArgumentException("PerThreadHardLimit must be greater than 0 and less than 2048MB");
+                }
+                this.perThreadHardLimitMB = value;
+            }
         }
 
-        internal override FlushPolicy FlushPolicy
+        /// <summary>
+        /// Expert: Controls when segments are flushed to disk during indexing.
+        /// The <see cref="Index.FlushPolicy"/> initialized during <see cref="IndexWriter"/> instantiation and once initialized
+        /// the given instance is bound to this <see cref="IndexWriter"/> and should not be used with another writer.
+        /// </summary>
+        /// <seealso cref="LiveIndexWriterConfig.MaxBufferedDeleteTerms"/>
+        /// <seealso cref="LiveIndexWriterConfig.MaxBufferedDocs"/>
+        /// <seealso cref="LiveIndexWriterConfig.RAMBufferSizeMB"/>
+        // LUCENENET NOTE: We cannot override a getter and add a setter, 
+        // so must declare it new. See: http://stackoverflow.com/q/82437
+        new internal FlushPolicy FlushPolicy
         {
             get
             {
                 return flushPolicy;
             }
-        }
-
-        public override InfoStream InfoStream
-        {
-            get
+            set
             {
-                return infoStream;
+                if (value == null)
+                {
+                    throw new System.ArgumentException("flushPolicy must not be null");
+                }
+                this.flushPolicy = value;
             }
         }
 
-        public override Analyzer Analyzer
-        {
-            get
-            {
-                return base.Analyzer;
-            }
-        }
+        // LUCENENT NOTE: The following properties would be pointless,
+        // since they are already inherited by the base class.
+        //public override InfoStream InfoStream
+        //{
+        //    get
+        //    {
+        //        return infoStream;
+        //    }
+        //}
 
-        public override int MaxBufferedDeleteTerms
-        {
-            get
-            {
-                return base.MaxBufferedDeleteTerms;
-            }
-        }
+        //public override Analyzer Analyzer
+        //{
+        //    get
+        //    {
+        //        return base.Analyzer;
+        //    }
+        //}
 
-        public override int MaxBufferedDocs
-        {
-            get
-            {
-                return base.MaxBufferedDocs;
-            }
-        }
+        //public override int MaxBufferedDeleteTerms
+        //{
+        //    get
+        //    {
+        //        return base.MaxBufferedDeleteTerms;
+        //    }
+        //}
 
-        public override IndexReaderWarmer MergedSegmentWarmer
-        {
-            get
-            {
-                return base.MergedSegmentWarmer;
-            }
-        }
+        //public override int MaxBufferedDocs
+        //{
+        //    get
+        //    {
+        //        return base.MaxBufferedDocs;
+        //    }
+        //}
 
-        public override double RAMBufferSizeMB
-        {
-            get
-            {
-                return base.RAMBufferSizeMB;
-            }
-        }
+        //public override IndexReaderWarmer MergedSegmentWarmer
+        //{
+        //    get
+        //    {
+        //        return base.MergedSegmentWarmer;
+        //    }
+        //}
 
-        public override int ReaderTermsIndexDivisor
-        {
-            get
-            {
-                return base.ReaderTermsIndexDivisor;
-            }
-        }
+        //public override double RAMBufferSizeMB
+        //{
+        //    get
+        //    {
+        //        return base.RAMBufferSizeMB;
+        //    }
+        //}
 
-        public override int TermIndexInterval
-        {
-            get
-            {
-                return base.TermIndexInterval;
-            }
-        }
+        //public override int ReaderTermsIndexDivisor
+        //{
+        //    get
+        //    {
+        //        return base.ReaderTermsIndexDivisor;
+        //    }
+        //}
+
+        //public override int TermIndexInterval
+        //{
+        //    get
+        //    {
+        //        return base.TermIndexInterval;
+        //    }
+        //}
 
         /// <summary>
         /// Information about merges, deletes and a
         /// message when maxFieldLength is reached will be printed
-        /// to this. Must not be null, but <seealso cref="InfoStream#NO_OUTPUT"/>
+        /// to this. Must not be <c>null</c>, but <see cref="InfoStream.NO_OUTPUT"/>
         /// may be used to supress output.
         /// </summary>
         public IndexWriterConfig SetInfoStream(InfoStream infoStream)
         {
             if (infoStream == null)
             {
-                throw new System.ArgumentException("Cannot set InfoStream implementation to null. " + "To disable logging use InfoStream.NO_OUTPUT");
+                throw new System.ArgumentException("Cannot set InfoStream implementation to null. " + 
+                    "To disable logging use InfoStream.NO_OUTPUT");
             }
             this.infoStream = infoStream;
             return this;
         }
 
         /// <summary>
-        /// Convenience method that uses <seealso cref="PrintStreamInfoStream"/>.  Must not be null.
+        /// Convenience method that uses <see cref="PrintStreamInfoStream"/> to write to the passed in <see cref="TextWriter"/>. 
+        /// Must not be <c>null</c>.
         /// </summary>
         public IndexWriterConfig SetInfoStream(TextWriter printStream)
         {
@@ -647,45 +672,48 @@ namespace Lucene.Net.Index
             return SetInfoStream(new PrintStreamInfoStream(printStream));
         }
 
-        new public IndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
-        {
-            return (IndexWriterConfig)base.SetMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
-        }
+        // LUCENENET NOTE: These were only here for casting purposes, but since we are
+        // using property setters, they are not needed
 
-        new public IndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
-        {
-            return (IndexWriterConfig)base.SetMaxBufferedDocs(maxBufferedDocs);
-        }
+        //new public IndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
+        //{
+        //    return (IndexWriterConfig)base.SetMaxBufferedDeleteTerms(maxBufferedDeleteTerms);
+        //}
 
-        new public IndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
-        {
-            return (IndexWriterConfig)base.SetMergedSegmentWarmer(mergeSegmentWarmer);
-        }
+        //new public IndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
+        //{
+        //    return (IndexWriterConfig)base.SetMaxBufferedDocs(maxBufferedDocs);
+        //}
 
-        new public IndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
-        {
-            return (IndexWriterConfig)base.SetRAMBufferSizeMB(ramBufferSizeMB);
-        }
+        //new public IndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
+        //{
+        //    return (IndexWriterConfig)base.SetMergedSegmentWarmer(mergeSegmentWarmer);
+        //}
 
-        new public IndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
-        {
-            return (IndexWriterConfig)base.SetReaderTermsIndexDivisor(divisor);
-        }
+        //new public IndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
+        //{
+        //    return (IndexWriterConfig)base.SetRAMBufferSizeMB(ramBufferSizeMB);
+        //}
 
-        new public IndexWriterConfig SetTermIndexInterval(int interval)
-        {
-            return (IndexWriterConfig)base.SetTermIndexInterval(interval);
-        }
+        //new public IndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
+        //{
+        //    return (IndexWriterConfig)base.SetReaderTermsIndexDivisor(divisor);
+        //}
 
-        new public IndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
-        {
-            return (IndexWriterConfig)base.SetUseCompoundFile(useCompoundFile);
-        }
+        //new public IndexWriterConfig SetTermIndexInterval(int interval)
+        //{
+        //    return (IndexWriterConfig)base.SetTermIndexInterval(interval);
+        //}
 
-        new public IndexWriterConfig SetCheckIntegrityAtMerge(bool checkIntegrityAtMerge)
-        {
-            return (IndexWriterConfig)base.SetCheckIntegrityAtMerge(checkIntegrityAtMerge);
-        }
+        //new public IndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
+        //{
+        //    return (IndexWriterConfig)base.SetUseCompoundFile(useCompoundFile);
+        //}
+
+        //new public IndexWriterConfig SetCheckIntegrityAtMerge(bool checkIntegrityAtMerge)
+        //{
+        //    return (IndexWriterConfig)base.SetCheckIntegrityAtMerge(checkIntegrityAtMerge);
+        //}
 
         public override string ToString()
         {
@@ -696,9 +724,9 @@ namespace Lucene.Net.Index
     }
 
     /// <summary>
-    /// Specifies the open mode for <seealso cref="IndexWriter"/>.
+    /// Specifies the open mode for <see cref="IndexWriter"/>.
     /// </summary>
-    public enum OpenMode // LUCENENET specific: Moved outside of IndexWriterConfig to prevent naming conflict
+    public enum OpenMode // LUCENENET specific: De-nested from IndexWriterConfig to prevent naming conflict
     {
         /// <summary>
         /// Creates a new index or overwrites an existing one.

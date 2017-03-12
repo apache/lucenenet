@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Search.Payloads
 {

@@ -1,10 +1,11 @@
 using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using FailOnNonBulkMergesInfoStream = Lucene.Net.Util.FailOnNonBulkMergesInfoStream;

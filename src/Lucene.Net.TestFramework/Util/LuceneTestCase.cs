@@ -947,7 +947,7 @@ namespace Lucene.Net.Util
                 // that when there are separate instances of
                 // IndexWriter created we see "IW 0", "IW 1", "IW 2",
                 // ... instead of just always "IW 0":
-                c.InfoStream = new TestRuleSetupAndRestoreClassEnv.ThreadNameFixingPrintStreamInfoStream(Console.Out);
+                c.SetInfoStream(new TestRuleSetupAndRestoreClassEnv.ThreadNameFixingPrintStreamInfoStream(Console.Out));
             }
 
             if (r.NextBoolean())

@@ -16,10 +16,11 @@ using System;
  * limitations under the License.
  */
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using IBits = Lucene.Net.Util.IBits;
     using Directory = Lucene.Net.Store.Directory;

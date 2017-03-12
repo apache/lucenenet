@@ -163,14 +163,16 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         protected internal virtual IndexWriterConfig GetIndexWriterConfig(LuceneVersion matchVersion, 
             Analyzer indexAnalyzer, OpenMode openMode)
         {
-            IndexWriterConfig iwc = new IndexWriterConfig(matchVersion, indexAnalyzer);
-            iwc.SetCodec(new Lucene46Codec());
-            iwc.SetOpenMode(openMode);
+            IndexWriterConfig iwc = new IndexWriterConfig(matchVersion, indexAnalyzer)
+            {
+                Codec = new Lucene46Codec(),
+                OpenMode = openMode
+            };
 
             // This way all merged segments will be sorted at
             // merge time, allow for per-segment early termination
             // when those segments are searched:
-            iwc.SetMergePolicy(new SortingMergePolicy(iwc.MergePolicy, SORT));
+            iwc.MergePolicy = new SortingMergePolicy(iwc.MergePolicy, SORT);
 
             return iwc;
         }

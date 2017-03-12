@@ -30,8 +30,8 @@ namespace Lucene.Net.Index
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
     /// <summary>
-    /// Holds all the configuration used by <seealso cref="IndexWriter"/> with few setters for
-    /// settings that can be changed on an <seealso cref="IndexWriter"/> instance "live".
+    /// Holds all the configuration used by <see cref="IndexWriter"/> with few setters for
+    /// settings that can be changed on an <see cref="IndexWriter"/> instance "live".
     ///
     /// @since 4.0
     /// </summary>
@@ -49,44 +49,33 @@ namespace Lucene.Net.Index
         // LUCENENET specific: Volatile fields are not CLS compliant,
         // so we are making them internal. This class cannot be inherited
         // from outside of the assembly anyway, since it has no public 
-        // constructors.
-
-        // LUCENENET TODO: Should we keep the SetXXX(foo) methods,
-        // or go with straight properties? If we use properties,
-        // we can use the shorter .NET syntax:
-
-        // var conf = new IndexWriterConfig
-        // {
-        //     OpenMode = OpenMode.CREATE,
-        //     Codec = new Lucene46Codec()
-        // };
-
+        // constructors, so protected members are moot.
 
         // modified by IndexWriterConfig
         /// <summary>
-        /// <seealso cref="IndexDeletionPolicy"/> controlling when commit
-        ///  points are deleted.
+        /// <see cref="Index.IndexDeletionPolicy"/> controlling when commit
+        /// points are deleted.
         /// </summary>
         internal volatile IndexDeletionPolicy delPolicy;
 
         /// <summary>
-        /// <seealso cref="IndexCommit"/> that <seealso cref="IndexWriter"/> is
-        ///  opened on.
+        /// <see cref="Index.IndexCommit"/> that <see cref="IndexWriter"/> is
+        /// opened on.
         /// </summary>
         internal volatile IndexCommit commit;
 
         /// <summary>
-        /// <seealso cref="OpenMode"/> that <seealso cref="IndexWriter"/> is opened
-        ///  with.
+        /// <see cref="Index.OpenMode"/> that <see cref="IndexWriter"/> is opened
+        /// with.
         /// </summary>
-        internal OpenMode? openMode; // LUCENENET TODO: Can we eliminate the nullable?
+        internal OpenMode? openMode; // LUCENENET TODO: Can we eliminate the nullable? If so, make volatile again.
 
         /// <summary>
-        /// <seealso cref="Similarity"/> to use when encoding norms. </summary>
+        /// <see cref="Search.Similarities.Similarity"/> to use when encoding norms. </summary>
         internal volatile Similarity similarity;
 
         /// <summary>
-        /// <seealso cref="MergeScheduler"/> to use for running merges. </summary>
+        /// <see cref="IMergeScheduler"/> to use for running merges. </summary>
         internal volatile IMergeScheduler mergeScheduler;
 
         /// <summary>
@@ -94,26 +83,26 @@ namespace Lucene.Net.Index
         internal long writeLockTimeout;
 
         /// <summary>
-        /// <seealso cref="IndexingChain"/> that determines how documents are
-        ///  indexed.
+        /// <see cref="DocumentsWriterPerThread.IndexingChain"/> that determines how documents are
+        /// indexed.
         /// </summary>
         internal volatile IndexingChain indexingChain; // LUCENENET specific - made internal because IndexingChain is internal
 
         /// <summary>
-        /// <seealso cref="Codec"/> used to write new segments. </summary>
+        /// <see cref="Codecs.Codec"/> used to write new segments. </summary>
         internal volatile Codec codec;
 
         /// <summary>
-        /// <seealso cref="InfoStream"/> for debugging messages. </summary>
+        /// <see cref="Util.InfoStream"/> for debugging messages. </summary>
         internal volatile InfoStream infoStream;
 
         /// <summary>
-        /// <seealso cref="MergePolicy"/> for selecting merges. </summary>
+        /// <see cref="Index.MergePolicy"/> for selecting merges. </summary>
         internal volatile MergePolicy mergePolicy;
 
         /// <summary>
-        /// {@code DocumentsWriterPerThreadPool} to control how
-        ///  threads are allocated to {@code DocumentsWriterPerThread}.
+        /// <see cref="DocumentsWriterPerThreadPool"/> to control how
+        /// threads are allocated to <see cref="DocumentsWriterPerThread"/>.
         /// </summary>
         internal volatile DocumentsWriterPerThreadPool indexerThreadPool; // LUCENENET specific - made internal because DocumentsWriterPerThreadPool is internal
 
@@ -122,19 +111,19 @@ namespace Lucene.Net.Index
         internal volatile bool readerPooling;
 
         /// <summary>
-        /// <seealso cref="FlushPolicy"/> to control when segments are
-        ///  flushed.
+        /// <see cref="Index.FlushPolicy"/> to control when segments are
+        /// flushed.
         /// </summary>
         internal volatile FlushPolicy flushPolicy; // LUCENENET specific - made internal because FlushPolicy is internal
 
         /// <summary>
         /// Sets the hard upper bound on RAM usage for a single
-        ///  segment, after which the segment is forced to flush.
+        /// segment, after which the segment is forced to flush.
         /// </summary>
         internal volatile int perThreadHardLimitMB;
 
         /// <summary>
-        /// <seealso cref="LuceneVersion"/> that <seealso cref="IndexWriter"/> should emulate. </summary>
+        /// <see cref="LuceneVersion"/> that <see cref="IndexWriter"/> should emulate. </summary>
         internal readonly LuceneVersion matchVersion;
 
         /// <summary>
@@ -182,7 +171,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates a new config that that handles the live <seealso cref="IndexWriter"/>
+        /// Creates a new config that that handles the live <see cref="IndexWriter"/>
         /// settings.
         /// </summary>
         internal LiveIndexWriterConfig(IndexWriterConfig config)
@@ -214,7 +203,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the default analyzer to use for indexing documents. </summary>
+        /// Gets the default analyzer to use for indexing documents. </summary>
         public virtual Analyzer Analyzer
         {
             get
@@ -224,12 +213,12 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: set the interval between indexed terms. Large values cause less
-        /// memory to be used by IndexReader, but slow random-access to terms. Small
-        /// values cause more memory to be used by an IndexReader, and speed
+        /// Expert: Gets or sets the interval between indexed terms. Large values cause less
+        /// memory to be used by <see cref="IndexReader"/>, but slow random-access to terms. Small
+        /// values cause more memory to be used by an <see cref="IndexReader"/>, and speed
         /// random-access to terms.
-        /// <p>
-        /// this parameter determines the amount of computation required per query
+        /// <para/>
+        /// This parameter determines the amount of computation required per query
         /// term, regardless of the number of documents that contain that term. In
         /// particular, it is the maximum number of other terms that must be scanned
         /// before a term is located and its frequency and position information may be
@@ -238,281 +227,250 @@ namespace Lucene.Net.Index
         /// processing of frequency and positional data. In a small index or when many
         /// uncommon query terms are generated (e.g., by wildcard queries) term lookup
         /// may become a dominant cost.
-        /// <p>
-        /// In particular, <code>numUniqueTerms/interval</code> terms are read into
-        /// memory by an IndexReader, and, on average, <code>interval/2</code> terms
+        /// <para/>
+        /// In particular, <c>numUniqueTerms/interval</c> terms are read into
+        /// memory by an <see cref="IndexReader"/>, and, on average, <c>interval/2</c> terms
         /// must be scanned for each random term access.
         ///
-        /// <p>
+        /// <para/>
         /// Takes effect immediately, but only applies to newly flushed/merged
         /// segments.
         ///
-        /// <p>
-        /// <b>NOTE:</b> this parameter does not apply to all PostingsFormat implementations,
+        /// <para/>
+        /// <b>NOTE:</b> this parameter does not apply to all <see cref="Codecs.PostingsFormat"/> implementations,
         /// including the default one in this release. It only makes sense for term indexes
         /// that are implemented as a fixed gap between terms. For example,
-        /// <seealso cref="Lucene41PostingsFormat"/> implements the term index instead based upon how
+        /// <see cref="Codecs.Lucene41.Lucene41PostingsFormat"/> implements the term index instead based upon how
         /// terms share prefixes. To configure its parameters (the minimum and maximum size
-        /// for a block), you would instead use  <seealso cref="Lucene41PostingsFormat#Lucene41PostingsFormat(int, int)"/>.
+        /// for a block), you would instead use <see cref="Codecs.Lucene41.Lucene41PostingsFormat.Lucene41PostingsFormat(int, int)"/>.
         /// which can also be configured on a per-field basis:
-        /// <pre class="prettyprint">
-        /// //customize Lucene41PostingsFormat, passing minBlockSize=50, maxBlockSize=100
-        /// final PostingsFormat tweakedPostings = new Lucene41PostingsFormat(50, 100);
-        /// iwc.SetCodec(new Lucene45Codec() {
-        ///   &#64;Override
-        ///   public PostingsFormat getPostingsFormatForField(String field) {
-        ///     if (field.equals("fieldWithTonsOfTerms"))
-        ///       return tweakedPostings;
-        ///     else
-        ///       return super.getPostingsFormatForField(field);
-        ///   }
-        /// });
-        /// </pre>
+        /// <code>
+        /// public class MyLucene45Codec : Lucene45Codec
+        /// {
+        ///     //customize Lucene41PostingsFormat, passing minBlockSize=50, maxBlockSize=100
+        ///     private readonly PostingsFormat tweakedPostings = new Lucene41PostingsFormat(50, 100);
+        /// 
+        ///     public override PostingsFormat GetPostingsFormatForField(string field)
+        ///     {
+        ///         if (field.Equals("fieldWithTonsOfTerms"))
+        ///             return tweakedPostings;
+        ///         else
+        ///             return base.GetPostingsFormatForField(field);
+        ///     }
+        /// }
+        /// ...
+        /// 
+        /// iwc.Codec = new MyLucene45Codec();
+        /// </code>
         /// Note that other implementations may have their own parameters, or no parameters at all.
         /// </summary>
-        /// <seealso cref= IndexWriterConfig#DEFAULT_TERM_INDEX_INTERVAL </seealso>
-        public virtual LiveIndexWriterConfig SetTermIndexInterval(int interval) // TODO: this should be private to the codec, not settable here
-        {
-            this.termIndexInterval = interval;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the interval between indexed terms.
-        /// </summary>
-        /// <seealso cref= #setTermIndexInterval(int) </seealso>
+        /// <seealso cref="IndexWriterConfig.DEFAULT_TERM_INDEX_INTERVAL"/>
         public virtual int TermIndexInterval
         {
             get
             {
                 return termIndexInterval;
             }
+            set // TODO: this should be private to the codec, not settable here
+            {
+                this.termIndexInterval = value;
+            }
         }
 
         /// <summary>
-        /// Determines the maximum number of delete-by-term operations that will be
+        /// Gets or sets a value that determines the maximum number of delete-by-term operations that will be
         /// buffered before both the buffered in-memory delete terms and queries are
         /// applied and flushed.
-        /// <p>
+        /// <para/>
         /// Disabled by default (writer flushes by RAM usage).
-        /// <p>
+        /// <para/>
         /// NOTE: this setting won't trigger a segment flush.
         ///
-        /// <p>
+        /// <para/>
         /// Takes effect immediately, but only the next time a document is added,
         /// updated or deleted. Also, if you only delete-by-query, this setting has no
         /// effect, i.e. delete queries are buffered until the next segment is flushed.
         /// </summary>
-        /// <exception cref="IllegalArgumentException">
+        /// <exception cref="ArgumentException">
         ///           if maxBufferedDeleteTerms is enabled but smaller than 1
         /// </exception>
-        /// <seealso cref= #setRAMBufferSizeMB </seealso>
-        public virtual LiveIndexWriterConfig SetMaxBufferedDeleteTerms(int maxBufferedDeleteTerms)
-        {
-            if (maxBufferedDeleteTerms != IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDeleteTerms < 1)
-            {
-                throw new System.ArgumentException("maxBufferedDeleteTerms must at least be 1 when enabled");
-            }
-            this.maxBufferedDeleteTerms = maxBufferedDeleteTerms;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the number of buffered deleted terms that will trigger a flush of all
-        /// buffered deletes if enabled.
-        /// </summary>
-        /// <seealso cref= #setMaxBufferedDeleteTerms(int) </seealso>
+        /// <seealso cref="RAMBufferSizeMB"/>
         public virtual int MaxBufferedDeleteTerms
         {
             get
             {
                 return maxBufferedDeleteTerms;
             }
+            set
+            {
+                if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 1)
+                {
+                    throw new System.ArgumentException("maxBufferedDeleteTerms must at least be 1 when enabled");
+                }
+                this.maxBufferedDeleteTerms = value;
+            }
         }
 
         /// <summary>
-        /// Determines the amount of RAM that may be used for buffering added documents
-        /// and deletions before they are flushed to the Directory. Generally for
+        /// Gets or sets a value that determines the amount of RAM that may be used for buffering added documents
+        /// and deletions before they are flushed to the <see cref="Store.Directory"/>. Generally for
         /// faster indexing performance it's best to flush by RAM usage instead of
         /// document count and use as large a RAM buffer as you can.
-        /// <p>
+        /// <para/>
         /// When this is set, the writer will flush whenever buffered documents and
         /// deletions use this much RAM. Pass in
-        /// <seealso cref="IndexWriterConfig#DISABLE_AUTO_FLUSH"/> to prevent triggering a flush
+        /// <see cref="IndexWriterConfig.DISABLE_AUTO_FLUSH"/> to prevent triggering a flush
         /// due to RAM usage. Note that if flushing by document count is also enabled,
         /// then the flush will be triggered by whichever comes first.
-        /// <p>
-        /// The maximum RAM limit is inherently determined by the JVMs available
-        /// memory. Yet, an <seealso cref="IndexWriter"/> session can consume a significantly
+        /// <para/>
+        /// The maximum RAM limit is inherently determined by the runtime's available
+        /// memory. Yet, an <see cref="IndexWriter"/> session can consume a significantly
         /// larger amount of memory than the given RAM limit since this limit is just
-        /// an indicator when to flush memory resident documents to the Directory.
+        /// an indicator when to flush memory resident documents to the <see cref="Store.Directory"/>.
         /// Flushes are likely happen concurrently while other threads adding documents
-        /// to the writer. For application stability the available memory in the JVM
+        /// to the writer. For application stability the available memory in the runtime
         /// should be significantly larger than the RAM buffer used for indexing.
-        /// <p>
+        /// <para/>
         /// <b>NOTE</b>: the account of RAM usage for pending deletions is only
-        /// approximate. Specifically, if you delete by Query, Lucene currently has no
+        /// approximate. Specifically, if you delete by <see cref="Search.Query"/>, Lucene currently has no
         /// way to measure the RAM usage of individual Queries so the accounting will
-        /// under-estimate and you should compensate by either calling commit()
-        /// periodically yourself, or by using <seealso cref="#setMaxBufferedDeleteTerms(int)"/>
+        /// under-estimate and you should compensate by either calling <see cref="IndexWriter.Commit()"/>
+        /// periodically yourself, or by setting <see cref="MaxBufferedDeleteTerms"/>
         /// to flush and apply buffered deletes by count instead of RAM usage (for each
-        /// buffered delete Query a constant number of bytes is used to estimate RAM
-        /// usage). Note that enabling <seealso cref="#setMaxBufferedDeleteTerms(int)"/> will not
+        /// buffered delete <see cref="Search.Query"/> a constant number of bytes is used to estimate RAM
+        /// usage). Note that enabling <see cref="MaxBufferedDeleteTerms"/> will not
         /// trigger any segment flushes.
-        /// <p>
+        /// <para/>
         /// <b>NOTE</b>: It's not guaranteed that all memory resident documents are
         /// flushed once this limit is exceeded. Depending on the configured
         /// <seealso cref="FlushPolicy"/> only a subset of the buffered documents are flushed and
         /// therefore only parts of the RAM buffer is released.
-        /// <p>
+        /// <para/>
         ///
-        /// The default value is <seealso cref="IndexWriterConfig#DEFAULT_RAM_BUFFER_SIZE_MB"/>.
+        /// The default value is <see cref="IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB"/>.
         ///
-        /// <p>
+        /// <para/>
         /// Takes effect immediately, but only the next time a document is added,
         /// updated or deleted.
         /// </summary>
-        /// <seealso cref= IndexWriterConfig#setRAMPerThreadHardLimitMB(int)
-        /// </seealso>
-        /// <exception cref="IllegalArgumentException">
-        ///           if ramBufferSize is enabled but non-positive, or it disables
-        ///           ramBufferSize when maxBufferedDocs is already disabled </exception>
-        public virtual LiveIndexWriterConfig SetRAMBufferSizeMB(double ramBufferSizeMB)
-        {
-            if (ramBufferSizeMB != IndexWriterConfig.DISABLE_AUTO_FLUSH && ramBufferSizeMB <= 0.0)
-            {
-                throw new System.ArgumentException("ramBufferSize should be > 0.0 MB when enabled");
-            }
-            if (ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH)
-            {
-                throw new System.ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
-            }
-            this.ramBufferSizeMB = ramBufferSizeMB;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the value set by <seealso cref="#setRAMBufferSizeMB(double)"/> if enabled. </summary>
+        /// <seealso cref="IndexWriterConfig.RAMPerThreadHardLimitMB"/>
+        /// <exception cref="ArgumentException">
+        ///           if ramBufferSizeMB is enabled but non-positive, or it disables
+        ///           ramBufferSizeMB when maxBufferedDocs is already disabled </exception>
         public virtual double RAMBufferSizeMB
         {
             get
             {
                 return ramBufferSizeMB;
             }
+            set
+            {
+                if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value <= 0.0)
+                {
+                    throw new System.ArgumentException("ramBufferSizeMB should be > 0.0 MB when enabled");
+                }
+                if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                {
+                    throw new System.ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
+                }
+                this.ramBufferSizeMB = value;
+            }
         }
 
         /// <summary>
-        /// Determines the minimal number of documents required before the buffered
+        /// Gets or sets a value that determines the minimal number of documents required before the buffered
         /// in-memory documents are flushed as a new Segment. Large values generally
         /// give faster indexing.
         ///
-        /// <p>
+        /// <para/>
         /// When this is set, the writer will flush every maxBufferedDocs added
-        /// documents. Pass in <seealso cref="IndexWriterConfig#DISABLE_AUTO_FLUSH"/> to prevent
+        /// documents. Pass in <see cref="IndexWriterConfig.DISABLE_AUTO_FLUSH"/> to prevent
         /// triggering a flush due to number of buffered documents. Note that if
         /// flushing by RAM usage is also enabled, then the flush will be triggered by
         /// whichever comes first.
         ///
-        /// <p>
+        /// <para/>
         /// Disabled by default (writer flushes by RAM usage).
         ///
-        /// <p>
+        /// <para/>
         /// Takes effect immediately, but only the next time a document is added,
         /// updated or deleted.
         /// </summary>
-        /// <seealso cref= #setRAMBufferSizeMB(double) </seealso>
-        /// <exception cref="IllegalArgumentException">
+        /// <seealso cref="RAMBufferSizeMB"/>
+        /// <exception cref="ArgumentException">
         ///           if maxBufferedDocs is enabled but smaller than 2, or it disables
-        ///           maxBufferedDocs when ramBufferSize is already disabled </exception>
-        public virtual LiveIndexWriterConfig SetMaxBufferedDocs(int maxBufferedDocs)
-        {
-            if (maxBufferedDocs != IndexWriterConfig.DISABLE_AUTO_FLUSH && maxBufferedDocs < 2)
-            {
-                throw new System.ArgumentException("maxBufferedDocs must at least be 2 when enabled");
-            }
-            if (maxBufferedDocs == IndexWriterConfig.DISABLE_AUTO_FLUSH && ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH)
-            {
-                throw new System.ArgumentException("at least one of ramBufferSize and maxBufferedDocs must be enabled");
-            }
-            this.maxBufferedDocs = maxBufferedDocs;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the number of buffered added documents that will trigger a flush if
-        /// enabled.
-        /// </summary>
-        /// <seealso cref= #setMaxBufferedDocs(int) </seealso>
+        ///           maxBufferedDocs when ramBufferSizeMB is already disabled </exception>
         public virtual int MaxBufferedDocs
         {
             get
             {
                 return maxBufferedDocs;
             }
+            set
+            {
+                if (value != IndexWriterConfig.DISABLE_AUTO_FLUSH && value < 2)
+                {
+                    throw new System.ArgumentException("maxBufferedDocs must at least be 2 when enabled");
+                }
+                if (value == IndexWriterConfig.DISABLE_AUTO_FLUSH && ramBufferSizeMB == IndexWriterConfig.DISABLE_AUTO_FLUSH)
+                {
+                    throw new System.ArgumentException("at least one of ramBufferSizeMB and maxBufferedDocs must be enabled");
+                }
+                this.maxBufferedDocs = value;
+            }
         }
 
         /// <summary>
-        /// Set the merged segment warmer. See <seealso cref="IndexReaderWarmer"/>.
-        ///
-        /// <p>
+        /// Gets or sets the merged segment warmer. See <see cref="IndexReaderWarmer"/>.
+        /// <para/>
         /// Takes effect on the next merge.
         /// </summary>
-        public virtual LiveIndexWriterConfig SetMergedSegmentWarmer(IndexReaderWarmer mergeSegmentWarmer)
-        {
-            this.mergedSegmentWarmer = mergeSegmentWarmer;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the current merged segment warmer. See <seealso cref="IndexReaderWarmer"/>. </summary>
         public virtual IndexReaderWarmer MergedSegmentWarmer
         {
             get
             {
                 return mergedSegmentWarmer;
             }
+            set
+            {
+                this.mergedSegmentWarmer = value;
+            }
         }
 
         /// <summary>
-        /// Sets the termsIndexDivisor passed to any readers that IndexWriter opens,
+        /// Gets or sets the termsIndexDivisor passed to any readers that <see cref="IndexWriter"/> opens,
         /// for example when applying deletes or creating a near-real-time reader in
-        /// <seealso cref="DirectoryReader#open(IndexWriter, boolean)"/>. If you pass -1, the
-        /// terms index won't be loaded by the readers. this is only useful in advanced
+        /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/>. If you pass -1, the
+        /// terms index won't be loaded by the readers. This is only useful in advanced
         /// situations when you will only .Next() through all terms; attempts to seek
         /// will hit an exception.
         ///
-        /// <p>
+        /// <para/>
         /// Takes effect immediately, but only applies to readers opened after this
         /// call
-        /// <p>
-        /// <b>NOTE:</b> divisor settings &gt; 1 do not apply to all PostingsFormat
+        /// <para/>
+        /// <b>NOTE:</b> divisor settings &gt; 1 do not apply to all <see cref="Codecs.PostingsFormat"/>
         /// implementations, including the default one in this release. It only makes
         /// sense for terms indexes that can efficiently re-sample terms at load time.
         /// </summary>
-        public virtual LiveIndexWriterConfig SetReaderTermsIndexDivisor(int divisor)
-        {
-            if (divisor <= 0 && divisor != -1)
-            {
-                throw new System.ArgumentException("divisor must be >= 1, or -1 (got " + divisor + ")");
-            }
-            readerTermsIndexDivisor = divisor;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the {@code termInfosIndexDivisor}.
-        /// </summary>
-        /// <seealso cref= #setReaderTermsIndexDivisor(int)  </seealso>
         public virtual int ReaderTermsIndexDivisor
         {
             get
             {
                 return readerTermsIndexDivisor;
             }
+            set
+            {
+                if (value <= 0 && value != -1)
+                {
+                    throw new System.ArgumentException("divisor must be >= 1, or -1 (got " + value + ")");
+                }
+                readerTermsIndexDivisor = value;
+            }
         }
 
         /// <summary>
-        /// Returns the <seealso cref="OpenMode"/> set by <seealso cref="IndexWriterConfig#setOpenMode(OpenMode)"/>. </summary>
+        /// Gets the <see cref="Index.OpenMode"/> set by <see cref="IndexWriterConfig.OpenMode"/> setter. </summary>
         public virtual OpenMode? OpenMode
         {
             get
@@ -522,9 +480,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="IndexDeletionPolicy"/> specified in
-        /// <seealso cref="IndexWriterConfig#setIndexDeletionPolicy(IndexDeletionPolicy)"/> or
-        /// the default <seealso cref="KeepOnlyLastCommitDeletionPolicy"/>/
+        /// Gets the <see cref="Index.IndexDeletionPolicy"/> specified in
+        /// <see cref="IndexWriterConfig.IndexDeletionPolicy"/> setter or
+        /// the default <see cref="KeepOnlyLastCommitDeletionPolicy"/>
         /// </summary>
         public virtual IndexDeletionPolicy IndexDeletionPolicy
         {
@@ -535,9 +493,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="IndexCommit"/> as specified in
-        /// <seealso cref="IndexWriterConfig#setIndexCommit(IndexCommit)"/> or the default,
-        /// {@code null} which specifies to open the latest index commit point.
+        /// Gets the <see cref="IndexCommit"/> as specified in
+        /// <see cref="IndexWriterConfig.IndexCommit"/> setter or the default,
+        /// <c>null</c> which specifies to open the latest index commit point.
         /// </summary>
         public virtual IndexCommit IndexCommit
         {
@@ -548,8 +506,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: returns the <seealso cref="Similarity"/> implementation used by this
-        /// <seealso cref="IndexWriter"/>.
+        /// Expert: returns the <see cref="Search.Similarities.Similarity"/> implementation used by this
+        /// <see cref="IndexWriter"/>.
         /// </summary>
         public virtual Similarity Similarity
         {
@@ -560,8 +518,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="MergeScheduler"/> that was set by
-        /// <seealso cref="IndexWriterConfig#setMergeScheduler(MergeScheduler)"/>.
+        /// Returns the <see cref="IMergeScheduler"/> that was set by
+        /// <see cref="IndexWriterConfig.MergeScheduler"/> setter.
         /// </summary>
         public virtual IMergeScheduler MergeScheduler
         {
@@ -574,7 +532,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns allowed timeout when acquiring the write lock.
         /// </summary>
-        /// <seealso cref= IndexWriterConfig#setWriteLockTimeout(long) </seealso>
+        /// <seealso cref="IndexWriterConfig.WriteLockTimeout"/>
         public virtual long WriteLockTimeout
         {
             get
@@ -584,7 +542,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the current <seealso cref="Codec"/>. </summary>
+        /// Returns the current <see cref="Codecs.Codec"/>. </summary>
         public virtual Codec Codec
         {
             get
@@ -594,9 +552,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the current MergePolicy in use by this writer.
+        /// Returns the current <see cref="Index.MergePolicy"/> in use by this writer.
         /// </summary>
-        /// <seealso cref= IndexWriterConfig#setMergePolicy(MergePolicy) </seealso>
+        /// <seealso cref="IndexWriterConfig.MergePolicy"/>
         public virtual MergePolicy MergePolicy
         {
             get
@@ -606,10 +564,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the configured <seealso cref="DocumentsWriterPerThreadPool"/> instance.
+        /// Returns the configured <see cref="DocumentsWriterPerThreadPool"/> instance.
         /// </summary>
-        /// <seealso cref= IndexWriterConfig#setIndexerThreadPool(DocumentsWriterPerThreadPool) </seealso>
-        /// <returns> the configured <seealso cref="DocumentsWriterPerThreadPool"/> instance. </returns>
+        /// <seealso cref="IndexWriterConfig.IndexerThreadPool"/>
         internal virtual DocumentsWriterPerThreadPool IndexerThreadPool
         {
             get
@@ -620,7 +577,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the max number of simultaneous threads that may be indexing
-        /// documents at once in IndexWriter.
+        /// documents at once in <see cref="IndexWriter"/>.
         /// </summary>
         public virtual int MaxThreadStates
         {
@@ -638,8 +595,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns {@code true} if <seealso cref="IndexWriter"/> should pool readers even if
-        /// <seealso cref="DirectoryReader#open(IndexWriter, boolean)"/> has not been called.
+        /// Returns <c>true</c> if <see cref="IndexWriter"/> should pool readers even if
+        /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/> has not been called.
         /// </summary>
         public virtual bool ReaderPooling
         {
@@ -651,7 +608,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the indexing chain set on
-        /// <seealso cref="IndexWriterConfig#setIndexingChain(IndexingChain)"/>.
+        /// <see cref="IndexWriterConfig.IndexingChain"/>.
         /// </summary>
         internal virtual IndexingChain IndexingChain
         {
@@ -662,10 +619,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the max amount of memory each <seealso cref="DocumentsWriterPerThread"/> can
+        /// Returns the max amount of memory each <see cref="DocumentsWriterPerThread"/> can
         /// consume until forcefully flushed.
         /// </summary>
-        /// <seealso cref= IndexWriterConfig#setRAMPerThreadHardLimitMB(int) </seealso>
+        /// <seealso cref="IndexWriterConfig.RAMPerThreadHardLimitMB"/>
         public virtual int RAMPerThreadHardLimitMB
         {
             get
@@ -674,7 +631,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        /// <seealso cref= IndexWriterConfig#setFlushPolicy(FlushPolicy) </seealso>
+        /// <seealso cref="IndexWriterConfig.FlushPolicy"/>
         internal virtual FlushPolicy FlushPolicy
         {
             get
@@ -684,44 +641,30 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <seealso cref="InfoStream"/> used for debugging.
+        /// Returns <see cref="Util.InfoStream"/> used for debugging.
         /// </summary>
-        /// <seealso cref= IndexWriterConfig#setInfoStream(InfoStream) </seealso>
+        /// <seealso cref="IndexWriterConfig.SetInfoStream(InfoStream)"/>
         public virtual InfoStream InfoStream
         {
             get
             {
                 return infoStream;
             }
-            set
-            {
-                infoStream = value;
-            }
         }
 
         /// <summary>
-        /// Sets if the <seealso cref="IndexWriter"/> should pack newly written segments in a
-        /// compound file. Default is <code>true</code>.
-        /// <p>
-        /// Use <code>false</code> for batch indexing with very large ram buffer
+        /// Gets or sets if the <see cref="IndexWriter"/> should pack newly written segments in a
+        /// compound file. Default is <c>true</c>.
+        /// <para>
+        /// Use <c>false</c> for batch indexing with very large RAM buffer
         /// settings.
-        /// </p>
-        /// <p>
+        /// </para>
+        /// <para>
         /// <b>Note: To control compound file usage during segment merges see
-        /// <seealso cref="MergePolicy#setNoCFSRatio(double)"/> and
-        /// <seealso cref="MergePolicy#setMaxCFSSegmentSizeMB(double)"/>. this setting only
+        /// <seealso cref="MergePolicy.NoCFSRatio"/> and
+        /// <seealso cref="MergePolicy.MaxCFSSegmentSizeMB"/>. This setting only
         /// applies to newly created segments.</b>
-        /// </p>
-        /// </summary>
-        public virtual LiveIndexWriterConfig SetUseCompoundFile(bool useCompoundFile)
-        {
-            this.useCompoundFile = useCompoundFile;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns <code>true</code> iff the <seealso cref="IndexWriter"/> packs
-        /// newly written segments in a compound file. Default is <code>true</code>.
+        /// </para>
         /// </summary>
         public virtual bool UseCompoundFile
         {
@@ -729,32 +672,30 @@ namespace Lucene.Net.Index
             {
                 return useCompoundFile;
             }
+            set
+            {
+                this.useCompoundFile = value;
+            }
         }
 
         /// <summary>
-        /// Sets if <seealso cref="IndexWriter"/> should call <seealso cref="AtomicReader#checkIntegrity()"/>
+        /// Gets or sets if <see cref="IndexWriter"/> should call <see cref="AtomicReader.CheckIntegrity()"/>
         /// on existing segments before merging them into a new one.
-        /// <p>
-        /// Use <code>true</code> to enable this safety check, which can help
+        /// <para>
+        /// Use <c>true</c> to enable this safety check, which can help
         /// reduce the risk of propagating index corruption from older segments
         /// into new ones, at the expense of slower merging.
-        /// </p>
-        /// </summary>
-        public virtual LiveIndexWriterConfig SetCheckIntegrityAtMerge(bool checkIntegrityAtMerge)
-        {
-            this.checkIntegrityAtMerge = checkIntegrityAtMerge;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns true if <seealso cref="AtomicReader#checkIntegrity()"/> is called before
-        ///  merging segments.
+        /// </para>
         /// </summary>
         public virtual bool CheckIntegrityAtMerge
         {
             get
             {
                 return checkIntegrityAtMerge;
+            }
+            set
+            {
+                this.checkIntegrityAtMerge = value;
             }
         }
 

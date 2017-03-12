@@ -1,7 +1,9 @@
+using Lucene.Net.Search;
+using Lucene.Net.Support;
+using NUnit.Framework;
+
 namespace Lucene.Net.Search.Spans
 {
-    using Lucene.Net.Search;
-    using NUnit.Framework;
     using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using IndexReader = Lucene.Net.Index.IndexReader;

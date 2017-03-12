@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 
 namespace Lucene.Net.Index

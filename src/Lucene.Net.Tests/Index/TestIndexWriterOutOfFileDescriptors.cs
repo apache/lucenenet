@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -68,7 +69,7 @@ namespace Lucene.Net.Index
                     {
                         // Do this ourselves instead of relying on LTC so
                         // we see incrementing messageID:
-                        iwc.InfoStream = new PrintStreamInfoStream(Console.Out);
+                        iwc.SetInfoStream(new PrintStreamInfoStream(Console.Out));
                     }
                     var ms = iwc.MergeScheduler;
                     if (ms is IConcurrentMergeScheduler)

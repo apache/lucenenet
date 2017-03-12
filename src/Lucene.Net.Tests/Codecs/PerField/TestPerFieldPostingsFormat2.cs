@@ -10,6 +10,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Analysis;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using Lucene.Net.Store;
 

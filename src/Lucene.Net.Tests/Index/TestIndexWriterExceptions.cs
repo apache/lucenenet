@@ -2440,7 +2440,7 @@ namespace Lucene.Net.Index
 
             Directory dir = NewMockDirectory(); // we want to ensure we don't leak any locks or file handles
             IndexWriterConfig iwc = new IndexWriterConfig(TEST_VERSION_CURRENT, null);
-            iwc.InfoStream = evilInfoStream;
+            iwc.SetInfoStream(evilInfoStream);
             IndexWriter iw = new IndexWriter(dir, iwc);
             Document doc = new Document();
             for (int i = 0; i < 10; i++)
