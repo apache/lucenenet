@@ -83,11 +83,6 @@ namespace Lucene.Net.Search
                 // avoid random sort order that could lead to duplicates (bug #31241):
                 return hitA.Doc > hitB.Doc;
             }
-
-            public override bool LessThan(Entry a, Entry b) // LUCENENET TODO: Calls itself (remove?)
-            {
-                return LessThan(a, b);
-            }
         }
 
         /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
@@ -127,11 +122,6 @@ namespace Lucene.Net.Search
 
                 // avoid random sort order that could lead to duplicates (bug #31241):
                 return hitA.Doc > hitB.Doc;
-            }
-
-            public override bool LessThan(Entry a, Entry b) // LUCENENET TODO: Calls itself (remove?)
-            {
-                return LessThan(a, b);
             }
         }
 
@@ -226,7 +216,9 @@ namespace Lucene.Net.Search
             get { return this.m_firstComparer; }
         }
 
-        public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
+        // LUCENENET NOTE: We don't need this declaration because we are using
+        // a generic constraint on T
+        //public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
 
         /// <summary>
         /// Given a queue Entry, creates a corresponding FieldDoc
