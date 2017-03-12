@@ -163,7 +163,10 @@ namespace Lucene.Net.Index
         {
             if (VERBOSE_DELETES)
             {
-                return "gen=" + gen + " numTerms=" + numTermDeletes + ", terms=" + terms + ", queries=" + queries + ", docIDs=" + docIDs + ", numericUpdates=" + numericUpdates + ", binaryUpdates=" + binaryUpdates + ", bytesUsed=" + bytesUsed;
+                return "gen=" + gen + " numTerms=" + numTermDeletes + ", terms=" + Arrays.ToString(terms) 
+                    + ", queries=" + Arrays.ToString(queries) + ", docIDs=" + Arrays.ToString(docIDs) 
+                    + ", numericUpdates=" + Arrays.ToString(numericUpdates) 
+                    + ", binaryUpdates=" + Arrays.ToString(binaryUpdates) + ", bytesUsed=" + bytesUsed;
             }
             else
             {
