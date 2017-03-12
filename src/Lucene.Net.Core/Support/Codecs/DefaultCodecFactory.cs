@@ -18,12 +18,12 @@ namespace Lucene.Net.Codecs
     ///         overriding <see cref="GetCodec(string)"/>.</item>
     ///     <item>subclass <see cref="DefaultCodecFactory"/> and override
     ///         <see cref="DefaultCodecFactory.GetCodecType(string)"/> so a type new type can be
-    ///         supplied that is not in the <see cref="DefaultCodecFactory.m_codecNameToTypeMap"/>.</item>
+    ///         supplied that is not in the <see cref="DefaultCodecFactory.codecNameToTypeMap"/>.</item>
     ///     <item>subclass <see cref="DefaultCodecFactory"/> to scan additional assemblies for <see cref="Codec"/>
     ///         subclasses in the constructor by calling <see cref="ScanForCodecs(Assembly)"/>. 
     ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</item>
     ///     <item>subclass <see cref="DefaultCodecFactory"/> to add override the default <see cref="Codec"/> 
-    ///         types by explicitly setting them in the <see cref="DefaultCodecFactory.m_codecNameToTypeMap"/>.</item>
+    ///         types by calling <see cref="PutCodecType(Type)"/>.</item>
     /// </list>
     /// <para/>
     /// To set the <see cref="ICodecFactory"/>, call <see cref="Codec.SetCodecFactory(ICodecFactory)"/>.
@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs
     {
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
-        protected readonly IDictionary<string, Type> m_codecNameToTypeMap = new Dictionary<string, Type>();
+        private readonly IDictionary<string, Type> codecNameToTypeMap = new Dictionary<string, Type>();
         private readonly IDictionary<Type, Codec> codecInstanceCache = new Dictionary<Type, Codec>();
 
         public DefaultCodecFactory()
@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Scans the given <paramref name="assemblies"/> for subclasses of <see cref="Codec"/>
-        /// and adds their names to the <see cref="m_codecNameToTypeMap"/>. Note that names will be
+        /// and adds their names to the <see cref="codecNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="Codec"/> name appears multiple times - the last match wins.
         /// </summary>
         /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last, 
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Scans the given <paramref name="assembly"/> for subclasses of <see cref="Codec"/>
-        /// and adds their names to the <see cref="m_codecNameToTypeMap"/>. Note that names will be
+        /// and adds their names to the <see cref="codecNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="Codec"/> name appears multiple times - the last match wins.
         /// </summary>
         /// <param name="assembly">The assembly to scan.</param>
@@ -72,10 +72,38 @@ namespace Lucene.Net.Codecs
             {
                 if (IsServiceType(c))
                 {
-                    string name = GetServiceName(c);
-                    m_codecNameToTypeMap[name] = c;
+                    PutCodecTypeImpl(c);
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds a <see cref="Codec"/> type to the <see cref="codecNameToTypeMap"/>, using 
+        /// the name provided in the <see cref="CodecNameAttribute"/>, if present, or the name
+        /// of the codec class minus the "Codec" suffix as the name by default.
+        /// <para/>
+        /// Note that if a <see cref="Codec"/> with the same name already exists in the map,
+        /// calling this method will update it to the new type.
+        /// </summary>
+        /// <param name="codec">A type that subclasses <see cref="Codec"/>.</param>
+        protected virtual void PutCodecType(Type codec)
+        {
+            if (codec == null)
+            {
+                throw new ArgumentNullException("codec", "codec may not be null");
+            }
+            if (!typeof(Codec).GetTypeInfo().IsAssignableFrom(codec))
+            {
+                throw new ArgumentException("System.Type passed dose not subclass Codec.");
+            }
+
+            PutCodecTypeImpl(codec);
+        }
+
+        private void PutCodecTypeImpl(Type codec)
+        {
+            string name = GetServiceName(codec);
+            codecNameToTypeMap[name] = codec;
         }
 
         /// <summary>
@@ -115,7 +143,7 @@ namespace Lucene.Net.Codecs
         protected virtual Type GetCodecType(string name)
         {
             Type codecType;
-            m_codecNameToTypeMap.TryGetValue(name, out codecType);
+            codecNameToTypeMap.TryGetValue(name, out codecType);
             if (codecType == null)
             {
                 throw new ArgumentException(string.Format("Codec '{0}' cannot be loaded. If the codec is not " +
@@ -132,7 +160,7 @@ namespace Lucene.Net.Codecs
         /// <returns>A <see cref="T:ICollection{string}"/> of <see cref="Codec"/> names.</returns>
         public ICollection<string> AvailableServices()
         {
-            return m_codecNameToTypeMap.Keys;
+            return codecNameToTypeMap.Keys;
         }
     }
 }

@@ -18,12 +18,12 @@ namespace Lucene.Net.Codecs
     ///         overriding <see cref="GetDocValuesFormat(string)"/>.</item>
     ///     <item>subclass <see cref="DefaultDocValuesFormatFactory"/> and override
     ///         <see cref="DefaultDocValuesFormatFactory.GetDocValuesFormatType(string)"/> so a type new type can be
-    ///         supplied that is not in the <see cref="DefaultDocValuesFormatFactory.m_docValuesFormatNameToTypeMap"/>.</item>
+    ///         supplied that is not in the <see cref="DefaultDocValuesFormatFactory.docValuesFormatNameToTypeMap"/>.</item>
     ///     <item>subclass <see cref="DefaultDocValuesFormatFactory"/> to scan additional assemblies for <see cref="DocValuesFormat"/>
     ///         subclasses in the constructor by calling <see cref="ScanForDocValuesFormats(Assembly)"/>. 
     ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</item>
     ///     <item>subclass <see cref="DefaultDocValuesFormatFactory"/> to add override the default <see cref="DocValuesFormat"/> 
-    ///         types by explicitly setting them in the <see cref="DefaultDocValuesFormatFactory.m_docValuesFormatNameToTypeMap"/>.</item>
+    ///         types by calling <see cref="PutDocValuesFormatType(Type)"/>.</item>
     /// </list>
     /// <para/>
     /// To set the <see cref="IDocValuesFormatFactory"/>, call <see cref="DocValuesFormat.SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>.
@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs
     {
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
-        protected readonly IDictionary<string, Type> m_docValuesFormatNameToTypeMap = new Dictionary<string, Type>();
+        private readonly IDictionary<string, Type> docValuesFormatNameToTypeMap = new Dictionary<string, Type>();
         private readonly IDictionary<Type, DocValuesFormat> docValuesFormatInstanceCache = new Dictionary<Type, DocValuesFormat>();
 
         public DefaultDocValuesFormatFactory()
@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Scans the given <paramref name="assemblies"/> for subclasses of <see cref="Codec"/>
-        /// and adds their names to the <see cref="m_docValuesFormatNameToTypeMap"/>. Note that names will be
+        /// and adds their names to the <see cref="docValuesFormatNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="DocValuesFormat"/> name appears multiple times - the last match wins.
         /// </summary>
         /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last, 
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Scans the given <paramref name="assembly"/> for subclasses of <see cref="DocValuesFormat"/>
-        /// and adds their names to the <see cref="m_docValuesFormatNameToTypeMap"/>. Note that names will be
+        /// and adds their names to the <see cref="docValuesFormatNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="DocValuesFormat"/> name appears multiple times - the last match wins.
         /// </summary>
         /// <param name="assembly">The assembly to scan.</param>
@@ -72,10 +72,38 @@ namespace Lucene.Net.Codecs
             {
                 if (IsServiceType(c))
                 {
-                    string name = GetServiceName(c);
-                    m_docValuesFormatNameToTypeMap[name] = c;
+                    PutCodecTypeImpl(c);
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds a <see cref="DocValuesFormat"/> type to the <see cref="docValuesFormatNameToTypeMap"/>, using 
+        /// the name provided in the <see cref="DocValuesFormatNameAttribute"/>, if present, or the name
+        /// of the codec class minus the "DocValuesFormat" suffix as the name by default.
+        /// <para/>
+        /// Note that if a <see cref="DocValuesFormat"/> with the same name already exists in the map,
+        /// calling this method will update it to the new type.
+        /// </summary>
+        /// <param name="docValuesFormat">A type that subclasses <see cref="DocValuesFormat"/>.</param>
+        protected virtual void PutDocValuesFormatType(Type docValuesFormat)
+        {
+            if (docValuesFormat == null)
+            {
+                throw new ArgumentNullException("docValuesFormat", "docValuesFormat may not be null");
+            }
+            if (!typeof(DocValuesFormat).GetTypeInfo().IsAssignableFrom(docValuesFormat))
+            {
+                throw new ArgumentException("System.Type passed dose not subclass DocValuesFormat.");
+            }
+
+            PutCodecTypeImpl(docValuesFormat);
+        }
+
+        private void PutCodecTypeImpl(Type docValuesFormat)
+        {
+            string name = GetServiceName(docValuesFormat);
+            docValuesFormatNameToTypeMap[name] = docValuesFormat;
         }
 
         /// <summary>
@@ -115,7 +143,7 @@ namespace Lucene.Net.Codecs
         protected virtual Type GetDocValuesFormatType(string name)
         {
             Type codecType;
-            m_docValuesFormatNameToTypeMap.TryGetValue(name, out codecType);
+            docValuesFormatNameToTypeMap.TryGetValue(name, out codecType);
             if (codecType == null)
             {
                 throw new ArgumentException(string.Format("DocValuesFormat '{0}' cannot be loaded. If the format is not " +
@@ -132,7 +160,7 @@ namespace Lucene.Net.Codecs
         /// <returns>A <see cref="ICollection{string}"/> of <see cref="DocValuesFormat"/> names.</returns>
         public ICollection<string> AvailableServices()
         {
-            return m_docValuesFormatNameToTypeMap.Keys;
+            return docValuesFormatNameToTypeMap.Keys;
         }
     }
 }

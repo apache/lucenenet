@@ -18,12 +18,12 @@ namespace Lucene.Net.Codecs
     ///         overriding <see cref="GetDocValuesFormat(string)"/>.</item>
     ///     <item>subclass <see cref="DefaultDPostingsFormatFactory"/> and override
     ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormatType(string)"/> so a type new type can be
-    ///         supplied that is not in the <see cref="DefaultPostingsFormatFactory.m_postingsFormatNameToTypeMap"/>.</item>
+    ///         supplied that is not in the <see cref="DefaultPostingsFormatFactory.postingsFormatNameToTypeMap"/>.</item>
     ///     <item>subclass <see cref="DefaultPostingsFormatFactory"/> to scan additional assemblies for <see cref="PostingsFormat"/>
     ///         subclasses in the constructor by calling <see cref="ScanForPostingsFormats(Assembly)"/>. 
     ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</item>
     ///     <item>subclass <see cref="DefaultPostingsFormatFactory"/> to add override the default <see cref="PostingsFormat"/> 
-    ///         types by explicitly setting them in the <see cref="DefaultPostingsFormatFactory.m_postingsFormatNameToTypeMap"/>.</item>
+    ///         types by calling <see cref="PutPostingsFormatType(Type)"/>.</item>
     /// </list>
     /// <para/>
     /// To set the <see cref="IPostingsFormatFactory"/>, call <see cref="DocValuesFormat.SetPostingsFormatFactory(IPostingsFormatFactory)"/>.
@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs
     {
         // NOTE: The following 2 dictionaries are static, since this instance is stored in a static
         // variable in the Codec class.
-        protected readonly IDictionary<string, Type> m_postingsFormatNameToTypeMap = new Dictionary<string, Type>();
+        private readonly IDictionary<string, Type> postingsFormatNameToTypeMap = new Dictionary<string, Type>();
         private readonly IDictionary<Type, PostingsFormat> postingsFormatInstanceCache = new Dictionary<Type, PostingsFormat>();
 
         public DefaultPostingsFormatFactory()
@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Scans the given <paramref name="assemblies"/> for subclasses of <see cref="Codec"/>
-        /// and adds their names to the <see cref="m_postingsFormatNameToTypeMap"/>. Note that names will be
+        /// and adds their names to the <see cref="postingsFormatNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="PostingsFormat"/> name appears multiple times - the last match wins.
         /// </summary>
         /// <param name="assemblies">A list of assemblies to scan. The assemblies will be scanned from first to last, 
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Scans the given <paramref name="assembly"/> for subclasses of <see cref="PostingsFormat"/>
-        /// and adds their names to the <see cref="m_postingsFormatNameToTypeMap"/>. Note that names will be
+        /// and adds their names to the <see cref="postingsFormatNameToTypeMap"/>. Note that names will be
         /// automatically overridden if the <see cref="PostingsFormat"/> name appears multiple times - the last match wins.
         /// </summary>
         /// <param name="assembly">The assembly to scan.</param>
@@ -72,10 +72,38 @@ namespace Lucene.Net.Codecs
             {
                 if (IsServiceType(c))
                 {
-                    string name = GetServiceName(c);
-                    m_postingsFormatNameToTypeMap[name] = c;
+                    PutPostingsFormatTypeImpl(c);
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds a <see cref="PostingsFormat"/> type to the <see cref="postingsFormaNameToTypeMap"/>, using 
+        /// the name provided in the <see cref="PostingsFormatNameAttribute"/>, if present, or the name
+        /// of the codec class minus the "Codec" suffix as the name by default.
+        /// <para/>
+        /// Note that if a <see cref="PostingsFormat"/> with the same name already exists in the map,
+        /// calling this method will update it to the new type.
+        /// </summary>
+        /// <param name="postingsFormat">A type that subclasses <see cref="PostingsFormat"/>.</param>
+        protected virtual void PutPostingsFormatType(Type postingsFormat)
+        {
+            if (postingsFormat == null)
+            {
+                throw new ArgumentNullException("postingsFormat", "postingsFormat may not be null");
+            }
+            if (!typeof(PostingsFormat).GetTypeInfo().IsAssignableFrom(postingsFormat))
+            {
+                throw new ArgumentException("System.Type passed dose not subclass PostingsFormat.");
+            }
+
+            PutPostingsFormatTypeImpl(postingsFormat);
+        }
+
+        private void PutPostingsFormatTypeImpl(Type postingsFormat)
+        {
+            string name = GetServiceName(postingsFormat);
+            postingsFormatNameToTypeMap[name] = postingsFormat;
         }
 
         /// <summary>
@@ -115,7 +143,7 @@ namespace Lucene.Net.Codecs
         protected virtual Type GetPostingsFormatType(string name)
         {
             Type codecType;
-            m_postingsFormatNameToTypeMap.TryGetValue(name, out codecType);
+            postingsFormatNameToTypeMap.TryGetValue(name, out codecType);
             if (codecType == null)
             {
                 throw new ArgumentException(string.Format("PostingsFormat '{0}' cannot be loaded. If the format is not " +
@@ -132,7 +160,7 @@ namespace Lucene.Net.Codecs
         /// <returns>A <see cref="ICollection{string}"/> of <see cref="PostingsFormat"/> names.</returns>
         public ICollection<string> AvailableServices()
         {
-            return m_postingsFormatNameToTypeMap.Keys;
+            return postingsFormatNameToTypeMap.Keys;
         }
     }
 }
