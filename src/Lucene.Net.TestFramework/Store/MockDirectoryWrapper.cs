@@ -301,9 +301,11 @@ namespace Lucene.Net.Store
                     {
                         f.Dispose();
                     }
-                    catch (Exception ex)
+#pragma warning disable 168
+                    catch (Exception ignored)
+#pragma warning restore 168
                     {
-                        Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ex.ToString());
+                        //Debug.WriteLine("Crash(): f.Dispose() FAILED for {0}:\n{1}", f.ToString(), ignored.ToString());
                     }
                 }
 
@@ -325,14 +327,15 @@ namespace Lucene.Net.Store
                         long length = FileLength(name);
                         var zeroes = new byte[256];
                         long upto = 0;
-                        IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
-                        while (upto < length)
+                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
                         {
-                            var limit = (int)Math.Min(length - upto, zeroes.Length);
-                            @out.WriteBytes(zeroes, 0, limit);
-                            upto += limit;
+                            while (upto < length)
+                            {
+                                var limit = (int)Math.Min(length - upto, zeroes.Length);
+                                @out.WriteBytes(zeroes, 0, limit);
+                                upto += limit;
+                            }
                         }
-                        @out.Dispose();
                     }
                     else if (damage == 2)
                     {
@@ -350,20 +353,24 @@ namespace Lucene.Net.Store
                                 break;
                             }
                         }
-                        IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
-                        IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState));
-                        tempOut.CopyBytes(ii, ii.Length / 2);
-                        tempOut.Dispose();
-                        ii.Dispose();
+                        using (IndexOutput tempOut = m_input.CreateOutput(tempFileName, LuceneTestCase.NewIOContext(RandomState)))
+                        {
+                            using (IndexInput ii = m_input.OpenInput(name, LuceneTestCase.NewIOContext(RandomState)))
+                            {
+                                tempOut.CopyBytes(ii, ii.Length / 2);
+                            }
+                        }
 
                         // Delete original and copy bytes back:
                         DeleteFile(name, true);
 
-                        IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
-                        ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState));
-                        @out.CopyBytes(ii, ii.Length);
-                        @out.Dispose();
-                        ii.Dispose();
+                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
+                        {
+                            using (IndexInput ii = m_input.OpenInput(tempFileName, LuceneTestCase.NewIOContext(RandomState)))
+                            {
+                                @out.CopyBytes(ii, ii.Length);
+                            }
+                        }
                         DeleteFile(tempFileName, true);
                     }
                     else if (damage == 3)
@@ -376,9 +383,10 @@ namespace Lucene.Net.Store
                         action = "fully truncated";
                         // Totally truncate the file to zero bytes
                         DeleteFile(name, true);
-                        IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
-                        @out.Length = 0;
-                        @out.Dispose();
+                        using (IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState)))
+                        {
+                            @out.Length = 0;
+                        }
                     }
                     if (LuceneTestCase.VERBOSE)
                     {
