@@ -768,13 +768,20 @@ namespace Lucene.Net.Util
         /// <summary>
         /// NOTE: This was toIntArray() in Lucene
         /// </summary>
-        public static int[] ToInt32Array(ICollection<int?> ints) // LUCENENET TODO: Nullable issue - the cast to int probably won't work here
+        public static int[] ToInt32Array(ICollection<int?> ints)
         {
             int[] result = new int[ints.Count];
             int upto = 0;
-            foreach (int v in ints)
+            foreach (int? v in ints)
             {
-                result[upto++] = v;
+                if (v.HasValue)
+                {
+                    result[upto++] = v.Value;
+                }
+                else
+                {
+                    throw new NullReferenceException(); // LUCENENET NOTE: This is the same behavior you get in Java when setting int = Integer and the integer is null.
+                }
             }
 
             // paranoia:
