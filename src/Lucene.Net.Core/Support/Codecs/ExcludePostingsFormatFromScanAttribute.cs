@@ -20,8 +20,16 @@ namespace Lucene.Net.Codecs
      * limitations under the License.
      */
 
+    /// <summary>
+    /// When placed on a class that subclasses <see cref="PostingsFormat"/>, adding this
+    /// attribute will exclude the type from consideration in the 
+    /// <see cref="DefaultPostingsFormatFactory.ScanForPostingsFormats(System.Reflection.Assembly)"/> method.
+    /// <para/>
+    /// However, the <see cref="PostingsFormat"/> type can still be added manually using
+    /// <see cref="DefaultPostingsFormatFactory.PutPostingsFormatType(Type)"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class IgnoreCodecAttribute : IgnoreServiceAttribute
+    public class ExcludePostingsFormatFromScanAttribute : ExcludeServiceAttribute
     {
     }
 }

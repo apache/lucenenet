@@ -38,7 +38,7 @@ namespace Lucene.Net.Codecs
     ///     <item>Subclass <see cref="DefaultDocValuesFormatFactory"/> and add the line
     ///         <c>base.ScanForDocValuesFormats(typeof(YourDocValuesFormat).GetTypeInfo().Assembly)</c>
     ///         to the constructor. If you have any format classes in your assembly 
-    ///         that are not meant for reading, you can add the <see cref="IgnoreDocValuesFormatAttribute"/> 
+    ///         that are not meant for reading, you can add the <see cref="ExcludeDocValuesFormatFromScanAttribute"/> 
     ///         to them so they are ignored by the scan.</item>
     ///     <item>Set the new <see cref="IDocValuesFormatFactory"/> by calling <see cref="SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>
     ///         at application startup.</item>

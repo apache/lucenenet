@@ -36,7 +36,7 @@ namespace Lucene.Net.Codecs
     ///     <item>Subclass <see cref="DefaultPostingsFormatFactory"/> and add the line 
     ///         <c>base.ScanForPostingsFormats(typeof(YourPostingsFormat).GetTypeInfo().Assembly)</c> 
     ///         to the constructor. If you have any format classes in your assembly 
-    ///         that are not meant for reading, you can add the <see cref="IgnorePostingsFormatAttribute"/> 
+    ///         that are not meant for reading, you can add the <see cref="ExcludePostingsFormatFromScanAttribute"/> 
     ///         to them so they are ignored by the scan.</item>
     ///     <item>Set the new <see cref="IPostingsFormatFactory"/> by calling <see cref="SetPostingsFormatFactory(IPostingsFormatFactory)"/> 
     ///         at application startup.</item>

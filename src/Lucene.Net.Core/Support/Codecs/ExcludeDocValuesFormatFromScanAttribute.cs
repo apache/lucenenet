@@ -20,8 +20,16 @@ namespace Lucene.Net.Codecs
      * limitations under the License.
      */
 
+    /// <summary>
+    /// When placed on a class that subclasses <see cref="DocValuesFormat"/>, adding this
+    /// attribute will exclude the type from consideration in the 
+    /// <see cref="DefaultDocValuesFormatFactory.ScanForDocValuesFormats(System.Reflection.Assembly)"/> method.
+    /// <para/>
+    /// However, the <see cref="DocValuesFormat"/> type can still be added manually using
+    /// <see cref="DefaultDocValuesFormatFactory.PutDocValuesFormatType(Type)"/>.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class IgnoreDocValuesFormatAttribute : IgnoreServiceAttribute
+    public class ExcludeDocValuesFormatFromScanAttribute : ExcludeServiceAttribute
     {
     }
 }

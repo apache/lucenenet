@@ -425,7 +425,7 @@ namespace Lucene.Net.Codecs
         }
     }
 
-    [IgnoreCodec]
+    [ExcludeCodecFromScan]
     [CodecName("FooBar")]
     public class CustomNamedCodec : Codec
     {
@@ -494,7 +494,7 @@ namespace Lucene.Net.Codecs
         }
     }
 
-    [IgnoreCodec]
+    [ExcludeCodecFromScan]
     [CodecName("My-Codec|With-Bad_Name")]
     public class InvalidNamedCodec : Codec
     {

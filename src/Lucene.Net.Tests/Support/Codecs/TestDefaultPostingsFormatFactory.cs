@@ -272,7 +272,7 @@ namespace Lucene.Net.Codecs
         }
     }
 
-    [IgnorePostingsFormat]
+    [ExcludePostingsFormatFromScan]
     [PostingsFormatName("FooBar")]
     public class CustomNamedPostingsFormat : PostingsFormat
     {
@@ -287,7 +287,7 @@ namespace Lucene.Net.Codecs
         }
     }
 
-    [IgnorePostingsFormat]
+    [ExcludePostingsFormatFromScan]
     [PostingsFormatName("My-PostingsFormat|With-Bad_Name")]
     public class InvalidNamedPostingsFormat : PostingsFormat
     {

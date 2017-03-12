@@ -1,4 +1,7 @@
-﻿namespace Lucene.Net.Util
+﻿using Lucene.Net.Util;
+using System;
+
+namespace Lucene.Net.Codecs
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,7 +20,16 @@
      * limitations under the License.
      */
 
-    public abstract class IgnoreServiceAttribute : System.Attribute
+    /// <summary>
+    /// When placed on a class that subclasses <see cref="Codec"/>, adding this
+    /// attribute will exclude the type from consideration in the 
+    /// <see cref="DefaultCodecFactory.ScanForCodecs(System.Reflection.Assembly)"/> method.
+    /// <para/>
+    /// However, the <see cref="Codec"/> type can still be added manually using
+    /// <see cref="DefaultCodecFactory.PutCodecType(Type)"/>.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class ExcludeCodecFromScanAttribute : ExcludeServiceAttribute
     {
     }
 }

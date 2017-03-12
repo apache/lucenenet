@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
                 type.GetTypeInfo().IsPublic &&
                 !type.GetTypeInfo().IsAbstract &&
                 typeof(TService).GetTypeInfo().IsAssignableFrom(type) &&
-                type.GetTypeInfo().GetCustomAttribute<IgnoreServiceAttribute>(inherit: true) == null;
+                type.GetTypeInfo().GetCustomAttribute<ExcludeServiceAttribute>(inherit: true) == null;
         }
 
         /// <summary>

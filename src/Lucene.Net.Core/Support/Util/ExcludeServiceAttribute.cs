@@ -1,7 +1,4 @@
-﻿using Lucene.Net.Util;
-using System;
-
-namespace Lucene.Net.Codecs
+﻿namespace Lucene.Net.Util
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,8 +17,7 @@ namespace Lucene.Net.Codecs
      * limitations under the License.
      */
 
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class IgnorePostingsFormatAttribute : IgnoreServiceAttribute
+    public abstract class ExcludeServiceAttribute : System.Attribute
     {
     }
 }

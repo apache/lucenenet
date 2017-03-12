@@ -264,7 +264,7 @@ namespace Lucene.Net.Codecs
         }
     }
 
-    [IgnoreDocValuesFormat]
+    [ExcludeDocValuesFormatFromScan]
     [DocValuesFormatName("FooBar")]
     public class CustomNamedDocValuesFormat : DocValuesFormat
     {
@@ -279,7 +279,7 @@ namespace Lucene.Net.Codecs
         }
     }
 
-    [IgnoreDocValuesFormat]
+    [ExcludeDocValuesFormatFromScan]
     [DocValuesFormatName("My-DocValuesFormat|With-Bad_Name")]
     public class InvalidNamedDocValuesFormat : DocValuesFormat
     {
