@@ -482,6 +482,9 @@
     <Compile Include="Support\C5\SupportClasses.cs" />
     <Compile Include="Support\C5\WeakViewList.cs" />
     <Compile Include="Support\C5\Wrappers.cs" />
+    <Compile Include="Support\Codecs\TestDefaultCodecFactory.cs" />
+    <Compile Include="Support\Codecs\TestDefaultDocValuesFormatFactory.cs" />
+    <Compile Include="Support\Codecs\TestDefaultPostingsFormatFactory.cs" />
     <Compile Include="Support\TestHashMap.cs" />
     <Compile Include="Support\TestLinkedHashMap.cs" />
     <Compile Include="Support\TestLongBuffer.cs" />
