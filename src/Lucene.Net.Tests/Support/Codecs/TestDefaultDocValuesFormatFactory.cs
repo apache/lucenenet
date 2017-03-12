@@ -30,18 +30,18 @@ namespace Lucene.Net.Codecs
         {
             var factory = new DefaultDocValuesFormatFactory();
 
-            var DocValuesFormats = factory.AvailableServices();
+            var docValuesFormats = factory.AvailableServices();
 
-            assertEquals(8, DocValuesFormats.Count);
+            assertEquals(7, docValuesFormats.Count);
 
-            assertTrue(DocValuesFormats.Contains("Lucene46"));
-            assertTrue(DocValuesFormats.Contains("Lucene45"));
-            assertTrue(DocValuesFormats.Contains("Lucene42"));
-            assertTrue(DocValuesFormats.Contains("Lucene41"));
-            assertTrue(DocValuesFormats.Contains("Lucene40"));
-            assertTrue(DocValuesFormats.Contains("Lucene3x"));
-            assertTrue(DocValuesFormats.Contains("SimpleText"));
-            assertTrue(DocValuesFormats.Contains("Appending"));
+            
+            assertTrue(docValuesFormats.Contains("Lucene45"));
+            assertTrue(docValuesFormats.Contains("Lucene42"));
+            assertTrue(docValuesFormats.Contains("Lucene40"));
+            assertTrue(docValuesFormats.Contains("SimpleText"));
+            assertTrue(docValuesFormats.Contains("Direct"));
+            assertTrue(docValuesFormats.Contains("Memory"));
+            assertTrue(docValuesFormats.Contains("Disk"));
         }
 
         private class ScanningDocValuesFormatFactory : DefaultDocValuesFormatFactory
@@ -59,16 +59,15 @@ namespace Lucene.Net.Codecs
 
             var docValuesFormats = factory.AvailableServices();
 
-            assertEquals(10, docValuesFormats.Count);
+            assertEquals(9, docValuesFormats.Count);
 
-            assertTrue(docValuesFormats.Contains("Lucene46"));
             assertTrue(docValuesFormats.Contains("Lucene45"));
             assertTrue(docValuesFormats.Contains("Lucene42"));
-            assertTrue(docValuesFormats.Contains("Lucene41"));
             assertTrue(docValuesFormats.Contains("Lucene40"));
-            assertTrue(docValuesFormats.Contains("Lucene3x"));
             assertTrue(docValuesFormats.Contains("SimpleText"));
-            assertTrue(docValuesFormats.Contains("Appending"));
+            assertTrue(docValuesFormats.Contains("Direct"));
+            assertTrue(docValuesFormats.Contains("Memory"));
+            assertTrue(docValuesFormats.Contains("Disk"));
             assertTrue(docValuesFormats.Contains("Public"));
             assertTrue(docValuesFormats.Contains("NotIgnored"));
 
