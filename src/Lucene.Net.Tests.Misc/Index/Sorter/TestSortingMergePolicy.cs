@@ -60,8 +60,8 @@ namespace Lucene.Net.Index.Sorter
             {
                 TieredMergePolicy tmp = NewTieredMergePolicy(Random());
                 int numSegs = TestUtil.NextInt(Random(), 3, 5);
-                tmp.SetSegmentsPerTier(numSegs);
-                tmp.SetMaxMergeAtOnce(TestUtil.NextInt(Random(), 2, numSegs));
+                tmp.SegmentsPerTier = (numSegs);
+                tmp.MaxMergeAtOnce = (TestUtil.NextInt(Random(), 2, numSegs));
                 mp = tmp;
             }
             else

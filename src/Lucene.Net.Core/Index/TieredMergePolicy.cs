@@ -24,42 +24,41 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    ///  Merges segments of approximately equal size, subject to
-    ///  an allowed number of segments per tier.  this is similar
-    ///  to <seealso cref="LogByteSizeMergePolicy"/>, except this merge
-    ///  policy is able to merge non-adjacent segment, and
-    ///  separates how many segments are merged at once ({@link
-    ///  #setMaxMergeAtOnce}) from how many segments are allowed
-    ///  per tier (<seealso cref="#setSegmentsPerTier"/>).  this merge
-    ///  policy also does not over-merge (i.e. cascade merges).
+    /// Merges segments of approximately equal size, subject to
+    /// an allowed number of segments per tier.  This is similar
+    /// to <see cref="LogByteSizeMergePolicy"/>, except this merge
+    /// policy is able to merge non-adjacent segment, and
+    /// separates how many segments are merged at once (<see cref="MaxMergeAtOnce"/>) 
+    /// from how many segments are allowed
+    /// per tier (<see cref="SegmentsPerTier"/>).  This merge
+    /// policy also does not over-merge (i.e. cascade merges).
     ///
-    ///  <p>For normal merging, this policy first computes a
-    ///  "budget" of how many segments are allowed to be in the
-    ///  index.  If the index is over-budget, then the policy
-    ///  sorts segments by decreasing size (pro-rating by percent
-    ///  deletes), and then finds the least-cost merge.  Merge
-    ///  cost is measured by a combination of the "skew" of the
-    ///  merge (size of largest segment divided by smallest segment),
-    ///  total merge size and percent deletes reclaimed,
-    ///  so that merges with lower skew, smaller size
-    ///  and those reclaiming more deletes, are
-    ///  favored.
+    /// <para/>For normal merging, this policy first computes a
+    /// "budget" of how many segments are allowed to be in the
+    /// index.  If the index is over-budget, then the policy
+    /// sorts segments by decreasing size (pro-rating by percent
+    /// deletes), and then finds the least-cost merge.  Merge
+    /// cost is measured by a combination of the "skew" of the
+    /// merge (size of largest segment divided by smallest segment),
+    /// total merge size and percent deletes reclaimed,
+    /// so that merges with lower skew, smaller size
+    /// and those reclaiming more deletes, are
+    /// favored.
     ///
-    ///  <p>If a merge will produce a segment that's larger than
-    ///  <seealso cref="#setMaxMergedSegmentMB"/>, then the policy will
-    ///  merge fewer segments (down to 1 at once, if that one has
-    ///  deletions) to keep the segment size under budget.
+    /// <para/>If a merge will produce a segment that's larger than
+    /// <see cref="MaxMergedSegmentMB"/>, then the policy will
+    /// merge fewer segments (down to 1 at once, if that one has
+    /// deletions) to keep the segment size under budget.
     ///
-    ///  <p><b>NOTE</b>: this policy freely merges non-adjacent
-    ///  segments; if this is a problem, use {@link
-    ///  LogMergePolicy}.
+    /// <para/><b>NOTE</b>: This policy freely merges non-adjacent
+    /// segments; if this is a problem, use <see cref="LogMergePolicy"/>.
     ///
-    ///  <p><b>NOTE</b>: this policy always merges by byte size
-    ///  of the segments, always pro-rates by percent deletes,
-    ///  and does not apply any maximum segment size during
-    ///  forceMerge (unlike <seealso cref="LogByteSizeMergePolicy"/>).
+    /// <para/><b>NOTE</b>: This policy always merges by byte size
+    /// of the segments, always pro-rates by percent deletes,
+    /// and does not apply any maximum segment size during
+    /// forceMerge (unlike <see cref="LogByteSizeMergePolicy"/>).
     ///
-    ///  @lucene.experimental
+    /// @lucene.experimental
     /// </summary>
 
     // TODO
@@ -72,8 +71,9 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Default noCFSRatio.  If a merge's size is >= 10% of
-        ///  the index, then we disable compound file for it. </summary>
-        ///  <seealso cref= MergePolicy#setNoCFSRatio  </seealso>
+        /// the index, then we disable compound file for it.
+        /// </summary>
+        /// <seealso cref="MergePolicy.NoCFSRatio"/>
         public new static readonly double DEFAULT_NO_CFS_RATIO = 0.1;
 
         private int maxMergeAtOnce = 10;
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole constructor, setting all settings to their
-        ///  defaults.
+        /// defaults.
         /// </summary>
         public TieredMergePolicy()
             : base(DEFAULT_NO_CFS_RATIO, MergePolicy.DEFAULT_MAX_CFS_SEGMENT_SIZE)
@@ -95,35 +95,25 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Maximum number of segments to be merged at a time
-        ///  during "normal" merging.  For explicit merging (eg,
-        ///  forceMerge or forceMergeDeletes was called), see {@link
-        ///  #setMaxMergeAtOnceExplicit}.  Default is 10.
+        /// Gets or sets maximum number of segments to be merged at a time
+        /// during "normal" merging.  For explicit merging (eg,
+        /// <see cref="IndexWriter.ForceMerge(int)"/> or 
+        /// <see cref="IndexWriter.ForceMergeDeletes()"/> was called), see 
+        /// <see cref="MaxMergeAtOnceExplicit"/>.  Default is 10.
         /// </summary>
-        public virtual TieredMergePolicy SetMaxMergeAtOnce(int v)
-        {
-            if (v < 2)
-            {
-                throw new System.ArgumentException("maxMergeAtOnce must be > 1 (got " + v + ")");
-            }
-            maxMergeAtOnce = v;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the current maxMergeAtOnce setting.
-        /// </summary>
-        /// <seealso cref= #setMaxMergeAtOnce  </seealso>
         public virtual int MaxMergeAtOnce
         {
             get
             {
                 return maxMergeAtOnce;
             }
-
-            set // LUCENENET TODO: Double setter functionality could be confusing
+            set
             {
-                SetMaxMergeAtOnce(value);
+                if (value < 2)
+                {
+                    throw new System.ArgumentException("maxMergeAtOnce must be > 1 (got " + value + ")");
+                }
+                maxMergeAtOnce = value;
             }
         }
 
@@ -131,206 +121,143 @@ namespace Lucene.Net.Index
         // if user calls IW.maybeMerge "explicitly"
 
         /// <summary>
-        /// Maximum number of segments to be merged at a time,
-        ///  during forceMerge or forceMergeDeletes. Default is 30.
+        /// Gets or sets maximum number of segments to be merged at a time,
+        /// during <see cref="IndexWriter.ForceMerge(int)"/> or 
+        /// <see cref="IndexWriter.ForceMergeDeletes()"/>. Default is 30.
         /// </summary>
-        public virtual TieredMergePolicy SetMaxMergeAtOnceExplicit(int v)
-        {
-            if (v < 2)
-            {
-                throw new System.ArgumentException("maxMergeAtOnceExplicit must be > 1 (got " + v + ")");
-            }
-            maxMergeAtOnceExplicit = v;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the current maxMergeAtOnceExplicit setting.
-        /// </summary>
-        /// <seealso cref= #setMaxMergeAtOnceExplicit  </seealso>
         public virtual int MaxMergeAtOnceExplicit
         {
             get
             {
                 return maxMergeAtOnceExplicit;
             }
-
-            set // LUCENENET TODO: Double setter functionality could be confusing
+            set
             {
-                SetMaxMergeAtOnceExplicit(value);
+                if (value < 2)
+                {
+                    throw new System.ArgumentException("maxMergeAtOnceExplicit must be > 1 (got " + value + ")");
+                }
+                maxMergeAtOnceExplicit = value;
             }
         }
 
         /// <summary>
-        /// Maximum sized segment to produce during
-        ///  normal merging.  this setting is approximate: the
-        ///  estimate of the merged segment size is made by summing
-        ///  sizes of to-be-merged segments (compensating for
-        ///  percent deleted docs).  Default is 5 GB.
+        /// Gets or sets maximum sized segment to produce during
+        /// normal merging.  This setting is approximate: the
+        /// estimate of the merged segment size is made by summing
+        /// sizes of to-be-merged segments (compensating for
+        /// percent deleted docs).  Default is 5 GB.
         /// </summary>
-        public virtual TieredMergePolicy SetMaxMergedSegmentMB(double v)
-        {
-            if (v < 0.0)
-            {
-                throw new System.ArgumentException("maxMergedSegmentMB must be >=0 (got " + v + ")");
-            }
-            v *= 1024 * 1024;
-            maxMergedSegmentBytes = (v > long.MaxValue) ? long.MaxValue : (long)v;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the current maxMergedSegmentMB setting.
-        /// </summary>
-        /// <seealso cref= #getMaxMergedSegmentMB  </seealso>
         public virtual double MaxMergedSegmentMB
         {
             get
             {
                 return maxMergedSegmentBytes / 1024 / 1024.0;
             }
-
-            set // LUCENENET TODO: Double setter functionality could be confusing
+            set
             {
-                SetMaxMergedSegmentMB(value);
+                if (value < 0.0)
+                {
+                    throw new System.ArgumentException("maxMergedSegmentMB must be >=0 (got " + value + ")");
+                }
+                value *= 1024 * 1024;
+                maxMergedSegmentBytes = (value > long.MaxValue) ? long.MaxValue : (long)value;
             }
         }
 
         /// <summary>
         /// Controls how aggressively merges that reclaim more
-        ///  deletions are favored.  Higher values will more
-        ///  aggressively target merges that reclaim deletions, but
-        ///  be careful not to go so high that way too much merging
-        ///  takes place; a value of 3.0 is probably nearly too
-        ///  high.  A value of 0.0 means deletions don't impact
-        ///  merge selection.
+        /// deletions are favored.  Higher values will more
+        /// aggressively target merges that reclaim deletions, but
+        /// be careful not to go so high that way too much merging
+        /// takes place; a value of 3.0 is probably nearly too
+        /// high.  A value of 0.0 means deletions don't impact
+        /// merge selection.
         /// </summary>
-        public virtual TieredMergePolicy SetReclaimDeletesWeight(double v)
-        {
-            if (v < 0.0)
-            {
-                throw new System.ArgumentException("reclaimDeletesWeight must be >= 0.0 (got " + v + ")");
-            }
-            reclaimDeletesWeight = v;
-            return this;
-        }
-
-        /// <summary>
-        /// See <seealso cref="#setReclaimDeletesWeight"/>. </summary>
         public virtual double ReclaimDeletesWeight
         {
             get
             {
                 return reclaimDeletesWeight;
             }
-
-            set // LUCENENET TODO: Double setter functionality could be confusing
+            set
             {
-                SetReclaimDeletesWeight(value);
+                if (value < 0.0)
+                {
+                    throw new System.ArgumentException("reclaimDeletesWeight must be >= 0.0 (got " + value + ")");
+                }
+                reclaimDeletesWeight = value;
             }
         }
 
         /// <summary>
         /// Segments smaller than this are "rounded up" to this
-        ///  size, ie treated as equal (floor) size for merge
-        ///  selection.  this is to prevent frequent flushing of
-        ///  tiny segments from allowing a long tail in the index.
-        ///  Default is 2 MB.
+        /// size, ie treated as equal (floor) size for merge
+        /// selection.  this is to prevent frequent flushing of
+        /// tiny segments from allowing a long tail in the index.
+        /// Default is 2 MB.
         /// </summary>
-        public virtual TieredMergePolicy SetFloorSegmentMB(double v)
-        {
-            if (v <= 0.0)
-            {
-                throw new System.ArgumentException("floorSegmentMB must be >= 0.0 (got " + v + ")");
-            }
-            v *= 1024 * 1024;
-            floorSegmentBytes = (v > long.MaxValue) ? long.MaxValue : (long)v;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the current floorSegmentMB.
-        /// </summary>
-        ///  <seealso cref= #setFloorSegmentMB  </seealso>
         public virtual double FloorSegmentMB
         {
             get
             {
                 return floorSegmentBytes / (1024 * 1024.0);
             }
-
-            set // LUCENENET TODO: Double setter functionality could be confusing
+            set
             {
-                SetFloorSegmentMB(value);
+                if (value <= 0.0)
+                {
+                    throw new System.ArgumentException("floorSegmentMB must be >= 0.0 (got " + value + ")");
+                }
+                value *= 1024 * 1024;
+                floorSegmentBytes = (value > long.MaxValue) ? long.MaxValue : (long)value;
             }
         }
 
         /// <summary>
         /// When forceMergeDeletes is called, we only merge away a
-        ///  segment if its delete percentage is over this
-        ///  threshold.  Default is 10%.
+        /// segment if its delete percentage is over this
+        /// threshold.  Default is 10%.
         /// </summary>
-        public virtual TieredMergePolicy SetForceMergeDeletesPctAllowed(double v)
-        {
-            if (v < 0.0 || v > 100.0)
-            {
-                throw new System.ArgumentException("forceMergeDeletesPctAllowed must be between 0.0 and 100.0 inclusive (got " + v + ")");
-            }
-            forceMergeDeletesPctAllowed = v;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the current forceMergeDeletesPctAllowed setting.
-        /// </summary>
-        /// <seealso cref= #setForceMergeDeletesPctAllowed  </seealso>
         public virtual double ForceMergeDeletesPctAllowed
         {
             get
             {
                 return forceMergeDeletesPctAllowed;
             }
-
-            set // LUCENENET TODO: Double setter functionality could be confusing
+            set
             {
-                SetForceMergeDeletesPctAllowed(value);
+                if (value < 0.0 || value > 100.0)
+                {
+                    throw new System.ArgumentException("forceMergeDeletesPctAllowed must be between 0.0 and 100.0 inclusive (got " + value + ")");
+                }
+                forceMergeDeletesPctAllowed = value;
             }
         }
 
         /// <summary>
-        /// Sets the allowed number of segments per tier.  Smaller
-        ///  values mean more merging but fewer segments.
-        ///
-        ///  <p><b>NOTE</b>: this value should be >= the {@link
-        ///  #setMaxMergeAtOnce} otherwise you'll force too much
-        ///  merging to occur.</p>
-        ///
-        ///  <p>Default is 10.0.</p>
+        /// Gets or sets the allowed number of segments per tier.  Smaller
+        /// values mean more merging but fewer segments.
+        /// 
+        /// <para/><b>NOTE</b>: this value should be >= the 
+        /// <see cref="MaxMergeAtOnce"/> otherwise you'll force too much
+        /// merging to occur.
+        /// 
+        /// <para/>Default is 10.0.
         /// </summary>
-        public virtual TieredMergePolicy SetSegmentsPerTier(double v)
-        {
-            if (v < 2.0)
-            {
-                throw new System.ArgumentException("segmentsPerTier must be >= 2.0 (got " + v + ")");
-            }
-            segsPerTier = v;
-            return this;
-        }
-
-        /// <summary>
-        /// Returns the current segmentsPerTier setting.
-        /// </summary>
-        /// <seealso cref= #setSegmentsPerTier  </seealso>
         public virtual double SegmentsPerTier
         {
             get
             {
                 return segsPerTier;
             }
-
-            set // LUCENENET TODO: Double setter functionality could be confusing
+            set
             {
-                SetSegmentsPerTier(value);
+                if (value < 2.0)
+                {
+                    throw new System.ArgumentException("segmentsPerTier must be >= 2.0 (got " + value + ")");
+                }
+                segsPerTier = value;
             }
         }
 
@@ -371,13 +298,13 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Holds score and explanation for a single candidate
-        ///  merge.
+        /// merge.
         /// </summary>
         protected abstract class MergeScore
         {
             /// <summary>
             /// Sole constructor. (For invocation by subclass
-            ///  constructors, typically implicit.)
+            /// constructors, typically implicit.)
             /// </summary>
             protected MergeScore()
             {
@@ -385,15 +312,15 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns the score for this merge candidate; lower
-            ///  scores are better.
+            /// scores are better.
             /// </summary>
-            internal abstract double Score { get; } // LUCENENET TODO: Should this be public? Or should the class be internal? It doesn't make any sense to have protected class with no protected members.
+            public abstract double Score { get; }
 
             /// <summary>
             /// Human readable explanation of how the merge got this
-            ///  score.
+            /// score.
             /// </summary>
-            internal abstract string Explanation { get; }
+            public abstract string Explanation { get; }
         }
 
         public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos infos)
@@ -655,7 +582,7 @@ namespace Lucene.Net.Index
                 this.finalMergeScore = finalMergeScore;
             }
 
-            internal override double Score
+            public override double Score
             {
                 get
                 {
@@ -663,7 +590,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal override string Explanation
+            public override string Explanation
             {
                 get
                 {
