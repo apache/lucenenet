@@ -342,14 +342,14 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Builder method for <see cref="IndexWriterConfig.ReaderPooling"/>.
+        /// Builder method for <see cref="IndexWriterConfig.UseReaderPooling"/>.
         /// </summary>
         /// <param name="config">this <see cref="IndexWriterConfig"/> instance</param>
         /// <param name="readerPooling"></param>
         /// <returns>this <see cref="IndexWriterConfig"/> instance</returns>
         public static IndexWriterConfig SetReaderPooling(this IndexWriterConfig config, bool readerPooling)
         {
-            config.ReaderPooling = readerPooling;
+            config.UseReaderPooling = readerPooling;
             return config;
         }
 

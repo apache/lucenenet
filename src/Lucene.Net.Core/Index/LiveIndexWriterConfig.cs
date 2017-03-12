@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
             infoStream = config.InfoStream;
             mergePolicy = config.MergePolicy;
             indexerThreadPool = config.IndexerThreadPool;
-            readerPooling = config.ReaderPooling;
+            readerPooling = config.UseReaderPooling;
             flushPolicy = config.FlushPolicy;
             perThreadHardLimitMB = config.RAMPerThreadHardLimitMB;
             useCompoundFile = config.UseCompoundFile;
@@ -598,7 +598,7 @@ namespace Lucene.Net.Index
         /// Returns <c>true</c> if <see cref="IndexWriter"/> should pool readers even if
         /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/> has not been called.
         /// </summary>
-        public virtual bool ReaderPooling
+        public virtual bool UseReaderPooling
         {
             get
             {
@@ -722,7 +722,7 @@ namespace Lucene.Net.Index
             sb.Append("infoStream=").Append(InfoStream.GetType().Name).Append("\n");
             sb.Append("mergePolicy=").Append(MergePolicy).Append("\n");
             sb.Append("indexerThreadPool=").Append(IndexerThreadPool).Append("\n");
-            sb.Append("readerPooling=").Append(ReaderPooling).Append("\n");
+            sb.Append("readerPooling=").Append(UseReaderPooling).Append("\n");
             sb.Append("perThreadHardLimitMB=").Append(RAMPerThreadHardLimitMB).Append("\n");
             sb.Append("useCompoundFile=").Append(UseCompoundFile).Append("\n");
             sb.Append("checkIntegrityAtMerge=").Append(CheckIntegrityAtMerge).Append("\n");

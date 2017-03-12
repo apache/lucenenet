@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
         public static long WRITE_LOCK_TIMEOUT = 1000;
 
         /// <summary>
-        /// Default setting for <see cref="ReaderPooling"/>. </summary>
+        /// Default setting for <see cref="UseReaderPooling"/>. </summary>
         public static readonly bool DEFAULT_READER_POOLING = false;
 
         /// <summary>
@@ -488,7 +488,7 @@ namespace Lucene.Net.Index
         /// </summary>
         // LUCENENET NOTE: We cannot override a getter and add a setter, 
         // so must declare it new. See: http://stackoverflow.com/q/82437
-        new public bool ReaderPooling // LUCENENET TODO: Rename UseReaderPooling
+        new public bool UseReaderPooling 
         {
             get
             {

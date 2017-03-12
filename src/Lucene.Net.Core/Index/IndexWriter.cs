@@ -810,7 +810,7 @@ namespace Lucene.Net.Index
             codec = config.Codec;
 
             bufferedUpdatesStream = new BufferedUpdatesStream(infoStream);
-            poolReaders = config.ReaderPooling;
+            poolReaders = config.UseReaderPooling;
 
             writeLock = directory.MakeLock(WRITE_LOCK_NAME);
 
