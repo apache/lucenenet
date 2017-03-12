@@ -634,9 +634,9 @@ namespace Lucene.Net.Index
         public class QueryAndLimit
         {
             public Query Query { get; private set; }
-            public int? Limit { get; private set; } // LUCENENET TODO: check if we can work without the nullable
+            public int Limit { get; private set; }
 
-            public QueryAndLimit(Query query, int? limit)
+            public QueryAndLimit(Query query, int limit)
             {
                 this.Query = query;
                 this.Limit = limit;
@@ -652,7 +652,7 @@ namespace Lucene.Net.Index
             foreach (QueryAndLimit ent in queriesIter)
             {
                 Query query = ent.Query;
-                int? limit = ent.Limit;
+                int limit = ent.Limit;
                 DocIdSet docs = (new QueryWrapperFilter(query)).GetDocIdSet(readerContext, reader.LiveDocs);
                 if (docs != null)
                 {

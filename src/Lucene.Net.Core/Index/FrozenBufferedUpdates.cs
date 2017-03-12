@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         // Parallel array of deleted query, and the docIDUpto for each
         internal readonly Query[] queries;
 
-        internal readonly int?[] queryLimits;
+        internal readonly int[] queryLimits;
 
         // numeric DV update term and their updates
         internal readonly NumericDocValuesUpdate[] numericDVUpdates;
@@ -79,12 +79,22 @@ namespace Lucene.Net.Index
             terms = builder.Finish();
 
             queries = new Query[deletes.queries.Count];
-            queryLimits = new int?[deletes.queries.Count];
+            queryLimits = new int[deletes.queries.Count];
             int upto = 0;
             foreach (KeyValuePair<Query, int?> ent in deletes.queries)
             {
                 queries[upto] = ent.Key;
-                queryLimits[upto] = ent.Value;
+                if (ent.Value.HasValue)
+                {
+                    queryLimits[upto] = ent.Value.Value;
+                }
+                else
+                {
+                    // LUCENENET NOTE: According to this: http://stackoverflow.com/a/13914344
+                    // we are supposed to throw an exception in this case, rather than
+                    // silently fail.
+                    throw new NullReferenceException();
+                }
                 upto++;
             }
 
