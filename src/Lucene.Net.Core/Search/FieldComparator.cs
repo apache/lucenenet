@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
         /// use searchAfter (deep paging), and is called before any
         /// calls to <seealso cref="#setNextReader"/>.
         /// </summary>
-        public abstract override void SetTopValue(object value); // LUCENENET TODO: investigate whether we can use T instead of object
+        public abstract override void SetTopValue(object value);
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  this will
@@ -240,7 +240,7 @@ namespace Lucene.Net.Search
         /// use searchAfter (deep paging), and is called before any
         /// calls to <seealso cref="#setNextReader"/>.
         /// </summary>
-        public abstract void SetTopValue(object value); // LUCENENET TODO: investigate whether we can use T instead of object
+        public abstract void SetTopValue(object value);
 
         /// <summary>
         /// Compare the bottom of the queue with this doc.  this will

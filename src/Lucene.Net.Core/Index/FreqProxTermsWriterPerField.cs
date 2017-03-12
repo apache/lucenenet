@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
             payloadAttribute = null;
         }
 
-        private void SetIndexOptions(IndexOptions? indexOptions) // LUCENENET TODO: Can we eliminate the nullable
+        private void SetIndexOptions(IndexOptions? indexOptions)
         {
             if (indexOptions == null)
             {

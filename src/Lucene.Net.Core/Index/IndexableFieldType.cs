@@ -94,12 +94,12 @@ namespace Lucene.Net.Index
         /// </summary>
         IndexOptions? IndexOptions { get; set; } // LUCENENET TODO: Can we remove the nullable?
 
-        NumericType? NumericType { get; set; } // LUCENENET TODO: Can we remove the nullable?
+        NumericType? NumericType { get; set; }
 
         /// <summary>
         /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value
         /// will be indexed into docValues.
         /// </summary>
-        DocValuesType? DocValueType { get; set; } // LUCENENET TODO: Can we remove the nullable?
+        DocValuesType? DocValueType { get; set; }
     }
 }

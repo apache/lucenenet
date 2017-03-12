@@ -323,7 +323,7 @@ namespace Lucene.Net.Store
                         action = "zeroed";
                         // Zero out file entirely
                         long length = FileLength(name);
-                        var zeroes = new byte[256]; // LUCENENET TODO: Don't we want to fill the array before writing from it?
+                        var zeroes = new byte[256];
                         long upto = 0;
                         IndexOutput @out = m_input.CreateOutput(name, LuceneTestCase.NewIOContext(RandomState));
                         while (upto < length)

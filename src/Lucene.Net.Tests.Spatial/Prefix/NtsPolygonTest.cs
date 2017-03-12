@@ -93,7 +93,7 @@ namespace Lucene.Net.Spatial.Prefix
             SpatialPrefixTree trie = new QuadPrefixTree(ctx, 12);
             TermQueryPrefixTreeStrategy strategy = new TermQueryPrefixTreeStrategy(trie, "geo");
             Document doc = new Document();
-            doc.Add(new TextField("id", "1", Field.Store.YES)); // LUCENENET TODO: Change API to Store.Yes
+            doc.Add(new TextField("id", "1", Field.Store.YES));
 
             Field[] fields = strategy.CreateIndexableFields(area, 0.025);
             foreach (Field field in fields)

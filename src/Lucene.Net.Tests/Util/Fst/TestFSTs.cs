@@ -323,7 +323,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         [Test]
-        [Ignore("LUCENENET TODO: This test will take around 10-14 hours to finish. It was marked with a Nightly attribute in the original Java source, but we don't currently have a corresponding attribute")]
+        [Ignore("This test will take around 10-14 hours to finish. It was marked with a Nightly attribute in the original Java source, but we don't currently have a corresponding attribute")]
         public virtual void TestBigSet()
         {
             TestRandomWords(TestUtil.NextInt(Random(), 50000, 60000), 1, false);

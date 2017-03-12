@@ -162,7 +162,7 @@ namespace Lucene.Net.Index
             Debug.Assert(CheckConsistency());
         }
 
-        public DocValuesType? DocValuesType // LUCENENET TODO: try to make non-nullable
+        public DocValuesType? DocValuesType
         {
             internal set
             {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns IndexOptions for the field, or null if the field is not indexed </summary>
-        public IndexOptions? IndexOptions // LUCENENET TODO: try to make non-nullable
+        public IndexOptions? IndexOptions
         {
             get
             {
@@ -212,9 +212,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <seealso cref="Index.DocValuesType"/> of the norm. this may be null if the field has no norms.
+        /// Returns <see cref="Index.DocValuesType"/> of the norm. This may be <c>null</c> if the field has no norms.
         /// </summary>
-        public DocValuesType? NormType // LUCENENET TODO: try to make non-nullable
+        public DocValuesType? NormType
         {
             get
             {
@@ -347,7 +347,6 @@ namespace Lucene.Net.Index
     /// Controls how much information is stored in the postings lists.
     /// @lucene.experimental
     /// </summary>
-    // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
     public enum IndexOptions // LUCENENET specific: de-nested from FieldInfo to prevent naming collisions
     {
         // NOTE: order is important here; FieldInfo uses this
@@ -387,7 +386,6 @@ namespace Lucene.Net.Index
     /// Note that DocValues is strongly typed, so a field cannot have different types
     /// across different documents.
     /// </summary>
-    // LUCENENET TODO: Add a NOT_SET = 0 state so we ca get rid of nullables?
     public enum DocValuesType // LUCENENET specific: de-nested from FieldInfo to prevent naming collisions
     {
         /// <summary>

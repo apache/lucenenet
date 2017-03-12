@@ -106,7 +106,7 @@ namespace Lucene.Net.Util.Fst
                     {
                         Console.WriteLine("TEST: now test OneOrMoreOutputs");
                     }
-                    PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton; // LUCENENET TODO: This should probably not be a nullable type
+                    PositiveInt32Outputs _outputs = PositiveInt32Outputs.Singleton; 
                     ListOfOutputs<long?> outputs2 = new ListOfOutputs<long?>(_outputs);
                     List<FSTTester<object>.InputOutput<object>> pairs2 = new List<FSTTester<object>.InputOutput<object>>(terms.Length);
                     long lastOutput2 = 0;

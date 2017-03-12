@@ -402,7 +402,7 @@ namespace Lucene.Net.Index
             w.DeleteAll();
         }
 
-        public virtual DirectoryReader Reader // LUCENENET TODO: Change to GetReader()
+        public virtual DirectoryReader Reader
         {
             get
             {

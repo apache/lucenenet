@@ -366,7 +366,7 @@ namespace Lucene.Net.Search
 
     // LUCENENET TODO: Copy documentation from Lucene
 
-    public static class FieldCache // LUCENENET TODO: Make this a partial class, so we can use the name FieldCache instead of FieldCacheImpl for the rest
+    public static class FieldCache 
     {
         public abstract class Bytes
         {

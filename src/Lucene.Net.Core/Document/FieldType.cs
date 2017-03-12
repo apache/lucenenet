@@ -235,7 +235,6 @@ namespace Lucene.Net.Documents
         /// </summary>
         /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        // LUCENENET TODO: Can we remove the nullable here? Note this has a default of DOCS_AND_FREQS_AND_POSITIONS
         public virtual IndexOptions? IndexOptions
         {
             get

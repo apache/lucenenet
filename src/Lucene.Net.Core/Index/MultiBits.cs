@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
 
         public int Length
         {
-            get { return starts[starts.Length - 1]; } // LUCENENET TODO: Will throw exception if array is empty
+            get { return starts[starts.Length - 1]; }
         }
     }
 }

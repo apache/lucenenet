@@ -264,7 +264,7 @@ namespace Lucene.Net.Spatial.Prefix
                 {
                     DeleteDoc(id);
                     //idIter.Remove();
-                    indexedShapes.Remove(id); // LUCENENET TODO: Verify this works.
+                    indexedShapes.Remove(id);
                     indexedShapesGS.Remove(id);
                 }
             }

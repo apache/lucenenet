@@ -1354,7 +1354,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             StandardQueryParser qp = new StandardQueryParser();
             qp.Analyzer = (new MockAnalyzer(Random(), MockTokenizer.WHITESPACE, false));
-            qp.Locale = new CultureInfo("en");//  (Locale.ENGLISH); // LUCENENET TODO: Fix API - we probably don't want to set Culture to a property
+            qp.Locale = new CultureInfo("en");//  (Locale.ENGLISH);
 
             Query q = qp.Parse(query, "date");
             ScoreDoc[] hits = @is.Search(q, null, 1000).ScoreDocs;

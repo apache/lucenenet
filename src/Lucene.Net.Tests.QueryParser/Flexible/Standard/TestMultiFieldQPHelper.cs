@@ -143,7 +143,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         [Test]
         public void TestBoostsSimple()
         {
-            IDictionary<String, float?> boosts = new Dictionary<String, float?>(); // LUCENENET TODO: make this non-nullable..?
+            IDictionary<String, float?> boosts = new Dictionary<String, float?>();
             boosts.Put("b", 5);
             boosts.Put("t", 10);
             String[] fields = { "b", "t" };
