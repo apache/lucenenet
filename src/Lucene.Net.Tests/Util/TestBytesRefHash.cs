@@ -344,7 +344,9 @@ namespace Lucene.Net.Util
                 {
                     Assert.AreEqual(i, Hash.Add(@ref));
                 }
+#pragma warning disable 168
                 catch (MaxBytesLengthExceededException e)
+#pragma warning restore 168
                 {
                     exceptionThrown = true;
                     if (i < sizes.Length - 1)
