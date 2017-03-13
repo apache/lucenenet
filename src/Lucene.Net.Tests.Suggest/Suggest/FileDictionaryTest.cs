@@ -77,7 +77,7 @@ namespace Lucene.Net.Search.Suggest
             Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
             FileDictionary dictionary = new FileDictionary(inputReader);
             List<List<string>> entries = fileInput.Key;
-            IInputIterator inputIter = dictionary.EntryIterator;
+            IInputIterator inputIter = dictionary.GetEntryIterator();
             assertFalse(inputIter.HasPayloads);
             BytesRef term;
             int count = 0;
@@ -101,7 +101,7 @@ namespace Lucene.Net.Search.Suggest
             Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
             FileDictionary dictionary = new FileDictionary(inputReader);
             List<List<String>> entries = fileInput.Key;
-            IInputIterator inputIter = dictionary.EntryIterator;
+            IInputIterator inputIter = dictionary.GetEntryIterator();
             assertFalse(inputIter.HasPayloads);
             BytesRef term;
             int count = 0;
@@ -125,7 +125,7 @@ namespace Lucene.Net.Search.Suggest
             Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
             FileDictionary dictionary = new FileDictionary(inputReader);
             List<List<string>> entries = fileInput.Key;
-            IInputIterator inputIter = dictionary.EntryIterator;
+            IInputIterator inputIter = dictionary.GetEntryIterator();
             assertTrue(inputIter.HasPayloads);
             BytesRef term;
             int count = 0;
@@ -156,7 +156,7 @@ namespace Lucene.Net.Search.Suggest
             Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
             FileDictionary dictionary = new FileDictionary(inputReader);
             List<List<string>> entries = fileInput.Key;
-            IInputIterator inputIter = dictionary.EntryIterator;
+            IInputIterator inputIter = dictionary.GetEntryIterator();
             assertTrue(inputIter.HasPayloads);
             BytesRef term;
             int count = 0;
@@ -188,7 +188,7 @@ namespace Lucene.Net.Search.Suggest
             Stream inputReader = new MemoryStream(fileInput.Value.getBytes(Encoding.UTF8));
             FileDictionary dictionary = new FileDictionary(inputReader, " , ");
             List<List<string>> entries = fileInput.Key;
-            IInputIterator inputIter = dictionary.EntryIterator;
+            IInputIterator inputIter = dictionary.GetEntryIterator();
             assertTrue(inputIter.HasPayloads);
             BytesRef term;
             int count = 0;

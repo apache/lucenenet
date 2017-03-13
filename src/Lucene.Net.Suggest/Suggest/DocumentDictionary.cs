@@ -98,12 +98,9 @@ namespace Lucene.Net.Search.Suggest
             this.m_contextsField = contextsField;
         }
 
-        public virtual IInputIterator EntryIterator
+        public virtual IInputIterator GetEntryIterator()
         {
-            get
-            {
-                return new DocumentInputIterator(this, m_payloadField != null, m_contextsField != null);
-            }
+            return new DocumentInputIterator(this, m_payloadField != null, m_contextsField != null);
         }
 
         /// <summary>

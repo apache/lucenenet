@@ -53,12 +53,9 @@ namespace Lucene.Net.Search.Spell
             this.thresh = thresh;
         }
 
-        public IInputIterator EntryIterator
+        public IInputIterator GetEntryIterator()
         {
-            get
-            {
-                return new HighFrequencyIterator(this);
-            }
+            return new HighFrequencyIterator(this);
         }
 
         internal sealed class HighFrequencyIterator : IInputIterator

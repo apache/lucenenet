@@ -39,19 +39,16 @@ namespace Lucene.Net.Search.Spell
             this.field = field;
         }
 
-        public virtual IInputIterator EntryIterator
+        public virtual IInputIterator GetEntryIterator()
         {
-            get
+            Terms terms = MultiFields.GetTerms(reader, field);
+            if (terms != null)
             {
-                Terms terms = MultiFields.GetTerms(reader, field);
-                if (terms != null)
-                {
-                    return new InputIteratorWrapper(terms.GetIterator(null));
-                }
-                else
-                {
-                    return EmptyInputIterator.Instance;
-                }
+                return new InputIteratorWrapper(terms.GetIterator(null));
+            }
+            else
+            {
+                return EmptyInputIterator.Instance;
             }
         }
     }

@@ -87,7 +87,7 @@ namespace Lucene.Net.Search.Spell
                 indexReader = DirectoryReader.Open(store);
 
                 ld = new LuceneDictionary(indexReader, "nonexistent_field");
-                it = ld.EntryIterator;
+                it = ld.GetEntryIterator();
 
                 assertNull("More elements than expected", spare = it.Next());
             }
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search.Spell
                 indexReader = DirectoryReader.Open(store);
 
                 ld = new LuceneDictionary(indexReader, "aaa");
-                it = ld.EntryIterator;
+                it = ld.GetEntryIterator();
                 assertNotNull("First element doesn't exist.", spare = it.Next());
                 assertTrue("First element isn't correct", spare.Utf8ToString().equals("foo"));
                 assertNull("More elements than expected", it.Next());
@@ -124,7 +124,7 @@ namespace Lucene.Net.Search.Spell
                 indexReader = DirectoryReader.Open(store);
 
                 ld = new LuceneDictionary(indexReader, "contents");
-                it = ld.EntryIterator;
+                it = ld.GetEntryIterator();
 
                 assertNotNull("First element doesn't exist.", spare = it.Next());
                 assertTrue("First element isn't correct", spare.Utf8ToString().equals("Jerry"));
@@ -133,7 +133,7 @@ namespace Lucene.Net.Search.Spell
                 assertNull("More elements than expected", it.Next());
 
                 ld = new LuceneDictionary(indexReader, "contents");
-                it = ld.EntryIterator;
+                it = ld.GetEntryIterator();
 
                 int counter = 2;
                 while (it.Next() != null)
@@ -157,7 +157,7 @@ namespace Lucene.Net.Search.Spell
                 indexReader = DirectoryReader.Open(store);
 
                 ld = new LuceneDictionary(indexReader, "contents");
-                it = ld.EntryIterator;
+                it = ld.GetEntryIterator();
 
                 // just iterate through words
                 assertEquals("First element isn't correct", "Jerry", it.Next().Utf8ToString());
@@ -178,7 +178,7 @@ namespace Lucene.Net.Search.Spell
                 indexReader = DirectoryReader.Open(store);
 
                 ld = new LuceneDictionary(indexReader, "zzz");
-                it = ld.EntryIterator;
+                it = ld.GetEntryIterator();
 
                 assertNotNull("First element doesn't exist.", spare = it.Next());
                 assertEquals("First element isn't correct", "bar", spare.Utf8ToString());

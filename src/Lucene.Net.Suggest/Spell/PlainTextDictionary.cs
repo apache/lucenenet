@@ -66,12 +66,9 @@ namespace Lucene.Net.Search.Spell
             @in = reader;
         }
 
-        public virtual IInputIterator EntryIterator
+        public virtual IInputIterator GetEntryIterator()
         {
-            get
-            {
-                return new InputIteratorWrapper(new FileIterator(this));
-            }
+            return new InputIteratorWrapper(new FileIterator(this));
         }
 
         internal sealed class FileIterator : IBytesRefIterator

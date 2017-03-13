@@ -31,6 +31,6 @@ namespace Lucene.Net.Search.Spell
         /// <summary>
         /// Returns an iterator over all the entries </summary>
         /// <returns> Iterator </returns>
-        IInputIterator EntryIterator { get; }
+        IInputIterator GetEntryIterator();
     }
 }

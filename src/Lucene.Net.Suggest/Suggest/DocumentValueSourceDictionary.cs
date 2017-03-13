@@ -97,12 +97,9 @@ namespace Lucene.Net.Search.Suggest
             this.weightsValueSource = weightsValueSource;
         }
 
-        public override IInputIterator EntryIterator
+        public override IInputIterator GetEntryIterator()
         {
-            get
-            {
-                return new DocumentValueSourceInputIterator(this, m_payloadField != null, m_contextsField != null);
-            }
+            return new DocumentValueSourceInputIterator(this, m_payloadField != null, m_contextsField != null);
         }
 
         internal sealed class DocumentValueSourceInputIterator : DocumentDictionary.DocumentInputIterator

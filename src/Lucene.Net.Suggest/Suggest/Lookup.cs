@@ -202,7 +202,7 @@ namespace Lucene.Net.Search.Suggest
         /// </summary>
         public virtual void Build(IDictionary dict)
         {
-            Build(dict.EntryIterator);
+            Build(dict.GetEntryIterator());
         }
 
         /// <summary>
