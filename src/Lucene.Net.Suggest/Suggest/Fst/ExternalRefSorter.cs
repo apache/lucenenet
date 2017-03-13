@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             writer.Write(utf8);
         }
 
-        public virtual IBytesRefIterator GetEnumerator()
+        public virtual IBytesRefIterator GetIterator()
         {
             if (sorted == null)
             {

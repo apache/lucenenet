@@ -255,7 +255,7 @@ namespace Lucene.Net.Search.Suggest.Fst
             BytesRef entry;
             Int32sRef scratchIntsRef = new Int32sRef();
             int count = 0;
-            IBytesRefIterator iter = sorter.GetEnumerator();
+            IBytesRefIterator iter = sorter.GetIterator();
             while ((entry = iter.Next()) != null)
             {
                 count++;

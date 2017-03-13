@@ -31,7 +31,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// </summary>
         /// <exception cref="System.IO.IOException"> If an I/O exception occurs. </exception>
         /// <exception cref="System.InvalidOperationException"> If an addition attempt is performed after
-        /// a call to <see cref="GetEnumerator"/> has been made. </exception>
+        /// a call to <see cref="GetIterator"/> has been made. </exception>
         void Add(BytesRef utf8);
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// an enumerator over all sorted entries.
         /// </summary>
         /// <exception cref="System.IO.IOException"> If an I/O exception occurs. </exception>
-        IBytesRefIterator GetEnumerator();
+        IBytesRefIterator GetIterator();
 
         /// <summary>
         /// Comparer used to determine the sort order of entries.
