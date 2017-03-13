@@ -191,7 +191,7 @@ namespace Lucene.Net.Documents
 
                 // even the underlying doc shouldn't have never_load
                 assertNull("never_load was loaded in wrapped doc",
-                           visitor.lazyDoc.Document.GetField("never_load"));
+                           visitor.lazyDoc.GetDocument().GetField("never_load"));
 
             }
             finally

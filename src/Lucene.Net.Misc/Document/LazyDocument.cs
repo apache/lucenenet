@@ -90,32 +90,29 @@ namespace Lucene.Net.Documents
         /// non-private for test only access
         /// @lucene.internal 
         /// </summary>
-        internal virtual Document Document // LUCENENET TODO: Make GetDocument()
+        internal virtual Document GetDocument()
         {
-            get
+            lock (this)
             {
-                lock (this)
+                if (doc == null)
                 {
-                    if (doc == null)
+                    try
                     {
-                        try
-                        {
-                            doc = reader.Document(docID, fieldNames);
-                        }
-                        catch (IOException ioe)
-                        {
-                            throw new InvalidOperationException("unable to load document", ioe);
-                        }
+                        doc = reader.Document(docID, fieldNames);
                     }
-                    return doc;
+                    catch (IOException ioe)
+                    {
+                        throw new InvalidOperationException("unable to load document", ioe);
+                    }
                 }
+                return doc;
             }
         }
 
         // :TODO: synchronize to prevent redundent copying? (sync per field name?)
         private void FetchRealValues(string name, int fieldNum)
         {
-            Document d = Document;
+            Document d = GetDocument();
 
             IList<LazyField> lazyValues;
             fields.TryGetValue(fieldNum, out lazyValues);
@@ -162,19 +159,16 @@ namespace Lucene.Net.Documents
                 get { return null != realValue; }
             }
 
-            internal virtual IIndexableField RealValue // LUCENENET TODO: Make GetRealValue()
+            internal virtual IIndexableField GetRealValue()
             {
-                get
+                if (null == realValue)
                 {
-                    if (null == realValue)
-                    {
-                        outerInstance.FetchRealValues(name, fieldNum);
-                    }
-                    Debug.Assert(HasBeenLoaded, "field value was not lazy loaded");
-                    Debug.Assert(realValue.Name.Equals(Name), "realvalue name != name: " + realValue.Name + " != " + Name);
-
-                    return realValue;
+                    outerInstance.FetchRealValues(name, fieldNum);
                 }
+                Debug.Assert(HasBeenLoaded, "field value was not lazy loaded");
+                Debug.Assert(realValue.Name.Equals(Name), "realvalue name != name: " + realValue.Name + " != " + Name);
+
+                return realValue;
             }
 
             public virtual string Name
@@ -189,32 +183,32 @@ namespace Lucene.Net.Documents
 
             public virtual BytesRef GetBinaryValue()
             {
-                return RealValue.GetBinaryValue();
+                return GetRealValue().GetBinaryValue();
             }
 
             public virtual string GetStringValue()
             {
-                return RealValue.GetStringValue();
+                return GetRealValue().GetStringValue();
             }
 
             public virtual TextReader GetReaderValue()
             {
-                return RealValue.GetReaderValue();
+                return GetRealValue().GetReaderValue();
             }
 
             public virtual object GetNumericValue()
             {
-                return RealValue.GetNumericValue();
+                return GetRealValue().GetNumericValue();
             }
 
             public virtual IIndexableFieldType FieldType
             {
-                get { return RealValue.FieldType; }
+                get { return GetRealValue().FieldType; }
             }
 
             public virtual TokenStream GetTokenStream(Analyzer analyzer)
             {
-                return RealValue.GetTokenStream(analyzer);
+                return GetRealValue().GetTokenStream(analyzer);
             }
         }
     }
