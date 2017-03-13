@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -109,7 +110,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
 
-    public sealed class SegmentInfos /*: List<SegmentCommitInfo>*/ // LUCENENET TODO: Original implemented IEnumerable<SegmentCommitInfo>
+    public sealed class SegmentInfos : IEnumerable<SegmentCommitInfo>
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>
@@ -1399,6 +1400,16 @@ namespace Lucene.Net.Index
         {
             this.Clear();
             this.AddAll(infos);
+        }
+
+        public IEnumerator<SegmentCommitInfo> GetEnumerator()
+        {
+            return AsList().GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         /// <summary>
