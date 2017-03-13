@@ -81,11 +81,11 @@ namespace Lucene.Net.Facet
         {
             /// <summary>
             /// True if this dimension is hierarchical. </summary>
-            public bool Hierarchical { get; set; }
+            public bool IsHierarchical { get; set; }
 
             /// <summary>
             /// True if this dimension is multi-valued. </summary>
-            public bool MultiValued { get; set; }
+            public bool IsMultiValued { get; set; }
 
             /// <summary>
             /// True if the count/aggregate for the entire dimension
@@ -162,12 +162,12 @@ namespace Lucene.Net.Facet
             {
                 if (!fieldTypes.ContainsKey(dimName))
                 {
-                    var ft = new DimConfig { Hierarchical = v };
+                    var ft = new DimConfig { IsHierarchical = v };
                     fieldTypes[dimName] = ft;
                 }
                 else
                 {
-                    fieldTypes[dimName].Hierarchical = v;
+                    fieldTypes[dimName].IsHierarchical = v;
                 }
             }
         }
@@ -182,12 +182,12 @@ namespace Lucene.Net.Facet
             {
                 if (!fieldTypes.ContainsKey(dimName))
                 {
-                    var ft = new DimConfig { MultiValued = v };
+                    var ft = new DimConfig { IsMultiValued = v };
                     fieldTypes[dimName] = ft;
                 }
                 else
                 {
-                    fieldTypes[dimName].MultiValued = v;
+                    fieldTypes[dimName].IsMultiValued = v;
                 }
             }
         }
@@ -296,7 +296,7 @@ namespace Lucene.Net.Facet
                 {
                     FacetField facetField = (FacetField)field;
                     FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
-                    if (dimConfig.MultiValued == false)
+                    if (dimConfig.IsMultiValued == false)
                     {
                         CheckSeen(seenDims, facetField.Dim);
                     }
@@ -314,7 +314,7 @@ namespace Lucene.Net.Facet
                 {
                     var facetField = (SortedSetDocValuesFacetField)field;
                     FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
-                    if (dimConfig.MultiValued == false)
+                    if (dimConfig.IsMultiValued == false)
                     {
                         CheckSeen(seenDims, facetField.Dim);
                     }
@@ -332,11 +332,11 @@ namespace Lucene.Net.Facet
                 {
                     AssociationFacetField facetField = (AssociationFacetField)field;
                     FacetsConfig.DimConfig dimConfig = GetDimConfig(facetField.Dim);
-                    if (dimConfig.MultiValued == false)
+                    if (dimConfig.IsMultiValued == false)
                     {
                         CheckSeen(seenDims, facetField.Dim);
                     }
-                    if (dimConfig.Hierarchical)
+                    if (dimConfig.IsHierarchical)
                     {
                         throw new System.ArgumentException("AssociationFacetField cannot be hierarchical (dim=\"" + facetField.Dim + "\")");
                     }
@@ -416,7 +416,7 @@ namespace Lucene.Net.Facet
                 {
 
                     FacetsConfig.DimConfig ft = GetDimConfig(facetField.Dim);
-                    if (facetField.Path.Length > 1 && ft.Hierarchical == false)
+                    if (facetField.Path.Length > 1 && ft.IsHierarchical == false)
                     {
                         throw new System.ArgumentException("dimension \"" + facetField.Dim + "\" is not hierarchical yet has " + facetField.Path.Length + " components");
                     }
@@ -433,7 +433,7 @@ namespace Lucene.Net.Facet
                     //System.out.println("ords[" + (ordinals.length-1) + "]=" + ordinal);
                     //System.out.println("  add cp=" + cp);
 
-                    if (ft.MultiValued && (ft.Hierarchical || ft.RequireDimCount))
+                    if (ft.IsMultiValued && (ft.IsHierarchical || ft.RequireDimCount))
                     {
                         //System.out.println("  add parents");
                         // Add all parents too:

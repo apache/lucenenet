@@ -53,7 +53,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 string dim = ent.Key;
                 FacetsConfig.DimConfig ft = ent.Value;
-                if (ft.Hierarchical && ft.MultiValued == false)
+                if (ft.IsHierarchical && ft.IsMultiValued == false)
                 {
                     int dimRootOrd = m_taxoReader.GetOrdinal(new FacetLabel(dim));
                     // It can be -1 if this field was declared in the
@@ -84,11 +84,11 @@ namespace Lucene.Net.Facet.Taxonomy
             var dimConfig = VerifyDim(dim);
             if (path.Length == 0)
             {
-                if (dimConfig.Hierarchical && dimConfig.MultiValued == false)
+                if (dimConfig.IsHierarchical && dimConfig.IsMultiValued == false)
                 {
                     // ok: rolled up at search time
                 }
-                else if (dimConfig.RequireDimCount && dimConfig.MultiValued)
+                else if (dimConfig.RequireDimCount && dimConfig.IsMultiValued)
                 {
                     // ok: we indexed all ords at index time
                 }
@@ -158,7 +158,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 return null;
             }
 
-            if (dimConfig.MultiValued)
+            if (dimConfig.IsMultiValued)
             {
                 if (dimConfig.RequireDimCount)
                 {

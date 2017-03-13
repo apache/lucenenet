@@ -104,7 +104,7 @@ namespace Lucene.Net.Facet
         {
             FacetsConfig config = new FacetsConfigAnonymousInnerClassHelper(this);
 
-            Assert.True(config.GetDimConfig("foobar").Hierarchical);
+            Assert.True(config.GetDimConfig("foobar").IsHierarchical);
         }
 
         private class FacetsConfigAnonymousInnerClassHelper : FacetsConfig
@@ -121,7 +121,7 @@ namespace Lucene.Net.Facet
                 get
                 {
                     DimConfig config = new DimConfig();
-                    config.Hierarchical = true;
+                    config.IsHierarchical = true;
                     return config;
                 }
             }
