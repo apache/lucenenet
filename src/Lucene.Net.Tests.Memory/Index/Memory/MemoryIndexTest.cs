@@ -116,7 +116,7 @@ namespace Lucene.Net.Index.Memory
             }
             else
             {
-                assertTrue(memory.MemorySize > 0L);
+                assertTrue(memory.GetMemorySize() > 0L);
             }
             AtomicReader reader = (AtomicReader)memory.CreateSearcher().IndexReader;
             DirectoryReader competitor = DirectoryReader.Open(ramdir);

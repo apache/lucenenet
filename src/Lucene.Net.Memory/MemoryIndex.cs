@@ -595,12 +595,9 @@ namespace Lucene.Net.Index.Memory
         /// Returns a reasonable approximation of the main memory [bytes] consumed by
         /// this instance. Useful for smart memory sensititive caches/pools. </summary>
         /// <returns> the main memory consumption </returns>
-        public virtual long MemorySize
+        public virtual long GetMemorySize()
         {
-            get
-            {
-                return RamUsageEstimator.SizeOf(this);
-            }
+            return RamUsageEstimator.SizeOf(this);
         }
 
         /// <summary>
@@ -701,7 +698,7 @@ namespace Lucene.Net.Index.Memory
             result.Append("\nfields=" + sortedFields.Length);
             result.Append(", terms=" + sumTerms);
             result.Append(", positions=" + sumPositions);
-            result.Append(", memory=" + RamUsageEstimator.HumanReadableUnits(MemorySize));
+            result.Append(", memory=" + RamUsageEstimator.HumanReadableUnits(GetMemorySize()));
             return result.ToString();
         }
 
