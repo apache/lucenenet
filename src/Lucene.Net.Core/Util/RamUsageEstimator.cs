@@ -111,7 +111,7 @@ namespace Lucene.Net.Util
 
         static RamUsageEstimator()
         {
-            primitiveSizes = new HashMap<Type, int>(8);
+            primitiveSizes = new IdentityHashMap<Type, int>();
             primitiveSizes[typeof(bool)] = Convert.ToInt32(NUM_BYTES_BOOLEAN);
             primitiveSizes[typeof(sbyte)] = Convert.ToInt32(NUM_BYTES_BYTE);
             primitiveSizes[typeof(byte)] = Convert.ToInt32(NUM_BYTES_BYTE);
@@ -468,7 +468,7 @@ namespace Lucene.Net.Util
             // Objects seen so far.
             IdentityHashSet<object> seen = new IdentityHashSet<object>();
             // Class cache with reference Field and precalculated shallow size.
-            HashMap<Type, ClassCache> classCache = new HashMap<Type, ClassCache>();
+            HashMap<Type, ClassCache> classCache = new IdentityHashMap<Type, ClassCache>();
             // Stack of objects pending traversal. Recursion caused stack overflows.
             Stack<object> stack = new Stack<object>();
             stack.Push(root);

@@ -138,19 +138,19 @@ namespace Lucene.Net.Analysis.Core
                 throw new Exception(e.Message, e);
             }
 
-            allowedTokenizerArgs = new HashSet<Type>(); // Collections.NewSetFromMap(new IdentityHashMap<Type, bool?>());
+            allowedTokenizerArgs = new IdentityHashSet<Type>(); // Collections.NewSetFromMap(new IdentityHashMap<Type, bool?>());
             allowedTokenizerArgs.addAll(argProducers.Keys);
             allowedTokenizerArgs.Add(typeof(TextReader));
             allowedTokenizerArgs.Add(typeof(AttributeSource.AttributeFactory));
             allowedTokenizerArgs.Add(typeof(AttributeSource));
 
-            allowedTokenFilterArgs = new HashSet<Type>();  //Collections.newSetFromMap(new IdentityHashMap<Type, bool?>());
+            allowedTokenFilterArgs = new IdentityHashSet<Type>();  //Collections.newSetFromMap(new IdentityHashMap<Type, bool?>());
             allowedTokenFilterArgs.addAll(argProducers.Keys);
             allowedTokenFilterArgs.Add(typeof(TokenStream));
             // TODO: fix this one, thats broken:
             allowedTokenFilterArgs.Add(typeof(CommonGramsFilter));
 
-            allowedCharFilterArgs = new HashSet<Type>(); //Collections.newSetFromMap(new IdentityHashMap<Type, bool?>());
+            allowedCharFilterArgs = new IdentityHashSet<Type>(); //Collections.newSetFromMap(new IdentityHashMap<Type, bool?>());
             allowedCharFilterArgs.addAll(argProducers.Keys);
             allowedCharFilterArgs.Add(typeof(TextReader));
         }

@@ -706,7 +706,7 @@ namespace Lucene.Net.Codecs.Pulsing
             // you don't reuse? and maybe pulsingPostingsReader should throw an exc if it wraps
             // another pulsing, because this is just stupid and wasteful. 
             // we still have to be careful in case someone does Pulsing(Stomping(Pulsing(...
-            private readonly IDictionary<PulsingPostingsReader, DocsEnum> _enums = new Dictionary<PulsingPostingsReader, DocsEnum>();
+            private readonly IDictionary<PulsingPostingsReader, DocsEnum> _enums = new IdentityHashMap<PulsingPostingsReader, DocsEnum>();
 
             public IDictionary<PulsingPostingsReader, DocsEnum> Enums
             {

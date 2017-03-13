@@ -84,7 +84,7 @@ namespace Lucene.Net.Store
 
         // use this for tracking files for crash.
         // additionally: provides debugging information in case you leave one open
-        private readonly ConcurrentDictionary<IDisposable, Exception> OpenFileHandles = new ConcurrentDictionary<IDisposable, Exception>();
+        private readonly ConcurrentDictionary<IDisposable, Exception> OpenFileHandles = new ConcurrentDictionary<IDisposable, Exception>(new IdentityComparer<IDisposable>());
 
         // NOTE: we cannot initialize the Map here due to the
         // order in which our constructor actually does this
@@ -294,8 +294,8 @@ namespace Lucene.Net.Store
                 UnSyncedFiles = new HashSet<string>();
                 // first force-close all files, so we can corrupt on windows etc.
                 // clone the file map, as these guys want to remove themselves on close.
-                var m = OpenFileHandles.Keys.ToArray();
-                foreach (IDisposable f in m)
+                var m = new IdentityHashMap<IDisposable, Exception>(OpenFileHandles);
+                foreach (IDisposable f in m.Keys)
                 {
                     try
                     {

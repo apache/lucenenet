@@ -7,6 +7,7 @@ using Lucene.Net.Analysis.Sinks;
 using Lucene.Net.Analysis.Snowball;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Analysis.Core
     {
 
         // these are test-only components (e.g. test-framework)
-        private static readonly ISet<Type> testComponents = new HashSet<Type>();
+        private static readonly ISet<Type> testComponents = new IdentityHashSet<Type>();
         static TestAllAnalyzersHaveFactories()
         {
             testComponents.addAll(new Type[] { typeof(MockTokenizer), typeof(MockCharFilter), typeof(MockFixedLengthPayloadFilter), typeof(MockGraphTokenFilter), typeof(MockHoleInjectingTokenFilter), typeof(MockRandomLookaheadTokenFilter), typeof(MockTokenFilter), typeof(MockVariableLengthPayloadFilter), typeof(ValidatingTokenFilter) });
@@ -57,16 +58,16 @@ namespace Lucene.Net.Analysis.Core
         }
 
         // these are 'crazy' components like cachingtokenfilter. does it make sense to add factories for these?
-        private static readonly ISet<Type> crazyComponents = new HashSet<Type>();
+        private static readonly ISet<Type> crazyComponents = new IdentityHashSet<Type>();
 
         // these are deprecated components that are just exact dups of other functionality: they dont need factories
         // (they never had them)
-        private static readonly ISet<Type> deprecatedDuplicatedComponents = new HashSet<Type>();
+        private static readonly ISet<Type> deprecatedDuplicatedComponents = new IdentityHashSet<Type>();
 
         // these are oddly-named (either the actual analyzer, or its factory)
         // they do actually have factories.
         // TODO: clean this up!
-        private static readonly ISet<Type> oddlyNamedComponents = new HashSet<Type>();
+        private static readonly ISet<Type> oddlyNamedComponents = new IdentityHashSet<Type>();
 
         private static readonly IResourceLoader loader = new StringMockResourceLoader("");
 
