@@ -861,8 +861,7 @@ namespace Lucene.Net.Util.Automaton
                         statesSet.ComputeHash();
 
                         State q;
-                        newstate.TryGetValue(statesSet.ToFrozenInt32Set(), out q);
-                        if (q == null)
+                        if (!newstate.TryGetValue(statesSet.ToFrozenInt32Set(), out q) || q == null)
                         {
                             q = new State();
 
