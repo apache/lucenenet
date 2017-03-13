@@ -38,12 +38,9 @@ namespace Lucene.Net.Misc
             this.TotalTermFreq = tf;
         }
 
-        internal string TermText
+        internal string GetTermText()
         {
-            get
-            {
-                return termtext.Utf8ToString();
-            }
+            return termtext.Utf8ToString();
         }
 
         public override string ToString()

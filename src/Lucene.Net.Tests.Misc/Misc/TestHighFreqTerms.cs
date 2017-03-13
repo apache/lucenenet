@@ -142,7 +142,7 @@ namespace Lucene.Net.Misc
             string field = "different_field";
             TermStats[]
             terms = HighFreqTerms.GetHighFreqTerms(reader, numTerms, field, new HighFreqTerms.TotalTermFreqComparer());
-            assertEquals("Term with highest totalTermFreq is first" + terms[0].TermText, 150, terms[0].TotalTermFreq);
+            assertEquals("Term with highest totalTermFreq is first" + terms[0].GetTermText(), 150, terms[0].TotalTermFreq);
         }
 
         [Test]

@@ -80,7 +80,7 @@ namespace Lucene.Net.Misc
 
                 for (int i = 0; i < terms.Length; i++)
                 {
-                    Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", terms[i].Field, terms[i].TermText, terms[i].TotalTermFreq, terms[i].DocFreq);
+                    Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", terms[i].Field, terms[i].GetTermText(), terms[i].TotalTermFreq, terms[i].DocFreq);
                 }
             }
         }
