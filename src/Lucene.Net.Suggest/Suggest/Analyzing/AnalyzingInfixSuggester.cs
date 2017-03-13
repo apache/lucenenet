@@ -316,7 +316,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         private Document BuildDocument(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
             string textString = text.Utf8ToString();
-            var ft = TextFieldType;
+            var ft = GetTextFieldType();
             var doc = new Document
 		{
 		    new Field(TEXT_FIELD_NAME, textString, ft),
@@ -356,16 +356,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// Subclass can override this method to change the field type of the text field
         /// e.g. to change the index options
         /// </summary>
-        protected internal virtual FieldType TextFieldType
+        protected virtual FieldType GetTextFieldType()
         {
-            get
-            {
-                var ft = new FieldType(TextField.TYPE_NOT_STORED);
-                ft.IndexOptions = IndexOptions.DOCS_ONLY;
-                ft.OmitNorms = true;
+            var ft = new FieldType(TextField.TYPE_NOT_STORED);
+            ft.IndexOptions = IndexOptions.DOCS_ONLY;
+            ft.OmitNorms = true;
 
-                return ft;
-            }
+            return ft;
         }
 
         public override IList<LookupResult> DoLookup(string key, IEnumerable<BytesRef> contexts, bool onlyMorePopular, int num)

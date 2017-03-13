@@ -127,18 +127,15 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return base.DoLookup(key, contexts, num * numFactor, allTermsRequired, doHighlight);
         }
 
-        protected internal override FieldType TextFieldType
+        protected override FieldType GetTextFieldType()
         {
-            get
-            {
-                FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
-                ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                ft.StoreTermVectors = true;
-                ft.StoreTermVectorPositions = true;
-                ft.OmitNorms = true;
+            FieldType ft = new FieldType(TextField.TYPE_NOT_STORED);
+            ft.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+            ft.StoreTermVectors = true;
+            ft.StoreTermVectorPositions = true;
+            ft.OmitNorms = true;
 
-                return ft;
-            }
+            return ft;
         }
 
         protected internal override IList<Lookup.LookupResult> CreateResults(IndexSearcher searcher, TopFieldDocs hits,
