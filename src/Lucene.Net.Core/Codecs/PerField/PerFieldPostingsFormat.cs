@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace Lucene.Net.Codecs.PerField
@@ -91,7 +92,7 @@ namespace Lucene.Net.Codecs.PerField
             private readonly PerFieldPostingsFormat outerInstance;
 
             internal readonly IDictionary<PostingsFormat, FieldsConsumerAndSuffix> formats = new Dictionary<PostingsFormat, FieldsConsumerAndSuffix>();
-            internal readonly IDictionary<string, int> suffixes = new Dictionary<string, int>();
+            internal readonly IDictionary<string, int?> suffixes = new Dictionary<string, int?>();
 
             internal readonly SegmentWriteState segmentWriteState;
 
@@ -111,18 +112,17 @@ namespace Lucene.Net.Codecs.PerField
                 string formatName = format.Name;
 
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName);
-                //Debug.Assert(previousValue == null);
+                Debug.Assert(previousValue == null);
 
-                int suffix;
+                int? suffix;
 
                 FieldsConsumerAndSuffix consumer;
-                formats.TryGetValue(format, out consumer);
-                if (consumer == null)
+                if (!formats.TryGetValue(format, out consumer) || consumer == null)
                 {
                     // First time we are seeing this format; create a new instance
 
                     // bump the suffix
-                    if (!suffixes.TryGetValue(formatName, out suffix))
+                    if (!suffixes.TryGetValue(formatName, out suffix) || suffix == null)
                     {
                         suffix = 0;
                     }
@@ -132,10 +132,12 @@ namespace Lucene.Net.Codecs.PerField
                     }
                     suffixes[formatName] = suffix;
 
-                    string segmentSuffix = GetFullSegmentSuffix(field.Name, segmentWriteState.SegmentSuffix, GetSuffix(formatName, Convert.ToString(suffix)));
+                    string segmentSuffix = GetFullSegmentSuffix(field.Name, 
+                                                                segmentWriteState.SegmentSuffix, 
+                                                                GetSuffix(formatName, Convert.ToString(suffix, CultureInfo.InvariantCulture)));
                     consumer = new FieldsConsumerAndSuffix();
                     consumer.Consumer = format.FieldsConsumer(new SegmentWriteState(segmentWriteState, segmentSuffix));
-                    consumer.Suffix = suffix;
+                    consumer.Suffix = suffix.Value; // LUCENENET NOTE: At this point suffix cannot be null
                     formats[format] = consumer;
                 }
                 else
@@ -145,8 +147,8 @@ namespace Lucene.Net.Codecs.PerField
                     suffix = consumer.Suffix;
                 }
 
-                previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix));
-                //Debug.Assert(previousValue == null);
+                previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
+                Debug.Assert(previousValue == null);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this PF actually sees ... then stuff like
@@ -159,7 +161,7 @@ namespace Lucene.Net.Codecs.PerField
             public override void Dispose()
             {
                 // Close all subs
-                IOUtils.Close(formats.Values.ToArray());
+                IOUtils.Close(formats.Values);
             }
         }
 
@@ -233,7 +235,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override IEnumerator<string> GetEnumerator()
             {
-                return fields.Keys.GetEnumerator();
+                return Collections.UnmodifiableSet(fields.Keys).GetEnumerator();
             }
 
             public override Terms GetTerms(string field)
@@ -254,7 +256,7 @@ namespace Lucene.Net.Codecs.PerField
 
             public override void Dispose()
             {
-                IOUtils.Close(formats.Values.ToArray());
+                IOUtils.Close(formats.Values);
             }
 
             public override long RamBytesUsed()

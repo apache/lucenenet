@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace Lucene.Net.Codecs.PerField
@@ -97,7 +98,7 @@ namespace Lucene.Net.Codecs.PerField
             private readonly PerFieldDocValuesFormat outerInstance;
 
             internal readonly IDictionary<DocValuesFormat, ConsumerAndSuffix> formats = new Dictionary<DocValuesFormat, ConsumerAndSuffix>();
-            internal readonly IDictionary<string, int> suffixes = new Dictionary<string, int>();
+            internal readonly IDictionary<string, int?> suffixes = new Dictionary<string, int?>();
 
             internal readonly SegmentWriteState segmentWriteState;
 
@@ -152,11 +153,10 @@ namespace Lucene.Net.Codecs.PerField
                 string previousValue = field.PutAttribute(PER_FIELD_FORMAT_KEY, formatName_);
                 Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "formatName=" + formatName_ + " prevValue=" + previousValue);
 
-                int suffix = -1;
+                int? suffix = null;
 
                 ConsumerAndSuffix consumer;
-                formats.TryGetValue(format, out consumer);
-                if (consumer == null)
+                if (!formats.TryGetValue(format, out consumer) || consumer == null)
                 {
                     // First time we are seeing this format; create a new instance
 
@@ -168,14 +168,14 @@ namespace Lucene.Net.Codecs.PerField
                         // attributes yet.
                         if (suffixAtt != null)
                         {
-                            suffix = Convert.ToInt32(suffixAtt);
+                            suffix = Convert.ToInt32(suffixAtt, CultureInfo.InvariantCulture);
                         }
                     }
 
-                    if (suffix == -1)
+                    if (suffix == null)
                     {
                         // bump the suffix
-                        if (!suffixes.TryGetValue(formatName_, out suffix))
+                        if (!suffixes.TryGetValue(formatName_, out suffix) || suffix == null)
                         {
                             suffix = 0;
                         }
@@ -186,10 +186,10 @@ namespace Lucene.Net.Codecs.PerField
                     }
                     suffixes[formatName_] = suffix;
 
-                    string segmentSuffix = GetFullSegmentSuffix(segmentWriteState.SegmentSuffix, GetSuffix(formatName_, Convert.ToString(suffix)));
+                    string segmentSuffix = GetFullSegmentSuffix(segmentWriteState.SegmentSuffix, GetSuffix(formatName_, Convert.ToString(suffix, CultureInfo.InvariantCulture)));
                     consumer = new ConsumerAndSuffix();
                     consumer.Consumer = format.FieldsConsumer(new SegmentWriteState(segmentWriteState, segmentSuffix));
-                    consumer.Suffix = suffix;
+                    consumer.Suffix = suffix.Value; // LUCENENET NOTE: At this point suffix cannot be null
                     formats[format] = consumer;
                 }
                 else
@@ -199,8 +199,8 @@ namespace Lucene.Net.Codecs.PerField
                     suffix = consumer.Suffix;
                 }
 
-                previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix));
-                Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "suffix=" + Convert.ToString(suffix) + " prevValue=" + previousValue);
+                previousValue = field.PutAttribute(PER_FIELD_SUFFIX_KEY, Convert.ToString(suffix, CultureInfo.InvariantCulture));
+                Debug.Assert(field.DocValuesGen != -1 || previousValue == null, "suffix=" + Convert.ToString(suffix, CultureInfo.InvariantCulture) + " prevValue=" + previousValue);
 
                 // TODO: we should only provide the "slice" of FIS
                 // that this DVF actually sees ...
@@ -212,7 +212,7 @@ namespace Lucene.Net.Codecs.PerField
                 if (disposing)
                 {
                     // Close all subs
-                    IOUtils.Close(formats.Values.ToArray());
+                    IOUtils.Close(formats.Values);
                 }
             }
         }
@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs.PerField
             {
                 this.outerInstance = outerInstance;
 
-                IDictionary<DocValuesProducer, DocValuesProducer> oldToNew = new HashMap<DocValuesProducer, DocValuesProducer>();
+                IDictionary<DocValuesProducer, DocValuesProducer> oldToNew = new IdentityHashMap<DocValuesProducer, DocValuesProducer>();
                 // First clone all formats
                 foreach (KeyValuePair<string, DocValuesProducer> ent in other.formats)
                 {
@@ -298,7 +298,8 @@ namespace Lucene.Net.Codecs.PerField
                 // Then rebuild fields:
                 foreach (KeyValuePair<string, DocValuesProducer> ent in other.fields)
                 {
-                    DocValuesProducer producer = oldToNew[ent.Value];
+                    DocValuesProducer producer;
+                    oldToNew.TryGetValue(ent.Value, out producer);
                     Debug.Assert(producer != null);
                     fields[ent.Key] = producer;
                 }
@@ -307,7 +308,7 @@ namespace Lucene.Net.Codecs.PerField
             public override NumericDocValues GetNumeric(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer) && producer != null)
                 {
                     return producer.GetNumeric(field);
                 }
@@ -317,7 +318,7 @@ namespace Lucene.Net.Codecs.PerField
             public override BinaryDocValues GetBinary(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer) && producer != null)
                 {
                     return producer.GetBinary(field);
                 }
@@ -327,7 +328,7 @@ namespace Lucene.Net.Codecs.PerField
             public override SortedDocValues GetSorted(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer) && producer != null)
                 {
                     return producer.GetSorted(field);
                 }
@@ -337,7 +338,7 @@ namespace Lucene.Net.Codecs.PerField
             public override SortedSetDocValues GetSortedSet(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer) && producer != null)
                 {
                     return producer.GetSortedSet(field);
                 }
@@ -347,7 +348,7 @@ namespace Lucene.Net.Codecs.PerField
             public override IBits GetDocsWithField(FieldInfo field)
             {
                 DocValuesProducer producer;
-                if (fields.TryGetValue(field.Name, out producer))
+                if (fields.TryGetValue(field.Name, out producer) && producer != null)
                 {
                     return producer.GetDocsWithField(field);
                 }
@@ -357,7 +358,9 @@ namespace Lucene.Net.Codecs.PerField
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
-                    IOUtils.Close(formats.Values.ToArray());
+                {
+                    IOUtils.Close(formats.Values);
+                }
             }
 
             public object Clone()
@@ -370,7 +373,8 @@ namespace Lucene.Net.Codecs.PerField
                 long size = 0;
                 foreach (KeyValuePair<string, DocValuesProducer> entry in formats)
                 {
-                    size += (entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR) + entry.Value.RamBytesUsed();
+                    size += (entry.Key.Length * RamUsageEstimator.NUM_BYTES_CHAR) 
+                        + entry.Value.RamBytesUsed();
                 }
                 return size;
             }
