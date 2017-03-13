@@ -260,8 +260,7 @@ namespace Lucene.Net.Search
                 object readerKey = reader.CoreCacheKey;
                 lock (readerCache)
                 {
-                    innerCache = readerCache[readerKey]; // LUCENENET TODO: Possible exception
-                    if (innerCache == null)
+                    if (!readerCache.TryGetValue(readerKey, out innerCache) || innerCache == null)
                     {
                         // First time this reader is using FieldCache
                         innerCache = new Dictionary<CacheKey, object>();
