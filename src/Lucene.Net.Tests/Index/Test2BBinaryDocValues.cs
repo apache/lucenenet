@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -38,7 +39,11 @@ namespace Lucene.Net.Index
     public class Test2BBinaryDocValues : LuceneTestCase
     {
         // indexes Integer.MAX_VALUE docs with a fixed binary field
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestFixedBinary([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BFixedBinary"));
@@ -104,7 +109,11 @@ namespace Lucene.Net.Index
         }
 
         // indexes Integer.MAX_VALUE docs with a variable binary field
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestVariableBinary([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BVariableBinary"));

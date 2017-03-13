@@ -1,16 +1,19 @@
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Analysis;
-    using Lucene.Net.Analysis.TokenAttributes;
-
-    using Lucene.Net.Search;
-    using Lucene.Net.Store;
-    using Lucene.Net.Support;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -28,10 +31,7 @@ namespace Lucene.Net.Index
          * limitations under the License.
          */
 
-    using Lucene.Net.Util;
-    using NUnit.Framework;
-    using System.Reflection;
-    using System.Runtime.CompilerServices;
+
     using Codec = Lucene.Net.Codecs.Codec;
 
     // NOTE: this test will fail w/ PreFlexRW codec!  (Because
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
                 TokenCount = 0;
             }
 
-            private sealed class MyTermAttributeImpl : Attribute, ITermToBytesRefAttribute
+            private sealed class MyTermAttributeImpl : Util.Attribute, ITermToBytesRefAttribute
             {
                 public void FillBytesRef()
                 {
@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
                     this.@delegate = @delegate;
                 }
 
-                public override Attribute CreateAttributeInstance<T>()
+                public override Util.Attribute CreateAttributeInstance<T>()
                 {
                     var attClass = typeof(T);
                     if (attClass == typeof(ITermToBytesRefAttribute))
@@ -168,7 +168,11 @@ namespace Lucene.Net.Index
         }
 
         [Ignore("Very slow. Enable manually by removing Ignore.")]
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(int.MaxValue)]
+#endif
+        [Test, LongRunningTest, HasTimeout]
         public virtual void Test2BTerms_Mem([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             if ("Lucene3x".Equals(Codec.Default.Name))
