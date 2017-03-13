@@ -87,7 +87,7 @@
             {
                 lock (this)
                 {
-                    return cache.Count == cache.Capacity;
+                    return cache.Count == cache.Limit;
                 }
             }
         }

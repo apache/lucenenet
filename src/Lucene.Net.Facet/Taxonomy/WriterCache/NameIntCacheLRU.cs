@@ -38,22 +38,22 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         private IDictionary<object, int> cache;
         internal long nMisses = 0; // for debug
         internal long nHits = 0; // for debug
-        private int capacity;
+        private int maxCacheSize;
 
-        internal NameInt32CacheLRU(int capacity)
+        internal NameInt32CacheLRU(int limit)
         {
-            this.capacity = capacity;
-            CreateCache(capacity);
+            this.maxCacheSize = limit;
+            CreateCache(limit);
         }
 
         /// <summary>
         /// Maximum number of cache entries before eviction.
         /// </summary>
-        public virtual int Capacity
+        public virtual int Limit
         {
             get
             {
-                return capacity;
+                return maxCacheSize;
             }
         }
 
@@ -122,20 +122,20 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         internal virtual bool Put(FacetLabel name, int val)
         {
             cache[Key(name)] = val;
-            return CacheFull;
+            return IsCacheFull;
         }
 
         internal virtual bool Put(FacetLabel name, int prefixLen, int val)
         {
             cache[Key(name, prefixLen)] = val;
-            return CacheFull;
+            return IsCacheFull;
         }
 
-        private bool CacheFull
+        private bool IsCacheFull
         {
             get
             {
-                return cache.Count > capacity;
+                return cache.Count > maxCacheSize;
             }
         }
 
@@ -158,11 +158,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         internal virtual bool MakeRoomLRU()
         {
-            if (!CacheFull)
+            if (!IsCacheFull)
             {
                 return false;
             }
-            int n = cache.Count - (2 * capacity) / 3;
+            int n = cache.Count - (2 * maxCacheSize) / 3;
             if (n <= 0)
             {
                 return false;
@@ -171,7 +171,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             lock (this)
             {
                 // Double-check that another thread didn't beat us to the operation
-                n = cache.Count - (2 * capacity) / 3;
+                n = cache.Count - (2 * maxCacheSize) / 3;
                 if (n <= 0)
                 {
                     return false;
