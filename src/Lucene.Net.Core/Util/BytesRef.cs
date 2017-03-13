@@ -36,7 +36,7 @@ namespace Lucene.Net.Util
     /// is <b>wrong</b>, as it does not respect the correct character set
     /// and may return wrong results (depending on the platform's defaults)!
     /// </summary>
-    public sealed class BytesRef : IComparable // LUCENENET TODO: Implement IComparable<BytesRef>
+    public sealed class BytesRef : IComparable<BytesRef>, IComparable // LUCENENET specific - implemented IComparable for FieldComparator
     {
         /// <summary>
         /// An empty byte array for convenience </summary>
@@ -293,11 +293,18 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Unsigned byte order comparison </summary>
-        public int CompareTo(object other)
+        public int CompareTo(object other) // LUCENENET specific: Implemented IComparable for FieldComparer
         {
             BytesRef br = other as BytesRef;
             Debug.Assert(br != null);
             return utf8SortedAsUnicodeSortOrder.Compare(this, br);
+        }
+
+        /// <summary>
+        /// Unsigned byte order comparison </summary>
+        public int CompareTo(BytesRef other)
+        {
+            return utf8SortedAsUnicodeSortOrder.Compare(this, other);
         }
 
         private static readonly IComparer<BytesRef> utf8SortedAsUnicodeSortOrder = Utf8SortedAsUnicodeComparer.Instance;
