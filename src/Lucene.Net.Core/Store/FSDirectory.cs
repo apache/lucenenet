@@ -517,9 +517,9 @@ namespace Lucene.Net.Store
         /// 
         /// </summary>
         /// <param name="name"></param>
-        protected virtual void Fsync(string name, bool isDir = false) // LUCENENET TODO: remove optional arg and make second overload (note the original only had one overload)
+        protected virtual void Fsync(string name)
         {
-            IOUtils.Fsync(Path.Combine(m_directory.FullName, name), isDir);            
+            IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);            
         }
     }
 }
