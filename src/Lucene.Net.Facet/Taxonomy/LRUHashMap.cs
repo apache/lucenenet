@@ -42,9 +42,25 @@ namespace Lucene.Net.Facet.Taxonomy
     {
         private LurchTable<TKey, TValue> cache;
 
-        public LRUHashMap(int capacity)
+        /// <summary>
+        /// Create a new hash map with a bounded size and with least recently
+        /// used entries removed.
+        /// </summary>
+        /// <param name="limit">
+        /// The maximum size (in number of entries) to which the map can grow
+        /// before the least recently used entries start being removed.
+        /// <para/>
+        /// Setting maxSize to a very large value, like <see cref="int.MaxValue"/>
+        /// is allowed, but is less efficient than
+        /// using <see cref="Support.HashMap{TKey, TValue}"/> or 
+        /// <see cref="Dictionary{TKey, TValue}"/> because our class needs
+        /// to keep track of the use order (via an additional doubly-linked
+        /// list) which is not used when the map's size is always below the
+        /// maximum size.
+        /// </param>
+        public LRUHashMap(int limit)
         {
-            cache = new LurchTable<TKey, TValue>(LurchTableOrder.Access, capacity);
+            cache = new LurchTable<TKey, TValue>(LurchTableOrder.Access, limit);
         }
 
         /// <summary>
