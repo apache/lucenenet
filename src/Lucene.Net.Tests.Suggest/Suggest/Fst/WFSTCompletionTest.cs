@@ -138,8 +138,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             int numWords = AtLeast(1000);
 
-            IDictionary<string, long> slowCompletor = new SortedDictionary<string, long>(); //new TreeMap<>();
-            ISet<string> allPrefixes = new SortedSet<string>(); //new TreeSet<>();
+            IDictionary<string, long> slowCompletor = new SortedDictionary<string, long>(ArrayUtil.STRING_ORDINAL_COMPARER); //new TreeMap<>();
+            ISet<string> allPrefixes = new SortedSet<string>(ArrayUtil.STRING_ORDINAL_COMPARER); //new TreeSet<>();
 
             Input[] keys = new Input[numWords];
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 // TODO: could be faster... but its slowCompletor for a reason
                 foreach (KeyValuePair<string, long> e in slowCompletor)
                 {
-                    if (e.Key.StartsWith(prefix))
+                    if (e.Key.StartsWith(prefix, StringComparison.Ordinal))
                     {
                         matches.Add(new Lookup.LookupResult(e.Key, e.Value));
                     }
