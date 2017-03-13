@@ -576,7 +576,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             shouldRefreshReaderManager = true;
 
             // also add to the parent array
-            taxoArrays = TaxoArrays.Add(id, parent);
+            taxoArrays = GetTaxoArrays().Add(id, parent);
 
             // NOTE: this line must be executed last, or else the cache gets updated
             // before the parents array (LUCENE-4596)
@@ -850,35 +850,32 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
         }
 
-        private TaxonomyIndexArrays TaxoArrays
+        private TaxonomyIndexArrays GetTaxoArrays()
         {
-            get
+            if (taxoArrays == null)
             {
-                if (taxoArrays == null)
+                lock (this)
                 {
-                    lock (this)
+                    if (taxoArrays == null)
                     {
-                        if (taxoArrays == null)
+                        InitReaderManager();
+                        DirectoryReader reader = readerManager.Acquire();
+                        try
                         {
-                            InitReaderManager();
-                            DirectoryReader reader = readerManager.Acquire();
-                            try
-                            {
-                                // according to Java Concurrency, this might perform better on some
-                                // JVMs, since the object initialization doesn't happen on the
-                                // volatile member.
-                                TaxonomyIndexArrays tmpArrays = new TaxonomyIndexArrays(reader);
-                                taxoArrays = tmpArrays;
-                            }
-                            finally
-                            {
-                                readerManager.Release(reader);
-                            }
+                            // according to Java Concurrency, this might perform better on some
+                            // JVMs, since the object initialization doesn't happen on the
+                            // volatile member.
+                            TaxonomyIndexArrays tmpArrays = new TaxonomyIndexArrays(reader);
+                            taxoArrays = tmpArrays;
+                        }
+                        finally
+                        {
+                            readerManager.Release(reader);
                         }
                     }
                 }
-                return taxoArrays;
             }
+            return taxoArrays;
         }
 
         public virtual int GetParent(int ordinal)
@@ -892,7 +889,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 throw new System.IndexOutOfRangeException("requested ordinal is bigger than the largest ordinal in the taxonomy");
             }
 
-            int[] parents = TaxoArrays.Parents;
+            int[] parents = GetTaxoArrays().Parents;
             Debug.Assert(ordinal < parents.Length, "requested ordinal (" + ordinal + "); parents.length (" + parents.Length + ") !");
             return parents[ordinal];
         }
