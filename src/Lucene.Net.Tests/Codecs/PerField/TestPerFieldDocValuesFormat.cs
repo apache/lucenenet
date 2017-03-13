@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.PerField
             // we don't use RandomIndexWriter because it might add more docvalues than we expect !!!!1
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer);
             DocValuesFormat fast = DocValuesFormat.ForName("Lucene45");
-            DocValuesFormat slow = DocValuesFormat.ForName("Lucene45");
+            DocValuesFormat slow = DocValuesFormat.ForName("SimpleText");
             iwc.SetCodec(new Lucene46CodecAnonymousInnerClassHelper(this, fast, slow));
             IndexWriter iwriter = new IndexWriter(directory, iwc);
             Document doc = new Document();
