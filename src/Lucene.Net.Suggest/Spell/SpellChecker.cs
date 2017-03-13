@@ -177,7 +177,7 @@ namespace Lucene.Net.Search.Spell
 
 
         /// <summary>
-        /// Gets or sets the <see cref="T:StringDistance"/> implementation for this
+        /// Gets or sets the <see cref="IStringDistance"/> implementation for this
         /// <see cref="SpellChecker"/> instance.
         /// </summary>
         public virtual IStringDistance StringDistance
