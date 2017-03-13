@@ -1,4 +1,7 @@
+using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search
 {
@@ -18,9 +21,6 @@ namespace Lucene.Net.Search
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Util;
-    using System;
 
     //Used to hold non-generic nested types
     public static class FieldValueHitQueue
@@ -62,7 +62,7 @@ namespace Lucene.Net.Search
                 SetComparer(0, field.GetComparer(size, 0));
                 oneReverseMul = field.reverse ? -1 : 1;
 
-                GetReverseMul()[0] = oneReverseMul;
+                ReverseMul[0] = oneReverseMul;
             }
 
             /// <summary> Returns whether <c>a</c> is less relevant than <c>b</c>.</summary>
@@ -165,7 +165,7 @@ namespace Lucene.Net.Search
     /// @since 2.9 </summary>
     /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
     /// <seealso cref= FieldCache </seealso>
-    public abstract class FieldValueHitQueue<T> : PriorityQueue<T>
+    public abstract class FieldValueHitQueue<T> : Util.PriorityQueue<T>
         where T : FieldValueHitQueue.Entry
     {
         // prevent instantiation and extension.
@@ -184,14 +184,18 @@ namespace Lucene.Net.Search
             m_reverseMul = new int[numComparers];
         }
 
-        public virtual FieldComparer[] GetComparers() // LUCENENET TODO: Change to property
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public virtual FieldComparer[] Comparers
         {
-            return m_comparers;
+            get { return m_comparers; }
         }
 
-        public virtual int[] GetReverseMul() // LUCENENET TODO: Change to property
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        public virtual int[] ReverseMul
         {
-            return m_reverseMul;
+            get { return m_reverseMul; }
         }
 
         public virtual void SetComparer(int pos, FieldComparer comparer)
@@ -244,9 +248,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the SortFields being used by this hit queue. </summary>
-        internal virtual SortField[] GetFields() // LUCENENET TODO: Change to property
+        [WritableArray]
+        [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
+        internal virtual SortField[] Fields
         {
-            return m_fields;
+            get { return m_fields; }
         }
     }
 }

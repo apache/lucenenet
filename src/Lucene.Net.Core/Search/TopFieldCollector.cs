@@ -53,8 +53,8 @@ namespace Lucene.Net.Search
                 : base(queue, numHits, fillFields)
             {
                 this.queue = queue;
-                comparer = queue.GetComparers()[0];
-                reverseMul = queue.GetReverseMul()[0];
+                comparer = queue.Comparers[0];
+                reverseMul = queue.ReverseMul[0];
             }
 
             internal void UpdateBottom(int doc)
@@ -418,8 +418,8 @@ namespace Lucene.Net.Search
                 : base(queue, numHits, fillFields)
             {
                 this.queue = queue;
-                comparers = queue.GetComparers();
-                reverseMul = queue.GetReverseMul();
+                comparers = queue.Comparers;
+                reverseMul = queue.ReverseMul;
             }
 
             internal void UpdateBottom(int doc)
@@ -987,8 +987,8 @@ namespace Lucene.Net.Search
                 this.trackDocScores = trackDocScores;
                 this.trackMaxScore = trackMaxScore;
                 this.after = after;
-                comparers = queue.GetComparers();
-                reverseMul = queue.GetReverseMul();
+                comparers = queue.Comparers;
+                reverseMul = queue.ReverseMul;
 
                 // Must set maxScore to NEG_INF, or otherwise Math.max always returns NaN.
                 maxScore = float.NegativeInfinity;
@@ -1280,7 +1280,7 @@ namespace Lucene.Net.Search
 
             if (after == null)
             {
-                if (queue.GetComparers().Length == 1)
+                if (queue.Comparers.Length == 1)
                 {
                     if (docsScoredInOrder)
                     {
@@ -1404,7 +1404,7 @@ namespace Lucene.Net.Search
             }
 
             // If this is a maxScoring tracking collector and there were no results,
-            return new TopFieldDocs(m_totalHits, results, ((FieldValueHitQueue<Entry>)m_pq).GetFields(), maxScore);
+            return new TopFieldDocs(m_totalHits, results, ((FieldValueHitQueue<Entry>)m_pq).Fields, maxScore);
         }
 
         public override bool AcceptsDocsOutOfOrder
