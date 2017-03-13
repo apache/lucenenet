@@ -312,12 +312,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             return a;
         }
 
-        internal virtual TokenStreamToAutomaton TokenStreamToAutomaton
+        internal virtual TokenStreamToAutomaton GetTokenStreamToAutomaton()
         {
-            get
-            {
-                return new TokenStreamToAutomaton { PreservePositionIncrements = preservePositionIncrements };
-            }
+            return new TokenStreamToAutomaton { PreservePositionIncrements = preservePositionIncrements };
         }
 
         private sealed class AnalyzingComparer : IComparer<BytesRef>
@@ -407,7 +404,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             OfflineSorter.ByteSequencesReader reader = null;
             var scratch = new BytesRef();
 
-            TokenStreamToAutomaton ts2a = TokenStreamToAutomaton;
+            TokenStreamToAutomaton ts2a = GetTokenStreamToAutomaton();
 
             bool success = false;
             count = 0;
@@ -987,7 +984,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             TokenStream ts = queryAnalyzer.GetTokenStream("", key);
             try
             {
-                automaton = (TokenStreamToAutomaton).ToAutomaton(ts);
+                automaton = (GetTokenStreamToAutomaton()).ToAutomaton(ts);
             }
             finally
             {

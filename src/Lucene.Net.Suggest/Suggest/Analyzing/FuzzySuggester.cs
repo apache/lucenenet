@@ -211,14 +211,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
         }
 
-        internal override TokenStreamToAutomaton TokenStreamToAutomaton
+        internal override TokenStreamToAutomaton GetTokenStreamToAutomaton()
         {
-            get
-            {
-                var tsta = base.TokenStreamToAutomaton;
-                tsta.UnicodeArcs = unicodeAware;
-                return tsta;
-            }
+            var tsta = base.GetTokenStreamToAutomaton();
+            tsta.UnicodeArcs = unicodeAware;
+            return tsta;
         }
 
         internal Automaton ToLevenshteinAutomata(Automaton automaton)

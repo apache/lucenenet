@@ -898,7 +898,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 {
                     Console.WriteLine("  analyzed: " + analyzedKey);
                 }
-                TokenStreamToAutomaton tokenStreamToAutomaton = suggester.TokenStreamToAutomaton;
+                TokenStreamToAutomaton tokenStreamToAutomaton = suggester.GetTokenStreamToAutomaton();
 
                 // NOTE: not great that we ask the suggester to give
                 // us the "answer key" (ie maybe we have a bug in
