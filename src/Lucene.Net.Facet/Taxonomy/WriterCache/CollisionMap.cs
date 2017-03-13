@@ -275,10 +275,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 return e;
             }
 
-            public void Remove()
-            {
-                throw new System.NotSupportedException();
-            }
+            // LUCENENET specific - .NET doesn't support Remove() anyway, so we can nix this
+            //public void Remove()
+            //{
+            //    throw new System.NotSupportedException();
+            //}
 
             public void Dispose()
             {
