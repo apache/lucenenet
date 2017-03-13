@@ -150,8 +150,6 @@ namespace Lucene.Net.Queries
 
         private TermsFilter(FieldAndTermEnum iter, int length)
         {
-            iter.OuterInstance = this; // .NET specific, since "this" can't be used in ctor redirection
-
             // TODO: maybe use oal.index.PrefixCodedTerms instead?
             // If number of terms is more than a few hundred it
             // should be a win
@@ -386,8 +384,6 @@ namespace Lucene.Net.Queries
 
         private abstract class FieldAndTermEnum
         {
-            public TermsFilter OuterInstance { get; internal set; }
-
             protected string m_field;
 
             public abstract BytesRef Next();
