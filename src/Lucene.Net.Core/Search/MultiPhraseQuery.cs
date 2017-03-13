@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
     {
         private string field;
         private List<Term[]> termArrays = new List<Term[]>();
-        private readonly List<int> positions = new List<int>();
+        private readonly ValueList<int> positions = new ValueList<int>();
 
         private int slop = 0;
 
@@ -446,13 +446,13 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns a hash code value for this object. </summary>
-        public override int GetHashCode() // LUCENENET TODO: Check this algorithm - it may not be working correctly
+        public override int GetHashCode()
         {
             //If this doesn't work hash all elements of positions. This was used to reduce time overhead
             return Number.SingleToInt32Bits(Boost) 
                 ^ slop 
                 ^ TermArraysHashCode() 
-                ^ ((positions.Count == 0) ? 0 : HashHelpers.CombineHashCodes(positions.First().GetHashCode(), positions.Last().GetHashCode(), positions.Count) 
+                ^ ((positions.Count == 0) ? 0 : positions.GetHashCode() 
                 ^ 0x4AC65113);
         }
 
