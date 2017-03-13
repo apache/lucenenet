@@ -83,11 +83,11 @@ namespace Lucene.Net.Util
         /// Creates a new <seealso cref="CharsRef"/> initialized with the given array, offset and
         /// Length
         /// </summary>
-        public CharsRef(char[] chars, int offset, int Length)
+        public CharsRef(char[] chars, int offset, int length)
         {
             this.chars = chars;
             this.Offset = offset;
-            this.Length = Length;
+            this.Length = length;
             Debug.Assert(IsValid());
         }
 
