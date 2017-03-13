@@ -166,14 +166,25 @@ namespace Lucene.Net.Store
         ///
         /// <p>See <a href="#subclasses">above</a>
         /// </summary>
-        public static FSDirectory Open(DirectoryInfo path) // LUCENENET TODO: Add overloads to pass the directory as a string
+        public static FSDirectory Open(DirectoryInfo path)
         {
             return Open(path, null);
         }
 
         /// <summary>
+        /// Just like <see cref="Open(DirectoryInfo)"/>, but
+        /// allows you to specify the directory as a <see cref="string"/>.
+        /// </summary>
+        /// <param name="path">The path (to a directory) to open</param>
+        /// <returns>An open <see cref="FSDirectory"/></returns>
+        public static FSDirectory Open(string path) // LUCENENET specific overload for ease of use with .NET
+        {
+            return Open(new DirectoryInfo(path), null);
+        }
+
+        /// <summary>
         /// Just like <seealso cref="#open(File)"/>, but allows you to
-        ///  also specify a custom <seealso cref="LockFactory"/>.
+        /// also specify a custom <seealso cref="LockFactory"/>.
         /// </summary>
         public static FSDirectory Open(DirectoryInfo path, LockFactory lockFactory)
         {
@@ -190,6 +201,18 @@ namespace Lucene.Net.Store
             {
                 return new NIOFSDirectory(path, lockFactory);
             }
+        }
+
+        /// <summary>
+        /// Just like <see cref="Open(DirectoryInfo, LockFactory)"/>, but
+        /// allows you to specify the directory as a <see cref="string"/>.
+        /// </summary>
+        /// <param name="path">The path (to a directory) to open</param>
+        /// <param name="lockFactory"></param>
+        /// <returns>An open <see cref="FSDirectory"/></returns>
+        public static FSDirectory Open(string path, LockFactory lockFactory) // LUCENENET specific overload for ease of use with .NET
+        {
+            return Open(new DirectoryInfo(path), lockFactory);
         }
 
         public override void SetLockFactory(LockFactory lockFactory)
