@@ -161,37 +161,34 @@ namespace Lucene.Net.Support
                 string s = (suffix == null) ? ".tmp" : suffix;
                 if (directory == null)
                 {
-                    string tmpDir = Path.GetTempPath();
-                    directory = new DirectoryInfo(tmpDir);
+                    directory = new DirectoryInfo(Path.GetTempPath());
                 }
-                int attempt = 0;
+                string fileNameSuffix, fileName = string.Empty;
                 string extension = suffix.StartsWith(".") ? suffix : '.' + suffix;
-                string fileName = Path.Combine(directory.FullName, string.Concat(prefix, extension));
                 while (true)
                 {
+                    fileNameSuffix = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+                    fileName = Path.Combine(directory.FullName, string.Concat(prefix, fileNameSuffix, extension));
+
+                    if (File.Exists(fileName))
+                    {
+                        continue;
+                    }
+
                     try
                     {
-                        if (attempt > 0)
-                        {
-                            fileName = Path.Combine(directory.FullName, string.Concat(prefix, attempt.ToString(), extension));
-                        }
-                        if (File.Exists(fileName))
-                        {
-                            attempt++;
-                            continue;
-                        }
                         // Create the file
                         File.WriteAllText(fileName, string.Empty, new UTF8Encoding(false) /* No BOM */);
                         break;
                     }
                     catch (IOException e)
                     {
-                        if (!e.Message.Contains("already exists"))
+                        // If the error was not due to the file existing already, we need to throw
+                        // the error up the chain, otherwise swallow it and try again.
+                        if (!File.Exists(fileName))
                         {
                             throw e;
                         }
-
-                        attempt++;
                     }
                 }
                 return new FileInfo(fileName);
