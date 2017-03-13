@@ -1204,7 +1204,7 @@ namespace Lucene.Net.Util
 
                     // Make sure the result of applying the pattern to a string with extended
                     // unicode characters is a valid utf16 string. See LUCENE-4078 for discussion.
-                    if (replacement != null && UnicodeUtil.ValidUTF16String(replacement.ToCharArray()))
+                    if (replacement != null && UnicodeUtil.ValidUTF16String(replacement))
                     {
                         return p;
                     }

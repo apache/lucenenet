@@ -381,7 +381,7 @@ namespace Lucene.Net.Util
         }
         */
 
-        public static bool ValidUTF16String(char[] s) // LUCENENET TODO: Original accepted ICharSequence - we should have one overload for that and one for string
+        public static bool ValidUTF16String(ICharSequence s)
         {
             int size = s.Length;
             for (int i = 0; i < size; i++)
@@ -419,7 +419,83 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public static bool ValidUTF16String(char[] s, int size) // LUCENENET TODO: Original accepted ICharSequence - we should have one overload for that and one for string
+        public static bool ValidUTF16String(string s) // LUCENENET specific overload because string doesn't implement ICharSequence
+        {
+            int size = s.Length;
+            for (int i = 0; i < size; i++)
+            {
+                char ch = s[i];
+                if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_HIGH_END)
+                {
+                    if (i < size - 1)
+                    {
+                        i++;
+                        char nextCH = s[i];
+                        if (nextCH >= UNI_SUR_LOW_START && nextCH <= UNI_SUR_LOW_END)
+                        {
+                            // Valid surrogate pair
+                        }
+                        else
+                        // Unmatched high surrogate
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    // Unmatched high surrogate
+                    {
+                        return false;
+                    }
+                }
+                else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
+                // Unmatched low surrogate
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool ValidUTF16String(StringBuilder s) // LUCENENET specific overload because StringBuilder doesn't implement ICharSequence
+        {
+            int size = s.Length;
+            for (int i = 0; i < size; i++)
+            {
+                char ch = s[i];
+                if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_HIGH_END)
+                {
+                    if (i < size - 1)
+                    {
+                        i++;
+                        char nextCH = s[i];
+                        if (nextCH >= UNI_SUR_LOW_START && nextCH <= UNI_SUR_LOW_END)
+                        {
+                            // Valid surrogate pair
+                        }
+                        else
+                        // Unmatched high surrogate
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    // Unmatched high surrogate
+                    {
+                        return false;
+                    }
+                }
+                else if (ch >= UNI_SUR_LOW_START && ch <= UNI_SUR_LOW_END)
+                // Unmatched low surrogate
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public static bool ValidUTF16String(char[] s, int size) 
         {
             for (int i = 0; i < size; i++)
             {

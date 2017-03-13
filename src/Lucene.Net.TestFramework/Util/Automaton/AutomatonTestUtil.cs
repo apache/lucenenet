@@ -41,7 +41,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 string regexp = RandomRegexpString(r);
                 // we will also generate some undefined unicode queries
-                if (!UnicodeUtil.ValidUTF16String(regexp.ToCharArray()))
+                if (!UnicodeUtil.ValidUTF16String(regexp))
                 {
                     continue;
                 }
