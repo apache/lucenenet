@@ -1,10 +1,11 @@
+using NUnit.Framework;
+using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using System;
 using System.Threading;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
@@ -33,7 +34,12 @@ namespace Lucene.Net.Index
     public class TestNRTReaderWithThreads : LuceneTestCase
     {
         internal AtomicInt32 Seq = new AtomicInt32(1);
-        [Test]
+
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestIndexing()
         {
             Directory mainDir = NewDirectory();

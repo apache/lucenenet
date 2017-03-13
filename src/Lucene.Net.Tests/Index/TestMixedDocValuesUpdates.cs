@@ -492,7 +492,7 @@ namespace Lucene.Net.Index
 
 #if !NETSTANDARD
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(80000)]
+        [Timeout(180000)]
 #endif
         [Test, HasTimeout]
         public virtual void TestTonsOfUpdates()
