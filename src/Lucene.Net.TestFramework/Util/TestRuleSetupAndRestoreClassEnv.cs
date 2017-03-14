@@ -397,7 +397,7 @@ namespace Lucene.Net.Util
         /// </summary>
         private bool ShouldAvoidCodec(string codec)
         {
-            return avoidCodecs.Count > 0 && avoidCodecs.Contains(codec, StringComparer.Ordinal);
+            return avoidCodecs.Count > 0 && avoidCodecs.Contains(codec);
         }
     }
 }

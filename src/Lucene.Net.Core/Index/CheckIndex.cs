@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 
 namespace Lucene.Net.Index
 {
@@ -689,7 +688,7 @@ namespace Lucene.Net.Index
                 {
                     result.MaxSegmentName = segmentName;
                 }
-                if (onlySegments != null && !onlySegments.Contains(info.Info.Name, StringComparer.Ordinal))
+                if (onlySegments != null && !onlySegments.Contains(info.Info.Name))
                 {
                     continue;
                 }

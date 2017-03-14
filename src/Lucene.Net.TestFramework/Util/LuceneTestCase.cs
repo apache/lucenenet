@@ -522,7 +522,7 @@ namespace Lucene.Net.Util
               @Override
               protected bool accept(System.Reflection.FieldInfo field)
               {
-                  if (STATIC_LEAK_IGNORED_TYPES.Contains(field.Type.Name, StringComparer.Ordinal))
+                  if (STATIC_LEAK_IGNORED_TYPES.contains(field.Type.Name))
                   {
                       return false;
                   }

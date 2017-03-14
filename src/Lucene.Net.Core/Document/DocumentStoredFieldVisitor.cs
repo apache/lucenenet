@@ -1,7 +1,5 @@
 using Lucene.Net.Index;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Lucene.Net.Documents
 {
@@ -100,7 +98,7 @@ namespace Lucene.Net.Documents
 
         public override Status NeedsField(FieldInfo fieldInfo)
         {
-            return fieldsToAdd == null || fieldsToAdd.Contains(fieldInfo.Name, StringComparer.Ordinal) ? Status.YES : Status.NO;
+            return fieldsToAdd == null || fieldsToAdd.Contains(fieldInfo.Name) ? Status.YES : Status.NO;
         }
 
         /// <summary>

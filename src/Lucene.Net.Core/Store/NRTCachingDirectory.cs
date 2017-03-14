@@ -145,7 +145,7 @@ namespace Lucene.Net.Store
                     {
                         // Cannot do this -- if lucene calls createOutput but
                         // file already exists then this falsely trips:
-                        //assert !files.contains(f, StringComparer.Ordinal): "file \"" + f + "\" is in both dirs";
+                        //assert !files.contains(f): "file \"" + f + "\" is in both dirs";
                         files.Add(f);
                     }
                 }

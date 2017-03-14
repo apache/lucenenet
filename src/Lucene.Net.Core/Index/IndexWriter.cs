@@ -717,7 +717,7 @@ namespace Lucene.Net.Index
                 HashSet<string> seen = new HashSet<string>();
                 foreach (SegmentCommitInfo info in readerMap.Keys)
                 {
-                    Debug.Assert(!seen.Contains(info.Info.Name, StringComparer.Ordinal));
+                    Debug.Assert(!seen.Contains(info.Info.Name));
                     seen.Add(info.Info.Name);
                 }
                 return true;
@@ -3400,7 +3400,7 @@ namespace Lucene.Net.Index
             foreach (string file in info.Files())
             {
                 string newFileName;
-                if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file, StringComparer.Ordinal))
+                if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
                 {
                     newFileName = newDsName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
                 }
@@ -3445,10 +3445,10 @@ namespace Lucene.Net.Index
                 foreach (string file in info.Files())
                 {
                     string newFileName;
-                    if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file, StringComparer.Ordinal))
+                    if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
                     {
                         newFileName = newDsName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
-                        if (dsFilesCopied.Contains(newFileName, StringComparer.Ordinal))
+                        if (dsFilesCopied.Contains(newFileName))
                         {
                             continue;
                         }
@@ -3459,14 +3459,14 @@ namespace Lucene.Net.Index
                         newFileName = segName + Lucene.Net.Index.IndexFileNames.StripSegmentName(file);
                     }
 
-                    if (siFiles.Contains(newFileName, StringComparer.Ordinal))
+                    if (siFiles.Contains(newFileName))
                     {
                         // We already rewrote this above
                         continue;
                     }
 
                     Debug.Assert(!SlowFileExists(directory, newFileName), "file \"" + newFileName + "\" already exists; siFiles=" + siFiles);
-                    Debug.Assert(!copiedFiles.Contains(file, StringComparer.Ordinal), "file \"" + file + "\" is being copied more than once");
+                    Debug.Assert(!copiedFiles.Contains(file), "file \"" + file + "\" is being copied more than once");
                     copiedFiles.Add(file);
                     info.Info.Dir.Copy(directory, file, newFileName, context);
                 }

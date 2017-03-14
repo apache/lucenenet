@@ -152,7 +152,7 @@ namespace Lucene.Net.Store
         private Directory GetDirectory(string name)
         {
             string ext = GetExtension(name);
-            if (primaryExtensions.Contains(ext, StringComparer.Ordinal))
+            if (primaryExtensions.Contains(ext))
             {
                 return primaryDir;
             }
@@ -190,7 +190,7 @@ namespace Lucene.Net.Store
 
             foreach (string name in names)
             {
-                if (primaryExtensions.Contains(GetExtension(name), StringComparer.Ordinal))
+                if (primaryExtensions.Contains(GetExtension(name)))
                 {
                     primaryNames.Add(name);
                 }

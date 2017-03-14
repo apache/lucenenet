@@ -415,7 +415,7 @@ namespace Lucene.Net.Index
                 for (int termUpto = 0; termUpto < numTerms; termUpto++)
                 {
                     string term = TestUtil.RandomSimpleString(Random());
-                    if (seenTerms.Contains(term, StringComparer.Ordinal))
+                    if (seenTerms.Contains(term))
                     {
                         continue;
                     }
@@ -527,7 +527,7 @@ namespace Lucene.Net.Index
 
                 string pf = TestUtil.GetPostingsFormat(codec, oldFieldInfo.Name);
                 int fieldMaxIndexOption;
-                if (DoesntSupportOffsets.Contains(pf, StringComparer.Ordinal))
+                if (DoesntSupportOffsets.Contains(pf))
                 {
                     fieldMaxIndexOption = Math.Min(maxIndexOptionNoOffsets, maxIndexOption);
                 }
@@ -1317,7 +1317,7 @@ namespace Lucene.Net.Index
             {
                 string field = "f_" + opts;
                 string pf = TestUtil.GetPostingsFormat(Codec.Default, field);
-                if (opts == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && DoesntSupportOffsets.Contains(pf, StringComparer.Ordinal))
+                if (opts == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && DoesntSupportOffsets.Contains(pf))
                 {
                     continue;
                 }

@@ -20,7 +20,7 @@ namespace Lucene.Net.Util
         {
 #if FEATURE_STACKTRACE
             IEnumerable<string> allMethods = GetStackTrace(false);
-            return allMethods.Contains(methodName, StringComparer.Ordinal);
+            return allMethods.Contains(methodName);
 #else
             StackTrace trace = new StackTrace();
             foreach (var frame in trace.GetFrames())
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
         {
 #if FEATURE_STACKTRACE
             IEnumerable<string> allMethods = GetStackTrace(true);
-            return allMethods.Any(x => x.Contains(className + '.' + methodName, StringComparer.Ordinal));
+            return allMethods.Any(x => x.Contains(className + '.' + methodName));
 #else
             StackTrace trace = new StackTrace();
             foreach (var frame in trace.GetFrames())
