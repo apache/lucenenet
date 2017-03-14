@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         {
             if (commonWordFiles != null)
             {
-                if ("snowball".Equals(format, StringComparison.CurrentCultureIgnoreCase))
+                if ("snowball".Equals(format, StringComparison.OrdinalIgnoreCase))
                 {
                     commonWords = GetSnowballWordSet(loader, commonWordFiles, ignoreCase);
                 }

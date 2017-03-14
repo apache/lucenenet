@@ -400,7 +400,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
             public override object GetEntity(Uri absoluteUri, string role, Type ofObjectToReturn)
             {
                 string dtdFilename = "hyphenation.dtd";
-                if (dtdFilename.Equals(absoluteUri.Segments.LastOrDefault(), StringComparison.OrdinalIgnoreCase))
+                if (dtdFilename.Equals(absoluteUri.Segments.LastOrDefault()))
                 {
                     var qualifedDtdFilename = string.Concat(GetType().Namespace, ".", dtdFilename);
                     return GetType().Assembly.GetManifestResourceStream(qualifedDtdFilename);

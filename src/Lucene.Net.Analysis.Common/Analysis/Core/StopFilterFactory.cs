@@ -96,11 +96,11 @@ namespace Lucene.Net.Analysis.Core
         {
             if (stopWordFiles != null)
             {
-                if (FORMAT_WORDSET.Equals(format, StringComparison.CurrentCultureIgnoreCase))
+                if (FORMAT_WORDSET.Equals(format, StringComparison.OrdinalIgnoreCase))
                 {
                     stopWords = GetWordSet(loader, stopWordFiles, ignoreCase);
                 }
-                else if (FORMAT_SNOWBALL.Equals(format, StringComparison.CurrentCultureIgnoreCase))
+                else if (FORMAT_SNOWBALL.Equals(format, StringComparison.OrdinalIgnoreCase))
                 {
                     stopWords = GetSnowballWordSet(loader, stopWordFiles, ignoreCase);
                 }

@@ -123,19 +123,19 @@ namespace Lucene.Net.Collation
 			// set the strength flag, otherwise it will be the default.
 			if (this.strength != null)
 			{
-				if (this.strength.Equals("primary", StringComparison.CurrentCultureIgnoreCase))
+				if (this.strength.Equals("primary", StringComparison.OrdinalIgnoreCase))
 				{
 					this.collator.Strength = CollationStrength.Primary;
 				}
-				else if (this.strength.Equals("secondary", StringComparison.CurrentCultureIgnoreCase))
+				else if (this.strength.Equals("secondary", StringComparison.OrdinalIgnoreCase))
 				{
 					this.collator.Strength = CollationStrength.Secondary;
 				}
-				else if (this.strength.Equals("tertiary", StringComparison.CurrentCultureIgnoreCase))
+				else if (this.strength.Equals("tertiary", StringComparison.OrdinalIgnoreCase))
 				{
                     this.collator.Strength = CollationStrength.Tertiary;
 				}
-				else if (this.strength.Equals("identical", StringComparison.CurrentCultureIgnoreCase))
+				else if (this.strength.Equals("identical", StringComparison.OrdinalIgnoreCase))
 				{
                     this.collator.Strength = CollationStrength.Identical;
 				}
@@ -150,15 +150,15 @@ namespace Lucene.Net.Collation
             // set the decomposition flag, otherwise it will be the default.
             if (this.decomposition != null)
             {
-                if (this.decomposition.Equals("no", StringComparison.CurrentCultureIgnoreCase))
+                if (this.decomposition.Equals("no", StringComparison.OrdinalIgnoreCase))
                 {
                     this.collator.NormalizationMode = NormalizationMode.Default; // .Decomposition = Collator.NoDecomposition;
                 }
-                else if (this.decomposition.Equals("canonical", StringComparison.CurrentCultureIgnoreCase))
+                else if (this.decomposition.Equals("canonical", StringComparison.OrdinalIgnoreCase))
                 {
                     this.collator.NormalizationMode = NormalizationMode.Off; //.Decomposition = Collator.CannonicalDecomposition;
                 }
-                else if (this.decomposition.Equals("full", StringComparison.CurrentCultureIgnoreCase))
+                else if (this.decomposition.Equals("full", StringComparison.OrdinalIgnoreCase))
                 {
                     this.collator.NormalizationMode = NormalizationMode.On; //.Decomposition = Collator.FullDecomposition;
                 }
