@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
             private Directory dir;
 
             /// <summary>
-            /// Create a {@code MergeException}. </summary>
+            /// Create a <see cref="MergeException"/>. </summary>
             public MergeException(string message, Directory dir)
                 : base(message)
             {
@@ -489,9 +489,9 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Create a {@code MergeException}. </summary>
+            /// Create a <see cref="MergeException"/>. </summary>
             public MergeException(Exception exc, Directory dir)
-                : base(exc.Message)
+                : base(exc.ToString(), exc)
             {
                 this.dir = dir;
             }
