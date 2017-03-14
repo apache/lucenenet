@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Hunspell
@@ -40,7 +41,9 @@ namespace Lucene.Net.Analysis.Hunspell
     {
 
         // set this to the location of where you downloaded all the files
-        internal static readonly DirectoryInfo DICTIONARY_HOME = new DirectoryInfo(@"..\..\..\..\test-files\analysis\data\thunderbirdDicts");
+        internal static readonly DirectoryInfo DICTIONARY_HOME = new DirectoryInfo(
+            System.IO.Path.Combine(new DirectoryInfo(typeof(TestAllDictionaries2).GetTypeInfo().Assembly.Location).Parent.Parent.Parent.Parent.Parent.FullName,
+                @"test-files\analysis\data\thunderbirdDicts"));
 
         internal readonly string[] tests = new string[]
         {
