@@ -1,5 +1,7 @@
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Index
@@ -53,7 +55,7 @@ namespace Lucene.Net.Index
 
         internal bool HasField(string field)
         {
-            return Negate ^ Fields_Renamed.Contains(field);
+            return Negate ^ Fields_Renamed.Contains(field, StringComparer.Ordinal);
         }
 
         public override FieldInfos FieldInfos

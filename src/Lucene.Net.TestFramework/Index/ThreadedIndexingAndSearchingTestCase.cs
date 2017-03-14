@@ -732,7 +732,7 @@ namespace Lucene.Net.Index
             for (int id = 0; id < endID; id++)
             {
                 string stringID = "" + id;
-                if (!delIDs.Contains(stringID))
+                if (!delIDs.Contains(stringID, StringComparer.Ordinal))
                 {
                     TopDocs hits = s.Search(new TermQuery(new Term("docid", stringID)), 1);
                     if (hits.TotalHits != 1)

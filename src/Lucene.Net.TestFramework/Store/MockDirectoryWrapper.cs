@@ -594,7 +594,7 @@ namespace Lucene.Net.Store
                     throw new System.IO.IOException("cannot delete after crash");
                 }
 
-                if (UnSyncedFiles.Contains(name))
+                if (UnSyncedFiles.Contains(name, StringComparer.Ordinal))
                 {
                     UnSyncedFiles.Remove(name);
                 }
@@ -661,7 +661,7 @@ namespace Lucene.Net.Store
                 Init();
                 lock (this)
                 {
-                    if (PreventDoubleWrite_Renamed && CreatedFiles.Contains(name) && !name.Equals("segments.gen", StringComparison.Ordinal))
+                    if (PreventDoubleWrite_Renamed && CreatedFiles.Contains(name, StringComparer.Ordinal) && !name.Equals("segments.gen", StringComparison.Ordinal))
                     {
                         throw new System.IO.IOException("file \"" + name + "\" was already written to");
                     }
@@ -969,7 +969,7 @@ namespace Lucene.Net.Store
                             ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles));
                             ISet<string> endSet = new SortedSet<string>(Arrays.AsList(endFiles));
 
-                            if (pendingDeletions.Contains("segments.gen") && endSet.Contains("segments.gen"))
+                            if (pendingDeletions.Contains("segments.gen", StringComparer.Ordinal) && endSet.Contains("segments.gen", StringComparer.Ordinal))
                             {
                                 // this is possible if we hit an exception while writing segments.gen, we try to delete it
                                 // and it ends out in pendingDeletions (but IFD wont remove this).
@@ -1009,9 +1009,9 @@ namespace Lucene.Net.Store
                                         ISet<string> ghosts = new HashSet<string>(sis.Files(m_input, false));
                                         foreach (string s in ghosts)
                                         {
-                                            if (endSet.Contains(s) && !startSet.Contains(s))
+                                            if (endSet.Contains(s, StringComparer.Ordinal) && !startSet.Contains(s, StringComparer.Ordinal))
                                             {
-                                                Debug.Assert(pendingDeletions.Contains(s));
+                                                Debug.Assert(pendingDeletions.Contains(s, StringComparer.Ordinal));
                                                 if (LuceneTestCase.VERBOSE)
                                                 {
                                                     Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + "from " + file + " that we could not delete.");
@@ -1037,7 +1037,7 @@ namespace Lucene.Net.Store
                                 IList<string> removed = new List<string>();
                                 foreach (string fileName in startFiles)
                                 {
-                                    if (!endSet.Contains(fileName))
+                                    if (!endSet.Contains(fileName, StringComparer.Ordinal))
                                     {
                                         removed.Add(fileName);
                                     }
@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Store
                                 IList<string> added = new List<string>();
                                 foreach (string fileName in endFiles)
                                 {
-                                    if (!startSet.Contains(fileName))
+                                    if (!startSet.Contains(fileName, StringComparer.Ordinal))
                                     {
                                         added.Add(fileName);
                                     }
@@ -1323,7 +1323,7 @@ namespace Lucene.Net.Store
             // cannot open a file for input if it's still open for
             // output, except for segments.gen and segments_N
 
-            if (OpenFilesForWrite.Contains(name) && !name.StartsWith("segments", StringComparison.Ordinal))
+            if (OpenFilesForWrite.Contains(name, StringComparer.Ordinal) && !name.StartsWith("segments", StringComparison.Ordinal))
             {
                 throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
             }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Lucene.Net.Index
 {
@@ -195,7 +196,7 @@ namespace Lucene.Net.Index
         {
             foreach (PostingsFormat p in postings)
             {
-                if (!avoidCodecs.Contains(p.Name))
+                if (!avoidCodecs.Contains(p.Name, StringComparer.Ordinal))
                 {
                     formats.Add(p);
                     formatNames.Add(p.Name);
@@ -207,7 +208,7 @@ namespace Lucene.Net.Index
         {
             foreach (DocValuesFormat d in docvalues)
             {
-                if (!avoidCodecs.Contains(d.Name))
+                if (!avoidCodecs.Contains(d.Name, StringComparer.Ordinal))
                 {
                     dvFormats.Add(d);
                     dvFormatNames.Add(d.Name);

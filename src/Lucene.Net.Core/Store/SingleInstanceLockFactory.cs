@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Store
 {
@@ -45,7 +47,7 @@ namespace Lucene.Net.Store
         {
             lock (locks)
             {
-                if (locks.Contains(lockName))
+                if (locks.Contains(lockName, StringComparer.Ordinal))
                 {
                     locks.Remove(lockName);
                 }
@@ -86,7 +88,7 @@ namespace Lucene.Net.Store
             {
                 lock (locks)
                 {
-                    return locks.Contains(lockName);
+                    return locks.Contains(lockName, StringComparer.Ordinal);
                 }
             }
         }

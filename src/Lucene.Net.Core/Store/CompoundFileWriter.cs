@@ -274,7 +274,7 @@ namespace Lucene.Net.Store
                 entry.File = name;
                 entries[name] = entry;
                 string id = IndexFileNames.StripSegmentName(name);
-                Debug.Assert(!seenIDs.Contains(id), "file=\"" + name + "\" maps to id=\"" + id + "\", which was already written");
+                Debug.Assert(!seenIDs.Contains(id, StringComparer.Ordinal), "file=\"" + name + "\" maps to id=\"" + id + "\", which was already written");
                 seenIDs.Add(id);
                 DirectCFSIndexOutput @out;
 

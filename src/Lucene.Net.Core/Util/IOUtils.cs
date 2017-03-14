@@ -257,7 +257,7 @@ namespace Lucene.Net.Util
         /// suppressed exceptions to a data field. </summary>
         /// <param name="exception"> this exception should get the suppressed one added </param>
         /// <param name="suppressed"> the suppressed exception </param>
-        private static void AddSuppressed(Exception exception, Exception suppressed)
+        private static void AddSuppressed(Exception exception, Exception suppressed) // LUCENENET TODO: It would be nice if we actually sent this exception somewhere...
         {
             if (exception != null && suppressed != null)
             {

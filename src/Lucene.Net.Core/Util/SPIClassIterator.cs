@@ -235,7 +235,7 @@ namespace Lucene.Net.Util
 
                 var publicKeyToken = string.Concat(publicKey.Select(i => i.ToString("x2")));
 
-                return s_microsoftKeys.Contains(publicKeyToken);
+                return s_microsoftKeys.Contains(publicKeyToken, StringComparer.Ordinal);
             }
         }
     }
