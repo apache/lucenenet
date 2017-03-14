@@ -225,7 +225,7 @@ namespace Lucene.Net.Queries.Mlt
                     return false;
                 }
             }
-            else if (!stopWords.Equals(other.stopWords))
+            else if (!stopWords.SetEquals(other.stopWords))
             {
                 return false;
             }
