@@ -110,7 +110,7 @@ namespace Lucene.Net.Util
                                 switch (parameters.Length)
                                 {
                                     case 0: // default ctor
-                                        return true;
+                                        return false; // LUCENENET NOTE: Now that we have factored Codecs into Abstract Factories, we don't need default constructors here
                                     case 1:
                                         return typeof(IDictionary<string, string>).IsAssignableFrom(parameters[0].ParameterType);
                                     default:
