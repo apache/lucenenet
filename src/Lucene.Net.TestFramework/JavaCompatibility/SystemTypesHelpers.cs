@@ -30,7 +30,7 @@ namespace Lucene.Net
                 string result = obj.ToString();
                 // Assume that this is a default call to object.ToString()
                 // when it starts with the same namespace as the type.
-                if (!result.StartsWith(obj.GetType().Namespace))
+                if (!result.StartsWith(obj.GetType().Namespace, StringComparison.Ordinal))
                 {
                     return result;
                 }

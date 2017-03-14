@@ -357,7 +357,7 @@ namespace Lucene.Net.Search
 
             Explanation[] detail = expl.GetDetails();
             // TODO: can we improve this entire method? its really geared to work only with TF/IDF
-            if (expl.Description.EndsWith("computed from:"))
+            if (expl.Description.EndsWith("computed from:", StringComparison.Ordinal))
             {
                 return; // something more complicated.
             }
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search
                 {
                     // simple containment, unless its a freq of: (which lets a query explain how the freq is calculated),
                     // just verify contained expl has same score
-                    if (!expl.Description.EndsWith("with freq of:"))
+                    if (!expl.Description.EndsWith("with freq of:", StringComparison.Ordinal))
                     {
                         VerifyExplanation(q, doc, score, deep, detail[0]);
                     }
@@ -379,9 +379,9 @@ namespace Lucene.Net.Search
                     // - have "max plus <x> times others" (where <x> is float).
                     float x = 0;
                     string descr = CultureInfo.InvariantCulture.TextInfo.ToLower(expl.Description);
-                    bool productOf = descr.EndsWith("product of:");
-                    bool sumOf = descr.EndsWith("sum of:");
-                    bool maxOf = descr.EndsWith("max of:");
+                    bool productOf = descr.EndsWith("product of:", StringComparison.Ordinal);
+                    bool sumOf = descr.EndsWith("sum of:", StringComparison.Ordinal);
+                    bool maxOf = descr.EndsWith("max of:", StringComparison.Ordinal);
                     bool maxTimesOthers = false;
                     if (!(productOf || sumOf || maxOf))
                     {

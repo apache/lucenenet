@@ -389,7 +389,7 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
-                    if (field.Name.StartsWith("<")) // Ignore auto-implemented properties
+                    if (field.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore auto-implemented properties
                     {
                         continue;
                     }
@@ -426,7 +426,7 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
-                if (!string.IsNullOrEmpty(c.Namespace) && c.Namespace.StartsWith("Lucene.Net.Support"))
+                if (!string.IsNullOrEmpty(c.Namespace) && c.Namespace.StartsWith("Lucene.Net.Support", StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -435,7 +435,7 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
-                    if (field.Name.StartsWith("<")) // Ignore auto-implemented properties
+                    if (field.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore auto-implemented properties
                     {
                         continue;
                     }
@@ -468,12 +468,12 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
-                if (c.Name.StartsWith("<")) // Ignore classes produced by anonymous methods 
+                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods 
                 {
                     continue;
                 }
 
-                if (!string.IsNullOrEmpty(c.Namespace) && c.Namespace.StartsWith("Lucene.Net.Support"))
+                if (!string.IsNullOrEmpty(c.Namespace) && c.Namespace.StartsWith("Lucene.Net.Support", StringComparison.Ordinal))
                 {
                     continue;
                 }
@@ -482,7 +482,7 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
-                    if (field.Name.StartsWith("<")) // Ignore auto-implemented properties
+                    if (field.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore auto-implemented properties
                     {
                         continue;
                     }
@@ -514,7 +514,7 @@ namespace Lucene.Net.Util
 
                 foreach (var method in methods)
                 {
-                    if (method.Name.StartsWith("<")) // Ignore auto-generated methods
+                    if (method.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore auto-generated methods
                     {
                         continue;
                     }
@@ -559,7 +559,7 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
-                if (c.Name.StartsWith("<")) // Ignore classes produced by anonymous methods 
+                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods 
                 {
                     continue;
                 }
@@ -646,7 +646,7 @@ namespace Lucene.Net.Util
 
                 foreach (var field in fields)
                 {
-                    if (field.Name.StartsWith("<")) // Ignore auto-implemented properties
+                    if (field.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore auto-implemented properties
                     {
                         continue;
                     }
@@ -685,7 +685,7 @@ namespace Lucene.Net.Util
                 {
                     if (ContainsComparer.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
                     {
-                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
                         }
@@ -718,7 +718,7 @@ namespace Lucene.Net.Util
                 {
                     if ("Size".Equals(member.Name, StringComparison.OrdinalIgnoreCase) && member.DeclaringType.Equals(t.UnderlyingSystemType))
                     {
-                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
                             var method = (MethodInfo)member;
                             // Ignore methods with parameters
@@ -764,7 +764,7 @@ namespace Lucene.Net.Util
 
                     if (ContainsNonNetNumeric.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
                     {
-                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
                         }
@@ -808,7 +808,7 @@ namespace Lucene.Net.Util
 
             foreach (var c in classes)
             {
-                if (c.Name.StartsWith("<")) // Ignore classes produced by anonymous methods 
+                if (c.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore classes produced by anonymous methods 
                 {
                     continue;
                 }
@@ -827,7 +827,7 @@ namespace Lucene.Net.Util
                     }
 
                     // Ignore property method definitions
-                    if (method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
+                    if (method.Name.StartsWith("get_", StringComparison.Ordinal) || method.Name.StartsWith("set_", StringComparison.Ordinal))
                     {
                         continue;
                     }
@@ -865,7 +865,7 @@ namespace Lucene.Net.Util
 
                 foreach (var member in members)
                 {
-                    if (member.Name.StartsWith("<")) // Ignore auto-generated methods
+                    if (member.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore auto-generated methods
                     {
                         continue;
                     }
@@ -878,7 +878,7 @@ namespace Lucene.Net.Util
 
                     if (member.DeclaringType.Equals(t.UnderlyingSystemType))
                     {
-                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
                             var method = (MethodInfo)member;
 
@@ -977,14 +977,14 @@ namespace Lucene.Net.Util
 
                 foreach (var member in members)
                 {
-                    if (member.Name.StartsWith("<")) // Ignore auto-generated methods
+                    if (member.Name.StartsWith("<", StringComparison.Ordinal)) // Ignore auto-generated methods
                     {
                         continue;
                     }
 
                     if (member.DeclaringType.Equals(t.UnderlyingSystemType))
                     {
-                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_") || member.Name.StartsWith("set_")))
+                        if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
                             var method = (MethodInfo)member;
 

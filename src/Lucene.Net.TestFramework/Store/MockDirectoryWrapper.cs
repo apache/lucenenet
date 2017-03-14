@@ -791,7 +791,7 @@ namespace Lucene.Net.Store
 
                 // cannot open a file for input if it's still open for
                 // output, except for segments.gen and segments_N
-                if (!AllowReadingFilesStillOpenForWrite_Renamed && OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
+                if (!AllowReadingFilesStillOpenForWrite_Renamed && OpenFilesForWrite.Contains(name, StringComparer.Ordinal) && !name.StartsWith("segments", StringComparison.Ordinal))
                 {
                     throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
                 }
@@ -985,7 +985,7 @@ namespace Lucene.Net.Store
                             // an issue (IFD would nuke this stuff eventually), but we pass NoDeletionPolicy...
                             foreach (string file in pendingDeletions)
                             {
-                                if (file.StartsWith("segments", StringComparison.Ordinal) && !file.Equals("segments.gen", StringComparison.Ordinal) && endSet.Contains(file))
+                                if (file.StartsWith("segments", StringComparison.Ordinal) && !file.Equals("segments.gen", StringComparison.Ordinal) && endSet.Contains(file, StringComparer.Ordinal))
                                 {
                                     startSet.Add(file);
                                     if (LuceneTestCase.VERBOSE)
@@ -1323,7 +1323,7 @@ namespace Lucene.Net.Store
             // cannot open a file for input if it's still open for
             // output, except for segments.gen and segments_N
 
-            if (OpenFilesForWrite.Contains(name) && !name.StartsWith("segments"))
+            if (OpenFilesForWrite.Contains(name) && !name.StartsWith("segments", StringComparison.Ordinal))
             {
                 throw WithAdditionalErrorInformation(new IOException("MockDirectoryWrapper: file \"" + name + "\" is still open for writing"), name, false);
             }

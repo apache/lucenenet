@@ -164,7 +164,7 @@ namespace Lucene.Net.Support
                     directory = new DirectoryInfo(Path.GetTempPath());
                 }
                 string fileNameSuffix, fileName = string.Empty;
-                string extension = suffix.StartsWith(".") ? suffix : '.' + suffix;
+                string extension = suffix.StartsWith(".", StringComparison.Ordinal) ? suffix : '.' + suffix;
                 while (true)
                 {
                     fileNameSuffix = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());

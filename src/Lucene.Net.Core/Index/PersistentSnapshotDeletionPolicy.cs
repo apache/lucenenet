@@ -266,7 +266,7 @@ namespace Lucene.Net.Index
             {
                 foreach (string file in dir.ListAll())
                 {
-                    if (file.StartsWith(SNAPSHOTS_PREFIX))
+                    if (file.StartsWith(SNAPSHOTS_PREFIX, StringComparison.Ordinal))
                     {
                         dir.DeleteFile(file);
                     }
@@ -308,7 +308,7 @@ namespace Lucene.Net.Index
                 IList<string> snapshotFiles = new List<string>();
                 foreach (string file in dir.ListAll())
                 {
-                    if (file.StartsWith(SNAPSHOTS_PREFIX))
+                    if (file.StartsWith(SNAPSHOTS_PREFIX, StringComparison.Ordinal))
                     {
                         long gen = Convert.ToInt64(file.Substring(SNAPSHOTS_PREFIX.Length));
                         if (genLoaded == -1 || gen > genLoaded)

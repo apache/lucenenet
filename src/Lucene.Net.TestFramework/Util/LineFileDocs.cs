@@ -107,7 +107,7 @@ namespace Lucene.Net.Util
                     // if its not in classpath, we load it as absolute filesystem path (e.g. Hudson's home dir)
                     FileInfo file = new FileInfo(Path);
                     size = file.Length;
-                    if (Path.EndsWith(".gz"))
+                    if (Path.EndsWith(".gz", StringComparison.Ordinal))
                     {
                         // if it is a gzip file, we need to use InputStream and slowly skipTo:
                         @is = new FileStream(file.FullName, FileMode.Append, FileAccess.Write, FileShare.Read);
@@ -132,7 +132,7 @@ namespace Lucene.Net.Util
                     size = @is.Length;// available();
                 }
 
-                if (Path.EndsWith(".gz"))
+                if (Path.EndsWith(".gz", StringComparison.Ordinal))
                 {
                     using (var gzs = new GZipStream(@is, CompressionMode.Decompress))
                     {

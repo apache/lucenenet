@@ -343,17 +343,17 @@ namespace Lucene.Net.Index
         private static SeedPostings GetSeedPostings(string term, long seed, bool withLiveDocs, IndexOptions options)
         {
             int minDocFreq, maxDocFreq;
-            if (term.StartsWith("big_"))
+            if (term.StartsWith("big_", StringComparison.Ordinal))
             {
                 minDocFreq = RANDOM_MULTIPLIER * 50000;
                 maxDocFreq = RANDOM_MULTIPLIER * 70000;
             }
-            else if (term.StartsWith("medium_"))
+            else if (term.StartsWith("medium_", StringComparison.Ordinal))
             {
                 minDocFreq = RANDOM_MULTIPLIER * 3000;
                 maxDocFreq = RANDOM_MULTIPLIER * 6000;
             }
-            else if (term.StartsWith("low_"))
+            else if (term.StartsWith("low_", StringComparison.Ordinal))
             {
                 minDocFreq = RANDOM_MULTIPLIER;
                 maxDocFreq = RANDOM_MULTIPLIER * 40;

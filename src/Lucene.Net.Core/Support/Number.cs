@@ -164,7 +164,7 @@ namespace Lucene.Net.Support
             long result = 0;
             long mult = 1;
 
-            s = s.ToLower();
+            s = s.ToLowerInvariant(); // LUCENENET TODO: Do we need to deal with Turkish? If so, this won't work right...
 
             for (int i = s.Length - 1; i >= 0; i--)
             {
@@ -232,7 +232,7 @@ namespace Lucene.Net.Support
             long factor;
 
             // handle negative number
-            if (s.StartsWith("-"))
+            if (s.StartsWith("-", StringComparison.Ordinal))
             {
                 s = s.Substring(1);
                 factor = -1;

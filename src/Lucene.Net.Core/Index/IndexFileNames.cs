@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -137,7 +138,7 @@ namespace Lucene.Net.Index
         {
             if (ext.Length > 0 || segmentSuffix.Length > 0)
             {
-                Debug.Assert(!ext.StartsWith("."));
+                Debug.Assert(!ext.StartsWith(".", StringComparison.Ordinal));
                 StringBuilder sb = new StringBuilder(segmentName.Length + 2 + segmentSuffix.Length + ext.Length);
                 sb.Append(segmentName);
                 if (segmentSuffix.Length > 0)
@@ -164,7 +165,7 @@ namespace Lucene.Net.Index
         {
             // It doesn't make a difference whether we allocate a StringBuilder ourself
             // or not, since there's only 1 '+' operator.
-            return filename.EndsWith("." + ext);
+            return filename.EndsWith("." + ext, StringComparison.Ordinal);
         }
 
         /// <summary>

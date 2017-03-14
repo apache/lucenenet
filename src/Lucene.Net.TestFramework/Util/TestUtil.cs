@@ -671,10 +671,10 @@ namespace Lucene.Net.Util
                 switch (NextInt(random, 0, 2))
                 {
                     case 0:
-                        builder.Append(toRecase.ToUpper());
+                        builder.Append(toRecase.ToUpper()); // LUCENENET NOTE: Intentionally using current culture
                         break;
                     case 1:
-                        builder.Append(toRecase.ToLower());
+                        builder.Append(toRecase.ToLower()); // LUCENENET NOTE: Intentionally using current culture
                         break;
                     case 2:
                         builder.Append(toRecase);

@@ -14,7 +14,7 @@ namespace Lucene.Net.Randomized
             int result = 0;
             foreach (var item in seed.ToCharArray())
             {
-                var character = Char.ToLower(item);
+                var character = char.ToLower(item); // LUCENENET NOTE: Intentionally using current culture
                 result = result << 4;
                 if (character >= '0' && character <= '9')
                     result |= (character - '0');

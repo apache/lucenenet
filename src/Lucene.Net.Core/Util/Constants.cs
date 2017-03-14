@@ -63,23 +63,23 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// True iff running on Linux. </summary>
-        public static readonly bool LINUX = OS_NAME.StartsWith("Linux");
+        public static readonly bool LINUX = OS_NAME.StartsWith("Linux", StringComparison.Ordinal);
 
         /// <summary>
         /// True iff running on Windows. </summary>
-        public static readonly bool WINDOWS = OS_NAME.StartsWith("Windows");
+        public static readonly bool WINDOWS = OS_NAME.StartsWith("Windows", StringComparison.Ordinal);
 
         /// <summary>
         /// True iff running on SunOS. </summary>
-        public static readonly bool SUN_OS = OS_NAME.StartsWith("SunOS");
+        public static readonly bool SUN_OS = OS_NAME.StartsWith("SunOS", StringComparison.Ordinal);
 
         /// <summary>
         /// True iff running on Mac OS X </summary>
-        public static readonly bool MAC_OS_X = OS_NAME.StartsWith("Mac OS X");
+        public static readonly bool MAC_OS_X = OS_NAME.StartsWith("Mac OS X", StringComparison.Ordinal);
 
         /// <summary>
         /// True iff running on FreeBSD </summary>
-        public static readonly bool FREE_BSD = OS_NAME.StartsWith("FreeBSD");
+        public static readonly bool FREE_BSD = OS_NAME.StartsWith("FreeBSD", StringComparison.Ordinal);
 
         public static readonly string OS_ARCH = GetEnvironmentVariable("PROCESSOR_ARCHITECTURE", "x86");
         public static readonly string OS_VERSION = GetEnvironmentVariable("OS_VERSION", "?");

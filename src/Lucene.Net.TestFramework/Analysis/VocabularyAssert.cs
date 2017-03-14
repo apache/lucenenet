@@ -50,7 +50,7 @@ namespace Lucene.Net.Analysis
             string inputLine = null;
             while ((inputLine = vocReader.ReadLine()) != null)
             {
-                if (inputLine.StartsWith("#") || inputLine.Trim().Length == 0)
+                if (inputLine.StartsWith("#", System.StringComparison.Ordinal) || inputLine.Trim().Length == 0)
                 {
                     continue; // comment
                 }

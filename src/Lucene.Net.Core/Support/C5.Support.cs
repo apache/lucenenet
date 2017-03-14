@@ -4812,7 +4812,7 @@ namespace Lucene.Net.Support.C5
             //TODO: validate format string
             if (format == null)
                 return 80;
-            if (format.Length > 1 && format.StartsWith("L"))
+            if (format.Length > 1 && format.StartsWith("L", StringComparison.Ordinal))
             {
                 return int.Parse(format.Substring(1));
             }
