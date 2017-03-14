@@ -806,29 +806,6 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// LUCENENET specific - we need custom handling for sorting strings the same
-        /// way they were sorted in Java.
-        /// </summary>
-        private class StringOrdinalComparer : IComparer<string> 
-        {
-            internal StringOrdinalComparer()
-            {
-            }
-
-            public virtual int Compare(string o1, string o2)
-            {
-                return string.CompareOrdinal(o1, o2);
-            }
-        }
-
-        /// <summary>
-        /// A comparer that uses the <see cref="string.CompareOrdinal(string, string)"/> method to make
-        /// string comparisons, which provides a culture-insensitive sort operation (similar to Java's default
-        /// string comparision).
-        /// </summary>
-        public static readonly IComparer<string> STRING_ORDINAL_COMPARER = new StringOrdinalComparer();
-
-        /// <summary>
         /// Get the natural <seealso cref="Comparer"/> for the provided object class.
         /// <para/>
         /// The comparer returned depends on the <typeparam name="T"/> argument:
@@ -852,7 +829,7 @@ namespace Lucene.Net.Util
             // in a culture-insenitive manner.
             if (typeof(T).Equals(typeof(string)))
             {
-                return (IComparer<T>)STRING_ORDINAL_COMPARER;
+                return (IComparer<T>)StringComparer.Ordinal;
             }
             // LUCENENET specific - Only return the NaturalComparer if the type
             // implements IComparable<T>, otherwise use Comparer<T>.Default.

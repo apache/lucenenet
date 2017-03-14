@@ -138,8 +138,8 @@ namespace Lucene.Net.Search.Suggest.Fst
         {
             int numWords = AtLeast(1000);
 
-            IDictionary<string, long> slowCompletor = new SortedDictionary<string, long>(ArrayUtil.STRING_ORDINAL_COMPARER); //new TreeMap<>();
-            ISet<string> allPrefixes = new SortedSet<string>(ArrayUtil.STRING_ORDINAL_COMPARER); //new TreeSet<>();
+            IDictionary<string, long> slowCompletor = new SortedDictionary<string, long>(StringComparer.Ordinal); //new TreeMap<>();
+            ISet<string> allPrefixes = new SortedSet<string>(StringComparer.Ordinal); //new TreeSet<>();
 
             Input[] keys = new Input[numWords];
 
