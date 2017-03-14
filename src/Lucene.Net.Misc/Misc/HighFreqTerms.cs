@@ -189,7 +189,7 @@ namespace Lucene.Net.Misc
         /// Priority queue for <see cref="TermStats"/> objects
         /// 
         /// </summary>
-        internal sealed class TermStatsQueue : PriorityQueue<TermStats>
+        internal sealed class TermStatsQueue : Util.PriorityQueue<TermStats>
         {
             internal readonly IComparer<TermStats> comparer;
 
