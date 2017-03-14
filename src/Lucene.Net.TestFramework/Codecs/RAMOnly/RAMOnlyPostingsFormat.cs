@@ -109,7 +109,8 @@ namespace Lucene.Net.Codecs.RAMOnly
         // Postings state:
         internal class RAMPostings : FieldsProducer
         {
-            internal readonly IDictionary<string, RAMField> FieldToTerms = new SortedDictionary<string, RAMField>();
+            // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+            internal readonly IDictionary<string, RAMField> FieldToTerms = new SortedDictionary<string, RAMField>(StringComparer.Ordinal);
 
             public override Terms GetTerms(string field)
             {
@@ -150,7 +151,9 @@ namespace Lucene.Net.Codecs.RAMOnly
         internal class RAMField : Terms
         {
             internal readonly string Field;
-            internal readonly SortedDictionary<string, RAMTerm> TermToDocs = new SortedDictionary<string, RAMTerm>();
+
+            // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+            internal readonly SortedDictionary<string, RAMTerm> TermToDocs = new SortedDictionary<string, RAMTerm>(StringComparer.Ordinal);
             internal long SumTotalTermFreq_Renamed;
             internal long SumDocFreq_Renamed;
             internal int DocCount_Renamed;

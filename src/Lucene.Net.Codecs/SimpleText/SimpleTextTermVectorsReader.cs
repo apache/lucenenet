@@ -114,7 +114,8 @@ namespace Lucene.Net.Codecs.SimpleText
 
         public override Fields Get(int doc)
         {
-            var fields = new SortedDictionary<string, SimpleTVTerms>();
+            // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+            var fields = new SortedDictionary<string, SimpleTVTerms>(StringComparer.Ordinal);
 
             _input.Seek(_offsets[doc]);
             ReadLine();

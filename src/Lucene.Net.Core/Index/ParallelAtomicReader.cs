@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -57,8 +58,10 @@ namespace Lucene.Net.Index
         private readonly bool closeSubReaders;
         private readonly int maxDoc, numDocs;
         private readonly bool hasDeletions;
-        private readonly IDictionary<string, AtomicReader> fieldToReader = new SortedDictionary<string, AtomicReader>();
-        private readonly IDictionary<string, AtomicReader> tvFieldToReader = new SortedDictionary<string, AtomicReader>();
+
+        // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+        private readonly IDictionary<string, AtomicReader> fieldToReader = new SortedDictionary<string, AtomicReader>(StringComparer.Ordinal);
+        private readonly IDictionary<string, AtomicReader> tvFieldToReader = new SortedDictionary<string, AtomicReader>(StringComparer.Ordinal);
 
         /// <summary>
         /// Create a ParallelAtomicReader based on the provided
@@ -191,7 +194,8 @@ namespace Lucene.Net.Index
         {
             private readonly ParallelAtomicReader outerInstance;
 
-            internal readonly IDictionary<string, Terms> fields = new SortedDictionary<string, Terms>();
+            // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+            internal readonly IDictionary<string, Terms> fields = new SortedDictionary<string, Terms>(StringComparer.Ordinal);
 
             internal ParallelFields(ParallelAtomicReader outerInstance)
             {

@@ -1031,7 +1031,9 @@ namespace Lucene.Net.Codecs.Memory
         {
             string fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, EXTENSION);
             ChecksumIndexInput @in = state.Directory.OpenChecksumInput(fileName, IOContext.READ_ONCE);
-            var fields = new SortedDictionary<string, TermsReader>();
+
+            // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+            var fields = new SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
 
             try
             {

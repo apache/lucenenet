@@ -374,7 +374,9 @@ namespace Lucene.Net.Index
 
             TotalPostings = 0;
             TotalPayloadBytes = 0;
-            Fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>();
+
+            // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+            Fields = new SortedDictionary<string, SortedDictionary<BytesRef, long>>(StringComparer.Ordinal);
 
             int numFields = TestUtil.NextInt(Random(), 1, 5);
             if (VERBOSE)

@@ -2325,9 +2325,10 @@ namespace Lucene.Net.Index
                     length = TestUtil.NextInt(Random(), minLength, maxLength);
                 }
                 int numValues = TestUtil.NextInt(Random(), 0, maxValuesPerDoc);
+
                 // create a random set of strings
-                // LUCENENET specific: Must use natural comparator to ensure culture insensitive sort order.
-                SortedSet<string> values = new SortedSet<string>(Util.ArrayUtil.GetNaturalComparer<string>());
+                // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+                SortedSet<string> values = new SortedSet<string>(StringComparer.Ordinal);
                 for (int v = 0; v < numValues; v++)
                 {
                     values.Add(TestUtil.RandomSimpleString(Random(), length));
@@ -3320,7 +3321,9 @@ namespace Lucene.Net.Index
                     doc.Add(dvNumericField);
                 }
                 int numSortedSetFields = Random().Next(3);
-                SortedSet<string> values = new SortedSet<string>();
+
+                // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+                SortedSet<string> values = new SortedSet<string>(StringComparer.Ordinal);
                 for (int j = 0; j < numSortedSetFields; j++)
                 {
                     values.Add(TestUtil.RandomSimpleString(Random()));

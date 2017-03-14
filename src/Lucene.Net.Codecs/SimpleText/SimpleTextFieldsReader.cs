@@ -85,7 +85,9 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             ChecksumIndexInput input = new BufferedChecksumIndexInput(@in);
             var scratch = new BytesRef(10);
-            var fields = new SortedDictionary<string, long?>();
+
+            // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+            var fields = new SortedDictionary<string, long?>(StringComparer.Ordinal);
 
             while (true)
             {

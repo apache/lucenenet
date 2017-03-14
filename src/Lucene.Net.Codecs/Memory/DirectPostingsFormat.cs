@@ -134,7 +134,8 @@ namespace Lucene.Net.Codecs.Memory
 
         private sealed class DirectFields : FieldsProducer
         {
-            private readonly IDictionary<string, DirectField> fields = new SortedDictionary<string, DirectField>();
+            // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+            private readonly IDictionary<string, DirectField> fields = new SortedDictionary<string, DirectField>(StringComparer.Ordinal);
 
             public DirectFields(SegmentReadState state, Fields fields, int minSkipCount, int lowFreqCutoff)
             {

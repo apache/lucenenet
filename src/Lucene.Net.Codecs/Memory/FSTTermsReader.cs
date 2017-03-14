@@ -58,7 +58,8 @@ namespace Lucene.Net.Codecs.Memory
     /// </summary>
     public class FSTTermsReader : FieldsProducer
     {
-        private readonly SortedDictionary<string, TermsReader> fields = new SortedDictionary<string, TermsReader>();
+        // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+        private readonly SortedDictionary<string, TermsReader> fields = new SortedDictionary<string, TermsReader>(StringComparer.Ordinal);
         private readonly PostingsReaderBase postingsReader;
         //static boolean TEST = false;
         private readonly int version;

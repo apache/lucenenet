@@ -98,7 +98,8 @@ namespace Lucene.Net.Codecs
         // produce DocsEnum on demand
         private readonly PostingsReaderBase postingsReader;
 
-        private readonly SortedDictionary<string, FieldReader> fields = new SortedDictionary<string, FieldReader>();
+        // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+        private readonly SortedDictionary<string, FieldReader> fields = new SortedDictionary<string, FieldReader>(StringComparer.Ordinal);
 
         /// <summary>
         /// File offset where the directory starts in the terms file. </summary>

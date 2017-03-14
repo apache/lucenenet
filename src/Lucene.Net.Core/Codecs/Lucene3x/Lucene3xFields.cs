@@ -57,7 +57,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         public IndexInput ProxStream { get; private set; }
         private readonly FieldInfos fieldInfos;
         private readonly SegmentInfo si;
-        internal readonly SortedDictionary<string, FieldInfo> fields = new SortedDictionary<string, FieldInfo>();
+
+        // LUCENENET specific: Use StringComparer.Ordinal to get the same ordering as Java
+        internal readonly SortedDictionary<string, FieldInfo> fields = new SortedDictionary<string, FieldInfo>(StringComparer.Ordinal);
         internal readonly IDictionary<string, Terms> preTerms = new Dictionary<string, Terms>();
         private readonly Directory dir;
         private readonly IOContext context;
