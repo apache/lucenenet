@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries.Function
@@ -85,7 +86,7 @@ namespace Lucene.Net.Tests.Queries.Function
                 string resID = s.Doc(h[i].Doc).Get(ID_FIELD);
                 Log(i + ".   score=" + h[i].Score + "  -  " + resID);
                 Log(s.Explain(functionQuery, h[i].Doc));
-                assertTrue("res id " + resID + " should be < prev res id " + prevID, resID.CompareTo(prevID) < 0);
+                assertTrue("res id " + resID + " should be < prev res id " + prevID, resID.CompareToOrdinal(prevID) < 0);
                 prevID = resID;
             }
             r.Dispose();

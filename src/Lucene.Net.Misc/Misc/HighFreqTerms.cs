@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -154,7 +155,7 @@ namespace Lucene.Net.Misc
                 int res = a.DocFreq.CompareTo(b.DocFreq);
                 if (res == 0)
                 {
-                    res = a.Field.CompareTo(b.Field);
+                    res = a.Field.CompareToOrdinal(b.Field);
                     if (res == 0)
                     {
                         res = a.termtext.CompareTo(b.termtext);
@@ -174,7 +175,7 @@ namespace Lucene.Net.Misc
                 int res = a.TotalTermFreq.CompareTo(b.TotalTermFreq);
                 if (res == 0)
                 {
-                    res = a.Field.CompareTo(b.Field);
+                    res = a.Field.CompareToOrdinal(b.Field);
                     if (res == 0)
                     {
                         res = a.termtext.CompareTo(b.termtext);

@@ -1,5 +1,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -119,7 +120,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override TermsConsumer AddField(FieldInfo field)
         {
-            Debug.Assert(currentField == null || currentField.Name.CompareTo(field.Name) < 0);
+            Debug.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
 
             currentField = field;
             var fiw = termsIndexWriter.AddField(field, m_output.FilePointer);

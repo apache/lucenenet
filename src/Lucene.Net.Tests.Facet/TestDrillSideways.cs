@@ -382,7 +382,7 @@ namespace Lucene.Net.Facet
 
             public virtual int CompareTo(Doc other)
             {
-                return id.CompareTo(other.id);
+                return id.CompareToOrdinal(other.id);
             }
         }
 

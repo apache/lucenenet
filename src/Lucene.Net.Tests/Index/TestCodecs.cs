@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
 
             public int CompareTo(FieldData other)
             {
-                return FieldInfo.Name.CompareTo(other.FieldInfo.Name);
+                return FieldInfo.Name.CompareToOrdinal(other.FieldInfo.Name);
             }
 
             public virtual void Write(FieldsConsumer consumer)

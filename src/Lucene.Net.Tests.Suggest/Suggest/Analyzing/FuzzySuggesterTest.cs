@@ -584,7 +584,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             public int CompareTo(TermFreqPayload2 other)
             {
-                int cmp = analyzedForm.CompareTo(other.analyzedForm);
+                int cmp = analyzedForm.CompareToOrdinal(other.analyzedForm);
                 if (cmp != 0)
                 {
                     return cmp;

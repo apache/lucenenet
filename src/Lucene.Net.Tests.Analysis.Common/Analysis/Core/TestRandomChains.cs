@@ -256,7 +256,7 @@ namespace Lucene.Net.Analysis.Core
             {
                 // LUCENENET TODO: Need to ensure we have the right sort order
                 // original: arg0.toGenericString().compareTo(arg1.toGenericString());
-                return arg0.ToString().CompareTo(arg1.ToString());
+                return arg0.ToString().CompareToOrdinal(arg1.ToString());
             }
         }
 

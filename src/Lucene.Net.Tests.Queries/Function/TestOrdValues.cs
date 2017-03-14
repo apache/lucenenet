@@ -2,6 +2,7 @@
 using Lucene.Net.Queries.Function;
 using Lucene.Net.Queries.Function.ValueSources;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using NUnit.Framework;
 
 namespace Lucene.Net.Tests.Queries.Function
@@ -77,11 +78,11 @@ namespace Lucene.Net.Tests.Queries.Function
                 Log(s.Explain(q, h[i].Doc));
                 if (inOrder)
                 {
-                    assertTrue("res id " + resID + " should be < prev res id " + prevID, resID.CompareTo(prevID) < 0);
+                    assertTrue("res id " + resID + " should be < prev res id " + prevID, resID.CompareToOrdinal(prevID) < 0);
                 }
                 else
                 {
-                    assertTrue("res id " + resID + " should be > prev res id " + prevID, resID.CompareTo(prevID) > 0);
+                    assertTrue("res id " + resID + " should be > prev res id " + prevID, resID.CompareToOrdinal(prevID) > 0);
                 }
                 prevID = resID;
             }

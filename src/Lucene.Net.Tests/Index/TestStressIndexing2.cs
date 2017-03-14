@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
 
             public virtual int Compare(IIndexableField o1, IIndexableField o2)
             {
-                return o1.Name.CompareTo(o2.Name);
+                return o1.Name.CompareToOrdinal(o2.Name);
             }
         }
 

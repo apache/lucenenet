@@ -31,7 +31,7 @@ namespace Lucene.Net.Support
     {
         public int Compare(string a, string b)
         {
-            return a.CompareTo(b);
+            return a.CompareToOrdinal(b);
         }
 
 
