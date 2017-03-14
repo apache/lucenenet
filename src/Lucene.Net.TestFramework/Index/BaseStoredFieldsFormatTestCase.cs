@@ -1,5 +1,6 @@
 using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
+using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
@@ -570,14 +571,14 @@ namespace Lucene.Net.Index
         {
             // get another codec, other than the default: so we are merging segments across different codecs
             Codec otherCodec;
-            /*if ("SimpleText".Equals(Codec.Default.Name))
-            {*/
-            otherCodec = new Lucene46Codec();
-            /*}
+            if ("SimpleText".Equals(Codec.Default.Name))
+            {
+                otherCodec = new Lucene46Codec();
+            }
             else
             {
-              otherCodec = new SimpleTextCodec();
-            }*/
+                otherCodec = new SimpleTextCodec();
+            }
             Directory dir = NewDirectory();
             IndexWriterConfig iwConf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             iwConf.SetMaxBufferedDocs(RandomInts.NextIntBetween(Random(), 2, 30));
