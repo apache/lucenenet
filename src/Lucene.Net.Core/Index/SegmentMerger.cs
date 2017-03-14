@@ -337,7 +337,7 @@ namespace Lucene.Net.Index
                     foreach (FieldInfo fi in segmentFieldInfos)
                     {
                         FieldInfo other = mergeState.FieldInfos.FieldInfo(fi.Number);
-                        if (other == null || !other.Name.Equals(fi.Name))
+                        if (other == null || !other.Name.Equals(fi.Name, StringComparison.Ordinal))
                         {
                             same = false;
                             break;
