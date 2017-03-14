@@ -718,7 +718,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             int numQueries = AtLeast(100);
 
             List<TermFreqPayload2> slowCompletor = new List<TermFreqPayload2>();
-            SortedSet<string> allPrefixes = new SortedSet<string>();
+            SortedSet<string> allPrefixes = new SortedSet<string>(StringComparer.Ordinal);
             ISet<string> seen = new HashSet<string>();
 
             Input[] keys = new Input[numQueries];

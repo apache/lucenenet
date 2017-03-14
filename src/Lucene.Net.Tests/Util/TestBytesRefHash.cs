@@ -201,9 +201,9 @@ namespace Lucene.Net.Util
             for (int j = 0; j < num; j++)
             {
                 // LUCENENET specific - to ensure sorting strings works the same in the SortedSet,
-                // we need to use the natural comparer from ArrayUtil, which compares strings the same
+                // we need to use StringComparer.Ordinal, which compares strings the same
                 // way they are done in Java.
-                SortedSet<string> strings = new SortedSet<string>(ArrayUtil.GetNaturalComparer<string>());
+                SortedSet<string> strings = new SortedSet<string>(StringComparer.Ordinal);
                 for (int k = 0; k < 797; k++)
                 {
                     string str;

@@ -2616,8 +2616,8 @@ namespace Lucene.Net.Util
             FieldInfos rightInfos = MultiFields.GetMergedFieldInfos(rightReader);
 
             // TODO: would be great to verify more than just the names of the fields!
-            SortedSet<string> left = new SortedSet<string>();
-            SortedSet<string> right = new SortedSet<string>();
+            SortedSet<string> left = new SortedSet<string>(StringComparer.Ordinal);
+            SortedSet<string> right = new SortedSet<string>(StringComparer.Ordinal);
 
             foreach (FieldInfo fi in leftInfos)
             {

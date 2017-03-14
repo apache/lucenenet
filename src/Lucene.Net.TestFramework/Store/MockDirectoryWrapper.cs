@@ -966,8 +966,8 @@ namespace Lucene.Net.Store
                             (new IndexWriter(m_input, iwc)).Rollback();
                             string[] endFiles = m_input.ListAll();
 
-                            ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles));
-                            ISet<string> endSet = new SortedSet<string>(Arrays.AsList(endFiles));
+                            ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles), StringComparer.Ordinal);
+                            ISet<string> endSet = new SortedSet<string>(Arrays.AsList(endFiles), StringComparer.Ordinal);
 
                             if (pendingDeletions.Contains("segments.gen") && endSet.Contains("segments.gen"))
                             {

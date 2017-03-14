@@ -261,8 +261,8 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <exception cref="IOException"> Can be thrown while reading from the InputStream </exception>
         private void ReadAffixFile(Stream affixStream, Encoding decoder)
         {
-            SortedDictionary<string, IList<char?>> prefixes = new SortedDictionary<string, IList<char?>>();
-            SortedDictionary<string, IList<char?>> suffixes = new SortedDictionary<string, IList<char?>>();
+            SortedDictionary<string, IList<char?>> prefixes = new SortedDictionary<string, IList<char?>>(StringComparer.Ordinal);
+            SortedDictionary<string, IList<char?>> suffixes = new SortedDictionary<string, IList<char?>>(StringComparer.Ordinal);
             IDictionary<string, int?> seenPatterns = new Dictionary<string, int?>();
 
             // zero condition -> 0 ord
@@ -548,7 +548,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         private FST<CharsRef> ParseConversions(TextReader reader, int num)
         {
-            IDictionary<string, string> mappings = new SortedDictionary<string, string>();
+            IDictionary<string, string> mappings = new SortedDictionary<string, string>(StringComparer.Ordinal);
 
             for (int i = 0; i < num; i++)
             {

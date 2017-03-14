@@ -643,7 +643,7 @@ namespace Lucene.Net.Search.VectorHighlight
 
         internal class AnalyzerWrapperAnonymousHelper : AnalyzerWrapper
         {
-            IDictionary<String, Analyzer> fieldAnalyzers = new SortedDictionary<String, Analyzer>();
+            IDictionary<String, Analyzer> fieldAnalyzers = new SortedDictionary<String, Analyzer>(StringComparer.Ordinal);
 
 #pragma warning disable 612, 618 // LUCENENET NOTE: Class calls obsolete (default) constructor
             public AnalyzerWrapperAnonymousHelper()
