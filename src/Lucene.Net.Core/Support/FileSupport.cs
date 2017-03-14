@@ -21,6 +21,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -147,7 +148,7 @@ namespace Lucene.Net.Support
         /// file.
         /// </summary>
         /// <param name="prefix">The prefix string to be used in generating the file's name; must be at least three characters long</param>
-        /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case the suffix ".tmp" will be used</param>
+        /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
         /// <param name="directory">The directory in which the file is to be created, or null if the default temporary-file directory is to be used</param>
         /// <returns></returns>
         public static FileInfo CreateTempFile(string prefix, string suffix, DirectoryInfo directory)
@@ -158,17 +159,25 @@ namespace Lucene.Net.Support
                     throw new ArgumentNullException("prefix");
                 if (prefix.Length < 3)
                     throw new ArgumentException("Prefix string too short");
-                string s = (suffix == null) ? ".tmp" : suffix;
+
+                // Ensure the strings passed don't contain invalid characters
+                char[] invalid = Path.GetInvalidPathChars();
+
+                if (prefix.ToCharArray().Intersect(invalid).Any())
+                    throw new ArgumentException(string.Format("Prefix contains invalid characters. You may not use any of '{0}'", string.Join(", ", invalid)));
+                if (suffix != null && suffix.ToCharArray().Intersect(invalid).Any())
+                    throw new ArgumentException(string.Format("Suffix contains invalid characters. You may not use any of '{0}'", string.Join(", ", invalid)));
+
+                // If no directory supplied, create one.
                 if (directory == null)
                 {
                     directory = new DirectoryInfo(Path.GetTempPath());
                 }
-                string fileNameSuffix, fileName = string.Empty;
-                string extension = suffix.StartsWith(".", StringComparison.Ordinal) ? suffix : '.' + suffix;
+                string fileName = string.Empty;
+
                 while (true)
                 {
-                    fileNameSuffix = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
-                    fileName = Path.Combine(directory.FullName, string.Concat(prefix, fileNameSuffix, extension));
+                    fileName = NewTempFileName(prefix, suffix, directory);
 
                     if (File.Exists(fileName))
                     {
@@ -177,22 +186,47 @@ namespace Lucene.Net.Support
 
                     try
                     {
-                        // Create the file
-                        File.WriteAllText(fileName, string.Empty, new UTF8Encoding(false) /* No BOM */);
+                        // Create the file, and close it immediately
+                        File.WriteAllText(fileName, string.Empty, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) /* No BOM */);
                         break;
                     }
                     catch (IOException e)
                     {
-                        // If the error was not due to the file existing already, we need to throw
-                        // the error up the chain, otherwise swallow it and try again.
-                        if (!File.Exists(fileName))
+                        // If the error was because the file exists, try again
+                        if (File.Exists(fileName))
                         {
-                            throw e;
+                            continue;
                         }
+
+                        // else rethrow it
+                        throw e;
                     }
                 }
                 return new FileInfo(fileName);
             }
+        }
+
+        /// <summary>
+        /// Generates a new random file name with the provided <paramref name="directory"/>, 
+        /// <paramref name="prefix"/> and optional <see cref="suffix"/>.
+        /// </summary>
+        /// <param name="prefix">The prefix string to be used in generating the file's name</param>
+        /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>
+        /// <param name="directory">A <see cref="DirectoryInfo"/> object containing the temp directory path. Must not be null.</param>
+        /// <returns>A random file name</returns>
+        internal static string NewTempFileName(string prefix, string suffix, DirectoryInfo directory)
+        {
+            string randomFileName = Path.GetRandomFileName();
+
+            if (suffix != null)
+            {
+                randomFileName = string.Concat(
+                    Path.GetFileNameWithoutExtension(randomFileName),
+                    suffix.StartsWith(".", StringComparison.Ordinal) ? suffix : '.' + suffix
+                );
+            }
+
+            return Path.Combine(directory.FullName, string.Concat(prefix, randomFileName));
         }
     }
 }
