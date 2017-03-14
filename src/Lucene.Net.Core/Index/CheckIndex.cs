@@ -1012,7 +1012,7 @@ namespace Lucene.Net.Index
             foreach (string field in fields)
             {
                 // MultiFieldsEnum relies upon this order...
-                if (lastField != null && field.CompareTo(lastField) <= 0)
+                if (lastField != null && field.CompareToOrdinal(lastField) <= 0)
                 {
                     throw new Exception("fields out of order: lastField=" + lastField + " field=" + field);
                 }
