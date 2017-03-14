@@ -81,7 +81,9 @@ namespace Lucene.Net.Analysis.CharFilters
         /// </summary>
         public class Builder
         {
-            private readonly IDictionary<string, string> pendingPairs = new SortedDictionary<string, string>();
+            // LUCENENET specific - we need to use StringComparer.Ordinal for the
+            // sort order to correctly match Lucene, otherwise FST.Builder will throw Debug.Assert failures
+            private readonly IDictionary<string, string> pendingPairs = new SortedDictionary<string, string>(StringComparer.Ordinal);
 
             /// <summary>
             /// Records a replacement to be applied to the input
