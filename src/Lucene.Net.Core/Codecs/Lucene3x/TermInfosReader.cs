@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -209,13 +210,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         private int CompareAsUTF16(Term term1, Term term2)
         {
-            if (term1.Field.Equals(term2.Field))
+            if (term1.Field.Equals(term2.Field, StringComparison.Ordinal))
             {
                 return legacyComparer.Compare(term1.Bytes, term2.Bytes);
             }
             else
             {
-                return term1.Field.CompareTo(term2.Field);
+                return term1.Field.CompareToOrdinal(term2.Field);
             }
         }
 

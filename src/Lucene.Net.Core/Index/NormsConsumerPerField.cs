@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Index
@@ -40,7 +41,7 @@ namespace Lucene.Net.Index
 
         public int CompareTo(NormsConsumerPerField other)
         {
-            return fieldInfo.Name.CompareTo(other.fieldInfo.Name);
+            return fieldInfo.Name.CompareToOrdinal(other.fieldInfo.Name);
         }
 
         internal override void Finish()

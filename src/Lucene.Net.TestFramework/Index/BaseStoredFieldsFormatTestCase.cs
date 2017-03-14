@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
                         {
                             throw new InvalidOperationException("Could not find document " + q);
                         }
-                        if (!Convert.ToString(q).Equals(sdoc.Get("fld")))
+                        if (!Convert.ToString(q).Equals(sdoc.Get("fld"), StringComparison.Ordinal))
                         {
                             throw new InvalidOperationException("Expected " + q + ", but got " + sdoc.Get("fld"));
                         }
@@ -571,7 +571,7 @@ namespace Lucene.Net.Index
         {
             // get another codec, other than the default: so we are merging segments across different codecs
             Codec otherCodec;
-            if ("SimpleText".Equals(Codec.Default.Name))
+            if ("SimpleText".Equals(Codec.Default.Name, StringComparison.Ordinal))
             {
                 otherCodec = new Lucene46Codec();
             }

@@ -231,7 +231,7 @@ namespace Lucene.Net.Store
                     lf.LockDir = m_directory;
                     lf.LockPrefix = null;
                 }
-                else if (dir.FullName.Equals(m_directory.FullName))
+                else if (dir.FullName.Equals(m_directory.FullName, StringComparison.Ordinal))
                 {
                     lf.LockPrefix = null;
                 }

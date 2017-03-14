@@ -458,7 +458,7 @@ namespace Lucene.Net.Util.Automaton
             }
             if (a1.IsSingleton && a2.IsSingleton)
             {
-                return a1.singleton.Equals(a2.singleton);
+                return a1.singleton.Equals(a2.singleton, StringComparison.Ordinal);
             }
             else if (a1.IsSingleton)
             {
@@ -488,7 +488,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 if (a2.IsSingleton)
                 {
-                    return a1.singleton.Equals(a2.singleton);
+                    return a1.singleton.Equals(a2.singleton, StringComparison.Ordinal);
                 }
                 return BasicOperations.Run(a2, a1.singleton);
             }
@@ -557,7 +557,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public static Automaton Union(Automaton a1, Automaton a2)
         {
-            if ((a1.IsSingleton && a2.IsSingleton && a1.singleton.Equals(a2.singleton)) || a1 == a2)
+            if ((a1.IsSingleton && a2.IsSingleton && a1.singleton.Equals(a2.singleton, StringComparison.Ordinal)) || a1 == a2)
             {
                 return a1.CloneIfRequired();
             }
@@ -1058,7 +1058,7 @@ namespace Lucene.Net.Util.Automaton
         {
             if (a.IsSingleton)
             {
-                return s.Equals(a.singleton);
+                return s.Equals(a.singleton, StringComparison.Ordinal);
             }
             if (a.deterministic)
             {

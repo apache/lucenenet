@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -142,16 +143,16 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!Field.Equals(field))
+            if (!Field.Equals(field, StringComparison.Ordinal))
             {
                 buffer.Append(Field);
                 buffer.Append(":");
             }
             buffer.Append(includeLower ? '[' : '{');
             // TODO: all these toStrings for queries should just output the bytes, it might not be UTF-8!
-            buffer.Append(lowerTerm != null ? ("*".Equals(Term.ToString(lowerTerm)) ? "\\*" : Term.ToString(lowerTerm)) : "*");
+            buffer.Append(lowerTerm != null ? ("*".Equals(Term.ToString(lowerTerm), StringComparison.Ordinal) ? "\\*" : Term.ToString(lowerTerm)) : "*");
             buffer.Append(" TO ");
-            buffer.Append(upperTerm != null ? ("*".Equals(Term.ToString(upperTerm)) ? "\\*" : Term.ToString(upperTerm)) : "*");
+            buffer.Append(upperTerm != null ? ("*".Equals(Term.ToString(upperTerm), StringComparison.Ordinal) ? "\\*" : Term.ToString(upperTerm)) : "*");
             buffer.Append(includeUpper ? ']' : '}');
             buffer.Append(ToStringUtils.Boost(Boost));
             return buffer.ToString();

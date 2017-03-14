@@ -191,7 +191,7 @@ namespace Lucene.Net.Index
             long max = -1;
             foreach (var file in files)
             {
-                if (file.StartsWith(IndexFileNames.SEGMENTS) && !file.Equals(IndexFileNames.SEGMENTS_GEN))
+                if (file.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) && !file.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
                 {
                     long gen = GenerationFromSegmentsFileName(file);
                     if (gen > max)
@@ -255,11 +255,11 @@ namespace Lucene.Net.Index
         /// </summary>
         public static long GenerationFromSegmentsFileName(string fileName)
         {
-            if (fileName.Equals(IndexFileNames.SEGMENTS))
+            if (fileName.Equals(IndexFileNames.SEGMENTS, StringComparison.Ordinal))
             {
                 return 0;
             }
-            else if (fileName.StartsWith(IndexFileNames.SEGMENTS))
+            else if (fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal))
             {
                 return Number.Parse(fileName.Substring(1 + IndexFileNames.SEGMENTS.Length), Character.MAX_RADIX);
             }

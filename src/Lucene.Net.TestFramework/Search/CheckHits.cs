@@ -394,7 +394,7 @@ namespace Lucene.Net.Search
                             try
                             {
                                 x = Convert.ToSingle(descr.Substring(k1, k2 - k1).Trim());
-                                if (descr.Substring(k2).Trim().Equals("times others of:"))
+                                if (descr.Substring(k2).Trim().Equals("times others of:", StringComparison.Ordinal))
                                 {
                                     maxTimesOthers = true;
                                 }

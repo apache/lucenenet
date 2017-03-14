@@ -160,13 +160,13 @@ namespace Lucene.Net.Index
                 Regex r = IndexFileNames.CODEC_FILE_PATTERN;
                 foreach (string fileName in files)
                 {
-                    if (!fileName.EndsWith("write.lock") && !fileName.Equals(IndexFileNames.SEGMENTS_GEN)
-                        && (r.IsMatch(fileName) || fileName.StartsWith(IndexFileNames.SEGMENTS)))
+                    if (!fileName.EndsWith("write.lock", StringComparison.Ordinal) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal)
+                        && (r.IsMatch(fileName) || fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal)))
                     {
                         // Add this file to refCounts with initial count 0:
                         GetRefCount(fileName);
 
-                        if (fileName.StartsWith(IndexFileNames.SEGMENTS))
+                        if (fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal))
                         {
                             // this is a commit (segments or segments_N), and
                             // it's valid (<= the max gen).  Load it, then
@@ -397,9 +397,9 @@ namespace Lucene.Net.Index
             {
                 string fileName = files[i];
                 //m.reset(fileName);
-                if ((segmentName == null || fileName.StartsWith(segmentPrefix1) || fileName.StartsWith(segmentPrefix2))
-                    && !fileName.EndsWith("write.lock") && !refCounts.ContainsKey(fileName) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN)
-                    && (r.IsMatch(fileName) || fileName.StartsWith(IndexFileNames.SEGMENTS)))
+                if ((segmentName == null || fileName.StartsWith(segmentPrefix1, StringComparison.Ordinal) || fileName.StartsWith(segmentPrefix2, StringComparison.Ordinal))
+                    && !fileName.EndsWith("write.lock", StringComparison.Ordinal) && !refCounts.ContainsKey(fileName) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal)
+                    && (r.IsMatch(fileName) || fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal)))
                 {
                     // Unreferenced file, so remove it
                     if (infoStream.IsEnabled("IFD"))

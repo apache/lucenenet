@@ -116,7 +116,7 @@ namespace Lucene.Net.Search
 
             for (var i = 0; i < terms.Length; i++)
             {
-                if (!terms[i].Field.Equals(field))
+                if (!terms[i].Field.Equals(field, StringComparison.Ordinal))
                 {
                     throw new System.ArgumentException("All phrase terms must be in the same field (" + field + "): " + terms[i]);
                 }
@@ -369,7 +369,7 @@ namespace Lucene.Net.Search
         public override sealed string ToString(string f)
         {
             StringBuilder buffer = new StringBuilder();
-            if (field == null || !field.Equals(f))
+            if (field == null || !field.Equals(f, StringComparison.Ordinal))
             {
                 buffer.Append(field);
                 buffer.Append(":");

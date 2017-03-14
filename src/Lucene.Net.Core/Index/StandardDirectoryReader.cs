@@ -390,7 +390,7 @@ namespace Lucene.Net.Index
                 {
                     throw new System.IO.IOException("the specified commit does not match the specified Directory");
                 }
-                if (segmentInfos != null && commit.SegmentsFileName.Equals(segmentInfos.GetSegmentsFileName()))
+                if (segmentInfos != null && commit.SegmentsFileName.Equals(segmentInfos.GetSegmentsFileName(), StringComparison.Ordinal))
                 {
                     return null;
                 }

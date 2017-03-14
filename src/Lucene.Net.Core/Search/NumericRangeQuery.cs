@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder sb = new StringBuilder();
-            if (!Field.Equals(field))
+            if (!Field.Equals(field, StringComparison.Ordinal))
             {
                 sb.Append(Field).Append(':');
             }

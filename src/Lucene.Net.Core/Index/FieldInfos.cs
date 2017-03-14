@@ -280,15 +280,17 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    string NumberToNameStr;
-                    int? NameToNumberVal;
-                    DocValuesType? DocValuesType_E;
+                    string numberToNameStr;
+                    int? nameToNumberVal;
+                    DocValuesType? docValuesType_E;
 
-                    numberToName.TryGetValue(number, out NumberToNameStr);
-                    nameToNumber.TryGetValue(name, out NameToNumberVal);
-                    docValuesType.TryGetValue(name, out DocValuesType_E);
+                    numberToName.TryGetValue(number, out numberToNameStr);
+                    nameToNumber.TryGetValue(name, out nameToNumberVal);
+                    docValuesType.TryGetValue(name, out docValuesType_E);
 
-                    return name.Equals(NumberToNameStr) && number.Equals(nameToNumber[name]) && (dvType == null || DocValuesType_E == null || dvType == DocValuesType_E);
+                    return name.Equals(numberToNameStr, StringComparison.Ordinal) 
+                        && number.Equals(nameToNumber[name]) && 
+                        (dvType == null || docValuesType_E == null || dvType == docValuesType_E);
                 }
             }
 

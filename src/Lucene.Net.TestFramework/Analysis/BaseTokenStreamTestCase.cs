@@ -655,7 +655,8 @@ namespace Lucene.Net.Analysis
             RandomIndexWriter iw = null;
             string postingsFormat = TestUtil.GetPostingsFormat("dummy");
             bool codecOk = iterations * maxWordLength < 100000
-                || !(postingsFormat.Equals("Memory") || postingsFormat.Equals("SimpleText"));
+                || !(postingsFormat.Equals("Memory", StringComparison.Ordinal) 
+                || postingsFormat.Equals("SimpleText", StringComparison.Ordinal));
             if (Rarely(random) && codecOk)
             {
                 dir = NewFSDirectory(CreateTempDir("bttc"));
@@ -1020,7 +1021,7 @@ namespace Lucene.Net.Analysis
                         {
                             // Catch & ignore MockTokenizer's
                             // anger...
-                            if ("End() called before IncrementToken() returned false!".Equals(ae.Message))
+                            if ("End() called before IncrementToken() returned false!".Equals(ae.Message, StringComparison.Ordinal))
                             {
                                 // OK
                             }
@@ -1059,7 +1060,7 @@ namespace Lucene.Net.Analysis
                         {
                             // Catch & ignore MockTokenizer's
                             // anger...
-                            if ("End() called before IncrementToken() returned false!".Equals(ae.Message))
+                            if ("End() called before IncrementToken() returned false!".Equals(ae.Message, StringComparison.Ordinal))
                             {
                                 // OK
                             }

@@ -461,7 +461,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 }
                 else
                 {
-                    if (Current.CompareTo(RamField.TermToDocs.Last().Key) > 0)
+                    if (Current.CompareToOrdinal(RamField.TermToDocs.Last().Key) > 0)
                     {
                         return SeekStatus.END;
                     }

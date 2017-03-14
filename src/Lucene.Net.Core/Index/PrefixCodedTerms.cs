@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                 {
                     int prefix = SharedPrefix(lastTerm.Bytes, term.Bytes);
                     int suffix = term.Bytes.Length - prefix;
-                    if (term.Field.Equals(lastTerm.Field))
+                    if (term.Field.Equals(lastTerm.Field, StringComparison.Ordinal))
                     {
                         output.WriteVInt32(prefix << 1);
                     }

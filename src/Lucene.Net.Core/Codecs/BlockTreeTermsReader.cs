@@ -558,7 +558,7 @@ namespace Lucene.Net.Codecs
                 this.outerInstance = outerInstance;
                 Debug.Assert(numTerms > 0);
                 this.fieldInfo = fieldInfo;
-                //DEBUG = BlockTreeTermsReader.DEBUG && fieldInfo.name.equals("id");
+                //DEBUG = BlockTreeTermsReader.DEBUG && fieldInfo.name.Equals("id", StringComparison.Ordinal);
                 this.numTerms = numTerms;
                 this.sumTotalTermFreq = sumTotalTermFreq;
                 this.sumDocFreq = sumDocFreq;

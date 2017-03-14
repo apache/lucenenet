@@ -91,7 +91,7 @@ namespace Lucene.Net.Index
 
         public int CompareTo(FreqProxTermsWriterPerField other)
         {
-            return fieldInfo.Name.CompareTo(other.fieldInfo.Name);
+            return fieldInfo.Name.CompareToOrdinal(other.fieldInfo.Name);
         }
 
         // Called after flush

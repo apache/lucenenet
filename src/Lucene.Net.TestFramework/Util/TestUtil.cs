@@ -915,7 +915,9 @@ namespace Lucene.Net.Util
         public static bool FieldSupportsHugeBinaryDocValues(string field)
         {
             string dvFormat = GetDocValuesFormat(field);
-            if (dvFormat.Equals("Lucene40") || dvFormat.Equals("Lucene42") || dvFormat.Equals("Memory"))
+            if (dvFormat.Equals("Lucene40", StringComparison.Ordinal) 
+                || dvFormat.Equals("Lucene42", StringComparison.Ordinal) 
+                || dvFormat.Equals("Memory", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -925,7 +927,7 @@ namespace Lucene.Net.Util
         public static bool AnyFilesExceptWriteLock(Directory dir)
         {
             string[] files = dir.ListAll();
-            if (files.Length > 1 || (files.Length == 1 && !files[0].Equals("write.lock")))
+            if (files.Length > 1 || (files.Length == 1 && !files[0].Equals("write.lock", StringComparison.Ordinal)))
             {
                 return true;
             }

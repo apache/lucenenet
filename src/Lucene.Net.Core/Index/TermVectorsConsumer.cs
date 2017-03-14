@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
         {
             try
             {
-                return lastVectorFieldName != null ? lastVectorFieldName.CompareTo(fi.Name) < 0 : true;
+                return lastVectorFieldName != null ? lastVectorFieldName.CompareToOrdinal(fi.Name) < 0 : true;
             }
             finally
             {

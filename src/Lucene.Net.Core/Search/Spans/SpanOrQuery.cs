@@ -1,6 +1,6 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
-using System.Linq;
+using System;
 using System.Text;
 
 namespace Lucene.Net.Search.Spans
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search.Spans
             {
                 field = clause.Field;
             }
-            else if (clause.Field != null && !clause.Field.Equals(field))
+            else if (clause.Field != null && !clause.Field.Equals(field, StringComparison.Ordinal))
             {
                 throw new System.ArgumentException("Clauses must have same field.");
             }

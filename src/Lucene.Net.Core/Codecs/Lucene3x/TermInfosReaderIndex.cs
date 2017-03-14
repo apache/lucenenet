@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             for (int i = 0; indexEnum.Next(); i++)
             {
                 Term term = indexEnum.Term();
-                if (currentField == null || !currentField.Equals(term.Field))
+                if (currentField == null || !currentField.Equals(term.Field, StringComparison.Ordinal))
                 {
                     currentField = term.Field;
                     fieldStrs.Add(currentField);
@@ -272,7 +272,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private int CompareField(Term term, int termIndex, PagedBytesDataInput input)
         {
             input.SetPosition(indexToDataOffset.Get(termIndex));
-            return System.String.Compare(term.Field, fields[input.ReadVInt32()].Field, System.StringComparison.Ordinal);
+            return term.Field.CompareToOrdinal(fields[input.ReadVInt32()].Field);
         }
 
         internal virtual long RamBytesUsed()

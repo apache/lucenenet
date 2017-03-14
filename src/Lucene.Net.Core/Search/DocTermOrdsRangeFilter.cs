@@ -188,7 +188,7 @@ namespace Lucene.Net.Search
             }
             DocTermOrdsRangeFilter other = (DocTermOrdsRangeFilter)o;
 
-            if (!this.field.Equals(other.field) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
+            if (!this.field.Equals(other.field, StringComparison.Ordinal) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
             {
                 return false;
             }

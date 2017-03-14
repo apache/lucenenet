@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        return o1.Info.Name.CompareTo(o2.Info.Name);
+                        return o1.Info.Name.CompareToOrdinal(o2.Info.Name);
                     }
                 }
                 catch (System.IO.IOException ioe)

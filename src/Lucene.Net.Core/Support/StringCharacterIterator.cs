@@ -210,7 +210,7 @@ namespace Lucene.Net.Support
 
             if (GetHashCode() != that.GetHashCode())
                 return false;
-            if (!text.Equals(that.text))
+            if (!text.Equals(that.text, StringComparison.Ordinal))
                 return false;
             if (pos != that.pos || begin != that.begin || end != that.end)
                 return false;

@@ -947,7 +947,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t2 == null || t2.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debug.Assert(t2 == null || !t2.Field.Equals(internedFieldName));
+                        Debug.Assert(t2 == null || !t2.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                         return SeekStatus.END;
                     }
@@ -1030,7 +1030,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t == null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debug.Assert(t == null || !t.Field.Equals(internedFieldName));
+                        Debug.Assert(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         current = null;
                     }
                     else
@@ -1055,7 +1055,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     if (t == null || t.Field != internedFieldName)
                     {
                         // PreFlex codec interns field names; verify:
-                        Debug.Assert(t == null || !t.Field.Equals(internedFieldName));
+                        Debug.Assert(t == null || !t.Field.Equals(internedFieldName, StringComparison.Ordinal));
                         return null;
                     }
                     else

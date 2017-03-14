@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Spans
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (m_term.Field.Equals(field))
+            if (m_term.Field.Equals(field, StringComparison.Ordinal))
             {
                 buffer.Append(m_term.Text());
             }

@@ -306,7 +306,7 @@ namespace Lucene.Net.Codecs
                 this.maxItemsInBlock = maxItemsInBlock;
                 WriteHeader(@out);
 
-                //DEBUG = state.segmentName.equals("_4a");
+                //DEBUG = state.segmentName.Equals("_4a", StringComparison.Ordinal);
 
                 string termsIndexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, TERMS_INDEX_EXTENSION);
                 indexOut = state.Directory.CreateOutput(termsIndexFileName, state.Context);
@@ -361,9 +361,9 @@ namespace Lucene.Net.Codecs
 
         public override TermsConsumer AddField(FieldInfo field)
         {
-            //DEBUG = field.name.equals("id");
+            //DEBUG = field.name.Equals("id", StringComparison.Ordinal);
             //if (DEBUG) System.out.println("\nBTTW.addField seg=" + segment + " field=" + field.name);
-            Debug.Assert(currentField == null || currentField.Name.CompareTo(field.Name) < 0);
+            Debug.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
             return new TermsWriter(this, field);
         }
@@ -1122,7 +1122,7 @@ namespace Lucene.Net.Codecs
                 //if (DEBUG) System.out.println("\nBTTW.startTerm term=" + fieldInfo.name + ":" + toString(text) + " seg=" + segment);
                 outerInstance.postingsWriter.StartTerm();
                 /*
-                if (fieldInfo.name.equals("id")) {
+                if (fieldInfo.name.Equals("id", StringComparison.Ordinal)) {
                   postingsWriter.termID = Integer.parseInt(text.utf8ToString());
                 } else {
                   postingsWriter.termID = -1;

@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                return field.CompareTo(other.field);
+                return field.CompareToOrdinal(other.field);
             }
         }
 
@@ -90,7 +91,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                Debug.Assert(field.Equals(fieldInfos.FieldInfo(fieldNumber).Name), "currentFieldNumber=" + currentFieldNumber + " field=" + field + " vs " + fieldInfos.FieldInfo(fieldNumber) == null ? "null" : fieldInfos.FieldInfo(fieldNumber).Name);
+                Debug.Assert(field.Equals(fieldInfos.FieldInfo(fieldNumber).Name, StringComparison.Ordinal), 
+                    "currentFieldNumber=" + currentFieldNumber + 
+                    " field=" + field + 
+                    " vs " + fieldInfos.FieldInfo(fieldNumber) == null ? "null" : fieldInfos.FieldInfo(fieldNumber).Name);
             }
         }
 

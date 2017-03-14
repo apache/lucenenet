@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Index
@@ -131,7 +132,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public int CompareTo(Term other)
         {
-            int compare = string.Compare(Field, other.Field, StringComparison.Ordinal);
+            int compare = Field.CompareToOrdinal(other.Field);
             if (compare == 0)
             {
                 return Bytes.CompareTo(other.Bytes);

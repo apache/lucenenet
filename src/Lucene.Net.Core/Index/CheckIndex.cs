@@ -642,7 +642,7 @@ namespace Lucene.Net.Index
             }
             else
             {
-                versionString = oldest.Equals(newest) ? ("version=" + oldest) : ("versions=[" + oldest + " .. " + newest + "]");
+                versionString = oldest.Equals(newest, StringComparison.Ordinal) ? ("version=" + oldest) : ("versions=[" + oldest + " .. " + newest + "]");
             }
 
             Msg(infoStream, "Segments file=" + segmentsFileName + " numSegments=" + numSegments + " " + versionString + " format=" + sFormat + userDataString);
@@ -2412,19 +2412,19 @@ namespace Lucene.Net.Index
           while (i < args.Length)
           {
             string arg = args[i];
-            if ("-fix".Equals(arg))
+            if ("-fix".Equals(arg, StringComparison.Ordinal))
             {
               doFix = true;
             }
-            else if ("-crossCheckTermVectors".Equals(arg))
+            else if ("-crossCheckTermVectors".Equals(arg, StringComparison.Ordinal))
             {
               doCrossCheckTermVectors = true;
             }
-            else if (arg.Equals("-verbose"))
+            else if (arg.Equals("-verbose", StringComparison.Ordinal))
             {
               verbose = true;
             }
-            else if (arg.Equals("-segment"))
+            else if (arg.Equals("-segment", StringComparison.Ordinal))
             {
               if (i == args.Length - 1)
               {
@@ -2434,7 +2434,7 @@ namespace Lucene.Net.Index
               i++;
               onlySegments.Add(args[i]);
             }
-            else if ("-dir-impl".Equals(arg))
+            else if ("-dir-impl".Equals(arg, StringComparison.Ordinal))
             {
               if (i == args.Length - 1)
               {

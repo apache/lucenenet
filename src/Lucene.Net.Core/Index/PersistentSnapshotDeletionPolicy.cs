@@ -364,7 +364,7 @@ namespace Lucene.Net.Index
                         string curFileName = SNAPSHOTS_PREFIX + genLoaded;
                         foreach (string file in snapshotFiles)
                         {
-                            if (!curFileName.Equals(file))
+                            if (!curFileName.Equals(file, StringComparison.Ordinal))
                             {
                                 dir.DeleteFile(file);
                             }

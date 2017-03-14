@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
             if (other is TypeAttribute)
             {
                 TypeAttribute o = (TypeAttribute)other;
-                return (this.type == null ? o.type == null : this.type.Equals(o.type));
+                return (this.type == null ? o.type == null : this.type.Equals(o.type, StringComparison.Ordinal));
             }
 
             return false;

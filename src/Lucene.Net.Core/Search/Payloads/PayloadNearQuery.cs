@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -139,7 +140,7 @@ namespace Lucene.Net.Search.Payloads
                     return false;
                 }
             }
-            else if (!m_fieldName.Equals(other.m_fieldName))
+            else if (!m_fieldName.Equals(other.m_fieldName, StringComparison.Ordinal))
             {
                 return false;
             }

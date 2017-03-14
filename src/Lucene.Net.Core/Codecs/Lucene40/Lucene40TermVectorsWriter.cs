@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -107,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads)
         {
-            Debug.Assert(lastFieldName == null || info.Name.CompareTo(lastFieldName) > 0, "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
+            Debug.Assert(lastFieldName == null || info.Name.CompareToOrdinal(lastFieldName) > 0, "fieldName=" + info.Name + " lastFieldName=" + lastFieldName);
             lastFieldName = info.Name;
             this.positions = positions;
             this.offsets = offsets;

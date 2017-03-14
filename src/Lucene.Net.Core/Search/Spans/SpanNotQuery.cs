@@ -71,7 +71,7 @@ namespace Lucene.Net.Search.Spans
             this.pre = (pre >= 0) ? pre : 0;
             this.post = (post >= 0) ? post : 0;
 
-            if (include.Field != null && exclude.Field != null && !include.Field.Equals(exclude.Field))
+            if (include.Field != null && exclude.Field != null && !include.Field.Equals(exclude.Field, StringComparison.Ordinal))
             {
                 throw new System.ArgumentException("Clauses must have same field.");
             }

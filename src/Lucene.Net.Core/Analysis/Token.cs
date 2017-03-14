@@ -424,10 +424,18 @@ namespace Lucene.Net.Analysis
                 return true;
             }
 
-            var other = obj as Token;
-            if (other != null)
+            
+            if (obj is Token)
             {
-                return (startOffset == other.startOffset && endOffset == other.endOffset && flags == other.flags && positionIncrement == other.positionIncrement && (type == null ? other.type == null : type.Equals(other.type)) && (payload == null ? other.payload == null : payload.Equals(other.payload)) && base.Equals(obj));
+                var other = (Token)obj;
+                return (startOffset == other.startOffset && 
+                    endOffset == other.endOffset && 
+                    flags == other.flags && 
+                    positionIncrement == other.positionIncrement && 
+                    (type == null ? other.type == null : type.Equals(other.type, System.StringComparison.Ordinal)) && 
+                    (payload == null ? other.payload == null : payload.Equals(other.payload)) && 
+                    base.Equals(obj)
+                );
             }
             else
             {

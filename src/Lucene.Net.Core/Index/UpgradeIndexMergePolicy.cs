@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -67,7 +68,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual bool ShouldUpgradeSegment(SegmentCommitInfo si)
         {
-            return !Constants.LUCENE_MAIN_VERSION.Equals(si.Info.Version);
+            return !Constants.LUCENE_MAIN_VERSION.Equals(si.Info.Version, StringComparison.Ordinal);
         }
 
         public override void SetIndexWriter(IndexWriter writer)

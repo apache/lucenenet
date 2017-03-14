@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -212,7 +213,7 @@ namespace Lucene.Net.Index
                 // Make sure we have a PerField allocated
                 int hashPos = fieldName.GetHashCode() & hashMask;
                 DocFieldProcessorPerField fp = fieldHash[hashPos];
-                while (fp != null && !fp.fieldInfo.Name.Equals(fieldName))
+                while (fp != null && !fp.fieldInfo.Name.Equals(fieldName, StringComparison.Ordinal))
                 {
                     fp = fp.next;
                 }
@@ -289,7 +290,7 @@ namespace Lucene.Net.Index
 
             public virtual int Compare(DocFieldProcessorPerField o1, DocFieldProcessorPerField o2)
             {
-                return o1.fieldInfo.Name.CompareTo(o2.fieldInfo.Name);
+                return o1.fieldInfo.Name.CompareToOrdinal(o2.fieldInfo.Name);
             }
         }
 

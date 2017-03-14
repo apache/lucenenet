@@ -364,7 +364,7 @@ namespace Lucene.Net.Store
                 bytes = context.FlushInfo.EstimatedSegmentSize;
             }
 
-            return !name.Equals(IndexFileNames.SEGMENTS_GEN) && (bytes <= maxMergeSizeBytes) && (bytes + cache.SizeInBytes()) <= maxCachedBytes;
+            return !name.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal) && (bytes <= maxMergeSizeBytes) && (bytes + cache.SizeInBytes()) <= maxCachedBytes;
         }
 
         private readonly object uncacheLock = new object();

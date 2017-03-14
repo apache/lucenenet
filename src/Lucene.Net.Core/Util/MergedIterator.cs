@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -274,7 +275,16 @@ namespace Lucene.Net.Util
 
             protected internal override bool LessThan(SubIterator<C> a, SubIterator<C> b)
             {
-                int cmp = a.Current.CompareTo(b.Current);
+                int cmp;
+                // LUCNENENET specific: For strings, we need to ensure we compare them ordinal
+                if (typeof(C).Equals(typeof(string)))
+                {
+                    cmp = (a.Current as string).CompareToOrdinal(b.Current as string);
+                }
+                else
+                {
+                    cmp = a.Current.CompareTo(b.Current);
+                }
                 if (cmp != 0)
                 {
                     return cmp < 0;

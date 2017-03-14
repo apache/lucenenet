@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -156,7 +157,7 @@ namespace Lucene.Net.Search.Spans
                 return false;
             }
             FieldMaskingSpanQuery other = (FieldMaskingSpanQuery)o;
-            return (this.Field.Equals(other.Field) && (this.Boost == other.Boost) && this.MaskedQuery.Equals(other.MaskedQuery));
+            return (this.Field.Equals(other.Field, StringComparison.Ordinal) && (this.Boost == other.Boost) && this.MaskedQuery.Equals(other.MaskedQuery));
         }
 
         public override int GetHashCode()

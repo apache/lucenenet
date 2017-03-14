@@ -539,7 +539,7 @@ namespace Lucene.Net.Util
               protected bool verify(Method key)
               {
                   string name = key.Name;
-                  return !(name.Equals("SetUp") || name.Equals("TearDown"));
+                  return !(name.Equals("SetUp", StringComparison.Ordinal) || name.Equals("TearDown", StringComparison.Ordinal));
               }})
               .around(new SystemPropertiesInvariantRule(IGNORED_INVARIANT_PROPERTIES))
               .around(ClassNameRule = new TestRuleStoreClassName())
@@ -1260,7 +1260,7 @@ namespace Lucene.Net.Util
         private static BaseDirectoryWrapper NewFSDirectory(DirectoryInfo d, LockFactory lf, bool bare)
         {
             string fsdirClass = TEST_DIRECTORY;
-            if (fsdirClass.Equals("random"))
+            if (fsdirClass.Equals("random", StringComparison.Ordinal))
             {
                 fsdirClass = RandomInts.RandomFrom(Random(), FS_DIRECTORIES);
             }
@@ -1492,7 +1492,7 @@ namespace Lucene.Net.Util
 
         public static bool DefaultCodecSupportsDocValues()
         {
-            return !Codec.Default.Name.Equals("Lucene3x");
+            return !Codec.Default.Name.Equals("Lucene3x", StringComparison.Ordinal);
         }
 
         private static Directory NewFSDirectoryImpl(Type clazz, DirectoryInfo file)
@@ -1502,7 +1502,7 @@ namespace Lucene.Net.Util
 
         private static Directory NewDirectoryImpl(Random random, string clazzName)
         {
-            if (clazzName.Equals("random"))
+            if (clazzName.Equals("random", StringComparison.Ordinal))
             {
                 if (Rarely(random))
                 {
@@ -1823,7 +1823,11 @@ namespace Lucene.Net.Util
         public static bool DefaultCodecSupportsMissingDocValues()
         {
             string name = Codec.Default.Name;
-            if (name.Equals("Lucene3x") || name.Equals("Lucene40") || name.Equals("Appending") || name.Equals("Lucene41") || name.Equals("Lucene42"))
+            if (name.Equals("Lucene3x", StringComparison.Ordinal) 
+                || name.Equals("Lucene40", StringComparison.Ordinal) 
+                || name.Equals("Appending", StringComparison.Ordinal) 
+                || name.Equals("Lucene41", StringComparison.Ordinal) 
+                || name.Equals("Lucene42", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -1839,7 +1843,9 @@ namespace Lucene.Net.Util
                 return false;
             }
             string name = Codec.Default.Name;
-            if (name.Equals("Lucene40") || name.Equals("Lucene41") || name.Equals("Appending"))
+            if (name.Equals("Lucene40", StringComparison.Ordinal) 
+                || name.Equals("Lucene41", StringComparison.Ordinal) 
+                || name.Equals("Appending", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -1857,7 +1863,10 @@ namespace Lucene.Net.Util
                 return false;
             }
             string name = Codec.Default.Name;
-            if (name.Equals("Appending") || name.Equals("Lucene40") || name.Equals("Lucene41") || name.Equals("Lucene42"))
+            if (name.Equals("Appending", StringComparison.Ordinal) 
+                || name.Equals("Lucene40", StringComparison.Ordinal) 
+                || name.Equals("Lucene41", StringComparison.Ordinal) 
+                || name.Equals("Lucene42", StringComparison.Ordinal))
             {
                 return false;
             }
@@ -1869,7 +1878,12 @@ namespace Lucene.Net.Util
         public static bool DefaultCodecSupportsFieldUpdates()
         {
             string name = Codec.Default.Name;
-            if (name.Equals("Lucene3x") || name.Equals("Appending") || name.Equals("Lucene40") || name.Equals("Lucene41") || name.Equals("Lucene42") || name.Equals("Lucene45"))
+            if (name.Equals("Lucene3x", StringComparison.Ordinal) 
+                || name.Equals("Appending", StringComparison.Ordinal) 
+                || name.Equals("Lucene40", StringComparison.Ordinal) 
+                || name.Equals("Lucene41", StringComparison.Ordinal) 
+                || name.Equals("Lucene42", StringComparison.Ordinal) 
+                || name.Equals("Lucene45", StringComparison.Ordinal))
             {
                 return false;
             }

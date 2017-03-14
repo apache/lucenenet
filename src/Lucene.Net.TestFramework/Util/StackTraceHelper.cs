@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
             StackTrace trace = new StackTrace();
             foreach (var frame in trace.GetFrames())
             {
-                if (frame.GetMethod().Name.equals(methodName))
+                if (frame.GetMethod().Name.Equals(methodName, StringComparison.Ordinal))
                 {
                     return true;
                 }
@@ -48,7 +48,7 @@ namespace Lucene.Net.Util
             foreach (var frame in trace.GetFrames())
             {
                 var method = frame.GetMethod();
-                if (method.DeclaringType.Name.equals(className) && method.Name.equals(methodName))
+                if (method.DeclaringType.Name.Equals(className, StringComparison.Ordinal) && method.Name.Equals(methodName, StringComparison.Ordinal))
                 {
                     return true;
                 }

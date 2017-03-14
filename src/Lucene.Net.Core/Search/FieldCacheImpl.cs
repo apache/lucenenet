@@ -353,7 +353,7 @@ namespace Lucene.Net.Search
                 if (o is CacheKey)
                 {
                     CacheKey other = (CacheKey)o;
-                    if (other.field.Equals(field))
+                    if (other.field.Equals(field, StringComparison.Ordinal))
                     {
                         if (other.custom == null)
                         {

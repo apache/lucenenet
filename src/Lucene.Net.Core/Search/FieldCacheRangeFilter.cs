@@ -1713,7 +1713,7 @@ namespace Lucene.Net.Search
             }
             FieldCacheRangeFilter<T> other = (FieldCacheRangeFilter<T>)o;
 
-            if (!this.field.Equals(other.field) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
+            if (!this.field.Equals(other.field, StringComparison.Ordinal) || this.includeLower != other.includeLower || this.includeUpper != other.includeUpper)
             {
                 return false;
             }

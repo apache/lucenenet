@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs
         public static int CheckHeaderNoMagic(DataInput @in, string codec, int minVersion, int maxVersion)
         {
             string actualCodec = @in.ReadString();
-            if (!actualCodec.Equals(codec))
+            if (!actualCodec.Equals(codec, StringComparison.Ordinal))
             {
                 throw new System.IO.IOException("codec mismatch: actual codec=" + actualCodec + " vs expected codec=" + codec + " (resource: " + @in + ")");
             }

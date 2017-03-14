@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -401,7 +402,7 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            return (other.m_field == null ? m_field == null : other.m_field.Equals(m_field));
+            return (other.m_field == null ? m_field == null : other.m_field.Equals(m_field, StringComparison.Ordinal));
         }
     }
 }

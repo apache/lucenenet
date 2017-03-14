@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
             // If we are writing with PreFlexRW, force a full
             // IndexReader.open so terms are sorted in codepoint
             // order during searching:
-            if (!applyDeletions || !Codec.Name.Equals("Lucene3x") && r.NextBoolean())
+            if (!applyDeletions || !Codec.Name.Equals("Lucene3x", StringComparison.Ordinal) && r.NextBoolean())
             {
                 if (LuceneTestCase.VERBOSE)
                 {
@@ -550,7 +550,7 @@ namespace Lucene.Net.Index
 
             public override void Message(string component, string message)
             {
-                if ("TP".Equals(component))
+                if ("TP".Equals(component, StringComparison.Ordinal))
                 {
                     TestPoint.Apply(message);
                 }
@@ -562,7 +562,7 @@ namespace Lucene.Net.Index
 
             public override bool IsEnabled(string component)
             {
-                return "TP".Equals(component) || @delegate.IsEnabled(component);
+                return "TP".Equals(component, StringComparison.Ordinal) || @delegate.IsEnabled(component);
             }
         }
 

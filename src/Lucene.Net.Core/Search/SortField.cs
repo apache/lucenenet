@@ -407,7 +407,10 @@ namespace Lucene.Net.Search
                 return false;
             }
             SortField other = (SortField)o;
-            return (StringHelper.Equals(other.field, this.field) && other.type == this.type && other.reverse == this.reverse && (other.comparerSource == null ? this.comparerSource == null : other.comparerSource.Equals(this.comparerSource)));
+            return (StringHelper.Equals(other.field, this.field) 
+                && other.type == this.type 
+                && other.reverse == this.reverse 
+                && (other.comparerSource == null ? this.comparerSource == null : other.comparerSource.Equals(this.comparerSource)));
         }
 
         /// <summary>

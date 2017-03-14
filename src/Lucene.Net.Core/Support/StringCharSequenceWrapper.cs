@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Support
+﻿using System;
+
+namespace Lucene.Net.Support
 {
     public class StringCharSequenceWrapper : ICharSequence
     {
@@ -41,8 +43,10 @@
         {
             if (obj == null)
                 return false;
+            if (!(obj is string))
+                return false;
 
-            return value.Equals(obj);
+            return string.Equals(value, obj as string, StringComparison.Ordinal);
         }
 
         public override string ToString()

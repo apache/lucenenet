@@ -421,7 +421,7 @@ namespace Lucene.Net.Index
             {
                 Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
                 long expected;
-                if (doc2.Get("id").Equals("0"))
+                if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
                 {
                     expected = -10;
                 }
@@ -564,7 +564,7 @@ namespace Lucene.Net.Index
             {
                 Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
                 string expected;
-                if (doc2.Get("id").Equals("0"))
+                if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
                 {
                     expected = "hello world 1";
                 }
@@ -726,7 +726,7 @@ namespace Lucene.Net.Index
             {
                 Document doc2 = ((AtomicReader)ireader.Leaves[0].Reader).Document(i);
                 string expected;
-                if (doc2.Get("id").Equals("0"))
+                if (doc2.Get("id").Equals("0", StringComparison.Ordinal))
                 {
                     expected = "hello world 1";
                 }

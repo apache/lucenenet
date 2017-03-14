@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis
 
         public static bool IsMyEvilException(Exception t)
         {
-            return (t != null) && "fake exception now!".Equals(t.Message);
+            return (t != null) && "fake exception now!".Equals(t.Message, StringComparison.Ordinal);
         }
     }
 }

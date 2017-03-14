@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     // need to open FieldsReader every time for each such segment.
                     si.Version = "3.0";
                 }
-                else if (si.Version.Equals("2.x"))
+                else if (si.Version.Equals("2.x", StringComparison.Ordinal))
                 {
                     // If it's a 3x index touched by 3.1+ code, then segments record their
                     // version, whether they are 2.x ones or not. We detect that and throw

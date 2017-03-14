@@ -187,7 +187,7 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             var buffer = new StringBuilder();
-            if (!term.Field.Equals(field))
+            if (!term.Field.Equals(field, StringComparison.Ordinal))
             {
                 buffer.Append(term.Field);
                 buffer.Append(":");

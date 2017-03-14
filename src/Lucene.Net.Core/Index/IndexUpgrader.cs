@@ -84,15 +84,15 @@ namespace Lucene.Net.Index
             while (i < args.Length)
             {
                 string arg = args[i];
-                if ("-delete-prior-commits".Equals(arg))
+                if ("-delete-prior-commits".Equals(arg, StringComparison.Ordinal))
                 {
                     deletePriorCommits = true;
                 }
-                else if ("-verbose".Equals(arg))
+                else if ("-verbose".Equals(arg, StringComparison.Ordinal))
                 {
                     @out = Console.Out;
                 }
-                else if ("-dir-impl".Equals(arg))
+                else if ("-dir-impl".Equals(arg, StringComparison.Ordinal))
                 {
                     if (i == args.Length - 1)
                     {

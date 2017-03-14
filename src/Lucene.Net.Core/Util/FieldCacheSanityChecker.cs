@@ -1,5 +1,6 @@
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -347,7 +348,7 @@ namespace Lucene.Net.Util
                 }
 
                 ReaderField other = (ReaderField)that;
-                return (this.readerKey == other.readerKey && this.FieldName.Equals(other.FieldName));
+                return (this.readerKey == other.readerKey && this.FieldName.Equals(other.FieldName, StringComparison.Ordinal));
             }
 
             public override string ToString()

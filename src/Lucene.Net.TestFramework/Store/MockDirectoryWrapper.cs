@@ -553,12 +553,12 @@ namespace Lucene.Net.Store
             {
                 foreach (var ent in OpenFileHandles)
                 {
-                    if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).Name.Equals(name))
+                    if (input && ent.Key is MockIndexInputWrapper && ((MockIndexInputWrapper)ent.Key).Name.Equals(name, StringComparison.Ordinal))
                     {
                         t = CreateException(t, ent.Value);
                         break;
                     }
-                    else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).Name.Equals(name))
+                    else if (!input && ent.Key is MockIndexOutputWrapper && ((MockIndexOutputWrapper)ent.Key).Name.Equals(name, StringComparison.Ordinal))
                     {
                         t = CreateException(t, ent.Value);
                         break;
@@ -661,7 +661,7 @@ namespace Lucene.Net.Store
                 Init();
                 lock (this)
                 {
-                    if (PreventDoubleWrite_Renamed && CreatedFiles.Contains(name) && !name.Equals("segments.gen"))
+                    if (PreventDoubleWrite_Renamed && CreatedFiles.Contains(name) && !name.Equals("segments.gen", StringComparison.Ordinal))
                     {
                         throw new System.IO.IOException("file \"" + name + "\" was already written to");
                     }
@@ -692,7 +692,7 @@ namespace Lucene.Net.Store
                     RAMFile existing = ramdir.m_fileMap.ContainsKey(name) ? ramdir.m_fileMap[name] : null;
 
                     // Enforce write once:
-                    if (existing != null && !name.Equals("segments.gen") && PreventDoubleWrite_Renamed)
+                    if (existing != null && !name.Equals("segments.gen", StringComparison.Ordinal) && PreventDoubleWrite_Renamed)
                     {
                         throw new System.IO.IOException("file " + name + " already exists");
                     }
@@ -985,7 +985,7 @@ namespace Lucene.Net.Store
                             // an issue (IFD would nuke this stuff eventually), but we pass NoDeletionPolicy...
                             foreach (string file in pendingDeletions)
                             {
-                                if (file.StartsWith("segments") && !file.Equals("segments.gen") && endSet.Contains(file))
+                                if (file.StartsWith("segments", StringComparison.Ordinal) && !file.Equals("segments.gen", StringComparison.Ordinal) && endSet.Contains(file))
                                 {
                                     startSet.Add(file);
                                     if (LuceneTestCase.VERBOSE)
@@ -1032,7 +1032,7 @@ namespace Lucene.Net.Store
                             startFiles = startSet.ToArray(/*new string[0]*/);
                             endFiles = endSet.ToArray(/*new string[0]*/);
 
-                            if (!Arrays.Equals(startFiles, endFiles))
+                            if (!Arrays.Equals(startFiles, endFiles)) // LUCENENET TODO: Possible equals ordinal issue
                             {
                                 IList<string> removed = new List<string>();
                                 foreach (string fileName in startFiles)

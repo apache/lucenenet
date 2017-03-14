@@ -134,7 +134,7 @@ namespace Lucene.Net.Util
             }
             else
             {
-                return s1.Equals(s2);
+                return s1.Equals(s2, StringComparison.Ordinal);
             }
         }
 

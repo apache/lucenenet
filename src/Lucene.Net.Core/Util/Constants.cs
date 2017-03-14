@@ -198,7 +198,7 @@ namespace Lucene.Net.Util
         public static string MainVersionWithoutAlphaBeta()
         {
             string[] parts = MAIN_VERSION_WITHOUT_ALPHA_BETA.Split(LUCENE_MAIN_VERSION);
-            if (parts.Length == 4 && "0".Equals(parts[2]))
+            if (parts.Length == 4 && "0".Equals(parts[2], StringComparison.Ordinal))
             {
                 return parts[0] + "." + parts[1];
             }

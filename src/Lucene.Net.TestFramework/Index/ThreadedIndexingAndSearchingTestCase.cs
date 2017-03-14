@@ -459,7 +459,7 @@ namespace Lucene.Net.Index
                                 Assert.IsNotNull(diagnostics);
                                 string source = diagnostics["source"];
                                 Assert.IsNotNull(source);
-                                if (source.Equals("merge"))
+                                if (source.Equals("merge", StringComparison.Ordinal))
                                 {
                                     Assert.IsTrue(!OuterInstance.AssertMergedSegmentsWarmed || OuterInstance.Warmed.ContainsKey((SegmentCoreReaders)segReader.CoreCacheKey), "sub reader " + sub + " wasn't warmed: warmed=" + OuterInstance.Warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo);
                                 }
@@ -824,7 +824,7 @@ namespace Lucene.Net.Index
 
             public override void Message(string component, string message)
             {
-                if ("TP".Equals(component))
+                if ("TP".Equals(component, StringComparison.Ordinal))
                 {
                     return; // ignore test points!
                 }

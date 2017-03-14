@@ -85,7 +85,7 @@ namespace Lucene.Net.Search
 
                 FieldAndShardVersion other = (FieldAndShardVersion)_other;
 
-                return Field.Equals(other.Field) && Version == other.Version && NodeID == other.NodeID;
+                return Field.Equals(other.Field, StringComparison.Ordinal) && Version == other.Version && NodeID == other.NodeID;
             }
 
             public override string ToString()

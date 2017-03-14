@@ -168,7 +168,7 @@ namespace Lucene.Net.Util
         {
 #if NETSTANDARD
             var methods = clazz.GetTypeInfo().GetMethods(bindingFlags).Where(x => {
-                return x.Name.Equals(methodName)
+                return x.Name.Equals(methodName, StringComparison.Ordinal)
                     && x.GetParameters().Select(y => y.ParameterType).SequenceEqual(methodParameters);
                 }).ToArray();
 

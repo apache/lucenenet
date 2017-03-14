@@ -183,7 +183,7 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             //System.out.println("SPW: setField");
             /*
-            if (BlockTreeTermsWriter.DEBUG && fieldInfo.Name.equals("id")) {
+            if (BlockTreeTermsWriter.DEBUG && fieldInfo.Name.Equals("id", StringComparison.Ordinal)) {
               DEBUG = true;
             } else {
               DEBUG = false;

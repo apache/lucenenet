@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -223,7 +224,7 @@ namespace Lucene.Net.Search
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            if (!term.Field.Equals(field))
+            if (!term.Field.Equals(field, StringComparison.Ordinal))
             {
                 buffer.Append(term.Field);
                 buffer.Append(":");

@@ -1,9 +1,10 @@
+using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
+using System.IO;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
-    using System;
-    using System.IO;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharsRef = Lucene.Net.Util.CharsRef;
     using Directory = Lucene.Net.Store.Directory;
@@ -196,7 +197,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (LastFieldNumber != fieldNumber)
             {
-                int cmp = FieldName(FieldInfos, LastFieldNumber).CompareTo(FieldName(FieldInfos, fieldNumber));
+                int cmp = FieldName(FieldInfos, LastFieldNumber).CompareToOrdinal(FieldName(FieldInfos, fieldNumber));
                 // If there is a field named "" (empty string) then we
                 // will get 0 on this comparison, yet, it's "OK".  But
                 // it's not OK if two different field numbers map to

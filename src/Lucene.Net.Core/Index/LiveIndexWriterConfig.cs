@@ -252,7 +252,7 @@ namespace Lucene.Net.Index
         /// 
         ///     public override PostingsFormat GetPostingsFormatForField(string field)
         ///     {
-        ///         if (field.Equals("fieldWithTonsOfTerms"))
+        ///         if (field.Equals("fieldWithTonsOfTerms", StringComparison.Ordinal))
         ///             return tweakedPostings;
         ///         else
         ///             return base.GetPostingsFormatForField(field);

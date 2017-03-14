@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -289,7 +290,7 @@ namespace Lucene.Net.Index
             {
                 string fileName = files[i];
 
-                if (fileName.StartsWith(IndexFileNames.SEGMENTS) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN) && SegmentInfos.GenerationFromSegmentsFileName(fileName) < currentGen)
+                if (fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal) && !fileName.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal) && SegmentInfos.GenerationFromSegmentsFileName(fileName) < currentGen)
                 {
                     SegmentInfos sis = new SegmentInfos();
                     try
@@ -364,7 +365,7 @@ namespace Lucene.Net.Index
                 string prefix = IndexFileNames.SEGMENTS + "_";
                 foreach (string file in files)
                 {
-                    if (file.StartsWith(prefix) || file.Equals(IndexFileNames.SEGMENTS_GEN))
+                    if (file.StartsWith(prefix, StringComparison.Ordinal) || file.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal))
                     {
                         return true;
                     }

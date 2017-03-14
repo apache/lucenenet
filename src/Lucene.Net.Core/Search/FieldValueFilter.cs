@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -171,7 +172,7 @@ namespace Lucene.Net.Search
                     return false;
                 }
             }
-            else if (!field.Equals(other.field))
+            else if (!field.Equals(other.field, StringComparison.Ordinal))
             {
                 return false;
             }
