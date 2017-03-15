@@ -1396,7 +1396,11 @@ namespace Lucene.Net.Index
         /// Make sure if all we do is open NRT reader against
         ///  writer, we don't see merge starvation.
         /// </summary>
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestTooManySegments()
         {
             Directory dir = GetAssertNoDeletesDirectory(NewDirectory());
