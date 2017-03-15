@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Synonym
             Encoding decoder = Encoding.UTF8;
 
             SynonymMap.Parser parser;
-            Type clazz = loader.FindClass(cname /*, typeof(SynonymMap.Parser) */);
+            Type clazz = loader.FindType(cname /*, typeof(SynonymMap.Parser) */);
             try
             {
                 parser = (SynonymMap.Parser)Activator.CreateInstance(clazz, new object[] { dedup, expand, analyzer });
@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Synonym
         // (there are no tests for this functionality)
         private TokenizerFactory LoadTokenizerFactory(IResourceLoader loader, string cname)
         {
-            Type clazz = loader.FindClass(cname /*, typeof(TokenizerFactory) */);
+            Type clazz = loader.FindType(cname /*, typeof(TokenizerFactory) */);
             try
             {
                 TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz, new object[] { tokArgs });

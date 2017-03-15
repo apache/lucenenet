@@ -133,9 +133,9 @@ namespace Lucene.Net.Analysis.Util
             return @delegate.NewInstance<T>(cname);
         }
 
-        public Type FindClass(string cname)
+        public Type FindType(string cname)
         {
-            return @delegate.FindClass(cname);
+            return @delegate.FindType(cname);
         }
     }
 }

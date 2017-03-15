@@ -297,7 +297,7 @@ namespace Lucene.Net.Analysis.Synonym
                 throw new Exception("stub");
             }
 
-            public Type FindClass(string cname)
+            public Type FindType(string cname)
             {
                 throw new Exception("stub");
             }

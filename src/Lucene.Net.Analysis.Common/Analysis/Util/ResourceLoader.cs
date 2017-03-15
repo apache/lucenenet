@@ -32,8 +32,10 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Finds class of the name
+        /// <para/>
+        /// NOTE: This was findClass() in Lucene
         /// </summary>
-        Type FindClass(string cname); // LUCENENET TODO: Rename FindType ?
+        Type FindType(string cname);
 
         /// <summary>
         /// Creates an instance of the name and expected type

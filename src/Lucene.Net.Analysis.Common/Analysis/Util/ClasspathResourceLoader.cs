@@ -70,7 +70,7 @@ namespace Lucene.Net.Analysis.Util
             return stream;
         }
 
-        public Type FindClass(string cname)
+        public Type FindType(string cname)
         {
             try
             {
@@ -94,7 +94,7 @@ namespace Lucene.Net.Analysis.Util
 
         public T NewInstance<T>(string cname)
         {
-            Type clazz = FindClass(cname);
+            Type clazz = FindType(cname);
             try
             {
                 return (T)Activator.CreateInstance(clazz);

@@ -201,7 +201,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         private TokenizerFactory LoadTokenizerFactory(IResourceLoader loader, string cname)
         {
-            Type clazz = loader.FindClass(cname);
+            Type clazz = loader.FindType(cname);
             try
             {
                 TokenizerFactory tokFactory = (TokenizerFactory)Activator.CreateInstance(clazz, new object[] { tokArgs });

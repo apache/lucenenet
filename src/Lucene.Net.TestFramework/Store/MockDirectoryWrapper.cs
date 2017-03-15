@@ -1032,7 +1032,7 @@ namespace Lucene.Net.Store
                             startFiles = startSet.ToArray(/*new string[0]*/);
                             endFiles = endSet.ToArray(/*new string[0]*/);
 
-                            if (!Arrays.Equals(startFiles, endFiles)) // LUCENENET TODO: Possible equals ordinal issue
+                            if (!Arrays.Equals(startFiles, endFiles))
                             {
                                 IList<string> removed = new List<string>();
                                 foreach (string fileName in startFiles)
