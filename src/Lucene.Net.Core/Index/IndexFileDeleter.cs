@@ -692,7 +692,7 @@ namespace Lucene.Net.Index
                 }
                 directory.DeleteFile(fileName);
             } // if delete fails
-            catch (Exception e)
+            catch (IOException e)
             {
                 // Some operating systems (e.g. Windows) don't
                 // permit a file to be deleted while it is opened
