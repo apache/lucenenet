@@ -155,6 +155,11 @@ namespace Lucene.Net.Index
                 new TestBloomFilteredLucene41Postings(), 
                 new MockSepPostingsFormat(), 
                 new MockFixedIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)),
+
+                // LUCENENET TODO: This codec is causing random exceptions, but upon
+                // line-by-line review of the codec, it is exactly as it was in Lucene.
+                // So, there must be something wrong with variable int functionality
+                // somewhere else in the core.
                 new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), 
                 new MockRandomPostingsFormat(random),
                 new NestedPulsingPostingsFormat(), 
