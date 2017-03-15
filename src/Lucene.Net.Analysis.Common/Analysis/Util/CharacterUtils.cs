@@ -33,6 +33,11 @@ namespace Lucene.Net.Analysis.Util
     /// </summary>
     public abstract class CharacterUtils
     {
+        // LUCENENET specific class for supporting broken Unicode support in Lucene 3.0.
+        // See the TestCharArraySet.TestSupplementaryCharsBWCompat()
+        // and TestCharArraySet.TestSingleHighSurrogateBWComapt() tests.
+        private static readonly CharacterUtils JAVA_4_BW_COMPAT = new Java4CharacterUtilsBWCompatibility();
+
         private static readonly CharacterUtils JAVA_4 = new Java4CharacterUtils();
         private static readonly CharacterUtils JAVA_5 = new Java5CharacterUtils();
 
@@ -47,18 +52,17 @@ namespace Lucene.Net.Analysis.Util
         public static CharacterUtils GetInstance(LuceneVersion matchVersion)
         {
 #pragma warning disable 612, 618
-            return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? JAVA_5 : JAVA_4;
+            return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) 
+                ? JAVA_5 
+                : JAVA_4_BW_COMPAT;
 #pragma warning restore 612, 618
         }
 
         /// <summary>
         /// Return a <see cref="CharacterUtils"/> instance compatible with Java 1.4. </summary>
-        public static CharacterUtils Java4Instance
+        public static CharacterUtils GetJava4Instance(LuceneVersion matchVersion) // LUCENENET specific - added matchVersion parameter so we can support backward compatible Unicode support
         {
-            get
-            {
-                return JAVA_4;
-            }
+            return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? JAVA_4 : JAVA_4_BW_COMPAT;
         }
 
         /// <summary>
@@ -133,7 +137,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="buffer"> the char buffer to lowercase </param>
         /// <param name="offset"> the offset to start at </param>
         /// <param name="limit"> the max char in the buffer to lower case </param>
-        public void ToLower(char[] buffer, int offset, int limit)
+        public virtual void ToLower(char[] buffer, int offset, int limit) // LUCENENET specific - marked virtual so we can override the default
         {
             Debug.Assert(buffer.Length >= limit);
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
@@ -144,6 +148,7 @@ namespace Lucene.Net.Analysis.Util
                 .ToLowerInvariant()
                 .CopyTo(0, buffer, offset, limit);
 
+            // Original (slow) Lucene implementation:
             //for (int i = offset; i < limit; )
             //{
             //    i += Character.ToChars(
@@ -158,7 +163,7 @@ namespace Lucene.Net.Analysis.Util
         /// <param name="buffer"> the char buffer to UPPERCASE </param>
         /// <param name="offset"> the offset to start at </param>
         /// <param name="limit"> the max char in the buffer to lower case </param>
-        public void ToUpper(char[] buffer, int offset, int limit)
+        public virtual void ToUpper(char[] buffer, int offset, int limit) // LUCENENET specific - marked virtual so we can override the default
         {
             Debug.Assert(buffer.Length >= limit);
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
@@ -169,6 +174,7 @@ namespace Lucene.Net.Analysis.Util
                 .ToUpperInvariant()
                 .CopyTo(0, buffer, offset, limit);
 
+            // Original (slow) Lucene implementation:
             //for (int i = offset; i < limit; )
             //{
             //    i += Character.ToChars(
@@ -346,7 +352,10 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
-        private sealed class Java4CharacterUtils : CharacterUtils
+        // LUCENENET specific - not sealed so we can make another override to handle BW compatibility
+        // with broken unicode support (Lucene 3.0). See the TestCharArraySet.TestSupplementaryCharsBWCompat()
+        // and TestCharArraySet.TestSingleHighSurrogateBWComapt() tests.
+        private class Java4CharacterUtils : CharacterUtils
         {
             public override int CodePointAt(string seq, int offset)
             {
@@ -394,6 +403,39 @@ namespace Lucene.Net.Analysis.Util
                     throw new System.IndexOutOfRangeException();
                 }
                 return result;
+            }
+        }
+
+        // LUCENENET specific class to handle BW compatibility
+        // with broken unicode support (Lucene 3.0). See the TestCharArraySet.TestSupplementaryCharsBWCompat()
+        // and TestCharArraySet.TestSingleHighSurrogateBWComapt() tests. This just provides the old (slower)
+        // implementation that represents the original Lucene toUpperCase and toLowerCase methods.
+        private class Java4CharacterUtilsBWCompatibility : Java4CharacterUtils
+        {
+            public override void ToLower(char[] buffer, int offset, int limit)
+            {
+                Debug.Assert(buffer.Length >= limit);
+                Debug.Assert(offset <= 0 && offset <= buffer.Length);
+
+                for (int i = offset; i < limit;)
+                {
+                    i += Character.ToChars(
+                        Character.ToLowerCase(
+                            CodePointAt(buffer, i, limit)), buffer, i);
+                }
+            }
+
+            public override void ToUpper(char[] buffer, int offset, int limit)
+            {
+                Debug.Assert(buffer.Length >= limit);
+                Debug.Assert(offset <= 0 && offset <= buffer.Length);
+
+                for (int i = offset; i < limit;)
+                {
+                    i += Character.ToChars(
+                        Character.ToUpperCase(
+                            CodePointAt(buffer, i, limit)), buffer, i);
+                }
             }
         }
 

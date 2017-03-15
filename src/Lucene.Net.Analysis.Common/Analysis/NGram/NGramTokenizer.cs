@@ -180,7 +180,7 @@ namespace Lucene.Net.Analysis.NGram
 #pragma warning disable 612, 618
             charUtils = version.OnOrAfter(LuceneVersion.LUCENE_44) ?
 #pragma warning restore 612, 618
-                CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
+                CharacterUtils.GetInstance(version) : CharacterUtils.GetJava4Instance(version);
             if (minGram < 1)
             {
                 throw new System.ArgumentException("minGram must be greater than zero");

@@ -86,7 +86,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestCodePointCount()
         {
-            var java4 = CharacterUtils.Java4Instance;
+            var java4 = CharacterUtils.GetJava4Instance(TEST_VERSION_CURRENT);
             var java5 = CharacterUtils.GetInstance(TEST_VERSION_CURRENT);
             
             var s = TestUtil.RandomUnicodeString(Random());
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestOffsetByCodePoint()
         {
-            var java4 = CharacterUtils.Java4Instance;
+            var java4 = CharacterUtils.GetJava4Instance(TEST_VERSION_CURRENT);
             var java5 = CharacterUtils.GetInstance(TEST_VERSION_CURRENT);
             for (int i = 0; i < 10; ++i)
             {
@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Util
         [Test]
         public virtual void TestConversions()
         {
-            var java4 = CharacterUtils.Java4Instance;
+            var java4 = CharacterUtils.GetJava4Instance(TEST_VERSION_CURRENT);
             var java5 = CharacterUtils.GetInstance(TEST_VERSION_CURRENT);
             TestConversions(java4);
             TestConversions(java5);

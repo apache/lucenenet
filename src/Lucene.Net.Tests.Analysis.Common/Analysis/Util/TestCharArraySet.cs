@@ -337,7 +337,7 @@ namespace Lucene.Net.Analysis.Util
         /// @deprecated (3.1) remove this test when lucene 3.0 "broken unicode 4" support is
         ///             no longer needed. 
         [Test]
-        [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is")]
+        [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is no longer needed.")]
         public virtual void TestSupplementaryCharsBWCompat()
         {
             string missing = "Term {0} is missing in the set";
@@ -371,7 +371,7 @@ namespace Lucene.Net.Analysis.Util
         /// @deprecated (3.1) remove this test when lucene 3.0 "broken unicode 4" support is
         ///             no longer needed. 
         [Test]
-        [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is")]
+        [Obsolete("(3.1) remove this test when lucene 3.0 'broken unicode 4' support is no longer needed.")]
         public virtual void TestSingleHighSurrogateBWComapt()
         {
             string missing = "Term {0} is missing in the set";

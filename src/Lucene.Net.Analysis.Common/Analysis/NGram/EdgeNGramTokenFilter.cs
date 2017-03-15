@@ -125,7 +125,7 @@ namespace Lucene.Net.Analysis.NGram
             }
 
             this.version = version;
-            this.charUtils = version.OnOrAfter(LuceneVersion.LUCENE_44) ? CharacterUtils.GetInstance(version) : CharacterUtils.Java4Instance;
+            this.charUtils = version.OnOrAfter(LuceneVersion.LUCENE_44) ? CharacterUtils.GetInstance(version) : CharacterUtils.GetJava4Instance(version);
             this.minGram = minGram;
             this.maxGram = maxGram;
             this.side = side;
