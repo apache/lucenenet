@@ -946,7 +946,7 @@ namespace Lucene.Net.Index
                                     throw new IndexFormatTooNewException(genInput, version, FORMAT_SEGMENTS_GEN_START, FORMAT_SEGMENTS_GEN_CURRENT);
                                 }
                             }
-                            catch (Exception err2)
+                            catch (IOException err2)
                             {
                                 // rethrow any format exception
                                 if (err2 is CorruptIndexException)
