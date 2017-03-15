@@ -68,7 +68,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             {
                 ITextableQueryNode txtNode = (ITextableQueryNode)node;
                 ICharSequence text = txtNode.Text;
-                txtNode.Text = text != null ? UnescapedCharSequence.ToLowerCase(text, locale) : null;
+                txtNode.Text = text != null ? UnescapedCharSequence.ToLower(text, locale) : null;
             }
 
             return node;

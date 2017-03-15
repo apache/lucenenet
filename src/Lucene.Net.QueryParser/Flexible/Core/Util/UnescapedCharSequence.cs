@@ -85,10 +85,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             }
         }
 
-        public char CharAt(int index)
-        {
-            return this.chars[index];
-        }
+        //public char CharAt(int index) // LUCENENET specific - replaced with this[index]
+        //{
+        //    return this.chars[index];
+        //}
 
 
         public int Length
@@ -100,7 +100,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
         {
             get
             {
-                return CharAt(index);
+                return this.chars[index];
             }
         }
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Util
             else return false;
         }
 
-        public static ICharSequence ToLowerCase(ICharSequence text, CultureInfo locale)
+        public static ICharSequence ToLower(ICharSequence text, CultureInfo locale)
         {
             var lowercaseText = locale.TextInfo.ToLower(text.ToString());
 
