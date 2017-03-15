@@ -438,13 +438,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     // identical code to CategoryPath.hashFromSerialized. since we need to
                     // advance offset, we cannot call the method directly. perhaps if we
                     // could pass a mutable Integer or something...
-                    int length = (ushort)l2o.labelRepository.CharAt(offset++);
+                    int length = (ushort)l2o.labelRepository[offset++];
                     int hash = length;
                     if (length != 0)
                     {
                         for (int i = 0; i < length; i++)
                         {
-                            int len = (ushort)l2o.labelRepository.CharAt(offset++);
+                            int len = (ushort)l2o.labelRepository[offset++];
                             hash = hash * 31 + l2o.labelRepository.SubSequence(offset, offset + len).GetHashCode();
                             offset += len;
                         }

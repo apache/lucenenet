@@ -47,7 +47,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         public static int HashCodeOfSerialized(CharBlockArray charBlockArray, int offset)
         {
-            int length = charBlockArray.CharAt(offset++);
+            int length = charBlockArray[offset++];
             if (length == 0)
             {
                 return 0;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             int hash = length;
             for (int i = 0; i < length; i++)
             {
-                int len = charBlockArray.CharAt(offset++);
+                int len = charBlockArray[offset++];
                 hash = hash * 31 + charBlockArray.SubSequence(offset, offset + len).GetHashCode();
                 offset += len;
             }
@@ -69,7 +69,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         /// </summary>
         public static bool EqualsToSerialized(FacetLabel cp, CharBlockArray charBlockArray, int offset)
         {
-            int n = charBlockArray.CharAt(offset++);
+            int n = charBlockArray[offset++];
             if (cp.Length != n)
             {
                 return false;
@@ -81,7 +81,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             for (int i = 0; i < cp.Length; i++)
             {
-                int len = charBlockArray.CharAt(offset++);
+                int len = charBlockArray[offset++];
                 if (len != cp.Components[i].Length)
                 {
                     return false;

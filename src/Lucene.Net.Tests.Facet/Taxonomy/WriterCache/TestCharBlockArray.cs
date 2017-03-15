@@ -95,7 +95,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             Assert.AreEqual(expected.Length, actual.Length, msg);
             for (int i = 0; i < expected.Length; i++)
             {
-                Assert.AreEqual(expected[i], actual.CharAt(i), msg);
+                Assert.AreEqual(expected[i], actual[i], msg);
             }
         }
     }

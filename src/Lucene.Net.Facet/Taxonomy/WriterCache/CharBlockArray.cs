@@ -181,11 +181,13 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             this.length_Renamed += s.Length;
             return this;
         }
-        public virtual char CharAt(int index)
-        {
-            Block b = blocks[BlockIndex(index)];
-            return b.chars[IndexInBlock(index)];
-        }
+
+        // LUCENENET specific - replaced with this[index]
+        //public virtual char CharAt(int index)
+        //{
+        //    Block b = blocks[BlockIndex(index)];
+        //    return b.chars[IndexInBlock(index)];
+        //}
 
         // LUCENENET specific - added to .NETify
         public virtual char this[int index]
