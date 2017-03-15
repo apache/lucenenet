@@ -321,8 +321,7 @@ namespace Lucene.Net.Analysis.Util
         /// <summary>
         /// Gets a <see cref="CultureInfo"/> value of the specified argument key <paramref name="name"/>.
         /// <para/>
-        /// To specify the invariant culture, pass the string <c>"invariant"</c>. To specify
-        /// the culture using the <see cref="CultureInfo.LCID"/>, pass the value as an <see cref="int"/>.
+        /// To specify the invariant culture, pass the string <c>"invariant"</c>.
         /// <para/>
         /// LUCENENET specific
         /// </summary>
@@ -344,11 +343,6 @@ namespace Lucene.Net.Analysis.Util
                 {
                     throw new System.ArgumentException("Configuration Error: '" + name + "' can not be parsed in " + this.GetType().Name, e);
                 }
-            }
-            int lcid;
-            if ((lcid = GetInt32(args, name, int.MinValue)) != int.MinValue)
-            {
-                return new CultureInfo(lcid);
             }
             return defaultVal;
         }
