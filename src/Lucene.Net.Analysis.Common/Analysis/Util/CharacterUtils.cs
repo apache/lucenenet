@@ -137,12 +137,19 @@ namespace Lucene.Net.Analysis.Util
         {
             Debug.Assert(buffer.Length >= limit);
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
-            for (int i = offset; i < limit; )
-            {
-                i += Character.ToChars(
-                    Character.ToLowerCase(
-                        CodePointAt(buffer, i, limit)), buffer, i);
-            }
+
+            // Optimization provided by Vincent Van Den Berghe: 
+            // http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
+            new string(buffer, offset, limit)
+                .ToLowerInvariant()
+                .CopyTo(0, buffer, offset, limit);
+
+            //for (int i = offset; i < limit; )
+            //{
+            //    i += Character.ToChars(
+            //        Character.ToLowerCase(
+            //            CodePointAt(buffer, i, limit)), buffer, i);
+            //}
         }
 
         /// <summary>
@@ -155,12 +162,19 @@ namespace Lucene.Net.Analysis.Util
         {
             Debug.Assert(buffer.Length >= limit);
             Debug.Assert(offset <= 0 && offset <= buffer.Length);
-            for (int i = offset; i < limit; )
-            {
-                i += Character.ToChars(
-                    Character.ToUpperCase(
-                        CodePointAt(buffer, i, limit)), buffer, i);
-            }
+
+            // Optimization provided by Vincent Van Den Berghe: 
+            // http://search-lucene.com/m/Lucene.Net/j1zMf1uckOzOYqsi?subj=Proposal+to+speed+up+implementation+of+LowercaseFilter+charUtils+ToLower
+            new string(buffer, offset, limit)
+                .ToUpperInvariant()
+                .CopyTo(0, buffer, offset, limit);
+
+            //for (int i = offset; i < limit; )
+            //{
+            //    i += Character.ToChars(
+            //        Character.ToUpperCase(
+            //            CodePointAt(buffer, i, limit)), buffer, i);
+            //}
         }
 
         /// <summary>
