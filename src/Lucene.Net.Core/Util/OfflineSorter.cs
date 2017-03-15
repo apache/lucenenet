@@ -624,7 +624,7 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadInt16();
                 }
-                catch (Exception)
+                catch (EndOfStreamException)
                 {
                     return false;
                 }
@@ -651,9 +651,7 @@ namespace Lucene.Net.Util
                 {
                     length = (ushort)inputStream.ReadInt16();
                 }
-#pragma warning disable 168
-                catch (Exception e)
-#pragma warning restore 168
+                catch (EndOfStreamException)
                 {
                     return null;
                 }
