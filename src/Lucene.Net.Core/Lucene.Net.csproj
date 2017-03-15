@@ -638,6 +638,7 @@
     <Compile Include="Support\DataInputStream.cs" />
     <Compile Include="Support\DataOutputStream.cs" />
     <Compile Include="Support\Codecs\DefaultCodecFactory.cs" />
+    <Compile Include="Support\ExceptionExtensions.cs" />
     <Compile Include="Support\ExceptionToClassNameConventionAttribute.cs" />
     <Compile Include="Support\ExceptionToNullableEnumConvention.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
