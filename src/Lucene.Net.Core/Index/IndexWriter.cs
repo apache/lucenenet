@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
         // to allow users to query an IndexWriter settings.
         private readonly LiveIndexWriterConfig config;
 
-        internal virtual DirectoryReader Reader
+        internal virtual DirectoryReader Reader // LUCENENET TODO API: Change to GetReader()
         {
             get
             {
@@ -560,78 +560,88 @@ namespace Lucene.Net.Index
                     Exception priorE = null;
                     IEnumerator<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>> it = readerMap.GetEnumerator();
 
-                    //Using outer try-catch to avoid deleting as iterating to avoid item corruption. Whether or not
-                    //an exception is encountered in the outer while-loop, the ReaderMap will always be Clear()ed out
-                    try
+                    // LUCENENET specific - Since an enumerator doesn't allow you to delete 
+                    // immediately, keep track of which elements we have iterated over so
+                    // we can delete them immediately before throwing exceptions or at the
+                    // end of the block.
+                    IList<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>> toDelete = new List<KeyValuePair<SegmentCommitInfo, ReadersAndUpdates>>();
+
+                    while (it.MoveNext())
                     {
-                        while (it.MoveNext())
+                        ReadersAndUpdates rld = it.Current.Value;
+
+                        try
                         {
-                            ReadersAndUpdates rld = it.Current.Value;
-
-                            try
+                            if (doSave && rld.WriteLiveDocs(outerInstance.directory)) // Throws IOException
                             {
-                                if (doSave && rld.WriteLiveDocs(outerInstance.directory))
-                                {
-                                    // Make sure we only write del docs and field updates for a live segment:
-                                    Debug.Assert(InfoIsLive(rld.Info));
-                                    // Must checkpoint because we just
-                                    // created new _X_N.del and field updates files;
-                                    // don't call IW.checkpoint because that also
-                                    // increments SIS.version, which we do not want to
-                                    // do here: it was done previously (after we
-                                    // invoked BDS.applyDeletes), whereas here all we
-                                    // did was move the state to disk:
-                                    outerInstance.CheckpointNoSIS();
-                                }
+                                // Make sure we only write del docs and field updates for a live segment:
+                                Debug.Assert(InfoIsLive(rld.Info));
+                                // Must checkpoint because we just
+                                // created new _X_N.del and field updates files;
+                                // don't call IW.checkpoint because that also
+                                // increments SIS.version, which we do not want to
+                                // do here: it was done previously (after we
+                                // invoked BDS.applyDeletes), whereas here all we
+                                // did was move the state to disk:
+                                outerInstance.CheckpointNoSIS(); // Throws IOException
                             }
-                            catch (Exception t)
+                        }
+                        catch (Exception t)
+                        {
+                            if (doSave)
                             {
-                                if (doSave)
-                                {
-                                    IOUtils.ReThrow(t);
-                                }
-                                else if (priorE == null)
-                                {
-                                    priorE = t;
-                                }
+                                // LUCENENET specific: remove all of the
+                                // elements we have iterated over so far
+                                // before throwing an exception.
+                                readerMap.RemoveAll(toDelete);
+                                IOUtils.ReThrow(t);
                             }
-
-                            // Important to remove as-we-go, not with .clear()
-                            // in the end, in case we hit an exception;
-                            // otherwise we could over-decref if close() is
-                            // called again:
-                            //ReaderMap.Remove(it.Current);
-
-                            // NOTE: it is allowed that these decRefs do not
-                            // actually close the SRs; this happens when a
-                            // near real-time reader is kept open after the
-                            // IndexWriter instance is closed:
-                            try
+                            else if (priorE == null)
                             {
-                                rld.DropReaders();
+                                priorE = t;
                             }
-                            catch (Exception t)
+                        }
+
+                        // Important to remove as-we-go, not with .clear()
+                        // in the end, in case we hit an exception;
+                        // otherwise we could over-decref if close() is
+                        // called again:
+
+                        // LUCENENET specific - we cannot delete immediately,
+                        // so we store the elements that are iterated over and
+                        // delete as soon as we are done iterating (whether
+                        // that is because of an exception or not).
+                        toDelete.Add(it.Current);
+
+                        // NOTE: it is allowed that these decRefs do not
+                        // actually close the SRs; this happens when a
+                        // near real-time reader is kept open after the
+                        // IndexWriter instance is closed:
+                        try
+                        {
+                            rld.DropReaders(); // Throws IOException
+                        }
+                        catch (Exception t)
+                        {
+                            if (doSave)
                             {
-                                if (doSave)
-                                {
-                                    IOUtils.ReThrow(t);
-                                }
-                                else if (priorE == null)
-                                {
-                                    priorE = t;
-                                }
+                                // LUCENENET specific: remove all of the
+                                // elements we have iterated over so far
+                                // before throwing an exception.
+                                readerMap.RemoveAll(toDelete);
+                                IOUtils.ReThrow(t);
+                            }
+                            else if (priorE == null)
+                            {
+                                priorE = t;
                             }
                         }
                     }
-#pragma warning disable 168
-                    catch (Exception disruption)
-#pragma warning restore 168
-                    {
-                    }
-                    finally
-                    {
-                        readerMap.Clear();
-                    }
+                    // LUCENENET specific: remove all of the
+                    // elements we have iterated over so far
+                    // before possibly throwing an exception.
+                    readerMap.RemoveAll(toDelete);
+
                     Debug.Assert(readerMap.Count == 0);
                     IOUtils.ReThrow(priorE);
                 }
