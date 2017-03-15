@@ -52,6 +52,25 @@ namespace Lucene.Net.Support
             return _accessor.ReadByte(Ix(CheckIndex(index)));
         }
 
+        // Implementation provided by Vincent Van Den Berghe: http://git.net/ml/general/2017-02/msg31639.html
+        public override ByteBuffer Get(byte[] dst, int offset, int length)
+        {
+            CheckBounds(offset, length, dst.Length);
+            if (length > Remaining)
+            {
+                throw new BufferUnderflowException();
+            }
+            // we need to check for 0-length reads, since 
+            // ReadArray will throw an ArgumentOutOfRange exception if position is at
+            // the end even when nothing is read
+            if (length > 0)
+            {
+                _accessor.ReadArray(Ix(NextGetIndex(length)), dst, offset, length);
+            }
+
+            return this;
+        }
+
         public override bool IsDirect
         {
             get { return false; }
@@ -73,6 +92,25 @@ namespace Lucene.Net.Support
             _accessor.Write(Ix(CheckIndex(index)), b);
             return this;
         }
+
+        // Implementation provided by Vincent Van Den Berghe: http://git.net/ml/general/2017-02/msg31639.html
+        public override ByteBuffer Put(byte[] src, int offset, int length)
+        {
+            CheckBounds(offset, length, src.Length);
+            if (length > Remaining)
+            {
+                throw new BufferOverflowException();
+            }
+            // we need to check for 0-length writes, since 
+            // ReadArray will throw an ArgumentOutOfRange exception if position is at 
+            // the end even when nothing is read
+            if (length > 0)
+            {
+                _accessor.WriteArray(Ix(NextPutIndex(length)), src, offset, length);
+            }
+            return this;
+        }
+
 
         public override ByteBuffer Compact()
         {
