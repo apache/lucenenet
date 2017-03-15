@@ -104,7 +104,7 @@ namespace Lucene.Net.Support
                                            - MIN_LOW_SURROGATE);
         }
 
-        public static int ToLowerCase(int codePoint)
+        public static int ToLower(int codePoint)
         {
             var str = UnicodeUtil.NewString(new[] {codePoint}, 0, 1);
 
@@ -113,7 +113,7 @@ namespace Lucene.Net.Support
             return CodePointAt(str, 0);
         }
 
-        public static int ToUpperCase(int codePoint)
+        public static int ToUpper(int codePoint)
         {
             var str = UnicodeUtil.NewString(new[] { codePoint }, 0, 1);
 

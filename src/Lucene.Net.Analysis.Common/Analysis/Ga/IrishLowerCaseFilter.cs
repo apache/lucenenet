@@ -60,7 +60,7 @@ namespace Lucene.Net.Analysis.Ga
 
                 for (int i = idx; i < chLen;)
                 {
-                    i += Character.ToChars(Character.ToLowerCase(chArray[i]), chArray, i);
+                    i += Character.ToChars(Character.ToLower(chArray[i]), chArray, i);
                 }
                 return true;
             }

@@ -132,7 +132,7 @@ namespace Lucene.Net.Analysis.Util
 
 
         /// <summary>
-        /// Converts each unicode codepoint to lowerCase via <see cref="Character.ToLowerCase(int)"/> starting 
+        /// Converts each unicode codepoint to lowerCase via <see cref="Character.ToLower(int)"/> starting 
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to lowercase </param>
         /// <param name="offset"> the offset to start at </param>
@@ -152,13 +152,13 @@ namespace Lucene.Net.Analysis.Util
             //for (int i = offset; i < limit; )
             //{
             //    i += Character.ToChars(
-            //        Character.ToLowerCase(
+            //        Character.ToLower(
             //            CodePointAt(buffer, i, limit)), buffer, i);
             //}
         }
 
         /// <summary>
-        /// Converts each unicode codepoint to UpperCase via <see cref="Character.ToUpperCase(int)"/> starting 
+        /// Converts each unicode codepoint to UpperCase via <see cref="Character.ToUpper(int)"/> starting 
         /// at the given offset. </summary>
         /// <param name="buffer"> the char buffer to UPPERCASE </param>
         /// <param name="offset"> the offset to start at </param>
@@ -178,7 +178,7 @@ namespace Lucene.Net.Analysis.Util
             //for (int i = offset; i < limit; )
             //{
             //    i += Character.ToChars(
-            //        Character.ToUpperCase(
+            //        Character.ToUpper(
             //            CodePointAt(buffer, i, limit)), buffer, i);
             //}
         }
@@ -420,7 +420,7 @@ namespace Lucene.Net.Analysis.Util
                 for (int i = offset; i < limit;)
                 {
                     i += Character.ToChars(
-                        Character.ToLowerCase(
+                        Character.ToLower(
                             CodePointAt(buffer, i, limit)), buffer, i);
                 }
             }
@@ -433,7 +433,7 @@ namespace Lucene.Net.Analysis.Util
                 for (int i = offset; i < limit;)
                 {
                     i += Character.ToChars(
-                        Character.ToUpperCase(
+                        Character.ToUpper(
                             CodePointAt(buffer, i, limit)), buffer, i);
                 }
             }

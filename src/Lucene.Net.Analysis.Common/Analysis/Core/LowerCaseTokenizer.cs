@@ -73,11 +73,11 @@ namespace Lucene.Net.Analysis.Core
 
         /// <summary>
         /// Converts char to lower case
-        /// <see cref="Character.ToLowerCase(int)"/>.
+        /// <see cref="Character.ToLower(int)"/>.
         /// </summary>
         protected override int Normalize(int c)
         {
-            return Character.ToLowerCase(c);
+            return Character.ToLower(c);
         }
     }
 }

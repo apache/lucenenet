@@ -213,7 +213,7 @@ namespace Lucene.Net.Search.PostingsHighlight
                         assertEquals(matchStart + 1, matchEnd);
                         // and the offsets must be correct...
                         assertEquals(1, term.Length);
-                        assertEquals((char)term.Bytes[term.Offset], Character.ToLowerCase(content[matchStart]));
+                        assertEquals((char)term.Bytes[term.Offset], Character.ToLower(content[matchStart]));
                     }
                     // record just the start/end offset for simplicity
                     seen.Add(new Pair(p.StartOffset, p.EndOffset));

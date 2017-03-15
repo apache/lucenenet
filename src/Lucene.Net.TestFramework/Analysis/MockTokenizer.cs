@@ -291,7 +291,7 @@ namespace Lucene.Net.Analysis
 
         protected internal virtual int Normalize(int c)
         {
-            return LowerCase ? Character.ToLowerCase(c) : c;
+            return LowerCase ? Character.ToLower(c) : c;
         }
 
         public override void Reset()

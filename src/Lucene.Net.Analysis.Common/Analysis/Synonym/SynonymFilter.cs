@@ -264,7 +264,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         /// <param name="input"> input tokenstream </param>
         /// <param name="synonyms"> synonym map </param>
-        /// <param name="ignoreCase"> case-folds input for matching with <see cref="Character.ToLowerCase(int)"/>.
+        /// <param name="ignoreCase"> case-folds input for matching with <see cref="Character.ToLower(int)"/>.
         ///                   Note, if you set this to true, its your responsibility to lowercase
         ///                   the input entries when you create the <see cref="SynonymMap"/> </param>
         public SynonymFilter(TokenStream input, SynonymMap synonyms, bool ignoreCase) 
@@ -423,7 +423,7 @@ namespace Lucene.Net.Analysis.Synonym
                 while (bufUpto < bufferLen)
                 {
                     int codePoint = Character.CodePointAt(buffer, bufUpto, bufferLen);
-                    if (fst.FindTargetArc(ignoreCase ? Character.ToLowerCase(codePoint) : codePoint, scratchArc, scratchArc, fstReader) == null)
+                    if (fst.FindTargetArc(ignoreCase ? Character.ToLower(codePoint) : codePoint, scratchArc, scratchArc, fstReader) == null)
                     {
                         //System.out.println("    stop");
                         goto byTokenBreak;

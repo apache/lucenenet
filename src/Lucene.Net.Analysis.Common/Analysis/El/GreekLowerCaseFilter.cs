@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.El
                     return '\u03C2'; // small final sigma
 
                 default:
-                    return Character.ToLowerCase(codepoint);
+                    return Character.ToLower(codepoint);
             }
         }
     }

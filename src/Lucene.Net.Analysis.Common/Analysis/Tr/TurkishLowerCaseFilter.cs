@@ -118,7 +118,7 @@ namespace Lucene.Net.Analysis.Tr
                         }
                     }
 
-                    i += Character.ToChars(Character.ToLowerCase(ch), buffer, i);
+                    i += Character.ToChars(Character.ToLower(ch), buffer, i);
                 }
 
                 termAtt.Length = length;
