@@ -5,10 +5,7 @@
   },
   "buildOptions": {
     "compile": {
-      "exclude": [ "Store/*" ],
-      "excludeFiles": [
-        "ByteBuffer.cs"
-      ]
+      "exclude": [ "Store/*" ]
     }
   },
   "frameworks": {
