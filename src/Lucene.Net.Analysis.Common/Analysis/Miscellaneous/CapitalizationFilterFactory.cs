@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Lucene.Net.Analysis.Util;
-using Lucene.Net.Support;
+﻿using Lucene.Net.Analysis.Util;
+using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Analysis.Miscellaneous
 {
@@ -59,6 +59,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         public const string MAX_TOKEN_LENGTH = "maxTokenLength";
         public const string ONLY_FIRST_WORD = "onlyFirstWord";
         public const string FORCE_FIRST_LETTER = "forceFirstLetter";
+        public const string CULTURE = "culture"; // LUCENENET specific
 
         internal CharArraySet keep;
 
@@ -69,6 +70,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         internal readonly int maxTokenLength;
         internal readonly bool onlyFirstWord;
         internal readonly bool forceFirstLetter; // make sure the first letter is capital even if it is in the keep list
+        private readonly CultureInfo culture; // LUCENENET specific
 
         /// <summary>
         /// Creates a new <see cref="CapitalizationFilterFactory"/> </summary>
@@ -99,6 +101,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             maxTokenLength = GetInt32(args, MAX_TOKEN_LENGTH, CapitalizationFilter.DEFAULT_MAX_TOKEN_LENGTH);
             onlyFirstWord = GetBoolean(args, ONLY_FIRST_WORD, true);
             forceFirstLetter = GetBoolean(args, FORCE_FIRST_LETTER, true);
+            culture = GetCulture(args, CULTURE, null);
             if (args.Count > 0)
             {
                 throw new System.ArgumentException("Unknown parameters: " + args);
@@ -107,7 +110,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         public override TokenStream Create(TokenStream input)
         {
-            return new CapitalizationFilter(input, onlyFirstWord, keep, forceFirstLetter, okPrefix, minWordLength, maxWordCount, maxTokenLength);
+            return new CapitalizationFilter(input, onlyFirstWord, keep, forceFirstLetter, okPrefix, minWordLength, maxWordCount, maxTokenLength, culture);
         }
     }
 }

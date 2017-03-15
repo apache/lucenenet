@@ -46,21 +46,44 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         private readonly ICharTermAttribute termAtt;
 
+        // LUCENENET specific for specifying culture instead of using
+        // invariant culture (which makes this class more generally useful).
+        // Per MSDN, InvariantCulture shouldn't be used for cases such as this:
+        // https://msdn.microsoft.com/en-us/library/dd465121(v=vs.110).aspx
+        private readonly CultureInfo culture;
+
         /// <summary>
-        /// Creates a <see cref="CapitalizationFilter"/> with the default parameters.
+        /// Creates a <see cref="CapitalizationFilter"/> with the default parameters using the culture from the current thread.
+        /// <para>
+        /// Calls <see cref="CapitalizationFilter.CapitalizationFilter(TokenStream, bool, CharArraySet, bool, ICollection{char[]}, int, int, int)">
+        ///     CapitalizationFilter(in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH, null)
+        /// </see>
+        /// </para>
+        /// </summary>
+        public CapitalizationFilter(TokenStream @in)
+            : this(@in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a <see cref="CapitalizationFilter"/> with the default parameters and the specified <paramref name="culture"/>.
         /// <para>
         /// Calls <see cref="CapitalizationFilter.CapitalizationFilter(TokenStream, bool, CharArraySet, bool, ICollection{char[]}, int, int, int)">
         ///     CapitalizationFilter(in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH)
         /// </see>
         /// </para>
         /// </summary>
-        public CapitalizationFilter(TokenStream @in)
-            : this(@in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH)
+        /// <param name="in"> input tokenstream </param>
+        /// <param name="culture"> The culture to use for the casing operation. If null, the culture of the current thread will be used. </param>
+        // LUCENENET specific overload for specifying culture instead of using
+        // invariant culture (which makes this class more generally useful).
+        public CapitalizationFilter(TokenStream @in, CultureInfo culture)
+            : this(@in, true, null, true, null, 0, DEFAULT_MAX_WORD_COUNT, DEFAULT_MAX_TOKEN_LENGTH, culture)
         {
         }
 
         /// <summary>
-        /// Creates a <see cref="CapitalizationFilter"/> with the specified parameters. </summary>
+        /// Creates a <see cref="CapitalizationFilter"/> with the specified parameters using the culture from the current thread.</summary>
         /// <param name="in"> input tokenstream </param>
         /// <param name="onlyFirstWord"> should each word be capitalized or all of the words? </param>
         /// <param name="keep"> a keep word list.  Each word that should be kept separated by whitespace. </param>
@@ -70,8 +93,28 @@ namespace Lucene.Net.Analysis.Miscellaneous
         ///                      minWordLength is 3, "and" &gt; "And" but "or" stays "or". </param>
         /// <param name="maxWordCount"> if the token contains more then maxWordCount words, the capitalization is
         ///                     assumed to be correct. </param>
-        /// <param name="maxTokenLength"> ??? </param>
+        /// <param name="maxTokenLength"> The maximum length for an individual token. Tokens that exceed this length will not have the capitalization operation performed. </param>
         public CapitalizationFilter(TokenStream @in, bool onlyFirstWord, CharArraySet keep, bool forceFirstLetter, ICollection<char[]> okPrefix, int minWordLength, int maxWordCount, int maxTokenLength)
+            : this(@in, onlyFirstWord, keep, forceFirstLetter, okPrefix, minWordLength, maxWordCount, maxTokenLength, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a <see cref="CapitalizationFilter"/> with the specified parameters and the specified <paramref name="culture"/>. </summary>
+        /// <param name="in"> input tokenstream </param>
+        /// <param name="onlyFirstWord"> should each word be capitalized or all of the words? </param>
+        /// <param name="keep"> a keep word list.  Each word that should be kept separated by whitespace. </param>
+        /// <param name="forceFirstLetter"> Force the first letter to be capitalized even if it is in the keep list. </param>
+        /// <param name="okPrefix"> do not change word capitalization if a word begins with something in this list. </param>
+        /// <param name="minWordLength"> how long the word needs to be to get capitalization applied.  If the
+        ///                      minWordLength is 3, "and" &gt; "And" but "or" stays "or". </param>
+        /// <param name="maxWordCount"> if the token contains more then maxWordCount words, the capitalization is
+        ///                     assumed to be correct. </param>
+        /// <param name="maxTokenLength"> The maximum length for an individual token. Tokens that exceed this length will not have the capitalization operation performed. </param>
+        /// <param name="culture"> The culture to use for the casing operation. If null, the culture of the current thread will be used. </param>
+        // LUCENENET specific overload for specifying culture instead of using
+        // invariant culture (which makes this class more generally useful).
+        public CapitalizationFilter(TokenStream @in, bool onlyFirstWord, CharArraySet keep, bool forceFirstLetter, ICollection<char[]> okPrefix, int minWordLength, int maxWordCount, int maxTokenLength, CultureInfo culture)
             : base(@in)
         {
             // LUCENENET NOTE: The guard clauses were copied here from a later version of Lucene.
@@ -97,6 +140,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             this.minWordLength = minWordLength;
             this.maxWordCount = maxWordCount;
             this.maxTokenLength = maxTokenLength;
+            this.culture = culture;
             termAtt = AddAttribute<ICharTermAttribute>();
         }
 
@@ -164,8 +208,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 for (int i = 0; i < length; i++)
                 {
-                    buffer[offset + i] = char.ToLower(buffer[offset + i]);
-
+                    buffer[offset + i] = Culture.TextInfo.ToLower(buffer[offset + i]);
                 }
                 return;
             }
@@ -174,7 +217,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             {
                 if (wordCount == 0 && forceFirstLetter)
                 {
-                    buffer[offset] = CultureInfo.InvariantCulture.TextInfo.ToUpper(buffer[offset]);
+                    buffer[offset] = Culture.TextInfo.ToUpper(buffer[offset]);
                 }
                 return;
             }
@@ -211,13 +254,25 @@ namespace Lucene.Net.Analysis.Miscellaneous
             /*char[] chars = w.toCharArray();
             StringBuilder word = new StringBuilder( w.length() );
             word.append( Character.toUpperCase( chars[0] ) );*/
-            buffer[offset] = char.ToUpper(buffer[offset]);
+            buffer[offset] = Culture.TextInfo.ToUpper(buffer[offset]);
 
             for (int i = 1; i < length; i++)
             {
-                buffer[offset + i] = CultureInfo.InvariantCulture.TextInfo.ToLower(buffer[offset + i]);
+                buffer[offset + i] = Culture.TextInfo.ToLower(buffer[offset + i]);
             }
             //return word.toString();
+        }
+
+        // LUCENENET specific - we get the culture from the current thread if it wasn't
+        // provided in the constructor. This allows us to change the culture on the current
+        // thread and work like other .NET components. But culture can be overridden by
+        // passing it to the constructor.
+        private CultureInfo Culture
+        {
+            get
+            {
+                return (culture != null) ? culture : CultureInfo.CurrentCulture;
+            }
         }
     }
 }

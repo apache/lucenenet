@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 
 namespace Lucene.Net.Analysis.Miscellaneous
@@ -72,7 +73,10 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         internal static void AssertCapitalizesTo(Tokenizer tokenizer, string[] expected, bool onlyFirstWord, CharArraySet keep, bool forceFirstLetter, ICollection<char[]> okPrefix, int minWordLength, int maxWordCount, int maxTokenLength)
         {
-            CapitalizationFilter filter = new CapitalizationFilter(tokenizer, onlyFirstWord, keep, forceFirstLetter, okPrefix, minWordLength, maxWordCount, maxTokenLength);
+            CapitalizationFilter filter = new CapitalizationFilter(tokenizer, onlyFirstWord, keep, forceFirstLetter, okPrefix, minWordLength, maxWordCount, maxTokenLength,
+                // LUCENENET specific - pass in the invariant culture to get the same behavior as Lucene,
+                // otherwise the filter is culture-sensitive.
+                CultureInfo.InvariantCulture);
             AssertTokenStreamContents(filter, expected);
         }
 
