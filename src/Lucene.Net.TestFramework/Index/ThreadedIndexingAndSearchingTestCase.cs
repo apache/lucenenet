@@ -265,7 +265,7 @@ namespace Lucene.Net.Index
                                     OuterInstance.DelCount.AddAndGet(delSubDocs.SubIDs.Count);
                                     if (VERBOSE)
                                     {
-                                        Console.WriteLine(Thread.CurrentThread.Name + ": update pack packID=" + delSubDocs.PackID + " count=" + docsList.Count + " docs=" + docIDs);
+                                        Console.WriteLine(Thread.CurrentThread.Name + ": update pack packID=" + delSubDocs.PackID + " count=" + docsList.Count + " docs=" + Arrays.ToString(docIDs));
                                     }
                                     OuterInstance.UpdateDocuments(packIDTerm, docsList);
                                 }
@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
                                 {
                                     if (VERBOSE)
                                     {
-                                        Console.WriteLine(Thread.CurrentThread.Name + ": add pack packID=" + packID + " count=" + docsList.Count + " docs=" + docIDs);
+                                        Console.WriteLine(Thread.CurrentThread.Name + ": add pack packID=" + packID + " count=" + docsList.Count + " docs=" + Arrays.ToString(docIDs));
                                     }
                                     OuterInstance.AddDocuments(packIDTerm, docsList);
                                 }
