@@ -52,6 +52,7 @@ namespace Lucene.Net.Support
             return _accessor.ReadByte(Ix(CheckIndex(index)));
         }
 
+#if !NETSTANDARD
         // Implementation provided by Vincent Van Den Berghe: http://git.net/ml/general/2017-02/msg31639.html
         public override ByteBuffer Get(byte[] dst, int offset, int length)
         {
@@ -70,6 +71,7 @@ namespace Lucene.Net.Support
 
             return this;
         }
+#endif
 
         public override bool IsDirect
         {
@@ -93,6 +95,7 @@ namespace Lucene.Net.Support
             return this;
         }
 
+#if !NETSTANDARD
         // Implementation provided by Vincent Van Den Berghe: http://git.net/ml/general/2017-02/msg31639.html
         public override ByteBuffer Put(byte[] src, int offset, int length)
         {
@@ -110,7 +113,7 @@ namespace Lucene.Net.Support
             }
             return this;
         }
-
+#endif
 
         public override ByteBuffer Compact()
         {
