@@ -1308,7 +1308,7 @@ namespace Lucene.Net.Index
 
             public override void Message(string component, string message)
             {
-                if (message.StartsWith("now flush at close") && Thrown.CompareAndSet(false, true))
+                if (message.StartsWith("now flush at close", StringComparison.Ordinal) && Thrown.CompareAndSet(false, true))
                 {
                     throw new System.OutOfMemoryException("fake OOME at " + message);
                 }
@@ -1501,7 +1501,7 @@ namespace Lucene.Net.Index
             bool corrupted = false;
             for (int i = 0; i < files.Length; i++)
             {
-                if (files[i].EndsWith(".cfs"))
+                if (files[i].EndsWith(".cfs", StringComparison.Ordinal))
                 {
                     dir.DeleteFile(files[i]);
                     corrupted = true;
@@ -1632,7 +1632,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception e)
                         {
-                            Assert.IsTrue(e.Message.StartsWith(FailOnTermVectors.EXC_MSG));
+                            Assert.IsTrue(e.Message.StartsWith(FailOnTermVectors.EXC_MSG, StringComparison.Ordinal));
                         }
                         if (Random().Next(20) == 0)
                         {
@@ -1657,7 +1657,7 @@ namespace Lucene.Net.Index
                         }
                         catch (Exception e)
                         {
-                            Assert.IsTrue(e.Message.StartsWith(FailOnTermVectors.EXC_MSG));
+                            Assert.IsTrue(e.Message.StartsWith(FailOnTermVectors.EXC_MSG, StringComparison.Ordinal));
                         }
                         if (Random().Next(20) == 0)
                         {
@@ -1869,7 +1869,7 @@ namespace Lucene.Net.Index
             public override IndexInput OpenInput(string name, IOContext context)
             {
                 if (DoFail
-                    && name.StartsWith("segments_")
+                    && name.StartsWith("segments_", StringComparison.Ordinal)
                     && StackTraceHelper.DoesStackTraceContainMethod("Read"))
                 {
                     throw new NotSupportedException("expected UOE");

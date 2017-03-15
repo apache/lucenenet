@@ -242,7 +242,7 @@
 //        public virtual void CrashJRE()
 //        {
 //            string vendor = Constants.JAVA_VENDOR;
-//            bool supportsUnsafeNpeDereference = vendor.StartsWith("Oracle") || vendor.StartsWith("Sun") || vendor.StartsWith("Apple");
+//            bool supportsUnsafeNpeDereference = vendor.StartsWith("Oracle", StringComparison.Ordinal) || vendor.StartsWith("Sun", StringComparison.Ordinal) || vendor.StartsWith("Apple", StringComparison.Ordinal);
 
 //            try
 //            {

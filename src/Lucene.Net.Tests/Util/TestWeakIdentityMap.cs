@@ -121,7 +121,7 @@ namespace Lucene.Net.Util
             for (IEnumerator<string> iter = map.Values.GetEnumerator(); iter.MoveNext();)
             {
                 string v = iter.Current;
-                Assert.IsTrue(v.StartsWith("bar"));
+                Assert.IsTrue(v.StartsWith("bar", StringComparison.Ordinal));
                 c++;
             }
             Assert.AreEqual(3, c);

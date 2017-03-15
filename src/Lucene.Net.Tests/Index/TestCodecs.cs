@@ -316,7 +316,7 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     text2 = TestUtil.RandomUnicodeString(Random());
-                    if (!termsSeen.Contains(text2) && !text2.EndsWith("."))
+                    if (!termsSeen.Contains(text2) && !text2.EndsWith(".", StringComparison.Ordinal))
                     {
                         termsSeen.Add(text2);
                         break;

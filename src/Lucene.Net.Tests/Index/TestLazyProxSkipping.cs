@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -63,7 +64,7 @@ namespace Lucene.Net.Index
             public override IndexInput OpenInput(string name, IOContext context)
             {
                 IndexInput ii = base.OpenInput(name, context);
-                if (name.EndsWith(".prx") || name.EndsWith(".pos"))
+                if (name.EndsWith(".prx", StringComparison.Ordinal) || name.EndsWith(".pos", StringComparison.Ordinal))
                 {
                     // we decorate the proxStream with a wrapper class that allows to count the number of calls of seek()
                     ii = new SeeksCountingStream(OuterInstance, ii);

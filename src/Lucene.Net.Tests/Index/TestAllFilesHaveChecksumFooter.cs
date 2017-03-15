@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
                 {
                     continue; // write.lock has no footer, thats ok
                 }
-                if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION))
+                if (file.EndsWith(IndexFileNames.COMPOUND_FILE_EXTENSION, StringComparison.Ordinal))
                 {
                     CompoundFileDirectory cfsDir = new CompoundFileDirectory(dir, file, NewIOContext(Random()), false);
                     CheckHeaders(cfsDir); // recurse into cfs

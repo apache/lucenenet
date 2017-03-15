@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -102,7 +103,7 @@ namespace Lucene.Net.Index
                 //Assert.AreEqual("this IndexReader cannot be used anymore as one of its child readers was closed", ace.Message);
                 // LUCENENET specific - ObjectDisposedExeption appends the type of object to the end of the message,
                 // so we need to check the start of the message only.
-                assertTrue(ace.Message.StartsWith("this IndexReader cannot be used anymore as one of its child readers was closed"));
+                assertTrue(ace.Message.StartsWith("this IndexReader cannot be used anymore as one of its child readers was closed", StringComparison.Ordinal));
             }
             finally
             {

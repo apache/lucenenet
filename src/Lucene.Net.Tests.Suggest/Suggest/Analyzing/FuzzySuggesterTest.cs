@@ -846,7 +846,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 for (int i = 0; i < tokens.Length; i++)
                 {
                     string token = tokens[i];
-                    if (preserveSep && builder.Length > 0 && !builder.ToString().EndsWith(" "))
+                    if (preserveSep && builder.Length > 0 && !builder.ToString().EndsWith(" ", StringComparison.Ordinal))
                     {
                         builder.Append(' ');
                     }
@@ -889,7 +889,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     continue;
                 }
 
-                if (preserveSep && (prefix.EndsWith(" ") || lastRemoved))
+                if (preserveSep && (prefix.EndsWith(" ", StringComparison.Ordinal) || lastRemoved))
                 {
                     analyzedKey += " ";
                 }

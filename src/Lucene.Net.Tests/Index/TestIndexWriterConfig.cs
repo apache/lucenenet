@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -116,7 +117,7 @@ namespace Lucene.Net.Index
 
             foreach (MethodInfo m in typeof(IndexWriterConfig).GetMethods())
             {
-                if (m.DeclaringType == typeof(IndexWriterConfig) && m.Name.StartsWith("get") && !m.Name.StartsWith("get_"))
+                if (m.DeclaringType == typeof(IndexWriterConfig) && m.Name.StartsWith("get", StringComparison.Ordinal) && !m.Name.StartsWith("get_", StringComparison.Ordinal))
                 {
                     Assert.IsTrue(getters.Contains(m.Name), "method " + m.Name + " is not tested for defaults");
                 }
@@ -131,7 +132,7 @@ namespace Lucene.Net.Index
             HashSet<string> allSetters = new HashSet<string>();
             foreach (MethodInfo m in typeof(IndexWriterConfig).GetMethods())
             {
-                if (m.Name.StartsWith("Set") && !m.IsStatic)
+                if (m.Name.StartsWith("Set", StringComparison.Ordinal) && !m.IsStatic)
                 {
                     allSetters.Add(m.Name);
                     // setters overridden from LiveIndexWriterConfig are returned twice, once with
@@ -206,7 +207,7 @@ namespace Lucene.Net.Index
             HashSet<string> liveGetters = new HashSet<string>();
             foreach (MethodInfo m in typeof(LiveIndexWriterConfig).GetMethods())
             {
-                if (m.Name.StartsWith("get") && !m.IsStatic)
+                if (m.Name.StartsWith("get", StringComparison.Ordinal) && !m.IsStatic)
                 {
                     liveGetters.Add(m.Name);
                 }
@@ -214,7 +215,7 @@ namespace Lucene.Net.Index
 
             foreach (MethodInfo m in typeof(IndexWriterConfig).GetMethods())
             {
-                if (m.Name.StartsWith("get") && !m.Name.StartsWith("get_") && !m.IsStatic)
+                if (m.Name.StartsWith("get", StringComparison.Ordinal) && !m.Name.StartsWith("get_", StringComparison.Ordinal) && !m.IsStatic)
                 {
                     Assert.AreEqual(typeof(IndexWriterConfig), m.DeclaringType, "method " + m.Name + " not overrided by IndexWriterConfig");
                     Assert.IsTrue(liveGetters.Contains(m.Name), "method " + m.Name + " not declared on LiveIndexWriterConfig");

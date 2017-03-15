@@ -64,7 +64,7 @@ namespace Lucene.Net.Index
             int count = 0;
             foreach (string file in dir.ListAll())
             {
-                if (file.StartsWith(PersistentSnapshotDeletionPolicy.SNAPSHOTS_PREFIX))
+                if (file.StartsWith(PersistentSnapshotDeletionPolicy.SNAPSHOTS_PREFIX, StringComparison.Ordinal))
                 {
                     count++;
                 }

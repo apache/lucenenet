@@ -258,8 +258,8 @@ namespace Lucene.Net.Index
             string[] files = dir.ListAll();
             for (int i = 0; i < files.Length; i++)
             {
-                Assert.IsFalse(files[i].EndsWith(".prx"));
-                Assert.IsFalse(files[i].EndsWith(".pos"));
+                Assert.IsFalse(files[i].EndsWith(".prx", StringComparison.Ordinal));
+                Assert.IsFalse(files[i].EndsWith(".pos", StringComparison.Ordinal));
             }
         }
 

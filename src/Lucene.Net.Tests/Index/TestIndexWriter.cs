@@ -1766,7 +1766,7 @@ namespace Lucene.Net.Index
             int extraFileCount;
             if (files.Length == 1)
             {
-                Assert.IsTrue(files[0].EndsWith("write.lock"));
+                Assert.IsTrue(files[0].EndsWith("write.lock", StringComparison.Ordinal));
                 extraFileCount = 1;
             }
             else

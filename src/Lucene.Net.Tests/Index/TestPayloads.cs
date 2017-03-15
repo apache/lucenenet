@@ -448,7 +448,7 @@ namespace Lucene.Net.Index
                 }
 
                 // Some values of the same field are to have payloads and others not
-                if (Offset + Length <= Data.Length && !TermAttribute.ToString().EndsWith("NO PAYLOAD"))
+                if (Offset + Length <= Data.Length && !TermAttribute.ToString().EndsWith("NO PAYLOAD", StringComparison.Ordinal))
                 {
                     BytesRef p = new BytesRef(Data, Offset, Length);
                     PayloadAtt.Payload = p;

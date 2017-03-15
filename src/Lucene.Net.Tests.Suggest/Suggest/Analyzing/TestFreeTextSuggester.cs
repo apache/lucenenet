@@ -657,7 +657,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     List<Lookup.LookupResult> tmp = new List<Lookup.LookupResult>();
                     foreach (string term in terms)
                     {
-                        if (term.StartsWith(tokens[tokens.Length - 1]))
+                        if (term.StartsWith(tokens[tokens.Length - 1], StringComparison.Ordinal))
                         {
                             if (VERBOSE)
                             {

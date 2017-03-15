@@ -83,7 +83,7 @@ namespace Lucene.Net.Search
             do
             {
                 string s = te.Term.Utf8ToString();
-                if (s.StartsWith(prefix))
+                if (s.StartsWith(prefix, StringComparison.Ordinal))
                 {
                     termsWithPrefix.AddLast(new Term("body", s));
                 }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
 
             do
             {
-                if (te.Term.Utf8ToString().StartsWith(prefix))
+                if (te.Term.Utf8ToString().StartsWith(prefix, StringComparison.Ordinal))
                 {
                     termsWithPrefix.AddLast(new Term("body", te.Term.Utf8ToString()));
                 }

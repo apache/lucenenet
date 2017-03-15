@@ -98,7 +98,7 @@ namespace Lucene.Net.Index
                 bool found = false;
                 foreach (string file in dir.ListAll())
                 {
-                    if (file.EndsWith(".fdt"))
+                    if (file.EndsWith(".fdt", StringComparison.Ordinal))
                     {
                         long fileLength = dir.FileLength(file);
                         if (fileLength >= 1L << 32)

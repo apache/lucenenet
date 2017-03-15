@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
             long totalBytes2 = 0;
             foreach (string fileName in dir.ListAll())
             {
-                if (!fileName.StartsWith(IndexFileNames.SEGMENTS))
+                if (!fileName.StartsWith(IndexFileNames.SEGMENTS, StringComparison.Ordinal))
                 {
                     totalBytes2 += dir.FileLength(fileName);
                 }

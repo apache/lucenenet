@@ -619,7 +619,7 @@ namespace Lucene.Net.Support
             });
 
 
-            if (rb.GetType().Name.StartsWith("java.nio.Heap"))
+            if (rb.GetType().Name.StartsWith("java.nio.Heap", StringComparison.Ordinal))
             {
 
                 tryCatch(b, typeof(ReadOnlyBufferException), () =>

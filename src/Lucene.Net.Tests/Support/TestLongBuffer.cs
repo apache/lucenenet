@@ -428,7 +428,7 @@ namespace Lucene.Net.Support
             //});
 
 
-            //if (rb.GetType().Name.StartsWith("Heap"))
+            //if (rb.GetType().Name.StartsWith("Heap", StringComparison.Ordinal))
             //{
 
             //    tryCatch(b, typeof(ReadOnlyBufferException), () =>

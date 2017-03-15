@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Util;
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -70,7 +71,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
                 //can't imagine this would ever happen
                 throw new ParseException("Passed null value as term to GetWildcardQuery");
             }
-            if (!AllowLeadingWildcard && (termStr.StartsWith("*") || termStr.StartsWith("?")))
+            if (!AllowLeadingWildcard && (termStr.StartsWith("*", StringComparison.Ordinal) || termStr.StartsWith("?", StringComparison.Ordinal)))
             {
                 throw new ParseException("'*' or '?' not allowed as first character in WildcardQuery"
                                         + " unless AllowLeadingWildcard returns true");

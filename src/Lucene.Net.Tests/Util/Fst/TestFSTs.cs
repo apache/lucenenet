@@ -762,7 +762,7 @@ namespace Lucene.Net.Util.Fst
                 {
                     doPack = true;
                 }
-                else if (args[idx].StartsWith("-"))
+                else if (args[idx].StartsWith("-", StringComparison.Ordinal))
                 {
                     Console.Error.WriteLine("Unrecognized option: " + args[idx]);
                     Environment.Exit(-1);

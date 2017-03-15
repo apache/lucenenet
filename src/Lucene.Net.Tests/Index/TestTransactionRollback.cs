@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                 IDictionary<string, string> ud = commit.UserData;
                 if (ud.Count > 0)
                 {
-                    if (ud["index"].EndsWith(ids))
+                    if (ud["index"].EndsWith(ids, StringComparison.Ordinal))
                     {
                         last = commit;
                     }

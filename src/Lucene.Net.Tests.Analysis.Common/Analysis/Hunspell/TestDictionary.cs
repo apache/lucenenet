@@ -134,7 +134,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     }
                     catch (Exception expected)
                     {
-                        assertTrue(expected.Message.StartsWith("The affix file contains a rule with less than four elements"));
+                        assertTrue(expected.Message.StartsWith("The affix file contains a rule with less than four elements", StringComparison.Ordinal));
                         //assertEquals(24, expected.ErrorOffset); // No parse exception in LUCENENET
                     }
                 }
@@ -156,7 +156,7 @@ namespace Lucene.Net.Analysis.Hunspell
                     }
                     catch (Exception expected)
                     {
-                        assertTrue(expected.Message.StartsWith("expected only one flag"));
+                        assertTrue(expected.Message.StartsWith("expected only one flag", StringComparison.Ordinal));
                     }
                 }
             }

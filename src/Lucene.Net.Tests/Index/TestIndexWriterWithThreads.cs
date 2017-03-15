@@ -108,7 +108,7 @@ namespace Lucene.Net.Index
                         }
                         //System.out.println(Thread.currentThread().getName() + ": hit exc");
                         //ioConsole.WriteLine(e.StackTrace);
-                        if (ioe.Message.StartsWith("fake disk full at") || ioe.Message.Equals("now failing on purpose"))
+                        if (ioe.Message.StartsWith("fake disk full at", StringComparison.Ordinal) || ioe.Message.Equals("now failing on purpose", StringComparison.Ordinal))
                         {
                             DiskFull = true;
 #if !NETSTANDARD

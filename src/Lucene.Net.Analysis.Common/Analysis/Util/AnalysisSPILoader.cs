@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Util
                     string name = null;
                     foreach (string suffix in suffixes)
                     {
-                        if (clazzName.EndsWith(suffix))
+                        if (clazzName.EndsWith(suffix, StringComparison.Ordinal))
                         {
                             name = clazzName.Substring(0, clazzName.Length - suffix.Length).ToLowerInvariant();
                             break;

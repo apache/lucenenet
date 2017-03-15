@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Compressing
                 int counter = 0;
                 foreach (string fileName in dir.ListAll())
                 {
-                    if (fileName.EndsWith(".fdt") || fileName.EndsWith(".fdx"))
+                    if (fileName.EndsWith(".fdt", StringComparison.Ordinal) || fileName.EndsWith(".fdx", StringComparison.Ordinal))
                     {
                         counter++;
                     }

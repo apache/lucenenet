@@ -712,7 +712,7 @@ namespace Lucene.Net.QueryParsers.Classic
             {
                 if ("*".Equals(termStr)) return NewMatchAllDocsQuery();
             }
-            if (!AllowLeadingWildcard && (termStr.StartsWith("*") || termStr.StartsWith("?")))
+            if (!AllowLeadingWildcard && (termStr.StartsWith("*", StringComparison.Ordinal) || termStr.StartsWith("?", StringComparison.Ordinal)))
                 throw new ParseException("'*' or '?' not allowed as first character in WildcardQuery");
             if (LowercaseExpandedTerms)
             {
@@ -772,7 +772,7 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <returns>Resulting <see cref="Query"/> built for the term</returns>
         protected internal virtual Query GetPrefixQuery(string field, string termStr)
         {
-            if (!AllowLeadingWildcard && termStr.StartsWith("*"))
+            if (!AllowLeadingWildcard && termStr.StartsWith("*", StringComparison.Ordinal))
                 throw new ParseException("'*' not allowed as first character in PrefixQuery");
             if (LowercaseExpandedTerms)
             {

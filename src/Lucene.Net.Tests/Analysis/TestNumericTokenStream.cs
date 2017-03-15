@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis
             }
             catch (System.ArgumentException iae)
             {
-                Assert.IsTrue(iae.Message.StartsWith("NumericTokenStream does not support"));
+                Assert.IsTrue(iae.Message.StartsWith("NumericTokenStream does not support", StringComparison.Ordinal));
             }
             try
             {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Analysis
             }
             catch (System.ArgumentException iae)
             {
-                Assert.IsTrue(iae.Message.StartsWith("NumericTokenStream does not support"));
+                Assert.IsTrue(iae.Message.StartsWith("NumericTokenStream does not support", StringComparison.Ordinal));
             }
         }
     }

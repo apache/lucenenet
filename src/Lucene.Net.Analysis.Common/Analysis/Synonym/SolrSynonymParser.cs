@@ -153,7 +153,7 @@ namespace Lucene.Net.Analysis.Synonym
             while (pos < end)
             {
                 //if (s.StartsWith(separator, pos))
-                if (s.Substring(pos).StartsWith(separator))
+                if (s.Substring(pos).StartsWith(separator, StringComparison.Ordinal))
                 {
                     if (sb.Length > 0)
                     {

@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception e)
             {
-                Assert.IsTrue(e.Message.StartsWith("Invalid vInt"));
+                Assert.IsTrue(e.Message.StartsWith("Invalid vInt", StringComparison.Ordinal));
                 Assert.IsTrue(expectedEx.IsInstanceOfType(e));
             }
             Assert.AreEqual(1, @is.ReadVInt32()); // guard value
@@ -126,7 +126,7 @@ namespace Lucene.Net.Index
             }
             catch (Exception e)
             {
-                Assert.IsTrue(e.Message.StartsWith("Invalid vLong"));
+                Assert.IsTrue(e.Message.StartsWith("Invalid vLong", StringComparison.Ordinal));
                 Assert.IsTrue(expectedEx.IsInstanceOfType(e));
             }
             Assert.AreEqual(1L, @is.ReadVInt64()); // guard value

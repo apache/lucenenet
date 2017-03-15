@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Documents;
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search
             do
             {
                 string s = te.Term.Utf8ToString();
-                if (s.StartsWith(prefix))
+                if (s.StartsWith(prefix, StringComparison.Ordinal))
                 {
                     termsWithPrefix.AddLast(new Term("body", s));
                 }

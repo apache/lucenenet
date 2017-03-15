@@ -477,7 +477,7 @@ namespace Lucene.Net.Index
             ParallelCompositeReader pr = new ParallelCompositeReader(new CompositeReader[] { ir1 });
 
             string s = pr.ToString();
-            Assert.IsTrue(s.StartsWith("ParallelCompositeReader(ParallelAtomicReader("), "toString incorrect: " + s);
+            Assert.IsTrue(s.StartsWith("ParallelCompositeReader(ParallelAtomicReader(", StringComparison.Ordinal), "toString incorrect: " + s);
 
             pr.Dispose();
             dir1.Dispose();
@@ -492,7 +492,7 @@ namespace Lucene.Net.Index
 
             string s = pr.ToString();
 
-            Assert.IsTrue(s.StartsWith("ParallelCompositeReader(ParallelCompositeReaderAnonymousInnerClassHelper(ParallelAtomicReader("), "toString incorrect: " + s);
+            Assert.IsTrue(s.StartsWith("ParallelCompositeReader(ParallelCompositeReaderAnonymousInnerClassHelper(ParallelAtomicReader(", StringComparison.Ordinal), "toString incorrect: " + s);
 
             pr.Dispose();
             dir1.Dispose();

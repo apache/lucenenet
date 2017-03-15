@@ -252,7 +252,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     String prefix = term.Substring(0, i - 0);
                     foreach (Lookup.LookupResult lr in lookup.DoLookup(StringToCharSequence(prefix).ToString(), true, 10))
                     {
-                        assertTrue(lr.Key.toString().StartsWith(prefix));
+                        assertTrue(lr.Key.toString().StartsWith(prefix, StringComparison.Ordinal));
                     }
                 }
             }

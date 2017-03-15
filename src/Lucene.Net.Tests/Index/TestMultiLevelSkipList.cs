@@ -1,5 +1,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -60,7 +61,7 @@ namespace Lucene.Net.Index
             public override IndexInput OpenInput(string fileName, IOContext context)
             {
                 IndexInput @in = base.OpenInput(fileName, context);
-                if (fileName.EndsWith(".frq"))
+                if (fileName.EndsWith(".frq", StringComparison.Ordinal))
                 {
                     @in = new CountingStream(OuterInstance, @in);
                 }
