@@ -125,7 +125,10 @@ namespace Lucene.Net.Analysis
                 throw new InvalidOperationException("TokenStream implementation classes or at least their IncrementToken() implementation must be marked sealed");
             }
 
-            return true;
+            // type.GetMethod returns null if the method doesn't exist.
+            // To emulate Lucene (which catches a NoSuchMethodException),
+            // we need to return false in that case.
+            return method != null;
         }
 
         /// <summary>
