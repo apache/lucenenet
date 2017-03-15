@@ -299,7 +299,7 @@ namespace Lucene.Net.Index
                         // segments_N is corrupt
                         sis.Read(dir, fileName);
                     }
-                    catch (FileNotFoundException/* | NoSuchFileException fnfe*/)
+                    catch (FileNotFoundException)
                     {
                         // LUCENE-948: on NFS (and maybe others), if
                         // you have writers switching back and forth
@@ -308,6 +308,10 @@ namespace Lucene.Net.Index
                         // file segments_X exists when in fact it
                         // doesn't.  So, we catch this and handle it
                         // as if the file does not exist
+                        sis = null;
+                    }
+                    catch (NoSuchFileException)
+                    {
                         sis = null;
                     }
 

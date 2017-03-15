@@ -183,7 +183,9 @@ namespace Lucene.Net.Store
                     }
                     catch (Exception e)
                     {
-                        throw e;
+                        // LUCENENET NOTE: We need to throw a new exception
+                        // to ensure this is Exception and not some other type.
+                        throw new Exception(e.ToString(), e);
                     }
                     finally
                     {

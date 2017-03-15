@@ -147,6 +147,7 @@ namespace Lucene.Net.Store
             }
             else
             {
+                // LUCENENET TODO: This doesn't look right. I think it should be File.Exists and if true throw the exception...
                 try
                 {
                     System.IO.Directory.Exists(lockDir.FullName);
@@ -157,7 +158,7 @@ namespace Lucene.Net.Store
                 }
             }
 
-            if (lockFile.Exists)
+            if (lockFile.Exists) // LUCENENET TODO: This should probably be File.Exists(lockFile.FullName)...
             {
                 return false;
             }
@@ -170,7 +171,7 @@ namespace Lucene.Net.Store
         }
 
         public override void Release()
-        {//LUCENE TO-DO
+        {//LUCENE TO-DO : change the logic to be more like Lucene...don't attempt delete unless the file exists
             try
             {
                 lockFile.Delete();

@@ -135,7 +135,7 @@ namespace Lucene.Net.Store
                         }
                         catch (ThreadInterruptedException ie)
                         {
-                            throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+                            throw new ThreadInterruptedException(ie.ToString(), ie);
                         }
 #endif
                         curNS = DateTime.UtcNow.Ticks * 100;

@@ -357,7 +357,7 @@ namespace Lucene.Net.Util
                 }
                 catch (System.IO.IOException cannotHappen)
                 {
-                    throw new InvalidOperationException(cannotHappen.ToString(), cannotHappen);
+                    throw new InvalidOperationException(cannotHappen.ToString(), cannotHappen); // LUCENENET NOTE: This was AssertionError in Lucene
                 }
                 @out.WriteBytes(dirtyWords.Bytes, 0, dirtyWords.Length);
                 dirtyWords.Length = 0;

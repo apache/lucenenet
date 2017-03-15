@@ -25,24 +25,24 @@ namespace Lucene.Net.Index
     internal class TwoStoredFieldsConsumers : StoredFieldsConsumer
     {
         private readonly StoredFieldsConsumer first;
-        private readonly StoredFieldsConsumer fecond;
+        private readonly StoredFieldsConsumer second;
 
         public TwoStoredFieldsConsumers(StoredFieldsConsumer first, StoredFieldsConsumer second)
         {
             this.first = first;
-            this.fecond = second;
+            this.second = second;
         }
 
         public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
         {
             first.AddField(docID, field, fieldInfo);
-            fecond.AddField(docID, field, fieldInfo);
+            second.AddField(docID, field, fieldInfo);
         }
 
         public override void Flush(SegmentWriteState state) // LUCENENET NOTE: original was internal, but other implementations require public
         {
             first.Flush(state);
-            fecond.Flush(state);
+            second.Flush(state);
         }
 
         public override void Abort() // LUCENENET NOTE: original was internal, but other implementations require public
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
             }
             try
             {
-                fecond.Abort();
+                second.Abort();
             }
             catch (Exception)
             {
@@ -66,13 +66,13 @@ namespace Lucene.Net.Index
         public override void StartDocument() // LUCENENET NOTE: original was internal, but other implementations require public
         {
             first.StartDocument();
-            fecond.StartDocument();
+            second.StartDocument();
         }
 
         internal override void FinishDocument()
         {
             first.FinishDocument();
-            fecond.FinishDocument();
+            second.FinishDocument();
         }
     }
 }

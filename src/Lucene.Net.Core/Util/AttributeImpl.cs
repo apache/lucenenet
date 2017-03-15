@@ -114,9 +114,9 @@ namespace Lucene.Net.Util
                     reflector.Reflect(interf, f.Name, f.GetValue(this));
                 }
             }
-            catch (UnauthorizedAccessException uae)
+            catch (MemberAccessException e)
             {
-                throw new Exception(uae.Message, uae);
+                throw new Exception(e.ToString(), e);
             }
         }
 

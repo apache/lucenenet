@@ -607,7 +607,7 @@ namespace Lucene.Net.Util.Automaton
                         }
                         catch (System.IO.IOException e)
                         {
-                            throw new System.ArgumentException(e.Message, e);
+                            throw new System.ArgumentException(e.ToString(), e);
                         }
                     }
                     if (aa == null)
@@ -1260,7 +1260,7 @@ namespace Lucene.Net.Util.Automaton
                     catch (System.FormatException e)
 #pragma warning restore 168
                     {
-                        throw new System.ArgumentException("interval syntax error at position " + (pos - 1));
+                        throw new System.ArgumentException("interval syntax error at position " + (pos - 1), e);
                     }
                 }
             }

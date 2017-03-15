@@ -69,9 +69,9 @@ namespace Lucene.Net.Util
                     {
                         return (Attribute)System.Activator.CreateInstance(GetClassForInterface<S>());
                     }
-                    catch (ArgumentException)
+                    catch (Exception e)
                     {
-                        throw new System.ArgumentException("Could not instantiate implementing class for " + typeof(S).FullName);
+                        throw new System.ArgumentException("Could not instantiate implementing class for " + typeof(S).FullName, e);
                     }
                 }
 
@@ -89,9 +89,9 @@ namespace Lucene.Net.Util
                             string name = attClass.FullName.Replace(attClass.Name, attClass.Name.Substring(1)) + ", " + attClass.GetTypeInfo().Assembly.FullName;
                             attClassImplMap.Add(attClass, new WeakReference(clazz = Type.GetType(name, true)));
                         }
-                        catch (Exception)
+                        catch (Exception e)
                         {
-                            throw new System.ArgumentException("Could not find implementing class for " + attClass.Name);
+                            throw new System.ArgumentException("Could not find implementing class for " + attClass.Name, e);
                         }
                     }
                     return clazz;

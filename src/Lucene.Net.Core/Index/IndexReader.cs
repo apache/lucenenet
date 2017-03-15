@@ -156,10 +156,7 @@ namespace Lucene.Net.Index
                         }
                         else
                         {
-                            //th.AddSuppressed(t);
-                            // LUCENENET TODO - Figure out how to track these exceptions
-                            // Drop the exception instead of wrapping in AggregateException.
-                            // Wrapping will change the exception type and change flow control.
+                            th.AddSuppressed(t);
                         }
                     }
                 }

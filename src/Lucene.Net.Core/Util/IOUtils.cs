@@ -77,13 +77,13 @@ namespace Lucene.Net.Util
         {
             Exception th = null;
 
-            foreach (IDisposable o in objects)
+            foreach (IDisposable @object in objects)
             {
                 try
                 {
-                    if (o != null)
+                    if (@object != null)
                     {
-                        o.Dispose();
+                        @object.Dispose();
                     }
                 }
                 catch (Exception t)
@@ -233,10 +233,9 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Closes all given <tt>IDisposable</tt>s, suppressing all thrown exceptions. </summary>
         /// <seealso cref= #closeWhileHandlingException(IDisposable...) </seealso>
-        public static void CloseWhileHandlingException<T1>(IEnumerable<T1> objects)
-            where T1 : IDisposable
+        public static void CloseWhileHandlingException(IEnumerable<IDisposable> objects)
         {
-            foreach (T1 @object in objects)
+            foreach (IDisposable @object in objects)
             {
                 try
                 {
@@ -254,24 +253,19 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Since there's no C# equivalent of Java's Exception.AddSuppressed, we add the
-        /// suppressed exceptions to a data field. </summary>
+        /// suppressed exceptions to a data field via the 
+        /// <see cref="Support.ExceptionExtensions.AddSuppressed(Exception, Exception)"/> method.
+        /// <para/>
+        /// The exceptions can be retrieved by calling <see cref="ExceptionExtensions.GetSuppressed(Exception)"/>
+        /// or <see cref="ExceptionExtensions.GetSuppressedAsList(Exception)"/>.
+        /// </summary>
         /// <param name="exception"> this exception should get the suppressed one added </param>
         /// <param name="suppressed"> the suppressed exception </param>
         private static void AddSuppressed(Exception exception, Exception suppressed)
         {
             if (exception != null && suppressed != null)
             {
-                List<Exception> suppressedExceptions;
-                if (!exception.Data.Contains("SuppressedExceptions"))
-                {
-                    suppressedExceptions = new List<Exception>();
-                    exception.Data.Add("SuppressedExceptions", suppressedExceptions);
-                }
-                else
-                {
-                    suppressedExceptions = (List<Exception>)exception.Data["SuppressedExceptions"];
-                }
-                suppressedExceptions.Add(suppressed);
+                exception.AddSuppressed(suppressed);
             }
         }
 
@@ -476,9 +470,21 @@ namespace Lucene.Net.Util
                     {
                         throw;
                     }
-
-                    // Pause 5 msec
-                    Thread.Sleep(5);
+#if !NETSTANDARD
+                    try
+                    {
+#endif
+                        // Pause 5 msec
+                        Thread.Sleep(5);
+#if !NETSTANDARD
+                    }
+                    catch (ThreadInterruptedException ie)
+                    {
+                        var ex = new ThreadInterruptedException(ie.ToString(), ie);
+                        //ex.AddSuppressed(exc);
+                        throw ex;
+                    }
+#endif
                 }
                 finally
                 {

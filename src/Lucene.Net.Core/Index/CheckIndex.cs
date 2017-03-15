@@ -2366,6 +2366,8 @@ namespace Lucene.Net.Index
             return assertsOn;
         }
 
+        // LUCENENET TODO: This seems too useful not to port over...but I suppose there is a Java version that could be used on the command line.
+
         /*
         /// Command-line interface to check and fix an index.
         ///

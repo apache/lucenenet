@@ -163,8 +163,9 @@ namespace Lucene.Net.Index
                     normsProducer = null;
                 }
 
-                // LUCENENET TODO: Not sure why this catch block is swallowing AccessViolationException, 
-                // because it didn't exist in Lucene. Is it really needed?
+                // LUCENENET TODO: EXCEPTIONS Not sure why this catch block is swallowing AccessViolationException, 
+                // because it didn't exist in Lucene. Is it really needed? AVE is for protected memory...could
+                // this be needed because we are using unchecked??
 
 #if !NETSTANDARD
                 try
@@ -271,8 +272,17 @@ namespace Lucene.Net.Index
                     {
                         listener.OnClose(this);
                     }
-                    catch (Exception)
+                    catch (Exception t)
                     {
+                        
+                        if (th == null)
+                        {
+                            th = t;
+                        }
+                        else
+                        {
+                            th.AddSuppressed(t);
+                        }
                     }
                 }
                 IOUtils.ReThrowUnchecked(th);

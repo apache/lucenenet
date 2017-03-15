@@ -461,7 +461,7 @@ namespace Lucene.Net.Index
                         }
                         catch (ThreadInterruptedException ie)
                         {
-                            throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+                            throw new ThreadInterruptedException(ie.ToString(), ie);
                         }
                     }
 

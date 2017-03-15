@@ -255,7 +255,7 @@ namespace Lucene.Net.Store
                 }
                 catch (System.IO.IOException ioe)
                 {
-                    throw new System.IO.IOException(ioe.Message + ": " + this, ioe);
+                    throw new System.IO.IOException(ioe.ToString() + ": " + this, ioe);
                 }
             }
 
