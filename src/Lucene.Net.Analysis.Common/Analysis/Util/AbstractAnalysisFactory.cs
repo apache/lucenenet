@@ -2,6 +2,7 @@
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -315,6 +316,41 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new System.ArgumentException("Configuration Error: '" + name + "' can not be parsed in " + this.GetType().Name, e);
             }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="CultureInfo"/> value of the specified argument key <paramref name="name"/>.
+        /// <para/>
+        /// To specify the invariant culture, pass the string <c>"invariant"</c>. To specify
+        /// the culture using the <see cref="CultureInfo.LCID"/>, pass the value as an <see cref="int"/>.
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        protected CultureInfo GetCulture(IDictionary<string, string> args, string name, CultureInfo defaultVal)
+        {
+            string culture;
+            if (args.TryGetValue(name, out culture))
+            {
+                args.Remove(name);
+                try
+                {
+                    if (culture.Equals("invariant"))
+                    {
+                        return CultureInfo.InvariantCulture;
+                    }
+                    return new CultureInfo(culture);
+                }
+                catch (Exception e)
+                {
+                    throw new System.ArgumentException("Configuration Error: '" + name + "' can not be parsed in " + this.GetType().Name, e);
+                }
+            }
+            int lcid;
+            if ((lcid = GetInt32(args, name, int.MinValue)) != int.MinValue)
+            {
+                return new CultureInfo(lcid);
+            }
+            return defaultVal;
         }
 
         /// <summary>
