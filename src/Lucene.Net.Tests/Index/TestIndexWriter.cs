@@ -1581,7 +1581,7 @@ namespace Lucene.Net.Index
             d.Add(f);
             w.AddDocument(d);
 
-            AtomicReader r = GetOnlySegmentReader(w.Reader);
+            AtomicReader r = GetOnlySegmentReader(w.GetReader());
             TermsEnum t = r.Fields.GetTerms("field").GetIterator(null);
             int count = 0;
             while (t.Next() != null)
@@ -1618,7 +1618,7 @@ namespace Lucene.Net.Index
                 if (iter == 0)
                 {
                     // use NRT
-                    r = w.Reader;
+                    r = w.GetReader();
                 }
                 else
                 {
@@ -2083,18 +2083,18 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(NewStringField("id", "0", Field.Store.YES));
             w.AddDocument(doc);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             long version = r.Version;
             r.Dispose();
 
             w.AddDocument(doc);
-            r = w.Reader;
+            r = w.GetReader();
             long version2 = r.Version;
             r.Dispose();
             Debug.Assert(version2 > version);
 
             w.DeleteDocuments(new Term("id", "0"));
-            r = w.Reader;
+            r = w.GetReader();
             w.Dispose();
             long version3 = r.Version;
             r.Dispose();
@@ -2573,7 +2573,7 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            DirectoryReader reader = w.Reader;
+            DirectoryReader reader = w.GetReader();
             Assert.AreEqual(docCount, reader.NumDocs);
             IList<AtomicReaderContext> leaves = reader.Leaves;
             foreach (AtomicReaderContext atomicReaderContext in leaves)
@@ -2831,7 +2831,7 @@ namespace Lucene.Net.Index
             // match field a's "foo":
             w.DeleteDocuments(new Term("a", "xxx"));
             w.DeleteDocuments(new Term("b", "foo"));
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             // Make sure document was not (incorrectly) deleted:

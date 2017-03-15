@@ -206,7 +206,7 @@ namespace Lucene.Net.Index
             doc.Add(NewField("aaa", "a b c", customType));
             doc.Add(NewField("zzz", "1 2 3", customType));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             Document doc2 = r.Document(0);
             IEnumerator<IIndexableField> it = doc2.Fields.GetEnumerator();
             Assert.IsTrue(it.MoveNext());

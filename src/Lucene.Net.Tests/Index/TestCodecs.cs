@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
 
         private ScoreDoc[] Search(IndexWriter writer, Query q, int n)
         {
-            IndexReader reader = writer.Reader;
+            IndexReader reader = writer.GetReader();
             IndexSearcher searcher = NewSearcher(reader);
             try
             {

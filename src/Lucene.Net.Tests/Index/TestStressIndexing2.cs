@@ -74,7 +74,7 @@ namespace Lucene.Net.Index
 
             // TODO: verify equals using IW.getReader
             DocsAndWriter dw = IndexRandomIWReader(5, 3, 100, dir);
-            DirectoryReader reader = dw.Writer.Reader;
+            DirectoryReader reader = dw.Writer.GetReader();
             dw.Writer.Commit();
             VerifyEquals(Random(), reader, dir, "id");
             reader.Dispose();

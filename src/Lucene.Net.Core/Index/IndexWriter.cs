@@ -277,12 +277,9 @@ namespace Lucene.Net.Index
         // to allow users to query an IndexWriter settings.
         private readonly LiveIndexWriterConfig config;
 
-        internal virtual DirectoryReader Reader // LUCENENET TODO API: Change to GetReader()
+        internal virtual DirectoryReader GetReader()
         {
-            get
-            {
-                return GetReader(true);
-            }
+            return GetReader(true);
         }
 
         /// <summary>

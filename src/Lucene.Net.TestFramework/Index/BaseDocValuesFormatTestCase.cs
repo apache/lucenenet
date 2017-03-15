@@ -3034,7 +3034,7 @@ namespace Lucene.Net.Index
             DirectoryReader r;
             try
             {
-                r = w.Reader;
+                r = w.GetReader();
             }
             catch (System.ArgumentException iae)
             {
@@ -3136,7 +3136,7 @@ namespace Lucene.Net.Index
                 w.AddDocument(doc);
             }
 
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             w.Dispose();
 
             AtomicReader ar = SlowCompositeReaderWrapper.Wrap(r);

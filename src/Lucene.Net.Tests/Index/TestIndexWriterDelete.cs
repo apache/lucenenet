@@ -481,7 +481,7 @@ namespace Lucene.Net.Index
             }
             modifier.Commit();
 
-            IndexReader reader = modifier.Reader;
+            IndexReader reader = modifier.GetReader();
             Assert.AreEqual(7, reader.NumDocs);
             reader.Dispose();
 
@@ -491,7 +491,7 @@ namespace Lucene.Net.Index
             // Delete all
             modifier.DeleteAll();
 
-            reader = modifier.Reader;
+            reader = modifier.GetReader();
             Assert.AreEqual(0, reader.NumDocs);
             reader.Dispose();
 

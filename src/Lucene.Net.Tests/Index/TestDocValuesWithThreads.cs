@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
             }
 
             w.ForceMerge(1);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
 
             Assert.AreEqual(1, r.Leaves.Count);

@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
                 wrapper.AssertNoDeleteOpenFile = true;
             }
             var writer = new IndexWriter(mainDir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMaxBufferedDocs(10).SetMergePolicy(NewLogMergePolicy(false, 2)));
-            IndexReader reader = writer.Reader; // start pooling readers
+            IndexReader reader = writer.GetReader(); // start pooling readers
             reader.Dispose();
             var indexThreads = new RunThread[4];
             for (int x = 0; x < indexThreads.Length; x++)
@@ -124,7 +124,7 @@ namespace Lucene.Net.Index
                         {
                             // we may or may not delete because the term may not exist,
                             // however we're opening and closing the reader rapidly
-                            IndexReader reader = Writer.Reader;
+                            IndexReader reader = Writer.GetReader();
                             int id = r.Next(OuterInstance.Seq.Get());
                             Term term = new Term("id", Convert.ToString(id));
                             int count = TestIndexWriterReader.Count(term, reader);

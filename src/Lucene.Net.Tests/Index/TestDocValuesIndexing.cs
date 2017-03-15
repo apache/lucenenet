@@ -211,7 +211,7 @@ namespace Lucene.Net.Index
             bytes[0] = 1;
             w.AddDocument(doc);
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             BinaryDocValues s = FieldCache.DEFAULT.GetTerms(GetOnlySegmentReader(r), "field", false);
 
             BytesRef bytes1 = new BytesRef();
@@ -243,7 +243,7 @@ namespace Lucene.Net.Index
                 doc.Add(new TextField("docId", "" + i, Field.Store.YES));
                 writer.AddDocument(doc);
             }
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             AtomicReader slow = SlowCompositeReaderWrapper.Wrap(r);
             FieldInfos fi = slow.FieldInfos;
             FieldInfo dvInfo = fi.FieldInfo("dv");
@@ -933,7 +933,7 @@ namespace Lucene.Net.Index
             doc.Add(new NumericDocValuesField("dv", 0L));
             writer.AddDocument(doc);
 
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
 
             AtomicReader subR = (AtomicReader)r.Leaves[0].Reader;

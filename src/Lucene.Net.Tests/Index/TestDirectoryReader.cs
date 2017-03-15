@@ -992,7 +992,7 @@ namespace Lucene.Net.Index
             Document d = new Document();
             d.Add(NewTextField("f", "a a b", Field.Store.NO));
             writer.AddDocument(d);
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
             try
             {
@@ -1020,7 +1020,7 @@ namespace Lucene.Net.Index
             d = new Document();
             d.Add(NewTextField("f", "b", Field.Store.NO));
             writer.AddDocument(d);
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
             try
             {
@@ -1046,7 +1046,7 @@ namespace Lucene.Net.Index
             d = new Document();
             d.Add(NewTextField("f", "a", Field.Store.NO));
             writer.AddDocument(d);
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
             try
             {
@@ -1072,7 +1072,7 @@ namespace Lucene.Net.Index
             d = new Document();
             d.Add(NewTextField("f", "a a b", Field.Store.NO));
             writer.AddDocument(d);
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
             try
             {
@@ -1098,7 +1098,7 @@ namespace Lucene.Net.Index
             writer.Commit();
             writer.AddDocument(new Document());
             writer.Commit();
-            DirectoryReader reader = writer.Reader;
+            DirectoryReader reader = writer.GetReader();
             int[] closeCount = new int[1];
             IndexReader.IReaderClosedListener listener = new ReaderClosedListenerAnonymousInnerClassHelper(this, reader, closeCount);
 
@@ -1145,7 +1145,7 @@ namespace Lucene.Net.Index
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())));
             writer.AddDocument(new Document());
-            DirectoryReader r = writer.Reader;
+            DirectoryReader r = writer.GetReader();
             writer.Dispose();
             r.Document(0);
             try

@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
                     {
                         w.UpdateDocument(new Term("docid", "" + Random().Next(NumStartDocs)), Docs.NextDoc());
                         // Force deletes to apply
-                        w.Reader.Dispose();
+                        w.GetReader().Dispose();
                     }
                 }
                 catch (Exception t)

@@ -277,7 +277,7 @@ namespace Lucene.Net.Index
             doc = new Document();
             doc.Add(NewTextField("field", "a", Field.Store.NO));
             w.AddDocument(doc);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             Assert.AreEqual(1, r.DocFreq(new Term("field", "a\uffffb")));
             r.Dispose();
             w.Dispose();

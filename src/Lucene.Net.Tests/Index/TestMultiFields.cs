@@ -132,7 +132,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                IndexReader reader = w.Reader;
+                IndexReader reader = w.GetReader();
                 w.Dispose();
                 if (VERBOSE)
                 {
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
             w.AddDocument(d);
             w.Commit();
             w.AddDocument(d);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             DocsEnum d1 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsFlags.NONE);
             DocsEnum d2 = TestUtil.Docs(Random(), r, "f", new BytesRef("j"), null, null, DocsFlags.NONE);
@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
             w.AddDocument(d);
             w.Commit();
             w.AddDocument(d);
-            IndexReader r = w.Reader;
+            IndexReader r = w.GetReader();
             w.Dispose();
             DocsEnum de = MultiFields.GetTermDocsEnum(r, null, "f", new BytesRef("j"));
             Assert.AreEqual(0, de.NextDoc());

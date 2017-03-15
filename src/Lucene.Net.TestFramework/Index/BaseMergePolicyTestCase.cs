@@ -54,7 +54,7 @@ namespace Lucene.Net.Index
                 {
                     writer.AddDocument(new Document());
                 }
-                writer.Reader.Dispose();
+                writer.GetReader().Dispose();
             }
             for (int i = 5; i >= 0; --i)
             {

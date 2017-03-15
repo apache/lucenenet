@@ -58,7 +58,7 @@ namespace Lucene.Net.Index
                     w.ForceMerge(1);
                 }
 
-                IndexReader r = w.Reader;
+                IndexReader r = w.GetReader();
 
                 TermsEnum terms = MultiFields.GetTerms(r, "field3").GetIterator(null);
                 Assert.AreEqual(TermsEnum.SeekStatus.END, terms.SeekCeil(new BytesRef("abc")));
@@ -78,7 +78,7 @@ namespace Lucene.Net.Index
             doc.Add(NewTextField("f", "a b c", Field.Store.NO));
             w.AddDocument(doc);
             w.ForceMerge(1);
-            DirectoryReader r = w.Reader;
+            DirectoryReader r = w.GetReader();
             TermsEnum terms = GetOnlySegmentReader(r).Fields.GetTerms("f").GetIterator(null);
             Assert.IsTrue(terms.Next() != null);
             try

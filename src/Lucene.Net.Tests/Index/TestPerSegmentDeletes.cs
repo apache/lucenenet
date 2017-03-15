@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
 
             // get reader flushes pending deletes
             // so there should not be anymore
-            IndexReader r1 = writer.Reader;
+            IndexReader r1 = writer.GetReader();
             Assert.IsFalse(writer.bufferedUpdatesStream.Any());
             r1.Dispose();
 
@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
 
             // id:2 shouldn't exist anymore because
             // it's been applied in the merge and now it's gone
-            IndexReader r2 = writer.Reader;
+            IndexReader r2 = writer.GetReader();
             int[] id2docs = ToDocsArray(new Term("id", "2"), null, r2);
             Assert.IsTrue(id2docs == null);
             r2.Dispose();

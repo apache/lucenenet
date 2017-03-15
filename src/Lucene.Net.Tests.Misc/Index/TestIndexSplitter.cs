@@ -67,7 +67,7 @@ namespace Lucene.Net.Index
                 iw.AddDocument(doc);
             }
             iw.Commit();
-            DirectoryReader iwReader = iw.Reader;
+            DirectoryReader iwReader = iw.GetReader();
             assertEquals(3, iwReader.Leaves.Count);
             iwReader.Dispose();
             iw.Dispose();
