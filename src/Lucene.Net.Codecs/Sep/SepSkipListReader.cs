@@ -51,22 +51,28 @@ namespace Lucene.Net.Codecs.Sep
             : base(skipStream, maxSkipLevels, skipInterval)
         {
             if (freqIn != null)
+            {
                 _freqIndex = new Int32IndexInput.AbstractIndex[maxSkipLevels];
-
+            }
             _docIndex = new Int32IndexInput.AbstractIndex[maxSkipLevels];
-
             if (posIn != null)
+            {
                 _posIndex = new Int32IndexInput.AbstractIndex[m_maxNumberOfSkipLevels];
+            }
 
             for (var i = 0; i < maxSkipLevels; i++)
             {
                 if (freqIn != null)
+                {
                     _freqIndex[i] = freqIn.GetIndex();
+                }
 
                 _docIndex[i] = docIn.GetIndex();
 
                 if (posIn != null)
+                {
                     _posIndex[i] = posIn.GetIndex();
+                }
             }
 
             _payloadPointer = new long[maxSkipLevels];
@@ -77,18 +83,23 @@ namespace Lucene.Net.Codecs.Sep
             _lastPosIndex = posIn != null ? posIn.GetIndex() : null;
         }
 
-        private IndexOptions _indexOptions;
+        private IndexOptions? _indexOptions;
 
-        internal virtual void SetIndexOptions(IndexOptions v)
+        internal virtual void SetIndexOptions(IndexOptions? v)
         {
             _indexOptions = v;
         }
 
-        internal virtual void Init(long skipPointer, Int32IndexInput.AbstractIndex docBaseIndex, Int32IndexInput.AbstractIndex freqBaseIndex,
-            Int32IndexInput.AbstractIndex posBaseIndex, long payloadBasePointer, int df, bool storesPayloads)
+        internal virtual void Init(long skipPointer, 
+            Int32IndexInput.AbstractIndex docBaseIndex, 
+            Int32IndexInput.AbstractIndex freqBaseIndex,
+            Int32IndexInput.AbstractIndex posBaseIndex, 
+            long payloadBasePointer, 
+            int df, 
+            bool storesPayloads)
         {
             base.Init(skipPointer, df);
-            _currentFieldStoresPayloads = storesPayloads;
+            this._currentFieldStoresPayloads = storesPayloads;
 
             _lastPayloadPointer = payloadBasePointer;
 
@@ -96,10 +107,13 @@ namespace Lucene.Net.Codecs.Sep
             {
                 _docIndex[i].CopyFrom(docBaseIndex);
                 if (_freqIndex != null)
+                {
                     _freqIndex[i].CopyFrom(freqBaseIndex);
-
+                }
                 if (posBaseIndex != null)
+                {
                     _posIndex[i].CopyFrom(posBaseIndex);
+                }
             }
             Arrays.Fill(_payloadPointer, payloadBasePointer);
             Arrays.Fill(_payloadLength, 0);
@@ -133,24 +147,33 @@ namespace Lucene.Net.Codecs.Sep
 
             _lastPayloadPointer = _payloadPointer[level];
             _lastPayloadLength = _payloadLength[level];
-                
+
             if (_freqIndex != null)
+            {
                 _lastFreqIndex.CopyFrom(_freqIndex[level]);
+            }
                 
             _lastDocIndex.CopyFrom(_docIndex[level]);
 
             if (_lastPosIndex != null)
+            {
                 _lastPosIndex.CopyFrom(_posIndex[level]);
+            }
 
-            if (level <= 0) return;
+            if (level > 0)
+            {
+                if (_freqIndex != null)
+                {
+                    _freqIndex[level - 1].CopyFrom(_freqIndex[level]);
+                }
 
-            if (_freqIndex != null)
-                _freqIndex[level - 1].CopyFrom(_freqIndex[level]);
-                
-            _docIndex[level - 1].CopyFrom(_docIndex[level]);
-            
-            if (_posIndex != null)
-                _posIndex[level - 1].CopyFrom(_posIndex[level]);
+                _docIndex[level - 1].CopyFrom(_docIndex[level]);
+
+                if (_posIndex != null)
+                {
+                    _posIndex[level - 1].CopyFrom(_posIndex[level]);
+                }
+            }
         }
 
         internal virtual Int32IndexInput.AbstractIndex FreqIndex
@@ -193,16 +216,21 @@ namespace Lucene.Net.Codecs.Sep
             }
 
             if (_indexOptions != IndexOptions.DOCS_ONLY)
+            {
                 _freqIndex[level].Read(skipStream, false);
+            }
             
             _docIndex[level].Read(skipStream, false);
-            if (_indexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) return delta;
+            if (_indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            {
+                _posIndex[level].Read(skipStream, false);
 
-            _posIndex[level].Read(skipStream, false);
-            
-            if (_currentFieldStoresPayloads)
-                _payloadPointer[level] += skipStream.ReadVInt32();
-            
+                if (_currentFieldStoresPayloads)
+                {
+                    _payloadPointer[level] += skipStream.ReadVInt32();
+                }
+            }
+
             return delta;
         }
     }

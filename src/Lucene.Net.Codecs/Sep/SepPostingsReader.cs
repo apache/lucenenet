@@ -119,11 +119,11 @@ namespace Lucene.Net.Codecs.Sep
             // We store only the seek point to the docs file because
             // the rest of the info (freqIndex, posIndex, etc.) is
             // stored in the docs file:
-            internal Int32IndexInput.AbstractIndex DOC_INDEX;
-            internal Int32IndexInput.AbstractIndex POS_INDEX;
-            internal Int32IndexInput.AbstractIndex FREQ_INDEX;
-            internal long PAYLOAD_FP;
-            internal long SKIP_FP;
+            internal Int32IndexInput.AbstractIndex docIndex;
+            internal Int32IndexInput.AbstractIndex posIndex;
+            internal Int32IndexInput.AbstractIndex freqIndex;
+            internal long payloadFP;
+            internal long skipFP;
 
             public override object Clone()
             {
@@ -137,64 +137,68 @@ namespace Lucene.Net.Codecs.Sep
                 base.CopyFrom(tsOther);
 
                 var other = (SepTermState)tsOther;
-                if (DOC_INDEX == null)
+                if (docIndex == null)
                 {
-                    DOC_INDEX = other.DOC_INDEX.Clone();
+                    docIndex = other.docIndex.Clone();
                 }
                 else
                 {
-                    DOC_INDEX.CopyFrom(other.DOC_INDEX);
+                    docIndex.CopyFrom(other.docIndex);
                 }
-                if (other.FREQ_INDEX != null)
+                if (other.freqIndex != null)
                 {
-                    if (FREQ_INDEX == null)
+                    if (freqIndex == null)
                     {
-                        FREQ_INDEX = other.FREQ_INDEX.Clone();
+                        freqIndex = other.freqIndex.Clone();
                     }
                     else
                     {
-                        FREQ_INDEX.CopyFrom(other.FREQ_INDEX);
+                        freqIndex.CopyFrom(other.freqIndex);
                     }
                 }
                 else
                 {
-                    FREQ_INDEX = null;
+                    freqIndex = null;
                 }
-                if (other.POS_INDEX != null)
+                if (other.posIndex != null)
                 {
-                    if (POS_INDEX == null)
+                    if (posIndex == null)
                     {
-                        POS_INDEX = other.POS_INDEX.Clone();
+                        posIndex = other.posIndex.Clone();
                     }
                     else
                     {
-                        POS_INDEX.CopyFrom(other.POS_INDEX);
+                        posIndex.CopyFrom(other.posIndex);
                     }
                 }
                 else
                 {
-                    POS_INDEX = null;
+                    posIndex = null;
                 }
-                PAYLOAD_FP = other.PAYLOAD_FP;
-                SKIP_FP = other.SKIP_FP;
+                payloadFP = other.payloadFP;
+                skipFP = other.skipFP;
             }
 
             public override string ToString()
             {
-                return base.ToString() + " docIndex=" + DOC_INDEX + " freqIndex=" + FREQ_INDEX + " posIndex=" + POS_INDEX +
-                       " payloadFP=" + PAYLOAD_FP + " skipFP=" + SKIP_FP;
+                return base.ToString() + " docIndex=" + docIndex + " freqIndex=" + freqIndex + " posIndex=" + posIndex +
+                       " payloadFP=" + payloadFP + " skipFP=" + skipFP;
             }
         }
 
         public override BlockTermState NewTermState()
         {
-            var state = new SepTermState {DOC_INDEX = _docIn.GetIndex()};
+            var state = new SepTermState { docIndex = _docIn.GetIndex() };
 
             if (_freqIn != null)
-                state.FREQ_INDEX = _freqIn.GetIndex();
+            {
+                state.freqIndex = _freqIn.GetIndex();
+            }
 
             if (_posIn != null)
-                state.POS_INDEX = _posIn.GetIndex();
+            {
+                state.posIndex = _posIn.GetIndex();
+            }
 
             return state;
         }
@@ -203,42 +207,46 @@ namespace Lucene.Net.Codecs.Sep
             bool absolute)
         {
             var termState = (SepTermState) bTermState;
-            termState.DOC_INDEX.Read(input, absolute);
+            termState.docIndex.Read(input, absolute);
             if (fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
             {
-                termState.FREQ_INDEX.Read(input, absolute);
+                termState.freqIndex.Read(input, absolute);
                 if (fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
-                    termState.POS_INDEX.Read(input, absolute);
-                    
+                    //System.out.println("  freqIndex=" + termState.freqIndex);
+                    termState.posIndex.Read(input, absolute);
+                    //System.out.println("  posIndex=" + termState.posIndex);
                     if (fieldInfo.HasPayloads)
                     {
                         if (absolute)
                         {
-                            termState.PAYLOAD_FP = input.ReadVInt64();
+                            termState.payloadFP = input.ReadVInt64();
                         }
                         else
                         {
-                            termState.PAYLOAD_FP += input.ReadVInt64();
+                            termState.payloadFP += input.ReadVInt64();
                         }
+                        //System.out.println("  payloadFP=" + termState.payloadFP);
                     }
                 }
             }
 
             if (termState.DocFreq >= _skipMinimum)
             {
+                //System.out.println("   readSkip @ " + in.getPosition());
                 if (absolute)
                 {
-                    termState.SKIP_FP = input.ReadVInt64();
+                    termState.skipFP = input.ReadVInt64();
                 }
                 else
                 {
-                    termState.SKIP_FP += input.ReadVInt64();
+                    termState.skipFP += input.ReadVInt64();
                 }
+                //System.out.println("  skipFP=" + termState.skipFP);
             }
             else if (absolute)
             {
-                termState.SKIP_FP = 0;
+                termState.skipFP = 0;
             }
         }
 
@@ -248,7 +256,7 @@ namespace Lucene.Net.Codecs.Sep
             var termState = (SepTermState)bTermState;
 
             SepDocsEnum docsEnum;
-            if (!(reuse is SepDocsEnum))
+            if (reuse == null || !(reuse is SepDocsEnum))
             {
                 docsEnum = new SepDocsEnum(this);
             }
@@ -274,7 +282,7 @@ namespace Lucene.Net.Codecs.Sep
             Debug.Assert(fieldInfo.IndexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
             var termState = (SepTermState)bTermState;
             SepDocsAndPositionsEnum postingsEnum;
-            if (!(reuse is SepDocsAndPositionsEnum))
+            if (reuse == null || !(reuse is SepDocsAndPositionsEnum))
             {
                 postingsEnum = new SepDocsAndPositionsEnum(this);
             }
@@ -305,7 +313,7 @@ namespace Lucene.Net.Codecs.Sep
 
             // TODO: -- should we do omitTF with 2 different enum classes?
             private bool _omitTf;
-            private IndexOptions _indexOptions;
+            private IndexOptions? _indexOptions;
             private bool _storePayloads;
             private IBits _liveDocs;
             private readonly Int32IndexInput.AbstractReader _docReader;
@@ -315,7 +323,7 @@ namespace Lucene.Net.Codecs.Sep
             private readonly Int32IndexInput.AbstractIndex _docIndex;
             private readonly Int32IndexInput.AbstractIndex _freqIndex;
             private readonly Int32IndexInput.AbstractIndex _posIndex;
-            internal Int32IndexInput startDocIn;
+            internal readonly Int32IndexInput startDocIn;
 
             // TODO: -- should we do hasProx with 2 different enum classes?
 
@@ -337,34 +345,34 @@ namespace Lucene.Net.Codecs.Sep
                     _freqReader = null;
                     _freqIndex = null;
                 }
-                _posIndex = outerInstance._posIn != null ? outerInstance._posIn.GetIndex() : null;
+                _posIndex = outerInstance._posIn != null 
+                    ? outerInstance._posIn.GetIndex() // only init this so skipper can read it
+                    : null;
 
                 startDocIn = outerInstance._docIn;
             }
 
             internal virtual SepDocsEnum Init(FieldInfo fieldInfo, SepTermState termState, IBits liveDocs)
             {
-                _liveDocs = liveDocs;
-                if (fieldInfo.IndexOptions.HasValue)
-                    _indexOptions = fieldInfo.IndexOptions.Value;
-
+                this._liveDocs = liveDocs;
+                this._indexOptions = fieldInfo.IndexOptions;
                 _omitTf = _indexOptions == IndexOptions.DOCS_ONLY;
                 _storePayloads = fieldInfo.HasPayloads;
 
                 // TODO: can't we only do this if consumer
                 // skipped consuming the previous docs?
-                _docIndex.CopyFrom(termState.DOC_INDEX);
+                _docIndex.CopyFrom(termState.docIndex);
                 _docIndex.Seek(_docReader);
 
                 if (!_omitTf)
                 {
-                    _freqIndex.CopyFrom(termState.FREQ_INDEX);
+                    _freqIndex.CopyFrom(termState.freqIndex);
                     _freqIndex.Seek(_freqReader);
                 }
 
                 _docFreq = termState.DocFreq;
                 // NOTE: unused if docFreq < skipMinimum:
-                _skipFp = termState.SKIP_FP;
+                _skipFp = termState.skipFP;
                 _count = 0;
                 _doc = -1;
                 _accum = 0;
@@ -425,7 +433,9 @@ namespace Lucene.Net.Codecs.Sep
                         // This DocsEnum has never done any skipping
                         _skipper = new SepSkipListReader((IndexInput)_outerInstance._skipIn.Clone(),
                             _outerInstance._freqIn,
-                            _outerInstance._docIn, _outerInstance._posIn, _outerInstance._maxSkipLevels,
+                            _outerInstance._docIn, 
+                            _outerInstance._posIn, 
+                            _outerInstance._maxSkipLevels,
                             _outerInstance._skipInterval);
 
                     }
@@ -482,6 +492,7 @@ namespace Lucene.Net.Codecs.Sep
             private int _accum;
             private int _count;
             private int _freq;
+            // private long freqStart; // LUCENENET - Not used
 
             private bool _storePayloads;
             private IBits _liveDocs;
@@ -511,6 +522,8 @@ namespace Lucene.Net.Codecs.Sep
             internal SepDocsAndPositionsEnum(SepPostingsReader outerInstance)
             {
                 _outerInstance = outerInstance;
+
+                startDocIn = outerInstance._docIn;
                 _docReader = outerInstance._docIn.GetReader();
                 _docIndex = outerInstance._docIn.GetIndex();
                 _freqReader = outerInstance._freqIn.GetReader();
@@ -518,28 +531,32 @@ namespace Lucene.Net.Codecs.Sep
                 _posReader = outerInstance._posIn.GetReader();
                 _posIndex = outerInstance._posIn.GetIndex();
                 _payloadIn = (IndexInput) outerInstance._payloadIn.Clone();
-
-                startDocIn = outerInstance._docIn;
             }
 
             internal virtual SepDocsAndPositionsEnum Init(FieldInfo fieldInfo, SepTermState termState, IBits liveDocs)
             {
                 _liveDocs = liveDocs;
                 _storePayloads = fieldInfo.HasPayloads;
+                //System.out.println("Sep D&P init");
 
-                // TODO: can't we only do this if consumer skipped consuming the previous docs?
-                _docIndex.CopyFrom(termState.DOC_INDEX);
+                // TODO: can't we only do this if consumer
+                // skipped consuming the previous docs?
+                _docIndex.CopyFrom(termState.docIndex);
                 _docIndex.Seek(_docReader);
+                //System.out.println("  docIndex=" + docIndex);
 
-                _freqIndex.CopyFrom(termState.FREQ_INDEX);
+                _freqIndex.CopyFrom(termState.freqIndex);
                 _freqIndex.Seek(_freqReader);
+                //System.out.println("  freqIndex=" + freqIndex);
 
-                _posIndex.CopyFrom(termState.POS_INDEX);
+                _posIndex.CopyFrom(termState.posIndex);
+                //System.out.println("  posIndex=" + posIndex);
                 _posSeekPending = true;
                 _payloadPending = false;
 
-                _payloadFp = termState.PAYLOAD_FP;
-                _skipFp = termState.SKIP_FP;
+                _payloadFp = termState.payloadFP;
+                _skipFp = termState.skipFP;
+                //System.out.println("  skipFP=" + skipFP);
 
                 _docFreq = termState.DocFreq;
                 _count = 0;
@@ -557,17 +574,28 @@ namespace Lucene.Net.Codecs.Sep
                 while (true)
                 {
                     if (_count == _docFreq)
+                    {
                         return _doc = NO_MORE_DOCS;
+                    }
 
                     _count++;
 
+                    // TODO: maybe we should do the 1-bit trick for encoding
+                    // freq=1 case?
+
                     // Decode next doc
+                    //System.out.println("  sep d&p read doc");
                     _accum += _docReader.Next();
+
+                    //System.out.println("  sep d&p read freq");
                     _freq = _freqReader.Next();
+
                     _pendingPosCount += _freq;
 
                     if (_liveDocs == null || _liveDocs.Get(_accum))
+                    {
                         break;
+                    }
                 }
 
                 _position = 0;
@@ -590,7 +618,6 @@ namespace Lucene.Net.Codecs.Sep
 
                 if ((target - _outerInstance._skipInterval) >= _doc && _docFreq >= _outerInstance._skipMinimum)
                 {
-
                     // There are enough docs in the posting to have
                     // skip data, and its not too close
 
@@ -600,7 +627,9 @@ namespace Lucene.Net.Codecs.Sep
                         // This DocsEnum has never done any skipping
                         _skipper = new SepSkipListReader((IndexInput) _outerInstance._skipIn.Clone(),
                             _outerInstance._freqIn,
-                            _outerInstance._docIn, _outerInstance._posIn, _outerInstance._maxSkipLevels,
+                            _outerInstance._docIn, 
+                            _outerInstance._posIn, 
+                            _outerInstance._maxSkipLevels,
                             _outerInstance._skipInterval);
                     }
 
@@ -614,28 +643,29 @@ namespace Lucene.Net.Codecs.Sep
                     }
 
                     int newCount = _skipper.SkipTo(target);
+                    //System.out.println("  skip newCount=" + newCount + " vs " + count);
 
                     if (newCount > _count)
                     {
-
                         // Skipper did move
                         _skipper.FreqIndex.Seek(_freqReader);
                         _skipper.DocIndex.Seek(_docReader);
-
+                        //System.out.println("  doc seek'd to " + skipper.getDocIndex());
                         // NOTE: don't seek pos here; do it lazily
                         // instead.  Eg a PhraseQuery may skip to many
                         // docs before finally asking for positions...
-
                         _posIndex.CopyFrom(_skipper.PosIndex);
                         _posSeekPending = true;
                         _count = newCount;
                         _doc = _accum = _skipper.Doc;
-
+                        //System.out.println("    moved to doc=" + doc);
+                        //payloadIn.seek(skipper.getPayloadPointer());
                         _payloadFp = _skipper.PayloadPointer;
                         _pendingPosCount = 0;
                         _pendingPayloadBytes = 0;
                         _payloadPending = false;
                         _payloadLength = _skipper.PayloadLength;
+                        //System.out.println("    move payloadLen=" + payloadLength);
                     }
                 }
 
@@ -644,11 +674,13 @@ namespace Lucene.Net.Codecs.Sep
                 {
                     if (NextDoc() == NO_MORE_DOCS)
                     {
+                        //System.out.println("  advance nextDoc=END");
                         return NO_MORE_DOCS;
                     }
-
+                    //System.out.println("  advance nextDoc=" + doc);
                 } while (target > _doc);
 
+                //System.out.println("  return doc=" + doc);
                 return _doc;
             }
 
@@ -735,7 +767,7 @@ namespace Lucene.Net.Codecs.Sep
 
                 if (_payload == null)
                 {
-                    _payload = new BytesRef {Bytes = new byte[_payloadLength]};
+                    _payload = new BytesRef { Bytes = new byte[_payloadLength] };
                 }
                 else if (_payload.Bytes.Length < _payloadLength)
                 {

@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Sep
         internal readonly int totalNumDocs;
 
         internal bool storePayloads;
-        internal IndexOptions indexOptions; 
+        internal IndexOptions? indexOptions; 
 
         internal FieldInfo fieldInfo;
 
@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Sep
             posOut = null;
             posIndex = null;
             payloadOut = null;
-            var success = false;
+            bool success = false;
             try
             {
                 this.skipInterval = skipInterval;
@@ -189,14 +189,13 @@ namespace Lucene.Net.Codecs.Sep
 
         // Currently, this instance is re-used across fields, so
         // our parent calls setField whenever the field changes
-        public override int SetField(FieldInfo fi)
+        public override int SetField(FieldInfo fieldInfo)
         {
-            fieldInfo = fi;
+            this.fieldInfo = fieldInfo;
             
-            if (fieldInfo.IndexOptions.HasValue)
-                indexOptions = fieldInfo.IndexOptions.Value;
+            indexOptions = fieldInfo.IndexOptions;
 
-            if (indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+            if (indexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new System.NotSupportedException("this codec cannot index offsets");
             }
@@ -211,7 +210,10 @@ namespace Lucene.Net.Codecs.Sep
 
         private SepTermState SetEmptyState()
         {
-            var emptyState = new SepTermState {DocIndex = docOut.GetIndex()};
+            var emptyState = new SepTermState
+            {
+                DocIndex = docOut.GetIndex()
+            };
             if (indexOptions != IndexOptions.DOCS_ONLY)
             {
                 emptyState.FreqIndex = freqOut.GetIndex();
@@ -231,7 +233,7 @@ namespace Lucene.Net.Codecs.Sep
         /// </summary>
         public override void StartDoc(int docId, int termDocFreq)
         {
-            var delta = docId - lastDocID;
+            int delta = docId - lastDocID;
             
             if (docId < 0 || (df > 0 && delta <= 0))
             {
@@ -239,9 +241,11 @@ namespace Lucene.Net.Codecs.Sep
                                                 docOut + ")");
             }
 
-            if ((++df%skipInterval) == 0)
+            if ((++df % skipInterval) == 0)
             {
-                // TODO: -- awkward we have to make these two separate calls to skipper
+                // TODO: -- awkward we have to make these two 
+                // separate calls to skipper
+                //System.out.println("    buffer skip lastDocID=" + lastDocID);
                 skipListWriter.SetSkipData(lastDocID, storePayloads, lastPayloadLength);
                 skipListWriter.BufferSkip(df);
             }
@@ -256,13 +260,13 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         /// <summary>
-        /// Add a new position & payload </summary>
+        /// Add a new position &amp; payload </summary>
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+
             int delta = position - lastPosition;
-            Debug.Assert(delta >= 0, "position=" + position + " lastPosition=" + lastPosition);
-            // not quite right (if pos=0 is repeated twice we don't catch it)
+            Debug.Assert(delta >= 0, "position=" + position + " lastPosition=" + lastPosition); // not quite right (if pos=0 is repeated twice we don't catch it)
             lastPosition = position;
 
             if (storePayloads)
@@ -281,7 +285,7 @@ namespace Lucene.Net.Codecs.Sep
                     posOut.Write(delta << 1);
                 }
 
-                if (payloadLength > 0 && payload != null)
+                if (payloadLength > 0)
                 {
                     payloadOut.WriteBytes(payload.Bytes, payload.Offset, payloadLength);
                 }
@@ -342,7 +346,9 @@ namespace Lucene.Net.Codecs.Sep
             if (df >= skipMinimum)
             {
                 state.SkipFp = skipOut.FilePointer;
+                //System.out.println("  skipFP=" + skipFP);
                 skipListWriter.WriteSkip(skipOut);
+                //System.out.println("    numBytes=" + (skipOut.getFilePointer()-skipFP));
             }
             else
             {
@@ -387,17 +393,18 @@ namespace Lucene.Net.Codecs.Sep
                     }
                 }
             }
-            if (state.SkipFp == -1) return;
-
-            if (absolute)
+            if (state.SkipFp != -1)
             {
-                output.WriteVInt64(state.SkipFp);
+                if (absolute)
+                {
+                    output.WriteVInt64(state.SkipFp);
+                }
+                else
+                {
+                    output.WriteVInt64(state.SkipFp - lastSkipFP);
+                }
+                lastSkipFP = state.SkipFp;
             }
-            else
-            {
-                output.WriteVInt64(state.SkipFp - lastSkipFP);
-            }
-            lastSkipFP = state.SkipFp;
         }
 
         protected override void Dispose(bool disposing)

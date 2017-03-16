@@ -51,14 +51,16 @@ namespace Lucene.Net.Codecs.Sep
         private int _curPayloadLength;
         private long _curPayloadPointer;
 
-        internal SepSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount, Int32IndexOutput freqOutput,
-            Int32IndexOutput docOutput, Int32IndexOutput posOutput, IndexOutput payloadOutput)
+        internal SepSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount, 
+            Int32IndexOutput freqOutput,
+            Int32IndexOutput docOutput, 
+            Int32IndexOutput posOutput, 
+            IndexOutput payloadOutput)
             : base(skipInterval, numberOfSkipLevels, docCount)
         {
-
-            _freqOutput = freqOutput;
-            _posOutput = posOutput;
-            _payloadOutput = payloadOutput;
+            this._freqOutput = freqOutput;
+            this._posOutput = posOutput;
+            this._payloadOutput = payloadOutput;
 
             _lastSkipDoc = new int[numberOfSkipLevels];
             _lastSkipPayloadLength = new int[numberOfSkipLevels];
@@ -83,9 +85,9 @@ namespace Lucene.Net.Codecs.Sep
             }
         }
 
-        private IndexOptions _indexOptions;
+        private IndexOptions? _indexOptions;
 
-        internal virtual void SetIndexOptions(IndexOptions v)
+        internal virtual void SetIndexOptions(IndexOptions? v)
         {
             _indexOptions = v;
         }
@@ -110,9 +112,9 @@ namespace Lucene.Net.Codecs.Sep
         /// </summary>
         internal virtual void SetSkipData(int doc, bool storePayloads, int payloadLength)
         {
-            _curDoc = doc;
-            _curStorePayloads = storePayloads;
-            _curPayloadLength = payloadLength;
+            this._curDoc = doc;
+            this._curStorePayloads = storePayloads;
+            this._curPayloadLength = payloadLength;
             if (_payloadOutput != null)
             {
                 _curPayloadPointer = _payloadOutput.FilePointer;
