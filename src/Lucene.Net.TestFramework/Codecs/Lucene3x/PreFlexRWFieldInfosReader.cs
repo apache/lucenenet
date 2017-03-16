@@ -70,10 +70,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                     bool storeTermVector = (bits & PreFlexRWFieldInfosWriter.STORE_TERMVECTOR) != 0;
                     bool omitNorms = (bits & PreFlexRWFieldInfosWriter.OMIT_NORMS) != 0;
                     bool storePayloads = (bits & PreFlexRWFieldInfosWriter.STORE_PAYLOADS) != 0;
-                    IndexOptions? indexOptions;
+                    IndexOptions indexOptions;
                     if (!isIndexed)
                     {
-                        indexOptions = null;
+                        indexOptions = IndexOptions.NONE;
                     }
                     else if ((bits & PreFlexRWFieldInfosWriter.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
                     {

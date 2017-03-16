@@ -82,7 +82,7 @@ namespace Lucene.Net.Codecs.Sep
         internal readonly int totalNumDocs;
 
         internal bool storePayloads;
-        internal IndexOptions? indexOptions; 
+        internal IndexOptions indexOptions; 
 
         internal FieldInfo fieldInfo;
 
@@ -195,7 +195,7 @@ namespace Lucene.Net.Codecs.Sep
             
             indexOptions = fieldInfo.IndexOptions;
 
-            if (indexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+            if (indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new System.NotSupportedException("this codec cannot index offsets");
             }

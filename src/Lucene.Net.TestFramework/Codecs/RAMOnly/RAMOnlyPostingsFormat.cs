@@ -221,17 +221,17 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override bool HasFreqs
             {
-                get { return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS; }
+                get { return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
             public override bool HasOffsets
             {
-                get { return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS; }
+                get { return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
             }
 
             public override bool HasPositions
             {
-                get { return Info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
+                get { return Info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
             }
 
             public override bool HasPayloads
@@ -307,7 +307,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
             public override TermsConsumer AddField(FieldInfo field)
             {
-                if (field.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+                if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                 {
                     throw new System.NotSupportedException("this codec cannot index offsets");
                 }

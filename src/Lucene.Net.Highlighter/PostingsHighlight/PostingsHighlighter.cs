@@ -10,7 +10,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using IndexOptions = Lucene.Net.Index.IndexOptions;
 
 namespace Lucene.Net.Search.PostingsHighlight
 {

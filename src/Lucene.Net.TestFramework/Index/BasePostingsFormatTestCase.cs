@@ -395,7 +395,9 @@ namespace Lucene.Net.Index
                     continue;
                 }
 
-                fieldInfoArray[fieldUpto] = new FieldInfo(field, true, fieldUpto, false, false, true, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, null, DocValuesType.NUMERIC, null);
+                fieldInfoArray[fieldUpto] = new FieldInfo(field, true, fieldUpto, false, false, true, 
+                                                        IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, 
+                                                        null, DocValuesType.NUMERIC, null);
                 fieldUpto++;
 
                 SortedDictionary<BytesRef, long> postings = new SortedDictionary<BytesRef, long>();
@@ -538,7 +540,7 @@ namespace Lucene.Net.Index
 
                 // Randomly picked the IndexOptions to index this
                 // field with:
-                IndexOptions indexOptions = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToArray()[alwaysTestMax ? fieldMaxIndexOption : Random().Next(1 + fieldMaxIndexOption)];
+                IndexOptions indexOptions = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToArray()[alwaysTestMax ? fieldMaxIndexOption : Random().Next(1, 1 + fieldMaxIndexOption)]; // LUCENENET: Skipping NONE option
                 bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
 
                 newFieldInfoArray[fieldUpto] = new FieldInfo(oldFieldInfo.Name, true, fieldUpto, false, false, doPayloads, indexOptions, null, DocValuesType.NUMERIC, null);
@@ -560,17 +562,17 @@ namespace Lucene.Net.Index
 
                 FieldInfo fieldInfo = newFieldInfos.FieldInfo(field);
 
-                IndexOptions? indexOptions = fieldInfo.IndexOptions;
+                IndexOptions indexOptions = fieldInfo.IndexOptions;
 
                 if (VERBOSE)
                 {
                     Console.WriteLine("field=" + field + " indexOtions=" + indexOptions);
                 }
 
-                bool doFreq = indexOptions >= IndexOptions.DOCS_AND_FREQS;
-                bool doPos = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                bool doPayloads = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS && allowPayloads;
-                bool doOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                bool doFreq = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                bool doPos = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
+                bool doOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
                 TermsConsumer termsConsumer = fieldsConsumer.AddField(fieldInfo);
                 long sumTotalTF = 0;
@@ -663,8 +665,18 @@ namespace Lucene.Net.Index
             public DocsAndPositionsEnum ReuseDocsAndPositionsEnum;
         }
 
-        private void VerifyEnum(ThreadState threadState, string field, BytesRef term, TermsEnum termsEnum, IndexOptions maxTestOptions, IndexOptions maxIndexOptions, ISet<Option> options, bool alwaysTestMax)
-        // Maximum options (docs/freqs/positions/offsets) to test:
+        private void VerifyEnum(ThreadState threadState, 
+                                string field, 
+                                BytesRef term, 
+                                TermsEnum termsEnum,
+
+                                // Maximum options (docs/freqs/positions/offsets) to test:
+                                IndexOptions maxTestOptions, 
+                                
+                                IndexOptions maxIndexOptions, 
+                                ISet<Option> options, 
+                                bool alwaysTestMax)
+        
         {
             if (VERBOSE)
             {
@@ -698,16 +710,22 @@ namespace Lucene.Net.Index
             FieldInfo fieldInfo = CurrentFieldInfos.FieldInfo(field);
 
             // NOTE: can be empty list if we are using liveDocs:
-            SeedPostings expected = GetSeedPostings(term.Utf8ToString(), Fields[field][term], useLiveDocs, maxIndexOptions);
+            SeedPostings expected = GetSeedPostings(term.Utf8ToString(), 
+                                                    Fields[field][term], 
+                                                    useLiveDocs, 
+                                                    maxIndexOptions);
             Assert.AreEqual(expected.DocFreq, termsEnum.DocFreq);
 
-            bool allowFreqs = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS && maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            bool allowFreqs = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0 && 
+                maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
             bool doCheckFreqs = allowFreqs && (alwaysTestMax || Random().Next(3) <= 2);
 
-            bool allowPositions = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS && maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            bool allowPositions = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && 
+                maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
             bool doCheckPositions = allowPositions && (alwaysTestMax || Random().Next(3) <= 2);
 
-            bool allowOffsets = fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+            bool allowOffsets = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >=0 && 
+                maxTestOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             bool doCheckOffsets = allowOffsets && (alwaysTestMax || Random().Next(3) <= 2);
 
             bool doCheckPayloads = options.Contains(Option.PAYLOADS) && allowPositions && fieldInfo.HasPayloads && (alwaysTestMax || Random().Next(3) <= 2);
@@ -1035,7 +1053,7 @@ namespace Lucene.Net.Index
                                 }
                             }
                         }
-                        else if (fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+                        else if (fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0)
                         {
                             if (VERBOSE)
                             {
@@ -1089,7 +1107,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void TestTerms(Fields fieldsSource, ISet<Option> options, IndexOptions maxTestOptions, IndexOptions maxIndexOptions, bool alwaysTestMax)
+        private void TestTerms(Fields fieldsSource, ISet<Option> options, 
+                                IndexOptions maxTestOptions, 
+                                IndexOptions maxIndexOptions, 
+                                bool alwaysTestMax)
         {
             if (options.Contains(Option.THREADS))
             {
@@ -1111,7 +1132,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        private void TestTermsOneThread(Fields fieldsSource, ISet<Option> options, IndexOptions maxTestOptions, IndexOptions maxIndexOptions, bool alwaysTestMax)
+        private void TestTermsOneThread(Fields fieldsSource, ISet<Option> options, 
+                                        IndexOptions maxTestOptions, 
+                                        IndexOptions maxIndexOptions, 
+                                        bool alwaysTestMax)
         {
             ThreadState threadState = new ThreadState();
 
@@ -1173,7 +1197,14 @@ namespace Lucene.Net.Index
                     savedTermState = true;
                 }
 
-                VerifyEnum(threadState, fieldAndTerm.Field, fieldAndTerm.Term, termsEnum, maxTestOptions, maxIndexOptions, options, alwaysTestMax);
+                VerifyEnum(threadState, 
+                            fieldAndTerm.Field, 
+                            fieldAndTerm.Term, 
+                            termsEnum, 
+                            maxTestOptions, 
+                            maxIndexOptions, 
+                            options, 
+                            alwaysTestMax);
 
                 // Sometimes save term state after pulling the enum:
                 if (options.Contains(Option.TERM_STATE) && !useTermState && !savedTermState && Random().Next(5) == 1)
@@ -1194,7 +1225,14 @@ namespace Lucene.Net.Index
                         Console.WriteLine("TEST: try enum again on same term");
                     }
 
-                    VerifyEnum(threadState, fieldAndTerm.Field, fieldAndTerm.Term, termsEnum, maxTestOptions, maxIndexOptions, options, alwaysTestMax);
+                    VerifyEnum(threadState, 
+                                fieldAndTerm.Field, 
+                                fieldAndTerm.Term, 
+                                termsEnum, 
+                                maxTestOptions, 
+                                maxIndexOptions, 
+                                options, 
+                                alwaysTestMax);
                 }
             }
         }
@@ -1226,7 +1264,7 @@ namespace Lucene.Net.Index
 
                 TestFields(fieldsProducer);
 
-                var allOptions = (IndexOptions[]) Enum.GetValues(typeof (IndexOptions));
+                var allOptions = ((IndexOptions[])Enum.GetValues(typeof(IndexOptions))).Skip(1).ToArray(); // LUCENENET: Skip our NONE option
                     //IndexOptions_e.values();
                 int maxIndexOption = Arrays.AsList(allOptions).IndexOf(options);
 
@@ -1301,7 +1339,12 @@ namespace Lucene.Net.Index
 
                 // NOTE: you can also test "weaker" index options than
                 // you indexed with:
-                TestTerms(fieldsProducer, new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>()), IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, false);
+                TestTerms(fieldsProducer,
+                    // LUCENENET: Skip our NONE option
+                    new HashSet<Option>(Enum.GetValues(typeof(Option)).Cast<Option>().Skip(1)), 
+                    IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, 
+                    IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, 
+                    false);
 
                 fieldsProducer.Dispose();
                 fieldsProducer = null;
@@ -1313,8 +1356,15 @@ namespace Lucene.Net.Index
 
         protected internal override void AddRandomFields(Document doc)
         {
+            
             foreach (IndexOptions opts in Enum.GetValues(typeof(IndexOptions)))
             {
+                // LUCENENET: Skip our NONE option
+                if (opts == IndexOptions.NONE)
+                {
+                    continue;
+                }
+
                 string field = "f_" + opts;
                 string pf = TestUtil.GetPostingsFormat(Codec.Default, field);
                 if (opts == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS && DoesntSupportOffsets.Contains(pf))

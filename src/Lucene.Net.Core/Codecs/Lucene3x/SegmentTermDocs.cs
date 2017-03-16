@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private bool haveSkipped;
 
         protected bool m_currentFieldStoresPayloads;
-        protected IndexOptions? m_indexOptions;
+        protected IndexOptions m_indexOptions;
 
         public SegmentTermDocs(IndexInput freqStream, TermInfosReader tis, FieldInfos fieldInfos)
         {

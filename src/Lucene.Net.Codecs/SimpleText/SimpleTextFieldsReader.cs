@@ -111,16 +111,15 @@ namespace Lucene.Net.Codecs.SimpleText
         {
             private readonly SimpleTextFieldsReader _outerInstance;
 
-            private readonly IndexOptions? _indexOptions;
+            private readonly IndexOptions _indexOptions;
             private int _docFreq;
             private long _totalTermFreq;
             private long _docsStart;
             
             private readonly BytesRefFSTEnum<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> _fstEnum;
 
-            [ExceptionToNullableEnumConvention]
             public SimpleTextTermsEnum(SimpleTextFieldsReader outerInstance,
-                FST<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> fst, IndexOptions? indexOptions)
+                FST<PairOutputs<long?, PairOutputs<long?,long?>.Pair>.Pair> fst, IndexOptions indexOptions)
             {
                 _outerInstance = outerInstance;
                 _indexOptions = indexOptions;
@@ -215,7 +214,7 @@ namespace Lucene.Net.Codecs.SimpleText
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
 
-                if (_indexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     // Positions were not indexed
                     return null;
@@ -230,7 +229,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     docsAndPositionsEnum = new SimpleTextDocsAndPositionsEnum(_outerInstance);
                 }
-                return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions.GetValueOrDefault(), _docFreq);
+                return docsAndPositionsEnum.Reset(_docsStart, liveDocs, _indexOptions, _docFreq);
             }
 
             public override IComparer<BytesRef> Comparer
@@ -712,20 +711,20 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override bool HasFreqs
             {
-                get { return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
+                get { return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
             public override bool HasOffsets
             {
                 get
                 {
-                    return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                    return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 }
             }
 
             public override bool HasPositions
             {
-                get { return _fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; } 
+                get { return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; } 
             }
 
             public override bool HasPayloads

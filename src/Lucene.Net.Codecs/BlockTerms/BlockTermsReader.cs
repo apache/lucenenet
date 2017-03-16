@@ -304,17 +304,17 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override bool HasFreqs
             {
-                get { return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS; }
+                get { return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
             public override bool HasOffsets
             {
-                get { return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS; }
+                get { return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
             }
 
             public override bool HasPositions
             {
-                get { return _fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
+                get { return _fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
             }
 
             public override bool HasPayloads
@@ -761,7 +761,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
                     DocsAndPositionsFlags flags)
                 {
-                    if (_fieldReader._fieldInfo.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                    if (_fieldReader._fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         // Positions were not indexed:
                         return null;

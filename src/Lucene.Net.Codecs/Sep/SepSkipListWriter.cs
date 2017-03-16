@@ -85,9 +85,9 @@ namespace Lucene.Net.Codecs.Sep
             }
         }
 
-        private IndexOptions? _indexOptions;
+        private IndexOptions _indexOptions;
 
-        internal virtual void SetIndexOptions(IndexOptions? v)
+        internal virtual void SetIndexOptions(IndexOptions v)
         {
             _indexOptions = v;
         }

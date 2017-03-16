@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Memory
                         buffer.WriteVInt32(delta);
                     }
 
-                    if (outerInstance.field.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
+                    if (outerInstance.field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                     {
                         // don't use startOffset - lastEndOffset, because this creates lots of negative vints for synonyms,
                         // and the numbers aren't that much smaller anyways.
@@ -831,14 +831,14 @@ namespace Lucene.Net.Codecs.Memory
 
                 if (reuse == null || !(reuse is FSTDocsEnum))
                 {
-                    docsEnum = new FSTDocsEnum(field.IndexOptions.Value, field.HasPayloads);
+                    docsEnum = new FSTDocsEnum(field.IndexOptions, field.HasPayloads);
                 }
                 else
                 {
                     docsEnum = (FSTDocsEnum)reuse;
-                    if (!docsEnum.CanReuse(field.IndexOptions.Value, field.HasPayloads))
+                    if (!docsEnum.CanReuse(field.IndexOptions, field.HasPayloads))
                     {
-                        docsEnum = new FSTDocsEnum(field.IndexOptions.Value, field.HasPayloads);
+                        docsEnum = new FSTDocsEnum(field.IndexOptions, field.HasPayloads);
                     }
                 }
                 return docsEnum.Reset(this.postingsSpare, liveDocs, docFreq_Renamed);
@@ -846,8 +846,8 @@ namespace Lucene.Net.Codecs.Memory
 
             public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags)
             {
-                bool hasOffsets = field.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
-                if (field.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                bool hasOffsets = field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                if (field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                 {
                     return null;
                 }
@@ -1003,17 +1003,17 @@ namespace Lucene.Net.Codecs.Memory
 
             public override bool HasFreqs
             {
-                get { return field.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
+                get { return field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
             public override bool HasOffsets
             {
-                get { return field.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
+                get { return field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0; }
             }
 
             public override bool HasPositions
             {
-                get { return field.IndexOptions.GetValueOrDefault().CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
+                get { return field.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
             }
 
             public override bool HasPayloads

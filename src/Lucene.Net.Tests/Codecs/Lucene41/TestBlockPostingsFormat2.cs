@@ -79,6 +79,12 @@ namespace Lucene.Net.Codecs.Lucene41
             Document doc = new Document();
             foreach (IndexOptions option in Enum.GetValues(typeof(IndexOptions)))
             {
+                // LUCENENET: skip the "NONE" option that we added
+                if (option == IndexOptions.NONE)
+                {
+                    continue;
+                }
+
                 var ft = new FieldType(TextField.TYPE_NOT_STORED)
                 {
                     StoreTermVectors = true,

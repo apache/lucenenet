@@ -66,7 +66,7 @@ namespace Lucene.Net.Index.Sorter
                 }
                 else
                 {
-                    return new SortingTerms(terms, infos.FieldInfo(field).IndexOptions.GetValueOrDefault(), docMap);
+                    return new SortingTerms(terms, infos.FieldInfo(field).IndexOptions, docMap);
                 }
             }
         }

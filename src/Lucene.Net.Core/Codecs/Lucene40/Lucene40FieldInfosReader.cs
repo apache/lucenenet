@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     IndexOptions indexOptions;
                     if (!isIndexed)
                     {
-                        indexOptions = default(IndexOptions);
+                        indexOptions = IndexOptions.NONE;
                     }
                     else if ((bits & Lucene40FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS) != 0)
                     {

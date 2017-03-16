@@ -78,9 +78,9 @@ namespace Lucene.Net.Index
                 byName[info.Name] = info;
 
                 hasVectors |= info.HasVectors;
-                hasProx |= info.IsIndexed && info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+                hasProx |= info.IsIndexed && info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
                 hasFreq |= info.IsIndexed && info.IndexOptions != IndexOptions.DOCS_ONLY;
-                hasOffsets |= info.IsIndexed && info.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                hasOffsets |= info.IsIndexed && info.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
                 hasNorms |= info.HasNorms;
                 hasDocValues |= info.HasDocValues;
                 hasPayloads |= info.HasPayloads;
@@ -381,7 +381,7 @@ namespace Lucene.Net.Index
                 return AddOrUpdateInternal(name, -1, fieldType.IsIndexed, false, fieldType.OmitNorms, false, fieldType.IndexOptions, fieldType.DocValueType, null);
             }
 
-            private FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions? indexOptions, DocValuesType? docValues, DocValuesType? normType)
+            private FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType? docValues, DocValuesType? normType)
             {
                 FieldInfo fi = FieldInfo(name);
                 if (fi == null)

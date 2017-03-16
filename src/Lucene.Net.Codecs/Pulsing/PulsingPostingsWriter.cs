@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Pulsing
     {
         internal static readonly string CODEC = "PulsedPostingsWriter";
         internal static readonly string SUMMARY_EXTENSION = "smy";         // recording field summary
-        
+
         // To add a new version, increment from the last one, and
         // change VERSION_CURRENT to point to your new version:
         internal static readonly int VERSION_START = 0;
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Pulsing
         private readonly SegmentWriteState _segmentState;
         private IndexOutput _termsOut;
         private readonly List<FieldMetaData> _fields;
-        private IndexOptions? _indexOptions;
+        private IndexOptions _indexOptions;
         private bool _storePayloads;
 
         // information for wrapped PF, in current field
@@ -143,7 +143,7 @@ namespace Lucene.Net.Codecs.Pulsing
 
         public override BlockTermState NewTermState()
         {
-            var state = new PulsingTermState {wrappedState = _wrappedPostingsWriter.NewTermState()};
+            var state = new PulsingTermState { wrappedState = _wrappedPostingsWriter.NewTermState() };
             return state;
         }
 
@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// <param name="state"></param>
         public override void FinishTerm(BlockTermState state)
         {
-            var state2 = (PulsingTermState) state;
+            var state2 = (PulsingTermState)state;
 
             Debug.Assert(_pendingCount > 0 || _pendingCount == -1);
 
@@ -289,7 +289,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 // given codec wants to store other interesting
                 // stuff, it could use this pulsing codec to do so
 
-                if (_indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
                 {
                     var lastDocID = 0;
                     var pendingIDX = 0;
@@ -322,7 +322,7 @@ namespace Lucene.Net.Codecs.Pulsing
                             Debug.Assert(pos.docID == doc.docID);
                             var posDelta = pos.pos - lastPos;
                             lastPos = pos.pos;
-                            
+
                             var payloadLength = pos.payload == null ? 0 : pos.payload.Length;
                             if (_storePayloads)
                             {
@@ -342,7 +342,7 @@ namespace Lucene.Net.Codecs.Pulsing
                                 _buffer.WriteVInt32(posDelta);
                             }
 
-                            if (_indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS)
+                            if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
                             {
                                 //System.out.println("write=" + pos.startOffset + "," + pos.endOffset);
                                 var offsetDelta = pos.startOffset - lastOffset;
@@ -368,45 +368,40 @@ namespace Lucene.Net.Codecs.Pulsing
                         }
                     }
                 }
-                else switch (_indexOptions)
+                else if (_indexOptions == IndexOptions.DOCS_AND_FREQS)
                 {
-                    case IndexOptions.DOCS_AND_FREQS:
+                    int lastDocId = 0;
+                    for (int posIdx = 0; posIdx < _pendingCount; posIdx++)
                     {
-                        var lastDocId = 0;
-                        for (var posIdx = 0; posIdx < _pendingCount; posIdx++)
+                        Position doc = _pending[posIdx];
+                        int delta = doc.docID - lastDocId;
+
+                        Debug.Assert(doc.termFreq != 0);
+
+                        if (doc.termFreq == 1)
                         {
-                            var doc = _pending[posIdx];
-                            var delta = doc.docID - lastDocId;
-
-                            Debug.Assert(doc.termFreq != 0);
-
-                            if (doc.termFreq == 1)
-                            {
-                                _buffer.WriteVInt32((delta << 1) | 1);
-                            }
-                            else
-                            {
-                                _buffer.WriteVInt32(delta << 1);
-                                _buffer.WriteVInt32(doc.termFreq);
-                            }
-                            lastDocId = doc.docID;
+                            _buffer.WriteVInt32((delta << 1) | 1);
                         }
+                        else
+                        {
+                            _buffer.WriteVInt32(delta << 1);
+                            _buffer.WriteVInt32(doc.termFreq);
+                        }
+                        lastDocId = doc.docID;
                     }
-                        break;
-                    case IndexOptions.DOCS_ONLY:
+                }
+                else if (_indexOptions == IndexOptions.DOCS_ONLY)
+                {
+                    int lastDocId = 0;
+                    for (int posIdx = 0; posIdx < _pendingCount; posIdx++)
                     {
-                        var lastDocId = 0;
-                        for (var posIdx = 0; posIdx < _pendingCount; posIdx++)
-                        {
-                            var doc = _pending[posIdx];
-                            _buffer.WriteVInt32(doc.docID - lastDocId);
-                            lastDocId = doc.docID;
-                        }
+                        Position doc = _pending[posIdx];
+                        _buffer.WriteVInt32(doc.docID - lastDocId);
+                        lastDocId = doc.docID;
                     }
-                        break;
                 }
 
-                state2.bytes = new byte[(int) _buffer.FilePointer];
+                state2.bytes = new byte[(int)_buffer.FilePointer];
                 _buffer.WriteTo(state2.bytes, 0);
                 _buffer.Reset();
             }
@@ -416,7 +411,7 @@ namespace Lucene.Net.Codecs.Pulsing
         public override void EncodeTerm(long[] empty, DataOutput output, FieldInfo fieldInfo, BlockTermState state,
             bool abs)
         {
-            var _state = (PulsingTermState) state;
+            var _state = (PulsingTermState)state;
             Debug.Assert(empty.Length == 0);
             _absolute = _absolute || abs;
             if (_state.bytes == null)
@@ -478,11 +473,11 @@ namespace Lucene.Net.Codecs.Pulsing
             _wrappedPostingsWriter.StartTerm();
 
             // Flush all buffered docs
-            if (_indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            if (_indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 Position doc = null;
 
-                foreach(var pos in _pending)
+                foreach (var pos in _pending)
                 {
                     if (doc == null)
                     {
@@ -502,7 +497,7 @@ namespace Lucene.Net.Codecs.Pulsing
             }
             else
             {
-                foreach(var doc in _pending)
+                foreach (var doc in _pending)
                 {
                     _wrappedPostingsWriter.StartDoc(doc.docID, _indexOptions == IndexOptions.DOCS_ONLY ? 0 : doc.termFreq);
                 }

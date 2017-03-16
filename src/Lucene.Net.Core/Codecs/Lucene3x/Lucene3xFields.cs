@@ -266,7 +266,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override bool HasFreqs
             {
-                get { return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS; }
+                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0; }
             }
 
             public override bool HasOffsets
@@ -274,14 +274,14 @@ namespace Lucene.Net.Codecs.Lucene3x
                 get
                 {
                     // preflex doesn't support this
-                    Debug.Assert(fieldInfo.IndexOptions < IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
+                    Debug.Assert(fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) < 0);
                     return false;
                 }
             }
 
             public override bool HasPositions
             {
-                get { return fieldInfo.IndexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
+                get { return fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0; }
             }
 
             public override bool HasPayloads

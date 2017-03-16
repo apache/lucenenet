@@ -37,7 +37,7 @@ namespace Lucene.Net.Documents
         private bool storeTermVectorPositions;
         private bool storeTermVectorPayloads;
         private bool omitNorms;
-        private IndexOptions? indexOptions = Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
+        private IndexOptions indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
         private NumericType? numericType;
         private bool frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
@@ -235,7 +235,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        public virtual IndexOptions? IndexOptions
+        public virtual IndexOptions IndexOptions
         {
             get
             {
@@ -335,10 +335,11 @@ namespace Lucene.Net.Documents
                 {
                     result.Append(",omitNorms");
                 }
-                if (indexOptions != Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                if (indexOptions != IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
                     result.Append(",indexOptions=");
-                    result.Append(indexOptions);
+                    // LUCENENET: duplcate what would happen if you print a null indexOptions in Java
+                    result.Append(indexOptions != IndexOptions.NONE ? indexOptions.ToString() : string.Empty);
                 }
                 if (numericType != null)
                 {

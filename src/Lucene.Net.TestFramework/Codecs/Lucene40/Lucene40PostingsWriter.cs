@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         internal readonly int TotalNumDocs;
 
-        internal IndexOptions? IndexOptions;
+        internal IndexOptions IndexOptions;
         internal bool StorePayloads;
         internal bool StoreOffsets;
 
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Lucene40
             this.FieldInfo = fieldInfo;
             IndexOptions = fieldInfo.IndexOptions;
 
-            StoreOffsets = IndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            StoreOffsets = IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             StorePayloads = fieldInfo.HasPayloads;
             LastState = EmptyState;
             //System.out.println("  set init blockFreqStart=" + freqStart);
@@ -223,7 +223,7 @@ namespace Lucene.Net.Codecs.Lucene40
             Debug.Assert(docID < TotalNumDocs, "docID=" + docID + " totalNumDocs=" + TotalNumDocs);
 
             LastDocID = docID;
-            if (IndexOptions == Index.IndexOptions.DOCS_ONLY)
+            if (IndexOptions == IndexOptions.DOCS_ONLY)
             {
                 FreqOut.WriteVInt32(delta);
             }
@@ -246,7 +246,7 @@ namespace Lucene.Net.Codecs.Lucene40
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             //if (DEBUG) System.out.println("SPW:     addPos pos=" + position + " payload=" + (payload == null ? "null" : (payload.Length + " bytes")) + " proxFP=" + proxOut.getFilePointer());
-            Debug.Assert(IndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS, "invalid indexOptions: " + IndexOptions);
+            Debug.Assert(IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0, "invalid indexOptions: " + IndexOptions);
             Debug.Assert(ProxOut != null);
 
             int delta = position - LastPosition;
@@ -352,7 +352,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 Debug.Assert(state.SkipOffset > 0);
                 @out.WriteVInt64(state.SkipOffset);
             }
-            if (IndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            if (IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 @out.WriteVInt64(state.ProxStart - LastState.ProxStart);
             }

@@ -246,10 +246,10 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override int SetField(FieldInfo fieldInfo)
         {
-            IndexOptions? indexOptions = fieldInfo.IndexOptions;
-            fieldHasFreqs = indexOptions >= IndexOptions.DOCS_AND_FREQS;
-            fieldHasPositions = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-            fieldHasOffsets = indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            IndexOptions indexOptions = fieldInfo.IndexOptions;
+            fieldHasFreqs = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            fieldHasPositions = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            fieldHasOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             fieldHasPayloads = fieldInfo.HasPayloads;
             skipWriter.SetField(fieldHasPositions, fieldHasOffsets, fieldHasPayloads);
             lastState = emptyState;

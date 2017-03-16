@@ -103,18 +103,18 @@ namespace Lucene.Net.Index
             payloadAttribute = null;
         }
 
-        private void SetIndexOptions(IndexOptions? indexOptions)
+        private void SetIndexOptions(IndexOptions indexOptions)
         {
-            if (indexOptions == null)
+            if (indexOptions == IndexOptions.NONE)
             {
                 // field could later be updated with indexed=true, so set everything on
                 hasFreq = hasProx = hasOffsets = true;
             }
             else
             {
-                hasFreq = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS;
-                hasProx = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-                hasOffsets = indexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+                hasFreq = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                hasProx = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                hasOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }
         }
 
@@ -412,12 +412,12 @@ namespace Lucene.Net.Index
             // according to this.indexOptions, but then write the
             // new segment to the directory according to
             // currentFieldIndexOptions:
-            IndexOptions? currentFieldIndexOptions = fieldInfo.IndexOptions;
-            Debug.Assert(currentFieldIndexOptions != null);
+            IndexOptions currentFieldIndexOptions = fieldInfo.IndexOptions;
+            Debug.Assert(currentFieldIndexOptions != IndexOptions.NONE);
 
-            bool writeTermFreq = currentFieldIndexOptions >= Index.IndexOptions.DOCS_AND_FREQS;
-            bool writePositions = currentFieldIndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-            bool writeOffsets = currentFieldIndexOptions >= Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+            bool writeTermFreq = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+            bool writePositions = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+            bool writeOffsets = currentFieldIndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
 
             bool readTermFreq = this.hasFreq;
             bool readPositions = this.hasProx;

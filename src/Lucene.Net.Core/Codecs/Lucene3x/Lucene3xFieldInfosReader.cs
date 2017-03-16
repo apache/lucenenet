@@ -92,7 +92,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     IndexOptions indexOptions;
                     if (!isIndexed)
                     {
-                        indexOptions = default(IndexOptions);
+                        indexOptions = IndexOptions.NONE;
                     }
                     else if ((bits & OMIT_TERM_FREQ_AND_POSITIONS) != 0)
                     {
@@ -123,7 +123,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     }
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, 
                         omitNorms, storePayloads, indexOptions, null, 
-                        isIndexed && !omitNorms ? DocValuesType.NUMERIC : default(DocValuesType), 
+                        isIndexed && !omitNorms ? DocValuesType.NUMERIC : default(DocValuesType), // LUCENENET TODO: Bug.. default is not null
                         Collections.EmptyMap<string, string>());
                 }
 

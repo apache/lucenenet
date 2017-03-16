@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs.SimpleText
             public SimpleTextPostingsWriter(SimpleTextFieldsWriter outerInstance, FieldInfo field)
             {
                 _outerInstance = outerInstance;
-                _indexOptions = field.IndexOptions.Value;
+                _indexOptions = field.IndexOptions;
                 _writePositions = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
                 _writeOffsets = _indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
             }

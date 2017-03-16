@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ISINDEXED));
                     bool isIndexed = Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.ISINDEXED.Length, scratch));
 
-                    IndexOptions? indexOptions;
+                    IndexOptions indexOptions;
                     if (isIndexed)
                     {
                         SimpleTextUtil.ReadLine(input, scratch);
@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
                     else
                     {
-                        indexOptions = null;
+                        indexOptions = IndexOptions.NONE;
                     }
 
                     SimpleTextUtil.ReadLine(input, scratch);

@@ -313,7 +313,7 @@ namespace Lucene.Net.Codecs.Sep
 
             // TODO: -- should we do omitTF with 2 different enum classes?
             private bool _omitTf;
-            private IndexOptions? _indexOptions;
+            private IndexOptions _indexOptions;
             private bool _storePayloads;
             private IBits _liveDocs;
             private readonly Int32IndexInput.AbstractReader _docReader;

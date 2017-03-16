@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 output.WriteVInt32(infos.Count);
                 foreach (FieldInfo fi in infos)
                 {
-                    IndexOptions? indexOptions = fi.IndexOptions;
+                    IndexOptions indexOptions = fi.IndexOptions;
                     sbyte bits = 0x0;
                     if (fi.HasVectors)
                     {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     if (fi.IsIndexed)
                     {
                         bits |= Lucene40FieldInfosFormat.IS_INDEXED;
-                        Debug.Assert(indexOptions >= IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !fi.HasPayloads);
+                        Debug.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !fi.HasPayloads);
                         if (indexOptions == IndexOptions.DOCS_ONLY)
                         {
                             bits |= Lucene40FieldInfosFormat.OMIT_TERM_FREQ_AND_POSITIONS;

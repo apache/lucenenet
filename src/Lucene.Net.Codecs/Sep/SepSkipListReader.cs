@@ -83,9 +83,9 @@ namespace Lucene.Net.Codecs.Sep
             _lastPosIndex = posIn != null ? posIn.GetIndex() : null;
         }
 
-        private IndexOptions? _indexOptions;
+        private IndexOptions _indexOptions;
 
-        internal virtual void SetIndexOptions(IndexOptions? v)
+        internal virtual void SetIndexOptions(IndexOptions v)
         {
             _indexOptions = v;
         }

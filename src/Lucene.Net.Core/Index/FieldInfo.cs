@@ -45,9 +45,9 @@ namespace Lucene.Net.Index
         // True if any document indexed term vectors
         private bool storeTermVector;
 
-        private DocValuesType? normTypeValue;
+        private DocValuesType? normType;
         private bool omitNorms; // omit norms associated with indexed fields
-        private IndexOptions? indexOptionsValue;
+        private IndexOptions indexOptions;
         private bool storePayloads; // whether this field stores payloads together with term positions
 
         private IDictionary<string, string> attributes;
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
         /// @lucene.experimental
         /// </summary>
         public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, 
-            bool storePayloads, IndexOptions? indexOptions, DocValuesType? docValues, DocValuesType? normsType, 
+            bool storePayloads, IndexOptions indexOptions, DocValuesType? docValues, DocValuesType? normsType, 
             IDictionary<string, string> attributes)
         {
             this.Name = name;
@@ -74,16 +74,16 @@ namespace Lucene.Net.Index
                 this.storeTermVector = storeTermVector;
                 this.storePayloads = storePayloads;
                 this.omitNorms = omitNorms;
-                this.indexOptionsValue = indexOptions;
-                this.normTypeValue = !omitNorms ? normsType : null;
+                this.indexOptions = indexOptions;
+                this.normType = !omitNorms ? normsType : null;
             } // for non-indexed fields, leave defaults
             else
             {
                 this.storeTermVector = false;
                 this.storePayloads = false;
                 this.omitNorms = false;
-                this.indexOptionsValue = null;
-                this.normTypeValue = null;
+                this.indexOptions = IndexOptions.NONE;
+                this.normType = null;
             }
             this.attributes = attributes;
             Debug.Assert(CheckConsistency());
@@ -96,18 +96,18 @@ namespace Lucene.Net.Index
                 Debug.Assert(!storeTermVector);
                 Debug.Assert(!storePayloads);
                 Debug.Assert(!omitNorms);
-                Debug.Assert(normTypeValue == null);
-                Debug.Assert(indexOptionsValue == null);
+                Debug.Assert(normType == null);
+                Debug.Assert(indexOptions == IndexOptions.NONE);
             }
             else
             {
-                Debug.Assert(indexOptionsValue != null);
+                Debug.Assert(indexOptions != IndexOptions.NONE);
                 if (omitNorms)
                 {
-                    Debug.Assert(normTypeValue == null);
+                    Debug.Assert(normType == null);
                 }
                 // Cannot store payloads unless positions are indexed:
-                Debug.Assert(((int)indexOptionsValue.GetValueOrDefault() >= (int)Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) || !this.storePayloads);
+                Debug.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
             }
 
             return true;
@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
         }
 
         // should only be called by FieldInfos#addOrUpdate
-        internal void Update(bool indexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions? indexOptions)
+        internal void Update(bool indexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions)
         {
             //System.out.println("FI.update field=" + name + " indexed=" + indexed + " omitNorms=" + omitNorms + " this.omitNorms=" + this.omitNorms);
             if (this.indexed != indexed)
@@ -139,20 +139,20 @@ namespace Lucene.Net.Index
                 if (this.omitNorms != omitNorms)
                 {
                     this.omitNorms = true; // if one require omitNorms at least once, it remains off for life
-                    this.normTypeValue = null;
+                    this.normType = null;
                 }
-                if (this.indexOptionsValue != indexOptions)
+                if (this.indexOptions != indexOptions)
                 {
-                    if (this.indexOptionsValue == null)
+                    if (this.indexOptions == IndexOptions.NONE)
                     {
-                        this.indexOptionsValue = indexOptions;
+                        this.indexOptions = indexOptions;
                     }
                     else
                     {
                         // downgrade
-                        indexOptionsValue = (int)indexOptionsValue.GetValueOrDefault() < (int)indexOptions ? indexOptionsValue : indexOptions;
+                        this.indexOptions = this.indexOptions.CompareTo(indexOptions) < 0 ? this.indexOptions : indexOptions;
                     }
-                    if ((int)indexOptionsValue.GetValueOrDefault() < (int)Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+                    if (this.indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         // cannot store payloads if we don't store positions:
                         this.storePayloads = false;
@@ -181,11 +181,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns IndexOptions for the field, or null if the field is not indexed </summary>
-        public IndexOptions? IndexOptions
+        public IndexOptions IndexOptions
         {
             get
             {
-                return indexOptionsValue;
+                return indexOptions;
             }
         }
 
@@ -218,15 +218,15 @@ namespace Lucene.Net.Index
         {
             get
             {
-                return normTypeValue;
+                return normType;
             }
             internal set
             {
-                if (normTypeValue != null && normTypeValue != value)
+                if (normType != null && normType != value)
                 {
-                    throw new System.ArgumentException("cannot change Norm type from " + normTypeValue + " to " + value + " for field \"" + Name + "\"");
+                    throw new System.ArgumentException("cannot change Norm type from " + normType + " to " + value + " for field \"" + Name + "\"");
                 }
-                normTypeValue = value;
+                normType = value;
                 Debug.Assert(CheckConsistency());
             }
         }
@@ -239,7 +239,7 @@ namespace Lucene.Net.Index
 
         internal void SetStorePayloads()
         {
-            if (indexed && (int)indexOptionsValue.GetValueOrDefault() >= (int)Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            if (indexed && indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0)
             {
                 storePayloads = true;
             }
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool HasNorms
         {
-            get { return normTypeValue != null; }
+            get { return normType != null; }
         }
 
         /// <summary>
@@ -352,6 +352,15 @@ namespace Lucene.Net.Index
         // NOTE: order is important here; FieldInfo uses this
         // order to merge two conflicting IndexOptions (always
         // "downgrades" by picking the lowest).
+
+        /// <summary>
+        /// No index options will be used.
+        /// <para/>
+        /// NOTE: This is the same as setting to <c>null</c> in Lucene
+        /// </summary>
+        // LUCENENET specific
+        NONE,
+
         /// <summary>
         /// Only documents are indexed: term frequencies and positions are omitted.
         /// Phrase and other positional queries on the field will throw an exception, and scoring

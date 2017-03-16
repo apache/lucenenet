@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs
         /// Default merge impl: append documents, mapping around
         ///  deletes
         /// </summary>
-        public virtual TermStats Merge(MergeState mergeState, IndexOptions? indexOptions, DocsEnum postings, FixedBitSet visitedDocs)
+        public virtual TermStats Merge(MergeState mergeState, IndexOptions indexOptions, DocsEnum postings, FixedBitSet visitedDocs)
         {
             int df = 0;
             long totTF = 0;
