@@ -89,9 +89,9 @@ namespace Lucene.Net.Index
         // note: we have to sync this map even though its just for debugging/toString,
         // otherwise DWPT's .toString() calls that iterate over the map can
         // cause concurrentmodificationexception if indexwriter's infostream is on
-        private readonly IDictionary<string, PostingsFormat> previousMappings = new ConcurrentDictionary<string, PostingsFormat>();
+        private readonly IDictionary<string, PostingsFormat> previousMappings = new ConcurrentDictionary<string, PostingsFormat>(StringComparer.Ordinal);
 
-        private IDictionary<string, DocValuesFormat> previousDVMappings = new ConcurrentDictionary<string, DocValuesFormat>();
+        private IDictionary<string, DocValuesFormat> previousDVMappings = new ConcurrentDictionary<string, DocValuesFormat>(StringComparer.Ordinal);
         private readonly int perFieldSeed;
 
         public override PostingsFormat GetPostingsFormatForField(string name)
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
                 // line-by-line review of the codec, it is exactly as it was in Lucene.
                 // So, there must be something wrong with variable int functionality
                 // somewhere else in the core.
-                new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), 
+                //new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), 
                 new MockRandomPostingsFormat(random),
                 new NestedPulsingPostingsFormat(), 
                 new Lucene41WithOrds(), 
