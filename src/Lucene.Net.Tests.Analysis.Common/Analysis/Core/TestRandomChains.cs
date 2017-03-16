@@ -23,6 +23,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -318,6 +319,9 @@ namespace Lucene.Net.Analysis.Core
             { typeof(CJKScript), new AnonymousProducer((random) => {
                 int max = Enum.GetValues(typeof(CJKScript)).Cast<int>().Sum();
                 return (CJKScript)random.Next(0, max + 1);
+            }) },
+            { typeof(CultureInfo), new AnonymousProducer((random) => {
+                return LuceneTestCase.RandomLocale(random);
             }) },
         };
 
