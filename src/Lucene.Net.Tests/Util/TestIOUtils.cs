@@ -1,8 +1,7 @@
-using System.Collections.Generic;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Text;
 
 namespace Lucene.Net.Util
 {
@@ -60,8 +59,10 @@ namespace Lucene.Net.Util
             }
             catch (TestException e1)
             {
-                Assert.IsTrue(e1.Data.Contains("SuppressedExceptions"));
-                Assert.IsTrue(((List<Exception>) e1.Data["SuppressedExceptions"]).Count == 2);
+                assertEquals("BASE-EXCEPTION", e1.Message);
+                assertEquals(2, e1.GetSuppressed().Length);
+                assertEquals("TEST-IO-EXCEPTION-1", e1.GetSuppressed()[0].Message);
+                assertEquals("TEST-IO-EXCEPTION-2", e1.GetSuppressed()[1].Message);
             }
 #pragma warning disable 168
             catch (Exception e2)
@@ -75,16 +76,23 @@ namespace Lucene.Net.Util
             {
                 IOUtils.CloseWhileHandlingException((TestException)null, new BrokenIDisposable(1), new BrokenIDisposable(2));
             }
-            catch (IOException e1)
+#pragma warning disable 168
+            catch (TestException e1)
+#pragma warning restore 168
             {
-                Assert.IsTrue(e1.Data.Contains("SuppressedExceptions"));
-                Assert.IsTrue(((List<Exception>)e1.Data["SuppressedExceptions"]).Count == 1);
+                fail("TestException should not be thrown here");
+            }
+            catch (IOException e2)
+            {
+                assertEquals("TEST-IO-EXCEPTION-1", e2.Message);
+                assertEquals(1, e2.GetSuppressed().Length);
+                assertEquals("TEST-IO-EXCEPTION-2", e2.GetSuppressed()[0].Message);
             }
 #pragma warning disable 168
             catch (Exception e2)
 #pragma warning restore 168
             {
-                Assert.Fail("Exception should not be thrown here");
+                fail("Exception should not be thrown here");
             }
         }
     }
