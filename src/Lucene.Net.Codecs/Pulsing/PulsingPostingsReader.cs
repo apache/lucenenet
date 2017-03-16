@@ -175,7 +175,7 @@ namespace Lucene.Net.Codecs.Pulsing
             termState2.Absolute = termState2.Absolute || absolute;
             // if we have positions, its total TF, otherwise its computed based on docFreq.
             // TODO Double check this is right..
-            long count = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS.CompareTo(fieldInfo.IndexOptions) >= 0
+            long count = fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0
                 ? termState2.TotalTermFreq
                 : termState2.DocFreq;
            
@@ -199,6 +199,7 @@ namespace Lucene.Net.Codecs.Pulsing
             }
             else
             {
+                //System.out.println("  not inlined");
                 var longsSize = _fields == null ? 0 : _fields[fieldInfo.Number];
                 if (termState2.Int64s == null)
                 {
