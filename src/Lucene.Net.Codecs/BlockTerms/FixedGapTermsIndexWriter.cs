@@ -82,16 +82,17 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldWriter AddField(FieldInfo field, long termsFilePointer)
         {
-            var writer = new SimpleFieldWriter(this, field, termsFilePointer);
+            //System.out.println("FGW: addFfield=" + field.name);
+            SimpleFieldWriter writer = new SimpleFieldWriter(this, field, termsFilePointer);
             _fields.Add(writer);
             return writer;
         }
 
-        /// <remarks>
+        /// <summary>
         /// NOTE: if your codec does not sort in unicode code
         /// point order, you must override this method, to simply
-        /// return indexedTerm.length.
-        /// </remarks>
+        /// return indexedTerm.Length.
+        /// </summary>
         protected virtual int IndexedTermPrefixLength(BytesRef priorTerm, BytesRef indexedTerm)
         {
             // As long as codec sorts terms in unicode codepoint
@@ -147,12 +148,15 @@ namespace Lucene.Net.Codecs.BlockTerms
                 // First term is first indexed term:
                 //System.output.println("FGW: checkIndexTerm text=" + text.utf8ToString());
                 if (0 == (numTerms++ % outerInstance._termIndexInterval))
+                {
                     return true;
-
+                }
                 // save last term just before next index term so we
                 // can compute wasted suffix
-                if (0 == numTerms % outerInstance._termIndexInterval)
+                else if (0 == numTerms % outerInstance._termIndexInterval)
+                {
                     lastTerm.CopyBytes(text);
+                }
 
                 return false;
             }
