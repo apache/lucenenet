@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.Lucene40
     using IndexFileNames = Lucene.Net.Index.IndexFileNames;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IOUtils = Lucene.Net.Util.IOUtils;
-    using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
+    //using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.LegacyDocValuesType;
     using NumericDocValues = Lucene.Net.Index.NumericDocValues;
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using PagedBytes = Lucene.Net.Util.PagedBytes;
@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     bool success = false;
                     try
                     {
-                        var type = LegacyDocValuesType.ValueOf(field.GetAttribute(legacyKey));
+                        var type = field.GetAttribute(legacyKey).ToLegacyDocValuesType();
 
                         //switch (Enum.Parse(typeof(LegacyDocValuesType), field.GetAttribute(LegacyKey)))
                         //{
@@ -425,7 +425,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 BinaryDocValues instance;
                 if (!binaryInstances.TryGetValue(field.Number, out instance))
                 {
-                    var type = LegacyDocValuesType.ValueOf(field.GetAttribute(legacyKey));
+                    var type = field.GetAttribute(legacyKey).ToLegacyDocValuesType();
 
                     if (type == LegacyDocValuesType.BYTES_FIXED_STRAIGHT)
                     {
@@ -701,7 +701,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         data = dir.OpenInput(dataName, state.Context);
                         index = dir.OpenInput(indexName, state.Context);
 
-                        var type = LegacyDocValuesType.ValueOf(field.GetAttribute(legacyKey));
+                        var type = field.GetAttribute(legacyKey).ToLegacyDocValuesType();
 
                         if (type == LegacyDocValuesType.BYTES_FIXED_SORTED)
                         {

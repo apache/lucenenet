@@ -1,4 +1,3 @@
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 
@@ -103,19 +102,19 @@ namespace Lucene.Net.Codecs.Lucene40
                     LegacyDocValuesType oldValuesType = GetDocValuesType((sbyte)(val & 0x0F));
                     LegacyDocValuesType oldNormsType = GetDocValuesType((sbyte)(((int)((uint)val >> 4)) & 0x0F));
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
-                    if (oldValuesType.Mapping != null)
+                    if (oldValuesType.GetMapping() != DocValuesType.NONE)
                     {
-                        attributes[LEGACY_DV_TYPE_KEY] = oldValuesType.Name;
+                        attributes[LEGACY_DV_TYPE_KEY] = oldValuesType.ToString();
                     }
-                    if (oldNormsType.Mapping != null)
+                    if (oldNormsType.GetMapping() != DocValuesType.NONE)
                     {
-                        if (oldNormsType.Mapping != DocValuesType.NUMERIC)
+                        if (oldNormsType.GetMapping() != DocValuesType.NUMERIC)
                         {
                             throw new CorruptIndexException("invalid norm type: " + oldNormsType + " (resource=" + input + ")");
                         }
-                        attributes[LEGACY_NORM_TYPE_KEY] = oldNormsType.Name;
+                        attributes[LEGACY_NORM_TYPE_KEY] = oldNormsType.ToString();
                     }
-                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, oldValuesType.Mapping, oldNormsType.Mapping, attributes);
+                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, oldValuesType.GetMapping(), oldNormsType.GetMapping(), attributes);
                 }
                 CodecUtil.CheckEOF(input);
                 FieldInfos fieldInfos = new FieldInfos(infos);
@@ -137,107 +136,6 @@ namespace Lucene.Net.Codecs.Lucene40
 
         internal static readonly string LEGACY_DV_TYPE_KEY = typeof(Lucene40FieldInfosReader).Name + ".dvtype";
         internal static readonly string LEGACY_NORM_TYPE_KEY = typeof(Lucene40FieldInfosReader).Name + ".normtype";
-
-        internal class LegacyDocValuesType
-        {
-            internal static readonly LegacyDocValuesType NONE = new LegacyDocValuesType("NONE", null);
-            internal static readonly LegacyDocValuesType VAR_INTS = new LegacyDocValuesType("VAR_INTS", DocValuesType.NUMERIC);
-            internal static readonly LegacyDocValuesType FLOAT_32 = new LegacyDocValuesType("FLOAT_32", DocValuesType.NUMERIC);
-            internal static readonly LegacyDocValuesType FLOAT_64 = new LegacyDocValuesType("FLOAT_64", DocValuesType.NUMERIC);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_STRAIGHT = new LegacyDocValuesType("BYTES_FIXED_STRAIGHT", DocValuesType.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_DEREF = new LegacyDocValuesType("BYTES_FIXED_DEREF", DocValuesType.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_VAR_STRAIGHT = new LegacyDocValuesType("BYTES_VAR_STRAIGHT", DocValuesType.BINARY);
-            internal static readonly LegacyDocValuesType BYTES_VAR_DEREF = new LegacyDocValuesType("BYTES_VAR_DEREF", DocValuesType.BINARY);
-            internal static readonly LegacyDocValuesType FIXED_INTS_16 = new LegacyDocValuesType("FIXED_INTS_16", DocValuesType.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_32 = new LegacyDocValuesType("FIXED_INTS_32", DocValuesType.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_64 = new LegacyDocValuesType("FIXED_INTS_64", DocValuesType.NUMERIC);
-            internal static readonly LegacyDocValuesType FIXED_INTS_8 = new LegacyDocValuesType("FIXED_INTS_8", DocValuesType.NUMERIC);
-            internal static readonly LegacyDocValuesType BYTES_FIXED_SORTED = new LegacyDocValuesType("BYTES_FIXED_SORTED", DocValuesType.SORTED);
-            internal static readonly LegacyDocValuesType BYTES_VAR_SORTED = new LegacyDocValuesType("BYTES_VAR_SORTED", DocValuesType.SORTED);
-
-            private static readonly LegacyDocValuesType[] values = new[] {
-                NONE,
-                VAR_INTS,
-                FLOAT_32,
-                FLOAT_64,
-                BYTES_FIXED_STRAIGHT,
-                BYTES_FIXED_DEREF,
-                BYTES_VAR_STRAIGHT,
-                BYTES_VAR_DEREF,
-                FIXED_INTS_16,
-                FIXED_INTS_32,
-                FIXED_INTS_64,
-                FIXED_INTS_8,
-                BYTES_FIXED_SORTED,
-                BYTES_VAR_SORTED
-            };
-
-            private static readonly IDictionary<string, LegacyDocValuesType> nameLookup = new HashMap<string, LegacyDocValuesType>(StringComparer.OrdinalIgnoreCase) {
-                {"NONE", NONE},
-                {"VAR_INTS", VAR_INTS},
-                {"FLOAT_32", FLOAT_32},
-                {"FLOAT_64", FLOAT_64},
-                {"BYTES_FIXED_STRAIGHT", BYTES_FIXED_STRAIGHT},
-                {"BYTES_FIXED_DEREF", BYTES_FIXED_DEREF},
-                {"BYTES_VAR_STRAIGHT", BYTES_VAR_STRAIGHT},
-                {"BYTES_VAR_DEREF", BYTES_VAR_DEREF},
-                {"FIXED_INTS_16", FIXED_INTS_16},
-                {"FIXED_INTS_32", FIXED_INTS_32},
-                {"FIXED_INTS_64", FIXED_INTS_64},
-                {"FIXED_INTS_8", FIXED_INTS_8},
-                {"BYTES_FIXED_SORTED", BYTES_FIXED_SORTED},
-                {"BYTES_VAR_SORTED", BYTES_VAR_SORTED}
-            };
-
-            public static readonly IDictionary<string, int> ordinalLookup = new HashMap<string, int>(14) {
-                {"NONE", 0},
-                {"VAR_INTS", 1},
-                {"FLOAT_32", 2},
-                {"FLOAT_64", 3},
-                {"BYTES_FIXED_STRAIGHT", 4},
-                {"BYTES_FIXED_DEREF", 5},
-                {"BYTES_VAR_STRAIGHT", 6},
-                {"BYTES_VAR_DEREF", 7},
-                {"FIXED_INTS_16", 8},
-                {"FIXED_INTS_32", 9},
-                {"FIXED_INTS_64", 10},
-                {"FIXED_INTS_8", 11},
-                {"BYTES_FIXED_SORTED", 12},
-                {"BYTES_VAR_SORTED", 13}
-            };
-
-            private readonly DocValuesType? mapping;
-            private readonly string name;
-
-            private LegacyDocValuesType(string name, DocValuesType? mapping)
-            {
-                this.name = name;
-                this.mapping = mapping;
-            }
-
-            public DocValuesType? Mapping
-            {
-                get { return mapping; }
-            }
-
-            public string Name
-            {
-                get { return name; }
-            }
-
-            public static LegacyDocValuesType[] Values
-            {
-                get
-                {
-                    return values;
-                }
-            }
-
-            public static LegacyDocValuesType ValueOf(string value)
-            {
-                return nameLookup[value];
-            }
-        }
 
         // mapping of 4.0 types -> 4.2 types
         /*internal enum LegacyDocValuesType
@@ -261,7 +159,58 @@ namespace Lucene.Net.Codecs.Lucene40
         // decodes a 4.0 type
         private static LegacyDocValuesType GetDocValuesType(sbyte b)
         {
-            return LegacyDocValuesType.Values[b];
+            //return LegacyDocValuesType.Values[b];
+            return (LegacyDocValuesType)b;
         }
+    }
+
+    internal enum LegacyDocValuesType : sbyte
+    {
+        NONE,
+        VAR_INTS,
+        FLOAT_32,
+        FLOAT_64,
+        BYTES_FIXED_STRAIGHT,
+        BYTES_FIXED_DEREF,
+        BYTES_VAR_STRAIGHT,
+        BYTES_VAR_DEREF,
+        FIXED_INTS_16,
+        FIXED_INTS_32,
+        FIXED_INTS_64,
+        FIXED_INTS_8,
+        BYTES_FIXED_SORTED,
+        BYTES_VAR_SORTED
+    }
+
+    internal static class LegacyDocValuesTypeExtensions
+    {
+        public static DocValuesType GetMapping(this LegacyDocValuesType legacyDocValuesType)
+        {
+            return mapping[legacyDocValuesType];
+        }
+
+        public static LegacyDocValuesType ToLegacyDocValuesType(this string name) // Was ValueOf in Java
+        {
+            return (LegacyDocValuesType)Enum.Parse(typeof(LegacyDocValuesType), name);
+        }
+
+        // mapping of 4.0 types -> 4.2 types
+        internal static IDictionary<LegacyDocValuesType, DocValuesType> mapping = new Dictionary<LegacyDocValuesType, DocValuesType>
+        {
+            { LegacyDocValuesType.NONE, DocValuesType.NONE },
+            { LegacyDocValuesType.VAR_INTS, DocValuesType.NUMERIC },
+            { LegacyDocValuesType.FLOAT_32, DocValuesType.NUMERIC },
+            { LegacyDocValuesType.FLOAT_64, DocValuesType.NUMERIC },
+            { LegacyDocValuesType.BYTES_FIXED_STRAIGHT, DocValuesType.BINARY },
+            { LegacyDocValuesType.BYTES_FIXED_DEREF, DocValuesType.BINARY },
+            { LegacyDocValuesType.BYTES_VAR_STRAIGHT, DocValuesType.BINARY },
+            { LegacyDocValuesType.BYTES_VAR_DEREF, DocValuesType.BINARY },
+            { LegacyDocValuesType.FIXED_INTS_16, DocValuesType.NUMERIC },
+            { LegacyDocValuesType.FIXED_INTS_32, DocValuesType.NUMERIC },
+            { LegacyDocValuesType.FIXED_INTS_64, DocValuesType.NUMERIC },
+            { LegacyDocValuesType.FIXED_INTS_8, DocValuesType.NUMERIC },
+            { LegacyDocValuesType.BYTES_FIXED_SORTED, DocValuesType.SORTED },
+            { LegacyDocValuesType.BYTES_VAR_SORTED, DocValuesType.SORTED }
+        };
     }
 }

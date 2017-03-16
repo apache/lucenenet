@@ -139,7 +139,7 @@ namespace Lucene.Net.Tests.Queries.Function
             var values = Enum.GetValues(typeof(DocValuesType));
             foreach (DocValuesType type in values)
             {
-                if (type != DocValuesType.SORTED_SET)
+                if (type != DocValuesType.SORTED_SET && type != DocValuesType.NONE) // LUCENENET specific: eliminate our NONE option from test
                 {
                     DoTest(type);
                 }

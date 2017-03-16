@@ -209,7 +209,7 @@ namespace Lucene.Net.Index
             // We use this to enforce that a given field never
             // changes DV type, even across segments / IndexWriter
             // sessions:
-            private readonly IDictionary<string, DocValuesType?> docValuesType;
+            private readonly IDictionary<string, DocValuesType> docValuesType;
 
             // TODO: we should similarly catch an attempt to turn
             // norms back on after they were already ommitted; today
@@ -220,7 +220,7 @@ namespace Lucene.Net.Index
             {
                 this.nameToNumber = new Dictionary<string, int?>();
                 this.numberToName = new Dictionary<int?, string>();
-                this.docValuesType = new Dictionary<string, DocValuesType?>();
+                this.docValuesType = new Dictionary<string, DocValuesType>();
             }
 
             /// <summary>
@@ -229,19 +229,19 @@ namespace Lucene.Net.Index
             /// number assigned if possible otherwise the first unassigned field number
             /// is used as the field number.
             /// </summary>
-            internal int AddOrGet(string fieldName, int preferredFieldNumber, DocValuesType? dvType)
+            internal int AddOrGet(string fieldName, int preferredFieldNumber, DocValuesType dvType)
             {
                 lock (this)
                 {
-                    if (dvType != null)
+                    if (dvType != DocValuesType.NONE)
                     {
-                        DocValuesType? currentDVType;
+                        DocValuesType currentDVType;
                         docValuesType.TryGetValue(fieldName, out currentDVType);
-                        if (currentDVType == null)
+                        if (currentDVType == DocValuesType.NONE) // default value in .NET (value type 0)
                         {
                             docValuesType[fieldName] = dvType;
                         }
-                        else if (currentDVType != null && currentDVType != dvType)
+                        else if (currentDVType != DocValuesType.NONE && currentDVType != dvType)
                         {
                             throw new System.ArgumentException("cannot change DocValues type from " + currentDVType + " to " + dvType + " for field \"" + fieldName + "\"");
                         }
@@ -276,13 +276,13 @@ namespace Lucene.Net.Index
             }
 
             // used by assert
-            internal bool ContainsConsistent(int? number, string name, DocValuesType? dvType)
+            internal bool ContainsConsistent(int? number, string name, DocValuesType dvType)
             {
                 lock (this)
                 {
                     string numberToNameStr;
                     int? nameToNumberVal;
-                    DocValuesType? docValuesType_E;
+                    DocValuesType docValuesType_E;
 
                     numberToName.TryGetValue(number, out numberToNameStr);
                     nameToNumber.TryGetValue(name, out nameToNumberVal);
@@ -290,7 +290,7 @@ namespace Lucene.Net.Index
 
                     return name.Equals(numberToNameStr, StringComparison.Ordinal) 
                         && number.Equals(nameToNumber[name]) && 
-                        (dvType == null || docValuesType_E == null || dvType == docValuesType_E);
+                        (dvType == DocValuesType.NONE || docValuesType_E == DocValuesType.NONE || dvType == docValuesType_E);
                 }
             }
 
@@ -298,7 +298,7 @@ namespace Lucene.Net.Index
             /// Returns true if the {@code fieldName} exists in the map and is of the
             /// same {@code dvType}.
             /// </summary>
-            internal bool Contains(string fieldName, DocValuesType? dvType)
+            internal bool Contains(string fieldName, DocValuesType dvType)
             {
                 lock (this)
                 {
@@ -310,7 +310,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         // only return true if the field has the same dvType as the requested one
-                        DocValuesType? dvCand;
+                        DocValuesType dvCand;
                         docValuesType.TryGetValue(fieldName, out dvCand);
                         return dvType == dvCand;
                     }
@@ -327,7 +327,7 @@ namespace Lucene.Net.Index
                 }
             }
 
-            internal void SetDocValuesType(int number, string name, DocValuesType? dvType)
+            internal void SetDocValuesType(int number, string name, DocValuesType dvType)
             {
                 lock (this)
                 {
@@ -378,10 +378,10 @@ namespace Lucene.Net.Index
                 // rather, each component in the chain should update
                 // what it "owns".  EG fieldType.indexOptions() should
                 // be updated by maybe FreqProxTermsWriterPerField:
-                return AddOrUpdateInternal(name, -1, fieldType.IsIndexed, false, fieldType.OmitNorms, false, fieldType.IndexOptions, fieldType.DocValueType, null);
+                return AddOrUpdateInternal(name, -1, fieldType.IsIndexed, false, fieldType.OmitNorms, false, fieldType.IndexOptions, fieldType.DocValueType, DocValuesType.NONE);
             }
 
-            private FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType? docValues, DocValuesType? normType)
+            private FieldInfo AddOrUpdateInternal(string name, int preferredFieldNumber, bool isIndexed, bool storeTermVector, bool omitNorms, bool storePayloads, IndexOptions indexOptions, DocValuesType docValues, DocValuesType normType)
             {
                 FieldInfo fi = FieldInfo(name);
                 if (fi == null)
@@ -401,7 +401,7 @@ namespace Lucene.Net.Index
                 {
                     fi.Update(isIndexed, storeTermVector, omitNorms, storePayloads, indexOptions);
 
-                    if (docValues != null)
+                    if (docValues != DocValuesType.NONE)
                     {
                         // only pay the synchronization cost if fi does not already have a DVType
                         bool updateGlobal = !fi.HasDocValues;
@@ -414,7 +414,7 @@ namespace Lucene.Net.Index
                         }
                     }
 
-                    if (!fi.OmitsNorms && normType != null)
+                    if (!fi.OmitsNorms && normType != DocValuesType.NONE)
                     {
                         fi.NormType = normType;
                     }

@@ -396,8 +396,8 @@ namespace Lucene.Net.Index
                 }
 
                 fieldInfoArray[fieldUpto] = new FieldInfo(field, true, fieldUpto, false, false, true, 
-                                                        IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS, 
-                                                        null, DocValuesType.NUMERIC, null);
+                                                        IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS,
+                                                        DocValuesType.NONE, DocValuesType.NUMERIC, null);
                 fieldUpto++;
 
                 SortedDictionary<BytesRef, long> postings = new SortedDictionary<BytesRef, long>();
@@ -543,7 +543,7 @@ namespace Lucene.Net.Index
                 IndexOptions indexOptions = Enum.GetValues(typeof(IndexOptions)).Cast<IndexOptions>().ToArray()[alwaysTestMax ? fieldMaxIndexOption : Random().Next(1, 1 + fieldMaxIndexOption)]; // LUCENENET: Skipping NONE option
                 bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
 
-                newFieldInfoArray[fieldUpto] = new FieldInfo(oldFieldInfo.Name, true, fieldUpto, false, false, doPayloads, indexOptions, null, DocValuesType.NUMERIC, null);
+                newFieldInfoArray[fieldUpto] = new FieldInfo(oldFieldInfo.Name, true, fieldUpto, false, false, doPayloads, indexOptions, DocValuesType.NONE, DocValuesType.NUMERIC, null);
             }
 
             FieldInfos newFieldInfos = new FieldInfos(newFieldInfoArray);

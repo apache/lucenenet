@@ -51,8 +51,8 @@ namespace Lucene.Net.Index
 
         public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
         {
-            DocValuesType? dvType = field.FieldType.DocValueType;
-            if (dvType != null)
+            DocValuesType dvType = field.FieldType.DocValueType;
+            if (dvType != DocValuesType.NONE)
             {
                 fieldInfo.DocValuesType = dvType;
                 if (dvType == DocValuesType.BINARY)

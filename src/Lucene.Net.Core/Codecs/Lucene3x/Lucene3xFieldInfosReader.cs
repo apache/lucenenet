@@ -122,8 +122,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                         storePayloads = false;
                     }
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, 
-                        omitNorms, storePayloads, indexOptions, null, 
-                        isIndexed && !omitNorms ? DocValuesType.NUMERIC : default(DocValuesType), // LUCENENET TODO: Bug.. default is not null
+                        omitNorms, storePayloads, indexOptions, DocValuesType.NONE, 
+                        isIndexed && !omitNorms ? DocValuesType.NUMERIC : DocValuesType.NONE,
                         Collections.EmptyMap<string, string>());
                 }
 

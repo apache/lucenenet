@@ -82,14 +82,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// True if normalization values should be omitted for the field.
-        /// <p>
+        /// <para/>
         /// this saves memory, but at the expense of scoring quality (length normalization
         /// will be disabled), and if you omit norms, you cannot use index-time boosts.
         /// </summary>
         bool OmitNorms { get; }
 
         /// <summary>
-        /// <seealso cref="IndexOptions"/>, describing what should be
+        /// <see cref="Index.IndexOptions"/>, describing what should be
         /// recorded into the inverted index
         /// </summary>
         IndexOptions IndexOptions { get; }
@@ -97,9 +97,9 @@ namespace Lucene.Net.Index
         //NumericType? NumericType { get; }
 
         /// <summary>
-        /// DocValues <seealso cref="DocValuesType"/>: if non-null then the field's value
+        /// DocValues <see cref="DocValuesType"/>: if not <see cref="DocValuesType.NONE"/> then the field's value
         /// will be indexed into docValues.
         /// </summary>
-        DocValuesType? DocValueType { get; }
+        DocValuesType DocValueType { get; }
     }
 }

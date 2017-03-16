@@ -103,14 +103,23 @@ namespace Lucene.Net.Codecs.Lucene3x
                         storePayloads = false;
                     }
 
-                    DocValuesType? normType = isIndexed && !omitNorms ? (DocValuesType?)DocValuesType.NUMERIC : null;
-                    if (format == PreFlexRWFieldInfosWriter.FORMAT_PREFLEX_RW && normType != null)
+                    DocValuesType normType = isIndexed && !omitNorms ? DocValuesType.NUMERIC : DocValuesType.NONE;
+                    if (format == PreFlexRWFieldInfosWriter.FORMAT_PREFLEX_RW && normType != DocValuesType.NONE)
                     {
                         // RW can have norms but doesn't write them
-                        normType = input.ReadByte() != 0 ? (DocValuesType?)DocValuesType.NUMERIC : null;
+                        normType = input.ReadByte() != 0 ? DocValuesType.NUMERIC : DocValuesType.NONE;
                     }
 
-                    infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, null, normType, null);
+                    infos[i] = new FieldInfo(name, 
+                                            isIndexed, 
+                                            fieldNumber, 
+                                            storeTermVector, 
+                                            omitNorms, 
+                                            storePayloads, 
+                                            indexOptions, 
+                                            DocValuesType.NONE, 
+                                            normType, 
+                                            null);
                 }
 
                 if (input.FilePointer != input.Length)

@@ -40,12 +40,12 @@ namespace Lucene.Net.Index
         public int Number { get; private set; }
 
         private bool indexed;
-        private DocValuesType? docValueType;
+        private DocValuesType docValueType;
 
         // True if any document indexed term vectors
         private bool storeTermVector;
 
-        private DocValuesType? normType;
+        private DocValuesType normType;
         private bool omitNorms; // omit norms associated with indexed fields
         private IndexOptions indexOptions;
         private bool storePayloads; // whether this field stores payloads together with term positions
@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
         /// @lucene.experimental
         /// </summary>
         public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, 
-            bool storePayloads, IndexOptions indexOptions, DocValuesType? docValues, DocValuesType? normsType, 
+            bool storePayloads, IndexOptions indexOptions, DocValuesType docValues, DocValuesType normsType, 
             IDictionary<string, string> attributes)
         {
             this.Name = name;
@@ -75,7 +75,7 @@ namespace Lucene.Net.Index
                 this.storePayloads = storePayloads;
                 this.omitNorms = omitNorms;
                 this.indexOptions = indexOptions;
-                this.normType = !omitNorms ? normsType : null;
+                this.normType = !omitNorms ? normsType : DocValuesType.NONE;
             } // for non-indexed fields, leave defaults
             else
             {
@@ -83,7 +83,7 @@ namespace Lucene.Net.Index
                 this.storePayloads = false;
                 this.omitNorms = false;
                 this.indexOptions = IndexOptions.NONE;
-                this.normType = null;
+                this.normType = DocValuesType.NONE;
             }
             this.attributes = attributes;
             Debug.Assert(CheckConsistency());
@@ -96,7 +96,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(!storeTermVector);
                 Debug.Assert(!storePayloads);
                 Debug.Assert(!omitNorms);
-                Debug.Assert(normType == null);
+                Debug.Assert(normType == DocValuesType.NONE);
                 Debug.Assert(indexOptions == IndexOptions.NONE);
             }
             else
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(indexOptions != IndexOptions.NONE);
                 if (omitNorms)
                 {
-                    Debug.Assert(normType == null);
+                    Debug.Assert(normType == DocValuesType.NONE);
                 }
                 // Cannot store payloads unless positions are indexed:
                 Debug.Assert(indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 || !this.storePayloads);
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
                 if (this.omitNorms != omitNorms)
                 {
                     this.omitNorms = true; // if one require omitNorms at least once, it remains off for life
-                    this.normType = null;
+                    this.normType = DocValuesType.NONE;
                 }
                 if (this.indexOptions != indexOptions)
                 {
@@ -162,11 +162,11 @@ namespace Lucene.Net.Index
             Debug.Assert(CheckConsistency());
         }
 
-        public DocValuesType? DocValuesType
+        public DocValuesType DocValuesType
         {
             internal set
             {
-                if (docValueType != null && docValueType != value)
+                if (docValueType != DocValuesType.NONE && docValueType != value)
                 {
                     throw new System.ArgumentException("cannot change DocValues type from " + docValueType + " to " + value + " for field \"" + Name + "\"");
                 }
@@ -194,7 +194,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool HasDocValues
         {
-            get { return docValueType != null; }
+            get { return docValueType != DocValuesType.NONE; }
         }
 
         /// <summary>
@@ -212,9 +212,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <see cref="Index.DocValuesType"/> of the norm. This may be <c>null</c> if the field has no norms.
+        /// Returns <see cref="Index.DocValuesType"/> of the norm. This may be <see cref="DocValuesType.NONE"/> if the field has no norms.
         /// </summary>
-        public DocValuesType? NormType
+        public DocValuesType NormType
         {
             get
             {
@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
             }
             internal set
             {
-                if (normType != null && normType != value)
+                if (normType != DocValuesType.NONE && normType != value)
                 {
                     throw new System.ArgumentException("cannot change Norm type from " + normType + " to " + value + " for field \"" + Name + "\"");
                 }
@@ -259,7 +259,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public bool HasNorms
         {
-            get { return normType != null; }
+            get { return normType != DocValuesType.NONE; }
         }
 
         /// <summary>
@@ -398,29 +398,37 @@ namespace Lucene.Net.Index
     public enum DocValuesType // LUCENENET specific: de-nested from FieldInfo to prevent naming collisions
     {
         /// <summary>
-        /// A per-document Number
+        /// No doc values type will be used.
+        /// <para/>
+        /// NOTE: This is the same as setting to <c>null</c> in Lucene
+        /// </summary>
+        // LUCENENET specific
+        NONE, // LUCENENET NOTE: The value of this option is 0, which is the default value for any .NET value type
+
+        /// <summary>
+        /// A per-document numeric type
         /// </summary>
         NUMERIC,
 
         /// <summary>
-        /// A per-document byte[].  Values may be larger than
+        /// A per-document <see cref="T:byte[]"/>.  Values may be larger than
         /// 32766 bytes, but different codecs may enforce their own limits.
         /// </summary>
         BINARY,
 
         /// <summary>
-        /// A pre-sorted byte[]. Fields with this type only store distinct byte values
+        /// A pre-sorted <see cref="T:byte[]"/>. Fields with this type only store distinct byte values
         /// and store an additional offset pointer per document to dereference the shared
         /// byte[]. The stored byte[] is presorted and allows access via document id,
-        /// ordinal and by-value.  Values must be <= 32766 bytes.
+        /// ordinal and by-value.  Values must be &lt;= 32766 bytes.
         /// </summary>
         SORTED,
 
         /// <summary>
-        /// A pre-sorted Set&lt;byte[]&gt;. Fields with this type only store distinct byte values
+        /// A pre-sorted ISet&lt;byte[]&gt;. Fields with this type only store distinct byte values
         /// and store additional offset pointers per document to dereference the shared
-        /// byte[]s. The stored byte[] is presorted and allows access via document id,
-        /// ordinal and by-value.  Values must be <= 32766 bytes.
+        /// <see cref="T:byte[]"/>s. The stored <see cref="T:byte[]"/> is presorted and allows access via document id,
+        /// ordinal and by-value.  Values must be &lt;= 32766 bytes.
         /// </summary>
         SORTED_SET
     }

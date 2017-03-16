@@ -95,8 +95,8 @@ namespace Lucene.Net.Codecs.Lucene42
 
                     // DV Types are packed in one byte
                     sbyte val = (sbyte)input.ReadByte();
-                    DocValuesType? docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
-                    DocValuesType? normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
+                    DocValuesType docValuesType = GetDocValuesType(input, (sbyte)(val & 0x0F));
+                    DocValuesType normsType = GetDocValuesType(input, (sbyte)(((int)((uint)val >> 4)) & 0x0F));
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, 
                         omitNorms, storePayloads, indexOptions, docValuesType, normsType, Collections.UnmodifiableMap(attributes));
@@ -120,11 +120,11 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        private static DocValuesType? GetDocValuesType(IndexInput input, sbyte b)
+        private static DocValuesType GetDocValuesType(IndexInput input, sbyte b)
         {
             if (b == 0)
             {
-                return null;
+                return DocValuesType.NONE;
             }
             else if (b == 1)
             {

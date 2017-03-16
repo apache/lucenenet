@@ -319,7 +319,7 @@ namespace Lucene.Net.Codecs.Asserting
 
             public override IBits GetDocsWithField(FieldInfo field)
             {
-                Debug.Assert(field.DocValuesType != null);
+                Debug.Assert(field.DocValuesType != DocValuesType.NONE);
                 IBits bits = @in.GetDocsWithField(field);
                 Debug.Assert(bits != null);
                 Debug.Assert(bits.Length == MaxDoc);

@@ -41,7 +41,7 @@ namespace Lucene.Net.Documents
         private NumericType? numericType;
         private bool frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
-        private DocValuesType? docValueType;
+        private DocValuesType docValueType;
 
         /// <summary>
         /// Create a new mutable <see cref="FieldType"/> with all of the properties from <paramref name="ref"/>
@@ -349,7 +349,7 @@ namespace Lucene.Net.Documents
                     result.Append(numericPrecisionStep);
                 }
             }
-            if (docValueType != null)
+            if (docValueType != DocValuesType.NONE)
             {
                 if (result.Length > 0)
                 {
@@ -363,13 +363,13 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Sets the field's <see cref="DocValuesType"/>, or set to <c>null</c> if no <see cref="DocValues"/> should be stored.
+        /// Sets the field's <see cref="DocValuesType"/>, or set to <see cref="DocValuesType.NONE"/> if no <see cref="DocValues"/> should be stored.
         /// <para/>
-        /// The default is <c>null</c> (no <see cref="DocValues"/>).
+        /// The default is <see cref="DocValuesType.NONE"/> (no <see cref="DocValues"/>).
         /// </summary>
         /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        public virtual DocValuesType? DocValueType
+        public virtual DocValuesType DocValueType
         {
             get
             {

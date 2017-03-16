@@ -30,7 +30,6 @@ namespace Lucene.Net.Codecs.Lucene40
          * limitations under the License.
          */
 
-    using LegacyDocValuesType = Lucene.Net.Codecs.Lucene40.Lucene40FieldInfosReader.LegacyDocValuesType;
 
     /// <summary>
     /// Lucene 4.0 FieldInfos writer.
@@ -117,9 +116,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// 4.0-style docvalues byte </summary>
-        public virtual sbyte DocValuesByte(DocValuesType? type, string legacyTypeAtt)
+        public virtual sbyte DocValuesByte(DocValuesType type, string legacyTypeAtt)
         {
-            if (type == null)
+            if (type == DocValuesType.NONE)
             {
                 Debug.Assert(legacyTypeAtt == null);
                 return 0;
@@ -127,7 +126,8 @@ namespace Lucene.Net.Codecs.Lucene40
             else
             {
                 Debug.Assert(legacyTypeAtt != null);
-                return (sbyte)LegacyDocValuesType.ordinalLookup[legacyTypeAtt];
+                //return (sbyte)LegacyDocValuesType.ordinalLookup[legacyTypeAtt];
+                return (sbyte)legacyTypeAtt.ToLegacyDocValuesType();
             }
         }
     }

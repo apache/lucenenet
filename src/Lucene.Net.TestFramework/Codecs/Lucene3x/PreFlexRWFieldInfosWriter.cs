@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         // to allow null norm types we need to indicate if norms are written
                         // only in RW case
-                        output.WriteByte((byte)(sbyte)(fi.NormType == null ? 0 : 1));
+                        output.WriteByte((byte)(sbyte)(fi.NormType == Index.DocValuesType.NONE ? 0 : 1));
                     }
                     Debug.Assert(fi.Attributes == null); // not used or supported
                 }

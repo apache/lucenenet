@@ -181,8 +181,8 @@ namespace Lucene.Net.Index
             {
                 foreach (FieldInfo field in mergeState.FieldInfos)
                 {
-                    DocValuesType? type = field.DocValuesType;
-                    if (type != null)
+                    DocValuesType type = field.DocValuesType;
+                    if (type != DocValuesType.NONE)
                     {
                         if (type == DocValuesType.NUMERIC)
                         {

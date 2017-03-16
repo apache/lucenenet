@@ -157,9 +157,10 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        private static string GetDocValuesType(DocValuesType? type)
+        private static string GetDocValuesType(DocValuesType type)
         {
-            return type.HasValue ? type.ToString() : "false";
+            // LUCENENET specific - need to write false for NONE
+            return type != DocValuesType.NONE ? type.ToString() : "false";
         }
     }
 }

@@ -181,9 +181,9 @@ namespace Lucene.Net.Index
                     get { return OmitTF ? Index.IndexOptions.DOCS_ONLY : Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
                 }
 
-                public DocValuesType? DocValueType
+                public DocValuesType DocValueType
                 {
-                    get { return null; }
+                    get { return DocValuesType.NONE; }
                 }
             }
 

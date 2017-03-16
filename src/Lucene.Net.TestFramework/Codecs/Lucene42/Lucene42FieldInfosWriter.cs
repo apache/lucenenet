@@ -114,9 +114,9 @@ namespace Lucene.Net.Codecs.Lucene42
             }
         }
 
-        private static sbyte DocValuesByte(DocValuesType? type)
+        private static sbyte DocValuesByte(DocValuesType type)
         {
-            if (type == null)
+            if (type == DocValuesType.NONE)
             {
                 return 0;
             }

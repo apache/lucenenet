@@ -104,12 +104,12 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS_TYPE));
                     string nrmType = ReadString(SimpleTextFieldInfosWriter.NORMS_TYPE.Length, scratch);
-                    Index.DocValuesType? normsType = DocValuesType(nrmType);
+                    Index.DocValuesType normsType = DocValuesType(nrmType);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES));
                     string dvType = ReadString(SimpleTextFieldInfosWriter.DOCVALUES.Length, scratch);
-                    Index.DocValuesType? docValuesType = DocValuesType(dvType);
+                    Index.DocValuesType docValuesType = DocValuesType(dvType);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES_GEN));
@@ -158,10 +158,9 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        [ExceptionToNullableEnumConvention]
-        public virtual Index.DocValuesType? DocValuesType(string dvType)
+        public virtual Index.DocValuesType DocValuesType(string dvType)
         {
-            return "false".Equals(dvType) ? null : (Index.DocValuesType?)Enum.Parse(typeof(Index.DocValuesType), dvType, true);
+            return "false".Equals(dvType) ? Index.DocValuesType.NONE : (Index.DocValuesType)Enum.Parse(typeof(Index.DocValuesType), dvType, true);
         }
 
         private string ReadString(int offset, BytesRef scratch)

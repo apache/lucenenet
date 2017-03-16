@@ -271,7 +271,7 @@ namespace Lucene.Net.Index
             IDictionary<long?, IList<FieldInfo>> genInfos = new Dictionary<long?, IList<FieldInfo>>();
             foreach (FieldInfo fi in FieldInfos)
             {
-                if (fi.DocValuesType == null)
+                if (fi.DocValuesType == DocValuesType.NONE)
                 {
                     continue;
                 }
@@ -494,7 +494,7 @@ namespace Lucene.Net.Index
                 // Field does not exist
                 return null;
             }
-            if (fi.DocValuesType == null)
+            if (fi.DocValuesType == DocValuesType.NONE)
             {
                 // Field was not indexed with doc values
                 return null;
@@ -544,7 +544,7 @@ namespace Lucene.Net.Index
                 // Field does not exist
                 return null;
             }
-            if (fi.DocValuesType == null)
+            if (fi.DocValuesType == DocValuesType.NONE)
             {
                 // Field was not indexed with doc values
                 return null;

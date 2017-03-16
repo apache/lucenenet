@@ -37,7 +37,8 @@ namespace Lucene.Net.Search.Grouping
 
     public class AllGroupHeadsCollectorTest : LuceneTestCase
     {
-        private static readonly DocValuesType[] vts = new DocValuesType[]{
+        private static readonly DocValuesType[] vts = new DocValuesType[]
+        {
             DocValuesType.BINARY, DocValuesType.SORTED
         };
 
