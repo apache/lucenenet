@@ -71,37 +71,31 @@ namespace Lucene.Net.Index
                 public bool IsIndexed
                 {
                     get { return (OuterInstance.Counter % 10) != 3; }
-                    set { }
                 }
 
                 public bool IsStored
                 {
                     get { return (OuterInstance.Counter & 1) == 0 || (OuterInstance.Counter % 10) == 3; }
-                    set { }
                 }
 
                 public bool IsTokenized
                 {
                     get { return true; }
-                    set { }
                 }
 
                 public bool StoreTermVectors
                 {
                     get { return IsIndexed && OuterInstance.Counter % 2 == 1 && OuterInstance.Counter % 10 != 9; }
-                    set { }
                 }
 
                 public bool StoreTermVectorOffsets
                 {
                     get { return StoreTermVectors && OuterInstance.Counter % 10 != 9; }
-                    set { }
                 }
 
                 public bool StoreTermVectorPositions
                 {
                     get { return StoreTermVectors && OuterInstance.Counter % 10 != 9; }
-                    set { }
                 }
 
                 public bool StoreTermVectorPayloads
@@ -119,31 +113,21 @@ namespace Lucene.Net.Index
                             return StoreTermVectors && OuterInstance.Counter % 10 != 9;
                         }
                     }
-                    set { }
                 }
 
                 public bool OmitNorms
                 {
                     get { return false; }
-                    set { }
                 }
 
-                public IndexOptions? IndexOptions
+                public IndexOptions IndexOptions
                 {
                     get { return Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
-                    set { }
-                }
-
-                public NumericType? NumericType
-                {
-                    get { throw new NotImplementedException(); }
-                    set { }
                 }
 
                 public DocValuesType? DocValueType
                 {
                     get { return null; }
-                    set { }
                 }
             }
 

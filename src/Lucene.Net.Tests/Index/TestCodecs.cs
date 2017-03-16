@@ -139,67 +139,51 @@ namespace Lucene.Net.Index
                 public bool IsIndexed
                 {
                     get { return true; }
-                    set { }
                 }
 
                 public bool IsStored
                 {
                     get { return false; }
-                    set { }
                 }
 
                 public bool IsTokenized
                 {
                     get { return false; }
-                    set { }
                 }
 
                 public bool StoreTermVectors
                 {
                     get { return false; }
-                    set { }
                 }
 
                 public bool StoreTermVectorOffsets
                 {
                     get { return false; }
-                    set { }
                 }
 
                 public bool StoreTermVectorPositions
                 {
                     get { return false; }
-                    set { }
                 }
 
                 public bool StoreTermVectorPayloads
                 {
                     get { return false; }
-                    set { }
                 }
 
                 public bool OmitNorms
                 {
                     get { return false; }
-                    set { }
                 }
 
-                public IndexOptions? IndexOptions
+                public IndexOptions IndexOptions
                 {
                     get { return OmitTF ? Index.IndexOptions.DOCS_ONLY : Index.IndexOptions.DOCS_AND_FREQS_AND_POSITIONS; }
-                    set { }
-                }
-
-                public NumericType? NumericType
-                {
-                    get { throw new NotImplementedException(); }
-                    set { }
                 }
 
                 public DocValuesType? DocValueType
                 {
                     get { return null; }
-                    set { }
                 }
             }
 

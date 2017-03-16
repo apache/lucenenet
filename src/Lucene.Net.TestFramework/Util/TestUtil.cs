@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Util
                 Field field1 = (Field)f;
                 Field field2;
                 DocValuesType? dvType = field1.FieldType.DocValueType;
-                Documents.NumericType? numType = field1.FieldType.NumericType;
+                Documents.NumericType? numType = ((FieldType)field1.FieldType).NumericType;
                 if (dvType != null)
                 {
                     switch (dvType)
