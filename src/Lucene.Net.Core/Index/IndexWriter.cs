@@ -5539,7 +5539,7 @@ namespace Lucene.Net.Index
 
                     if (infoStream.IsEnabled("IW"))
                     {
-                        infoStream.Message("IW", "done all syncs: " + filesToSync);
+                        infoStream.Message("IW", "done all syncs: " + Arrays.ToString(filesToSync));
                     }
 
                     tpResult = TestPoint("midStartCommitSuccess");
