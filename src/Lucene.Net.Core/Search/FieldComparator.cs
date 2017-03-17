@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -192,13 +193,11 @@ namespace Lucene.Net.Search
             {
                 return 1;
             }
-            else if (object.ReferenceEquals(first, second))
-            {
-                return 0;
-            }
             else
             {
-                return Comparer<T>.Default.Compare(first, second);
+                // LUCENENET NOTE: We need to compare using NaturalComparer<T>
+                // to ensure that if comparing strings we do so in Ordinal sort order
+                return ArrayUtil.GetNaturalComparer<T>().Compare(first, second);
             }
         }
 
