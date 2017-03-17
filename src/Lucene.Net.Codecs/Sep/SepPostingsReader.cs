@@ -253,8 +253,7 @@ namespace Lucene.Net.Codecs.Sep
         public override DocsEnum Docs(FieldInfo fieldInfo, BlockTermState bTermState, IBits liveDocs, DocsEnum reuse,
             DocsFlags flags)
         {
-            var termState = (SepTermState)bTermState;
-
+            SepTermState termState = (SepTermState)bTermState;
             SepDocsEnum docsEnum;
             if (reuse == null || !(reuse is SepDocsEnum))
             {
@@ -310,6 +309,7 @@ namespace Lucene.Net.Codecs.Sep
             private int _accum;
             private int _count;
             private int _freq;
+            //private long freqStart; // LUCENENET: not used
 
             // TODO: -- should we do omitTF with 2 different enum classes?
             private bool _omitTf;
@@ -333,6 +333,8 @@ namespace Lucene.Net.Codecs.Sep
             internal SepDocsEnum(SepPostingsReader outerInstance)
             {
                 _outerInstance = outerInstance;
+
+                startDocIn = outerInstance._docIn;
                 _docReader = outerInstance._docIn.GetReader();
                 _docIndex = outerInstance._docIn.GetIndex();
                 if (outerInstance._freqIn != null)
@@ -345,11 +347,14 @@ namespace Lucene.Net.Codecs.Sep
                     _freqReader = null;
                     _freqIndex = null;
                 }
-                _posIndex = outerInstance._posIn != null 
-                    ? outerInstance._posIn.GetIndex() // only init this so skipper can read it
-                    : null;
-
-                startDocIn = outerInstance._docIn;
+                if (outerInstance._posIn != null)
+                {
+                    _posIndex = outerInstance._posIn.GetIndex();                 // only init this so skipper can read it
+                }
+                else
+                {
+                    _posIndex = null;
+                }
             }
 
             internal virtual SepDocsEnum Init(FieldInfo fieldInfo, SepTermState termState, IBits liveDocs)
@@ -443,7 +448,13 @@ namespace Lucene.Net.Codecs.Sep
                     if (!_skipped)
                     {
                         // We haven't yet skipped for this posting
-                        _skipper.Init(_skipFp, _docIndex, _freqIndex, _posIndex, 0, _docFreq, _storePayloads);
+                        _skipper.Init(_skipFp, 
+                                    _docIndex, 
+                                    _freqIndex, 
+                                    _posIndex, 
+                                    0, 
+                                    _docFreq, 
+                                    _storePayloads);
                         _skipper.SetIndexOptions(_indexOptions);
 
                         _skipped = true;

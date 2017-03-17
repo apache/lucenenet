@@ -485,6 +485,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 // same term block we are now in; skip seeking
                                 // (but do scanning):
                                 doSeek = false;
+                                //System.out.println("  skip seek: nextIndexTerm=" + (nextIndexTerm == null ? "null" : nextIndexTerm.utf8ToString()));
                             }
                         }
                     }
@@ -579,7 +580,6 @@ namespace Lucene.Net.Codecs.BlockTerms
                                     return SeekStatus.END;
                                 }
                                 common = 0;
-
                             }
                             else if (cmp > 0)
                             {
