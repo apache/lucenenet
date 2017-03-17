@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Lucene41
             }
             Debug.Assert(numBits > 0 && numBits <= 32, numBits.ToString());
             int encodedSize = encodedSizes[numBits];
-            @in.Seek(@in.FilePointer + encodedSize);
+            @in.Seek(@in.GetFilePointer() + encodedSize);
         }
 
         private static bool IsAllEqual(int[] data)

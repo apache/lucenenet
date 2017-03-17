@@ -67,7 +67,7 @@ namespace Lucene.Net.Util.Packed
                     int size = (int)Math.Min(blockSize, valueCount - (long)i * blockSize);
                     if (direct)
                     {
-                        long pointer = @in.FilePointer;
+                        long pointer = @in.GetFilePointer();
                         subReaders[i] = PackedInt32s.GetDirectReaderNoHeader(@in, PackedInt32s.Format.PACKED, packedIntsVersion, size, bitsPerValue);
                         @in.Seek(pointer + PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, size, bitsPerValue));
                     }

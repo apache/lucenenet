@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene41
                     forUtil.ReadBlock(@in, new byte[Lucene41.ForUtil.MAX_ENCODED_SIZE], restored);
                     Assert.AreEqual(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, (i + 1) * Lucene41PostingsFormat.BLOCK_SIZE), Arrays.CopyOf(restored, Lucene41PostingsFormat.BLOCK_SIZE));
                 }
-                Assert.AreEqual(endPointer, @in.FilePointer);
+                assertEquals(endPointer, @in.GetFilePointer());
                 @in.Dispose();
             }
         }

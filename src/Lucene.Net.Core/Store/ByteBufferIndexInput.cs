@@ -205,18 +205,15 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override sealed long FilePointer
+        public override sealed long GetFilePointer()
         {
-            get
+            try
             {
-                try
-                {
-                    return (((long)curBufIndex) << chunkSizePower) + curBuf.Position - offset;
-                }
-                catch (System.NullReferenceException)
-                {
-                    throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
-                }
+                return (((long)curBufIndex) << chunkSizePower) + curBuf.Position - offset;
+            }
+            catch (System.NullReferenceException)
+            {
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
             }
         }
 
@@ -263,7 +260,7 @@ namespace Lucene.Net.Store
             ByteBufferIndexInput clone = BuildSlice(0L, this.length);
             try
             {
-                clone.Seek(FilePointer);
+                clone.Seek(GetFilePointer());
             }
             catch (System.IO.IOException ioe)
             {

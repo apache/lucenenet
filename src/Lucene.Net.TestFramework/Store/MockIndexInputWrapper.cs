@@ -97,13 +97,10 @@ namespace Lucene.Net.Store
             return clone;
         }
 
-        public override long FilePointer
+        public override long GetFilePointer()
         {
-            get
-            {
-                EnsureOpen();
-                return @delegate.FilePointer;
-            }
+            EnsureOpen();
+            return @delegate.GetFilePointer();
         }
 
         public override void Seek(long pos)

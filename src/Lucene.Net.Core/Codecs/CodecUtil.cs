@@ -211,9 +211,9 @@ namespace Lucene.Net.Codecs
             {
                 throw new System.IO.IOException("checksum failed (hardware problem?) : expected=" + expectedChecksum.ToString("x") + " actual=" + actualChecksum.ToString("x") + " (resource=" + @in + ")");
             }
-            if (@in.FilePointer != @in.Length)
+            if (@in.GetFilePointer() != @in.Length)
             {
-                throw new System.IO.IOException("did not read all bytes from file: read " + @in.FilePointer + " vs size " + @in.Length + " (resource: " + @in + ")");
+                throw new System.IO.IOException("did not read all bytes from file: read " + @in.GetFilePointer() + " vs size " + @in.Length + " (resource: " + @in + ")");
             }
             return actualChecksum;
         }
@@ -251,9 +251,9 @@ namespace Lucene.Net.Codecs
         [Obsolete("Use CheckFooter() instead")]
         public static void CheckEOF(IndexInput @in)
         {
-            if (@in.FilePointer != @in.Length)
+            if (@in.GetFilePointer() != @in.Length)
             {
-                throw new System.IO.IOException("did not read all bytes from file: read " + @in.FilePointer + " vs size " + @in.Length + " (resource: " + @in + ")");
+                throw new System.IO.IOException("did not read all bytes from file: read " + @in.GetFilePointer() + " vs size " + @in.Length + " (resource: " + @in + ")");
             }
         }
 
@@ -268,7 +268,7 @@ namespace Lucene.Net.Codecs
             IndexInput clone = (IndexInput)input.Clone();
             clone.Seek(0);
             ChecksumIndexInput @in = new BufferedChecksumIndexInput(clone);
-            Debug.Assert(@in.FilePointer == 0);
+            Debug.Assert(@in.GetFilePointer() == 0);
             @in.Seek(@in.Length - FooterLength());
             return CheckFooter(@in);
         }

@@ -192,12 +192,9 @@ namespace Lucene.Net.Index
                 this.Input.Dispose();
             }
 
-            public override long FilePointer
+            public override long GetFilePointer()
             {
-                get
-                {
-                    return this.Input.FilePointer;
-                }
+                return this.Input.GetFilePointer();
             }
 
             public override void Seek(long pos)

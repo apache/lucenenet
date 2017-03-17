@@ -138,14 +138,14 @@ namespace Lucene.Net.Util.Packed
                         Assert.AreEqual(w.BitsPerValue, @in.ReadVInt32());
                         Assert.AreEqual(valueCount, @in.ReadVInt32());
                         Assert.AreEqual(w.Format.Id, @in.ReadVInt32());
-                        Assert.AreEqual(startFp, @in.FilePointer);
+                        Assert.AreEqual(startFp, @in.GetFilePointer());
                         @in.Dispose();
                     }
 
                     { // test reader
                         IndexInput @in = d.OpenInput("out.bin", NewIOContext(Random()));
                         PackedInt32s.Reader r = PackedInt32s.GetReader(@in);
-                        Assert.AreEqual(fp, @in.FilePointer);
+                        Assert.AreEqual(fp, @in.GetFilePointer());
                         for (int i = 0; i < valueCount; i++)
                         {
                             Assert.AreEqual(values[i], r.Get(i), "index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name);
@@ -165,7 +165,7 @@ namespace Lucene.Net.Util.Packed
                             Assert.AreEqual(values[i], r.Next(), "index=" + i + " valueCount=" + valueCount + " nbits=" + nbits + " for " + r.GetType().Name);
                             Assert.AreEqual(i, r.Ord);
                         }
-                        Assert.AreEqual(fp, @in.FilePointer);
+                        assertEquals(fp, @in.GetFilePointer());
                         @in.Dispose();
                     }
 
@@ -183,7 +183,7 @@ namespace Lucene.Net.Util.Packed
                             }
                             i += next.Length;
                         }
-                        Assert.AreEqual(fp, @in.FilePointer);
+                        Assert.AreEqual(fp, @in.GetFilePointer());
                         @in.Dispose();
                     }
 
@@ -197,7 +197,7 @@ namespace Lucene.Net.Util.Packed
                             Assert.AreEqual(values[index], intsEnum.Get(index), msg);
                         }
                         intsEnum.Get(intsEnum.Count - 1);
-                        Assert.AreEqual(fp, @in.FilePointer);
+                        Assert.AreEqual(fp, @in.GetFilePointer());
                         @in.Dispose();
                     }
                     d.Dispose();
@@ -237,18 +237,18 @@ namespace Lucene.Net.Util.Packed
                         {
                             it.Next();
                         }
-                        Assert.AreEqual(byteCount, @in.FilePointer, msg);
+                        Assert.AreEqual(byteCount, @in.GetFilePointer(), msg);
 
                         // test direct reader
                         @in.Seek(0L);
                         PackedInt32s.Reader directReader = PackedInt32s.GetDirectReaderNoHeader(@in, format, version, valueCount, bpv);
                         directReader.Get(valueCount - 1);
-                        Assert.AreEqual(byteCount, @in.FilePointer, msg);
+                        Assert.AreEqual(byteCount, @in.GetFilePointer(), msg);
 
                         // test reader
                         @in.Seek(0L);
                         PackedInt32s.GetReaderNoHeader(@in, format, version, valueCount, bpv);
-                        Assert.AreEqual(byteCount, @in.FilePointer, msg);
+                        Assert.AreEqual(byteCount, @in.GetFilePointer(), msg);
                     }
                 }
             }
@@ -481,7 +481,7 @@ namespace Lucene.Net.Util.Packed
                 string msg = "Impl=" + w.GetType().Name + ", bitsPerValue=" + bitsPerValue;
                 Assert.AreEqual(1, reader.Count, msg);
                 Assert.AreEqual(value, reader.Get(0), msg);
-                Assert.AreEqual(end, @in.FilePointer, msg);
+                Assert.AreEqual(end, @in.GetFilePointer(), msg);
                 @in.Dispose();
 
                 dir.Dispose();
@@ -1295,7 +1295,7 @@ namespace Lucene.Net.Util.Packed
                     pin.SkipToNextByte();
                 }
             }
-            Assert.AreEqual((long)Math.Ceiling((double)totalBits / 8), @in.FilePointer);
+            assertEquals((long)Math.Ceiling((double)totalBits / 8), @in.GetFilePointer());
             @in.Dispose();
             dir.Dispose();
         }
@@ -1371,7 +1371,7 @@ namespace Lucene.Net.Util.Packed
                     }
                     Assert.AreEqual(i, it.Ord);
                 }
-                Assert.AreEqual(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : ((IndexInput)@in).FilePointer);
+                assertEquals(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : ((IndexInput)@in).GetFilePointer());
                 try
                 {
                     it.Next();
@@ -1410,7 +1410,7 @@ namespace Lucene.Net.Util.Packed
                         ++k;
                     }
                 }
-                Assert.AreEqual(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : ((IndexInput)@in).FilePointer);
+                assertEquals(fp, @in is ByteArrayDataInput ? ((ByteArrayDataInput)@in).Position : (((IndexInput)@in).GetFilePointer()));
                 try
                 {
                     it2.Skip(1);
@@ -1425,7 +1425,7 @@ namespace Lucene.Net.Util.Packed
 
                 in1.Seek(0L);
                 BlockPackedReader reader = new BlockPackedReader(in1, PackedInt32s.VERSION_CURRENT, blockSize, valueCount, Random().NextBoolean());
-                Assert.AreEqual(in1.FilePointer, in1.Length);
+                assertEquals(in1.GetFilePointer(), in1.Length);
                 for (k = 0; k < valueCount; ++k)
                 {
                     Assert.AreEqual(values[k], reader.Get(k), "i=" + k);
@@ -1474,7 +1474,7 @@ namespace Lucene.Net.Util.Packed
 
                 IndexInput @in = dir.OpenInput("out.bin", IOContext.DEFAULT);
                 MonotonicBlockPackedReader reader = new MonotonicBlockPackedReader(@in, PackedInt32s.VERSION_CURRENT, blockSize, valueCount, Random().NextBoolean());
-                Assert.AreEqual(fp, @in.FilePointer);
+                assertEquals(fp, @in.GetFilePointer());
                 for (int i = 0; i < valueCount; ++i)
                 {
                     Assert.AreEqual(values[i], reader.Get(i),"i=" + i);

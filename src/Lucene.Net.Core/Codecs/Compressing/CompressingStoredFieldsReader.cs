@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.Compressing
                 indexStream = d.OpenChecksumInput(indexStreamFN, context);
                 string codecNameIdx = formatName + CompressingStoredFieldsWriter.CODEC_SFX_IDX;
                 version = CodecUtil.CheckHeader(indexStream, codecNameIdx, CompressingStoredFieldsWriter.VERSION_START, CompressingStoredFieldsWriter.VERSION_CURRENT);
-                Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.FilePointer);
+                Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
                 indexReader = new CompressingStoredFieldsIndexReader(indexStream, si);
 
                 long maxPointer = -1;
@@ -138,7 +138,7 @@ namespace Lucene.Net.Codecs.Compressing
                 {
                     throw new CorruptIndexException("Version mismatch between stored fields index and data: " + version + " != " + fieldsVersion);
                 }
-                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.FilePointer);
+                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer());
 
                 if (version >= CompressingStoredFieldsWriter.VERSION_BIG_CHUNKS)
                 {
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
                 else
                 {
-                    long filePointer = fieldsStream.FilePointer;
+                    long filePointer = fieldsStream.GetFilePointer();
                     PackedInt32s.Reader reader = PackedInt32s.GetDirectReaderNoHeader(fieldsStream, PackedInt32s.Format.PACKED, packedIntsVersion, chunkDocs, bitsPerStoredFields);
                     numStoredFields = (int)(reader.Get(docID - docBase));
                     fieldsStream.Seek(filePointer + PackedInt32s.Format.PACKED.ByteCount(packedIntsVersion, chunkDocs, bitsPerStoredFields));
@@ -606,7 +606,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 Debug.Assert(outerInstance.Version == CompressingStoredFieldsWriter.VERSION_CURRENT);
                 long chunkEnd = docBase + chunkDocs == outerInstance.numDocs ? outerInstance.maxPointer : outerInstance.indexReader.GetStartPointer(docBase + chunkDocs);
-                @out.CopyBytes(fieldsStream, chunkEnd - fieldsStream.FilePointer);
+                @out.CopyBytes(fieldsStream, chunkEnd - fieldsStream.GetFilePointer());
             }
 
             /// <summary>

@@ -1181,7 +1181,7 @@ namespace Lucene.Net.Util.Packed
                 if (byteCount != format.ByteCount(VERSION_CURRENT, valueCount, bitsPerValue))
                 {
                     Debug.Assert(version == VERSION_START);
-                    long endPointer = @in.FilePointer + byteCount;
+                    long endPointer = @in.GetFilePointer() + byteCount;
                     // Some consumers of direct readers assume that reading the last value
                     // will make the underlying IndexInput go to the end of the packed
                     // stream, but this is not true because packed ints storage used to be

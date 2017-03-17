@@ -48,7 +48,7 @@ namespace Lucene.Net.Store
         /// </summary>
         public override void Seek(long pos)
         {
-            long skip = pos - FilePointer;
+            long skip = pos - GetFilePointer();
             if (skip < 0)
             {
                 throw new InvalidOperationException(this.GetType() + " cannot seek backwards");

@@ -773,7 +773,7 @@ namespace Lucene.Net.Codecs.Sep
 
                 if (_pendingPayloadBytes > _payloadLength)
                 {
-                    _payloadIn.Seek(_payloadIn.FilePointer + (_pendingPayloadBytes - _payloadLength));
+                    _payloadIn.Seek(_payloadIn.GetFilePointer() + (_pendingPayloadBytes - _payloadLength));
                 }
 
                 if (_payload == null)

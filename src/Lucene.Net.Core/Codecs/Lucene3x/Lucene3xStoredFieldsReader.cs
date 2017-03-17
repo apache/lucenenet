@@ -356,7 +356,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             else
             {
                 int length = fieldsStream.ReadVInt32();
-                fieldsStream.Seek(fieldsStream.FilePointer + length);
+                fieldsStream.Seek(fieldsStream.GetFilePointer() + length);
             }
         }
 

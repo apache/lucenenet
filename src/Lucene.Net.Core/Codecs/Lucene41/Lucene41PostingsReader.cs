@@ -775,7 +775,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("      refillPositions");
                 // }
-                if (posIn.FilePointer == lastPosBlockFP)
+                if (posIn.GetFilePointer() == lastPosBlockFP)
                 {
                     // if (DEBUG) {
                     //   System.out.println("        vInt pos block @ fp=" + posIn.getFilePointer() + " hasPayloads=" + indexHasPayloads + " hasOffsets=" + indexHasOffsets);
@@ -794,7 +794,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             posDeltaBuffer[i] = (int)((uint)code >> 1);
                             if (payloadLength != 0)
                             {
-                                posIn.Seek(posIn.FilePointer + payloadLength);
+                                posIn.Seek(posIn.GetFilePointer() + payloadLength);
                             }
                         }
                         else
@@ -993,7 +993,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        Debug.Assert(posIn.FilePointer != lastPosBlockFP);
+                        Debug.Assert(posIn.GetFilePointer() != lastPosBlockFP);
                         outerInstance.forUtil.SkipBlock(posIn);
                         toSkip -= Lucene41PostingsFormat.BLOCK_SIZE;
                     }
@@ -1291,7 +1291,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 // if (DEBUG) {
                 //   System.out.println("      refillPositions");
                 // }
-                if (posIn.FilePointer == lastPosBlockFP)
+                if (posIn.GetFilePointer() == lastPosBlockFP)
                 {
                     // if (DEBUG) {
                     //   System.out.println("        vInt pos block @ fp=" + posIn.getFilePointer() + " hasPayloads=" + indexHasPayloads + " hasOffsets=" + indexHasOffsets);
@@ -1379,7 +1379,7 @@ namespace Lucene.Net.Codecs.Lucene41
                             // this works, because when writing a vint block we always force the first length to be written
                             outerInstance.forUtil.SkipBlock(payIn); // skip over lengths
                             int numBytes = payIn.ReadVInt32(); // read length of payloadBytes
-                            payIn.Seek(payIn.FilePointer + numBytes); // skip over payloadBytes
+                            payIn.Seek(payIn.GetFilePointer() + numBytes); // skip over payloadBytes
                         }
                         payloadByteUpto = 0;
                     }
@@ -1590,7 +1590,7 @@ namespace Lucene.Net.Codecs.Lucene41
                         // if (DEBUG) {
                         //   System.out.println("        skip whole block @ fp=" + posIn.getFilePointer());
                         // }
-                        Debug.Assert(posIn.FilePointer != lastPosBlockFP);
+                        Debug.Assert(posIn.GetFilePointer() != lastPosBlockFP);
                         outerInstance.forUtil.SkipBlock(posIn);
 
                         if (indexHasPayloads)
@@ -1600,7 +1600,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
                             // Skip payloadBytes block:
                             int numBytes = payIn.ReadVInt32();
-                            payIn.Seek(payIn.FilePointer + numBytes);
+                            payIn.Seek(payIn.GetFilePointer() + numBytes);
                         }
 
                         if (indexHasOffsets)

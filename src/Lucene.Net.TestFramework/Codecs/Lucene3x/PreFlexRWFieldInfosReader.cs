@@ -122,9 +122,9 @@ namespace Lucene.Net.Codecs.Lucene3x
                                             null);
                 }
 
-                if (input.FilePointer != input.Length)
+                if (input.GetFilePointer() != input.Length)
                 {
-                    throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.FilePointer + " vs size " + input.Length + " (resource: " + input + ")");
+                    throw new CorruptIndexException("did not read all bytes from file \"" + fileName + "\": read " + input.GetFilePointer() + " vs size " + input.Length + " (resource: " + input + ")");
                 }
                 return new FieldInfos(infos);
             }

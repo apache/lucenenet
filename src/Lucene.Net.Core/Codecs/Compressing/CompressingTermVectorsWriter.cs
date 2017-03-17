@@ -907,7 +907,7 @@ namespace Lucene.Net.Codecs.Compressing
                         // We make sure to move the checksum input in any case, otherwise the final
                         // integrity check might need to read the whole file a second time
                         long startPointer = index.GetStartPointer(i);
-                        if (startPointer > vectorsStream.FilePointer)
+                        if (startPointer > vectorsStream.GetFilePointer())
                         {
                             vectorsStream.Seek(startPointer);
                         }
@@ -919,7 +919,7 @@ namespace Lucene.Net.Codecs.Compressing
                             if (docBase + chunkDocs < matchingSegmentReader.MaxDoc && NextDeletedDoc(docBase, liveDocs, docBase + chunkDocs) == docBase + chunkDocs)
                             {
                                 long chunkEnd = index.GetStartPointer(docBase + chunkDocs);
-                                long chunkLength = chunkEnd - vectorsStream.FilePointer;
+                                long chunkLength = chunkEnd - vectorsStream.GetFilePointer();
                                 indexWriter.WriteIndex(chunkDocs, this.vectorsStream.FilePointer);
                                 this.vectorsStream.WriteVInt32(docCount);
                                 this.vectorsStream.WriteVInt32(chunkDocs);

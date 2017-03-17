@@ -71,12 +71,9 @@ namespace Lucene.Net.Store
             main.Dispose();
         }
 
-        public override long FilePointer
+        public override long GetFilePointer()
         {
-            get
-            {
-                return main.FilePointer;
-            }
+            return main.GetFilePointer();
         }
 
         public override long Length

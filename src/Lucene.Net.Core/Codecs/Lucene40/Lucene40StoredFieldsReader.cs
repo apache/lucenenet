@@ -88,8 +88,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 CodecUtil.CheckHeader(indexStream, Lucene40StoredFieldsWriter.CODEC_NAME_IDX, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
                 CodecUtil.CheckHeader(fieldsStream, Lucene40StoredFieldsWriter.CODEC_NAME_DAT, Lucene40StoredFieldsWriter.VERSION_START, Lucene40StoredFieldsWriter.VERSION_CURRENT);
-                Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == fieldsStream.FilePointer);
-                Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == indexStream.FilePointer);
+                Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
+                Debug.Assert(Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX == indexStream.GetFilePointer());
                 long indexSize = indexStream.Length - Lucene40StoredFieldsWriter.HEADER_LENGTH_IDX;
                 this.size = (int)(indexSize >> 3);
                 // Verify two sources of "maxDoc" agree:
@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.Lucene40
             else
             {
                 int length = fieldsStream.ReadVInt32();
-                fieldsStream.Seek(fieldsStream.FilePointer + length);
+                fieldsStream.Seek(fieldsStream.GetFilePointer() + length);
             }
         }
 

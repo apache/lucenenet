@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (needToLoadPayload && payloadLength > 0)
             {
-                proxStream.Seek(proxStream.FilePointer + payloadLength);
+                proxStream.Seek(proxStream.GetFilePointer() + payloadLength);
             }
             needToLoadPayload = false;
         }

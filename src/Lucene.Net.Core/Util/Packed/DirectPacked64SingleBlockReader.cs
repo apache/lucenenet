@@ -32,7 +32,7 @@ namespace Lucene.Net.Util.Packed
             : base(valueCount, bitsPerValue)
         {
             this.@in = @in;
-            startPointer = @in.FilePointer;
+            startPointer = @in.GetFilePointer();
             valuesPerBlock = 64 / bitsPerValue;
             mask = ~(~0L << bitsPerValue);
         }

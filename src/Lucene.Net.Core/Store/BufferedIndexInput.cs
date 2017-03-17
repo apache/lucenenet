@@ -387,12 +387,9 @@ namespace Lucene.Net.Store
         /// <param name="length"> the number of bytes to read </param>
         protected abstract void ReadInternal(byte[] b, int offset, int length);
 
-        public override sealed long FilePointer
+        public override sealed long GetFilePointer()
         {
-            get
-            {
-                return bufferStart + bufferPosition;
-            }
+            return bufferStart + bufferPosition;
         }
 
         public override sealed void Seek(long pos)
@@ -423,7 +420,7 @@ namespace Lucene.Net.Store
             clone.m_buffer = null;
             clone.bufferLength = 0;
             clone.bufferPosition = 0;
-            clone.bufferStart = FilePointer;
+            clone.bufferStart = GetFilePointer();
 
             return clone;
         }

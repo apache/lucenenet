@@ -95,8 +95,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
-                    field.DataStartFilePointer = data.FilePointer;
-                    data.Seek(data.FilePointer + (1 + field.Pattern.Length + 2)*maxDoc);
+                    field.DataStartFilePointer = data.GetFilePointer();
+                    data.Seek(data.GetFilePointer() + (1 + field.Pattern.Length + 2)*maxDoc);
                 }
                 else if (dvType == DocValuesType.BINARY)
                 {
@@ -106,8 +106,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
-                    field.DataStartFilePointer = data.FilePointer;
-                    data.Seek(data.FilePointer + (9 + field.Pattern.Length + field.MaxLength + 2)*maxDoc);
+                    field.DataStartFilePointer = data.GetFilePointer();
+                    data.Seek(data.GetFilePointer() + (9 + field.Pattern.Length + field.MaxLength + 2)*maxDoc);
                 }
                 else if (dvType == DocValuesType.SORTED || dvType == DocValuesType.SORTED_SET)
                 {
@@ -123,8 +123,8 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.ORDPATTERN));
                     field.OrdPattern = StripPrefix(SimpleTextDocValuesWriter.ORDPATTERN);
-                    field.DataStartFilePointer = data.FilePointer;
-                    data.Seek(data.FilePointer + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +
+                    field.DataStartFilePointer = data.GetFilePointer();
+                    data.Seek(data.GetFilePointer() + (9 + field.Pattern.Length + field.MaxLength)*field.NumValues +
                               (1 + field.OrdPattern.Length)*maxDoc);
                 }
                 else

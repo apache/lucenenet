@@ -119,9 +119,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 fn = IndexFileNames.SegmentFileName(segment, "", VECTORS_FIELDS_EXTENSION);
                 tvf = d.OpenInput(fn, context);
                 int tvfVersion = CodecUtil.CheckHeader(tvf, CODEC_NAME_FIELDS, VERSION_START, VERSION_CURRENT);
-                Debug.Assert(HEADER_LENGTH_INDEX == tvx.FilePointer);
-                Debug.Assert(HEADER_LENGTH_DOCS == tvd.FilePointer);
-                Debug.Assert(HEADER_LENGTH_FIELDS == tvf.FilePointer);
+                Debug.Assert(HEADER_LENGTH_INDEX == tvx.GetFilePointer());
+                Debug.Assert(HEADER_LENGTH_DOCS == tvd.GetFilePointer());
+                Debug.Assert(HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
                 Debug.Assert(tvxVersion == tvdVersion);
                 Debug.Assert(tvxVersion == tvfVersion);
 
@@ -359,7 +359,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 storePositions = (bits & STORE_POSITIONS_WITH_TERMVECTOR) != 0;
                 storeOffsets = (bits & STORE_OFFSET_WITH_TERMVECTOR) != 0;
                 storePayloads = (bits & STORE_PAYLOAD_WITH_TERMVECTOR) != 0;
-                tvfFPStart = outerInstance.tvf.FilePointer;
+                tvfFPStart = outerInstance.tvf.GetFilePointer();
             }
 
             public override TermsEnum GetIterator(TermsEnum reuse)

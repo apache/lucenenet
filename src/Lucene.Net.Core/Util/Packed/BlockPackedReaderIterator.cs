@@ -188,7 +188,7 @@ namespace Lucene.Net.Util.Packed
             if (@in is IndexInput)
             {
                 IndexInput iin = (IndexInput)@in;
-                iin.Seek(iin.FilePointer + count);
+                iin.Seek(iin.GetFilePointer() + count);
             }
             else
             {

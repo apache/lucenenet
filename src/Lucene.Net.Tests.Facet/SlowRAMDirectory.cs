@@ -163,12 +163,9 @@ namespace Lucene.Net.Facet
             {
                 return ii.Equals(o);
             }
-            public override long FilePointer
+            public override long GetFilePointer()
             {
-                get
-                {
-                    return ii.FilePointer;
-                }
+                return ii.GetFilePointer();
             }
 
             public override void Seek(long pos)

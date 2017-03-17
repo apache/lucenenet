@@ -170,7 +170,7 @@ namespace Lucene.Net.Codecs
                 else
                 {
                     // no more skips on this level, go down one level
-                    if (level > 0 && lastChildPointer > skipStream[level - 1].FilePointer)
+                    if (level > 0 && lastChildPointer > skipStream[level - 1].GetFilePointer())
                     {
                         SeekChild(level - 1);
                     }
@@ -282,7 +282,7 @@ namespace Lucene.Net.Codecs
                 long length = skipStream[0].ReadVInt64();
 
                 // the start pointer of the current level
-                skipPointer[i] = skipStream[0].FilePointer;
+                skipPointer[i] = skipStream[0].GetFilePointer();
                 if (toBuffer > 0)
                 {
                     // buffer this level
@@ -299,12 +299,12 @@ namespace Lucene.Net.Codecs
                     }
 
                     // move base stream beyond the current level
-                    skipStream[0].Seek(skipStream[0].FilePointer + length);
+                    skipStream[0].Seek(skipStream[0].GetFilePointer() + length);
                 }
             }
 
             // use base stream for the lowest level
-            skipPointer[0] = skipStream[0].FilePointer;
+            skipPointer[0] = skipStream[0].GetFilePointer();
         }
 
         /// <summary>
@@ -334,7 +334,7 @@ namespace Lucene.Net.Codecs
                 : base("SkipBuffer on " + input)
             {
                 data = new byte[length];
-                pointer = input.FilePointer;
+                pointer = input.GetFilePointer();
                 input.ReadBytes(data, 0, length);
             }
 
@@ -343,12 +343,9 @@ namespace Lucene.Net.Codecs
                 data = null;
             }
 
-            public override long FilePointer
+            public override long GetFilePointer()
             {
-                get
-                {
-                    return pointer + pos;
-                }
+                return pointer + pos;
             }
 
             public override long Length

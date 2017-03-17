@@ -34,7 +34,7 @@ namespace Lucene.Net.Util.Packed
         {
             this.@in = @in;
 
-            startPointer = @in.FilePointer;
+            startPointer = @in.GetFilePointer();
             if (bitsPerValue == 64)
             {
                 valueMask = -1L;

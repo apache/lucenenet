@@ -192,7 +192,7 @@ namespace Lucene.Net.Index
             protected override void ReadInternal(byte[] b, int offset, int length)
             {
                 SimOutage();
-                @delegate.Seek(FilePointer);
+                @delegate.Seek(GetFilePointer());
                 @delegate.ReadBytes(b, offset, length);
             }
 
@@ -216,7 +216,7 @@ namespace Lucene.Net.Index
                 // seek the clone to our current position
                 try
                 {
-                    i.Seek(FilePointer);
+                    i.Seek(GetFilePointer());
                 }
 #pragma warning disable 168
                 catch (IOException e)

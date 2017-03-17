@@ -184,7 +184,7 @@ namespace Lucene.Net.Store
             {
                 lock (m_file)
                 {
-                    long position = m_off + FilePointer;
+                    long position = m_off + GetFilePointer();
                     m_file.Seek(position, SeekOrigin.Begin);
                     int total = 0;
 

@@ -119,12 +119,9 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override long FilePointer
+        public override long GetFilePointer()
         {
-            get
-            {
-                return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition;
-            }
+            return currentBufferIndex < 0 ? 0 : bufferStart + bufferPosition;
         }
 
         public override void Seek(long pos)
