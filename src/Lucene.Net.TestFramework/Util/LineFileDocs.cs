@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
@@ -294,7 +295,7 @@ namespace Lucene.Net.Util
             }
             docState.TitleTokenized.SetStringValue(title);
             docState.Date.SetStringValue(line.Substring(1 + spot, spot2 - (1 + spot)));
-            docState.Id.SetStringValue(Convert.ToString(Id.GetAndIncrement()));
+            docState.Id.SetStringValue(Convert.ToString(Id.GetAndIncrement(), CultureInfo.InvariantCulture));
             return docState.Doc;
         }
     }

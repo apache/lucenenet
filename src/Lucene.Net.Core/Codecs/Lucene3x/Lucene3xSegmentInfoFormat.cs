@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -84,7 +85,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public static int GetDocStoreOffset(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_OFFSET_KEY);
-            return v == null ? -1 : Convert.ToInt32(v);
+            return v == null ? -1 : Convert.ToInt32(v, CultureInfo.InvariantCulture);
         }
 
         /// <returns> name used to derive fields/vectors file we share with other segments </returns>
@@ -98,7 +99,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         public static bool GetDocStoreIsCompoundFile(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_COMPOUND_KEY);
-            return v == null ? false : Convert.ToBoolean(v);
+            return v == null ? false : Convert.ToBoolean(v, CultureInfo.InvariantCulture);
         }
     }
 }

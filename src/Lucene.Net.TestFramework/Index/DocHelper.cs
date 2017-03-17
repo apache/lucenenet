@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Index
@@ -190,7 +191,7 @@ namespace Lucene.Net.Index
             customType1.StoreTermVectorOffsets = true;
 
             Document doc = new Document();
-            doc.Add(new Field("id", Convert.ToString(n), customType1));
+            doc.Add(new Field("id", Convert.ToString(n, CultureInfo.InvariantCulture), customType1));
             doc.Add(new Field("indexname", indexName, customType1));
             sb.Append("a");
             sb.Append(n);

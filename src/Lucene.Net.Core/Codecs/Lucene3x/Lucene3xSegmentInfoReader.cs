@@ -1,7 +1,7 @@
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using CompoundFileDirectory = Lucene.Net.Store.CompoundFileDirectory;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -174,9 +174,9 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 docStoreSegment = input.ReadString();
                 docStoreIsCompoundFile = input.ReadByte() == SegmentInfo.YES;
-                attributes[Lucene3xSegmentInfoFormat.DS_OFFSET_KEY] = Convert.ToString(docStoreOffset);
+                attributes[Lucene3xSegmentInfoFormat.DS_OFFSET_KEY] = Convert.ToString(docStoreOffset, CultureInfo.InvariantCulture);
                 attributes[Lucene3xSegmentInfoFormat.DS_NAME_KEY] = docStoreSegment;
-                attributes[Lucene3xSegmentInfoFormat.DS_COMPOUND_KEY] = Convert.ToString(docStoreIsCompoundFile);
+                attributes[Lucene3xSegmentInfoFormat.DS_COMPOUND_KEY] = Convert.ToString(docStoreIsCompoundFile, CultureInfo.InvariantCulture);
             }
             else
             {
@@ -262,7 +262,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             // parse the normgen stuff and shove it into attributes
             if (normGen != null)
             {
-                attributes[Lucene3xSegmentInfoFormat.NORMGEN_KEY] = Convert.ToString(numNormGen);
+                attributes[Lucene3xSegmentInfoFormat.NORMGEN_KEY] = Convert.ToString(numNormGen, CultureInfo.InvariantCulture);
                 foreach (KeyValuePair<int, long> ent in normGen)
                 {
                     long gen = ent.Value;
@@ -270,7 +270,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     {
                         // Definitely a separate norm file, with generation:
                         files.Add(IndexFileNames.FileNameFromGeneration(name, "s" + ent.Key, gen));
-                        attributes[Lucene3xSegmentInfoFormat.NORMGEN_PREFIX + ent.Key] = Convert.ToString(gen);
+                        attributes[Lucene3xSegmentInfoFormat.NORMGEN_PREFIX + ent.Key] = Convert.ToString(gen, CultureInfo.InvariantCulture);
                     }
                     else if (gen == SegmentInfo.NO)
                     {

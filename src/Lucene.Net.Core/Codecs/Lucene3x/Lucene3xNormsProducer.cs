@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using Lucene.Net.Support;
 
@@ -165,7 +166,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (HasSeparateNorms(info, number))
             {
-                long gen = Convert.ToInt64(info.GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_PREFIX + number));
+                long gen = Convert.ToInt64(info.GetAttribute(Lucene3xSegmentInfoFormat.NORMGEN_PREFIX + number), CultureInfo.InvariantCulture);
                 return IndexFileNames.FileNameFromGeneration(info.Name, SEPARATE_NORMS_EXTENSION + number, gen);
             }
             else
@@ -184,7 +185,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                Debug.Assert(Convert.ToInt64(v) != SegmentInfo.NO);
+                Debug.Assert(Convert.ToInt64(v, CultureInfo.InvariantCulture) != SegmentInfo.NO);
                 return true;
             }
         }

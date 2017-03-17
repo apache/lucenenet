@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 
 namespace Lucene.Net.Codecs.Lucene40
@@ -62,7 +63,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 maxValue = Math.Max(maxValue, v);
             }
 
-            string fileName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+            string fileName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), SegmentSuffix, "dat");
             IndexOutput data = Dir.CreateOutput(fileName, State.Context);
             bool success = false;
             try
@@ -103,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddBytesField(FieldInfo field, IndexOutput output, IEnumerable<long?> values)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_8.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_8.ToString(CultureInfo.InvariantCulture));
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
             output.WriteInt32(1); // size
             foreach (long? n in values)
@@ -114,7 +115,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddShortsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_16.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_16.ToString(CultureInfo.InvariantCulture));
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
             output.WriteInt32(2); // size
             foreach (long? n in values)
@@ -125,7 +126,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddIntsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_32.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.FIXED_INTS_32.ToString(CultureInfo.InvariantCulture));
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.INTS_CODEC_NAME, Lucene40DocValuesFormat.INTS_VERSION_CURRENT);
             output.WriteInt32(4); // size
             foreach (long? n in values)
@@ -136,7 +137,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddVarIntsField(FieldInfo field, IndexOutput output, IEnumerable<long?> values, long minValue, long maxValue)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.VAR_INTS.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.VAR_INTS.ToString(CultureInfo.InvariantCulture));
 
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.VAR_INTS_CODEC_NAME, Lucene40DocValuesFormat.VAR_INTS_VERSION_CURRENT);
 
@@ -211,8 +212,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 bool success = false;
                 IndexOutput data = null;
                 IndexOutput index = null;
-                string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
-                string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+                string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), SegmentSuffix, "dat");
+                string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), SegmentSuffix, "idx");
                 try
                 {
                     data = Dir.CreateOutput(dataName, State.Context);
@@ -245,7 +246,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 if (@fixed)
                 {
                     // fixed byte[]
-                    string fileName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
+                    string fileName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), SegmentSuffix, "dat");
                     IndexOutput data = Dir.CreateOutput(fileName, State.Context);
                     bool success = false;
                     try
@@ -271,8 +272,8 @@ namespace Lucene.Net.Codecs.Lucene40
                     bool success = false;
                     IndexOutput data = null;
                     IndexOutput index = null;
-                    string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
-                    string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+                    string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), SegmentSuffix, "dat");
+                    string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), SegmentSuffix, "idx");
                     try
                     {
                         data = Dir.CreateOutput(dataName, State.Context);
@@ -297,7 +298,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddFixedStraightBytesField(FieldInfo field, IndexOutput output, IEnumerable<BytesRef> values, int length)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_STRAIGHT.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_STRAIGHT.ToString(CultureInfo.InvariantCulture));
 
             CodecUtil.WriteHeader(output, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_CODEC_NAME, Lucene40DocValuesFormat.BYTES_FIXED_STRAIGHT_VERSION_CURRENT);
 
@@ -314,7 +315,7 @@ namespace Lucene.Net.Codecs.Lucene40
         // NOTE: 4.0 file format docs are crazy/wrong here...
         private void AddVarStraightBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_STRAIGHT.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_STRAIGHT.ToString(CultureInfo.InvariantCulture));
 
             CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_STRAIGHT_VERSION_CURRENT);
 
@@ -358,7 +359,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddFixedDerefBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, int length)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_DEREF.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_DEREF.ToString(CultureInfo.InvariantCulture));
 
             CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_FIXED_DEREF_VERSION_CURRENT);
 
@@ -403,7 +404,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddVarDerefBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_DEREF.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_DEREF.ToString(CultureInfo.InvariantCulture));
 
             CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_VAR_DEREF_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_DEREF_VERSION_CURRENT);
 
@@ -481,8 +482,8 @@ namespace Lucene.Net.Codecs.Lucene40
             bool success = false;
             IndexOutput data = null;
             IndexOutput index = null;
-            string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "dat");
-            string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number), SegmentSuffix, "idx");
+            string dataName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), SegmentSuffix, "dat");
+            string indexName = IndexFileNames.SegmentFileName(State.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), SegmentSuffix, "idx");
 
             try
             {
@@ -530,7 +531,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddFixedSortedBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd, int length)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_SORTED.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_FIXED_SORTED.ToString(CultureInfo.InvariantCulture));
 
             CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_FIXED_SORTED_VERSION_CURRENT);
 
@@ -561,7 +562,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private void AddVarSortedBytesField(FieldInfo field, IndexOutput data, IndexOutput index, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd)
         {
-            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_SORTED.ToString());
+            field.PutAttribute(LegacyKey, LegacyDocValuesType.BYTES_VAR_SORTED.ToString(CultureInfo.InvariantCulture));
 
             CodecUtil.WriteHeader(data, Lucene40DocValuesFormat.BYTES_VAR_SORTED_CODEC_NAME_DAT, Lucene40DocValuesFormat.BYTES_VAR_SORTED_VERSION_CURRENT);
 

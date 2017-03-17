@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -726,7 +727,7 @@ namespace Lucene.Net.Index
 
             // Verify: make sure all not-deleted docs are in fact
             // not deleted:
-            int endID = Convert.ToInt32(docs.NextDoc().Get("docid"));
+            int endID = Convert.ToInt32(docs.NextDoc().Get("docid"), CultureInfo.InvariantCulture);
             docs.Dispose();
 
             for (int id = 0; id < endID; id++)

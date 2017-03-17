@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Support;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
                 SimpleTextUtil.ReadLine(input, scratch);
                 Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUMFIELDS));
-                var size = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUMFIELDS.Length, scratch));
+                var size = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUMFIELDS.Length, scratch), CultureInfo.InvariantCulture);
                 var infos = new FieldInfo[size];
 
                 for (var i = 0; i < size; i++)
@@ -68,11 +68,11 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUMBER));
-                    int fieldNumber = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUMBER.Length, scratch));
+                    int fieldNumber = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUMBER.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.ISINDEXED));
-                    bool isIndexed = Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.ISINDEXED.Length, scratch));
+                    bool isIndexed = Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.ISINDEXED.Length, scratch), CultureInfo.InvariantCulture);
 
                     IndexOptions indexOptions;
                     if (isIndexed)
@@ -90,16 +90,16 @@ namespace Lucene.Net.Codecs.SimpleText
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.STORETV));
                     bool storeTermVector =
-                        Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.STORETV.Length, scratch));
+                        Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.STORETV.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.PAYLOADS));
                     bool storePayloads =
-                        Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.PAYLOADS.Length, scratch));
+                        Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.PAYLOADS.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS));
-                    bool omitNorms = !Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.NORMS.Length, scratch));
+                    bool omitNorms = !Convert.ToBoolean(ReadString(SimpleTextFieldInfosWriter.NORMS.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NORMS_TYPE));
@@ -113,11 +113,11 @@ namespace Lucene.Net.Codecs.SimpleText
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.DOCVALUES_GEN));
-                    long dvGen = Convert.ToInt64(ReadString(SimpleTextFieldInfosWriter.DOCVALUES_GEN.Length, scratch));
+                    long dvGen = Convert.ToInt64(ReadString(SimpleTextFieldInfosWriter.DOCVALUES_GEN.Length, scratch), CultureInfo.InvariantCulture);
 
                     SimpleTextUtil.ReadLine(input, scratch);
                     Debug.Assert(StringHelper.StartsWith(scratch, SimpleTextFieldInfosWriter.NUM_ATTS));
-                    int numAtts = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUM_ATTS.Length, scratch));
+                    int numAtts = Convert.ToInt32(ReadString(SimpleTextFieldInfosWriter.NUM_ATTS.Length, scratch), CultureInfo.InvariantCulture);
                     IDictionary<string, string> atts = new Dictionary<string, string>();
 
                     for (int j = 0; j < numAtts; j++)

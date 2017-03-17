@@ -9,6 +9,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -284,7 +285,7 @@ namespace Lucene.Net.Index
                     if (Random().NextBoolean())
                     {
                         float f = Random().NextFloat();
-                        answer = Convert.ToSingle(f);
+                        answer = Convert.ToSingle(f, CultureInfo.InvariantCulture);
                         nf = new SingleField("nf", f, Field.Store.NO);
                         sf = new StoredField("nf", f);
                         typeAnswer = NumericType.SINGLE;
@@ -292,7 +293,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         double d = Random().NextDouble();
-                        answer = Convert.ToDouble(d);
+                        answer = Convert.ToDouble(d, CultureInfo.InvariantCulture);
                         nf = new DoubleField("nf", d, Field.Store.NO);
                         sf = new StoredField("nf", d);
                         typeAnswer = NumericType.DOUBLE;
@@ -304,7 +305,7 @@ namespace Lucene.Net.Index
                     if (Random().NextBoolean())
                     {
                         int i = Random().Next();
-                        answer = Convert.ToInt32(i);
+                        answer = Convert.ToInt32(i, CultureInfo.InvariantCulture);
                         nf = new Int32Field("nf", i, Field.Store.NO);
                         sf = new StoredField("nf", i);
                         typeAnswer = NumericType.INT32;
@@ -312,7 +313,7 @@ namespace Lucene.Net.Index
                     else
                     {
                         long l = Random().NextLong();
-                        answer = Convert.ToInt64(l);
+                        answer = Convert.ToInt64(l, CultureInfo.InvariantCulture);
                         nf = new Int64Field("nf", l, Field.Store.NO);
                         sf = new StoredField("nf", l);
                         typeAnswer = NumericType.INT64;
@@ -543,7 +544,7 @@ namespace Lucene.Net.Index
                         {
                             throw new InvalidOperationException("Could not find document " + q);
                         }
-                        if (!Convert.ToString(q).Equals(sdoc.Get("fld"), StringComparison.Ordinal))
+                        if (!Convert.ToString(q, CultureInfo.InvariantCulture).Equals(sdoc.Get("fld"), StringComparison.Ordinal))
                         {
                             throw new InvalidOperationException("Expected " + q + ", but got " + sdoc.Get("fld"));
                         }
@@ -758,7 +759,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; ++i)
             {
                 Document doc = new Document();
-                doc.Add(new StringField("id", Convert.ToString(i), Field.Store.YES));
+                doc.Add(new StringField("id", Convert.ToString(i, CultureInfo.InvariantCulture), Field.Store.YES));
                 doc.Add(new StoredField("f", TestUtil.RandomSimpleString(Random())));
                 w.AddDocument(doc);
             }
@@ -766,7 +767,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < deleteCount; ++i)
             {
                 int id = Random().Next(numDocs);
-                w.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                w.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             w.Commit();
             w.Dispose();

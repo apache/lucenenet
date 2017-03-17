@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis
 
             public override int GetHashCode()
             {
-                return 76137213 ^ Convert.ToBoolean(ClearCalled).GetHashCode();
+                return 76137213 ^ ClearCalled.GetHashCode();
             }
 
             public override void CopyTo(IAttribute target)

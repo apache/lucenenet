@@ -91,7 +91,7 @@ namespace Lucene.Net.Codecs.SimpleText
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.MINVALUE),
                         "got " + scratch.Utf8ToString() + " field=" + fieldName + " ext=" + ext);
-                    field.MinValue = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.MINVALUE));
+                    field.MinValue = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.MINVALUE), CultureInfo.InvariantCulture);
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
@@ -102,7 +102,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH));
-                    field.MaxLength = Convert.ToInt32(StripPrefix(SimpleTextDocValuesWriter.MAXLENGTH));
+                    field.MaxLength = Convert.ToInt32(StripPrefix(SimpleTextDocValuesWriter.MAXLENGTH), CultureInfo.InvariantCulture);
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
@@ -113,10 +113,10 @@ namespace Lucene.Net.Codecs.SimpleText
                 {
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.NUMVALUES));
-                    field.NumValues = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.NUMVALUES));
+                    field.NumValues = Convert.ToInt64(StripPrefix(SimpleTextDocValuesWriter.NUMVALUES), CultureInfo.InvariantCulture);
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.MAXLENGTH));
-                    field.MaxLength = Convert.ToInt32(StripPrefix(SimpleTextDocValuesWriter.MAXLENGTH));
+                    field.MaxLength = Convert.ToInt32(StripPrefix(SimpleTextDocValuesWriter.MAXLENGTH), CultureInfo.InvariantCulture);
                     ReadLine();
                     Debug.Assert(StartsWith(SimpleTextDocValuesWriter.PATTERN));
                     field.Pattern = StripPrefix(SimpleTextDocValuesWriter.PATTERN);
@@ -520,7 +520,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             public override long NextOrd()
             {
-                return _currentIndex == _currentOrds.Length ? NO_MORE_ORDS : Convert.ToInt64(_currentOrds[_currentIndex++]);
+                return _currentIndex == _currentOrds.Length ? NO_MORE_ORDS : Convert.ToInt64(_currentOrds[_currentIndex++], CultureInfo.InvariantCulture);
             }
 
             public override void SetDocument(int docID)

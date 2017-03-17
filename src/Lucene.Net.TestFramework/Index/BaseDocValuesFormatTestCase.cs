@@ -3,6 +3,7 @@ using Lucene.Net.Randomized.Generators;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Threading;
 using Lucene.Net.Search;
 
@@ -1359,9 +1360,9 @@ namespace Lucene.Net.Index
             Debug.Assert(numDocs > 256);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.SetStringValue(Convert.ToString(i));
+                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
                 long value = longs.Next();
-                storedField.SetStringValue(Convert.ToString(value));
+                storedField.SetStringValue(Convert.ToString(value, CultureInfo.InvariantCulture));
                 dvField.SetInt64Value(value);
                 writer.AddDocument(doc);
                 if (Random().Next(31) == 0)
@@ -1375,7 +1376,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
 
             // merge some segments and ensure that at least one of them has more than
@@ -1392,7 +1393,7 @@ namespace Lucene.Net.Index
                 NumericDocValues docValues = r.GetNumericDocValues("dv");
                 for (int i = 0; i < r.MaxDoc; i++)
                 {
-                    long storedValue = Convert.ToInt64(r.Document(i).Get("stored"));
+                    long storedValue = Convert.ToInt64(r.Document(i).Get("stored"), CultureInfo.InvariantCulture);
                     Assert.AreEqual(storedValue, docValues.Get(i));
                 }
             }
@@ -1442,9 +1443,9 @@ namespace Lucene.Net.Index
             Debug.Assert(numDocs > 256);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.SetStringValue(Convert.ToString(i));
+                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
                 long value = longs.Next();
-                indexedField.SetStringValue(Convert.ToString(value));
+                indexedField.SetStringValue(Convert.ToString(value, CultureInfo.InvariantCulture));
                 dvField.SetInt64Value(value);
                 Document doc = new Document();
                 doc.Add(idField);
@@ -1466,7 +1467,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
 
             // merge some segments and ensure that at least one of them has more than
@@ -1595,7 +1596,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.SetStringValue(Convert.ToString(i));
+                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
                 int length;
                 if (minLength == maxLength)
                 {
@@ -1621,7 +1622,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
 
@@ -1681,7 +1682,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.SetStringValue(Convert.ToString(i));
+                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
                 int length;
                 if (minLength == maxLength)
                 {
@@ -1707,7 +1708,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
 
@@ -1746,7 +1747,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.SetStringValue(Convert.ToString(i));
+                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
                 int length;
                 if (minLength == maxLength)
                 {
@@ -1771,7 +1772,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
 
@@ -2313,7 +2314,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                Field idField = new StringField("id", Convert.ToString(i), Field.Store.NO);
+                Field idField = new StringField("id", Convert.ToString(i, CultureInfo.InvariantCulture), Field.Store.NO);
                 doc.Add(idField);
                 int length;
                 if (minLength == maxLength)
@@ -2360,7 +2361,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
 
@@ -2575,7 +2576,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDocs; i++)
             {
                 Document doc = new Document();
-                Field idField = new StringField("id", Convert.ToString(i), Field.Store.NO);
+                Field idField = new StringField("id", Convert.ToString(i, CultureInfo.InvariantCulture), Field.Store.NO);
                 doc.Add(idField);
                 int length;
                 if (minLength == maxLength)
@@ -2622,7 +2623,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
 
             // compare per-segment
@@ -3062,7 +3063,7 @@ namespace Lucene.Net.Index
                 Document doc = ar.Document(docID);
                 BytesRef bytes = new BytesRef();
                 s.Get(docID, bytes);
-                var expected = docBytes[Convert.ToInt32(doc.Get("id"))];
+                var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
                 Assert.AreEqual(expected.Length, bytes.Length);
                 Assert.AreEqual(new BytesRef(expected), bytes);
             }
@@ -3147,7 +3148,7 @@ namespace Lucene.Net.Index
                 Document doc = ar.Document(docID);
                 BytesRef bytes = new BytesRef();
                 s.Get(docID, bytes);
-                var expected = docBytes[Convert.ToInt32(doc.Get("id"))];
+                var expected = docBytes[Convert.ToInt32(doc.Get("id"), CultureInfo.InvariantCulture)];
                 Assert.AreEqual(expected.Length, bytes.Length);
                 Assert.AreEqual(new BytesRef(expected), bytes);
             }
@@ -3183,7 +3184,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.SetStringValue(Convert.ToString(i));
+                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
                 int length = TestUtil.NextInt(Random(), 0, 8);
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
@@ -3191,7 +3192,7 @@ namespace Lucene.Net.Index
                 dvBinField.SetBytesValue(buffer);
                 dvSortedField.SetBytesValue(buffer);
                 long numericValue = Random().NextLong();
-                storedNumericField.SetStringValue(Convert.ToString(numericValue));
+                storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
                 dvNumericField.SetInt64Value(numericValue);
                 writer.AddDocument(doc);
                 if (Random().Next(31) == 0)
@@ -3205,7 +3206,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
 
@@ -3263,7 +3264,7 @@ namespace Lucene.Net.Index
                             sorted.Get(j, scratch);
                             Assert.AreEqual(binaryValue, scratch);
                             string expected = r.Document(j).Get("storedNum");
-                            Assert.AreEqual(Convert.ToInt64(expected), numerics.Get(j));
+                            Assert.AreEqual(Convert.ToInt64(expected, CultureInfo.InvariantCulture), numerics.Get(j));
                         }
                     }
                     TestUtil.CheckReader(Ir);
@@ -3297,7 +3298,7 @@ namespace Lucene.Net.Index
             int numDocs = AtLeast(300);
             for (int i = 0; i < numDocs; i++)
             {
-                idField.SetStringValue(Convert.ToString(i));
+                idField.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
                 int length = TestUtil.NextInt(Random(), 0, 8);
                 var buffer = new byte[length];
                 Random().NextBytes(buffer);
@@ -3305,7 +3306,7 @@ namespace Lucene.Net.Index
                 dvBinField.SetBytesValue(buffer);
                 dvSortedField.SetBytesValue(buffer);
                 long numericValue = Random().NextLong();
-                storedNumericField.SetStringValue(Convert.ToString(numericValue));
+                storedNumericField.SetStringValue(Convert.ToString(numericValue, CultureInfo.InvariantCulture));
                 dvNumericField.SetInt64Value(numericValue);
                 Document doc = new Document();
                 doc.Add(idField);
@@ -3345,7 +3346,7 @@ namespace Lucene.Net.Index
             for (int i = 0; i < numDeletions; i++)
             {
                 int id = Random().Next(numDocs);
-                writer.DeleteDocuments(new Term("id", Convert.ToString(id)));
+                writer.DeleteDocuments(new Term("id", Convert.ToString(id, CultureInfo.InvariantCulture)));
             }
             writer.Dispose();
 
@@ -3427,7 +3428,7 @@ namespace Lucene.Net.Index
                             {
                                 if (numerics != null)
                                 {
-                                    Assert.AreEqual(Convert.ToInt64(number), numerics.Get(j));
+                                    Assert.AreEqual(Convert.ToInt64(number, CultureInfo.InvariantCulture), numerics.Get(j));
                                 }
                             }
                             else if (numerics != null)

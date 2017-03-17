@@ -1,7 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Globalization;
 using System.Reflection;
 
 namespace Lucene.Net.Util
@@ -106,7 +106,7 @@ namespace Lucene.Net.Util
             if (distance == default(int))
             {
                 // we have the slight chance that another thread may do the same, but who cares?
-                Cache.Put(subclazz, distance = Convert.ToInt32(ReflectImplementationDistance(subclazz)));
+                Cache.Put(subclazz, distance = Convert.ToInt32(ReflectImplementationDistance(subclazz), CultureInfo.InvariantCulture));
             }
             return (int)distance;
         }
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util
         /// </ul> </returns>
         public static int CompareImplementationDistance(Type clazz, VirtualMethod m1, VirtualMethod m2)
         {
-            return Convert.ToInt32(m1.GetImplementationDistance(clazz)).CompareTo(m2.GetImplementationDistance(clazz));
+            return m1.GetImplementationDistance(clazz).CompareTo(m2.GetImplementationDistance(clazz));
         }
 
         private MethodInfo GetMethod(Type clazz, string methodName, BindingFlags bindingFlags, Type[] methodParameters)

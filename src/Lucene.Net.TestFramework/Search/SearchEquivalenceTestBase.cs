@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Text;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
@@ -82,7 +83,7 @@ namespace Lucene.Net.Search
             int numDocs = AtLeast(1000);
             for (int i = 0; i < numDocs; i++)
             {
-                id.SetStringValue(Convert.ToString(i));
+                id.SetStringValue(Convert.ToString(i, CultureInfo.InvariantCulture));
                 field.SetStringValue(RandomFieldContents());
                 iw.AddDocument(doc);
             }
@@ -91,7 +92,7 @@ namespace Lucene.Net.Search
             int numDeletes = numDocs / 20;
             for (int i = 0; i < numDeletes; i++)
             {
-                Term toDelete = new Term("id", Convert.ToString(random.Next(numDocs)));
+                Term toDelete = new Term("id", Convert.ToString(random.Next(numDocs), CultureInfo.InvariantCulture));
                 if (random.NextBoolean())
                 {
                     iw.DeleteDocuments(toDelete);

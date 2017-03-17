@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -75,7 +76,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 NumericDocValues instance;
                 if (!numericInstances.TryGetValue(field.Number, out instance))
                 {
-                    string fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "dat");
+                    string fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "dat");
                     IndexInput input = dir.OpenInput(fileName, state.Context);
                     bool success = false;
                     try
@@ -455,7 +456,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private BinaryDocValues LoadBytesFixedStraight(FieldInfo field)
         {
-            string fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "dat");
+            string fileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "dat");
             IndexInput input = dir.OpenInput(fileName, state.Context);
             bool success = false;
             try
@@ -502,8 +503,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private BinaryDocValues LoadBytesVarStraight(FieldInfo field)
         {
-            string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "dat");
-            string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "idx");
+            string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "dat");
+            string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "idx");
             IndexInput data = null;
             IndexInput index = null;
             bool success = false;
@@ -558,8 +559,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private BinaryDocValues LoadBytesFixedDeref(FieldInfo field)
         {
-            string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "dat");
-            string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "idx");
+            string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "dat");
+            string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "idx");
             IndexInput data = null;
             IndexInput index = null;
             bool success = false;
@@ -617,8 +618,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
         private BinaryDocValues LoadBytesVarDeref(FieldInfo field)
         {
-            string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "dat");
-            string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "idx");
+            string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "dat");
+            string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "idx");
             IndexInput data = null;
             IndexInput index = null;
             bool success = false;
@@ -691,8 +692,8 @@ namespace Lucene.Net.Codecs.Lucene40
                 SortedDocValues instance;
                 if (!sortedInstances.TryGetValue(field.Number, out instance))
                 {
-                    string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "dat");
-                    string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number), segmentSuffix, "idx");
+                    string dataName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "dat");
+                    string indexName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name + "_" + Convert.ToString(field.Number, CultureInfo.InvariantCulture), segmentSuffix, "idx");
                     IndexInput data = null;
                     IndexInput index = null;
                     bool success = false;

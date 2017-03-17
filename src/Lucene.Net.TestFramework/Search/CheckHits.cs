@@ -62,13 +62,13 @@ namespace Lucene.Net.Search
             SortedSet<int?> ignore = new SortedSet<int?>();
             for (int i = 0; i < results.Length; i++)
             {
-                ignore.Add(Convert.ToInt32(results[i]));
+                ignore.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
             }
 
             int maxDoc = searcher.IndexReader.MaxDoc;
             for (int doc = 0; doc < maxDoc; doc++)
             {
-                if (ignore.Contains(Convert.ToInt32(doc)))
+                if (ignore.Contains(Convert.ToInt32(doc, CultureInfo.InvariantCulture)))
                 {
                     continue;
                 }
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
             SortedSet<int?> correct = new SortedSet<int?>();
             for (int i = 0; i < results.Length; i++)
             {
-                correct.Add(Convert.ToInt32(results[i]));
+                correct.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
             }
             SortedSet<int?> actual = new SortedSet<int?>();
             ICollector c = new SetCollector(actual);
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
 
             public virtual void Collect(int doc)
             {
-                Bag.Add(Convert.ToInt32(doc + @base));
+                Bag.Add(Convert.ToInt32(doc + @base, CultureInfo.InvariantCulture));
             }
 
             public virtual void SetNextReader(AtomicReaderContext context)
@@ -180,13 +180,13 @@ namespace Lucene.Net.Search
             SortedSet<int?> correct = new SortedSet<int?>();
             for (int i = 0; i < results.Length; i++)
             {
-                correct.Add(Convert.ToInt32(results[i]));
+                correct.Add(Convert.ToInt32(results[i], CultureInfo.InvariantCulture));
             }
 
             SortedSet<int?> actual = new SortedSet<int?>();
             for (int i = 0; i < hits.Length; i++)
             {
-                actual.Add(Convert.ToInt32(hits[i].Doc));
+                actual.Add(Convert.ToInt32(hits[i].Doc, CultureInfo.InvariantCulture));
             }
 
             Assert.AreEqual(correct, actual, query.ToString(defaultFieldName));
@@ -393,7 +393,7 @@ namespace Lucene.Net.Search
                             int k2 = descr.IndexOf(" ", k1);
                             try
                             {
-                                x = Convert.ToSingle(descr.Substring(k1, k2 - k1).Trim());
+                                x = Convert.ToSingle(descr.Substring(k1, k2 - k1).Trim(), CultureInfo.InvariantCulture);
                                 if (descr.Substring(k2).Trim().Equals("times others of:", StringComparison.Ordinal))
                                 {
                                     maxTimesOthers = true;
