@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         private FieldInfo currentField;
         private readonly TermsIndexWriterBase termsIndexWriter;
         
-        protected class FieldMetaData
+        private class FieldMetaData
         {
             public FieldInfo FieldInfo { get; private set; }
             public long NumTerms { get; private set; }
@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public int Int64sSize { get; private set; }
 
             public FieldMetaData(FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
-                long sumDocFreq, int docCount, int longsSize)
+                long sumDocFreq, int docCount, int int64sSize)
             {
                 Debug.Assert(numTerms > 0);
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 SumTotalTermFreq = sumTotalTermFreq;
                 SumDocFreq = sumDocFreq;
                 DocCount = docCount;
-                Int64sSize = longsSize;
+                Int64sSize = int64sSize;
             }
         }
 
@@ -88,18 +88,20 @@ namespace Lucene.Net.Codecs.BlockTerms
         public BlockTermsWriter(TermsIndexWriterBase termsIndexWriter,
             SegmentWriteState state, PostingsWriterBase postingsWriter)
         {
-            var termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
+            string termsFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
                 TERMS_EXTENSION);
             this.termsIndexWriter = termsIndexWriter;
             m_output = state.Directory.CreateOutput(termsFileName, state.Context);
-            var success = false;
-
+            bool success = false;
             try
             {
                 fieldInfos = state.FieldInfos;
                 WriteHeader(m_output);
                 currentField = null;
                 this.postingsWriter = postingsWriter;
+                // segment = state.segmentName;
+
+                //System.out.println("BTW.init seg=" + state.segmentName);
 
                 postingsWriter.Init(m_output); // have consumer write its format/header
                 success = true;
@@ -120,47 +122,47 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override TermsConsumer AddField(FieldInfo field)
         {
+            //System.out.println("\nBTW.addField seg=" + segment + " field=" + field.name);
             Debug.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
-
             currentField = field;
-            var fiw = termsIndexWriter.AddField(field, m_output.FilePointer);
-            return new TermsWriter(this, fiw, field, postingsWriter);
+            TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.FilePointer);
+            return new TermsWriter(this, fieldIndexWriter, field, postingsWriter);
         }
 
         public override void Dispose()
         {
-            if (m_output == null) return;
-
-            try
+            if (m_output != null)
             {
-                var dirStart = m_output.FilePointer;
-
-                m_output.WriteVInt32(_fields.Count);
-
-                foreach (var field in _fields)
+                try
                 {
-                    m_output.WriteVInt32(field.FieldInfo.Number);
-                    m_output.WriteVInt64(field.NumTerms);
-                    m_output.WriteVInt64(field.TermsStartPointer);
-                    if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
-                    {
-                        m_output.WriteVInt64(field.SumTotalTermFreq);
-                    }
-                    m_output.WriteVInt64(field.SumDocFreq);
-                    m_output.WriteVInt32(field.DocCount);
-                    if (VERSION_CURRENT >= VERSION_META_ARRAY)
-                    {
-                        m_output.WriteVInt32(field.Int64sSize);
-                    }
+                    long dirStart = m_output.FilePointer;
 
+                    m_output.WriteVInt32(_fields.Count);
+                    foreach (FieldMetaData field in _fields)
+                    {
+                        m_output.WriteVInt32(field.FieldInfo.Number);
+                        m_output.WriteVInt64(field.NumTerms);
+                        m_output.WriteVInt64(field.TermsStartPointer);
+                        if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                        {
+                            m_output.WriteVInt64(field.SumTotalTermFreq);
+                        }
+                        m_output.WriteVInt64(field.SumDocFreq);
+                        m_output.WriteVInt32(field.DocCount);
+                        if (VERSION_CURRENT >= VERSION_META_ARRAY)
+                        {
+                            m_output.WriteVInt32(field.Int64sSize);
+                        }
+
+                    }
+                    WriteTrailer(dirStart);
+                    CodecUtil.WriteFooter(m_output);
                 }
-                WriteTrailer(dirStart);
-                CodecUtil.WriteFooter(m_output);
-            }
-            finally
-            {
-                IOUtils.Close(m_output, postingsWriter, termsIndexWriter);
-                m_output = null;
+                finally
+                {
+                    IOUtils.Close(m_output, postingsWriter, termsIndexWriter);
+                    m_output = null;
+                }
             }
         }
 
@@ -205,17 +207,17 @@ namespace Lucene.Net.Codecs.BlockTerms
                 PostingsWriterBase postingsWriter)
             {
                 this.outerInstance = outerInstance;
-                _fieldInfo = fieldInfo;
-                _fieldIndexWriter = fieldIndexWriter;
 
+                this._fieldInfo = fieldInfo;
+                this._fieldIndexWriter = fieldIndexWriter;
                 _pendingTerms = new TermEntry[32];
                 for (int i = 0; i < _pendingTerms.Length; i++)
                 {
                     _pendingTerms[i] = new TermEntry();
                 }
                 _termsStartPointer = this.outerInstance.m_output.FilePointer;
-                _postingsWriter = postingsWriter;
-                _longsSize = postingsWriter.SetField(fieldInfo);
+                this._postingsWriter = postingsWriter;
+                this._longsSize = postingsWriter.SetField(fieldInfo);
             }
 
             public override IComparer<BytesRef> Comparer
@@ -225,6 +227,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         
             public override PostingsConsumer StartTerm(BytesRef text)
             {
+                //System.out.println("BTW: startTerm term=" + fieldInfo.name + ":" + text.utf8ToString() + " " + text + " seg=" + segment);
                 _postingsWriter.StartTerm();
                 return _postingsWriter;
             }
@@ -234,8 +237,9 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override void FinishTerm(BytesRef text, TermStats stats)
             {
                 Debug.Assert(stats.DocFreq > 0);
+                //System.out.println("BTW: finishTerm term=" + fieldInfo.name + ":" + text.utf8ToString() + " " + text + " seg=" + segment + " df=" + stats.docFreq);
 
-                var isIndexTerm = _fieldIndexWriter.CheckIndexTerm(text, stats);
+                bool isIndexTerm = _fieldIndexWriter.CheckIndexTerm(text, stats);
 
                 if (isIndexTerm)
                 {
@@ -247,12 +251,12 @@ namespace Lucene.Net.Codecs.BlockTerms
                         FlushBlock();
                     }
                     _fieldIndexWriter.Add(text, stats, outerInstance.m_output.FilePointer);
+                    //System.out.println("  index term!");
                 }
 
                 if (_pendingTerms.Length == _pendingCount)
                 {
-                    var newArray =
-                        new TermEntry[ArrayUtil.Oversize(_pendingCount + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
+                    TermEntry[] newArray = new TermEntry[ArrayUtil.Oversize(_pendingCount + 1, RamUsageEstimator.NUM_BYTES_OBJECT_REF)];
                     Array.Copy(_pendingTerms, 0, newArray, 0, _pendingCount);
                     for (var i = _pendingCount; i < newArray.Length; i++)
                     {
@@ -260,7 +264,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                     _pendingTerms = newArray;
                 }
-                var te = _pendingTerms[_pendingCount];
+                TermEntry te = _pendingTerms[_pendingCount];
                 te.Term.CopyBytes(text);
                 te.State = _postingsWriter.NewTermState();
                 te.State.DocFreq = stats.DocFreq;
@@ -278,7 +282,6 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     FlushBlock();
                 }
-
                 // EOF marker:
                 outerInstance.m_output.WriteVInt32(0);
 
@@ -286,10 +289,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                 _sumDocFreq = sumDocFreq;
                 _docCount = docCount;
                 _fieldIndexWriter.Finish(outerInstance.m_output.FilePointer);
-
                 if (_numTerms > 0)
                 {
-                    outerInstance._fields.Add(new FieldMetaData(_fieldInfo,
+                    outerInstance._fields.Add(new FieldMetaData(
+                        _fieldInfo,
                         _numTerms,
                         _termsStartPointer,
                         sumTotalTermFreq,
@@ -304,10 +307,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                 Debug.Assert(term1.Offset == 0);
                 Debug.Assert(term2.Offset == 0);
 
-                var pos1 = 0;
-                var pos1End = pos1 + Math.Min(term1.Length, term2.Length);
-                var pos2 = 0;
-
+                int pos1 = 0;
+                int pos1End = pos1 + Math.Min(term1.Length, term2.Length);
+                int pos2 = 0;
                 while (pos1 < pos1End)
                 {
                     if (term1.Bytes[pos1] != term2.Bytes[pos2])
@@ -326,6 +328,8 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             private void FlushBlock()
             {
+                //System.out.println("BTW.flushBlock seg=" + segment + " pendingCount=" + pendingCount + " fp=" + out.getFilePointer());
+
                 // First pass: compute common prefix for all terms
                 // in the block, against term before first term in
                 // this block:
@@ -342,9 +346,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                 outerInstance.m_output.WriteVInt32(commonPrefix);
 
                 // 2nd pass: write suffixes, as separate byte[] blob
-                for (var termCount = 0; termCount < _pendingCount; termCount++)
+                for (int termCount = 0; termCount < _pendingCount; termCount++)
                 {
-                    var suffix = _pendingTerms[termCount].Term.Length - commonPrefix;
+                    int suffix = _pendingTerms[termCount].Term.Length - commonPrefix;
                     // TODO: cutover to better intblock codec, instead
                     // of interleaving here:
                     _bytesWriter.WriteVInt32(suffix);
@@ -374,7 +378,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 _bytesWriter.Reset();
 
                 // 4th pass: write the metadata 
-                var longs = new long[_longsSize];
+                long[] longs = new long[_longsSize];
                 bool absolute = true;
                 for (int termCount = 0; termCount < _pendingCount; termCount++)
                 {

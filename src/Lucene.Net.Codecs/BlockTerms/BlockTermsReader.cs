@@ -48,10 +48,10 @@ namespace Lucene.Net.Codecs.BlockTerms
         // produce DocsEnum on demand
         private readonly PostingsReaderBase _postingsReader;
 
+        private readonly IDictionary<string, FieldReader> _fields = new SortedDictionary<string, FieldReader>(StringComparer.Ordinal);
+
         // Reads the terms index
         private TermsIndexReaderBase _indexReader;
-
-        private readonly IDictionary<string, FieldReader> _fields = new SortedDictionary<string, FieldReader>(StringComparer.Ordinal);
 
         // keeps the dirStart offset
         private long _dirOffset;
@@ -101,12 +101,13 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             _postingsReader = postingsReader;
 
+            // this.segment = segment;
             _input =
                 dir.OpenInput(
                     IndexFileNames.SegmentFileName(info.Name, segmentSuffix, BlockTermsWriter.TERMS_EXTENSION),
                     context);
 
-            var success = false;
+            bool success = false;
             try
             {
                 _version = ReadHeader(_input);
@@ -126,19 +127,19 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 for (var i = 0; i < numFields; i++)
                 {
-                    var field = _input.ReadVInt32();
-                    var numTerms = _input.ReadVInt64();
+                    int field = _input.ReadVInt32();
+                    long numTerms = _input.ReadVInt64();
 
                     Debug.Assert(numTerms >= 0);
 
-                    var termsStartPointer = _input.ReadVInt64();
-                    var fieldInfo = fieldInfos.FieldInfo(field);
-                    var sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY
+                    long termsStartPointer = _input.ReadVInt64();
+                    FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
+                    long sumTotalTermFreq = fieldInfo.IndexOptions == IndexOptions.DOCS_ONLY
                         ? -1
                         : _input.ReadVInt64();
-                    var sumDocFreq = _input.ReadVInt64();
-                    var docCount = _input.ReadVInt32();
-                    var longsSize = _version >= BlockTermsWriter.VERSION_META_ARRAY ? _input.ReadVInt32() : 0;
+                    long sumDocFreq = _input.ReadVInt64();
+                    int docCount = _input.ReadVInt32();
+                    int longsSize = _version >= BlockTermsWriter.VERSION_META_ARRAY ? _input.ReadVInt32() : 0;
 
                     if (docCount < 0 || docCount > info.DocCount)
                     {
@@ -184,13 +185,14 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private int ReadHeader(DataInput input)
         {
-            var version = CodecUtil.CheckHeader(input, BlockTermsWriter.CODEC_NAME,
+            int version = CodecUtil.CheckHeader(input, BlockTermsWriter.CODEC_NAME,
                 BlockTermsWriter.VERSION_START,
                 BlockTermsWriter.VERSION_CURRENT);
 
             if (version < BlockTermsWriter.VERSION_APPEND_ONLY)
+            {
                 _dirOffset = input.ReadInt64();
-
+            }
             return version;
         }
 
@@ -216,7 +218,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                 try
                 {
                     if (_indexReader != null)
+                    {
                         _indexReader.Dispose();
+                    }
                 }
                 finally
                 {
@@ -225,18 +229,23 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // ram
                     _indexReader = null;
                     if (_input != null)
+                    {
                         _input.Dispose();
+                    }
                 }
             }
             finally
             {
                 if (_postingsReader != null)
+                {
                     _postingsReader.Dispose();
+                }
             }
         }
 
         public override IEnumerator<string> GetEnumerator()
         {
+            //return Collections.UnmodifiableSet(_fields.Keys).GetEnumerator();
             return _fields.Keys.GetEnumerator();
         }
 
@@ -260,8 +269,9 @@ namespace Lucene.Net.Codecs.BlockTerms
         private class FieldReader : Terms
         {
             private readonly BlockTermsReader outerInstance;
-            private readonly FieldInfo _fieldInfo;
+
             private readonly long _numTerms;
+            private readonly FieldInfo _fieldInfo;
             private readonly long _termsStartPointer;
             private readonly long _sumTotalTermFreq;
             private readonly long _sumDocFreq;
@@ -291,7 +301,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
-                return new SegmentTermsEnum(this, outerInstance);
+                return new SegmentTermsEnum(this);
             }
 
             public override bool HasFreqs
@@ -338,7 +348,6 @@ namespace Lucene.Net.Codecs.BlockTerms
             private class SegmentTermsEnum : TermsEnum
             {
                 private readonly FieldReader outerInstance;
-                private readonly BlockTermsReader _blockTermsReader;
 
                 private readonly IndexInput _input;
                 private readonly BlockTermState _state;
@@ -387,22 +396,22 @@ namespace Lucene.Net.Codecs.BlockTerms
                 private byte[] _bytes;
                 private ByteArrayDataInput _bytesReader;
 
-                public SegmentTermsEnum(FieldReader outerInstance, BlockTermsReader blockTermsReader)
+                public SegmentTermsEnum(FieldReader outerInstance)
                 {
                     this.outerInstance = outerInstance;
-                    _blockTermsReader = blockTermsReader;
 
-                    _input = (IndexInput)_blockTermsReader._input.Clone();
+                    _input = (IndexInput)outerInstance.outerInstance._input.Clone();
                     _input.Seek(this.outerInstance._termsStartPointer);
-                    _indexEnum = _blockTermsReader._indexReader.GetFieldEnum(this.outerInstance._fieldInfo);
-                    _doOrd = _blockTermsReader._indexReader.SupportsOrd;
+                    _indexEnum = outerInstance.outerInstance._indexReader.GetFieldEnum(this.outerInstance._fieldInfo);
+                    _doOrd = outerInstance.outerInstance._indexReader.SupportsOrd;
                     _fieldTerm.Field = this.outerInstance._fieldInfo.Name;
-                    _state = _blockTermsReader._postingsReader.NewTermState();
+                    _state = outerInstance.outerInstance._postingsReader.NewTermState();
                     _state.TotalTermFreq = -1;
                     _state.Ord = -1;
 
                     _termSuffixes = new byte[128];
                     _docFreqBytes = new byte[64];
+                    //System.out.println("BTR.enum init this=" + this + " postingsReader=" + postingsReader);
                     _longs = new long[this.outerInstance._longsSize];
                 }
 
@@ -422,25 +431,50 @@ namespace Lucene.Net.Codecs.BlockTerms
                 public override SeekStatus SeekCeil(BytesRef target)
                 {
                     if (_indexEnum == null)
+                    {
                         throw new InvalidOperationException("terms index was not loaded");
+                    }
 
-                    var doSeek = true;
+                    //System.out.println("BTR.seek seg=" + segment + " target=" + fieldInfo.name + ":" + target.utf8ToString() + " " + target + " current=" + term().utf8ToString() + " " + term() + " indexIsCurrent=" + indexIsCurrent + " didIndexNext=" + didIndexNext + " seekPending=" + seekPending + " divisor=" + indexReader.getDivisor() + " this="  + this);
+                    if (_didIndexNext)
+                    {
+                        if (_nextIndexTerm == null)
+                        {
+                            //System.out.println("  nextIndexTerm=null");
+                        }
+                        else
+                        {
+                            //System.out.println("  nextIndexTerm=" + nextIndexTerm.utf8ToString());
+                        }
+                    }
+
+                    bool doSeek = true;
 
                     // See if we can avoid seeking, because target term
                     // is after current term but before next index term:
                     if (_indexIsCurrent)
                     {
-                        var cmp = BytesRef.UTF8SortedAsUnicodeComparer.Compare(_term, target);
+                        int cmp = BytesRef.UTF8SortedAsUnicodeComparer.Compare(_term, target);
 
                         if (cmp == 0)
-                            return SeekStatus.FOUND;     // Already at the requested term
-
-                        if (cmp < 0)
+                        {
+                            // Already at the requested term
+                            return SeekStatus.FOUND;     
+                        }
+                        else if (cmp < 0)
                         {
                             // Target term is after current term
                             if (!_didIndexNext)
                             {
-                                _nextIndexTerm = _indexEnum.Next() == -1 ? null : _indexEnum.Term;
+                                if (_indexEnum.Next() == -1)
+                                {
+                                    _nextIndexTerm = null;
+                                }
+                                else
+                                {
+                                    _nextIndexTerm = _indexEnum.Term;
+                                }
+                                //System.out.println("  now do index next() nextIndexTerm=" + (nextIndexTerm == null ? "null" : nextIndexTerm.utf8ToString()));
                                 _didIndexNext = true;
                             }
 
@@ -462,7 +496,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // Ask terms index to find biggest indexed term (=
                         // first term in a block) that's <= our text:
                         _input.Seek(_indexEnum.Seek(target));
-                        var result = NextBlock();
+                        bool result = NextBlock();
 
                         // Block must exist since, at least, the indexed term
                         // is in the block:
@@ -473,12 +507,16 @@ namespace Lucene.Net.Codecs.BlockTerms
                         _blocksSinceSeek = 0;
 
                         if (_doOrd)
+                        {
                             _state.Ord = _indexEnum.Ord - 1;
+                        }
 
                         _term.CopyBytes(_indexEnum.Term);
+                        //System.out.println("  seek: term=" + term.utf8ToString());
                     }
                     else
                     {
+                        //System.out.println("  skip seek");
                         if (_state.TermBlockOrd == _blockTermCount && !NextBlock())
                         {
                             _indexIsCurrent = false;
@@ -488,7 +526,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                     _seekPending = false;
 
-                    var common = 0;
+                    int common = 0;
 
                     // Scan within block.  We could do this by calling
                     // _next() and testing the resulting term, but this
@@ -505,11 +543,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // in this block:
                         if (common < _termBlockPrefix)
                         {
-
-                            var cmp = (_term.Bytes[common] & 0xFF) - (target.Bytes[target.Offset + common] & 0xFF);
+                            int cmp = (_term.Bytes[common] & 0xFF) - (target.Bytes[target.Offset + common] & 0xFF);
                             if (cmp < 0)
                             {
-
                                 // TODO: maybe we should store common prefix
                                 // in block header?  (instead of relying on
                                 // last term of previous block)
@@ -527,7 +563,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                         _state.Ord++;
                                         _termSuffixesReader.SkipBytes(_termSuffixesReader.ReadVInt32());
                                     }
-                                    var suffix = _termSuffixesReader.ReadVInt32();
+                                    int suffix = _termSuffixesReader.ReadVInt32();
                                     _term.Length = _termBlockPrefix + suffix;
                                     if (_term.Bytes.Length < _term.Length)
                                     {
@@ -552,7 +588,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 // block and return NOT_FOUND:
                                 Debug.Assert(_state.TermBlockOrd == 0);
 
-                                var suffix = _termSuffixesReader.ReadVInt32();
+                                int suffix = _termSuffixesReader.ReadVInt32();
                                 _term.Length = _termBlockPrefix + suffix;
                                 if (_term.Bytes.Length < _term.Length)
                                 {
@@ -575,20 +611,18 @@ namespace Lucene.Net.Codecs.BlockTerms
                             _state.TermBlockOrd++;
                             _state.Ord++;
 
-                            var suffix = _termSuffixesReader.ReadVInt32();
+                            int suffix = _termSuffixesReader.ReadVInt32();
 
                             // We know the prefix matches, so just compare the new suffix:
+                            int termLen = _termBlockPrefix + suffix;
+                            int bytePos = _termSuffixesReader.Position;
 
-                            var termLen = _termBlockPrefix + suffix;
-                            var bytePos = _termSuffixesReader.Position;
-
-                            var next = false;
-
-                            var limit = target.Offset + (termLen < target.Length ? termLen : target.Length);
-                            var targetPos = target.Offset + _termBlockPrefix;
+                            bool next = false;
+                            int limit = target.Offset + (termLen < target.Length ? termLen : target.Length);
+                            int targetPos = target.Offset + _termBlockPrefix;
                             while (targetPos < limit)
                             {
-                                var cmp = (_termSuffixes[bytePos++] & 0xFF) - (target.Bytes[targetPos++] & 0xFF);
+                                int cmp = (_termSuffixes[bytePos++] & 0xFF) - (target.Bytes[targetPos++] & 0xFF);
                                 if (cmp < 0)
                                 {
                                     // Current term is still before the target;
@@ -596,18 +630,19 @@ namespace Lucene.Net.Codecs.BlockTerms
                                     next = true;
                                     break;
                                 }
-
-                                if (cmp <= 0) continue;
-
-                                // Done!  Current term is after target. Stop
-                                // here, fill in real term, return NOT_FOUND.
-                                _term.Length = _termBlockPrefix + suffix;
-                                if (_term.Bytes.Length < _term.Length)
+                                else if (cmp > 0)
                                 {
-                                    _term.Grow(_term.Length);
+                                    // Done!  Current term is after target. Stop
+                                    // here, fill in real term, return NOT_FOUND.
+                                    _term.Length = _termBlockPrefix + suffix;
+                                    if (_term.Bytes.Length < _term.Length)
+                                    {
+                                        _term.Grow(_term.Length);
+                                    }
+                                    _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
+                                    //System.out.println("  NOT_FOUND");
+                                    return SeekStatus.NOT_FOUND;
                                 }
-                                _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
-                                return SeekStatus.NOT_FOUND;
                             }
 
                             if (!next && target.Length <= termLen)
@@ -619,7 +654,18 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 }
                                 _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
 
-                                return target.Length == termLen ? SeekStatus.FOUND : SeekStatus.NOT_FOUND;
+                                if (target.Length == termLen)
+                                {
+                                    // Done!  Exact match.  Stop here, fill in
+                                    // real term, return FOUND.
+                                    //System.out.println("  FOUND");
+                                    return SeekStatus.FOUND;
+                                }
+                                else
+                                {
+                                    //System.out.println("  NOT_FOUND");
+                                    return SeekStatus.NOT_FOUND;
+                                }
                             }
 
                             if (_state.TermBlockOrd == _blockTermCount)
@@ -633,8 +679,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                                 _termSuffixesReader.ReadBytes(_term.Bytes, _termBlockPrefix, suffix);
                                 break;
                             }
-
-                            _termSuffixesReader.SkipBytes(suffix);
+                            else
+                            {
+                                _termSuffixesReader.SkipBytes(suffix);
+                            }
                         }
 
                         // The purpose of the terms dict index is to seek
@@ -647,6 +695,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                         if (!NextBlock())
                         {
+                            //System.out.println("  END");
                             _indexIsCurrent = false;
                             return SeekStatus.END;
                         }
@@ -656,33 +705,35 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 public override BytesRef Next()
                 {
+                    //System.out.println("BTR.next() seekPending=" + seekPending + " pendingSeekCount=" + state.termBlockOrd);
+
                     // If seek was previously called and the term was cached,
                     // usually caller is just going to pull a D/&PEnum or get
                     // docFreq, etc.  But, if they then call next(),
                     // this method catches up all internal state so next()
                     // works properly:
-                    if (!_seekPending) return _next();
-
-                    Debug.Assert(!_indexIsCurrent);
-
-                    _input.Seek(_state.BlockFilePointer);
-                    var pendingSeekCount = _state.TermBlockOrd;
-                    var result = NextBlock();
-
-                    var savOrd = _state.Ord;
-
-                    // Block must exist since seek(TermState) was called w/ a
-                    // TermState previously returned by this enum when positioned
-                    // on a real term:
-                    Debug.Assert(result);
-
-                    while (_state.TermBlockOrd < pendingSeekCount)
+                    if (_seekPending)
                     {
-                        var nextResult = _next();
-                        Debug.Assert(nextResult != null);
+                        Debug.Assert(!_indexIsCurrent);
+                        _input.Seek(_state.BlockFilePointer);
+                        int pendingSeekCount = _state.TermBlockOrd;
+                        bool result = NextBlock();
+
+                        long savOrd = _state.Ord;
+
+                        // Block must exist since seek(TermState) was called w/ a
+                        // TermState previously returned by this enum when positioned
+                        // on a real term:
+                        Debug.Assert(result);
+
+                        while (_state.TermBlockOrd < pendingSeekCount)
+                        {
+                            BytesRef nextResult = _next();
+                            Debug.Assert(nextResult != null);
+                        }
+                        _seekPending = false;
+                        _state.Ord = savOrd;
                     }
-                    _seekPending = false;
-                    _state.Ord = savOrd;
                     return _next();
                 }
 
@@ -703,8 +754,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
 
                     // TODO: cutover to something better for these ints!  simple64?
-
-                    var suffix = _termSuffixesReader.ReadVInt32();
+                    int suffix = _termSuffixesReader.ReadVInt32();
                     //System.out.println("  suffix=" + suffix);
 
                     _term.Length = _termBlockPrefix + suffix;
@@ -718,6 +768,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // NOTE: meaningless in the non-ord case
                     _state.Ord++;
 
+                    //System.out.println("  return term=" + fieldInfo.name + ":" + term.utf8ToString() + " " + term + " tbOrd=" + state.termBlockOrd);
                     return _term;
                 }
 
@@ -730,7 +781,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     get
                     {
+                        //System.out.println("BTR.docFreq");
                         DecodeMetaData();
+                        //System.out.println("  return " + state.docFreq);
                         return _state.DocFreq;
                     }
                 }
@@ -746,8 +799,10 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
+                    //System.out.println("BTR.docs this=" + this);
                     DecodeMetaData();
-                    return _blockTermsReader._postingsReader.Docs(outerInstance._fieldInfo, _state, liveDocs, reuse, flags);
+                    //System.out.println("BTR.docs:  state.docFreq=" + state.docFreq);
+                    return outerInstance.outerInstance._postingsReader.Docs(outerInstance._fieldInfo, _state, liveDocs, reuse, flags);
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
@@ -760,13 +815,13 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
 
                     DecodeMetaData();
-                    return _blockTermsReader._postingsReader.DocsAndPositions(outerInstance._fieldInfo, _state, liveDocs, reuse, flags);
+                    return outerInstance.outerInstance._postingsReader.DocsAndPositions(outerInstance._fieldInfo, _state, liveDocs, reuse, flags);
                 }
 
                 public override void SeekExact(BytesRef target, TermState otherState)
                 {
                     //System.out.println("BTR.seekExact termState target=" + target.utf8ToString() + " " + target + " this=" + this);
-                    Debug.Assert(otherState is BlockTermState);
+                    Debug.Assert(otherState != null && otherState is BlockTermState);
                     Debug.Assert(!_doOrd || ((BlockTermState)otherState).Ord < outerInstance._numTerms);
                     _state.CopyFrom(otherState);
                     _seekPending = true;
@@ -776,14 +831,20 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 public override TermState GetTermState()
                 {
+                    //System.out.println("BTR.termState this=" + this);
                     DecodeMetaData();
-                    return (TermState)_state.Clone();
+                    TermState ts = (TermState)_state.Clone();
+                    //System.out.println("  return ts=" + ts);
+                    return ts;
                 }
 
                 public override void SeekExact(long ord)
                 {
+                    //System.out.println("BTR.seek by ord ord=" + ord);
                     if (_indexEnum == null)
+                    {
                         throw new InvalidOperationException("terms index was not loaded");
+                    }
 
                     Debug.Assert(ord < outerInstance._numTerms);
 
@@ -806,10 +867,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _term.CopyBytes(_indexEnum.Term);
 
                     // Now, scan:
-                    var left = (int)(ord - _state.Ord);
+                    int left = (int)(ord - _state.Ord);
                     while (left > 0)
                     {
-                        var term = _next();
+                        BytesRef term = _next();
                         Debug.Assert(term != null);
                         left--;
                         Debug.Assert(_indexIsCurrent);
@@ -822,8 +883,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                     get
                     {
                         if (!_doOrd)
+                        {
                             throw new NotSupportedException();
-
+                        }
                         return _state.Ord;
                     }
                 }
@@ -845,12 +907,15 @@ namespace Lucene.Net.Codecs.BlockTerms
                     // all N terms up front then seeking could do a fast
                     // bsearch w/in the block...
 
+                    //System.out.println("BTR.nextBlock() fp=" + in.getFilePointer() + " this=" + this);
                     _state.BlockFilePointer = _input.FilePointer;
                     _blockTermCount = _input.ReadVInt32();
 
+                    //System.out.println("  blockTermCount=" + blockTermCount);
                     if (_blockTermCount == 0)
+                    {
                         return false;
-
+                    }
                     _termBlockPrefix = _input.ReadVInt32();
 
                     // term suffixes:
@@ -861,14 +926,15 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                     //System.out.println("  termSuffixes len=" + len);
                     _input.ReadBytes(_termSuffixes, 0, len);
-
                     _termSuffixesReader.Reset(_termSuffixes, 0, len);
 
                     // docFreq, totalTermFreq
                     len = _input.ReadVInt32();
                     if (_docFreqBytes.Length < len)
+                    {
                         _docFreqBytes = new byte[ArrayUtil.Oversize(len, 1)];
-
+                    }
+                    //System.out.println("  freq bytes len=" + len);
                     _input.ReadBytes(_docFreqBytes, 0, len);
                     _freqReader.Reset(_docFreqBytes, 0, len);
 
@@ -883,7 +949,6 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         _bytes = new byte[ArrayUtil.Oversize(len, 1)];
                     }
-
                     _input.ReadBytes(_bytes, 0, len);
                     _bytesReader.Reset(_bytes, 0, len);
 
@@ -891,7 +956,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _state.TermBlockOrd = 0;
 
                     _blocksSinceSeek++;
-                    _indexIsCurrent = _indexIsCurrent && (_blocksSinceSeek < _blockTermsReader._indexReader.Divisor);
+                    _indexIsCurrent = _indexIsCurrent && (_blocksSinceSeek < outerInstance.outerInstance._indexReader.Divisor);
+                    //System.out.println("  indexIsCurrent=" + indexIsCurrent);
 
                     return true;
                 }
@@ -907,9 +973,8 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // that we really need...
 
                         // lazily catch up on metadata decode:
-
-                        var limit = _state.TermBlockOrd;
-                        var absolute = _metaDataUpto == 0;
+                        int limit = _state.TermBlockOrd;
+                        bool absolute = _metaDataUpto == 0;
                         // TODO: better API would be "jump straight to term=N"???
                         while (_metaDataUpto < limit)
                         {
@@ -923,7 +988,9 @@ namespace Lucene.Net.Codecs.BlockTerms
                             // TODO: if docFreq were bulk decoded we could
                             // just skipN here:
 
+                            // docFreq, totalTermFreq
                             _state.DocFreq = _freqReader.ReadVInt32();
+                            //System.out.println("    dF=" + state.docFreq);
                             if (outerInstance._fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
                                 _state.TotalTermFreq = _state.DocFreq + _freqReader.ReadVInt64();
@@ -933,19 +1000,22 @@ namespace Lucene.Net.Codecs.BlockTerms
                             {
                                 _longs[i] = _bytesReader.ReadVInt64();
                             }
-                            _blockTermsReader._postingsReader.DecodeTerm(_longs, _bytesReader, outerInstance._fieldInfo, _state, absolute);
+                            outerInstance.outerInstance._postingsReader.DecodeTerm(_longs, _bytesReader, outerInstance._fieldInfo, _state, absolute);
                             _metaDataUpto++;
                             absolute = false;
                         }
                     }
+                    else
+                    {
+                        //System.out.println("  skip! seekPending");
+                    }
                 }
-
             }
         }
 
         public override long RamBytesUsed()
         {
-            var sizeInBytes = (_postingsReader != null) ? _postingsReader.RamBytesUsed() : 0;
+            long sizeInBytes = (_postingsReader != null) ? _postingsReader.RamBytesUsed() : 0;
             sizeInBytes += (_indexReader != null) ? _indexReader.RamBytesUsed() : 0;
             return sizeInBytes;
         }
