@@ -176,7 +176,7 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 64-bit <see cref="long"/> value </param>
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.INT64"/>. </param>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <see cref="NumericType.NONE"/> </exception>
         /// <exception cref="ArgumentException"> if the field type does not have a 
         /// <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT64"/> </exception>
         public Int64Field(string name, long value, FieldType type)
@@ -184,7 +184,7 @@ namespace Lucene.Net.Documents
         {
             if (type.NumericType != NumericType.INT64)
             {
-                throw new System.ArgumentException("type.numericType() must be LONG but got " + type.NumericType);
+                throw new System.ArgumentException("type.NumericType must be NumericType.INT64 but got " + type.NumericType);
             }
             m_fieldsData = Convert.ToInt64(value);
         }

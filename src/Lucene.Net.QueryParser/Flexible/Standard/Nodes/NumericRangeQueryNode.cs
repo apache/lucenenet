@@ -96,7 +96,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                 throw new ArgumentException("numericConfig cannot be null!");
             }
 
-            NumericType? lowerNumberType, upperNumberType;
+            NumericType lowerNumberType, upperNumberType;
 
             if (lower != null && lower.Value != null)
             {
@@ -104,7 +104,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
             else
             {
-                lowerNumberType = null;
+                lowerNumberType = NumericType.NONE;
             }
 
             if (upper != null && upper.Value != null)
@@ -113,10 +113,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
             }
             else
             {
-                upperNumberType = null;
+                upperNumberType = NumericType.NONE;
             }
 
-            if (lowerNumberType != null
+            if (lowerNumberType != NumericType.NONE
                 && !lowerNumberType.Equals(numericConfig.Type))
             {
                 throw new ArgumentException(
@@ -124,7 +124,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Nodes
                         + lowerNumberType + " != " + numericConfig.Type);
             }
 
-            if (upperNumberType != null
+            if (upperNumberType != NumericType.NONE
                 && !upperNumberType.Equals(numericConfig.Type))
             {
                 throw new ArgumentException(

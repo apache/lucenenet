@@ -163,13 +163,13 @@ namespace Lucene.Net.Documents
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.DOUBLE"/>. </param>
         /// <exception cref="ArgumentNullException"> if the field name or type is <c>null</c>, or
-        ///          if the field type does not have a DOUBLE <see cref="FieldType.NumericType"/> </exception>
+        ///          if the field type does not have a <see cref="NumericType.DOUBLE"/> <see cref="FieldType.NumericType"/> </exception>
         public DoubleField(string name, double value, FieldType type)
             : base(name, type)
         {
             if (type.NumericType != NumericType.DOUBLE)
             {
-                throw new System.ArgumentException("type.numericType() must be DOUBLE but got " + type.NumericType);
+                throw new System.ArgumentException("type.NumericType must be NumericType.DOUBLE but got " + type.NumericType);
             }
             m_fieldsData = Convert.ToDouble(value);
         }

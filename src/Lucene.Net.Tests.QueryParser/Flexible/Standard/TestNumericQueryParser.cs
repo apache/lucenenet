@@ -197,6 +197,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
             {
+                if (type == NumericType.NONE)
+                {
+                    continue;
+                }
+
                 numericConfigMap.Put(type.ToString(), new NumericConfig(PRECISION_STEP,
                     NUMBER_FORMAT, type)); 
 
@@ -437,6 +442,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
             {
+                if (type == NumericType.NONE)
+                {
+                    continue;
+                }
+
                 String lowerStr = NumberToString(GetNumberType(lowerType, type.ToString()));
                 String upperStr = NumberToString(GetNumberType(upperType, type.ToString()));
 
@@ -501,6 +511,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
             {
+                if (type == NumericType.NONE)
+                {
+                    continue;
+                }
+
                 String boundStr = NumberToString(GetNumberType(boundType, type.ToString()));
 
                 sb.append("+").append(type.ToString()).append(@operator).append('"').append(boundStr).append('"').append(' ');
@@ -527,6 +542,11 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
             foreach (NumericType type in Enum.GetValues(typeof(NumericType)))
             {
+                if (type == NumericType.NONE)
+                {
+                    continue;
+                }
+
                 String numberStr = NumberToString(GetNumberType(numberType, type.ToString()));
                 sb.append('+').append(type.ToString()).append(":\"").append(numberStr)
                           .append("\" ");

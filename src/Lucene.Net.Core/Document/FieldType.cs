@@ -38,7 +38,7 @@ namespace Lucene.Net.Documents
         private bool storeTermVectorPayloads;
         private bool omitNorms;
         private IndexOptions indexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS;
-        private NumericType? numericType;
+        private NumericType numericType;
         private bool frozen;
         private int numericPrecisionStep = NumericUtils.PRECISION_STEP_DEFAULT;
         private DocValuesType docValueType;
@@ -255,7 +255,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         /// <exception cref="InvalidOperationException"> if this <see cref="FieldType"/> is frozen against
         ///         future modifications. </exception>
-        public virtual NumericType? NumericType
+        public virtual NumericType NumericType
         {
             get
             {
@@ -271,7 +271,7 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Sets the numeric precision step for the field.
         /// <para/>
-        /// This has no effect if <see cref="NumericType"/> returns <c>null</c>.
+        /// This has no effect if <see cref="NumericType"/> returns <see cref="NumericType.NONE"/>.
         /// <para/>
         /// The default is <see cref="NumericUtils.PRECISION_STEP_DEFAULT"/>.
         /// </summary>
@@ -341,7 +341,7 @@ namespace Lucene.Net.Documents
                     // LUCENENET: duplcate what would happen if you print a null indexOptions in Java
                     result.Append(indexOptions != IndexOptions.NONE ? indexOptions.ToString() : string.Empty);
                 }
-                if (numericType != null)
+                if (numericType != NumericType.NONE)
                 {
                     result.Append(",numericType=");
                     result.Append(numericType);
@@ -390,6 +390,14 @@ namespace Lucene.Net.Documents
     /// </summary>
     public enum NumericType
     {
+        /// <summary>
+        /// No numeric type will be used.
+        /// <para/>
+        /// NOTE: This is the same as setting to <c>null</c> in Lucene
+        /// </summary>
+        // LUCENENET specific
+        NONE,
+
         /// <summary>
         /// 32-bit integer numeric type
         /// <para/>

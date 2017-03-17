@@ -166,14 +166,14 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 32-bit <see cref="float"/> value </param>
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.SINGLE"/>. </param>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <see cref="NumericType.NONE"/> </exception>
         /// <exception cref="ArgumentException">if the field type does not have a <see cref="NumericType.SINGLE"/> <see cref="FieldType.NumericType"/></exception>
         public SingleField(string name, float value, FieldType type)
             : base(name, type)
         {
             if (type.NumericType != NumericType.SINGLE)
             {
-                throw new System.ArgumentException("type.NumericType must be NumericType.Single but got " + type.NumericType);
+                throw new System.ArgumentException("type.NumericType must be NumericType.SINGLE but got " + type.NumericType);
             }
             m_fieldsData = Convert.ToSingle(value);
         }

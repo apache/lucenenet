@@ -166,7 +166,7 @@ namespace Lucene.Net.Documents
         /// <param name="value"> 32-bit <see cref="int"/> value </param>
         /// <param name="type"> customized field type: must have <see cref="FieldType.NumericType"/>
         ///         of <see cref="NumericType.INT32"/>. </param>
-        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <c>null</c> </exception>
+        /// <exception cref="ArgumentNullException"> if the field <paramref name="name"/> or <paramref name="type"/> is <see cref="NumericType.NONE"/> </exception>
         /// <exception cref="ArgumentException">if the field type does not have a 
         ///         <see cref="FieldType.NumericType"/> of <see cref="NumericType.INT32"/> </exception>
         public Int32Field(string name, int value, FieldType type)
@@ -174,7 +174,7 @@ namespace Lucene.Net.Documents
         {
             if (type.NumericType != NumericType.INT32)
             {
-                throw new System.ArgumentException("type.NumericType must be INT but got " + type.NumericType);
+                throw new System.ArgumentException("type.NumericType must be NumericType.INT32 but got " + type.NumericType);
             }
             m_fieldsData = Convert.ToInt32(value);
         }

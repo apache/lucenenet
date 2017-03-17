@@ -94,8 +94,6 @@ namespace Lucene.Net.Index
         /// </summary>
         IndexOptions IndexOptions { get; }
 
-        //NumericType? NumericType { get; }
-
         /// <summary>
         /// DocValues <see cref="DocValuesType"/>: if not <see cref="DocValuesType.NONE"/> then the field's value
         /// will be indexed into docValues.

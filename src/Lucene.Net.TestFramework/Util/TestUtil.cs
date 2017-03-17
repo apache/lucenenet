@@ -1036,7 +1036,7 @@ namespace Lucene.Net.Util
                 Field field1 = (Field)f;
                 Field field2;
                 DocValuesType dvType = field1.FieldType.DocValueType;
-                Documents.NumericType? numType = ((FieldType)field1.FieldType).NumericType;
+                NumericType numType = ((FieldType)field1.FieldType).NumericType;
                 if (dvType != DocValuesType.NONE)
                 {
                     switch (dvType)
@@ -1057,7 +1057,7 @@ namespace Lucene.Net.Util
                             throw new InvalidOperationException("unknown Type: " + dvType);
                     }
                 }
-                else if (numType != null)
+                else if (numType != NumericType.NONE)
                 {
                     switch (numType)
                     {

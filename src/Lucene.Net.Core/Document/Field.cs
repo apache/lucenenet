@@ -476,7 +476,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
             }
-            if (m_type.NumericType != null)
+            if (m_type.NumericType != NumericType.NONE)
             {
                 throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
             }
@@ -576,8 +576,8 @@ namespace Lucene.Net.Documents
             {
                 return null;
             }
-            NumericType? numericType = ((FieldType)FieldType).NumericType;
-            if (numericType != null)
+            NumericType numericType = ((FieldType)FieldType).NumericType;
+            if (numericType != NumericType.NONE)
             {
                 if (!(internalTokenStream is NumericTokenStream))
                 {
