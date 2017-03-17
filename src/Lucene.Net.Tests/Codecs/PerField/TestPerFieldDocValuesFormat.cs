@@ -1,14 +1,14 @@
+using NUnit.Framework;
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Lucene.Net.Support;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Codecs.PerField
 {
-    using Lucene.Net.Index;
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -542,7 +542,11 @@ namespace Lucene.Net.Codecs.PerField
             base.TestSortedSetFixedLengthVsUninvertedField();
         }
 
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public override void TestSortedSetVariableLengthVsUninvertedField()
         {
             base.TestSortedSetVariableLengthVsUninvertedField();
