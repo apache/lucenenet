@@ -825,9 +825,11 @@ namespace Lucene.Net.Util
         public static IComparer<T> GetNaturalComparer<T>()
             //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
+            Type genericClosingType = typeof(T);
+
             // LUCENENET specific - we need to ensure that strings are compared
             // in a culture-insenitive manner.
-            if (typeof(T).Equals(typeof(string)))
+            if (genericClosingType.Equals(typeof(string)))
             {
                 return (IComparer<T>)StringComparer.Ordinal;
             }
@@ -835,7 +837,7 @@ namespace Lucene.Net.Util
             // implements IComparable<T>, otherwise use Comparer<T>.Default.
             // This allows the comparison to be customized, but it is not mandatory
             // to implement IComparable<T>.
-            else if (typeof(IComparable<T>).GetTypeInfo().IsAssignableFrom(typeof(T)))
+            else if (typeof(IComparable<T>).GetTypeInfo().IsAssignableFrom(genericClosingType))
             {
                 return new NaturalComparer<T>();
             }
