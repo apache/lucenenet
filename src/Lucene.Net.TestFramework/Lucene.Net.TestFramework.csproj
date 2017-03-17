@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -429,6 +429,7 @@
     <Compile Include="Support\RandomizedTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\SystemProperties.cs" />
     <Compile Include="Util\ApiScanTestBase.cs" />
     <Compile Include="Util\Automaton\AutomatonTestUtil.cs">
       <SubType>Code</SubType>

@@ -131,12 +131,12 @@ namespace Lucene.Net.Support
                 setting = Environment.GetEnvironmentVariable(key);
             }
 
-            return string.IsNullOrEmpty(setting) 
-                ? defaultValue 
+            return string.IsNullOrEmpty(setting)
+                ? defaultValue
                 : conversionFunction(setting);
         }
 
-        private static bool ignoreSecurityExceptions = GetPropertyAsBoolean("lucene.ignoreSecurityExceptions", true);
+        private static bool ignoreSecurityExceptions = GetPropertyAsBoolean("lucene.ignoreSecurityExceptions", false);
 
         /// <summary>
         /// Creates, modifies, or deletes an environment variable stored in the current process.

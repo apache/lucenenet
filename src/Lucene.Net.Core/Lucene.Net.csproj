@@ -678,7 +678,6 @@
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\StringExtensions.cs" />
     <Compile Include="Support\StringTokenizer.cs" />
-    <Compile Include="Support\SystemProperties.cs" />
     <Compile Include="Support\TaskSchedulerCompletionService.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
     <Compile Include="Support\TimeHelper.cs" />
