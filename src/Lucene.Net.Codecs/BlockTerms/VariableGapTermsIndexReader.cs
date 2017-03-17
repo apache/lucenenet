@@ -1,5 +1,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using System;
@@ -81,15 +82,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                     var field = _input.ReadVInt32();
                     var indexStart = _input.ReadVInt64();
                     var fieldInfo = fieldInfos.FieldInfo(field);
-                    
-                    try
+                    FieldIndexData previous = _fields.Put(fieldInfo, new FieldIndexData(this, fieldInfo, indexStart));
+                    if (previous != null)
                     {
-                        _fields.Add(fieldInfo, new FieldIndexData(this, indexStart));
-                    }
-                    catch (ArgumentException)
-                    {
-                        throw new CorruptIndexException(string.Format("Duplicate Field: {0}, Resource: {1}",
-                            fieldInfo.Name, _input));
+                        throw new CorruptIndexException("duplicate field: " + fieldInfo.Name + " (resource=" + _input +")");
                     }
                 }
                 success = true;
@@ -142,7 +138,11 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override long Seek(BytesRef target)
             {
                 _current = _fstEnum.SeekFloor(target);
-                return _current.Output.GetValueOrDefault(); // LUCENENET NOTE: Not sure what to return if Output is null, so we are returning 0
+                if (_current.Output.HasValue)
+                {
+                    return _current.Output.Value;
+                }
+                throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
             }
 
             public override long Next()
@@ -178,7 +178,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             // Set only if terms index is loaded:
             internal volatile FST<long?> fst;
             
-            public FieldIndexData(VariableGapTermsIndexReader outerInstance, long indexStart)
+            public FieldIndexData(VariableGapTermsIndexReader outerInstance, FieldInfo fieldInfo, long indexStart)
             {
                 this.outerInstance = outerInstance;
                 _indexStart = indexStart;

@@ -1,5 +1,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -162,20 +163,11 @@ namespace Lucene.Net.Codecs.BlockTerms
                             string.Format("Invalid sumTotalTermFreq: {0}, sumDocFreq: {1}, Resource: {2}",
                                 sumTotalTermFreq, sumDocFreq, _input));
                     }
-
-                    try
+                    FieldReader previous = _fields.Put(fieldInfo.Name, new FieldReader(this, fieldInfo, numTerms, termsStartPointer, sumTotalTermFreq, sumDocFreq, docCount, longsSize));
+                    if (previous != null)
                     {
-                        _fields.Add(fieldInfo.Name,
-                            new FieldReader(fieldInfo, this, numTerms, termsStartPointer, sumTotalTermFreq, sumDocFreq,
-                                docCount,
-                                longsSize));
+                        throw new CorruptIndexException("duplicate fields: " + fieldInfo.Name + " (resource=" + _input +")");
                     }
-                    catch (ArgumentException)
-                    {
-                        throw new CorruptIndexException(string.Format("Duplicate fields: {0}, Resource: {1}",
-                            fieldInfo.Name, _input));
-                    }
-
                 }
                 success = true;
             }
@@ -267,7 +259,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         private class FieldReader : Terms
         {
-            private readonly BlockTermsReader _blockTermsReader;
+            private readonly BlockTermsReader outerInstance;
             private readonly FieldInfo _fieldInfo;
             private readonly long _numTerms;
             private readonly long _termsStartPointer;
@@ -276,12 +268,12 @@ namespace Lucene.Net.Codecs.BlockTerms
             private readonly int _docCount;
             private readonly int _longsSize;
 
-            public FieldReader(FieldInfo fieldInfo, BlockTermsReader blockTermsReader, long numTerms, long termsStartPointer, long sumTotalTermFreq,
+            public FieldReader(BlockTermsReader outerInstance, FieldInfo fieldInfo, long numTerms, long termsStartPointer, long sumTotalTermFreq,
                 long sumDocFreq, int docCount, int longsSize)
             {
                 Debug.Assert(numTerms > 0);
 
-                _blockTermsReader = blockTermsReader;
+                this.outerInstance = outerInstance;
 
                 _fieldInfo = fieldInfo;
                 _numTerms = numTerms;
@@ -299,7 +291,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override TermsEnum GetIterator(TermsEnum reuse)
             {
-                return new SegmentTermsEnum(this, _blockTermsReader);
+                return new SegmentTermsEnum(this, outerInstance);
             }
 
             public override bool HasFreqs
@@ -345,7 +337,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             // Iterates through terms in this field
             private class SegmentTermsEnum : TermsEnum
             {
-                private readonly FieldReader _fieldReader;
+                private readonly FieldReader outerInstance;
                 private readonly BlockTermsReader _blockTermsReader;
 
                 private readonly IndexInput _input;
@@ -395,23 +387,23 @@ namespace Lucene.Net.Codecs.BlockTerms
                 private byte[] _bytes;
                 private ByteArrayDataInput _bytesReader;
 
-                public SegmentTermsEnum(FieldReader fieldReader, BlockTermsReader blockTermsReader)
+                public SegmentTermsEnum(FieldReader outerInstance, BlockTermsReader blockTermsReader)
                 {
-                    _fieldReader = fieldReader;
+                    this.outerInstance = outerInstance;
                     _blockTermsReader = blockTermsReader;
 
                     _input = (IndexInput)_blockTermsReader._input.Clone();
-                    _input.Seek(_fieldReader._termsStartPointer);
-                    _indexEnum = _blockTermsReader._indexReader.GetFieldEnum(_fieldReader._fieldInfo);
+                    _input.Seek(this.outerInstance._termsStartPointer);
+                    _indexEnum = _blockTermsReader._indexReader.GetFieldEnum(this.outerInstance._fieldInfo);
                     _doOrd = _blockTermsReader._indexReader.SupportsOrd;
-                    _fieldTerm.Field = _fieldReader._fieldInfo.Name;
+                    _fieldTerm.Field = this.outerInstance._fieldInfo.Name;
                     _state = _blockTermsReader._postingsReader.NewTermState();
                     _state.TotalTermFreq = -1;
                     _state.Ord = -1;
 
                     _termSuffixes = new byte[128];
                     _docFreqBytes = new byte[64];
-                    _longs = new long[_fieldReader._longsSize];
+                    _longs = new long[this.outerInstance._longsSize];
                 }
 
                 public override IComparer<BytesRef> Comparer
@@ -755,27 +747,27 @@ namespace Lucene.Net.Codecs.BlockTerms
                 public override DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags)
                 {
                     DecodeMetaData();
-                    return _blockTermsReader._postingsReader.Docs(_fieldReader._fieldInfo, _state, liveDocs, reuse, flags);
+                    return _blockTermsReader._postingsReader.Docs(outerInstance._fieldInfo, _state, liveDocs, reuse, flags);
                 }
 
                 public override DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse,
                     DocsAndPositionsFlags flags)
                 {
-                    if (_fieldReader._fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
+                    if (outerInstance._fieldInfo.IndexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) < 0)
                     {
                         // Positions were not indexed:
                         return null;
                     }
 
                     DecodeMetaData();
-                    return _blockTermsReader._postingsReader.DocsAndPositions(_fieldReader._fieldInfo, _state, liveDocs, reuse, flags);
+                    return _blockTermsReader._postingsReader.DocsAndPositions(outerInstance._fieldInfo, _state, liveDocs, reuse, flags);
                 }
 
                 public override void SeekExact(BytesRef target, TermState otherState)
                 {
                     //System.out.println("BTR.seekExact termState target=" + target.utf8ToString() + " " + target + " this=" + this);
                     Debug.Assert(otherState is BlockTermState);
-                    Debug.Assert(!_doOrd || ((BlockTermState)otherState).Ord < _fieldReader._numTerms);
+                    Debug.Assert(!_doOrd || ((BlockTermState)otherState).Ord < outerInstance._numTerms);
                     _state.CopyFrom(otherState);
                     _seekPending = true;
                     _indexIsCurrent = false;
@@ -793,7 +785,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     if (_indexEnum == null)
                         throw new InvalidOperationException("terms index was not loaded");
 
-                    Debug.Assert(ord < _fieldReader._numTerms);
+                    Debug.Assert(ord < outerInstance._numTerms);
 
                     // TODO: if ord is in same terms block and
                     // after current ord, we should avoid this seek just
@@ -932,7 +924,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                             // just skipN here:
 
                             _state.DocFreq = _freqReader.ReadVInt32();
-                            if (_fieldReader._fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                            if (outerInstance._fieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
                             {
                                 _state.TotalTermFreq = _state.DocFreq + _freqReader.ReadVInt64();
                             }
@@ -941,7 +933,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                             {
                                 _longs[i] = _bytesReader.ReadVInt64();
                             }
-                            _blockTermsReader._postingsReader.DecodeTerm(_longs, _bytesReader, _fieldReader._fieldInfo, _state, absolute);
+                            _blockTermsReader._postingsReader.DecodeTerm(_longs, _bytesReader, outerInstance._fieldInfo, _state, absolute);
                             _metaDataUpto++;
                             absolute = false;
                         }
