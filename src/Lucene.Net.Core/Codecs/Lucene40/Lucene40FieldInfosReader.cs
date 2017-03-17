@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     IDictionary<string, string> attributes = input.ReadStringStringMap();
                     if (oldValuesType.GetMapping() != DocValuesType.NONE)
                     {
-                        attributes[LEGACY_DV_TYPE_KEY] = oldValuesType.ToString(CultureInfo.InvariantCulture);
+                        attributes[LEGACY_DV_TYPE_KEY] = oldValuesType.ToString();
                     }
                     if (oldNormsType.GetMapping() != DocValuesType.NONE)
                     {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Codecs.Lucene40
                         {
                             throw new CorruptIndexException("invalid norm type: " + oldNormsType + " (resource=" + input + ")");
                         }
-                        attributes[LEGACY_NORM_TYPE_KEY] = oldNormsType.ToString(CultureInfo.InvariantCulture);
+                        attributes[LEGACY_NORM_TYPE_KEY] = oldNormsType.ToString();
                     }
                     infos[i] = new FieldInfo(name, isIndexed, fieldNumber, storeTermVector, omitNorms, storePayloads, indexOptions, oldValuesType.GetMapping(), oldNormsType.GetMapping(), attributes);
                 }

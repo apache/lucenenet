@@ -100,15 +100,15 @@ namespace Lucene.Net.Codecs.SimpleText
                     }
 
                     SimpleTextUtil.Write(output, STORETV);
-                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.HasVectors.ToString(CultureInfo.InvariantCulture)), scratch);
+                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.HasVectors.ToString()), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, PAYLOADS);
-                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.HasPayloads.ToString(CultureInfo.InvariantCulture)), scratch);
+                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower(fi.HasPayloads.ToString()), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, NORMS);
-                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower((!fi.OmitsNorms).ToString(CultureInfo.InvariantCulture)), scratch);
+                    SimpleTextUtil.Write(output, CultureInfo.InvariantCulture.TextInfo.ToLower((!fi.OmitsNorms).ToString()), scratch);
                     SimpleTextUtil.WriteNewline(output);
 
                     SimpleTextUtil.Write(output, NORMS_TYPE);

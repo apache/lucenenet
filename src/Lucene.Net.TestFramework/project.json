@@ -18,7 +18,6 @@
         "define": [ "FEATURE_STACKTRACE", "NETSTANDARD" ],
         "compile": {
           "excludeFiles": [
-            "Support/SystemProperties.cs",
             "Util/ApiScanTestBase.cs",
             "Util/AbstractBeforeAfterRule.cs",
             "Util/CloseableDirectory.cs",

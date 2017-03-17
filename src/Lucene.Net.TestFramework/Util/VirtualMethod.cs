@@ -2,6 +2,9 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+#if NETSTANDARD
+using System.Linq;
+#endif
 using System.Reflection;
 
 namespace Lucene.Net.Util
