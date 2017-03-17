@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         // Reads the terms index
         private TermsIndexReaderBase _indexReader;
 
-        private readonly Dictionary<string, FieldReader> _fields = new Dictionary<string, FieldReader>();
+        private readonly IDictionary<string, FieldReader> _fields = new SortedDictionary<string, FieldReader>(StringComparer.Ordinal);
 
         // keeps the dirStart offset
         private long _dirOffset;
