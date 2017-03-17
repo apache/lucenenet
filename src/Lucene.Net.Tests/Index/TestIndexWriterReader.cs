@@ -862,7 +862,10 @@ namespace Lucene.Net.Index
         public virtual void TestDuringAddIndexes()
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
-            IndexWriter writer = new IndexWriter(dir1, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetMergePolicy(NewLogMergePolicy(2)));
+            IndexWriter writer = new IndexWriter(
+                dir1, 
+                NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))
+                    .SetMergePolicy(NewLogMergePolicy(2)));
 
             // create the index
             CreateIndexNoClose(false, "test", writer);
@@ -879,7 +882,7 @@ namespace Lucene.Net.Index
             const float SECONDS = 0.5f;
 
             long endTime = (long)(Environment.TickCount + 1000.0 * SECONDS);
-            IList<Exception> excs = new SynchronizedList<Exception>();
+            ConcurrentHashSet<Exception> excs = new ConcurrentHashSet<Exception>();
 
             // Only one thread can addIndexes at a time, because
             // IndexWriter acquires a write lock in each directory:
@@ -941,9 +944,9 @@ namespace Lucene.Net.Index
             private IndexWriter Writer;
             private Directory[] Dirs;
             private long EndTime;
-            private IList<Exception> Excs;
+            private ISet<Exception> Excs;
 
-            public ThreadAnonymousInnerClassHelper(IndexWriter writer, Directory[] dirs, long endTime, IList<Exception> excs)
+            public ThreadAnonymousInnerClassHelper(IndexWriter writer, Directory[] dirs, long endTime, ISet<Exception> excs)
             {
                 this.Writer = writer;
                 this.Dirs = dirs;
