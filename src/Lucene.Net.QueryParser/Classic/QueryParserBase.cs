@@ -89,8 +89,8 @@ namespace Lucene.Net.QueryParsers.Classic
         //int phraseSlop = 0;
         //float fuzzyMinSim = FuzzyQuery.DefaultMinSimilarity;
         //int fuzzyPrefixLength = FuzzyQuery.DefaultPrefixLength;
-        //CultureInfo locale = CultureInfo.CurrentCulture;
-        //TimeZoneInfo timeZone = TimeZoneInfo.Local;
+        CultureInfo locale = null; // LUCENENET NOTE: null indicates read CultureInfo.CurrentCulture on the fly
+        TimeZoneInfo timeZone = null; // LUCENENET NOTE: null indicates read TimeZoneInfo.Local on the fly
 
         // TODO: Work out what the default date resolution SHOULD be (was null in Java, which isn't valid for an enum type)
 
@@ -126,8 +126,6 @@ namespace Lucene.Net.QueryParsers.Classic
             FuzzyMinSim = FuzzyQuery.DefaultMinSimilarity;
 #pragma warning restore 612, 618
             FuzzyPrefixLength = FuzzyQuery.DefaultPrefixLength;
-            Locale = CultureInfo.CurrentCulture;
-            TimeZone = TimeZoneInfo.Local;
         }
 
         /// <summary>
@@ -267,10 +265,31 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Get or Set locale used by date range parsing, lowercasing, and other
         /// locale-sensitive operations.
+        /// <para/>
+        /// By default, the culture is <c>null</c>, which indicates to read the culture on the fly 
+        /// from <see cref="CultureInfo.CurrentCulture"/>. This ensures if you change the culture on
+        /// the current thread, QueryParser will utilize it. You can also explicitly set a culture.
+        /// Setting the culture to <c>null</c> will restore the default behavior if you have explicitly set a culture.
         /// </summary>
-        public virtual CultureInfo Locale { get; set; }
+        public virtual CultureInfo Locale
+        {
+            get { return this.locale == null ? CultureInfo.CurrentCulture : this.locale; }
+            set { this.locale = value; }
+        }
 
-        public virtual TimeZoneInfo TimeZone { get; set; }
+        /// <summary>
+        /// Get or Set the current time zone for date and time parsing operations.
+        /// <para/>
+        /// By default, the time zone is <c>null</c>, which indicates to read the time zone on the fly 
+        /// from <see cref="TimeZoneInfo.Local"/>. This ensures if you change the time zone on
+        /// the current system, QueryParser will utilize it. You can also explicitly set a time zone.
+        /// Setting the time zone to <c>null</c> will restore the default behavior if you have explicitly set a time zone.
+        /// </summary>
+        public virtual TimeZoneInfo TimeZone
+        {
+            get { return this.timeZone == null ? TimeZoneInfo.Local : this.timeZone; }
+            set { this.timeZone = value; }
+        }
 
         /// <summary>
         /// Gets or Sets the default date resolution used by RangeQueries for fields for which no
