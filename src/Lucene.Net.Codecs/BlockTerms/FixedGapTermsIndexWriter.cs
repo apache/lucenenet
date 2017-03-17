@@ -136,6 +136,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             internal SimpleFieldWriter(FixedGapTermsIndexWriter outerInstance, FieldInfo fieldInfo, long termsFilePointer)
             {
                 this.outerInstance = outerInstance;
+
                 this.fieldInfo = fieldInfo;
                 indexStart = outerInstance.m_output.FilePointer;
                 termsStart = lastTermsPointer = termsFilePointer;
@@ -164,6 +165,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override void Add(BytesRef text, TermStats stats, long termsFilePointer)
             {
                 int indexedTermLength = outerInstance.IndexedTermPrefixLength(lastTerm, text);
+                //System.out.println("FGW: add text=" + text.utf8ToString() + " " + text + " fp=" + termsFilePointer);
 
                 // write only the min prefix that shows the diff
                 // against prior term

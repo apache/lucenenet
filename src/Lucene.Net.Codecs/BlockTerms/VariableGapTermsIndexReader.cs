@@ -56,8 +56,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     IndexFileNames.SegmentFileName(segment, segmentSuffix,
                         VariableGapTermsIndexWriter.TERMS_INDEX_EXTENSION), new IOContext(context, true));
             this.segment = segment;
-            var success = false;
-
+            bool success = false;
             Debug.Assert(indexDivisor == -1 || indexDivisor > 0);
 
             try
@@ -66,12 +65,14 @@ namespace Lucene.Net.Codecs.BlockTerms
                 _indexDivisor = indexDivisor;
 
                 if (_version >= VariableGapTermsIndexWriter.VERSION_CHECKSUM)
+                {
                     CodecUtil.ChecksumEntireFile(_input);
+                }
                 
                 SeekDir(_input, _dirOffset);
 
                 // Read directory
-                var numFields = _input.ReadVInt32();
+                int numFields = _input.ReadVInt32();
                 if (numFields < 0)
                 {
                     throw new CorruptIndexException("invalid numFields: " + numFields + " (resource=" + _input + ")");
@@ -79,9 +80,9 @@ namespace Lucene.Net.Codecs.BlockTerms
 
                 for (var i = 0; i < numFields; i++)
                 {
-                    var field = _input.ReadVInt32();
-                    var indexStart = _input.ReadVInt64();
-                    var fieldInfo = fieldInfos.FieldInfo(field);
+                    int field = _input.ReadVInt32();
+                    long indexStart = _input.ReadVInt64();
+                    FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
                     FieldIndexData previous = _fields.Put(fieldInfo, new FieldIndexData(this, fieldInfo, indexStart));
                     if (previous != null)
                     {
@@ -137,9 +138,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override long Seek(BytesRef target)
             {
+                //System.out.println("VGR: seek field=" + fieldInfo.name + " target=" + target);
                 _current = _fstEnum.SeekFloor(target);
                 if (_current.Output.HasValue)
                 {
+                    //System.out.println("  got input=" + current.input + " output=" + current.output);
                     return _current.Output.Value;
                 }
                 throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
@@ -147,11 +150,19 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public override long Next()
             {
+                //System.out.println("VGR: next field=" + fieldInfo.name);
                 _current = _fstEnum.Next();
                 if (_current == null)
+                {
+                    //System.out.println("  eof");
                     return -1;
+                }
 
-                return _current.Output.Value;
+                if (_current.Output.HasValue)
+                {
+                    return _current.Output.Value;
+                }
+                throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
             }
 
             public override long Ord
@@ -181,49 +192,52 @@ namespace Lucene.Net.Codecs.BlockTerms
             public FieldIndexData(VariableGapTermsIndexReader outerInstance, FieldInfo fieldInfo, long indexStart)
             {
                 this.outerInstance = outerInstance;
+
                 _indexStart = indexStart;
 
                 if (this.outerInstance._indexDivisor > 0)
+                {
                     LoadTermsIndex();
+                }  
             }
 
             private void LoadTermsIndex()
             {
-                if (fst != null) return;
-
-                var clone = (IndexInput)outerInstance._input.Clone();
-                clone.Seek(_indexStart);
-                fst = new FST<long?>(clone, outerInstance._fstOutputs);
-                clone.Dispose();
-
-                /*
-                final String dotFileName = segment + "_" + fieldInfo.name + ".dot";
-                Writer w = new OutputStreamWriter(new FileOutputStream(dotFileName));
-                Util.toDot(fst, w, false, false);
-                System.out.println("FST INDEX: SAVED to " + dotFileName);
-                w.close();
-                */
-
-                if (outerInstance._indexDivisor > 1)
+                if (fst == null)
                 {
-                    // subsample
-                    var scratchIntsRef = new Int32sRef();
-                    var outputs = PositiveInt32Outputs.Singleton;
-                    var builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
-                    var fstEnum = new BytesRefFSTEnum<long?>(fst);
-                    var count = outerInstance._indexDivisor;
+                    IndexInput clone = (IndexInput)outerInstance._input.Clone();
+                    clone.Seek(_indexStart);
+                    fst = new FST<long?>(clone, outerInstance._fstOutputs);
+                    clone.Dispose(); // LUCENENET TODO: No using block here is bad...
 
-                    BytesRefFSTEnum.InputOutput<long?> result;
-                    while ((result = fstEnum.Next()) != null)
+                    /*
+                    final String dotFileName = segment + "_" + fieldInfo.name + ".dot";
+                    Writer w = new OutputStreamWriter(new FileOutputStream(dotFileName));
+                    Util.toDot(fst, w, false, false);
+                    System.out.println("FST INDEX: SAVED to " + dotFileName);
+                    w.close();
+                    */
+
+                    if (outerInstance._indexDivisor > 1)
                     {
-                        if (count == outerInstance._indexDivisor)
+                        // subsample
+                        Int32sRef scratchIntsRef = new Int32sRef();
+                        PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
+                        Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
+                        BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
+                        BytesRefFSTEnum.InputOutput<long?> result;
+                        int count = outerInstance._indexDivisor;
+                        while ((result = fstEnum.Next()) != null)
                         {
-                            builder.Add(Util.Fst.Util.ToInt32sRef(result.Input, scratchIntsRef), result.Output);
-                            count = 0;
+                            if (count == outerInstance._indexDivisor)
+                            {
+                                builder.Add(Util.Fst.Util.ToInt32sRef(result.Input, scratchIntsRef), result.Output);
+                                count = 0;
+                            }
+                            count++;
                         }
-                        count++;
+                        fst = builder.Finish();
                     }
-                    fst = builder.Finish();
                 }
             }
 
@@ -236,13 +250,21 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
-            FieldIndexData fieldData = _fields[fieldInfo];
-            return fieldData.fst == null ? null : new IndexEnum(fieldData.fst);
+            FieldIndexData fieldData;
+            if (!_fields.TryGetValue(fieldInfo, out fieldData) || fieldData == null)
+            {
+                return null;
+            }
+            else
+            {
+                return new IndexEnum(fieldData.fst);
+            }
         }
 
         public override void Dispose()
         {
-            if (_input != null && !_indexLoaded) { 
+            if (_input != null && !_indexLoaded)
+            { 
                 _input.Dispose(); 
             } 
         }
@@ -264,7 +286,12 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override long RamBytesUsed()
         {
-            return _fields.Values.Sum(entry => entry.RamBytesUsed());
+            long sizeInBytes = 0;
+            foreach (FieldIndexData entry in _fields.Values)
+            {
+                sizeInBytes += entry.RamBytesUsed();
+            }
+            return sizeInBytes;
         }
     }
 }

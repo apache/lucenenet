@@ -38,16 +38,18 @@ namespace Lucene.Net.Codecs.BlockTerms
     {
         protected IndexOutput m_output;
 
-        /** Extension of terms index file */
+        /// <summary>Extension of terms index file</summary>
         internal const string TERMS_INDEX_EXTENSION = "tiv";
+
         internal const string CODEC_NAME = "VARIABLE_GAP_TERMS_INDEX";
         internal const int VERSION_START = 0;
         internal const int VERSION_APPEND_ONLY = 1;
         internal const int VERSION_CHECKSUM = 2;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        private readonly List<FstFieldWriter> _fields = new List<FstFieldWriter>();
+        private readonly IList<FstFieldWriter> _fields = new List<FstFieldWriter>();
 
+        private readonly FieldInfos fieldInfos; // unread
         private readonly IndexTermSelector _policy;
 
         /// <summary>
@@ -81,19 +83,22 @@ namespace Lucene.Net.Codecs.BlockTerms
             public EveryNTermSelector(int interval)
             {
                 this._interval = interval;
-                _count = interval; // First term is first indexed term
+                // First term is first indexed term
+                _count = interval; 
             }
 
             public override bool IsIndexTerm(BytesRef term, TermStats stats)
             {
-                if (_count >= _interval) 
+                if (_count >= _interval)
                 {
                     _count = 1;
                     return true;
                 }
-                
-                _count++;
-                return false;
+                else
+                {
+                    _count++;
+                    return false;
+                }
             }
 
             public override void NewField(FieldInfo fieldInfo)
@@ -115,9 +120,11 @@ namespace Lucene.Net.Codecs.BlockTerms
 
             public EveryNOrDocFreqTermSelector(int docFreqThresh, int interval)
             {
-                _interval = interval;
-                _docFreqThresh = docFreqThresh;
-                _count = interval; // First term is first indexed term
+                this._interval = interval;
+                this._docFreqThresh = docFreqThresh;
+
+                // First term is first indexed term
+                _count = interval; 
             }
 
             public override bool IsIndexTerm(BytesRef term, TermStats stats)
@@ -127,9 +134,11 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _count = 1;
                     return true;
                 }
-                
-                _count++;
-                return false;
+                else
+                {
+                    _count++;
+                    return false;
+                }
             }
 
             public override void NewField(FieldInfo fieldInfo)
@@ -177,17 +186,19 @@ namespace Lucene.Net.Codecs.BlockTerms
                 TERMS_INDEX_EXTENSION);
             m_output = state.Directory.CreateOutput(indexFileName, state.Context);
             bool success = false;
-
             try
             {
-                _policy = policy;
+                fieldInfos = state.FieldInfos;
+                this._policy = policy;
                 WriteHeader(m_output);
                 success = true;
             }
             finally
             {
                 if (!success)
+                {
                     IOUtils.CloseWhileHandlingException(m_output);
+                }
             }
         }
 
@@ -198,8 +209,9 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override FieldWriter AddField(FieldInfo field, long termsFilePointer)
         {
+            ////System.out.println("VGW: field=" + field.name);
             _policy.NewField(field);
-            var writer = new FstFieldWriter(this, field, termsFilePointer);
+            FstFieldWriter writer = new FstFieldWriter(this, field, termsFilePointer);
             _fields.Add(writer);
             return writer;
         }
@@ -233,7 +245,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             private readonly VariableGapTermsIndexWriter outerInstance;
 
             private readonly Builder<long?> _fstBuilder;
-            //private readonly PositiveIntOutputs fstOutputs; // LUCENENET NOTE: Not used
+            private readonly PositiveInt32Outputs fstOutputs;
             private readonly long _startTermsFilePointer;
 
             internal FieldInfo FieldInfo { get; private set; }
@@ -246,10 +258,12 @@ namespace Lucene.Net.Codecs.BlockTerms
             public FstFieldWriter(VariableGapTermsIndexWriter outerInstance, FieldInfo fieldInfo, long termsFilePointer)
             {
                 this.outerInstance = outerInstance;
-                FieldInfo = fieldInfo;
-                PositiveInt32Outputs fstOutputs = PositiveInt32Outputs.Singleton;
+
+                this.FieldInfo = fieldInfo;
+                fstOutputs = PositiveInt32Outputs.Singleton;
                 _fstBuilder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, fstOutputs);
                 IndexStart = this.outerInstance.m_output.FilePointer;
+                ////System.out.println("VGW: field=" + fieldInfo.name);
 
                 // Always put empty string in
                 _fstBuilder.Add(new Int32sRef(), termsFilePointer);
@@ -265,9 +279,11 @@ namespace Lucene.Net.Codecs.BlockTerms
                     _first = false;
                     return true;
                 }
-
-                _lastTerm.CopyBytes(text);
-                return false;
+                else
+                {
+                    _lastTerm.CopyBytes(text);
+                    return false;
+                }
             }
 
             private readonly Int32sRef _scratchIntsRef = new Int32sRef();
@@ -297,46 +313,49 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 Fst = _fstBuilder.Finish();
                 if (Fst != null)
+                {
                     Fst.Save(outerInstance.m_output);
+                }
             }
         }
 
         public override void Dispose()
         {
-            if (m_output == null) return;
-
-            try
+            if (m_output != null)
             {
-                long dirStart = m_output.FilePointer;
-                int fieldCount = _fields.Count;
-
-                int nonNullFieldCount = 0;
-                for (int i = 0; i < fieldCount; i++)
+                try
                 {
-                    FstFieldWriter field = _fields[i];
-                    if (field.Fst != null)
-                    {
-                        nonNullFieldCount++;
-                    }
-                }
+                    long dirStart = m_output.FilePointer;
+                    int fieldCount = _fields.Count;
 
-                m_output.WriteVInt32(nonNullFieldCount);
-                for (int i = 0; i < fieldCount; i++)
-                {
-                    FstFieldWriter field = _fields[i];
-                    if (field.Fst != null)
+                    int nonNullFieldCount = 0;
+                    for (int i = 0; i < fieldCount; i++)
                     {
-                        m_output.WriteVInt32(field.FieldInfo.Number);
-                        m_output.WriteVInt64(field.IndexStart);
+                        FstFieldWriter field = _fields[i];
+                        if (field.Fst != null)
+                        {
+                            nonNullFieldCount++;
+                        }
                     }
+
+                    m_output.WriteVInt32(nonNullFieldCount);
+                    for (int i = 0; i < fieldCount; i++)
+                    {
+                        FstFieldWriter field = _fields[i];
+                        if (field.Fst != null)
+                        {
+                            m_output.WriteVInt32(field.FieldInfo.Number);
+                            m_output.WriteVInt64(field.IndexStart);
+                        }
+                    }
+                    WriteTrailer(dirStart);
+                    CodecUtil.WriteFooter(m_output);
                 }
-                WriteTrailer(dirStart);
-                CodecUtil.WriteFooter(m_output);
-            }
-            finally
-            {
-                m_output.Dispose();
-                m_output = null;
+                finally
+                {
+                    m_output.Dispose();
+                    m_output = null;
+                }
             }
         }
 
