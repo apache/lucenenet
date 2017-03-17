@@ -191,7 +191,7 @@ namespace Lucene.Net.Codecs
         /// </summary>
         /// <returns> length of the entire codec footer. </returns>
         /// <seealso cref= #writeFooter(IndexOutput) </seealso>
-        public static int FooterLength()
+        public static int FooterLength() // LUCENENET TODO: Make property
         {
             return 16;
         }
