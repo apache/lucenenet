@@ -286,7 +286,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
+            public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
             {
                 MergeSpecification ms = new MergeSpecification();
                 if (DoMerge)

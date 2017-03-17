@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
         public virtual void TestNoMergePolicy_Mem()
         {
             MergePolicy mp = NoMergePolicy.NO_COMPOUND_FILES;
-            Assert.IsNull(mp.FindMerges(null, (SegmentInfos)null));
+            Assert.IsNull(mp.FindMerges(/*null*/ (MergeTrigger)int.MinValue, (SegmentInfos)null));
             Assert.IsNull(mp.FindForcedMerges(null, 0, null));
             Assert.IsNull(mp.FindForcedDeletesMerges(null));
             Assert.IsFalse(mp.UseCompoundFile(null, null));

@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
             this.Random = new Random(random.Next());
         }
 
-        public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
+        public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
         {
             MergeSpecification mergeSpec = null;
             //System.out.println("MRMP: findMerges sis=" + segmentInfos);
@@ -115,7 +115,8 @@ namespace Lucene.Net.Index
 
         public override MergeSpecification FindForcedDeletesMerges(SegmentInfos segmentInfos)
         {
-            return FindMerges(null, segmentInfos);
+            // LUCENENET specific - just use int.MinValue to indicate "null"
+            return FindMerges((MergeTrigger)int.MinValue, segmentInfos);
         }
 
         public override void Dispose()

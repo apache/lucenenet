@@ -77,9 +77,10 @@ namespace Lucene.Net.Index
             m_base.SetIndexWriter(writer);
         }
 
-        public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
+        public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
         {
-            return m_base.FindMerges(null, segmentInfos);
+            // LUCENENET specific - just use min value to indicate "null" for merge trigger
+            return m_base.FindMerges((MergeTrigger)int.MinValue, segmentInfos);
         }
 
         public override MergeSpecification FindForcedMerges(SegmentInfos segmentInfos, int maxSegmentCount, IDictionary<SegmentCommitInfo, bool?> segmentsToMerge)

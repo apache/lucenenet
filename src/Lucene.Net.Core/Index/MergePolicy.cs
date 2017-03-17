@@ -610,19 +610,19 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Determine what set of merge operations are now necessary on the index.
-        /// <seealso cref="IndexWriter"/> calls this whenever there is a change to the segments.
-        /// this call is always synchronized on the <seealso cref="IndexWriter"/> instance so
+        /// <see cref="IndexWriter"/> calls this whenever there is a change to the segments.
+        /// this call is always synchronized on the <see cref="IndexWriter"/> instance so
         /// only one thread at a time will call this method. </summary>
         /// <param name="mergeTrigger"> the event that triggered the merge </param>
         /// <param name="segmentInfos">
         ///          the total set of segments in the index </param>
-        public abstract MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos);
+        public abstract MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos);
 
         /// <summary>
         /// Determine what set of merge operations is necessary in
-        /// order to merge to <= the specified segment count. <seealso cref="IndexWriter"/> calls this when its
-        /// <seealso cref="IndexWriter#forceMerge"/> method is called. this call is always
-        /// synchronized on the <seealso cref="IndexWriter"/> instance so only one thread at a
+        /// order to merge to &lt;= the specified segment count. <see cref="IndexWriter"/> calls this when its
+        /// <see cref="IndexWriter.ForceMerge"/> method is called. this call is always
+        /// synchronized on the <see cref="IndexWriter"/> instance so only one thread at a
         /// time will call this method.
         /// </summary>
         /// <param name="segmentInfos">

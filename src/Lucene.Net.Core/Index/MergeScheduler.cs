@@ -40,10 +40,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Run the merges provided by <seealso cref="IndexWriter#getNextMerge()"/>. </summary>
-        /// <param name="writer"> the <seealso cref="IndexWriter"/> to obtain the merges from. </param>
-        /// <param name="trigger"> the <seealso cref="MergeTrigger"/> that caused this merge to happen </param>
-        /// <param name="newMergesFound"> <code>true</code> iff any new merges were found by the caller otherwise <code>false</code>
+        /// Run the merges provided by <see cref="IndexWriter.NextMerge()"/>. </summary>
+        /// <param name="writer"> the <see cref="IndexWriter"/> to obtain the merges from. </param>
+        /// <param name="trigger"> the <see cref="MergeTrigger"/> that caused this merge to happen </param>
+        /// <param name="newMergesFound"> <c>true</c> iff any new merges were found by the caller; otherwise <c>false</c>
         ///  </param>
         public abstract void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
 

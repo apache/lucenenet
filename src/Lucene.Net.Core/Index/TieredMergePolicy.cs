@@ -323,7 +323,7 @@ namespace Lucene.Net.Index
             public abstract string Explanation { get; }
         }
 
-        public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos infos)
+        public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos infos)
         {
             if (Verbose())
             {
@@ -356,7 +356,7 @@ namespace Lucene.Net.Index
                     {
                         extra += " [floored]";
                     }
-                    Message("  seg=" + m_writer.Get().SegString(info) + " size=" + String.Format(CultureInfo.InvariantCulture, "{0:0.00}", segBytes / 1024 / 1024.0) + " MB" + extra);
+                    Message("  seg=" + m_writer.Get().SegString(info) + " size=" + string.Format("{0:0.000}", segBytes / 1024 / 1024.0) + " MB" + extra);
                 }
 
                 minSegmentBytes = Math.Min(segBytes, minSegmentBytes);
@@ -467,7 +467,7 @@ namespace Lucene.Net.Index
                         MergeScore score = Score(candidate, hitTooLarge, mergingBytes);
                         if (Verbose())
                         {
-                            Message("  maybe=" + m_writer.Get().SegString(candidate) + " score=" + score.Score + " " + score.Explanation + " tooLarge=" + hitTooLarge + " size=" + string.Format(CultureInfo.InvariantCulture, "%.3f MB", totAfterMergeBytes / 1024.0 / 1024.0));
+                            Message("  maybe=" + m_writer.Get().SegString(candidate) + " score=" + score.Score + " " + score.Explanation + " tooLarge=" + hitTooLarge + " size=" + string.Format("{0:0.000} MB", totAfterMergeBytes / 1024.0 / 1024.0));
                         }
 
                         // If we are already running a max sized merge
@@ -497,7 +497,7 @@ namespace Lucene.Net.Index
 
                         if (Verbose())
                         {
-                            Message("  add merge=" + m_writer.Get().SegString(merge.Segments) + " size=" + string.Format(CultureInfo.InvariantCulture, "%.3f MB", bestMergeBytes / 1024.0 / 1024.0) + " score=" + string.Format(CultureInfo.InvariantCulture, "%.3f", bestScore.Score) + " " + bestScore.Explanation + (bestTooLarge ? " [max merge]" : ""));
+                            Message("  add merge=" + m_writer.Get().SegString(merge.Segments) + " size=" + string.Format("{0:0.000} MB", bestMergeBytes / 1024.0 / 1024.0) + " score=" + string.Format("{0:0.000}", bestScore.Score) + " " + bestScore.Explanation + (bestTooLarge ? " [max merge]" : ""));
                         }
                     }
                     else

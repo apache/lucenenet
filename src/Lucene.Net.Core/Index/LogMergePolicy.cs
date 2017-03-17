@@ -559,7 +559,7 @@ namespace Lucene.Net.Index
         ///  will return multiple merges, allowing the {@link
         ///  MergeScheduler} to use concurrency.
         /// </summary>
-        public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos infos)
+        public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos infos)
         {
             int numSegments = infos.Count;
             if (IsVerbose)

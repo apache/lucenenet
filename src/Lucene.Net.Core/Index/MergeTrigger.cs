@@ -19,7 +19,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// MergeTrigger is passed to
-    /// <seealso cref="Lucene.Net.Index.MergePolicy#findMerges(MergeTrigger, Lucene.Net.Index.SegmentInfos)"/> to indicate the
+    /// <see cref="MergePolicy.FindMerges(MergeTrigger, SegmentInfos)"/> to indicate the
     /// event that triggered the merge.
     /// </summary>
     public enum MergeTrigger

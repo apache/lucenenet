@@ -2364,8 +2364,8 @@ namespace Lucene.Net.Index
         /// necessary. The most common case is when merge policy
         /// parameters have changed.
         ///
-        /// this method will call the <seealso cref="mergePolicy"/> with
-        /// <seealso cref="MergeTrigger#EXPLICIT"/>.
+        /// this method will call the <see cref="mergePolicy"/> with
+        /// <see cref="MergeTrigger.EXPLICIT"/>.
         ///
         /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
         /// you should immediately close the writer.  See <a

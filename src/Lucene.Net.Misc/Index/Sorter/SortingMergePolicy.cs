@@ -235,8 +235,7 @@ namespace Lucene.Net.Index.Sorter
             this.sort = sort;
         }
 
-        [ExceptionToNullableEnumConvention]
-        public override MergeSpecification FindMerges(MergeTrigger? mergeTrigger, SegmentInfos segmentInfos)
+        public override MergeSpecification FindMerges(MergeTrigger mergeTrigger, SegmentInfos segmentInfos)
         {
             return SortedMergeSpecification(@in.FindMerges(mergeTrigger, segmentInfos));
         }

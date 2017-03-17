@@ -18,9 +18,9 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// A <seealso cref="MergeScheduler"/> which never executes any merges. It is also a
-    /// singleton and can be accessed through <seealso cref="NoMergeScheduler#INSTANCE"/>. Use
-    /// it if you want to prevent an <seealso cref="IndexWriter"/> from ever executing merges,
+    /// A <see cref="MergeScheduler"/> which never executes any merges. It is also a
+    /// singleton and can be accessed through <see cref="NoMergeScheduler.INSTANCE"/>. Use
+    /// it if you want to prevent an <see cref="IndexWriter"/> from ever executing merges,
     /// regardless of the <seealso cref="MergePolicy"/> used. Note that you can achieve the
     /// same thing by using <seealso cref="NoMergePolicy"/>, however with
     /// <seealso cref="NoMergeScheduler"/> you also ensure that no unnecessary code of any
