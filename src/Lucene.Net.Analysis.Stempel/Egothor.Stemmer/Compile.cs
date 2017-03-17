@@ -107,7 +107,21 @@ namespace Egothor.Stemmer
                 qq++;
             }
 
-            string charset = SystemProperties.GetProperty("egothor.stemmer.charset", "UTF-8");
+            string charset = null;
+            try
+            {
+                charset = System.Environment.GetEnvironmentVariable("egothor.stemmer.charset");
+            }
+            catch
+            {
+            }
+            finally
+            {
+                if (string.IsNullOrEmpty(charset))
+                {
+                    charset = "UTF-8";
+                }
+            }
 
             char[] optimizer = new char[args[0].Length - qq];
             for (int i = 0; i < optimizer.Length; i++)

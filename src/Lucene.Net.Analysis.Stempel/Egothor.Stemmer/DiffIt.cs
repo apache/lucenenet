@@ -113,7 +113,23 @@ namespace Egothor.Stemmer
                 TextReader @in;
                 // System.out.println("[" + args[i] + "]");
                 Diff diff = new Diff(ins, del, rep, nop);
-                string charset = SystemProperties.GetProperty("egothor.stemmer.charset", "UTF-8");
+
+                string charset = null;
+                try
+                {
+                    charset = System.Environment.GetEnvironmentVariable("egothor.stemmer.charset");
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    if (string.IsNullOrEmpty(charset))
+                    {
+                        charset = "UTF-8";
+                    }
+                }
+
                 @in = new StreamReader(new FileStream(args[i], FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset));
                 for (string line = @in.ReadLine(); line != null; line = @in.ReadLine())
                 {
