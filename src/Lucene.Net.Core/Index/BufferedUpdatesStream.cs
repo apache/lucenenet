@@ -198,7 +198,7 @@ namespace Lucene.Net.Index
 
                 if (infoStream.IsEnabled("BD"))
                 {
-                    infoStream.Message("BD", "applyDeletes: infos=" + infos + " packetCount=" + updates.Count);
+                    infoStream.Message("BD", "applyDeletes: infos=" + Arrays.ToString(infos) + " packetCount=" + updates.Count);
                 }
 
                 long gen = nextGen++;
