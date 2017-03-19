@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.Sep
 
         /// <summary>
         /// Records a single skip-point in the <see cref="Int32IndexInput.GetReader"/>. </summary>
-        public abstract class AbstractIndex
+        public abstract class AbstractIndex // LUCENENET TODO: API Change back to Index ? Or make interface so names don't collide?
         {
             public abstract void Read(DataInput indexIn, bool absolute);
 
@@ -50,7 +50,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         /// <summary>Reads int values</summary>
-        public abstract class AbstractReader
+        public abstract class AbstractReader // LUCENENET TODO: Change back to Reader ? Or make interface so names don't collide?
         {
             /// <summary>Reads next single int</summary>
             public abstract int Next();

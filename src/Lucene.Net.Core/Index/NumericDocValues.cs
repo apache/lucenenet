@@ -34,6 +34,6 @@ namespace Lucene.Net.Index
         /// Returns the numeric value for the specified document ID. </summary>
         /// <param name="docID"> document ID to lookup </param>
         /// <returns> numeric value </returns>
-        public abstract long Get(int docID);
+        public abstract long Get(int docID); // LUCENENET TODO: API Change to this[docID] (and check API for consistency)
     }
 }

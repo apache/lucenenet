@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Sep
         public abstract void Write(int v);
 
         /// <summary>Records a single skip-point in the IndexOutput. </summary>
-        public abstract class AbstractIndex
+        public abstract class AbstractIndex // LUCENENET TODO: API Change back to Index ? Or make interface so names don't collide?
         {
             /// <summary>Internally records the current location </summary>
             public abstract void Mark();

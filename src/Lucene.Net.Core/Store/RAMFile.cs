@@ -75,7 +75,7 @@ namespace Lucene.Net.Store
             return buffer;
         }
 
-        protected internal byte[] GetBuffer(int index)
+        protected internal byte[] GetBuffer(int index) // LUCENENET TODO: API Make Buffer[] property
         {
             lock (this)
             {
