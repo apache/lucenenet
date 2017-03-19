@@ -828,16 +828,16 @@ namespace Lucene.Net.Util
 
         private class Lucene46CodecAnonymousInnerClassHelper : Lucene46Codec
         {
-            private PostingsFormat Format;
+            private PostingsFormat format;
 
             public Lucene46CodecAnonymousInnerClassHelper(PostingsFormat format)
             {
-                this.Format = format;
+                this.format = format;
             }
 
             public override PostingsFormat GetPostingsFormatForField(string field)
             {
-                return Format;
+                return format;
             }
         }
 
@@ -860,16 +860,16 @@ namespace Lucene.Net.Util
 
         private class Lucene46CodecAnonymousInnerClassHelper2 : Lucene46Codec
         {
-            private DocValuesFormat Format;
+            private DocValuesFormat format;
 
             public Lucene46CodecAnonymousInnerClassHelper2(DocValuesFormat format)
             {
-                this.Format = format;
+                this.format = format;
             }
 
             public override DocValuesFormat GetDocValuesFormatForField(string field)
             {
-                return Format;
+                return format;
             }
         }
 
