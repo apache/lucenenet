@@ -929,46 +929,66 @@ namespace Lucene.Net.Analysis
             TokenStream ts;
             using (ts = a.GetTokenStream("dummy", useCharFilter ? (TextReader) new MockCharFilter(reader, remainder) : reader))
             {
-                 termAtt = ts.HasAttribute<ICharTermAttribute>()
-                    ? ts.GetAttribute<ICharTermAttribute>()
-                    : null;
-                offsetAtt = ts.HasAttribute<IOffsetAttribute>()
-                    ? ts.GetAttribute<IOffsetAttribute>()
-                    : null;
-                posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>()
-                    ? ts.GetAttribute<IPositionIncrementAttribute>()
-                    : null;
-                posLengthAtt = ts.HasAttribute<IPositionLengthAttribute>()
-                    ? ts.GetAttribute<IPositionLengthAttribute>()
-                    : null;
-                typeAtt = ts.HasAttribute<ITypeAttribute>() ? ts.GetAttribute<ITypeAttribute>() : null;
-
-                ts.Reset();
-
-                // First pass: save away "correct" tokens
-                while (ts.IncrementToken())
+                bool isReset = false;
+                try
                 {
-                    Assert.IsNotNull(termAtt, "has no CharTermAttribute");
-                    tokens.Add(termAtt.ToString());
-                    if (typeAtt != null)
+                    termAtt = ts.HasAttribute<ICharTermAttribute>()
+                       ? ts.GetAttribute<ICharTermAttribute>()
+                       : null;
+                    offsetAtt = ts.HasAttribute<IOffsetAttribute>()
+                        ? ts.GetAttribute<IOffsetAttribute>()
+                        : null;
+                    posIncAtt = ts.HasAttribute<IPositionIncrementAttribute>()
+                        ? ts.GetAttribute<IPositionIncrementAttribute>()
+                        : null;
+                    posLengthAtt = ts.HasAttribute<IPositionLengthAttribute>()
+                        ? ts.GetAttribute<IPositionLengthAttribute>()
+                        : null;
+                    typeAtt = ts.HasAttribute<ITypeAttribute>() ? ts.GetAttribute<ITypeAttribute>() : null;
+
+                    ts.Reset();
+                    isReset = true;
+
+                    // First pass: save away "correct" tokens
+                    while (ts.IncrementToken())
                     {
-                        types.Add(typeAtt.Type);
+                        Assert.IsNotNull(termAtt, "has no CharTermAttribute");
+                        tokens.Add(termAtt.ToString());
+                        if (typeAtt != null)
+                        {
+                            types.Add(typeAtt.Type);
+                        }
+                        if (posIncAtt != null)
+                        {
+                            positions.Add(posIncAtt.PositionIncrement);
+                        }
+                        if (posLengthAtt != null)
+                        {
+                            positionLengths.Add(posLengthAtt.PositionLength);
+                        }
+                        if (offsetAtt != null)
+                        {
+                            startOffsets.Add(offsetAtt.StartOffset);
+                            endOffsets.Add(offsetAtt.EndOffset);
+                        }
                     }
-                    if (posIncAtt != null)
-                    {
-                        positions.Add(posIncAtt.PositionIncrement);
-                    }
-                    if (posLengthAtt != null)
-                    {
-                        positionLengths.Add(posLengthAtt.PositionLength);
-                    }
-                    if (offsetAtt != null)
-                    {
-                        startOffsets.Add(offsetAtt.StartOffset);
-                        endOffsets.Add(offsetAtt.EndOffset);
-                    }
+                    ts.End();
                 }
-                ts.End();
+                finally
+                {
+                    if (!isReset)
+                    {
+                        try
+                        {
+                            ts.Reset();
+                        }
+                        catch (Exception ex)
+                        {
+                            // ignore
+                        }
+                    }
+                    ts.End();
+                }
             }
 
             // verify reusing is "reproducable" and also get the normal tokenstream sanity checks
