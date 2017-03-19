@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.MockRandom
                 int blockSize = TestUtil.NextInt(random, 1, 2000);
                 delegates.Add(new MockFixedIntBlockPostingsFormat.MockIntFactory(blockSize));
                 int baseBlockSize = TestUtil.NextInt(random, 1, 127);
-                delegates.Add(new MockVariableIntBlockPostingsFormat.MockIntFactory(baseBlockSize));
+                delegates.Add(new MockVariableInt32BlockPostingsFormat.MockInt32Factory(baseBlockSize));
                 // TODO: others
             }
 

@@ -32,17 +32,17 @@ namespace Lucene.Net.Codecs.MockIntBlock
     /// int is &lt;= 3, else 2* baseBlockSize.
     /// </summary>
     [PostingsFormatName("MockVariableIntBlock")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
-    public class MockVariableIntBlockPostingsFormat : PostingsFormat
+    public class MockVariableInt32BlockPostingsFormat : PostingsFormat
     {
         private readonly int baseBlockSize;
         
-        public MockVariableIntBlockPostingsFormat()
+        public MockVariableInt32BlockPostingsFormat()
             : this(1)
         {
 
         }
 
-        public MockVariableIntBlockPostingsFormat(int baseBlockSize)
+        public MockVariableInt32BlockPostingsFormat(int baseBlockSize)
             : base()
         {
             this.baseBlockSize = baseBlockSize;
@@ -57,12 +57,12 @@ namespace Lucene.Net.Codecs.MockIntBlock
          * If the first value is &lt;= 3, writes baseBlockSize vInts at once,
          * otherwise writes 2*baseBlockSize vInts.
          */
-        public class MockIntFactory : Int32StreamFactory
+        public class MockInt32Factory : Int32StreamFactory
         {
 
             private readonly int baseBlockSize;
 
-            public MockIntFactory(int baseBlockSize)
+            public MockInt32Factory(int baseBlockSize)
             {
                 this.baseBlockSize = baseBlockSize;
             }
@@ -71,14 +71,14 @@ namespace Lucene.Net.Codecs.MockIntBlock
             {
                 IndexInput input = dir.OpenInput(fileName, context);
                 int baseBlockSize = input.ReadInt32();
-                return new VariableIntBlockIndexInputAnonymousHelper(input, baseBlockSize);
+                return new VariableInt32BlockIndexInputAnonymousHelper(input, baseBlockSize);
             }
 
-            private class VariableIntBlockIndexInputAnonymousHelper : VariableInt32BlockIndexInput
+            private class VariableInt32BlockIndexInputAnonymousHelper : VariableInt32BlockIndexInput
             {
                 private readonly int baseBlockSize;
 
-                public VariableIntBlockIndexInputAnonymousHelper(IndexInput input, int baseBlockSize)
+                public VariableInt32BlockIndexInputAnonymousHelper(IndexInput input, int baseBlockSize)
                     : base(input)
                 {
                     this.baseBlockSize = baseBlockSize;
@@ -101,11 +101,11 @@ namespace Lucene.Net.Codecs.MockIntBlock
                         this.baseBlockSize = baseBlockSize;
                     }
 
-                    public void Seek(long pos)
+                    public virtual void Seek(long pos)
                     {
                     }
 
-                    public int ReadBlock()
+                    public virtual int ReadBlock()
                     {
                         buffer[0] = input.ReadVInt32();
                         int count = buffer[0] <= 3 ? baseBlockSize - 1 : 2 * baseBlockSize - 1;
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                 try
                 {
                     output.WriteInt32(baseBlockSize);
-                    VariableInt32BlockIndexOutput ret = new VariableIntBlockIndexOutputAnonymousHelper(output, 2 * baseBlockSize);
+                    VariableInt32BlockIndexOutput ret = new VariableInt32BlockIndexOutputAnonymousHelper(output, baseBlockSize);
                     success = true;
                     return ret;
                 }
@@ -140,12 +140,14 @@ namespace Lucene.Net.Codecs.MockIntBlock
             }
         }
 
-        private class VariableIntBlockIndexOutputAnonymousHelper : VariableInt32BlockIndexOutput
+        private class VariableInt32BlockIndexOutputAnonymousHelper : VariableInt32BlockIndexOutput
         {
             private readonly int baseBlockSize;
-            public VariableIntBlockIndexOutputAnonymousHelper(IndexOutput output, int baseBlockSize)
-                : base(output, baseBlockSize)
+            private readonly IndexOutput output;
+            public VariableInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int baseBlockSize)
+                : base(output, 2 * baseBlockSize)
             {
+                this.output = output;
                 this.baseBlockSize = baseBlockSize;
                 this.buffer = new int[2 + 2 * baseBlockSize];
             }
@@ -166,7 +168,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                 {
                     for (int i = 0; i < flushAt; i++)
                     {
-                        m_output.WriteVInt32(buffer[i]);
+                        this.output.WriteVInt32(buffer[i]);
                     }
                     buffer[0] = buffer[flushAt];
                     pendingCount = 1;
@@ -181,7 +183,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
-            PostingsWriterBase postingsWriter = new SepPostingsWriter(state, new MockIntFactory(baseBlockSize));
+            PostingsWriterBase postingsWriter = new SepPostingsWriter(state, new MockInt32Factory(baseBlockSize));
 
             bool success = false;
             TermsIndexWriterBase indexWriter;
@@ -227,7 +229,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                                                                       state.FieldInfos,
                                                                       state.SegmentInfo,
                                                                       state.Context,
-                                                                      new MockIntFactory(baseBlockSize), state.SegmentSuffix);
+                                                                      new MockInt32Factory(baseBlockSize), state.SegmentSuffix);
 
             TermsIndexReaderBase indexReader;
             bool success = false;
