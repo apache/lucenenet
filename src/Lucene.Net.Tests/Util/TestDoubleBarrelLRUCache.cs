@@ -192,7 +192,7 @@ namespace Lucene.Net.Util
                 return Value.GetHashCode();
             }
 
-            public override DoubleBarrelLRUCache.CloneableKey Clone()
+            public override object Clone()
             {
                 return new CloneableObject(Value);
             }
@@ -217,7 +217,7 @@ namespace Lucene.Net.Util
                 return Value.GetHashCode();
             }
 
-            public override DoubleBarrelLRUCache.CloneableKey Clone()
+            public override object Clone()
             {
                 return new CloneableInteger(Value);
             }

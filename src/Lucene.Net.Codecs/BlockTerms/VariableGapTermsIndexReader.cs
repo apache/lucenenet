@@ -6,7 +6,6 @@ using Lucene.Net.Util.Fst;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 
 namespace Lucene.Net.Codecs.BlockTerms
 {
@@ -34,59 +33,58 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// </summary>
     public class VariableGapTermsIndexReader : TermsIndexReaderBase
     {
-        private readonly PositiveInt32Outputs _fstOutputs = PositiveInt32Outputs.Singleton;
-        private readonly int _indexDivisor;
+        private readonly PositiveInt32Outputs fstOutputs = PositiveInt32Outputs.Singleton;
+        private int indexDivisor;
 
-        private readonly IndexInput _input;       // Closed if indexLoaded is true:
-        private volatile bool _indexLoaded;
+        // Closed if indexLoaded is true:
+        private IndexInput input;
+        private volatile bool indexLoaded;
 
-        private readonly Dictionary<FieldInfo, FieldIndexData> _fields = new Dictionary<FieldInfo, FieldIndexData>();
+        private readonly IDictionary<FieldInfo, FieldIndexData> fields = new Dictionary<FieldInfo, FieldIndexData>();
 
-        private long _dirOffset;                 // start of the field info data
+        // start of the field info data
+        private long dirOffset;
 
-        private readonly int _version;
+        private readonly int version;
 
         private readonly string segment;
-        
+
         public VariableGapTermsIndexReader(Directory dir, FieldInfos fieldInfos, string segment, int indexDivisor,
             string segmentSuffix, IOContext context)
         {
-            _input =
-                dir.OpenInput(
-                    IndexFileNames.SegmentFileName(segment, segmentSuffix,
-                        VariableGapTermsIndexWriter.TERMS_INDEX_EXTENSION), new IOContext(context, true));
+            input = dir.OpenInput(IndexFileNames.SegmentFileName(segment, segmentSuffix, VariableGapTermsIndexWriter.TERMS_INDEX_EXTENSION), new IOContext(context, true));
             this.segment = segment;
             bool success = false;
             Debug.Assert(indexDivisor == -1 || indexDivisor > 0);
 
             try
             {
-                _version = ReadHeader(_input);
-                _indexDivisor = indexDivisor;
+                version = ReadHeader(input);
+                this.indexDivisor = indexDivisor;
 
-                if (_version >= VariableGapTermsIndexWriter.VERSION_CHECKSUM)
+                if (version >= VariableGapTermsIndexWriter.VERSION_CHECKSUM)
                 {
-                    CodecUtil.ChecksumEntireFile(_input);
+                    CodecUtil.ChecksumEntireFile(input);
                 }
-                
-                SeekDir(_input, _dirOffset);
+
+                SeekDir(input, dirOffset);
 
                 // Read directory
-                int numFields = _input.ReadVInt32();
+                int numFields = input.ReadVInt32();
                 if (numFields < 0)
                 {
-                    throw new CorruptIndexException("invalid numFields: " + numFields + " (resource=" + _input + ")");
+                    throw new CorruptIndexException("invalid numFields: " + numFields + " (resource=" + input + ")");
                 }
 
-                for (var i = 0; i < numFields; i++)
+                for (int i = 0; i < numFields; i++)
                 {
-                    int field = _input.ReadVInt32();
-                    long indexStart = _input.ReadVInt64();
+                    int field = input.ReadVInt32();
+                    long indexStart = input.ReadVInt64();
                     FieldInfo fieldInfo = fieldInfos.FieldInfo(field);
-                    FieldIndexData previous = _fields.Put(fieldInfo, new FieldIndexData(this, fieldInfo, indexStart));
+                    FieldIndexData previous = fields.Put(fieldInfo, new FieldIndexData(this, fieldInfo, indexStart));
                     if (previous != null)
                     {
-                        throw new CorruptIndexException("duplicate field: " + fieldInfo.Name + " (resource=" + _input +")");
+                        throw new CorruptIndexException("duplicate field: " + fieldInfo.Name + " (resource=" + input + ")");
                     }
                 }
                 success = true;
@@ -95,11 +93,11 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (indexDivisor > 0)
                 {
-                    _input.Dispose();
-                    _input = null;
+                    input.Dispose();
+                    input = null;
                     if (success)
                     {
-                        _indexLoaded = true;
+                        indexLoaded = true;
                     }
                 }
             }
@@ -107,7 +105,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override int Divisor
         {
-            get { return _indexDivisor; }
+            get { return indexDivisor; }
         }
 
         private int ReadHeader(IndexInput input)
@@ -116,58 +114,76 @@ namespace Lucene.Net.Codecs.BlockTerms
                 VariableGapTermsIndexWriter.VERSION_START, VariableGapTermsIndexWriter.VERSION_CURRENT);
             if (version < VariableGapTermsIndexWriter.VERSION_APPEND_ONLY)
             {
-                _dirOffset = input.ReadInt64();
+                dirOffset = input.ReadInt64();
             }
             return version;
         }
 
         private class IndexEnum : FieldIndexEnum
         {
-            private readonly BytesRefFSTEnum<long?> _fstEnum;
-            private BytesRefFSTEnum.InputOutput<long?> _current;
+            private readonly BytesRefFSTEnum<long?> fstEnum;
+            private BytesRefFSTEnum.InputOutput<long?> current;
 
             public IndexEnum(FST<long?> fst)
             {
-                _fstEnum = new BytesRefFSTEnum<long?>(fst);
+                fstEnum = new BytesRefFSTEnum<long?>(fst);
             }
 
             public override BytesRef Term
             {
-                get { return _current == null ? null : _current.Input; }
+                get
+                {
+                    if (current == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return current.Input;
+                    }
+                }
             }
 
             public override long Seek(BytesRef target)
             {
                 //System.out.println("VGR: seek field=" + fieldInfo.name + " target=" + target);
-                _current = _fstEnum.SeekFloor(target);
-                if (_current.Output.HasValue)
+                current = fstEnum.SeekFloor(target);
+                //System.out.println("  got input=" + current.input + " output=" + current.output);
+                if (current.Output.HasValue)
                 {
-                    //System.out.println("  got input=" + current.input + " output=" + current.output);
-                    return _current.Output.Value;
+                    return current.Output.Value;
                 }
-                throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
+                else
+                {
+                    throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
+                }
             }
 
             public override long Next()
             {
                 //System.out.println("VGR: next field=" + fieldInfo.name);
-                _current = _fstEnum.Next();
-                if (_current == null)
+                current = fstEnum.Next();
+                if (current == null)
                 {
                     //System.out.println("  eof");
                     return -1;
                 }
-
-                if (_current.Output.HasValue)
+                else
                 {
-                    return _current.Output.Value;
+                    if (current.Output.HasValue)
+                    {
+                        return current.Output.Value;
+                    }
+                    else
+                    {
+                        throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
+                    }
                 }
-                throw new NullReferenceException("_current.Output is null"); // LUCENENET NOTE: NullReferenceException would be thrown in Java, so doing it here
             }
 
             public override long Ord
             {
-                get { throw new NotSupportedException(); } 
+                get { throw new NotSupportedException(); }
             }
 
             public override long Seek(long ord)
@@ -185,30 +201,31 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             private readonly VariableGapTermsIndexReader outerInstance;
 
-            private readonly long _indexStart;
+            private readonly long indexStart;
             // Set only if terms index is loaded:
             internal volatile FST<long?> fst;
-            
+
             public FieldIndexData(VariableGapTermsIndexReader outerInstance, FieldInfo fieldInfo, long indexStart)
             {
                 this.outerInstance = outerInstance;
 
-                _indexStart = indexStart;
+                this.indexStart = indexStart;
 
-                if (this.outerInstance._indexDivisor > 0)
+                if (outerInstance.indexDivisor > 0)
                 {
                     LoadTermsIndex();
-                }  
+                }
             }
 
             private void LoadTermsIndex()
             {
                 if (fst == null)
                 {
-                    IndexInput clone = (IndexInput)outerInstance._input.Clone();
-                    clone.Seek(_indexStart);
-                    fst = new FST<long?>(clone, outerInstance._fstOutputs);
-                    clone.Dispose(); // LUCENENET TODO: No using block here is bad...
+                    using (IndexInput clone = (IndexInput)outerInstance.input.Clone())
+                    {
+                        clone.Seek(indexStart);
+                        fst = new FST<long?>(clone, outerInstance.fstOutputs);
+                    } // clone.Dispose();
 
                     /*
                     final String dotFileName = segment + "_" + fieldInfo.name + ".dot";
@@ -218,7 +235,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     w.close();
                     */
 
-                    if (outerInstance._indexDivisor > 1)
+                    if (outerInstance.indexDivisor > 1)
                     {
                         // subsample
                         Int32sRef scratchIntsRef = new Int32sRef();
@@ -226,10 +243,10 @@ namespace Lucene.Net.Codecs.BlockTerms
                         Builder<long?> builder = new Builder<long?>(FST.INPUT_TYPE.BYTE1, outputs);
                         BytesRefFSTEnum<long?> fstEnum = new BytesRefFSTEnum<long?>(fst);
                         BytesRefFSTEnum.InputOutput<long?> result;
-                        int count = outerInstance._indexDivisor;
+                        int count = outerInstance.indexDivisor;
                         while ((result = fstEnum.Next()) != null)
                         {
-                            if (count == outerInstance._indexDivisor)
+                            if (count == outerInstance.indexDivisor)
                             {
                                 builder.Add(Util.Fst.Util.ToInt32sRef(result.Input, scratchIntsRef), result.Output);
                                 count = 0;
@@ -251,7 +268,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo)
         {
             FieldIndexData fieldData;
-            if (!_fields.TryGetValue(fieldInfo, out fieldData) || fieldData == null)
+            if (!fields.TryGetValue(fieldInfo, out fieldData) || fieldData == null || fieldData.fst == null)
             {
                 return null;
             }
@@ -263,20 +280,20 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override void Dispose()
         {
-            if (_input != null && !_indexLoaded)
-            { 
-                _input.Dispose(); 
-            } 
+            if (input != null && !indexLoaded)
+            {
+                input.Dispose();
+            }
         }
 
         private void SeekDir(IndexInput input, long dirOffset)
         {
-            if (_version >= VariableGapTermsIndexWriter.VERSION_CHECKSUM)
+            if (version >= VariableGapTermsIndexWriter.VERSION_CHECKSUM)
             {
                 input.Seek(input.Length - CodecUtil.FooterLength() - 8);
                 dirOffset = input.ReadInt64();
             }
-            else if (_version >= VariableGapTermsIndexWriter.VERSION_APPEND_ONLY)
+            else if (version >= VariableGapTermsIndexWriter.VERSION_APPEND_ONLY)
             {
                 input.Seek(input.Length - 8);
                 dirOffset = input.ReadInt64();
@@ -287,7 +304,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public override long RamBytesUsed()
         {
             long sizeInBytes = 0;
-            foreach (FieldIndexData entry in _fields.Values)
+            foreach (FieldIndexData entry in fields.Values)
             {
                 sizeInBytes += entry.RamBytesUsed();
             }

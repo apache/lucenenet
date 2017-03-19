@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return term.GetHashCode();
             }
 
-            public override DoubleBarrelLRUCache.CloneableKey Clone()
+            public override object Clone()
             {
                 return new CloneableTerm(term);
             }

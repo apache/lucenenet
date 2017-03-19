@@ -39,31 +39,30 @@ namespace Lucene.Net.Codecs.BlockTerms
         protected IndexOutput m_output;
 
         /// <summary>Extension of terms index file</summary>
-        internal const string TERMS_INDEX_EXTENSION = "tii";
-        internal const string CODEC_NAME = "SIMPLE_STANDARD_TERMS_INDEX";
-        internal const int VERSION_START = 0;
-        internal const int VERSION_APPEND_ONLY = 1;
-        internal const int VERSION_CHECKSUM = 1000; // 4.x "skipped" trunk's monotonic addressing: give any user a nice exception
-        internal const int VERSION_CURRENT = VERSION_CHECKSUM;
+        internal readonly static string TERMS_INDEX_EXTENSION = "tii";
+        internal readonly static string CODEC_NAME = "SIMPLE_STANDARD_TERMS_INDEX";
+        internal readonly static int VERSION_START = 0;
+        internal readonly static int VERSION_APPEND_ONLY = 1;
+        internal readonly static int VERSION_CHECKSUM = 1000; // 4.x "skipped" trunk's monotonic addressing: give any user a nice exception
+        internal readonly static int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        private readonly int _termIndexInterval;
+        private readonly int termIndexInterval;
 
-        private readonly List<SimpleFieldWriter> _fields = new List<SimpleFieldWriter>();
+        private readonly IList<SimpleFieldWriter> fields = new List<SimpleFieldWriter>();
 
-        private readonly FieldInfos _fieldInfos; // unread
+        private readonly FieldInfos fieldInfos; // unread
 
         public FixedGapTermsIndexWriter(SegmentWriteState state)
         {
-            string indexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,
-                TERMS_INDEX_EXTENSION);
-            _termIndexInterval = state.TermIndexInterval;
+            string indexFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, TERMS_INDEX_EXTENSION);
+            termIndexInterval = state.TermIndexInterval;
             m_output = state.Directory.CreateOutput(indexFileName, state.Context);
             bool success = false;
             try
             {
-                _fieldInfos = state.FieldInfos;
+                fieldInfos = state.FieldInfos;
                 WriteHeader(m_output);
-                m_output.WriteInt32(_termIndexInterval);
+                m_output.WriteInt32(termIndexInterval);
                 success = true;
             }
             finally
@@ -84,7 +83,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         {
             //System.out.println("FGW: addFfield=" + field.name);
             SimpleFieldWriter writer = new SimpleFieldWriter(this, field, termsFilePointer);
-            _fields.Add(writer);
+            fields.Add(writer);
             return writer;
         }
 
@@ -148,18 +147,20 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 // First term is first indexed term:
                 //System.output.println("FGW: checkIndexTerm text=" + text.utf8ToString());
-                if (0 == (numTerms++ % outerInstance._termIndexInterval))
+                if (0 == (numTerms++ % outerInstance.termIndexInterval))
                 {
                     return true;
                 }
-                // save last term just before next index term so we
-                // can compute wasted suffix
-                else if (0 == numTerms % outerInstance._termIndexInterval)
+                else
                 {
-                    lastTerm.CopyBytes(text);
+                    if (0 == numTerms % outerInstance.termIndexInterval)
+                    {
+                        // save last term just before next index term so we
+                        // can compute wasted suffix
+                        lastTerm.CopyBytes(text);
+                    }
+                    return false;
                 }
-
-                return false;
             }
 
             public override void Add(BytesRef text, TermStats stats, long termsFilePointer)
@@ -198,9 +199,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 // write primary terms dict offsets
                 packedIndexStart = outerInstance.m_output.FilePointer;
 
-                PackedInt32s.Writer w = PackedInt32s.GetWriter(outerInstance.m_output, numIndexTerms,
-                    PackedInt32s.BitsRequired(termsFilePointer),
-                    PackedInt32s.DEFAULT);
+                PackedInt32s.Writer w = PackedInt32s.GetWriter(outerInstance.m_output, numIndexTerms, PackedInt32s.BitsRequired(termsFilePointer), PackedInt32s.DEFAULT);
 
                 // relative to our indexStart
                 long upto = 0;
@@ -214,8 +213,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 packedOffsetsStart = outerInstance.m_output.FilePointer;
 
                 // write offsets into the byte[] terms
-                w = PackedInt32s.GetWriter(outerInstance.m_output, 1 + numIndexTerms, PackedInt32s.BitsRequired(totTermLength),
-                    PackedInt32s.DEFAULT);
+                w = PackedInt32s.GetWriter(outerInstance.m_output, 1 + numIndexTerms, PackedInt32s.BitsRequired(totTermLength), PackedInt32s.DEFAULT);
                 upto = 0;
                 for (int i = 0; i < numIndexTerms; i++)
                 {
@@ -240,12 +238,12 @@ namespace Lucene.Net.Codecs.BlockTerms
                 try
                 {
                     long dirStart = m_output.FilePointer;
-                    int fieldCount = _fields.Count;
+                    int fieldCount = fields.Count;
 
                     int nonNullFieldCount = 0;
                     for (int i = 0; i < fieldCount; i++)
                     {
-                        SimpleFieldWriter field = _fields[i];
+                        SimpleFieldWriter field = fields[i];
                         if (field.numIndexTerms > 0)
                         {
                             nonNullFieldCount++;
@@ -255,7 +253,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     m_output.WriteVInt32(nonNullFieldCount);
                     for (int i = 0; i < fieldCount; i++)
                     {
-                        SimpleFieldWriter field = _fields[i];
+                        SimpleFieldWriter field = fields[i];
                         if (field.numIndexTerms > 0)
                         {
                             m_output.WriteVInt32(field.fieldInfo.Number);

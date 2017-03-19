@@ -139,7 +139,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public abstract class CloneableKey
         {
-            public abstract CloneableKey Clone();
+            public abstract object Clone();
         }
     }
 }
