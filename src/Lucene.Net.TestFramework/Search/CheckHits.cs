@@ -393,7 +393,9 @@ namespace Lucene.Net.Search
                             int k2 = descr.IndexOf(" ", k1);
                             try
                             {
-                                x = Convert.ToSingle(descr.Substring(k1, k2 - k1).Trim(), CultureInfo.InvariantCulture);
+                                // LUCENENET NOTE: Using current culture here is intentional because
+                                // we are parsing from text that was made using the current culture.
+                                x = Convert.ToSingle(descr.Substring(k1, k2 - k1).Trim());
                                 if (descr.Substring(k2).Trim().Equals("times others of:", StringComparison.Ordinal))
                                 {
                                     maxTimesOthers = true;
