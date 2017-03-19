@@ -41,12 +41,12 @@ namespace Lucene.Net.Tests.Queries.Function
         [TearDown]
         public override void TearDown()
         {
-            base.TearDown();
             @is = null;
             ir.Dispose();
             ir = null;
             dir.Dispose();
             dir = null;
+            base.TearDown();
         }
         
         [Test]

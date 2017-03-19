@@ -52,9 +52,9 @@ namespace Lucene.Net.Index
         [TearDown]
         public override void TearDown()
         {
-            base.TearDown();
             Writer.Dispose();
             Directory.Dispose();
+            base.TearDown();
         }
 
         /// <summary>

@@ -60,9 +60,9 @@ namespace Lucene.Net.Search
         [TearDown]
         public override void TearDown()
         {
-            base.TearDown();
             Reader.Dispose();
             Dir.Dispose();
+            base.TearDown();
         }
 
         // should not throw exception

@@ -158,15 +158,7 @@ namespace Lucene.Net.Index
                 d.Dispose();
             }
             OldIndexDirs = null;
-            base.TearDown();
             base.AfterClass();
-        }
-
-        public override void TearDown() // LUCENENET TODO: Fix teardown for directories
-        {
-            // LUCENENET: We don't want our temp directory deleted until after
-            // all of the tests in the class run. So we need to override this and
-            // call base.TearDown() manually during TestFixtureTearDown
         }
 
         /// <summary>

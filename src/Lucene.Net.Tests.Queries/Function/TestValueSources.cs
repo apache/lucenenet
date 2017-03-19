@@ -83,13 +83,12 @@ namespace Lucene.Net.Tests.Queries.Function
         [TearDown]
         public override void TearDown()
         {
-            base.TearDown();
-
             searcher = null;
             reader.Dispose();
             reader = null;
             dir.Dispose();
             dir = null;
+            base.TearDown();
         }
         
         [Test]

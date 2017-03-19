@@ -68,11 +68,11 @@ namespace Lucene.Net.Classification
         }
 
         [TearDown]
-        public void tearDown()
+        public override void TearDown()
         {
-            base.TearDown();
             indexWriter.Dispose();
             dir.Dispose();
+            base.TearDown();
         }
 
         protected void CheckCorrectClassification(IClassifier<T> classifier, String inputDoc, T expectedResult, Analyzer analyzer, String textFieldName, String classFieldName)
