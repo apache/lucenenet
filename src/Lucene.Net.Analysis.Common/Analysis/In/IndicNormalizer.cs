@@ -272,8 +272,8 @@ namespace Lucene.Net.Analysis.In
             for (int i = 0; i < len; i++)
             {
                 var block = GetBlockForChar(text[i]);
-                ScriptData sd = scripts.ContainsKey(block) ? scripts[block] : null;
-                if (sd != null)
+                ScriptData sd;
+                if (scripts.TryGetValue(block, out sd) && sd != null)
                 {
                     int ch = text[i] - sd.@base;
                     if (sd.decompMask.Get(ch))
