@@ -203,7 +203,6 @@ namespace Lucene.Net.Analysis.NGram
 
         private static void TestNGrams(int minGram, int maxGram, int length, string nonTokenChars)
         {
-            // LUCENENET TODO: Changed randomizing strategy - not sure if this is right...
             //string s = RandomStrings.randomAsciiOfLength(Random(), length);
             string s = TestUtil.RandomAnalysisString(Random(), length, true);
             TestNGrams(minGram, maxGram, s, nonTokenChars);

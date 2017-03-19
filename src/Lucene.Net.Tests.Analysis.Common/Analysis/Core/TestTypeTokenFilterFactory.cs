@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Core
         {
             TokenFilterFactory factory = TokenFilterFactory("Type", "types", "stoptypes-1.txt, stoptypes-2.txt", "enablePositionIncrements", "true");
             NumericTokenStream input = new NumericTokenStream();
-            input.SetInt32Value(123); // LUCENENET TODO: Shouldn't this be a property setter?
+            input.SetInt32Value(123);
             factory.Create(input);
         }
 
