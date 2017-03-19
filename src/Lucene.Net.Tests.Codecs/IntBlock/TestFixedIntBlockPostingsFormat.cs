@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs.IntBlock
     public class TestFixedIntBlockPostingsFormat : BasePostingsFormatTestCase
     {
         // TODO: randomize blocksize
-        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MockFixedIntBlockPostingsFormat());
+        private readonly Codec codec = TestUtil.AlwaysPostingsFormat(new MockFixedInt32BlockPostingsFormat());
 
         protected override Codec Codec
         {

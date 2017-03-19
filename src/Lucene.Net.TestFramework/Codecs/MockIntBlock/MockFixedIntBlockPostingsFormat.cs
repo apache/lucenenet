@@ -30,16 +30,16 @@ namespace Lucene.Net.Codecs.MockIntBlock
     /// used here just writes each block as a series of vInt.
     /// </summary>
     [PostingsFormatName("MockFixedIntBlock")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
-    public sealed class MockFixedIntBlockPostingsFormat : PostingsFormat
+    public sealed class MockFixedInt32BlockPostingsFormat : PostingsFormat
     {
         private readonly int blockSize;
 
-        public MockFixedIntBlockPostingsFormat()
+        public MockFixedInt32BlockPostingsFormat()
             : this(1)
         {
         }
 
-        public MockFixedIntBlockPostingsFormat(int blockSize)
+        public MockFixedInt32BlockPostingsFormat(int blockSize)
             : base()
         {
             this.blockSize = blockSize;
@@ -51,33 +51,33 @@ namespace Lucene.Net.Codecs.MockIntBlock
         }
 
         // only for testing
-        public Int32StreamFactory getIntFactory()
+        public Int32StreamFactory GetInt32Factory()
         {
-            return new MockIntFactory(blockSize);
+            return new MockInt32Factory(blockSize);
         }
 
         /**
          * Encodes blocks as vInts of a fixed block size.
          */
-        public class MockIntFactory : Int32StreamFactory
+        public class MockInt32Factory : Int32StreamFactory
         {
             private readonly int blockSize;
 
-            public MockIntFactory(int blockSize)
+            public MockInt32Factory(int blockSize)
             {
                 this.blockSize = blockSize;
             }
 
             public override Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context)
             {
-                return new FixedIntBlockIndexInputAnonymousHelper(this, dir.OpenInput(fileName, context));
+                return new FixedInt32BlockIndexInputAnonymousHelper(this, dir.OpenInput(fileName, context));
             }
 
-            private class FixedIntBlockIndexInputAnonymousHelper : FixedInt32BlockIndexInput
+            private class FixedInt32BlockIndexInputAnonymousHelper : FixedInt32BlockIndexInput
             {
-                private readonly MockIntFactory outerInstance;
+                private readonly MockInt32Factory outerInstance;
 
-                public FixedIntBlockIndexInputAnonymousHelper(MockIntFactory outerInstance, IndexInput input)
+                public FixedInt32BlockIndexInputAnonymousHelper(MockInt32Factory outerInstance, IndexInput input)
                     : base(input)
                 {
                     this.outerInstance = outerInstance;
@@ -90,11 +90,11 @@ namespace Lucene.Net.Codecs.MockIntBlock
 
                 private class BlockReaderAnonymousHelper : FixedInt32BlockIndexInput.IBlockReader
                 {
-                    private readonly MockIntFactory outerInstance;
+                    private readonly MockInt32Factory outerInstance;
                     private readonly IndexInput @in;
                     private readonly int[] buffer;
 
-                    public BlockReaderAnonymousHelper(MockIntFactory outerInstance, IndexInput @in, int[] buffer)
+                    public BlockReaderAnonymousHelper(MockInt32Factory outerInstance, IndexInput @in, int[] buffer)
                     {
                         this.outerInstance = outerInstance;
                         this.@in = @in;
@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                 bool success = false;
                 try
                 {
-                    FixedIntBlockIndexOutputAnonymousHelper ret = new FixedIntBlockIndexOutputAnonymousHelper(output, blockSize);
+                    FixedInt32BlockIndexOutputAnonymousHelper ret = new FixedInt32BlockIndexOutputAnonymousHelper(output, blockSize);
 
                     success = true;
                     return ret;
@@ -136,9 +136,9 @@ namespace Lucene.Net.Codecs.MockIntBlock
             }
         }
 
-        private class FixedIntBlockIndexOutputAnonymousHelper : FixedInt32BlockIndexOutput
+        private class FixedInt32BlockIndexOutputAnonymousHelper : FixedInt32BlockIndexOutput
         {
-            public FixedIntBlockIndexOutputAnonymousHelper(IndexOutput output, int blockSize)
+            public FixedInt32BlockIndexOutputAnonymousHelper(IndexOutput output, int blockSize)
                 : base(output, blockSize)
             {
             }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState state)
         {
-            PostingsWriterBase postingsWriter = new SepPostingsWriter(state, new MockIntFactory(blockSize));
+            PostingsWriterBase postingsWriter = new SepPostingsWriter(state, new MockInt32Factory(blockSize));
 
             bool success = false;
             TermsIndexWriterBase indexWriter;
@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                                                                       state.FieldInfos,
                                                                       state.SegmentInfo,
                                                                       state.Context,
-                                                                      new MockIntFactory(blockSize), state.SegmentSuffix);
+                                                                      new MockInt32Factory(blockSize), state.SegmentSuffix);
 
             TermsIndexReaderBase indexReader;
             bool success = false;

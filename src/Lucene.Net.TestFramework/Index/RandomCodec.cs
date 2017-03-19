@@ -42,7 +42,7 @@ namespace Lucene.Net.Index
     using DirectPostingsFormat = Lucene.Net.Codecs.Memory.DirectPostingsFormat;
     using MemoryDocValuesFormat = Lucene.Net.Codecs.Memory.MemoryDocValuesFormat;
     using MemoryPostingsFormat = Lucene.Net.Codecs.Memory.MemoryPostingsFormat;
-    using MockFixedIntBlockPostingsFormat = Lucene.Net.Codecs.MockIntBlock.MockFixedIntBlockPostingsFormat;
+    using MockFixedInt32BlockPostingsFormat = Lucene.Net.Codecs.MockIntBlock.MockFixedInt32BlockPostingsFormat;
     using MockVariableInt32BlockPostingsFormat = Lucene.Net.Codecs.MockIntBlock.MockVariableInt32BlockPostingsFormat;
     using MockRandomPostingsFormat = Lucene.Net.Codecs.MockRandom.MockRandomPostingsFormat;
     using MockSepPostingsFormat = Lucene.Net.Codecs.MockSep.MockSepPostingsFormat;
@@ -166,7 +166,7 @@ namespace Lucene.Net.Index
                 //with such "wrapper" classes?
                 new TestBloomFilteredLucene41Postings(), 
                 new MockSepPostingsFormat(), 
-                new MockFixedIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)),
+                new MockFixedInt32BlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)),
                 new MockVariableInt32BlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), 
                 new MockRandomPostingsFormat(random),
                 new NestedPulsingPostingsFormat(), 
