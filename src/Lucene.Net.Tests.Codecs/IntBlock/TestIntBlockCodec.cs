@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.IntBlock
             @out.Dispose();
 
             Int32IndexInput @in = f.OpenInput(dir, "test", NewIOContext(Random()));
-            Int32IndexInput.AbstractReader r = @in.GetReader();
+            Int32IndexInput.Reader r = @in.GetReader();
 
             for (int i = 0; i < 11777; i++)
             {

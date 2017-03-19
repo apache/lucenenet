@@ -47,7 +47,7 @@ namespace Lucene.Net.Codecs.IntBlock
             m_blockSize = @in.ReadVInt32();
         }
 
-        public override AbstractReader GetReader()
+        public override Int32IndexInput.Reader GetReader()
         {
             var buffer = new int[m_blockSize];
             var clone = (IndexInput)input.Clone();
@@ -60,7 +60,7 @@ namespace Lucene.Net.Codecs.IntBlock
             input.Dispose();
         }
 
-        public override AbstractIndex GetIndex()
+        public override Int32IndexInput.Index GetIndex()
         {
             return new Index(this);
         }
@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.IntBlock
             void ReadBlock();
         }
 
-        private class Reader : AbstractReader
+        new private class Reader : Int32IndexInput.Reader
         {
             private readonly IndexInput input;
             private readonly IBlockReader blockReader;
@@ -132,7 +132,7 @@ namespace Lucene.Net.Codecs.IntBlock
             }
         }
 
-        private class Index : AbstractIndex
+        new private class Index : Int32IndexInput.Index
         {
             private readonly FixedInt32BlockIndexInput outerInstance;
 
@@ -169,19 +169,19 @@ namespace Lucene.Net.Codecs.IntBlock
                 Debug.Assert(upto < outerInstance.m_blockSize);
             }
 
-            public override void Seek(AbstractReader other)
+            public override void Seek(Int32IndexInput.Reader other)
             {
                 ((Reader)other).Seek(fp, upto);
             }
 
-            public override void CopyFrom(AbstractIndex other)
+            public override void CopyFrom(Int32IndexInput.Index other)
             {
                 Index idx = (Index)other;
                 fp = idx.fp;
                 upto = idx.upto;
             }
 
-            public override AbstractIndex Clone()
+            public override object Clone()
             {
                 Index other = new Index(outerInstance);
                 other.fp = fp;

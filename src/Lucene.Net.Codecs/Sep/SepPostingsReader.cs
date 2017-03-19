@@ -108,9 +108,9 @@ namespace Lucene.Net.Codecs.Sep
             // We store only the seek point to the docs file because
             // the rest of the info (freqIndex, posIndex, etc.) is
             // stored in the docs file:
-            internal Int32IndexInput.AbstractIndex docIndex;
-            internal Int32IndexInput.AbstractIndex posIndex;
-            internal Int32IndexInput.AbstractIndex freqIndex;
+            internal Int32IndexInput.Index docIndex;
+            internal Int32IndexInput.Index posIndex;
+            internal Int32IndexInput.Index freqIndex;
             internal long payloadFP;
             internal long skipFP;
 
@@ -127,7 +127,7 @@ namespace Lucene.Net.Codecs.Sep
                 SepTermState other_ = (SepTermState)other;
                 if (docIndex == null)
                 {
-                    docIndex = other_.docIndex.Clone();
+                    docIndex = (Int32IndexInput.Index)other_.docIndex.Clone();
                 }
                 else
                 {
@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.Sep
                 {
                     if (freqIndex == null)
                     {
-                        freqIndex = other_.freqIndex.Clone();
+                        freqIndex = (Int32IndexInput.Index)other_.freqIndex.Clone();
                     }
                     else
                     {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.Sep
                 {
                     if (posIndex == null)
                     {
-                        posIndex = other_.posIndex.Clone();
+                        posIndex = (Int32IndexInput.Index)other_.posIndex.Clone();
                     }
                     else
                     {
@@ -301,13 +301,13 @@ namespace Lucene.Net.Codecs.Sep
             private IndexOptions indexOptions;
             private bool storePayloads;
             private IBits liveDocs;
-            private readonly Int32IndexInput.AbstractReader docReader;
-            private readonly Int32IndexInput.AbstractReader freqReader;
+            private readonly Int32IndexInput.Reader docReader;
+            private readonly Int32IndexInput.Reader freqReader;
             private long skipFP;
 
-            private readonly Int32IndexInput.AbstractIndex docIndex;
-            private readonly Int32IndexInput.AbstractIndex freqIndex;
-            private readonly Int32IndexInput.AbstractIndex posIndex;
+            private readonly Int32IndexInput.Index docIndex;
+            private readonly Int32IndexInput.Index freqIndex;
+            private readonly Int32IndexInput.Index posIndex;
             internal readonly Int32IndexInput startDocIn;
 
             // TODO: -- should we do hasProx with 2 different enum classes?
@@ -492,15 +492,15 @@ namespace Lucene.Net.Codecs.Sep
 
             private bool storePayloads;
             private IBits liveDocs;
-            private readonly Int32IndexInput.AbstractReader docReader;
-            private readonly Int32IndexInput.AbstractReader freqReader;
-            private readonly Int32IndexInput.AbstractReader posReader;
+            private readonly Int32IndexInput.Reader docReader;
+            private readonly Int32IndexInput.Reader freqReader;
+            private readonly Int32IndexInput.Reader posReader;
             private readonly IndexInput payloadIn;
             private long skipFP;
 
-            private readonly Int32IndexInput.AbstractIndex docIndex;
-            private readonly Int32IndexInput.AbstractIndex freqIndex;
-            private readonly Int32IndexInput.AbstractIndex posIndex;
+            private readonly Int32IndexInput.Index docIndex;
+            private readonly Int32IndexInput.Index freqIndex;
+            private readonly Int32IndexInput.Index posIndex;
             internal readonly Int32IndexInput startDocIn;
 
             private long payloadFP;

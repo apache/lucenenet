@@ -33,15 +33,15 @@ namespace Lucene.Net.Codecs.Sep
     internal class SepSkipListReader : MultiLevelSkipListReader
     {
         private bool _currentFieldStoresPayloads;
-        private readonly Int32IndexInput.AbstractIndex[] _freqIndex;
-        private readonly Int32IndexInput.AbstractIndex[] _docIndex;
-        private readonly Int32IndexInput.AbstractIndex[] _posIndex;
+        private readonly Int32IndexInput.Index[] _freqIndex;
+        private readonly Int32IndexInput.Index[] _docIndex;
+        private readonly Int32IndexInput.Index[] _posIndex;
         private readonly long[] _payloadPointer;
         private readonly int[] _payloadLength;
 
-        private readonly Int32IndexInput.AbstractIndex _lastFreqIndex;
-        private readonly Int32IndexInput.AbstractIndex _lastDocIndex;
-        private readonly Int32IndexInput.AbstractIndex _lastPosIndex;
+        private readonly Int32IndexInput.Index _lastFreqIndex;
+        private readonly Int32IndexInput.Index _lastDocIndex;
+        private readonly Int32IndexInput.Index _lastPosIndex;
 
         private long _lastPayloadPointer;
         private int _lastPayloadLength;
@@ -52,12 +52,12 @@ namespace Lucene.Net.Codecs.Sep
         {
             if (freqIn != null)
             {
-                _freqIndex = new Int32IndexInput.AbstractIndex[maxSkipLevels];
+                _freqIndex = new Int32IndexInput.Index[maxSkipLevels];
             }
-            _docIndex = new Int32IndexInput.AbstractIndex[maxSkipLevels];
+            _docIndex = new Int32IndexInput.Index[maxSkipLevels];
             if (posIn != null)
             {
-                _posIndex = new Int32IndexInput.AbstractIndex[m_maxNumberOfSkipLevels];
+                _posIndex = new Int32IndexInput.Index[m_maxNumberOfSkipLevels];
             }
 
             for (var i = 0; i < maxSkipLevels; i++)
@@ -91,9 +91,9 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         internal virtual void Init(long skipPointer, 
-            Int32IndexInput.AbstractIndex docBaseIndex, 
-            Int32IndexInput.AbstractIndex freqBaseIndex,
-            Int32IndexInput.AbstractIndex posBaseIndex, 
+            Int32IndexInput.Index docBaseIndex, 
+            Int32IndexInput.Index freqBaseIndex,
+            Int32IndexInput.Index posBaseIndex, 
             long payloadBasePointer, 
             int df, 
             bool storesPayloads)
@@ -176,17 +176,17 @@ namespace Lucene.Net.Codecs.Sep
             }
         }
 
-        internal virtual Int32IndexInput.AbstractIndex FreqIndex
+        internal virtual Int32IndexInput.Index FreqIndex
         {
             get { return _lastFreqIndex; }
         }
 
-        internal virtual Int32IndexInput.AbstractIndex PosIndex
+        internal virtual Int32IndexInput.Index PosIndex
         {
             get { return _lastPosIndex; }
         }
 
-        internal virtual Int32IndexInput.AbstractIndex DocIndex
+        internal virtual Int32IndexInput.Index DocIndex
         {
             get { return _lastDocIndex; }
         }
