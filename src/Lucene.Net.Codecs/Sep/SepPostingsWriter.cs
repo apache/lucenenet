@@ -30,32 +30,32 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     public sealed class SepPostingsWriter : PostingsWriterBase
     {
-        internal const string CODEC = "SepPostingsWriter";
+        internal readonly static string CODEC = "SepPostingsWriter";
 
-        internal const string DOC_EXTENSION = "doc";
-        internal const string SKIP_EXTENSION = "skp";
-        internal const string FREQ_EXTENSION = "frq";
-        internal const string POS_EXTENSION = "pos";
-        internal const string PAYLOAD_EXTENSION = "pyl";
+        internal readonly static string DOC_EXTENSION = "doc";
+        internal readonly static string SKIP_EXTENSION = "skp";
+        internal readonly static string FREQ_EXTENSION = "frq";
+        internal readonly static string POS_EXTENSION = "pos";
+        internal readonly static string PAYLOAD_EXTENSION = "pyl";
 
         // Increment version to change it:
-        internal const int VERSION_START = 0;
-        internal const int VERSION_CURRENT = VERSION_START;
+        internal readonly static int VERSION_START = 0;
+        internal readonly static int VERSION_CURRENT = VERSION_START;
 
-        internal Int32IndexOutput freqOut;
-        internal Int32IndexOutput.AbstractIndex freqIndex;
+        private Int32IndexOutput freqOut;
+        private Int32IndexOutput.AbstractIndex freqIndex;
 
-        internal Int32IndexOutput posOut;
-        internal Int32IndexOutput.AbstractIndex posIndex;
+        private Int32IndexOutput posOut;
+        private Int32IndexOutput.AbstractIndex posIndex;
 
-        internal Int32IndexOutput docOut;
-        internal Int32IndexOutput.AbstractIndex docIndex;
+        private Int32IndexOutput docOut;
+        private Int32IndexOutput.AbstractIndex docIndex;
 
-        internal IndexOutput payloadOut;
+        private IndexOutput payloadOut;
 
-        internal IndexOutput skipOut;
+        private IndexOutput skipOut;
 
-        internal readonly SepSkipListWriter skipListWriter;
+        private readonly SepSkipListWriter skipListWriter;
 
         /// <summary>
         /// Expert: The fraction of TermDocs entries stored in skip tables,
@@ -64,37 +64,36 @@ namespace Lucene.Net.Codecs.Sep
         /// smaller values result in bigger indexes, less acceleration and more
         /// accelerable cases. More detailed experiments would be useful here. 
         /// </summary>
-        internal readonly int skipInterval;
-
-        internal const int DEFAULT_SKIP_INTERVAL = 16;
+        private readonly int skipInterval;
+        private static readonly int DEFAULT_SKIP_INTERVAL = 16;
 
         /// <summary>
         /// Expert: minimum docFreq to write any skip data at all
         /// </summary>
-        internal readonly int skipMinimum;
+        private readonly int skipMinimum;
 
         /// <summary>
         /// Expert: The maximum number of skip levels. Smaller values result in 
         /// slightly smaller indexes, but slower skipping in big posting lists.
         /// </summary>
-        internal readonly int maxSkipLevels = 10;
+        private readonly int maxSkipLevels = 10;
 
-        internal readonly int totalNumDocs;
+        private readonly int totalNumDocs;
 
-        internal bool storePayloads;
-        internal IndexOptions indexOptions; 
+        private bool storePayloads;
+        private IndexOptions indexOptions;
 
-        internal FieldInfo fieldInfo;
+        private FieldInfo fieldInfo;
 
-        internal int lastPayloadLength;
-        internal int lastPosition;
-        internal long payloadStart;
-        internal int lastDocID;
-        internal int df;
+        private int lastPayloadLength;
+        private int lastPosition;
+        private long payloadStart;
+        private int lastDocID;
+        private int df;
 
         private SepTermState lastState;
-        internal long lastPayloadFP;
-        internal long lastSkipFP; 
+        private long lastPayloadFP;
+        private long lastSkipFP;
 
         public SepPostingsWriter(SegmentWriteState state, Int32StreamFactory factory)
             : this(state, factory, DEFAULT_SKIP_INTERVAL)
@@ -112,36 +111,39 @@ namespace Lucene.Net.Codecs.Sep
             try
             {
                 this.skipInterval = skipInterval;
-                skipMinimum = skipInterval; // set to the same for now
-                var docFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, DOC_EXTENSION);
+                this.skipMinimum = skipInterval; /* set to the same for now */
+                string docFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, DOC_EXTENSION);
 
                 docOut = factory.CreateOutput(state.Directory, docFileName, state.Context);
                 docIndex = docOut.GetIndex();
 
                 if (state.FieldInfos.HasFreq)
                 {
-                    var frqFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, FREQ_EXTENSION);
+                    string frqFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, FREQ_EXTENSION);
                     freqOut = factory.CreateOutput(state.Directory, frqFileName, state.Context);
                     freqIndex = freqOut.GetIndex();
                 }
 
                 if (state.FieldInfos.HasProx)
                 {
-                    var posFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, POS_EXTENSION);
+                    string posFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, POS_EXTENSION);
                     posOut = factory.CreateOutput(state.Directory, posFileName, state.Context);
                     posIndex = posOut.GetIndex();
 
                     // TODO: -- only if at least one field stores payloads?
-                    var payloadFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix,PAYLOAD_EXTENSION);
+                    string payloadFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, PAYLOAD_EXTENSION);
                     payloadOut = state.Directory.CreateOutput(payloadFileName, state.Context);
                 }
 
-                var skipFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, SKIP_EXTENSION);
+                string skipFileName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, SKIP_EXTENSION);
                 skipOut = state.Directory.CreateOutput(skipFileName, state.Context);
 
                 totalNumDocs = state.SegmentInfo.DocCount;
 
-                skipListWriter = new SepSkipListWriter(skipInterval, maxSkipLevels, totalNumDocs, freqOut, docOut,
+                skipListWriter = new SepSkipListWriter(skipInterval,
+                    maxSkipLevels,
+                    totalNumDocs,
+                    freqOut, docOut,
                     posOut, payloadOut);
 
                 success = true;
@@ -171,7 +173,7 @@ namespace Lucene.Net.Codecs.Sep
         public override void StartTerm()
         {
             docIndex.Mark();
-            
+
             if (indexOptions != IndexOptions.DOCS_ONLY)
             {
                 freqIndex.Mark();
@@ -192,16 +194,13 @@ namespace Lucene.Net.Codecs.Sep
         public override int SetField(FieldInfo fieldInfo)
         {
             this.fieldInfo = fieldInfo;
-            
-            indexOptions = fieldInfo.IndexOptions;
-
+            this.indexOptions = fieldInfo.IndexOptions;
             if (indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0)
             {
                 throw new System.NotSupportedException("this codec cannot index offsets");
             }
             skipListWriter.SetIndexOptions(indexOptions);
-            storePayloads = indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS &&
-                            fieldInfo.HasPayloads;
+            storePayloads = indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS && fieldInfo.HasPayloads;
             lastPayloadFP = 0;
             lastSkipFP = 0;
             lastState = SetEmptyState();
@@ -210,10 +209,8 @@ namespace Lucene.Net.Codecs.Sep
 
         private SepTermState SetEmptyState()
         {
-            var emptyState = new SepTermState
-            {
-                DocIndex = docOut.GetIndex()
-            };
+            SepTermState emptyState = new SepTermState();
+            emptyState.DocIndex = docOut.GetIndex();
             if (indexOptions != IndexOptions.DOCS_ONLY)
             {
                 emptyState.FreqIndex = freqOut.GetIndex();
@@ -222,8 +219,8 @@ namespace Lucene.Net.Codecs.Sep
                     emptyState.PosIndex = posOut.GetIndex();
                 }
             }
-            emptyState.PayloadFp = 0;
-            emptyState.SkipFp = 0;
+            emptyState.PayloadFP = 0;
+            emptyState.SkipFP = 0;
             return emptyState;
         }
 
@@ -231,26 +228,26 @@ namespace Lucene.Net.Codecs.Sep
         /// Adds a new doc in this term.  If this returns null
         ///  then we just skip consuming positions/payloads. 
         /// </summary>
-        public override void StartDoc(int docId, int termDocFreq)
+        public override void StartDoc(int docID, int termDocFreq)
         {
-            int delta = docId - lastDocID;
-            
-            if (docId < 0 || (df > 0 && delta <= 0))
+            int delta = docID - lastDocID;
+            //System.out.println("SEPW: startDoc: write doc=" + docID + " delta=" + delta + " out.fp=" + docOut);
+
+            if (docID < 0 || (df > 0 && delta <= 0))
             {
-                throw new CorruptIndexException("docs out of order (" + docId + " <= " + lastDocID + " ) (docOut: " +
-                                                docOut + ")");
+                throw new CorruptIndexException("docs out of order (" + docID + " <= " + lastDocID + " ) (docOut: " + docOut + ")");
             }
 
             if ((++df % skipInterval) == 0)
             {
-                // TODO: -- awkward we have to make these two 
+                // TODO: -- awkward we have to make these two
                 // separate calls to skipper
                 //System.out.println("    buffer skip lastDocID=" + lastDocID);
                 skipListWriter.SetSkipData(lastDocID, storePayloads, lastPayloadLength);
                 skipListWriter.BufferSkip(df);
             }
 
-            lastDocID = docId;
+            lastDocID = docID;
             docOut.Write(delta);
             if (indexOptions != IndexOptions.DOCS_ONLY)
             {
@@ -266,7 +263,7 @@ namespace Lucene.Net.Codecs.Sep
             Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
 
             int delta = position - lastPosition;
-            Debug.Assert(delta >= 0, "position=" + position + " lastPosition=" + lastPosition); // not quite right (if pos=0 is repeated twice we don't catch it)
+            Debug.Assert(delta >= 0, "position=" + position + " lastPosition=" + lastPosition);            // not quite right (if pos=0 is repeated twice we don't catch it)
             lastPosition = position;
 
             if (storePayloads)
@@ -309,109 +306,110 @@ namespace Lucene.Net.Codecs.Sep
             public Int32IndexOutput.AbstractIndex DocIndex { get; set; }
             public Int32IndexOutput.AbstractIndex FreqIndex { get; set; }
             public Int32IndexOutput.AbstractIndex PosIndex { get; set; }
-            public long PayloadFp { get; set; }
-            public long SkipFp { get; set; }
+            public long PayloadFP { get; set; }
+            public long SkipFP { get; set; }
         }
 
         /// <summary>Called when we are done adding docs to this term </summary>
-        public override void FinishTerm(BlockTermState bstate)
+        public override void FinishTerm(BlockTermState state)
         {
-            var state = (SepTermState)bstate;
+            SepTermState state_ = (SepTermState)state;
             // TODO: -- wasteful we are counting this in two places?
-            Debug.Assert(state.DocFreq > 0);
-            Debug.Assert(state.DocFreq == df);
+            Debug.Assert(state_.DocFreq > 0);
+            Debug.Assert(state_.DocFreq == df);
 
-            state.DocIndex = docOut.GetIndex();
-            state.DocIndex.CopyFrom(docIndex, false);
+            state_.DocIndex = docOut.GetIndex();
+            state_.DocIndex.CopyFrom(docIndex, false);
             if (indexOptions != IndexOptions.DOCS_ONLY)
             {
-                state.FreqIndex = freqOut.GetIndex();
-                state.FreqIndex.CopyFrom(freqIndex, false);
+                state_.FreqIndex = freqOut.GetIndex();
+                state_.FreqIndex.CopyFrom(freqIndex, false);
                 if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
-                    state.PosIndex = posOut.GetIndex();
-                    state.PosIndex.CopyFrom(posIndex, false);
+                    state_.PosIndex = posOut.GetIndex();
+                    state_.PosIndex.CopyFrom(posIndex, false);
                 }
                 else
                 {
-                    state.PosIndex = null;
+                    state_.PosIndex = null;
                 }
             }
             else
             {
-                state.FreqIndex = null;
-                state.PosIndex = null;
+                state_.FreqIndex = null;
+                state_.PosIndex = null;
             }
 
             if (df >= skipMinimum)
             {
-                state.SkipFp = skipOut.FilePointer;
+                state_.SkipFP = skipOut.FilePointer;
                 //System.out.println("  skipFP=" + skipFP);
                 skipListWriter.WriteSkip(skipOut);
                 //System.out.println("    numBytes=" + (skipOut.getFilePointer()-skipFP));
             }
             else
             {
-                state.SkipFp = -1;
+                state_.SkipFP = -1;
             }
-            state.PayloadFp = payloadStart;
+            state_.PayloadFP = payloadStart;
 
             lastDocID = 0;
             df = 0;
         }
 
-        public override void EncodeTerm(long[] longs, DataOutput output, FieldInfo fi, BlockTermState bstate, bool absolute)
+        public override void EncodeTerm(long[] longs, DataOutput output, FieldInfo fi, BlockTermState state, bool absolute)
         {
-            var state = (SepTermState) bstate;
+            SepTermState state_ = (SepTermState)state;
             if (absolute)
             {
                 lastSkipFP = 0;
                 lastPayloadFP = 0;
-                lastState = state;
+                lastState = state_;
             }
-            lastState.DocIndex.CopyFrom(state.DocIndex, false);
+            lastState.DocIndex.CopyFrom(state_.DocIndex, false);
             lastState.DocIndex.Write(output, absolute);
             if (indexOptions != IndexOptions.DOCS_ONLY)
             {
-                lastState.FreqIndex.CopyFrom(state.FreqIndex, false);
+                lastState.FreqIndex.CopyFrom(state_.FreqIndex, false);
                 lastState.FreqIndex.Write(output, absolute);
                 if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
                 {
-                    lastState.PosIndex.CopyFrom(state.PosIndex, false);
+                    lastState.PosIndex.CopyFrom(state_.PosIndex, false);
                     lastState.PosIndex.Write(output, absolute);
                     if (storePayloads)
                     {
                         if (absolute)
                         {
-                            output.WriteVInt64(state.PayloadFp);
+                            output.WriteVInt64(state_.PayloadFP);
                         }
                         else
                         {
-                            output.WriteVInt64(state.PayloadFp - lastPayloadFP);
+                            output.WriteVInt64(state_.PayloadFP - lastPayloadFP);
                         }
-                        lastPayloadFP = state.PayloadFp;
+                        lastPayloadFP = state_.PayloadFP;
                     }
                 }
             }
-            if (state.SkipFp != -1)
+            if (state_.SkipFP != -1)
             {
                 if (absolute)
                 {
-                    output.WriteVInt64(state.SkipFp);
+                    output.WriteVInt64(state_.SkipFP);
                 }
                 else
                 {
-                    output.WriteVInt64(state.SkipFp - lastSkipFP);
+                    output.WriteVInt64(state_.SkipFP - lastSkipFP);
                 }
-                lastSkipFP = state.SkipFp;
+                lastSkipFP = state_.SkipFP;
             }
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (!disposing) return;
-
-            IOUtils.Close(docOut, skipOut, freqOut, posOut, payloadOut);
+            if (disposing)
+            {
+                IOUtils.Close(docOut, skipOut, freqOut, posOut, payloadOut);
+            }
         }
     }
 }
