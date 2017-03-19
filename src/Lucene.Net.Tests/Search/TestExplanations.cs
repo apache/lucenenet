@@ -50,7 +50,7 @@ namespace Lucene.Net.Search
     /// </summary>
     /// <seealso cref= "Subclasses for actual tests" </seealso>
     [TestFixture]
-    public class TestExplanations : LuceneTestCaseWithReducedFloatPrecision
+    public class TestExplanations : LuceneTestCase
     {
         protected internal static IndexSearcher Searcher;
         protected internal static IndexReader Reader;

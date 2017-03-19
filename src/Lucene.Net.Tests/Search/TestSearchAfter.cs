@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
     /// Tests IndexSearcher's searchAfter() method
     /// </summary>
     [TestFixture]
-    public class TestSearchAfter : LuceneTestCaseWithReducedFloatPrecision
+    public class TestSearchAfter : LuceneTestCase
     {
         private bool isVerbose = false;
 

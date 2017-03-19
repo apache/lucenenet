@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
-    public class TestTopDocsMerge : LuceneTestCaseWithReducedFloatPrecision
+    public class TestTopDocsMerge : LuceneTestCase
     {
         private class ShardSearcher : IndexSearcher
         {

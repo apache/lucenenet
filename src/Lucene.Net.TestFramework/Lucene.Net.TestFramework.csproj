@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -425,7 +425,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Support\CultureInfoSupport.cs" />
-    <Compile Include="Support\FloatUtils.cs" />
     <Compile Include="Support\RandomizedTest.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -458,7 +457,6 @@
     <Compile Include="Util\Paths.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Util\LuceneTestCaseWithReducedFloatPrecision.cs" />
     <Compile Include="Util\StackTraceHelper.cs" />
     <Compile Include="Util\TestRuleSetupAndRestoreClassEnv.cs">
       <SubType>Code</SubType>

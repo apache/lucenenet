@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
     ///
     /// </summary>
     [TestFixture]
-    public class TestFuzzyQuery : LuceneTestCaseWithReducedFloatPrecision
+    public class TestFuzzyQuery : LuceneTestCase
     {
         [Test]
         public virtual void TestFuzziness()
