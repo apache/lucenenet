@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
     using MemoryDocValuesFormat = Lucene.Net.Codecs.Memory.MemoryDocValuesFormat;
     using MemoryPostingsFormat = Lucene.Net.Codecs.Memory.MemoryPostingsFormat;
     using MockFixedIntBlockPostingsFormat = Lucene.Net.Codecs.MockIntBlock.MockFixedIntBlockPostingsFormat;
-    using MockVariableIntBlockPostingsFormat = Lucene.Net.Codecs.MockIntBlock.MockVariableIntBlockPostingsFormat;
+    using MockVariableInt32BlockPostingsFormat = Lucene.Net.Codecs.MockIntBlock.MockVariableInt32BlockPostingsFormat;
     using MockRandomPostingsFormat = Lucene.Net.Codecs.MockRandom.MockRandomPostingsFormat;
     using MockSepPostingsFormat = Lucene.Net.Codecs.MockSep.MockSepPostingsFormat;
     using NestedPulsingPostingsFormat = Lucene.Net.Codecs.NestedPulsing.NestedPulsingPostingsFormat;
@@ -167,12 +167,7 @@ namespace Lucene.Net.Index
                 new TestBloomFilteredLucene41Postings(), 
                 new MockSepPostingsFormat(), 
                 new MockFixedIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 2000)),
-
-                // LUCENENET TODO: This codec is causing random exceptions, but upon
-                // line-by-line review of the codec, it is exactly as it was in Lucene.
-                // So, there must be something wrong with variable int functionality
-                // somewhere else in the core.
-                //new MockVariableIntBlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), 
+                new MockVariableInt32BlockPostingsFormat(TestUtil.NextInt(random, 1, 127)), 
                 new MockRandomPostingsFormat(random),
                 new NestedPulsingPostingsFormat(), 
                 new Lucene41WithOrds(), 
