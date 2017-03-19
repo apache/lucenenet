@@ -732,7 +732,7 @@ namespace Lucene.Net.Index
 
             for (int id = 0; id < endID; id++)
             {
-                string stringID = "" + id;
+                string stringID = id.ToString(CultureInfo.InvariantCulture);
                 if (!delIDs.Contains(stringID))
                 {
                     TopDocs hits = s.Search(new TermQuery(new Term("docid", stringID)), 1);
