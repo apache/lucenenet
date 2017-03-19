@@ -38,9 +38,9 @@ namespace Lucene.Net.Codecs.Sep
         private readonly int[] _lastSkipPayloadLength;
         private readonly long[] _lastSkipPayloadPointer;
 
-        private readonly Int32IndexOutput.AbstractIndex[] _docIndex;
-        private readonly Int32IndexOutput.AbstractIndex[] _freqIndex;
-        private readonly Int32IndexOutput.AbstractIndex[] _posIndex;
+        private readonly Int32IndexOutput.Index[] _docIndex;
+        private readonly Int32IndexOutput.Index[] _freqIndex;
+        private readonly Int32IndexOutput.Index[] _posIndex;
 
         private readonly Int32IndexOutput _freqOutput;
         private Int32IndexOutput _posOutput;
@@ -67,9 +67,9 @@ namespace Lucene.Net.Codecs.Sep
             // TODO: -- also cutover normal IndexOutput to use getIndex()?
             _lastSkipPayloadPointer = new long[numberOfSkipLevels];
 
-            _freqIndex = new Int32IndexOutput.AbstractIndex[numberOfSkipLevels];
-            _docIndex = new Int32IndexOutput.AbstractIndex[numberOfSkipLevels];
-            _posIndex = new Int32IndexOutput.AbstractIndex[numberOfSkipLevels];
+            _freqIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
+            _docIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
+            _posIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
 
             for (var i = 0; i < numberOfSkipLevels; i++)
             {
@@ -124,8 +124,8 @@ namespace Lucene.Net.Codecs.Sep
         /// <summary>
         /// Called @ start of new term
         /// </summary>
-        protected internal virtual void ResetSkip(Int32IndexOutput.AbstractIndex topDocIndex, Int32IndexOutput.AbstractIndex topFreqIndex,
-            Int32IndexOutput.AbstractIndex topPosIndex)
+        protected internal virtual void ResetSkip(Int32IndexOutput.Index topDocIndex, Int32IndexOutput.Index topFreqIndex,
+            Int32IndexOutput.Index topPosIndex)
         {
             base.ResetSkip();
 

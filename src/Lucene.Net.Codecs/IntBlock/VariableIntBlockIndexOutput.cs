@@ -69,12 +69,12 @@ namespace Lucene.Net.Codecs.IntBlock
         /// </summary>
         protected abstract int Add(int value);
 
-        public override AbstractIndex GetIndex()
+        public override Int32IndexOutput.Index GetIndex()
         {
             return new Index(this);
         }
 
-        private class Index : AbstractIndex
+        new private class Index : Int32IndexOutput.Index
         {
             private readonly VariableInt32BlockIndexOutput outerInstance;
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs.IntBlock
                 upto = outerInstance.upto;
             }
 
-            public override void CopyFrom(AbstractIndex other, bool copyLast)
+            public override void CopyFrom(Int32IndexOutput.Index other, bool copyLast)
             {
                 Index idx = (Index)other;
                 fp = idx.fp;

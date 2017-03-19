@@ -40,7 +40,7 @@ namespace Lucene.Net.Codecs.MockSep
             @out.WriteVInt32(v);
         }
 
-        public override AbstractIndex GetIndex()
+        public override Index GetIndex()
         {
             return new MockSingleIntIndexOutputIndex(this);
         }
@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.MockSep
             return "MockSingleIntIndexOutput fp=" + @out.GetFilePointer();
         }
 
-        private class MockSingleIntIndexOutputIndex : AbstractIndex
+        private class MockSingleIntIndexOutputIndex : Index
         {
             internal long fp;
             internal long lastFP;
@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.MockSep
                 fp = outerClass.@out.GetFilePointer();
             }
 
-            public override void CopyFrom(AbstractIndex other, bool copyLast)
+            public override void CopyFrom(Index other, bool copyLast)
             {
                 fp = ((MockSingleIntIndexOutputIndex)other).fp;
                 if (copyLast)

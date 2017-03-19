@@ -43,13 +43,13 @@ namespace Lucene.Net.Codecs.Sep
         internal readonly static int VERSION_CURRENT = VERSION_START;
 
         private Int32IndexOutput freqOut;
-        private Int32IndexOutput.AbstractIndex freqIndex;
+        private Int32IndexOutput.Index freqIndex;
 
         private Int32IndexOutput posOut;
-        private Int32IndexOutput.AbstractIndex posIndex;
+        private Int32IndexOutput.Index posIndex;
 
         private Int32IndexOutput docOut;
-        private Int32IndexOutput.AbstractIndex docIndex;
+        private Int32IndexOutput.Index docIndex;
 
         private IndexOutput payloadOut;
 
@@ -303,9 +303,9 @@ namespace Lucene.Net.Codecs.Sep
 
         private class SepTermState : BlockTermState
         {
-            public Int32IndexOutput.AbstractIndex DocIndex { get; set; }
-            public Int32IndexOutput.AbstractIndex FreqIndex { get; set; }
-            public Int32IndexOutput.AbstractIndex PosIndex { get; set; }
+            public Int32IndexOutput.Index DocIndex { get; set; }
+            public Int32IndexOutput.Index FreqIndex { get; set; }
+            public Int32IndexOutput.Index PosIndex { get; set; }
             public long PayloadFP { get; set; }
             public long SkipFP { get; set; }
         }

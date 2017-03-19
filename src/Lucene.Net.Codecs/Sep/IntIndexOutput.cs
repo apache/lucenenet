@@ -43,13 +43,13 @@ namespace Lucene.Net.Codecs.Sep
         public abstract void Write(int v);
 
         /// <summary>Records a single skip-point in the IndexOutput. </summary>
-        public abstract class AbstractIndex // LUCENENET TODO: API Change back to Index ? Or make interface so names don't collide?
+        public abstract class Index
         {
             /// <summary>Internally records the current location </summary>
             public abstract void Mark();
 
             /// <summary>Copies index from other </summary>
-            public abstract void CopyFrom(AbstractIndex other, bool copyLast);
+            public abstract void CopyFrom(Index other, bool copyLast);
 
             /// <summary>
             /// Writes "location" of current output pointer of primary
@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.Sep
         /// If you are indexing the primary output file, call
         ///  this and interact with the returned IndexWriter. 
         /// </summary>
-        public abstract AbstractIndex GetIndex();
+        public abstract Index GetIndex();
 
         public abstract void Dispose(); // LUCENENET TODO: Implement disposable pattern
     }
