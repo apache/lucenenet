@@ -172,7 +172,7 @@ namespace Lucene.Net.Codecs.Memory
             try
             {
                 // write field summary
-                var dirStart = _output.FilePointer;
+                var dirStart = _output.GetFilePointer();
 
                 _output.WriteVInt32(_fields.Count);
                 foreach (var field in _fields)
@@ -278,7 +278,7 @@ namespace Lucene.Net.Codecs.Memory
                 };
                 _outerInstance._postingsWriter.FinishTerm(state);
                 _outerInstance._postingsWriter.EncodeTerm(meta.longs, _metaWriter, _fieldInfo, state, true);
-                var bytesSize = (int) _metaWriter.FilePointer;
+                var bytesSize = (int) _metaWriter.GetFilePointer();
                 if (bytesSize > 0)
                 {
                     meta.bytes = new byte[bytesSize];

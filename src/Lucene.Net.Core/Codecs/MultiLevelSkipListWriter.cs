@@ -163,7 +163,7 @@ namespace Lucene.Net.Codecs
             {
                 WriteSkipData(level, skipBuffer[level]);
 
-                long newChildPointer = skipBuffer[level].FilePointer;
+                long newChildPointer = skipBuffer[level].GetFilePointer();
 
                 if (level != 0)
                 {
@@ -183,7 +183,7 @@ namespace Lucene.Net.Codecs
         /// <returns> the pointer the skip list starts </returns>
         public virtual long WriteSkip(IndexOutput output)
         {
-            long skipPointer = output.FilePointer;
+            long skipPointer = output.GetFilePointer();
             //System.out.println("skipper.writeSkip fp=" + skipPointer);
             if (skipBuffer == null || skipBuffer.Length == 0)
             {
@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs
 
             for (int level = m_numberOfSkipLevels - 1; level > 0; level--)
             {
-                long length = skipBuffer[level].FilePointer;
+                long length = skipBuffer[level].GetFilePointer();
                 if (length > 0)
                 {
                     output.WriteVInt64(length);

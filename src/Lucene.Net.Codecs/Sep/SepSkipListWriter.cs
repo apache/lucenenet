@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.Sep
             this._curPayloadLength = payloadLength;
             if (_payloadOutput != null)
             {
-                _curPayloadPointer = _payloadOutput.FilePointer;
+                _curPayloadPointer = _payloadOutput.GetFilePointer();
             }
         }
 
@@ -145,7 +145,7 @@ namespace Lucene.Net.Codecs.Sep
             }
             if (_payloadOutput != null)
             {
-                Arrays.Fill(_lastSkipPayloadPointer, _payloadOutput.FilePointer);
+                Arrays.Fill(_lastSkipPayloadPointer, _payloadOutput.GetFilePointer());
             }
         }
 

@@ -192,7 +192,7 @@ namespace Lucene.Net.Codecs.Memory
             IOException ioe = null;
             try
             {
-                var blockDirStart = blockOut.FilePointer;
+                var blockDirStart = blockOut.GetFilePointer();
 
                 // write field summary
                 blockOut.WriteVInt32(_fields.Count);
@@ -207,9 +207,9 @@ namespace Lucene.Net.Codecs.Memory
                     blockOut.WriteVInt64(field.SumDocFreq);
                     blockOut.WriteVInt32(field.DocCount);
                     blockOut.WriteVInt32(field.Int64sSize);
-                    blockOut.WriteVInt64(field.StatsOut.FilePointer);
-                    blockOut.WriteVInt64(field.MetaInt64sOut.FilePointer);
-                    blockOut.WriteVInt64(field.MetaBytesOut.FilePointer);
+                    blockOut.WriteVInt64(field.StatsOut.GetFilePointer());
+                    blockOut.WriteVInt64(field.MetaInt64sOut.GetFilePointer());
+                    blockOut.WriteVInt64(field.MetaBytesOut.GetFilePointer());
 
                     field.SkipOut.WriteTo(blockOut);
                     field.StatsOut.WriteTo(blockOut);
@@ -360,12 +360,12 @@ namespace Lucene.Net.Codecs.Memory
                     _metaLongsOut.WriteVInt64(longs[i] - _lastLongs[i]);
                     _lastLongs[i] = longs[i];
                 }
-                _metaLongsOut.WriteVInt64(_metaBytesOut.FilePointer - _lastMetaBytesFp);
+                _metaLongsOut.WriteVInt64(_metaBytesOut.GetFilePointer() - _lastMetaBytesFp);
 
                 _builder.Add(Util.ToInt32sRef(text, _scratchTerm), _numTerms);
                 _numTerms++;
 
-                _lastMetaBytesFp = _metaBytesOut.FilePointer;
+                _lastMetaBytesFp = _metaBytesOut.GetFilePointer();
             }
 
             public override void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount)
@@ -391,16 +391,16 @@ namespace Lucene.Net.Codecs.Memory
 
             private void BufferSkip()
             {
-                _skipOut.WriteVInt64(_statsOut.FilePointer - _lastBlockStatsFp);
-                _skipOut.WriteVInt64(_metaLongsOut.FilePointer - _lastBlockMetaLongsFp);
-                _skipOut.WriteVInt64(_metaBytesOut.FilePointer - _lastBlockMetaBytesFp);
+                _skipOut.WriteVInt64(_statsOut.GetFilePointer() - _lastBlockStatsFp);
+                _skipOut.WriteVInt64(_metaLongsOut.GetFilePointer() - _lastBlockMetaLongsFp);
+                _skipOut.WriteVInt64(_metaBytesOut.GetFilePointer() - _lastBlockMetaBytesFp);
                 for (var i = 0; i < _longsSize; i++)
                 {
                     _skipOut.WriteVInt64(_lastLongs[i] - _lastBlockLongs[i]);
                 }
-                _lastBlockStatsFp = _statsOut.FilePointer;
-                _lastBlockMetaLongsFp = _metaLongsOut.FilePointer;
-                _lastBlockMetaBytesFp = _metaBytesOut.FilePointer;
+                _lastBlockStatsFp = _statsOut.GetFilePointer();
+                _lastBlockMetaLongsFp = _metaLongsOut.GetFilePointer();
+                _lastBlockMetaBytesFp = _metaBytesOut.GetFilePointer();
                 Array.Copy(_lastLongs, 0, _lastBlockLongs, 0, _longsSize);
             }
         }

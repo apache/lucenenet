@@ -96,17 +96,17 @@ namespace Lucene.Net.Codecs.Lucene41
         {
             base.ResetSkip();
             Arrays.Fill(lastSkipDoc, 0);
-            Arrays.Fill(lastSkipDocPointer, docOut.FilePointer);
+            Arrays.Fill(lastSkipDocPointer, docOut.GetFilePointer());
             if (fieldHasPositions)
             {
-                Arrays.Fill(lastSkipPosPointer, posOut.FilePointer);
+                Arrays.Fill(lastSkipPosPointer, posOut.GetFilePointer());
                 if (fieldHasPayloads)
                 {
                     Arrays.Fill(lastPayloadByteUpto, 0);
                 }
                 if (fieldHasOffsets || fieldHasPayloads)
                 {
-                    Arrays.Fill(lastSkipPayPointer, payOut.FilePointer);
+                    Arrays.Fill(lastSkipPayPointer, payOut.GetFilePointer());
                 }
             }
         }
@@ -117,7 +117,7 @@ namespace Lucene.Net.Codecs.Lucene41
         public void BufferSkip(int doc, int numDocs, long posFP, long payFP, int posBufferUpto, int payloadByteUpto)
         {
             this.curDoc = doc;
-            this.curDocPointer = docOut.FilePointer;
+            this.curDocPointer = docOut.GetFilePointer();
             this.curPosPointer = posFP;
             this.curPayPointer = payFP;
             this.curPosBufferUpto = posBufferUpto;

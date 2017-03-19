@@ -137,7 +137,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 this.outerInstance = outerInstance;
 
                 this.fieldInfo = fieldInfo;
-                indexStart = outerInstance.m_output.FilePointer;
+                indexStart = outerInstance.m_output.GetFilePointer();
                 termsStart = lastTermsPointer = termsFilePointer;
                 termLengths = new short[0];
                 termsPointerDeltas = new int[0];
@@ -197,7 +197,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public override void Finish(long termsFilePointer)
             {
                 // write primary terms dict offsets
-                packedIndexStart = outerInstance.m_output.FilePointer;
+                packedIndexStart = outerInstance.m_output.GetFilePointer();
 
                 PackedInt32s.Writer w = PackedInt32s.GetWriter(outerInstance.m_output, numIndexTerms, PackedInt32s.BitsRequired(termsFilePointer), PackedInt32s.DEFAULT);
 
@@ -210,7 +210,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
                 w.Finish();
 
-                packedOffsetsStart = outerInstance.m_output.FilePointer;
+                packedOffsetsStart = outerInstance.m_output.GetFilePointer();
 
                 // write offsets into the byte[] terms
                 w = PackedInt32s.GetWriter(outerInstance.m_output, 1 + numIndexTerms, PackedInt32s.BitsRequired(totTermLength), PackedInt32s.DEFAULT);
@@ -237,7 +237,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 bool success = false;
                 try
                 {
-                    long dirStart = m_output.FilePointer;
+                    long dirStart = m_output.GetFilePointer();
                     int fieldCount = fields.Count;
 
                     int nonNullFieldCount = 0;

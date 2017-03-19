@@ -272,8 +272,8 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             if (IsIndex)
             {
-                Output.WriteVInt64(Other.Output.FilePointer - LastIndexPointer);
-                LastIndexPointer = Other.Output.FilePointer; // write pointer
+                Output.WriteVInt64(Other.Output.GetFilePointer() - LastIndexPointer);
+                LastIndexPointer = Other.Output.GetFilePointer(); // write pointer
             }
 
             LastFieldNumber = fieldNumber;

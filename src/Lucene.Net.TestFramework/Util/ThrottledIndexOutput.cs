@@ -89,12 +89,9 @@ namespace Lucene.Net.Util
             }
         }
 
-        public override long FilePointer
+        public override long GetFilePointer()
         {
-            get
-            {
-                return @delegate.FilePointer;
-            }
+            return @delegate.GetFilePointer();
         }
 
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]

@@ -76,9 +76,9 @@ namespace Lucene.Net.Codecs.Lucene40
                 CodecUtil.WriteHeader(tvd, Lucene40TermVectorsReader.CODEC_NAME_DOCS, Lucene40TermVectorsReader.VERSION_CURRENT);
                 tvf = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene40TermVectorsReader.VECTORS_FIELDS_EXTENSION), context);
                 CodecUtil.WriteHeader(tvf, Lucene40TermVectorsReader.CODEC_NAME_FIELDS, Lucene40TermVectorsReader.VERSION_CURRENT);
-                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.FilePointer);
-                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.FilePointer);
-                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.FilePointer);
+                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_INDEX == tvx.GetFilePointer());
+                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_DOCS == tvd.GetFilePointer());
+                Debug.Assert(Lucene40TermVectorsReader.HEADER_LENGTH_FIELDS == tvf.GetFilePointer());
                 success = true;
             }
             finally
@@ -94,8 +94,8 @@ namespace Lucene.Net.Codecs.Lucene40
         {
             lastFieldName = null;
             this.numVectorFields = numVectorFields;
-            tvx.WriteInt64(tvd.FilePointer);
-            tvx.WriteInt64(tvf.FilePointer);
+            tvx.WriteInt64(tvd.GetFilePointer());
+            tvx.WriteInt64(tvf.GetFilePointer());
             tvd.WriteVInt32(numVectorFields);
             fieldCount = 0;
             fps = ArrayUtil.Grow(fps, numVectorFields);
@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs.Lucene40
             this.payloads = payloads;
             lastTerm.Length = 0;
             lastPayloadLength = -1; // force first payload to write its length
-            fps[fieldCount++] = tvf.FilePointer;
+            fps[fieldCount++] = tvf.GetFilePointer();
             tvd.WriteVInt32(info.Number);
             tvf.WriteVInt32(numTerms);
             sbyte bits = 0x0;
@@ -340,8 +340,8 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         private void AddRawDocuments(Lucene40TermVectorsReader reader, int[] tvdLengths, int[] tvfLengths, int numDocs)
         {
-            long tvdPosition = tvd.FilePointer;
-            long tvfPosition = tvf.FilePointer;
+            long tvdPosition = tvd.GetFilePointer();
+            long tvfPosition = tvf.GetFilePointer();
             long tvdStart = tvdPosition;
             long tvfStart = tvfPosition;
             for (int i = 0; i < numDocs; i++)
@@ -353,8 +353,8 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             tvd.CopyBytes(reader.TvdStream, tvdPosition - tvdStart);
             tvf.CopyBytes(reader.TvfStream, tvfPosition - tvfStart);
-            Debug.Assert(tvd.FilePointer == tvdPosition);
-            Debug.Assert(tvf.FilePointer == tvfPosition);
+            Debug.Assert(tvd.GetFilePointer() == tvdPosition);
+            Debug.Assert(tvf.GetFilePointer() == tvfPosition);
         }
 
         public override int Merge(MergeState mergeState)
@@ -492,14 +492,14 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (Lucene40TermVectorsReader.HEADER_LENGTH_INDEX + ((long)numDocs) * 16 != tvx.FilePointer)
+            if (Lucene40TermVectorsReader.HEADER_LENGTH_INDEX + ((long)numDocs) * 16 != tvx.GetFilePointer())
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.FilePointer + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
+                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + tvx.GetFilePointer() + " file=" + tvx.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 

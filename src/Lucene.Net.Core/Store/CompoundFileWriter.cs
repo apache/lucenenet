@@ -216,11 +216,11 @@ namespace Lucene.Net.Store
             bool success = false;
             try
             {
-                long startPtr = dataOut.FilePointer;
+                long startPtr = dataOut.GetFilePointer();
                 long length = fileEntry.Length;
                 dataOut.CopyBytes(@is, length);
                 // Verify that the output length diff is equal to original file
-                long endPtr = dataOut.FilePointer;
+                long endPtr = dataOut.GetFilePointer();
                 long diff = endPtr - startPtr;
                 if (diff != length)
                 {
@@ -369,7 +369,7 @@ namespace Lucene.Net.Store
                 this.outerInstance = outerInstance;
                 this.@delegate = @delegate;
                 this.entry = entry;
-                entry.Offset = offset = @delegate.FilePointer;
+                entry.Offset = offset = @delegate.GetFilePointer();
                 this.isSeparate = isSeparate;
             }
 
@@ -400,12 +400,9 @@ namespace Lucene.Net.Store
                 }
             }
 
-            public override long FilePointer
+            public override long GetFilePointer()
             {
-                get
-                {
-                    return @delegate.FilePointer - offset;
-                }
+                return @delegate.GetFilePointer() - offset;
             }
 
             [Obsolete("(4.1) this method will be removed in Lucene 5.0")]

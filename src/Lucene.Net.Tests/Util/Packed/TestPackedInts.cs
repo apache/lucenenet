@@ -107,7 +107,7 @@ namespace Lucene.Net.Util.Packed
                         acceptableOverhead = Random().NextFloat();
                     }
                     PackedInt32s.Writer w = PackedInt32s.GetWriter(@out, valueCount, nbits, acceptableOverhead);
-                    long startFp = @out.FilePointer;
+                    long startFp = @out.GetFilePointer();
 
                     int actualValueCount = Random().NextBoolean() ? valueCount : TestUtil.NextInt(Random(), 0, valueCount);
                     long[] values = new long[valueCount];
@@ -124,7 +124,7 @@ namespace Lucene.Net.Util.Packed
                         w.Add(values[i]);
                     }
                     w.Finish();
-                    long fp = @out.FilePointer;
+                    long fp = @out.GetFilePointer();
                     @out.Dispose();
 
                     // ensure that finish() added the (valueCount-actualValueCount) missing values
@@ -473,7 +473,7 @@ namespace Lucene.Net.Util.Packed
                 long value = 17L & PackedInt32s.MaxValue(bitsPerValue);
                 w.Add(value);
                 w.Finish();
-                long end = @out.FilePointer;
+                long end = @out.GetFilePointer();
                 @out.Dispose();
 
                 IndexInput @in = dir.OpenInput("out", NewIOContext(Random()));
@@ -1283,7 +1283,7 @@ namespace Lucene.Net.Util.Packed
                 }
             }
             pout.Flush();
-            Assert.AreEqual((long)Math.Ceiling((double)totalBits / 8), @out.FilePointer);
+            Assert.AreEqual((long)Math.Ceiling((double)totalBits / 8), @out.GetFilePointer());
             @out.Dispose();
             IndexInput @in = dir.OpenInput("out.bin", IOContext.READ_ONCE);
             PackedDataInput pin = new PackedDataInput(@in);
@@ -1343,7 +1343,7 @@ namespace Lucene.Net.Util.Packed
                 Assert.AreEqual(valueCount, writer.Ord);
                 writer.Finish();
                 Assert.AreEqual(valueCount, writer.Ord);
-                long fp = @out.FilePointer;
+                long fp = @out.GetFilePointer();
                 @out.Dispose();
 
                 IndexInput in1 = dir.OpenInput("out.bin", IOContext.DEFAULT);
@@ -1469,7 +1469,7 @@ namespace Lucene.Net.Util.Packed
                 Assert.AreEqual(valueCount, writer.Ord);
                 writer.Finish();
                 Assert.AreEqual(valueCount, writer.Ord);
-                long fp = @out.FilePointer;
+                long fp = @out.GetFilePointer();
                 @out.Dispose();
 
                 IndexInput @in = dir.OpenInput("out.bin", IOContext.DEFAULT);

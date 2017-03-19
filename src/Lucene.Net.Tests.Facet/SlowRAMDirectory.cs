@@ -235,12 +235,9 @@ namespace Lucene.Net.Facet
             {
                 io.Flush();
             }
-            public override long FilePointer
+            public override long GetFilePointer()
             {
-                get
-                {
-                    return io.FilePointer;
-                }
+                return io.GetFilePointer();
             }
 
             [Obsolete]

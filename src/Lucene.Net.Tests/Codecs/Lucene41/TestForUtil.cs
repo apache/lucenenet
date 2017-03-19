@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     forUtil.WriteBlock(Arrays.CopyOfRange(values, i * Lucene41PostingsFormat.BLOCK_SIZE, values.Length), new byte[Lucene41.ForUtil.MAX_ENCODED_SIZE], @out);
                 }
-                endPointer = @out.FilePointer;
+                endPointer = @out.GetFilePointer();
                 @out.Dispose();
             }
 

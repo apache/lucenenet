@@ -70,8 +70,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             LastFieldName = null;
             this.NumVectorFields = numVectorFields;
-            Tvx.WriteInt64(Tvd.FilePointer);
-            Tvx.WriteInt64(Tvf.FilePointer);
+            Tvx.WriteInt64(Tvd.GetFilePointer());
+            Tvx.WriteInt64(Tvf.GetFilePointer());
             Tvd.WriteVInt32(numVectorFields);
             FieldCount = 0;
             Fps = ArrayUtil.Grow(Fps, numVectorFields);
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             this.Positions = positions;
             this.Offsets = offsets;
             LastTerm.Length = 0;
-            Fps[FieldCount++] = Tvf.FilePointer;
+            Fps[FieldCount++] = Tvf.GetFilePointer();
             Tvd.WriteVInt32(info.Number);
             Tvf.WriteVInt32(numTerms);
             sbyte bits = 0x0;
@@ -211,14 +211,14 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (4 + ((long)numDocs) * 16 != Tvx.FilePointer)
+            if (4 + ((long)numDocs) * 16 != Tvx.GetFilePointer())
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + Tvx.FilePointer + " file=" + Tvx.ToString() + "; now aborting this merge to prevent index corruption");
+                throw new Exception("tvx size mismatch: mergedDocs is " + numDocs + " but tvx size is " + Tvx.GetFilePointer() + " file=" + Tvx.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 

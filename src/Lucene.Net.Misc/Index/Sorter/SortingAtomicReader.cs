@@ -658,7 +658,7 @@ namespace Lucene.Net.Index.Sorter
                             offsets = Arrays.CopyOf(offsets, newLength);
                         }
                         docs[i] = docMap.OldToNew(doc);
-                        offsets[i] = @out.FilePointer;
+                        offsets[i] = @out.GetFilePointer();
                         AddPositions(@in, @out);
                         i++;
                     }

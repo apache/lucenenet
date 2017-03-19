@@ -52,7 +52,7 @@ namespace Lucene.Net.Codecs.MockSep
 
         public override string ToString()
         {
-            return "MockSingleIntIndexOutput fp=" + @out.FilePointer;
+            return "MockSingleIntIndexOutput fp=" + @out.GetFilePointer();
         }
 
         private class MockSingleIntIndexOutputIndex : AbstractIndex
@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.MockSep
 
             public override void Mark()
             {
-                fp = outerClass.@out.FilePointer;
+                fp = outerClass.@out.GetFilePointer();
             }
 
             public override void CopyFrom(AbstractIndex other, bool copyLast)

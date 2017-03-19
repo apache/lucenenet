@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.NUMBER);
-            meta.WriteInt64(data.FilePointer);
+            meta.WriteInt64(data.GetFilePointer());
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -147,10 +147,10 @@ namespace Lucene.Net.Codecs.Memory
 
             if (missing)
             {
-                long start = data.FilePointer;
+                long start = data.GetFilePointer();
                 WriteMissingBitset(values);
                 meta.WriteInt64(start);
-                meta.WriteInt64(data.FilePointer - start);
+                meta.WriteInt64(data.GetFilePointer() - start);
             }
             else
             {
@@ -271,7 +271,7 @@ namespace Lucene.Net.Codecs.Memory
             var minLength = int.MaxValue;
             var maxLength = int.MinValue;
 
-            var startFP = data.FilePointer;
+            var startFP = data.GetFilePointer();
             var missing = false;
             foreach (var v in values)
             {
@@ -298,13 +298,13 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
             meta.WriteInt64(startFP);
-            meta.WriteInt64(data.FilePointer - startFP);
+            meta.WriteInt64(data.GetFilePointer() - startFP);
             if (missing)
             {
-                long start = data.FilePointer;
+                long start = data.GetFilePointer();
                 WriteMissingBitset(values);
                 meta.WriteInt64(start);
-                meta.WriteInt64(data.FilePointer - start);
+                meta.WriteInt64(data.GetFilePointer() - start);
             }
             else
             {
@@ -339,7 +339,7 @@ namespace Lucene.Net.Codecs.Memory
         {
             meta.WriteVInt32(field.Number);
             meta.WriteByte(MemoryDocValuesProducer.FST);
-            meta.WriteInt64(data.FilePointer);
+            meta.WriteInt64(data.GetFilePointer());
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             var builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
             var scratch = new Int32sRef();

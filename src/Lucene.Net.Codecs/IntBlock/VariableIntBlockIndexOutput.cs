@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.IntBlock
 
             public override void Mark()
             {
-                fp = outerInstance.m_output.FilePointer;
+                fp = outerInstance.m_output.GetFilePointer();
                 upto = outerInstance.upto;
             }
 

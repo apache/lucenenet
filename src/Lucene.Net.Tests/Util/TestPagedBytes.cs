@@ -213,12 +213,12 @@ namespace Lucene.Net.Util
             var @out = dir.CreateOutput("foo", IOContext.DEFAULT);
             for (long i = 0; i < numBytes; )
             {
-                Assert.AreEqual(i, @out.FilePointer);
+                Assert.AreEqual(i, @out.GetFilePointer());
                 int len = (int)Math.Min(arr.Length, numBytes - i);
                 @out.WriteBytes(arr, len);
                 i += len;
             }
-            Assert.AreEqual(numBytes, @out.FilePointer);
+            Assert.AreEqual(numBytes, @out.GetFilePointer());
             @out.Dispose();
             IndexInput @in = dir.OpenInput("foo", IOContext.DEFAULT);
             p.Copy(@in, numBytes);

@@ -89,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             Meta.WriteVInt32(field.Number);
             Meta.WriteByte((byte)Lucene42DocValuesProducer.NUMBER);
-            Meta.WriteInt64(Data.FilePointer);
+            Meta.WriteInt64(Data.GetFilePointer());
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;
@@ -241,7 +241,7 @@ namespace Lucene.Net.Codecs.Lucene42
             Meta.WriteByte((byte)Lucene42DocValuesProducer.BYTES);
             int minLength = int.MaxValue;
             int maxLength = int.MinValue;
-            long startFP = Data.FilePointer;
+            long startFP = Data.GetFilePointer();
             foreach (BytesRef v in values)
             {
                 int length = v == null ? 0 : v.Length;
@@ -257,7 +257,7 @@ namespace Lucene.Net.Codecs.Lucene42
                 }
             }
             Meta.WriteInt64(startFP);
-            Meta.WriteInt64(Data.FilePointer - startFP);
+            Meta.WriteInt64(Data.GetFilePointer() - startFP);
             Meta.WriteVInt32(minLength);
             Meta.WriteVInt32(maxLength);
 
@@ -286,7 +286,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             Meta.WriteVInt32(field.Number);
             Meta.WriteByte((byte)Lucene42DocValuesProducer.FST);
-            Meta.WriteInt64(Data.FilePointer);
+            Meta.WriteInt64(Data.GetFilePointer());
             PositiveInt32Outputs outputs = PositiveInt32Outputs.Singleton;
             Builder<long?> builder = new Builder<long?>(INPUT_TYPE.BYTE1, outputs);
             Int32sRef scratch = new Int32sRef();

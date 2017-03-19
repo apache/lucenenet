@@ -435,7 +435,7 @@ namespace Lucene.Net.Codecs
             {
                 Debug.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor=" + IsFloor + " floorBlocks=" + floorBlocks);
 
-                Debug.Assert(scratchBytes.FilePointer == 0);
+                Debug.Assert(scratchBytes.GetFilePointer() == 0);
 
                 // TODO: try writing the leading vLong in MSB order
                 // (opposite of what Lucene does today), for better
@@ -458,7 +458,7 @@ namespace Lucene.Net.Codecs
 
                 ByteSequenceOutputs outputs = ByteSequenceOutputs.Singleton;
                 Builder<BytesRef> indexBuilder = new Builder<BytesRef>(FST.INPUT_TYPE.BYTE1, 0, 0, true, false, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15);
-                var bytes = new byte[(int)scratchBytes.FilePointer];
+                var bytes = new byte[(int)scratchBytes.GetFilePointer()];
                 Debug.Assert(bytes.Length > 0);
                 scratchBytes.WriteTo(bytes, 0);
                 indexBuilder.Add(Util.ToInt32sRef(Prefix, scratchIntsRef), new BytesRef(bytes, 0, bytes.Length));
@@ -884,7 +884,7 @@ namespace Lucene.Net.Codecs
 
                 IList<PendingEntry> slice = pending.SubList(start, start + length);
 
-                long startFP = outerInstance.@out.FilePointer;
+                long startFP = outerInstance.@out.GetFilePointer();
 
                 BytesRef prefix = new BytesRef(indexPrefixLength);
                 for (int m = 0; m < indexPrefixLength; m++)
@@ -1058,17 +1058,17 @@ namespace Lucene.Net.Codecs
                 // search on lookup
 
                 // Write suffixes byte[] blob to terms dict output:
-                outerInstance.@out.WriteVInt32((int)(suffixWriter.FilePointer << 1) | (isLeafBlock ? 1 : 0));
+                outerInstance.@out.WriteVInt32((int)(suffixWriter.GetFilePointer() << 1) | (isLeafBlock ? 1 : 0));
                 suffixWriter.WriteTo(outerInstance.@out);
                 suffixWriter.Reset();
 
                 // Write term stats byte[] blob
-                outerInstance.@out.WriteVInt32((int)statsWriter.FilePointer);
+                outerInstance.@out.WriteVInt32((int)statsWriter.GetFilePointer());
                 statsWriter.WriteTo(outerInstance.@out);
                 statsWriter.Reset();
 
                 // Write term meta data byte[] blob
-                outerInstance.@out.WriteVInt32((int)metaWriter.FilePointer);
+                outerInstance.@out.WriteVInt32((int)metaWriter.GetFilePointer());
                 metaWriter.WriteTo(outerInstance.@out);
                 metaWriter.Reset();
 
@@ -1167,7 +1167,7 @@ namespace Lucene.Net.Codecs
                     this.docCount = docCount;
 
                     // Write FST to index
-                    indexStartFP = outerInstance.indexOut.FilePointer;
+                    indexStartFP = outerInstance.indexOut.GetFilePointer();
                     root.Index.Save(outerInstance.indexOut);
                     //System.out.println("  write FST " + indexStartFP + " field=" + fieldInfo.name);
 
@@ -1200,8 +1200,8 @@ namespace Lucene.Net.Codecs
             System.IO.IOException ioe = null;
             try
             {
-                long dirStart = @out.FilePointer;
-                long indexDirStart = indexOut.FilePointer;
+                long dirStart = @out.GetFilePointer();
+                long indexDirStart = indexOut.GetFilePointer();
 
                 @out.WriteVInt32(fields.Count);
 

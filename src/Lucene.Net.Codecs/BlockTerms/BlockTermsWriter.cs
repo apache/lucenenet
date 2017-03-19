@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             //System.out.println("\nBTW.addField seg=" + segment + " field=" + field.name);
             Debug.Assert(currentField == null || currentField.Name.CompareToOrdinal(field.Name) < 0);
             currentField = field;
-            TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.FilePointer);
+            TermsIndexWriterBase.FieldWriter fieldIndexWriter = termsIndexWriter.AddField(field, m_output.GetFilePointer());
             return new TermsWriter(this, fieldIndexWriter, field, postingsWriter);
         }
 
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 try
                 {
-                    long dirStart = m_output.FilePointer;
+                    long dirStart = m_output.GetFilePointer();
 
                     m_output.WriteVInt32(fields.Count);
                     foreach (FieldMetaData field in fields)
@@ -215,7 +215,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 {
                     pendingTerms[i] = new TermEntry();
                 }
-                termsStartPointer = outerInstance.m_output.FilePointer;
+                termsStartPointer = outerInstance.m_output.GetFilePointer();
                 this.postingsWriter = postingsWriter;
                 this.longsSize = postingsWriter.SetField(fieldInfo);
             }
@@ -250,7 +250,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         // entire block in between index terms:
                         FlushBlock();
                     }
-                    fieldIndexWriter.Add(text, stats, outerInstance.m_output.FilePointer);
+                    fieldIndexWriter.Add(text, stats, outerInstance.m_output.GetFilePointer());
                     //System.out.println("  index term!");
                 }
 
@@ -288,7 +288,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 this.sumTotalTermFreq = sumTotalTermFreq;
                 this.sumDocFreq = sumDocFreq;
                 this.docCount = docCount;
-                fieldIndexWriter.Finish(outerInstance.m_output.FilePointer);
+                fieldIndexWriter.Finish(outerInstance.m_output.GetFilePointer());
                 if (numTerms > 0)
                 {
                     outerInstance.fields.Add(new FieldMetaData(fieldInfo,
@@ -350,7 +350,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     bytesWriter.WriteVInt32(suffix);
                     bytesWriter.WriteBytes(pendingTerms[termCount].Term.Bytes, commonPrefix, suffix);
                 }
-                outerInstance.m_output.WriteVInt32((int)bytesWriter.FilePointer);
+                outerInstance.m_output.WriteVInt32((int)bytesWriter.GetFilePointer());
                 bytesWriter.WriteTo(outerInstance.m_output);
                 bytesWriter.Reset();
 
@@ -367,7 +367,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                         bytesWriter.WriteVInt64(state.TotalTermFreq - state.DocFreq);
                     }
                 }
-                outerInstance.m_output.WriteVInt32((int)bytesWriter.FilePointer);
+                outerInstance.m_output.WriteVInt32((int)bytesWriter.GetFilePointer());
                 bytesWriter.WriteTo(outerInstance.m_output);
                 bytesWriter.Reset();
 
@@ -386,7 +386,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     bufferWriter.Reset();
                     absolute = false;
                 }
-                outerInstance.m_output.WriteVInt32((int)bytesWriter.FilePointer);
+                outerInstance.m_output.WriteVInt32((int)bytesWriter.GetFilePointer());
                 bytesWriter.WriteTo(outerInstance.m_output);
                 bytesWriter.Reset();
 

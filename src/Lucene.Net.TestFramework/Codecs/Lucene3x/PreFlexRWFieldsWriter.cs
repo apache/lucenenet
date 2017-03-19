@@ -232,10 +232,10 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 //System.out.println("  w term=" + text.utf8ToString());
                 OuterInstance.SkipListWriter.ResetSkip();
-                TermInfo.FreqPointer = OuterInstance.FreqOut.FilePointer;
+                TermInfo.FreqPointer = OuterInstance.FreqOut.GetFilePointer();
                 if (OuterInstance.ProxOut != null)
                 {
-                    TermInfo.ProxPointer = OuterInstance.ProxOut.FilePointer;
+                    TermInfo.ProxPointer = OuterInstance.ProxOut.GetFilePointer();
                 }
                 return postingsWriter.Reset();
             }

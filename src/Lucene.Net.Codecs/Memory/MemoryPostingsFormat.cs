@@ -230,7 +230,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 public virtual PostingsWriter Reset()
                 {
-                    Debug.Assert(buffer.FilePointer == 0);
+                    Debug.Assert(buffer.GetFilePointer() == 0);
                     lastDocID = 0;
                     docCount = 0;
                     lastPayloadLen = 0;
@@ -256,18 +256,18 @@ namespace Lucene.Net.Codecs.Memory
             {
                 Debug.Assert(postingsWriter.docCount == stats.DocFreq);
 
-                Debug.Assert(buffer2.FilePointer == 0);
+                Debug.Assert(buffer2.GetFilePointer() == 0);
 
                 buffer2.WriteVInt32(stats.DocFreq);
                 if (field.IndexOptions != IndexOptions.DOCS_ONLY)
                 {
                     buffer2.WriteVInt64(stats.TotalTermFreq - stats.DocFreq);
                 }
-                int pos = (int)buffer2.FilePointer;
+                int pos = (int)buffer2.GetFilePointer();
                 buffer2.WriteTo(finalBuffer, 0);
                 buffer2.Reset();
 
-                int totalBytes = pos + (int)postingsWriter.buffer.FilePointer;
+                int totalBytes = pos + (int)postingsWriter.buffer.GetFilePointer();
                 if (totalBytes > finalBuffer.Length)
                 {
                     finalBuffer = ArrayUtil.Grow(finalBuffer, totalBytes);

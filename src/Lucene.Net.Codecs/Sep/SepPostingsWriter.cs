@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Sep
             if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
                 posIndex.Mark();
-                payloadStart = payloadOut.FilePointer;
+                payloadStart = payloadOut.GetFilePointer();
                 lastPayloadLength = -1;
             }
 
@@ -342,7 +342,7 @@ namespace Lucene.Net.Codecs.Sep
 
             if (df >= skipMinimum)
             {
-                state_.SkipFP = skipOut.FilePointer;
+                state_.SkipFP = skipOut.GetFilePointer();
                 //System.out.println("  skipFP=" + skipFP);
                 skipListWriter.WriteSkip(skipOut);
                 //System.out.println("    numBytes=" + (skipOut.getFilePointer()-skipFP));

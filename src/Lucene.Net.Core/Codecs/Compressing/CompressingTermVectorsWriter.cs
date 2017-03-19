@@ -262,8 +262,8 @@ namespace Lucene.Net.Codecs.Compressing
                 string codecNameDat = formatName + CODEC_SFX_DAT;
                 CodecUtil.WriteHeader(indexStream, codecNameIdx, VERSION_CURRENT);
                 CodecUtil.WriteHeader(vectorsStream, codecNameDat, VERSION_CURRENT);
-                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.FilePointer);
-                Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.FilePointer);
+                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == vectorsStream.GetFilePointer());
+                Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
 
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
                 indexStream = null;
@@ -377,7 +377,7 @@ namespace Lucene.Net.Codecs.Compressing
             Debug.Assert(chunkDocs > 0, chunkDocs.ToString());
 
             // write the index file
-            indexWriter.WriteIndex(chunkDocs, vectorsStream.FilePointer);
+            indexWriter.WriteIndex(chunkDocs, vectorsStream.GetFilePointer());
 
             int docBase = numDocs - chunkDocs;
             vectorsStream.WriteVInt32(docBase);
@@ -779,7 +779,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 throw new Exception("Wrote " + this.numDocs + " docs, finish called with numDocs=" + numDocs);
             }
-            indexWriter.Finish(numDocs, vectorsStream.FilePointer);
+            indexWriter.Finish(numDocs, vectorsStream.GetFilePointer());
             CodecUtil.WriteFooter(vectorsStream);
         }
 
@@ -920,7 +920,7 @@ namespace Lucene.Net.Codecs.Compressing
                             {
                                 long chunkEnd = index.GetStartPointer(docBase + chunkDocs);
                                 long chunkLength = chunkEnd - vectorsStream.GetFilePointer();
-                                indexWriter.WriteIndex(chunkDocs, this.vectorsStream.FilePointer);
+                                indexWriter.WriteIndex(chunkDocs, this.vectorsStream.GetFilePointer());
                                 this.vectorsStream.WriteVInt32(docCount);
                                 this.vectorsStream.WriteVInt32(chunkDocs);
                                 this.vectorsStream.CopyBytes(vectorsStream, chunkLength);

@@ -635,12 +635,12 @@ namespace Lucene.Net.Index
                 largeBuf[i] = (byte)unchecked((sbyte)(new Random(1).NextDouble() * 256));
             }
 
-            long currentPos = os.FilePointer;
+            long currentPos = os.GetFilePointer();
             os.WriteBytes(largeBuf, largeBuf.Length);
 
             try
             {
-                Assert.AreEqual(currentPos + largeBuf.Length, os.FilePointer);
+                Assert.AreEqual(currentPos + largeBuf.Length, os.GetFilePointer());
             }
             finally
             {

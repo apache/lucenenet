@@ -150,12 +150,9 @@ namespace Lucene.Net.Store
             Flush();
         }
 
-        public override long FilePointer
+        public override long GetFilePointer()
         {
-            get
-            {
-                return bufferStart + bufferPosition;
-            }
+            return bufferStart + bufferPosition;
         }
 
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]

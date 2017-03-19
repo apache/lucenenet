@@ -323,7 +323,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* values */
 
-            long startPos = data.FilePointer;
+            long startPos = data.GetFilePointer();
 
             foreach (BytesRef v in values)
             {
@@ -335,7 +335,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* addresses */
 
-            long maxAddress = data.FilePointer - startPos;
+            long maxAddress = data.GetFilePointer() - startPos;
             index.WriteVInt64(maxAddress);
 
             int maxDoc = State.SegmentInfo.DocCount;
@@ -418,19 +418,19 @@ namespace Lucene.Net.Codecs.Lucene40
             }
 
             /* values */
-            long startPosition = data.FilePointer;
+            long startPosition = data.GetFilePointer();
             long currentAddress = 0;
             Dictionary<BytesRef, long> valueToAddress = new Dictionary<BytesRef, long>();
             foreach (BytesRef v in dictionary)
             {
-                currentAddress = data.FilePointer - startPosition;
+                currentAddress = data.GetFilePointer() - startPosition;
                 valueToAddress[v] = currentAddress;
                 WriteVShort(data, v.Length);
                 data.WriteBytes(v.Bytes, v.Offset, v.Length);
             }
 
             /* ordinals */
-            long totalBytes = data.FilePointer - startPosition;
+            long totalBytes = data.GetFilePointer() - startPosition;
             index.WriteInt64(totalBytes);
             int maxDoc = State.SegmentInfo.DocCount;
             PackedInt32s.Writer w = PackedInt32s.GetWriter(index, maxDoc, PackedInt32s.BitsRequired(currentAddress), PackedInt32s.DEFAULT);
@@ -570,7 +570,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* values */
 
-            long startPos = data.FilePointer;
+            long startPos = data.GetFilePointer();
 
             int valueCount = 0;
             foreach (BytesRef v in values)
@@ -581,7 +581,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
             /* addresses */
 
-            long maxAddress = data.FilePointer - startPos;
+            long maxAddress = data.GetFilePointer() - startPos;
             index.WriteInt64(maxAddress);
 
             Debug.Assert(valueCount != int.MaxValue); // unsupported by the 4.0 impl

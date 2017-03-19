@@ -79,7 +79,7 @@ namespace Lucene.Net.Codecs.Lucene42
         {
             meta.WriteVInt32(field.Number);
             meta.WriteByte((byte)NUMBER);
-            meta.WriteInt64(data.FilePointer);
+            meta.WriteInt64(data.GetFilePointer());
             long minValue = long.MaxValue;
             long maxValue = long.MinValue;
             long gcd = 0;

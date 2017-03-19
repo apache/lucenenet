@@ -108,8 +108,8 @@ namespace Lucene.Net.Codecs.Compressing
                 string codecNameDat = formatName + CODEC_SFX_DAT;
                 CodecUtil.WriteHeader(indexStream, codecNameIdx, VERSION_CURRENT);
                 CodecUtil.WriteHeader(fieldsStream, codecNameDat, VERSION_CURRENT);
-                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.FilePointer);
-                Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.FilePointer);
+                Debug.Assert(CodecUtil.HeaderLength(codecNameDat) == fieldsStream.GetFilePointer());
+                Debug.Assert(CodecUtil.HeaderLength(codecNameIdx) == indexStream.GetFilePointer());
 
                 indexWriter = new CompressingStoredFieldsIndexWriter(indexStream);
                 indexStream = null;
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         private void Flush()
         {
-            indexWriter.WriteIndex(numBufferedDocs, fieldsStream.FilePointer);
+            indexWriter.WriteIndex(numBufferedDocs, fieldsStream.GetFilePointer());
 
             // transform end offsets into lengths
             int[] lengths = endOffsets;
@@ -438,7 +438,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 throw new Exception("Wrote " + docBase + " docs, finish called with numDocs=" + numDocs);
             }
-            indexWriter.Finish(numDocs, fieldsStream.FilePointer);
+            indexWriter.Finish(numDocs, fieldsStream.GetFilePointer());
             CodecUtil.WriteFooter(fieldsStream);
             Debug.Assert(bufferedDocs.Length == 0);
         }
@@ -503,7 +503,7 @@ namespace Lucene.Net.Codecs.Compressing
                                 Debug.Assert(docID == it.docBase);
 
                                 // no need to decompress, just copy data
-                                indexWriter.WriteIndex(it.chunkDocs, fieldsStream.FilePointer);
+                                indexWriter.WriteIndex(it.chunkDocs, fieldsStream.GetFilePointer());
                                 WriteHeader(this.docBase, it.chunkDocs, it.numStoredFields, it.lengths);
                                 it.CopyCompressedData(fieldsStream);
                                 this.docBase += it.chunkDocs;

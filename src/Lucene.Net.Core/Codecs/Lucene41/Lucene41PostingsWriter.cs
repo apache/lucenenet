@@ -272,13 +272,13 @@ namespace Lucene.Net.Codecs.Lucene41
 
         public override void StartTerm()
         {
-            docStartFP = docOut.FilePointer;
+            docStartFP = docOut.GetFilePointer();
             if (fieldHasPositions)
             {
-                posStartFP = posOut.FilePointer;
+                posStartFP = posOut.GetFilePointer();
                 if (fieldHasPayloads || fieldHasOffsets)
                 {
-                    payStartFP = payOut.FilePointer;
+                    payStartFP = payOut.GetFilePointer();
                 }
             }
             lastDocID = 0;
@@ -419,9 +419,9 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     if (payOut != null)
                     {
-                        lastBlockPayFP = payOut.FilePointer;
+                        lastBlockPayFP = payOut.GetFilePointer();
                     }
-                    lastBlockPosFP = posOut.FilePointer;
+                    lastBlockPosFP = posOut.GetFilePointer();
                     lastBlockPosBufferUpto = posBufferUpto;
                     lastBlockPayloadByteUpto = payloadByteUpto;
                 }
@@ -500,7 +500,7 @@ namespace Lucene.Net.Codecs.Lucene41
                 if (state2.TotalTermFreq > Lucene41PostingsFormat.BLOCK_SIZE)
                 {
                     // record file offset for last pos in last block
-                    lastPosBlockOffset = posOut.FilePointer - posStartFP;
+                    lastPosBlockOffset = posOut.GetFilePointer() - posStartFP;
                 }
                 else
                 {

@@ -164,11 +164,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
         public override void StartTerm()
         {
-            FreqStart = FreqOut.FilePointer;
+            FreqStart = FreqOut.GetFilePointer();
             //if (DEBUG) System.out.println("SPW: startTerm freqOut.fp=" + freqStart);
             if (ProxOut != null)
             {
-                ProxStart = ProxOut.FilePointer;
+                ProxStart = ProxOut.GetFilePointer();
             }
             // force first payload to write its length
             LastPayloadLength = -1;

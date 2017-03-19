@@ -99,8 +99,8 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 CodecUtil.WriteHeader(fieldsStream, CODEC_NAME_DAT, VERSION_CURRENT);
                 CodecUtil.WriteHeader(indexStream, CODEC_NAME_IDX, VERSION_CURRENT);
-                Debug.Assert(HEADER_LENGTH_DAT == fieldsStream.FilePointer);
-                Debug.Assert(HEADER_LENGTH_IDX == indexStream.FilePointer);
+                Debug.Assert(HEADER_LENGTH_DAT == fieldsStream.GetFilePointer());
+                Debug.Assert(HEADER_LENGTH_IDX == indexStream.GetFilePointer());
                 success = true;
             }
             finally
@@ -118,7 +118,7 @@ namespace Lucene.Net.Codecs.Lucene40
         // in the correct fields format.
         public override void StartDocument(int numStoredFields)
         {
-            indexStream.WriteInt64(fieldsStream.FilePointer);
+            indexStream.WriteInt64(fieldsStream.GetFilePointer());
             fieldsStream.WriteVInt32(numStoredFields);
         }
 
@@ -249,7 +249,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public void AddRawDocuments(IndexInput stream, int[] lengths, int numDocs)
         {
-            long position = fieldsStream.FilePointer;
+            long position = fieldsStream.GetFilePointer();
             long start = position;
             for (int i = 0; i < numDocs; i++)
             {
@@ -257,19 +257,19 @@ namespace Lucene.Net.Codecs.Lucene40
                 position += lengths[i];
             }
             fieldsStream.CopyBytes(stream, position - start);
-            Debug.Assert(fieldsStream.FilePointer == position);
+            Debug.Assert(fieldsStream.GetFilePointer() == position);
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (HEADER_LENGTH_IDX + ((long)numDocs) * 8 != indexStream.FilePointer)
+            if (HEADER_LENGTH_IDX + ((long)numDocs) * 8 != indexStream.GetFilePointer())
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.FilePointer + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
+                throw new Exception("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.GetFilePointer() + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
 

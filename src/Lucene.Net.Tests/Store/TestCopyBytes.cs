@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
                 }
 
                 @out.WriteBytes(bytes, 0, byteUpto);
-                Assert.AreEqual(size, @out.FilePointer);
+                Assert.AreEqual(size, @out.GetFilePointer());
                 @out.Dispose();
                 Assert.AreEqual(size, dir.FileLength("test"));
 

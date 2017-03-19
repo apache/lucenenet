@@ -77,10 +77,10 @@ namespace Lucene.Net.Codecs.Lucene40
             this.CurPayloadLength = payloadLength;
             this.CurStoreOffsets = storeOffsets;
             this.CurOffsetLength = offsetLength;
-            this.CurFreqPointer = FreqOutput.FilePointer;
+            this.CurFreqPointer = FreqOutput.GetFilePointer();
             if (ProxOutput != null)
             {
-                this.CurProxPointer = ProxOutput.FilePointer;
+                this.CurProxPointer = ProxOutput.GetFilePointer();
             }
         }
 
@@ -90,10 +90,10 @@ namespace Lucene.Net.Codecs.Lucene40
             Arrays.Fill(LastSkipDoc, 0);
             Arrays.Fill(LastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
             Arrays.Fill(LastSkipOffsetLength, -1); // we don't have to write the first length in the skip list
-            Arrays.Fill(LastSkipFreqPointer, FreqOutput.FilePointer);
+            Arrays.Fill(LastSkipFreqPointer, FreqOutput.GetFilePointer());
             if (ProxOutput != null)
             {
-                Arrays.Fill(LastSkipProxPointer, ProxOutput.FilePointer);
+                Arrays.Fill(LastSkipProxPointer, ProxOutput.GetFilePointer());
             }
         }
 
