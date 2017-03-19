@@ -38,7 +38,7 @@ namespace Lucene.Net.Search.Highlight
 
         private float totalScore = 0;
         private float maxTermWeight = 0;
-        private HashMap<string, WeightedTerm> termsToFind;
+        private IDictionary<string, WeightedTerm> termsToFind;
 
         private ICharTermAttribute termAtt;
 
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Highlight
 
         public QueryTermScorer(WeightedTerm[] weightedTerms)
         {
-            termsToFind = new HashMap<string, WeightedTerm>();
+            termsToFind = new Dictionary<string, WeightedTerm>();
             for (int i = 0; i < weightedTerms.Length; i++)
             {
                 WeightedTerm existingTerm;
@@ -120,8 +120,8 @@ namespace Lucene.Net.Search.Highlight
         {
             string termText = termAtt.ToString();
 
-            WeightedTerm queryTerm = termsToFind[termText];
-            if (queryTerm == null)
+            WeightedTerm queryTerm;
+            if (!termsToFind.TryGetValue(termText, out queryTerm) || queryTerm == null)
             {
                 // not a query term - return
                 return 0;
