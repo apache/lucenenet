@@ -276,9 +276,9 @@ namespace Lucene.Net.Codecs.SimpleText
         private class SimpleTVFields : Fields
         {
             private readonly SimpleTextTermVectorsReader _outerInstance;
-            private readonly SortedDictionary<string, SimpleTVTerms> _fields;
+            private readonly IDictionary<string, SimpleTVTerms> _fields;
 
-            internal SimpleTVFields(SimpleTextTermVectorsReader outerInstance, SortedDictionary<string, SimpleTVTerms> fields)
+            internal SimpleTVFields(SimpleTextTermVectorsReader outerInstance, IDictionary<string, SimpleTVTerms> fields)
             {
                 _outerInstance = outerInstance;
                 _fields = fields;
