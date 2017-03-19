@@ -604,7 +604,10 @@ namespace Lucene.Net.Util
             Console.WriteLine(this.ClassEnvRule.timeZone.DisplayName);
 
             Console.Write("Default Codec: ");
-            Console.WriteLine(this.ClassEnvRule.codec.Name);
+            Console.Write(this.ClassEnvRule.codec.Name);
+            Console.Write(" (");
+            Console.Write(this.ClassEnvRule.codec.GetType().ToString());
+            Console.WriteLine(")");
 
             Console.Write("Default Similarity: ");
             Console.WriteLine(this.ClassEnvRule.similarity.ToString());
