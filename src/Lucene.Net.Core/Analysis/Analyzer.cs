@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// Simple example:
     /// <code>
-    /// Analyzer analyzer = new Analyzer.NewAnonymous((fieldName, reader) => 
+    /// Analyzer analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => 
     /// {
     ///     Tokenizer source = new FooTokenizer(reader);
     ///     TokenStream filter = new FooFilter(source);
@@ -97,7 +97,7 @@ namespace Lucene.Net.Analysis
         /// method through the <paramref name="createComponents"/> argument.
         /// Simple example: 
         /// <code>
-        ///     var analyzer = Analyzer.NewAnonymous((fieldName, reader) => 
+        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => 
         ///     {
         ///         Tokenizer source = new FooTokenizer(reader);
         ///         TokenStream filter = new FooFilter(source);
@@ -124,7 +124,7 @@ namespace Lucene.Net.Analysis
         /// method through the <paramref name="createComponents"/> argument and allows the use of a <see cref="ReuseStrategy"/>.
         /// Simple example: 
         /// <code>
-        ///     var analyzer = Analyzer.NewAnonymous((fieldName, reader) => 
+        ///     var analyzer = Analyzer.NewAnonymous(createComponents: (fieldName, reader) => 
         ///     {
         ///         Tokenizer source = new FooTokenizer(reader);
         ///         TokenStream filter = new FooFilter(source);
