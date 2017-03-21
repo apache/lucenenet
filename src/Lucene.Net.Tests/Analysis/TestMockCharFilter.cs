@@ -28,11 +28,23 @@ namespace Lucene.Net.Analysis
         {
             Analyzer analyzer = new AnalyzerAnonymousInnerClassHelper(this);
 
-            AssertAnalyzesTo(analyzer, "aab", new string[] { "aab" }, new int[] { 0 }, new int[] { 3 });
+            AssertAnalyzesTo(analyzer, "ab",
+                new string[] { "aab" },
+                new int[] { 0 },
+                new int[] { 2 }
+            );
 
-            AssertAnalyzesTo(analyzer, "aabaa", new string[] { "aabaa" }, new int[] { 0 }, new int[] { 5 });
+            AssertAnalyzesTo(analyzer, "aba",
+                new string[] { "aabaa" },
+                new int[] { 0 },
+                new int[] { 3 }
+            );
 
-            AssertAnalyzesTo(analyzer, "aabcdefgaa", new string[] { "aabcdefgaa" }, new int[] { 0 }, new int[] { 10 });
+            AssertAnalyzesTo(analyzer, "abcdefga",
+                new string[] { "aabcdefgaa" },
+                new int[] { 0 },
+                new int[] { 8 }
+            );
         }
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer

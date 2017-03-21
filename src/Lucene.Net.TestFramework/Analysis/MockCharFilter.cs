@@ -89,7 +89,14 @@ namespace Lucene.Net.Analysis
         public override int Read(char[] cbuf, int off, int len)
         {
             // Java returns -1, maintain compat.
-            int numRead = base.Read(cbuf, off, len);
+            int numRead = 0;
+            for (int i = off; i < off + len; i++)
+            {
+                int c = Read();
+                if (c == -1) break;
+                cbuf[i] = (char)c;
+                numRead++;
+            }
             return numRead == 0 ? -1 : numRead;
         }
 
