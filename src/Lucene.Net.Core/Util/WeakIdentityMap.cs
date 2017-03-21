@@ -1,29 +1,27 @@
-using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Collections;
 
 namespace Lucene.Net.Util
 {
     /*
-     * Licensed to the Apache Software Foundation (ASF) under one or more
-     * contributor license agreements.  See the NOTICE file distributed with
-     * this work for additional information regarding copyright ownership.
-     * The ASF licenses this file to You under the Apache License, Version 2.0
-     * (the "License"); you may not use this file except in compliance with
-     * the License.  You may obtain a copy of the License at
-     *
-     *     http://www.apache.org/licenses/LICENSE-2.0
-     *
-     * Unless required by applicable law or agreed to in writing, software
-     * distributed under the License is distributed on an "AS IS" BASIS,
-     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-     * See the License for the specific language governing permissions and
-     * limitations under the License.
-     */
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
 
     /// <summary>
     /// Implements a combination of <seealso cref="java.util.WeakHashMap"/> and
@@ -61,9 +59,8 @@ namespace Lucene.Net.Util
     /// @lucene.internal
     /// </summary>
     public sealed class WeakIdentityMap<TKey, TValue>
-        where TKey : class
+         where TKey : class
     {
-        //private readonly ReferenceQueue<object> queue = new ReferenceQueue<object>();
         private readonly IDictionary<IdentityWeakReference, TValue> backingStore;
 
         private readonly bool reapOnRead;
@@ -82,7 +79,7 @@ namespace Lucene.Net.Util
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
         public static WeakIdentityMap<TKey, TValue> NewHashMap(bool reapOnRead)
         {
-            return new WeakIdentityMap<TKey, TValue>(new HashMap<IdentityWeakReference, TValue>(), reapOnRead);
+            return new WeakIdentityMap<TKey, TValue>(new Dictionary<IdentityWeakReference, TValue>(), reapOnRead);
         }
 
         /// <summary>
@@ -252,16 +249,17 @@ namespace Lucene.Net.Util
 
         private class IteratorAnonymousInnerClassHelper : IEnumerator<TKey>
         {
-            private readonly WeakIdentityMap<TKey,TValue> outerInstance;
+            private readonly WeakIdentityMap<TKey, TValue> outerInstance;
+            private readonly IEnumerator<KeyValuePair<IdentityWeakReference, TValue>> enumerator;
 
-            public IteratorAnonymousInnerClassHelper(WeakIdentityMap<TKey,TValue> outerInstance)
+            public IteratorAnonymousInnerClassHelper(WeakIdentityMap<TKey, TValue> outerInstance)
             {
                 this.outerInstance = outerInstance;
+                enumerator = outerInstance.backingStore.GetEnumerator();
             }
 
             // holds strong reference to next element in backing iterator:
             private object next = null;
-            private int position = -1; // start before the beginning of the set
 
             public TKey Current
             {
@@ -279,56 +277,32 @@ namespace Lucene.Net.Util
                 }
             }
 
+
             public void Dispose()
             {
-                // Nothing to do
+                enumerator.Dispose();
             }
 
-            
+
             public bool MoveNext()
             {
-                while (true)
+                while (enumerator.MoveNext())
                 {
-                    IdentityWeakReference key;
-
-                    // If the next position doesn't exist, exit
-                    if (++position >= outerInstance.backingStore.Count)
+                    next = enumerator.Current.Key.Target;
+                    if (next != null)
                     {
-                        position--;
-                        return false;
+                        // unfold "null" special value:
+                        if (next == NULL)
+                            next = null;
+                        return true;
                     }
-                    try
-                    {
-                        key = outerInstance.backingStore.Keys.ElementAt(position);
-                    }
-                    catch (ArgumentOutOfRangeException)
-                    {
-                        // some other thread beat us to the last element (or removed a prior element) - fail gracefully.
-                        position--;
-                        return false;
-                    }
-                    if (!key.IsAlive)
-                    {
-                        outerInstance.backingStore.Remove(key);
-                        position--;
-                        continue;
-                    }
-                    // unfold "null" special value:
-                    if (key.Target == NULL)
-                    {
-                        next = null;
-                    }
-                    else
-                    {
-                        next = key.Target;
-                    }
-                    return true;
                 }
+                return false;
             }
 
             public void Reset()
             {
-                throw new NotSupportedException();
+                enumerator.Reset();
             }
         }
 
@@ -354,22 +328,27 @@ namespace Lucene.Net.Util
         /// collected key/value pairs from the map. Calling this method is not needed
         /// if {@code reapOnRead = true}. Otherwise it might be a good idea
         /// to call this method when there is spare time (e.g. from a background thread). </summary>
-        /// <seealso cref= <a href="#reapInfo">Information about the <code>reapOnRead</code> setting</a> </seealso>
+        /// <seealso cref= <a href="#reapInfo">Information about the <code>reapOnRead</code> setting</a> </seealso>			
         public void Reap()
         {
-            List<IdentityWeakReference> keysToRemove = new List<IdentityWeakReference>();
-            foreach (IdentityWeakReference zombie in backingStore.Keys)
+            List<IdentityWeakReference> keysToRemove = null;
+            foreach (var item in backingStore)
             {
-                if (!zombie.IsAlive)
+                if (!item.Key.IsAlive)
                 {
-                    keysToRemove.Add(zombie);
+                    // create the list of keys to remove only if there are keys to remove.
+                    // this reduces heap pressure
+                    if (keysToRemove == null)
+                        keysToRemove = new List<IdentityWeakReference>();
+                    keysToRemove.Add(item.Key);
                 }
             }
 
-            foreach (var key in keysToRemove)
-            {
-                backingStore.Remove(key);
-            }
+            if (keysToRemove != null)
+                foreach (var key in keysToRemove)
+                {
+                    backingStore.Remove(key);
+                }
         }
 
         // we keep a hard reference to our NULL key, so map supports null keys that never get GCed:
@@ -396,9 +375,9 @@ namespace Lucene.Net.Util
                 {
                     return true;
                 }
-                if (o is IdentityWeakReference)
+                IdentityWeakReference @ref = o as IdentityWeakReference;
+                if (@ref != null)
                 {
-                    IdentityWeakReference @ref = (IdentityWeakReference)o;
                     if (this.Target == @ref.Target)
                     {
                         return true;

@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -56,11 +57,13 @@ namespace Lucene.Net.Util
             // try null key & check its iterator also return null:
             map.Put(null, "null");
             {
-                IEnumerator<string> iter = map.Keys.GetEnumerator();
-                Assert.IsTrue(iter.MoveNext());
-                Assert.IsNull(iter.Current);
-                Assert.IsFalse(iter.MoveNext());
-                Assert.IsFalse(iter.MoveNext());
+                using (IEnumerator<string> iter = map.Keys.GetEnumerator())
+                {
+                    Assert.IsTrue(iter.MoveNext());
+                    Assert.IsNull(iter.Current);
+                    Assert.IsFalse(iter.MoveNext());
+                    Assert.IsFalse(iter.MoveNext());
+                }
             }
             // 2 more keys:
             map.Put(key1, "bar1");
@@ -105,10 +108,9 @@ namespace Lucene.Net.Util
             Assert.AreEqual(3, map.Count);
 
             int c = 0, keysAssigned = 0;
-            for (IEnumerator<string> iter = map.Keys.GetEnumerator(); iter.MoveNext();)
+            foreach (object k in map.Keys)
             {
                 //Assert.IsTrue(iter.hasNext()); // try again, should return same result!
-                string k = iter.Current;
                 // LUCENENET NOTE: Need object.ReferenceEquals here because the == operator does more than check reference equality
                 Assert.IsTrue(object.ReferenceEquals(k, key1) || object.ReferenceEquals(k, key2) | object.ReferenceEquals(k, key3));
                 keysAssigned += object.ReferenceEquals(k, key1) ? 1 : (object.ReferenceEquals(k, key2) ? 2 : 4);
@@ -143,9 +145,9 @@ namespace Lucene.Net.Util
                     size = newSize;
                     Thread.Sleep(TimeSpan.FromSeconds(1));
                     c = 0;
-                    for (IEnumerator<string> iter = map.Keys.GetEnumerator(); iter.MoveNext();)
+                    foreach (object k in map.Keys)
                     {
-                        Assert.IsNotNull(iter.Current);
+                        Assert.IsNotNull(k);
                         c++;
                     }
                     newSize = map.Count;
@@ -166,8 +168,8 @@ namespace Lucene.Net.Util
             Assert.AreEqual(0, map.Count);
             Assert.IsTrue(map.IsEmpty);
 
-            IEnumerator<string> it = map.Keys.GetEnumerator();
-            Assert.IsFalse(it.MoveNext());
+            using (IEnumerator<string> it = map.Keys.GetEnumerator())
+                Assert.IsFalse(it.MoveNext());
             /*try
             {
               it.Next();
@@ -194,7 +196,11 @@ namespace Lucene.Net.Util
             Assert.IsTrue(map.IsEmpty);
         }
 
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestConcurrentHashMap()
         {
             // don't make threadCount and keyCount random, otherwise easily OOMs or fails otherwise:
@@ -224,7 +230,7 @@ namespace Lucene.Net.Util
             {
                 foreach (var w in workers)
                 {
-                    w.Join(1000L);
+                    w.Join();
                 }
             }
 
@@ -258,9 +264,9 @@ namespace Lucene.Net.Util
                     size = newSize;
                     Thread.Sleep(new TimeSpan(100L));
                     int c = 0;
-                    for (IEnumerator<object> it = map.Keys.GetEnumerator(); it.MoveNext();)
+                    foreach (object k in map.Keys)
                     {
-                        Assert.IsNotNull(it.Current);
+                        Assert.IsNotNull(k);
                         c++;
                     }
                     newSize = map.Count;
@@ -332,9 +338,9 @@ namespace Lucene.Net.Util
                                 break;
                             case 4:
                                 // check iterator still working
-                                for (IEnumerator<object> it = map.Keys.GetEnumerator(); it.MoveNext();)
+                                foreach (object k in map.Keys)
                                 {
-                                    Assert.IsNotNull(it.Current);
+                                    Assert.IsNotNull(k);
                                 }
                                 break;
                             default:
