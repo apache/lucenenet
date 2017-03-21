@@ -95,8 +95,18 @@ namespace Lucene.Net.Analysis
 
         protected override int Correct(int currentOff)
         {
-            KeyValuePair<int, int> lastEntry = corrections.LowerEntry(currentOff + 1);
-            int ret = lastEntry.Equals(default(KeyValuePair<int, int>)) ? currentOff : currentOff + lastEntry.Value;
+            Support.C5.KeyValuePair<int, int> lastEntry;
+            int ret;
+            // LUCENENET NOTE: TryPredecessor is equivalent to TreeMap.lowerEntry() in Java
+            if (corrections.TryPredecessor(currentOff + 1, out lastEntry))
+            {
+                ret = currentOff + lastEntry.Value;
+            }
+            else
+            {
+                ret = currentOff;
+            }
+
             Debug.Assert(ret >= 0, "currentOff=" + currentOff + ",diff=" + (ret - currentOff));
             return ret;
         }
@@ -106,6 +116,6 @@ namespace Lucene.Net.Analysis
             corrections[off] = cumulativeDiff;
         }
 
-        internal SortedDictionary<int, int> corrections = new SortedDictionary<int, int>();
+        internal TreeDictionary<int, int> corrections = new TreeDictionary<int, int>();
     }
 }
