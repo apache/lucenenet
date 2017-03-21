@@ -2,8 +2,6 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Codecs.Lucene41;
 using Lucene.Net.Documents;
-using Lucene.Net.Index;
-using Lucene.Net.Index.Memory;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
@@ -13,6 +11,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -210,11 +209,17 @@ namespace Lucene.Net.Index.Memory
             IndexReader reader = DirectoryReader.Open(ramdir);
             IndexSearcher ram = NewSearcher(reader);
             IndexSearcher mem = memory.CreateSearcher();
-            QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "foo", analyzer);
+            QueryParser qp = new QueryParser(TEST_VERSION_CURRENT, "foo", analyzer)
+            {
+                // LUCENENET specific - to avoid random failures, set the culture
+                // of the QueryParser to invariant
+                Locale = CultureInfo.InvariantCulture
+            };
             foreach (string query in queries)
             {
                 TopDocs ramDocs = ram.Search(qp.Parse(query), 1);
                 TopDocs memDocs = mem.Search(qp.Parse(query), 1);
+
                 assertEquals(query, ramDocs.TotalHits, memDocs.TotalHits);
             }
             reader.Dispose();
