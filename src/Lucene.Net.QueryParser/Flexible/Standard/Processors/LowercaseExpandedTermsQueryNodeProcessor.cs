@@ -58,7 +58,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
             CultureInfo locale = GetQueryConfigHandler().Get(ConfigurationKeys.LOCALE);
             if (locale == null)
             {
-                locale = CultureInfo.InvariantCulture; //Locale.getDefault();
+                locale = CultureInfo.CurrentCulture; //Locale.getDefault();
             }
 
             if (node is WildcardQueryNode

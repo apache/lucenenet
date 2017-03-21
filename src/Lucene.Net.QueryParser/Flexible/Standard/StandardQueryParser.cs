@@ -324,7 +324,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                return QueryConfigHandler.Get(ConfigurationKeys.LOCALE);
+                var culture = QueryConfigHandler.Get(ConfigurationKeys.LOCALE);
+                return culture == null ? CultureInfo.CurrentCulture : culture;
             }
             set
             {
@@ -336,7 +337,8 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         {
             get
             {
-                return QueryConfigHandler.Get(ConfigurationKeys.TIMEZONE);
+                var timeZone = QueryConfigHandler.Get(ConfigurationKeys.TIMEZONE);
+                return timeZone == null ? TimeZoneInfo.Local : timeZone;
             }
             set
             {

@@ -52,7 +52,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Config
             Set(ConfigurationKeys.ENABLE_POSITION_INCREMENTS, false); //default value 2.4
             Set(ConfigurationKeys.FIELD_BOOST_MAP, new LinkedHashMap<string, float?>());
             Set(ConfigurationKeys.FUZZY_CONFIG, new FuzzyConfig());
-            Set(ConfigurationKeys.LOCALE, CultureInfo.CurrentCulture);
+            Set(ConfigurationKeys.LOCALE, null);
             Set(ConfigurationKeys.MULTI_TERM_REWRITE_METHOD, MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT);
             Set(ConfigurationKeys.FIELD_DATE_RESOLUTION_MAP, new HashMap<string, DateTools.Resolution?>());
         }
