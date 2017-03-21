@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
@@ -34,7 +35,11 @@ namespace Lucene.Net.Store
             return unchecked((byte)((idx % 256) * (1 + (idx / 256))));
         }
 
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestCopyBytesMem()
         {
             int num = AtLeast(10);
