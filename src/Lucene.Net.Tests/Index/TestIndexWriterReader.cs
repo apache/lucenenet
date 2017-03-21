@@ -107,22 +107,22 @@ namespace Lucene.Net.Index
                             break;
                     }
                 }
-                Assert.IsFalse(reader.IsCurrent);
+                Assert.IsFalse(reader.IsCurrent());
                 reader.Dispose();
             }
             writer.ForceMerge(1); // make sure all merging is done etc.
             DirectoryReader dirReader = writer.GetReader();
             writer.Commit(); // no changes that are not visible to the reader
-            Assert.IsTrue(dirReader.IsCurrent);
+            Assert.IsTrue(dirReader.IsCurrent());
             writer.Dispose();
-            Assert.IsTrue(dirReader.IsCurrent); // all changes are visible to the reader
+            Assert.IsTrue(dirReader.IsCurrent()); // all changes are visible to the reader
             iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
             writer = new IndexWriter(dir1, iwc);
-            Assert.IsTrue(dirReader.IsCurrent);
+            Assert.IsTrue(dirReader.IsCurrent());
             writer.AddDocument(DocHelper.CreateDocument(1, "x", 1 + Random().Next(5)));
-            Assert.IsTrue(dirReader.IsCurrent); // segments in ram but IW is different to the readers one
+            Assert.IsTrue(dirReader.IsCurrent()); // segments in ram but IW is different to the readers one
             writer.Dispose();
-            Assert.IsFalse(dirReader.IsCurrent); // segments written
+            Assert.IsFalse(dirReader.IsCurrent()); // segments written
             dirReader.Dispose();
             dir1.Dispose();
         }
@@ -160,7 +160,7 @@ namespace Lucene.Net.Index
 
             // get a reader
             DirectoryReader r1 = writer.GetReader();
-            Assert.IsTrue(r1.IsCurrent);
+            Assert.IsTrue(r1.IsCurrent());
 
             string id10 = r1.Document(10).GetField("id").GetStringValue();
 
@@ -168,10 +168,10 @@ namespace Lucene.Net.Index
             newDoc.RemoveField("id");
             newDoc.Add(NewStringField("id", Convert.ToString(8000), Field.Store.YES));
             writer.UpdateDocument(new Term("id", id10), newDoc);
-            Assert.IsFalse(r1.IsCurrent);
+            Assert.IsFalse(r1.IsCurrent());
 
             DirectoryReader r2 = writer.GetReader();
-            Assert.IsTrue(r2.IsCurrent);
+            Assert.IsTrue(r2.IsCurrent());
             Assert.AreEqual(0, Count(new Term("id", id10), r2));
             if (VERBOSE)
             {
@@ -180,13 +180,13 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, Count(new Term("id", Convert.ToString(8000)), r2));
 
             r1.Dispose();
-            Assert.IsTrue(r2.IsCurrent);
+            Assert.IsTrue(r2.IsCurrent());
             writer.Dispose();
-            Assert.IsTrue(r2.IsCurrent);
+            Assert.IsTrue(r2.IsCurrent());
 
             DirectoryReader r3 = DirectoryReader.Open(dir1);
-            Assert.IsTrue(r3.IsCurrent);
-            Assert.IsTrue(r2.IsCurrent);
+            Assert.IsTrue(r3.IsCurrent());
+            Assert.IsTrue(r2.IsCurrent());
             Assert.AreEqual(0, Count(new Term("id", id10), r3));
             Assert.AreEqual(1, Count(new Term("id", Convert.ToString(8000)), r3));
 
@@ -194,13 +194,13 @@ namespace Lucene.Net.Index
             Document doc = new Document();
             doc.Add(NewTextField("field", "a b c", Field.Store.NO));
             writer.AddDocument(doc);
-            Assert.IsTrue(r2.IsCurrent);
-            Assert.IsTrue(r3.IsCurrent);
+            Assert.IsTrue(r2.IsCurrent());
+            Assert.IsTrue(r3.IsCurrent());
 
             writer.Dispose();
 
-            Assert.IsFalse(r2.IsCurrent);
-            Assert.IsTrue(!r3.IsCurrent);
+            Assert.IsFalse(r2.IsCurrent());
+            Assert.IsTrue(!r3.IsCurrent());
 
             r2.Dispose();
             r3.Dispose();
@@ -225,23 +225,23 @@ namespace Lucene.Net.Index
             doc = new Document();
             doc.Add(NewTextField("field", "a b c", Field.Store.NO));
             DirectoryReader nrtReader = writer.GetReader();
-            Assert.IsTrue(nrtReader.IsCurrent);
+            Assert.IsTrue(nrtReader.IsCurrent());
             writer.AddDocument(doc);
-            Assert.IsFalse(nrtReader.IsCurrent); // should see the changes
+            Assert.IsFalse(nrtReader.IsCurrent()); // should see the changes
             writer.ForceMerge(1); // make sure we don't have a merge going on
-            Assert.IsFalse(nrtReader.IsCurrent);
+            Assert.IsFalse(nrtReader.IsCurrent());
             nrtReader.Dispose();
 
             DirectoryReader dirReader = DirectoryReader.Open(dir);
             nrtReader = writer.GetReader();
 
-            Assert.IsTrue(dirReader.IsCurrent);
-            Assert.IsTrue(nrtReader.IsCurrent); // nothing was committed yet so we are still current
+            Assert.IsTrue(dirReader.IsCurrent());
+            Assert.IsTrue(nrtReader.IsCurrent()); // nothing was committed yet so we are still current
             Assert.AreEqual(2, nrtReader.MaxDoc); // sees the actual document added
             Assert.AreEqual(1, dirReader.MaxDoc);
             writer.Dispose(); // close is actually a commit both should see the changes
-            Assert.IsTrue(nrtReader.IsCurrent);
-            Assert.IsFalse(dirReader.IsCurrent); // this reader has been opened before the writer was closed / committed
+            Assert.IsTrue(nrtReader.IsCurrent());
+            Assert.IsFalse(dirReader.IsCurrent()); // this reader has been opened before the writer was closed / committed
 
             dirReader.Dispose();
             nrtReader.Dispose();
@@ -284,16 +284,16 @@ namespace Lucene.Net.Index
             writer2.Dispose();
 
             DirectoryReader r0 = writer.GetReader();
-            Assert.IsTrue(r0.IsCurrent);
+            Assert.IsTrue(r0.IsCurrent());
             writer.AddIndexes(dir2);
-            Assert.IsFalse(r0.IsCurrent);
+            Assert.IsFalse(r0.IsCurrent());
             r0.Dispose();
 
             DirectoryReader r1 = writer.GetReader();
-            Assert.IsTrue(r1.IsCurrent);
+            Assert.IsTrue(r1.IsCurrent());
 
             writer.Commit();
-            Assert.IsTrue(r1.IsCurrent); // we have seen all changes - no change after opening the NRT reader
+            Assert.IsTrue(r1.IsCurrent()); // we have seen all changes - no change after opening the NRT reader
 
             Assert.AreEqual(200, r1.MaxDoc);
 
@@ -1304,13 +1304,13 @@ namespace Lucene.Net.Index
             DirectoryReader r3 = DirectoryReader.OpenIfChanged(r);
             Assert.IsNotNull(r3);
             Assert.IsTrue(r3.Version != r.Version);
-            Assert.IsTrue(r3.IsCurrent);
+            Assert.IsTrue(r3.IsCurrent());
 
             // Deletes nothing in reality...:
             w.DeleteDocuments(new Term("foo", "bar"));
 
             // ... but IW marks this as not current:
-            Assert.IsFalse(r3.IsCurrent);
+            Assert.IsFalse(r3.IsCurrent());
             DirectoryReader r4 = DirectoryReader.OpenIfChanged(r3);
             Assert.IsNull(r4);
 

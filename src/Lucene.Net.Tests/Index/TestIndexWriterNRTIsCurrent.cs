@@ -219,7 +219,7 @@ namespace Lucene.Net.Index
                     {
                         try
                         {
-                            bool current = reader.IsCurrent;
+                            bool current = reader.IsCurrent();
                             if (VERBOSE)
                             {
                                 Console.WriteLine("Thread: " + Thread.CurrentThread + " Reader: " + reader + " isCurrent:" + current);

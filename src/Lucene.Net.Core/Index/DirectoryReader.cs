@@ -466,7 +466,7 @@ namespace Lucene.Net.Index
         /// changes.</p>
         /// </summary>
         /// <exception cref="IOException">           if there is a low-level IO error </exception>
-        public abstract bool IsCurrent { get; }
+        public abstract bool IsCurrent();
 
         /// <summary>
         /// Expert: return the IndexCommit that this reader has opened.

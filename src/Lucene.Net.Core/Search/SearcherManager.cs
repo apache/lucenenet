@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
         ///          custom behavior.
         /// </param>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
-        public SearcherManager(IndexWriter writer, bool applyAllDeletes, SearcherFactory searcherFactory = null)
+        public SearcherManager(IndexWriter writer, bool applyAllDeletes, SearcherFactory searcherFactory)
         {
             if (searcherFactory == null)
             {
@@ -149,7 +149,7 @@ namespace Lucene.Net.Search
             {
                 IndexReader r = searcher.IndexReader;
                 Debug.Assert(r is DirectoryReader, "searcher's IndexReader should be a DirectoryReader, but got " + r);
-                return ((DirectoryReader)r).IsCurrent;
+                return ((DirectoryReader)r).IsCurrent();
             }
             finally
             {

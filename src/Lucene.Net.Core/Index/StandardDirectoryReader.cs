@@ -379,7 +379,7 @@ namespace Lucene.Net.Index
         {
             if (commit == null)
             {
-                if (IsCurrent)
+                if (IsCurrent())
                 {
                     return null;
                 }
@@ -436,28 +436,25 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override bool IsCurrent
+        public override bool IsCurrent()
         {
-            get
+            EnsureOpen();
+            if (writer == null || writer.IsClosed)
             {
-                EnsureOpen();
-                if (writer == null || writer.IsClosed)
-                {
-                    // Fully read the segments file: this ensures that it's
-                    // completely written so that if
-                    // IndexWriter.prepareCommit has been called (but not
-                    // yet commit), then the reader will still see itself as
-                    // current:
-                    SegmentInfos sis = new SegmentInfos();
-                    sis.Read(m_directory);
+                // Fully read the segments file: this ensures that it's
+                // completely written so that if
+                // IndexWriter.prepareCommit has been called (but not
+                // yet commit), then the reader will still see itself as
+                // current:
+                SegmentInfos sis = new SegmentInfos();
+                sis.Read(m_directory);
 
-                    // we loaded SegmentInfos from the directory
-                    return sis.Version == segmentInfos.Version;
-                }
-                else
-                {
-                    return writer.NrtIsCurrent(segmentInfos);
-                }
+                // we loaded SegmentInfos from the directory
+                return sis.Version == segmentInfos.Version;
+            }
+            else
+            {
+                return writer.NrtIsCurrent(segmentInfos);
             }
         }
 

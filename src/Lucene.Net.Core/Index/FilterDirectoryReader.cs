@@ -143,12 +143,9 @@ namespace Lucene.Net.Index
             }
         }
 
-        public override bool IsCurrent
+        public override bool IsCurrent()
         {
-            get
-            {
-                return m_input.IsCurrent;
-            }
+            return m_input.IsCurrent();
         }
 
         public override IndexCommit IndexCommit
