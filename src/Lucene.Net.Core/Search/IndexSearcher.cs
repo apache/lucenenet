@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
@@ -892,11 +893,6 @@ namespace Lucene.Net.Search
             {
             }
 
-            /*public override bool HasNext()
-            {
-              return NumTasks > 0;
-            }*/
-
             public void Submit(ICallable<T> task)
             {
                 this.service.Submit(task);
@@ -908,30 +904,6 @@ namespace Lucene.Net.Search
                 throw new NotSupportedException();
             }
 
-            /*public override T Next()
-            {
-              if (!this.HasNext())
-              {
-                throw new NoSuchElementException("next() is called but hasNext() returned false");
-              }
-              try
-              {
-                return Service.Take().Get();
-              }
-              catch (ThreadInterruptedException e)
-              {
-                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-              }
-              catch (ExecutionException e)
-              {
-                throw new Exception(e);
-              }
-              finally
-              {
-                --NumTasks;
-              }
-            }*/
-
             public bool MoveNext()
             {
                 if (numTasks > 0)
@@ -942,11 +914,12 @@ namespace Lucene.Net.Search
                         awaitable.Wait();
                         current = awaitable.Result;
 
+                        return true;
                     }
 #if !NETSTANDARD
-                    catch (System.Threading.ThreadInterruptedException e)
+                    catch (ThreadInterruptedException e)
                     {
-                        throw new System.Threading.ThreadInterruptedException(e.ToString(), e);
+                        throw new ThreadInterruptedException(e.ToString(), e);
                     }
 #endif
                     catch (Exception e)
@@ -964,10 +937,11 @@ namespace Lucene.Net.Search
                 return false;
             }
 
-            /*public override void Remove()
-            {
-              throw new System.NotSupportedException();
-            }*/
+            // LUCENENET NOTE: Not supported in .NET anyway
+            //public override void Remove()
+            //{
+            //  throw new System.NotSupportedException();
+            //}
 
             public IEnumerator<T> GetEnumerator()
             {
