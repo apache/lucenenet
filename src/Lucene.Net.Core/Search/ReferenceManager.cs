@@ -174,7 +174,7 @@ namespace Lucene.Net.Search
         ///  Called after close(), so subclass can free any resources. </summary>
         ///  <exception cref="IOException"> if the after close operation in a sub-class throws an <seealso cref="IOException"/>
         ///  </exception>
-        protected internal virtual void AfterClose()
+        protected virtual void AfterClose()
         {
         }
 
@@ -336,7 +336,7 @@ namespace Lucene.Net.Search
         {
             if (listener == null)
             {
-                throw new System.NullReferenceException("Listener cannot be null");
+                throw new System.NullReferenceException("Listener cannot be null"); // LUCENENET TODO: ArgumentNullException ?
             }
             refreshListeners.Add(listener);
         }
@@ -348,7 +348,7 @@ namespace Lucene.Net.Search
         {
             if (listener == null)
             {
-                throw new System.NullReferenceException("Listener cannot be null");
+                throw new System.NullReferenceException("Listener cannot be null"); // LUCENENET TODO: ArgumentNullException ?
             }
             refreshListeners.Remove(listener);
         }

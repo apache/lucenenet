@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
                 }
                 catch (ThreadInterruptedException ie)
                 {
-                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+                    throw new ThreadInterruptedException(ie.ToString(), ie);
                 }
 #endif
                 // Max it out so any waiting search threads will return:
@@ -239,7 +239,7 @@ namespace Lucene.Net.Search
         {
             // TODO: maybe use private thread ticktock timer, in
             // case clock shift messes up nanoTime?
-            long lastReopenStartNS = DateTime.Now.Ticks * 100;
+            long lastReopenStartNS = Environment.TickCount * 1000000;
 
             //System.out.println("reopen: start");
             while (!finish)
@@ -261,11 +261,11 @@ namespace Lucene.Net.Search
                         bool hasWaiting = waitingGen > searchingGen;
                         long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
 
-                        long sleepNS = nextReopenStartNS - (DateTime.Now.Ticks * 100);
+                        long sleepNS = nextReopenStartNS - (Environment.TickCount * 1000000);
 
                         if (sleepNS > 0)
                         {
-                            reopenCond.WaitOne(new TimeSpan(sleepNS / 100));//Convert NS to Ticks
+                            reopenCond.WaitOne(new TimeSpan(sleepNS / 1000000));//Convert NS to Ticks
                         }
                         else
                         {
@@ -293,7 +293,7 @@ namespace Lucene.Net.Search
                     break;
                 }
 
-                lastReopenStartNS = DateTime.Now.Ticks * 100;
+                lastReopenStartNS = Environment.TickCount * 1000000;
                 // Save the gen as of when we started the reopen; the
                 // listener (HandleRefresh above) copies this to
                 // searchingGen once the reopen completes:
