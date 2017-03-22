@@ -938,12 +938,15 @@ namespace Lucene.Net.Search
                 {
                     try
                     {
-                        current = service.Take().Result;
+                        var awaitable = service.Take();
+                        awaitable.Wait();
+                        current = awaitable.Result;
+
                     }
 #if !NETSTANDARD
-                    catch (System.Threading.ThreadInterruptedException)
+                    catch (System.Threading.ThreadInterruptedException e)
                     {
-                        throw;
+                        throw new System.Threading.ThreadInterruptedException(e.ToString(), e);
                     }
 #endif
                     catch (Exception e)
