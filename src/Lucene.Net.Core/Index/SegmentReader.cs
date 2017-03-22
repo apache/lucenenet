@@ -51,11 +51,10 @@ namespace Lucene.Net.Index
         // tells us the docCount:
         private readonly int numDocs;
 
-        private readonly SegmentCoreReaders core; // LUCENENET specific - made private
-        private readonly SegmentDocValues segDocValues; // LUCENENET specific - made private
+        internal readonly SegmentCoreReaders core;
+        internal readonly SegmentDocValues segDocValues;
 
-        // LUCENENET specific - made private
-        private readonly DisposableThreadLocal<IDictionary<string, object>> docValuesLocal = new DisposableThreadLocalAnonymousInnerClassHelper();
+        internal readonly DisposableThreadLocal<IDictionary<string, object>> docValuesLocal = new DisposableThreadLocalAnonymousInnerClassHelper();
 
         private class DisposableThreadLocalAnonymousInnerClassHelper : DisposableThreadLocal<IDictionary<string, object>>
         {
@@ -83,10 +82,8 @@ namespace Lucene.Net.Index
             }
         }
 
-        // LUCENENET specific - made private
-        private readonly IDictionary<string, DocValuesProducer> dvProducersByField = new Dictionary<string, DocValuesProducer>();
-        // LUCENENET specific - made private
-        private readonly ISet<DocValuesProducer> dvProducers = new IdentityHashSet<DocValuesProducer>();
+        internal readonly IDictionary<string, DocValuesProducer> dvProducersByField = new Dictionary<string, DocValuesProducer>();
+        internal readonly ISet<DocValuesProducer> dvProducers = new IdentityHashSet<DocValuesProducer>();
 
         private readonly FieldInfos fieldInfos; // LUCENENET specific - since it is readonly, made all internal classes use property
 

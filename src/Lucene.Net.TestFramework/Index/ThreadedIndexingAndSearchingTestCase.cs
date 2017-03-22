@@ -64,24 +64,24 @@ namespace Lucene.Net.Index
     /// </summary>
     public abstract class ThreadedIndexingAndSearchingTestCase : LuceneTestCase
     {
-        protected internal readonly AtomicBoolean Failed = new AtomicBoolean();
-        protected internal readonly AtomicInt32 AddCount = new AtomicInt32();
-        protected internal readonly AtomicInt32 DelCount = new AtomicInt32();
-        protected internal readonly AtomicInt32 PackCount = new AtomicInt32();
+        protected internal readonly AtomicBoolean failed = new AtomicBoolean();
+        protected internal readonly AtomicInt32 addCount = new AtomicInt32();
+        protected internal readonly AtomicInt32 delCount = new AtomicInt32();
+        protected internal readonly AtomicInt32 packCount = new AtomicInt32();
 
-        protected internal Directory Dir;
-        protected internal IndexWriter Writer;
+        protected internal Directory dir;
+        protected internal IndexWriter writer;
 
         private class SubDocs
         {
-            public readonly string PackID;
-            public readonly IList<string> SubIDs;
-            public bool Deleted;
+            public readonly string packID;
+            public readonly IList<string> subIDs;
+            public bool deleted;
 
             public SubDocs(string packID, IList<string> subIDs)
             {
-                this.PackID = packID;
-                this.SubIDs = subIDs;
+                this.packID = packID;
+                this.subIDs = subIDs;
             }
         }
 
@@ -95,7 +95,7 @@ namespace Lucene.Net.Index
         }
 
         // Called once to run searching
-        protected internal abstract void DoSearching(TaskScheduler es, DateTime stopTime);
+        protected internal abstract void DoSearching(TaskScheduler es, long stopTime);
 
         protected internal virtual Directory GetDirectory(Directory @in)
         {
@@ -104,34 +104,39 @@ namespace Lucene.Net.Index
 
         protected internal virtual void UpdateDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            Writer.UpdateDocuments(id, docs);
+            writer.UpdateDocuments(id, docs);
         }
 
         protected internal virtual void AddDocuments(Term id, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
-            Writer.AddDocuments(docs);
+            writer.AddDocuments(docs);
         }
 
         protected internal virtual void AddDocument(Term id, IEnumerable<IIndexableField> doc)
         {
-            Writer.AddDocument(doc);
+            writer.AddDocument(doc);
         }
 
         protected internal virtual void UpdateDocument(Term term, IEnumerable<IIndexableField> doc)
         {
-            Writer.UpdateDocument(term, doc);
+            writer.UpdateDocument(term, doc);
         }
 
         protected internal virtual void DeleteDocuments(Term term)
         {
-            Writer.DeleteDocuments(term);
+            writer.DeleteDocuments(term);
         }
 
         protected internal virtual void DoAfterIndexingThreadDone()
         {
         }
 
-        private ThreadClass[] LaunchIndexingThreads(LineFileDocs docs, int numThreads, DateTime stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
+        private ThreadClass[] LaunchIndexingThreads(LineFileDocs docs, 
+                                                    int numThreads, 
+                                                    long stopTime, 
+                                                    ISet<string> delIDs, 
+                                                    ISet<string> delPackIDs, 
+                                                    IList<SubDocs> allSubDocs)
         {
             ThreadClass[] threads = new ThreadClass[numThreads];
             for (int thread = 0; thread < numThreads; thread++)
@@ -146,22 +151,22 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
-            private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
+            private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
-            private LineFileDocs Docs;
-            private DateTime StopTime;
-            private ISet<string> DelIDs;
-            private ISet<string> DelPackIDs;
-            private IList<SubDocs> AllSubDocs;
+            private LineFileDocs docs;
+            private long stopTime;
+            private ISet<string> delIDs;
+            private ISet<string> delPackIDs;
+            private IList<SubDocs> allSubDocs;
 
-            public ThreadAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance, LineFileDocs docs, DateTime stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
+            public ThreadAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance, LineFileDocs docs, long stopTime, ISet<string> delIDs, ISet<string> delPackIDs, IList<SubDocs> allSubDocs)
             {
-                this.OuterInstance = outerInstance;
-                this.Docs = docs;
-                this.StopTime = stopTime;
-                this.DelIDs = delIDs;
-                this.DelPackIDs = delPackIDs;
-                this.AllSubDocs = allSubDocs;
+                this.outerInstance = outerInstance;
+                this.docs = docs;
+                this.stopTime = stopTime;
+                this.delIDs = delIDs;
+                this.delPackIDs = delPackIDs;
+                this.allSubDocs = allSubDocs;
             }
 
             public override void Run()
@@ -169,7 +174,7 @@ namespace Lucene.Net.Index
                 // TODO: would be better if this were cross thread, so that we make sure one thread deleting anothers added docs works:
                 IList<string> toDeleteIDs = new List<string>();
                 IList<SubDocs> toDeleteSubDocs = new List<SubDocs>();
-                while (DateTime.UtcNow < StopTime && !OuterInstance.Failed.Get())
+                while (Environment.TickCount < stopTime && !outerInstance.failed.Get())
                 {
                     try
                     {
@@ -194,7 +199,7 @@ namespace Lucene.Net.Index
                             }
                         }
 
-                        Document doc = Docs.NextDoc();
+                        Document doc = docs.NextDoc();
                         if (doc == null)
                         {
                             break;
@@ -205,7 +210,7 @@ namespace Lucene.Net.Index
                         if (Random().NextBoolean())
                         {
                             addedField = "extra" + Random().Next(40);
-                            doc.Add(OuterInstance.NewTextField(addedField, "a random field", Field.Store.YES));
+                            doc.Add(outerInstance.NewTextField(addedField, "a random field", Field.Store.YES));
                         }
                         else
                         {
@@ -222,24 +227,24 @@ namespace Lucene.Net.Index
                                 if (toDeleteSubDocs.Count > 0 && Random().NextBoolean())
                                 {
                                     delSubDocs = toDeleteSubDocs[Random().Next(toDeleteSubDocs.Count)];
-                                    Debug.Assert(!delSubDocs.Deleted);
+                                    Debug.Assert(!delSubDocs.deleted);
                                     toDeleteSubDocs.Remove(delSubDocs);
                                     // Update doc block, replacing prior packID
-                                    packID = delSubDocs.PackID;
+                                    packID = delSubDocs.packID;
                                 }
                                 else
                                 {
                                     delSubDocs = null;
                                     // Add doc block, using new packID
-                                    packID = OuterInstance.PackCount.IncrementAndGet() + "";
+                                    packID = outerInstance.packCount.GetAndIncrement().ToString(CultureInfo.InvariantCulture);
                                 }
 
-                                Field packIDField = OuterInstance.NewStringField("packID", packID, Field.Store.YES);
+                                Field packIDField = outerInstance.NewStringField("packID", packID, Field.Store.YES);
                                 IList<string> docIDs = new List<string>();
                                 SubDocs subDocs = new SubDocs(packID, docIDs);
                                 IList<Document> docsList = new List<Document>();
 
-                                AllSubDocs.Add(subDocs);
+                                allSubDocs.Add(subDocs);
                                 doc.Add(packIDField);
                                 docsList.Add(TestUtil.CloneDocument(doc));
                                 docIDs.Add(doc.Get("docid"));
@@ -247,7 +252,7 @@ namespace Lucene.Net.Index
                                 int maxDocCount = TestUtil.NextInt(Random(), 1, 10);
                                 while (docsList.Count < maxDocCount)
                                 {
-                                    doc = Docs.NextDoc();
+                                    doc = docs.NextDoc();
                                     if (doc == null)
                                     {
                                         break;
@@ -255,20 +260,20 @@ namespace Lucene.Net.Index
                                     docsList.Add(TestUtil.CloneDocument(doc));
                                     docIDs.Add(doc.Get("docid"));
                                 }
-                                OuterInstance.AddCount.AddAndGet(docsList.Count);
+                                outerInstance.addCount.AddAndGet(docsList.Count);
 
                                 Term packIDTerm = new Term("packID", packID);
 
                                 if (delSubDocs != null)
                                 {
-                                    delSubDocs.Deleted = true;
-                                    DelIDs.AddAll(delSubDocs.SubIDs);
-                                    OuterInstance.DelCount.AddAndGet(delSubDocs.SubIDs.Count);
+                                    delSubDocs.deleted = true;
+                                    delIDs.AddAll(delSubDocs.subIDs);
+                                    outerInstance.delCount.AddAndGet(delSubDocs.subIDs.Count);
                                     if (VERBOSE)
                                     {
-                                        Console.WriteLine(Thread.CurrentThread.Name + ": update pack packID=" + delSubDocs.PackID + " count=" + docsList.Count + " docs=" + Arrays.ToString(docIDs));
+                                        Console.WriteLine(Thread.CurrentThread.Name + ": update pack packID=" + delSubDocs.packID + " count=" + docsList.Count + " docs=" + Arrays.ToString(docIDs));
                                     }
-                                    OuterInstance.UpdateDocuments(packIDTerm, docsList);
+                                    outerInstance.UpdateDocuments(packIDTerm, docsList);
                                 }
                                 else
                                 {
@@ -276,7 +281,7 @@ namespace Lucene.Net.Index
                                     {
                                         Console.WriteLine(Thread.CurrentThread.Name + ": add pack packID=" + packID + " count=" + docsList.Count + " docs=" + Arrays.ToString(docIDs));
                                     }
-                                    OuterInstance.AddDocuments(packIDTerm, docsList);
+                                    outerInstance.AddDocuments(packIDTerm, docsList);
                                 }
                                 doc.RemoveField("packID");
 
@@ -297,8 +302,8 @@ namespace Lucene.Net.Index
                                 {
                                     Console.WriteLine(Thread.CurrentThread.Name + ": add doc docid:" + docid);
                                 }
-                                OuterInstance.AddDocument(new Term("docid", docid), doc);
-                                OuterInstance.AddCount.IncrementAndGet();
+                                outerInstance.AddDocument(new Term("docid", docid), doc);
+                                outerInstance.addCount.GetAndIncrement();
 
                                 if (Random().Next(5) == 3)
                                 {
@@ -320,8 +325,8 @@ namespace Lucene.Net.Index
                                 Console.WriteLine(Thread.CurrentThread.Name + ": update doc id:" + doc.Get("docid"));
                             }
                             string docid = doc.Get("docid");
-                            OuterInstance.UpdateDocument(new Term("docid", docid), doc);
-                            OuterInstance.AddCount.IncrementAndGet();
+                            outerInstance.UpdateDocument(new Term("docid", docid), doc);
+                            outerInstance.addCount.GetAndIncrement();
 
                             if (Random().Next(5) == 3)
                             {
@@ -345,28 +350,28 @@ namespace Lucene.Net.Index
                                 {
                                     Console.WriteLine(Thread.CurrentThread.Name + ": del term=id:" + id);
                                 }
-                                OuterInstance.DeleteDocuments(new Term("docid", id));
+                                outerInstance.DeleteDocuments(new Term("docid", id));
                             }
-                            int count = OuterInstance.DelCount.AddAndGet(toDeleteIDs.Count);
+                            int count = outerInstance.delCount.AddAndGet(toDeleteIDs.Count);
                             if (VERBOSE)
                             {
                                 Console.WriteLine(Thread.CurrentThread.Name + ": tot " + count + " deletes");
                             }
-                            DelIDs.AddAll(toDeleteIDs);
+                            delIDs.AddAll(toDeleteIDs);
                             toDeleteIDs.Clear();
 
                             foreach (SubDocs subDocs in toDeleteSubDocs)
                             {
-                                Debug.Assert(!subDocs.Deleted);
-                                DelPackIDs.Add(subDocs.PackID);
-                                OuterInstance.DeleteDocuments(new Term("packID", subDocs.PackID));
-                                subDocs.Deleted = true;
+                                Debug.Assert(!subDocs.deleted);
+                                delPackIDs.Add(subDocs.packID);
+                                outerInstance.DeleteDocuments(new Term("packID", subDocs.packID));
+                                subDocs.deleted = true;
                                 if (VERBOSE)
                                 {
-                                    Console.WriteLine(Thread.CurrentThread.Name + ": del subs: " + subDocs.SubIDs + " packID=" + subDocs.PackID);
+                                    Console.WriteLine(Thread.CurrentThread.Name + ": del subs: " + subDocs.subIDs + " packID=" + subDocs.packID);
                                 }
-                                DelIDs.AddAll(subDocs.SubIDs);
-                                OuterInstance.DelCount.AddAndGet(subDocs.SubIDs.Count);
+                                delIDs.AddAll(subDocs.subIDs);
+                                outerInstance.delCount.AddAndGet(subDocs.subIDs.Count);
                             }
                             toDeleteSubDocs.Clear();
                         }
@@ -380,8 +385,8 @@ namespace Lucene.Net.Index
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
                         Console.WriteLine(t.ToString());
                         Console.Write(t.StackTrace);
-                        OuterInstance.Failed.Set(true);
-                        throw new Exception(t.Message, t);
+                        outerInstance.failed.Set(true);
+                        throw new Exception(t.ToString(), t);
                     }
                 }
                 if (VERBOSE)
@@ -389,11 +394,11 @@ namespace Lucene.Net.Index
                     Console.WriteLine(Thread.CurrentThread.Name + ": indexing done");
                 }
 
-                OuterInstance.DoAfterIndexingThreadDone();
+                outerInstance.DoAfterIndexingThreadDone();
             }
         }
 
-        protected internal virtual void RunSearchThreads(DateTime stopTime)
+        protected internal virtual void RunSearchThreads(long stopTime)
         {
             int numThreads = TestUtil.NextInt(Random(), 1, 5);
             ThreadClass[] searchThreads = new ThreadClass[numThreads];
@@ -423,18 +428,18 @@ namespace Lucene.Net.Index
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadClass
         {
-            private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
+            private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
-            private DateTime StopTime;
-            private AtomicInt32 TotHits;
-            private AtomicInt32 TotTermCount;
+            private long stopTimeMS;
+            private AtomicInt32 totHits;
+            private AtomicInt32 totTermCount;
 
-            public ThreadAnonymousInnerClassHelper2(ThreadedIndexingAndSearchingTestCase outerInstance, DateTime stopTime, AtomicInt32 totHits, AtomicInt32 totTermCount)
+            public ThreadAnonymousInnerClassHelper2(ThreadedIndexingAndSearchingTestCase outerInstance, long stopTimeMS, AtomicInt32 totHits, AtomicInt32 totTermCount)
             {
-                this.OuterInstance = outerInstance;
-                this.StopTime = stopTime;
-                this.TotHits = totHits;
-                this.TotTermCount = totTermCount;
+                this.outerInstance = outerInstance;
+                this.stopTimeMS = stopTimeMS;
+                this.totHits = totHits;
+                this.totTermCount = totTermCount;
             }
 
             public override void Run()
@@ -443,11 +448,11 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine(Thread.CurrentThread.Name + ": launch search thread");
                 }
-                while (DateTime.UtcNow < StopTime)
+                while (Environment.TickCount < stopTimeMS)
                 {
                     try
                     {
-                        IndexSearcher s = OuterInstance.CurrentSearcher;
+                        IndexSearcher s = outerInstance.CurrentSearcher;
                         try
                         {
                             // Verify 1) IW is correctly setting
@@ -457,17 +462,19 @@ namespace Lucene.Net.Index
                             {
                                 SegmentReader segReader = (SegmentReader)sub.Reader;
                                 IDictionary<string, string> diagnostics = segReader.SegmentInfo.Info.Diagnostics;
-                                Assert.IsNotNull(diagnostics);
-                                string source = diagnostics["source"];
-                                Assert.IsNotNull(source);
+                                assertNotNull(diagnostics);
+                                string source;
+                                diagnostics.TryGetValue("source", out source);
+                                assertNotNull(source);
                                 if (source.Equals("merge", StringComparison.Ordinal))
                                 {
-                                    Assert.IsTrue(!OuterInstance.AssertMergedSegmentsWarmed || OuterInstance.Warmed.ContainsKey((SegmentCoreReaders)segReader.CoreCacheKey), "sub reader " + sub + " wasn't warmed: warmed=" + OuterInstance.Warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo);
+                                    assertTrue("sub reader " + sub + " wasn't warmed: warmed=" + outerInstance.warmed + " diagnostics=" + diagnostics + " si=" + segReader.SegmentInfo,
+                                        !outerInstance.assertMergedSegmentsWarmed || outerInstance.warmed.ContainsKey(segReader.core));
                                 }
                             }
                             if (s.IndexReader.NumDocs > 0)
                             {
-                                OuterInstance.SmokeTestSearcher(s);
+                                outerInstance.SmokeTestSearcher(s);
                                 Fields fields = MultiFields.GetFields(s.IndexReader);
                                 if (fields == null)
                                 {
@@ -482,22 +489,22 @@ namespace Lucene.Net.Index
                                 int seenTermCount = 0;
                                 int shift;
                                 int trigger;
-                                if (TotTermCount.Get() < 30)
+                                if (totTermCount.Get() < 30)
                                 {
                                     shift = 0;
                                     trigger = 1;
                                 }
                                 else
                                 {
-                                    trigger = TotTermCount.Get() / 30;
+                                    trigger = totTermCount.Get() / 30;
                                     shift = Random().Next(trigger);
                                 }
-                                while (DateTime.UtcNow < StopTime)
+                                while (Environment.TickCount < stopTimeMS)
                                 {
                                     BytesRef term = termsEnum.Next();
                                     if (term == null)
                                     {
-                                        TotTermCount.Set(seenTermCount);
+                                        totTermCount.Set(seenTermCount);
                                         break;
                                     }
                                     seenTermCount++;
@@ -507,7 +514,7 @@ namespace Lucene.Net.Index
                                         //if (VERBOSE) {
                                         //System.out.println(Thread.currentThread().getName() + " now search body:" + term.Utf8ToString());
                                         //}
-                                        TotHits.AddAndGet(OuterInstance.RunQuery(s, new TermQuery(new Term("body", term))));
+                                        totHits.AddAndGet(outerInstance.RunQuery(s, new TermQuery(new Term("body", term))));
                                     }
                                 }
                                 //if (VERBOSE) {
@@ -517,15 +524,15 @@ namespace Lucene.Net.Index
                         }
                         finally
                         {
-                            OuterInstance.ReleaseSearcher(s);
+                            outerInstance.ReleaseSearcher(s);
                         }
                     }
                     catch (Exception t)
                     {
                         Console.WriteLine(Thread.CurrentThread.Name + ": hit exc");
-                        OuterInstance.Failed.Set(true);
-                        Console.WriteLine(t.StackTrace);
-                        throw new Exception(t.Message, t);
+                        outerInstance.failed.Set(true);
+                        Console.WriteLine(t.ToString());
+                        throw new Exception(t.ToString(), t);
                     }
                 }
             }
@@ -539,27 +546,27 @@ namespace Lucene.Net.Index
         {
         }
 
-        protected internal bool AssertMergedSegmentsWarmed = true;
+        protected internal bool assertMergedSegmentsWarmed = true;
 
-        private readonly IDictionary<SegmentCoreReaders, bool?> Warmed = new ConcurrentHashMapWrapper<SegmentCoreReaders, bool?>(new HashMap<SegmentCoreReaders, bool?>());
+        private readonly IDictionary<SegmentCoreReaders, bool?> warmed = new WeakDictionary<SegmentCoreReaders, bool?>(); //new ConcurrentHashMapWrapper<SegmentCoreReaders, bool?>(new HashMap<SegmentCoreReaders, bool?>());
         // Collections.synchronizedMap(new WeakHashMap<SegmentCoreReaders, bool?>());
 
         public virtual void RunTest(string testName)
         {
-            Failed.Set(false);
-            AddCount.Set(0);
-            DelCount.Set(0);
-            PackCount.Set(0);
+            failed.Set(false);
+            addCount.Set(0);
+            delCount.Set(0);
+            packCount.Set(0);
 
-            DateTime t0 = DateTime.UtcNow;
+            long t0 = Environment.TickCount;
 
             Random random = new Random(Random().Next());
             LineFileDocs docs = new LineFileDocs(random, DefaultCodecSupportsDocValues());
             DirectoryInfo tempDir = CreateTempDir(testName);
-            Dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
-            if (Dir is BaseDirectoryWrapper)
+            dir = GetDirectory(NewMockFSDirectory(tempDir)); // some subclasses rely on this being MDW
+            if (dir is BaseDirectoryWrapper)
             {
-                ((BaseDirectoryWrapper)Dir).CheckIndexOnClose = false; // don't double-checkIndex, we do it ourselves.
+                ((BaseDirectoryWrapper)dir).CheckIndexOnClose = false; // don't double-checkIndex, we do it ourselves.
             }
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
@@ -591,8 +598,8 @@ namespace Lucene.Net.Index
             {
                 conf.SetInfoStream(new PrintStreamInfoStreamAnonymousInnerClassHelper(this, Console.Out));
             }
-            Writer = new IndexWriter(Dir, conf);
-            TestUtil.ReduceOpenFiles(Writer);
+            writer = new IndexWriter(dir, conf);
+            TestUtil.ReduceOpenFiles(writer);
 
             TaskScheduler es = Random().NextBoolean() ? null : TaskScheduler.Default;
 
@@ -606,13 +613,13 @@ namespace Lucene.Net.Index
             ISet<string> delPackIDs = new ConcurrentHashSet<string>(new HashSet<string>());
             ConcurrentQueue<SubDocs> allSubDocs = new ConcurrentQueue<SubDocs>();
 
-            DateTime stopTime = DateTime.UtcNow.AddSeconds(RUN_TIME_SEC);
+            long stopTime = Environment.TickCount + (RUN_TIME_SEC * 1000);
 
             ThreadClass[] indexThreads = LaunchIndexingThreads(docs, NUM_INDEX_THREADS, stopTime, delIDs, delPackIDs, allSubDocs.ToList());
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: DONE start " + NUM_INDEX_THREADS + " indexing threads [" + (DateTime.UtcNow - t0).TotalMilliseconds + " ms]");
+                Console.WriteLine("TEST: DONE start " + NUM_INDEX_THREADS + " indexing threads [" + (Environment.TickCount - t0) + " ms]");
             }
 
             // Let index build up a bit
@@ -622,7 +629,7 @@ namespace Lucene.Net.Index
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: all searching done [" + (DateTime.UtcNow - t0).TotalMilliseconds + " ms]");
+                Console.WriteLine("TEST: all searching done [" + (Environment.TickCount - t0) + " ms]");
             }
 
             for (int thread = 0; thread < indexThreads.Length; thread++)
@@ -632,7 +639,7 @@ namespace Lucene.Net.Index
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: done join indexing threads [" + (DateTime.UtcNow - t0).TotalMilliseconds + " ms]; addCount=" + AddCount + " delCount=" + DelCount);
+                Console.WriteLine("TEST: done join indexing threads [" + (Environment.TickCount - t0) + " ms]; addCount=" + addCount + " delCount=" + delCount);
             }
 
             IndexSearcher s = FinalSearcher;
@@ -641,7 +648,7 @@ namespace Lucene.Net.Index
                 Console.WriteLine("TEST: finalSearcher=" + s);
             }
 
-            Assert.IsFalse(Failed.Get());
+            assertFalse(failed.Get());
 
             bool doFail = false;
 
@@ -670,13 +677,13 @@ namespace Lucene.Net.Index
             // Verify: make sure each group of sub-docs are still in docID order:
             foreach (SubDocs subDocs in allSubDocs.ToList())
             {
-                TopDocs hits = s.Search(new TermQuery(new Term("packID", subDocs.PackID)), 20);
-                if (!subDocs.Deleted)
+                TopDocs hits = s.Search(new TermQuery(new Term("packID", subDocs.packID)), 20);
+                if (!subDocs.deleted)
                 {
                     // We sort by relevance but the scores should be identical so sort falls back to by docID:
-                    if (hits.TotalHits != subDocs.SubIDs.Count)
+                    if (hits.TotalHits != subDocs.subIDs.Count)
                     {
-                        Console.WriteLine("packID=" + subDocs.PackID + ": expected " + subDocs.SubIDs.Count + " hits but got " + hits.TotalHits);
+                        Console.WriteLine("packID=" + subDocs.packID + ": expected " + subDocs.subIDs.Count + " hits but got " + hits.TotalHits);
                         doFail = true;
                     }
                     else
@@ -688,7 +695,7 @@ namespace Lucene.Net.Index
                             int docID = scoreDoc.Doc;
                             if (lastDocID != -1)
                             {
-                                Assert.AreEqual(1 + lastDocID, docID);
+                                assertEquals(1 + lastDocID, docID);
                             }
                             else
                             {
@@ -696,18 +703,18 @@ namespace Lucene.Net.Index
                             }
                             lastDocID = docID;
                             Document doc = s.Doc(docID);
-                            Assert.AreEqual(subDocs.PackID, doc.Get("packID"));
+                            assertEquals(subDocs.packID, doc.Get("packID"));
                         }
 
                         lastDocID = startDocID - 1;
-                        foreach (string subID in subDocs.SubIDs)
+                        foreach (string subID in subDocs.subIDs)
                         {
                             hits = s.Search(new TermQuery(new Term("docid", subID)), 1);
-                            Assert.AreEqual(1, hits.TotalHits);
+                            assertEquals(1, hits.TotalHits);
                             int docID = hits.ScoreDocs[0].Doc;
                             if (lastDocID != -1)
                             {
-                                Assert.AreEqual(1 + lastDocID, docID);
+                                assertEquals(1 + lastDocID, docID);
                             }
                             lastDocID = docID;
                         }
@@ -718,9 +725,9 @@ namespace Lucene.Net.Index
                     // Pack was deleted -- make sure its docs are
                     // deleted.  We can't verify packID is deleted
                     // because we can re-use packID for update:
-                    foreach (string subID in subDocs.SubIDs)
+                    foreach (string subID in subDocs.subIDs)
                     {
-                        Assert.AreEqual(0, s.Search(new TermQuery(new Term("docid", subID)), 1).TotalHits);
+                        assertEquals(0, s.Search(new TermQuery(new Term("docid", subID)), 1).TotalHits);
                     }
                 }
             }
@@ -743,17 +750,17 @@ namespace Lucene.Net.Index
                     }
                 }
             }
-            Assert.IsFalse(doFail);
+            assertFalse(doFail);
 
-            Assert.AreEqual(AddCount.Get() - DelCount.Get(), s.IndexReader.NumDocs, "index=" + Writer.SegString() + " addCount=" + AddCount + " delCount=" + DelCount);
+            assertEquals("index=" + writer.SegString() + " addCount=" + addCount + " delCount=" + delCount, addCount.Get() - delCount.Get(), s.IndexReader.NumDocs);
             ReleaseSearcher(s);
 
-            Writer.Commit();
+            writer.Commit();
 
-            Assert.AreEqual(AddCount.Get() - DelCount.Get(), Writer.NumDocs, "index=" + Writer.SegString() + " addCount=" + AddCount + " delCount=" + DelCount);
+            assertEquals("index=" + writer.SegString() + " addCount=" + addCount + " delCount=" + delCount, addCount.Get() - delCount.Get(), writer.NumDocs);
 
             DoClose();
-            Writer.Dispose(false);
+            writer.Dispose(false);
 
             // Cannot shutdown until after writer is closed because
             // writer has merged segment warmer that uses IS to run
@@ -764,23 +771,23 @@ namespace Lucene.Net.Index
               es.awaitTermination(1, TimeUnit.SECONDS);
             }*/
 
-            TestUtil.CheckIndex(Dir);
-            Dir.Dispose();
+            TestUtil.CheckIndex(dir);
+            dir.Dispose();
             System.IO.Directory.Delete(tempDir.FullName, true);
 
             if (VERBOSE)
             {
-                Console.WriteLine("TEST: done [" + (DateTime.UtcNow - t0).TotalMilliseconds + " ms]");
+                Console.WriteLine("TEST: done [" + (Environment.TickCount - t0) + " ms]");
             }
         }
 
         private class IndexReaderWarmerAnonymousInnerClassHelper : IndexWriter.IndexReaderWarmer
         {
-            private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
+            private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
             public IndexReaderWarmerAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void Warm(AtomicReader reader)
@@ -789,7 +796,7 @@ namespace Lucene.Net.Index
                 {
                     Console.WriteLine("TEST: now warm merged reader=" + reader);
                 }
-                OuterInstance.Warmed[(SegmentCoreReaders)reader.CoreCacheKey] = true;
+                outerInstance.warmed[((SegmentReader)reader).core] = true;
                 int maxDoc = reader.MaxDoc;
                 IBits liveDocs = reader.LiveDocs;
                 int sum = 0;
@@ -803,7 +810,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                IndexSearcher searcher = OuterInstance.NewSearcher(reader);
+                IndexSearcher searcher = outerInstance.NewSearcher(reader);
                 sum += searcher.Search(new TermQuery(new Term("body", "united")), 10).TotalHits;
 
                 if (VERBOSE)
@@ -815,12 +822,12 @@ namespace Lucene.Net.Index
 
         private class PrintStreamInfoStreamAnonymousInnerClassHelper : PrintStreamInfoStream
         {
-            private readonly ThreadedIndexingAndSearchingTestCase OuterInstance;
+            private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 
             public PrintStreamInfoStreamAnonymousInnerClassHelper(ThreadedIndexingAndSearchingTestCase outerInstance, TextWriter @out)
                 : base(@out)
             {
-                this.OuterInstance = outerInstance;
+                this.outerInstance = outerInstance;
             }
 
             public override void Message(string component, string message)
@@ -841,7 +848,7 @@ namespace Lucene.Net.Index
             {
                 Sort dvSort = new Sort(new SortField("title", SortFieldType.STRING));
                 int hitCount2 = s.Search(q, null, 10, dvSort).TotalHits;
-                Assert.AreEqual(hitCount, hitCount2);
+                assertEquals(hitCount, hitCount2);
             }
             return hitCount;
         }
