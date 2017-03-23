@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.IO;
 using System.Threading;
@@ -30,14 +31,14 @@ namespace Lucene.Net.Util
     public class PrintStreamInfoStream : InfoStream
     {
         // Used for printing messages
-        private static int MESSAGE_ID = 0;
+        private static readonly AtomicInt32 MESSAGE_ID = new AtomicInt32();
 
         protected readonly int m_messageID;
 
         protected readonly TextWriter m_stream;
 
         public PrintStreamInfoStream(TextWriter stream)
-            : this(stream, Interlocked.Increment(ref MESSAGE_ID))
+            : this(stream, MESSAGE_ID.GetAndIncrement())
         {
         }
 
