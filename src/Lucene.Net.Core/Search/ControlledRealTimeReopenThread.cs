@@ -52,7 +52,9 @@ namespace Lucene.Net.Search
         private long refreshStartGen;
 
         private readonly ReentrantLock reopenLock = new ReentrantLock();
-        private ManualResetEvent reopenCond = new ManualResetEvent(false);
+        private EventWaitHandle reopenCond = new AutoResetEvent(false);
+
+        private const long MILLISECONDS_PER_NANOSECOND = 1000000;
 
         /// <summary>
         /// Create ControlledRealTimeReopenThread, to periodically
@@ -105,7 +107,8 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                searchingGen = refreshStartGen;
+                // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Exchange()
+                Interlocked.Exchange(ref searchingGen, refreshStartGen);
                 Monitor.PulseAll(this);
             }
         }
@@ -144,6 +147,9 @@ namespace Lucene.Net.Search
                 // Max it out so any waiting search threads will return:
                 searchingGen = long.MaxValue;
                 Monitor.PulseAll(this);
+
+                // LUCENENET specific: dispose reset event
+                reopenCond.Dispose();
             }
         }
 
@@ -188,7 +194,8 @@ namespace Lucene.Net.Search
                 {
                     throw new System.ArgumentException("targetGen=" + targetGen + " was never returned by the ReferenceManager instance (current gen=" + curGen + ")");
                 }
-                if (targetGen > searchingGen)
+                // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Read()
+                if (targetGen > Interlocked.Read(ref searchingGen))
                 {
                     // Notify the reopen thread that the waitingGen has
                     // changed, so it may wake up and realize it should
@@ -210,7 +217,8 @@ namespace Lucene.Net.Search
 
                     long startMS = Environment.TickCount;//System.nanoTime() / 1000000;
 
-                    while (targetGen > searchingGen)
+                    // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Read()
+                    while (targetGen > Interlocked.Read(ref searchingGen))
                     {
                         if (maxMS < 0)
                         {
@@ -239,7 +247,7 @@ namespace Lucene.Net.Search
         {
             // TODO: maybe use private thread ticktock timer, in
             // case clock shift messes up nanoTime?
-            long lastReopenStartNS = Environment.TickCount * 1000000;
+            long lastReopenStartNS = Environment.TickCount * MILLISECONDS_PER_NANOSECOND;
 
             //System.out.println("reopen: start");
             while (!finish)
@@ -261,11 +269,11 @@ namespace Lucene.Net.Search
                         bool hasWaiting = waitingGen > searchingGen;
                         long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
 
-                        long sleepNS = nextReopenStartNS - (Environment.TickCount * 1000000);
+                        long sleepNS = nextReopenStartNS - (Environment.TickCount * MILLISECONDS_PER_NANOSECOND);
 
                         if (sleepNS > 0)
                         {
-                            reopenCond.WaitOne(new TimeSpan(sleepNS / 1000000));//Convert NS to Ticks
+                            reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / MILLISECONDS_PER_NANOSECOND));//Convert NS to Ticks
                         }
                         else
                         {
@@ -293,7 +301,7 @@ namespace Lucene.Net.Search
                     break;
                 }
 
-                lastReopenStartNS = Environment.TickCount * 1000000;
+                lastReopenStartNS = Environment.TickCount * MILLISECONDS_PER_NANOSECOND;
                 // Save the gen as of when we started the reopen; the
                 // listener (HandleRefresh above) copies this to
                 // searchingGen once the reopen completes:
