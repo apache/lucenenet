@@ -1,10 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using Lucene.Net.Search;
+﻿using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
-using Lucene.Net.Support;
+using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Index.Sorter
 {
@@ -43,15 +43,13 @@ namespace Lucene.Net.Index.Sorter
     /// </summary>
     public class SortingAtomicReader : FilterAtomicReader
     {
-
         private class SortingFields : FilterFields
         {
+            private readonly Sorter.DocMap docMap;
+            private readonly FieldInfos infos;
 
-            internal readonly Sorter.DocMap docMap;
-            internal readonly FieldInfos infos;
-
-            public SortingFields(Fields @in, FieldInfos infos, Sorter.DocMap docMap)
-                : base(@in)
+            public SortingFields(Fields input, FieldInfos infos, Sorter.DocMap docMap)
+                : base(input)
             {
                 this.docMap = docMap;
                 this.infos = infos;
@@ -73,11 +71,11 @@ namespace Lucene.Net.Index.Sorter
 
         private class SortingTerms : FilterTerms
         {
+            private readonly Sorter.DocMap docMap;
+            private readonly IndexOptions indexOptions;
 
-            internal readonly Sorter.DocMap docMap;
-            internal readonly IndexOptions indexOptions;
-
-            public SortingTerms(Terms input, IndexOptions indexOptions, Sorter.DocMap docMap) : base(input)
+            public SortingTerms(Terms input, IndexOptions indexOptions, Sorter.DocMap docMap) 
+                : base(input)
             {
                 this.docMap = docMap;
                 this.indexOptions = indexOptions;
@@ -96,12 +94,11 @@ namespace Lucene.Net.Index.Sorter
 
         private class SortingTermsEnum : FilterTermsEnum
         {
+            private readonly Sorter.DocMap docMap; // pkg-protected to avoid synthetic accessor methods
+            private readonly IndexOptions indexOptions;
 
-            internal readonly Sorter.DocMap docMap; // pkg-protected to avoid synthetic accessor methods
-            internal readonly IndexOptions indexOptions;
-
-            public SortingTermsEnum(TermsEnum @in, Sorter.DocMap docMap, IndexOptions indexOptions)
-                : base(@in)
+            public SortingTermsEnum(TermsEnum input, Sorter.DocMap docMap, IndexOptions indexOptions)
+                : base(input)
             {
                 this.docMap = docMap;
                 this.indexOptions = indexOptions;
@@ -196,13 +193,12 @@ namespace Lucene.Net.Index.Sorter
 
         private class SortingBinaryDocValues : BinaryDocValues
         {
+            private readonly BinaryDocValues @in;
+            private readonly Sorter.DocMap docMap;
 
-            internal readonly BinaryDocValues @in;
-            internal readonly Sorter.DocMap docMap;
-
-            internal SortingBinaryDocValues(BinaryDocValues @in, Sorter.DocMap docMap)
+            internal SortingBinaryDocValues(BinaryDocValues input, Sorter.DocMap docMap)
             {
-                this.@in = @in;
+                this.@in = input;
                 this.docMap = docMap;
             }
 
@@ -214,13 +210,12 @@ namespace Lucene.Net.Index.Sorter
 
         private class SortingNumericDocValues : NumericDocValues
         {
+            private readonly NumericDocValues @in;
+            private readonly Sorter.DocMap docMap;
 
-            internal readonly NumericDocValues @in;
-            internal readonly Sorter.DocMap docMap;
-
-            public SortingNumericDocValues(NumericDocValues @in, Sorter.DocMap docMap)
+            public SortingNumericDocValues(NumericDocValues input, Sorter.DocMap docMap)
             {
-                this.@in = @in;
+                this.@in = input;
                 this.docMap = docMap;
             }
 
@@ -232,13 +227,12 @@ namespace Lucene.Net.Index.Sorter
 
         private class SortingBits : IBits
         {
+            private readonly IBits @in;
+            private readonly Sorter.DocMap docMap;
 
-            internal readonly IBits @in;
-            internal readonly Sorter.DocMap docMap;
-
-            public SortingBits(IBits @in, Sorter.DocMap docMap)
+            public SortingBits(IBits input, Sorter.DocMap docMap)
             {
-                this.@in = @in;
+                this.@in = input;
                 this.docMap = docMap;
             }
 
@@ -255,13 +249,12 @@ namespace Lucene.Net.Index.Sorter
 
         private class SortingSortedDocValues : SortedDocValues
         {
+            private readonly SortedDocValues @in;
+            private readonly Sorter.DocMap docMap;
 
-            internal readonly SortedDocValues @in;
-            internal readonly Sorter.DocMap docMap;
-
-            internal SortingSortedDocValues(SortedDocValues @in, Sorter.DocMap docMap)
+            internal SortingSortedDocValues(SortedDocValues input, Sorter.DocMap docMap)
             {
-                this.@in = @in;
+                this.@in = input;
                 this.docMap = docMap;
             }
 
@@ -296,13 +289,12 @@ namespace Lucene.Net.Index.Sorter
 
         private class SortingSortedSetDocValues : SortedSetDocValues
         {
+            private readonly SortedSetDocValues @in;
+            private readonly Sorter.DocMap docMap;
 
-            internal readonly SortedSetDocValues @in;
-            internal readonly Sorter.DocMap docMap;
-
-            internal SortingSortedSetDocValues(SortedSetDocValues @in, Sorter.DocMap docMap)
+            internal SortingSortedSetDocValues(SortedSetDocValues input, Sorter.DocMap docMap)
             {
-                this.@in = @in;
+                this.@in = input;
                 this.docMap = docMap;
             }
 
@@ -337,16 +329,15 @@ namespace Lucene.Net.Index.Sorter
 
         internal class SortingDocsEnum : FilterDocsEnum
         {
-
-            internal sealed class DocFreqSorter : TimSorter
+            private sealed class DocFreqSorter : TimSorter
             {
+                private int[] docs;
+                private int[] freqs;
+                private readonly int[] tmpDocs;
+                private int[] tmpFreqs;
 
-                internal int[] docs;
-                internal int[] freqs;
-                internal readonly int[] tmpDocs;
-                internal int[] tmpFreqs;
-
-                public DocFreqSorter(int maxDoc) : base(maxDoc / 64)
+                public DocFreqSorter(int maxDoc) 
+                    : base(maxDoc / 64)
                 {
                     this.tmpDocs = new int[maxDoc / 64];
                 }
@@ -413,16 +404,16 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            internal readonly int maxDoc;
-            internal readonly DocFreqSorter sorter;
-            internal int[] docs;
-            internal int[] freqs;
-            internal int docIt = -1;
-            internal readonly int upto;
-            internal readonly bool withFreqs;
+            private readonly int maxDoc;
+            private readonly DocFreqSorter sorter;
+            private int[] docs;
+            private int[] freqs;
+            private int docIt = -1;
+            private readonly int upto;
+            private readonly bool withFreqs;
 
-            internal SortingDocsEnum(int maxDoc, SortingDocsEnum reuse, DocsEnum @in, bool withFreqs, Sorter.DocMap docMap)
-                    : base(@in)
+            internal SortingDocsEnum(int maxDoc, SortingDocsEnum reuse, DocsEnum input, bool withFreqs, Sorter.DocMap docMap)
+                : base(input)
             {
                 this.maxDoc = maxDoc;
                 this.withFreqs = withFreqs;
@@ -453,7 +444,7 @@ namespace Lucene.Net.Index.Sorter
                     {
                         freqs = new int[docs.Length];
                     }
-                    while ((doc = @in.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+                    while ((doc = input.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         if (i >= docs.Length)
                         {
@@ -461,14 +452,14 @@ namespace Lucene.Net.Index.Sorter
                             freqs = ArrayUtil.Grow(freqs, freqs.Length + 1);
                         }
                         docs[i] = docMap.OldToNew(doc);
-                        freqs[i] = @in.Freq;
+                        freqs[i] = input.Freq;
                         ++i;
                     }
                 }
                 else
                 {
                     freqs = null;
-                    while ((doc = @in.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
+                    while ((doc = input.NextDoc()) != DocIdSetIterator.NO_MORE_DOCS)
                     {
                         if (i >= docs.Length)
                         {
@@ -533,7 +524,6 @@ namespace Lucene.Net.Index.Sorter
 
         internal class SortingDocsAndPositionsEnum : FilterDocsAndPositionsEnum
         {
-
             /// <summary>
             /// A <see cref="TimSorter"/> which sorts two parallel arrays of doc IDs and
             /// offsets in one go. Everytime a doc ID is 'swapped', its correponding offset
@@ -541,13 +531,13 @@ namespace Lucene.Net.Index.Sorter
             /// </summary>
             internal sealed class DocOffsetSorter : TimSorter
             {
+                private int[] docs;
+                private long[] offsets;
+                private readonly int[] tmpDocs;
+                private readonly long[] tmpOffsets;
 
-                internal int[] docs;
-                internal long[] offsets;
-                internal readonly int[] tmpDocs;
-                internal readonly long[] tmpOffsets;
-
-                public DocOffsetSorter(int maxDoc) : base(maxDoc / 64)
+                public DocOffsetSorter(int maxDoc) 
+                    : base(maxDoc / 64)
                 {
                     this.tmpDocs = new int[maxDoc / 64];
                     this.tmpOffsets = new long[maxDoc / 64];
@@ -599,23 +589,23 @@ namespace Lucene.Net.Index.Sorter
                 }
             }
 
-            internal readonly int maxDoc;
-            internal readonly DocOffsetSorter sorter;
-            internal int[] docs;
-            internal long[] offsets;
-            internal readonly int upto;
+            private readonly int maxDoc;
+            private readonly DocOffsetSorter sorter;
+            private int[] docs;
+            private long[] offsets;
+            private readonly int upto;
 
-            internal readonly IndexInput postingInput;
-            internal readonly bool storeOffsets;
+            private readonly IndexInput postingInput;
+            private readonly bool storeOffsets;
 
-            internal int docIt = -1;
-            internal int pos;
-            internal int startOffset = -1;
-            internal int endOffset = -1;
-            internal readonly BytesRef payload;
-            internal int currFreq;
+            private int docIt = -1;
+            private int pos;
+            private int startOffset = -1;
+            private int endOffset = -1;
+            private readonly BytesRef payload;
+            private int currFreq;
 
-            internal readonly RAMFile file;
+            private readonly RAMFile file;
 
             internal SortingDocsAndPositionsEnum(int maxDoc, SortingDocsAndPositionsEnum reuse, DocsAndPositionsEnum @in, Sorter.DocMap docMap, bool storeOffsets)
                 : base(@in)
@@ -679,7 +669,7 @@ namespace Lucene.Net.Index.Sorter
                 return docs == ((SortingDocsAndPositionsEnum)other).docs;
             }
 
-            internal virtual void AddPositions(DocsAndPositionsEnum @in, IndexOutput @out)
+            private void AddPositions(DocsAndPositionsEnum @in, IndexOutput @out)
             {
                 int freq = @in.Freq;
                 @out.WriteVInt32(freq);
@@ -801,7 +791,7 @@ namespace Lucene.Net.Index.Sorter
         /// </summary>
         public static AtomicReader Wrap(AtomicReader reader, Sort sort)
         {
-            return Wrap(reader, (new Sorter(sort)).Sort(reader));
+            return Wrap(reader, new Sorter(sort).Sort(reader));
         }
 
         /// <summary>
@@ -816,13 +806,13 @@ namespace Lucene.Net.Index.Sorter
             }
             if (reader.MaxDoc != docMap.Count)
             {
-                throw new System.ArgumentException("reader.maxDoc() should be equal to docMap.size(), got" + reader.MaxDoc + " != " + docMap.Count);
+                throw new System.ArgumentException("reader.MaxDoc should be equal to docMap.Count, got" + reader.MaxDoc + " != " + docMap.Count);
             }
             Debug.Assert(Sorter.IsConsistent(docMap));
             return new SortingAtomicReader(reader, docMap);
         }
 
-        internal readonly Sorter.DocMap docMap; // pkg-protected to avoid synthetic accessor methods
+        private readonly Sorter.DocMap docMap; // pkg-protected to avoid synthetic accessor methods
 
         private SortingAtomicReader(AtomicReader @in, Sorter.DocMap docMap) : base(@in)
         {

@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
@@ -51,7 +50,7 @@ namespace Lucene.Net.Index.Sorter
         /// Put in the <see cref="SegmentInfo.Diagnostics">diagnostics</see> to denote that
         /// this segment is sorted.
         /// </summary>
-        public const string SORTER_ID_PROP = "sorter";
+        public static readonly string SORTER_ID_PROP = "sorter";
 
         internal class SortingOneMerge : OneMerge
         {
@@ -132,7 +131,7 @@ namespace Lucene.Net.Index.Sorter
             {
                 if (unsortedReaders == null)
                 {
-                    throw new InvalidOperationException("Invalid state");
+                    throw new InvalidOperationException();
                 }
                 if (docMap == null)
                 {
@@ -164,7 +163,6 @@ namespace Lucene.Net.Index.Sorter
                     return mergeState.DocMaps[0].Get(newWithDeletes);
                 }
             }
-
         }
 
         internal class SortingMergeSpecification : MergeSpecification
@@ -184,7 +182,7 @@ namespace Lucene.Net.Index.Sorter
 
             public override string SegString(Directory dir)
             {
-                return "SortingMergeSpec(" + base.SegString(dir) + ", sorter=" + outerInstance.sorter + ")";
+                return "SortingMergeSpecification(" + base.SegString(dir) + ", sorter=" + outerInstance.sorter + ")";
             }
 
         }
@@ -198,8 +196,10 @@ namespace Lucene.Net.Index.Sorter
             {
                 SegmentReader segReader = (SegmentReader)reader;
                 IDictionary<string, string> diagnostics = segReader.SegmentInfo.Info.Diagnostics;
-                var diagnosticsSort = diagnostics.ContainsKey(SORTER_ID_PROP) ? diagnostics[SORTER_ID_PROP] : null;
-                if (diagnostics != null && sort.ToString().Equals(diagnosticsSort))
+                string diagnosticsSort;
+                if (diagnostics != null 
+                    && diagnostics.TryGetValue(SORTER_ID_PROP, out diagnosticsSort)
+                    && sort.ToString().Equals(diagnosticsSort))
                 {
                     return true;
                 }

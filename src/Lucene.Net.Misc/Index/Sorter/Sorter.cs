@@ -32,7 +32,7 @@ namespace Lucene.Net.Index.Sorter
     /// </summary>
     internal sealed class Sorter
     {
-        internal readonly Sort sort_Renamed;
+        internal readonly Sort sort;
 
         /// <summary>
         /// Creates a new Sorter to sort the index with <paramref name="sort"/>.
@@ -43,20 +43,19 @@ namespace Lucene.Net.Index.Sorter
             {
                 throw new System.ArgumentException("Cannot sort an index with a Sort that refers to the relevance score");
             }
-            this.sort_Renamed = sort;
+            this.sort = sort;
         }
 
         /// <summary>
         /// A permutation of doc IDs. For every document ID between <c>0</c> and
-        /// <see cref="IndexReader.MaxDoc"/>, <code>OldToNew(NewToOld(docID))</code> must
-        /// return <code>docID</code>.
+        /// <see cref="IndexReader.MaxDoc"/>, <c>OldToNew(NewToOld(docID))</c> must
+        /// return <c>docID</c>.
         /// </summary>
         internal abstract class DocMap
         {
-
             /// <summary>
             /// Given a doc ID from the original index, return its ordinal in the
-            ///  sorted index. 
+            /// sorted index. 
             /// </summary>
             public abstract int OldToNew(int docID);
 
@@ -67,7 +66,7 @@ namespace Lucene.Net.Index.Sorter
 
             /// <summary>
             /// Return the number of documents in this map. This must be equal to the
-            /// <see cref="AtomicReader.LiveDocs">number of documents</see> of the
+            /// <see cref="IndexReader.MaxDoc"/> number of documents of the
             /// <see cref="AtomicReader"/> which is sorted. 
             /// </summary>
             public abstract int Count { get; }
@@ -98,23 +97,21 @@ namespace Lucene.Net.Index.Sorter
         /// </summary>
         internal abstract class DocComparer : IComparer<int>
         {
-
             /// <summary>
-            /// Compare docID1 against docID2. The contract for the return value is the
+            /// Compare <paramref name="docID1"/> against <paramref name="docID2"/>. The contract for the return value is the
             /// same as <see cref="IComparer{T}.Compare(T, T)"/>. 
             /// </summary>
             public abstract int Compare(int docID1, int docID2);
-
         }
 
         private sealed class DocValueSorter : TimSorter
         {
+            private readonly int[] docs;
+            private readonly Sorter.DocComparer comparer;
+            private readonly int[] tmp;
 
-            internal readonly int[] docs;
-            internal readonly Sorter.DocComparer comparer;
-            internal readonly int[] tmp;
-
-            internal DocValueSorter(int[] docs, Sorter.DocComparer comparer) : base(docs.Length / 64)
+            internal DocValueSorter(int[] docs, Sorter.DocComparer comparer) 
+                : base(docs.Length / 64)
             {
                 this.docs = docs;
                 this.comparer = comparer;
@@ -257,9 +254,8 @@ namespace Lucene.Net.Index.Sorter
         /// </summary>
         internal DocMap Sort(AtomicReader reader)
         {
-            SortField[] fields = sort_Renamed.GetSort();
+            SortField[] fields = sort.GetSort();
             int[] reverseMul = new int[fields.Length];
-
             FieldComparer[] comparers = new FieldComparer[fields.Length];
 
             for (int i = 0; i < fields.Length; i++)
@@ -324,7 +320,7 @@ namespace Lucene.Net.Index.Sorter
         {
             get
             {
-                return sort_Renamed.ToString();
+                return sort.ToString();
             }
         }
 
@@ -337,7 +333,8 @@ namespace Lucene.Net.Index.Sorter
 
         private class ScorerAnonymousInnerClassHelper : Scorer
         {
-            public ScorerAnonymousInnerClassHelper() : base(null)
+            public ScorerAnonymousInnerClassHelper() 
+                : base(null)
             {
             }
 
