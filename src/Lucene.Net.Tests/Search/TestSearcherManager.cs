@@ -1,3 +1,8 @@
+using NUnit.Framework;
+using Lucene.Net.Attributes;
+using Lucene.Net.Index;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -5,10 +10,6 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.Search
 {
-    using Index;
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Documents.Document;
@@ -48,7 +49,11 @@ namespace Lucene.Net.Search
 
         private SearcherLifetimeManager.IPruner pruner;
 
-        [Test]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(60000)]
+#endif
+        [Test, HasTimeout]
         public virtual void TestSearcherManager_Mem()
         {
             pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt(Random(), 1, 20) : 1);
