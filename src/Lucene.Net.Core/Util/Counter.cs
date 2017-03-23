@@ -1,4 +1,4 @@
-using System.Threading;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -58,7 +58,7 @@ namespace Lucene.Net.Util
         /// <returns> a new counter. </returns>
         public static Counter NewCounter(bool threadSafe)
         {
-            return threadSafe ? (Counter)new AtomicCounter() : (Counter)new SerialCounter();
+            return threadSafe ? (Counter)new AtomicCounter() : new SerialCounter();
         }
 
         private sealed class SerialCounter : Counter
@@ -78,24 +78,16 @@ namespace Lucene.Net.Util
 
         private sealed class AtomicCounter : Counter
         {
-            //internal readonly AtomicLong Count = new AtomicLong();
-            private long count;
+            private readonly AtomicInt64 count = new AtomicInt64();
 
             public override long AddAndGet(long delta)
             {
-                return Interlocked.Add(ref count, delta);
+                return count.AddAndGet(delta);
             }
 
             public override long Get()
             {
-                //LUCENE TO-DO read operations atomic in 64 bit
-                /*if (IntPtr.Size == 4)
-                {
-                    long Count_ = 0;
-                    Interlocked.Exchange(ref Count_, (long)Count);
-                    return (int)Interlocked.Read(ref Count_);
-                }*/
-                return count;
+                return count.Get();
             }
         }
     }
