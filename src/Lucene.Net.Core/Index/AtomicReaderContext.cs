@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// <seealso cref="IndexReaderContext"/> for <seealso cref="AtomicReader"/> instances.
+    /// <see cref="IndexReaderContext"/> for <see cref="Index.AtomicReader"/> instances.
     /// </summary>
     public sealed class AtomicReaderContext : IndexReaderContext
     {
@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
         private readonly IList<AtomicReaderContext> leaves;
 
         /// <summary>
-        /// Creates a new <seealso cref="AtomicReaderContext"/>
+        /// Creates a new <see cref="AtomicReaderContext"/>
         /// </summary>
         internal AtomicReaderContext(CompositeReaderContext parent, AtomicReader reader, int ord, int docBase, int leafOrd, int leafDocBase)
             : base(parent, ord, docBase)
