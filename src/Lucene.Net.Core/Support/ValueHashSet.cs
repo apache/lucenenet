@@ -62,7 +62,7 @@ namespace Lucene.Net.Support
                 T obj = i.Current;
                 if (!EqualityComparer<T>.Default.Equals(obj, default(T)))
                 {
-                    h = HashHelpers.CombineHashCodes(h, obj.GetHashCode());
+                    h += obj.GetHashCode();
                 }
             }
             return h;
