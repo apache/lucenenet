@@ -24,6 +24,11 @@ namespace Lucene.Net.Support
             return Interlocked.Increment(ref value);
         }
 
+        public long GetAndIncrement()
+        {
+            return Interlocked.Increment(ref value) - 1;
+        }
+
         public long DecrementAndGet()
         {
             return Interlocked.Decrement(ref value);

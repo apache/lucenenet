@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public virtual long GetAndIncrementGeneration()
         {
-            return indexingGen.IncrementAndGet();
+            return indexingGen.GetAndIncrement();
         }
 
         /// <summary>
