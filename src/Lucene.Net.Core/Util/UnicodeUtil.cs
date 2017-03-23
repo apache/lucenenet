@@ -120,7 +120,7 @@ namespace Lucene.Net.Util
         private const long HALF_SHIFT = 10;
         private const long HALF_MASK = 0x3FFL;
 
-        private const int SURROGATE_OFFSET = Character.MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << (int) HALF_SHIFT) - UNI_SUR_LOW_START;
+        private const int SURROGATE_OFFSET = Character.MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
 
         /// <summary>
         /// Encode characters from a char[] source, starting at
@@ -495,7 +495,7 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public static bool ValidUTF16String(char[] s, int size) 
+        public static bool ValidUTF16String(char[] s, int size)
         {
             for (int i = 0; i < size; i++)
             {
@@ -700,7 +700,7 @@ namespace Lucene.Net.Util
         /// <exception cref="IndexOutOfBoundsException"> If the offset or count are out of bounds. </exception>
         public static string NewString(int[] codePoints, int offset, int count)
         {
-            var chars = ToCharArray(codePoints, offset, count);
+            char[] chars = ToCharArray(codePoints, offset, count);
             return new string(chars);
         }
 
@@ -713,12 +713,16 @@ namespace Lucene.Net.Util
         /// <param name="offset"> The start of the text in the code point array </param>
         /// <param name="count"> The number of code points </param>
         /// <returns> a char array representing the code points between offset and count </returns>
+        // LUCENENET NOTE: This code was originally in the NewString() method (above).
+        // It has been refactored from the original to remove the exception throw/catch and
+        // instead proactively resizes the array instead of relying on excpetions.
         public static char[] ToCharArray(int[] codePoints, int offset, int count)
         {
             if (count < 0)
             {
                 throw new System.ArgumentException();
             }
+            // LUCENENET: as a first approximation, assume each codepoint is 1 character
             char[] chars = new char[count];
             int w = 0;
             for (int r = offset, e = offset + count; r < e; ++r)
@@ -728,30 +732,24 @@ namespace Lucene.Net.Util
                 {
                     throw new System.ArgumentException();
                 }
-                while (true)
+                if (cp < 0x010000)
                 {
-                    try
+                    chars[w++] = (char)cp;
+                }
+                else
+                {
+                    chars[w++] = (char)(LEAD_SURROGATE_OFFSET_ + (cp >> LEAD_SURROGATE_SHIFT_));
+                    // LUCENENET: resize to the exact length: it's slightly faster to check if the resize is needed
+                    if (w >= chars.Length)
                     {
-                        if (cp < 0x010000)
-                        {
-                            chars[w] = (char)cp;
-                            w++;
-                        }
-                        else
-                        {
-                            chars[w] = (char)(LEAD_SURROGATE_OFFSET_ + (cp >> LEAD_SURROGATE_SHIFT_));
-                            chars[w + 1] = (char)(TRAIL_SURROGATE_MIN_VALUE + (cp & TRAIL_SURROGATE_MASK_));
-                            w += 2;
-                        }
-                        break;
+                        Array.Resize(ref chars, chars.Length + (e - r) * 2 - 1);
                     }
-                    catch (System.IndexOutOfRangeException)
-                    {
-                        int newlen = (int)(Math.Ceiling((double)codePoints.Length * (w + 2) / (r - offset + 1)));
-                        char[] temp = new char[newlen];
-                        Array.Copy(chars, 0, temp, 0, w);
-                        chars = temp;
-                    }
+                    chars[w++] = (char)(TRAIL_SURROGATE_MIN_VALUE + (cp & TRAIL_SURROGATE_MASK_));
+                }
+                // LUCENENET: resize to the exact length: it's slightly faster to check if the resize is needed
+                if (w != chars.Length)
+                {
+                    Array.Resize(ref chars, w);
                 }
             }
 
