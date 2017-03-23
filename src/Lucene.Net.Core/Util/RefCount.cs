@@ -1,5 +1,5 @@
+using Lucene.Net.Support;
 using System;
-using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -22,12 +22,11 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Manages reference counting for a given object. Extensions can override
-    /// <seealso cref="#release()"/> to do custom logic when reference counting hits 0.
+    /// <see cref="Release()"/> to do custom logic when reference counting hits 0.
     /// </summary>
     public class RefCount<T>
     {
-        //private readonly AtomicInteger refCount = new AtomicInteger(1);
-        private int refCount = 1;
+        private readonly AtomicInt32 refCount = new AtomicInt32(1);
 
         protected internal readonly T m_object;
 
@@ -47,11 +46,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Decrements the reference counting of this object. When reference counting
-        /// hits 0, calls <seealso cref="#release()"/>.
+        /// hits 0, calls <see cref="Release()"/>.
         /// </summary>
         public void DecRef()
         {
-            int rc = Interlocked.Decrement(ref refCount);
+            int rc = refCount.DecrementAndGet();
             if (rc == 0)
             {
                 bool success = false;
@@ -65,13 +64,13 @@ namespace Lucene.Net.Util
                     if (!success)
                     {
                         // Put reference back on failure
-                        Interlocked.Increment(ref refCount);
+                        refCount.IncrementAndGet();
                     }
                 }
             }
             else if (rc < 0)
             {
-                throw new InvalidOperationException("too many decRef calls: refCount is " + rc + " after decrement");
+                throw new InvalidOperationException("too many DecRef() calls: refCount is " + rc + " after decrement");
             }
         }
 
@@ -84,23 +83,16 @@ namespace Lucene.Net.Util
         /// Returns the current reference count. </summary>
         public int GetRefCount() // LUCENENET NOTE: although this would be a good candidate for a property, doing so would cause a naming conflict
         {
-            //LUCENE TO-DO read operations atomic in 64 bit
-            /*if (IntPtr.Size == 4)
-            {
-                long refCount_ = 0;
-                Interlocked.Exchange(ref refCount_, (long)refCount);
-                return (int)Interlocked.Read(ref refCount_);
-            }*/
-            return refCount;
+            return refCount.Get();
         }
 
         /// <summary>
         /// Increments the reference count. Calls to this method must be matched with
-        /// calls to <seealso cref="#decRef()"/>.
+        /// calls to <see cref="DecRef()"/>.
         /// </summary>
         public void IncRef()
         {
-            Interlocked.Increment(ref refCount);
+            refCount.IncrementAndGet();
         }
     }
 }
