@@ -668,7 +668,7 @@ namespace Lucene.Net.Codecs.RAMOnly
 
         public override FieldsConsumer FieldsConsumer(SegmentWriteState writeState)
         {
-            int id = (int)NextID.IncrementAndGet();
+            int id = (int)NextID.GetAndIncrement();
 
             // TODO -- ok to do this up front instead of
             // on close....?  should be ok?
