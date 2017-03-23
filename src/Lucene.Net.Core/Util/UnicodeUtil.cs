@@ -715,15 +715,34 @@ namespace Lucene.Net.Util
         /// <returns> a char array representing the code points between offset and count </returns>
         // LUCENENET NOTE: This code was originally in the NewString() method (above).
         // It has been refactored from the original to remove the exception throw/catch and
-        // instead proactively resizes the array instead of relying on excpetions.
+        // instead proactively resizes the array instead of relying on excpetions + copy operations
         public static char[] ToCharArray(int[] codePoints, int offset, int count)
         {
             if (count < 0)
             {
                 throw new System.ArgumentException();
             }
-            // LUCENENET: as a first approximation, assume each codepoint is 1 character
-            char[] chars = new char[count];
+            int countThreashhold = 1024; // If the number of chars exceeds this, we count them instead of allocating count * 2
+            // LUCENENET: as a first approximation, assume each codepoint 
+            // is 2 characters (since it cannot be longer than this)
+            int arrayLength = count * 2;
+            // LUCENENET: if we go over the threashhold, count the number of 
+            // chars we will need so we can allocate the precise amount of memory
+            if (count > countThreashhold)
+            {
+                arrayLength = 0;
+                for (int r = offset, e = offset + count; r < e; ++r)
+                {
+                    arrayLength += codePoints[r] < 0x010000 ? 1 : 2;
+                }
+                if (arrayLength < 1)
+                {
+                    arrayLength = count * 2;
+                }
+            }
+            // Initialize our array to our exact or oversized length.
+            // It is now safe to assume we have enough space for all of the characters.
+            char[] chars = new char[arrayLength];
             int w = 0;
             for (int r = offset, e = offset + count; r < e; ++r)
             {
@@ -739,17 +758,7 @@ namespace Lucene.Net.Util
                 else
                 {
                     chars[w++] = (char)(LEAD_SURROGATE_OFFSET_ + (cp >> LEAD_SURROGATE_SHIFT_));
-                    // LUCENENET: resize to the exact length: it's slightly faster to check if the resize is needed
-                    if (w >= chars.Length)
-                    {
-                        Array.Resize(ref chars, chars.Length + (e - r) * 2 - 1);
-                    }
                     chars[w++] = (char)(TRAIL_SURROGATE_MIN_VALUE + (cp & TRAIL_SURROGATE_MASK_));
-                }
-                // LUCENENET: resize to the exact length: it's slightly faster to check if the resize is needed
-                if (w != chars.Length)
-                {
-                    Array.Resize(ref chars, w);
                 }
             }
 
