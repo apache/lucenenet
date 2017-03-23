@@ -645,7 +645,7 @@ namespace Lucene.Net.Index
 
             if (Verbose())
             {
-                Message("eligible=" + eligible);
+                Message("eligible=" + Arrays.ToString(eligible));
                 Message("forceMergeRunning=" + forceMergeRunning);
             }
 
@@ -711,7 +711,7 @@ namespace Lucene.Net.Index
 
             if (Verbose())
             {
-                Message("eligible=" + eligible);
+                Message("eligible=" + Arrays.ToString(eligible));
             }
 
             int start = 0;
