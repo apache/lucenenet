@@ -1,5 +1,5 @@
+using Lucene.Net.Support;
 using System;
-using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -23,16 +23,16 @@ namespace Lucene.Net.Util
     /// <summary>
     /// A convenient class which offers a semi-immutable object wrapper
     /// implementation which allows one to set the value of an object exactly once,
-    /// and retrieve it many times. If <seealso cref="#set(Object)"/> is called more than once,
-    /// <seealso cref="AlreadySetException"/> is thrown and the operation
+    /// and retrieve it many times. If <see cref="Set(T)"/> is called more than once,
+    /// <see cref="AlreadySetException"/> is thrown and the operation
     /// will fail.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class SetOnce<T>
+    public sealed class SetOnce<T> where T : class // LUCENENET specific - added class constraint so we don't accept value types (which cannot be volatile)
     {
         /// <summary>
-        /// Thrown when <seealso cref="SetOnce#set(Object)"/> is called more than once. </summary>
+        /// Thrown when <see cref="SetOnce.Set(T)"/> is called more than once. </summary>
         // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -45,37 +45,36 @@ namespace Lucene.Net.Util
             }
         }
 
-        private T obj = default(T);
-        private int set;
+        private volatile T obj = default(T);
+        private readonly AtomicBoolean set;
 
         /// <summary>
         /// A default constructor which does not set the internal object, and allows
-        /// setting it by calling <seealso cref="#set(Object)"/>.
+        /// setting it by calling <see cref="Set(T)"/>.
         /// </summary>
         public SetOnce()
         {
-            set = 0;
+            set = new AtomicBoolean(false);
         }
 
         /// <summary>
         /// Creates a new instance with the internal object set to the given object.
-        /// Note that any calls to <seealso cref="#set(Object)"/> afterwards will result in
-        /// <seealso cref="AlreadySetException"/>
+        /// Note that any calls to <see cref="Set(T)"/> afterwards will result in
+        /// <see cref="AlreadySetException"/>
         /// </summary>
         /// <exception cref="AlreadySetException"> if called more than once </exception>
-        /// <seealso cref= #set(Object) </seealso>
+        /// <seealso cref="Set(T)"/>
         public SetOnce(T obj)
         {
             this.obj = obj;
-            set = 1;
+            set = new AtomicBoolean(true);
         }
 
         /// <summary>
         /// Sets the given object. If the object has already been set, an exception is thrown. </summary>
         public void Set(T obj)
         {
-            //if (set.compareAndSet(false, true))
-            if (Interlocked.CompareExchange(ref set, 1, 0) == 0)
+            if (set.CompareAndSet(false, true))
             {
                 this.obj = obj;
             }
@@ -86,7 +85,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the object set by <seealso cref="#set(Object)"/>. </summary>
+        /// Returns the object set by <see cref="Set(T)"/>. </summary>
         public T Get()
         {
             return obj;

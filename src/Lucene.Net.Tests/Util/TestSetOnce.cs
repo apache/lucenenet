@@ -1,7 +1,8 @@
-using System.Threading;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
+using System.Globalization;
+using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -25,10 +26,20 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestSetOnce : LuceneTestCase
     {
+        private class Integer // LUCENENET specific class for testing (since int? is not a reference type)
+        {
+            public Integer(int value)
+            {
+                this.value = value;
+            }
+
+            internal int value;
+        }
+
         private sealed class SetOnceThread : ThreadClass
         {
-            internal SetOnce<int?> Set;
-            internal bool Success = false;
+            internal SetOnce<Integer> set;
+            internal bool success = false;
             internal readonly Random RAND;
 
             public SetOnceThread(Random random)
@@ -41,8 +52,8 @@ namespace Lucene.Net.Util
                 try
                 {
                     Sleep(RAND.Next(10)); // sleep for a short time
-                    Set.Set(new int?(Convert.ToInt32(Name.Substring(2))));
-                    Success = true;
+                    set.Set(new Integer(Convert.ToInt32(Name.Substring(2), CultureInfo.InvariantCulture)));
+                    success = true;
                 }
 #if !NETSTANDARD
                 catch (ThreadInterruptedException)
@@ -54,7 +65,7 @@ namespace Lucene.Net.Util
                 {
                     // TODO: change exception type
                     // expected.
-                    Success = false;
+                    success = false;
                 }
             }
         }
@@ -62,38 +73,38 @@ namespace Lucene.Net.Util
         [Test]
         public virtual void TestEmptyCtor()
         {
-            SetOnce<int?> set = new SetOnce<int?>();
+            SetOnce<Integer> set = new SetOnce<Integer>();
             Assert.IsNull(set.Get());
         }
 
         [Test]
         public virtual void TestSettingCtor()
         {
-            SetOnce<int?> set = new SetOnce<int?>(new int?(5));
-            Assert.AreEqual(5, (int)set.Get());
-            Assert.Throws<SetOnce<int?>.AlreadySetException>(() => set.Set(new int?(7)));
+            SetOnce<Integer> set = new SetOnce<Integer>(new Integer(5));
+            Assert.AreEqual(5, set.Get().value);
+            Assert.Throws<SetOnce<Integer>.AlreadySetException>(() => set.Set(new Integer(7)));
         }
 
         [Test]
         public virtual void TestSetOnce_mem()
         {
-            SetOnce<int?> set = new SetOnce<int?>();
-            set.Set(new int?(5));
-            Assert.AreEqual(5, (int)set.Get());
-            Assert.Throws<SetOnce<int?>.AlreadySetException>(() => set.Set(new int?(7)));
+            SetOnce<Integer> set = new SetOnce<Integer>();
+            set.Set(new Integer(5));
+            Assert.AreEqual(5, set.Get().value);
+            Assert.Throws<SetOnce<Integer>.AlreadySetException>(() => set.Set(new Integer(7)));
         }
 
         [Test]
         public virtual void TestSetMultiThreaded()
         {
-            SetOnce<int?> set = new SetOnce<int?>();
+            SetOnce<Integer> set = new SetOnce<Integer>();
             SetOnceThread[] threads = new SetOnceThread[10];
             Random random = Random();
             for (int i = 0; i < threads.Length; i++)
             {
                 threads[i] = new SetOnceThread(random);
                 threads[i].Name = "t-" + (i + 1);
-                threads[i].Set = set;
+                threads[i].set = set;
             }
 
             foreach (ThreadClass t in threads)
@@ -108,10 +119,10 @@ namespace Lucene.Net.Util
 
             foreach (SetOnceThread t in threads)
             {
-                if (t.Success)
+                if (t.success)
                 {
                     int expectedVal = Convert.ToInt32(t.Name.Substring(2));
-                    Assert.AreEqual(expectedVal, t.Set.Get(), "thread " + t.Name);
+                    Assert.AreEqual(expectedVal, t.set.Get().value, "thread " + t.Name);
                 }
             }
         }
