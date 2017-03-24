@@ -29,23 +29,23 @@ namespace Lucene.Net.Util.Fst
     // build it?
 
     /// <summary>
-    /// Builds a minimal FST (maps an IntsRef term to an arbitrary
+    /// Builds a minimal FST (maps an <see cref="Int32sRef"/> term to an arbitrary
     /// output) from pre-sorted terms with outputs.  The FST
     /// becomes an FSA if you use NoOutputs.  The FST is written
     /// on-the-fly into a compact serialized format byte array, which can
     /// be saved to / loaded from a Directory or used directly
     /// for traversal.  The FST is always finite (no cycles).
     ///
-    /// <p>NOTE: The algorithm is described at
-    /// http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698</p>
+    /// <para/>NOTE: The algorithm is described at
+    /// http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.24.3698
     ///
-    /// <p>The parameterized type T is the output type.  See the
-    /// subclasses of <seealso cref="Outputs"/>.
+    /// <para/>The parameterized type <typeparam name="T"/> is the output type.  See the
+    /// subclasses of <see cref="Outputs{T}"/>.
     ///
-    /// <p>FSTs larger than 2.1GB are now possible (as of Lucene
+    /// <para/>FSTs larger than 2.1GB are now possible (as of Lucene
     /// 4.2).  FSTs containing more than 2.1B nodes are also now
     /// possible, however they cannot be packed.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class Builder<T> : Builder
@@ -99,9 +99,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Instantiates an FST/FSA builder without any pruning. A shortcut
-        /// to {@link #Builder(FST.INPUT_TYPE, int, int, boolean,
-        /// boolean, int, Outputs, FreezeTail, boolean, float,
-        /// boolean, int)} with pruning options turned off.
+        /// to <see cref="Builder.Builder(FST.INPUT_TYPE, int, int, bool, bool, int, Outputs{T}, FreezeTail{T}, bool, float, bool, int)"/>
+        /// with pruning options turned off.
         /// </summary>
         public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs)
             : this(inputType, 0, 0, true, true, int.MaxValue, outputs, null, false, PackedInt32s.COMPACT, true, 15)
@@ -114,9 +113,9 @@ namespace Lucene.Net.Util.Fst
         /// tweaks. Read parameter documentation carefully.
         /// </summary>
         /// <param name="inputType">
-        ///    The input type (transition labels). Can be anything from <seealso cref="INPUT_TYPE"/>
+        ///    The input type (transition labels). Can be anything from <see cref="Lucene.Net.Util.Fst.FST.INPUT_TYPE"/>
         ///    enumeration. Shorter types will consume less memory. Strings (character sequences) are
-        ///    represented as <seealso cref="INPUT_TYPE#BYTE4"/> (full unicode codepoints).
+        ///    represented as <see cref="Lucene.Net.Util.Fst.FST.INPUT_TYPE.BYTE4"/> (full unicode codepoints).
         /// </param>
         /// <param name="minSuffixCount1">
         ///    If pruning the input graph during construction, this threshold is used for telling
@@ -127,36 +126,36 @@ namespace Lucene.Net.Util.Fst
         ///    (Note: only Mike McCandless knows what this one is really doing...)
         /// </param>
         /// <param name="doShareSuffix">
-        ///    If <code>true</code>, the shared suffixes will be compacted into unique paths.
+        ///    If <c>true</c>, the shared suffixes will be compacted into unique paths.
         ///    this requires an additional RAM-intensive hash map for lookups in memory. Setting this parameter to
-        ///    <code>false</code> creates a single suffix path for all input sequences. this will result in a larger
+        ///    <c>false</c> creates a single suffix path for all input sequences. this will result in a larger
         ///    FST, but requires substantially less memory and CPU during building.
         /// </param>
         /// <param name="doShareNonSingletonNodes">
-        ///    Only used if doShareSuffix is true.  Set this to
+        ///    Only used if <paramref name="doShareSuffix"/> is <c>true</c>.  Set this to
         ///    true to ensure FST is fully minimal, at cost of more
         ///    CPU and more RAM during building.
         /// </param>
         /// <param name="shareMaxTailLength">
-        ///    Only used if doShareSuffix is true.  Set this to
-        ///    Integer.MAX_VALUE to ensure FST is fully minimal, at cost of more
+        ///    Only used if <paramref name="doShareSuffix"/> is <c>true</c>.  Set this to
+        ///    <see cref="int.MaxValue"/> to ensure FST is fully minimal, at cost of more
         ///    CPU and more RAM during building.
         /// </param>
         /// <param name="outputs"> The output type for each input sequence. Applies only if building an FST. For
-        ///    FSA, use <seealso cref="NoOutputs.Singleton"/> and <seealso cref="NoOutputs.NoOutput"/> as the
+        ///    FSA, use <see cref="NoOutputs.Singleton"/> and <see cref="NoOutputs.NoOutput"/> as the
         ///    singleton output object.
         /// </param>
-        /// <param name="doPackFST"> Pass true to create a packed FST.
+        /// <param name="doPackFST"> Pass <c>true</c> to create a packed FST.
         /// </param>
-        /// <param name="acceptableOverheadRatio"> How to trade speed for space when building the FST. this option </param>
-        ///    is only relevant when doPackFST is true. <seealso cref= PackedInt32s#getMutable(int, int, float)
-        /// </seealso>
+        /// <param name="acceptableOverheadRatio"> How to trade speed for space when building the FST. this option 
+        ///    is only relevant when doPackFST is true. <see cref="PackedInt32s.GetMutable(int, int, float)"/>
+        /// </param>
         /// <param name="allowArrayArcs"> Pass false to disable the array arc optimization
         ///    while building the FST; this will make the resulting
         ///    FST smaller but slower to traverse.
         /// </param>
         /// <param name="bytesPageBits"> How many bits wide to make each
-        ///    byte[] block in the BytesStore; if you know the FST
+        ///    <see cref="T:byte[]"/> block in the <see cref="BytesStore"/>; if you know the FST
         ///    will be large then make this larger.  For example 15
         ///    bits = 32768 byte pages. </param>
         public Builder(FST.INPUT_TYPE inputType, int minSuffixCount1, int minSuffixCount2, bool doShareSuffix, 
@@ -367,13 +366,13 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// It's OK to add the same input twice in a row with
-        ///  different outputs, as long as outputs impls the merge
-        ///  method. Note that input is fully consumed after this
-        ///  method is returned (so caller is free to reuse), but
-        ///  output is not.  So if your outputs are changeable (eg
-        ///  <seealso cref="ByteSequenceOutputs"/> or {@link
-        ///  IntSequenceOutputs}) then you cannot reuse across
-        ///  calls.
+        /// different outputs, as long as outputs impls the merge
+        /// method. Note that input is fully consumed after this
+        /// method is returned (so caller is free to reuse), but
+        /// output is not.  So if your outputs are changeable (eg
+        /// <see cref="ByteSequenceOutputs"/> or 
+        /// <see cref="Int32SequenceOutputs"/>) then you cannot reuse across
+        /// calls.
         /// </summary>
         public virtual void Add(Int32sRef input, T output)
         {
@@ -518,7 +517,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Returns final FST.  NOTE: this will return null if
-        ///  nothing is accepted by the FST.
+        /// nothing is accepted by the FST.
         /// </summary>
         public virtual FST<T> Finish()
         {

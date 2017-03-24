@@ -24,9 +24,9 @@ namespace Lucene.Net.Util.Fst
     /// Represents the outputs for an FST, providing the basic
     /// algebra required for building and traversing the FST.
     ///
-    /// <p>Note that any operation that returns NO_OUTPUT must
-    /// return the same singleton object from {@link
-    /// #getNoOutput}.</p>
+    /// <para>Note that any operation that returns NO_OUTPUT must
+    /// return the same singleton object from
+    /// <see cref="NoOutput"/>.</para>
     ///
     /// @lucene.experimental
     /// </summary>
@@ -50,13 +50,13 @@ namespace Lucene.Net.Util.Fst
         public abstract T Add(T prefix, T output);
 
         /// <summary>
-        /// Encode an output value into a <seealso cref="DataOutput"/>. </summary>
+        /// Encode an output value into a <see cref="DataOutput"/>. </summary>
         public abstract void Write(T output, DataOutput @out);
 
         /// <summary>
-        /// Encode an final node output value into a {@link
-        ///  DataOutput}.  By default this just calls {@link #write(Object,
-        ///  DataOutput)}.
+        /// Encode an final node output value into a
+        /// <see cref="DataOutput"/>.  By default this just calls 
+        /// <see cref="Write(T, DataOutput)"/>.
         /// </summary>
         public virtual void WriteFinalOutput(T output, DataOutput @out)
         {
@@ -64,15 +64,15 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Decode an output value previously written with {@link
-        ///  #write(Object, DataOutput)}.
+        /// Decode an output value previously written with
+        /// <see cref="Write(T, DataOutput)"/>.
         /// </summary>
         public abstract T Read(DataInput @in);
 
         /// <summary>
-        /// Decode an output value previously written with {@link
-        ///  #writeFinalOutput(Object, DataOutput)}.  By default this
-        ///  just calls <seealso cref="#read(DataInput)"/>.
+        /// Decode an output value previously written with
+        /// <see cref="WriteFinalOutput(T, DataOutput)"/>.  By default this
+        /// just calls <see cref="Read(DataInput)"/>.
         /// </summary>
         public virtual T ReadFinalOutput(DataInput @in)
         {
@@ -81,8 +81,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// NOTE: this output is compared with == so you must
-        ///  ensure that all methods return the single object if
-        ///  it's really no output
+        /// ensure that all methods return the single object if
+        /// it's really no output
         /// </summary>
         public abstract T NoOutput { get; }
 

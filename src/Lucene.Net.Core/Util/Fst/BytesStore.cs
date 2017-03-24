@@ -46,7 +46,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Pulls bytes from the provided IndexInput. </summary>
+        /// Pulls bytes from the provided <see cref="Store.IndexInput"/>. </summary>
         public BytesStore(DataInput @in, long numBytes, int maxBlockSize)
         {
             int blockSize = 2;
@@ -74,8 +74,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Absolute write byte; you must ensure dest is < max
-        ///  position written so far.
+        /// Absolute write byte; you must ensure dest is &lt; max
+        /// position written so far.
         /// </summary>
         public virtual void WriteByte(int dest, byte b)
         {
@@ -131,8 +131,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Absolute writeBytes without changing the current
-        ///  position.  Note: this cannot "grow" the bytes, so you
-        ///  must only call it on already written parts.
+        /// position.  Note: this cannot "grow" the bytes, so you
+        /// must only call it on already written parts.
         /// </summary>
         internal virtual void WriteBytes(long dest, byte[] b, int offset, int len)
         {
@@ -198,8 +198,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Absolute copy bytes self to self, without changing the
-        ///  position. Note: this cannot "grow" the bytes, so must
-        ///  only call it on already written parts.
+        /// position. Note: this cannot "grow" the bytes, so must
+        /// only call it on already written parts.
         /// </summary>
         public virtual void CopyBytes(long src, long dest, int len)
         {
@@ -265,7 +265,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Writes an int at the absolute position without
+        /// Writes an <see cref="int"/> at the absolute position without
         /// changing the current pointer.
         /// <para/>
         /// NOTE: This was writeInt() in Lucene
@@ -290,7 +290,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Reverse from srcPos, inclusive, to destPos, inclusive. </summary>
+        /// Reverse from <paramref name="srcPos"/>, inclusive, to <paramref name="destPos"/>, inclusive. </summary>
         public virtual void Reverse(long srcPos, long destPos)
         {
             Debug.Assert(srcPos < destPos);
@@ -363,7 +363,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Pos must be less than the max position written so far!
-        ///  Ie, you cannot "grow" the file with this!
+        /// i.e., you cannot "grow" the file with this!
         /// </summary>
         public virtual void Truncate(long newLen)
         {
@@ -400,7 +400,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Writes all of our bytes to the target <seealso cref="DataOutput"/>. </summary>
+        /// Writes all of our bytes to the target <see cref="DataOutput"/>. </summary>
         public virtual void WriteTo(DataOutput @out)
         {
             foreach (byte[] block in blocks)

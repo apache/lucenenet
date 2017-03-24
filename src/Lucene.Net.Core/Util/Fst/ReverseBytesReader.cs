@@ -18,7 +18,7 @@ namespace Lucene.Net.Util.Fst
      */
 
     /// <summary>
-    /// Reads in reverse from a single byte[]. </summary>
+    /// Reads in reverse from a single <see cref="T:byte[]"/>. </summary>
     internal sealed class ReverseBytesReader : FST.BytesReader
     {
         private readonly byte[] bytes;

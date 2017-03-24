@@ -20,11 +20,11 @@ namespace Lucene.Net.Util.Fst
      */
 
     /// <summary>
-    /// Enumerates all input (IntsRef) + output pairs in an
+    /// Enumerates all input (<see cref="Int32sRef"/>) + output pairs in an
     /// FST.
     /// <para/>
     /// NOTE: This was IntsRefFSTEnum{T} in Lucene
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class Int32sRefFSTEnum<T> : FSTEnum<T>
@@ -37,8 +37,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// doFloor controls the behavior of advance: if it's true
-        ///  doFloor is true, advance positions to the biggest
-        ///  term before target.
+        /// doFloor is true, advance positions to the biggest
+        /// term before target.
         /// </summary>
         public Int32sRefFSTEnum(FST<T> fst)
             : base(fst)
@@ -60,7 +60,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Seeks to smallest term that's >= target. </summary>
+        /// Seeks to smallest term that's &gt;= target. </summary>
         public Int32sRefFSTEnum.InputOutput<T> SeekCeil(Int32sRef target)
         {
             this.target = target;
@@ -70,7 +70,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Seeks to biggest term that's <= target. </summary>
+        /// Seeks to biggest term that's &lt;= target. </summary>
         public Int32sRefFSTEnum.InputOutput<T> SeekFloor(Int32sRef target)
         {
             this.target = target;
@@ -80,10 +80,10 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Seeks to exactly this term, returning null if the term
-        ///  doesn't exist.  this is faster than using {@link
-        ///  #seekFloor} or <seealso cref="#seekCeil"/> because it
-        ///  short-circuits as soon the match is not found.
+        /// Seeks to exactly this term, returning <c>null</c> if the term
+        /// doesn't exist.  This is faster than using 
+        /// <see cref="SeekFloor"/> or <see cref="SeekCeil"/> because it
+        /// short-circuits as soon the match is not found.
         /// </summary>
         public Int32sRefFSTEnum.InputOutput<T> SeekExact(Int32sRef target)
         {
@@ -161,7 +161,7 @@ namespace Lucene.Net.Util.Fst
         { }
 
         /// <summary>
-        /// Holds a single input (IntsRef) + output pair. </summary>
+        /// Holds a single input (<see cref="Int32sRef"/>) + output pair. </summary>
         public class InputOutput<T>
         {
             public Int32sRef Input { get; set; }

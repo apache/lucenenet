@@ -24,9 +24,9 @@ namespace Lucene.Net.Util.Fst
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// An FST <seealso cref="Outputs"/> implementation where each output
+    /// An FST <see cref="T:Outputs{BytesRef}"/> implementation where each output
     /// is a sequence of bytes.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class ByteSequenceOutputs : Outputs<BytesRef>

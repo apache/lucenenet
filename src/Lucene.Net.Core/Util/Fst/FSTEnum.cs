@@ -21,8 +21,8 @@ namespace Lucene.Net.Util.Fst
      */
 
     /// <summary>
-    /// Can next() and advance() through the terms in an FST
-    ///
+    /// Can Next() and Advance() through the terms in an FST
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class FSTEnum<T> // LUCENENET NOTE: changed from internal to public because has public subclasses
@@ -43,8 +43,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// doFloor controls the behavior of advance: if it's true
-        ///  doFloor is true, advance positions to the biggest
-        ///  term before target.
+        /// doFloor is true, advance positions to the biggest
+        /// term before target.
         /// </summary>
         protected FSTEnum(FST<T> fst)
         {
@@ -63,7 +63,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Rewinds enum state to match the shared prefix between
-        ///  current term and target term
+        /// current term and target term
         /// </summary>
         protected void RewindPrefix()
         {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Util.Fst
         // SEEK_END)?  saves the eq check above?
 
         /// <summary>
-        /// Seeks to smallest term that's >= target. </summary>
+        /// Seeks to smallest term that's &gt;= target. </summary>
         protected virtual void DoSeekCeil()
         {
             //System.out.println("    advance len=" + target.length + " curlen=" + current.length);
@@ -303,7 +303,7 @@ namespace Lucene.Net.Util.Fst
         // TODO: should we return a status here (SEEK_FOUND / SEEK_NOT_FOUND /
         // SEEK_END)?  saves the eq check above?
         /// <summary>
-        /// Seeks to largest term that's <= target. </summary>
+        /// Seeks to largest term that's &lt;= target. </summary>
         protected virtual void DoSeekFloor()
         {
             // TODO: possibly caller could/should provide common
@@ -563,8 +563,10 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        // Appends current arc, and then recurses from its target,
-        // appending first arc all the way to the final node
+        /// <summary>
+        /// Appends current arc, and then recurses from its target,
+        /// appending first arc all the way to the final node
+        /// </summary>
         private void PushFirst()
         {
             FST.Arc<T> arc = m_arcs[m_upto];
@@ -588,8 +590,10 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        // Recurses from current arc, appending last arc all the
-        // way to the first final node
+        /// <summary>
+        /// Recurses from current arc, appending last arc all the
+        /// way to the first final node
+        /// </summary>
         private void PushLast()
         {
             FST.Arc<T> arc = m_arcs[m_upto];

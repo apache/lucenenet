@@ -24,8 +24,8 @@ namespace Lucene.Net.Util.Fst
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// An FST <seealso cref="Outputs{T}"/> implementation where each output
-    /// is a non-negative long value.
+    /// An FST <see cref="Outputs{T}"/> implementation where each output
+    /// is a non-negative <see cref="long?"/> value.
     /// <para/>
     /// NOTE: This was PositiveIntOutputs in Lucene
     ///

@@ -23,7 +23,7 @@ namespace Lucene.Net.Util.Fst
     // add a .skipBytes to DataInput.. hmm and .setPosition
 
     /// <summary>
-    /// Reads from a single byte[]. </summary>
+    /// Reads from a single <see cref="T:byte[]"/>. </summary>
     internal sealed class ForwardBytesReader : FST.BytesReader
     {
         private readonly byte[] bytes;

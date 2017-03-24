@@ -23,9 +23,9 @@ namespace Lucene.Net.Util.Fst
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// A null FST <seealso cref="Outputs"/> implementation; use this if
+    /// A null FST <see cref="Outputs{T}"/> implementation; use this if
     /// you just want to build an FSA.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class NoOutputs : Outputs<object>
@@ -38,8 +38,10 @@ namespace Lucene.Net.Util.Fst
             {
             }
 
-            // NodeHash calls hashCode for this output; we fix this
-            // so we get deterministic hashing.
+            /// <summary>
+            /// NodeHash calls hashCode for this output; we fix this
+            /// so we get deterministic hashing.
+            /// </summary>
             public override int GetHashCode()
             {
                 return 42;

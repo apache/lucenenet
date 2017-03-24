@@ -23,7 +23,9 @@ namespace Lucene.Net.Util.Fst
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
     using PagedGrowableWriter = Lucene.Net.Util.Packed.PagedGrowableWriter;
 
-    // Used to dedup states (lookup already-frozen states)
+    /// <summary>
+    /// Used to dedup states (lookup already-frozen states)
+    /// </summary>
     internal sealed class NodeHash<T>
     {
         private PagedGrowableWriter table;
@@ -73,8 +75,10 @@ namespace Lucene.Net.Util.Fst
             return false;
         }
 
-        // hash code for an unfrozen node.  this must be identical
-        // to the frozen case (below)!!
+        /// <summary>
+        /// hash code for an unfrozen node.  this must be identical
+        /// to the frozen case (below)!!
+        /// </summary>
         private long Hash(Builder.UnCompiledNode<T> node)
         {
             const int PRIME = 31;
@@ -98,7 +102,9 @@ namespace Lucene.Net.Util.Fst
             return h & long.MaxValue;
         }
 
-        // hash code for a frozen node
+        /// <summary>
+        /// hash code for a frozen node
+        /// </summary>
         private long Hash(long node)
         {
             const int PRIME = 31;
@@ -162,7 +168,9 @@ namespace Lucene.Net.Util.Fst
             }
         }
 
-        // called only by rehash
+        /// <summary>
+        /// called only by rehash
+        /// </summary>
         private void AddNew(long address)
         {
             long pos = Hash(address) & mask;

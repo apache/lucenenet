@@ -25,10 +25,10 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// An FST <see cref="Outputs{T}"/> implementation where each output
-    /// is a sequence of ints.
+    /// is a sequence of <see cref="int"/>s.
     /// <para/>
     /// NOTE: This was IntSequenceOutputs in Lucene
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class Int32SequenceOutputs : Outputs<Int32sRef>

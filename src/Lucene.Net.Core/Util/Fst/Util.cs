@@ -26,7 +26,7 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// Static helper methods.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class Util // LUCENENET TODO: Fix naming conflict with containing namespace
@@ -36,8 +36,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Looks up the output for this input, or null if the
-        ///  input is not accepted.
+        /// Looks up the output for this input, or <c>null</c> if the
+        /// input is not accepted.
         /// </summary>
         public static T Get<T>(FST<T> fst, Int32sRef input)
         {
@@ -70,8 +70,8 @@ namespace Lucene.Net.Util.Fst
         // TODO: maybe a CharsRef version for BYTE2
 
         /// <summary>
-        /// Looks up the output for this input, or null if the
-        ///  input is not accepted
+        /// Looks up the output for this input, or <c>null</c> if the
+        /// input is not accepted
         /// </summary>
         public static T Get<T>(FST<T> fst, BytesRef input)
         {
@@ -105,17 +105,17 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Reverse lookup (lookup by output instead of by input),
-        ///  in the special case when your FSTs outputs are
-        ///  strictly ascending.  this locates the input/output
-        ///  pair where the output is equal to the target, and will
-        ///  return null if that output does not exist.
+        /// in the special case when your FSTs outputs are
+        /// strictly ascending.  This locates the input/output
+        /// pair where the output is equal to the target, and will
+        /// return <c>null</c> if that output does not exist.
         ///
-        ///  <p>NOTE: this only works with {@code FST<Long>}, only
-        ///  works when the outputs are ascending in order with
-        ///  the inputs.
-        ///  For example, simple ordinals (0, 1,
-        ///  2, ...), or file offets (when appending to a file)
-        ///  fit this.
+        /// <para/>NOTE: this only works with <see cref="T:FST{long?}"/>, only
+        /// works when the outputs are ascending in order with
+        /// the inputs.
+        /// For example, simple ordinals (0, 1,
+        /// 2, ...), or file offets (when appending to a file)
+        /// fit this.
         /// </summary>
         public static Int32sRef GetByOutput(FST<long?> fst, long targetOutput)
         {
@@ -132,8 +132,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Expert: like <seealso cref="Util#getByOutput(FST, long)"/> except reusing
-        /// BytesReader, initial and scratch Arc, and result.
+        /// Expert: like <see cref="Util.GetByOutput(FST{long?}, long)"/> except reusing
+        /// <see cref="FST.BytesReader"/>, initial and scratch Arc, and result.
         /// </summary>
         public static Int32sRef GetByOutput(FST<long?> fst, long targetOutput, FST.BytesReader @in, FST.Arc<long?> arc, FST.Arc<long?> scratchArc, Int32sRef result)
         {
@@ -294,8 +294,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Represents a path in TopNSearcher.
-        ///
-        ///  @lucene.experimental
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
         public class FSTPath<T>
         {
@@ -320,7 +320,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Compares first by the provided comparer, and then
-        ///  tie breaks by path.input.
+        /// tie breaks by <see cref="FSTPath{T}.Input"/>.
         /// </summary>
         private class TieBreakByInputComparer<T> : IComparer<FSTPath<T>>
         {
@@ -347,7 +347,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Utility class to find top N shortest paths from start
-        ///  point(s).
+        /// point(s).
         /// </summary>
         public class TopNSearcher<T>
         {
@@ -366,7 +366,7 @@ namespace Lucene.Net.Util.Fst
 
             /// <summary>
             /// Creates an unbounded TopNSearcher </summary>
-            /// <param name="fst"> the <seealso cref="Lucene.Net.Util.Fst.FST"/> to search on </param>
+            /// <param name="fst"> the <see cref="Lucene.Net.Util.Fst.FST{T}"/> to search on </param>
             /// <param name="topN"> the number of top scoring entries to retrieve </param>
             /// <param name="maxQueueDepth"> the maximum size of the queue of possible top entries </param>
             /// <param name="comparer"> the comparer to select the top N </param>
@@ -381,7 +381,9 @@ namespace Lucene.Net.Util.Fst
                 queue = new SortedSet<FSTPath<T>>(new TieBreakByInputComparer<T>(comparer));
             }
 
-            // If back plus this arc is competitive then add to queue:
+            /// <summary>
+            /// If back plus this arc is competitive then add to queue:
+            /// </summary>
             protected virtual void AddIfCompetitive(FSTPath<T> path)
             {
                 Debug.Assert(queue != null);
@@ -447,7 +449,7 @@ namespace Lucene.Net.Util.Fst
 
             /// <summary>
             /// Adds all leaving arcs, including 'finished' arc, if
-            ///  the node is final, from this node into the queue.
+            /// the node is final, from this node into the queue.
             /// </summary>
             public virtual void AddStartPaths(FST.Arc<T> node, T startOutput, bool allowEmptyString, Int32sRef input)
             {
@@ -641,8 +643,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Holds a single input (IntsRef) + output, returned by
-        ///  <seealso cref="#shortestPaths shortestPaths()"/>.
+        /// Holds a single input (<see cref="Int32sRef"/>) + output, returned by
+        /// <see cref="ShortestPaths"/>.
         /// </summary>
         public sealed class Result<T>
         {
@@ -657,14 +659,14 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Holds the results for a top N search using <seealso cref="TopNSearcher"/>
+        /// Holds the results for a top N search using <see cref="TopNSearcher{T}"/>
         /// </summary>
         public sealed class TopResults<T> : IEnumerable<Result<T>>
         {
             /// <summary>
-            /// <code>true</code> iff this is a complete result ie. if
+            /// <c>true</c> iff this is a complete result ie. if
             /// the specified queue size was large enough to find the complete list of results. this might
-            /// be <code>false</code> if the <seealso cref="TopNSearcher"/> rejected too many results.
+            /// be <c>false</c> if the <see cref="TopNSearcher{T}"/> rejected too many results.
             /// </summary>
             public bool IsComplete { get; private set; }
 
@@ -692,7 +694,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Starting from node, find the top N min cost
-        ///  completions to a final node.
+        /// completions to a final node.
         /// </summary>
         public static TopResults<T> ShortestPaths<T>(FST<T> fst, FST.Arc<T> fromNode, T startOutput, IComparer<T> comparer, int topN, bool allowEmptyString)
         {
@@ -707,36 +709,38 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Dumps an <seealso cref="FST"/> to a GraphViz's <code>dot</code> language description
+        /// Dumps an <see cref="FST{T}"/> to a GraphViz's <c>dot</c> language description
         /// for visualization. Example of use:
         ///
-        /// <pre class="prettyprint">
-        /// PrintWriter pw = new PrintWriter(&quot;out.dot&quot;);
-        /// Util.toDot(fst, pw, true, true);
-        /// pw.Dispose();
-        /// </pre>
+        /// <code>
+        /// using (TextWriter sw = new StreamWriter(&quot;out.dot&quot;))
+        /// {
+        ///     Util.ToDot(fst, sw, true, true);
+        /// }
+        /// </code>
         ///
         /// and then, from command line:
         ///
-        /// <pre>
+        /// <code>
         /// dot -Tpng -o out.png out.dot
-        /// </pre>
+        /// </code>
         ///
-        /// <p>
+        /// <para/>
         /// Note: larger FSTs (a few thousand nodes) won't even
-        /// render, don't bother.  If the FST is > 2.1 GB in size
+        /// render, don't bother.  If the FST is &gt; 2.1 GB in size
         /// then this method will throw strange exceptions.
+        /// <para/>
+        /// See also <a href="http://www.graphviz.org/">http://www.graphviz.org/</a>.
         /// </summary>
         /// <param name="sameRank">
-        ///          If <code>true</code>, the resulting <code>dot</code> file will try
-        ///          to order states in layers of breadth-first traversal. this may
+        ///          If <c>true</c>, the resulting <c>dot</c> file will try
+        ///          to order states in layers of breadth-first traversal. This may
         ///          mess up arcs, but makes the output FST's structure a bit clearer.
         /// </param>
         /// <param name="labelStates">
-        ///          If <code>true</code> states will have labels equal to their offsets in their
+        ///          If <c>true</c> states will have labels equal to their offsets in their
         ///          binary format. Expands the graph considerably.
         /// </param>
-        /// <seealso cref= "http://www.graphviz.org/" </seealso>
         public static void ToDot<T>(FST<T> fst, TextWriter @out, bool sameRank, bool labelStates)
         {
             const string expandedNodeColor = "blue";
@@ -948,7 +952,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Emit a single state in the <code>dot</code> language.
+        /// Emit a single state in the <c>dot</c> language.
         /// </summary>
         private static void EmitDotState(TextWriter @out, string name, string shape, string color, string label)
         {
@@ -975,8 +979,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Just maps each UTF16 unit (char) to the ints in an
-        ///  IntsRef.
+        /// Just maps each UTF16 unit (char) to the <see cref="int"/>s in an
+        /// <see cref="Int32sRef"/>.
         /// </summary>
         public static Int32sRef ToUTF16(string s, Int32sRef scratch)
         {
@@ -993,8 +997,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Decodes the Unicode codepoints from the provided
-        ///  CharSequence and places them in the provided scratch
-        ///  IntsRef, which must not be null, returning it.
+        /// <see cref="ICharSequence"/> and places them in the provided scratch
+        /// <see cref="Int32sRef"/>, which must not be <c>null</c>, returning it.
         /// </summary>
         public static Int32sRef ToUTF32(string s, Int32sRef scratch)
         {
@@ -1015,8 +1019,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Decodes the Unicode codepoints from the provided
-        ///  char[] and places them in the provided scratch
-        ///  IntsRef, which must not be null, returning it.
+        /// <see cref="T:char[]"/> and places them in the provided scratch
+        /// <see cref="Int32sRef"/>, which must not be <c>null</c>, returning it.
         /// </summary>
         public static Int32sRef ToUTF32(char[] s, int offset, int length, Int32sRef scratch)
         {
@@ -1036,8 +1040,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Just takes unsigned byte values from the BytesRef and
-        /// converts into an IntsRef.
+        /// Just takes unsigned byte values from the <see cref="BytesRef"/> and
+        /// converts into an <see cref="Int32sRef"/>.
         /// <para/>
         /// NOTE: This was toIntsRef() in Lucene
         /// </summary>
@@ -1053,8 +1057,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Just converts IntsRef to BytesRef; you must ensure the
-        ///  int values fit into a byte.
+        /// Just converts <see cref="Int32sRef"/> to <see cref="BytesRef"/>; you must ensure the
+        /// <see cref="int"/> values fit into a <see cref="byte"/>.
         /// </summary>
         public static BytesRef ToBytesRef(Int32sRef input, BytesRef scratch)
         {
@@ -1082,13 +1086,13 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Reads the first arc greater or equal that the given label into the provided
-        /// arc in place and returns it iff found, otherwise return <code>null</code>.
+        /// arc in place and returns it iff found, otherwise return <c>null</c>.
         /// </summary>
         /// <param name="label"> the label to ceil on </param>
         /// <param name="fst"> the fst to operate on </param>
         /// <param name="follow"> the arc to follow reading the label from </param>
         /// <param name="arc"> the arc to read into in place </param>
-        /// <param name="in"> the fst's <seealso cref="BytesReader"/> </param>
+        /// <param name="in"> the fst's <see cref="FST.BytesReader"/> </param>
         public static FST.Arc<T> ReadCeilArc<T>(int label, FST<T> fst, FST.Arc<T> follow, FST.Arc<T> arc, FST.BytesReader @in)
         {
             // TODO maybe this is a useful in the FST class - we could simplify some other code like FSTEnum?

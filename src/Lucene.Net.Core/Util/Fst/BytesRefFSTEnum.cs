@@ -20,8 +20,8 @@ namespace Lucene.Net.Util.Fst
      */
 
     /// <summary>
-    /// Enumerates all input (BytesRef) + output pairs in an
-    ///  FST.
+    /// Enumerates all input (<see cref="BytesRef"/>) + output pairs in an
+    /// FST.
     ///
     /// @lucene.experimental
     /// </summary>
@@ -35,8 +35,8 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// doFloor controls the behavior of advance: if it's true
-        ///  doFloor is true, advance positions to the biggest
-        ///  term before target.
+        /// doFloor is true, advance positions to the biggest
+        /// term before target.
         /// </summary>
         public BytesRefFSTEnum(FST<T> fst)
             : base(fst)
@@ -58,7 +58,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Seeks to smallest term that's >= target. </summary>
+        /// Seeks to smallest term that's &gt;= target. </summary>
         public BytesRefFSTEnum.InputOutput<T> SeekCeil(BytesRef target)
         {
             this.target = target;
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Seeks to biggest term that's <= target. </summary>
+        /// Seeks to biggest term that's &lt;= target. </summary>
         public BytesRefFSTEnum.InputOutput<T> SeekFloor(BytesRef target)
         {
             this.target = target;
@@ -78,10 +78,10 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Seeks to exactly this term, returning null if the term
-        ///  doesn't exist.  this is faster than using {@link
-        ///  #seekFloor} or <seealso cref="#seekCeil"/> because it
-        ///  short-circuits as soon the match is not found.
+        /// Seeks to exactly this term, returning <c>null</c> if the term
+        /// doesn't exist.  This is faster than using
+        /// <see cref="SeekFloor"/> or <see cref="SeekCeil"/> because it
+        /// short-circuits as soon the match is not found.
         /// </summary>
         public BytesRefFSTEnum.InputOutput<T> SeekExact(BytesRef target)
         {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util.Fst
         { }
 
         /// <summary>
-        /// Holds a single input (BytesRef) + output pair. </summary>
+        /// Holds a single input (<see cref="BytesRef"/>) + output pair. </summary>
         public class InputOutput<T>
         {
             public BytesRef Input { get; set; }

@@ -50,13 +50,13 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// Represents an finite state machine (FST), using a
-    ///  compact byte[] format.
-    ///  <p> The format is similar to what's used by Morfologik
-    ///  (http://sourceforge.net/projects/morfologik).
+    /// compact <see cref="T:byte[]"/> format.
+    /// <para/> The format is similar to what's used by Morfologik
+    /// (http://sourceforge.net/projects/morfologik).
     ///
-    ///  <p> See the {@link Lucene.Net.Util.Fst package
-    ///      documentation} for some simple examples.
-    ///
+    /// <para/> See the <a href="https://lucene.apache.org/core/4_8_0/core/org/apache/lucene/util/fst/package-summary.html">
+    /// FST package documentation</a> for some simple examples.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class FST<T>
@@ -230,8 +230,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Load a previously saved FST; maxBlockBits allows you to
-        ///  control the size of the byte[] pages used to hold the FST bytes.
+        /// Load a previously saved FST; <paramref name="maxBlockBits"/> allows you to
+        /// control the size of the <see cref="T:byte[]"/> pages used to hold the FST bytes.
         /// </summary>
         public FST(DataInput @in, Outputs<T> outputs, int maxBlockBits)
         {
@@ -633,8 +633,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// returns true if the node at this address has any
-        ///  outgoing arcs
+        /// returns <c>true</c> if the node at this address has any
+        /// outgoing arcs
         /// </summary>
         public static bool TargetHasArcs(FST.Arc<T> arc)
         {
@@ -865,7 +865,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Fills virtual 'start' arc, ie, an empty incoming arc to
-        ///  the FST's start node
+        /// the FST's start node
         /// </summary>
         public FST.Arc<T> GetFirstArc(FST.Arc<T> arc)
         {
@@ -892,12 +892,12 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Follows the <code>follow</code> arc and reads the last
-        ///  arc of its target; this changes the provided
-        ///  <code>arc</code> (2nd arg) in-place and returns it.
+        /// Follows the <paramref name="follow"/> arc and reads the last
+        /// arc of its target; this changes the provided
+        /// <paramref name="arc"/> (2nd arg) in-place and returns it.
         /// </summary>
         /// <returns> Returns the second argument
-        /// (<code>arc</code>).  </returns>
+        /// (<paramref name="arc"/>).  </returns>
         public FST.Arc<T> ReadLastTargetArc(FST.Arc<T> follow, FST.Arc<T> arc, FST.BytesReader @in)
         {
             //System.out.println("readLast");
@@ -991,11 +991,11 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Follow the <code>follow</code> arc and read the first arc of its target;
-        /// this changes the provided <code>arc</code> (2nd arg) in-place and returns
+        /// Follow the <paramref name="follow"/> arc and read the first arc of its target;
+        /// this changes the provided <paramref name="arc"/> (2nd arg) in-place and returns
         /// it.
         /// </summary>
-        /// <returns> Returns the second argument (<code>arc</code>). </returns>
+        /// <returns> Returns the second argument (<paramref name="arc"/>). </returns>
         public FST.Arc<T> ReadFirstTargetArc(FST.Arc<T> follow, FST.Arc<T> arc, FST.BytesReader @in)
         {
             //int pos = address;
@@ -1063,9 +1063,9 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Checks if <code>arc</code>'s target state is in expanded (or vector) format.
+        /// Checks if <paramref name="arc"/>'s target state is in expanded (or vector) format.
         /// </summary>
-        /// <returns> Returns <code>true</code> if <code>arc</code> points to a state in an
+        /// <returns> Returns <c>true</c> if <paramref name="arc"/> points to a state in an
         /// expanded array format. </returns>
         internal bool IsExpandedTarget(FST.Arc<T> follow, FST.BytesReader @in)
         {
@@ -1100,8 +1100,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Peeks at next arc's label; does not alter arc.  Do
-        ///  not call this if arc.isLast()!
+        /// Peeks at next arc's label; does not alter <paramref name="arc"/>.  Do
+        /// not call this if arc.IsLast!
         /// </summary>
         public int ReadNextArcLabel(FST.Arc<T> arc, FST.BytesReader @in)
         {
@@ -1157,8 +1157,8 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Never returns null, but you should never call this if
-        ///  arc.isLast() is true.
+        /// Never returns <c>null</c>, but you should never call this if
+        /// arc.IsLast is <c>true</c>.
         /// </summary>
         public FST.Arc<T> ReadNextRealArc(FST.Arc<T> arc, FST.BytesReader @in)
         {
@@ -1278,8 +1278,8 @@ namespace Lucene.Net.Util.Fst
         // look automaton?
 
         /// <summary>
-        /// Finds an arc leaving the incoming arc, replacing the arc in place.
-        ///  this returns null if the arc was not found, else the incoming arc.
+        /// Finds an arc leaving the incoming <paramref name="arc"/>, replacing the arc in place.
+        /// this returns <c>null</c> if the arc was not found, else the incoming <paramref name="arc"/>.
         /// </summary>
         public FST.Arc<T> FindTargetArc(int labelToMatch, FST.Arc<T> follow, FST.Arc<T> arc, FST.BytesReader @in)
         {
@@ -1472,25 +1472,25 @@ namespace Lucene.Net.Util.Fst
         /// <summary>
         /// Nodes will be expanded if their depth (distance from the root node) is
         /// &lt;= this value and their number of arcs is &gt;=
-        /// <seealso cref="#FIXED_ARRAY_NUM_ARCS_SHALLOW"/>.
+        /// <see cref="FST.FIXED_ARRAY_NUM_ARCS_SHALLOW"/>.
         ///
-        /// <p>
+        /// <para/>
         /// Fixed array consumes more RAM but enables binary search on the arcs
         /// (instead of a linear scan) on lookup by arc label.
         /// </summary>
-        /// <returns> <code>true</code> if <code>node</code> should be stored in an
+        /// <returns> <c>true</c> if <paramref name="node"/> should be stored in an
         ///         expanded (array) form.
         /// </returns>
-        /// <seealso cref= #FIXED_ARRAY_NUM_ARCS_DEEP </seealso>
-        /// <seealso cref= Builder.UnCompiledNode#depth </seealso>
+        /// <seealso cref="FST.FIXED_ARRAY_NUM_ARCS_DEEP"/>
+        /// <seealso cref="Builder.UnCompiledNode{S}.Depth"/>
         private bool ShouldExpand(Builder.UnCompiledNode<T> node)
         {
             return allowArrayArcs && ((node.Depth <= FST.FIXED_ARRAY_SHALLOW_DISTANCE && node.NumArcs >= FST.FIXED_ARRAY_NUM_ARCS_SHALLOW) || node.NumArcs >= FST.FIXED_ARRAY_NUM_ARCS_DEEP);
         }
 
         /// <summary>
-        /// Returns a <seealso cref="FST.BytesReader"/> for this FST, positioned at
-        ///  position 0.
+        /// Returns a <see cref="FST.BytesReader"/> for this FST, positioned at
+        /// position 0.
         /// </summary>
         public FST.BytesReader GetBytesReader()
         {
@@ -1635,7 +1635,9 @@ namespace Lucene.Net.Util.Fst
         }
        */
 
-        // Creates a packed FST
+        /// <summary>
+        /// Creates a packed FST
+        /// </summary>
         private FST(FST.INPUT_TYPE inputType, Outputs<T> outputs, int bytesPageBits)
         {
             version = FST.VERSION_CURRENT;
@@ -1652,17 +1654,17 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Expert: creates an FST by packing this one.  this
-        ///  process requires substantial additional RAM (currently
-        ///  up to ~8 bytes per node depending on
-        ///  <code>acceptableOverheadRatio</code>), but then should
-        ///  produce a smaller FST.
+        /// Expert: creates an FST by packing this one.  This
+        /// process requires substantial additional RAM (currently
+        /// up to ~8 bytes per node depending on
+        /// <c>acceptableOverheadRatio</c>), but then should
+        /// produce a smaller FST.
         ///
-        ///  <p>The implementation of this method uses ideas from
-        ///  <a target="_blank" href="http://www.cs.put.poznan.pl/dweiss/site/publications/download/fsacomp.pdf">Smaller Representation of Finite State Automata</a>,
-        ///  which describes techniques to reduce the size of a FST.
-        ///  However, this is not a strict implementation of the
-        ///  algorithms described in this paper.
+        /// <para/>The implementation of this method uses ideas from
+        /// <a target="_blank" href="http://www.cs.put.poznan.pl/dweiss/site/publications/download/fsacomp.pdf">Smaller Representation of Finite State Automata</a>,
+        /// which describes techniques to reduce the size of a FST.
+        /// However, this is not a strict implementation of the
+        /// algorithms described in this paper.
         /// </summary>
         internal FST<T> Pack(int minInCountDeref, int maxDerefNodes, float acceptableOverheadRatio)
         {
@@ -2145,20 +2147,26 @@ namespace Lucene.Net.Util.Fst
 
         internal const int VERSION_CURRENT = VERSION_VINT32_TARGET;
 
-        // Never serialized; just used to represent the virtual
-        // final node w/ no arcs:
+        /// <summary>
+        /// Never serialized; just used to represent the virtual
+        /// final node w/ no arcs:
+        /// </summary>
         internal const long FINAL_END_NODE = -1;
 
-        // Never serialized; just used to represent the virtual
-        // non-final node w/ no arcs:
+        /// <summary>
+        /// Never serialized; just used to represent the virtual
+        /// non-final node w/ no arcs:
+        /// </summary>
         internal const long NON_FINAL_END_NODE = 0;
 
         /// <summary>
         /// If arc has this label then that arc is final/accepted </summary>
         public static readonly int END_LABEL = -1;
 
-        // returns true if the node at this address has any
-        // outgoing arcs
+        /// <summary>
+        /// returns <c>true</c> if the node at this address has any
+        /// outgoing arcs
+        /// </summary>
         public static bool TargetHasArcs<T>(Arc<T> arc)
         {
             return arc.Target > 0;
@@ -2201,7 +2209,7 @@ namespace Lucene.Net.Util.Fst
             public abstract long Position { get; set; }
 
             /// <summary>
-            /// Returns true if this reader uses reversed bytes
+            /// Returns <c>true</c> if this reader uses reversed bytes
             /// under-the-hood.
             /// </summary>
             /// <returns></returns>
@@ -2229,8 +2237,10 @@ namespace Lucene.Net.Util.Fst
 
             public T Output { get; set; }
 
-            // From node (ord or address); currently only used when
-            // building an FST w/ willPackFST=true:
+            /// <summary>
+            /// From node (ord or address); currently only used when
+            /// building an FST w/ willPackFST=true:
+            /// </summary>
             internal long Node { get; set; }
 
             /// <summary>
@@ -2242,10 +2252,14 @@ namespace Lucene.Net.Util.Fst
 
             public T NextFinalOutput { get; set; }
 
-            // address (into the byte[]), or ord/address if label == END_LABEL
+            /// <summary>
+            /// address (into the byte[]), or ord/address if label == END_LABEL
+            /// </summary>
             internal long NextArc { get; set; }
 
-            // This is non-zero if current arcs are fixed array:
+            /// <summary>
+            /// This is non-zero if current arcs are fixed array:
+            /// </summary>
             internal long PosArcsStart { get; set; }
 
             internal int BytesPerArc { get; set; }

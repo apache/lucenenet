@@ -24,7 +24,7 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// An FST <see cref="Outputs{T}"/> implementation, holding two other outputs.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class PairOutputs<A, B> : Outputs<PairOutputs<A, B>.Pair>
@@ -78,7 +78,7 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Create a new Pair </summary>
+        /// Create a new <see cref="Pair"/> </summary>
         public virtual Pair NewPair(A a, B b)
         {
             if (a.Equals(outputs1.NoOutput))

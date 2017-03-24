@@ -24,9 +24,9 @@ namespace Lucene.Net.Util.Fst
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// An FST <seealso cref="Outputs"/> implementation where each output
+    /// An FST <see cref="Outputs{T}"/> implementation where each output
     /// is a sequence of characters.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class CharSequenceOutputs : Outputs<CharsRef>
