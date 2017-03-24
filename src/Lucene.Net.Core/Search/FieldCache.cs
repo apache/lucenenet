@@ -910,543 +910,542 @@ namespace Lucene.Net.Search
             }
         }
     }
-
-    /*LUCENE TO-DO refactoring because of enum nonsense
-  public static readonly FieldCache DEFAULT = new FieldCacheImpl();
-
-  private class FieldCache_ByteParserAnonymousInnerClassHelper : FieldCache_ByteParser
-  {
-      public FieldCache_ByteParserAnonymousInnerClassHelper()
-      {
-      }
-
-      public virtual sbyte ParseByte(BytesRef term)
-      {
-      // TODO: would be far better to directly parse from
-      // UTF8 bytes... but really users should use
-      // IntField, instead, which already decodes
-      // directly from byte[]
-      return (sbyte)Convert.ToByte(term.Utf8ToString());
-      }
-    public override string ToString()
-    {
-      return typeof(FieldCache).Name + ".DEFAULT_BYTE_PARSER";
-    }
-    public virtual TermsEnum TermsEnum(Terms terms)
-    {
-      return terms.Iterator(null);
-    }
-  }
-
-  private class FieldCache_ShortParserAnonymousInnerClassHelper : FieldCache_ShortParser
-  {
-      public FieldCache_ShortParserAnonymousInnerClassHelper()
-      {
-      }
-
-      public virtual short ParseShort(BytesRef term)
-      {
-      // TODO: would be far better to directly parse from
-      // UTF8 bytes... but really users should use
-      // IntField, instead, which already decodes
-      // directly from byte[]
-      return Convert.ToInt16(term.Utf8ToString());
-      }
-    public override string ToString()
-    {
-      return typeof(FieldCache).Name + ".DEFAULT_SHORT_PARSER";
-    }
-
-    public virtual TermsEnum TermsEnum(Terms terms)
-    {
-      return terms.Iterator(null);
-    }
-  }
-
-  private class FieldCache_IntParserAnonymousInnerClassHelper : FieldCache_IntParser
-  {
-      public FieldCache_IntParserAnonymousInnerClassHelper()
-      {
-      }
-
-      public virtual int ParseInt(BytesRef term)
-      {
-      // TODO: would be far better to directly parse from
-      // UTF8 bytes... but really users should use
-      // IntField, instead, which already decodes
-      // directly from byte[]
-      return Convert.ToInt32(term.Utf8ToString());
-      }
-
-    public virtual TermsEnum TermsEnum(Terms terms)
-    {
-      return terms.Iterator(null);
-    }
-
-    public override string ToString()
-    {
-      return typeof(FieldCache).Name + ".DEFAULT_INT_PARSER";
-    }
-  }
-
-  private class FieldCache_FloatParserAnonymousInnerClassHelper : FieldCache_FloatParser
-  {
-      public FieldCache_FloatParserAnonymousInnerClassHelper()
-      {
-      }
-
-      public virtual float ParseFloat(BytesRef term)
-      {
-      // TODO: would be far better to directly parse from
-      // UTF8 bytes... but really users should use
-      // FloatField, instead, which already decodes
-      // directly from byte[]
-      return Convert.ToSingle(term.Utf8ToString());
-      }
-
-    public virtual TermsEnum TermsEnum(Terms terms)
-    {
-      return terms.Iterator(null);
-    }
-
-    public override string ToString()
-    {
-      return typeof(FieldCache).Name + ".DEFAULT_FLOAT_PARSER";
-    }
-  }
-
-  private class FieldCache_LongParserAnonymousInnerClassHelper : FieldCache_LongParser
-  {
-      public FieldCache_LongParserAnonymousInnerClassHelper()
-      {
-      }
-
-      public virtual long ParseLong(BytesRef term)
-      {
-      // TODO: would be far better to directly parse from
-      // UTF8 bytes... but really users should use
-      // LongField, instead, which already decodes
-      // directly from byte[]
-      return Convert.ToInt64(term.Utf8ToString());
-      }
-
-    public virtual TermsEnum TermsEnum(Terms terms)
-    {
-      return terms.Iterator(null);
-    }
-
-    public override string ToString()
-    {
-      return typeof(FieldCache).Name + ".DEFAULT_LONG_PARSER";
-    }
-  }
-
-  private class FieldCache_DoubleParserAnonymousInnerClassHelper : FieldCache_DoubleParser
-  {
-      public FieldCache_DoubleParserAnonymousInnerClassHelper()
-      {
-      }
-
-      public virtual double ParseDouble(BytesRef term)
-      {
-      // TODO: would be far better to directly parse from
-      // UTF8 bytes... but really users should use
-      // DoubleField, instead, which already decodes
-      // directly from byte[]
-      return Convert.ToDouble(term.Utf8ToString());
-      }
-
-    public virtual TermsEnum TermsEnum(Terms terms)
-    {
-      return terms.Iterator(null);
-    }
-
-    public override string ToString()
-    {
-      return typeof(FieldCache).Name + ".DEFAULT_DOUBLE_PARSER";
-    }
-  }
-
-  private class FieldCache_IntParserAnonymousInnerClassHelper2 : FieldCache_IntParser
-  {
-      public FieldCache_IntParserAnonymousInnerClassHelper2()
-      {
-      }
-
-      public override int ParseInt(BytesRef term)
-      {
-        return NumericUtils.PrefixCodedToInt(term);
-      }
-
-      public override TermsEnum TermsEnum(Terms terms)
-      {
-        return NumericUtils.FilterPrefixCodedInts(terms.Iterator(null));
-      }
-
-      public override string ToString()
-      {
-        return typeof(FieldCache).Name + ".NUMERIC_UTILS_INT_PARSER";
-      }
-  }
-
-  private class FieldCache_FloatParserAnonymousInnerClassHelper2 : FieldCache_FloatParser
-  {
-      public FieldCache_FloatParserAnonymousInnerClassHelper2()
-      {
-      }
-
-      public override float ParseFloat(BytesRef term)
-      {
-        return NumericUtils.SortableIntToFloat(NumericUtils.PrefixCodedToInt(term));
-      }
-      public override string ToString()
-      {
-        return typeof(FieldCache).Name + ".NUMERIC_UTILS_FLOAT_PARSER";
-      }
-
-      public override TermsEnum TermsEnum(Terms terms)
-      {
-        return NumericUtils.FilterPrefixCodedInts(terms.Iterator(null));
-      }
-  }
-
-  private class FieldCache_LongParserAnonymousInnerClassHelper2 : FieldCache_LongParser
-  {
-      public FieldCache_LongParserAnonymousInnerClassHelper2()
-      {
-      }
-
-      public override long ParseLong(BytesRef term)
-      {
-        return NumericUtils.PrefixCodedToLong(term);
-      }
-      public override string ToString()
-      {
-        return typeof(FieldCache).Name + ".NUMERIC_UTILS_LONG_PARSER";
-      }
-
-      public override TermsEnum TermsEnum(Terms terms)
-      {
-        return NumericUtils.FilterPrefixCodedLongs(terms.Iterator(null));
-      }
-  }
-
-  private class FieldCache_DoubleParserAnonymousInnerClassHelper2 : FieldCache_DoubleParser
-  {
-      public FieldCache_DoubleParserAnonymousInnerClassHelper2()
-      {
-      }
-
-      public override double ParseDouble(BytesRef term)
-      {
-        return NumericUtils.SortableLongToDouble(NumericUtils.PrefixCodedToLong(term));
-      }
-      public override string ToString()
-      {
-        return typeof(FieldCache).Name + ".NUMERIC_UTILS_DOUBLE_PARSER";
-      }
-
-      public override TermsEnum TermsEnum(Terms terms)
-      {
-        return NumericUtils.FilterPrefixCodedLongs(terms.Iterator(null));
-      }
-  }
-}
-
-  public abstract class FieldCache_Bytes
-  {
-    /// <summary>
-    /// Return a single Byte representation of this field's value. </summary>
-    public abstract sbyte Get(int docID);
-
-    /// <summary>
-    /// Zero value for every document </summary>
-    public static readonly FieldCache_Bytes EMPTY = new FieldCache_BytesAnonymousInnerClassHelper();
-
-    private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache_Bytes
-    {
-        public FieldCache_BytesAnonymousInnerClassHelper()
-        {
-        }
-
-      public override sbyte Get(int docID)
-      {
-        return 0;
-      }
-    }
-  }
-
-  public abstract class FieldCache_Shorts
-  {
-    /// <summary>
-    /// Return a short representation of this field's value. </summary>
-    public abstract short Get(int docID);
-
-    /// <summary>
-    /// Zero value for every document </summary>
-    public static readonly FieldCache_Shorts EMPTY = new FieldCache_ShortsAnonymousInnerClassHelper();
-
-    private class FieldCache_ShortsAnonymousInnerClassHelper : FieldCache_Shorts
-    {
-        public FieldCache_ShortsAnonymousInnerClassHelper()
-        {
-        }
-
-      public override short Get(int docID)
-      {
-        return 0;
-      }
-    }
-  }
-
-  public abstract class FieldCache_Ints
-  {
-    /// <summary>
-    /// Return an integer representation of this field's value. </summary>
-    public abstract int Get(int docID);
-
-    /// <summary>
-    /// Zero value for every document </summary>
-    public static readonly FieldCache_Ints EMPTY = new FieldCache_IntsAnonymousInnerClassHelper();
-
-    private class FieldCache_IntsAnonymousInnerClassHelper : FieldCache_Ints
-    {
-        public FieldCache_IntsAnonymousInnerClassHelper()
-        {
-        }
-
-      public override int Get(int docID)
-      {
-        return 0;
-      }
-    }
-  }
-
-  public abstract class FieldCache_Longs
-  {
-    /// <summary>
-    /// Return an long representation of this field's value. </summary>
-    public abstract long Get(int docID);
-
-    /// <summary>
-    /// Zero value for every document </summary>
-    public static readonly FieldCache_Longs EMPTY = new FieldCache_LongsAnonymousInnerClassHelper();
-
-    private class FieldCache_LongsAnonymousInnerClassHelper : FieldCache_Longs
-    {
-        public FieldCache_LongsAnonymousInnerClassHelper()
-        {
-        }
-
-      public override long Get(int docID)
-      {
-        return 0;
-      }
-    }
-  }
-
-  public abstract class FieldCache_Floats
-  {
-    /// <summary>
-    /// Return an float representation of this field's value. </summary>
-    public abstract float Get(int docID);
-
-    /// <summary>
-    /// Zero value for every document </summary>
-    public static readonly FieldCache_Floats EMPTY = new FieldCache_FloatsAnonymousInnerClassHelper();
-
-    private class FieldCache_FloatsAnonymousInnerClassHelper : FieldCache_Floats
-    {
-        public FieldCache_FloatsAnonymousInnerClassHelper()
-        {
-        }
-
-      public override float Get(int docID)
-      {
-        return 0;
-      }
-    }
-  }
-
-  public abstract class FieldCache_Doubles
-  {
-    /// <summary>
-    /// Return an double representation of this field's value. </summary>
-    public abstract double Get(int docID);
-
-    /// <summary>
-    /// Zero value for every document </summary>
-    public static readonly FieldCache_Doubles EMPTY = new FieldCache_DoublesAnonymousInnerClassHelper();
-
-    private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache_Doubles
-    {
-        public FieldCache_DoublesAnonymousInnerClassHelper()
-        {
-        }
-
-      public override double Get(int docID)
-      {
-        return 0;
-      }
-    }
-  }
-
-  public sealed class FieldCache_CreationPlaceholder
-  {
-    internal object Value;
-  }
-
-  public interface FieldCache_Parser
-  {
-    /// <summary>
-    /// Pulls a <seealso cref="TermsEnum"/> from the given <seealso cref="Terms"/>. this method allows certain parsers
-    /// to filter the actual TermsEnum before the field cache is filled.
-    /// </summary>
-    /// <param name="terms"> the <seealso cref="Terms"/> instance to create the <seealso cref="TermsEnum"/> from. </param>
-    /// <returns> a possibly filtered <seealso cref="TermsEnum"/> instance, this method must not return <code>null</code>. </returns>
-    /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
-    TermsEnum TermsEnum(Terms terms);
-  }
-
-  [Obsolete]
-  public interface FieldCache_ByteParser : FieldCache_Parser
-  {
-    /// <summary>
-    /// Return a single Byte representation of this field's value. </summary>
-    sbyte ParseByte(BytesRef term);
-  }
-
-  [Obsolete]
-  public interface FieldCache_ShortParser : FieldCache_Parser
-  {
-    /// <summary>
-    /// Return a short representation of this field's value. </summary>
-    short ParseShort(BytesRef term);
-  }
-
-  public interface FieldCache_IntParser : FieldCache_Parser
-  {
-    /// <summary>
-    /// Return an integer representation of this field's value. </summary>
-    int ParseInt(BytesRef term);
-  }
-
-  public interface FieldCache_FloatParser : FieldCache_Parser
-  {
-    /// <summary>
-    /// Return an float representation of this field's value. </summary>
-    float ParseFloat(BytesRef term);
-  }
-
-  public interface FieldCache_LongParser : FieldCache_Parser
-  {
-    /// <summary>
-    /// Return an long representation of this field's value. </summary>
-    long ParseLong(BytesRef term);
-  }
-
-  public interface FieldCache_DoubleParser : FieldCache_Parser
-  {
-    /// <summary>
-    /// Return an double representation of this field's value. </summary>
-    double ParseDouble(BytesRef term);
-  }
-
-  public sealed class FieldCache_CacheEntry
-  {
-    private readonly object readerKey;
-    private readonly string fieldName;
-    private readonly Type cacheType;
-    private readonly object custom;
-    private readonly object value;
-    private string Size;
-
-    public FieldCache_CacheEntry(object readerKey, string fieldName, Type cacheType, object custom, object value)
-    {
-      this.readerKey = readerKey;
-      this.fieldName = fieldName;
-      this.cacheType = cacheType;
-      this.custom = custom;
-      this.value = value;
-    }
-
-    public object ReaderKey
-    {
-        get
-        {
-          return readerKey;
-        }
-    }
-
-    public string FieldName
-    {
-        get
-        {
-          return fieldName;
-        }
-    }
-
-    public Type CacheType
-    {
-        get
-        {
-          return cacheType;
-        }
-    }
-
-    public object Custom
-    {
-        get
-        {
-          return custom;
-        }
-    }
-
-    public object Value
-    {
-        get
-        {
-          return value;
-        }
-    }
-
-    /// <summary>
-    /// Computes (and stores) the estimated size of the cache Value </summary>
-    /// <seealso cref= #getEstimatedSize </seealso>
-    public void EstimateSize()
-    {
-      long bytesUsed = RamUsageEstimator.SizeOf(Value);
-      Size = RamUsageEstimator.HumanReadableUnits(bytesUsed);
-    }
-
-    /// <summary>
-    /// The most recently estimated size of the value, null unless
-    /// estimateSize has been called.
-    /// </summary>
-    public string EstimatedSize
-    {
-        get
-        {
-          return Size;
-        }
-    }
-
-    public override string ToString()
-    {
-      StringBuilder b = new StringBuilder();
-      b.Append("'").Append(ReaderKey).Append("'=>");
-      b.Append("'").Append(FieldName).Append("',");
-      b.Append(CacheType).Append(",").Append(Custom);
-      b.Append("=>").Append(Value.GetType().Name).Append("#");
-      b.Append(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Value));
-
-      string s = EstimatedSize;
-      if (null != s)
-      {
-        b.Append(" (size =~ ").Append(s).Append(')');
-      }
-
-      return b.ToString();
-    }
-  }*/
+    
+//  // LUCENENET NOTE: refactoring because of enum nonsense
+//  public static readonly FieldCache DEFAULT = new FieldCacheImpl();
+
+//  private class FieldCache_ByteParserAnonymousInnerClassHelper : FieldCache_ByteParser
+//  {
+//      public FieldCache_ByteParserAnonymousInnerClassHelper()
+//      {
+//      }
+
+//      public virtual sbyte ParseByte(BytesRef term)
+//      {
+//      // TODO: would be far better to directly parse from
+//      // UTF8 bytes... but really users should use
+//      // IntField, instead, which already decodes
+//      // directly from byte[]
+//      return (sbyte)Convert.ToByte(term.Utf8ToString());
+//      }
+//    public override string ToString()
+//    {
+//      return typeof(FieldCache).Name + ".DEFAULT_BYTE_PARSER";
+//    }
+//    public virtual TermsEnum TermsEnum(Terms terms)
+//    {
+//      return terms.Iterator(null);
+//    }
+//  }
+
+//  private class FieldCache_ShortParserAnonymousInnerClassHelper : FieldCache_ShortParser
+//  {
+//      public FieldCache_ShortParserAnonymousInnerClassHelper()
+//      {
+//      }
+
+//      public virtual short ParseShort(BytesRef term)
+//      {
+//      // TODO: would be far better to directly parse from
+//      // UTF8 bytes... but really users should use
+//      // IntField, instead, which already decodes
+//      // directly from byte[]
+//      return Convert.ToInt16(term.Utf8ToString());
+//      }
+//    public override string ToString()
+//    {
+//      return typeof(FieldCache).Name + ".DEFAULT_SHORT_PARSER";
+//    }
+
+//    public virtual TermsEnum TermsEnum(Terms terms)
+//    {
+//      return terms.Iterator(null);
+//    }
+//  }
+
+//  private class FieldCache_IntParserAnonymousInnerClassHelper : FieldCache_IntParser
+//  {
+//      public FieldCache_IntParserAnonymousInnerClassHelper()
+//      {
+//      }
+
+//      public virtual int ParseInt(BytesRef term)
+//      {
+//      // TODO: would be far better to directly parse from
+//      // UTF8 bytes... but really users should use
+//      // IntField, instead, which already decodes
+//      // directly from byte[]
+//      return Convert.ToInt32(term.Utf8ToString());
+//      }
+
+//    public virtual TermsEnum TermsEnum(Terms terms)
+//    {
+//      return terms.Iterator(null);
+//    }
+
+//    public override string ToString()
+//    {
+//      return typeof(FieldCache).Name + ".DEFAULT_INT_PARSER";
+//    }
+//  }
+
+//  private class FieldCache_FloatParserAnonymousInnerClassHelper : FieldCache_FloatParser
+//  {
+//      public FieldCache_FloatParserAnonymousInnerClassHelper()
+//      {
+//      }
+
+//      public virtual float ParseFloat(BytesRef term)
+//      {
+//      // TODO: would be far better to directly parse from
+//      // UTF8 bytes... but really users should use
+//      // FloatField, instead, which already decodes
+//      // directly from byte[]
+//      return Convert.ToSingle(term.Utf8ToString());
+//      }
+
+//    public virtual TermsEnum TermsEnum(Terms terms)
+//    {
+//      return terms.Iterator(null);
+//    }
+
+//    public override string ToString()
+//    {
+//      return typeof(FieldCache).Name + ".DEFAULT_FLOAT_PARSER";
+//    }
+//  }
+
+//  private class FieldCache_LongParserAnonymousInnerClassHelper : FieldCache_LongParser
+//  {
+//      public FieldCache_LongParserAnonymousInnerClassHelper()
+//      {
+//      }
+
+//      public virtual long ParseLong(BytesRef term)
+//      {
+//      // TODO: would be far better to directly parse from
+//      // UTF8 bytes... but really users should use
+//      // LongField, instead, which already decodes
+//      // directly from byte[]
+//      return Convert.ToInt64(term.Utf8ToString());
+//      }
+
+//    public virtual TermsEnum TermsEnum(Terms terms)
+//    {
+//      return terms.Iterator(null);
+//    }
+
+//    public override string ToString()
+//    {
+//      return typeof(FieldCache).Name + ".DEFAULT_LONG_PARSER";
+//    }
+//  }
+
+//  private class FieldCache_DoubleParserAnonymousInnerClassHelper : FieldCache_DoubleParser
+//  {
+//      public FieldCache_DoubleParserAnonymousInnerClassHelper()
+//      {
+//      }
+
+//      public virtual double ParseDouble(BytesRef term)
+//      {
+//      // TODO: would be far better to directly parse from
+//      // UTF8 bytes... but really users should use
+//      // DoubleField, instead, which already decodes
+//      // directly from byte[]
+//      return Convert.ToDouble(term.Utf8ToString());
+//      }
+
+//    public virtual TermsEnum TermsEnum(Terms terms)
+//    {
+//      return terms.Iterator(null);
+//    }
+
+//    public override string ToString()
+//    {
+//      return typeof(FieldCache).Name + ".DEFAULT_DOUBLE_PARSER";
+//    }
+//  }
+
+//  private class FieldCache_IntParserAnonymousInnerClassHelper2 : FieldCache_IntParser
+//  {
+//      public FieldCache_IntParserAnonymousInnerClassHelper2()
+//      {
+//      }
+
+//      public override int ParseInt(BytesRef term)
+//      {
+//        return NumericUtils.PrefixCodedToInt(term);
+//      }
+
+//      public override TermsEnum TermsEnum(Terms terms)
+//      {
+//        return NumericUtils.FilterPrefixCodedInts(terms.Iterator(null));
+//      }
+
+//      public override string ToString()
+//      {
+//        return typeof(FieldCache).Name + ".NUMERIC_UTILS_INT_PARSER";
+//      }
+//  }
+
+//  private class FieldCache_FloatParserAnonymousInnerClassHelper2 : FieldCache_FloatParser
+//  {
+//      public FieldCache_FloatParserAnonymousInnerClassHelper2()
+//      {
+//      }
+
+//      public override float ParseFloat(BytesRef term)
+//      {
+//        return NumericUtils.SortableIntToFloat(NumericUtils.PrefixCodedToInt(term));
+//      }
+//      public override string ToString()
+//      {
+//        return typeof(FieldCache).Name + ".NUMERIC_UTILS_FLOAT_PARSER";
+//      }
+
+//      public override TermsEnum TermsEnum(Terms terms)
+//      {
+//        return NumericUtils.FilterPrefixCodedInts(terms.Iterator(null));
+//      }
+//  }
+
+//  private class FieldCache_LongParserAnonymousInnerClassHelper2 : FieldCache_LongParser
+//  {
+//      public FieldCache_LongParserAnonymousInnerClassHelper2()
+//      {
+//      }
+
+//      public override long ParseLong(BytesRef term)
+//      {
+//        return NumericUtils.PrefixCodedToLong(term);
+//      }
+//      public override string ToString()
+//      {
+//        return typeof(FieldCache).Name + ".NUMERIC_UTILS_LONG_PARSER";
+//      }
+
+//      public override TermsEnum TermsEnum(Terms terms)
+//      {
+//        return NumericUtils.FilterPrefixCodedLongs(terms.Iterator(null));
+//      }
+//  }
+
+//  private class FieldCache_DoubleParserAnonymousInnerClassHelper2 : FieldCache_DoubleParser
+//  {
+//      public FieldCache_DoubleParserAnonymousInnerClassHelper2()
+//      {
+//      }
+
+//      public override double ParseDouble(BytesRef term)
+//      {
+//        return NumericUtils.SortableLongToDouble(NumericUtils.PrefixCodedToLong(term));
+//      }
+//      public override string ToString()
+//      {
+//        return typeof(FieldCache).Name + ".NUMERIC_UTILS_DOUBLE_PARSER";
+//      }
+
+//      public override TermsEnum TermsEnum(Terms terms)
+//      {
+//        return NumericUtils.FilterPrefixCodedLongs(terms.Iterator(null));
+//      }
+//  }
+//}
+
+//  public abstract class FieldCache_Bytes
+//  {
+//    /// <summary>
+//    /// Return a single Byte representation of this field's value. </summary>
+//    public abstract sbyte Get(int docID);
+
+//    /// <summary>
+//    /// Zero value for every document </summary>
+//    public static readonly FieldCache_Bytes EMPTY = new FieldCache_BytesAnonymousInnerClassHelper();
+
+//    private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache_Bytes
+//    {
+//        public FieldCache_BytesAnonymousInnerClassHelper()
+//        {
+//        }
+
+//      public override sbyte Get(int docID)
+//      {
+//        return 0;
+//      }
+//    }
+//  }
+
+//  public abstract class FieldCache_Shorts
+//  {
+//    /// <summary>
+//    /// Return a short representation of this field's value. </summary>
+//    public abstract short Get(int docID);
+
+//    /// <summary>
+//    /// Zero value for every document </summary>
+//    public static readonly FieldCache_Shorts EMPTY = new FieldCache_ShortsAnonymousInnerClassHelper();
+
+//    private class FieldCache_ShortsAnonymousInnerClassHelper : FieldCache_Shorts
+//    {
+//        public FieldCache_ShortsAnonymousInnerClassHelper()
+//        {
+//        }
+
+//      public override short Get(int docID)
+//      {
+//        return 0;
+//      }
+//    }
+//  }
+
+//  public abstract class FieldCache_Ints
+//  {
+//    /// <summary>
+//    /// Return an integer representation of this field's value. </summary>
+//    public abstract int Get(int docID);
+
+//    /// <summary>
+//    /// Zero value for every document </summary>
+//    public static readonly FieldCache_Ints EMPTY = new FieldCache_IntsAnonymousInnerClassHelper();
+
+//    private class FieldCache_IntsAnonymousInnerClassHelper : FieldCache_Ints
+//    {
+//        public FieldCache_IntsAnonymousInnerClassHelper()
+//        {
+//        }
+
+//      public override int Get(int docID)
+//      {
+//        return 0;
+//      }
+//    }
+//  }
+
+//  public abstract class FieldCache_Longs
+//  {
+//    /// <summary>
+//    /// Return an long representation of this field's value. </summary>
+//    public abstract long Get(int docID);
+
+//    /// <summary>
+//    /// Zero value for every document </summary>
+//    public static readonly FieldCache_Longs EMPTY = new FieldCache_LongsAnonymousInnerClassHelper();
+
+//    private class FieldCache_LongsAnonymousInnerClassHelper : FieldCache_Longs
+//    {
+//        public FieldCache_LongsAnonymousInnerClassHelper()
+//        {
+//        }
+
+//      public override long Get(int docID)
+//      {
+//        return 0;
+//      }
+//    }
+//  }
+
+//  public abstract class FieldCache_Floats
+//  {
+//    /// <summary>
+//    /// Return an float representation of this field's value. </summary>
+//    public abstract float Get(int docID);
+
+//    /// <summary>
+//    /// Zero value for every document </summary>
+//    public static readonly FieldCache_Floats EMPTY = new FieldCache_FloatsAnonymousInnerClassHelper();
+
+//    private class FieldCache_FloatsAnonymousInnerClassHelper : FieldCache_Floats
+//    {
+//        public FieldCache_FloatsAnonymousInnerClassHelper()
+//        {
+//        }
+
+//      public override float Get(int docID)
+//      {
+//        return 0;
+//      }
+//    }
+//  }
+
+//  public abstract class FieldCache_Doubles
+//  {
+//    /// <summary>
+//    /// Return an double representation of this field's value. </summary>
+//    public abstract double Get(int docID);
+
+//    /// <summary>
+//    /// Zero value for every document </summary>
+//    public static readonly FieldCache_Doubles EMPTY = new FieldCache_DoublesAnonymousInnerClassHelper();
+
+//    private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache_Doubles
+//    {
+//        public FieldCache_DoublesAnonymousInnerClassHelper()
+//        {
+//        }
+
+//      public override double Get(int docID)
+//      {
+//        return 0;
+//      }
+//    }
+//  }
+
+//  public sealed class FieldCache_CreationPlaceholder
+//  {
+//    internal object Value;
+//  }
+
+//  public interface FieldCache_Parser
+//  {
+//    /// <summary>
+//    /// Pulls a <seealso cref="TermsEnum"/> from the given <seealso cref="Terms"/>. this method allows certain parsers
+//    /// to filter the actual TermsEnum before the field cache is filled.
+//    /// </summary>
+//    /// <param name="terms"> the <seealso cref="Terms"/> instance to create the <seealso cref="TermsEnum"/> from. </param>
+//    /// <returns> a possibly filtered <seealso cref="TermsEnum"/> instance, this method must not return <code>null</code>. </returns>
+//    /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
+//    TermsEnum TermsEnum(Terms terms);
+//  }
+
+//  [Obsolete]
+//  public interface FieldCache_ByteParser : FieldCache_Parser
+//  {
+//    /// <summary>
+//    /// Return a single Byte representation of this field's value. </summary>
+//    sbyte ParseByte(BytesRef term);
+//  }
+
+//  [Obsolete]
+//  public interface FieldCache_ShortParser : FieldCache_Parser
+//  {
+//    /// <summary>
+//    /// Return a short representation of this field's value. </summary>
+//    short ParseShort(BytesRef term);
+//  }
+
+//  public interface FieldCache_IntParser : FieldCache_Parser
+//  {
+//    /// <summary>
+//    /// Return an integer representation of this field's value. </summary>
+//    int ParseInt(BytesRef term);
+//  }
+
+//  public interface FieldCache_FloatParser : FieldCache_Parser
+//  {
+//    /// <summary>
+//    /// Return an float representation of this field's value. </summary>
+//    float ParseFloat(BytesRef term);
+//  }
+
+//  public interface FieldCache_LongParser : FieldCache_Parser
+//  {
+//    /// <summary>
+//    /// Return an long representation of this field's value. </summary>
+//    long ParseLong(BytesRef term);
+//  }
+
+//  public interface FieldCache_DoubleParser : FieldCache_Parser
+//  {
+//    /// <summary>
+//    /// Return an double representation of this field's value. </summary>
+//    double ParseDouble(BytesRef term);
+//  }
+
+//  public sealed class FieldCache_CacheEntry
+//  {
+//    private readonly object readerKey;
+//    private readonly string fieldName;
+//    private readonly Type cacheType;
+//    private readonly object custom;
+//    private readonly object value;
+//    private string Size;
+
+//    public FieldCache_CacheEntry(object readerKey, string fieldName, Type cacheType, object custom, object value)
+//    {
+//      this.readerKey = readerKey;
+//      this.fieldName = fieldName;
+//      this.cacheType = cacheType;
+//      this.custom = custom;
+//      this.value = value;
+//    }
+
+//    public object ReaderKey
+//    {
+//        get
+//        {
+//          return readerKey;
+//        }
+//    }
+
+//    public string FieldName
+//    {
+//        get
+//        {
+//          return fieldName;
+//        }
+//    }
+
+//    public Type CacheType
+//    {
+//        get
+//        {
+//          return cacheType;
+//        }
+//    }
+
+//    public object Custom
+//    {
+//        get
+//        {
+//          return custom;
+//        }
+//    }
+
+//    public object Value
+//    {
+//        get
+//        {
+//          return value;
+//        }
+//    }
+
+//    /// <summary>
+//    /// Computes (and stores) the estimated size of the cache Value </summary>
+//    /// <seealso cref= #getEstimatedSize </seealso>
+//    public void EstimateSize()
+//    {
+//      long bytesUsed = RamUsageEstimator.SizeOf(Value);
+//      Size = RamUsageEstimator.HumanReadableUnits(bytesUsed);
+//    }
+
+//    /// <summary>
+//    /// The most recently estimated size of the value, null unless
+//    /// estimateSize has been called.
+//    /// </summary>
+//    public string EstimatedSize
+//    {
+//        get
+//        {
+//          return Size;
+//        }
+//    }
+
+//    public override string ToString()
+//    {
+//      StringBuilder b = new StringBuilder();
+//      b.Append("'").Append(ReaderKey).Append("'=>");
+//      b.Append("'").Append(FieldName).Append("',");
+//      b.Append(CacheType).Append(",").Append(Custom);
+//      b.Append("=>").Append(Value.GetType().Name).Append("#");
+//      b.Append(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Value));
+
+//      string s = EstimatedSize;
+//      if (null != s)
+//      {
+//        b.Append(" (size =~ ").Append(s).Append(')');
+//      }
+
+//      return b.ToString();
+//    }
 }

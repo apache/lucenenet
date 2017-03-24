@@ -116,56 +116,57 @@ namespace Lucene.Net.Util
             catch (System.Security.SecurityException) //Ignore in medium trust.
             {
             }
-            /* LUCENE TO-DO Well that was all over the top to check architechture
-            bool is64Bit = false;
-            try
-            {
-              Type unsafeClass = Type.GetType("sun.misc.Unsafe");
-              Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
-              unsafeField.Accessible = true;
-              object @unsafe = unsafeField.get(null);
-              int addressSize = (int)((Number) unsafeClass.GetMethod("addressSize").invoke(@unsafe));
-              is64Bit = addressSize >= 8;
-            }
-            catch (Exception e)
-            {
-              string x = System.getProperty("sun.arch.data.model");
-              if (x != null)
-              {
-                is64Bit = x.IndexOf("64") != -1;
-              }
-              else
-              {
-                if (OS_ARCH != null && OS_ARCH.IndexOf("64") != -1)
-                {
-                  is64Bit = true;
-                }
-                else
-                {
-                  is64Bit = false;
-                }
-              }
-            }
-            RUNTIME_IS_64BIT = is64Bit;
 
-            // this method only exists in Java 8:
-            bool v8 = true;
-            try
-            {
-              typeof(Collections).getMethod("emptySortedSet");
-            }
-            catch (NoSuchMethodException nsme)
-            {
-              v8 = false;
-            }
-            JRE_IS_MINIMUM_JAVA8 = v8;
-            Package pkg = LucenePackage.Get();
-            string v = (pkg == null) ? null : pkg.ImplementationVersion;
-            if (v == null)
-            {
-              v = MainVersionWithoutAlphaBeta() + "-SNAPSHOT";
-            }
-            LUCENE_VERSION = Ident(v);*/
+            //LUCENENET NOTE: Well that was all over the top to check architechture
+            //bool is64Bit = false;
+            //try
+            //{
+            //  Type unsafeClass = Type.GetType("sun.misc.Unsafe");
+            //  Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+            //  unsafeField.Accessible = true;
+            //  object @unsafe = unsafeField.get(null);
+            //  int addressSize = (int)((Number) unsafeClass.GetMethod("addressSize").invoke(@unsafe));
+            //  is64Bit = addressSize >= 8;
+            //}
+            //catch (Exception e)
+            //{
+            //  string x = System.getProperty("sun.arch.data.model");
+            //  if (x != null)
+            //  {
+            //    is64Bit = x.IndexOf("64") != -1;
+            //  }
+            //  else
+            //  {
+            //    if (OS_ARCH != null && OS_ARCH.IndexOf("64") != -1)
+            //    {
+            //      is64Bit = true;
+            //    }
+            //    else
+            //    {
+            //      is64Bit = false;
+            //    }
+            //  }
+            //}
+            //RUNTIME_IS_64BIT = is64Bit;
+
+            //// this method only exists in Java 8:
+            //bool v8 = true;
+            //try
+            //{
+            //  typeof(Collections).getMethod("emptySortedSet");
+            //}
+            //catch (NoSuchMethodException nsme)
+            //{
+            //  v8 = false;
+            //}
+            //JRE_IS_MINIMUM_JAVA8 = v8;
+            //Package pkg = LucenePackage.Get();
+            //string v = (pkg == null) ? null : pkg.ImplementationVersion;
+            //if (v == null)
+            //{
+            //  v = MainVersionWithoutAlphaBeta() + "-SNAPSHOT";
+            //}
+            //LUCENE_VERSION = Ident(v);
         }
 
         // this method prevents inlining the final version constant in compiled classes,

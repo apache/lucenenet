@@ -135,105 +135,98 @@ namespace Lucene.Net.Util
             int objectAlignment = Constants.RUNTIME_IS_64BIT ? 8 : 4;
 
 
-            /* LUCENENET TODO
+		    //Type unsafeClass = null;
+		    //object tempTheUnsafe = null;
+		    //try
+		    //{
+		    //  unsafeClass = Type.GetType("sun.misc.Unsafe");
+		    //  FieldInfo unsafeField = unsafeClass.getDeclaredField("theUnsafe");
+		    //  unsafeField.Accessible = true;
+		    //  tempTheUnsafe = unsafeField.get(null);
+		    //}
+		    //catch (Exception e)
+		    //{
+		    //  // Ignore.
+		    //}
+		    //TheUnsafe = tempTheUnsafe;
 
-		    Type unsafeClass = null;
-		    object tempTheUnsafe = null;
-		    try
-		    {
-		      unsafeClass = Type.GetType("sun.misc.Unsafe");
-		      FieldInfo unsafeField = unsafeClass.getDeclaredField("theUnsafe");
-		      unsafeField.Accessible = true;
-		      tempTheUnsafe = unsafeField.get(null);
-		    }
-		    catch (Exception e)
-		    {
-		      // Ignore.
-		    }
-		    TheUnsafe = tempTheUnsafe;
-
-		    // get object reference size by getting scale factor of Object[] arrays:
-		    try
-		    {
-		      Method arrayIndexScaleM = unsafeClass.GetMethod("arrayIndexScale", typeof(Type));
-		      referenceSize = (int)((Number) arrayIndexScaleM.invoke(TheUnsafe, typeof(object[])));
-		    }
-		    catch (Exception e)
-		    {
-		      // ignore.
-		    }
-            */
+		    //// get object reference size by getting scale factor of Object[] arrays:
+		    //try
+		    //{
+		    //  Method arrayIndexScaleM = unsafeClass.GetMethod("arrayIndexScale", typeof(Type));
+		    //  referenceSize = (int)((Number) arrayIndexScaleM.invoke(TheUnsafe, typeof(object[])));
+		    //}
+		    //catch (Exception e)
+		    //{
+		    //  // ignore.
+		    //}
 
             // "best guess" based on reference size. We will attempt to modify
             // these to exact values if there is supported infrastructure.
             objectHeader = Constants.RUNTIME_IS_64BIT ? (8 + referenceSize) : 8;
 		    arrayHeader = Constants.RUNTIME_IS_64BIT ? (8 + 2 * referenceSize) : 12;
 
-            /* LUCENENET TODO
-             
-		    // get the object header size:
-		    // - first try out if the field offsets are not scaled (see warning in Unsafe docs)
-		    // - get the object header size by getting the field offset of the first field of a dummy object
-		    // If the scaling is byte-wise and unsafe is available, enable dynamic size measurement for
-		    // estimateRamUsage().
-		    Method tempObjectFieldOffsetMethod = null;
-		    try
-		    {
-		      Method objectFieldOffsetM = unsafeClass.GetMethod("objectFieldOffset", typeof(FieldInfo));
-		      FieldInfo dummy1Field = typeof(DummyTwoLongObject).getDeclaredField("dummy1");
-		      int ofs1 = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, dummy1Field));
-		      FieldInfo dummy2Field = typeof(DummyTwoLongObject).getDeclaredField("dummy2");
-		      int ofs2 = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, dummy2Field));
-		      if (Math.Abs(ofs2 - ofs1) == NUM_BYTES_LONG)
-		      {
-			    FieldInfo baseField = typeof(DummyOneFieldObject).getDeclaredField("base");
-			    objectHeader = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, baseField));
-			    tempObjectFieldOffsetMethod = objectFieldOffsetM;
-		      }
-		    }
-		    catch (Exception e)
-		    {
-		      // Ignore.
-		    }
-		    ObjectFieldOffsetMethod = tempObjectFieldOffsetMethod;
+		    //// get the object header size:
+		    //// - first try out if the field offsets are not scaled (see warning in Unsafe docs)
+		    //// - get the object header size by getting the field offset of the first field of a dummy object
+		    //// If the scaling is byte-wise and unsafe is available, enable dynamic size measurement for
+		    //// estimateRamUsage().
+		    //Method tempObjectFieldOffsetMethod = null;
+		    //try
+		    //{
+		    //  Method objectFieldOffsetM = unsafeClass.GetMethod("objectFieldOffset", typeof(FieldInfo));
+		    //  FieldInfo dummy1Field = typeof(DummyTwoLongObject).getDeclaredField("dummy1");
+		    //  int ofs1 = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, dummy1Field));
+		    //  FieldInfo dummy2Field = typeof(DummyTwoLongObject).getDeclaredField("dummy2");
+		    //  int ofs2 = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, dummy2Field));
+		    //  if (Math.Abs(ofs2 - ofs1) == NUM_BYTES_LONG)
+		    //  {
+			   // FieldInfo baseField = typeof(DummyOneFieldObject).getDeclaredField("base");
+			   // objectHeader = (int)((Number) objectFieldOffsetM.invoke(TheUnsafe, baseField));
+			   // tempObjectFieldOffsetMethod = objectFieldOffsetM;
+		    //  }
+		    //}
+		    //catch (Exception e)
+		    //{
+		    //  // Ignore.
+		    //}
+		    //ObjectFieldOffsetMethod = tempObjectFieldOffsetMethod;
 
-		    // Get the array header size by retrieving the array base offset
-		    // (offset of the first element of an array).
-		    try
-		    {
-		      Method arrayBaseOffsetM = unsafeClass.GetMethod("arrayBaseOffset", typeof(Type));
-		      // we calculate that only for byte[] arrays, it's actually the same for all types:
-		      arrayHeader = (int)((Number) arrayBaseOffsetM.invoke(TheUnsafe, typeof(sbyte[])));
-		    }
-		    catch (Exception e)
-		    {
-		      // Ignore.
-		    }
-            */
+		    //// Get the array header size by retrieving the array base offset
+		    //// (offset of the first element of an array).
+		    //try
+		    //{
+		    //  Method arrayBaseOffsetM = unsafeClass.GetMethod("arrayBaseOffset", typeof(Type));
+		    //  // we calculate that only for byte[] arrays, it's actually the same for all types:
+		    //  arrayHeader = (int)((Number) arrayBaseOffsetM.invoke(TheUnsafe, typeof(sbyte[])));
+		    //}
+		    //catch (Exception e)
+		    //{
+		    //  // Ignore.
+		    //}
+
             NUM_BYTES_OBJECT_REF = referenceSize;
             NUM_BYTES_OBJECT_HEADER = objectHeader;
             NUM_BYTES_ARRAY_HEADER = arrayHeader;
 
-            /* LUCENENET TODO
-          // Try to get the object alignment (the default seems to be 8 on Hotspot,
-          // regardless of the architecture).
-          int objectAlignment = 8;
-          try
-          {
-            Type beanClazz = Type.GetType("com.sun.management.HotSpotDiagnosticMXBean").asSubclass(typeof(PlatformManagedObject));
-            object hotSpotBean = ManagementFactory.getPlatformMXBean(beanClazz);
-            if (hotSpotBean != null)
-            {
-              Method getVMOptionMethod = beanClazz.GetMethod("getVMOption", typeof(string));
-              object vmOption = getVMOptionMethod.invoke(hotSpotBean, "ObjectAlignmentInBytes");
-              objectAlignment = Convert.ToInt32(vmOption.GetType().GetMethod("getValue").invoke(vmOption).ToString());
-            }
-          }
-          catch (Exception e)
-          {
-            // Ignore.
-          }
-            */
+            //// Try to get the object alignment (the default seems to be 8 on Hotspot,
+            //// regardless of the architecture).
+            //int objectAlignment = 8;
+            //try
+            //{
+            //Type beanClazz = Type.GetType("com.sun.management.HotSpotDiagnosticMXBean").asSubclass(typeof(PlatformManagedObject));
+            //object hotSpotBean = ManagementFactory.getPlatformMXBean(beanClazz);
+            //if (hotSpotBean != null)
+            //{
+            //    Method getVMOptionMethod = beanClazz.GetMethod("getVMOption", typeof(string));
+            //    object vmOption = getVMOptionMethod.invoke(hotSpotBean, "ObjectAlignmentInBytes");
+            //    objectAlignment = Convert.ToInt32(vmOption.GetType().GetMethod("getValue").invoke(vmOption).ToString());
+            //}
+            //}
+            //catch (Exception e)
+            //{
+            //// Ignore.
+            //}
 
             NUM_BYTES_OBJECT_ALIGNMENT = objectAlignment;
 
@@ -614,24 +607,24 @@ namespace Lucene.Net.Util
         {
             Type type = f.FieldType;
             int fsize = type.GetTypeInfo().IsPrimitive ? primitiveSizes[type] : NUM_BYTES_OBJECT_REF;
-            /* LUCENE-TODO I dont think this will ever not be null
-            if (ObjectFieldOffsetMethod != null)
-            {
-              try
-              {
-                long offsetPlusSize = (long)((Number) ObjectFieldOffsetMethod.invoke(TheUnsafe, f)) + fsize;
-                return Math.Max(sizeSoFar, offsetPlusSize);
-              }
-              catch (Exception ex)
-              {
-                throw new Exception("Access problem with sun.misc.Unsafe", ex);
-              }
-            }
-            else
-            {
-              // TODO: No alignments based on field type/ subclass fields alignments?
-              return sizeSoFar + fsize;
-            }*/
+            // LUCENENET NOTE: I dont think this will ever not be null
+            //if (ObjectFieldOffsetMethod != null)
+            //{
+            //  try
+            //  {
+            //    long offsetPlusSize = (long)((Number) ObjectFieldOffsetMethod.invoke(TheUnsafe, f)) + fsize;
+            //    return Math.Max(sizeSoFar, offsetPlusSize);
+            //  }
+            //  catch (Exception ex)
+            //  {
+            //    throw new Exception("Access problem with sun.misc.Unsafe", ex);
+            //  }
+            //}
+            //else
+            //{
+            //  // TODO: No alignments based on field type/ subclass fields alignments?
+            //  return sizeSoFar + fsize;
+            //}
             return sizeSoFar + fsize;
         }
 
