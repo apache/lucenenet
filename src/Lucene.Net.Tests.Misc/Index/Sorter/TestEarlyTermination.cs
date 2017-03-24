@@ -130,13 +130,24 @@ namespace Lucene.Net.Index.Sorter
             bool trackDocScores = Random().nextBoolean();
             bool trackMaxScore = Random().nextBoolean();
             bool inOrder = Random().nextBoolean();
-            TopFieldCollector collector1 = Search.TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
-            TopFieldCollector collector2 = Search.TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+            // LUCENENET specific:
+            // we are changing this test to use Lucene.Net 4.9-like behavior rather than going through all of the effort to
+            // fix a hard-to-find null reference exception problem.
+            // https://github.com/apache/lucene-solr/commit/c59f13f9918faeeb4e69acd41731e674ce88f912
+            //TopFieldCollector collector1 = TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+            //TopFieldCollector collector2 = TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
 
             IndexSearcher searcher = NewSearcher(reader);
             int iters = AtLeast(5);
             for (int i = 0; i < iters; ++i)
             {
+                // LUCENENET specific:
+                // we are changing this test to use Lucene.Net 4.9-like behavior rather than going through all of the effort to
+                // fix a hard-to-find null reference exception problem.
+                // https://github.com/apache/lucene-solr/commit/c59f13f9918faeeb4e69acd41731e674ce88f912
+                TopFieldCollector collector1 = TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+                TopFieldCollector collector2 = TopFieldCollector.Create(sort, numHits, fillFields, trackDocScores, trackMaxScore, inOrder);
+
                 TermQuery query = new TermQuery(new Term("s", RandomInts.RandomFrom(Random(), terms)));
                 searcher.Search(query, collector1);
                 Sort different = new Sort(new SortField("ndv2", SortFieldType.INT64));
