@@ -62,6 +62,8 @@ namespace Lucene.Net.Codecs
     /// <seealso cref="DefaultDocValuesFormatFactory"/>
     /// <seealso cref="IDocValuesFormatFactory"/>
     /// <seealso cref="DocValuesFormatNameAttribute"/>
+    // LUCENENET specific - refactored this class so it depends on IDocValuesFormatFactory rather than
+    // the Java-centric NamedSPILoader
     public abstract class DocValuesFormat //: NamedSPILoader.INamedSPI
     {
         private static IDocValuesFormatFactory docValuesFormatFactory = new DefaultDocValuesFormatFactory();
@@ -166,114 +168,6 @@ namespace Lucene.Net.Codecs
         }
 
         // LUCENENET specific: Removed the ReloadDocValuesFormats() method because
-        // this goes against the grain of standar DI practices.
+        // this goes against the grain of standard DI practices.
     }
-
-
-    ///// <summary>
-    ///// Encodes/decodes per-document values.
-    ///// <p>
-    ///// Note, when extending this class, the name (<seealso cref="#getName"/>) may
-    ///// written into the index in certain configurations. In order for the segment
-    ///// to be read, the name must resolve to your implementation via <seealso cref="#forName(String)"/>.
-    ///// this method uses Java's
-    ///// <seealso cref="ServiceLoader Service Provider Interface"/> (SPI) to resolve format names.
-    ///// <p>
-    ///// If you implement your own format, make sure that it has a no-arg constructor
-    ///// so SPI can load it. </summary>
-    ///// <seealso cref= ServiceLoader
-    ///// @lucene.experimental  </seealso>
-    //public abstract class DocValuesFormat : NamedSPILoader.INamedSPI
-    //{
-    //    private static readonly NamedSPILoader<DocValuesFormat> loader = new NamedSPILoader<DocValuesFormat>(typeof(DocValuesFormat));
-
-    //    /// <summary>
-    //    /// Unique name that's used to retrieve this format when
-    //    ///  reading the index.
-    //    /// </summary>
-    //    private readonly string name;
-
-    //    /// <summary>
-    //    /// Creates a new docvalues format.
-    //    /// <p>
-    //    /// The provided name will be written into the index segment in some configurations
-    //    /// (such as when using {@code PerFieldDocValuesFormat}): in such configurations,
-    //    /// for the segment to be read this class should be registered with Java's
-    //    /// SPI mechanism (registered in META-INF/ of your jar file, etc). </summary>
-    //    /// <param name="name"> must be all ascii alphanumeric, and less than 128 characters in length. </param>
-    //    protected internal DocValuesFormat(string name)
-    //    {
-    //        NamedSPILoader<DocValuesFormat>.CheckServiceName(name);
-    //        this.name = name;
-    //    }
-
-    //    /// <summary>
-    //    /// Returns a <seealso cref="DocValuesConsumer"/> to write docvalues to the
-    //    ///  index.
-    //    /// </summary>
-    //    public abstract DocValuesConsumer FieldsConsumer(SegmentWriteState state);
-
-    //    /// <summary>
-    //    /// Returns a <seealso cref="DocValuesProducer"/> to read docvalues from the index.
-    //    /// <p>
-    //    /// NOTE: by the time this call returns, it must hold open any files it will
-    //    /// need to use; else, those files may be deleted. Additionally, required files
-    //    /// may be deleted during the execution of this call before there is a chance
-    //    /// to open them. Under these circumstances an IOException should be thrown by
-    //    /// the implementation. IOExceptions are expected and will automatically cause
-    //    /// a retry of the segment opening logic with the newly revised segments.
-    //    /// </summary>
-    //    public abstract DocValuesProducer FieldsProducer(SegmentReadState state);
-
-    //    public string Name
-    //    {
-    //        get
-    //        {
-    //            return name;
-    //        }
-    //    }
-
-    //    public override string ToString()
-    //    {
-    //        return "DocValuesFormat(name=" + name + ")";
-    //    }
-
-    //    /// <summary>
-    //    /// looks up a format by name </summary>
-    //    public static DocValuesFormat ForName(string name)
-    //    {
-    //        if (loader == null)
-    //        {
-    //            throw new InvalidOperationException("You called DocValuesFormat.forName() before all formats could be initialized. " + "this likely happens if you call it from a DocValuesFormat's ctor.");
-    //        }
-    //        return loader.Lookup(name);
-    //    }
-
-    //    /// <summary>
-    //    /// returns a list of all available format names </summary>
-    //    public static ISet<string> AvailableDocValuesFormats()
-    //    {
-    //        if (loader == null)
-    //        {
-    //            throw new InvalidOperationException("You called DocValuesFormat.availableDocValuesFormats() before all formats could be initialized. " + "this likely happens if you call it from a DocValuesFormat's ctor.");
-    //        }
-    //        return loader.AvailableServices();
-    //    }
-
-    //    /// <summary>
-    //    /// Reloads the DocValues format list from the given <seealso cref="ClassLoader"/>.
-    //    /// Changes to the docvalues formats are visible after the method ends, all
-    //    /// iterators (<seealso cref="#availableDocValuesFormats()"/>,...) stay consistent.
-    //    ///
-    //    /// <p><b>NOTE:</b> Only new docvalues formats are added, existing ones are
-    //    /// never removed or replaced.
-    //    ///
-    //    /// <p><em>this method is expensive and should only be called for discovery
-    //    /// of new docvalues formats on the given classpath/classloader!</em>
-    //    /// </summary>
-    //    public static void ReloadDocValuesFormats()
-    //    {
-    //        loader.Reload();
-    //    }
-    //}
 }
