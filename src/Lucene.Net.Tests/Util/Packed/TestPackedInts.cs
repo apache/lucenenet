@@ -381,7 +381,7 @@ namespace Lucene.Net.Util.Packed
                 catch (Exception e)
                 {
                     Console.Error.WriteLine(e.StackTrace);
-                    Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Exception while filling %s: valueCount=%d, bitsPerValue=%s", packedInt.GetType().Name, valueCount, bitsPerValue));
+                    Assert.Fail(string.Format(CultureInfo.InvariantCulture, "Exception while filling {0}: valueCount={1}, bitsPerValue={2}", packedInt.GetType().Name, valueCount, bitsPerValue));
                 }
             }
             AssertListEquality(packedInts);
@@ -432,7 +432,7 @@ namespace Lucene.Net.Util.Packed
             {
                 long value = TestUtil.NextLong(rnd2, 0, maxValue);
                 packedInt.Set(i, value);
-                Assert.AreEqual(value, packedInt.Get(i), string.Format(CultureInfo.InvariantCulture, "The set/get of the value at index %d should match for %s", i, packedInt.GetType().Name));
+                Assert.AreEqual(value, packedInt.Get(i), string.Format(CultureInfo.InvariantCulture, "The set/get of the value at index {0} should match for {1}", i, packedInt.GetType().Name));
             }
         }
 
@@ -457,7 +457,7 @@ namespace Lucene.Net.Util.Packed
             {
                 for (int j = 1; j < packedInts.Count; j++)
                 {
-                    Assert.AreEqual( @base.Get(i), packedInts[j].Get(i), string.Format(CultureInfo.InvariantCulture, "%s. The value at index %d should be the same for %s and %s", message, i, @base.GetType().Name, packedInts[j].GetType().Name));
+                    Assert.AreEqual( @base.Get(i), packedInts[j].Get(i), string.Format(CultureInfo.InvariantCulture, "{0}. The value at index {1} should be the same for {2} and {3}", message, i, @base.GetType().Name, packedInts[j].GetType().Name));
                 }
             }
         }
