@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,7 +44,7 @@ namespace Lucene.Net.Analysis.In
         {
             internal readonly UnicodeBlock flag;
             internal readonly int @base;
-            internal BitArray decompMask;
+            internal OpenBitSet decompMask;
 
             internal ScriptData(UnicodeBlock flag, int @base)
             {
@@ -231,14 +232,14 @@ namespace Lucene.Net.Analysis.In
 
             foreach (ScriptData sd in scripts.Values)
             {
-                sd.decompMask = new BitArray(0x7F);
+                sd.decompMask = new OpenBitSet(0x7F);
                 for (int i = 0; i < decompositions.Length; i++)
                 {
                     int ch = decompositions[i][0];
                     int flags = decompositions[i][4];
                     if ((flags & (int)sd.flag) != 0)
                     {
-                        sd.decompMask.Set(ch, true);
+                        sd.decompMask.Set(ch);
                     }
                 }
             }
