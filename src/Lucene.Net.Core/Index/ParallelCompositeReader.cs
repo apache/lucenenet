@@ -193,7 +193,7 @@ namespace Lucene.Net.Index
                 IList<IndexReader> subs = reader.GetSequentialSubReaders();
                 if (reader.MaxDoc != maxDoc)
                 {
-                    throw new System.ArgumentException("All readers must have same maxDoc: " + maxDoc + "!=" + reader.MaxDoc);
+                    throw new System.ArgumentException("All readers must have same MaxDoc: " + maxDoc + "!=" + reader.MaxDoc);
                 }
                 int noSubs = subs.Count;
                 if (noSubs != childMaxDoc.Length)

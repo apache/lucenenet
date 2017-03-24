@@ -60,5 +60,10 @@ namespace Lucene.Net.Support
             int rc = Interlocked.CompareExchange(ref value, update, expect);
             return rc == expect;
         }
+
+        public override string ToString()
+        {
+            return Get().ToString();
+        }
     }
 }

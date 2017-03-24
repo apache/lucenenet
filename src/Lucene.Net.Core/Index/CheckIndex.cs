@@ -1407,7 +1407,7 @@ namespace Lucene.Net.Index
                                 }
                                 if (nextDocID <= docID)
                                 {
-                                    throw new Exception("term " + term + ": advance(docID=" + skipDocID + "), then .next() returned docID=" + nextDocID + " vs prev docID=" + docID);
+                                    throw new Exception("term " + term + ": Advance(docID=" + skipDocID + "), then .Next() returned docID=" + nextDocID + " vs prev docID=" + docID);
                                 }
                             }
                         }
@@ -1427,7 +1427,7 @@ namespace Lucene.Net.Index
                             {
                                 if (docID < skipDocID)
                                 {
-                                    throw new Exception("term " + term + ": advance(docID=" + skipDocID + ") returned docID=" + docID);
+                                    throw new Exception("term " + term + ": Advance(docID=" + skipDocID + ") returned docID=" + docID);
                                 }
                                 int nextDocID = docs.NextDoc();
                                 if (nextDocID == DocIdSetIterator.NO_MORE_DOCS)
@@ -1436,7 +1436,7 @@ namespace Lucene.Net.Index
                                 }
                                 if (nextDocID <= docID)
                                 {
-                                    throw new Exception("term " + term + ": advance(docID=" + skipDocID + "), then .next() returned docID=" + nextDocID + " vs prev docID=" + docID);
+                                    throw new Exception("term " + term + ": Advance(docID=" + skipDocID + "), then .Next() returned docID=" + nextDocID + " vs prev docID=" + docID);
                                 }
                             }
                         }
@@ -1852,7 +1852,7 @@ namespace Lucene.Net.Index
             }
             if (seenOrds.Cardinality() != dv.ValueCount)
             {
-                throw new Exception("dv for field: " + fieldName + " has holes in its ords, valueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality());
+                throw new Exception("dv for field: " + fieldName + " has holes in its ords, ValueCount=" + dv.ValueCount + " but only used: " + seenOrds.Cardinality());
             }
             BytesRef lastValue = null;
             BytesRef scratch = new BytesRef();

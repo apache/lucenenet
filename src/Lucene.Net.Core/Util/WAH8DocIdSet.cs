@@ -296,7 +296,7 @@ namespace Lucene.Net.Util
             ///  larger. An index interval <code>i</code> makes the index add an overhead
             ///  which is at most <code>4/i</code>, but likely much less.The default index
             ///  interval is <code>8</code>, meaning the index has an overhead of at most
-            ///  50%. To disable indexing, you can pass <seealso cref="Integer#MAX_VALUE"/> as an
+            ///  50%. To disable indexing, you can pass <see cref="int.MaxValue"/> as an
             ///  index interval.
             /// </summary>
             public virtual object SetIndexInterval(int indexInterval)

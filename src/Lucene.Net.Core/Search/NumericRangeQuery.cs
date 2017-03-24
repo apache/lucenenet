@@ -140,10 +140,10 @@ namespace Lucene.Net.Search
     ///  <li>Ideal value in most cases for <em>64 bit</em> data types <em>(long, double)</em> is <b>6</b> or <b>8</b>.
     ///  <li>Ideal value in most cases for <em>32 bit</em> data types <em>(int, float)</em> is <b>4</b>.
     ///  <li>For low cardinality fields larger precision steps are good. If the cardinality is &lt; 100, it is
-    ///  fair to use <seealso cref="Integer#MAX_VALUE"/> (see below).
+    ///  fair to use <seealso cref="int.MaxValue"/> (see below).
     ///  <li>Steps <b>&gt;=64</b> for <em>long/double</em> and <b>&gt;=32</b> for <em>int/float</em> produces one token
     ///  per value in the index and querying is as slow as a conventional <seealso cref="TermRangeQuery"/>. But it can be used
-    ///  to produce fields, that are solely used for sorting (in this case simply use <seealso cref="Integer#MAX_VALUE"/> as
+    ///  to produce fields, that are solely used for sorting (in this case simply use <seealso cref="int.MaxValue"/> as
     ///  <code>precisionStep</code>). Using <seealso cref="Int32Field"/>,
     ///  <seealso cref="Int64Field"/>, <seealso cref="SingleField"/> or <seealso cref="DoubleField"/> for sorting
     ///  is ideal, because building the field cache is much faster than with text-only numbers.

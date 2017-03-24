@@ -99,7 +99,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Set the index interval. Every <code>indexInterval</code>-th block will
-            /// be stored in the index. Set to <seealso cref="Integer#MAX_VALUE"/> to disable indexing.
+            /// be stored in the index. Set to <see cref="int.MaxValue"/> to disable indexing.
             /// </summary>
             public virtual Builder SetIndexInterval(int indexInterval)
             {

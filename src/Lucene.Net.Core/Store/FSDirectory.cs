@@ -260,8 +260,8 @@ namespace Lucene.Net.Store
             }
 
             // Exclude subdirs
-            FileInfo[] files = dir.EnumerateFiles().ToArray();
-            string[] result = new String[files.Length];
+            FileInfo[] files = dir.EnumerateFiles().ToArray(); // LUCENENET TODO: BUG Original implementation returned a recursive list of files (excluding directories)
+            string[] result = new string[files.Length];
 
             for (int i = 0; i < files.Length; i++)
             {

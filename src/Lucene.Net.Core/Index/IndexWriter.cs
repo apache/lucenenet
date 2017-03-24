@@ -3469,7 +3469,7 @@ namespace Lucene.Net.Index
                         continue;
                     }
 
-                    Debug.Assert(!SlowFileExists(directory, newFileName), "file \"" + newFileName + "\" already exists; siFiles=" + siFiles);
+                    Debug.Assert(!SlowFileExists(directory, newFileName), "file \"" + newFileName + "\" already exists; siFiles=" + Arrays.ToString(siFiles));
                     Debug.Assert(!copiedFiles.Contains(file), "file \"" + file + "\" is being copied more than once");
                     copiedFiles.Add(file);
                     info.Info.Dir.Copy(directory, file, newFileName, context);
@@ -5465,7 +5465,7 @@ namespace Lucene.Net.Index
             {
                 if (infoStream.IsEnabled("IW"))
                 {
-                    infoStream.Message("IW", "startCommit(): start");
+                    infoStream.Message("IW", "StartCommit(): start");
                 }
 
                 lock (this)
@@ -5476,7 +5476,7 @@ namespace Lucene.Net.Index
                     {
                         if (infoStream.IsEnabled("IW"))
                         {
-                            infoStream.Message("IW", "  skip startCommit(): no changes pending");
+                            infoStream.Message("IW", "  skip StartCommit(): no changes pending");
                         }
                         deleter.DecRef(filesToCommit);
                         filesToCommit = null;

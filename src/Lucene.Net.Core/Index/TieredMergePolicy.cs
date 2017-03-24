@@ -158,7 +158,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0)
                 {
-                    throw new System.ArgumentException("maxMergedSegmentMB must be >=0 (got " + value + ")");
+                    throw new System.ArgumentException("maxMergedSegmentMB must be >=0 (got " + value.ToString("0.0") + ")");
                 }
                 value *= 1024 * 1024;
                 maxMergedSegmentBytes = (value > long.MaxValue) ? long.MaxValue : (long)value;
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0)
                 {
-                    throw new System.ArgumentException("reclaimDeletesWeight must be >= 0.0 (got " + value + ")");
+                    throw new System.ArgumentException("reclaimDeletesWeight must be >= 0.0 (got " + value.ToString("0.0") + ")");
                 }
                 reclaimDeletesWeight = value;
             }
@@ -207,7 +207,7 @@ namespace Lucene.Net.Index
             {
                 if (value <= 0.0)
                 {
-                    throw new System.ArgumentException("floorSegmentMB must be >= 0.0 (got " + value + ")");
+                    throw new System.ArgumentException("floorSegmentMB must be >= 0.0 (got " + value.ToString("0.0") + ")");
                 }
                 value *= 1024 * 1024;
                 floorSegmentBytes = (value > long.MaxValue) ? long.MaxValue : (long)value;
@@ -229,7 +229,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 0.0 || value > 100.0)
                 {
-                    throw new System.ArgumentException("forceMergeDeletesPctAllowed must be between 0.0 and 100.0 inclusive (got " + value + ")");
+                    throw new System.ArgumentException("forceMergeDeletesPctAllowed must be between 0.0 and 100.0 inclusive (got " + value.ToString("0.0") + ")");
                 }
                 forceMergeDeletesPctAllowed = value;
             }
@@ -255,7 +255,7 @@ namespace Lucene.Net.Index
             {
                 if (value < 2.0)
                 {
-                    throw new System.ArgumentException("segmentsPerTier must be >= 2.0 (got " + value + ")");
+                    throw new System.ArgumentException("segmentsPerTier must be >= 2.0 (got " + value.ToString("0.0") + ")");
                 }
                 segsPerTier = value;
             }
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
             {
                 get
                 {
-                    return "skew=" + string.Format(CultureInfo.InvariantCulture, "%.3f", skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "%.3f", nonDelRatio);
+                    return "skew=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", skew) + " nonDelRatio=" + string.Format(CultureInfo.InvariantCulture, "{0:F3}", nonDelRatio);
                 }
             }
         }
@@ -603,7 +603,7 @@ namespace Lucene.Net.Index
         {
             if (Verbose())
             {
-                Message("findForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + m_writer.Get().SegString(infos.Segments) + " segmentsToMerge=" + segmentsToMerge);
+                Message("FindForcedMerges maxSegmentCount=" + maxSegmentCount + " infos=" + m_writer.Get().SegString(infos.Segments) + " segmentsToMerge=" + Arrays.ToString(segmentsToMerge));
             }
 
             List<SegmentCommitInfo> eligible = new List<SegmentCommitInfo>();

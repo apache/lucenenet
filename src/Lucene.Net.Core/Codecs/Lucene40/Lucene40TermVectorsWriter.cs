@@ -304,8 +304,8 @@ namespace Lucene.Net.Codecs.Lucene40
                     if (payloadLength + payloadData.Length < 0)
                     {
                         // we overflowed the payload buffer, just throw UOE
-                        // having > Integer.MAX_VALUE bytes of payload for a single term in a single doc is nuts.
-                        throw new System.NotSupportedException("A term cannot have more than Integer.MAX_VALUE bytes of payload data in a single document");
+                        // having > System.Int32.MaxValue bytes of payload for a single term in a single doc is nuts.
+                        throw new System.NotSupportedException("A term cannot have more than System.Int32.MaxValue bytes of payload data in a single document");
                     }
                     payloadData.Append(payload);
                 }

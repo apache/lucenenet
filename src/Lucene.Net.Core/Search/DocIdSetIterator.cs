@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
     /// doc ids. Note that this class assumes it iterates on doc Ids, and therefore
     /// <seealso cref="#NO_MORE_DOCS"/> is set to {@value #NO_MORE_DOCS} in order to be used as
     /// a sentinel object. Implementations of this class are expected to consider
-    /// <seealso cref="Integer#MAX_VALUE"/> as an invalid value.
+    /// <see cref="int.MaxValue"/> as an invalid value.
     /// </summary>
     public abstract class DocIdSetIterator
     {

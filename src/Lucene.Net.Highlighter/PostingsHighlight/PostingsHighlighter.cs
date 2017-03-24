@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 // two reasons: no overflow problems in BreakIterator.preceding(offset+1),
                 // our sentinel in the offsets queue uses this value to terminate.
-                throw new ArgumentException("maxLength must be < Integer.MAX_VALUE");
+                throw new ArgumentException("maxLength must be < System.Int32.MaxValue");
             }
             this.maxLength = maxLength;
         }

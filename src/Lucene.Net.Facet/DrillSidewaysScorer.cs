@@ -66,7 +66,7 @@ namespace Lucene.Net.Facet
         {
             if (maxDoc != int.MaxValue)
             {
-                throw new System.ArgumentException("maxDoc must be Integer.MAX_VALUE");
+                throw new System.ArgumentException("maxDoc must be System.Int32.MaxValue");
             }
             //if (DEBUG) {
             //  System.out.println("\nscore: reader=" + context.reader());

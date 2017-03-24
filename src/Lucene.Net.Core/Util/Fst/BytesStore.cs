@@ -484,7 +484,7 @@ namespace Lucene.Net.Util.Fst
                     nextBuffer = bufferIndex + 1;
                     current = outerInstance.blocks[bufferIndex];
                     nextRead = (int)(value & outerInstance.blockMask);
-                    Debug.Assert(this.Position == value, "pos=" + value + " getPos()=" + this.Position);
+                    Debug.Assert(this.Position == value, "pos=" + value + " Position=" + this.Position);
                 }
             }
 

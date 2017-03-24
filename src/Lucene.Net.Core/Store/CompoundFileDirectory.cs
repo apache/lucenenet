@@ -432,7 +432,7 @@ namespace Lucene.Net.Store
             FileEntry entry = entries[id];
             if (entry == null)
             {
-                throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + entries.Keys + ")");
+                throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(entries.Keys) + ")");
             }
             return new IndexInputSlicerAnonymousInnerClassHelper(this, entry);
         }

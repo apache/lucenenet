@@ -135,12 +135,12 @@ namespace Lucene.Net.Util.Packed
         ///         <li><code>numValues</code> is negative, or
         ///         <li><code>numValues</code> is non negative and <code>upperBound</code> is negative, or
         ///         <li>the low bits do not fit in a <code>long[]</code>:
-        ///             <code>(L * numValues / 64) > Integer.MAX_VALUE</code>, or
+        ///             <code>(L * numValues / 64) > System.Int32.MaxValue</code>, or
         ///         <li>the high bits do not fit in a <code>long[]</code>:
-        ///             <code>(2 * numValues / 64) > Integer.MAX_VALUE</code>, or
+        ///             <code>(2 * numValues / 64) > System.Int32.MaxValue</code>, or
         ///         <li><code>indexInterval < 2</code>,
         ///         <li>the index bits do not fit in a <code>long[]</code>:
-        ///             <code>(numValues / indexInterval * ceil(2log(3 * numValues)) / 64) > Integer.MAX_VALUE</code>.
+        ///             <code>(numValues / indexInterval * ceil(2log(3 * numValues)) / 64) > System.Int32.MaxValue</code>.
         ///         </ul> </exception>
         public EliasFanoEncoder(long numValues, long upperBound, long indexInterval)
         {

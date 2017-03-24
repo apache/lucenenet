@@ -433,7 +433,9 @@ namespace Lucene.Net.Codecs
 
             public void CompileIndex(IList<PendingBlock> floorBlocks, RAMOutputStream scratchBytes)
             {
-                Debug.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor=" + IsFloor + " floorBlocks=" + floorBlocks);
+                // LUCENENET TODO: floorBlocks cannot be converted using Arrays.ToString() here.
+                // It generates an IndexOutOfRangeException()
+                Debug.Assert((IsFloor && floorBlocks != null && floorBlocks.Count != 0) || (!IsFloor && floorBlocks == null), "isFloor=" + IsFloor + " floorBlocks=" + floorBlocks /*Arrays.ToString(floorBlocks)*/); 
 
                 Debug.Assert(scratchBytes.GetFilePointer() == 0);
 
@@ -880,7 +882,7 @@ namespace Lucene.Net.Codecs
 
                 int start = pending.Count - startBackwards;
 
-                Debug.Assert(start >= 0, "pending.size()=" + pending.Count + " startBackwards=" + startBackwards + " length=" + length);
+                Debug.Assert(start >= 0, "pending.Count=" + pending.Count + " startBackwards=" + startBackwards + " length=" + length);
 
                 IList<PendingEntry> slice = pending.SubList(start, start + length);
 

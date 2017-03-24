@@ -150,7 +150,7 @@ namespace Lucene.Net.Index
                     count = Info.Info.DocCount;
                 }
 
-                Debug.Assert(Info.Info.DocCount - Info.DelCount - pendingDeleteCount == count, "info.docCount=" + Info.Info.DocCount + " info.getDelCount()=" + Info.DelCount + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count);
+                Debug.Assert(Info.Info.DocCount - Info.DelCount - pendingDeleteCount == count, "info.docCount=" + Info.Info.DocCount + " info.DelCount=" + Info.DelCount + " pendingDeleteCount=" + pendingDeleteCount + " count=" + count);
                 return true;
             }
         }

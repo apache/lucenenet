@@ -29,7 +29,7 @@ namespace Lucene.Net.Store
     /// <p>
     /// Because Java's ByteBuffer uses an int to address the
     /// values, it's necessary to access a file greater
-    /// Integer.MAX_VALUE in size using multiple byte buffers.
+    /// <see cref="int.MaxValue"/> in size using multiple byte buffers.
     /// <p>
     /// For efficiency, this class requires that the buffers
     /// are a power-of-two (<code>chunkSizePower</code>).

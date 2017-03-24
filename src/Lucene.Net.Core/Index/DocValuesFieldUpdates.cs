@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -133,7 +134,7 @@ namespace Lucene.Net.Index
 
             public override string ToString()
             {
-                return "numericDVUpdates=" + numericDVUpdates + " binaryDVUpdates=" + binaryDVUpdates;
+                return "numericDVUpdates=" + Arrays.ToString(numericDVUpdates) + " binaryDVUpdates=" + Arrays.ToString(binaryDVUpdates);
             }
         }
 

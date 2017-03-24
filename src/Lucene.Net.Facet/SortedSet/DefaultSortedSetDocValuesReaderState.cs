@@ -56,7 +56,7 @@ namespace Lucene.Net.Facet.SortedSet
             }
             if (dv.ValueCount > int.MaxValue)
             {
-                throw new System.ArgumentException("can only handle valueCount < Integer.MAX_VALUE; got " + dv.ValueCount);
+                throw new System.ArgumentException("can only handle valueCount < System.Int32.MaxValue; got " + dv.ValueCount);
             }
             valueCount = (int)dv.ValueCount;
 

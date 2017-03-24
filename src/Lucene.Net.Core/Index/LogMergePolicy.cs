@@ -390,7 +390,7 @@ namespace Lucene.Net.Index
             Debug.Assert(maxNumSegments > 0);
             if (IsVerbose)
             {
-                Message("findForcedMerges: maxNumSegs=" + maxNumSegments + " segsToMerge=" + segmentsToMerge);
+                Message("findForcedMerges: maxNumSegs=" + maxNumSegments + " segsToMerge=" + Arrays.ToString(segmentsToMerge));
             }
 
             // If the segments are already merged (e.g. there's only 1 segment), or
@@ -666,7 +666,7 @@ namespace Lucene.Net.Index
                 }
                 if (IsVerbose)
                 {
-                    Message("  level " + levelBottom + " to " + maxLevel + ": " + (1 + upto - start) + " segments");
+                    Message("  level " + levelBottom.ToString("0.0") + " to " + maxLevel.ToString("0.0") + ": " + (1 + upto - start) + " segments");
                 }
 
                 // Finally, record all merges that are viable at this level:
@@ -732,7 +732,7 @@ namespace Lucene.Net.Index
         /// are best for batched indexing and speedier
         /// searches.</p>
         ///
-        /// <p>The default value is <seealso cref="Integer#MAX_VALUE"/>.</p>
+        /// <p>The default value is <see cref="int.MaxValue"/>.</p>
         ///
         /// <p>The default merge policy ({@link
         /// LogByteSizeMergePolicy}) also allows you to set this

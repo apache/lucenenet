@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
             // TODO: if the Sorter interface changes to take long indexes, we can remove that limitation
             if (size == int.MaxValue)
             {
-                throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries");
+                throw new InvalidOperationException("cannot support more than System.Int32.MaxValue doc/value entries");
             }
 
             long? val = (long?)value;
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
             NumericDocValuesFieldUpdates otherUpdates = (NumericDocValuesFieldUpdates)other;
             if (size + otherUpdates.size > int.MaxValue)
             {
-                throw new InvalidOperationException("cannot support more than Integer.MAX_VALUE doc/value entries; size=" + size + " other.size=" + otherUpdates.size);
+                throw new InvalidOperationException("cannot support more than System.Int32.MaxValue doc/value entries; size=" + size + " other.size=" + otherUpdates.size);
             }
             docs = docs.Grow(size + otherUpdates.size);
             values = values.Grow(size + otherUpdates.size);

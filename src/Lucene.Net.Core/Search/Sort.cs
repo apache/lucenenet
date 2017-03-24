@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
     ///
     /// <p>Integer term values should contain only digits and an optional
     /// preceding negative sign.  Values must be base 10 and in the range
-    /// <code>Integer.MIN_VALUE</code> and <code>Integer.MAX_VALUE</code> inclusive.
+    /// <see cref="int.MinValue"/> and <see cref="int.MaxValue"/> inclusive.
     /// Documents which should appear first in the sort
     /// should have low value integers, later documents high values
     /// (i.e. the documents should be numbered <code>1..n</code> where
