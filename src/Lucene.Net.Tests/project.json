@@ -19,7 +19,6 @@
         "TestMergeSchedulerExternal.cs",
         "TestWorstCaseTestBehavior.cs",
         "Index/TestConcurrentMergeScheduler.cs",
-        "Search/TestControlledRealTimeReopenThread.cs",
         "Support/BigObject.cs",
         "Support/CollisionTester.cs",
         "Support/SmallObject.cs",

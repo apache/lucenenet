@@ -274,13 +274,17 @@ namespace Lucene.Net.Search
 
             nrtDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtDeletes, maxReopenSec, minReopenSec);
             nrtDeletesThread.Name = "NRTDeletes Reopen Thread";
+#if !NETSTANDARD
             nrtDeletesThread.Priority = (ThreadPriority)Math.Min((int)Thread.CurrentThread.Priority + 2, (int)ThreadPriority.Highest);
+#endif
             nrtDeletesThread.SetDaemon(true);
             nrtDeletesThread.Start();
 
             nrtNoDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtNoDeletes, maxReopenSec, minReopenSec);
             nrtNoDeletesThread.Name = "NRTNoDeletes Reopen Thread";
+#if !NETSTANDARD
             nrtNoDeletesThread.Priority = (ThreadPriority)Math.Min((int)Thread.CurrentThread.Priority + 2, (int)ThreadPriority.Highest);
+#endif
             nrtNoDeletesThread.SetDaemon(true);
             nrtNoDeletesThread.Start();
         }
@@ -490,15 +494,19 @@ namespace Lucene.Net.Search
 
             public override void Run()
             {
+#if !NETSTANDARD
                 try
                 {
+#endif
                     thread.WaitForGeneration(lastGen);
+#if !NETSTANDARD
                 }
                 catch (ThreadInterruptedException ie)
                 {
                     Thread.CurrentThread.Interrupt();
                     throw new Exception(ie.Message, ie);
                 }
+#endif
                 finished.Set(true);
             }
         }
@@ -521,13 +529,16 @@ namespace Lucene.Net.Search
             public override void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
             {
                 base.UpdateDocument(term, doc, analyzer);
+#if !NETSTANDARD
                 try
                 {
+#endif
                     if (waitAfterUpdate)
                     {
                         signal.Reset(signal.CurrentCount == 0 ? 0 : signal.CurrentCount - 1);
                         latch.Wait();
                     }
+#if !NETSTANDARD
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)
@@ -535,6 +546,7 @@ namespace Lucene.Net.Search
                 {
                     throw;
                 }
+#endif
             }
         }
 
