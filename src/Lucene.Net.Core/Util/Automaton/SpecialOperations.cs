@@ -238,7 +238,7 @@ namespace Lucene.Net.Util.Automaton
             // reverse all edges
             Dictionary<State, HashSet<Transition>> m = new Dictionary<State, HashSet<Transition>>();
             State[] states = a.GetNumberedStates();
-            HashSet<State> accept = new HashSet<State>();
+            HashSet<State> accept = new ValueHashSet<State>();
             foreach (State s in states)
             {
                 if (s.Accept)
