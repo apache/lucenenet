@@ -487,7 +487,7 @@ namespace Lucene.Net.Store
 
             protected internal override void FlushBuffer(byte[] b, int offset, int size)
             {
-                Debug.Assert(isOpen);
+                //Debug.Assert(isOpen);
                 //while (size > 0)
                 //{
                 //    int toWrite = Math.Min(CHUNK_SIZE, size);

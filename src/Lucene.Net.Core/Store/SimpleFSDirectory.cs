@@ -213,7 +213,7 @@ namespace Lucene.Net.Store
                         // all we need to do is Read().
                         total = m_file.Read(b, offset, len);
 
-                        Debug.Assert(total == len);
+                        //Debug.Assert(total == len);
                     }
                     catch (System.IO.IOException ioe)
                     {
