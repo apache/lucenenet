@@ -722,13 +722,13 @@ namespace Lucene.Net.Util
             {
                 throw new System.ArgumentException();
             }
-            int countThreashhold = 1024; // If the number of chars exceeds this, we count them instead of allocating count * 2
+            int countThreashold = 1024; // If the number of chars exceeds this, we count them instead of allocating count * 2
             // LUCENENET: as a first approximation, assume each codepoint 
             // is 2 characters (since it cannot be longer than this)
             int arrayLength = count * 2;
-            // LUCENENET: if we go over the threashhold, count the number of 
+            // LUCENENET: if we go over the threashold, count the number of 
             // chars we will need so we can allocate the precise amount of memory
-            if (count > countThreashhold)
+            if (count > countThreashold)
             {
                 arrayLength = 0;
                 for (int r = offset, e = offset + count; r < e; ++r)
