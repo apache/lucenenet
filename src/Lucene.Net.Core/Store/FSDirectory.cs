@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;// Used only for WRITE_LOCK_NAME in deprecated create=true case:
 
@@ -463,11 +464,12 @@ namespace Lucene.Net.Store
         /// </summary>
         protected class FSIndexOutput : BufferedIndexOutput
         {
-            /// <summary>
-            /// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
-            /// a native buffer outside of stack if the write buffer size is larger.
-            /// </summary>
-            private const int CHUNK_SIZE = 8192;
+            // LUCENENET specific: chunk size not needed
+            ///// <summary>
+            ///// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
+            ///// a native buffer outside of stack if the write buffer size is larger.
+            ///// </summary>
+            //private const int CHUNK_SIZE = 8192;
 
             private readonly FSDirectory parent;
             internal readonly string name;
@@ -475,7 +477,7 @@ namespace Lucene.Net.Store
             private volatile bool isOpen; // remember if the file is open, so that we don't try to close it more than once
 
             public FSIndexOutput(FSDirectory parent, string name)
-                : base(CHUNK_SIZE)
+                : base(/*CHUNK_SIZE*/)
             {
                 this.parent = parent;
                 this.name = name;
@@ -485,14 +487,20 @@ namespace Lucene.Net.Store
 
             protected internal override void FlushBuffer(byte[] b, int offset, int size)
             {
-                //Debug.Assert(IsOpen);
-                while (size > 0)
-                {
-                    int toWrite = Math.Min(CHUNK_SIZE, size);
-                    file.Write(b, offset, toWrite);
-                    offset += toWrite;
-                    size -= toWrite;
-                }
+                Debug.Assert(isOpen);
+                //while (size > 0)
+                //{
+                //    int toWrite = Math.Min(CHUNK_SIZE, size);
+                //    file.Write(b, offset, toWrite);
+                //    offset += toWrite;
+                //    size -= toWrite;
+                //}
+
+                // LUCENENET specific: FileStream is already optimized to write natively
+                // if over the buffer size that is passed through its constructor. So,
+                // all we need to do is Write().
+                file.Write(b, offset, size);
+
                 //Debug.Assert(size == 0);
             }
 

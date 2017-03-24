@@ -118,11 +118,12 @@ namespace Lucene.Net.Store
         /// </summary>
         protected internal class SimpleFSIndexInput : BufferedIndexInput
         {
-            /// <summary>
-            /// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
-            /// a native buffer outside of stack if the read buffer size is larger.
-            /// </summary>
-            private const int CHUNK_SIZE = 8192;
+            // LUCENENET specific: chunk size not needed
+            ///// <summary>
+            ///// The maximum chunk size is 8192 bytes, because <seealso cref="RandomAccessFile"/> mallocs
+            ///// a native buffer outside of stack if the read buffer size is larger.
+            ///// </summary>
+            //private const int CHUNK_SIZE = 8192;
 
             /// <summary>
             /// the file channel we will read from </summary>
@@ -195,17 +196,23 @@ namespace Lucene.Net.Store
 
                     try
                     {
-                        while (total < len)
-                        {
-                            int toRead = Math.Min(CHUNK_SIZE, len - total);
-                            int i = m_file.Read(b, offset + total, toRead);
-                            if (i < 0) // be defensive here, even though we checked before hand, something could have changed
-                            {
-                                throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
-                            }
-                            Debug.Assert(i > 0, "RandomAccessFile.read with non zero-length toRead must always read at least one byte");
-                            total += i;
-                        }
+                        //while (total < len)
+                        //{
+                        //    int toRead = Math.Min(CHUNK_SIZE, len - total);
+                        //    int i = m_file.Read(b, offset + total, toRead);
+                        //    if (i < 0) // be defensive here, even though we checked before hand, something could have changed
+                        //    {
+                        //        throw new EndOfStreamException("read past EOF: " + this + " off: " + offset + " len: " + len + " total: " + total + " chunkLen: " + toRead + " end: " + m_end);
+                        //    }
+                        //    Debug.Assert(i > 0, "RandomAccessFile.read with non zero-length toRead must always read at least one byte");
+                        //    total += i;
+                        //}
+
+                        // LUCENENET specific: FileStream is already optimized to read natively
+                        // using the buffer size that is passed through its constructor. So,
+                        // all we need to do is Read().
+                        total = m_file.Read(b, offset, len);
+
                         Debug.Assert(total == len);
                     }
                     catch (System.IO.IOException ioe)
