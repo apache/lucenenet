@@ -82,10 +82,6 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
 
-#if !NETSTANDARD
-[assembly: Timeout(20000)]
-#endif 
-
 
 // LUCENENET specific - only allow tests in this assembly to run one at a time
 // to prevent polluting shared state.
