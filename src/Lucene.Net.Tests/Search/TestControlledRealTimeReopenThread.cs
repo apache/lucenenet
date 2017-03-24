@@ -625,8 +625,12 @@ namespace Lucene.Net.Search
             }
         }
 
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(40000)]
+#endif
         // LUCENE-5461
-        [Test, Timeout(120000)]
+        [Test, HasTimeout]
         public virtual void TestCRTReopen()
         {
             //test behaving badly
