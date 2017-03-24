@@ -193,7 +193,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Called before successive calls to <see cref="Collect(int)"/>. Implementations
         /// that need the score of the current document (passed-in to
-        /// <also cref="Collect(int)"/>), should save the passed-in <see cref="Scorer"/> and call
+        /// <see cref="Collect(int)"/>), should save the passed-in <see cref="Scorer"/> and call
         /// scorer.Score() when needed.
         /// </summary>
         public abstract void SetScorer(Scorer scorer);
