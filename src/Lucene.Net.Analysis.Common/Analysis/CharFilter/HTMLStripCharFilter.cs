@@ -29,6 +29,7 @@ namespace Lucene.Net.Analysis.CharFilters
     /// <summary>
     /// A <see cref="CharFilter"/> that wraps another <see cref="TextReader"/> and attempts to strip out HTML constructs.
     /// </summary>
+    // LUCENENET NOTE: Version compatibility level 4.8.1 (added fix for SOLR-5983: HTMLStripCharFilter is treating CDATA sections incorrectly)
     public sealed class HTMLStripCharFilter : BaseCharFilter
     {
         /// <summary>This character denotes the end of file</summary>
