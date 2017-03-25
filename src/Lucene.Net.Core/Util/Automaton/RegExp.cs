@@ -979,7 +979,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return false;
             }
-            if (Character.CodePointAt(b, pos) == c)
+            if (b.CodePointAt(pos) == c)
             {
                 pos += Character.CharCount(c);
                 return true;
@@ -998,7 +998,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 throw new System.ArgumentException("unexpected end-of-string");
             }
-            int ch = Character.CodePointAt(b, pos);
+            int ch = b.CodePointAt(pos);
             pos += Character.CharCount(ch);
             return ch;
         }
