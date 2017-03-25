@@ -758,7 +758,7 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         public virtual ISet<string> GetIdentifiers()
         {
-            HashSet<string> set = new HashSet<string>();
+            HashSet<string> set = new ValueHashSet<string>();
             GetIdentifiers(set);
             return set;
         }
