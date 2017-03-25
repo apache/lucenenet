@@ -44,7 +44,7 @@ namespace Lucene.Net.Store
     /// </summary>
     public class RAMDirectory : BaseDirectory
     {
-        protected internal readonly IDictionary<string, RAMFile> m_fileMap = new ConcurrentDictionary<string, RAMFile>();
+        protected internal readonly ConcurrentDictionary<string, RAMFile> m_fileMap = new ConcurrentDictionary<string, RAMFile>();
         protected internal readonly AtomicInt64 m_sizeInBytes = new AtomicInt64(0);
 
         // *****
@@ -120,14 +120,8 @@ namespace Lucene.Net.Store
             EnsureOpen();
             // NOTE: fileMap.keySet().toArray(new String[0]) is broken in non Sun JDKs,
             // and the code below is resilient to map changes during the array population.
-            //IDictionary<string, RAMFile>.KeyCollection fileNames = FileMap.Keys;
-            ISet<string> fileNames = SetFactory.CreateHashSet(m_fileMap.Keys);//just want a set of strings
-            IList<string> names = new List<string>(fileNames.Count);
-            foreach (string name in fileNames)
-            {
-                names.Add(name);
-            }
-            return names.ToArray();
+            // LUCENENET NOTE: Just because it is broken in Java, doesn't mean we can't use it in .NET.
+            return m_fileMap.Keys.ToArray();
         }
 
         /// <summary>
@@ -145,8 +139,8 @@ namespace Lucene.Net.Store
         public override sealed long FileLength(string name)
         {
             EnsureOpen();
-            RAMFile file = m_fileMap[name];
-            if (file == null)
+            RAMFile file;
+            if (!m_fileMap.TryGetValue(name, out file) || file == null)
             {
                 throw new FileNotFoundException(name);
             }
@@ -170,9 +164,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             RAMFile file;
-            m_fileMap.TryGetValue(name, out file);
-            m_fileMap.Remove(name);
-            if (file != null)
+            if (m_fileMap.TryRemove(name, out file) && file != null)
             {
                 file.directory = null;
                 m_sizeInBytes.AddAndGet(-file.m_sizeInBytes);
@@ -190,8 +182,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             RAMFile file = NewRAMFile();
             RAMFile existing;
-            m_fileMap.TryGetValue(name, out existing);
-            if (existing != null)
+            if (m_fileMap.TryRemove(name, out existing) && existing != null)
             {
                 m_sizeInBytes.AddAndGet(-existing.m_sizeInBytes);
                 existing.directory = null;
@@ -220,7 +211,7 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             RAMFile file;
-            if (!m_fileMap.TryGetValue(name, out file))
+            if (!m_fileMap.TryGetValue(name, out file) || file == null)
             {
                 throw new FileNotFoundException(name);
             }
