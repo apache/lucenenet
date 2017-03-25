@@ -345,7 +345,7 @@ namespace Lucene.Net.Index
                     {
                         infoStream.Message("IFD", "deleteCommits: now decRef commit \"" + commit.SegmentsFileName + "\"");
                     }
-                    foreach (String file in commit.files)
+                    foreach (string file in commit.files)
                     {
                         DecRef(file);
                     }
@@ -562,7 +562,7 @@ namespace Lucene.Net.Index
             Debug.Assert(IsLocked);
             // If this is a commit point, also incRef the
             // segments_N file:
-            foreach (String fileName in segmentInfos.Files(directory, isCommit))
+            foreach (string fileName in segmentInfos.Files(directory, isCommit))
             {
                 IncRef(fileName);
             }
@@ -571,7 +571,7 @@ namespace Lucene.Net.Index
         internal void IncRef(ICollection<string> files)
         {
             Debug.Assert(IsLocked);
-            foreach (String file in files)
+            foreach (string file in files)
             {
                 IncRef(file);
             }
@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
         internal void DecRef(ICollection<string> files)
         {
             Debug.Assert(IsLocked);
-            foreach (String file in files)
+            foreach (string file in files)
             {
                 DecRef(file);
             }
@@ -623,7 +623,7 @@ namespace Lucene.Net.Index
         internal void DecRef(SegmentInfos segmentInfos)
         {
             Debug.Assert(IsLocked);
-            foreach (String file in segmentInfos.Files(directory, false))
+            foreach (string file in segmentInfos.Files(directory, false))
             {
                 DecRef(file);
             }
@@ -661,7 +661,7 @@ namespace Lucene.Net.Index
         internal void DeleteFiles(IList<string> files)
         {
             Debug.Assert(IsLocked);
-            foreach (String file in files)
+            foreach (string file in files)
             {
                 DeleteFile(file);
             }
@@ -674,7 +674,7 @@ namespace Lucene.Net.Index
         internal void DeleteNewFiles(ICollection<string> files)
         {
             Debug.Assert(IsLocked);
-            foreach (String fileName in files)
+            foreach (string fileName in files)
             {
                 // NOTE: it's very unusual yet possible for the
                 // refCount to be present and 0: it can happen if you
