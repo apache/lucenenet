@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         // true when segments are used for "normal" searching;
         // it's only false during testing, to create a pre-flex
         // index, using the test-only PreFlexRW.
-        protected internal virtual bool SortTermsByUnicode()
+        protected internal virtual bool SortTermsByUnicode() // LUCENENET TODO: API Make property
         {
             return true;
         }
