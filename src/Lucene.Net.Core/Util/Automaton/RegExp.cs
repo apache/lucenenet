@@ -701,11 +701,11 @@ namespace Lucene.Net.Util.Automaton
                     break;
 
                 case Kind.REGEXP_CHAR:
-                    b.Append("\\").Append(Character.ToChars(c));
+                    b.Append("\\").AppendCodePoint(c);
                     break;
 
                 case Kind.REGEXP_CHAR_RANGE:
-                    b.Append("[\\").Append(Character.ToChars(from)).Append("-\\").Append(Character.ToChars(to)).Append("]");
+                    b.Append("[\\").AppendCodePoint(from).Append("-\\").AppendCodePoint(to).Append("]");
                     break;
 
                 case Kind.REGEXP_ANYCHAR:
@@ -835,7 +835,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                b.Append(Character.ToChars(exp1.c));
+                b.AppendCodePoint(exp1.c);
             }
             if (exp2.kind == Kind.REGEXP_STRING)
             {
@@ -843,7 +843,7 @@ namespace Lucene.Net.Util.Automaton
             }
             else
             {
-                b.Append(Character.ToChars(exp2.c));
+                b.AppendCodePoint(exp2.c);
             }
             return MakeString(b.ToString());
         }
@@ -970,7 +970,7 @@ namespace Lucene.Net.Util.Automaton
 
         private bool Peek(string s)
         {
-            return More() && s.IndexOf((char)Character.CodePointAt(b, pos)) != -1;
+            return More() && s.IndexOf(b.CodePointAt(pos)) != -1;
         }
 
         private bool Match(int c)

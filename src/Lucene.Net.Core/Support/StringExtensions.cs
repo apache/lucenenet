@@ -85,5 +85,39 @@ namespace Lucene.Net.Support
         {
             return new StringCharSequenceWrapper(str);
         }
+
+        /// <summary>
+        /// Returns the index within this string of the first occurrence of the
+        /// specified <paramref name="codePoint"/>.
+        /// </summary>
+        /// <param name="str">this string</param>
+        /// <param name="codePoint">a codePoint representing a single character or surrogate pair</param>
+        /// <returns>the index of the first occurrence of the character (or surrogate pair) in the string, 
+        /// or <c>-1</c> if the character (or surrogate pair) doesn't occur.</returns>
+        public static int IndexOf(this string str, int codePoint)
+        {
+            if (codePoint >= 0 && codePoint < Character.MIN_SUPPLEMENTARY_CODE_POINT)
+            {
+                // handle most cases here (codePoint is a BMP code point)
+                return str.IndexOf((char)codePoint);
+            }
+            else if (codePoint >= Character.MIN_CODE_POINT && codePoint <= Character.MAX_CODE_POINT)
+            {
+                // codePoint is a surogate pair
+                char[] pair = Character.ToChars(codePoint);
+                char hi = pair[0];
+                char lo = pair[1];
+                for (int i = 0; i < str.Length - 1; i++)
+                {
+                    if (str[i] == hi && str[i + 1] == lo)
+                    {
+                        return i;
+                    }
+                }
+            }
+
+            // codePoint is negative or not found in string
+            return -1;
+        }
     }
 }

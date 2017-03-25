@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
@@ -116,11 +116,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// test a bunch of random regular expressions </summary>
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test]
         public virtual void TestRegexps()
         {
             int num = AtLeast(1000);
