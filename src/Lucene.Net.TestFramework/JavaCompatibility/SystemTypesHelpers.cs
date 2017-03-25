@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net
 {
@@ -271,12 +272,8 @@ namespace Lucene.Net
 
         public static string replaceFirst(this string text, string search, string replace)
         {
-            int pos = text.IndexOf(search);
-            if (pos < 0)
-            {
-                return text;
-            }
-            return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+            var regex = new Regex(search);
+            return regex.Replace(text, replace, 1);
         }
     }
 }
