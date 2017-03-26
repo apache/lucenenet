@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
         /// Returns the length of a file in the directory. this method follows the
         /// following contract:
         /// <list>
-        ///     <item>Throws <see cref="System.IO.FileNotFoundException"/> or <see cref="Index.NoSuchFileException"/>
+        ///     <item>Throws <see cref="System.IO.FileNotFoundException"/>
         ///         if the file does not exist.</item>
         ///     <item>Returns a value &gt;=0 if the file exists, which specifies its length.</item>
         /// </list>
@@ -100,7 +100,7 @@ namespace Lucene.Net.Store
         /// the only <see cref="Directory"/> implementations that respect this
         /// parameter are <see cref="FSDirectory"/> and 
         /// <see cref="CompoundFileDirectory"/>.
-        /// <para/>Throws <see cref="System.IO.FileNotFoundException"/> or <see cref="Index.NoSuchFileException"/>
+        /// <para/>Throws <see cref="System.IO.FileNotFoundException"/>
         /// if the file does not exist.
         /// </summary>
         public abstract IndexInput OpenInput(string name, IOContext context);
@@ -226,7 +226,7 @@ namespace Lucene.Net.Store
         /// efficiently open one or more sliced <see cref="IndexInput"/> instances from a
         /// single file handle. The underlying file handle is kept open until the
         /// <see cref="IndexInputSlicer"/> is closed.
-        /// <para/>Throws <see cref="FileNotFoundException"/> or <see cref="Index.NoSuchFileException"/>
+        /// <para/>Throws <see cref="FileNotFoundException"/>
         /// if the file does not exist.
         /// <para/>
         /// @lucene.internal

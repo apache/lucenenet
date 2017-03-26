@@ -5933,10 +5933,11 @@ namespace Lucene.Net.Index
             {
                 return false;
             }
-            catch (NoSuchFileException)
-            {
-                return false;
-            }
+            // LUCENENET specific - .NET (thankfully) only has one FileNotFoundException, so we don't need this
+            //catch (NoSuchFileException)
+            //{
+            //    return false;
+            //}
         }
     }
 }

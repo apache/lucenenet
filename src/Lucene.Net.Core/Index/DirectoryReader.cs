@@ -310,10 +310,11 @@ namespace Lucene.Net.Index
                         // as if the file does not exist
                         sis = null;
                     }
-                    catch (NoSuchFileException)
-                    {
-                        sis = null;
-                    }
+                    // LUCENENET specific - .NET (thankfully) only has one FileNotFoundException, so we don't need this
+                    //catch (NoSuchFileException)
+                    //{
+                    //    sis = null;
+                    //}
 
                     if (sis != null)
                     {

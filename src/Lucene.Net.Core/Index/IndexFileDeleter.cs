@@ -197,21 +197,22 @@ namespace Lucene.Net.Index
                                 }
                                 sis = null;
                             }
-                            catch (NoSuchFileException)
-                            {
-                                // LUCENE-948: on NFS (and maybe others), if
-                                // you have writers switching back and forth
-                                // between machines, it's very likely that the
-                                // dir listing will be stale and will claim a
-                                // file segments_X exists when in fact it
-                                // doesn't.  So, we catch this and handle it
-                                // as if the file does not exist
-                                if (infoStream.IsEnabled("IFD"))
-                                {
-                                    infoStream.Message("IFD", "init: hit FileNotFoundException when loading commit \"" + fileName + "\"; skipping this commit point");
-                                }
-                                sis = null;
-                            }
+                            // LUCENENET specific - .NET (thankfully) only has one FileNotFoundException, so we don't need this
+                            //catch (NoSuchFileException)
+                            //{
+                            //    // LUCENE-948: on NFS (and maybe others), if
+                            //    // you have writers switching back and forth
+                            //    // between machines, it's very likely that the
+                            //    // dir listing will be stale and will claim a
+                            //    // file segments_X exists when in fact it
+                            //    // doesn't.  So, we catch this and handle it
+                            //    // as if the file does not exist
+                            //    if (infoStream.IsEnabled("IFD"))
+                            //    {
+                            //        infoStream.Message("IFD", "init: hit FileNotFoundException when loading commit \"" + fileName + "\"; skipping this commit point");
+                            //    }
+                            //    sis = null;
+                            //}
                             catch (IOException e)
                             {
                                 if (SegmentInfos.GenerationFromSegmentsFileName(fileName) <= currentGen && directory.FileLength(fileName) > 0)

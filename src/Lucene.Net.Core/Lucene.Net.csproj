@@ -322,7 +322,6 @@
     <Compile Include="Index\NoMergeScheduler.cs" />
     <Compile Include="Index\NormsConsumer.cs" />
     <Compile Include="Index\NormsConsumerPerField.cs" />
-    <Compile Include="Index\NoSuchFileException.cs" />
     <Compile Include="Index\NumericDocValues.cs" />
     <Compile Include="Index\NumericDocValuesFieldUpdates.cs" />
     <Compile Include="Index\NumericDocValuesWriter.cs" />
