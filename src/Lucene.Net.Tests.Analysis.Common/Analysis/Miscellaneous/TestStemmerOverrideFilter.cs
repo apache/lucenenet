@@ -80,7 +80,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                     int cp = Character.CodePointAt(charArray, j, charArray.Length);
                     if (!char.IsWhiteSpace((char)cp))
                     {
-                        sb.Append(cp);
+                        sb.AppendCodePoint(cp);
                     }
                     j += Character.CharCount(cp);
                 }
