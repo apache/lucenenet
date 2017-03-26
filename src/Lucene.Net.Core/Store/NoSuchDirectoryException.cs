@@ -28,7 +28,7 @@ namespace Lucene.Net.Store
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class NoSuchDirectoryException : FileNotFoundException
+    public class NoSuchDirectoryException : FileNotFoundException // LUCENENET TODO: API Replace with System.IO.DirectoryNotFoundException ? Note that it does not subclass FileNotFoundException
     {
         public NoSuchDirectoryException(string message)
             : base(message)
