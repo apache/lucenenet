@@ -37,9 +37,9 @@ namespace Lucene.Net.Index
 
 #if !NETSTANDARD
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
+        [Timeout(120000)]
 #endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestIndexing()
         {
             Directory mainDir = NewDirectory();
