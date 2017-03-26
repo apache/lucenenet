@@ -26,7 +26,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    internal class NoSuchFileException : Exception
+    internal class NoSuchFileException : Exception // LUCENENET TODO: API Remove this exception (no equivalent in .NET, since we are already using FileNotFoundException in all of the same places).
     {
     }
 }
