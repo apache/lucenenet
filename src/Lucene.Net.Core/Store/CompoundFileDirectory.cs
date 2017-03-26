@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace Lucene.Net.Store
@@ -30,42 +31,42 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Class for accessing a compound stream.
-    /// this class implements a directory, but is limited to only read operations.
+    /// This class implements a directory, but is limited to only read operations.
     /// Directory methods that would normally modify data throw an exception.
-    /// <p>
+    /// <para/>
     /// All files belonging to a segment have the same name with varying extensions.
-    /// The extensions correspond to the different file formats used by the <seealso cref="Codec"/>.
+    /// The extensions correspond to the different file formats used by the <see cref="Codecs.Codec"/>.
     /// When using the Compound File format these files are collapsed into a
-    /// single <tt>.cfs</tt> file (except for the <seealso cref="LiveDocsFormat"/>, with a
-    /// corresponding <tt>.cfe</tt> file indexing its sub-files.
-    /// <p>
+    /// single <c>.cfs</c> file (except for the <see cref="Codecs.LiveDocsFormat"/>, with a
+    /// corresponding <c>.cfe</c> file indexing its sub-files.
+    /// <para/>
     /// Files:
-    /// <ul>
-    ///    <li><tt>.cfs</tt>: An optional "virtual" file consisting of all the other
-    ///    index files for systems that frequently run out of file handles.
-    ///    <li><tt>.cfe</tt>: The "virtual" compound file's entry table holding all
-    ///    entries in the corresponding .cfs file.
-    /// </ul>
-    /// <p>Description:</p>
-    /// <ul>
-    ///   <li>Compound (.cfs) --&gt; Header, FileData <sup>FileCount</sup></li>
-    ///   <li>Compound Entry Table (.cfe) --&gt; Header, FileCount, &lt;FileName,
-    ///       DataOffset, DataLength&gt; <sup>FileCount</sup>, Footer</li>
-    ///   <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    ///   <li>FileCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    ///   <li>DataOffset,DataLength --&gt; <seealso cref="DataOutput#writeLong UInt64"/></li>
-    ///   <li>FileName --&gt; <seealso cref="DataOutput#writeString String"/></li>
-    ///   <li>FileData --&gt; raw file data</li>
-    ///   <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
-    /// </ul>
-    /// <p>Notes:</p>
-    /// <ul>
-    ///   <li>FileCount indicates how many files are contained in this compound file.
-    ///       The entry table that follows has that many entries.
-    ///   <li>Each directory entry contains a long pointer to the start of this file's data
-    ///       section, the files length, and a String with that file's name.
-    /// </ul>
-    ///
+    /// <list type="bullet">
+    ///     <item><c>.cfs</c>: An optional "virtual" file consisting of all the other
+    ///         index files for systems that frequently run out of file handles.</item>
+    ///     <item><c>.cfe</c>: The "virtual" compound file's entry table holding all
+    ///         entries in the corresponding .cfs file.</item>
+    /// </list>
+    /// <para>Description:</para>
+    /// <list type="bullet">
+    ///     <item>Compound (.cfs) --&gt; Header, FileData <sup>FileCount</sup></item>
+    ///     <item>Compound Entry Table (.cfe) --&gt; Header, FileCount, &lt;FileName,
+    ///         DataOffset, DataLength&gt; <sup>FileCount</sup>, Footer</item>
+    ///     <item>Header --&gt; <see cref="CodecUtil.WriteHeader"/></item>
+    ///     <item>FileCount --&gt; <see cref="DataOutput.WriteVInt32"/></item>
+    ///     <item>DataOffset,DataLength --&gt; <see cref="DataOutput.WriteInt64"/></item>
+    ///     <item>FileName --&gt; <see cref="DataOutput.WriteString"/></item>
+    ///     <item>FileData --&gt; raw file data</item>
+    ///     <item>Footer --&gt; <see cref="CodecUtil.WriteFooter"/></item>
+    /// </list>
+    /// <para>Notes:</para>
+    /// <list type="bullet">
+    ///   <item>FileCount indicates how many files are contained in this compound file.
+    ///         The entry table that follows has that many entries.</item>
+    ///   <item>Each directory entry contains a long pointer to the start of this file's data
+    ///         section, the files length, and a <see cref="string"/> with that file's name.</item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class CompoundFileDirectory : BaseDirectory
@@ -88,7 +89,7 @@ namespace Lucene.Net.Store
         private readonly IndexInputSlicer handle;
 
         /// <summary>
-        /// Create a new CompoundFileDirectory.
+        /// Create a new <see cref="CompoundFileDirectory"/>.
         /// </summary>
         public CompoundFileDirectory(Directory directory, string fileName, IOContext context, bool openForWrite)
         {
@@ -136,7 +137,7 @@ namespace Lucene.Net.Store
         /// Helper method that reads CFS entries from an input stream </summary>
         private static IDictionary<string, FileEntry> ReadEntries(IndexInputSlicer handle, Directory dir, string name)
         {
-            System.IO.IOException priorE = null;
+            IOException priorE = null;
             IndexInput stream = null;
             ChecksumIndexInput entriesStream = null;
             // read the first VInt. If it is negative, it's the version number
@@ -160,7 +161,9 @@ namespace Lucene.Net.Store
                         throw new CorruptIndexException("Illegal/impossible header for CFS file: " + secondByte + "," + thirdByte + "," + fourthByte);
                     }
                     int version = CodecUtil.CheckHeaderNoMagic(stream, CompoundFileWriter.DATA_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
-                    string entriesFileName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
+                    string entriesFileName = IndexFileNames.SegmentFileName(
+                                                    IndexFileNames.StripExtension(name), "", 
+                                                    IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
                     entriesStream = dir.OpenChecksumInput(entriesFileName, IOContext.READ_ONCE);
                     CodecUtil.CheckHeader(entriesStream, CompoundFileWriter.ENTRY_CODEC, CompoundFileWriter.VERSION_START, CompoundFileWriter.VERSION_CURRENT);
                     int numEntries = entriesStream.ReadVInt32();
@@ -169,15 +172,10 @@ namespace Lucene.Net.Store
                     {
                         FileEntry fileEntry = new FileEntry();
                         string id = entriesStream.ReadString();
-
-                        //If the key was already present
-                        if (mapping.ContainsKey(id))
+                        FileEntry previous = mapping.Put(id, fileEntry);
+                        if (previous != null)
                         {
                             throw new CorruptIndexException("Duplicate cfs entry id=" + id + " in CFS: " + entriesStream);
-                        }
-                        else
-                        {
-                            mapping[id] = fileEntry;
                         }
                         fileEntry.Offset = entriesStream.ReadInt64();
                         fileEntry.Length = entriesStream.ReadInt64();
@@ -200,7 +198,7 @@ namespace Lucene.Net.Store
                 }
                 return mapping;
             }
-            catch (System.IO.IOException ioe)
+            catch (IOException ioe)
             {
                 priorE = ioe;
             }
@@ -221,7 +219,8 @@ namespace Lucene.Net.Store
             {
                 if (firstInt < CompoundFileWriter.FORMAT_NO_SEGMENT_PREFIX)
                 {
-                    throw new CorruptIndexException("Incompatible format version: " + firstInt + " expected >= " + CompoundFileWriter.FORMAT_NO_SEGMENT_PREFIX + " (resource: " + stream + ")");
+                    throw new CorruptIndexException("Incompatible format version: " 
+                        + firstInt + " expected >= " + CompoundFileWriter.FORMAT_NO_SEGMENT_PREFIX + " (resource: " + stream + ")");
                 }
                 // It's a post-3.1 index, read the count.
                 count = stream.ReadVInt32();
@@ -261,14 +260,10 @@ namespace Lucene.Net.Store
                 entry = new FileEntry();
                 entry.Offset = offset;
 
-                FileEntry previous;
-                if (entries.TryGetValue(id, out previous))
+                FileEntry previous = entries.Put(id, entry);
+                if (previous != null)
                 {
                     throw new CorruptIndexException("Duplicate cfs entry id=" + id + " in CFS: " + stream);
-                }
-                else
-                {
-                    entries[id] = entry;
                 }
             }
 
@@ -327,9 +322,9 @@ namespace Lucene.Net.Store
                 Debug.Assert(!openForWrite);
                 string id = IndexFileNames.StripSegmentName(name);
                 FileEntry entry;
-                if (!entries.TryGetValue(id, out entry))
+                if (!entries.TryGetValue(id, out entry) || entry == null)
                 {
-                    throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(entries.Keys) + ")");
+                    throw new FileNotFoundException("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(entries.Keys) + ")");
                 }
                 return handle.OpenSlice(name, entry.Offset, entry.Length);
             }
@@ -373,23 +368,23 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Not implemented </summary>
-        /// <exception cref="UnsupportedOperationException"> always: not supported by CFS  </exception>
+        /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
         public override void DeleteFile(string name)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
         /// Not implemented </summary>
-        /// <exception cref="UnsupportedOperationException"> always: not supported by CFS  </exception>
+        /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
         public void RenameFile(string from, string to)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
         /// Returns the length of a file in the directory. </summary>
-        /// <exception cref="System.IO.IOException"> if the file does not exist  </exception>
+        /// <exception cref="IOException"> if the file does not exist  </exception>
         public override long FileLength(string name)
         {
             EnsureOpen();
@@ -400,7 +395,7 @@ namespace Lucene.Net.Store
             FileEntry e = entries[IndexFileNames.StripSegmentName(name)];
             if (e == null)
             {
-                throw new Exception(name);
+                throw new FileNotFoundException(name);
             }
             return e.Length;
         }
@@ -413,15 +408,15 @@ namespace Lucene.Net.Store
 
         public override void Sync(ICollection<string> names)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         /// <summary>
         /// Not implemented </summary>
-        /// <exception cref="UnsupportedOperationException"> always: not supported by CFS  </exception>
+        /// <exception cref="NotSupportedException"> always: not supported by CFS  </exception>
         public override Lock MakeLock(string name)
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
@@ -432,7 +427,7 @@ namespace Lucene.Net.Store
             FileEntry entry = entries[id];
             if (entry == null)
             {
-                throw new Exception("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(entries.Keys) + ")");
+                throw new FileNotFoundException("No sub-file with id " + id + " found (fileName=" + name + " files: " + Arrays.ToString(entries.Keys) + ")");
             }
             return new IndexInputSlicerAnonymousInnerClassHelper(this, entry);
         }
@@ -441,9 +436,9 @@ namespace Lucene.Net.Store
         {
             private readonly CompoundFileDirectory outerInstance;
 
-            private Lucene.Net.Store.CompoundFileDirectory.FileEntry entry;
+            private FileEntry entry;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(CompoundFileDirectory outerInstance, Lucene.Net.Store.CompoundFileDirectory.FileEntry entry)
+            public IndexInputSlicerAnonymousInnerClassHelper(CompoundFileDirectory outerInstance, FileEntry entry)
                 : base(outerInstance)
             {
                 this.outerInstance = outerInstance;
@@ -459,7 +454,7 @@ namespace Lucene.Net.Store
                 return outerInstance.handle.OpenSlice(sliceDescription, entry.Offset + offset, length);
             }
 
-            [Obsolete]
+            [Obsolete("Only for reading CFS files from 3.x indexes.")]
             public override IndexInput OpenFullSlice()
             {
                 return OpenSlice("full-slice", 0, entry.Length);

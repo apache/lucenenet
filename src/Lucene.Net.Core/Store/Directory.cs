@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
@@ -23,21 +24,21 @@ namespace Lucene.Net.Store
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
-    /// A Directory is a flat list of files.  Files may be written once, when they
+    /// A <see cref="Directory"/> is a flat list of files.  Files may be written once, when they
     /// are created.  Once a file is created it may only be opened for read, or
     /// deleted.  Random access is permitted both when reading and writing.
-    ///
-    /// Java's i/o APIs not used directly, but rather all i/o is
-    /// through this API.  this permits things such as: <ul>
-    /// <li> implementation of RAM-based indices;</li>
-    /// <li> implementation indices stored in a database, via JDBC;</li>
-    /// <li> implementation of an index as a single file;</li>
-    /// </ul>
-    ///
-    /// Directory locking is implemented by an instance of {@link
-    /// LockFactory}, and can be changed for each Directory
-    /// instance using <seealso cref="setLockFactory"/>.
-    ///
+    /// <para/>
+    /// .NET's i/o APIs not used directly, but rather all i/o is
+    /// through this API.  This permits things such as: 
+    /// <list type="bullet">
+    ///     <item> implementation of RAM-based indices;</item>
+    ///     <item> implementation indices stored in a database;</item>
+    ///     <item> implementation of an index as a single file;</item>
+    /// </list>
+    /// <para/>
+    /// Directory locking is implemented by an instance of
+    /// <see cref="Store.LockFactory"/>, and can be changed for each <see cref="Directory"/>
+    /// instance using <see cref="SetLockFactory"/>.
     /// </summary>
     public abstract class Directory : IDisposable // LUCENENET TODO: Subclass System.IO.FileSystemInfo ?
     {
@@ -45,14 +46,13 @@ namespace Lucene.Net.Store
         /// Returns an array of strings, one for each file in the directory.
         /// </summary>
         /// <exception cref="NoSuchDirectoryException"> if the directory is not prepared for any
-        ///         write operations (such as <seealso cref="#createOutput(String, IOContext)"/>). </exception>
+        ///         write operations (such as <see cref="CreateOutput(string, IOContext)"/>). </exception>
         /// <exception cref="System.IO.IOException"> in case of other IO errors </exception>
         public abstract string[] ListAll();
 
         /// <summary>
-        /// Returns true iff a file with the given name exists.
+        /// Returns <c>true</c> iff a file with the given name exists.
         /// </summary>
-        ///  @deprecated this method will be removed in 5.0
         [Obsolete("this method will be removed in 5.0")]
         public abstract bool FileExists(string name);
 
@@ -63,11 +63,11 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Returns the length of a file in the directory. this method follows the
         /// following contract:
-        /// <ul>
-        /// <li>Throws <seealso cref="FileNotFoundException"/> or <seealso cref="NoSuchFileException"/>
-        /// if the file does not exist.</li>
-        /// <li>Returns a value &gt;=0 if the file exists, which specifies its length.</li>
-        /// </ul>
+        /// <list>
+        ///     <item>Throws <see cref="System.IO.FileNotFoundException"/> or <see cref="Index.NoSuchFileException"/>
+        ///         if the file does not exist.</item>
+        ///     <item>Returns a value &gt;=0 if the file exists, which specifies its length.</item>
+        /// </list>
         /// </summary>
         /// <param name="name"> the name of the file for which to return the length. </param>
         /// <exception cref="System.IO.IOException"> if there was an IO error while retrieving the file's
@@ -76,7 +76,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Creates a new, empty file in the directory with the given name.
-        ///    Returns a stream writing this file.
+        /// Returns a stream writing this file.
         /// </summary>
         public abstract IndexOutput CreateOutput(string name, IOContext context);
 
@@ -95,12 +95,12 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns a stream reading an existing file, with the
-        /// specified read buffer size.  The particular Directory
+        /// specified read buffer size.  The particular <see cref="Directory"/>
         /// implementation may ignore the buffer size.  Currently
-        /// the only Directory implementations that respect this
-        /// parameter are <seealso cref="FSDirectory"/> and {@link
-        /// CompoundFileDirectory}.
-        /// <p>Throws <seealso cref="FileNotFoundException"/> or <seealso cref="NoSuchFileException"/>
+        /// the only <see cref="Directory"/> implementations that respect this
+        /// parameter are <see cref="FSDirectory"/> and 
+        /// <see cref="CompoundFileDirectory"/>.
+        /// <para/>Throws <see cref="System.IO.FileNotFoundException"/> or <see cref="Index.NoSuchFileException"/>
         /// if the file does not exist.
         /// </summary>
         public abstract IndexInput OpenInput(string name, IOContext context);
@@ -113,7 +113,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Construct a <seealso cref="Lock"/>. </summary>
+        /// Construct a <see cref="Lock"/>. </summary>
         /// <param name="name"> the name of the lock file </param>
         public abstract Lock MakeLock(string name);
 
@@ -125,33 +125,33 @@ namespace Lucene.Net.Store
         public abstract void ClearLock(string name);
 
         /// <summary>
-        /// Closes the store. </summary>
+        /// Disposes the store. </summary>
         public abstract void Dispose();
 
         /// <summary>
-        /// Set the LockFactory that this Directory instance should
+        /// Set the <see cref="Store.LockFactory"/> that this <see cref="Directory"/> instance should
         /// use for its locking implementation.  Each * instance of
-        /// LockFactory should only be used for one directory (ie,
+        /// <see cref="Store.LockFactory"/> should only be used for one directory (ie,
         /// do not share a single instance across multiple
         /// Directories).
         /// </summary>
-        /// <param name="lockFactory"> instance of <seealso cref="LockFactory"/>. </param>
+        /// <param name="lockFactory"> instance of <see cref="Store.LockFactory"/>. </param>
         public abstract void SetLockFactory(LockFactory lockFactory);
 
         /// <summary>
-        /// Get the LockFactory that this Directory instance is
+        /// Get the <see cref="Store.LockFactory"/> that this <see cref="Directory"/> instance is
         /// using for its locking implementation.  Note that this
-        /// may be null for Directory implementations that provide
+        /// may be null for <see cref="Directory"/> implementations that provide
         /// their own locking implementation.
         /// </summary>
         public abstract LockFactory LockFactory { get; }
 
         /// <summary>
         /// Return a string identifier that uniquely differentiates
-        /// this Directory instance from other Directory instances.
-        /// this ID should be the same if two Directory instances
-        /// (even in different JVMs and/or on different machines)
-        /// are considered "the same index".  this is how locking
+        /// this <see cref="Directory"/> instance from other <see cref="Directory"/> instances.
+        /// This ID should be the same if two <see cref="Directory"/> instances
+        /// (even in different AppDomains and/or on different machines)
+        /// are considered "the same index".  This is how locking
         /// "scopes" to the right index.
         /// </summary>
         public virtual string GetLockID()
@@ -165,34 +165,34 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Copies the file <i>src</i> to <seealso cref="Directory"/> <i>to</i> under the new
-        /// file name <i>dest</i>.
-        /// <p>
+        /// Copies the file <paramref name="src"/> to <seealso cref="Directory"/> <paramref name="to"/> under the new
+        /// file name <paramref name="dest"/>.
+        /// <para/>
         /// If you want to copy the entire source directory to the destination one, you
         /// can do so like this:
         ///
-        /// <pre class="prettyprint">
+        /// <code>
         /// Directory to; // the directory to copy to
-        /// for (String file : dir.listAll()) {
-        ///   dir.copy(to, file, newFile, IOContext.DEFAULT); // newFile can be either file, or a new name
+        /// foreach (string file in dir.ListAll()) {
+        ///     dir.Copy(to, file, newFile, IOContext.DEFAULT); // newFile can be either file, or a new name
         /// }
-        /// </pre>
-        /// <p>
-        /// <b>NOTE:</b> this method does not check whether <i>dest</i> exist and will
+        /// </code>
+        /// <para/>
+        /// <b>NOTE:</b> this method does not check whether <paramref name="dest"/> exist and will
         /// overwrite it if it does.
         /// </summary>
         public virtual void Copy(Directory to, string src, string dest, IOContext context)
         {
             IndexOutput os = null;
             IndexInput @is = null;
-            System.IO.IOException priorException = null;
+            IOException priorException = null;
             try
             {
                 os = to.CreateOutput(dest, context);
                 @is = OpenInput(src, context);
                 os.CopyBytes(@is, @is.Length);
             }
-            catch (System.IO.IOException ioe)
+            catch (IOException ioe)
             {
                 priorException = ioe;
             }
@@ -221,18 +221,19 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Creates an <seealso cref="IndexInputSlicer"/> for the given file name.
-        /// IndexInputSlicer allows other <seealso cref="Directory"/> implementations to
-        /// efficiently open one or more sliced <seealso cref="IndexInput"/> instances from a
+        /// Creates an <see cref="IndexInputSlicer"/> for the given file name.
+        /// <see cref="IndexInputSlicer"/> allows other <see cref="Directory"/> implementations to
+        /// efficiently open one or more sliced <see cref="IndexInput"/> instances from a
         /// single file handle. The underlying file handle is kept open until the
-        /// <seealso cref="IndexInputSlicer"/> is closed.
-        /// <p>Throws <seealso cref="FileNotFoundException"/> or <seealso cref="NoSuchFileException"/>
+        /// <see cref="IndexInputSlicer"/> is closed.
+        /// <para/>Throws <see cref="FileNotFoundException"/> or <see cref="Index.NoSuchFileException"/>
         /// if the file does not exist.
-        /// </summary>
-        /// <exception cref="System.IO.IOException">
-        ///           if an <seealso cref="System.IO.IOException"/> occurs
+        /// <para/>
         /// @lucene.internal
-        /// @lucene.experimental </exception>
+        /// @lucene.experimental
+        /// </summary>
+        /// <exception cref="IOException">
+        ///           if an <seealso cref="IOException"/> occurs</exception>
         public virtual IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             EnsureOpen();
@@ -280,9 +281,10 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Allows to create one or more sliced <seealso cref="IndexInput"/> instances from a single
-        /// file handle. Some <seealso cref="Directory"/> implementations may be able to efficiently map slices of a file
+        /// Allows to create one or more sliced <see cref="IndexInput"/> instances from a single
+        /// file handle. Some <see cref="Directory"/> implementations may be able to efficiently map slices of a file
         /// into memory when only certain parts of a file are required.
+        /// <para/>
         /// @lucene.internal
         /// @lucene.experimental
         /// </summary>
@@ -296,18 +298,15 @@ namespace Lucene.Net.Store
             }
 
             /// <summary>
-            /// Returns an <seealso cref="IndexInput"/> slice starting at the given offset with the given length.
+            /// Returns an <see cref="IndexInput"/> slice starting at the given offset with the given length.
             /// </summary>
             public abstract IndexInput OpenSlice(string sliceDescription, long offset, long length);
 
             /// <summary>
-            /// Returns an <seealso cref="IndexInput"/> slice starting at offset <i>0</i> with a
+            /// Returns an <see cref="IndexInput"/> slice starting at offset <c>0</c> with a
             /// length equal to the length of the underlying file </summary>
-            /// @deprecated Only for reading CFS files from 3.x indexes.
             [Obsolete("Only for reading CFS files from 3.x indexes.")]
-            public abstract IndexInput OpenFullSlice();
-
-            // can we remove this somehow?
+            public abstract IndexInput OpenFullSlice(); // can we remove this somehow?
 
             public abstract void Dispose(bool disposing);
 
@@ -318,8 +317,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Implementation of an IndexInput that reads from a portion of
-        ///  a file.
+        /// Implementation of an <see cref="IndexInput"/> that reads from a portion of
+        /// a file.
         /// </summary>
         private sealed class SlicedIndexInput : BufferedIndexInput
         {
@@ -351,7 +350,7 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Expert: implements buffer refill.  Reads bytes from the current
-            ///  position in the input. </summary>
+            /// position in the input. </summary>
             /// <param name="b"> the array to read bytes into </param>
             /// <param name="offset"> the offset in the array to start storing bytes </param>
             /// <param name="len"> the number of bytes to read </param>
@@ -368,12 +367,16 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Expert: implements seek.  Sets current position in this file, where
-            ///  the next <seealso cref="#readInternal(byte[],int,int)"/> will occur. </summary>
-            /// <seealso> cref= #readInternal(byte[],int,int) </seealso>
+            /// the next <see cref="ReadInternal(byte[], int, int)"/> will occur. 
+            /// </summary>
+            /// <seealso cref="ReadInternal(byte[], int, int)"/>
             protected override void SeekInternal(long pos)
             {
             }
 
+            /// <summary>
+            /// Closes the stream to further operations.
+            /// </summary>
             public override void Dispose()
             {
                 @base.Dispose();

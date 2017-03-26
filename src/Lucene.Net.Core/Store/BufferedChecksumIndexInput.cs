@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Store
 {
@@ -20,7 +21,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Simple implementation of <seealso cref="ChecksumIndexInput"/> that wraps
+    /// Simple implementation of <see cref="ChecksumIndexInput"/> that wraps
     /// another input and delegates calls.
     /// </summary>
     public class BufferedChecksumIndexInput : ChecksumIndexInput
@@ -29,7 +30,7 @@ namespace Lucene.Net.Store
         internal readonly IChecksum digest;
 
         /// <summary>
-        /// Creates a new BufferedChecksumIndexInput </summary>
+        /// Creates a new <see cref="BufferedChecksumIndexInput"/> </summary>
         public BufferedChecksumIndexInput(IndexInput main)
             : base("BufferedChecksumIndexInput(" + main + ")")
         {
@@ -49,14 +50,6 @@ namespace Lucene.Net.Store
             main.ReadBytes(b, offset, len);
             digest.Update(b, offset, len);
         }
-
-        /*
-              public override void ReadBytes(byte[] b, int offset, int len)
-              {
-                  Main.ReadBytes(b, offset, len);
-                  Digest.Update(b, offset, len);
-              }
-                */
 
         public override long Checksum
         {
@@ -83,7 +76,7 @@ namespace Lucene.Net.Store
 
         public override object Clone()
         {
-            throw new System.NotSupportedException();
+            throw new NotSupportedException();
         }
     }
 }

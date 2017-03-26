@@ -22,7 +22,8 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Base implementation for a concrete <seealso cref="Directory"/>.
+    /// Base implementation for a concrete <see cref="Directory"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class BaseDirectory : Directory
@@ -40,7 +41,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Holds the LockFactory instance (implements locking for
-        /// this Directory instance).
+        /// this <see cref="Directory"/> instance).
         /// </summary>
         protected internal LockFactory m_lockFactory;
 

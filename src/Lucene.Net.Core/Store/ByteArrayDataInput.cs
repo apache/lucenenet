@@ -24,6 +24,7 @@ namespace Lucene.Net.Store
     /// <summary>
     /// DataInput backed by a byte array.
     /// <b>WARNING:</b> this class omits all low-level checks.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class ByteArrayDataInput : DataInput
@@ -53,8 +54,10 @@ namespace Lucene.Net.Store
             Reset(bytes, 0, bytes.Length);
         }
 
-        // NOTE: sets pos to 0, which is not right if you had
-        // called reset w/ non-zero offset!!
+        /// <summary>
+        /// NOTE: sets pos to 0, which is not right if you had
+        /// called reset w/ non-zero offset!!
+        /// </summary>
         public void Rewind()
         {
             pos = 0;
@@ -110,7 +113,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public override int ReadInt32()
         {
-            return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16) | ((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF);
+            return ((bytes[pos++] & 0xFF) << 24) | ((bytes[pos++] & 0xFF) << 16) 
+                | ((bytes[pos++] & 0xFF) << 8) | (bytes[pos++] & 0xFF);
         }
 
         /// <summary>
@@ -118,8 +122,10 @@ namespace Lucene.Net.Store
         /// </summary>
         public override long ReadInt64()
         {
-            int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
-            int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
+            int i1 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) 
+                | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
+            int i2 = ((bytes[pos++] & 0xff) << 24) | ((bytes[pos++] & 0xff) << 16) 
+                | ((bytes[pos++] & 0xff) << 8) | (bytes[pos++] & 0xff);
             return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
         }
 
@@ -128,16 +134,6 @@ namespace Lucene.Net.Store
         /// </summary>
         public override int ReadVInt32()
         {
-            // .NET Port: going back to original style code instead of Java code below due to sbyte/byte diff
-            /*byte b = Bytes[Pos++];
-            int i = b & 0x7F;
-            for (int shift = 7; (b & 0x80) != 0; shift += 7)
-            {
-                b = Bytes[Pos++];
-                i |= (b & 0x7F) << shift;
-            }
-            return i;*/
-
             byte b = bytes[pos++];
             if ((sbyte)b >= 0)
             {
@@ -169,7 +165,7 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new Exception("Invalid vInt detected (too many bits)");
+            throw new Exception("Invalid VInt32 detected (too many bits)");
         }
 
         /// <summary>
@@ -177,16 +173,6 @@ namespace Lucene.Net.Store
         /// </summary>
         public override long ReadVInt64()
         {
-            // .NET Port: going back to old style code
-            /*byte b = Bytes[Pos++];
-            long i = b & 0x7F;
-            for (int shift = 7; (b & 0x80) != 0; shift += 7)
-            {
-                b = Bytes[Pos++];
-                i |= (b & 0x7FL) << shift;
-            }
-            return i;*/
-
             byte b = bytes[pos++];
             if ((sbyte)b >= 0)
             {
@@ -241,7 +227,7 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new Exception("Invalid vLong detected (negative values disallowed)");
+            throw new Exception("Invalid VInt64 detected (negative values disallowed)");
         }
 
         // NOTE: AIOOBE not EOF if you read too much

@@ -21,11 +21,11 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Base implementation class for buffered <seealso cref="IndexOutput"/>. </summary>
+    /// Base implementation class for buffered <see cref="IndexOutput"/>. </summary>
     public abstract class BufferedIndexOutput : IndexOutput
     {
         /// <summary>
-        /// The default buffer size in bytes ({@value #DEFAULT_BUFFER_SIZE}). </summary>
+        /// The default buffer size in bytes (<see cref="DEFAULT_BUFFER_SIZE"/>). </summary>
         public const int DEFAULT_BUFFER_SIZE = 16384;
 
         private readonly int bufferSize;
@@ -35,8 +35,8 @@ namespace Lucene.Net.Store
         private readonly CRC32 crc = new CRC32();
 
         /// <summary>
-        /// Creates a new <seealso cref="BufferedIndexOutput"/> with the default buffer size
-        /// ({@value #DEFAULT_BUFFER_SIZE} bytes see <seealso cref="#DEFAULT_BUFFER_SIZE"/>)
+        /// Creates a new <see cref="BufferedIndexOutput"/> with the default buffer size
+        /// (<see cref="DEFAULT_BUFFER_SIZE"/> bytes see <see cref="DEFAULT_BUFFER_SIZE"/>)
         /// </summary>
         public BufferedIndexOutput()
             : this(DEFAULT_BUFFER_SIZE)
@@ -44,14 +44,14 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="BufferedIndexOutput"/> with the given buffer size. </summary>
+        /// Creates a new <see cref="BufferedIndexOutput"/> with the given buffer size. </summary>
         /// <param name="bufferSize"> the buffer size in bytes used to buffer writes internally. </param>
-        /// <exception cref="IllegalArgumentException"> if the given buffer size is less or equal to <tt>0</tt> </exception>
+        /// <exception cref="ArgumentException"> if the given buffer size is less or equal to <c>0</c> </exception>
         public BufferedIndexOutput(int bufferSize)
         {
             if (bufferSize <= 0)
             {
-                throw new System.ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
+                throw new ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
             }
             this.bufferSize = bufferSize;
             buffer = new byte[bufferSize];

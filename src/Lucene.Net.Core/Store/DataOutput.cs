@@ -27,19 +27,19 @@ namespace Lucene.Net.Store
     /// Abstract base class for performing write operations of Lucene's low-level
     /// data types.
     ///
-    /// <p>{@code DataOutput} may only be used from one thread, because it is not
+    /// <para/><see cref="DataOutput"/> may only be used from one thread, because it is not
     /// thread safe (it keeps internal state like file position).
     /// </summary>
     public abstract class DataOutput
     {
         /// <summary>
         /// Writes a single byte.
-        /// <p>
+        /// <para/>
         /// The most primitive data type is an eight-bit byte. Files are
         /// accessed as sequences of bytes. All other data types are defined
         /// as sequences of bytes, so file formats are byte-order independent.
         /// </summary>
-        /// <seealso cref= IndexInput#readByte() </seealso>
+        /// <seealso cref="IndexInput.ReadByte()"/>
         public abstract void WriteByte(byte b);
 
         /// <summary>
@@ -58,17 +58,17 @@ namespace Lucene.Net.Store
         /// <param name="b"> the bytes to write </param>
         /// <param name="offset"> the offset in the byte array </param>
         /// <param name="length"> the number of bytes to write </param>
-        /// <seealso cref= DataInput#readBytes(byte[],int,int) </seealso>
+        /// <seealso cref="DataInput.ReadBytes(byte[], int, int)"/>
         public abstract void WriteBytes(byte[] b, int offset, int length);
 
         /// <summary>
-        /// Writes an int as four bytes.
+        /// Writes an <see cref="int"/> as four bytes.
         /// <para/>
         /// 32-bit unsigned integer written as four bytes, high-order bytes first.
         /// <para/>
         /// NOTE: this was writeInt() in Lucene
         /// </summary>
-        /// <seealso cref= DataInput#readInt() </seealso>
+        /// <seealso cref="DataInput.ReadInt32()"/>
         public virtual void WriteInt32(int i)
         {
             WriteByte((byte)(sbyte)(i >> 24));
@@ -82,7 +82,7 @@ namespace Lucene.Net.Store
         /// <para/>
         /// NOTE: this was writeShort() in Lucene
         /// </summary>
-        /// <seealso cref= DataInput#readShort() </seealso>
+        /// <seealso cref="DataInput.ReadInt16()"/>
         public virtual void WriteInt16(short i)
         {
             WriteByte((byte)(sbyte)((ushort)i >> 8));
@@ -90,113 +90,110 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes an int in a variable-length format.  Writes between one and
+        /// Writes an <see cref="int"/> in a variable-length format.  Writes between one and
         /// five bytes.  Smaller values take fewer bytes.  Negative numbers are
         /// supported, but should be avoided.
-        /// <p>VByte is a variable-length format for positive integers is defined where the
+        /// <para>VByte is a variable-length format for positive integers is defined where the
         /// high-order bit of each byte indicates whether more bytes remain to be read. The
         /// low-order seven bits are appended as increasingly more significant bits in the
         /// resulting integer value. Thus values from zero to 127 may be stored in a single
-        /// byte, values from 128 to 16,383 may be stored in two bytes, and so on.</p>
-        /// <p>VByte Encoding Example</p>
-        /// <table cellspacing="0" cellpadding="2" border="0">
-        /// <col width="64*">
-        /// <col width="64*">
-        /// <col width="64*">
-        /// <col width="64*">
-        /// <tr valign="top">
-        ///   <th align="left" width="25%">Value</th>
-        ///   <th align="left" width="25%">Byte 1</th>
-        ///   <th align="left" width="25%">Byte 2</th>
-        ///   <th align="left" width="25%">Byte 3</th>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">0</td>
-        ///   <td width="25%"><kbd>00000000</kbd></td>
-        ///   <td width="25%"></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">1</td>
-        ///   <td width="25%"><kbd>00000001</kbd></td>
-        ///   <td width="25%"></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">2</td>
-        ///   <td width="25%"><kbd>00000010</kbd></td>
-        ///   <td width="25%"></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr>
-        ///   <td valign="top" width="25%">...</td>
-        ///   <td valign="bottom" width="25%"></td>
-        ///   <td valign="bottom" width="25%"></td>
-        ///   <td valign="bottom" width="25%"></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">127</td>
-        ///   <td width="25%"><kbd>01111111</kbd></td>
-        ///   <td width="25%"></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">128</td>
-        ///   <td width="25%"><kbd>10000000</kbd></td>
-        ///   <td width="25%"><kbd>00000001</kbd></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">129</td>
-        ///   <td width="25%"><kbd>10000001</kbd></td>
-        ///   <td width="25%"><kbd>00000001</kbd></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">130</td>
-        ///   <td width="25%"><kbd>10000010</kbd></td>
-        ///   <td width="25%"><kbd>00000001</kbd></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr>
-        ///   <td valign="top" width="25%">...</td>
-        ///   <td width="25%"></td>
-        ///   <td width="25%"></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">16,383</td>
-        ///   <td width="25%"><kbd>11111111</kbd></td>
-        ///   <td width="25%"><kbd>01111111</kbd></td>
-        ///   <td width="25%"></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">16,384</td>
-        ///   <td width="25%"><kbd>10000000</kbd></td>
-        ///   <td width="25%"><kbd>10000000</kbd></td>
-        ///   <td width="25%"><kbd>00000001</kbd></td>
-        /// </tr>
-        /// <tr valign="bottom">
-        ///   <td width="25%">16,385</td>
-        ///   <td width="25%"><kbd>10000001</kbd></td>
-        ///   <td width="25%"><kbd>10000000</kbd></td>
-        ///   <td width="25%"><kbd>00000001</kbd></td>
-        /// </tr>
-        /// <tr>
-        ///   <td valign="top" width="25%">...</td>
-        ///   <td valign="bottom" width="25%"></td>
-        ///   <td valign="bottom" width="25%"></td>
-        ///   <td valign="bottom" width="25%"></td>
-        /// </tr>
-        /// </table>
-        /// <p>this provides compression while still being efficient to decode.</p>
+        /// byte, values from 128 to 16,383 may be stored in two bytes, and so on.</para>
+        /// <para>VByte Encoding Example</para>
+        /// <list type="table">
+        ///     <listheader>
+        ///         <term>Value</term>
+        ///         <term>Byte 1</term>
+        ///         <term>Byte 2</term>
+        ///         <term>Byte 3</term>
+        ///     </listheader>
+        ///     <item>
+        ///         <term>0</term>
+        ///         <term>00000000</term>
+        ///         <term></term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>1</term>
+        ///         <term>00000001</term>
+        ///         <term></term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>2</term>
+        ///         <term>00000010</term>
+        ///         <term></term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>...</term>
+        ///         <term></term>
+        ///         <term></term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>127</term>
+        ///         <term>01111111</term>
+        ///         <term></term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>128</term>
+        ///         <term>10000000</term>
+        ///         <term>00000001</term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>129</term>
+        ///         <term>10000001</term>
+        ///         <term>00000001</term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>130</term>
+        ///         <term>10000010</term>
+        ///         <term>00000001</term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>...</term>
+        ///         <term></term>
+        ///         <term></term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>16,383</term>
+        ///         <term>11111111</term>
+        ///         <term>01111111</term>
+        ///         <term></term>
+        ///     </item>
+        ///     <item>
+        ///         <term>16,384</term>
+        ///         <term>10000000</term>
+        ///         <term>10000000</term>
+        ///         <term>00000001</term>
+        ///     </item>
+        ///     <item>
+        ///         <term>16,385</term>
+        ///         <term>10000001</term>
+        ///         <term>10000000</term>
+        ///         <term>00000001</term>
+        ///     </item>
+        ///     <item>
+        ///         <term>...</term>
+        ///         <term></term>
+        ///         <term></term>
+        ///         <term></term>
+        ///     </item>
+        /// </list>
+        /// 
+        /// <para>this provides compression while still being efficient to decode.</para>
         /// <para/>
         /// NOTE: this was writeVInt() in Lucene
         /// </summary>
         /// <param name="i"> Smaller values take fewer bytes.  Negative numbers are
         /// supported, but should be avoided. </param>
         /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
-        /// <seealso cref= DataInput#readVInt() </seealso>
+        /// <seealso cref="DataInput.ReadVInt32()"/>
         public void WriteVInt32(int i)
         {
             while ((i & ~0x7F) != 0)
@@ -208,13 +205,13 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes a long as eight bytes.
+        /// Writes a <see cref="long"/> as eight bytes.
         /// <para/>
         /// 64-bit unsigned integer written as eight bytes, high-order bytes first.
         /// <para/>
         /// NOTE: this was writeLong() in Lucene
         /// </summary>
-        /// <seealso cref= DataInput#readLong() </seealso>
+        /// <seealso cref="DataInput.ReadLong()"/>
         public virtual void WriteInt64(long i)
         {
             WriteInt32((int)(i >> 32));
@@ -222,15 +219,15 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes an long in a variable-length format.  Writes between one and nine
+        /// Writes an <see cref="long"/> in a variable-length format.  Writes between one and nine
         /// bytes.  Smaller values take fewer bytes.  Negative numbers are not
         /// supported.
         /// <para/>
-        /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>. 
+        /// The format is described further in <see cref="DataOutput.WriteVInt32(int)"/>. 
         /// <para/>
         /// NOTE: this was writeVLong() in Lucene
         /// </summary>
-        /// <seealso cref= DataInput#readVLong() </seealso>
+        /// <seealso cref="DataInput.ReadVInt64()"/>
         public void WriteVInt64(long i)
         {
             Debug.Assert(i >= 0L);
@@ -244,15 +241,15 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Writes a string.
-        /// <p>
+        /// <para/>
         /// Writes strings as UTF-8 encoded bytes. First the length, in bytes, is
-        /// written as a <seealso cref="#writeVInt VInt"/>, followed by the bytes.
+        /// written as a <see cref="WriteVInt32"/>, followed by the bytes.
         /// </summary>
-        /// <seealso cref= DataInput#readString() </seealso>
+        /// <seealso cref="DataInput.ReadString()"/>
         public virtual void WriteString(string s)
         {
             var utf8Result = new BytesRef(10);
-            UnicodeUtil.UTF16toUTF8(s.ToCharArray(), 0, s.Length, utf8Result);
+            UnicodeUtil.UTF16toUTF8(s, 0, s.Length, utf8Result);
             WriteVInt32(utf8Result.Length);
             WriteBytes(utf8Result.Bytes, 0, utf8Result.Length);
         }
@@ -288,13 +285,13 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes a String map.
-        /// <p>
-        /// First the size is written as an <seealso cref="#writeInt(int) Int32"/>,
+        /// Writes a <see cref="T:IDictionary{string, string}"/>.
+        /// <para/>
+        /// First the size is written as an <see cref="WriteInt32(int)"/>,
         /// followed by each key-value pair written as two consecutive
-        /// <seealso cref="#writeString(String) String"/>s.
+        /// <see cref="WriteString(string)"/>s.
         /// </summary>
-        /// <param name="map"> Input map. May be null (equivalent to an empty map) </param>
+        /// <param name="map"> Input <see cref="T:IDictionary{string, string}"/>. May be <c>null</c> (equivalent to an empty dictionary) </param>
         public virtual void WriteStringStringMap(IDictionary<string, string> map)
         {
             if (map == null)
@@ -313,14 +310,14 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes a String set.
-        /// <p>
-        /// First the size is written as an <seealso cref="#writeInt(int) Int32"/>,
+        /// Writes a <see cref="string"/> set.
+        /// <para/>
+        /// First the size is written as an <see cref="WriteInt32(int)"/>,
         /// followed by each value written as a
-        /// <seealso cref="#writeString(String) String"/>.
+        /// <see cref="WriteString(string)"/>.
         /// </summary>
-        /// <param name="set"> Input set. May be null (equivalent to an empty set) </param>
-        public virtual void WriteStringSet(ICollection<string> set)
+        /// <param name="set"> Input <see cref="T:ISet{string}"/>. May be <c>null</c> (equivalent to an empty set) </param>
+        public virtual void WriteStringSet(ICollection<string> set) // LUCENENET TODO: API change back to ISet<string>
         {
             if (set == null)
             {

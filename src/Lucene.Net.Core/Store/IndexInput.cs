@@ -64,7 +64,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Sets current position in this file, where the next read will occur. </summary>
-        /// <seealso cref= #getFilePointer() </seealso>
+        /// <seealso cref="GetFilePointer()"/>
         public abstract void Seek(long pos);
 
         /// <summary>

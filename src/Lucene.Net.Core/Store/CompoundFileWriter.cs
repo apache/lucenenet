@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -30,9 +31,10 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Combines multiple files into a single compound file.
+    /// <para/>
+    /// @lucene.internal 
     /// </summary>
-    /// <seealso cref= CompoundFileDirectory
-    /// @lucene.internal </seealso>
+    /// <seealso cref="CompoundFileDirectory"/>
     internal sealed class CompoundFileWriter : IDisposable
     {
         private sealed class FileEntry
@@ -60,7 +62,6 @@ namespace Lucene.Net.Store
 
         // versioning for the .cfs file
         internal const string DATA_CODEC = "CompoundFileWriterData";
-
         internal const int VERSION_START = 0;
         internal const int VERSION_CHECKSUM = 1;
         internal const int VERSION_CURRENT = VERSION_CHECKSUM;
@@ -71,10 +72,8 @@ namespace Lucene.Net.Store
         private readonly Directory directory;
         private readonly IDictionary<string, FileEntry> entries = new Dictionary<string, FileEntry>();
         private readonly ISet<string> seenIDs = new HashSet<string>();
-
         // all entries that are written to a sep. file but not yet moved into CFS
         private readonly LinkedList<FileEntry> pendingEntries = new LinkedList<FileEntry>();
-
         private bool closed = false;
         private IndexOutput dataOut;
         private readonly AtomicBoolean outputTaken = new AtomicBoolean(false);
@@ -85,17 +84,17 @@ namespace Lucene.Net.Store
         /// Create the compound stream in the specified file. The file name is the
         /// entire name (no extensions are added).
         /// </summary>
-        /// <exception cref="NullPointerException">
-        ///           if <code>dir</code> or <code>name</code> is null </exception>
+        /// <exception cref="NullReferenceException">
+        ///           if <paramref name="dir"/> or <paramref name="name"/> is <c>null</c> </exception>
         internal CompoundFileWriter(Directory dir, string name)
         {
             if (dir == null)
             {
-                throw new System.NullReferenceException("directory cannot be null");
+                throw new NullReferenceException("directory cannot be null"); // LUCENENET TODO: ArgumentNullException?
             }
             if (name == null)
             {
-                throw new System.NullReferenceException("name cannot be null");
+                throw new NullReferenceException("name cannot be null"); // LUCENENET TODO: ArgumentNullException?
             }
             directory = dir;
             entryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
@@ -119,7 +118,7 @@ namespace Lucene.Net.Store
                     {
                         if (!success)
                         {
-                            IOUtils.CloseWhileHandlingException((IDisposable)dataOut);
+                            IOUtils.CloseWhileHandlingException(dataOut);
                         }
                     }
                 }
@@ -148,10 +147,10 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Closes all resources and writes the entry table
+        /// Disposes all resources and writes the entry table
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        ///           if close() had been called before or if no file has been added to
+        ///           if <see cref="Dispose"/> had been called before or if no file has been added to
         ///           this object </exception>
         public void Dispose()
         {
@@ -159,7 +158,7 @@ namespace Lucene.Net.Store
             {
                 return;
             }
-            System.IO.IOException priorException = null;
+            IOException priorException = null;
             IndexOutput entryTableOut = null;
             // TODO this code should clean up after itself
             // (remove partial .cfs/.cfe)
@@ -175,7 +174,7 @@ namespace Lucene.Net.Store
                 Debug.Assert(dataOut != null);
                 CodecUtil.WriteFooter(dataOut);
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 priorException = e;
             }
@@ -188,7 +187,7 @@ namespace Lucene.Net.Store
                 entryTableOut = directory.CreateOutput(entryTableName, IOContext.DEFAULT);
                 WriteEntryTable(entries.Values, entryTableOut);
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 priorException = e;
             }
@@ -224,7 +223,7 @@ namespace Lucene.Net.Store
                 long diff = endPtr - startPtr;
                 if (diff != length)
                 {
-                    throw new System.IO.IOException("Difference in the output file offsets " + diff + " does not match the original file length " + length);
+                    throw new IOException("Difference in the output file offsets " + diff + " does not match the original file length " + length);
                 }
                 fileEntry.Offset = startPtr;
                 success = true;
@@ -268,7 +267,7 @@ namespace Lucene.Net.Store
                 Debug.Assert(name != null, "name must not be null");
                 if (entries.ContainsKey(name))
                 {
-                    throw new System.ArgumentException("File " + name + " already exists");
+                    throw new ArgumentException("File " + name + " already exists");
                 }
                 FileEntry entry = new FileEntry();
                 entry.File = name;
@@ -318,8 +317,8 @@ namespace Lucene.Net.Store
                 {
                     while (pendingEntries.Count > 0)
                     {
-                        FileEntry entry = pendingEntries.First();
-                        pendingEntries.RemoveFirst(); ;
+                        FileEntry entry = pendingEntries.First.Value;
+                        pendingEntries.Remove(entry); ;
                         CopyFileEntry(GetOutput(), entry);
                         entries[entry.File] = entry;
                     }
@@ -337,7 +336,7 @@ namespace Lucene.Net.Store
             FileEntry fileEntry = entries[name];
             if (fileEntry == null)
             {
-                throw new Exception(name + " does not exist");
+                throw new FileNotFoundException(name + " does not exist");
             }
             return fileEntry.Length;
         }

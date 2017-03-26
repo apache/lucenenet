@@ -22,11 +22,11 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Base implementation class for buffered <seealso cref="IndexInput"/>. </summary>
+    /// Base implementation class for buffered <see cref="IndexInput"/>. </summary>
     public abstract class BufferedIndexInput : IndexInput
     {
         /// <summary>
-        /// Default buffer size set to {@value #BUFFER_SIZE}. </summary>
+        /// Default buffer size set to <see cref="BUFFER_SIZE"/>. </summary>
         public const int BUFFER_SIZE = 1024;
 
         // The normal read buffer size defaults to 1024, but
@@ -36,13 +36,13 @@ namespace Lucene.Net.Store
         // BufferedIndexInputs created during merging.  See
         // LUCENE-888 for details.
         /// <summary>
-        /// A buffer size for merges set to {@value #MERGE_BUFFER_SIZE}.
+        /// A buffer size for merges set to <see cref="MERGE_BUFFER_SIZE"/>.
         /// </summary>
         public const int MERGE_BUFFER_SIZE = 4096;
 
         private int bufferSize = BUFFER_SIZE;
 
-        protected internal byte[] m_buffer;
+        protected byte[] m_buffer;
 
         private long bufferStart = 0; // position in file of buffer
         private int bufferLength = 0; // end of valid bytes
@@ -68,7 +68,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Inits BufferedIndexInput with a specific bufferSize </summary>
+        /// Inits <see cref="BufferedIndexInput"/> with a specific <paramref name="bufferSize"/> </summary>
         public BufferedIndexInput(string resourceDesc, int bufferSize)
             : base(resourceDesc)
         {
@@ -77,7 +77,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Change the buffer size used by this IndexInput </summary>
+        /// Change the buffer size used by this <see cref="IndexInput"/> </summary>
         public void SetBufferSize(int newSize)
         {
             Debug.Assert(m_buffer == null || bufferSize == m_buffer.Length, "buffer=" + m_buffer + " bufferSize=" + bufferSize + " buffer.length=" + (m_buffer != null ? m_buffer.Length : 0));
@@ -132,7 +132,7 @@ namespace Lucene.Net.Store
         {
             if (bufferSize <= 0)
             {
-                throw new System.ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
+                throw new ArgumentException("bufferSize must be greater than 0 (got " + bufferSize + ")");
             }
         }
 
@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
                 // the buffer contains enough data to satisfy this request
                 if (len > 0) // to allow b to be null if len is 0...
                 {
-                    System.Buffer.BlockCopy(m_buffer, bufferPosition, b, offset, len);
+                    Buffer.BlockCopy(m_buffer, bufferPosition, b, offset, len);
                 }
                 bufferPosition += len;
             }
@@ -158,7 +158,7 @@ namespace Lucene.Net.Store
                 // the buffer does not have enough data. First serve all we've got.
                 if (available > 0)
                 {
-                    System.Buffer.BlockCopy(m_buffer, bufferPosition, b, offset, available);
+                    Buffer.BlockCopy(m_buffer, bufferPosition, b, offset, available);
                     offset += available;
                     len -= available;
                     bufferPosition += available;
@@ -173,12 +173,12 @@ namespace Lucene.Net.Store
                     if (bufferLength < len)
                     {
                         // Throw an exception when refill() could not read len bytes:
-                        System.Buffer.BlockCopy(m_buffer, 0, b, offset, bufferLength);
+                        Buffer.BlockCopy(m_buffer, 0, b, offset, bufferLength);
                         throw new EndOfStreamException("read past EOF: " + this);
                     }
                     else
                     {
-                        System.Buffer.BlockCopy(m_buffer, 0, b, offset, len);
+                        Buffer.BlockCopy(m_buffer, 0, b, offset, len);
                         bufferPosition = len;
                     }
                 }
@@ -219,11 +219,15 @@ namespace Lucene.Net.Store
             }
         }
 
+        /// <summary>
+        /// NOTE: this was readInt() in Lucene
+        /// </summary>
         public override sealed int ReadInt32()
         {
             if (4 <= (bufferLength - bufferPosition))
             {
-                return ((m_buffer[bufferPosition++] & 0xFF) << 24) | ((m_buffer[bufferPosition++] & 0xFF) << 16) | ((m_buffer[bufferPosition++] & 0xFF) << 8) | (m_buffer[bufferPosition++] & 0xFF);
+                return ((m_buffer[bufferPosition++] & 0xFF) << 24) | ((m_buffer[bufferPosition++] & 0xFF) << 16) 
+                    | ((m_buffer[bufferPosition++] & 0xFF) << 8) | (m_buffer[bufferPosition++] & 0xFF);
             }
             else
             {
@@ -231,12 +235,17 @@ namespace Lucene.Net.Store
             }
         }
 
+        /// <summary>
+        /// NOTE: this was readLong() in Lucene
+        /// </summary>
         public override sealed long ReadInt64()
         {
             if (8 <= (bufferLength - bufferPosition))
             {
-                int i1 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16) | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
-                int i2 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16) | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
+                int i1 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16) 
+                    | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
+                int i2 = ((m_buffer[bufferPosition++] & 0xff) << 24) | ((m_buffer[bufferPosition++] & 0xff) << 16) 
+                    | ((m_buffer[bufferPosition++] & 0xff) << 8) | (m_buffer[bufferPosition++] & 0xff);
                 return (((long)i1) << 32) | (i2 & 0xFFFFFFFFL);
             }
             else
@@ -245,6 +254,9 @@ namespace Lucene.Net.Store
             }
         }
 
+        /// <summary>
+        /// NOTE: this was readVInt() in Lucene
+        /// </summary>
         public override sealed int ReadVInt32()
         {
             if (5 <= (bufferLength - bufferPosition))
@@ -280,7 +292,7 @@ namespace Lucene.Net.Store
                 {
                     return i;
                 }
-                throw new System.IO.IOException("Invalid vInt detected (too many bits)");
+                throw new IOException("Invalid VInt32 detected (too many bits)");
             }
             else
             {
@@ -288,6 +300,9 @@ namespace Lucene.Net.Store
             }
         }
 
+        /// <summary>
+        /// NOTE: this was readVLong() in Lucene
+        /// </summary>
         public override sealed long ReadVInt64()
         {
             if (9 <= bufferLength - bufferPosition)
@@ -346,7 +361,7 @@ namespace Lucene.Net.Store
                 {
                     return i;
                 }
-                throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
+                throw new IOException("Invalid VInt64 detected (negative values disallowed)");
             }
             else
             {
@@ -409,8 +424,8 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Expert: implements seek.  Sets current position in this file, where the
-        /// next <seealso cref="#readInternal(byte[],int,int)"/> will occur. </summary>
-        /// <seealso cref= #readInternal(byte[],int,int) </seealso>
+        /// next <see cref="ReadInternal(byte[], int, int)"/> will occur. </summary>
+        /// <seealso cref="ReadInternal(byte[], int, int)"/>
         protected abstract void SeekInternal(long pos);
 
         public override object Clone()
@@ -427,8 +442,8 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Flushes the in-memory buffer to the given output, copying at most
-        /// <code>numBytes</code>.
-        /// <p>
+        /// <paramref name="numBytes"/>.
+        /// <para/>
         /// <b>NOTE:</b> this method does not refill the buffer, however it does
         /// advance the buffer position.
         /// </summary>
@@ -449,7 +464,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Returns default buffer sizes for the given <seealso cref="IOContext"/>
+        /// Returns default buffer sizes for the given <see cref="IOContext"/>
         /// </summary>
         public static int GetBufferSize(IOContext context) // LUCENENET NOTE: Renamed from BufferSize to prevent naming conflict
         {

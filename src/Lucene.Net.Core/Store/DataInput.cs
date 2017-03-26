@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace Lucene.Net.Store
@@ -26,30 +27,31 @@ namespace Lucene.Net.Store
     /// Abstract base class for performing read operations of Lucene's low-level
     /// data types.
     ///
-    /// <p>{@code DataInput} may only be used from one thread, because it is not
+    /// <para/><see cref="DataInput"/> may only be used from one thread, because it is not
     /// thread safe (it keeps internal state like file position). To allow
-    /// multithreaded use, every {@code DataInput} instance must be cloned before
-    /// used in another thread. Subclasses must therefore implement <seealso cref="#clone()"/>,
-    /// returning a new {@code DataInput} which operates on the same underlying
+    /// multithreaded use, every <see cref="DataInput"/> instance must be cloned before
+    /// used in another thread. Subclasses must therefore implement <see cref="Clone()"/>,
+    /// returning a new <see cref="DataInput"/> which operates on the same underlying
     /// resource, but positioned independently.
     /// </summary>
     public abstract class DataInput
     {
         private const int SKIP_BUFFER_SIZE = 1024;
 
-        /* this buffer is used to skip over bytes with the default implementation of
-         * skipBytes. The reason why we need to use an instance member instead of
-         * sharing a single instance across threads is that some delegating
-         * implementations of DataInput might want to reuse the provided buffer in
-         * order to eg. update the checksum. If we shared the same buffer across
-         * threads, then another thread might update the buffer while the checksum is
-         * being computed, making it invalid. See LUCENE-5583 for more information.
-         */
+        /// <summary>
+        /// This buffer is used to skip over bytes with the default implementation of
+        /// skipBytes. The reason why we need to use an instance member instead of
+        /// sharing a single instance across threads is that some delegating
+        /// implementations of DataInput might want to reuse the provided buffer in
+        /// order to eg.update the checksum. If we shared the same buffer across
+        /// threads, then another thread might update the buffer while the checksum is
+        /// being computed, making it invalid. See LUCENE-5583 for more information.
+        /// </summary>
         private byte[] skipBuffer;
 
         /// <summary>
         /// Reads and returns a single byte. </summary>
-        /// <seealso cref= DataOutput#writeByte(byte) </seealso>
+        /// <seealso cref="DataOutput.WriteByte(byte)"/>
         public abstract byte ReadByte();
 
         /// <summary>
@@ -57,21 +59,21 @@ namespace Lucene.Net.Store
         /// <param name="b"> the array to read bytes into </param>
         /// <param name="offset"> the offset in the array to start storing bytes </param>
         /// <param name="len"> the number of bytes to read </param>
-        /// <seealso cref= DataOutput#writeBytes(byte[],int) </seealso>
+        /// <seealso cref="DataOutput.WriteBytes(byte[], int)"/>
         public abstract void ReadBytes(byte[] b, int offset, int len);
 
         /// <summary>
         /// Reads a specified number of bytes into an array at the
         /// specified offset with control over whether the read
         /// should be buffered (callers who have their own buffer
-        /// should pass in "false" for useBuffer).  Currently only
-        /// <seealso cref="BufferedIndexInput"/> respects this parameter. </summary>
+        /// should pass in "false" for <paramref name="useBuffer"/>).  Currently only
+        /// <see cref="BufferedIndexInput"/> respects this parameter. </summary>
         /// <param name="b"> the array to read bytes into </param>
         /// <param name="offset"> the offset in the array to start storing bytes </param>
         /// <param name="len"> the number of bytes to read </param>
         /// <param name="useBuffer"> set to false if the caller will handle
         /// buffering. </param>
-        /// <seealso cref= DataOutput#writeBytes(byte[],int) </seealso>
+        /// <seealso cref="DataOutput.WriteBytes(byte[],int)"/>
         public virtual void ReadBytes(byte[] b, int offset, int len, bool useBuffer)
         {
             // Default to ignoring useBuffer entirely
@@ -79,52 +81,43 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads two bytes and returns a short. 
+        /// Reads two bytes and returns a <see cref="short"/>. 
         /// <para/>
         /// LUCENENET NOTE: Important - always cast to ushort (System.UInt16) before using to ensure
         /// the value is positive!
         /// <para/>
         /// NOTE: this was readShort() in Lucene
         /// </summary>
-        /// <seealso cref= DataOutput#writeByte(byte) </seealso>
+        /// <seealso cref="DataOutput.WriteInt16(short)"/>
         public virtual short ReadInt16()
         {
             return (short)(ushort)(((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF));
         }
 
         /// <summary>
-        /// Reads four bytes and returns an int. 
+        /// Reads four bytes and returns an <see cref="int"/>. 
         /// <para/>
         /// NOTE: this was readInt() in Lucene
         /// </summary>
-        /// <seealso cref= DataOutput#writeInt(int) </seealso>
+        /// <seealso cref="DataOutput.WriteInt32(int)"/>
         public virtual int ReadInt32()
         {
-            return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16) | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
+            return ((ReadByte() & 0xFF) << 24) | ((ReadByte() & 0xFF) << 16) 
+                | ((ReadByte() & 0xFF) << 8) | (ReadByte() & 0xFF);
         }
 
         /// <summary>
-        /// Reads an int stored in variable-length format.  Reads between one and
+        /// Reads an <see cref="int"/> stored in variable-length format.  Reads between one and
         /// five bytes.  Smaller values take fewer bytes.  Negative numbers are not
         /// supported.
         /// <para/>
-        /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>.
+        /// The format is described further in <see cref="DataOutput.WriteVInt32(int)"/>.
         /// <para/>
         /// NOTE: this was readVInt() in Lucene
         /// </summary>
-        /// <seealso cref= DataOutput#writeVInt(int) </seealso>
+        /// <seealso cref="DataOutput.WriteVInt32(int)"/>
         public virtual int ReadVInt32()
         {
-            // .NET Port: Going back to original code instead of Java code below due to sbyte/byte diff
-            /*byte b = ReadByte();
-            int i = b & 0x7F;
-            for (int shift = 7; (b & 0x80) != 0; shift += 7)
-            {
-                b = ReadByte();
-                i |= (b & 0x7F) << shift;
-            }
-            return i;*/
-
             byte b = ReadByte();
             if ((sbyte)b >= 0)
             {
@@ -156,45 +149,43 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new System.IO.IOException("Invalid vInt32 detected (too many bits)");
+            throw new IOException("Invalid VInt32 detected (too many bits)");
         }
 
         /// <summary>
-        /// Reads eight bytes and returns a long. 
+        /// Reads eight bytes and returns a <see cref="long"/>. 
         /// <para/>
         /// NOTE: this was readLong() in Lucene
         /// </summary>
-        /// <seealso cref= DataOutput#writeLong(long) </seealso>
+        /// <seealso cref="DataOutput.WriteInt64(long)"/>
         public virtual long ReadInt64()
         {
-            long halfA = ((long)ReadInt32()) << 32;
-            long halfB = (ReadInt32() & 0xFFFFFFFFL);
-            long ret = halfA | halfB;
-            return ret;
+            return (((long)ReadInt32()) << 32) | (ReadInt32() & 0xFFFFFFFFL);
         }
 
         /// <summary>
-        /// Reads a long stored in variable-length format.  Reads between one and
+        /// Reads a <see cref="long"/> stored in variable-length format.  Reads between one and
         /// nine bytes.  Smaller values take fewer bytes.  Negative numbers are not
         /// supported.
         /// <para/>
-        /// The format is described further in <seealso cref="DataOutput#writeVInt(int)"/>.
+        /// The format is described further in <seealso cref="DataOutput.WriteVInt32(int)"/>.
         /// <para/>
         /// NOTE: this was readVLong() in Lucene
         /// </summary>
-        /// <seealso cref= DataOutput#writeVLong(long) </seealso>
+        /// <seealso cref="DataOutput.WriteVInt64(long)"/>
         public virtual long ReadVInt64()
         {
-            // .NET Port: going back to old style code
-            /*byte b = ReadByte();
+            /* This is the original code of this method,
+             * but a Hotspot bug (see LUCENE-2975) corrupts the for-loop if
+             * readByte() is inlined. So the loop was unwinded!
+            byte b = readByte();
             long i = b & 0x7F;
-            for (int shift = 7; (b & 0x80) != 0; shift += 7)
-            {
-                b = ReadByte();
-                i |= (b & 0x7FL) << shift;
+            for (int shift = 7; (b & 0x80) != 0; shift += 7) {
+              b = readByte();
+              i |= (b & 0x7FL) << shift;
             }
-            return i;*/
-
+            return i;
+            */
             byte b = ReadByte();
             if ((sbyte)b >= 0)
             {
@@ -249,16 +240,16 @@ namespace Lucene.Net.Store
             {
                 return i;
             }
-            throw new System.IO.IOException("Invalid vLong detected (negative values disallowed)");
+            throw new IOException("Invalid VInt64 detected (negative values disallowed)");
         }
 
         /// <summary>
-        /// Reads a string. </summary>
-        /// <seealso cref= DataOutput#writeString(String) </seealso>
+        /// Reads a <see cref="string"/>. </summary>
+        /// <seealso cref="DataOutput.WriteString(string)"/>
         public virtual string ReadString()
         {
-            var length = ReadVInt32();
-            var bytes = new byte[length];
+            int length = ReadVInt32();
+            byte[] bytes = new byte[length];
             ReadBytes(bytes, 0, length);
 
             return Encoding.UTF8.GetString(bytes);
@@ -267,30 +258,21 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Returns a clone of this stream.
         ///
-        /// <p>Clones of a stream access the same data, and are positioned at the same
+        /// <para/>Clones of a stream access the same data, and are positioned at the same
         /// point as the stream they were cloned from.
         ///
-        /// <p>Expert: Subclasses must ensure that clones may be positioned at
+        /// <para/>Expert: Subclasses must ensure that clones may be positioned at
         /// different points in the input from each other and from the stream they
         /// were cloned from.
         /// </summary>
         public virtual object Clone()
         {
-            DataInput clone = null;
-            try
-            {
-                clone = (DataInput)base.MemberwiseClone();
-            }
-            catch (Exception)
-            {
-            }
-
-            return clone;
+            return base.MemberwiseClone();
         }
 
         /// <summary>
-        /// Reads a Map&lt;String,String&gt; previously written
-        ///  with <seealso cref="DataOutput#writeStringStringMap(Map)"/>.
+        /// Reads a IDictionary&lt;string,string&gt; previously written
+        ///  with <see cref="DataOutput.WriteStringStringMap(IDictionary{string, string})"/>.
         /// </summary>
         public virtual IDictionary<string, string> ReadStringStringMap()
         {
@@ -307,8 +289,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads a Set&lt;String&gt; previously written
-        ///  with <seealso cref="DataOutput#writeStringSet(Set)"/>.
+        /// Reads a ISet&lt;string&gt; previously written
+        /// with <see cref="DataOutput.WriteStringSet(ISet{string})"/>.
         /// </summary>
         public virtual ISet<string> ReadStringSet()
         {
@@ -323,16 +305,16 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Skip over <code>numBytes</code> bytes. The contract on this method is that it
+        /// Skip over <paramref name="numBytes"/> bytes. The contract on this method is that it
         /// should have the same behavior as reading the same number of bytes into a
-        /// buffer and discarding its content. Negative values of <code>numBytes</code>
+        /// buffer and discarding its content. Negative values of <paramref name="numBytes"/>
         /// are not supported.
         /// </summary>
         public virtual void SkipBytes(long numBytes)
         {
             if (numBytes < 0)
             {
-                throw new System.ArgumentException("numBytes must be >= 0, got " + numBytes);
+                throw new ArgumentException("numBytes must be >= 0, got " + numBytes);
             }
             if (skipBuffer == null)
             {

@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 
 namespace Lucene.Net.Store
@@ -24,15 +25,15 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Base IndexInput implementation that uses an array
-    /// of ByteBuffers to represent a file.
-    /// <p>
-    /// Because Java's ByteBuffer uses an int to address the
+    /// Base <see cref="IndexInput"/> implementation that uses an array
+    /// of <see cref="ByteBuffer"/>s to represent a file.
+    /// <para/>
+    /// Because Java's <see cref="ByteBuffer"/> uses an <see cref="int"/> to address the
     /// values, it's necessary to access a file greater
     /// <see cref="int.MaxValue"/> in size using multiple byte buffers.
-    /// <p>
+    /// <para/>
     /// For efficiency, this class requires that the buffers
-    /// are a power-of-two (<code>chunkSizePower</code>).
+    /// are a power-of-two (<c>chunkSizePower</c>).
     /// </summary>
     public abstract class ByteBufferIndexInput : IndexInput
     {
@@ -65,7 +66,7 @@ namespace Lucene.Net.Store
         internal ByteBufferIndexInput(string resourceDescription, ByteBuffer[] buffers, long length, int chunkSizePower, bool trackClones)
             : base(resourceDescription)
         {
-            //this.buffers = buffers;
+            //this.buffers = buffers; // LUCENENET: this is set in SetBuffers()
             this.length = length;
             this.chunkSizePower = chunkSizePower;
             this.chunkSizeMask = (1L << chunkSizePower) - 1L;
@@ -104,14 +105,14 @@ namespace Lucene.Net.Store
                     curBufIndex++;
                     if (curBufIndex >= buffers.Length)
                     {
-                        throw new System.IO.EndOfStreamException("read past EOF: " + this);
+                        throw new EndOfStreamException("read past EOF: " + this);
                     }
                     curBuf = buffers[curBufIndex];
                     curBuf.Position = 0;
                 } while (!curBuf.HasRemaining);
                 return curBuf.Get();
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
             }
@@ -134,7 +135,7 @@ namespace Lucene.Net.Store
                     curBufIndex++;
                     if (curBufIndex >= buffers.Length)
                     {
-                        throw new System.IO.EndOfStreamException("read past EOF: " + this);
+                        throw new EndOfStreamException("read past EOF: " + this);
                     }
                     curBuf = buffers[curBufIndex];
                     curBuf.Position = 0;
@@ -142,7 +143,7 @@ namespace Lucene.Net.Store
                 }
                 curBuf.Get(b, offset, len);
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
             }
@@ -161,7 +162,7 @@ namespace Lucene.Net.Store
             {
                 return base.ReadInt16();
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
             }
@@ -180,7 +181,7 @@ namespace Lucene.Net.Store
             {
                 return base.ReadInt32();
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
             }
@@ -199,7 +200,7 @@ namespace Lucene.Net.Store
             {
                 return base.ReadInt64();
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
             }
@@ -211,7 +212,7 @@ namespace Lucene.Net.Store
             {
                 return (((long)curBufIndex) << chunkSizePower) + curBuf.Position - offset;
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
             }
@@ -222,7 +223,7 @@ namespace Lucene.Net.Store
             // necessary in case offset != 0 and pos < 0, but pos >= -offset
             if (pos < 0L)
             {
-                throw new System.ArgumentException("Seeking to negative position: " + this);
+                throw new ArgumentException("Seeking to negative position: " + this);
             }
             pos += offset;
             // we use >> here to preserve negative, so we will catch AIOOBE,
@@ -236,15 +237,15 @@ namespace Lucene.Net.Store
                 this.curBufIndex = bi;
                 this.curBuf = b;
             }
-            catch (System.IndexOutOfRangeException)
+            catch (IndexOutOfRangeException)
             {
-                throw new System.IO.EndOfStreamException("seek past EOF: " + this);
+                throw new EndOfStreamException("seek past EOF: " + this);
             }
-            catch (System.ArgumentException)
+            catch (ArgumentException)
             {
-                throw new System.IO.EndOfStreamException("seek past EOF: " + this);
+                throw new EndOfStreamException("seek past EOF: " + this);
             }
-            catch (System.NullReferenceException)
+            catch (NullReferenceException)
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
             }
@@ -262,7 +263,7 @@ namespace Lucene.Net.Store
             {
                 clone.Seek(GetFilePointer());
             }
-            catch (System.IO.IOException ioe)
+            catch (IOException ioe)
             {
                 throw new Exception("Should never happen: " + this, ioe);
             }
@@ -285,7 +286,7 @@ namespace Lucene.Net.Store
             {
                 clone.Seek(0L);
             }
-            catch (System.IO.IOException ioe)
+            catch (IOException ioe)
             {
                 throw new Exception("Should never happen: " + this, ioe);
             }
@@ -301,7 +302,7 @@ namespace Lucene.Net.Store
             }
             if (offset < 0 || length < 0 || offset + length > this.length)
             {
-                throw new System.ArgumentException("slice() " + sliceDescription + " out of bounds: offset=" + offset + ",length=" + length + ",fileLength=" + this.length + ": " + this);
+                throw new ArgumentException("slice() " + sliceDescription + " out of bounds: offset=" + offset + ",length=" + length + ",fileLength=" + this.length + ": " + this);
             }
 
             // include our own offset into the final offset:
@@ -326,8 +327,8 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns a sliced view from a set of already-existing buffers:
-        ///  the last buffer's limit() will be correct, but
-        ///  you must deal with offset separately (the first buffer will not be adjusted)
+        /// the last buffer's <see cref="Support.Buffer.Limit"/> will be correct, but
+        /// you must deal with <paramref name="offset"/> separately (the first buffer will not be adjusted)
         /// </summary>
         private ByteBuffer[] BuildSlice(ByteBuffer[] buffers, long offset, long length)
         {

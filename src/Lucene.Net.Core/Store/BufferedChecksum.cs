@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 
 namespace Lucene.Net.Store
 {
@@ -21,7 +20,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Wraps another <seealso cref="Checksum"/> with an internal buffer
+    /// Wraps another <see cref="IChecksum"/> with an internal buffer
     /// to speed up checksum calculations.
     /// </summary>
     public class BufferedChecksum : IChecksum
@@ -35,14 +34,14 @@ namespace Lucene.Net.Store
         public const int DEFAULT_BUFFERSIZE = 256;
 
         /// <summary>
-        /// Create a new BufferedChecksum with <seealso cref="#DEFAULT_BUFFERSIZE"/> </summary>
+        /// Create a new <see cref="BufferedChecksum"/> with <see cref="DEFAULT_BUFFERSIZE"/> </summary>
         public BufferedChecksum(IChecksum @in)
             : this(@in, DEFAULT_BUFFERSIZE)
         {
         }
 
         /// <summary>
-        /// Create a new BufferedChecksum with the specified bufferSize </summary>
+        /// Create a new <see cref="BufferedChecksum"/> with the specified <paramref name="bufferSize"/> </summary>
         public BufferedChecksum(IChecksum @in, int bufferSize)
         {
             this.@in = @in;
@@ -58,6 +57,7 @@ namespace Lucene.Net.Store
             buffer[upto++] = (byte)b;
         }
 
+        // LUCENENET specific overload for updating a whole byte[] array
         public virtual void Update(byte[] b)
         {
             Update(b, 0, b.Length);
@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public long Value
+        public virtual long Value
         {
             get
             {
@@ -90,7 +90,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public void Reset()
+        public virtual void Reset()
         {
             upto = 0;
             @in.Reset();

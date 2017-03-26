@@ -20,15 +20,15 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Extension of IndexInput, computing checksum as it goes.
-    /// Callers can retrieve the checksum via <seealso cref="#getChecksum()"/>.
+    /// Extension of <see cref="IndexInput"/>, computing checksum as it goes.
+    /// Callers can retrieve the checksum via <see cref="Checksum"/>.
     /// </summary>
     public abstract class ChecksumIndexInput : IndexInput
     {
         /// <summary>
-        /// resourceDescription should be a non-null, opaque string
-        ///  describing this resource; it's returned from
-        ///  <seealso cref="#toString"/>.
+        /// <paramref name="resourceDescription"/> should be a non-null, opaque string
+        /// describing this resource; it's returned from
+        /// <see cref="object.ToString()"/>.
         /// </summary>
         protected ChecksumIndexInput(string resourceDescription)
             : base(resourceDescription)
@@ -40,9 +40,9 @@ namespace Lucene.Net.Store
         public abstract long Checksum { get; }
 
         /// <summary>
-        /// {@inheritDoc}
-        ///
-        /// <seealso cref="ChecksumIndexInput"/> can only seek forward and seeks are expensive
+        /// Sets current position in this file, where the next read will occur. 
+        /// <para/>
+        /// <see cref="ChecksumIndexInput"/> can only seek forward and seeks are expensive
         /// since they imply to read bytes in-between the current position and the
         /// target position in order to update the checksum.
         /// </summary>
