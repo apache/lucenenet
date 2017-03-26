@@ -597,13 +597,14 @@ namespace Lucene.Net.Analysis
             // add memory barriers (ie alter how threads
             // interact)... so this is just "best effort":
             public bool Failed;
+            public Exception firstException = null;
 
             /// <summary>
             /// <param name="outerInstance">
             /// LUCENENET specific
             /// Added to remove a call to the then-static BaseTokenStreamTestCase methods</param>
             /// </summary>
-            internal AnalysisThread(long seed, /*CountdownEvent latch,*/ Analyzer a, int iterations, int maxWordLength, 
+            internal AnalysisThread(long seed, CountdownEvent latch, Analyzer a, int iterations, int maxWordLength, 
                 bool useCharFilter, bool simple, bool offsetsAreCorrect, RandomIndexWriter iw, BaseTokenStreamTestCase outerInstance)
             {
                 this.Seed = seed;
@@ -614,7 +615,7 @@ namespace Lucene.Net.Analysis
                 this.Simple = simple;
                 this.OffsetsAreCorrect = offsetsAreCorrect;
                 this.Iw = iw;
-                this._latch = null;
+                this._latch = latch;
                 this.OuterInstance = outerInstance;
             }
 
@@ -631,8 +632,15 @@ namespace Lucene.Net.Analysis
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Exception in Thread: " + e);
-                    throw;
+                    //Console.WriteLine("Exception in Thread: " + e);
+                    //throw;
+                    // LUCENENET: Throwing an exception on another thread
+                    // is pointless, so we set it to a variable so we can read
+                    // it from our main thread (for debugging).
+                    if (firstException == null)
+                    {
+                        firstException = e;
+                    }
                 }
                 finally
                 {
@@ -674,7 +682,7 @@ namespace Lucene.Net.Analysis
                 var threads = new AnalysisThread[numThreads];
                 for (int i = 0; i < threads.Length; i++)
                 {
-                    threads[i] = new AnalysisThread(seed, /*startingGun,*/ a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw, this);
+                    threads[i] = new AnalysisThread(seed, startingGun, a, iterations, maxWordLength, useCharFilter, simple, offsetsAreCorrect, iw, this);
                 }
                 
                 foreach (AnalysisThread thread in threads)
@@ -701,8 +709,15 @@ namespace Lucene.Net.Analysis
 #endif
                 }
 
-                if (threads.Any(x => x.Failed))
-                    Fail("Thread threw exception");
+                //if (threads.Any(x => x.Failed))
+                //    Fail("Thread threw exception");
+                foreach (var t in threads)
+                {
+                    if (t.Failed)
+                    {
+                        fail("Thread threw exception: " + t.firstException.ToString());
+                    }
+                }
 
                 success = true;
             }
