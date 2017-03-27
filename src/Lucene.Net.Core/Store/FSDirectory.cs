@@ -208,7 +208,7 @@ namespace Lucene.Net.Store
                 // if the lock factory has no lockDir set, use the this directory as lockDir
                 if (dir == null)
                 {
-                    lf.LockDir = m_directory;
+                    lf.SetLockDir(m_directory);
                     lf.LockPrefix = null;
                 }
                 else if (dir.FullName.Equals(m_directory.FullName, StringComparison.Ordinal))

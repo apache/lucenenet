@@ -84,7 +84,7 @@ namespace Lucene.Net.Store
         /// <param name="lockDir"> where lock files are created. </param>
         public NativeFSLockFactory(DirectoryInfo lockDir)
         {
-            LockDir = lockDir;
+            SetLockDir(lockDir);
         }
 
         // LUCENENET: NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure

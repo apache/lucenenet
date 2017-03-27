@@ -37,16 +37,20 @@ namespace Lucene.Net.Store
         /// Subclasses can also use this property to set the directory
         /// in the constructor.
         /// </summary>
-        protected internal DirectoryInfo LockDir // LUCENENET TODO: API Make SetLockDir() (can only be set one time and should be sealed, but getter should be virtual)
+        protected internal void SetLockDir(DirectoryInfo lockDir)
         {
-            set
+            if (this.m_lockDir != null)
             {
-                if (this.m_lockDir != null)
-                {
-                    throw new InvalidOperationException("You can set the lock directory for this factory only once.");
-                }
-                this.m_lockDir = value;
+                throw new InvalidOperationException("You can set the lock directory for this factory only once.");
             }
+            this.m_lockDir = lockDir;
+        }
+
+        /// <summary>
+        /// Gets the lock directory.
+        /// </summary>
+        public DirectoryInfo LockDir
+        {
             get
             {
                 return m_lockDir;

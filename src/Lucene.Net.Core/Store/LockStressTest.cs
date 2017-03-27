@@ -93,7 +93,7 @@ namespace Lucene.Net.Store
 
             if (lockFactory is FSLockFactory)
             {
-                ((FSLockFactory)lockFactory).LockDir = lockDir;
+                ((FSLockFactory)lockFactory).SetLockDir(lockDir);
             }
 
             Console.WriteLine("Connecting to server " + addr + " and registering as client " + myID + "...");
