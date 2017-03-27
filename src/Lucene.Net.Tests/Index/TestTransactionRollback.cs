@@ -73,7 +73,7 @@ namespace Lucene.Net.Index
             IndexWriter w = new IndexWriter(Dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetIndexDeletionPolicy(new RollbackDeletionPolicy(this, id)).SetIndexCommit(last));
             IDictionary<string, string> data = new Dictionary<string, string>();
             data["index"] = "Rolled back to 1-" + id;
-            w.CommitData = data;
+            w.SetCommitData(data);
             w.Dispose();
         }
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Index
                 {
                     IDictionary<string, string> data = new Dictionary<string, string>();
                     data["index"] = "records 1-" + currentRecordId;
-                    w.CommitData = data;
+                    w.SetCommitData(data);
                     w.Commit();
                 }
             }

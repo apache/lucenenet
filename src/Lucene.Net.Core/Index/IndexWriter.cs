@@ -1368,34 +1368,31 @@ namespace Lucene.Net.Index
         /// turns out those buffered deletions don't match any
         /// documents. Also, if a merge kicked off as a result of flushing a
         /// </summary>
-        public virtual bool HasDeletions // LUCENENET TODO: API Change to method
+        public virtual bool HasDeletions()
         {
-            get
+            lock (this)
             {
-                lock (this)
+                EnsureOpen();
+                if (bufferedUpdatesStream.Any())
                 {
-                    EnsureOpen();
-                    if (bufferedUpdatesStream.Any())
-                    {
-                        return true;
-                    }
-                    if (docWriter.AnyDeletions())
-                    {
-                        return true;
-                    }
-                    if (readerPool.AnyPendingDeletes())
-                    {
-                        return true;
-                    }
-                    foreach (SegmentCommitInfo info in segmentInfos.Segments)
-                    {
-                        if (info.HasDeletions)
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
+                    return true;
                 }
+                if (docWriter.AnyDeletions())
+                {
+                    return true;
+                }
+                if (readerPool.AnyPendingDeletes())
+                {
+                    return true;
+                }
+                foreach (SegmentCommitInfo info in segmentInfos.Segments)
+                {
+                    if (info.HasDeletions)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
@@ -2492,14 +2489,11 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public virtual bool HasPendingMerges // LUCENENET TODO: API change to method (consistency with other Has methods)
+        public virtual bool HasPendingMerges()
         {
-            get
+            lock (this)
             {
-                lock (this)
-                {
-                    return pendingMerges.Count != 0;
-                }
+                return pendingMerges.Count != 0;
             }
         }
 
@@ -3678,21 +3672,21 @@ namespace Lucene.Net.Index
         /// <b>NOTE:</b> the dictionary is cloned internally, therefore altering the dictionary's
         /// contents after calling this method has no effect.
         /// </summary>
+        public void SetCommitData(IDictionary<string, string> commitUserData)
+        {
+            lock (this)
+            {
+                segmentInfos.UserData = new Dictionary<string, string>(commitUserData);
+                ++changeCount;
+            }
+        }
 
         /// <summary>
         /// Returns the commit user data map that was last committed, or the one that
         /// was set on <see cref="SetCommitData(IDictionary{string, string})"/>.
         /// </summary>
-        public IDictionary<string, string> CommitData // LUCENENET TODO: API change back to SetCommitData(IDictionary<string, string> commitUserData) - has side effect
+        public IDictionary<string, string> CommitData
         {
-            set
-            {
-                lock (this)
-                {
-                    segmentInfos.UserData = new Dictionary<string, string>(value);
-                    ++changeCount;
-                }
-            }
             get
             {
                 lock (this)
@@ -3752,9 +3746,9 @@ namespace Lucene.Net.Index
         /// merged finished, this method may return <c>true</c> right
         /// after you had just called <see cref="Commit()"/>.
         /// </summary>
-        public bool HasUncommittedChanges // LUCENENET TODO: API Change to method
+        public bool HasUncommittedChanges()
         {
-            get { return changeCount != lastCommitChangeCount || docWriter.AnyChanges() || bufferedUpdatesStream.Any(); }
+            return changeCount != lastCommitChangeCount || docWriter.AnyChanges() || bufferedUpdatesStream.Any();
         }
 
         private void CommitInternal()

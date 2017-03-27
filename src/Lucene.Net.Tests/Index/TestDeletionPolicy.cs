@@ -273,7 +273,7 @@ namespace Lucene.Net.Index
             ExpirationTimeDeletionPolicy policy = (ExpirationTimeDeletionPolicy)writer.Config.IndexDeletionPolicy;
             IDictionary<string, string> commitData = new Dictionary<string, string>();
             commitData["commitTime"] = Convert.ToString(Environment.TickCount);
-            writer.CommitData = commitData;
+            writer.SetCommitData(commitData);
             writer.Commit();
             writer.Dispose();
 
@@ -295,7 +295,7 @@ namespace Lucene.Net.Index
                 }
                 commitData = new Dictionary<string, string>();
                 commitData["commitTime"] = Convert.ToString(Environment.TickCount);
-                writer.CommitData = commitData;
+                writer.SetCommitData(commitData);
                 writer.Commit();
                 writer.Dispose();
 

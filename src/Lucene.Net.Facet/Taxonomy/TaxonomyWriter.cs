@@ -114,13 +114,19 @@ namespace Lucene.Net.Facet.Taxonomy
 
         /// <summary>
         /// Sets the commit user data map. That method is considered a transaction and
-        /// will be <see cref="Index.IndexWriter.Commit">committed</see> even if no other changes were made to
+        /// will be committed (<see cref="Index.IndexWriter.Commit"/>) even if no other changes were made to
         /// the writer instance.
         /// <para>
         /// <b>NOTE:</b> the map is cloned internally, therefore altering the map's
         /// contents after calling this method has no effect.
         /// </para>
         /// </summary>
-        IDictionary<string, string> CommitData { set; get; }
+        void SetCommitData(IDictionary<string, string> commitUserData);
+
+        /// <summary>
+        /// Returns the commit user data map that was set on
+        /// <see cref="SetCommitData(IDictionary{string, string})"/>.
+        /// </summary>
+        IDictionary<string, string> CommitData { get; }
     }
 }

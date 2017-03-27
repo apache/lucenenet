@@ -707,7 +707,7 @@ namespace Lucene.Net.Index
                 writer.AddDocument(doc);
                 IDictionary<string, string> data = new Dictionary<string, string>();
                 data["index"] = i + "";
-                writer.CommitData = data;
+                writer.SetCommitData(data);
                 writer.Commit();
             }
             for (int i = 0; i < 4; i++)
@@ -715,7 +715,7 @@ namespace Lucene.Net.Index
                 writer.DeleteDocuments(new Term("id", "" + i));
                 IDictionary<string, string> data = new Dictionary<string, string>();
                 data["index"] = (4 + i) + "";
-                writer.CommitData = data;
+                writer.SetCommitData(data);
                 writer.Commit();
             }
             writer.Dispose();

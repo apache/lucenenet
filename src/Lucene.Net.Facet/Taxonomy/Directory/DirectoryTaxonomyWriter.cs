@@ -678,7 +678,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 indexWriter.CommitData.TryGetValue(INDEX_EPOCH, out epochStr);
                 if (epochStr == null || Convert.ToInt64(epochStr, 16) != indexEpoch)
                 {
-                    indexWriter.CommitData = CombinedCommitData(indexWriter.CommitData);
+                    indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
                 }
                 indexWriter.Commit();
             }
@@ -698,12 +698,13 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             return m;
         }
 
+        public virtual void SetCommitData(IDictionary<string, string> commitUserData)
+        {
+            indexWriter.SetCommitData(CombinedCommitData(commitUserData));
+        }
+
         public virtual IDictionary<string, string> CommitData
         {
-            set
-            {
-                indexWriter.CommitData = CombinedCommitData(value);
-            }
             get
             {
                 return CombinedCommitData(indexWriter.CommitData);
@@ -726,7 +727,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     || epochStr == null 
                     || Convert.ToInt64(epochStr, 16) != indexEpoch)
                 {
-                    indexWriter.CommitData = CombinedCommitData(indexWriter.CommitData);
+                    indexWriter.SetCommitData(CombinedCommitData(indexWriter.CommitData));
                 }
                 indexWriter.PrepareCommit();
             }

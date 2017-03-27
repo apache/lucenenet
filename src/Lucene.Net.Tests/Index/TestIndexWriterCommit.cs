@@ -499,13 +499,13 @@ namespace Lucene.Net.Index
             // commit to "first"
             IDictionary<string, string> commitData = new Dictionary<string, string>();
             commitData["tag"] = "first";
-            w.CommitData = commitData;
+            w.SetCommitData(commitData);
             w.Commit();
 
             // commit to "second"
             w.AddDocument(doc);
             commitData["tag"] = "second";
-            w.CommitData = commitData;
+            w.SetCommitData(commitData);
             w.Dispose();
 
             // open "first" with IndexWriter
@@ -528,7 +528,7 @@ namespace Lucene.Net.Index
             // commit IndexWriter to "third"
             w.AddDocument(doc);
             commitData["tag"] = "third";
-            w.CommitData = commitData;
+            w.SetCommitData(commitData);
             w.Dispose();
 
             // make sure "second" commit is still there
@@ -729,7 +729,7 @@ namespace Lucene.Net.Index
             }
             IDictionary<string, string> data = new Dictionary<string, string>();
             data["label"] = "test1";
-            w.CommitData = data;
+            w.SetCommitData(data);
             w.Dispose();
 
             r = DirectoryReader.Open(dir);

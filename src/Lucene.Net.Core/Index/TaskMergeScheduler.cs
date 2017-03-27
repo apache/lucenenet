@@ -246,7 +246,7 @@ namespace Lucene.Net.Index
                 while (true)
                 {
                     long startStallTime = 0;
-                    while (writer.HasPendingMerges && MergeThreadCount >= MaxMergeCount)
+                    while (writer.HasPendingMerges() && MergeThreadCount >= MaxMergeCount)
                     {
                         // this means merging has fallen too far behind: we
                         // have already created maxMergeCount threads, and

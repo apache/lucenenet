@@ -105,7 +105,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             taxoWriter.AddCategory(new FacetLabel("b"));
             IDictionary<string, string> userCommitData = new Dictionary<string, string>();
             userCommitData["testing"] = "1 2 3";
-            taxoWriter.CommitData = userCommitData;
+            taxoWriter.SetCommitData(userCommitData);
             taxoWriter.Dispose();
             var r = DirectoryReader.Open(dir);
             Assert.AreEqual(3, r.NumDocs, "2 categories plus root should have been committed to the underlying directory");
@@ -121,10 +121,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             taxoWriter.AddCategory(new FacetLabel("c")); // add a category so that commit will happen
 
 
-            taxoWriter.CommitData = new Dictionary<string, string>()
+            taxoWriter.SetCommitData(new Dictionary<string, string>()
 		    {
 			    {"just", "data"}
-		    };
+		    });
             taxoWriter.Commit();
 
             // verify taxoWriter.getCommitData()
@@ -195,10 +195,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         private void TouchTaxo(DirectoryTaxonomyWriter taxoWriter, FacetLabel cp)
         {
             taxoWriter.AddCategory(cp);
-            taxoWriter.CommitData = new Dictionary<string, string>()
-		{
-			{"just", "data"}
-		};
+            taxoWriter.SetCommitData(new Dictionary<string, string>()
+		    {
+			    {"just", "data"}
+		    });
             taxoWriter.Commit();
         }
 
