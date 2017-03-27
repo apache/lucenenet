@@ -22,18 +22,19 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Directory implementation that delegates calls to another directory.
-    ///  this class can be used to add limitations on top of an existing
-    ///  <seealso cref="Directory"/> implementation such as
-    ///  <seealso cref="RateLimitedDirectoryWrapper rate limiting"/> or to add additional
-    ///  sanity checks for tests. However, if you plan to write your own
-    ///  <seealso cref="Directory"/> implementation, you should consider extending directly
-    ///  <seealso cref="Directory"/> or <seealso cref="BaseDirectory"/> rather than try to reuse
-    ///  functionality of existing <seealso cref="Directory"/>s by extending this class.
-    ///  @lucene.internal
+    /// This class can be used to add limitations on top of an existing
+    /// <see cref="Directory"/> implementation such as
+    /// rate limiting (<see cref="RateLimitedDirectoryWrapper"/>) or to add additional
+    /// sanity checks for tests. However, if you plan to write your own
+    /// <see cref="Directory"/> implementation, you should consider extending directly
+    /// <see cref="Directory"/> or <see cref="BaseDirectory"/> rather than try to reuse
+    /// functionality of existing <see cref="Directory"/>s by extending this class.
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
     public class FilterDirectory : Directory
     {
-        protected internal readonly Directory m_input;
+        protected readonly Directory m_input;
 
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>
@@ -43,7 +44,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Return the wrapped <seealso cref="Directory"/>. </summary>
+        /// Return the wrapped <see cref="Directory"/>. </summary>
         public Directory Delegate
         {
             get
@@ -108,17 +109,17 @@ namespace Lucene.Net.Store
             m_input.SetLockFactory(lockFactory);
         }
 
+        public override string GetLockID()
+        {
+            return m_input.GetLockID();
+        }
+
         public override LockFactory LockFactory
         {
             get
             {
                 return m_input.LockFactory;
             }
-        }
-
-        public override string GetLockID()
-        {
-            return m_input.GetLockID();
         }
 
         public override string ToString()

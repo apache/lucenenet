@@ -20,14 +20,14 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Abstract base class for output to a file in a Directory.  A random-access
+    /// Abstract base class for output to a file in a <see cref="Directory"/>.  A random-access
     /// output stream.  Used for all Lucene index output operations.
     ///
-    /// <p>{@code IndexOutput} may only be used from one thread, because it is not
+    /// <para/><see cref="IndexOutput"/> may only be used from one thread, because it is not
     /// thread safe (it keeps internal state like file position).
     /// </summary>
-    /// <seealso cref= Directory </seealso>
-    /// <seealso cref= IndexInput </seealso>
+    /// <seealso cref="Directory"/>
+    /// <seealso cref="IndexInput"/>
     public abstract class IndexOutput : DataOutput, IDisposable
     {
         /// <summary>
@@ -41,13 +41,12 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Returns the current position in this file, where the next write will
         /// occur. </summary>
-        /// <seealso cref= #seek(long) </seealso>
+        /// <seealso cref="Seek(long)"/>
         public abstract long GetFilePointer();
 
         /// <summary>
         /// Sets current position in this file, where the next write will occur. </summary>
-        /// <seealso cref= #getFilePointer() </seealso>
-        /// @deprecated (4.1) this method will be removed in Lucene 5.0
+        /// <seealso cref="GetFilePointer()"/>
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]
         public abstract void Seek(long pos);
 
@@ -56,23 +55,14 @@ namespace Lucene.Net.Store
         public abstract long Checksum { get; }
 
         /// <summary>
-        /// The number of bytes in the file. </summary>
-        //public abstract long Length();
-
-        /// <summary>
-        /// Set the file length. By default, this method does
-        /// nothing (it's optional for a Directory to implement
-        /// it).  But, certain Directory implementations (for </summary>
+        /// Gets or Sets the file length. By default, this property's setter does
+        /// nothing (it's optional for a <see cref="Directory"/> to implement
+        /// it).  But, certain <see cref="Directory"/> implementations (for 
         /// example <see cref="FSDirectory"/>) can use this to inform the
         /// underlying IO system to pre-allocate the file to the
         /// specified size.  If the length is longer than the
         /// current file length, the bytes added to the file are
-        /// undefined.  Otherwise the file is truncated.
-        /// <param name="length"> file length </param>
-        public virtual long Length
-        {
-            get;
-            set;
-        }
+        /// undefined.  Otherwise the file is truncated.</summary>
+        public virtual long Length { get; set; }
     }
 }

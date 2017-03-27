@@ -27,92 +27,71 @@ namespace Lucene.Net.Store
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
-    /// Base class for Directory implementations that store index
+    /// Base class for <see cref="Directory"/> implementations that store index
     /// files in the file system.
-    /// <a name="subclasses"/>
+    /// <para/>
     /// There are currently three core
     /// subclasses:
     ///
-    /// <ul>
+    /// <list type="bullet">
     ///
-    ///  <li> <seealso cref="SimpleFSDirectory"/> is a straightforward
-    ///       implementation using java.io.RandomAccessFile.
-    ///       However, it has poor concurrent performance
-    ///       (multiple threads will bottleneck) as it
-    ///       synchronizes when multiple threads read from the
-    ///       same file.
+    ///     <item> <see cref="SimpleFSDirectory"/> is a straightforward
+    ///         implementation using <see cref="System.IO.FileStream"/>.
+    ///         However, it has poor concurrent performance
+    ///         (multiple threads will bottleneck) as it
+    ///         synchronizes when multiple threads read from the
+    ///         same file.</item>
     ///
-    ///  <li> <seealso cref="NIOFSDirectory"/> uses java.nio's
-    ///       FileChannel's positional io when reading to avoid
-    ///       synchronization when reading from the same file.
-    ///       Unfortunately, due to a Windows-only <a
-    ///       href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">Sun
-    ///       JRE bug</a> this is a poor choice for Windows, but
-    ///       on all other platforms this is the preferred
-    ///       choice. Applications using <seealso cref="Thread#interrupt()"/> or
-    ///       <seealso cref="Future#cancel(boolean)"/> should use
-    ///       <seealso cref="SimpleFSDirectory"/> instead. See <seealso cref="NIOFSDirectory"/> java doc
-    ///       for details.
+    ///     <item> <see cref="NIOFSDirectory"/> uses java.nio's
+    ///         FileChannel's positional io when reading to avoid
+    ///         synchronization when reading from the same file.
+    ///         Unfortunately, due to a Windows-only <a
+    ///         href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">Sun
+    ///         JRE bug</a> this is a poor choice for Windows, but
+    ///         on all other platforms this is the preferred
+    ///         choice. Applications using <see cref="System.Threading.Thread.Interrupt()"/> or
+    ///         <see cref="System.Threading.Tasks.Task{TResult}"/> should use
+    ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="NIOFSDirectory"/> java doc
+    ///         for details.</item>
     ///
-    ///
-    ///
-    ///  <li> <seealso cref="MMapDirectory"/> uses memory-mapped IO when
-    ///       reading. this is a good choice if you have plenty
-    ///       of virtual memory relative to your index size, eg
-    ///       if you are running on a 64 bit JRE, or you are
-    ///       running on a 32 bit JRE but your index sizes are
-    ///       small enough to fit into the virtual memory space.
-    ///       Java has currently the limitation of not being able to
-    ///       unmap files from user code. The files are unmapped, when GC
-    ///       releases the byte buffers. Due to
-    ///       <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038">
-    ///       this bug</a> in Sun's JRE, MMapDirectory's <seealso cref="IndexInput#close"/>
-    ///       is unable to close the underlying OS file handle. Only when
-    ///       GC finally collects the underlying objects, which could be
-    ///       quite some time later, will the file handle be closed.
-    ///       this will consume additional transient disk usage: on Windows,
-    ///       attempts to delete or overwrite the files will result in an
-    ///       exception; on other platforms, which typically have a &quot;delete on
-    ///       last close&quot; semantics, while such operations will succeed, the bytes
-    ///       are still consuming space on disk.  For many applications this
-    ///       limitation is not a problem (e.g. if you have plenty of disk space,
-    ///       and you don't rely on overwriting files on Windows) but it's still
-    ///       an important limitation to be aware of. this class supplies a
-    ///       (possibly dangerous) workaround mentioned in the bug report,
-    ///       which may fail on non-Sun JVMs.
-    ///
-    ///       Applications using <seealso cref="Thread#interrupt()"/> or
-    ///       <seealso cref="Future#cancel(boolean)"/> should use
-    ///       <seealso cref="SimpleFSDirectory"/> instead. See <seealso cref="MMapDirectory"/>
-    ///       java doc for details.
-    /// </ul>
+    ///     <item> <see cref="MMapDirectory"/> uses memory-mapped IO when
+    ///         reading. This is a good choice if you have plenty
+    ///         of virtual memory relative to your index size, eg
+    ///         if you are running on a 64 bit runtime, or you are
+    ///         running on a 32 bit runtime but your index sizes are
+    ///         small enough to fit into the virtual memory space.
+    ///         <para/>
+    ///         Applications using <see cref="System.Threading.Thread.Interrupt()"/> or
+    ///         <see cref="System.Threading.Tasks.Task"/> should use
+    ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="MMapDirectory"/>
+    ///         doc for details.</item>
+    /// </list>
     ///
     /// Unfortunately, because of system peculiarities, there is
     /// no single overall best implementation.  Therefore, we've
-    /// added the <seealso cref="#open"/> method, to allow Lucene to choose
-    /// the best FSDirectory implementation given your
+    /// added the <see cref="Open(string)"/> method  (or one of its overloads), to allow Lucene to choose
+    /// the best <see cref="FSDirectory"/> implementation given your
     /// environment, and the known limitations of each
     /// implementation.  For users who have no reason to prefer a
-    /// specific implementation, it's best to simply use {@link
-    /// #open}.  For all others, you should instantiate the
+    /// specific implementation, it's best to simply use 
+    /// <see cref="Open(string)"/>  (or one of its overloads).  For all others, you should instantiate the
     /// desired implementation directly.
     ///
-    /// <p>The locking implementation is by default {@link
-    /// NativeFSLockFactory}, but can be changed by
-    /// passing in a custom <seealso cref="LockFactory"/> instance.
+    /// <para/>The locking implementation is by default 
+    /// <see cref="NativeFSLockFactory"/>, but can be changed by
+    /// passing in a custom <see cref="LockFactory"/> instance.
     /// </summary>
-    /// <seealso cref= Directory </seealso>
+    /// <seealso cref="Directory"/>
     public abstract class FSDirectory : BaseDirectory
     {
         /// <summary>
-        /// Default read chunk size: 8192 bytes (this is the size up to which the JDK
-        ///   does not allocate additional arrays while reading/writing) </summary>
-        ///   @deprecated this constant is no longer used since Lucene 4.5.
+        /// Default read chunk size: 8192 bytes (this is the size up to which the runtime
+        /// does not allocate additional arrays while reading/writing) </summary>
         [Obsolete("this constant is no longer used since Lucene 4.5.")]
         public const int DEFAULT_READ_CHUNK_SIZE = 8192;
 
-        protected internal readonly DirectoryInfo m_directory; // The underlying filesystem directory
-        protected internal readonly ISet<string> m_staleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
+        protected readonly DirectoryInfo m_directory; // The underlying filesystem directory
+        protected readonly ISet<string> m_staleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
 #pragma warning disable 612, 618
         private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
 #pragma warning restore 612, 618
@@ -123,11 +102,11 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Create a new FSDirectory for the named location (ctor for subclasses). </summary>
+        /// Create a new <see cref="FSDirectory"/> for the named location (ctor for subclasses). </summary>
         /// <param name="path"> the path of the directory </param>
         /// <param name="lockFactory"> the lock factory to use, or null for the default
         /// (<seealso cref="NativeFSLockFactory"/>); </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         protected internal FSDirectory(DirectoryInfo path, LockFactory lockFactory)
         {
             // new ctors use always NativeFSLockFactory as default:
@@ -139,33 +118,33 @@ namespace Lucene.Net.Store
 
             if (File.Exists(path.FullName))
             {
-                throw new NoSuchDirectoryException("file '" + path.FullName + "' exists but is not a directory"); //should be NoSuchDirectoryException
+                throw new NoSuchDirectoryException("file '" + path.FullName + "' exists but is not a directory");
             }
 
             SetLockFactory(lockFactory);
         }
 
         /// <summary>
-        /// Creates an FSDirectory instance, trying to pick the
-        ///  best implementation given the current environment.
-        ///  The directory returned uses the <seealso cref="NativeFSLockFactory"/>.
+        /// Creates an <see cref="FSDirectory"/> instance, trying to pick the
+        /// best implementation given the current environment.
+        /// The directory returned uses the <see cref="NativeFSLockFactory"/>.
         ///
-        ///  <p>Currently this returns <seealso cref="MMapDirectory"/> for most Solaris
-        ///  and Windows 64-bit JREs, <seealso cref="NIOFSDirectory"/> for other
-        ///  non-Windows JREs, and <seealso cref="SimpleFSDirectory"/> for other
-        ///  JREs on Windows. It is highly recommended that you consult the
-        ///  implementation's documentation for your platform before
-        ///  using this method.
+        /// <para/>Currently this returns <see cref="MMapDirectory"/> for most Solaris
+        /// and Windows 64-bit runtimes, <see cref="NIOFSDirectory"/> for other
+        /// non-Windows runtimes, and <see cref="SimpleFSDirectory"/> for other
+        /// runtimes on Windows. It is highly recommended that you consult the
+        /// implementation's documentation for your platform before
+        /// using this method.
         ///
-        /// <p><b>NOTE</b>: this method may suddenly change which
+        /// <para/><b>NOTE</b>: this method may suddenly change which
         /// implementation is returned from release to release, in
         /// the event that higher performance defaults become
         /// possible; if the precise implementation is important to
         /// your application, please instantiate it directly,
         /// instead. For optimal performance you should consider using
-        /// <seealso cref="MMapDirectory"/> on 64 bit JVMs.
+        /// <see cref="MMapDirectory"/> on 64 bit runtimes.
         ///
-        /// <p>See <a href="#subclasses">above</a>
+        /// <para/>See <see cref="FSDirectory"/>.
         /// </summary>
         public static FSDirectory Open(DirectoryInfo path)
         {
@@ -184,8 +163,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Just like <seealso cref="#open(File)"/>, but allows you to
-        /// also specify a custom <seealso cref="LockFactory"/>.
+        /// Just like <see cref="Open(DirectoryInfo)"/>, but allows you to
+        /// also specify a custom <see cref="LockFactory"/>.
         /// </summary>
         public static FSDirectory Open(DirectoryInfo path, LockFactory lockFactory)
         {
@@ -241,13 +220,13 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Lists all files (not subdirectories) in the
-        ///  directory.  this method never returns null (throws
-        ///  <seealso cref="System.IO.IOException"/> instead).
+        /// directory.  This method never returns <c>null</c> (throws
+        /// <seealso cref="IOException"/> instead).
         /// </summary>
-        ///  <exception cref="NoSuchDirectoryException"> if the directory
-        ///   does not exist, or does exist but is not a
-        ///   directory. </exception>
-        ///  <exception cref="System.IO.IOException"> if list() returns null  </exception>
+        /// <exception cref="NoSuchDirectoryException"> if the directory
+        /// does not exist, or does exist but is not a
+        /// directory or is invalid (for example, it is on an unmapped drive). </exception>
+        /// <exception cref="System.Security.SecurityException">The caller does not have the required permission.</exception>
         public static string[] ListAll(DirectoryInfo dir)
         {
             if (!System.IO.Directory.Exists(dir.FullName))
@@ -260,17 +239,18 @@ namespace Lucene.Net.Store
             }
 
             // Exclude subdirs
-            FileInfo[] files = dir.EnumerateFiles().ToArray(); // LUCENENET TODO: BUG Original implementation returned a recursive list of files (excluding directories)
+            FileInfo[] files = dir.EnumerateFiles().ToArray();
             string[] result = new string[files.Length];
 
             for (int i = 0; i < files.Length; i++)
             {
                 result[i] = files[i].Name;
             }
-            if (result == null)
-            {
-                throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
-            }
+            // LUCENENET NOTE: this can never happen in .NET
+            //if (result == null)
+            //{
+            //    throw new System.IO.IOException("directory '" + dir + "' exists and is a directory, but cannot be listed: list() returned null");
+            //}
 
             return result;
         }
@@ -278,7 +258,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Lists all files (not subdirectories) in the
         /// directory. </summary>
-        /// <seealso cref= #listAll(File)  </seealso>
+        /// <seealso cref="ListAll(DirectoryInfo)"/>
         public override string[] ListAll()
         {
             EnsureOpen();
@@ -322,18 +302,18 @@ namespace Lucene.Net.Store
                 file.Delete();
                 if (File.Exists(file.FullName))
                 {
-                    throw new System.IO.IOException("Cannot delete " + file);
+                    throw new IOException("Cannot delete " + file);
                 }
             }
             catch (Exception)
             {
-                throw new System.IO.IOException("Cannot delete " + file);
+                throw new IOException("Cannot delete " + file);
             }
             m_staleFiles.Remove(name);
         }
 
         /// <summary>
-        /// Creates an IndexOutput for the file with the given name. </summary>
+        /// Creates an <see cref="IndexOutput"/> for the file with the given name. </summary>
         public override IndexOutput CreateOutput(string name, IOContext context)
         {
             EnsureOpen();
@@ -352,7 +332,7 @@ namespace Lucene.Net.Store
                 }
                 catch
                 {
-                    throw new System.IO.IOException("Cannot create directory: " + m_directory);
+                    throw new IOException("Cannot create directory: " + m_directory);
                 }
             }
 
@@ -365,7 +345,7 @@ namespace Lucene.Net.Store
                 }
                 catch
                 {
-                    throw new System.IO.IOException("Cannot overwrite: " + file);
+                    throw new IOException("Cannot overwrite: " + file);
                 }
             }
         }
@@ -404,7 +384,7 @@ namespace Lucene.Net.Store
             {
                 dirName = m_directory.FullName;
             }
-            catch (System.IO.IOException e)
+            catch (IOException e)
             {
                 throw new Exception(e.ToString(), e);
             }
@@ -425,7 +405,7 @@ namespace Lucene.Net.Store
             IsOpen = false;
         }
 
-        /// <returns> the underlying filesystem directory </returns>
+        /// <summary> the underlying filesystem directory </summary>
         public virtual DirectoryInfo Directory
         {
             get
@@ -444,7 +424,6 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// this setting has no effect anymore. </summary>
-        /// @deprecated this is no longer used since Lucene 4.5.
         [Obsolete("this is no longer used since Lucene 4.5.")]
         public int ReadChunkSize
         {
@@ -460,7 +439,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Writes output with <seealso cref="RandomAccessFile#write(byte[], int, int)"/>
+        /// Writes output with <see cref="FileStream.Write(byte[], int, int)"/>
         /// </summary>
         protected class FSIndexOutput : BufferedIndexOutput
         {
@@ -510,12 +489,12 @@ namespace Lucene.Net.Store
                 // only close the file if it has not been closed yet
                 if (isOpen)
                 {
-                    System.IO.IOException priorE = null;
+                    IOException priorE = null;
                     try
                     {
                         base.Dispose();
                     }
-                    catch (System.IO.IOException ioe)
+                    catch (IOException ioe)
                     {
                         priorE = ioe;
                     }
@@ -544,10 +523,6 @@ namespace Lucene.Net.Store
             // LUCENENET NOTE: FileStream doesn't have a way to set length
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="name"></param>
         protected virtual void Fsync(string name)
         {
             IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);            

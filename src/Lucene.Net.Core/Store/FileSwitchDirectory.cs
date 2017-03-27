@@ -22,15 +22,15 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Expert: A Directory instance that switches files between
-    /// two other Directory instances.
+    /// Expert: A <see cref="Directory"/> instance that switches files between
+    /// two other <see cref="Directory"/> instances.
     ///
-    /// <p>Files with the specified extensions are placed in the
+    /// <para/>Files with the specified extensions are placed in the
     /// primary directory; others are placed in the secondary
-    /// directory.  The provided Set must not change once passed
+    /// directory.  The provided <see cref="T:ISet{string}"/> must not change once passed
     /// to this class, and must allow multiple threads to call
-    /// contains at once.</p>
-    ///
+    /// contains at once.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class FileSwitchDirectory : BaseDirectory
@@ -112,7 +112,7 @@ namespace Lucene.Net.Store
                     files.Add(f);
                 }
             }
-            catch (NoSuchDirectoryException)
+            catch (NoSuchDirectoryException e)
             {
                 // we got NoSuchDirectoryException from both dirs
                 // rethrow the first.
@@ -124,7 +124,7 @@ namespace Lucene.Net.Store
                 // and the primary is empty.
                 if (files.Count == 0)
                 {
-                    throw;
+                    throw e;
                 }
             }
             // we got NoSuchDirectoryException from the primary,

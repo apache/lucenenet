@@ -18,8 +18,8 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// <p>A FlushInfo provides information required for a FLUSH context.
-    ///  It is used as part of an <seealso cref="IOContext"/> in case of FLUSH context.</p>
+    /// <para>A FlushInfo provides information required for a FLUSH context.
+    /// It is used as part of an <see cref="IOContext"/> in case of FLUSH context.</para>
     /// </summary>
     public class FlushInfo
     {
@@ -28,13 +28,11 @@ namespace Lucene.Net.Store
         public long EstimatedSegmentSize { get; private set; }
 
         /// <summary>
-        /// <p>Creates a new <seealso cref="FlushInfo"/> instance from
-        /// the values required for a FLUSH <seealso cref="IOContext"/> context.
-        ///
+        /// <para/>Creates a new <see cref="FlushInfo"/> instance from
+        /// the values required for a FLUSH <see cref="IOContext"/> context.
+        /// <para/>
         /// These values are only estimates and are not the actual values.
-        ///
         /// </summary>
-
         public FlushInfo(int numDocs, long estimatedSegmentSize)
         {
             this.NumDocs = numDocs;

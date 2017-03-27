@@ -18,8 +18,8 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// <p>A MergeInfo provides information required for a MERGE context.
-    ///  It is used as part of an <seealso cref="IOContext"/> in case of MERGE context.</p>
+    /// <para>A MergeInfo provides information required for a MERGE context.
+    /// It is used as part of an <see cref="IOContext"/> in case of MERGE context.</para>
     /// </summary>
     public class MergeInfo
     {
@@ -32,13 +32,11 @@ namespace Lucene.Net.Store
         public int MergeMaxNumSegments { get; private set; }
 
         /// <summary>
-        /// <p>Creates a new <seealso cref="MergeInfo"/> instance from
-        /// the values required for a MERGE <seealso cref="IOContext"/> context.
-        ///
+        /// <para/>Creates a new <see cref="MergeInfo"/> instance from
+        /// the values required for a MERGE <see cref="IOContext"/> context.
+        /// <para/>
         /// These values are only estimates and are not the actual values.
-        ///
         /// </summary>
-
         public MergeInfo(int totalDocCount, long estimatedMergeBytes, bool isExternal, int mergeMaxNumSegments)
         {
             this.TotalDocCount = totalDocCount;
@@ -51,7 +49,8 @@ namespace Lucene.Net.Store
         {
             const int prime = 31;
             int result = 1;
-            result = prime * result + (int)(EstimatedMergeBytes ^ ((long)((ulong)EstimatedMergeBytes >> 32)));
+            result = prime * result 
+                + (int)(EstimatedMergeBytes ^ ((long)((ulong)EstimatedMergeBytes >> 32)));
             result = prime * result + (IsExternal ? 1231 : 1237);
             result = prime * result + MergeMaxNumSegments;
             result = prime * result + TotalDocCount;
@@ -94,7 +93,9 @@ namespace Lucene.Net.Store
 
         public override string ToString()
         {
-            return "MergeInfo [totalDocCount=" + TotalDocCount + ", estimatedMergeBytes=" + EstimatedMergeBytes + ", isExternal=" + IsExternal + ", mergeMaxNumSegments=" + MergeMaxNumSegments + "]";
+            return "MergeInfo [totalDocCount=" + TotalDocCount 
+                + ", estimatedMergeBytes=" + EstimatedMergeBytes + ", isExternal=" 
+                + IsExternal + ", mergeMaxNumSegments=" + MergeMaxNumSegments + "]";
         }
     }
 }

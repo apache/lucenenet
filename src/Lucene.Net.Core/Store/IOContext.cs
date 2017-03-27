@@ -21,17 +21,19 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// IOContext holds additional details on the merge/search context. A IOContext
+    /// <see cref="IOContext"/> holds additional details on the merge/search context. A <see cref="IOContext"/>
     /// object can never be initialized as null as passed as a parameter to either
-    /// <seealso cref="Lucene.Net.Store.Directory#openInput(String, IOContext)"/> or
-    /// <seealso cref="Lucene.Net.Store.Directory#createOutput(String, IOContext)"/>
+    /// <see cref="Directory.OpenInput(string, IOContext)"/> or
+    /// <see cref="Directory.CreateOutput(string, IOContext)"/>
     /// </summary>
     [ExceptionToClassNameConvention]
     public class IOContext
     {
         /// <summary>
-        /// Context is a enumerator which specifies the context in which the Directory
+        /// <see cref="UsageContext"/> is a enumeration which specifies the context in which the <see cref="Directory"/>
         /// is being used for.
+        /// <para/>
+        /// NOTE: This was Context in Lucene
         /// </summary>
         public enum UsageContext
         {
@@ -42,7 +44,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// An object of a enumerator Context type
+        /// A <see cref="UsageContext"/> setting
         /// </summary>
         public UsageContext Context { get; private set; }
 
@@ -101,9 +103,9 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// this constructor is used to initialize a <seealso cref="IOContext"/> instance with a new value for the readOnce variable. </summary>
-        /// <param name="ctxt"> <seealso cref="IOContext"/> object whose information is used to create the new instance except the readOnce variable. </param>
-        /// <param name="readOnce"> The new <seealso cref="IOContext"/> object will use this value for readOnce.  </param>
+        /// This constructor is used to initialize a <see cref="IOContext"/> instance with a new value for the <see cref="ReadOnce"/> property. </summary>
+        /// <param name="ctxt"> <see cref="IOContext"/> object whose information is used to create the new instance except the <see cref="ReadOnce"/> property. </param>
+        /// <param name="readOnce"> The new <see cref="IOContext"/> object will use this value for <see cref="ReadOnce"/>.  </param>
         public IOContext(IOContext ctxt, bool readOnce)
         {
             this.Context = ctxt.Context;
@@ -170,15 +172,6 @@ namespace Lucene.Net.Store
             }
             return true;
         }
-
-        //public static IEnumerable<UsageContext> ContextValues()
-        //{
-        //    // .NET port: This is to make up for enums in .NET not having a Values method.
-        //    yield return UsageContext.DEFAULT;
-        //    yield return UsageContext.FLUSH;
-        //    yield return UsageContext.MERGE;
-        //    yield return UsageContext.READ;
-        //}
 
         public override string ToString()
         {

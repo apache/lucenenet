@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A <seealso cref="DataInput"/> wrapping a plain <seealso cref="InputStream"/>.
+    /// A <see cref="DataInput"/> wrapping a plain <see cref="Stream"/>.
     /// </summary>
     public class InputStreamDataInput : DataInput, IDisposable
     {

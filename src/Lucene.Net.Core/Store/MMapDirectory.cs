@@ -26,49 +26,27 @@ namespace Lucene.Net.Store
     using Constants = Lucene.Net.Util.Constants;
 
     /// <summary>
-    /// File-based <seealso cref="Directory"/> implementation that uses
-    ///  mmap for reading, and {@link
-    ///  FSDirectory.FSIndexOutput} for writing.
+    /// File-based <see cref="Directory"/> implementation that uses
+    /// <see cref="MemoryMappedFile"/> for reading, and
+    /// <see cref="FSDirectory.FSIndexOutput"/> for writing.
     ///
-    /// <p><b>NOTE</b>: memory mapping uses up a portion of the
+    /// <para/><b>NOTE</b>: memory mapping uses up a portion of the
     /// virtual memory address space in your process equal to the
     /// size of the file being mapped.  Before using this class,
     /// be sure your have plenty of virtual address space, e.g. by
-    /// using a 64 bit JRE, or a 32 bit JRE with indexes that are
+    /// using a 64 bit runtime, or a 32 bit runtime with indexes that are
     /// guaranteed to fit within the address space.
-    /// On 32 bit platforms also consult <seealso cref="#MMapDirectory(File, LockFactory, int)"/>
+    /// On 32 bit platforms also consult <see cref="MMapDirectory(DirectoryInfo, LockFactory, int)"/>
     /// if you have problems with mmap failing because of fragmented
-    /// address space. If you get an OutOfMemoryException, it is recommended
+    /// address space. If you get an <see cref="OutOfMemoryException"/>, it is recommended
     /// to reduce the chunk size, until it works.
-    ///
-    /// <p>Due to <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4724038">
-    /// this bug</a> in Sun's JRE, MMapDirectory's <seealso cref="IndexInput#close"/>
-    /// is unable to close the underlying OS file handle.  Only when GC
-    /// finally collects the underlying objects, which could be quite
-    /// some time later, will the file handle be closed.
-    ///
-    /// <p>this will consume additional transient disk usage: on Windows,
-    /// attempts to delete or overwrite the files will result in an
-    /// exception; on other platforms, which typically have a &quot;delete on
-    /// last close&quot; semantics, while such operations will succeed, the bytes
-    /// are still consuming space on disk.  For many applications this
-    /// limitation is not a problem (e.g. if you have plenty of disk space,
-    /// and you don't rely on overwriting files on Windows) but it's still
-    /// an important limitation to be aware of.
-    ///
-    /// <p>this class supplies the workaround mentioned in the bug report
-    /// (see <seealso cref="#setUseUnmap"/>), which may fail on
-    /// non-Sun JVMs. It forcefully unmaps the buffer on close by using
-    /// an undocumented internal cleanup functionality.
-    /// <seealso cref="#UNMAP_SUPPORTED"/> is <code>true</code>, if the workaround
-    /// can be enabled (with no guarantees).
-    /// <p>
+    /// <para>
     /// <b>NOTE:</b> Accessing this class either directly or
     /// indirectly from a thread while it's interrupted can close the
     /// underlying channel immediately if at the same time the thread is
     /// blocked on IO. The channel will remain closed and subsequent access
-    /// to <seealso cref="MMapDirectory"/> will throw a <seealso cref="ClosedChannelException"/>.
-    /// </p>
+    /// to <see cref="MMapDirectory"/> will throw a <see cref="ObjectDisposedException"/>.
+    /// </para>
     /// </summary>
     public class MMapDirectory : FSDirectory
     {
@@ -76,52 +54,53 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Default max chunk size. </summary>
-        /// <seealso cref= #MMapDirectory(File, LockFactory, int) </seealso>
+        /// <seealso cref="MMapDirectory(DirectoryInfo, LockFactory, int)"/>
         public static readonly int DEFAULT_MAX_BUFF = Constants.RUNTIME_IS_64BIT ? (1 << 30) : (1 << 28);
 
         private readonly int chunkSizePower;
 
         /// <summary>
-        /// Create a new MMapDirectory for the named location.
+        /// Create a new <see cref="MMapDirectory"/> for the named location.
         /// </summary>
         /// <param name="path"> the path of the directory </param>
         /// <param name="lockFactory"> the lock factory to use, or null for the default
         /// (<seealso cref="NativeFSLockFactory"/>); </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public MMapDirectory(DirectoryInfo path, LockFactory lockFactory)
             : this(path, lockFactory, DEFAULT_MAX_BUFF)
         {
         }
 
         /// <summary>
-        /// Create a new MMapDirectory for the named location and <seealso cref="NativeFSLockFactory"/>.
+        /// Create a new <see cref="MMapDirectory"/> for the named location and <see cref="NativeFSLockFactory"/>.
         /// </summary>
         /// <param name="path"> the path of the directory </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public MMapDirectory(DirectoryInfo path)
             : this(path, null)
         {
         }
 
         /// <summary>
-        /// Create a new MMapDirectory for the named location, specifying the
+        /// Create a new <see cref="MMapDirectory"/> for the named location, specifying the
         /// maximum chunk size used for memory mapping.
         /// </summary>
         /// <param name="path"> the path of the directory </param>
-        /// <param name="lockFactory"> the lock factory to use, or null for the default
+        /// <param name="lockFactory"> the lock factory to use, or <c>null</c> for the default
         /// (<seealso cref="NativeFSLockFactory"/>); </param>
         /// <param name="maxChunkSize"> maximum chunk size (default is 1 GiBytes for
-        /// 64 bit JVMs and 256 MiBytes for 32 bit JVMs) used for memory mapping.
-        /// <p>
+        /// 64 bit runtimes and 256 MiBytes for 32 bit runtimes) used for memory mapping.
+        /// <para/>
         /// Especially on 32 bit platform, the address space can be very fragmented,
         /// so large index files cannot be mapped. Using a lower chunk size makes
         /// the directory implementation a little bit slower (as the correct chunk
         /// may be resolved on lots of seeks) but the chance is higher that mmap
-        /// does not fail. On 64 bit Java platforms, this parameter should always
-        /// be {@code 1 << 30}, as the address space is big enough.
-        /// <p>
-        /// <b>Please note:</b> The chunk size is always rounded down to a power of 2. </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// does not fail. On 64 bit platforms, this parameter should always
+        /// be <c>1 &lt;&lt; 30</c>, as the address space is big enough.
+        /// <para/>
+        /// <b>Please note:</b> The chunk size is always rounded down to a power of 2.
+        /// </param>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public MMapDirectory(DirectoryInfo path, LockFactory lockFactory, int maxChunkSize)
             : base(path, lockFactory)
         {
@@ -134,40 +113,40 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// <code>true</code>, if this platform supports unmapping mmapped files.
+        /// <c>true</c>, if this platform supports unmapping mmapped files.
         /// </summary>
         // LUCENENET NOTE: Some JREs had a bug that didn't allow them to unmap.
         // But according to MSDN, the MemoryMappedFile.Dispose() method will
         // indeed "release all resources".
         public static readonly bool UNMAP_SUPPORTED = true;
 
-        /*static MMapDirectory()
-        {
-            bool v;
-            try
-            {
-                Type.GetType("sun.misc.Cleaner");
-                Type.GetType("java.nio.DirectByteBuffer").GetMethod("cleaner");
-                v = true;
-            }
-            catch (Exception)
-            {
-                v = false;
-            }
-            UNMAP_SUPPORTED = v;
-        }*/
+        //static MMapDirectory()
+        //{
+        //    bool v;
+        //    try
+        //    {
+        //        Type.GetType("sun.misc.Cleaner");
+        //        Type.GetType("java.nio.DirectByteBuffer").GetMethod("cleaner");
+        //        v = true;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        v = false;
+        //    }
+        //    UNMAP_SUPPORTED = v;
+        //}
 
         /// <summary>
-        /// this method enables the workaround for unmapping the buffers
-        /// from address space after closing <seealso cref="IndexInput"/>, that is
-        /// mentioned in the bug report. this hack may fail on non-Sun JVMs.
+        /// This property enables the workaround for unmapping the buffers
+        /// from address space after closing <see cref="IndexInput"/>, that is
+        /// mentioned in the bug report. This hack may fail on non-Sun JVMs.
         /// It forcefully unmaps the buffer on close by using
         /// an undocumented internal cleanup functionality.
-        /// <p><b>NOTE:</b> Enabling this is completely unsupported
-        /// by Java and may lead to JVM crashes if <code>IndexInput</code>
+        /// <para/><b>NOTE:</b> Enabling this is completely unsupported
+        /// by Java and may lead to JVM crashes if <see cref="IndexInput"/>
         /// is closed while another thread is still accessing it (SIGSEGV). </summary>
-        /// <exception cref="IllegalArgumentException"> if <seealso cref="#UNMAP_SUPPORTED"/>
-        /// is <code>false</code> and the workaround cannot be enabled. </exception>
+        /// <exception cref="ArgumentException"> if <see cref="UNMAP_SUPPORTED"/>
+        /// is <c>false</c> and the workaround cannot be enabled. </exception>
         public virtual bool UseUnmap
         {
             set
@@ -186,7 +165,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns the current mmap chunk size. </summary>
-        /// <seealso cref= #MMapDirectory(File, LockFactory, int) </seealso>
+        /// <seealso cref="MMapDirectory(DirectoryInfo, LockFactory, int)"/>
         public int MaxChunkSize
         {
             get
@@ -196,7 +175,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Creates an IndexInput for the file with the given name. </summary>
+        /// Creates an <see cref="IndexInput"/> for the file with the given name. </summary>
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
@@ -273,7 +252,7 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Try to unmap the buffer, this method silently fails if no support
-            /// for that in the JVM. On Windows, this leads to the fact,
+            /// for that in the runtime. On Windows, this leads to the fact,
             /// that mmapped files cannot be modified or deleted.
             /// </summary>
             protected override void FreeBuffer(ByteBuffer buffer)
@@ -283,47 +262,47 @@ namespace Lucene.Net.Store
 
                 if (mmfbb != null)
                     mmfbb.Dispose();
-                /*
-              if (UseUnmapHack)
-              {
-                try
-                {
-                  AccessController.doPrivileged(new PrivilegedExceptionActionAnonymousInnerClassHelper(this, buffer));
-                }
-                catch (PrivilegedActionException e)
-                {
-                  System.IO.IOException ioe = new System.IO.IOException("unable to unmap the mapped buffer");
-                  ioe.initCause(e.InnerException);
-                  throw ioe;
-                }
-              }*/
+
+                //if (UseUnmapHack)
+                //{
+                //    try
+                //    {
+                //        AccessController.doPrivileged(new PrivilegedExceptionActionAnonymousInnerClassHelper(this, buffer));
+                //    }
+                //    catch (PrivilegedActionException e)
+                //    {
+                //        System.IO.IOException ioe = new System.IO.IOException("unable to unmap the mapped buffer");
+                //        ioe.initCause(e.InnerException);
+                //        throw ioe;
+                //    }
+                //}
             }
 
-            /*
-          private class PrivilegedExceptionActionAnonymousInnerClassHelper : PrivilegedExceptionAction<Void>
-          {
-              private readonly MMapIndexInput OuterInstance;
 
-              private ByteBuffer Buffer;
+            //private class PrivilegedExceptionActionAnonymousInnerClassHelper : PrivilegedExceptionAction<Void>
+            //{
+            //    private readonly MMapIndexInput OuterInstance;
 
-              public PrivilegedExceptionActionAnonymousInnerClassHelper(MMapIndexInput outerInstance, ByteBuffer buffer)
-              {
-                  this.OuterInstance = outerInstance;
-                  this.Buffer = buffer;
-              }
+            //    private ByteBuffer Buffer;
 
-              public override void Run()
-              {
-                Method getCleanerMethod = Buffer.GetType().GetMethod("cleaner");
-                getCleanerMethod.Accessible = true;
-                object cleaner = getCleanerMethod.invoke(Buffer);
-                if (cleaner != null)
-                {
-                  cleaner.GetType().GetMethod("clean").invoke(cleaner);
-                }
-                //return null;
-              }
-          }*/
+            //    public PrivilegedExceptionActionAnonymousInnerClassHelper(MMapIndexInput outerInstance, ByteBuffer buffer)
+            //    {
+            //        this.OuterInstance = outerInstance;
+            //        this.Buffer = buffer;
+            //    }
+
+            //    public override void Run()
+            //    {
+            //        Method getCleanerMethod = Buffer.GetType().GetMethod("cleaner");
+            //        getCleanerMethod.Accessible = true;
+            //        object cleaner = getCleanerMethod.invoke(Buffer);
+            //        if (cleaner != null)
+            //        {
+            //            cleaner.GetType().GetMethod("clean").invoke(cleaner);
+            //        }
+            //        //return null;
+            //    }
+            //}
         }
 
         /// <summary>

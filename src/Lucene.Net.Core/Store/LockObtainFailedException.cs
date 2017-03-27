@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
@@ -20,16 +21,16 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// this exception is thrown when the <code>write.lock</code>
-    /// could not be acquired.  this
+    /// This exception is thrown when the <c>write.lock</c>
+    /// could not be acquired.  This
     /// happens when a writer tries to open an index
     /// that another writer already has open. </summary>
-    /// <seealso cref= Lock#obtain(long) </seealso>
+    /// <seealso cref="Lock.Obtain(long)"/>
     // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class LockObtainFailedException : System.IO.IOException
+    public class LockObtainFailedException : IOException
     {
         public LockObtainFailedException(string message)
             : base(message)

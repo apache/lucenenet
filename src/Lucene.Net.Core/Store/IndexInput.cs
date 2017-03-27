@@ -20,28 +20,28 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Abstract base class for input from a file in a <seealso cref="Directory"/>.  A
+    /// Abstract base class for input from a file in a <see cref="Directory"/>.  A
     /// random-access input stream.  Used for all Lucene index input operations.
     ///
-    /// <p>{@code IndexInput} may only be used from one thread, because it is not
+    /// <para/><see cref="IndexInput"/> may only be used from one thread, because it is not
     /// thread safe (it keeps internal state like file position). To allow
-    /// multithreaded use, every {@code IndexInput} instance must be cloned before
-    /// used in another thread. Subclasses must therefore implement <seealso cref="#clone()"/>,
-    /// returning a new {@code IndexInput} which operates on the same underlying
+    /// multithreaded use, every <see cref="IndexInput"/> instance must be cloned before
+    /// used in another thread. Subclasses must therefore implement <see cref="Clone()"/>,
+    /// returning a new <see cref="IndexInput"/> which operates on the same underlying
     /// resource, but positioned independently. Lucene never closes cloned
-    /// {@code IndexInput}s, it will only do this on the original one.
+    /// <see cref="IndexInput"/>s, it will only do this on the original one.
     /// The original instance must take care that cloned instances throw
-    /// <seealso cref="ObjectDisposedException"/> when the original one is closed.
+    /// <see cref="ObjectDisposedException"/> when the original one is closed.
     /// </summary>
-    /// <seealso cref= Directory </seealso>
+    /// <seealso cref="Directory"/>
     public abstract class IndexInput : DataInput, IDisposable
     {
         private readonly string resourceDescription;
 
         /// <summary>
-        /// resourceDescription should be a non-null, opaque string
-        ///  describing this resource; it's returned from
-        ///  <seealso cref="#toString"/>.
+        /// <paramref name="resourceDescription"/> should be a non-null, opaque string
+        /// describing this resource; it's returned from
+        /// <see cref="ToString()"/>.
         /// </summary>
         protected IndexInput(string resourceDescription)
         {
@@ -59,11 +59,12 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Returns the current position in this file, where the next read will
         /// occur. </summary>
-        /// <seealso cref= #seek(long) </seealso>
+        /// <seealso cref="Seek(long)"/>
         public abstract long GetFilePointer();
 
         /// <summary>
-        /// Sets current position in this file, where the next read will occur. </summary>
+        /// Sets current position in this file, where the next read will occur.
+        /// </summary>
         /// <seealso cref="GetFilePointer()"/>
         public abstract void Seek(long pos);
 
@@ -71,17 +72,28 @@ namespace Lucene.Net.Store
         /// The number of bytes in the file. </summary>
         public abstract long Length { get; }
 
+        /// <summary>
+        /// Returns the resourceDescription that was passed into the constructor.
+        /// </summary>
         public override string ToString()
         {
             return resourceDescription;
         }
 
         /// <summary>
-        /// {@inheritDoc}
-        /// <p><b>Warning:</b> Lucene never closes cloned
-        /// {@code IndexInput}s, it will only do this on the original one.
+        /// Returns a clone of this stream.
+        ///
+        /// <para/>Clones of a stream access the same data, and are positioned at the same
+        /// point as the stream they were cloned from.
+        ///
+        /// <para/>Expert: Subclasses must ensure that clones may be positioned at
+        /// different points in the input from each other and from the stream they
+        /// were cloned from.
+        /// 
+        /// <para/><b>Warning:</b> Lucene never closes cloned
+        /// <see cref="IndexInput"/>s, it will only do this on the original one.
         /// The original instance must take care that cloned instances throw
-        /// <seealso cref="ObjectDisposedException"/> when the original one is closed.
+        /// <see cref="ObjectDisposedException"/> when the original one is closed.
         /// </summary>
         public override object Clone()
         {

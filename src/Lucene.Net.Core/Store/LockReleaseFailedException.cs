@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace Lucene.Net.Store
 {
@@ -20,14 +21,14 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// this exception is thrown when the <code>write.lock</code>
+    /// This exception is thrown when the <c>write.lock</c>
     /// could not be released. </summary>
-    /// <seealso cref= Lock#close() </seealso>
+    /// <seealso cref="Lock.Dispose()"/>
     // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class LockReleaseFailedException : System.IO.IOException
+    public class LockReleaseFailedException : IOException
     {
         public LockReleaseFailedException(string message)
             : base(message)

@@ -18,38 +18,38 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// <p>Base class for Locking implementation.  <seealso cref="Directory"/> uses
-    /// instances of this class to implement locking.</p>
+    /// <para>Base class for Locking implementation.  <see cref="Directory"/> uses
+    /// instances of this class to implement locking.</para>
     ///
-    /// <p>Lucene uses <seealso cref="NativeFSLockFactory"/> by default for
-    /// <seealso cref="FSDirectory"/>-based index directories.</p>
+    /// <para>Lucene uses <see cref="NativeFSLockFactory"/> by default for
+    /// <see cref="FSDirectory"/>-based index directories.</para>
     ///
-    /// <p>Special care needs to be taken if you change the locking
+    /// <para>Special care needs to be taken if you change the locking
     /// implementation: First be certain that no writer is in fact
     /// writing to the index otherwise you can easily corrupt
-    /// your index. Be sure to do the LockFactory change on all Lucene
+    /// your index. Be sure to do the <see cref="LockFactory"/> change on all Lucene
     /// instances and clean up all leftover lock files before starting
     /// the new configuration for the first time. Different implementations
-    /// can not work together!</p>
+    /// can not work together!</para>
     ///
-    /// <p>If you suspect that some LockFactory implementation is
+    /// <para>If you suspect that some <see cref="LockFactory"/> implementation is
     /// not working properly in your environment, you can easily
-    /// test it by using <seealso cref="VerifyingLockFactory"/>, {@link
-    /// LockVerifyServer} and <seealso cref="LockStressTest"/>.</p>
+    /// test it by using <see cref="VerifyingLockFactory"/>, 
+    /// <see cref="LockVerifyServer"/> and <see cref="LockStressTest"/>.</para>
     /// </summary>
-    /// <seealso cref= LockVerifyServer </seealso>
-    /// <seealso cref= LockStressTest </seealso>
-    /// <seealso cref= VerifyingLockFactory </seealso>
+    /// <seealso cref="LockVerifyServer"/>
+    /// <seealso cref="LockStressTest"/>
+    /// <seealso cref="VerifyingLockFactory"/>
     public abstract class LockFactory
     {
         protected string m_lockPrefix = null;
 
         /// <summary>
-        /// Set the prefix in use for all locks created in this
-        /// LockFactory.  this is normally called once, when a
-        /// Directory gets this LockFactory instance.  However, you
+        /// Gets or Sets the prefix in use for all locks created in this
+        /// <see cref="LockFactory"/>.  This is normally called once, when a
+        /// <see cref="Directory"/> gets this <see cref="LockFactory"/> instance.  However, you
         /// can also call this (after this instance is assigned to
-        /// a Directory) to override the prefix in use.  this
+        /// a <see cref="Directory"/>) to override the prefix in use.  This
         /// is helpful if you're running Lucene on machines that
         /// have different mount points for the same shared
         /// directory.
@@ -67,7 +67,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Return a new Lock instance identified by lockName. </summary>
+        /// Return a new <see cref="Lock"/> instance identified by <paramref name="lockName"/>. </summary>
         /// <param name="lockName"> name of the lock to be created. </param>
         public abstract Lock MakeLock(string lockName);
 

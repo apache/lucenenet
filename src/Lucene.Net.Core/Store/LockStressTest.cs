@@ -24,12 +24,12 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Simple standalone tool that forever acquires & releases a
-    /// lock using a specific LockFactory.  Run without any args
+    /// Simple standalone tool that forever acquires &amp; releases a
+    /// lock using a specific <see cref="LockFactory"/>.  Run without any args
     /// to see usage.
     /// </summary>
-    /// <seealso cref= VerifyingLockFactory </seealso>
-    /// <seealso cref= LockVerifyServer </seealso>
+    /// <seealso cref="VerifyingLockFactory"/>
+    /// <seealso cref="LockVerifyServer"/>
     public class LockStressTest
     {
         [STAThread]
@@ -37,6 +37,7 @@ namespace Lucene.Net.Store
         {
             if (args.Length != 7)
             {
+                // LUCENENET TODO: Usage depends on making this into a console application executable.
                 Console.WriteLine("Usage: java Lucene.Net.Store.LockStressTest myID verifierHost verifierPort lockFactoryClassName lockDirName sleepTimeMS count\n" + "\n" + "  myID = int from 0 .. 255 (should be unique for test process)\n" + "  verifierHost = hostname that LockVerifyServer is listening on\n" + "  verifierPort = port that LockVerifyServer is listening on\n" + "  lockFactoryClassName = primary LockFactory class that we will use\n" + "  lockDirName = path to the lock directory (only set for Simple/NativeFSLockFactory\n" + "  sleepTimeMS = milliseconds to pause betweeen each lock obtain/release\n" + "  count = number of locking tries\n" + "\n" + "You should run multiple instances of this process, each with its own\n" + "unique ID, and each pointing to the same lock directory, to verify\n" + "that locking is working correctly.\n" + "\n" + "Make sure you are first running LockVerifyServer.");
                 Environment.FailFast("1");
             }
@@ -47,7 +48,7 @@ namespace Lucene.Net.Store
             if (myID < 0 || myID > 255)
             {
                 Console.WriteLine("myID must be a unique int 0..255");
-                Environment.FailFast("1");
+                Environment.Exit(1);
             }
 
             IPHostEntry verifierHost = Dns.GetHostEntryAsync(args[arg++]).Result;
@@ -75,17 +76,17 @@ namespace Lucene.Net.Store
             {
                 lockFactory = (LockFactory)Activator.CreateInstance(c);
             }
-            catch (UnauthorizedAccessException)
+            catch (UnauthorizedAccessException e)
             {
-                throw new System.IO.IOException("Cannot instantiate lock factory " + lockFactoryClassName);
+                throw new IOException("Cannot instantiate lock factory " + lockFactoryClassName, e);
             }
-            catch (InvalidCastException)
+            catch (InvalidCastException e)
             {
-                throw new System.IO.IOException("unable to cast LockClass " + lockFactoryClassName + " instance to a LockFactory");
+                throw new IOException("unable to cast LockClass " + lockFactoryClassName + " instance to a LockFactory", e);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new System.IO.IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName);
+                throw new IOException("InstantiationException when instantiating LockClass " + lockFactoryClassName, e);
             }
 
             DirectoryInfo lockDir = new DirectoryInfo(lockDirName);
@@ -117,7 +118,7 @@ namespace Lucene.Net.Store
                     // wait for starting gun
                     if (intReader.ReadInt32() != 43)
                     {
-                        throw new System.IO.IOException("Protocol violation");
+                        throw new IOException("Protocol violation");
                     }
 
                     for (int i = 0; i < count; i++)
@@ -152,10 +153,5 @@ namespace Lucene.Net.Store
 
             Console.WriteLine("Finished " + count + " tries.");
         }
-
-        //private static int ToInt32(byte[] tempBuf, int p)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

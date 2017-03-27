@@ -28,25 +28,20 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Simple standalone server that must be running when you
-    /// use <seealso cref="VerifyingLockFactory"/>.  this server simply
+    /// use <see cref="VerifyingLockFactory"/>.  This server simply
     /// verifies at most one process holds the lock at a time.
     /// Run without any args to see usage.
     /// </summary>
-    /// <seealso cref= VerifyingLockFactory </seealso>
-    /// <seealso cref= LockStressTest </seealso>
-
+    /// <seealso cref="VerifyingLockFactory"/>
+    /// <seealso cref="LockStressTest"/>
     public class LockVerifyServer
     {
-        //private static String GetTime(long startTime)
-        //{
-        //    return "[" + (((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - startTime) / 1000) + "s] ";
-        //}
-
         [STAThread]
         public static void Main(string[] args)
         {
             if (args.Length != 2)
             {
+                // LUCENENET TODO: Usage depends on making this into a console application executable.
                 Console.WriteLine("Usage: java Lucene.Net.Store.LockVerifyServer bindToIp clients\n");
                 Environment.FailFast("1");
             }
@@ -124,7 +119,7 @@ namespace Lucene.Net.Store
                         int id = intReader.ReadInt32();
                         if (id < 0)
                         {
-                            throw new System.IO.IOException("Client closed connection before communication started.");
+                            throw new IOException("Client closed connection before communication started.");
                         }
 
                         //LUCENE TO-DO NOt sure about this
@@ -134,7 +129,7 @@ namespace Lucene.Net.Store
 
                         while (true)
                         {
-                            int command = intReader.ReadInt32();
+                            int command = intReader.Read();
                             if (command < 0)
                             {
                                 return; // closed

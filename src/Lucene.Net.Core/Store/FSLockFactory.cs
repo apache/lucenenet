@@ -31,13 +31,13 @@ namespace Lucene.Net.Store
         protected internal DirectoryInfo m_lockDir = null;
 
         /// <summary>
-        /// Set the lock directory. this method can be only called
-        /// once to initialize the lock directory. It is used by <seealso cref="FSDirectory"/>
+        /// Set the lock directory. This property can be only called
+        /// once to initialize the lock directory. It is used by <see cref="FSDirectory"/>
         /// to set the lock directory to itself.
-        /// Subclasses can also use this method to set the directory
+        /// Subclasses can also use this property to set the directory
         /// in the constructor.
         /// </summary>
-        protected internal DirectoryInfo LockDir
+        protected internal DirectoryInfo LockDir // LUCENENET TODO: API Make SetLockDir() (can only be set one time and should be sealed, but getter should be virtual)
         {
             set
             {
