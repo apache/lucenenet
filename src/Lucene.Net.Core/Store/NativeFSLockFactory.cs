@@ -23,48 +23,41 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// <p>Implements <seealso cref="LockFactory"/> using native OS file
-    /// locks.  Note that because this LockFactory relies on
-    /// java.nio.* APIs for locking, any problems with those APIs
-    /// will cause locking to fail.  Specifically, on certain NFS
-    /// environments the java.nio.* locks will fail (the lock can
-    /// incorrectly be double acquired) whereas {@link
-    /// SimpleFSLockFactory} worked perfectly in those same
-    /// environments.  For NFS based access to an index, it's
-    /// recommended that you try <seealso cref="SimpleFSLockFactory"/>
+    /// <para>Implements <see cref="LockFactory"/> using native OS file
+    /// locks.  For NFS based access to an index, it's
+    /// recommended that you try <see cref="SimpleFSLockFactory"/>
     /// first and work around the one limitation that a lock file
-    /// could be left when the JVM exits abnormally.</p>
+    /// could be left when the runtime exits abnormally.</para>
     ///
-    /// <p>The primary benefit of <seealso cref="NativeFSLockFactory"/> is
+    /// <para>The primary benefit of <see cref="NativeFSLockFactory"/> is
     /// that locks (not the lock file itsself) will be properly
-    /// removed (by the OS) if the JVM has an abnormal exit.</p>
+    /// removed (by the OS) if the runtime has an abnormal exit.</para>
     ///
-    /// <p>Note that, unlike <seealso cref="SimpleFSLockFactory"/>, the existence of
+    /// <para>Note that, unlike <see cref="SimpleFSLockFactory"/>, the existence of
     /// leftover lock files in the filesystem is fine because the OS
     /// will free the locks held against these files even though the
     /// files still remain. Lucene will never actively remove the lock
-    /// files, so although you see them, the index may not be locked.</p>
+    /// files, so although you see them, the index may not be locked.</para>
     ///
-    /// <p>Special care needs to be taken if you change the locking
+    /// <para>Special care needs to be taken if you change the locking
     /// implementation: First be certain that no writer is in fact
     /// writing to the index otherwise you can easily corrupt
-    /// your index. Be sure to do the LockFactory change on all Lucene
+    /// your index. Be sure to do the <see cref="LockFactory"/> change on all Lucene
     /// instances and clean up all leftover lock files before starting
     /// the new configuration for the first time. Different implementations
-    /// can not work together!</p>
+    /// can not work together!</para>
     ///
-    /// <p>If you suspect that this or any other LockFactory is
+    /// <para>If you suspect that this or any other <see cref="LockFactory"/> is
     /// not working properly in your environment, you can easily
-    /// test it by using <seealso cref="VerifyingLockFactory"/>, {@link
-    /// LockVerifyServer} and <seealso cref="LockStressTest"/>.</p>
+    /// test it by using <see cref="VerifyingLockFactory"/>, 
+    /// <see cref="LockVerifyServer"/> and <see cref="LockStressTest"/>.</para>
     /// </summary>
-    /// <seealso cref= LockFactory </seealso>
-
+    /// <seealso cref="LockFactory"/>
     public class NativeFSLockFactory : FSLockFactory
     {
         /// <summary>
-        /// Create a NativeFSLockFactory instance, with null (unset)
-        /// lock directory. When you pass this factory to a <seealso cref="FSDirectory"/>
+        /// Create a <see cref="NativeFSLockFactory"/> instance, with <c>null</c> (unset)
+        /// lock directory. When you pass this factory to a <see cref="FSDirectory"/>
         /// subclass, the lock directory is automatically set to the
         /// directory itself. Be sure to create one instance for each directory
         /// your create!
@@ -75,8 +68,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Create a NativeFSLockFactory instance, storing lock
-        /// files into the specified lockDirName:
+        /// Create a <see cref="NativeFSLockFactory"/> instance, storing lock
+        /// files into the specified <paramref name="lockDirName"/>
         /// </summary>
         /// <param name="lockDirName"> where lock files are created. </param>
         public NativeFSLockFactory(string lockDirName)
@@ -85,8 +78,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Create a NativeFSLockFactory instance, storing lock
-        /// files into the specified lockDir:
+        /// Create a <see cref="NativeFSLockFactory"/> instance, storing lock
+        /// files into the specified <paramref name="lockDir"/>
         /// </summary>
         /// <param name="lockDir"> where lock files are created. </param>
         public NativeFSLockFactory(DirectoryInfo lockDir)
@@ -94,7 +87,7 @@ namespace Lucene.Net.Store
             LockDir = lockDir;
         }
 
-        // LUCENENET NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
+        // LUCENENET: NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
         // IW.Unlock and IW.IsLocked works correctly
         internal readonly ConcurrentDictionary<string, NativeFSLock> _locks = new ConcurrentDictionary<string, NativeFSLock>(); 
 
@@ -116,14 +109,15 @@ namespace Lucene.Net.Store
 
     internal class NativeFSLock : Lock
     {
+        private readonly NativeFSLockFactory outerInstance;
+
         private FileStream channel;
         private readonly DirectoryInfo path;
-        private readonly NativeFSLockFactory _creatingInstance;
         private readonly DirectoryInfo lockDir;
 
-        public NativeFSLock(NativeFSLockFactory creatingInstance, DirectoryInfo lockDir, string lockFileName)
+        public NativeFSLock(NativeFSLockFactory outerInstance, DirectoryInfo lockDir, string lockFileName)
         {
-            _creatingInstance = creatingInstance;
+            this.outerInstance = outerInstance;
             this.lockDir = lockDir;
             path = new DirectoryInfo(System.IO.Path.Combine(lockDir.FullName, lockFileName));
         }
@@ -148,7 +142,7 @@ namespace Lucene.Net.Store
                     }
                     catch
                     {
-                        throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
+                        throw new IOException("Cannot create directory: " + lockDir.FullName);
                     }
                 }
                 else if (File.Exists(lockDir.FullName))
@@ -189,7 +183,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Dispose()
+        public override void Dispose() // LUCENENET TODO: Possible Bug - not calling base.Dispose(). But Dispose() shouldn't be virtual anyway if implementing dispose pattern
         {
             // LUCENENET: No lock to release, just dispose the channel
             if (channel != null)
@@ -208,7 +202,7 @@ namespace Lucene.Net.Store
                     try
                     {
                         NativeFSLock _;
-                        _creatingInstance._locks.TryRemove(path.FullName, out _);
+                        outerInstance._locks.TryRemove(path.FullName, out _);
                     }
                     finally
                     {

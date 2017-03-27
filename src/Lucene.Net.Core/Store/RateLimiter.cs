@@ -22,10 +22,10 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Abstract base class to rate limit IO.  Typically implementations are
-    ///  shared across multiple IndexInputs or IndexOutputs (for example
-    ///  those involved all merging).  Those IndexInputs and
-    ///  IndexOutputs would call <seealso cref="#pause"/> whenever they
-    ///  want to read bytes or write bytes.
+    /// shared across multiple <see cref="IndexInput"/>s or <see cref="IndexOutput"/>s (for example
+    /// those involved all merging).  Those <see cref="IndexInput"/>s and
+    /// <see cref="IndexOutput"/>s would call <see cref="Pause"/> whenever they
+    /// want to read bytes or write bytes.
     /// </summary>
     public abstract class RateLimiter
     {
@@ -41,12 +41,12 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Pauses, if necessary, to keep the instantaneous IO
-        ///  rate at or below the target.
-        ///  <p>
-        ///  Note: the implementation is thread-safe
-        ///  </p> </summary>
-        ///  <returns> the pause time in nano seconds
-        ///  </returns>
+        /// rate at or below the target.
+        /// <para>
+        /// Note: the implementation is thread-safe
+        /// </para> 
+        /// </summary>
+        /// <returns> the pause time in nano seconds </returns>
         public abstract long Pause(long bytes);
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace Lucene.Net.Store
             // change the allowed rate over time or something
 
             /// <summary>
-            /// mbPerSec is the MB/sec max IO rate </summary>
+            /// <paramref name="mbPerSec"/> is the MB/sec max IO rate </summary>
             public SimpleRateLimiter(double mbPerSec)
             {
                 SetMbPerSec(mbPerSec);
@@ -94,14 +94,13 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Pauses, if necessary, to keep the instantaneous IO
-            ///  rate at or below the target. NOTE: multiple threads
-            ///  may safely use this, however the implementation is
-            ///  not perfectly thread safe but likely in practice this
-            ///  is harmless (just means in some rare cases the rate
-            ///  might exceed the target).  It's best to call this
-            ///  with a biggish count, not one byte at a time. </summary>
-            ///  <returns> the pause time in nano seconds
-            ///  </returns>
+            /// rate at or below the target. NOTE: multiple threads
+            /// may safely use this, however the implementation is
+            /// not perfectly thread safe but likely in practice this
+            /// is harmless (just means in some rare cases the rate
+            /// might exceed the target).  It's best to call this
+            /// with a biggish count, not one byte at a time. </summary>
+            /// <returns> the pause time in nano seconds </returns>
             public override long Pause(long bytes)
             {
                 if (bytes == 1)

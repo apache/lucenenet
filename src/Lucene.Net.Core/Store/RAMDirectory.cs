@@ -26,21 +26,21 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A memory-resident <seealso cref="Directory"/> implementation.  Locking
-    /// implementation is by default the <seealso cref="SingleInstanceLockFactory"/>
-    /// but can be changed with <seealso cref="#setLockFactory"/>.
+    /// A memory-resident <see cref="Directory"/> implementation.  Locking
+    /// implementation is by default the <see cref="SingleInstanceLockFactory"/>
+    /// but can be changed with <see cref="Directory.SetLockFactory(LockFactory)"/>.
     ///
-    /// <p><b>Warning:</b> this class is not intended to work with huge
+    /// <para/><b>Warning:</b> This class is not intended to work with huge
     /// indexes. Everything beyond several hundred megabytes will waste
     /// resources (GC cycles), because it uses an internal buffer size
-    /// of 1024 bytes, producing millions of {@code byte[1024]} arrays.
-    /// this class is optimized for small memory-resident indexes.
+    /// of 1024 bytes, producing millions of <see cref="T:byte[1024]"/> arrays.
+    /// This class is optimized for small memory-resident indexes.
     /// It also has bad concurrency on multithreaded environments.
     ///
-    /// <p>It is recommended to materialize large indexes on disk and use
-    /// <seealso cref="MMapDirectory"/>, which is a high-performance directory
+    /// <para/>It is recommended to materialize large indexes on disk and use
+    /// <see cref="MMapDirectory"/>, which is a high-performance directory
     /// implementation working directly on the file system cache of the
-    /// operating system, so copying data to Java heap space is not useful.
+    /// operating system, so copying data to heap space is not useful.
     /// </summary>
     public class RAMDirectory : BaseDirectory
     {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Store
         // *****
 
         /// <summary>
-        /// Constructs an empty <seealso cref="Directory"/>. </summary>
+        /// Constructs an empty <see cref="Directory"/>. </summary>
         public RAMDirectory()
         {
             try
@@ -60,7 +60,7 @@ namespace Lucene.Net.Store
                 SetLockFactory(new SingleInstanceLockFactory());
             }
 #pragma warning disable 168
-            catch (System.IO.IOException e)
+            catch (IOException e)
 #pragma warning restore 168
             {
                 // Cannot happen
@@ -68,30 +68,31 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Creates a new <code>RAMDirectory</code> instance from a different
-        /// <code>Directory</code> implementation.  this can be used to load
+        /// Creates a new <see cref="RAMDirectory"/> instance from a different
+        /// <see cref="Directory"/> implementation.  This can be used to load
         /// a disk-based index into memory.
         ///
-        /// <p><b>Warning:</b> this class is not intended to work with huge
+        /// <para/><b>Warning:</b> this class is not intended to work with huge
         /// indexes. Everything beyond several hundred megabytes will waste
         /// resources (GC cycles), because it uses an internal buffer size
-        /// of 1024 bytes, producing millions of {@code byte[1024]} arrays.
+        /// of 1024 bytes, producing millions of <see cref="T:byte[1024]"/> arrays.
         /// this class is optimized for small memory-resident indexes.
         /// It also has bad concurrency on multithreaded environments.
         ///
-        /// <p>For disk-based indexes it is recommended to use
-        /// <seealso cref="MMapDirectory"/>, which is a high-performance directory
+        /// <para/>For disk-based indexes it is recommended to use
+        /// <see cref="MMapDirectory"/>, which is a high-performance directory
         /// implementation working directly on the file system cache of the
-        /// operating system, so copying data to Java heap space is not useful.
+        /// operating system, so copying data to heap space is not useful.
         ///
-        /// <p>Note that the resulting <code>RAMDirectory</code> instance is fully
-        /// independent from the original <code>Directory</code> (it is a
+        /// <para/>Note that the resulting <see cref="RAMDirectory"/> instance is fully
+        /// independent from the original <see cref="Directory"/> (it is a
         /// complete copy).  Any subsequent changes to the
-        /// original <code>Directory</code> will not be visible in the
-        /// <code>RAMDirectory</code> instance.
+        /// original <see cref="Directory"/> will not be visible in the
+        /// <see cref="RAMDirectory"/> instance.
         /// </summary>
-        /// <param name="dir"> a <code>Directory</code> value </param>
-        /// <exception cref="System.IO.IOException"> if an error occurs </exception>
+        /// <param name="dir"> a <see cref="Directory"/> value </param>
+        /// <param name="context">io context</param>
+        /// <exception cref="IOException"> if an error occurs </exception>
         public RAMDirectory(Directory dir, IOContext context)
             : this(dir, false, context)
         {
@@ -135,7 +136,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns the length in bytes of a file in the directory. </summary>
-        /// <exception cref="System.IO.IOException"> if the file does not exist </exception>
+        /// <exception cref="IOException"> if the file does not exist </exception>
         public override sealed long FileLength(string name)
         {
             EnsureOpen();
@@ -148,8 +149,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Return total size in bytes of all files in this directory. this is
-        /// currently quantized to RAMOutputStream.BUFFER_SIZE.
+        /// Return total size in bytes of all files in this directory. This is
+        /// currently quantized to <see cref="RAMOutputStream.BUFFER_SIZE"/>.
         /// </summary>
         public long SizeInBytes()
         {
@@ -159,7 +160,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Removes an existing file in the directory. </summary>
-        /// <exception cref="System.IO.IOException"> if the file does not exist </exception>
+        /// <exception cref="IOException"> if the file does not exist </exception>
         public override void DeleteFile(string name)
         {
             EnsureOpen();
@@ -192,9 +193,9 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Returns a new <seealso cref="RAMFile"/> for storing data. this method can be
-        /// overridden to return different <seealso cref="RAMFile"/> impls, that e.g. override
-        /// <seealso cref="RAMFile#newBuffer(int)"/>.
+        /// Returns a new <see cref="RAMFile"/> for storing data. this method can be
+        /// overridden to return different <see cref="RAMFile"/> impls, that e.g. override
+        /// <see cref="RAMFile.NewBuffer(int)"/>.
         /// </summary>
         protected virtual RAMFile NewRAMFile()
         {

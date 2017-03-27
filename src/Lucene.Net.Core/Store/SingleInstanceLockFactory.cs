@@ -20,15 +20,14 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Implements <seealso cref="LockFactory"/> for a single in-process instance,
+    /// Implements <see cref="LockFactory"/> for a single in-process instance,
     /// meaning all locking will take place through this one instance.
-    /// Only use this <seealso cref="LockFactory"/> when you are certain all
-    /// IndexReaders and IndexWriters for a given index are running
-    /// against a single shared in-process Directory instance.  this is
-    /// currently the default locking for RAMDirectory.
+    /// Only use this <see cref="LockFactory"/> when you are certain all
+    /// <see cref="Index.IndexReader"/>s and <see cref="Index.IndexWriter"/>s for a given index are running
+    /// against a single shared in-process <see cref="Directory"/> instance.  This is
+    /// currently the default locking for <see cref="RAMDirectory"/>.
     /// </summary>
-    /// <seealso cref= LockFactory </seealso>
-
+    /// <seealso cref="LockFactory"/>
     public class SingleInstanceLockFactory : LockFactory
     {
         private HashSet<string> locks = new HashSet<string>();

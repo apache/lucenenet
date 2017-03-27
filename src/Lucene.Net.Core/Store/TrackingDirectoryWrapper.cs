@@ -21,8 +21,8 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A delegating Directory that records which files were
-    ///  written to and deleted.
+    /// A delegating <see cref="Directory"/> that records which files were
+    /// written to and deleted.
     /// </summary>
     public sealed class TrackingDirectoryWrapper : FilterDirectory
     {

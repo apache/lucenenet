@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// this exception is thrown when you try to list a
+    /// This exception is thrown when you try to list a
     /// non-existent directory.
     /// </summary>
     // LUCENENET: All exeption classes should be marked serializable

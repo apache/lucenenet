@@ -23,16 +23,16 @@ namespace Lucene.Net.Store
 
     ///
     /// <summary>
-    /// A <seealso cref="Directory"/> wrapper that allows <seealso cref="IndexOutput"/> rate limiting using
-    /// <seealso cref="IOContext.Context IO context"/> specific <seealso cref="RateLimiter rate limiters"/>.
+    /// A <see cref="Directory"/> wrapper that allows <see cref="IndexOutput"/> rate limiting using
+    /// IO context (<see cref="IOContext.UsageContext"/>) specific rate limiters (<see cref="RateLimiter"/>).
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    ///  <seealso cref= #setRateLimiter(RateLimiter, IOContext.Context)
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="SetRateLimiter(RateLimiter, IOContext.UsageContext)"/>
     public sealed class RateLimitedDirectoryWrapper : FilterDirectory
     {
         // we need to be volatile here to make sure we see all the values that are set
         // / modified concurrently
-        //private volatile RateLimiter[] ContextRateLimiters = new RateLimiter[Enum.GetValues(typeof(IOContext.Context_e)).Length];
         private readonly IDictionary<IOContext.UsageContext, RateLimiter> _contextRateLimiters = new ConcurrentDictionary<IOContext.UsageContext, RateLimiter>();
 
         public RateLimitedDirectoryWrapper(Directory wrapped)
@@ -73,22 +73,22 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Sets the maximum (approx) MB/sec allowed by all write IO performed by
-        /// <seealso cref="IndexOutput"/> created with the given <seealso cref="IOContext.Context"/>. Pass
-        /// <code>null</code> to have no limit.
+        /// <see cref="IndexOutput"/> created with the given <see cref="IOContext.UsageContext"/>. Pass 
+        /// <c>null</c> for <paramref name="mbPerSec"/> to have no limit.
         ///
-        /// <p>
-        /// <b>NOTE</b>: For already created <seealso cref="IndexOutput"/> instances there is no
+        /// <para/>
+        /// <b>NOTE</b>: For already created <see cref="IndexOutput"/> instances there is no
         /// guarantee this new rate will apply to them; it will only be guaranteed to
-        /// apply for new created <seealso cref="IndexOutput"/> instances.
-        /// <p>
+        /// apply for new created <see cref="IndexOutput"/> instances.
+        /// <para/>
         /// <b>NOTE</b>: this is an optional operation and might not be respected by
-        /// all Directory implementations. Currently only <seealso cref="FSDirectory buffered"/>
-        /// Directory implementations use rate-limiting.
+        /// all <see cref="Directory"/> implementations. Currently only buffered (<see cref="FSDirectory"/>)
+        /// <see cref="Directory"/> implementations use rate-limiting.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
-        /// <exception cref="IllegalArgumentException">
-        ///           if context is <code>null</code> </exception>
-        /// <exception cref="System.ObjectDisposedException"> if the <seealso cref="Directory"/> is already closed
-        /// @lucene.experimental </exception>
+        /// <exception cref="System.ObjectDisposedException"> if the <see cref="Directory"/> is already disposed
+        /// </exception>
         public void SetMaxWriteMBPerSec(double? mbPerSec, IOContext.UsageContext context)
         {
             EnsureOpen();
@@ -121,19 +121,19 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Sets the rate limiter to be used to limit (approx) MB/sec allowed by all IO
-        /// performed with the given <seealso cref="IOContext.Context context"/>. Pass <code>null</code> to
+        /// performed with the given context (<see cref="IOContext.UsageContext"/>). Pass <c>null</c> to
         /// have no limit.
         ///
-        /// <p>
+        /// <para/>
         /// Passing an instance of rate limiter compared to setting it using
-        /// <seealso cref="#setMaxWriteMBPerSec(Double, IOContext.Context)"/>
+        /// <see cref="SetMaxWriteMBPerSec(double?, IOContext.UsageContext)"/>
         /// allows to use the same limiter instance across several directories globally
         /// limiting IO across them.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
-        /// <exception cref="ArgumentException">
-        ///           if context is <code>null</code> </exception>
-        /// <exception cref="System.ObjectDisposedException"> if the <seealso cref="Directory"/> is already closed
-        /// @lucene.experimental </exception>
+        /// <exception cref="System.ObjectDisposedException"> if the <see cref="Directory"/> is already disposed
+        /// </exception>
         public void SetRateLimiter(RateLimiter mergeWriteRateLimiter, IOContext.UsageContext context)
         {
             EnsureOpen();
@@ -141,12 +141,12 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// See <seealso cref="#setMaxWriteMBPerSec"/>.
+        /// See <see cref="SetMaxWriteMBPerSec"/>.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
-        /// <exception cref="System.ArgumentException">
-        ///           if context is <code>null</code> </exception>
-        /// <exception cref="System.ObjectDisposedException"> if the <seealso cref="Directory"/> is already closed
-        /// @lucene.experimental </exception>
+        /// <exception cref="System.ObjectDisposedException"> if the <see cref="Directory"/> is already disposed
+        /// </exception>
         public double GetMaxWriteMBPerSec(IOContext.UsageContext context)
         {
             EnsureOpen();

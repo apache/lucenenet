@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Store
 {
@@ -21,47 +22,29 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// <p>Implements <seealso cref="LockFactory"/> using {@link
-    /// File#createNewFile()}.</p>
+    /// <para>Implements <see cref="LockFactory"/> using 
+    /// <see cref="File.WriteAllText(string, string, Encoding)"/> 
+    /// (writes the file with UTF8 encoding and no byte order mark).</para>
     ///
-    /// <p><b>NOTE:</b> the {@link File#createNewFile() javadocs
-    /// for <code>File.createNewFile()</code>} contain a vague
-    /// yet spooky warning about not using the API for file
-    /// locking.  this warning was added due to <a target="_top"
-    /// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4676183">this
-    /// bug</a>, and in fact the only known problem with using
-    /// this API for locking is that the Lucene write lock may
-    /// not be released when the JVM exits abnormally.</p>
-    ///
-    /// <p>When this happens, a <seealso cref="LockObtainFailedException"/>
-    /// is hit when trying to create a writer, in which case you
-    /// need to explicitly clear the lock file first.  You can
-    /// either manually remove the file, or use the {@link
-    /// Lucene.Net.Index.IndexWriter#unlock(Directory)}
-    /// API.  But, first be certain that no writer is in fact
-    /// writing to the index otherwise you can easily corrupt
-    /// your index.</p>
-    ///
-    /// <p>Special care needs to be taken if you change the locking
+    /// <para>Special care needs to be taken if you change the locking
     /// implementation: First be certain that no writer is in fact
     /// writing to the index otherwise you can easily corrupt
-    /// your index. Be sure to do the LockFactory change all Lucene
+    /// your index. Be sure to do the <see cref="LockFactory"/> change to all Lucene
     /// instances and clean up all leftover lock files before starting
     /// the new configuration for the first time. Different implementations
-    /// can not work together!</p>
+    /// can not work together!</para>
     ///
-    /// <p>If you suspect that this or any other LockFactory is
+    /// <para>If you suspect that this or any other <see cref="LockFactory"/> is
     /// not working properly in your environment, you can easily
-    /// test it by using <seealso cref="VerifyingLockFactory"/>, {@link
-    /// LockVerifyServer} and <seealso cref="LockStressTest"/>.</p>
+    /// test it by using <see cref="VerifyingLockFactory"/>, 
+    /// <see cref="LockVerifyServer"/> and <see cref="LockStressTest"/>.</para>
     /// </summary>
-    /// <seealso cref= LockFactory </seealso>
-
+    /// <seealso cref="LockFactory"/>
     public class SimpleFSLockFactory : FSLockFactory
     {
         /// <summary>
-        /// Create a SimpleFSLockFactory instance, with null (unset)
-        /// lock directory. When you pass this factory to a <seealso cref="FSDirectory"/>
+        /// Create a <see cref="SimpleFSLockFactory"/> instance, with <c>null</c> (unset)
+        /// lock directory. When you pass this factory to a <see cref="FSDirectory"/>
         /// subclass, the lock directory is automatically set to the
         /// directory itself. Be sure to create one instance for each directory
         /// your create!
@@ -72,7 +55,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Instantiate using the provided directory (as a File instance). </summary>
+        /// Instantiate using the provided directory (as a <see cref="DirectoryInfo"/> instance). </summary>
         /// <param name="lockDir"> where lock files should be created. </param>
         public SimpleFSLockFactory(DirectoryInfo lockDir)
         {
@@ -80,7 +63,7 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Instantiate using the provided directory name (String). </summary>
+        /// Instantiate using the provided directory name (<see cref="string"/>). </summary>
         /// <param name="lockDirName"> where lock files should be created. </param>
         public SimpleFSLockFactory(string lockDirName)
         {
@@ -114,7 +97,7 @@ namespace Lucene.Net.Store
 #pragma warning restore 168
                 {
                     if (lockFile.Exists) // Delete failed and lockFile exists
-                        throw new System.IO.IOException("Cannot delete " + lockFile);
+                        throw new IOException("Cannot delete " + lockFile);
                 }
             }
         }
@@ -142,7 +125,7 @@ namespace Lucene.Net.Store
                 }
                 catch
                 {
-                    throw new System.IO.IOException("Cannot create directory: " + lockDir.FullName);
+                    throw new IOException("Cannot create directory: " + lockDir.FullName);
                 }
             }
             else
@@ -164,7 +147,8 @@ namespace Lucene.Net.Store
             }
             else
             {
-                System.IO.FileStream createdFile = lockFile.Create();
+                // Create the file, and close it immediately
+                FileStream createdFile = lockFile.Create();
                 createdFile.Dispose();
                 return true;
             }

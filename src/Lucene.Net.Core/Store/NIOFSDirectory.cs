@@ -23,56 +23,56 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// An <seealso cref="FSDirectory"/> implementation that uses java.nio's FileChannel's
+    /// An <see cref="FSDirectory"/> implementation that uses <see cref="FileStream"/>'s
     /// positional read, which allows multiple threads to read from the same file
     /// without synchronizing.
-    /// <p>
-    /// this class only uses FileChannel when reading; writing is achieved with
-    /// <seealso cref="FSDirectory.FSIndexOutput"/>.
-    /// <p>
-    /// <b>NOTE</b>: NIOFSDirectory is not recommended on Windows because of a bug in
+    /// <para/>
+    /// This class only uses <see cref="FileStream"/> when reading; writing is achieved with
+    /// <see cref="FSDirectory.FSIndexOutput"/>.
+    /// <para>
+    /// <b>NOTE</b>: <see cref="NIOFSDirectory"/> is not recommended on Windows because of a bug in
     /// how FileChannel.read is implemented in Sun's JRE. Inside of the
     /// implementation the position is apparently synchronized. See <a
     /// href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=6265734">here</a>
     /// for details.
-    /// </p>
-    /// <p>
+    /// </para>
+    /// <para>
     /// <font color="red"><b>NOTE:</b> Accessing this class either directly or
     /// indirectly from a thread while it's interrupted can close the
     /// underlying file descriptor immediately if at the same time the thread is
     /// blocked on IO. The file descriptor will remain closed and subsequent access
-    /// to <seealso cref="NIOFSDirectory"/> will throw a <seealso cref="ClosedChannelException"/>. If
-    /// your application uses either <seealso cref="Thread#interrupt()"/> or
-    /// <seealso cref="Future#cancel(boolean)"/> you should use <seealso cref="SimpleFSDirectory"/> in
-    /// favor of <seealso cref="NIOFSDirectory"/>.</font>
-    /// </p>
+    /// to <see cref="NIOFSDirectory"/> will throw a <see cref="ObjectDisposedException"/>. If
+    /// your application uses either <see cref="System.Threading.Thread.Interrupt()"/> or
+    /// <see cref="System.Threading.Tasks.Task"/> you should use <see cref="SimpleFSDirectory"/> in
+    /// favor of <see cref="NIOFSDirectory"/>.</font>
+    /// </para>
     /// </summary>
     public class NIOFSDirectory : FSDirectory
     {
         /// <summary>
-        /// Create a new NIOFSDirectory for the named location.
+        /// Create a new <see cref="NIOFSDirectory"/> for the named location.
         /// </summary>
         /// <param name="path"> the path of the directory </param>
         /// <param name="lockFactory"> the lock factory to use, or null for the default
-        /// (<seealso cref="NativeFSLockFactory"/>); </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// (<see cref="NativeFSLockFactory"/>); </param>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public NIOFSDirectory(DirectoryInfo path, LockFactory lockFactory)
             : base(path, lockFactory)
         {
         }
 
         /// <summary>
-        /// Create a new NIOFSDirectory for the named location and <seealso cref="NativeFSLockFactory"/>.
+        /// Create a new <see cref="NIOFSDirectory"/> for the named location and <see cref="NativeFSLockFactory"/>.
         /// </summary>
         /// <param name="path"> the path of the directory </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public NIOFSDirectory(DirectoryInfo path)
             : base(path, null)
         {
         }
 
         /// <summary>
-        /// Creates an IndexInput for the file with the given name. </summary>
+        /// Creates an <see cref="IndexInput"/> for the file with the given name. </summary>
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
@@ -113,7 +113,8 @@ namespace Lucene.Net.Store
 
             public override IndexInput OpenSlice(string sliceDescription, long offset, long length)
             {
-                return new NIOFSIndexInput("NIOFSIndexInput(" + sliceDescription + " in path=\"" + path + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset, length, BufferedIndexInput.GetBufferSize(context));
+                return new NIOFSIndexInput("NIOFSIndexInput(" + sliceDescription + " in path=\"" + path + "\" slice=" + offset + ":" + (offset + length) + ")", descriptor, offset, length, 
+                    BufferedIndexInput.GetBufferSize(context));
             }
 
             [Obsolete("Only for reading CFS files from 3.x indexes.")]
@@ -131,7 +132,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads bytes with <seealso cref="FileChannel#read(ByteBuffer, long)"/>
+        /// Reads bytes with the <see cref="FileStreamExtensions.Read(FileStream, ByteBuffer, long)"/>
+        /// extension method for <see cref="FileStream"/>.
         /// </summary>
         protected class NIOFSIndexInput : BufferedIndexInput
         {
@@ -253,9 +255,9 @@ namespace Lucene.Net.Store
                     }
                     Debug.Assert(readLength == 0);
                 }
-                catch (System.IO.IOException ioe)
+                catch (IOException ioe)
                 {
-                    throw new System.IO.IOException(ioe.ToString() + ": " + this, ioe);
+                    throw new IOException(ioe.ToString() + ": " + this, ioe);
                 }
             }
 

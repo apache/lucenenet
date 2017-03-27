@@ -21,7 +21,7 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A <seealso cref="DataOutput"/> wrapping a plain <seealso cref="OutputStream"/>.
+    /// A <see cref="DataOutput"/> wrapping a plain <see cref="Stream"/>.
     /// </summary>
     public class OutputStreamDataOutput : DataOutput, IDisposable
     {

@@ -18,17 +18,15 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Use this <seealso cref="LockFactory"/> to disable locking entirely.
-    /// Only one instance of this lock is created.  You should call {@link
-    /// #getNoLockFactory()} to get the instance.
+    /// Use this <see cref="LockFactory"/> to disable locking entirely.
+    /// Only one instance of this lock is created.  You should call 
+    /// <see cref="GetNoLockFactory()"/> to get the instance.
     /// </summary>
-    /// <seealso cref= LockFactory </seealso>
-
+    /// <seealso cref="LockFactory"/>
     public class NoLockFactory : LockFactory
     {
         // Single instance returned whenever makeLock is called.
         private static NoLock singletonLock = new NoLock();
-
         private static NoLockFactory singleton = new NoLockFactory();
 
         private NoLockFactory()

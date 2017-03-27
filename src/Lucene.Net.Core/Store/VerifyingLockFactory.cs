@@ -21,18 +21,17 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A <seealso cref="LockFactory"/> that wraps another {@link
-    /// LockFactory} and verifies that each lock obtain/release
+    /// A <see cref="LockFactory"/> that wraps another 
+    /// <see cref="LockFactory"/> and verifies that each lock obtain/release
     /// is "correct" (never results in two processes holding the
     /// lock at the same time).  It does this by contacting an
-    /// external server (<seealso cref="LockVerifyServer"/>) to assert that
+    /// external server (<see cref="LockVerifyServer"/>) to assert that
     /// at most one process holds the lock at a time.  To use
-    /// this, you should also run <seealso cref="LockVerifyServer"/> on the
-    /// host & port matching what you pass to the constructor.
+    /// this, you should also run <see cref="LockVerifyServer"/> on the
+    /// host &amp; port matching what you pass to the constructor.
     /// </summary>
-    /// <seealso> cref= LockVerifyServer </seealso>
-    /// <seealso> cref= LockStressTest </seealso>
-
+    /// <seealso cref="LockVerifyServer"/>
+    /// <seealso cref="LockStressTest"/>
     public class VerifyingLockFactory : LockFactory
     {
         internal readonly LockFactory lf;
@@ -62,7 +61,7 @@ namespace Lucene.Net.Store
                 }
                 if (ret != message)
                 {
-                    throw new System.IO.IOException("Protocol violation.");
+                    throw new IOException("Protocol violation.");
                 }
             }
 
@@ -103,9 +102,12 @@ namespace Lucene.Net.Store
             }
         }
 
-        /// <param name="lf"> the LockFactory that we are testing </param>
-        /// <param name="in"> the socket's input to <seealso cref="LockVerifyServer"/> </param>
-        /// <param name="out"> the socket's output to <seealso cref="LockVerifyServer"/> </param>
+        /// <summary>
+        /// Creates a new <see cref="VerifyingLockFactory"/> instance.
+        /// </summary>
+        /// <param name="lf"> the <see cref="LockFactory"/> that we are testing </param>
+        /// <param name="in"> the socket's input to <see cref="LockVerifyServer"/> </param>
+        /// <param name="out"> the socket's output to <see cref="LockVerifyServer"/> </param>
         public VerifyingLockFactory(LockFactory lf, Stream @in, Stream @out)
         {
             this.lf = lf;

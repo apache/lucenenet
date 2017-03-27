@@ -20,7 +20,8 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// Represents a file in RAM as a list of byte[] buffers.
+    /// Represents a file in RAM as a list of <see cref="T:byte[]"/> buffers.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class RAMFile
@@ -30,7 +31,9 @@ namespace Lucene.Net.Store
         internal RAMDirectory directory;
         protected internal long m_sizeInBytes;
 
-        // File used as buffer, in no RAMDirectory
+        /// <summary>
+        /// File used as buffer, in no <see cref="RAMDirectory"/>
+        /// </summary>
         public RAMFile()
         {
         }
@@ -40,7 +43,9 @@ namespace Lucene.Net.Store
             this.directory = directory;
         }
 
-        // For non-stream access from thread that might be concurrent with writing
+        /// <summary>
+        /// For non-stream access from thread that might be concurrent with writing
+        /// </summary>
         public virtual long Length
         {
             get
@@ -104,7 +109,7 @@ namespace Lucene.Net.Store
             return new byte[size];
         }
 
-        public virtual long SizeInBytes
+        public virtual long SizeInBytes // LUCENENET TODO: API Change to GetSizeInBytes() and check consistency across API
         {
             get
             {

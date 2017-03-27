@@ -20,8 +20,8 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A <seealso cref="rateLimiter rate limiting"/> <seealso cref="IndexOutput"/>
-    ///
+    /// A rate limiting (<see cref="RateLimiter"/>) <see cref="IndexOutput"/>
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     internal sealed class RateLimitedIndexOutput : BufferedIndexOutput

@@ -22,39 +22,39 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A straightforward implementation of <seealso cref="FSDirectory"/>
-    ///  using java.io.RandomAccessFile.  However, this class has
-    ///  poor concurrent performance (multiple threads will
-    ///  bottleneck) as it synchronizes when multiple threads
-    ///  read from the same file.  It's usually better to use
-    ///  <seealso cref="NIOFSDirectory"/> or <seealso cref="MMapDirectory"/> instead.
+    /// A straightforward implementation of <see cref="FSDirectory"/>
+    /// using <see cref="FileStream"/>.  However, this class has
+    /// poor concurrent performance (multiple threads will
+    /// bottleneck) as it synchronizes when multiple threads
+    /// read from the same file.  It's usually better to use
+    /// <see cref="NIOFSDirectory"/> or <see cref="MMapDirectory"/> instead.
     /// </summary>
     public class SimpleFSDirectory : FSDirectory
     {
         /// <summary>
-        /// Create a new SimpleFSDirectory for the named location.
+        /// Create a new <see cref="SimpleFSDirectory"/> for the named location.
         /// </summary>
         /// <param name="path"> the path of the directory </param>
         /// <param name="lockFactory"> the lock factory to use, or null for the default
-        /// (<seealso cref="NativeFSLockFactory"/>); </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// (<see cref="NativeFSLockFactory"/>); </param>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public SimpleFSDirectory(DirectoryInfo path, LockFactory lockFactory)
             : base(path, lockFactory)
         {
         }
 
         /// <summary>
-        /// Create a new SimpleFSDirectory for the named location and <seealso cref="NativeFSLockFactory"/>.
+        /// Create a new <see cref="SimpleFSDirectory"/> for the named location and <see cref="NativeFSLockFactory"/>.
         /// </summary>
         /// <param name="path"> the path of the directory </param>
-        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public SimpleFSDirectory(DirectoryInfo path)
             : base(path, null)
         {
         }
 
         /// <summary>
-        /// Creates an IndexInput for the file with the given name. </summary>
+        /// Creates an <see cref="IndexInput"/> for the file with the given name. </summary>
         public override IndexInput OpenInput(string name, IOContext context)
         {
             EnsureOpen();
@@ -105,7 +105,7 @@ namespace Lucene.Net.Store
                 {
                     return OpenSlice("full-slice", 0, descriptor.Length);
                 }
-                catch (System.IO.IOException ex)
+                catch (IOException ex)
                 {
                     throw new Exception(ex.ToString(), ex);
                 }
@@ -113,8 +113,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Reads bytes with <seealso cref="RandomAccessFile#seek(long)"/> followed by
-        /// <seealso cref="RandomAccessFile#read(byte[], int, int)"/>.
+        /// Reads bytes with <see cref="FileStream.Seek(long, SeekOrigin)"/> followed by
+        /// <see cref="FileStream.Read(byte[], int, int)"/>.
         /// </summary>
         protected internal class SimpleFSIndexInput : BufferedIndexInput
         {
@@ -180,7 +180,7 @@ namespace Lucene.Net.Store
             }
 
             /// <summary>
-            /// IndexInput methods </summary>
+            /// <see cref="IndexInput"/> methods </summary>
             protected override void ReadInternal(byte[] b, int offset, int len)
             {
                 lock (m_file)
@@ -215,9 +215,9 @@ namespace Lucene.Net.Store
 
                         //Debug.Assert(total == len);
                     }
-                    catch (System.IO.IOException ioe)
+                    catch (IOException ioe)
                     {
-                        throw new System.IO.IOException(ioe.Message + ": " + this, ioe);
+                        throw new IOException(ioe.Message + ": " + this, ioe);
                     }
                 }
             }
@@ -226,11 +226,11 @@ namespace Lucene.Net.Store
             {
             }
 
-            public virtual bool FDValid
+            public virtual bool FDValid // LUCENENET TODO: API Rename IsFDValid
             {
                 get
                 {
-                    return m_file != null;// File.FD.valid(); // LUCENENET TODO: Check logic
+                    return m_file != null;
                 }
             }
         }

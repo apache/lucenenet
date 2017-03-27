@@ -23,7 +23,7 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// A memory-resident <see cref="IndexOutput"/> implementation.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class RAMOutputStream : IndexOutput
@@ -81,7 +81,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Copy the current contents of this buffer to output
-        ///  byte array
+        /// byte array
         /// </summary>
         public virtual void WriteTo(byte[] bytes, int offset)
         {
@@ -216,7 +216,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns byte usage of all buffers. </summary>
-        public virtual long SizeInBytes()
+        public virtual long SizeInBytes() // LUCENENET TODO: API Change to GetSizeInBytes()
         {
             return (long)file.NumBuffers * (long)BUFFER_SIZE;
         }

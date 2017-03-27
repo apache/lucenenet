@@ -20,9 +20,9 @@ namespace Lucene.Net.Store
      */
 
     /// <summary>
-    /// A memory-resident <seealso cref="IndexInput"/> implementation.
-    ///
-    ///  @lucene.internal
+    /// A memory-resident <see cref="IndexInput"/> implementation.
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
     public class RAMInputStream : IndexInput
     {

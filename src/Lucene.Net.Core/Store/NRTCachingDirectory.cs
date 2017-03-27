@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Lucene.Net.Store
@@ -30,37 +31,36 @@ namespace Lucene.Net.Store
 
     // :Post-Release-Update-Version.LUCENE_XY: (in <pre> block in javadoc below)
     /// <summary>
-    /// Wraps a <seealso cref="RAMDirectory"/>
+    /// Wraps a <see cref="RAMDirectory"/>
     /// around any provided delegate directory, to
     /// be used during NRT search.
     ///
-    /// <p>this class is likely only useful in a near-real-time
+    /// <para>This class is likely only useful in a near-real-time
     /// context, where indexing rate is lowish but reopen
     /// rate is highish, resulting in many tiny files being
-    /// written.  this directory keeps such segments (as well as
+    /// written.  This directory keeps such segments (as well as
     /// the segments produced by merging them, as long as they
-    /// are small enough), in RAM.</p>
+    /// are small enough), in RAM.</para>
     ///
-    /// <p>this is safe to use: when your app calls {IndexWriter#commit},
-    /// all cached files will be flushed from the cached and sync'd.</p>
+    /// <para>This is safe to use: when your app calls <see cref="Index.IndexWriter.Commit()"/>,
+    /// all cached files will be flushed from the cached and sync'd.</para>
     ///
-    /// <p>Here's a simple example usage:
+    /// <para/>Here's a simple example usage:
     ///
-    /// <pre class="prettyprint">
-    ///   Directory fsDir = FSDirectory.open(new File("/path/to/index"));
-    ///   NRTCachingDirectory cachedFSDir = new NRTCachingDirectory(fsDir, 5.0, 60.0);
-    ///   IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_48, analyzer);
-    ///   IndexWriter writer = new IndexWriter(cachedFSDir, conf);
-    /// </pre>
+    /// <code>
+    ///     Directory fsDir = FSDirectory.Open(new DirectoryInfo("/path/to/index"));
+    ///     NRTCachingDirectory cachedFSDir = new NRTCachingDirectory(fsDir, 5.0, 60.0);
+    ///     IndexWriterConfig conf = new IndexWriterConfig(Version.LUCENE_48, analyzer);
+    ///     IndexWriter writer = new IndexWriter(cachedFSDir, conf);
+    /// </code>
     ///
-    /// <p>this will cache all newly flushed segments, all merges
-    /// whose expected segment size is <= 5 MB, unless the net
+    /// <para>This will cache all newly flushed segments, all merges
+    /// whose expected segment size is &lt;= 5 MB, unless the net
     /// cached bytes exceeds 60 MB at which point all writes will
-    /// not be cached (until the net bytes falls below 60 MB).</p>
-    ///
+    /// not be cached (until the net bytes falls below 60 MB).</para>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-
     public class NRTCachingDirectory : Directory
     {
         private readonly RAMDirectory cache = new RAMDirectory();
@@ -73,10 +73,10 @@ namespace Lucene.Net.Store
         private static bool VERBOSE = false;
 
         /// <summary>
-        ///  We will cache a newly created output if 1) it's a
-        ///  flush or a merge and the estimated size of the merged segment is <=
-        ///  maxMergeSizeMB, and 2) the total cached bytes is <=
-        ///  maxCachedMB
+        /// We will cache a newly created output if 1) it's a
+        /// flush or a merge and the estimated size of the merged segment is &lt;=
+        /// maxMergeSizeMB, and 2) the total cached bytes is &lt;=
+        /// maxCachedMB
         /// </summary>
         public NRTCachingDirectory(Directory @delegate, double maxMergeSizeMB, double maxCachedMB)
         {
@@ -164,7 +164,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns how many bytes are being used by the
-        ///  RAMDirectory cache
+        /// <see cref="RAMDirectory"/> cache
         /// </summary>
         public virtual long SizeInBytes()
         {
@@ -240,7 +240,7 @@ namespace Lucene.Net.Store
                     @delegate.DeleteFile(name);
                 }
 #pragma warning disable 168
-                catch (System.IO.IOException ioe)
+                catch (IOException ioe)
 #pragma warning restore 168
                 {
                     // this is fine: file may not exist
@@ -254,7 +254,7 @@ namespace Lucene.Net.Store
                     cache.DeleteFile(name);
                 }
 #pragma warning disable 168
-                catch (System.IO.IOException ioe)
+                catch (IOException ioe)
 #pragma warning restore 168
                 {
                     // this is fine: file may not exist
@@ -328,8 +328,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Close this directory, which flushes any cached files
-        ///  to the delegate and then closes the delegate.
+        /// Dispose this directory, which flushes any cached files
+        /// to the delegate and then disposes the delegate.
         /// </summary>
         public override void Dispose()
         {
@@ -348,7 +348,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Subclass can override this to customize logic; return
-        ///  true if this file should be written to the RAMDirectory.
+        /// <c>true</c> if this file should be written to the <see cref="RAMDirectory"/>.
         /// </summary>
         protected virtual bool DoCacheWrite(string name, IOContext context)
         {
