@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public override IEnumerator<string> GetEnumerator()
         {
-            return Collections.UnmodifiableSet(fields.Keys).GetEnumerator();
+            return fields.Keys.GetEnumerator(); // LUCENENET NOTE: enumerators are not writable in .NET
         }
 
         public override Terms GetTerms(string field)

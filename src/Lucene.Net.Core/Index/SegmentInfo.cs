@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Return all files referenced by this SegmentInfo. </summary>
-        public ICollection<string> GetFiles()
+        public ISet<string> GetFiles()
         {
             if (setFiles == null)
             {

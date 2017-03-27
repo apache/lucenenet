@@ -95,7 +95,7 @@ namespace Lucene.Net
             return new UnmodifiableDictionary<TKey, TValue>(d);
         }
 
-        public static ICollection<T> UnmodifiableSet<T>(ICollection<T> list)
+        public static ISet<T> UnmodifiableSet<T>(ISet<T> list)
         {
             return new UnmodifiableSetImpl<T>(list);
         }
@@ -574,10 +574,10 @@ namespace Lucene.Net
 
         #region UnmodifiableSetImpl
 
-        private class UnmodifiableSetImpl<T> : ICollection<T>
+        private class UnmodifiableSetImpl<T> : ISet<T>
         {
-            private readonly ICollection<T> set;
-            public UnmodifiableSetImpl(ICollection<T> set)
+            private readonly ISet<T> set;
+            public UnmodifiableSetImpl(ISet<T> set)
             {
                 if (set == null)
                     throw new ArgumentNullException("set");
@@ -619,12 +619,67 @@ namespace Lucene.Net
                 set.CopyTo(array, arrayIndex);
             }
 
+            public void ExceptWith(IEnumerable<T> other)
+            {
+                throw new InvalidOperationException("Unable to modify this set.");
+            }
+
             public IEnumerator<T> GetEnumerator()
             {
                 return set.GetEnumerator();
             }
 
+            public void IntersectWith(IEnumerable<T> other)
+            {
+                throw new InvalidOperationException("Unable to modify this set.");
+            }
+
+            public bool IsProperSubsetOf(IEnumerable<T> other)
+            {
+                return set.IsProperSubsetOf(other);
+            }
+
+            public bool IsProperSupersetOf(IEnumerable<T> other)
+            {
+                return set.IsProperSupersetOf(other);
+            }
+
+            public bool IsSubsetOf(IEnumerable<T> other)
+            {
+                return set.IsSubsetOf(other);
+            }
+
+            public bool IsSupersetOf(IEnumerable<T> other)
+            {
+                return set.IsSupersetOf(other);
+            }
+
+            public bool Overlaps(IEnumerable<T> other)
+            {
+                return set.Overlaps(other);
+            }
+
             public bool Remove(T item)
+            {
+                throw new InvalidOperationException("Unable to modify this set.");
+            }
+
+            public bool SetEquals(IEnumerable<T> other)
+            {
+                return set.SetEquals(other);
+            }
+
+            public void SymmetricExceptWith(IEnumerable<T> other)
+            {
+                throw new InvalidOperationException("Unable to modify this set.");
+            }
+
+            public void UnionWith(IEnumerable<T> other)
+            {
+                throw new InvalidOperationException("Unable to modify this set.");
+            }
+
+            bool ISet<T>.Add(T item)
             {
                 throw new InvalidOperationException("Unable to modify this set.");
             }

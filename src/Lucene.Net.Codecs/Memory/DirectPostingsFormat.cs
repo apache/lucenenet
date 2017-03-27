@@ -147,7 +147,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public override IEnumerator<string> GetEnumerator()
             {
-                return Collections.UnmodifiableSet<string>(fields.Keys).GetEnumerator();
+                return fields.Keys.GetEnumerator(); // LUCENENET NOTE: enumerators are not writable in .NET
             }
 
             public override Terms GetTerms(string field)
