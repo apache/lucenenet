@@ -226,7 +226,7 @@ namespace Lucene.Net.Store
             {
             }
 
-            public virtual bool FDValid // LUCENENET TODO: API Rename IsFDValid
+            public virtual bool IsFDValid
             {
                 get
                 {

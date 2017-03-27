@@ -68,7 +68,7 @@ namespace Lucene.Net.Store
             if (IsSimpleFSIndexInput(@is))
             {
                 SimpleFSIndexInput fis = (SimpleFSIndexInput)@is;
-                return fis.FDValid;
+                return fis.IsFDValid;
             }
             else
             {
