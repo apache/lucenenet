@@ -1,11 +1,11 @@
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*
@@ -88,7 +88,7 @@ namespace Lucene.Net.Search
 
             List<PreviousSearchState> priorSearches = new List<PreviousSearchState>();
             List<BytesRef> terms = null;
-            while (DateTime.UtcNow < EndTime)
+            while (Time.NanoTime() < endTimeNanos)
             {
                 bool doFollowon = priorSearches.Count > 0 && Random().Next(7) == 1;
 

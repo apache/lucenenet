@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -101,12 +102,12 @@ namespace Lucene.Net.Index
             long t0 = 0;
             if (mergeState.InfoStream.IsEnabled("SM"))
             {
-                t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                t0 = Time.NanoTime();
             }
             int numMerged = MergeFields();
             if (mergeState.InfoStream.IsEnabled("SM"))
             {
-                long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                long t1 = Time.NanoTime();
                 mergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge stored fields [" + numMerged + " docs]");
             }
             Debug.Assert(numMerged == mergeState.SegmentInfo.DocCount);
@@ -114,18 +115,18 @@ namespace Lucene.Net.Index
             SegmentWriteState segmentWriteState = new SegmentWriteState(mergeState.InfoStream, directory, mergeState.SegmentInfo, mergeState.FieldInfos, termIndexInterval, null, context);
             if (mergeState.InfoStream.IsEnabled("SM"))
             {
-                t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                t0 = Time.NanoTime();
             }
             MergeTerms(segmentWriteState);
             if (mergeState.InfoStream.IsEnabled("SM"))
             {
-                long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                long t1 = Time.NanoTime();
                 mergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge postings [" + numMerged + " docs]");
             }
 
             if (mergeState.InfoStream.IsEnabled("SM"))
             {
-                t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                t0 = Time.NanoTime();
             }
             if (mergeState.FieldInfos.HasDocValues)
             {
@@ -133,7 +134,7 @@ namespace Lucene.Net.Index
             }
             if (mergeState.InfoStream.IsEnabled("SM"))
             {
-                long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                long t1 = Time.NanoTime();
                 mergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge doc values [" + numMerged + " docs]");
             }
 
@@ -141,12 +142,12 @@ namespace Lucene.Net.Index
             {
                 if (mergeState.InfoStream.IsEnabled("SM"))
                 {
-                    t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                    t0 = Time.NanoTime();
                 }
                 MergeNorms(segmentWriteState);
                 if (mergeState.InfoStream.IsEnabled("SM"))
                 {
-                    long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                    long t1 = Time.NanoTime();
                     mergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge norms [" + numMerged + " docs]");
                 }
             }
@@ -155,12 +156,12 @@ namespace Lucene.Net.Index
             {
                 if (mergeState.InfoStream.IsEnabled("SM"))
                 {
-                    t0 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                    t0 = Time.NanoTime();
                 }
                 numMerged = MergeVectors();
                 if (mergeState.InfoStream.IsEnabled("SM"))
                 {
-                    long t1 = DateTime.UtcNow.Ticks / TimeSpan.TicksPerMillisecond;
+                    long t1 = Time.NanoTime();
                     mergeState.InfoStream.Message("SM", ((t1 - t0) / 1000000) + " msec to merge vectors [" + numMerged + " docs]");
                 }
                 Debug.Assert(numMerged == mergeState.SegmentInfo.DocCount);

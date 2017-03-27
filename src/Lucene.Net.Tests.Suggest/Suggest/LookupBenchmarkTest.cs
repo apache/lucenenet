@@ -287,16 +287,16 @@ namespace Lucene.Net.Search.Suggest
          */
         private BenchmarkResult Measure(ICallable<int> callable)
         {
-            //double NANOS_PER_MS = 1000000;
+            double NANOS_PER_MS = 1000000;
 
             try
             {
                 List<double> times = new List<double>();
                 for (int i = 0; i < warmup + rounds; i++)
                 {
-                    long start = Environment.TickCount;
+                    long start = Time.NanoTime();
                     guard = Convert.ToInt32(callable.Call());
-                    times.Add((Environment.TickCount - start) /* / NANOS_PER_MS */);
+                    times.Add((Time.NanoTime() - start) / NANOS_PER_MS );
                 }
                 return new BenchmarkResult(times, warmup, rounds);
             }

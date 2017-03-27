@@ -53,8 +53,6 @@ namespace Lucene.Net.Search
         private EventWaitHandle reopenCond = new AutoResetEvent(false);
         private EventWaitHandle available = new AutoResetEvent(false);
 
-        private const long MILLISECONDS_PER_NANOSECOND = 1000000;
-
         /// <summary>
         /// Create <see cref="ControlledRealTimeReopenThread{T}"/>, to periodically
         /// reopen the a <see cref="ReferenceManager{T}"/>.
@@ -183,7 +181,7 @@ namespace Lucene.Net.Search
                     available.Reset();
                 }
 
-            long startMS = Environment.TickCount;//System.nanoTime() / 1000000;
+            long startMS = Time.NanoTime() / 1000000;
 
             // LUCENENET specific - reading searchingGen not thread safe, so use Interlocked.Read()
             while (targetGen > Interlocked.Read(ref searchingGen))
@@ -194,7 +192,7 @@ namespace Lucene.Net.Search
                 }
                 else
                 {
-                    long msLeft = (startMS + maxMS) - Environment.TickCount;//(System.nanoTime()) / 1000000;
+                    long msLeft = (startMS + maxMS) - (Time.NanoTime()) / 1000000;
                     if (msLeft <= 0)
                     {
                         return false;
@@ -213,7 +211,7 @@ namespace Lucene.Net.Search
         {
             // TODO: maybe use private thread ticktock timer, in
             // case clock shift messes up nanoTime?
-            long lastReopenStartNS = Environment.TickCount * MILLISECONDS_PER_NANOSECOND;
+            long lastReopenStartNS = DateTime.UtcNow.Ticks * 100;
 
             //System.out.println("reopen: start");
             while (!finish)
@@ -224,14 +222,14 @@ namespace Lucene.Net.Search
                     hasWaiting = waitingGen > searchingGen;
 
                 long nextReopenStartNS = lastReopenStartNS + (hasWaiting ? targetMinStaleNS : targetMaxStaleNS);
-                long sleepNS = nextReopenStartNS - (Environment.TickCount * MILLISECONDS_PER_NANOSECOND);
+                long sleepNS = nextReopenStartNS - Time.NanoTime();
 
                 if (sleepNS > 0)
 #if !NETSTANDARD
                     try
                     {
 #endif
-                        reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / MILLISECONDS_PER_NANOSECOND));//Convert NS to Ticks
+                        reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MILLISECONDS_PER_NANOSECOND));//Convert NS to Ticks
 #if !NETSTANDARD
                     }
 #pragma warning disable 168
@@ -248,7 +246,7 @@ namespace Lucene.Net.Search
                     break;
                 }
 
-                lastReopenStartNS = Environment.TickCount * MILLISECONDS_PER_NANOSECOND;
+                lastReopenStartNS = Time.NanoTime();
                 // Save the gen as of when we started the reopen; the
                 // listener (HandleRefresh above) copies this to
                 // searchingGen once the reopen completes:

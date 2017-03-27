@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Threading;
 
@@ -112,7 +113,7 @@ namespace Lucene.Net.Store
                 // should also offer decayed recent history one?
                 var targetNS = lastNS = lastNS + ((long)(bytes * nsPerByte));
                 long startNS;
-                var curNS = startNS = DateTime.UtcNow.Ticks * 100 /* ns */;
+                var curNS = startNS = Time.NanoTime() /* ns */;
                 if (lastNS < curNS)
                 {
                     lastNS = curNS;
@@ -137,7 +138,7 @@ namespace Lucene.Net.Store
                             throw new ThreadInterruptedException(ie.ToString(), ie);
                         }
 #endif
-                        curNS = DateTime.UtcNow.Ticks * 100;
+                        curNS = Time.NanoTime();
                         continue;
                     }
                     break;

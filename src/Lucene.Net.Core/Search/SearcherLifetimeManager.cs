@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -95,10 +96,7 @@ namespace Lucene.Net.Search
 
     public class SearcherLifetimeManager : IDisposable
     {
-        // LUCENENET specific - adjust scale to account for the fact that we
-        // are using milliseconds instead of nanoseconds in .NET.
-        private const double MILLISECONDS_PER_SECOND = 1000;
-        //internal const double NANOS_PER_SEC = 1000000000.0;
+        internal const double NANOS_PER_SEC = 1000000000.0;
 
         private sealed class SearcherTracker : IComparable<SearcherTracker>, IDisposable
         {
@@ -111,11 +109,9 @@ namespace Lucene.Net.Search
                 Searcher = searcher;
                 Version = ((DirectoryReader)searcher.IndexReader).Version;
                 searcher.IndexReader.IncRef();
-                //// Use nanoTime not currentTimeMillis since it [in
-                //// theory] reduces risk from clock shift
-                //RecordTimeSec = DateTime.Now.ToFileTime() / 100.0d / NANOS_PER_SEC;
-                // LUCENENET specific - adjust calculation for milliseconds
-                RecordTimeSec = Environment.TickCount / MILLISECONDS_PER_SECOND;
+                // Use nanoTime not currentTimeMillis since it [in
+                // theory] reduces risk from clock shift
+                RecordTimeSec = Time.NanoTime() / NANOS_PER_SEC;
             }
 
             // Newer searchers are sort before older ones:
@@ -273,9 +269,7 @@ namespace Lucene.Net.Search
                 var trackers = _searchers.Values.ToList();
                 trackers.Sort();
                 var lastRecordTimeSec = 0.0;
-                //var now = DateTime.Now.ToFileTime() / 100.0d / NANOS_PER_SEC;
-                // LUCENENET specific - adjust calculation for milliseconds
-                double now = Environment.TickCount / MILLISECONDS_PER_SECOND;
+                double now = Time.NanoTime() / NANOS_PER_SEC;
                 foreach (var tracker in trackers)
                 {
                     double ageSec;

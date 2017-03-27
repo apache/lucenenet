@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -109,12 +110,12 @@ namespace Lucene.Net.Util
 
         public override void WriteBytes(byte[] b, int offset, int length)
         {
-            long before = DateTime.Now.Ticks;
+            long before = Time.NanoTime();
             // TODO: sometimes, write only half the bytes, then
             // sleep, then 2nd half, then sleep, so we sometimes
             // interrupt having only written not all bytes
             @delegate.WriteBytes(b, offset, length);
-            TimeElapsed += (DateTime.Now.Ticks - before) * 100;
+            TimeElapsed += Time.NanoTime() - before;
             PendingBytes += length;
             Sleep(GetDelay(false));
         }
