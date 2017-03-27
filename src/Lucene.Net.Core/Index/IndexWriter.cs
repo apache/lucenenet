@@ -49,111 +49,111 @@ namespace Lucene.Net.Index
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
     /// <summary>
-    ///  An <code>IndexWriter</code> creates and maintains an index.
+    /// An <see cref="IndexWriter"/> creates and maintains an index.
     ///
-    ///  <p>The <seealso cref="OpenMode"/> option on
-    ///  <seealso cref="IndexWriterConfig#setOpenMode(OpenMode)"/> determines
-    ///  whether a new index is created, or whether an existing index is
-    ///  opened. Note that you can open an index with <seealso cref="OpenMode#CREATE"/>
-    ///  even while readers are using the index. The old readers will
-    ///  continue to search the "point in time" snapshot they had opened,
-    ///  and won't see the newly created index until they re-open. If
-    ///  <seealso cref="OpenMode#CREATE_OR_APPEND"/> is used IndexWriter will create a
-    ///  new index if there is not already an index at the provided path
-    ///  and otherwise open the existing index.</p>
+    /// <para>The <see cref="OpenMode"/> option on
+    /// <see cref="IndexWriterConfig.OpenMode"/> determines
+    /// whether a new index is created, or whether an existing index is
+    /// opened. Note that you can open an index with <see cref="OpenMode.CREATE"/>
+    /// even while readers are using the index. The old readers will
+    /// continue to search the "point in time" snapshot they had opened,
+    /// and won't see the newly created index until they re-open. If
+    /// <see cref="OpenMode.CREATE_OR_APPEND"/> is used <see cref="IndexWriter"/> will create a
+    /// new index if there is not already an index at the provided path
+    /// and otherwise open the existing index.</para>
     ///
-    ///  <p>In either case, documents are added with {@link #addDocument(Iterable)
-    ///  addDocument} and removed with <seealso cref="#deleteDocuments(Term)"/> or {@link
-    ///  #deleteDocuments(Query)}. A document can be updated with {@link
-    ///  #updateDocument(Term, Iterable) updateDocument} (which just deletes
-    ///  and then adds the entire document). When finished adding, deleting
-    ///  and updating documents, <seealso cref="#close() close"/> should be called.</p>
+    /// <para>In either case, documents are added with <see cref="AddDocument(IEnumerable{IIndexableField})"/>
+    /// and removed with <see cref="DeleteDocuments(Term)"/> or
+    /// <see cref="DeleteDocuments(Query)"/>. A document can be updated with
+    /// <see cref="UpdateDocument(Term, IEnumerable{IIndexableField})"/> (which just deletes
+    /// and then adds the entire document). When finished adding, deleting
+    /// and updating documents, <see cref="Dispose()"/> should be called.</para>
     ///
-    ///  <a name="flush"></a>
-    ///  <p>These changes are buffered in memory and periodically
-    ///  flushed to the <seealso cref="Directory"/> (during the above method
-    ///  calls). A flush is triggered when there are enough added documents
-    ///  since the last flush. Flushing is triggered either by RAM usage of the
-    ///  documents (see <seealso cref="IndexWriterConfig#setRAMBufferSizeMB"/>) or the
-    ///  number of added documents (see <seealso cref="IndexWriterConfig#setMaxBufferedDocs(int)"/>).
-    ///  The default is to flush when RAM usage hits
-    ///  <seealso cref="IndexWriterConfig#DEFAULT_RAM_BUFFER_SIZE_MB"/> MB. For
-    ///  best indexing speed you should flush by RAM usage with a
-    ///  large RAM buffer. Additionally, if IndexWriter reaches the configured number of
-    ///  buffered deletes (see <seealso cref="IndexWriterConfig#setMaxBufferedDeleteTerms"/>)
-    ///  the deleted terms and queries are flushed and applied to existing segments.
-    ///  In contrast to the other flush options <seealso cref="IndexWriterConfig#setRAMBufferSizeMB"/> and
-    ///  <seealso cref="IndexWriterConfig#setMaxBufferedDocs(int)"/>, deleted terms
-    ///  won't trigger a segment flush. Note that flushing just moves the
-    ///  internal buffered state in IndexWriter into the index, but
-    ///  these changes are not visible to IndexReader until either
-    ///  <seealso cref="#commit()"/> or <seealso cref="#close"/> is called.  A flush may
-    ///  also trigger one or more segment merges which by default
-    ///  run with a background thread so as not to block the
-    ///  addDocument calls (see <a href="#mergePolicy">below</a>
-    ///  for changing the <seealso cref="mergeScheduler"/>).</p>
+    /// <a name="flush"></a>
+    /// <para>These changes are buffered in memory and periodically
+    /// flushed to the <see cref="Store.Directory"/> (during the above method
+    /// calls). A flush is triggered when there are enough added documents
+    /// since the last flush. Flushing is triggered either by RAM usage of the
+    /// documents (see <see cref="LiveIndexWriterConfig.RAMBufferSizeMB"/>) or the
+    /// number of added documents (see <see cref="LiveIndexWriterConfig.MaxBufferedDocs"/>).
+    /// The default is to flush when RAM usage hits
+    /// <see cref="IndexWriterConfig.DEFAULT_RAM_BUFFER_SIZE_MB"/> MB. For
+    /// best indexing speed you should flush by RAM usage with a
+    /// large RAM buffer. Additionally, if <see cref="IndexWriter"/> reaches the configured number of
+    /// buffered deletes (see <see cref="LiveIndexWriterConfig.MaxBufferedDeleteTerms"/>)
+    /// the deleted terms and queries are flushed and applied to existing segments.
+    /// In contrast to the other flush options <see cref="LiveIndexWriterConfig.RAMBufferSizeMB"/> and
+    /// <see cref="LiveIndexWriterConfig.MaxBufferedDocs"/>, deleted terms
+    /// won't trigger a segment flush. Note that flushing just moves the
+    /// internal buffered state in <see cref="IndexWriter"/> into the index, but
+    /// these changes are not visible to <see cref="IndexReader"/> until either
+    /// <see cref="Commit()"/> or <see cref="Dispose()"/> is called.  A flush may
+    /// also trigger one or more segment merges which by default
+    /// run with a background thread so as not to block the
+    /// addDocument calls (see <a href="#mergePolicy">below</a>
+    /// for changing the <see cref="mergeScheduler"/>).</para>
     ///
-    ///  <p>Opening an <code>IndexWriter</code> creates a lock file for the directory in use. Trying to open
-    ///  another <code>IndexWriter</code> on the same directory will lead to a
-    ///  <seealso cref="LockObtainFailedException"/>. The <seealso cref="LockObtainFailedException"/>
-    ///  is also thrown if an IndexReader on the same directory is used to delete documents
-    ///  from the index.</p>
+    /// <para>Opening an <see cref="IndexWriter"/> creates a lock file for the directory in use. Trying to open
+    /// another <see cref="IndexWriter"/> on the same directory will lead to a
+    /// <see cref="LockObtainFailedException"/>. The <see cref="LockObtainFailedException"/>
+    /// is also thrown if an <see cref="IndexReader"/> on the same directory is used to delete documents
+    /// from the index.</para>
     ///
-    ///  <a name="deletionPolicy"></a>
-    ///  <p>Expert: <code>IndexWriter</code> allows an optional
-    ///  <seealso cref="IndexDeletionPolicy"/> implementation to be
-    ///  specified.  You can use this to control when prior commits
-    ///  are deleted from the index.  The default policy is {@link
-    ///  KeepOnlyLastCommitDeletionPolicy} which removes all prior
-    ///  commits as soon as a new commit is done (this matches
-    ///  behavior before 2.2).  Creating your own policy can allow
-    ///  you to explicitly keep previous "point in time" commits
-    ///  alive in the index for some time, to allow readers to
-    ///  refresh to the new commit without having the old commit
-    ///  deleted out from under them.  this is necessary on
-    ///  filesystems like NFS that do not support "delete on last
-    ///  close" semantics, which Lucene's "point in time" search
-    ///  normally relies on. </p>
+    /// <a name="deletionPolicy"></a>
+    /// <para>Expert: <see cref="IndexWriter"/> allows an optional
+    /// <see cref="IndexDeletionPolicy"/> implementation to be
+    /// specified.  You can use this to control when prior commits
+    /// are deleted from the index.  The default policy is
+    /// <see cref="KeepOnlyLastCommitDeletionPolicy"/> which removes all prior
+    /// commits as soon as a new commit is done (this matches
+    /// behavior before 2.2).  Creating your own policy can allow
+    /// you to explicitly keep previous "point in time" commits
+    /// alive in the index for some time, to allow readers to
+    /// refresh to the new commit without having the old commit
+    /// deleted out from under them.  This is necessary on
+    /// filesystems like NFS that do not support "delete on last
+    /// close" semantics, which Lucene's "point in time" search
+    /// normally relies on. </para>
     ///
-    ///  <a name="mergePolicy"></a> <p>Expert:
-    ///  <code>IndexWriter</code> allows you to separately change
-    ///  the <seealso cref="mergePolicy"/> and the <seealso cref="mergeScheduler"/>.
-    ///  The <seealso cref="mergePolicy"/> is invoked whenever there are
-    ///  changes to the segments in the index.  Its role is to
-    ///  select which merges to do, if any, and return a {@link
-    ///  MergePolicy.MergeSpecification} describing the merges.
-    ///  The default is <seealso cref="LogByteSizeMergePolicy"/>.  Then, the {@link
-    ///  MergeScheduler} is invoked with the requested merges and
-    ///  it decides when and how to run the merges.  The default is
-    ///  <seealso cref="ConcurrentMergeScheduler"/>. </p>
+    /// <a name="mergePolicy"></a> <para>Expert:
+    /// <see cref="IndexWriter"/> allows you to separately change
+    /// the <see cref="mergePolicy"/> and the <see cref="mergeScheduler"/>.
+    /// The <see cref="mergePolicy"/> is invoked whenever there are
+    /// changes to the segments in the index.  Its role is to
+    /// select which merges to do, if any, and return a 
+    /// <see cref="MergePolicy.MergeSpecification"/> describing the merges.
+    /// The default is <see cref="LogByteSizeMergePolicy"/>.  Then, the 
+    /// <see cref="MergeScheduler"/> is invoked with the requested merges and
+    /// it decides when and how to run the merges.  The default is
+    /// <see cref="ConcurrentMergeScheduler"/>. </para>
     ///
-    ///  <a name="OOME"></a><p><b>NOTE</b>: if you hit an
-    ///  OutOfMemoryError then IndexWriter will quietly record this
-    ///  fact and block all future segment commits.  this is a
-    ///  defensive measure in case any internal state (buffered
-    ///  documents and deletions) were corrupted.  Any subsequent
-    ///  calls to <seealso cref="#commit()"/> will throw an
-    ///  InvalidOperationException.  The only course of action is to
-    ///  call <seealso cref="#close()"/>, which internally will call {@link
-    ///  #rollback()}, to undo any changes to the index since the
-    ///  last commit.  You can also just call <seealso cref="#rollback()"/>
-    ///  directly.</p>
+    /// <a name="OOME"></a><para><b>NOTE</b>: if you hit an
+    /// <see cref="OutOfMemoryException"/> then <see cref="IndexWriter"/> will quietly record this
+    /// fact and block all future segment commits.  This is a
+    /// defensive measure in case any internal state (buffered
+    /// documents and deletions) were corrupted.  Any subsequent
+    /// calls to <see cref="Commit()"/> will throw an
+    /// <see cref="InvalidOperationException"/>.  The only course of action is to
+    /// call <see cref="Dispose()"/>, which internally will call
+    /// <see cref="Rollback()"/>, to undo any changes to the index since the
+    /// last commit.  You can also just call <see cref="Rollback()"/>
+    /// directly.</para>
     ///
-    ///  <a name="thread-safety"></a><p><b>NOTE</b>: {@link
-    ///  IndexWriter} instances are completely thread
-    ///  safe, meaning multiple threads can call any of its
-    ///  methods, concurrently.  If your application requires
-    ///  external synchronization, you should <b>not</b>
-    ///  synchronize on the <code>IndexWriter</code> instance as
-    ///  this may cause deadlock; use your own (non-Lucene) objects
-    ///  instead. </p>
+    /// <a name="thread-safety"></a><para><b>NOTE</b>: 
+    /// <see cref="IndexWriter"/> instances are completely thread
+    /// safe, meaning multiple threads can call any of its
+    /// methods, concurrently.  If your application requires
+    /// external synchronization, you should <b>not</b>
+    /// synchronize on the <see cref="IndexWriter"/> instance as
+    /// this may cause deadlock; use your own (non-Lucene) objects
+    /// instead. </para>
     ///
-    ///  <p><b>NOTE</b>: If you call
-    ///  <code>Thread.interrupt()</code> on a thread that's within
-    ///  IndexWriter, IndexWriter will try to catch this (eg, if
-    ///  it's in a wait() or Thread.sleep()), and will then throw
-    ///  the unchecked exception <seealso cref="ThreadInterruptedException"/>
-    ///  and <b>clear</b> the interrupt status on the thread.</p>
+    /// <para><b>NOTE</b>: If you call
+    /// <see cref="Thread.Interrupt()"/> on a thread that's within
+    /// <see cref="IndexWriter"/>, <see cref="IndexWriter"/> will try to catch this (eg, if
+    /// it's in a Wait() or <see cref="Thread.Sleep()"/>), and will then throw
+    /// the unchecked exception <see cref="ThreadInterruptedException"/>
+    /// and <b>clear</b> the interrupt status on the thread.</para>
     /// </summary>
 
     /*
@@ -187,7 +187,7 @@ namespace Lucene.Net.Index
         public static readonly string WRITE_LOCK_NAME = "write.lock";
 
         /// <summary>
-        /// Key for the source of a segment in the <seealso cref="SegmentInfo#getDiagnostics() diagnostics"/>. </summary>
+        /// Key for the source of a segment in the <see cref="SegmentInfo.Diagnostics"/>. </summary>
         public static readonly string SOURCE = "source";
 
         /// <summary>
@@ -199,16 +199,16 @@ namespace Lucene.Net.Index
         public static readonly string SOURCE_FLUSH = "flush";
 
         /// <summary>
-        /// Source of a segment which results from a call to <seealso cref="#addIndexes(IndexReader...)"/>. </summary>
-        public static readonly string SOURCE_ADDINDEXES_READERS = "addIndexes(IndexReader...)";
+        /// Source of a segment which results from a call to <see cref="AddIndexes(IndexReader[])"/>. </summary>
+        public static readonly string SOURCE_ADDINDEXES_READERS = "AddIndexes(params IndexReader[] readers)";
 
         /// <summary>
         /// Absolute hard maximum length for a term, in bytes once
         /// encoded as UTF8.  If a term arrives from the analyzer
         /// longer than this length, an
-        /// <code>IllegalArgumentException</code>  is thrown
-        /// and a message is printed to infoStream, if set (see {@link
-        /// IndexWriterConfig#setInfoStream(InfoStream)}).
+        /// <see cref="ArgumentException"/> is thrown
+        /// and a message is printed to <see cref="infoStream"/>, if set (see
+        /// <see cref="IndexWriterConfig.SetInfoStream(InfoStream)"/>).
         /// </summary>
         public static readonly int MAX_TERM_LENGTH = DocumentsWriterPerThread.MAX_TERM_LENGTH_UTF8;
 
@@ -286,57 +286,57 @@ namespace Lucene.Net.Index
         /// Expert: returns a readonly reader, covering all
         /// committed as well as un-committed changes to the index.
         /// this provides "near real-time" searching, in that
-        /// changes made during an IndexWriter session can be
+        /// changes made during an <see cref="IndexWriter"/> session can be
         /// quickly made available for searching without closing
-        /// the writer nor calling <seealso cref="#commit"/>.
+        /// the writer nor calling <see cref="Commit()"/>.
         ///
-        /// <p>Note that this is functionally equivalent to calling
-        /// {#flush} and then opening a new reader.  But the turnaround time of this
+        /// <para>Note that this is functionally equivalent to calling
+        /// Flush() and then opening a new reader.  But the turnaround time of this
         /// method should be faster since it avoids the potentially
-        /// costly <seealso cref="#commit"/>.</p>
+        /// costly <see cref="Commit()"/>.</para>
         ///
-        /// <p>You must close the <seealso cref="IndexReader"/> returned by
-        /// this method once you are done using it.</p>
+        /// <para>You must close the <see cref="IndexReader"/> returned by
+        /// this method once you are done using it.</para>
         ///
-        /// <p>It's <i>near</i> real-time because there is no hard
+        /// <para>It's <i>near</i> real-time because there is no hard
         /// guarantee on how quickly you can get a new reader after
-        /// making changes with IndexWriter.  You'll have to
+        /// making changes with <see cref="IndexWriter"/>.  You'll have to
         /// experiment in your situation to determine if it's
         /// fast enough.  As this is a new and experimental
         /// feature, please report back on your findings so we can
-        /// learn, improve and iterate.</p>
+        /// learn, improve and iterate.</para>
         ///
-        /// <p>The resulting reader supports {@link
-        /// DirectoryReader#openIfChanged}, but that call will simply forward
+        /// <para>The resulting reader supports
+        /// <see cref="DirectoryReader.DoOpenIfChanged()"/>, but that call will simply forward
         /// back to this method (though this may change in the
-        /// future).</p>
+        /// future).</para>
         ///
-        /// <p>The very first time this method is called, this
+        /// <para>The very first time this method is called, this
         /// writer instance will make every effort to pool the
         /// readers that it opens for doing merges, applying
-        /// deletes, etc.  this means additional resources (RAM,
-        /// file descriptors, CPU time) will be consumed.</p>
+        /// deletes, etc.  This means additional resources (RAM,
+        /// file descriptors, CPU time) will be consumed.</para>
         ///
-        /// <p>For lower latency on reopening a reader, you should
-        /// call <seealso cref="IndexWriterConfig#setMergedSegmentWarmer"/> to
+        /// <para>For lower latency on reopening a reader, you should
+        /// set <see cref="LiveIndexWriterConfig.MergedSegmentWarmer"/> to
         /// pre-warm a newly merged segment before it's committed
-        /// to the index.  this is important for minimizing
-        /// index-to-search delay after a large merge.  </p>
+        /// to the index.  This is important for minimizing
+        /// index-to-search delay after a large merge.  </para>
         ///
-        /// <p>If an addIndexes* call is running in another thread,
+        /// <para>If an AddIndexes* call is running in another thread,
         /// then this reader will only search those segments from
         /// the foreign index that have been successfully copied
-        /// over, so far</p>.
+        /// over, so far.</para>
         ///
-        /// <p><b>NOTE</b>: Once the writer is closed, any
+        /// <para><b>NOTE</b>: Once the writer is disposed, any
         /// outstanding readers may continue to be used.  However,
         /// if you attempt to reopen any of those readers, you'll
-        /// hit an <seealso cref="ObjectDisposedException"/>.</p>
+        /// hit an <see cref="ObjectDisposedException"/>.</para>
         ///
         /// @lucene.experimental
         /// </summary>
-        /// <returns> IndexReader that covers entire index plus all
-        /// changes made so far by this IndexWriter instance
+        /// <returns> <see cref="IndexReader"/> that covers entire index plus all
+        /// changes made so far by this <see cref="IndexWriter"/> instance
         /// </returns>
         /// <exception cref="IOException"> If there is a low-level I/O error </exception>
         public virtual DirectoryReader GetReader(bool applyAllDeletes)
@@ -434,12 +434,12 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Holds shared SegmentReader instances. IndexWriter uses
-        ///  SegmentReaders for 1) applying deletes, 2) doing
-        ///  merges, 3) handing out a real-time reader.  this pool
-        ///  reuses instances of the SegmentReaders in all these
-        ///  places if it is in "near real-time mode" (getReader()
-        ///  has been called on this instance).
+        /// Holds shared <see cref="SegmentReader"/> instances. <see cref="IndexWriter"/> uses
+        /// <see cref="SegmentReader"/>s for 1) applying deletes, 2) doing
+        /// merges, 3) handing out a real-time reader.  This pool
+        /// reuses instances of the <see cref="SegmentReader"/>s in all these
+        /// places if it is in "near real-time mode" (<see cref="GetReader()"/>
+        /// has been called on this instance).
         /// </summary>
         internal class ReaderPool : IDisposable
         {
@@ -548,7 +548,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Remove all our references to readers, and commits
-            ///  any pending changes.
+            /// any pending changes.
             /// </summary>
             internal virtual void DropAll(bool doSave)
             {
@@ -678,9 +678,9 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Obtain a ReadersAndLiveDocs instance from the
-            /// readerPool.  If create is true, you must later call
-            /// <seealso cref="#release(ReadersAndUpdates)"/>.
+            /// Obtain a <see cref="ReadersAndUpdates"/> instance from the
+            /// readerPool.  If <paramref name="create"/> is <c>true</c>, you must later call
+            /// <see cref="Release(ReadersAndUpdates)"/>.
             /// </summary>
             public virtual ReadersAndUpdates Get(SegmentCommitInfo info, bool create)
             {
@@ -717,8 +717,10 @@ namespace Lucene.Net.Index
                 }
             }
 
-            // Make sure that every segment appears only once in the
-            // pool:
+            /// <summary>
+            /// Make sure that every segment appears only once in the
+            /// pool:
+            /// </summary>
             private bool NoDups()
             {
                 HashSet<string> seen = new HashSet<string>();
@@ -750,31 +752,32 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Used internally to throw an <seealso cref="ObjectDisposedException"/> if this
-        /// IndexWriter has been closed or is in the process of closing.
+        /// Used internally to throw an <see cref="ObjectDisposedException"/> if this
+        /// <see cref="IndexWriter"/> has been disposed or is in the process of diposing.
         /// </summary>
-        /// <param name="failIfClosing">
-        ///          if true, also fail when {@code IndexWriter} is in the process of
-        ///          closing ({@code closing=true}) but not yet done closing (
-        ///          {@code closed=false}) </param>
+        /// <param name="failIfDisposing">
+        ///          if <c>true</c>, also fail when <see cref="IndexWriter"/> is in the process of
+        ///          disposing (<c>closing=true</c>) but not yet done disposing (
+        ///          <c>closed=false</c>) </param>
         /// <exception cref="ObjectDisposedException">
         ///           if this IndexWriter is closed or in the process of closing </exception>
-        protected internal void EnsureOpen(bool failIfClosing)
+        protected internal void EnsureOpen(bool failIfDisposing)
         {
-            if (closed || (failIfClosing && closing))
+            if (closed || (failIfDisposing && closing))
             {
                 throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "this IndexWriter is closed");
             }
         }
 
         /// <summary>
-        /// Used internally to throw an {@link
-        /// ObjectDisposedException} if this IndexWriter has been
-        /// closed ({@code closed=true}) or is in the process of
-        /// closing ({@code closing=true}).
-        /// <p>
-        /// Calls <seealso cref="#ensureOpen(boolean) ensureOpen(true)"/>. </summary>
-        /// <exception cref="ObjectDisposedException"> if this IndexWriter is closed </exception>
+        /// Used internally to throw an
+        /// <see cref="ObjectDisposedException"/> if this <see cref="IndexWriter"/> has been
+        /// disposed (<c>closed=true</c>) or is in the process of
+        /// disposing (<c>closing=true</c>).
+        /// <para/>
+        /// Calls <see cref="EnsureOpen(bool)"/>.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException"> if this <see cref="IndexWriter"/> is disposed </exception>
         protected internal void EnsureOpen()
         {
             EnsureOpen(true);
@@ -783,25 +786,25 @@ namespace Lucene.Net.Index
         internal readonly Codec codec; // for writing new segments
 
         /// <summary>
-        /// Constructs a new IndexWriter per the settings given in <code>conf</code>.
+        /// Constructs a new <see cref="IndexWriter"/> per the settings given in <paramref name="conf"/>.
         /// If you want to make "live" changes to this writer instance, use
-        /// <seealso cref="#getConfig()"/>.
+        /// <see cref="Config"/>.
         ///
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> after ths writer is created, the given configuration instance
         /// cannot be passed to another writer. If you intend to do so, you should
-        /// <seealso cref="IndexWriterConfig#clone() clone"/> it beforehand.
+        /// <see cref="IndexWriterConfig.Clone()"/> it beforehand.
         /// </summary>
         /// <param name="d">
         ///          the index directory. The index is either created or appended
-        ///          according <code>conf.getOpenMode()</code>. </param>
+        ///          according <see cref="IndexWriterConfig.OpenMode"/>. </param>
         /// <param name="conf">
-        ///          the configuration settings according to which IndexWriter should
+        ///          the configuration settings according to which <see cref="IndexWriter"/> should
         ///          be initialized. </param>
         /// <exception cref="IOException">
         ///           if the directory cannot be read/written to, or if it does not
-        ///           exist and <code>conf.getOpenMode()</code> is
-        ///           <code>OpenMode.APPEND</code> or if there is any other low-level
+        ///           exist and <see cref="IndexWriterConfig.OpenMode"/> is
+        ///           <see cref="OpenMode.APPEND"/> or if there is any other low-level
         ///           IO error </exception>
         public IndexWriter(Directory d, IndexWriterConfig conf)
         {
@@ -947,8 +950,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Loads or returns the already loaded the global field number map for this <seealso cref="segmentInfos"/>.
-        /// If this <seealso cref="segmentInfos"/> has no global field number map the returned instance is empty
+        /// Loads or returns the already loaded the global field number map for <see cref="segmentInfos"/>.
+        /// If <see cref="segmentInfos"/> has no global field number map the returned instance is empty
         /// </summary>
         private FieldNumbers FieldNumberMap
         {
@@ -969,7 +972,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a <seealso cref="LiveIndexWriterConfig"/>, which can be used to query the IndexWriter
+        /// Returns a <see cref="LiveIndexWriterConfig"/>, which can be used to query the <see cref="IndexWriter"/>
         /// current settings, as well as modify "live" ones.
         /// </summary>
         public virtual LiveIndexWriterConfig Config
@@ -992,48 +995,52 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Commits all changes to an index, waits for pending merges
         /// to complete, and closes all associated files.
-        /// <p>
-        /// this is a "slow graceful shutdown" which may take a long time
+        /// <para/>
+        /// This is a "slow graceful shutdown" which may take a long time
         /// especially if a big merge is pending: If you only want to close
-        /// resources use <seealso cref="#rollback()"/>. If you only want to commit
-        /// pending changes and close resources see <seealso cref="#close(boolean)"/>.
-        /// <p>
+        /// resources use <see cref="Rollback()"/>. If you only want to commit
+        /// pending changes and close resources see <see cref="Dispose(bool)"/>.
+        /// <para/>
         /// Note that this may be a costly
         /// operation, so, try to re-use a single writer instead of
-        /// closing and opening a new one.  See <seealso cref="#commit()"/> for
+        /// closing and opening a new one.  See <see cref="Commit()"/> for
         /// caveats about write caching done by some IO devices.
         ///
-        /// <p> If an Exception is hit during close, eg due to disk
+        /// <para> If an <see cref="Exception"/> is hit during close, eg due to disk
         /// full or some other reason, then both the on-disk index
-        /// and the internal state of the IndexWriter instance will
+        /// and the internal state of the <see cref="IndexWriter"/> instance will
         /// be consistent.  However, the close will not be complete
         /// even though part of it (flushing buffered documents)
         /// may have succeeded, so the write lock will still be
-        /// held.</p>
+        /// held.</para>
         ///
-        /// <p> If you can correct the underlying cause (eg free up
-        /// some disk space) then you can call close() again.
+        /// <para> If you can correct the underlying cause (eg free up
+        /// some disk space) then you can call <see cref="Dispose()"/> again.
         /// Failing that, if you want to force the write lock to be
         /// released (dangerous, because you may then lose buffered
-        /// docs in the IndexWriter instance) then you can do
-        /// something like this:</p>
+        /// docs in the <see cref="IndexWriter"/> instance) then you can do
+        /// something like this:</para>
         ///
-        /// <pre class="prettyprint">
-        /// try {
-        ///   writer.Dispose();
-        /// } finally {
-        ///   if (IndexWriter.isLocked(directory)) {
-        ///     IndexWriter.unlock(directory);
-        ///   }
+        /// <code>
+        /// try 
+        /// {
+        ///     writer.Dispose();
+        /// } 
+        /// finally 
+        /// {
+        ///     if (IndexWriter.IsLocked(directory)) 
+        ///     {
+        ///         IndexWriter.Unlock(directory);
+        ///     }
         /// }
-        /// </pre>
-        ///
+        /// </code>
+        /// 
         /// after which, you must be certain not to use the writer
-        /// instance anymore.</p>
+        /// instance anymore.
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer, again.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer, again.  See 
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public void Dispose()
@@ -1044,22 +1051,22 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Closes the index with or without waiting for currently
-        /// running merges to finish.  this is only meaningful when
-        /// using a MergeScheduler that runs merges in background
+        /// running merges to finish.  This is only meaningful when
+        /// using a <see cref="MergeScheduler"/> that runs merges in background
         /// threads.
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer, again.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer, again.  See 
+        /// <see cref="IndexWriter"/> for details.</para>
         ///
-        /// <p><b>NOTE</b>: it is dangerous to always call
-        /// close(false), especially when IndexWriter is not open
+        /// <para><b>NOTE</b>: it is dangerous to always call
+        /// <c>Dispose(false)</c>, especially when <see cref="IndexWriter"/> is not open
         /// for very long, because this can result in "merge
         /// starvation" whereby long merges will never have a
-        /// chance to finish.  this will cause too many segments in
-        /// your index over time.</p>
+        /// chance to finish.  This will cause too many segments in
+        /// your index over time.</para>
         /// </summary>
-        /// <param name="waitForMerges"> if true, this call will block
+        /// <param name="waitForMerges"> if <c>true</c>, this call will block
         /// until all merges complete; else, it will ask all
         /// running merges to abort, wait until those merges have
         /// finished (which should be at most a few seconds), and
@@ -1101,9 +1108,11 @@ namespace Lucene.Net.Index
             return true;
         }
 
-        // Returns true if this thread should attempt to close, or
-        // false if IndexWriter is now closed; else, waits until
-        // another thread finishes closing
+        /// <summary>
+        /// Returns <c>true</c> if this thread should attempt to close, or
+        /// false if IndexWriter is now closed; else, waits until
+        /// another thread finishes closing
+        /// </summary>
         private bool ShouldClose()
         {
             lock (this)
@@ -1294,7 +1303,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the Directory used by this index. </summary>
+        /// Gets the <see cref="Store.Directory"/> used by this index. </summary>
         public virtual Directory Directory
         {
             get
@@ -1304,7 +1313,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the analyzer used by this index. </summary>
+        /// Gets the analyzer used by this index. </summary>
         public virtual Analyzer Analyzer
         {
             get
@@ -1315,10 +1324,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns total number of docs in this index, including
-        ///  docs not yet flushed (still in the RAM buffer),
-        ///  not counting deletions. </summary>
-        ///  <seealso> cref= #numDocs  </seealso>
+        /// Gets total number of docs in this index, including
+        /// docs not yet flushed (still in the RAM buffer),
+        /// not counting deletions.
+        /// </summary>
+        /// <seealso cref="NumDocs"/>
         public virtual int MaxDoc
         {
             get
@@ -1332,12 +1342,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns total number of docs in this index, including
-        ///  docs not yet flushed (still in the RAM buffer), and
-        ///  including deletions.  <b>NOTE:</b> buffered deletions
-        ///  are not counted.  If you really need these to be
-        ///  counted you should call <seealso cref="#commit()"/> first. </summary>
-        ///  <seealso> cref= #numDocs  </seealso>
+        /// Gets total number of docs in this index, including
+        /// docs not yet flushed (still in the RAM buffer), and
+        /// including deletions.  <b>NOTE:</b> buffered deletions
+        /// are not counted.  If you really need these to be
+        /// counted you should call <see cref="Commit()"/> first.
+        /// </summary>
+        /// <seealso cref="MaxDoc"/>
         public virtual int NumDocs // LUCENENET NOTE: This is not a great candidate for a property, but changing because IndexReader has a property with the same name
         {
             get
@@ -1351,13 +1362,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if this index has deletions (including
-        /// buffered deletions).  Note that this will return true
+        /// Returns <c>true</c> if this index has deletions (including
+        /// buffered deletions).  Note that this will return <c>true</c>
         /// if there are buffered Term/Query deletions, even if it
         /// turns out those buffered deletions don't match any
-        /// documents.
+        /// documents. Also, if a merge kicked off as a result of flushing a
         /// </summary>
-        public virtual bool HasDeletions
+        public virtual bool HasDeletions // LUCENENET TODO: API Change to method
         {
             get
             {
@@ -1391,41 +1402,41 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Adds a document to this index.
         ///
-        /// <p> Note that if an Exception is hit (for example disk full)
+        /// <para> Note that if an <see cref="Exception"/> is hit (for example disk full)
         /// then the index will be consistent, but this document
         /// may not have been added.  Furthermore, it's possible
         /// the index will have one segment in non-compound format
         /// even when using compound files (when a merge has
-        /// partially succeeded).</p>
+        /// partially succeeded).</para>
         ///
-        /// <p> this method periodically flushes pending documents
-        /// to the Directory (see <a href="#flush">above</a>), and
+        /// <para>This method periodically flushes pending documents
+        /// to the <see cref="Directory"/> (see <see cref="IndexWriter"/>), and
         /// also periodically triggers segment merges in the index
-        /// according to the <seealso cref="MergePolicy"/> in use.</p>
+        /// according to the <see cref="MergePolicy"/> in use.</para>
         ///
-        /// <p>Merges temporarily consume space in the
+        /// <para>Merges temporarily consume space in the
         /// directory. The amount of space required is up to 1X the
         /// size of all segments being merged, when no
         /// readers/searchers are open against the index, and up to
         /// 2X the size of all segments being merged when
         /// readers/searchers are open against the index (see
-        /// <seealso cref="#forceMerge(int)"/> for details). The sequence of
+        /// <see cref="ForceMerge(int)"/> for details). The sequence of
         /// primitive merge operations performed is governed by the
-        /// merge policy.
+        /// merge policy.</para>
         ///
-        /// <p>Note that each term in the document can be no longer
-        /// than <seealso cref="#MAX_TERM_LENGTH"/> in bytes, otherwise an
-        /// IllegalArgumentException will be thrown.</p>
+        /// <para>Note that each term in the document can be no longer
+        /// than <see cref="MAX_TERM_LENGTH"/> in bytes, otherwise an
+        /// <see cref="ArgumentException"/> will be thrown.</para>
         ///
-        /// <p>Note that it's possible to create an invalid Unicode
+        /// <para>Note that it's possible to create an invalid Unicode
         /// string in java if a UTF16 surrogate pair is malformed.
         /// In this case, the invalid characters are silently
         /// replaced with the Unicode replacement character
-        /// U+FFFD.</p>
+        /// U+FFFD.</para>
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See 
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -1435,16 +1446,16 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Adds a document to this index, using the provided analyzer instead of the
-        /// value of <seealso cref="#getAnalyzer()"/>.
+        /// Adds a document to this index, using the provided <paramref name="analyzer"/> instead of the
+        /// value of <see cref="Analyzer"/>.
         ///
-        /// <p>See <seealso cref="#addDocument(Iterable)"/> for details on
-        /// index and IndexWriter state after an Exception, and
-        /// flushing/merging temporary free space requirements.</p>
+        /// <para>See <see cref="AddDocument(IEnumerable{IIndexableField})"/> for details on
+        /// index and <see cref="IndexWriter"/> state after an <see cref="Exception"/>, and
+        /// flushing/merging temporary free space requirements.</para>
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -1458,7 +1469,7 @@ namespace Lucene.Net.Index
         /// assigned document IDs, such that an external reader
         /// will see all or none of the documents.
         ///
-        /// <p><b>WARNING</b>: the index does not currently record
+        /// <para><b>WARNING</b>: the index does not currently record
         /// which documents were added as a block.  Today this is
         /// fine, because merging will preserve a block. The order of
         /// documents within a segment will be preserved, even when child
@@ -1467,32 +1478,32 @@ namespace Lucene.Net.Index
         /// mark documents; when these documents are deleted these
         /// search features will not work as expected. Obviously adding
         /// documents to an existing block will require you the reindex
-        /// the entire block.
+        /// the entire block.</para>
         ///
-        /// <p>However it's possible that in the future Lucene may
+        /// <para>However it's possible that in the future Lucene may
         /// merge more aggressively re-order documents (for example,
         /// perhaps to obtain better index compression), in which case
-        /// you may need to fully re-index your documents at that time.
+        /// you may need to fully re-index your documents at that time.</para>
         ///
-        /// <p>See <seealso cref="#addDocument(Iterable)"/> for details on
-        /// index and IndexWriter state after an Exception, and
-        /// flushing/merging temporary free space requirements.</p>
+        /// <para>See <see cref="AddDocument(IEnumerable{IIndexableField})"/> for details on
+        /// index and <see cref="IndexWriter"/> state after an <see cref="Exception"/>, and
+        /// flushing/merging temporary free space requirements.</para>
         ///
-        /// <p><b>NOTE</b>: tools that do offline splitting of an index
-        /// (for example, IndexSplitter in contrib) or
+        /// <para><b>NOTE</b>: tools that do offline splitting of an index
+        /// (for example, IndexSplitter in Lucene.Net.Misc) or
         /// re-sorting of documents (for example, IndexSorter in
         /// contrib) are not aware of these atomically added documents
         /// and will likely break them up.  Use such tools at your
-        /// own risk!
+        /// own risk!</para>
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
+        /// 
+        /// @lucene.experimental 
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="IOException"> if there is a low-level IO error
-        ///
-        /// @lucene.experimental </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             AddDocuments(docs, analyzer);
@@ -1500,14 +1511,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Atomically adds a block of documents, analyzed using the
-        /// provided analyzer, with sequentially assigned document
+        /// provided <paramref name="analyzer"/>, with sequentially assigned document
         /// IDs, such that an external reader will see all or none
         /// of the documents.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="IOException"> if there is a low-level IO error
-        ///
-        /// @lucene.experimental </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public virtual void AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer)
         {
             UpdateDocuments(null, docs, analyzer);
@@ -1515,16 +1526,15 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Atomically deletes documents matching the provided
-        /// delTerm and adds a block of documents with sequentially
+        /// <paramref name="delTerm"/> and adds a block of documents with sequentially
         /// assigned document IDs, such that an external reader
         /// will see all or none of the documents.
-        ///
-        /// See <seealso cref="#addDocuments(Iterable)"/>.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="IOException"> if there is a low-level IO error
-        ///
-        /// @lucene.experimental </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <seealso cref="AddDocuments(IEnumerable{IEnumerable{IIndexableField}})"/>
         public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
             UpdateDocuments(delTerm, docs, analyzer);
@@ -1532,17 +1542,16 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Atomically deletes documents matching the provided
-        /// delTerm and adds a block of documents, analyzed  using
-        /// the provided analyzer, with sequentially
+        /// <paramref name="delTerm"/> and adds a block of documents, analyzed using
+        /// the provided <paramref name="analyzer"/>, with sequentially
         /// assigned document IDs, such that an external reader
         /// will see all or none of the documents.
-        ///
-        /// See <seealso cref="#addDocuments(Iterable)"/>.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="IOException"> if there is a low-level IO error
-        ///
-        /// @lucene.experimental </exception>
+        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <seealso cref="AddDocuments(IEnumerable{IEnumerable{IIndexableField}})"/>
         public virtual void UpdateDocuments(Term delTerm, IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer analyzer)
         {
             EnsureOpen();
@@ -1575,11 +1584,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Deletes the document(s) containing <code>term</code>.
+        /// Deletes the document(s) containing <paramref name="term"/>.
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See 
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <param name="term"> the term to identify the documents to be deleted </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1602,19 +1611,19 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: attempts to delete by document ID, as long as
-        ///  the provided reader is a near-real-time reader (from {@link
-        ///  DirectoryReader#open(IndexWriter,boolean)}).  If the
-        ///  provided reader is an NRT reader obtained from this
-        ///  writer, and its segment has not been merged away, then
-        ///  the delete succeeds and this method returns true; else, it
-        ///  returns false the caller must then separately delete by
-        ///  Term or Query.
+        /// the provided <paramref name="readerIn"/> is a near-real-time reader (from 
+        /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/>.  If the
+        /// provided <paramref name="readerIn"/> is an NRT reader obtained from this
+        /// writer, and its segment has not been merged away, then
+        /// the delete succeeds and this method returns <c>true</c>; else, it
+        /// returns <c>false</c> the caller must then separately delete by
+        /// Term or Query.
         ///
-        ///  <b>NOTE</b>: this method can only delete documents
-        ///  visible to the currently open NRT reader.  If you need
-        ///  to delete documents indexed after opening the NRT
-        ///  reader you must use the other deleteDocument methods
-        ///  (e.g., <seealso cref="#deleteDocuments(Term)"/>).
+        /// <b>NOTE</b>: this method can only delete documents
+        /// visible to the currently open NRT reader.  If you need
+        /// to delete documents indexed after opening the NRT
+        /// reader you must use the other DeleteDocument() methods
+        /// (e.g., <see cref="DeleteDocuments(Term)"/>).
         /// </summary>
         public virtual bool TryDeleteDocument(IndexReader readerIn, int docID)
         {
@@ -1700,9 +1709,9 @@ namespace Lucene.Net.Index
         /// terms. All given deletes are applied and flushed atomically
         /// at the same time.
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <param name="terms"> array of terms to identify the documents
         /// to be deleted </param>
@@ -1727,9 +1736,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Deletes the document(s) matching the provided query.
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <param name="query"> the query to identify the documents to be deleted </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
@@ -1754,9 +1763,9 @@ namespace Lucene.Net.Index
         /// Deletes the document(s) matching any of the provided queries.
         /// All given deletes are applied and flushed atomically at the same time.
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <param name="queries"> array of queries to identify the documents
         /// to be deleted </param>
@@ -1780,14 +1789,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Updates a document by first deleting the document(s)
-        /// containing <code>term</code> and then adding the new
+        /// containing <paramref name="term"/> and then adding the new
         /// document.  The delete and then add are atomic as seen
         /// by a reader on the same index (flush may happen only after
         /// the add).
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <param name="term"> the term to identify the document(s) to be
         /// deleted </param>
@@ -1802,14 +1811,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Updates a document by first deleting the document(s)
-        /// containing <code>term</code> and then adding the new
+        /// containing <paramref name="term"/> and then adding the new
         /// document.  The delete and then add are atomic as seen
         /// by a reader on the same index (flush may happen only after
         /// the add).
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <param name="term"> the term to identify the document(s) to be
         /// deleted </param>
@@ -1849,21 +1858,21 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Updates a document's <seealso cref="NumericDocValues"/> for <code>field</code> to the
-        /// given <code>value</code>. this method can be used to 'unset' a document's
-        /// value by passing {@code null} as the new value. Also, you can only update
+        /// Updates a document's <see cref="NumericDocValues"/> for <paramref name="field"/> to the
+        /// given <paramref name="value"/>. This method can be used to 'unset' a document's
+        /// value by passing <c>null</c> as the new <paramref name="value"/>. Also, you can only update
         /// fields that already exist in the index, not add new fields through this
         /// method.
         ///
-        /// <p>
-        /// <b>NOTE</b>: if this method hits an OutOfMemoryError you should immediately
-        /// close the writer. See <a href="#OOME">above</a> for details.
-        /// </p>
+        /// <para>
+        /// <b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/> you should immediately
+        /// dispose the writer. See <see cref="IndexWriter"/> for details.
+        /// </para>
         /// </summary>
         /// <param name="term">
         ///          the term to identify the document(s) to be updated </param>
         /// <param name="field">
-        ///          field name of the <seealso cref="NumericDocValues"/> field </param>
+        ///          field name of the <see cref="NumericDocValues"/> field </param>
         /// <param name="value">
         ///          new value for the field </param>
         /// <exception cref="CorruptIndexException">
@@ -1891,25 +1900,25 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Updates a document's <seealso cref="BinaryDocValues"/> for <code>field</code> to the
-        /// given <code>value</code>. this method can be used to 'unset' a document's
-        /// value by passing {@code null} as the new value. Also, you can only update
+        /// Updates a document's <see cref="BinaryDocValues"/> for <paramref name="field"/> to the
+        /// given <paramref name="value"/>. this method can be used to 'unset' a document's
+        /// value by passing <c>null</c> as the new <paramref name="value"/>. Also, you can only update
         /// fields that already exist in the index, not add new fields through this
         /// method.
         ///
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> this method currently replaces the existing value of all
         /// affected documents with the new value.
         ///
-        /// <p>
-        /// <b>NOTE:</b> if this method hits an OutOfMemoryError you should immediately
-        /// close the writer. See <a href="#OOME">above</a> for details.
-        /// </p>
+        /// <para>
+        /// <b>NOTE:</b> if this method hits an <see cref="OutOfMemoryException"/> you should immediately
+        /// dispose the writer. See <see cref="IndexWriter"/> for details.
+        /// </para>
         /// </summary>
         /// <param name="term">
         ///          the term to identify the document(s) to be updated </param>
         /// <param name="field">
-        ///          field name of the <seealso cref="BinaryDocValues"/> field </param>
+        ///          field name of the <see cref="BinaryDocValues"/> field </param>
         /// <param name="value">
         ///          new value for the field </param>
         /// <exception cref="CorruptIndexException">
@@ -2029,84 +2038,83 @@ namespace Lucene.Net.Index
         internal readonly InfoStream infoStream;
 
         /// <summary>
-        /// Forces merge policy to merge segments until there are <=
-        /// maxNumSegments.  The actual merges to be
-        /// executed are determined by the <seealso cref="MergePolicy"/>.
+        /// Forces merge policy to merge segments until there are &lt;=
+        /// <paramref name="maxNumSegments"/>.  The actual merges to be
+        /// executed are determined by the <see cref="MergePolicy"/>.
         ///
-        /// <p>this is a horribly costly operation, especially when
-        /// you pass a small {@code maxNumSegments}; usually you
+        /// <para>This is a horribly costly operation, especially when
+        /// you pass a small <paramref name="maxNumSegments"/>; usually you
         /// should only call this if the index is static (will no
-        /// longer be changed).</p>
+        /// longer be changed).</para>
         ///
-        /// <p>Note that this requires up to 2X the index size free
+        /// <para>Note that this requires up to 2X the index size free
         /// space in your Directory (3X if you're using compound
         /// file format).  For example, if your index size is 10 MB
         /// then you need up to 20 MB free for this to complete (30
         /// MB if you're using compound file format).  Also,
-        /// it's best to call <seealso cref="#commit()"/> afterwards,
-        /// to allow IndexWriter to free up disk space.</p>
+        /// it's best to call <see cref="Commit()"/> afterwards,
+        /// to allow <see cref="IndexWriter"/> to free up disk space.</para>
         ///
-        /// <p>If some but not all readers re-open while merging
-        /// is underway, this will cause > 2X temporary
+        /// <para>If some but not all readers re-open while merging
+        /// is underway, this will cause &gt; 2X temporary
         /// space to be consumed as those new readers will then
         /// hold open the temporary segments at that time.  It is
-        /// best not to re-open readers while merging is running.</p>
+        /// best not to re-open readers while merging is running.</para>
         ///
-        /// <p>The actual temporary usage could be much less than
-        /// these figures (it depends on many factors).</p>
+        /// <para>The actual temporary usage could be much less than
+        /// these figures (it depends on many factors).</para>
         ///
-        /// <p>In general, once this completes, the total size of the
+        /// <para>In general, once this completes, the total size of the
         /// index will be less than the size of the starting index.
         /// It could be quite a bit smaller (if there were many
-        /// pending deletes) or just slightly smaller.</p>
+        /// pending deletes) or just slightly smaller.</para>
         ///
-        /// <p>If an Exception is hit, for example
+        /// <para>If an <see cref="Exception"/> is hit, for example
         /// due to disk full, the index will not be corrupted and no
         /// documents will be lost.  However, it may have
         /// been partially merged (some segments were merged but
         /// not all), and it's possible that one of the segments in
         /// the index will be in non-compound format even when
-        /// using compound file format.  this will occur when the
-        /// Exception is hit during conversion of the segment into
-        /// compound format.</p>
+        /// using compound file format.  This will occur when the
+        /// <see cref="Exception"/> is hit during conversion of the segment into
+        /// compound format.</para>
         ///
-        /// <p>this call will merge those segments present in
+        /// <para>This call will merge those segments present in
         /// the index when the call started.  If other threads are
         /// still adding documents and flushing segments, those
         /// newly created segments will not be merged unless you
-        /// call forceMerge again.</p>
+        /// call <see cref="ForceMerge(int)"/> again.</para>
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         ///
-        /// <p><b>NOTE</b>: if you call <seealso cref="#close(boolean)"/>
-        /// with <tt>false</tt>, which aborts all running merges,
+        /// <para><b>NOTE</b>: if you call <see cref="Dispose(bool)"/>
+        /// with <c>false</c>, which aborts all running merges,
         /// then any thread still running this method might hit a
-        /// <seealso cref="MergePolicy.MergeAbortedException"/>.
+        /// <see cref="MergePolicy.MergeAbortedException"/>.</para>
         /// </summary>
         /// <param name="maxNumSegments"> maximum number of segments left
         /// in the index after merging finishes
         /// </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
-        /// <seealso cref= MergePolicy#findMerges
-        ///  </seealso>
+        /// <seealso cref="MergePolicy.FindMerges(MergeTrigger, SegmentInfos)"/>
         public virtual void ForceMerge(int maxNumSegments)
         {
             ForceMerge(maxNumSegments, true);
         }
 
         /// <summary>
-        /// Just like <seealso cref="#forceMerge(int)"/>, except you can
-        ///  specify whether the call should block until
-        ///  all merging completes.  this is only meaningful with a
-        ///  <seealso cref="mergeScheduler"/> that is able to run merges in
-        ///  background threads.
+        /// Just like <see cref="ForceMerge(int)"/>, except you can
+        /// specify whether the call should block until
+        /// all merging completes.  This is only meaningful with a
+        /// <see cref="mergeScheduler"/> that is able to run merges in
+        /// background threads.
         ///
-        ///  <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        ///  you should immediately close the writer.  See <a
-        ///  href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         public virtual void ForceMerge(int maxNumSegments, bool doWait)
         {
@@ -2209,8 +2217,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if any merges in pendingMerges or
-        ///  runningMerges are maxNumSegments merges.
+        /// Returns <c>true</c> if any merges in <see cref="pendingMerges"/> or
+        /// <see cref="runningMerges"/> are <see cref="mergeMaxNumSegments"/> merges.
         /// </summary>
         private bool MaxNumSegmentsMergesPending()
         {
@@ -2237,20 +2245,20 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Just like <seealso cref="#forceMergeDeletes()"/>, except you can
-        ///  specify whether the call should block until the
-        ///  operation completes.  this is only meaningful with a
-        ///  <seealso cref="MergeScheduler"/> that is able to run merges in
-        ///  background threads.
+        /// Just like <see cref="ForceMergeDeletes()"/>, except you can
+        /// specify whether the call should block until the
+        /// operation completes.  This is only meaningful with a
+        /// <see cref="MergeScheduler"/> that is able to run merges in
+        /// background threads.
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         ///
-        /// <p><b>NOTE</b>: if you call <seealso cref="#close(boolean)"/>
-        /// with <tt>false</tt>, which aborts all running merges,
+        /// <para><b>NOTE</b>: if you call <see cref="Dispose(bool)"/>
+        /// with <c>false</c>, which aborts all running merges,
         /// then any thread still running this method might hit a
-        /// <seealso cref="MergePolicy.MergeAbortedException"/>.
+        /// <see cref="MergePolicy.MergeAbortedException"/>.</para>
         /// </summary>
         public virtual void ForceMergeDeletes(bool doWait)
         {
@@ -2327,27 +2335,27 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        ///  Forces merging of all segments that have deleted
-        ///  documents.  The actual merges to be executed are
-        ///  determined by the <seealso cref="MergePolicy"/>.  For example,
-        ///  the default <seealso cref="TieredMergePolicy"/> will only
-        ///  pick a segment if the percentage of
-        ///  deleted docs is over 10%.
+        /// Forces merging of all segments that have deleted
+        /// documents.  The actual merges to be executed are
+        /// determined by the <see cref="MergePolicy"/>.  For example,
+        /// the default <see cref="TieredMergePolicy"/> will only
+        /// pick a segment if the percentage of
+        /// deleted docs is over 10%.
         ///
-        ///  <p>this is often a horribly costly operation; rarely
-        ///  is it warranted.</p>
+        /// <para>This is often a horribly costly operation; rarely
+        /// is it warranted.</para>
         ///
-        ///  <p>To see how
-        ///  many deletions you have pending in your index, call
-        ///  <seealso cref="IndexReader#numDeletedDocs"/>.</p>
+        /// <para>To see how
+        /// many deletions you have pending in your index, call
+        /// <see cref="IndexReader.NumDeletedDocs"/>.</para>
         ///
-        ///  <p><b>NOTE</b>: this method first flushes a new
-        ///  segment (if there are indexed documents), and applies
-        ///  all buffered deletes.
+        /// <para><b>NOTE</b>: this method first flushes a new
+        /// segment (if there are indexed documents), and applies
+        /// all buffered deletes.</para>
         ///
-        ///  <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        ///  you should immediately close the writer.  See <a
-        ///  href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         public virtual void ForceMergeDeletes()
         {
@@ -2355,21 +2363,21 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: asks the mergePolicy whether any merges are
+        /// Expert: asks the <see cref="mergePolicy"/> whether any merges are
         /// necessary now and if so, runs the requested merges and
         /// then iterate (test again if merges are needed) until no
-        /// more merges are returned by the mergePolicy.
-        ///
-        /// Explicit calls to maybeMerge() are usually not
+        /// more merges are returned by the <see cref="mergePolicy"/>.
+        /// <para/>
+        /// Explicit calls to <see cref="MaybeMerge()"/> are usually not
         /// necessary. The most common case is when merge policy
         /// parameters have changed.
-        ///
+        /// <para/>
         /// this method will call the <see cref="mergePolicy"/> with
         /// <see cref="MergeTrigger.EXPLICIT"/>.
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         public void MaybeMerge()
         {
@@ -2434,14 +2442,14 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: to be used by a <seealso cref="MergePolicy"/> to avoid
-        ///  selecting merges for segments already being merged.
-        ///  The returned collection is not cloned, and thus is
-        ///  only safe to access if you hold IndexWriter's lock
-        ///  (which you do when IndexWriter invokes the
-        ///  MergePolicy).
-        ///
-        ///  <p>Do not alter the returned collection!
+        /// Expert: to be used by a <see cref="MergePolicy"/> to avoid
+        /// selecting merges for segments already being merged.
+        /// The returned collection is not cloned, and thus is
+        /// only safe to access if you hold <see cref="IndexWriter"/>'s lock
+        /// (which you do when <see cref="IndexWriter"/> invokes the
+        /// <see cref="MergePolicy"/>).
+        /// <para/>
+        /// Do not alter the returned collection!
         /// </summary>
         public virtual ICollection<SegmentCommitInfo> MergingSegments
         {
@@ -2455,9 +2463,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: the <seealso cref="mergeScheduler"/> calls this method to retrieve the next
-        /// merge requested by the MergePolicy
-        ///
+        /// Expert: the <see cref="mergeScheduler"/> calls this method to retrieve the next
+        /// merge requested by the <see cref="MergePolicy"/>
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public virtual MergePolicy.OneMerge NextMerge()
@@ -2481,10 +2489,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: returns true if there are merges waiting to be scheduled.
-        ///
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public virtual bool HasPendingMerges
+        public virtual bool HasPendingMerges // LUCENENET TODO: API change to method (consistency with other Has methods)
         {
             get
             {
@@ -2496,14 +2504,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Close the <code>IndexWriter</code> without committing
+        /// Close the <see cref="IndexWriter"/> without committing
         /// any changes that have occurred since the last commit
         /// (or since it was opened, if commit hasn't been called).
         /// this removes any temporary files that had been created,
         /// after which the state of the index will be the same as
-        /// it was when commit() was last called or when this
-        /// writer was first opened.  this also clears a previous
-        /// call to <seealso cref="#prepareCommit"/>. </summary>
+        /// it was when <see cref="Commit()"/> was last called or when this
+        /// writer was first opened.  This also clears a previous
+        /// call to <see cref="PrepareCommit()"/>.
+        /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public virtual void Rollback()
         {
@@ -2646,24 +2655,24 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Delete all documents in the index.
         ///
-        /// <p>this method will drop all buffered documents and will
-        ///    remove all segments from the index. this change will not be
-        ///    visible until a <seealso cref="#commit()"/> has been called. this method
-        ///    can be rolled back using <seealso cref="#rollback()"/>.</p>
+        /// <para>This method will drop all buffered documents and will
+        ///    remove all segments from the index. This change will not be
+        ///    visible until a <see cref="Commit()"/> has been called. This method
+        ///    can be rolled back using <see cref="Rollback()"/>.</para>
         ///
-        /// <p>NOTE: this method is much faster than using deleteDocuments( new MatchAllDocsQuery() ).
-        ///    Yet, this method also has different semantics compared to <seealso cref="#deleteDocuments(Query)"/>
-        ///    / <seealso cref="#deleteDocuments(Query...)"/> since internal data-structures are cleared as well
+        /// <para>NOTE: this method is much faster than using <c>DeleteDocuments(new MatchAllDocsQuery())</c>.
+        ///    Yet, this method also has different semantics compared to <see cref="DeleteDocuments(Query)"/>
+        ///    / <see cref="DeleteDocuments(Query[])"/> since internal data-structures are cleared as well
         ///    as all segment information is forcefully dropped anti-viral semantics like omitting norms
-        ///    are reset or doc value types are cleared. Essentially a call to <seealso cref="#deleteAll()"/> is equivalent
-        ///    to creating a new <seealso cref="IndexWriter"/> with <seealso cref="OpenMode#CREATE"/> which a delete query only marks
-        ///    documents as deleted.</p>
+        ///    are reset or doc value types are cleared. Essentially a call to <see cref="DeleteAll()"/> is equivalent
+        ///    to creating a new <see cref="IndexWriter"/> with <see cref="OpenMode.CREATE"/> which a delete query only marks
+        ///    documents as deleted.</para>
         ///
-        /// <p>NOTE: this method will forcefully abort all merges
-        ///    in progress.  If other threads are running {@link
-        ///    #forceMerge}, <seealso cref="#addIndexes(IndexReader[])"/> or
-        ///    <seealso cref="#forceMergeDeletes"/> methods, they may receive
-        ///    <seealso cref="MergePolicy.MergeAbortedException"/>s.
+        /// <para>NOTE: this method will forcefully abort all merges
+        ///    in progress.  If other threads are running 
+        ///    <see cref="ForceMerge(int)"/>, <see cref="AddIndexes(IndexReader[])"/> or
+        ///    <see cref="ForceMergeDeletes()"/> methods, they may receive
+        ///    <see cref="MergePolicy.MergeAbortedException"/>s.</para>
         /// </summary>
         public virtual void DeleteAll()
         {
@@ -2803,8 +2812,8 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Wait for any currently outstanding merges to finish.
         ///
-        /// <p>It is guaranteed that any merges started prior to calling this method
-        ///    will have completed once this method completes.</p>
+        /// <para>It is guaranteed that any merges started prior to calling this method
+        ///    will have completed once this method completes.</para>
         /// </summary>
         public virtual void WaitForMerges()
         {
@@ -2831,7 +2840,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Called whenever the SegmentInfos has been updated and
+        /// Called whenever the <see cref="SegmentInfos"/> has been updated and
         /// the index files referenced exist (correctly) in the
         /// index directory.
         /// </summary>
@@ -2845,10 +2854,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Checkpoints with IndexFileDeleter, so it's aware of
-        ///  new files, and increments changeCount, so on
-        ///  close/commit we will write a new segments file, but
-        ///  does NOT bump segmentInfos.version.
+        /// Checkpoints with <see cref="IndexFileDeleter"/>, so it's aware of
+        /// new files, and increments <see cref="changeCount"/>, so on
+        /// close/commit we will write a new segments file, but
+        /// does NOT bump segmentInfos.version.
         /// </summary>
         internal virtual void CheckpointNoSIS()
         {
@@ -2884,7 +2893,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Atomically adds the segment private delete packet and publishes the flushed
-        /// segments SegmentInfo to the index writer.
+        /// segments <see cref="SegmentInfo"/> to the index writer.
         /// </summary>
         internal virtual void PublishFlushedSegment(SegmentCommitInfo newSegment, FrozenBufferedUpdates packet, FrozenBufferedUpdates globalPacket)
         {
@@ -2962,8 +2971,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Acquires write locks on all the directories; be sure
-        ///  to match with a call to <seealso cref="IOUtils#close"/> in a
-        ///  finally clause.
+        /// to match with a call to <see cref="IOUtils.Close(IEnumerable{IDisposable})"/> in a
+        /// finally clause.
         /// </summary>
         private IEnumerable<Lock> AcquireWriteLocks(params Directory[] dirs)
         {
@@ -2993,42 +3002,42 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Adds all segments from an array of indexes into this index.
         ///
-        /// <p>this may be used to parallelize batch indexing. A large document
+        /// <para/>This may be used to parallelize batch indexing. A large document
         /// collection can be broken into sub-collections. Each sub-collection can be
         /// indexed in parallel, on a different thread, process or machine. The
         /// complete index can then be created by merging sub-collection indexes
         /// with this method.
         ///
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> this method acquires the write lock in
-        /// each directory, to ensure that no {@code IndexWriter}
+        /// each directory, to ensure that no <see cref="IndexWriter"/>
         /// is currently open or tries to open while this is
         /// running.
         ///
-        /// <p>this method is transactional in how Exceptions are
+        /// <para/>This method is transactional in how <see cref="Exception"/>s are
         /// handled: it does not commit a new segments_N file until
-        /// all indexes are added.  this means if an Exception
+        /// all indexes are added.  this means if an <see cref="Exception"/>
         /// occurs (for example disk full), then either no indexes
         /// will have been added or they all will have been.
         ///
-        /// <p>Note that this requires temporary free space in the
-        /// <seealso cref="Directory"/> up to 2X the sum of all input indexes
+        /// <para/>Note that this requires temporary free space in the
+        /// <see cref="Store.Directory"/> up to 2X the sum of all input indexes
         /// (including the starting index). If readers/searchers
         /// are open against the starting index, then temporary
         /// free space required will be higher by the size of the
-        /// starting index (see <seealso cref="#forceMerge(int)"/> for details).
+        /// starting index (see <see cref="ForceMerge(int)"/> for details).
         ///
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> this method only copies the segments of the incoming indexes
         /// and does not merge them. Therefore deleted documents are not removed and
         /// the new segments are not merged with the existing ones.
         ///
-        /// <p>this requires this index not be among those to be added.
+        /// <para/>This requires this index not be among those to be added.
         ///
-        /// <p>
-        /// <b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer. See <a
-        /// href="#OOME">above</a> for details.
+        /// <para/>
+        /// <b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer. See
+        /// <see cref="IndexWriter"/> for details.
         /// </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -3171,36 +3180,36 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Merges the provided indexes into this index.
         ///
-        /// <p>
-        /// The provided IndexReaders are not closed.
+        /// <para/>
+        /// The provided <see cref="IndexReader"/>s are not closed.
         ///
-        /// <p>
-        /// See <seealso cref="#addIndexes"/> for details on transactional semantics, temporary
-        /// free space required in the Directory, and non-CFS segments on an Exception.
+        /// <para/>
+        /// See <see cref="AddIndexes(IndexReader[])"/> for details on transactional semantics, temporary
+        /// free space required in the <see cref="Store.Directory"/>, and non-CFS segments on an <see cref="Exception"/>.
         ///
-        /// <p>
-        /// <b>NOTE</b>: if this method hits an OutOfMemoryError you should immediately
-        /// close the writer. See <a href="#OOME">above</a> for details.
+        /// <para/>
+        /// <b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/> you should immediately
+        /// dispose the writer. See <see cref="IndexWriter"/> for details.
         ///
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> empty segments are dropped by this method and not added to this
         /// index.
         ///
-        /// <p>
-        /// <b>NOTE:</b> this method merges all given <seealso cref="IndexReader"/>s in one
+        /// <para/>
+        /// <b>NOTE:</b> this method merges all given <see cref="IndexReader"/>s in one
         /// merge. If you intend to merge a large number of readers, it may be better
         /// to call this method multiple times, each time with a small set of readers.
-        /// In principle, if you use a merge policy with a {@code mergeFactor} or
-        /// {@code maxMergeAtOnce} parameter, you should pass that many readers in one
-        /// call. Also, if the given readers are <seealso cref="DirectoryReader"/>s, they can be
-        /// opened with {@code termIndexInterval=-1} to save RAM, since during merge
+        /// In principle, if you use a merge policy with a <c>mergeFactor</c> or
+        /// <c>maxMergeAtOnce</c> parameter, you should pass that many readers in one
+        /// call. Also, if the given readers are <see cref="DirectoryReader"/>s, they can be
+        /// opened with <c>termIndexInterval=-1</c> to save RAM, since during merge
         /// the in-memory structure is not used. See
-        /// <seealso cref="DirectoryReader#open(Directory, int)"/>.
+        /// <see cref="DirectoryReader.Open(Directory, int)"/>.
         ///
-        /// <p>
-        /// <b>NOTE</b>: if you call <seealso cref="#close(boolean)"/> with <tt>false</tt>, which
+        /// <para/>
+        /// <b>NOTE</b>: if you call <see cref="Dispose(bool)"/> with <c>false</c>, which
         /// aborts all running merges, then any thread still running this method might
-        /// hit a <seealso cref="MergePolicy.MergeAbortedException"/>.
+        /// hit a <see cref="MergePolicy.MergeAbortedException"/>.
         /// </summary>
         /// <exception cref="CorruptIndexException">
         ///           if the index is corrupt </exception>
@@ -3345,7 +3354,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Copies the segment files as-is into the IndexWriter's directory. </summary>
+        /// Copies the segment files as-is into the <see cref="IndexWriter"/>'s directory. </summary>
         private SegmentCommitInfo CopySegmentAsIs(SegmentCommitInfo info, string segName, IDictionary<string, string> dsNames, ISet<string> dsFilesCopied, IOContext context, ISet<string> copiedFiles)
         {
             // Determine if the doc store of this segment needs to be copied. It's
@@ -3498,7 +3507,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// A hook for extending classes to execute operations after pending added and
-        /// deleted documents have been flushed to the Directory but before the change
+        /// deleted documents have been flushed to the <see cref="Store.Directory"/> but before the change
         /// is committed (new segments_N file written).
         /// </summary>
         protected virtual void DoAfterFlush()
@@ -3507,30 +3516,30 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// A hook for extending classes to execute operations before pending added and
-        /// deleted documents are flushed to the Directory.
+        /// deleted documents are flushed to the <see cref="Store.Directory"/>.
         /// </summary>
         protected virtual void DoBeforeFlush()
         {
         }
 
         /// <summary>
-        /// <p>Expert: prepare for commit.  this does the
-        ///  first phase of 2-phase commit. this method does all
-        ///  steps necessary to commit changes since this writer
-        ///  was opened: flushes pending added and deleted docs,
-        ///  syncs the index files, writes most of next segments_N
-        ///  file.  After calling this you must call either {@link
-        ///  #commit()} to finish the commit, or {@link
-        ///  #rollback()} to revert the commit and undo all changes
-        ///  done since the writer was opened.</p>
+        /// <para>Expert: prepare for commit.  This does the
+        /// first phase of 2-phase commit. this method does all
+        /// steps necessary to commit changes since this writer
+        /// was opened: flushes pending added and deleted docs,
+        /// syncs the index files, writes most of next segments_N
+        /// file.  After calling this you must call either 
+        /// <see cref="Commit()"/> to finish the commit, or 
+        /// <see cref="Rollback()"/> to revert the commit and undo all changes
+        /// done since the writer was opened.</para>
         ///
-        /// <p>You can also just call <seealso cref="#commit()"/> directly
-        ///  without prepareCommit first in which case that method
-        ///  will internally call prepareCommit.
+        /// <para>You can also just call <see cref="Commit()"/> directly
+        /// without <see cref="PrepareCommit()"/> first in which case that method
+        /// will internally call <see cref="PrepareCommit()"/>.</para>
         ///
-        ///  <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        ///  you should immediately close the writer.  See <a
-        ///  href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         public void PrepareCommit()
         {
@@ -3661,15 +3670,20 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sets the commit user data map. That method is considered a transaction by
-        /// <seealso cref="IndexWriter"/> and will be <seealso cref="#commit() committed"/> even if no other
+        /// <see cref="IndexWriter"/> and will be committed (<see cref="Commit()"/> even if no other
         /// changes were made to the writer instance. Note that you must call this method
-        /// before <seealso cref="#prepareCommit()"/>, or otherwise it won't be included in the
-        /// follow-on <seealso cref="#commit()"/>.
-        /// <p>
-        /// <b>NOTE:</b> the map is cloned internally, therefore altering the map's
+        /// before <see cref="PrepareCommit()"/>, or otherwise it won't be included in the
+        /// follow-on <see cref="Commit()"/>.
+        /// <para/>
+        /// <b>NOTE:</b> the dictionary is cloned internally, therefore altering the dictionary's
         /// contents after calling this method has no effect.
         /// </summary>
-        public IDictionary<string, string> CommitData
+
+        /// <summary>
+        /// Returns the commit user data map that was last committed, or the one that
+        /// was set on <see cref="SetCommitData(IDictionary{string, string})"/>.
+        /// </summary>
+        public IDictionary<string, string> CommitData // LUCENENET TODO: API change back to SetCommitData(IDictionary<string, string> commitUserData) - has side effect
         {
             set
             {
@@ -3688,36 +3702,38 @@ namespace Lucene.Net.Index
             }
         }
 
-        // Used only by commit and prepareCommit, below; lock
-        // order is commitLock -> IW
+        /// <summary>
+        /// Used only by commit and prepareCommit, below; lock
+        /// order is commitLock -> IW
+        /// </summary>
         private readonly object commitLock = new object();
 
         /// <summary>
-        /// <p>Commits all pending changes (added & deleted
+        /// <para>Commits all pending changes (added &amp; deleted
         /// documents, segment merges, added
         /// indexes, etc.) to the index, and syncs all referenced
         /// index files, such that a reader will see the changes
         /// and the index updates will survive an OS or machine
         /// crash or power loss.  Note that this does not wait for
-        /// any running background merges to finish.  this may be a
+        /// any running background merges to finish.  This may be a
         /// costly operation, so you should test the cost in your
-        /// application and do it only when really necessary.</p>
+        /// application and do it only when really necessary.</para>
         ///
-        /// <p> Note that this operation calls Directory.sync on
+        /// <para> Note that this operation calls <see cref="Store.Directory.Sync(ICollection{string})"/> on
         /// the index files.  That call should not return until the
-        /// file contents & metadata are on stable storage.  For
-        /// FSDirectory, this calls the OS's fsync.  But, beware:
+        /// file contents &amp; metadata are on stable storage.  For
+        /// <see cref="Store.FSDirectory"/>, this calls the OS's fsync.  But, beware:
         /// some hardware devices may in fact cache writes even
         /// during fsync, and return before the bits are actually
         /// on stable storage, to give the appearance of faster
         /// performance.  If you have such a device, and it does
         /// not have a battery backup (for example) then on power
         /// loss it may still lose data.  Lucene cannot guarantee
-        /// consistency on such devices.  </p>
+        /// consistency on such devices.  </para>
         ///
-        /// <p><b>NOTE</b>: if this method hits an OutOfMemoryError
-        /// you should immediately close the writer.  See <a
-        /// href="#OOME">above</a> for details.</p>
+        /// <para><b>NOTE</b>: if this method hits an <see cref="OutOfMemoryException"/>
+        /// you should immediately dispose the writer.  See
+        /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         public void Commit()
         {
@@ -3726,17 +3742,17 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if there may be changes that have not been
-        ///  committed.  There are cases where this may return true
-        ///  when there are no actual "real" changes to the index,
-        ///  for example if you've deleted by Term or Query but
-        ///  that Term or Query does not match any documents.
-        ///  Also, if a merge kicked off as a result of flushing a
-        ///  new segment during <seealso cref="#commit"/>, or a concurrent
-        ///  merged finished, this method may return true right
-        ///  after you had just called <seealso cref="#commit"/>.
+        /// Returns <c>true</c> if there may be changes that have not been
+        /// committed.  There are cases where this may return <c>true</c>
+        /// when there are no actual "real" changes to the index,
+        /// for example if you've deleted by <see cref="Term"/> or <see cref="Query"/> but
+        /// that <see cref="Term"/> or <see cref="Query"/> does not match any documents.
+        /// Also, if a merge kicked off as a result of flushing a
+        /// new segment during <see cref="Commit()"/>, or a concurrent
+        /// merged finished, this method may return <c>true</c> right
+        /// after you had just called <see cref="Commit()"/>.
         /// </summary>
-        public bool HasUncommittedChanges
+        public bool HasUncommittedChanges // LUCENENET TODO: API Change to method
         {
             get { return changeCount != lastCommitChangeCount || docWriter.AnyChanges() || bufferedUpdatesStream.Any(); }
         }
@@ -3825,8 +3841,10 @@ namespace Lucene.Net.Index
             }
         }
 
-        // Ensures only one flush() is actually flushing segments
-        // at a time:
+        /// <summary>
+        /// Ensures only one <see cref="Flush(bool, bool)"/> is actually flushing segments
+        /// at a time:
+        /// </summary>
         private readonly object fullFlushLock = new object();
 
         // LUCENENET NOTE: Not possible in .NET
@@ -3838,9 +3856,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Flush all in-memory buffered updates (adds and deletes)
-        /// to the Directory. </summary>
-        /// <param name="triggerMerge"> if true, we may merge segments (if
-        ///  deletes or docs were flushed) if necessary </param>
+        /// to the <see cref="Store.Directory"/>. </summary>
+        /// <param name="triggerMerge"> if <c>true</c>, we may merge segments (if
+        /// deletes or docs were flushed) if necessary </param>
         /// <param name="applyAllDeletes"> whether pending deletes should also </param>
         public void Flush(bool triggerMerge, bool applyAllDeletes)
         {
@@ -4001,7 +4019,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert:  Return the number of documents currently
-        ///  buffered in RAM.
+        /// buffered in RAM.
         /// </summary>
         public int NumRamDocs()
         {
@@ -4095,10 +4113,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Carefully merges deletes and updates for the segments we just merged. this
+        /// Carefully merges deletes and updates for the segments we just merged. This
         /// is tricky because, although merging will clear all deletes (compacts the
         /// documents) and compact all the updates, new deletes and updates may have
-        /// been flushed to the segments since the merge was started. this method
+        /// been flushed to the segments since the merge was started. This method
         /// "carries over" such new deletes and updates onto the newly merged segment,
         /// and saves the resulting deletes and updates files (incrementing the delete
         /// and DV generations for merge.info). If no deletes were flushed, no new
@@ -4538,7 +4556,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Merges the indicated segments, replacing them in the stack with a
         /// single segment.
-        ///
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public virtual void Merge(MergePolicy.OneMerge merge)
@@ -4621,11 +4639,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Checks whether this merge involves any segments
-        ///  already participating in a merge.  If not, this merge
-        ///  is "registered", meaning we record that its segments
-        ///  are now participating in a merge, and true is
-        ///  returned.  Else (the merge conflicts) false is
-        ///  returned.
+        /// already participating in a merge.  If not, this merge
+        /// is "registered", meaning we record that its segments
+        /// are now participating in a merge, and <c>true</c> is
+        /// returned.  Else (the merge conflicts) <c>false</c> is
+        /// returned.
         /// </summary>
         internal bool RegisterMerge(MergePolicy.OneMerge merge)
         {
@@ -4735,7 +4753,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Does initial setup for a merge, which is fast but holds
-        ///  the synchronized lock on IndexWriter instance.
+        /// the synchronized lock on <see cref="IndexWriter"/> instance.
         /// </summary>
         internal void MergeInit(MergePolicy.OneMerge merge)
         {
@@ -4867,7 +4885,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Does fininishing for a merge, which is fast but holds
-        ///  the synchronized lock on IndexWriter instance.
+        /// the synchronized lock on <see cref="IndexWriter"/> instance.
         /// </summary>
         public void MergeFinish(MergePolicy.OneMerge merge)
         {
@@ -4948,8 +4966,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Does the actual (time-consuming) work of the merge,
-        ///  but without holding synchronized lock on IndexWriter
-        ///  instance
+        /// but without holding synchronized lock on <see cref="IndexWriter"/>
+        /// instance
         /// </summary>
         private int MergeMiddle(MergePolicy.OneMerge merge)
         {
@@ -5307,8 +5325,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns a string description of all segments, for
-        ///  debugging.
-        ///
+        /// debugging.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public virtual string SegString()
@@ -5321,8 +5339,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns a string description of the specified
-        ///  segments, for debugging.
-        ///
+        /// segments, for debugging.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public virtual string SegString(IEnumerable<SegmentCommitInfo> infos)
@@ -5344,8 +5362,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns a string description of the specified
-        ///  segment, for debugging.
-        ///
+        /// segment, for debugging.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public virtual string SegString(SegmentCommitInfo info)
@@ -5385,7 +5403,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Only for testing.
-        ///
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public virtual bool KeepFullyDeletedSegments
@@ -5404,7 +5422,7 @@ namespace Lucene.Net.Index
         private bool FilesExist(SegmentInfos toSync)
         {
             ICollection<string> files = toSync.Files(directory, false);
-            foreach (String fileName in files)
+            foreach (string fileName in files)
             {
                 Debug.Assert(SlowFileExists(directory, fileName), "file " + fileName + " does not exist; files=" + Arrays.ToString(directory.ListAll()));
                 // If this trips it means we are missing a call to
@@ -5445,10 +5463,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Walk through all files referenced by the current
-        ///  segmentInfos and ask the Directory to sync each file,
-        ///  if it wasn't already.  If that succeeds, then we
-        ///  prepare a new segments_N file but do not fully commit
-        ///  it.
+        /// <see cref="segmentInfos"/> and ask the <see cref="Store.Directory"/> to sync each file,
+        /// if it wasn't already.  If that succeeds, then we
+        /// prepare a new segments_N file but do not fully commit
+        /// it.
         /// </summary>
         private void StartCommit(SegmentInfos toSync)
         {
@@ -5578,7 +5596,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <code>true</code> iff the index in the named directory is
+        /// Returns <c>true</c> iff the index in the named directory is
         /// currently locked. </summary>
         /// <param name="directory"> the directory to check for a lock </param>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -5589,7 +5607,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Forcibly unlocks the index in the named directory.
-        /// <P>
+        /// <para/>
         /// Caution: this should only be used by failure recovery code,
         /// when it is known that no other process nor thread is in fact
         /// currently accessing this index.
@@ -5600,34 +5618,34 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// If <seealso cref="DirectoryReader#open(IndexWriter,boolean)"/> has
-        ///  been called (ie, this writer is in near real-time
-        ///  mode), then after a merge completes, this class can be
-        ///  invoked to warm the reader on the newly merged
-        ///  segment, before the merge commits.  this is not
-        ///  required for near real-time search, but will reduce
-        ///  search latency on opening a new near real-time reader
-        ///  after a merge completes.
-        ///
+        /// If <see cref="DirectoryReader.Open(IndexWriter, bool)"/> has
+        /// been called (ie, this writer is in near real-time
+        /// mode), then after a merge completes, this class can be
+        /// invoked to warm the reader on the newly merged
+        /// segment, before the merge commits.  This is not
+        /// required for near real-time search, but will reduce
+        /// search latency on opening a new near real-time reader
+        /// after a merge completes.
+        /// <para/>
         /// @lucene.experimental
-        ///
-        /// <p><b>NOTE</b>: warm is called before any deletes have
+        /// 
+        /// <para/><b>NOTE</b>: <see cref="Warm(AtomicReader)"/> is called before any deletes have
         /// been carried over to the merged segment.
         /// </summary>
         public abstract class IndexReaderWarmer
         {
             /// <summary>
             /// Sole constructor. (For invocation by subclass
-            ///  constructors, typically implicit.)
+            /// constructors, typically implicit.)
             /// </summary>
             protected IndexReaderWarmer()
             {
             }
 
             /// <summary>
-            /// Invoked on the <seealso cref="AtomicReader"/> for the newly
-            ///  merged segment, before that segment is made visible
-            ///  to near-real-time readers.
+            /// Invoked on the <see cref="AtomicReader"/> for the newly
+            /// merged segment, before that segment is made visible
+            /// to near-real-time readers.
             /// </summary>
             public abstract void Warm(AtomicReader reader);
         }
@@ -5689,29 +5707,29 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: remove any index files that are no longer
-        ///  used.
+        /// used.
         ///
-        ///  <p> IndexWriter normally deletes unused files itself,
-        ///  during indexing.  However, on Windows, which disallows
-        ///  deletion of open files, if there is a reader open on
-        ///  the index then those files cannot be deleted.  this is
-        ///  fine, because IndexWriter will periodically retry
-        ///  the deletion.</p>
+        /// <para> <see cref="IndexWriter"/> normally deletes unused files itself,
+        /// during indexing.  However, on Windows, which disallows
+        /// deletion of open files, if there is a reader open on
+        /// the index then those files cannot be deleted.  This is
+        /// fine, because <see cref="IndexWriter"/> will periodically retry
+        /// the deletion.</para>
         ///
-        ///  <p> However, IndexWriter doesn't try that often: only
-        ///  on open, close, flushing a new segment, and finishing
-        ///  a merge.  If you don't do any of these actions with your
-        ///  IndexWriter, you'll see the unused files linger.  If
-        ///  that's a problem, call this method to delete them
-        ///  (once you've closed the open readers that were
-        ///  preventing their deletion).
+        /// <para> However, <see cref="IndexWriter"/> doesn't try that often: only
+        /// on open, close, flushing a new segment, and finishing
+        /// a merge.  If you don't do any of these actions with your
+        /// <see cref="IndexWriter"/>, you'll see the unused files linger.  If
+        /// that's a problem, call this method to delete them
+        /// (once you've closed the open readers that were
+        /// preventing their deletion).</para>
         ///
-        ///  <p> In addition, you can call this method to delete
-        ///  unreferenced index commits. this might be useful if you
-        ///  are using an <seealso cref="IndexDeletionPolicy"/> which holds
-        ///  onto index commits until some criteria are met, but those
-        ///  commits are no longer needed. Otherwise, those commits will
-        ///  be deleted the next time commit() is called.
+        /// <para> In addition, you can call this method to delete
+        /// unreferenced index commits. this might be useful if you
+        /// are using an <see cref="IndexDeletionPolicy"/> which holds
+        /// onto index commits until some criteria are met, but those
+        /// commits are no longer needed. Otherwise, those commits will
+        /// be deleted the next time <see cref="Commit()"/> is called.</para>
         /// </summary>
         public virtual void DeleteUnusedFiles()
         {
@@ -5734,7 +5752,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// NOTE: this method creates a compound file for all files returned by
         /// info.files(). While, generally, this may include separate norms and
-        /// deletion files, this SegmentInfo must not reference such files when this
+        /// deletion files, this <see cref="SegmentInfo"/> must not reference such files when this
         /// method is called, because they are not allowed within a compound file.
         /// </summary>
         internal static ICollection<string> CreateCompoundFile(InfoStream infoStream, Directory directory, CheckAbort checkAbort, SegmentInfo info, IOContext context)
@@ -5803,8 +5821,8 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Tries to delete the given files if unreferenced </summary>
         /// <param name="files"> the files to delete </param>
-        /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
-        /// <seealso cref= IndexFileDeleter#deleteNewFiles(Collection) </seealso>
+        /// <exception cref="IOException"> if an <see cref="IOException"/> occurs </exception>
+        /// <seealso cref="IndexFileDeleter.DeleteNewFiles(ICollection{string})"/>
         internal void DeleteNewFiles(ICollection<string> files)
         {
             lock (this)
@@ -5815,7 +5833,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Cleans up residuals from a segment that could not be entirely flushed due to an error </summary>
-        /// <seealso cref= IndexFileDeleter#refresh(String)  </seealso>
+        /// <seealso cref="IndexFileDeleter.Refresh(string)"/>
         internal void FlushFailed(SegmentInfo info)
         {
             lock (this)
@@ -5884,7 +5902,6 @@ namespace Lucene.Net.Index
         {
             IEvent @event;
             bool processed = false;
-            //while ((@event = queue.RemoveFirst()) != null)
             while (queue.TryDequeue(out @event))
             {
                 processed = true;
@@ -5894,33 +5911,32 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Interface for internal atomic events. See <seealso cref="DocumentsWriter"/> for details. Events are executed concurrently and no order is guaranteed.
+        /// Interface for internal atomic events. See <see cref="DocumentsWriter"/> for details. Events are executed concurrently and no order is guaranteed.
         /// Each event should only rely on the serializeability within it's process method. All actions that must happen before or after a certain action must be
-        /// encoded inside the <seealso cref="#process(IndexWriter, boolean, boolean)"/> method.
-        ///
+        /// encoded inside the <see cref="Process(IndexWriter, bool, bool)"/> method.
         /// </summary>
         public interface IEvent
         {
             /// <summary>
-            /// Processes the event. this method is called by the <seealso cref="IndexWriter"/>
+            /// Processes the event. this method is called by the <see cref="IndexWriter"/>
             /// passed as the first argument.
             /// </summary>
             /// <param name="writer">
-            ///          the <seealso cref="IndexWriter"/> that executes the event. </param>
+            ///          the <see cref="IndexWriter"/> that executes the event. </param>
             /// <param name="triggerMerge">
-            ///          <code>false</code> iff this event should not trigger any segment merges </param>
+            ///          <c>false</c> iff this event should not trigger any segment merges </param>
             /// <param name="clearBuffers">
-            ///          <code>true</code> iff this event should clear all buffers associated with the event. </param>
+            ///          <c>true</c> iff this event should clear all buffers associated with the event. </param>
             /// <exception cref="IOException">
-            ///           if an <seealso cref="IOException"/> occurs </exception>
+            ///           if an <see cref="IOException"/> occurs </exception>
             void Process(IndexWriter writer, bool triggerMerge, bool clearBuffers);
         }
 
         /// <summary>
-        /// Used only by asserts: returns true if the file exists
-        ///  (can be opened), false if it cannot be opened, and
-        ///  (unlike Java's File.exists) throws IOException if
-        ///  there's some unexpected error.
+        /// Used only by asserts: returns <c>true</c> if the file exists
+        /// (can be opened), <c>false</c> if it cannot be opened, and
+        /// (unlike <see cref="File.Exists(string)"/>) throws <see cref="IOException"/> if
+        /// there's some unexpected error.
         /// </summary>
         private static bool SlowFileExists(Directory dir, string fileName)
         {
