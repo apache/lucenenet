@@ -679,7 +679,7 @@
     <Compile Include="Support\StringTokenizer.cs" />
     <Compile Include="Support\TaskSchedulerCompletionService.cs" />
     <Compile Include="Support\ThreadFactory.cs" />
-    <Compile Include="Support\TimeHelper.cs" />
+    <Compile Include="Support\Time.cs" />
     <Compile Include="Support\TreeDictionary.cs" />
     <Compile Include="Support\TreeSet.cs" />
     <Compile Include="Support\CloseableThreadLocalProfiler.cs" />

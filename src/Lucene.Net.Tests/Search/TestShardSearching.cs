@@ -64,7 +64,7 @@ namespace Lucene.Net.Search
                 this.Sort = sort;
                 this.Query = query;
                 this.NumHitsPaged = numHitsPaged;
-                SearchTimeNanos = TimeHelper.NanoTime();
+                SearchTimeNanos = Time.NanoTime();
             }
         }
 
@@ -106,7 +106,7 @@ namespace Lucene.Net.Search
 
                     if (VERBOSE)
                     {
-                        Console.WriteLine("\nTEST: follow-on query age=" + ((TimeHelper.NanoTime() - prevSearchState.SearchTimeNanos) / 1000000000.0));
+                        Console.WriteLine("\nTEST: follow-on query age=" + ((Time.NanoTime() - prevSearchState.SearchTimeNanos) / 1000000000.0));
                     }
 
                     try
