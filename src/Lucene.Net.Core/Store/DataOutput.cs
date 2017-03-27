@@ -317,7 +317,7 @@ namespace Lucene.Net.Store
         /// <see cref="WriteString(string)"/>.
         /// </summary>
         /// <param name="set"> Input <see cref="T:ISet{string}"/>. May be <c>null</c> (equivalent to an empty set) </param>
-        public virtual void WriteStringSet(ICollection<string> set) // LUCENENET TODO: API change back to ISet<string>
+        public virtual void WriteStringSet(ISet<string> set)
         {
             if (set == null)
             {
