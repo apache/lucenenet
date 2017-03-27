@@ -129,7 +129,7 @@ namespace Lucene.Net.Store
                         try
                         {
 #endif
-                            Thread.Sleep((int)(pauseNS / 1000000));
+                            Thread.Sleep(TimeSpan.FromMilliseconds(pauseNS / 1000000));
 #if !NETSTANDARD
                         }
                         catch (ThreadInterruptedException ie)
