@@ -117,55 +117,59 @@ namespace Lucene.Net.Store
         public override bool Obtain()
         {
             // Ensure that lockDir exists and is a directory:
-            if (!lockDir.Exists)
+            if (!System.IO.Directory.Exists(lockDir.FullName))
             {
                 try
                 {
-                    System.IO.Directory.CreateDirectory(lockDir.FullName);
+                    lockDir.Create();
                 }
-                catch
+                catch (Exception e)
                 {
-                    throw new IOException("Cannot create directory: " + lockDir.FullName);
+                    throw new IOException("Cannot create directory: " + lockDir.FullName, e);
                 }
             }
-            else
+            else if (File.Exists(lockDir.FullName)) // LUCENENET: File.Exists will be true if it is a file and not a directory
             {
-                // LUCENENET TODO: This doesn't look right. I think it should be File.Exists and if true throw the exception...
-                try
-                {
-                    System.IO.Directory.Exists(lockDir.FullName);
-                }
-                catch
-                {
-                    throw new System.IO.IOException("Found regular file where directory expected: " + lockDir.FullName);
-                }
+                throw new IOException("Found regular file where directory expected: " + lockDir.FullName);
             }
 
-            if (lockFile.Exists) // LUCENENET TODO: This should probably be File.Exists(lockFile.FullName)...
+            // LUCENENET: Since WriteAllText doesn't care if the file exists or not,
+            // we need to make that check first. We create a new IOException "failure reason"
+            // in this case to simulate what happens in Java
+            if (File.Exists(lockFile.FullName))
             {
+                FailureReason = new IOException(string.Format("lockFile '{0}' alredy exists.", lockFile.FullName));
                 return false;
             }
-            else
+
+            try
             {
                 // Create the file, and close it immediately
-                FileStream createdFile = lockFile.Create();
-                createdFile.Dispose();
+                File.WriteAllText(lockFile.FullName, string.Empty, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) /* No BOM */);
                 return true;
+            }
+            catch (Exception e) // LUCENENET: Some of the exceptions that can happen are not IOException, so we catch everything
+            {
+                // On Windows, on concurrent createNewFile, the 2nd process gets "access denied".
+                // In that case, the lock was not aquired successfully, so return false.
+                // We record the failure reason here; the obtain with timeout (usually the
+                // one calling us) will use this as "root cause" if it fails to get the lock.
+                FailureReason = e;
+                return false;
             }
         }
 
         public override void Release()
-        {//LUCENE TO-DO : change the logic to be more like Lucene...don't attempt delete unless the file exists
-            try
+        {
+            if (File.Exists(lockFile.FullName))
             {
-                lockFile.Delete();
-            }
-#pragma warning disable 168
-            catch (Exception e)
-#pragma warning restore 168
-            {
-                if (lockFile.Exists) // Delete failed and lockFile exists
+                File.Delete(lockFile.FullName);
+
+                // If lockFile still exists, delete failed
+                if (File.Exists(lockFile.FullName))
+                {
                     throw new LockReleaseFailedException("failed to delete " + lockFile);
+                }
             }
         }
 
@@ -173,7 +177,7 @@ namespace Lucene.Net.Store
         {
             get
             {
-                return lockFile.Exists;
+                return File.Exists(lockFile.FullName);
             }
         }
 
