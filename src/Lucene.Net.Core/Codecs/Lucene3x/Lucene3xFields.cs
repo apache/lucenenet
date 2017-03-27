@@ -141,9 +141,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         // true when segments are used for "normal" searching;
         // it's only false during testing, to create a pre-flex
         // index, using the test-only PreFlexRW.
-        protected internal virtual bool SortTermsByUnicode() // LUCENENET TODO: API Make property
+        protected virtual bool SortTermsByUnicode
         {
-            return true;
+            get { return true; }
         }
 
         public override IEnumerator<string> GetEnumerator()
@@ -224,7 +224,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     // Pre-flex indexes always sorted in UTF16 order, but
                     // we remap on-the-fly to unicode order
-                    if (outerInstance.SortTermsByUnicode())
+                    if (outerInstance.SortTermsByUnicode)
                     {
                         return BytesRef.UTF8SortedAsUnicodeComparer;
                     }
@@ -809,7 +809,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
                 skipNext = true;
 
-                unicodeSortOrder = outerInstance.SortTermsByUnicode();
+                unicodeSortOrder = outerInstance.SortTermsByUnicode;
 
                 Term t = termEnum.Term();
                 if (t != null && t.Field == internedFieldName)

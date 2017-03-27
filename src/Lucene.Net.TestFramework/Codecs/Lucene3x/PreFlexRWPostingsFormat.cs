@@ -64,22 +64,25 @@ namespace Lucene.Net.Codecs.Lucene3x
                 this.OuterInstance = outerInstance;
             }
 
-            protected internal override bool SortTermsByUnicode()
+            protected override bool SortTermsByUnicode
             {
-                // We carefully peek into stack track above us: if
-                // we are part of a "merge", we must sort by UTF16:
-                bool unicodeSortOrder = true;
-
-                if(Util.StackTraceHelper.DoesStackTraceContainMethod("Merge"))
+                get
                 {
-                       unicodeSortOrder = false;
+                    // We carefully peek into stack track above us: if
+                    // we are part of a "merge", we must sort by UTF16:
+                    bool unicodeSortOrder = true;
+
+                    if (Util.StackTraceHelper.DoesStackTraceContainMethod("Merge"))
+                    {
+                        unicodeSortOrder = false;
                         if (LuceneTestCase.VERBOSE)
                         {
                             Console.WriteLine("NOTE: PreFlexRW codec: forcing legacy UTF16 term sort order");
                         }
-                }
+                    }
 
-                return unicodeSortOrder;
+                    return unicodeSortOrder;
+                }
             }
         }
     }
