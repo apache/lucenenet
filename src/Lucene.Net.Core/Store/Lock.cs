@@ -20,18 +20,18 @@ namespace Lucene.Net.Store
      * limitations under the License.
      */
 
-    // LUCENENET TODO: API Create NewAnonymous() method and update code sample
     /// <summary>
     /// An interprocess mutex lock.
     /// <para/>Typical use might look like:
     /// 
     /// <code>
-    /// new Lock.With(directory.MakeLock("my.lock")) 
-    /// {
-    ///     public object doBody() {
-    ///       <i>... code to execute while locked ...</i>
-    ///     }
-    /// }.Run();
+    ///     var result = Lock.With.NewAnonymous(
+    ///         @lock: directory.MakeLock("my.lock"), 
+    ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER, 
+    ///         doBody: () =>
+    ///     {
+    ///         //... code to execute while locked ...
+    ///     }).Run();
     /// </code>
     /// </summary>
     /// <seealso cref="Directory.MakeLock(string)"/>
@@ -48,6 +48,35 @@ namespace Lucene.Net.Store
         /// forever to obtain the lock.
         /// </summary>
         public const long LOCK_OBTAIN_WAIT_FOREVER = -1;
+
+        /// <summary>
+        /// Creates a new instance with the ability to specify the <see cref="With.DoBody()"/> method
+        /// through the <paramref name="doBody"/> argument
+        /// <para/>
+        /// Simple example:
+        /// <code>
+        ///     var result = Lock.With.NewAnonymous(
+        ///         @lock: directory.MakeLock("my.lock"), 
+        ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER, 
+        ///         doBody: () =>
+        ///     {
+        ///         //... code to execute while locked ...
+        ///     }).Run();
+        /// </code>
+        /// <para/>
+        /// The result of the operation is the value that is returned from <paramref name="doBody"/>
+        /// (i.e. () => { return theObject; }).
+        /// </summary>
+        /// <param name="lock"> the <see cref="Lock"/> instance to use </param>
+        /// <param name="lockWaitTimeout"> length of time to wait in
+        ///        milliseconds or 
+        ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
+        /// <param name="doBody"> a delegate method that </param>
+        /// <returns>The value that is returned from the <paramref name="doBody"/> delegate method (i.e. () => { return theObject; })</returns>
+        public static With NewAnonymous(Lock @lock, int lockWaitTimeout, Func<object> doBody)
+        {
+            return new AnonymousWith(@lock, lockWaitTimeout, doBody);
+        }
 
         /// <summary>
         /// Attempts to obtain exclusive access and immediately return
@@ -138,15 +167,20 @@ namespace Lucene.Net.Store
         /// </summary>
         public abstract bool IsLocked { get; } // LUCENENET TODO: API Make IsLocked() method
 
+
         /// <summary>
         /// Utility class for executing code with exclusive access. </summary>
-        public abstract class With
+        public abstract class With // LUCENENET TODO: API Make generic so we don't have to return object?
         {
             private Lock @lock;
             private long lockWaitTimeout;
 
             /// <summary>
             /// Constructs an executor that will grab the named <paramref name="lock"/>. </summary>
+            /// <param name="lock"> the <see cref="Lock"/> instance to use </param>
+            /// <param name="lockWaitTimeout"> length of time to wait in
+            ///        milliseconds or 
+            ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
             public With(Lock @lock, long lockWaitTimeout)
             {
                 this.@lock = @lock;
@@ -180,6 +214,28 @@ namespace Lucene.Net.Store
                         @lock.Release();
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// LUCENENET specific class to simulate the anonymous creation of a With class in Java
+        /// by using deletate methods.
+        /// </summary>
+        private class AnonymousWith : With
+        {
+            private readonly Func<object> doBody;
+            public AnonymousWith(Lock @lock, int lockWaitTimeout, Func<object> doBody)
+                : base(@lock, lockWaitTimeout)
+            {
+                if (doBody == null)
+                    throw new ArgumentNullException("doBody");
+
+                this.doBody = doBody;
+            }
+
+            protected override object DoBody()
+            {
+                return doBody();
             }
         }
     }
