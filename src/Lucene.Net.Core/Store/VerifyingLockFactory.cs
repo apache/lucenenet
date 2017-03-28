@@ -86,14 +86,17 @@ namespace Lucene.Net.Store
                 }
             }
 
-            public override void Release()
+            public override void Dispose(bool disposing)
             {
-                lock (this)
+                if (disposing)
                 {
-                    if (IsLocked())
+                    lock (this)
                     {
-                        Verify((byte)0);
-                        @lock.Release();
+                        if (IsLocked())
+                        {
+                            Verify((byte)0);
+                            @lock.Dispose();
+                        }
                     }
                 }
             }

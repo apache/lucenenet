@@ -103,7 +103,7 @@ namespace Lucene.Net.Store
 
         public override void ClearLock(string lockName)
         {
-            MakeLock(lockName).Release();
+            using (var _ = MakeLock(lockName)) { }
         }
     }
 
@@ -183,51 +183,44 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Dispose() // LUCENENET TODO: Possible Bug - not calling base.Dispose(). But Dispose() shouldn't be virtual anyway if implementing dispose pattern
+        public override void Dispose(bool disposing)
         {
-            // LUCENENET: No lock to release, just dispose the channel
-            if (channel != null)
+            if (disposing)
             {
-                channel.Dispose();
-                channel = null;
-            }
-        }
-
-        public override void Release()
-        {
-            lock (this)
-            {
-                if (channel != null)
+                lock (this)
                 {
-                    try
+                    if (channel != null)
                     {
-                        NativeFSLock _;
-                        outerInstance._locks.TryRemove(path.FullName, out _);
-                    }
-                    finally
-                    {
-                        IOUtils.CloseWhileHandlingException(channel);
-                        channel = null;
-                    }
+                        try
+                        {
+                            NativeFSLock _;
+                            outerInstance._locks.TryRemove(path.FullName, out _);
+                        }
+                        finally
+                        {
+                            IOUtils.CloseWhileHandlingException(channel);
+                            channel = null;
+                        }
 
-                    bool tmpBool;
-                    if (File.Exists(path.FullName))
-                    {
-                        File.Delete(path.FullName);
-                        tmpBool = true;
-                    }
-                    else if (System.IO.Directory.Exists(path.FullName))
-                    {
-                        System.IO.Directory.Delete(path.FullName);
-                        tmpBool = true;
-                    }
-                    else
-                    {
-                        tmpBool = false;
-                    }
-                    if (!tmpBool)
-                    {
-                        throw new LockReleaseFailedException("failed to delete " + path);
+                        bool tmpBool;
+                        if (File.Exists(path.FullName))
+                        {
+                            File.Delete(path.FullName);
+                            tmpBool = true;
+                        }
+                        else if (System.IO.Directory.Exists(path.FullName))
+                        {
+                            System.IO.Directory.Delete(path.FullName);
+                            tmpBool = true;
+                        }
+                        else
+                        {
+                            tmpBool = false;
+                        }
+                        if (!tmpBool)
+                        {
+                            throw new LockReleaseFailedException("failed to delete " + path);
+                        }
                     }
                 }
             }
@@ -260,7 +253,7 @@ namespace Lucene.Net.Store
                     bool obtained = Obtain();
                     if (obtained)
                     {
-                        Release();
+                        Dispose();
                     }
                     return !obtained;
                 }

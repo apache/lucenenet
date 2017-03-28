@@ -942,7 +942,6 @@ namespace Lucene.Net.Index
                     {
                         infoStream.Message("IW", "init: hit exception on init; releasing write lock");
                     }
-                    writeLock.Release();
                     IOUtils.CloseWhileHandlingException(writeLock);
                     writeLock = null;
                 }
@@ -2591,7 +2590,6 @@ namespace Lucene.Net.Index
                     deleter.Refresh();
                     deleter.Dispose();
 
-                    writeLock.Release();
                     IOUtils.Close(writeLock); // release write lock
                     writeLock = null;
 
@@ -2633,10 +2631,6 @@ namespace Lucene.Net.Index
                         }
 
                         // close all the closeables we can (but important is readerPool and writeLock to prevent leaks)
-                        if (writeLock != null)
-                        {
-                            writeLock.Release();
-                        }
                         IOUtils.CloseWhileHandlingException(readerPool, deleter, writeLock);
                         writeLock = null;
                     }
@@ -3152,14 +3146,6 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                if (locks != null)
-                {
-                    foreach (var lk in locks)
-                    {
-                        lk.Release();
-                    }
-                }
-
                 if (successTop)
                 {
                     IOUtils.Close(locks);
@@ -5608,7 +5594,7 @@ namespace Lucene.Net.Index
         /// </summary>
         public static void Unlock(Directory directory)
         {
-            directory.MakeLock(IndexWriter.WRITE_LOCK_NAME).Release();
+            using (var _ = directory.MakeLock(IndexWriter.WRITE_LOCK_NAME)) { }
         }
 
         /// <summary>

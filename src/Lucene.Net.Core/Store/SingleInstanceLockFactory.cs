@@ -71,11 +71,14 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Release()
+        public override void Dispose(bool disposing)
         {
-            lock (locks)
+            if (disposing)
             {
-                locks.Remove(lockName);
+                lock (locks)
+                {
+                    locks.Remove(lockName);
+                }
             }
         }
 

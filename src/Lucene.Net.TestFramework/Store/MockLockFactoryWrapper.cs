@@ -87,10 +87,13 @@ namespace Lucene.Net.Store
                 }
             }
 
-            public override void Release()
+            public override void Dispose(bool disposing)
             {
-                DelegateLock.Release();
-                OuterInstance.Dir.OpenLocks.Remove(Name);
+                if (disposing)
+                {
+                    DelegateLock.Dispose();
+                    OuterInstance.Dir.OpenLocks.Remove(Name);
+                }
             }
 
             public override bool IsLocked()

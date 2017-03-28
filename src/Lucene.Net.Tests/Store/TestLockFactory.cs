@@ -485,7 +485,7 @@ namespace Lucene.Net.Store
                     return true;
                 }
 
-                public override void Release()
+                public override void Dispose(bool disposing)
                 {
                     // do nothing
                 }

@@ -138,7 +138,7 @@ namespace Lucene.Net.Store
                         if (obtained)
                         {
                             Thread.Sleep(sleepTimeMS);
-                            l.Release();
+                            l.Dispose();
                         }
 
                         if (i % 500 == 0)

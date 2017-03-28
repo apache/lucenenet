@@ -149,17 +149,18 @@ namespace Lucene.Net.Store
             }
             return locked;
         }
-
+        
         /// <summary>
         /// Releases exclusive access. </summary>
-        public abstract void Release(); // LUCENENET TODO: API Change to Dispose(bool) for proper implementation of disposable pattern
-
-        /// <summary>
-        /// Releases exclusive access. </summary>
-        public virtual void Dispose()
+        public void Dispose()
         {
-            Release();
+            Dispose(true);
         }
+
+        /// <summary>
+        /// Releases exclusive access. </summary>
+        public abstract void Dispose(bool disposing);
+
 
         /// <summary>
         /// Returns <c>true</c> if the resource is currently locked.  Note that one must
@@ -211,7 +212,7 @@ namespace Lucene.Net.Store
                 {
                     if (locked)
                     {
-                        @lock.Release();
+                        @lock.Dispose();
                     }
                 }
             }
