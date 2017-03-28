@@ -173,12 +173,9 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override bool IsLocked
+        public override bool IsLocked()
         {
-            get
-            {
-                return File.Exists(lockFile.FullName);
-            }
+            return File.Exists(lockFile.FullName);
         }
 
         public override string ToString()

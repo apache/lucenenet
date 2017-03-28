@@ -5596,7 +5596,7 @@ namespace Lucene.Net.Index
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public static bool IsLocked(Directory directory)
         {
-            return directory.MakeLock(WRITE_LOCK_NAME).IsLocked;
+            return directory.MakeLock(WRITE_LOCK_NAME).IsLocked();
         }
 
         /// <summary>

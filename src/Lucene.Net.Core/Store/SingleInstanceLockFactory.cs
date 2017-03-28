@@ -79,14 +79,11 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override bool IsLocked
+        public override bool IsLocked()
         {
-            get
+            lock (locks)
             {
-                lock (locks)
-                {
-                    return locks.Contains(lockName);
-                }
+                return locks.Contains(lockName);
             }
         }
 

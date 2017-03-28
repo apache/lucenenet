@@ -233,43 +233,40 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override bool IsLocked
+        public override bool IsLocked()
         {
-            get
+            lock (this)
             {
-                lock (this)
+                // The test for is isLocked is not directly possible with native file locks:
+
+                // First a shortcut, if a lock reference in this instance is available
+                if (channel != null)
                 {
-                    // The test for is isLocked is not directly possible with native file locks:
+                    return true;
+                }
 
-                    // First a shortcut, if a lock reference in this instance is available
-                    if (channel != null)
-                    {
-                        return true;
-                    }
+                // Look if lock file is present; if not, there can definitely be no lock!
+                bool tmpBool;
+                if (System.IO.File.Exists(path.FullName))
+                    tmpBool = true;
+                else
+                    tmpBool = System.IO.Directory.Exists(path.FullName);
+                if (!tmpBool)
+                    return false;
 
-                    // Look if lock file is present; if not, there can definitely be no lock!
-                    bool tmpBool;
-                    if (System.IO.File.Exists(path.FullName))
-                        tmpBool = true;
-                    else
-                        tmpBool = System.IO.Directory.Exists(path.FullName);
-                    if (!tmpBool)
-                        return false;
-
-                    // Try to obtain and release (if was locked) the lock
-                    try
+                // Try to obtain and release (if was locked) the lock
+                try
+                {
+                    bool obtained = Obtain();
+                    if (obtained)
                     {
-                        bool obtained = Obtain();
-                        if (obtained)
-                        {
-                            Release();
-                        }
-                        return !obtained;
+                        Release();
                     }
-                    catch (IOException)
-                    {
-                        return false;
-                    }
+                    return !obtained;
+                }
+                catch (IOException)
+                {
+                    return false;
                 }
             }
         }
