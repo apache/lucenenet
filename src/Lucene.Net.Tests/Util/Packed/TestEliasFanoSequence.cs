@@ -308,7 +308,7 @@ namespace Lucene.Net.Util.Packed
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
         [Timeout(120000)]
 #endif
-        [Test, LongRunningTest, HasTimeout, LuceneNetSpecific]
+        [Test, LongRunningTest, HasTimeout, LuceneNetSpecific, Ignore("For debugging only")]
         public virtual void TestMonotoneSequencesLonger()
         {
             for (int s = 2; s < 4422; s++)
@@ -341,7 +341,7 @@ namespace Lucene.Net.Util.Packed
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
         [Timeout(120000)]
 #endif
-        [Test, LongRunningTest, HasTimeout, LuceneNetSpecific]
+        [Test, LongRunningTest, HasTimeout, LuceneNetSpecific, Ignore("For debugging only")]
         public virtual void TestStrictMonotoneSequencesLonger()
         {
             for (int s = 2; s < 4422; s++)
