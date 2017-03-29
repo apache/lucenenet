@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace Lucene.Net
 {
@@ -99,6 +101,952 @@ namespace Lucene.Net
         {
             return new UnmodifiableSetImpl<T>(list);
         }
+
+
+        /// <summary>
+        /// The same implementation of GetHashCode from Java's AbstractList
+        /// (the default implementation for all lists).
+        /// <para/>
+        /// This algorithm depends on the order of the items in the list.
+        /// It is recursive and will build the hash code based on the values of
+        /// all nested collections.
+        /// <para/>
+        /// Note this operation currently only supports <see cref="IList{T}"/>, <see cref="ISet{T}"/>, 
+        /// and <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        public static int GetHashCode<T>(IList<T> list)
+        {
+            int hashCode = 1;
+            bool isValueType = typeof(T).IsValueType;
+            foreach (T e in list)
+            {
+                hashCode = 31 * hashCode +
+                    (isValueType ? e.GetHashCode() : (e == null ? 0 : GetHashCode(e)));
+            }
+
+            return hashCode;
+        }
+
+        /// <summary>
+        /// The same implementation of GetHashCode from Java's AbstractSet
+        /// (the default implementation for all sets)
+        /// <para/>
+        /// This algorithm does not depend on the order of the items in the set.
+        /// It is recursive and will build the hash code based on the values of
+        /// all nested collections.
+        /// <para/>
+        /// Note this operation currently only supports <see cref="IList{T}"/>, <see cref="ISet{T}"/>, 
+        /// and <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        public static int GetHashCode<T>(ISet<T> set)
+        {
+            int h = 0;
+            bool isValueType = typeof(T).IsValueType;
+            using (var i = set.GetEnumerator())
+            {
+                while (i.MoveNext())
+                {
+                    T obj = i.Current;
+                    if (isValueType)
+                    {
+                        h += obj.GetHashCode();
+                    }
+                    else if (obj != null)
+                    {
+                        h += GetHashCode(obj);
+                    }
+                }
+            }
+            return h;
+        }
+
+        /// <summary>
+        /// The same implementation of GetHashCode from Java's AbstractMap
+        /// (the default implementation for all dictionaries)
+        /// <para/>
+        /// This algoritm does not depend on the order of the items in the dictionary.
+        /// It is recursive and will build the hash code based on the values of
+        /// all nested collections.
+        /// <para/>
+        /// Note this operation currently only supports <see cref="IList{T}"/>, <see cref="ISet{T}"/>, 
+        /// and <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        public static int GetHashCode<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        {
+            int h = 0;
+            bool keyIsValueType = typeof(TKey).IsValueType;
+            bool valueIsValueType = typeof(TValue).IsValueType;
+            using (var i = dictionary.GetEnumerator())
+            {
+                while (i.MoveNext())
+                {
+                    TKey key = i.Current.Key;
+                    TValue value = i.Current.Value;
+                    int keyHash = (keyIsValueType ? key.GetHashCode() : (key == null ? 0 : GetHashCode(key)));
+                    int valueHash = (valueIsValueType ? value.GetHashCode() : (value == null ? 0 : GetHashCode(value)));
+                    h += keyHash ^ valueHash;
+                }
+            }
+            return h;
+        }
+
+        //public static int GetHashCode<TKey, TValue>(KeyValuePair<TKey, TValue> kvp)
+        //{
+        //    TKey key = kvp.Key;
+        //    TValue value = kvp.Value;
+        //    int keyHash = (key == null ? 0 : GetHashCode(key));
+        //    int valueHash = (value == null ? 0 : GetHashCode(value));
+        //    return keyHash ^ valueHash;
+        //}
+
+        /// <summary>
+        /// This method generally assists with the recursive GetHashCode() that
+        /// builds a hash code based on all of the values in a collection 
+        /// including any nested collections (lists, sets, arrays, and dictionaries).
+        /// <para/>
+        /// Note this currently only supports <see cref="IList{T}"/>, <see cref="ISet{T}"/>, 
+        /// and <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        /// <param name="obj">the object to build the hash code for</param>
+        /// <returns>a value that represents the unique state of all of the values and 
+        /// nested collection values in the object, provided the main object itself is 
+        /// a collection, otherwise calls <see cref="object.GetHashCode()"/> on the 
+        /// object that is passed.</returns>
+        public static int GetHashCode(object obj)
+        {
+            Type t = obj.GetType();
+            if (t.IsGenericType
+                && (t.ImplementsGenericInterface(typeof(IList<>))
+                || t.ImplementsGenericInterface(typeof(ISet<>))
+                || t.ImplementsGenericInterface(typeof(IDictionary<,>))))
+            {
+                dynamic genericType = Convert.ChangeType(obj, t);
+                return GetHashCode(genericType);
+            }
+
+            return obj.GetHashCode();
+        }
+
+        /// <summary>
+        /// The same implementation of Equals from Java's AbstractList
+        /// (the default implementation for all lists)
+        /// <para/>
+        /// This algorithm depends on the order of the items in the list. 
+        /// It is recursive and will determine equality based on the values of
+        /// all nested collections.
+        /// <para/>
+        /// Note this operation currently only supports <see cref="IList{T}"/>, <see cref="ISet{T}"/>, 
+        /// and <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        public static bool Equals<T>(IList<T> listA, IList<T> listB)
+        {
+            if (object.ReferenceEquals(listA, listB))
+            {
+                return true;
+            }
+
+            bool isValueType = typeof(T).IsValueType;
+
+            if (!isValueType && listA == null)
+            {
+                if (listB == null)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+
+            using (IEnumerator<T> eA = listA.GetEnumerator())
+            {
+                using (IEnumerator<T> eB = listB.GetEnumerator())
+                {
+                    while (eA.MoveNext() && eB.MoveNext())
+                    {
+                        T o1 = eA.Current;
+                        T o2 = eB.Current;
+
+                        if (isValueType ?
+                            !o1.Equals(o2) :
+                            (!(o1 == null ? o2 == null : Equals(o1, o2))))
+                        {
+                            return false;
+                        }
+                    }
+
+                    return (!(eA.MoveNext() || eB.MoveNext()));
+
+                    //while (eA.MoveNext())
+                    //{
+                    //    if (!eB.MoveNext() || (isValueType ? !eA.Current.Equals(eB.Current) : !Equals(eA.Current, eB.Current)))
+                    //    {
+                    //        return false;
+                    //    }
+                    //}
+                    //if (eB.MoveNext())
+                    //{
+                    //    return false;
+                    //}
+                }
+            }
+        }
+
+        /// <summary>
+        /// The same implementation of Equals from Java's AbstractSet
+        /// (the default implementation for all sets)
+        /// <para/>
+        /// This algoritm does not depend on the order of the items in the set.
+        /// It is recursive and will determine equality based on the values of
+        /// all nested collections.
+        /// <para/>
+        /// Note this operation currently only supports <see cref="IList{T}"/>, <see cref="ISet{T}"/>, 
+        /// and <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        public static bool Equals<T>(ISet<T> setA, ISet<T> setB)
+        {
+            if (object.ReferenceEquals(setA, setB))
+            {
+                return true;
+            }
+
+            if (setA == null)
+            {
+                if (setB == null)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            if (setA.Count != setB.Count)
+            {
+                return false;
+            }
+
+            bool isValueType = typeof(T).IsValueType;
+
+            // same operation as containsAll()
+            foreach (T eB in setB)
+            {
+                bool contains = false;
+                foreach (T eA in setA)
+                {
+                    if (isValueType ? eA.Equals(eB) : Equals(eA, eB))
+                    {
+                        contains = true;
+                        break;
+                    }
+                }
+                if (!contains)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// This is the same implemenation of Equals from Java's AbstractMap
+        /// (the default implementation of all dictionaries)
+        /// <para/>
+        /// This algoritm does not depend on the order of the items in the dictionary.
+        /// It is recursive and will determine equality based on the values of
+        /// all nested collections.
+        /// <para/>
+        /// Note this operation currently only supports <see cref="IList{T}"/>, <see cref="ISet{T}"/>, 
+        /// and <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        public static bool Equals<TKey, TValue>(IDictionary<TKey, TValue> dictionaryA, IDictionary<TKey, TValue> dictionaryB)
+        {
+            if (object.ReferenceEquals(dictionaryA, dictionaryB))
+            {
+                return true;
+            }
+
+            if (dictionaryA == null)
+            {
+                if (dictionaryB == null)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            if (dictionaryA.Count != dictionaryB.Count)
+            {
+                return false;
+            }
+
+            //foreach (var eA in dictionaryA)
+            //{
+            //    bool contains = false;
+            //    foreach (var eB in dictionaryB)
+            //    {
+            //        if (Equals(eA, eB))
+            //        {
+            //            contains = true;
+            //            break;
+            //        }
+            //    }
+            //    if (!contains)
+            //    {
+            //        return false;
+            //    }
+            //}
+            bool valueIsValueType = typeof(TValue).IsValueType;
+
+            using (var i = dictionaryB.GetEnumerator())
+            {
+                while (i.MoveNext())
+                {
+                    KeyValuePair<TKey, TValue> e = i.Current;
+                    TKey keyB = e.Key;
+                    TValue valueB = e.Value;
+                    if (valueB == null)
+                    {
+                        if (!(dictionaryA.ContainsKey(keyB)))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        TValue valueA;
+                        if (!dictionaryA.TryGetValue(keyB, out valueA) || (valueIsValueType ? !valueA.Equals(valueB) : !Equals(valueA, valueB)))
+                        {
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        //public static bool Equals<TKey, TValue>(KeyValuePair<TKey, TValue> kvpA, KeyValuePair<TKey, TValue> kvpB)
+        //{
+        //    return Equals(kvpA, kvpB, false);
+        //}
+
+        //public static bool Equals<TKey, TValue>(KeyValuePair<TKey, TValue> kvpA, KeyValuePair<TKey, TValue> kvpB, bool deep)
+        //{
+        //    return Equals(kvpA.Key, kvpB.Key, deep) && Equals(kvpA.Value, kvpB.Value, deep);
+        //    //if (deep)
+        //    //{
+        //    //    return Equals(kvpA.Key, kvpB.Key, deep) && Equals(kvpA.Value, kvpB.Value, deep);
+        //    //}
+        //    //return kvpA.Equals(kvpB);
+        //}
+
+        /// <summary>
+        /// A helper method to recursively determine equality based on
+        /// the values of the collection and all nested collections.
+        /// <para/>
+        /// Note this operation currently only supports <see cref="IList{T}"/>, <see cref="ISet{T}"/>, 
+        /// and <see cref="IDictionary{TKey, TValue}"/>.
+        /// </summary>
+        new public static bool Equals(object objA, object objB)
+        {
+            Type tA = objA.GetType();
+            Type tB = objB.GetType();
+            if (tA.IsGenericType)
+            {
+                bool shouldReturn = false;
+
+                if (tA.ImplementsGenericInterface(typeof(IList<>)))
+                {
+                    if (!(tB.IsGenericType && tB.ImplementsGenericInterface(typeof(IList<>))))
+                    {
+                        return false; // type mismatch - must be a list
+                    }
+                    shouldReturn = true;
+                }
+                else if (tA.ImplementsGenericInterface(typeof(ISet<>)))
+                {
+                    if (!(tB.IsGenericType && tB.ImplementsGenericInterface(typeof(ISet<>))))
+                    {
+                        return false; // type mismatch - must be a set
+                    }
+                    shouldReturn = true;
+                }
+                else if (tA.ImplementsGenericInterface(typeof(IDictionary<,>)))
+                {
+                    if (!(tB.IsGenericType && tB.ImplementsGenericInterface(typeof(IDictionary<,>))))
+                    {
+                        return false; // type mismatch - must be a dictionary
+                    }
+                    shouldReturn = true;
+                }
+
+                if (shouldReturn)
+                {
+                    dynamic genericTypeA = Convert.ChangeType(objA, tA);
+                    dynamic genericTypeB = Convert.ChangeType(objB, tB);
+                    return Equals(genericTypeA, genericTypeB);
+                }
+            }
+
+            return objA.Equals(objB);
+        }
+
+        // LUCENENET TODO: Move to a new TypeExtensions class
+        private static bool ImplementsGenericInterface(this Type target, Type interfaceType)
+        {
+            return target.IsGenericType && target.GetGenericTypeDefinition().GetInterfaces().Any(
+                x => x.IsGenericType && interfaceType.IsAssignableFrom(x.GetGenericTypeDefinition())
+            );
+        }
+
+
+        /// <summary>
+        /// This is the same implementation of ToString from Java's AbstractCollection
+        /// (the default implementation for all sets and lists)
+        /// </summary>
+        public static string ToString<T>(ICollection<T> collection)
+        {
+            if (collection.Count == 0)
+            {
+                return "[]";
+            }
+
+            bool isValueType = typeof(T).IsValueType;
+            using (var it = collection.GetEnumerator())
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append('[');
+                it.MoveNext();
+                while (true)
+                {
+                    T e = it.Current;
+                    sb.Append(object.ReferenceEquals(e, collection) ? "(this Collection)" : (isValueType ? e.ToString() : ToString(e)));
+                    if (!it.MoveNext())
+                    {
+                        return sb.Append(']').ToString();
+                    }
+                    sb.Append(',').Append(' ');
+                }
+            }
+        }
+
+        /// <summary>
+        /// This is the same implementation of ToString from Java's AbstractCollection
+        /// (the default implementation for all sets and lists), plus the ability
+        /// to specify culture for formatting of nested numbers and dates. Note that
+        /// this overload will change the culture of the current thread.
+        /// </summary>
+        public static string ToString<T>(ICollection<T> collection, CultureInfo culture)
+        {
+            using (var context = new Support.CultureContext(culture))
+            {
+                return ToString(collection);
+            }
+        }
+
+        /// <summary>
+        /// This is the same implementation of ToString from Java's AbstractMap
+        /// (the default implementation for all dictionaries)
+        /// </summary>
+        public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        {
+            if (dictionary.Count == 0)
+            {
+                return "{}";
+            }
+
+            bool keyIsValueType = typeof(TKey).IsValueType;
+            bool valueIsValueType = typeof(TValue).IsValueType;
+            using (var i = dictionary.GetEnumerator())
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append('{');
+                i.MoveNext();
+                while (true)
+                {
+                    KeyValuePair<TKey, TValue> e = i.Current;
+                    TKey key = e.Key;
+                    TValue value = e.Value;
+                    sb.Append(object.ReferenceEquals(key, dictionary) ? "(this Dictionary)" : (keyIsValueType ? key.ToString() : ToString(key)));
+                    sb.Append('=');
+                    sb.Append(object.ReferenceEquals(value, dictionary) ? "(this Dictionary)" : (valueIsValueType ? value.ToString() : ToString(value)));
+                    if (!i.MoveNext())
+                    {
+                        return sb.Append('}').ToString();
+                    }
+                    sb.Append(',').Append(' ');
+                }
+            }
+        }
+
+        /// <summary>
+        /// This is the same implementation of ToString from Java's AbstractMap
+        /// (the default implementation for all dictionaries), plus the ability
+        /// to specify culture for formatting of nested numbers and dates. Note that
+        /// this overload will change the culture of the current thread.
+        /// </summary>
+        public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary, CultureInfo culture)
+        {
+            using (var context = new Support.CultureContext(culture))
+            {
+                return ToString(dictionary);
+            }
+        }
+
+        /// <summary>
+        /// This is a helper method that assists with recursively building
+        /// a string of the current collection and all nested collections.
+        /// </summary>
+        public static string ToString(object obj)
+        {
+            Type t = obj.GetType();
+            if (t.IsGenericType
+                && (t.ImplementsGenericInterface(typeof(ICollection<>)))
+                || t.ImplementsGenericInterface(typeof(IDictionary<,>)))
+            {
+                dynamic genericType = Convert.ChangeType(obj, t);
+                return ToString(genericType);
+            }
+
+            return obj.ToString();
+        }
+
+        /// <summary>
+        /// This is a helper method that assists with recursively building
+        /// a string of the current collection and all nested collections, plus the ability
+        /// to specify culture for formatting of nested numbers and dates. Note that
+        /// this overload will change the culture of the current thread.
+        /// </summary>
+        public static string ToString(object obj, CultureInfo culture)
+        {
+            using (var context = new Support.CultureContext(culture))
+            {
+                return ToString(obj);
+            }
+        }
+
+
+
+        //public static int GetHashCode<T>(IList<T> list)
+        //{
+        //    return GetHashCode(list, false);
+        //}
+
+        ///// <summary>
+        ///// The same implementation of GetHashCode from Java's AbstractList
+        ///// (the default implementation for all lists).
+        ///// <para/>
+        ///// This algorithm depends on the order of the items in the list.
+        ///// </summary>
+        //public static int GetHashCode<T>(IList<T> list, bool deep)
+        //{
+        //    int hashCode = 1;
+        //    foreach (T e in list)
+        //    {
+        //        hashCode = 31 * hashCode +
+        //            // LUCENENET: Value types will never be null, so this is ok
+        //            (e == null ? 0 : 
+        //                (deep ? GetHashCode(e, deep) : e.GetHashCode()));
+        //    }
+
+        //    return hashCode;
+        //}
+
+        //public static int GetHashCode<T>(ISet<T> set)
+        //{
+        //    return GetHashCode(set, false);
+        //}
+
+        ///// <summary>
+        ///// The same implementation of GetHashCode from Java's AbstractSet
+        ///// (the default implementation for all sets)
+        ///// <para/>
+        ///// This algorithm does not depend on the order of the items in the set.
+        ///// </summary>
+        //public static int GetHashCode<T>(ISet<T> set, bool deep)
+        //{
+        //    int h = 0;
+        //    using (var i = set.GetEnumerator())
+        //    {
+        //        while (i.MoveNext())
+        //        {
+        //            T obj = i.Current;
+        //            if (obj != null) // LUCENENET: Value types will never be null, so this is ok
+        //            {
+        //                h += deep ? GetHashCode(obj, deep) : obj.GetHashCode();
+        //            }
+        //        }
+        //    }
+        //    return h;
+        //}
+
+        //public static int GetHashCode<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        //{
+        //    return GetHashCode(dictionary, false);
+        //}
+
+        ///// <summary>
+        ///// The same implementation of GetHashCode from Java's AbstractMap
+        ///// (the default implementation for all dictionaries)
+        ///// <para/>
+        ///// This algoritm does not depend on the order of the items in the dictionary.
+        ///// </summary>
+        //public static int GetHashCode<TKey, TValue>(IDictionary<TKey, TValue> dictionary, bool deep)
+        //{
+        //    int h = 0;
+        //    using (var i = dictionary.GetEnumerator())
+        //    {
+        //        while (i.MoveNext())
+        //        {
+        //            h += GetHashCode(i.Current, deep);
+        //        }
+        //    }
+        //    return h;
+        //}
+
+        //public static int GetHashCode<TKey, TValue>(KeyValuePair<TKey, TValue> kvp)
+        //{
+        //    return GetHashCode(kvp, false);
+        //}
+
+        //public static int GetHashCode<TKey, TValue>(KeyValuePair<TKey, TValue> kvp, bool deep)
+        //{
+        //    if (deep)
+        //    {
+        //        TKey key = kvp.Key;
+        //        TValue value = kvp.Value;
+        //        int keyHash = (key == null ? 0 : GetHashCode(key, deep));
+        //        int valueHash = (value == null ? 0 : GetHashCode(value, deep));
+        //        return keyHash ^ valueHash;
+        //    }
+        //    return kvp.GetHashCode();
+        //}
+
+        //public static int GetHashCode(object obj)
+        //{
+        //    return GetHashCode(obj, false);
+        //}
+
+        //public static int GetHashCode(object obj, bool deep)
+        //{
+        //    Type t = obj.GetType();
+        //    if (t.IsGenericType
+        //        && (t.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsAssignableFrom(typeof(IList<>)))
+        //        || t.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsAssignableFrom(typeof(ISet<>)))
+        //        || t.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsAssignableFrom(typeof(IDictionary<,>)))))
+        //    {
+        //        dynamic genericType = Convert.ChangeType(obj, t);
+        //        return GetHashCode(genericType, deep);
+        //    }
+
+        //    return obj.GetHashCode();
+        //}
+
+        //public static bool Equals<T>(IList<T> listA, IList<T> listB)
+        //{
+        //    return Equals(listA, listB, false);
+        //}
+
+        ///// <summary>
+        ///// The same implementation of Equals from Java's AbstractList
+        ///// (the default implementation for all lists)
+        ///// <para/>
+        ///// This algorithm depends on the order of the items in the list. 
+        ///// </summary>
+        //public static bool Equals<T>(IList<T> listA, IList<T> listB, bool deep)
+        //{
+        //    if (object.ReferenceEquals(listA, listB))
+        //    {
+        //        return true;
+        //    }
+
+        //    if (listA == null)
+        //    {
+        //        if (listB == null)
+        //        {
+        //            return true;
+        //        }
+        //        return false;
+        //    }
+
+        //    using (IEnumerator<T> eA = listA.GetEnumerator())
+        //    {
+        //        using (IEnumerator<T> eB = listB.GetEnumerator())
+        //        {
+        //            while (eA.MoveNext())
+        //            {
+        //                if (!eB.MoveNext() || (deep ? Equals(eA, eB, deep) : !eA.Current.Equals(eB.Current)))
+        //                {
+        //                    return false;
+        //                }
+        //            }
+        //            if (eB.MoveNext())
+        //            {
+        //                return false;
+        //            }
+        //        }
+        //    }
+        //    return true;
+        //}
+
+        //public static bool Equals<T>(ISet<T> setA, ISet<T> setB)
+        //{
+        //    return Equals(setA, setB, false);
+        //}
+
+        ///// <summary>
+        ///// The same implementation of Equals from Java's AbstractSet
+        ///// (the default implementation for all sets)
+        ///// <para/>
+        ///// This algoritm does not depend on the order of the items in the set.
+        ///// </summary>
+        //public static bool Equals<T>(ISet<T> setA, ISet<T> setB, bool deep)
+        //{
+        //    if (object.ReferenceEquals(setA, setB))
+        //    {
+        //        return true;
+        //    }
+
+        //    if (setA == null)
+        //    {
+        //        if (setB == null)
+        //        {
+        //            return true;
+        //        }
+        //        return false;
+        //    }
+
+        //    if (setA.Count != setB.Count)
+        //    {
+        //        return false;
+        //    }
+
+        //    // same operation as containsAll()
+        //    foreach (T eB in setB)
+        //    {
+        //        bool contains = false;
+        //        foreach (T eA in setA)
+        //        {
+        //            if (deep ? Equals(eA, eB, deep) : eA.Equals(eB))
+        //            {
+        //                contains = true;
+        //                break;
+        //            }
+        //        }
+        //        if (!contains)
+        //        {
+        //            return false;
+        //        }
+        //    }
+
+        //    return true;
+        //}
+
+        //public static bool Equals<TKey, TValue>(IDictionary<TKey, TValue> dictionaryA, IDictionary<TKey, TValue> dictionaryB)
+        //{
+        //    return Equals(dictionaryA, dictionaryB, false);
+        //}
+
+        ///// <summary>
+        ///// This is the same implemenation of Equals from Java's AbstractMap
+        ///// (the default implementation of all dictionaries)
+        ///// <para/>
+        ///// This algoritm does not depend on the order of the items in the dictionary.
+        ///// </summary>
+        //public static bool Equals<TKey, TValue>(IDictionary<TKey, TValue> dictionaryA, IDictionary<TKey, TValue> dictionaryB, bool deep)
+        //{
+        //    if (object.ReferenceEquals(dictionaryA, dictionaryB))
+        //    {
+        //        return true;
+        //    }
+
+        //    if (dictionaryA == null)
+        //    {
+        //        if (dictionaryB == null)
+        //        {
+        //            return true;
+        //        }
+        //        return false;
+        //    }
+
+        //    if (dictionaryA.Count != dictionaryB.Count)
+        //    {
+        //        return false;
+        //    }
+
+        //    foreach (var eA in dictionaryA)
+        //    {
+        //        bool contains = false;
+        //        foreach (var eB in dictionaryB)
+        //        {
+        //            if (deep ? Equals(eA, eB, deep) : eA.GetHashCode().Equals(eB.GetHashCode()))
+        //            {
+        //                contains = true;
+        //                break;
+        //            }
+        //        }
+        //        if (!contains)
+        //        {
+        //            return false;
+        //        }
+        //    }
+
+
+        //    //using (var i = dictionaryA.GetEnumerator())
+        //    //{
+        //    //    while(i.MoveNext())
+        //    //    {
+        //    //        KeyValuePair<TKey, TValue> e = i.Current;
+
+
+        //    //        //TKey key = e.Key;
+        //    //        //TValue value = e.Value;
+        //    //        //if (value == null)
+        //    //        //{
+        //    //        //    if (!(dictionaryB.ContainsKey(key)))
+        //    //        //    {
+        //    //        //        return false;
+        //    //        //    }
+        //    //        //}
+        //    //        //else
+        //    //        //{
+        //    //        //    TValue valueB;
+        //    //        //    if (!dictionaryB.TryGetValue(key, out valueB) || !(deep ? Equals(value, valueB, deep) : value.Equals(valueB)))
+        //    //        //    {
+        //    //        //        return false;
+        //    //        //    }
+        //    //        //}
+        //    //    }
+        //    //}
+
+        //    return true;
+        //}
+
+        //public static bool Equals<TKey, TValue>(KeyValuePair<TKey, TValue> kvpA, KeyValuePair<TKey, TValue> kvpB)
+        //{
+        //    return Equals(kvpA, kvpB, false);
+        //}
+
+        //public static bool Equals<TKey, TValue>(KeyValuePair<TKey, TValue> kvpA, KeyValuePair<TKey, TValue> kvpB, bool deep)
+        //{
+        //    return Equals(kvpA.Key, kvpB.Key, deep) && Equals(kvpA.Value, kvpB.Value, deep);
+        //    //if (deep)
+        //    //{
+        //    //    return Equals(kvpA.Key, kvpB.Key, deep) && Equals(kvpA.Value, kvpB.Value, deep);
+        //    //}
+        //    //return kvpA.Equals(kvpB);
+        //}
+
+        //new public static bool Equals(object objA, object objB)
+        //{
+        //    return Equals(objA, objB, false);
+        //}
+
+        //public static bool Equals(object objA, object objB, bool deep)
+        //{
+        //    Type t = objA.GetType();
+        //    if (t.IsGenericType
+        //        && (t.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsAssignableFrom(typeof(IList<>)))
+        //        || t.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsAssignableFrom(typeof(ISet<>)))
+        //        || t.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsAssignableFrom(typeof(IDictionary<,>)))))
+        //    {
+        //        dynamic genericType = Convert.ChangeType(objA, t);
+        //        return Equals(genericType, objB, deep);
+        //    }
+
+        //    return objA.Equals(objB);
+        //}
+
+
+        //public static string ToString<T>(ICollection<T> collection)
+        //{
+        //    return ToString(collection, true);
+        //}
+
+        ///// <summary>
+        ///// This is the same implementation of ToString from Java's AbstractCollection
+        ///// (the default implementation for all sets and lists)
+        ///// </summary>
+        //public static string ToString<T>(ICollection<T> collection, bool deep)
+        //{
+        //    if (collection.Count == 0)
+        //    {
+        //        return "[]";
+        //    }
+
+        //    using (var it = collection.GetEnumerator())
+        //    {
+        //        StringBuilder sb = new StringBuilder();
+        //        sb.Append('[');
+        //        it.MoveNext();
+        //        while (true)
+        //        {
+        //            T e = it.Current;
+        //            sb.Append(object.ReferenceEquals(e, collection) ? "(this Collection)" : deep ? ToString(e, deep) : e.ToString());
+        //            if (!it.MoveNext())
+        //            {
+        //                return sb.Append(']').ToString();
+        //            }
+        //            sb.Append(',').Append(' ');
+        //        }
+        //    }
+        //}
+
+        //public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
+        //{
+        //    return ToString(dictionary, true);
+        //}
+
+        ///// <summary>
+        ///// This is the same implementation of ToString from Java's AbstractMap
+        ///// (the default implementation for all dictionaries)
+        ///// </summary>
+        //public static string ToString<TKey, TValue>(IDictionary<TKey, TValue> dictionary, bool deep)
+        //{
+        //    if (dictionary.Count == 0)
+        //    {
+        //        return "{}";
+        //    }
+
+        //    using (var i = dictionary.GetEnumerator())
+        //    {
+        //        StringBuilder sb = new StringBuilder();
+        //        sb.Append('{');
+        //        i.MoveNext();
+        //        while (true)
+        //        {
+        //            KeyValuePair<TKey, TValue> e = i.Current;
+        //            TKey key = e.Key;
+        //            TValue value = e.Value;
+        //            sb.Append(object.ReferenceEquals(key, dictionary) ? "(this Dictionary)" : deep ? ToString(key, deep) : key.ToString());
+        //            sb.Append('=');
+        //            sb.Append(object.ReferenceEquals(value, dictionary) ? "(this Dictionary)" : deep ? ToString(value, deep) : value.ToString());
+        //            if (!i.MoveNext())
+        //            {
+        //                return sb.Append('}').ToString();
+        //            }
+        //            sb.Append(',').Append(' ');
+        //        }
+        //    }
+        //}
+
+        //public static string ToString(object obj)
+        //{
+        //    return ToString(obj, true);
+        //}
+
+        //public static string ToString(object obj, bool deep)
+        //{
+        //    Type t = obj.GetType();
+        //    if (t.IsGenericType
+        //        && (t.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsAssignableFrom(typeof(ICollection<>)))
+        //        || t.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsAssignableFrom(typeof(IDictionary<,>)))))
+        //    {
+        //        dynamic genericType = Convert.ChangeType(obj, t);
+        //        return ToString(genericType, deep);
+        //    }
+
+        //    return obj.ToString();
+        //}
 
         #region Nested Types
 
