@@ -276,9 +276,8 @@ namespace Lucene.Net.Sandbox.Queries
                 return rewrittenQuery;
             }
             //load up the list of possible terms
-            for (IEnumerator<FieldVals> iter = fieldVals.GetEnumerator(); iter.MoveNext();)
+            foreach (var f in fieldVals)
             {
-                FieldVals f = iter.Current;
                 AddTerms(reader, f);
             }
             //clear the list of fields
