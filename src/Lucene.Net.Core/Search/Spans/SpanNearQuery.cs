@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Spans
         public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder, bool collectPayloads)
         {
             // copy clauses array into an ArrayList
-            this.m_clauses = new ValueList<SpanQuery>(clauses.Length);
+            this.m_clauses = new EquatableList<SpanQuery>(clauses.Length);
             for (int i = 0; i < clauses.Length; i++)
             {
                 SpanQuery clause = clauses[i];
