@@ -397,7 +397,9 @@ namespace Lucene.Net.Queries
             result = prime * result + Number.SingleToInt32Bits(m_maxTermFrequency);
             result = prime * result + Number.SingleToInt32Bits(m_lowFreqMinNrShouldMatch);
             result = prime * result + Number.SingleToInt32Bits(m_highFreqMinNrShouldMatch);
-            result = prime * result + ((m_terms == null) ? 0 : m_terms.GetValueHashCode());
+            // LUCENENET specific: wrap the m_terms to ensure the collection values are
+            // compared for equalitly
+            result = prime * result + ((m_terms == null) ? 0 : Equatable.Wrap(m_terms).GetHashCode());
             return result;
         }
 
@@ -455,7 +457,9 @@ namespace Lucene.Net.Queries
                     return false;
                 }
             }
-            else if (!m_terms.SequenceEqual(other.m_terms))
+            // LUCENENET specific: wrap the m_terms to ensure the collection values are
+            // compared for equalitly
+            else if (!Equatable.Wrap(m_terms).Equals(other.m_terms))
             {
                 return false;
             }
