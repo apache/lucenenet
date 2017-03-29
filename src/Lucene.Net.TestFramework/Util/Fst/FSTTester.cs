@@ -412,7 +412,7 @@ namespace Lucene.Net.Util.Fst
             // their values are equal, so we need to do that manually.
             // Note that we are testing the values without regard to whether
             // the enumerable type is nullable.
-            return a.ValueEquals(b);
+            return Collections.Equals(a, b);
         }
 
         // FST is complete

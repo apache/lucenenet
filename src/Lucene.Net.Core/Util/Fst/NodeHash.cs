@@ -35,6 +35,10 @@ namespace Lucene.Net.Util.Fst
         private readonly FST.Arc<T> scratchArc = new FST.Arc<T>();
         private readonly FST.BytesReader input;
 
+        // LUCENENET specific - optimize the Hash methods
+        // by only calling Collections.GetHashCode() if the value is a reference type
+        private readonly bool tIsValueType = typeof(T).IsValueType;
+
         public NodeHash(FST<T> fst, FST.BytesReader input)
         {
             table = new PagedGrowableWriter(16, 1 << 30, 8, PackedInt32s.COMPACT);
@@ -92,7 +96,10 @@ namespace Lucene.Net.Util.Fst
                 long n = ((Builder.CompiledNode)arc.Target).Node;
                 h = PRIME * h + (int)(n ^ (n >> 32));
                 h = PRIME * h + arc.Output.GetHashCode();
-                h = PRIME * h + arc.NextFinalOutput.GetValueHashCode();
+
+                // LUCENENET specific - optimize the Hash methods
+                // by only calling Collections.GetHashCode() if the value is a reference type
+                h = PRIME * h + (tIsValueType ? arc.NextFinalOutput.GetHashCode() : Collections.GetHashCode(arc.NextFinalOutput));
                 if (arc.IsFinal)
                 {
                     h += 17;
@@ -117,7 +124,10 @@ namespace Lucene.Net.Util.Fst
                 h = PRIME * h + scratchArc.Label;
                 h = PRIME * h + (int)(scratchArc.Target ^ (scratchArc.Target >> 32));
                 h = PRIME * h + scratchArc.Output.GetHashCode();
-                h = PRIME * h + scratchArc.NextFinalOutput.GetValueHashCode();
+
+                // LUCENENET specific - optimize the Hash methods
+                // by only calling Collections.GetHashCode() if the value is a reference type
+                h = PRIME * h + (tIsValueType ? scratchArc.NextFinalOutput.GetHashCode() : Collections.GetHashCode(scratchArc.NextFinalOutput));
                 if (scratchArc.IsFinal)
                 {
                     h += 17;

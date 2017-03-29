@@ -448,8 +448,10 @@ namespace Lucene.Net.Util.Fst
 
                     // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
                     // because it checks for reference equality, not that the list contents
-                    // are the same. ValueEquals (a custom extension method) will make that check.
-                    Debug.Assert(root.NextFinalOutput.ValueEquals(asserting.NextFinalOutput));
+                    // are the same. Collections.Equals() will make that check.
+                    Debug.Assert(typeof(T).IsValueType 
+                        ? root.NextFinalOutput.Equals(asserting.NextFinalOutput) 
+                        : Collections.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
                     Debug.Assert(root.Node == asserting.Node);
                     Debug.Assert(root.NumArcs == asserting.NumArcs);
                     Debug.Assert(root.Output.Equals(asserting.Output));
