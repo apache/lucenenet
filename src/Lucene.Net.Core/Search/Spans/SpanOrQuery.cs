@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search.Spans
@@ -33,9 +34,7 @@ namespace Lucene.Net.Search.Spans
     /// Matches the union of its clauses. </summary>
     public class SpanOrQuery : SpanQuery
     {
-        // LUCENENET NOTE: The hash code needs to be made from the hash codes of all elements. 
-        // So, we force all subclasses to use ValueList<SpanQuery> instead of IList<SpanQuery> to ensure that logic is in place.
-        private readonly ValueList<SpanQuery> clauses;
+        private readonly EquatableList<SpanQuery> clauses;
         private string field;
 
         /// <summary>
@@ -43,7 +42,7 @@ namespace Lucene.Net.Search.Spans
         public SpanOrQuery(params SpanQuery[] clauses)
         {
             // copy clauses array into an ArrayList
-            this.clauses = new ValueList<SpanQuery>(clauses.Length);
+            this.clauses = new EquatableList<SpanQuery>(clauses.Length);
             for (int i = 0; i < clauses.Length; i++)
             {
                 AddClause(clauses[i]);
