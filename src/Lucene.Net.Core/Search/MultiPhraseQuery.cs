@@ -56,7 +56,7 @@ namespace Lucene.Net.Search
     {
         private string field;
         private List<Term[]> termArrays = new List<Term[]>();
-        private readonly ValueList<int> positions = new ValueList<int>();
+        private readonly IList<int> positions = new EquatableList<int>();
 
         private int slop = 0;
 
@@ -441,7 +441,7 @@ namespace Lucene.Net.Search
             return this.Boost == other.Boost 
                 && this.slop == other.slop 
                 && TermArraysEquals(this.termArrays, other.termArrays) 
-                && this.positions.SequenceEqual(other.positions);
+                && this.positions.Equals(other.positions);
         }
 
         /// <summary>
@@ -475,16 +475,20 @@ namespace Lucene.Net.Search
             {
                 return false;
             }
-            IEnumerator<Term[]> iterator1 = termArrays1.GetEnumerator();
-            IEnumerator<Term[]> iterator2 = termArrays2.GetEnumerator();
-            while (iterator1.MoveNext())
+            using (IEnumerator<Term[]> iterator1 = termArrays1.GetEnumerator())
             {
-                Term[] termArray1 = iterator1.Current;
-                iterator2.MoveNext();
-                Term[] termArray2 = iterator2.Current;
-                if (!(termArray1 == null ? termArray2 == null : Arrays.Equals(termArray1, termArray2)))
+                using (IEnumerator<Term[]> iterator2 = termArrays2.GetEnumerator())
                 {
-                    return false;
+                    while (iterator1.MoveNext())
+                    {
+                        Term[] termArray1 = iterator1.Current;
+                        iterator2.MoveNext();
+                        Term[] termArray2 = iterator2.Current;
+                        if (!(termArray1 == null ? termArray2 == null : Arrays.Equals(termArray1, termArray2)))
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
             return true;
