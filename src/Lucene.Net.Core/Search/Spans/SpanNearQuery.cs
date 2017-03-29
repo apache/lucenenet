@@ -37,9 +37,7 @@ namespace Lucene.Net.Search.Spans
     /// </summary>
     public class SpanNearQuery : SpanQuery
     {
-        // LUCENENET NOTE: The hash code needs to be made from the hash codes of all elements. 
-        // So, we force all subclasses to use ValueList<SpanQuery> instead of IList<SpanQuery> to ensure that logic is in place.
-        protected readonly ValueList<SpanQuery> m_clauses;
+        protected readonly IList<SpanQuery> m_clauses;
         protected int m_slop;
         protected bool m_inOrder;
 
@@ -228,7 +226,7 @@ namespace Lucene.Net.Search.Spans
             {
                 return false;
             }
-            if (!m_clauses.SequenceEqual(spanNearQuery.m_clauses))
+            if (!Equatable.Wrap(m_clauses).Equals(spanNearQuery.m_clauses))
             {
                 return false;
             }
@@ -239,7 +237,7 @@ namespace Lucene.Net.Search.Spans
         public override int GetHashCode()
         {
             int result;
-            result = m_clauses.GetHashCode();
+            result = Equatable.Wrap(m_clauses).GetHashCode();
             // Mix bits before folding in things like boost, since it could cancel the
             // last element of clauses.  this particular mix also serves to
             // differentiate SpanNearQuery hashcodes from others.
