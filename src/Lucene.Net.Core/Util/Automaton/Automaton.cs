@@ -669,7 +669,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 current = worklist.First.Value;
                 worklist.Remove(current);
-                hash = HashHelpers.CombineHashCodes(hash, current.accept.GetHashCode());
+                hash = 31 * hash + current.accept.GetHashCode();
 
                 Transition[] t1 = transitions[current.number];
 
@@ -677,8 +677,8 @@ namespace Lucene.Net.Util.Automaton
                 {
                     int min1 = t1[n1].min, max1 = t1[n1].max;
 
-                    hash = HashHelpers.CombineHashCodes(hash, min1.GetHashCode());
-                    hash = HashHelpers.CombineHashCodes(hash, max1.GetHashCode());
+                    hash = 31 * hash + min1.GetHashCode();
+                    hash = 31 * hash + max1.GetHashCode();
 
                     State next = t1[n1].to;
                     if (!visited.Contains(next))
