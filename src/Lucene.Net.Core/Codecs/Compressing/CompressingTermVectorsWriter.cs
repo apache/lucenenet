@@ -455,7 +455,7 @@ namespace Lucene.Net.Codecs.Compressing
 
             int numDistinctFields = fieldNums.Count;
             Debug.Assert(numDistinctFields > 0);
-            int bitsRequired = PackedInt32s.BitsRequired(fieldNums.Last());
+            int bitsRequired = PackedInt32s.BitsRequired(fieldNums.Max);
             int token = (Math.Min(numDistinctFields - 1, 0x07) << 5) | bitsRequired;
             vectorsStream.WriteByte((byte)(sbyte)token);
             if (numDistinctFields - 1 >= 0x07)
