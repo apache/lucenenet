@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System.Collections;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace Lucene.Net.Queries
     /// </summary>
     public class BooleanFilter : Filter, IEnumerable<FilterClause>
     {
-        private readonly IList<FilterClause> clauses = new List<FilterClause>();
+        private readonly IList<FilterClause> clauses = new EquatableList<FilterClause>();
 
         /// <summary>
         /// Returns the a <see cref="DocIdSetIterator"/> representing the Boolean composition
