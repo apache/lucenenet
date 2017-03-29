@@ -486,6 +486,8 @@
     <Compile Include="Support\Codecs\TestDefaultDocValuesFormatFactory.cs" />
     <Compile Include="Support\Codecs\TestDefaultPostingsFormatFactory.cs" />
     <Compile Include="Support\TestCollections.cs" />
+    <Compile Include="Support\TestEquatableList.cs" />
+    <Compile Include="Support\TestEquatableSet.cs" />
     <Compile Include="Support\TestHashMap.cs" />
     <Compile Include="Support\TestLinkedHashMap.cs" />
     <Compile Include="Support\TestLongBuffer.cs" />

@@ -1,4 +1,4 @@
-using Lucene.Net.Attributes;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -24,28 +24,28 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    public class TestEquatableList : LuceneTestCase
+    public class TestEquatableSet : LuceneTestCase
     {
         /// <summary>
-        /// This test shows that System.Collections.Generic.List is not suitable for determining uniqueness 
+        /// This test shows that System.Collections.Generic.HashSet is not suitable for determining uniqueness 
         /// when used in a HashSet. This is a difference between the Java and .NET BCL Lists. Since the equatable 
-        /// behaviour of java.util.List.hashCode() in Java is relied upon for the the Java Lucene implementation, 
+        /// behaviour of java.util.HashSet.hashCode() in Java is relied upon for the the Java Lucene implementation, 
         /// a correct port must use an equatable list with the same behaviour.
         /// 
         /// We include this unit test here, to prove the problem with the .NET List type. If this test fails, we 
         /// can remove the SupportClass.EquatableList class, and replace it with System.Collection.Generic.List. 
         /// </summary>
         [Test, LuceneNetSpecific]
-        public void System_Collections_Generic_List_Not_Suitable_For_Determining_Uniqueness_In_HashSet()
+        public void System_Collections_Generic_HashSet_Not_Suitable_For_Determining_Uniqueness_In_HashSet()
         {
             // reference equality 
             var foo = new Object();
             var bar = new Object();
 
-            var list1 = new List<Object> {foo, bar};
-            var list2 = new List<Object> {foo, bar};
+            var list1 = new HashSet<Object> { foo, bar };
+            var list2 = new HashSet<Object> { foo, bar };
 
-            var hashSet = new HashSet<List<Object>>();
+            var hashSet = new HashSet<HashSet<Object>>();
 
             Assert.IsTrue(hashSet.Add(list1));
 
@@ -64,14 +64,14 @@ namespace Lucene.Net.Support
         /// can remove the SupportClass.EquatableList class, and replace it with System.Collection.Generic.List. 
         /// </summary>
         [Test, LuceneNetSpecific]
-        public void System_Collections_Generic_List_Not_Suitable_For_Determining_Uniqueness_In_Hashtable()
+        public void System_Collections_Generic_HashSet_Not_Suitable_For_Determining_Uniqueness_In_Hashtable()
         {
             // reference equality 
             var foo = new Object();
             var bar = new Object();
 
-            var list1 = new List<Object> {foo, bar};
-            var list2 = new List<Object> {foo, bar};
+            var list1 = new HashSet<Object> { foo, bar };
+            var list2 = new HashSet<Object> { foo, bar };
 
             var hashTable = new Hashtable();
 
@@ -118,7 +118,7 @@ namespace Lucene.Net.Support
 
             // if 32 bit process
             if (IntPtr.Size == 4)
-            { 
+            {
                 // TODO: determine if there is an similar issue when in a 64 bit process.
                 Assert.IsTrue(
                     hash1.Equals(hash2),
@@ -133,12 +133,12 @@ namespace Lucene.Net.Support
             var foo = new Object();
             var bar = new Object();
 
-            var list1 = new EquatableList<Object> {foo, bar};
-            var list2 = new EquatableList<Object> {foo, bar};
+            var list1 = new EquatableSet<Object> { foo, bar };
+            var list2 = new EquatableSet<Object> { foo, bar };
 
             Assert.AreEqual(list1, list2);
 
-            var hashSet = new HashSet<IList<Object>>();
+            var hashSet = new HashSet<ISet<Object>>();
 
             Assert.IsTrue(hashSet.Add(list1));
             Assert.IsFalse(hashSet.Add(list2));
@@ -150,8 +150,8 @@ namespace Lucene.Net.Support
             var foo = new Object();
             var bar = new Object();
 
-            var list1 = new EquatableList<Object> { foo, bar };
-            var list2 = new EquatableList<Object> { foo, bar };
+            var list1 = new EquatableSet<Object> { foo, bar };
+            var list2 = new EquatableSet<Object> { foo, bar };
 
             var hashTable = new Hashtable();
 
