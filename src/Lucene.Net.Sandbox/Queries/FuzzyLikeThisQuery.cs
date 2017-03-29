@@ -49,13 +49,13 @@ namespace Lucene.Net.Sandbox.Queries
         // the rewrite method can 'average' the TermContext's term statistics (docfreq,totalTermFreq) 
         // provided to TermQuery, so that the general idea is agnostic to any scoring system...
         internal static TFIDFSimilarity sim = new DefaultSimilarity();
-        Query rewrittenQuery = null;
-        List<FieldVals> fieldVals = new List<FieldVals>();
-        Analyzer analyzer;
+        private Query rewrittenQuery = null;
+        private IList<FieldVals> fieldVals = new EquatableList<FieldVals>();
+        private Analyzer analyzer;
 
-        ScoreTermQueue q;
-        int MAX_VARIANTS_PER_TERM = 50;
-        bool ignoreTF = false;
+        private ScoreTermQueue q;
+        private int MAX_VARIANTS_PER_TERM = 50;
+        private bool ignoreTF = false;
         private int maxNumTerms;
 
         public override int GetHashCode()
@@ -64,7 +64,7 @@ namespace Lucene.Net.Sandbox.Queries
             int result = base.GetHashCode();
             result = prime * result + ((analyzer == null) ? 0 : analyzer.GetHashCode());
             result = prime * result
-                + ((fieldVals == null) ? 0 : fieldVals.GetValueHashCode());
+                + ((fieldVals == null) ? 0 : fieldVals.GetHashCode());
             result = prime * result + (ignoreTF ? 1231 : 1237);
             result = prime * result + maxNumTerms;
             return result;
@@ -95,7 +95,7 @@ namespace Lucene.Net.Sandbox.Queries
                 if (other.fieldVals != null)
                     return false;
             }
-            else if (!fieldVals.ValueEquals(other.fieldVals))
+            else if (!fieldVals.Equals(other.fieldVals))
                 return false;
             if (ignoreTF != other.ignoreTF)
                 return false;
