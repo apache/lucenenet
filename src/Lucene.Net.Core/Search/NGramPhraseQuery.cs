@@ -110,8 +110,8 @@ namespace Lucene.Net.Search
         {
             return Number.SingleToInt32Bits(Boost) 
                 ^ Slop 
-                ^ GetTerms().GetHashCode() 
-                ^ GetPositions().GetHashCode() 
+                ^ Equatable.Wrap(GetTerms()).GetHashCode() 
+                ^ Equatable.Wrap(GetPositions()).GetHashCode() 
                 ^ n;
         }
     }
