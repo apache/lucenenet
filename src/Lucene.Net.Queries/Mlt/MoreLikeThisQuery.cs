@@ -146,7 +146,8 @@ namespace Lucene.Net.Queries.Mlt
             result = prime * result + minTermFrequency;
             result = prime * result + Arrays.GetHashCode(moreLikeFields);
             result = prime * result + Number.SingleToInt32Bits(percentTermsToMatch);
-            result = prime * result + ((stopWords == null) ? 0 : stopWords.GetValueHashCode());
+            // LUCENENET: wrap in Equatable to compare set contents
+            result = prime * result + ((stopWords == null) ? 0 : Equatable.Wrap(stopWords).GetHashCode());
             return result;
         }
 
@@ -225,7 +226,8 @@ namespace Lucene.Net.Queries.Mlt
                     return false;
                 }
             }
-            else if (!stopWords.SetEquals(other.stopWords))
+            // LUCENENET: wrap in Equatable to compare set contents
+            else if (!Equatable.Wrap(stopWords).Equals(other.stopWords))
             {
                 return false;
             }
