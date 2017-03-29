@@ -12,6 +12,8 @@ namespace Lucene.Net.Support
             }
         }
 
+        // LUCENENET TODO: Maybe factor this out? Dictionaries already expose their entries and there is
+        // little point in putting them into a set just so you can enumerate them.
         public static ISet<KeyValuePair<TKey, TValue>> EntrySet<TKey, TValue>(this IDictionary<TKey, TValue> dict)
         {
             ISet<KeyValuePair<TKey, TValue>> iset = new HashSet<KeyValuePair<TKey, TValue>>();
