@@ -54,7 +54,9 @@ namespace Lucene.Net.Spatial.Prefix
         /// </summary>
         public override int GetHashCode()
         {
-            return HashHelpers.CombineHashCodes(base.GetHashCode(), hasIndexedLeaves.GetHashCode());
+            int h = base.GetHashCode();
+            h ^= hasIndexedLeaves.GetHashCode(); // reversible
+            return h;
         }
 
         /// <exception cref="System.IO.IOException"></exception>
