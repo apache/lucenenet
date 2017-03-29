@@ -236,9 +236,9 @@ namespace Lucene.Net.Util.Automaton
         {
             a.ExpandSingleton();
             // reverse all edges
-            Dictionary<State, HashSet<Transition>> m = new Dictionary<State, HashSet<Transition>>();
+            Dictionary<State, ISet<Transition>> m = new Dictionary<State, ISet<Transition>>();
             State[] states = a.GetNumberedStates();
-            HashSet<State> accept = new ValueHashSet<State>();
+            ISet<State> accept = new EquatableSet<State>();
             foreach (State s in states)
             {
                 if (s.Accept)
@@ -248,7 +248,7 @@ namespace Lucene.Net.Util.Automaton
             }
             foreach (State r in states)
             {
-                m[r] = new ValueHashSet<Transition>();
+                m[r] = new EquatableSet<Transition>();
                 r.accept = false;
             }
             foreach (State r in states)
@@ -260,7 +260,7 @@ namespace Lucene.Net.Util.Automaton
             }
             foreach (State r in states)
             {
-                HashSet<Transition> tr = m[r];
+                ISet<Transition> tr = m[r];
                 r.SetTransitions(tr.ToArray(/*new Transition[tr.Count]*/));
             }
             // make new initial+final states
