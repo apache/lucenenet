@@ -214,6 +214,11 @@ namespace Lucene.Net
         /// object that is passed.</returns>
         public static int GetHashCode(object obj)
         {
+            if (obj == null)
+            {
+                return 0; // 0 for null
+            }
+
             Type t = obj.GetType();
             if (t.IsGenericType
                 && (t.ImplementsGenericInterface(typeof(IList<>))
@@ -448,6 +453,19 @@ namespace Lucene.Net
         /// </summary>
         new public static bool Equals(object objA, object objB)
         {
+            if (objA == null)
+            {
+                if (objB == null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            else if (objB == null)
+            {
+                return false;
+            }
+
             Type tA = objA.GetType();
             Type tB = objB.GetType();
             if (tA.IsGenericType)
