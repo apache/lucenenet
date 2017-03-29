@@ -1125,9 +1125,9 @@ namespace Lucene.Net.Util.Packed
 
 #if !NETSTANDARD
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
+        [Timeout(180000)]
 #endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest, HasTimeout]
         public virtual void TestAppendingLongBuffer()
         {
 
