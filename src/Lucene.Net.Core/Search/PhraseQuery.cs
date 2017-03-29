@@ -51,8 +51,8 @@ namespace Lucene.Net.Search
     public class PhraseQuery : Query
     {
         private string field;
-        private List<Term> terms = new ValueList<Term>(4);
-        private List<int?> positions = new ValueList<int?>(4);
+        private IList<Term> terms = new EquatableList<Term>(4);
+        private IList<int?> positions = new EquatableList<int?>(4);
         private int maxPosition = 0;
         private int slop = 0;
 
@@ -502,8 +502,8 @@ namespace Lucene.Net.Search
             PhraseQuery other = (PhraseQuery)o;
             return (this.Boost == other.Boost) 
                 && (this.slop == other.slop) 
-                && this.terms.SequenceEqual(other.terms) 
-                && this.positions.SequenceEqual(other.positions);
+                && this.terms.Equals(other.terms) 
+                && this.positions.Equals(other.positions);
         }
 
         /// <summary>
