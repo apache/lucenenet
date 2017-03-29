@@ -48,7 +48,7 @@ namespace Lucene.Net.Queries
         private readonly int[] offsets;
         private readonly byte[] termsBytes;
         private readonly TermsAndField[] termsAndFields;
-        private readonly int hashCode_Renamed; // cached hashcode for fast cache lookups
+        private readonly int hashCode; // cached hashcode for fast cache lookups
         private const int PRIME = 31;
 
         /// <summary>
@@ -214,7 +214,7 @@ namespace Lucene.Net.Queries
             termsAndFields.Add(lastTermsAndField);
             this.termsBytes = ArrayUtil.Shrink(serializedTerms, lastEndOffset);
             this.termsAndFields = termsAndFields.ToArray();
-            this.hashCode_Renamed = hash;
+            this.hashCode = hash;
         }
 
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
@@ -275,7 +275,7 @@ namespace Lucene.Net.Queries
 
             var test = (TermsFilter)obj;
             // first check the fields before even comparing the bytes
-            if (test.hashCode_Renamed == hashCode_Renamed && Arrays.Equals(termsAndFields, test.termsAndFields))
+            if (test.hashCode == hashCode && Arrays.Equals(termsAndFields, test.termsAndFields))
             {
                 int lastOffset = termsAndFields[termsAndFields.Length - 1].end;
                 // compare offsets since we sort they must be identical
@@ -290,7 +290,7 @@ namespace Lucene.Net.Queries
 
         public override int GetHashCode()
         {
-            return hashCode_Renamed;
+            return hashCode;
         }
 
         public override string ToString()
