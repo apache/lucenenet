@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
             }
         }
 
-        private ValueList<BooleanClause> clauses = new ValueList<BooleanClause>();
+        private EquatableList<BooleanClause> clauses = new EquatableList<BooleanClause>();
         private readonly bool disableCoord;
 
         /// <summary>
@@ -585,7 +585,7 @@ namespace Lucene.Net.Search
         public override object Clone()
         {
             BooleanQuery clone = (BooleanQuery)base.Clone();
-            clone.clauses = (ValueList<BooleanClause>)this.clauses.Clone();
+            clone.clauses = (EquatableList<BooleanClause>)this.clauses.Clone();
             return clone;
         }
 
