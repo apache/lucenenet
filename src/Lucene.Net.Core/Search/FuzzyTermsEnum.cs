@@ -484,9 +484,10 @@ namespace Lucene.Net.Search
         /// </summary>
         public sealed class LevenshteinAutomataAttribute : Attribute, ILevenshteinAutomataAttribute
         {
-            private readonly IList<CompiledAutomaton> automata = new List<CompiledAutomaton>();
+            // LUCENENET NOTE: Must use EquatableList for Equals and GetHashCode()
+            private readonly IList<CompiledAutomaton> automata = new EquatableList<CompiledAutomaton>();
 
-            public IList<CompiledAutomaton> Automata()
+            public IList<CompiledAutomaton> Automata() // LUCENENT TODO: API make property
             {
                 return automata;
             }
