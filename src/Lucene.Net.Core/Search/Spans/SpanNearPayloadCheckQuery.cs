@@ -34,8 +34,12 @@ namespace Lucene.Net.Search.Spans
     {
         protected readonly ICollection<byte[]> m_payloadToMatch;
 
-        /// <param name="match">          The underlying <seealso cref="SpanQuery"/> to check </param>
-        /// <param name="payloadToMatch"> The <seealso cref="java.util.Collection"/> of payloads to match </param>
+        /// <param name="match">          The underlying <see cref="SpanQuery"/> to check </param>
+        /// <param name="payloadToMatch"> The <see cref="T:ICollection{byte[]}"/> of payloads to match.
+        /// IMPORTANT: If the type provided does not implement <see cref="IList{T}"/> (including arrays), 
+        /// <see cref="ISet{T}"/>, or <see cref="IDictionary{TKey, TValue}"/>, it should provide an 
+        /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> implementation 
+        /// that compares the values of the byte arrays to ensure they are the same. </param>
         public SpanNearPayloadCheckQuery(SpanNearQuery match, ICollection<byte[]> payloadToMatch)
             : base(match)
         {
