@@ -485,6 +485,12 @@ namespace Lucene.Net.Index
             {
                 // expected
             }
+            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+            // in Lucene, we need to catch it here to be on the safe side.
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                // expected
+            }
 
             dirFile.Delete();
 
@@ -497,6 +503,12 @@ namespace Lucene.Net.Index
 #pragma warning disable 168
             catch (System.IO.FileNotFoundException /*| NoSuchFileException*/ e)
 #pragma warning restore 168
+            {
+                // expected
+            }
+            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+            // in Lucene, we need to catch it here to be on the safe side.
+            catch (System.IO.DirectoryNotFoundException)
             {
                 // expected
             }
