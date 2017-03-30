@@ -40,21 +40,11 @@ namespace Lucene.Net.Util.Fst
             public A Output1 { get; private set; }
             public B Output2 { get; private set; }
 
-            // LUCENENET specific - track whether we have value or reference types
-            // for optimization of Equals and GetHashCode()
-            private readonly bool output1IsValueType;
-            private readonly bool output2IsValueType;
-
             // use newPair
             internal Pair(A output1, B output2)
             {
                 this.Output1 = output1;
                 this.Output2 = output2;
-
-                // LUCENENET specific - track whether we have value or reference types
-                // for optimization of Equals and GetHashCode()
-                this.output1IsValueType = typeof(A).IsValueType;
-                this.output2IsValueType = typeof(B).IsValueType;
             }
 
             public override bool Equals(object other)
@@ -66,11 +56,7 @@ namespace Lucene.Net.Util.Fst
                 else if (other is Pair)
                 {
                     var pair = (Pair)other;
-
-                    // LUCENENET specific - if we have reference types, they might be collections that need to be compared
-                    // as sets of values.
-                    return output1IsValueType ? Output1.Equals(pair.Output1) : Collections.Equals(Output1, pair.Output1)
-                        && output2IsValueType ? Output2.Equals(pair.Output2) : Collections.Equals(Output2, pair.Output2);
+                    return Output1.Equals(pair.Output1) && Output2.Equals(pair.Output2);
                 }
                 else
                 {
@@ -80,10 +66,7 @@ namespace Lucene.Net.Util.Fst
 
             public override int GetHashCode()
             {
-                // LUCENENET specific - if we have reference types, they might be collections that need to be compared
-                // as sets of values.
-                return (output1IsValueType ? Output1.GetHashCode() : Collections.GetHashCode(Output1))
-                    + (output2IsValueType ? Output2.GetHashCode() : Collections.GetHashCode(Output2));
+                return Output1.GetHashCode() + Output2.GetHashCode();
             }
         }
 
