@@ -305,6 +305,67 @@ namespace Lucene.Net.Support
 
         #endregion
 
+        #region Operator overrides
+
+        // TODO: When diverging from Java version of Lucene, can uncomment these to adhere to best practices when overriding the Equals method and implementing IEquatable<T>.
+        ///// <summary>Overload of the == operator, it compares a
+        ///// <see cref="EquatableSet{T}"/> to an <see cref="IEnumerable{T}"/>
+        ///// implementation.</summary>
+        ///// <param name="x">The <see cref="EquatableSet{T}"/> to compare
+        ///// against <paramref name="y"/>.</param>
+        ///// <param name="y">The <see cref="IEnumerable{T}"/> to compare
+        ///// against <paramref name="x"/>.</param>
+        ///// <returns>True if the instances are equal, false otherwise.</returns>
+        //public static bool operator ==(EquatableSet<T> x, System.Collections.Generic.IEnumerable<T> y)
+        //{
+        //    // Call Equals.
+        //    return Equals(x, y);
+        //}
+
+        ///// <summary>Overload of the == operator, it compares a
+        ///// <see cref="EquatableSet{T}"/> to an <see cref="IEnumerable{T}"/>
+        ///// implementation.</summary>
+        ///// <param name="y">The <see cref="EquatableSet{T}"/> to compare
+        ///// against <paramref name="x"/>.</param>
+        ///// <param name="x">The <see cref="IEnumerable{T}"/> to compare
+        ///// against <paramref name="y"/>.</param>
+        ///// <returns>True if the instances are equal, false otherwise.</returns>
+        //public static bool operator ==(System.Collections.Generic.IEnumerable<T> x, EquatableSet<T> y)
+        //{
+        //    // Call equals.
+        //    return Equals(x, y);
+        //}
+
+        ///// <summary>Overload of the != operator, it compares a
+        ///// <see cref="EquatableSet{T}"/> to an <see cref="IEnumerable{T}"/>
+        ///// implementation.</summary>
+        ///// <param name="x">The <see cref="EquatableSet{T}"/> to compare
+        ///// against <paramref name="y"/>.</param>
+        ///// <param name="y">The <see cref="IEnumerable{T}"/> to compare
+        ///// against <paramref name="x"/>.</param>
+        ///// <returns>True if the instances are not equal, false otherwise.</returns>
+        //public static bool operator !=(EquatableSet<T> x, System.Collections.Generic.IEnumerable<T> y)
+        //{
+        //    // Return the negative of the equals operation.
+        //    return !(x == y);
+        //}
+
+        ///// <summary>Overload of the != operator, it compares a
+        ///// <see cref="EquatableSet{T}"/> to an <see cref="IEnumerable{T}"/>
+        ///// implementation.</summary>
+        ///// <param name="y">The <see cref="EquatableSet{T}"/> to compare
+        ///// against <paramref name="x"/>.</param>
+        ///// <param name="x">The <see cref="IEnumerable{T}"/> to compare
+        ///// against <paramref name="y"/>.</param>
+        ///// <returns>True if the instances are not equal, false otherwise.</returns>
+        //public static bool operator !=(System.Collections.Generic.IEnumerable<T> x, EquatableSet<T> y)
+        //{
+        //    // Return the negative of the equals operation.
+        //    return !(x == y);
+        //}
+
+        #endregion
+
         #region IEquatable<T> members
 
         /// <summary>
