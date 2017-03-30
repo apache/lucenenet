@@ -486,7 +486,6 @@ namespace Lucene.Net.Util
             // word to be changed.
             int endWord = (int)((endIndex - 1) >> 6);
 
-            //LUCENE TO-DO
             long startmask = -1L << (int)startIndex;
             long endmask = -(int)((uint)1L >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 
@@ -631,7 +630,6 @@ namespace Lucene.Net.Util
             /// **
             /// </summary>
 
-            //LUCENE TO-DO
             long startmask = -1L << (int)startIndex;
             long endmask = (long)(0xffffffffffffffffUL >> (int)-endIndex); // 64-(endIndex&0x3f) is the same as -endIndex due to wrap
 

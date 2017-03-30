@@ -42,7 +42,6 @@ namespace Lucene.Net.Codecs.PerField
         [Test]
         public override void TestMergeStability()
         {
-            //LUCENE TO-DO
             AssumeTrue("The MockRandom PF randomizes content on the fly, so we can't check it", false);
         }
 
