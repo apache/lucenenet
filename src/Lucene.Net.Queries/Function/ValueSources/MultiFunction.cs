@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -125,7 +126,9 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
         public override int GetHashCode()
         {
-            return m_sources.GetHashCode() + Name.GetHashCode();
+            // LUCENENET specific: ensure our passed in list is equatable by
+            // wrapping it in an EquatableList if it is not one already
+            return Equatable.Wrap(m_sources).GetHashCode() + Name.GetHashCode();
         }
 
         public override bool Equals(object o)
@@ -135,7 +138,10 @@ namespace Lucene.Net.Queries.Function.ValueSources
                 return false;
             }
             var other = (MultiFunction)o;
-            return this.m_sources.Equals(other.m_sources);
+
+            // LUCENENET specific: ensure our passed in list is equatable by
+            // wrapping it in an EquatableList if it is not one already
+            return Equatable.Wrap(this.m_sources).Equals(other.m_sources);
         }
     }
 }
