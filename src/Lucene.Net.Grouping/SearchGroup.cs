@@ -180,9 +180,17 @@ namespace Lucene.Net.Search.Grouping
             }
             private bool inQueue;
 
+            // LUCENENET specific - store whether T is value type
+            // for optimization of GetHashCode() and Equals()
+            private readonly bool groupValueIsValueType;
+
             public MergedGroup(T groupValue)
             {
                 this.groupValue = groupValue;
+
+                // LUCENENET specific - store whether T is value type
+                // for optimization of GetHashCode() and Equals()
+                this.groupValueIsValueType = typeof(T).IsValueType;
             }
 
             // Only for assert
@@ -197,7 +205,13 @@ namespace Lucene.Net.Search.Grouping
                     }
                     else
                     {
-                        Debug.Assert(!groupValue.Equals(otherMergedGroup.groupValue));
+                        
+                        Debug.Assert(!groupValueIsValueType 
+                            ? groupValue.Equals(otherMergedGroup.groupValue)
+
+                            // LUCENENET specific - use Collections.Equals() if we have a reference type
+                            // to ensure if it is a collection its contents are compared
+                            : Collections.Equals(groupValue, otherMergedGroup.groupValue));
                     }
                 }
                 return true;
@@ -218,7 +232,9 @@ namespace Lucene.Net.Search.Grouping
                     }
                     else
                     {
-                        return groupValue.Equals(otherMergedGroup);
+                        // LUCENENET specific - use Collections.Equals() if we have a reference type
+                        // to ensure if it is a collection its contents are compared
+                        return groupValueIsValueType ? groupValue.Equals(otherMergedGroup) : Collections.Equals(groupValue, otherMergedGroup);
                     }
                 }
                 else
@@ -235,7 +251,9 @@ namespace Lucene.Net.Search.Grouping
                 }
                 else
                 {
-                    return groupValue.GetHashCode();
+                    // LUCENENET specific - use Collections.GetHashCode() if we have a reference type
+                    // to ensure if it is a collection its contents are compared
+                    return groupValueIsValueType ? groupValue.GetHashCode() : Collections.GetHashCode(groupValue);
                 }
             }
         }
