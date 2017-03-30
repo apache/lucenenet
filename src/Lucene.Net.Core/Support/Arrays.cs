@@ -11,14 +11,18 @@ namespace Lucene.Net.Support
             if (a == null)
                 return 0;
 
-            int hash = 17;
+            int result = 1;
+            bool isValueType = typeof(T).IsValueType;
 
             foreach (var item in a)
             {
-                hash = hash * 23 + (item == null ? 0 : item.GetHashCode());
+                result = 31 * result + (item == null ? 0 : 
+                    // LUCENENET specific: if this is a reference type, pass to
+                    // Collections.GetHashCode() in case we have an array of collections
+                    (isValueType ? item.GetHashCode() : Collections.GetHashCode(item)));
             }
 
-            return hash;
+            return result;
         }
 
         /// <summary>
