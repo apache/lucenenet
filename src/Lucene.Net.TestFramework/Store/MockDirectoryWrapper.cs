@@ -531,7 +531,7 @@ namespace Lucene.Net.Store
                 }
                 else
                 {
-                    throw RandomState.NextBoolean() ? new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")") : new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")");
+                    throw RandomState.NextBoolean() ? (IOException)new FileNotFoundException("a randomSystem.IO.IOException (" + name + ")") : new DirectoryNotFoundException("a randomSystem.IO.IOException (" + name + ")");
                 }
             }
         }
@@ -1318,7 +1318,7 @@ namespace Lucene.Net.Store
             MaybeYield();
             if (!LuceneTestCase.SlowFileExists(m_input, name))
             {
-                throw RandomState.NextBoolean() ? new FileNotFoundException(name) : new FileNotFoundException(name);
+                throw RandomState.NextBoolean() ? (IOException)new FileNotFoundException(name) : new DirectoryNotFoundException(name);
             }
             // cannot open a file for input if it's still open for
             // output, except for segments.gen and segments_N
