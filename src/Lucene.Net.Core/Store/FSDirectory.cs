@@ -305,9 +305,9 @@ namespace Lucene.Net.Store
                     throw new IOException("Cannot delete " + file);
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw new IOException("Cannot delete " + file);
+                throw new IOException("Cannot delete " + file, e);
             }
             m_staleFiles.Remove(name);
         }
