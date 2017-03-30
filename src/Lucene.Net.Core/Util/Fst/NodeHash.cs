@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -37,7 +38,7 @@ namespace Lucene.Net.Util.Fst
 
         // LUCENENET specific - optimize the Hash methods
         // by only calling Collections.GetHashCode() if the value is a reference type
-        private readonly bool tIsValueType = typeof(T).IsValueType;
+        private readonly static bool tIsValueType = typeof(T).GetTypeInfo().IsValueType;
 
         public NodeHash(FST<T> fst, FST.BytesReader input)
         {

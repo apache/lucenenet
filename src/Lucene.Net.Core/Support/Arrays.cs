@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Support
 {
@@ -12,7 +13,7 @@ namespace Lucene.Net.Support
                 return 0;
 
             int result = 1;
-            bool isValueType = typeof(T).IsValueType;
+            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
 
             foreach (var item in a)
             {
@@ -99,7 +100,7 @@ namespace Lucene.Net.Support
             {
                 return true;
             }
-            bool isValueType = typeof(T).IsValueType;
+            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
             if (!isValueType && a == null)
             {
                 return b == null;

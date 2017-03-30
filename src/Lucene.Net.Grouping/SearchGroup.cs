@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 
 namespace Lucene.Net.Search.Grouping
 {
@@ -182,15 +183,11 @@ namespace Lucene.Net.Search.Grouping
 
             // LUCENENET specific - store whether T is value type
             // for optimization of GetHashCode() and Equals()
-            private readonly bool groupValueIsValueType;
+            private readonly static bool groupValueIsValueType = typeof(T).GetTypeInfo().IsValueType;
 
             public MergedGroup(T groupValue)
             {
                 this.groupValue = groupValue;
-
-                // LUCENENET specific - store whether T is value type
-                // for optimization of GetHashCode() and Equals()
-                this.groupValueIsValueType = typeof(T).IsValueType;
             }
 
             // Only for assert

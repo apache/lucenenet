@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 
@@ -117,7 +118,7 @@ namespace Lucene.Net
         public static int GetHashCode<T>(IList<T> list)
         {
             int hashCode = 1;
-            bool isValueType = typeof(T).IsValueType;
+            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
             foreach (T e in list)
             {
                 hashCode = 31 * hashCode +
@@ -141,7 +142,7 @@ namespace Lucene.Net
         public static int GetHashCode<T>(ISet<T> set)
         {
             int h = 0;
-            bool isValueType = typeof(T).IsValueType;
+            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
             using (var i = set.GetEnumerator())
             {
                 while (i.MoveNext())
@@ -174,8 +175,8 @@ namespace Lucene.Net
         public static int GetHashCode<TKey, TValue>(IDictionary<TKey, TValue> dictionary)
         {
             int h = 0;
-            bool keyIsValueType = typeof(TKey).IsValueType;
-            bool valueIsValueType = typeof(TValue).IsValueType;
+            bool keyIsValueType = typeof(TKey).GetTypeInfo().IsValueType;
+            bool valueIsValueType = typeof(TValue).GetTypeInfo().IsValueType;
             using (var i = dictionary.GetEnumerator())
             {
                 while (i.MoveNext())
@@ -211,7 +212,7 @@ namespace Lucene.Net
             }
 
             Type t = obj.GetType();
-            if (t.IsGenericType
+            if (t.GetTypeInfo().IsGenericType
                 && (t.ImplementsGenericInterface(typeof(IList<>))
                 || t.ImplementsGenericInterface(typeof(ISet<>))
                 || t.ImplementsGenericInterface(typeof(IDictionary<,>))))
@@ -241,7 +242,7 @@ namespace Lucene.Net
                 return true;
             }
 
-            bool isValueType = typeof(T).IsValueType;
+            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
 
             if (!isValueType && listA == null)
             {
@@ -307,7 +308,7 @@ namespace Lucene.Net
                 return false;
             }
 
-            bool isValueType = typeof(T).IsValueType;
+            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
 
             // same operation as containsAll()
             foreach (T eB in setB)
@@ -362,7 +363,7 @@ namespace Lucene.Net
                 return false;
             }
 
-            bool valueIsValueType = typeof(TValue).IsValueType;
+            bool valueIsValueType = typeof(TValue).GetTypeInfo().IsValueType;
 
             using (var i = dictionaryB.GetEnumerator())
             {
@@ -416,13 +417,13 @@ namespace Lucene.Net
 
             Type tA = objA.GetType();
             Type tB = objB.GetType();
-            if (tA.IsGenericType)
+            if (tA.GetTypeInfo().IsGenericType)
             {
                 bool shouldReturn = false;
 
                 if (tA.ImplementsGenericInterface(typeof(IList<>)))
                 {
-                    if (!(tB.IsGenericType && tB.ImplementsGenericInterface(typeof(IList<>))))
+                    if (!(tB.GetTypeInfo().IsGenericType && tB.ImplementsGenericInterface(typeof(IList<>))))
                     {
                         return false; // type mismatch - must be a list
                     }
@@ -430,7 +431,7 @@ namespace Lucene.Net
                 }
                 else if (tA.ImplementsGenericInterface(typeof(ISet<>)))
                 {
-                    if (!(tB.IsGenericType && tB.ImplementsGenericInterface(typeof(ISet<>))))
+                    if (!(tB.GetTypeInfo().IsGenericType && tB.ImplementsGenericInterface(typeof(ISet<>))))
                     {
                         return false; // type mismatch - must be a set
                     }
@@ -438,7 +439,7 @@ namespace Lucene.Net
                 }
                 else if (tA.ImplementsGenericInterface(typeof(IDictionary<,>)))
                 {
-                    if (!(tB.IsGenericType && tB.ImplementsGenericInterface(typeof(IDictionary<,>))))
+                    if (!(tB.GetTypeInfo().IsGenericType && tB.ImplementsGenericInterface(typeof(IDictionary<,>))))
                     {
                         return false; // type mismatch - must be a dictionary
                     }
@@ -459,8 +460,8 @@ namespace Lucene.Net
         // LUCENENET TODO: Move to a new TypeExtensions class
         private static bool ImplementsGenericInterface(this Type target, Type interfaceType)
         {
-            return target.IsGenericType && target.GetGenericTypeDefinition().GetInterfaces().Any(
-                x => x.IsGenericType && interfaceType.IsAssignableFrom(x.GetGenericTypeDefinition())
+            return target.GetTypeInfo().IsGenericType && target.GetGenericTypeDefinition().GetInterfaces().Any(
+                x => x.GetTypeInfo().IsGenericType && interfaceType.IsAssignableFrom(x.GetGenericTypeDefinition())
             );
         }
 
@@ -476,7 +477,7 @@ namespace Lucene.Net
                 return "[]";
             }
 
-            bool isValueType = typeof(T).IsValueType;
+            bool isValueType = typeof(T).GetTypeInfo().IsValueType;
             using (var it = collection.GetEnumerator())
             {
                 StringBuilder sb = new StringBuilder();
@@ -520,8 +521,8 @@ namespace Lucene.Net
                 return "{}";
             }
 
-            bool keyIsValueType = typeof(TKey).IsValueType;
-            bool valueIsValueType = typeof(TValue).IsValueType;
+            bool keyIsValueType = typeof(TKey).GetTypeInfo().IsValueType;
+            bool valueIsValueType = typeof(TValue).GetTypeInfo().IsValueType;
             using (var i = dictionary.GetEnumerator())
             {
                 StringBuilder sb = new StringBuilder();
@@ -565,7 +566,7 @@ namespace Lucene.Net
         public static string ToString(object obj)
         {
             Type t = obj.GetType();
-            if (t.IsGenericType
+            if (t.GetTypeInfo().IsGenericType
                 && (t.ImplementsGenericInterface(typeof(ICollection<>)))
                 || t.ImplementsGenericInterface(typeof(IDictionary<,>)))
             {

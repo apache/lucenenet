@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 
 namespace Lucene.Net.Util.Fst
@@ -449,7 +450,7 @@ namespace Lucene.Net.Util.Fst
                     // LUCENENET NOTE: In .NET, IEnumerable will not equal another identical IEnumerable
                     // because it checks for reference equality, not that the list contents
                     // are the same. Collections.Equals() will make that check.
-                    Debug.Assert(typeof(T).IsValueType 
+                    Debug.Assert(typeof(T).GetTypeInfo().IsValueType 
                         ? root.NextFinalOutput.Equals(asserting.NextFinalOutput) 
                         : Collections.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
                     Debug.Assert(root.Node == asserting.Node);
