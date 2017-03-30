@@ -55,6 +55,30 @@ namespace Lucene.Net.Index
 #pragma warning restore 168
                 {
                 }
+                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+                // in Lucene, we need to catch it here to be on the safe side.
+                catch (System.IO.DirectoryNotFoundException)
+                {
+                }
+            }
+            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+            // in Lucene, we need to catch it here to be on the safe side.
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                try
+                {
+                    new IndexWriter(dir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
+                }
+#pragma warning disable 168
+                catch (FileNotFoundException /*| NoSuchFileException*/ e1)
+#pragma warning restore 168
+                {
+                }
+                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+                // in Lucene, we need to catch it here to be on the safe side.
+                catch (System.IO.DirectoryNotFoundException)
+                {
+                }
             }
             finally
             {

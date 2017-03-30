@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Lucene.Net.Store
@@ -92,7 +93,7 @@ namespace Lucene.Net.Store
             // but if one underlying delegate is an FSDir and mkdirs() has not
             // yet been called, because so far everything is written to the other,
             // in this case, we don't want to throw a NoSuchDirectoryException
-            NoSuchDirectoryException exc = null;
+            DirectoryNotFoundException exc = null;
             try
             {
                 foreach (string f in primaryDir.ListAll())
@@ -100,7 +101,7 @@ namespace Lucene.Net.Store
                     files.Add(f);
                 }
             }
-            catch (NoSuchDirectoryException e)
+            catch (DirectoryNotFoundException e)
             {
                 exc = e;
             }
@@ -112,7 +113,7 @@ namespace Lucene.Net.Store
                     files.Add(f);
                 }
             }
-            catch (NoSuchDirectoryException e)
+            catch (DirectoryNotFoundException e)
             {
                 // we got NoSuchDirectoryException from both dirs
                 // rethrow the first.

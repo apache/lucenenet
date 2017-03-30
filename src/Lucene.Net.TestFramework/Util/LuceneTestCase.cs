@@ -2658,6 +2658,12 @@ namespace Lucene.Net.Util
             //{
             //    return false;
             //}
+            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+            // in Lucene, we need to catch it here to be on the safe side.
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                return false;
+            }
         }
 
         /// <summary>

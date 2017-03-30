@@ -2083,6 +2083,12 @@ namespace Lucene.Net.Index
                 {
                     continue;
                 }
+                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+                // in Lucene, we need to catch it here to be on the safe side.
+                catch (System.IO.DirectoryNotFoundException)
+                {
+                    continue;
+                }
                 failure.ClearDoFail();
                 iw.Dispose();
                 ir = DirectoryReader.Open(dir);

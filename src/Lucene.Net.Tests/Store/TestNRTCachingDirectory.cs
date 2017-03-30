@@ -151,7 +151,7 @@ namespace Lucene.Net.Store
                     DirectoryReader.Open(dir);
                     Assert.Fail("did not hit expected exception");
                 }
-                catch (NoSuchDirectoryException)
+                catch (DirectoryNotFoundException)
                 {
                     // expected
                 }

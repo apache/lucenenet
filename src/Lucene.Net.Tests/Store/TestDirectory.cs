@@ -146,6 +146,11 @@ namespace Lucene.Net.Store
 #pragma warning restore 168
                             {
                             }
+                            // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+                            // in Lucene, we need to catch it here to be on the safe side.
+                            catch (System.IO.DirectoryNotFoundException)
+                            {
+                            }
                             catch (IOException e)
                             {
                                 if (!e.Message.Contains("still open for writing"))
@@ -355,7 +360,7 @@ namespace Lucene.Net.Store
                     Assert.Fail("did not hit expected exception");
                 }
 #pragma warning disable 168
-                catch (NoSuchDirectoryException nsde)
+                catch (DirectoryNotFoundException nsde)
 #pragma warning restore 168
                 {
                     // Expected
@@ -403,6 +408,12 @@ namespace Lucene.Net.Store
                                 Arrays.AsList(fsdir.ListAll()));
                 }
                 catch (FileNotFoundException)
+                {
+                    // ok
+                }
+                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+                // in Lucene, we need to catch it here to be on the safe side.
+                catch (System.IO.DirectoryNotFoundException)
                 {
                     // ok
                 }

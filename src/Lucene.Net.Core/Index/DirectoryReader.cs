@@ -24,7 +24,6 @@ namespace Lucene.Net.Index
 
     // javadocs
     using Directory = Lucene.Net.Store.Directory;
-    using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
 
     /// <summary>
     /// DirectoryReader is an implementation of <seealso cref="CompositeReader"/>
@@ -315,6 +314,19 @@ namespace Lucene.Net.Index
                     //{
                     //    sis = null;
                     //}
+                    // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+                    // in Lucene, we need to catch it here to be on the safe side.
+                    catch (System.IO.DirectoryNotFoundException)
+                    {
+                        // LUCENE-948: on NFS (and maybe others), if
+                        // you have writers switching back and forth
+                        // between machines, it's very likely that the
+                        // dir listing will be stale and will claim a
+                        // file segments_X exists when in fact it
+                        // doesn't.  So, we catch this and handle it
+                        // as if the file does not exist
+                        sis = null;
+                    }
 
                     if (sis != null)
                     {
@@ -356,7 +368,7 @@ namespace Lucene.Net.Index
                 files = directory.ListAll();
             }
 #pragma warning disable 168
-            catch (NoSuchDirectoryException nsde)
+            catch (DirectoryNotFoundException nsde)
 #pragma warning restore 168
             {
                 // Directory does not exist --> no index exists

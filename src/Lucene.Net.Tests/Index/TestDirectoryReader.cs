@@ -38,7 +38,6 @@ namespace Lucene.Net.Index
          */
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
     using StoredField = StoredField;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -771,7 +770,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("did not hit expected exception");
             }
 #pragma warning disable 168
-            catch (NoSuchDirectoryException nsde)
+            catch (DirectoryNotFoundException nsde)
 #pragma warning restore 168
             {
                 // expected

@@ -149,7 +149,7 @@ namespace Lucene.Net.Store
                         files.Add(f);
                     }
                 }
-                catch (NoSuchDirectoryException ex)
+                catch (DirectoryNotFoundException ex)
                 {
                     // however, if there are no cached files, then the directory truly
                     // does not "exist"

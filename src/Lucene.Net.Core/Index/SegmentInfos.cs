@@ -38,7 +38,6 @@ namespace Lucene.Net.Index
     using Lucene3xCodec = Lucene.Net.Codecs.Lucene3x.Lucene3xCodec;
     using Lucene3xSegmentInfoFormat = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoFormat;
     using Lucene3xSegmentInfoReader = Lucene.Net.Codecs.Lucene3x.Lucene3xSegmentInfoReader;
-    using NoSuchDirectoryException = Lucene.Net.Store.NoSuchDirectoryException;
     using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
@@ -214,7 +213,7 @@ namespace Lucene.Net.Index
             {
                 return GetLastCommitGeneration(directory.ListAll());
             }
-            catch (NoSuchDirectoryException)
+            catch (DirectoryNotFoundException)
             {
                 return -1;
             }

@@ -118,7 +118,7 @@ namespace Lucene.Net.Store
 
             if (File.Exists(path.FullName))
             {
-                throw new NoSuchDirectoryException("file '" + path.FullName + "' exists but is not a directory");
+                throw new DirectoryNotFoundException("file '" + path.FullName + "' exists but is not a directory");
             }
 
             SetLockFactory(lockFactory);
@@ -223,7 +223,7 @@ namespace Lucene.Net.Store
         /// directory.  This method never returns <c>null</c> (throws
         /// <seealso cref="IOException"/> instead).
         /// </summary>
-        /// <exception cref="NoSuchDirectoryException"> if the directory
+        /// <exception cref="DirectoryNotFoundException"> if the directory
         /// does not exist, or does exist but is not a
         /// directory or is invalid (for example, it is on an unmapped drive). </exception>
         /// <exception cref="System.Security.SecurityException">The caller does not have the required permission.</exception>
@@ -231,11 +231,11 @@ namespace Lucene.Net.Store
         {
             if (!System.IO.Directory.Exists(dir.FullName))
             {
-                throw new NoSuchDirectoryException("directory '" + dir + "' does not exist");
+                throw new DirectoryNotFoundException("directory '" + dir + "' does not exist");
             }
             else if (File.Exists(dir.FullName))
             {
-                throw new NoSuchDirectoryException("file '" + dir + "' exists but is not a directory");
+                throw new DirectoryNotFoundException("file '" + dir + "' exists but is not a directory");
             }
 
             // Exclude subdirs

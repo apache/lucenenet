@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
         /// <summary>
         /// Returns an array of strings, one for each file in the directory.
         /// </summary>
-        /// <exception cref="NoSuchDirectoryException"> if the directory is not prepared for any
+        /// <exception cref="DirectoryNotFoundException"> if the directory is not prepared for any
         ///         write operations (such as <see cref="CreateOutput(string, IOContext)"/>). </exception>
         /// <exception cref="System.IO.IOException"> in case of other IO errors </exception>
         public abstract string[] ListAll();
