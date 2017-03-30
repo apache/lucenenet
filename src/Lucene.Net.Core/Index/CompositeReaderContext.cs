@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// <seealso cref="IndexReaderContext"/> for <seealso cref="CompositeReader"/> instance.
+    /// <see cref="IndexReaderContext"/> for <see cref="CompositeReader"/> instance.
     /// </summary>
     public sealed class CompositeReaderContext : IndexReaderContext
     {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates a <seealso cref="CompositeReaderContext"/> for intermediate readers that aren't
+        /// Creates a <see cref="CompositeReaderContext"/> for intermediate readers that aren't
         /// not top-level readers in the current context
         /// </summary>
         internal CompositeReaderContext(CompositeReaderContext parent, CompositeReader reader, int ordInParent, int docbaseInParent, IList<IndexReaderContext> children)
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates a <seealso cref="CompositeReaderContext"/> for top-level readers with parent set to <code>null</code>
+        /// Creates a <see cref="CompositeReaderContext"/> for top-level readers with parent set to <c>null</c>
         /// </summary>
         internal CompositeReaderContext(CompositeReader reader, IList<IndexReaderContext> children, IList<AtomicReaderContext> leaves)
             : this(null, reader, 0, 0, children, leaves)

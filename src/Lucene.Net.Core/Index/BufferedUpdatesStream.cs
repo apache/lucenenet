@@ -30,21 +30,22 @@ namespace Lucene.Net.Index
     using Query = Lucene.Net.Search.Query;
     using QueryWrapperFilter = Lucene.Net.Search.QueryWrapperFilter;
 
-    /* Tracks the stream of {@link BufferedDeletes}.
-     * When DocumentsWriterPerThread flushes, its buffered
-     * deletes and updates are appended to this stream.  We later
-     * apply them (resolve them to the actual
-     * docIDs, per segment) when a merge is started
-     * (only to the to-be-merged segments).  We
-     * also apply to all segments when NRT reader is pulled,
-     * commit/close is called, or when too many deletes or  updates are
-     * buffered and must be flushed (by RAM usage or by count).
-     *
-     * Each packet is assigned a generation, and each flushed or
-     * merged segment is also assigned a generation, so we can
-     * track which BufferedDeletes packets to apply to any given
-     * segment. */
-
+    /// <summary>
+    /// Tracks the stream of BufferedDeletes.
+    /// When <see cref="DocumentsWriterPerThread"/> flushes, its buffered
+    /// deletes and updates are appended to this stream.  We later
+    /// apply them (resolve them to the actual
+    /// docIDs, per segment) when a merge is started
+    /// (only to the to-be-merged segments).  We
+    /// also apply to all segments when NRT reader is pulled,
+    /// commit/close is called, or when too many deletes or  updates are
+    /// buffered and must be flushed (by RAM usage or by count).
+    /// <para/>
+    /// Each packet is assigned a generation, and each flushed or
+    /// merged segment is also assigned a generation, so we can
+    /// track which BufferedDeletes packets to apply to any given
+    /// segment.
+    /// </summary>
     internal class BufferedUpdatesStream
     {
         // TODO: maybe linked list?
@@ -67,8 +68,10 @@ namespace Lucene.Net.Index
             this.infoStream = infoStream;
         }
 
-        // Appends a new packet of buffered deletes to the stream,
-        // setting its generation:
+        /// <summary>
+        /// Appends a new packet of buffered deletes to the stream,
+        /// setting its generation:
+        /// </summary>
         public virtual long Push(FrozenBufferedUpdates packet)
         {
             lock (this)
@@ -171,8 +174,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Resolves the buffered deleted Term/Query/docIDs, into
-        ///  actual deleted docIDs in the liveDocs MutableBits for
-        ///  each SegmentReader.
+        /// actual deleted docIDs in the liveDocs <see cref="Util.IMutableBits"/> for
+        /// each <see cref="SegmentReader"/>.
         /// </summary>
         public virtual ApplyDeletesResult ApplyDeletesAndUpdates(IndexWriter.ReaderPool readerPool, IList<SegmentCommitInfo> infos)
         {
@@ -389,10 +392,12 @@ namespace Lucene.Net.Index
         }
 
         // Lock order IW -> BD
-        /* Removes any BufferedDeletes that we no longer need to
-         * store because all segments in the index have had the
-         * deletes applied. */
 
+        /// <summary>
+        /// Removes any BufferedDeletes that we no longer need to
+        /// store because all segments in the index have had the
+        /// deletes applied.
+        /// </summary>
         public virtual void Prune(SegmentInfos segmentInfos)
         {
             lock (this)

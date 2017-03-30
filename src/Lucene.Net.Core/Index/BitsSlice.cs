@@ -23,8 +23,8 @@ namespace Lucene.Net.Index
     using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
-    /// Exposes a slice of an existing Bits as a new Bits.
-    ///
+    /// Exposes a slice of an existing <see cref="IBits"/> as a new <see cref="IBits"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     internal sealed class BitsSlice : IBits

@@ -24,10 +24,9 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Class to write byte streams into slices of shared
-    /// byte[].  this is used by DocumentsWriter to hold the
+    /// <see cref="T:byte[]"/>.  This is used by <see cref="DocumentsWriter"/> to hold the
     /// posting list for many terms in RAM.
     /// </summary>
-
     internal sealed class ByteSliceWriter : DataOutput
     {
         private byte[] slice;

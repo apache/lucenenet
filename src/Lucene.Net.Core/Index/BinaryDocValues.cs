@@ -20,7 +20,7 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// A per-document byte[]
+    /// A per-document <see cref="T:byte[]"/>
     /// </summary>
     public abstract class BinaryDocValues
     {

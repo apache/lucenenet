@@ -22,29 +22,31 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Base class for implementing <seealso cref="CompositeReader"/>s based on an array
+    /// Base class for implementing <see cref="CompositeReader"/>s based on an array
     /// of sub-readers. The implementing class has to add code for
     /// correctly refcounting and closing the sub-readers.
     ///
-    /// <p>User code will most likely use <seealso cref="MultiReader"/> to build a
+    /// <para/>User code will most likely use <see cref="MultiReader"/> to build a
     /// composite reader on a set of sub-readers (like several
-    /// <seealso cref="DirectoryReader"/>s).
+    /// <see cref="DirectoryReader"/>s).
     ///
-    /// <p> For efficiency, in this API documents are often referred to via
+    /// <para/> For efficiency, in this API documents are often referred to via
     /// <i>document numbers</i>, non-negative integers which each name a unique
     /// document in the index.  These document numbers are ephemeral -- they may change
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
     ///
-    /// <p><a name="thread-safety"></a><p><b>NOTE</b>: {@link
-    /// IndexReader} instances are completely thread
+    /// <para/><b>NOTE</b>: 
+    /// <see cref="IndexReader"/> instances are completely thread
     /// safe, meaning multiple threads can call any of its methods,
     /// concurrently.  If your application requires external
     /// synchronization, you should <b>not</b> synchronize on the
-    /// <code>IndexReader</code> instance; use your own
-    /// (non-Lucene) objects instead. </summary>
-    /// <seealso cref= MultiReader
-    /// @lucene.internal </seealso>
+    /// <see cref="IndexReader"/> instance; use your own
+    /// (non-Lucene) objects instead.
+    /// <para/>
+    /// @lucene.internal
+    /// </summary>
+    /// <seealso cref="MultiReader"/>
     public abstract class BaseCompositeReader<R> : CompositeReader
         where R : IndexReader
     {
@@ -54,15 +56,15 @@ namespace Lucene.Net.Index
         private readonly int numDocs;
 
         /// <summary>
-        /// List view solely for <seealso cref="#getSequentialSubReaders()"/>,
+        /// List view solely for <see cref="GetSequentialSubReaders()"/>,
         /// for effectiveness the array is used internally.
         /// </summary>
         private readonly IList<R> subReadersList;
 
         /// <summary>
-        /// Constructs a {@code BaseCompositeReader} on the given subReaders. </summary>
-        /// <param name="subReaders"> the wrapped sub-readers. this array is returned by
-        /// <seealso cref="#getSequentialSubReaders"/> and used to resolve the correct
+        /// Constructs a <see cref="BaseCompositeReader{R}"/> on the given <paramref name="subReaders"/>. </summary>
+        /// <param name="subReaders"> the wrapped sub-readers. This array is returned by
+        /// <see cref="GetSequentialSubReaders()"/> and used to resolve the correct
         /// subreader for docID-based methods. <b>Please note:</b> this array is <b>not</b>
         /// cloned and not protected for modification, the subclass is responsible
         /// to do this. </param>

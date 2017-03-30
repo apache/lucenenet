@@ -31,9 +31,9 @@ namespace Lucene.Net.Index
     using PagedMutable = Lucene.Net.Util.Packed.PagedMutable;
 
     /// <summary>
-    /// A <seealso cref="DocValuesFieldUpdates"/> which holds updates of documents, of a single
-    /// <seealso cref="BinaryDocValuesField"/>.
-    ///
+    /// A <see cref="DocValuesFieldUpdates"/> which holds updates of documents, of a single
+    /// <see cref="BinaryDocValuesField"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     internal class BinaryDocValuesFieldUpdates : DocValuesFieldUpdates

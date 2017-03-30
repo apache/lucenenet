@@ -27,33 +27,32 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Instances of this reader type can only
-    /// be used to get stored fields from the underlying AtomicReaders,
+    /// be used to get stored fields from the underlying <see cref="AtomicReader"/>s,
     /// but it is not possible to directly retrieve postings. To do that, get
-    /// the <seealso cref="AtomicReaderContext"/> for all sub-readers via <seealso cref="#leaves()"/>.
-    /// Alternatively, you can mimic an <seealso cref="AtomicReader"/> (with a serious slowdown),
-    /// by wrapping composite readers with <seealso cref="SlowCompositeReaderWrapper"/>.
+    /// the <see cref="AtomicReaderContext"/> for all sub-readers via <see cref="AtomicReaderContext.Leaves"/>.
+    /// Alternatively, you can mimic an <see cref="AtomicReader"/> (with a serious slowdown),
+    /// by wrapping composite readers with <see cref="SlowCompositeReaderWrapper"/>.
     ///
-    /// <p>IndexReader instances for indexes on disk are usually constructed
-    /// with a call to one of the static <code>DirectoryReader.open()</code> methods,
-    /// e.g. <seealso cref="DirectoryReader#open(Directory)"/>. <seealso cref="DirectoryReader"/> implements
-    /// the {@code CompositeReader} interface, it is not possible to directly get postings.
-    /// <p> Concrete subclasses of IndexReader are usually constructed with a call to
-    /// one of the static <code>open()</code> methods, e.g. {@link
-    /// DirectoryReader#open(Directory)}.
+    /// <para/><see cref="IndexReader"/> instances for indexes on disk are usually constructed
+    /// with a call to one of the static <c>DirectoryReader.Open()</c> methods,
+    /// e.g. <see cref="DirectoryReader.Open(Store.Directory)"/>. <see cref="DirectoryReader"/> implements
+    /// the <see cref="CompositeReader"/> interface, it is not possible to directly get postings.
+    /// <para/> Concrete subclasses of <see cref="IndexReader"/> are usually constructed with a call to
+    /// one of the static <c>Open()</c> methods, e.g. <see cref="DirectoryReader.Open(Store.Directory)"/>.
     ///
-    /// <p> For efficiency, in this API documents are often referred to via
+    /// <para/> For efficiency, in this API documents are often referred to via
     /// <i>document numbers</i>, non-negative integers which each name a unique
     /// document in the index.  These document numbers are ephemeral -- they may change
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
     ///
-    /// <p>
-    /// <a name="thread-safety"></a><p><b>NOTE</b>: {@link
-    /// IndexReader} instances are completely thread
+    /// <para/>
+    /// <b>NOTE</b>: 
+    /// <see cref="IndexReader"/> instances are completely thread
     /// safe, meaning multiple threads can call any of its methods,
     /// concurrently.  If your application requires external
     /// synchronization, you should <b>not</b> synchronize on the
-    /// <code>IndexReader</code> instance; use your own
+    /// <see cref="IndexReader"/> instance; use your own
     /// (non-Lucene) objects instead.
     /// </summary>
     public abstract class CompositeReader : IndexReader
@@ -62,7 +61,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal CompositeReader()
             : base()
@@ -98,13 +97,13 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Expert: returns the sequential sub readers that this
-        ///  reader is logically composed of. this method may not
-        ///  return {@code null}.
+        /// reader is logically composed of. This method may not
+        /// return <c>null</c>.
         ///
-        ///  <p><b>NOTE:</b> In contrast to previous Lucene versions this method
-        ///  is no longer public, code that wants to get all <seealso cref="AtomicReader"/>s
-        ///  this composite is composed of should use <seealso cref="IndexReader#leaves()"/>. </summary>
-        /// <seealso cref= IndexReader#leaves() </seealso>
+        /// <para/><b>NOTE:</b> In contrast to previous Lucene versions this method
+        /// is no longer public, code that wants to get all <see cref="AtomicReader"/>s
+        /// this composite is composed of should use <see cref="IndexReader.Leaves"/>. </summary>
+        /// <seealso cref="IndexReader.Leaves"/>
         protected internal abstract IList<IndexReader> GetSequentialSubReaders();
 
         public override sealed IndexReaderContext Context

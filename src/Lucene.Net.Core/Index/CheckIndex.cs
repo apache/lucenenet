@@ -45,11 +45,14 @@ namespace Lucene.Net.Index
     /// write a new segments file that removes reference to
     /// problematic segments.
     ///
-    /// <p>As this tool checks every byte in the index, on a large
+    /// <para/>As this tool checks every byte in the index, on a large
     /// index it can take quite a long time to run.
     ///
-    /// @lucene.experimental Please make a complete backup of your
+    /// <para/>
+    /// Please make a complete backup of your
     /// index before using this to fix your index!
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
     public class CheckIndex
     {
@@ -57,12 +60,10 @@ namespace Lucene.Net.Index
         private Directory dir;
 
         /// <summary>
-        /// Returned from <seealso cref="#checkIndex()"/> detailing the health and status of the index.
-        ///
+        /// Returned from <see cref="CheckIndex.DoCheckIndex()"/> detailing the health and status of the index.
+        /// <para/>
         /// @lucene.experimental
-        ///
         /// </summary>
-
         public class Status
         {
             internal Status()
@@ -88,9 +89,9 @@ namespace Lucene.Net.Index
             /// True if we were unable to read the version number from segments_N file. </summary>
             public bool MissingSegmentVersion { get; internal set; } // LUCENENET specific - made setter internal
 
-        /// <summary>
-        /// Name of latest segments_N file in the index. </summary>
-        public string SegmentsFileName { get; internal set; } // LUCENENET specific - made setter internal
+            /// <summary>
+            /// Name of latest segments_N file in the index. </summary>
+            public string SegmentsFileName { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
             /// Number of segments in the index. </summary>
@@ -98,24 +99,24 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Empty unless you passed specific segments list to check as optional 3rd argument. </summary>
-            ///  <seealso cref= CheckIndex#checkIndex(List)  </seealso>
+            /// <seealso cref="CheckIndex.DoCheckIndex(IList{string})"/>
             public IList<string> SegmentsChecked { get; internal set; } // LUCENENET specific - made setter internal 
 
             /// <summary>
-            /// True if the index was created with a newer version of Lucene than the CheckIndex tool. </summary>
+            /// True if the index was created with a newer version of Lucene than the <see cref="CheckIndex"/> tool. </summary>
             public bool ToolOutOfDate { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
-            /// List of <seealso cref="SegmentInfoStatus"/> instances, detailing status of each segment. </summary>
+            /// List of <see cref="SegmentInfoStatus"/> instances, detailing status of each segment. </summary>
             public IList<SegmentInfoStatus> SegmentInfos { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
-            /// Directory index is in. </summary>
+            /// <see cref="Directory"/> index is in. </summary>
             public Directory Dir { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
-            /// SegmentInfos instance containing only segments that
-            /// had no problems (this is used with the <seealso cref="CheckIndex#fixIndex"/>
+            /// <see cref="Index.SegmentInfos"/> instance containing only segments that
+            /// had no problems (this is used with the <see cref="CheckIndex.FixIndex(Status)"/>
             /// method to repair the index.
             /// </summary>
             internal SegmentInfos NewSegments { get; set; }
@@ -129,8 +130,8 @@ namespace Lucene.Net.Index
             public int NumBadSegments { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
-            /// True if we checked only specific segments ({@link
-            /// #checkIndex(List)}) was called with non-null
+            /// True if we checked only specific segments 
+            /// (<see cref="DoCheckIndex(IList{string})"/> was called with non-null
             /// argument).
             /// </summary>
             public bool Partial { get; internal set; } // LUCENENET specific - made setter internal
@@ -140,7 +141,7 @@ namespace Lucene.Net.Index
             public int MaxSegmentName { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
-            /// Whether the SegmentInfos.counter is greater than any of the segments' names. </summary>
+            /// Whether the <see cref="SegmentInfos.Counter"/> is greater than any of the segments' names. </summary>
             public bool ValidCounter { get; internal set; } // LUCENENET specific - made setter internal
 
             /// <summary>
@@ -149,8 +150,8 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Holds the status of each segment in the index.
-            ///  See <seealso cref="#segmentInfos"/>.
-            ///
+            /// See <see cref="SegmentInfos"/>.
+            /// <para/>
             /// @lucene.experimental
             /// </summary>
             public class SegmentInfoStatus
@@ -183,26 +184,26 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Net size (MB) of the files referenced by this
-                ///  segment.
+                /// segment.
                 /// </summary>
                 public double SizeMB { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Doc store offset, if this segment shares the doc
-                ///  store files (stored fields and term vectors) with
-                ///  other segments.  this is -1 if it does not share.
+                /// store files (stored fields and term vectors) with
+                /// other segments.  This is -1 if it does not share.
                 /// </summary>
                 public int DocStoreOffset { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// String of the shared doc store segment, or null if
-                ///  this segment does not share the doc store files.
+                /// String of the shared doc store segment, or <c>null</c> if
+                /// this segment does not share the doc store files.
                 /// </summary>
                 public string DocStoreSegment { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// True if the shared doc store files are compound file
-                ///  format.
+                /// format.
                 /// </summary>
                 public bool DocStoreCompoundFile { get; internal set; } // LUCENENET specific - made setter internal
 
@@ -219,8 +220,8 @@ namespace Lucene.Net.Index
                 public int NumDeleted { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// True if we were able to open an AtomicReader on this
-                ///  segment.
+                /// True if we were able to open an <see cref="AtomicReader"/> on this
+                /// segment.
                 /// </summary>
                 public bool OpenReaderPassed { get; internal set; } // LUCENENET specific - made setter internal
 
@@ -230,29 +231,29 @@ namespace Lucene.Net.Index
 
                 /// <summary>
                 /// Map that includes certain
-                ///  debugging details that IndexWriter records into
-                ///  each segment it creates
+                /// debugging details that <see cref="IndexWriter"/> records into
+                /// each segment it creates
                 /// </summary>
                 public IDictionary<string, string> Diagnostics { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Status for testing of field norms (null if field norms could not be tested). </summary>
+                /// Status for testing of field norms (<c>null</c> if field norms could not be tested). </summary>
                 public FieldNormStatus FieldNormStatus { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Status for testing of indexed terms (null if indexed terms could not be tested). </summary>
+                /// Status for testing of indexed terms (<c>null</c> if indexed terms could not be tested). </summary>
                 public TermIndexStatus TermIndexStatus { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Status for testing of stored fields (null if stored fields could not be tested). </summary>
+                /// Status for testing of stored fields (<c>null</c> if stored fields could not be tested). </summary>
                 public StoredFieldStatus StoredFieldStatus { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Status for testing of term vectors (null if term vectors could not be tested). </summary>
+                /// Status for testing of term vectors (<c>null</c> if term vectors could not be tested). </summary>
                 public TermVectorStatus TermVectorStatus { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Status for testing of DocValues (null if DocValues could not be tested). </summary>
+                /// Status for testing of <see cref="DocValues"/> (<c>null</c> if <see cref="DocValues"/> could not be tested). </summary>
                 public DocValuesStatus DocValuesStatus { get; internal set; } // LUCENENET specific - made setter internal
             }
 
@@ -273,7 +274,7 @@ namespace Lucene.Net.Index
                 public long TotFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Exception thrown during term index test (null on success) </summary>
+                /// Exception thrown during term index test (<c>null</c> on success) </summary>
                 public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
             }
 
@@ -310,14 +311,14 @@ namespace Lucene.Net.Index
                 public long TotPos { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Exception thrown during term index test (null on success) </summary>
+                /// Exception thrown during term index test (<c>null</c> on success) </summary>
                 public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
                 /// Holds details of block allocations in the block
-                ///  tree terms dictionary (this is only set if the
-                ///  <seealso cref="PostingsFormat"/> for this segment uses block
-                ///  tree.
+                /// tree terms dictionary (this is only set if the
+                /// <see cref="PostingsFormat"/> for this segment uses block
+                /// tree.
                 /// </summary>
                 public IDictionary<string, BlockTreeTermsReader.Stats> BlockTreeStats { get; internal set; } // LUCENENET specific - made setter internal
             }
@@ -344,7 +345,7 @@ namespace Lucene.Net.Index
                 public long TotFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Exception thrown during stored fields test (null on success) </summary>
+                /// Exception thrown during stored fields test (<c>null</c> on success) </summary>
                 public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
             }
 
@@ -370,12 +371,12 @@ namespace Lucene.Net.Index
                 public long TotVectors { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Exception thrown during term vector test (null on success) </summary>
+                /// Exception thrown during term vector test (<c>null</c> on success) </summary>
                 public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
             }
 
             /// <summary>
-            /// Status from testing DocValues
+            /// Status from testing <see cref="DocValues"/>
             /// </summary>
             public sealed class DocValuesStatus
             {
@@ -406,13 +407,13 @@ namespace Lucene.Net.Index
                 public long TotalSortedSetFields { get; internal set; } // LUCENENET specific - made setter internal
 
                 /// <summary>
-                /// Exception thrown during doc values test (null on success) </summary>
+                /// Exception thrown during doc values test (<c>null</c> on success) </summary>
                 public Exception Error { get; internal set; } // LUCENENET specific - made setter internal
             }
         }
 
         /// <summary>
-        /// Create a new CheckIndex on the directory. </summary>
+        /// Create a new <see cref="CheckIndex"/> on the directory. </summary>
         public CheckIndex(Directory dir)
         {
             this.dir = dir;
@@ -422,9 +423,9 @@ namespace Lucene.Net.Index
         private bool crossCheckTermVectors;
 
         /// <summary>
-        /// If true, term vectors are compared against postings to
-        ///  make sure they are the same.  this will likely
-        ///  drastically increase time it takes to run CheckIndex!
+        /// If <c>true</c>, term vectors are compared against postings to
+        /// make sure they are the same.  This will likely
+        /// drastically increase time it takes to run <see cref="CheckIndex"/>!
         /// </summary>
         public virtual bool CrossCheckTermVectors
         {
@@ -443,7 +444,7 @@ namespace Lucene.Net.Index
         // LUCENENET specific - added getter so we don't need to keep a reference outside of this class to dispose
         /// <summary>
         /// Gets or Sets infoStream where messages should go.  If null, no
-        /// messages are printed.  If <see cref="InfoStreamIsVerbose"/> is true then more
+        /// messages are printed.  If <see cref="InfoStreamIsVerbose"/> is <c>true</c> then more
         /// details are printed.
         /// </summary>
         public virtual TextWriter InfoStream
@@ -461,7 +462,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// If true, prints more details to the <see cref="InfoStream"/>, if set.
+        /// If <c>true</c>, prints more details to the <see cref="InfoStream"/>, if set.
         /// </summary>
         public virtual bool InfoStreamIsVerbose // LUCENENET specific (replaced overload of SetInfoStream with property)
         {
@@ -483,15 +484,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a <seealso cref="Status"/> instance detailing
-        ///  the state of the index.
+        /// Returns a <see cref="Status"/> instance detailing
+        /// the state of the index.
         ///
-        ///  <p>As this method checks every byte in the index, on a large
-        ///  index it can take quite a long time to run.
+        /// <para/>As this method checks every byte in the index, on a large
+        /// index it can take quite a long time to run.
         ///
-        ///  <p><b>WARNING</b>: make sure
-        ///  you only call this when the index is not opened by any
-        ///  writer.
+        /// <para/><b>WARNING</b>: make sure
+        /// you only call this when the index is not opened by any
+        /// writer.
         /// </summary>
         public virtual Status DoCheckIndex()
         {
@@ -499,18 +500,18 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a <seealso cref="Status"/> instance detailing
-        ///  the state of the index.
+        /// Returns a <see cref="Status"/> instance detailing
+        /// the state of the index.
         /// </summary>
-        ///  <param name="onlySegments"> list of specific segment names to check
+        /// <param name="onlySegments"> list of specific segment names to check
         ///
-        ///  <p>As this method checks every byte in the specified
-        ///  segments, on a large index it can take quite a long
-        ///  time to run.
+        /// <para/>As this method checks every byte in the specified
+        /// segments, on a large index it can take quite a long
+        /// time to run.
         ///
-        ///  <p><b>WARNING</b>: make sure
-        ///  you only call this when the index is not opened by any
-        ///  writer.  </param>
+        /// <para/><b>WARNING</b>: make sure
+        /// you only call this when the index is not opened by any
+        /// writer.  </param>
         public virtual Status DoCheckIndex(IList<string> onlySegments)
         {
             NumberFormatInfo nf = CultureInfo.CurrentCulture.NumberFormat;
@@ -933,6 +934,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Test field norms.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static Status.FieldNormStatus TestFieldNorms(AtomicReader reader, TextWriter infoStream)
@@ -988,8 +990,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// checks Fields api is consistent with itself.
-        /// searcher is optional, to verify with queries. Can be null.
+        /// Checks <see cref="Fields"/> api is consistent with itself.
+        /// Searcher is optional, to verify with queries. Can be <c>null</c>.
         /// </summary>
         private static Status.TermIndexStatus CheckFields(Fields fields, IBits liveDocs, int maxDoc, FieldInfos fieldInfos, bool doPrint, bool isVectors, TextWriter infoStream, bool verbose)
         {
@@ -1644,6 +1646,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Test the term index.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static Status.TermIndexStatus TestPostings(AtomicReader reader, TextWriter infoStream)
@@ -1653,6 +1656,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Test the term index.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static Status.TermIndexStatus TestPostings(AtomicReader reader, TextWriter infoStream, bool verbose)
@@ -1703,6 +1707,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Test stored fields.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static Status.StoredFieldStatus TestStoredFields(AtomicReader reader, TextWriter infoStream)
@@ -1757,6 +1762,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Test docvalues.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static Status.DocValuesStatus TestDocValues(AtomicReader reader, TextWriter infoStream)
@@ -2044,6 +2050,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Test term vectors.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, TextWriter infoStream)
@@ -2053,6 +2060,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Test term vectors.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static Status.TermVectorStatus TestTermVectors(AtomicReader reader, TextWriter infoStream, bool verbose, bool crossCheckTermVectors)
@@ -2329,18 +2337,18 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Repairs the index using previously returned result
-        ///  from <seealso cref="#checkIndex"/>.  Note that this does not
-        ///  remove any of the unreferenced files after it's done;
-        ///  you must separately open an <seealso cref="IndexWriter"/>, which
-        ///  deletes unreferenced files when it's created.
+        /// from <see cref="DoCheckIndex()"/>.  Note that this does not
+        /// remove any of the unreferenced files after it's done;
+        /// you must separately open an <see cref="IndexWriter"/>, which
+        /// deletes unreferenced files when it's created.
         ///
-        /// <p><b>WARNING</b>: this writes a
-        ///  new segments file into the index, effectively removing
-        ///  all documents in broken segments from the index.
-        ///  BE CAREFUL.
+        /// <para/><b>WARNING</b>: this writes a
+        /// new segments file into the index, effectively removing
+        /// all documents in broken segments from the index.
+        /// BE CAREFUL.
         ///
-        /// <p><b>WARNING</b>: Make sure you only call this when the
-        ///  index is not opened  by any writer.
+        /// <para/><b>WARNING</b>: Make sure you only call this when the
+        /// index is not opened by any writer.
         /// </summary>
         public virtual void FixIndex(Status result)
         {

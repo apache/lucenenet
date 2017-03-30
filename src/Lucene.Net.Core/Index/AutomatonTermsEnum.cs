@@ -29,20 +29,20 @@ namespace Lucene.Net.Index
     using Transition = Lucene.Net.Util.Automaton.Transition;
 
     /// <summary>
-    /// A FilteredTermsEnum that enumerates terms based upon what is accepted by a
+    /// A <see cref="FilteredTermsEnum"/> that enumerates terms based upon what is accepted by a
     /// DFA.
-    /// <p>
+    /// <para/>
     /// The algorithm is such:
-    /// <ol>
-    ///   <li>As long as matches are successful, keep reading sequentially.
-    ///   <li>When a match fails, skip to the next string in lexicographic order that
-    /// does not enter a reject state.
-    /// </ol>
-    /// <p>
+    /// <list type="number">
+    ///     <item>As long as matches are successful, keep reading sequentially.</item>
+    ///     <item>When a match fails, skip to the next string in lexicographic order that
+    ///         does not enter a reject state.</item>
+    /// </list>
+    /// <para>
     /// The algorithm does not attempt to actually skip to the next string that is
     /// completely accepted. this is not possible when the language accepted by the
     /// FSM is not finite (i.e. * operator).
-    /// </p>
+    /// </para>
     /// @lucene.experimental
     /// </summary>
     internal class AutomatonTermsEnum : FilteredTermsEnum
@@ -79,10 +79,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Construct an enumerator based upon an automaton, enumerating the specified
-        /// field, working on a supplied TermsEnum
-        /// <p>
+        /// field, working on a supplied <see cref="TermsEnum"/>
+        /// <para/>
         /// @lucene.experimental
-        /// <p> </summary>
+        /// </summary>
+        /// <param name="tenum"> TermsEnum </param>
         /// <param name="compiled"> CompiledAutomaton </param>
         public AutomatonTermsEnum(TermsEnum tenum, CompiledAutomaton compiled)
             : base(tenum)
@@ -100,7 +101,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if the term matches the automaton. Also stashes away the term
+        /// Returns <c>true</c> if the term matches the automaton. Also stashes away the term
         /// to assist with smart enumeration.
         /// </summary>
         protected override AcceptStatus Accept(BytesRef term)
@@ -153,7 +154,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Sets the enum to operate in linear fashion, as we have found
         /// a looping transition at position: we set an upper bound and
-        /// act like a TermRangeQuery for this portion of the term space.
+        /// act like a <see cref="Search.TermRangeQuery"/> for this portion of the term space.
         /// </summary>
         private void SetLinear(int position)
         {
@@ -195,14 +196,14 @@ namespace Lucene.Net.Index
         private readonly Int32sRef savedStates = new Int32sRef(10);
 
         /// <summary>
-        /// Increments the byte buffer to the next String in binary order after s that will not put
+        /// Increments the byte buffer to the next string in binary order after s that will not put
         /// the machine into a reject state. If such a string does not exist, returns
-        /// false.
-        ///
+        /// <c>false</c>.
+        /// <para/>
         /// The correctness of this method depends upon the automaton being deterministic,
         /// and having no transitions to dead states.
         /// </summary>
-        /// <returns> true if more possible solutions exist for the DFA </returns>
+        /// <returns> <c>true</c> if more possible solutions exist for the DFA </returns>
         private bool NextString()
         {
             int state;
@@ -263,21 +264,21 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the next String in lexicographic order that will not put
+        /// Returns the next string in lexicographic order that will not put
         /// the machine into a reject state.
-        ///
-        /// this method traverses the DFA from the given position in the String,
+        /// <para/>
+        /// This method traverses the DFA from the given position in the string,
         /// starting at the given state.
-        ///
-        /// If this cannot satisfy the machine, returns false. this method will
+        /// <para/>
+        /// If this cannot satisfy the machine, returns <c>false</c>. This method will
         /// walk the minimal path, in lexicographic order, as long as possible.
-        ///
-        /// If this method returns false, then there might still be more solutions,
+        /// <para/>
+        /// If this method returns <c>false</c>, then there might still be more solutions,
         /// it is necessary to backtrack to find out.
         /// </summary>
         /// <param name="state"> current non-reject state </param>
         /// <param name="position"> useful portion of the string </param>
-        /// <returns> true if more possible solutions exist for the DFA from this
+        /// <returns> <c>true</c> if more possible solutions exist for the DFA from this
         ///         position </returns>
         private bool NextString(int state, int position)
         {
@@ -350,11 +351,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Attempts to backtrack thru the string after encountering a dead end
-        /// at some given position. Returns false if no more possible strings
+        /// at some given position. Returns <c>false</c> if no more possible strings
         /// can match.
         /// </summary>
-        /// <param name="position"> current position in the input String </param>
-        /// <returns> position >=0 if more possible solutions exist for the DFA </returns>
+        /// <param name="position"> current position in the input string </param>
+        /// <returns> position &gt;=0 if more possible solutions exist for the DFA </returns>
         private int Backtrack(int position)
         {
             while (position-- > 0)

@@ -33,8 +33,8 @@ namespace Lucene.Net.Index
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
-    /// Buffers up pending byte[] per doc, then flushes when
-    ///  segment flushes.
+    /// Buffers up pending <see cref="T:byte[]"/> per doc, then flushes when
+    /// segment flushes.
     /// </summary>
     internal class BinaryDocValuesWriter : DocValuesWriter
     {

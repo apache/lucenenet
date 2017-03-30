@@ -24,12 +24,13 @@ namespace Lucene.Net.Index
     using DataInput = Lucene.Net.Store.DataInput;
     using DataOutput = Lucene.Net.Store.DataOutput;
 
-    /* IndexInput that knows how to read the byte slices written
-     * by Posting and PostingVector.  We read the bytes in
-     * each slice until we hit the end of that slice at which
-     * point we read the forwarding address of the next slice
-     * and then jump to it.*/
-
+    /// <summary>
+    /// <see cref="Store.IndexInput"/> that knows how to read the byte slices written
+    /// by Posting and PostingVector. We read the bytes in
+    /// each slice until we hit the end of that slice at which
+    /// point we read the forwarding address of the next slice
+    /// and then jump to it.
+    /// </summary>
     public sealed class ByteSliceReader : DataInput // LUCENENET specific - changed from internal to public because returned from public API
     {
         private ByteBlockPool pool;

@@ -27,16 +27,18 @@ namespace Lucene.Net.Index
     using Query = Lucene.Net.Search.Query;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
-    /* Holds buffered deletes and updates, by docID, term or query for a
-     * single segment. this is used to hold buffered pending
-     * deletes and updates against the to-be-flushed segment.  Once the
-     * deletes and updates are pushed (on flush in DocumentsWriter), they
-     * are converted to a FrozenDeletes instance. */
 
-    // NOTE: instances of this class are accessed either via a private
-    // instance on DocumentWriterPerThread, or via sync'd code by
-    // DocumentsWriterDeleteQueue
-
+    /// <summary>
+    /// Holds buffered deletes and updates, by docID, term or query for a
+    /// single segment. this is used to hold buffered pending
+    /// deletes and updates against the to-be-flushed segment.  Once the
+    /// deletes and updates are pushed (on flush in <see cref="DocumentsWriter"/>), they
+    /// are converted to a FrozenDeletes instance.
+    /// <para/>
+    /// NOTE: instances of this class are accessed either via a private
+    /// instance on <see cref="DocumentsWriterPerThread"/>, or via sync'd code by
+    /// <see cref="DocumentsWriterDeleteQueue"/>
+    /// </summary>
     public class BufferedUpdates // LUCENENET NOTE: Made public rather than internal because it is available through a public API
     {
         /* Rough logic: HashMap has an array[Entry] w/ varying
