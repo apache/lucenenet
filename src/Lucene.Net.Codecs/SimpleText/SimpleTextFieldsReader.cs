@@ -337,7 +337,9 @@ namespace Lucene.Net.Codecs.SimpleText
                     {
                         Debug.Assert(
                             StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.TERM) || StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.FIELD) ||
-                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END), "scratch=" + _scratch.Utf8ToString());
+                            // LUCENENET TODO: This assert fails sometimes, which in turns causes _scratch.Utf8ToString() to throw an index out of range exception
+                            StringHelper.StartsWith(_scratch, SimpleTextFieldsWriter.END) /*, "scratch=" + _scratch.Utf8ToString()*/);
+
                         if (!first && (_liveDocs == null || _liveDocs.Get(_docId)))
                         {
                             _in.Seek(lineStart);
