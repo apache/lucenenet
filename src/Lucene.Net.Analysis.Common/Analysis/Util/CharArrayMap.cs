@@ -781,12 +781,14 @@ namespace Lucene.Net.Analysis.Util
         public override int GetHashCode()
         {
             const int PRIME = 31; // arbitrary prime
-            int hash = PRIME; 
-            var iter = (EntryIterator)EntrySet().GetEnumerator();
-            while (iter.MoveNext())
+            int hash = PRIME;
+            using (var iter = (EntryIterator)EntrySet().GetEnumerator())
             {
-                hash = (hash * PRIME) ^ iter.Current.Key.GetHashCode();
-                hash = (hash * PRIME) ^ iter.Current.Value.GetHashCode();
+                while (iter.MoveNext())
+                {
+                    hash = (hash * PRIME) ^ iter.Current.Key.GetHashCode();
+                    hash = (hash * PRIME) ^ iter.Current.Value.GetHashCode();
+                }
             }
             return hash;
         }
