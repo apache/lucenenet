@@ -186,7 +186,7 @@ namespace Lucene.Net.Search
         /// initialize levenshtein DFAs up to maxDistance, if possible </summary>
         private IList<CompiledAutomaton> InitAutomata(int maxDistance)
         {
-            IList<CompiledAutomaton> runAutomata = dfaAtt.Automata();
+            IList<CompiledAutomaton> runAutomata = dfaAtt.Automata;
             //System.out.println("cached automata size: " + runAutomata.size());
             if (runAutomata.Count <= maxDistance && maxDistance <= LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE)
             {
@@ -475,7 +475,7 @@ namespace Lucene.Net.Search
         /// </summary>
         public interface ILevenshteinAutomataAttribute : IAttribute
         {
-            IList<CompiledAutomaton> Automata();
+            IList<CompiledAutomaton> Automata { get; }
         }
 
         /// <summary>
@@ -487,9 +487,9 @@ namespace Lucene.Net.Search
             // LUCENENET NOTE: Must use EquatableList for Equals and GetHashCode()
             private readonly IList<CompiledAutomaton> automata = new EquatableList<CompiledAutomaton>();
 
-            public IList<CompiledAutomaton> Automata() // LUCENENT TODO: API make property
+            public IList<CompiledAutomaton> Automata
             {
-                return automata;
+                get { return automata; }
             }
 
             public override void Clear()
@@ -517,7 +517,7 @@ namespace Lucene.Net.Search
 
             public override void CopyTo(IAttribute target)
             {
-                IList<CompiledAutomaton> targetAutomata = ((LevenshteinAutomataAttribute)target).Automata();
+                IList<CompiledAutomaton> targetAutomata = ((LevenshteinAutomataAttribute)target).Automata;
                 targetAutomata.Clear();
                 targetAutomata.AddRange(automata);
             }
