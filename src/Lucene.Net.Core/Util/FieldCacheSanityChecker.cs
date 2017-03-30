@@ -144,7 +144,7 @@ namespace Lucene.Net.Util
 
                 ReaderField rf = new ReaderField(item.ReaderKey, item.FieldName);
 
-                int valId = val.GetHashCode();
+                int valId = RuntimeHelpers.GetHashCode(val);
 
                 // indirect mapping, so the MapOfSet will dedup identical valIds for us
                 valIdToItems.Put(valId, item);
@@ -348,7 +348,8 @@ namespace Lucene.Net.Util
                 }
 
                 ReaderField other = (ReaderField)that;
-                return (this.readerKey == other.readerKey && this.FieldName.Equals(other.FieldName, StringComparison.Ordinal));
+                return (object.ReferenceEquals(this.readerKey, other.readerKey) 
+                    && this.FieldName.Equals(other.FieldName, StringComparison.Ordinal));
             }
 
             public override string ToString()
