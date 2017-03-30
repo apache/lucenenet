@@ -95,10 +95,10 @@ namespace Lucene.Net.Util.Fst
                 h = PRIME * h + arc.Label;
                 long n = ((Builder.CompiledNode)arc.Target).Node;
                 h = PRIME * h + (int)(n ^ (n >> 32));
-                h = PRIME * h + arc.Output.GetHashCode();
 
                 // LUCENENET specific - optimize the Hash methods
                 // by only calling Collections.GetHashCode() if the value is a reference type
+                h = PRIME * h + (tIsValueType ? arc.Output.GetHashCode() : Collections.GetHashCode(arc.Output));
                 h = PRIME * h + (tIsValueType ? arc.NextFinalOutput.GetHashCode() : Collections.GetHashCode(arc.NextFinalOutput));
                 if (arc.IsFinal)
                 {
@@ -123,10 +123,10 @@ namespace Lucene.Net.Util.Fst
                 //System.out.println("  label=" + scratchArc.label + " target=" + scratchArc.target + " h=" + h + " output=" + fst.outputs.outputToString(scratchArc.output) + " next?=" + scratchArc.flag(4) + " final?=" + scratchArc.isFinal() + " pos=" + in.getPosition());
                 h = PRIME * h + scratchArc.Label;
                 h = PRIME * h + (int)(scratchArc.Target ^ (scratchArc.Target >> 32));
-                h = PRIME * h + scratchArc.Output.GetHashCode();
 
                 // LUCENENET specific - optimize the Hash methods
                 // by only calling Collections.GetHashCode() if the value is a reference type
+                h = PRIME * h + (tIsValueType ? scratchArc.Output.GetHashCode() : Collections.GetHashCode(scratchArc.Output));
                 h = PRIME * h + (tIsValueType ? scratchArc.NextFinalOutput.GetHashCode() : Collections.GetHashCode(scratchArc.NextFinalOutput));
                 if (scratchArc.IsFinal)
                 {
