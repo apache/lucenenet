@@ -710,8 +710,6 @@
     <Compile Include="Support\Util\IServiceListable.cs" />
     <Compile Include="Support\Util\NamedServiceFactory.cs" />
     <Compile Include="Support\Util\ServiceNameAttribute.cs" />
-    <Compile Include="Support\ValueHashSet.cs" />
-    <Compile Include="Support\ValueList.cs" />
     <Compile Include="Support\WeakDictionary.cs" />
     <Compile Include="Support\WritableArrayAttribute.cs" />
     <Compile Include="Util\Accountable.cs" />
