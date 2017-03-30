@@ -381,12 +381,20 @@ namespace Lucene.Net.Util.Packed
             }
             EliasFanoEncoder oefs = (EliasFanoEncoder)other;
             // no equality needed for upperBound
-            return (this.numValues == oefs.numValues) && (this.numEncoded == oefs.numEncoded) && (this.numLowBits == oefs.numLowBits) && (this.numIndexEntries == oefs.numIndexEntries) && (this.indexInterval == oefs.indexInterval) && Arrays.Equals(this.upperLongs, oefs.upperLongs) && Arrays.Equals(this.lowerLongs, oefs.lowerLongs); // no need to check index content
+            return (this.numValues == oefs.numValues) 
+                && (this.numEncoded == oefs.numEncoded) 
+                && (this.numLowBits == oefs.numLowBits) 
+                && (this.numIndexEntries == oefs.numIndexEntries) 
+                && (this.indexInterval == oefs.indexInterval) 
+                && Arrays.Equals(this.upperLongs, oefs.upperLongs) 
+                && Arrays.Equals(this.lowerLongs, oefs.lowerLongs); // no need to check index content
         }
 
         public override int GetHashCode()
         {
-            int h = ((int)(31 * (numValues + 7 * (numEncoded + 5 * (numLowBits + 3 * (numIndexEntries + 11 * indexInterval)))))) ^ Arrays.GetHashCode(upperLongs) ^ Arrays.GetHashCode(lowerLongs);
+            int h = ((int)(31 * (numValues + 7 * (numEncoded + 5 * (numLowBits + 3 * (numIndexEntries + 11 * indexInterval)))))) 
+                ^ Arrays.GetHashCode(upperLongs) 
+                ^ Arrays.GetHashCode(lowerLongs);
             return h;
         }
     }
