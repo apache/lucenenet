@@ -324,6 +324,40 @@ namespace Lucene.Net.Analysis.Util
         #region LUCENENET specific members
 
         /// <summary>
+        /// Compares the specified object with this set for equality. Returns <c>true</c> if the 
+        /// given object is also a set, the two sets have the same size, and every member of the 
+        /// given set is contained in this set. This ensures that the equals method works properly 
+        /// across different implementations of the <see cref="T:ISet{string}"/> interface.
+        /// <para/>
+        /// This implementation first checks if the specified object is this set; if so it 
+        /// returns <c>true</c>. Then, it checks if the specified object is a set whose 
+        /// size is identical to the size of this set; if not, it returns <c>false</c>. If so, 
+        /// it uses the enumerator of this set and the specified object to determine if all of the
+        /// contained values are present (using <see cref="string.Equals(string)"/>).
+        /// </summary>
+        /// <param name="obj">object to be compared for equality with this set</param>
+        /// <returns><c>true</c> if the specified object is equal to this set</returns>
+        public override bool Equals(object obj)
+        {
+            return Collections.Equals(this, obj as ISet<string>);
+        }
+
+        /// <summary>
+        /// Returns the hash code value for this set. The hash code of a set 
+        /// is defined to be the sum of the hash codes of the elements in the 
+        /// set, where the hash code of a <c>null</c> element is defined to be zero. 
+        /// This ensures that <c>s1.Equals(s2)</c> implies that 
+        /// <c>s1.GetHashCode()==s2.GetHashCode()</c> for any two sets s1 and s2.
+        /// This implementation iterates over the set, calling the GetHashCode() 
+        /// method on each element in the set, and adding up the results.
+        /// </summary>
+        /// <returns>the hash code value for this set</returns>
+        public override int GetHashCode()
+        {
+            return Collections.GetHashCode(this);
+        }
+
+        /// <summary>
         /// Copies the entire <see cref="CharArraySet"/> to a one-dimensional <see cref="T:string[]"/> array, 
         /// starting at the specified index of the target array.
         /// </summary>

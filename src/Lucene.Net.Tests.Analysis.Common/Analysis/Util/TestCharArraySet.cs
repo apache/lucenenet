@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Attributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -643,7 +643,40 @@ namespace Lucene.Net.Analysis.Util
 
         #region LUCENENET specific tests
 
-        [Test]
+        [Test, LuceneNetSpecific]
+        public virtual void TestEquality()
+        {
+            var values = new List<string> { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
+            var charArraySet = new CharArraySet(TEST_VERSION_CURRENT, values, false);
+            var charArraySetCopy = new CharArraySet(TEST_VERSION_CURRENT, values, false);
+            values.Reverse();
+            var charArraySetReverse = new CharArraySet(TEST_VERSION_CURRENT, values, false);
+            var equatableSetReverse = new EquatableSet<string>(values);
+
+            assertTrue(charArraySet.GetHashCode().Equals(charArraySetCopy.GetHashCode()));
+            assertTrue(charArraySet.Equals(charArraySetCopy));
+            assertTrue(charArraySet.GetHashCode().Equals(charArraySetReverse.GetHashCode()));
+            assertTrue(charArraySet.Equals(charArraySetReverse));
+            assertTrue(charArraySet.GetHashCode().Equals(equatableSetReverse.GetHashCode()));
+            assertTrue(charArraySet.Equals(equatableSetReverse));
+
+            values = new List<string> { "sally", "seashells", "by", "the", "sea", "shore" };
+            charArraySet.Clear();
+            charArraySet.AddAll(values);
+
+            assertFalse(charArraySet.GetHashCode().Equals(charArraySetCopy.GetHashCode()));
+            assertFalse(charArraySet.Equals(charArraySetCopy));
+            assertFalse(charArraySet.GetHashCode().Equals(charArraySetReverse.GetHashCode()));
+            assertFalse(charArraySet.Equals(charArraySetReverse));
+            assertFalse(charArraySet.GetHashCode().Equals(equatableSetReverse.GetHashCode()));
+            assertFalse(charArraySet.Equals(equatableSetReverse));
+
+            equatableSetReverse.Remove("sells");
+            assertTrue(charArraySet.GetHashCode().Equals(equatableSetReverse.GetHashCode()));
+            assertTrue(charArraySet.Equals(equatableSetReverse));
+        }
+
+        [Test, LuceneNetSpecific]
         public virtual void TestUnionWithObject()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -686,7 +719,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(target.Contains(new StringCharSequenceWrapper("testing")));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestUnionWithCharArray()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -706,7 +739,7 @@ namespace Lucene.Net.Analysis.Util
                 "true", "set", "of", "unique", "values", "except"}, target);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestUnionWithString()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -728,7 +761,7 @@ namespace Lucene.Net.Analysis.Util
                 "true", "set", "of", "unique", "values", "except"}, target);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestUnionWithCharSequence()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -748,7 +781,7 @@ namespace Lucene.Net.Analysis.Util
                 "true", "set", "of", "unique", "values", "except"}, target);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestIsSubsetOfString()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -761,7 +794,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(target.IsSubsetOf(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestIsSubsetOfObject()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -774,7 +807,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(target.IsSubsetOf(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestIsProperSubsetOfString()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -787,7 +820,7 @@ namespace Lucene.Net.Analysis.Util
             assertFalse(target.IsProperSubsetOf(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestIsProperSubsetOfObject()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -800,7 +833,7 @@ namespace Lucene.Net.Analysis.Util
             assertFalse(target.IsProperSubsetOf(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestIsSupersetOfString()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -813,7 +846,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(target.IsSupersetOf(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestIsSupersetOfObject()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -826,7 +859,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(target.IsSupersetOf(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestIsProperSupersetOfString()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -839,7 +872,7 @@ namespace Lucene.Net.Analysis.Util
             assertFalse(target.IsProperSupersetOf(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestIsProperSupersetOfObject()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -852,7 +885,7 @@ namespace Lucene.Net.Analysis.Util
             assertFalse(target.IsProperSupersetOf(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestOverlapsString()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
@@ -865,7 +898,7 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(target.Overlaps(originalValues));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public virtual void TestOverlapsObject()
         {
             var originalValues = new string[] { "sally", "sells", "seashells", "by", "the", "sea", "shore" };
