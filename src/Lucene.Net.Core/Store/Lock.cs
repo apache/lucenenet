@@ -25,12 +25,13 @@ namespace Lucene.Net.Store
     /// <para/>Typical use might look like:
     /// 
     /// <code>
-    ///     var result = Lock.With.NewAnonymous(
+    ///     var result = Lock.With.NewAnonymous&lt;string&gt;(
     ///         @lock: directory.MakeLock("my.lock"), 
     ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER, 
     ///         doBody: () =>
     ///     {
     ///         //... code to execute while locked ...
+    ///         return "the result";
     ///     }).Run();
     /// </code>
     /// </summary>
@@ -55,17 +56,19 @@ namespace Lucene.Net.Store
         /// <para/>
         /// Simple example:
         /// <code>
-        ///     var result = Lock.With.NewAnonymous(
+        ///     var result = Lock.With.NewAnonymous&lt;string&gt;(
         ///         @lock: directory.MakeLock("my.lock"), 
         ///         lockWaitTimeout: Lock.LOCK_OBTAIN_WAIT_FOREVER, 
         ///         doBody: () =>
         ///     {
         ///         //... code to execute while locked ...
+        ///         return "the result";
         ///     }).Run();
         /// </code>
         /// <para/>
         /// The result of the operation is the value that is returned from <paramref name="doBody"/>
-        /// (i.e. () => { return theObject; }).
+        /// (i.e. () => { return "the result"; }). The type of <typeparam name="T"/> determines the
+        /// return type of the operation.
         /// </summary>
         /// <param name="lock"> the <see cref="Lock"/> instance to use </param>
         /// <param name="lockWaitTimeout"> length of time to wait in
@@ -73,9 +76,9 @@ namespace Lucene.Net.Store
         ///        <see cref="LOCK_OBTAIN_WAIT_FOREVER"/> to retry forever </param>
         /// <param name="doBody"> a delegate method that </param>
         /// <returns>The value that is returned from the <paramref name="doBody"/> delegate method (i.e. () => { return theObject; })</returns>
-        public static With NewAnonymous(Lock @lock, int lockWaitTimeout, Func<object> doBody)
+        public static With<T> NewAnonymous<T>(Lock @lock, int lockWaitTimeout, Func<T> doBody)
         {
-            return new AnonymousWith(@lock, lockWaitTimeout, doBody);
+            return new AnonymousWith<T>(@lock, lockWaitTimeout, doBody);
         }
 
         /// <summary>
@@ -171,7 +174,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Utility class for executing code with exclusive access. </summary>
-        public abstract class With // LUCENENET TODO: API Make generic so we don't have to return object?
+        public abstract class With<T> // LUCENENET specific - made generic so we don't need to deal with casting
         {
             private Lock @lock;
             private long lockWaitTimeout;
@@ -190,7 +193,7 @@ namespace Lucene.Net.Store
 
             /// <summary>
             /// Code to execute with exclusive access. </summary>
-            protected abstract object DoBody();
+            protected abstract T DoBody();
 
             /// <summary>
             /// Calls <see cref="DoBody"/> while <i>lock</i> is obtained.  Blocks if lock
@@ -200,7 +203,7 @@ namespace Lucene.Net.Store
             /// <exception cref="LockObtainFailedException"> if lock could not
             /// be obtained </exception>
             /// <exception cref="System.IO.IOException"> if <see cref="Lock.Obtain()"/> throws <see cref="System.IO.IOException"/> </exception>
-            public virtual object Run()
+            public virtual T Run()
             {
                 bool locked = false;
                 try
@@ -222,10 +225,10 @@ namespace Lucene.Net.Store
         /// LUCENENET specific class to simulate the anonymous creation of a With class in Java
         /// by using deletate methods.
         /// </summary>
-        private class AnonymousWith : With
+        private class AnonymousWith<T> : With<T>
         {
-            private readonly Func<object> doBody;
-            public AnonymousWith(Lock @lock, int lockWaitTimeout, Func<object> doBody)
+            private readonly Func<T> doBody;
+            public AnonymousWith(Lock @lock, int lockWaitTimeout, Func<T> doBody)
                 : base(@lock, lockWaitTimeout)
             {
                 if (doBody == null)
@@ -234,7 +237,7 @@ namespace Lucene.Net.Store
                 this.doBody = doBody;
             }
 
-            protected override object DoBody()
+            protected override T DoBody()
             {
                 return doBody();
             }
