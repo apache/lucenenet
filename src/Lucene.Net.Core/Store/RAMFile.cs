@@ -109,14 +109,11 @@ namespace Lucene.Net.Store
             return new byte[size];
         }
 
-        public virtual long SizeInBytes // LUCENENET TODO: API Change to GetSizeInBytes() and check consistency across API
+        public virtual long GetSizeInBytes()
         {
-            get
+            lock (this)
             {
-                lock (this)
-                {
-                    return m_sizeInBytes;
-                }
+                return m_sizeInBytes;
             }
         }
     }

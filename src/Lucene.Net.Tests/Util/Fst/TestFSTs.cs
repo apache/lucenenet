@@ -431,7 +431,7 @@ namespace Lucene.Net.Util.Fst
                 FST<long?> fst = builder.Finish();
                 if (VERBOSE)
                 {
-                    Console.WriteLine("FST: " + docCount + " docs; " + ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs;" + " " + fst.SizeInBytes() + " bytes");
+                    Console.WriteLine("FST: " + docCount + " docs; " + ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs;" + " " + fst.GetSizeInBytes() + " bytes");
                 }
 
                 if (ord > 0)
@@ -596,7 +596,7 @@ namespace Lucene.Net.Util.Fst
                         return;
                     }
 
-                    Console.WriteLine(ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs; " + fst.ArcWithOutputCount + " arcs w/ output; tot size " + fst.SizeInBytes());
+                    Console.WriteLine(ord + " terms; " + fst.NodeCount + " nodes; " + fst.ArcCount + " arcs; " + fst.ArcWithOutputCount + " arcs w/ output; tot size " + fst.GetSizeInBytes());
                     if (fst.NodeCount < 100)
                     {
                         TextWriter w = new StreamWriter(new FileStream("out.dot", FileMode.Create), Encoding.UTF8);

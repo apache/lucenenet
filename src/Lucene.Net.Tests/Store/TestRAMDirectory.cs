@@ -84,7 +84,7 @@ namespace Lucene.Net.Store
             dir.Dispose();
 
             // Check size
-            Assert.AreEqual(ramDir.SizeInBytes(), ramDir.RecomputedSizeInBytes);
+            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.RecomputedSizeInBytes);
 
             // open reader to test document count
             IndexReader reader = DirectoryReader.Open(ramDir);
@@ -117,7 +117,7 @@ namespace Lucene.Net.Store
             IndexWriter writer = new IndexWriter(ramDir, (new IndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()))).SetOpenMode(OpenMode.APPEND));
             writer.ForceMerge(1);
 
-            Assert.AreEqual(ramDir.SizeInBytes(), ramDir.RecomputedSizeInBytes);
+            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.RecomputedSizeInBytes);
 
             ThreadClass[] threads = new ThreadClass[NumThreads];
             for (int i = 0; i < NumThreads; i++)
@@ -135,7 +135,7 @@ namespace Lucene.Net.Store
             }
 
             writer.ForceMerge(1);
-            Assert.AreEqual(ramDir.SizeInBytes(), ramDir.RecomputedSizeInBytes);
+            Assert.AreEqual(ramDir.GetSizeInBytes(), ramDir.RecomputedSizeInBytes);
 
             writer.Dispose();
         }

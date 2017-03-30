@@ -44,12 +44,9 @@ namespace Lucene.Net.Index
         }
 
         /// <returns> size in bytes </returns>
-        public virtual long SizeInBytes
+        public virtual long GetSizeInBytes()
         {
-            get
-            {
-                return buffer.SizeInBytes;
-            }
+            return buffer.GetSizeInBytes();
         }
 
         /// <returns> iterator over the bytes </returns>

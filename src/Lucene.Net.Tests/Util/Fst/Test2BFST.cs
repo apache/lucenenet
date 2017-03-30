@@ -71,7 +71,7 @@ namespace Lucene.Net.Util.Fst
                         count++;
                         if (count % 100000 == 0)
                         {
-                            Console.WriteLine(count + ": " + b.FstSizeInBytes() + " bytes; " + b.TotStateCount + " nodes");
+                            Console.WriteLine(count + ": " + b.GetFstSizeInBytes() + " bytes; " + b.TotStateCount + " nodes");
                         }
                         if (b.TotStateCount > int.MaxValue + 100L * 1024 * 1024)
                         {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Util.Fst
 
                     for (int verify = 0; verify < 2; verify++)
                     {
-                        Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
+                        Console.WriteLine("\nTEST: now verify [fst size=" + fst.GetSizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
                         Arrays.Fill(ints2, 0);
                         r = new Random(seed);
@@ -164,9 +164,9 @@ namespace Lucene.Net.Util.Fst
                         count++;
                         if (count % 1000000 == 0)
                         {
-                            Console.WriteLine(count + "...: " + b.FstSizeInBytes() + " bytes");
+                            Console.WriteLine(count + "...: " + b.GetFstSizeInBytes() + " bytes");
                         }
-                        if (b.FstSizeInBytes() > LIMIT)
+                        if (b.GetFstSizeInBytes() > LIMIT)
                         {
                             break;
                         }
@@ -176,7 +176,7 @@ namespace Lucene.Net.Util.Fst
                     FST<BytesRef> fst = b.Finish();
                     for (int verify = 0; verify < 2; verify++)
                     {
-                        Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
+                        Console.WriteLine("\nTEST: now verify [fst size=" + fst.GetSizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
                         r = new Random(seed);
                         Arrays.Fill(ints, 0);
@@ -250,9 +250,9 @@ namespace Lucene.Net.Util.Fst
                         count++;
                         if (count % 1000000 == 0)
                         {
-                            Console.WriteLine(count + "...: " + b.FstSizeInBytes() + " bytes");
+                            Console.WriteLine(count + "...: " + b.GetFstSizeInBytes() + " bytes");
                         }
-                        if (b.FstSizeInBytes() > LIMIT)
+                        if (b.GetFstSizeInBytes() > LIMIT)
                         {
                             break;
                         }
@@ -263,7 +263,7 @@ namespace Lucene.Net.Util.Fst
 
                     for (int verify = 0; verify < 2; verify++)
                     {
-                        Console.WriteLine("\nTEST: now verify [fst size=" + fst.SizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
+                        Console.WriteLine("\nTEST: now verify [fst size=" + fst.GetSizeInBytes() + "; nodeCount=" + fst.NodeCount + "; arcCount=" + fst.ArcCount + "]");
 
                         Arrays.Fill(ints, 0);
 

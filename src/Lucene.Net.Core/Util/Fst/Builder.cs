@@ -584,9 +584,9 @@ namespace Lucene.Net.Util.Fst
 
         // LUCENENET specific: moved INode to Builder type
 
-        public virtual long FstSizeInBytes()
+        public virtual long GetFstSizeInBytes()
         {
-            return fst.SizeInBytes();
+            return fst.GetSizeInBytes();
         }
 
         // LUCENENET specific: Moved CompiledNode and UncompiledNode to Builder class

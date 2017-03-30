@@ -166,9 +166,9 @@ namespace Lucene.Net.Store
         /// Returns how many bytes are being used by the
         /// <see cref="RAMDirectory"/> cache
         /// </summary>
-        public virtual long SizeInBytes()
+        public virtual long GetSizeInBytes()
         {
-            return cache.SizeInBytes();
+            return cache.GetSizeInBytes();
         }
 
         [Obsolete("this method will be removed in 5.0")]
@@ -364,7 +364,7 @@ namespace Lucene.Net.Store
                 bytes = context.FlushInfo.EstimatedSegmentSize;
             }
 
-            return !name.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal) && (bytes <= maxMergeSizeBytes) && (bytes + cache.SizeInBytes()) <= maxCachedBytes;
+            return !name.Equals(IndexFileNames.SEGMENTS_GEN, StringComparison.Ordinal) && (bytes <= maxMergeSizeBytes) && (bytes + cache.GetSizeInBytes()) <= maxCachedBytes;
         }
 
         private readonly object uncacheLock = new object();

@@ -1023,7 +1023,7 @@ namespace Lucene.Net.Codecs.Memory
 
             public long RamBytesUsed()
             {
-                return ((fst != null) ? fst.SizeInBytes() : 0);
+                return ((fst != null) ? fst.GetSizeInBytes() : 0);
             }
         }
 

@@ -584,7 +584,7 @@ namespace Lucene.Net.Index
             }
             writer.Dispose();
 
-            long diskUsage = startDir.SizeInBytes();
+            long diskUsage = startDir.GetSizeInBytes();
             long diskFree = diskUsage + 10;
 
             IOException err = null;

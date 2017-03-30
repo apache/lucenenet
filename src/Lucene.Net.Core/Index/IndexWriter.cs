@@ -3076,7 +3076,7 @@ namespace Lucene.Net.Index
                                 infoStream.Message("IW", "addIndexes: process segment origName=" + info.Info.Name + " newName=" + newSegName + " info=" + info);
                             }
 
-                            IOContext context = new IOContext(new MergeInfo(info.Info.DocCount, info.SizeInBytes(), true, -1));
+                            IOContext context = new IOContext(new MergeInfo(info.Info.DocCount, info.GetSizeInBytes(), true, -1));
 
                             foreach (FieldInfo fi in SegmentReader.ReadFieldInfos(info))
                             {
@@ -4719,8 +4719,8 @@ namespace Lucene.Net.Index
                         int delCount = NumDeletedDocs(info);
                         Debug.Assert(delCount <= info.Info.DocCount);
                         double delRatio = ((double)delCount) / info.Info.DocCount;
-                        merge.EstimatedMergeBytes += (long)(info.SizeInBytes() * (1.0 - delRatio));
-                        merge.totalMergeBytes += info.SizeInBytes();
+                        merge.EstimatedMergeBytes += (long)(info.GetSizeInBytes() * (1.0 - delRatio));
+                        merge.totalMergeBytes += info.GetSizeInBytes();
                     }
                 }
 
@@ -5217,8 +5217,8 @@ namespace Lucene.Net.Index
                 // lost...
 
                 if (infoStream.IsEnabled("IW"))
-                {
-                    infoStream.Message("IW", string.Format(CultureInfo.InvariantCulture, "merged segment size=%.3f MB vs estimate=%.3f MB", merge.info.SizeInBytes() / 1024.0 / 1024.0, merge.EstimatedMergeBytes / 1024 / 1024.0));
+                {// LUCENENET TODO: String formatting
+                    infoStream.Message("IW", string.Format(CultureInfo.InvariantCulture, "merged segment size=%.3f MB vs estimate=%.3f MB", merge.info.GetSizeInBytes() / 1024.0 / 1024.0, merge.EstimatedMergeBytes / 1024 / 1024.0));
                 }
 
                 IndexReaderWarmer mergedSegmentWarmer = config.MergedSegmentWarmer;

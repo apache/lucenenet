@@ -678,7 +678,7 @@ namespace Lucene.Net.Codecs
             /// Returns approximate RAM bytes used </summary>
             public long RamBytesUsed()
             {
-                return ((index != null) ? index.SizeInBytes() : 0);
+                return ((index != null) ? index.GetSizeInBytes() : 0);
             }
 
             // NOTE: cannot seek!
@@ -1623,7 +1623,7 @@ namespace Lucene.Net.Codecs
                     {
                         stats.IndexNodeCount = outerInstance.index.NodeCount;
                         stats.IndexArcCount = outerInstance.index.ArcCount;
-                        stats.IndexNumBytes = outerInstance.index.SizeInBytes();
+                        stats.IndexNumBytes = outerInstance.index.GetSizeInBytes();
                     }
 
                     currentFrame = staticFrame;

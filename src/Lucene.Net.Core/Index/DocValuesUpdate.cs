@@ -56,15 +56,15 @@ namespace Lucene.Net.Index
             this.value = value;
         }
 
-        internal abstract long ValueSizeInBytes(); // LUCENENT TODO: Name GetValueSizeInBytes() ?
+        internal abstract long GetValueSizeInBytes();
 
-        internal int SizeInBytes() // LUCENENT TODO: Name GetSizeInBytes() ?
+        internal int GetSizeInBytes()
         {
             int sizeInBytes = RAW_SIZE_IN_BYTES;
             sizeInBytes += term.Field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
             sizeInBytes += term.Bytes.Bytes.Length;
             sizeInBytes += field.Length * RamUsageEstimator.NUM_BYTES_CHAR;
-            sizeInBytes += (int)ValueSizeInBytes();
+            sizeInBytes += (int)GetValueSizeInBytes();
             return sizeInBytes;
         }
 
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            internal override long ValueSizeInBytes()
+            internal override long GetValueSizeInBytes()
             {
                 return RAW_VALUE_SIZE_IN_BYTES + ((BytesRef)value).Bytes.Length;
             }
@@ -104,7 +104,7 @@ namespace Lucene.Net.Index
             {
             }
 
-            internal override long ValueSizeInBytes()
+            internal override long GetValueSizeInBytes()
             {
                 return RamUsageEstimator.NUM_BYTES_INT64;
             }

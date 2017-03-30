@@ -334,7 +334,7 @@ namespace Lucene.Net.Search.Suggest.Fst
         /// Returns byte size of the underlying FST. </summary>
         public override long GetSizeInBytes()
         {
-            return (fst == null) ? 0 : fst.SizeInBytes();
+            return (fst == null) ? 0 : fst.GetSizeInBytes();
         }
 
         public override long Count

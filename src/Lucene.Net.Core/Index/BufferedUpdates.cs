@@ -276,7 +276,7 @@ namespace Lucene.Net.Index
             numNumericUpdates.IncrementAndGet();
             if (current == null)
             {
-                bytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.SizeInBytes());
+                bytesUsed.AddAndGet(BYTES_PER_NUMERIC_UPDATE_ENTRY + update.GetSizeInBytes());
             }
         }
 
@@ -311,7 +311,7 @@ namespace Lucene.Net.Index
             numBinaryUpdates.IncrementAndGet();
             if (current == null)
             {
-                bytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.SizeInBytes());
+                bytesUsed.AddAndGet(BYTES_PER_BINARY_UPDATE_ENTRY + update.GetSizeInBytes());
             }
         }
 

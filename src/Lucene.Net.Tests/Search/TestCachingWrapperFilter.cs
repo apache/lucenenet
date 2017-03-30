@@ -389,7 +389,7 @@ namespace Lucene.Net.Search
             CachingWrapperFilter filter = new CachingWrapperFilter(startFilter);
 
             docs = searcher.Search(new MatchAllDocsQuery(), filter, 1);
-            Assert.IsTrue(filter.SizeInBytes() > 0);
+            Assert.IsTrue(filter.GetSizeInBytes() > 0);
 
             Assert.AreEqual(1, docs.TotalHits, "[query + filter] Should find a hit...");
 

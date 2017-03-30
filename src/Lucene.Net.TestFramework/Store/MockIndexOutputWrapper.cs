@@ -56,7 +56,7 @@ namespace Lucene.Net.Store
 
         private void CheckDiskFull(byte[] b, int offset, DataInput @in, long len)
         {
-            long freeSpace = Dir.MaxSize == 0 ? 0 : Dir.MaxSize - Dir.SizeInBytes();
+            long freeSpace = Dir.MaxSize == 0 ? 0 : Dir.MaxSize - Dir.GetSizeInBytes();
             long realUsage = 0;
 
             // Enforce disk full:

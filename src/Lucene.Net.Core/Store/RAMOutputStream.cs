@@ -216,7 +216,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Returns byte usage of all buffers. </summary>
-        public virtual long SizeInBytes() // LUCENENET TODO: API Change to GetSizeInBytes()
+        public virtual long GetSizeInBytes()
         {
             return (long)file.NumBuffers * (long)BUFFER_SIZE;
         }

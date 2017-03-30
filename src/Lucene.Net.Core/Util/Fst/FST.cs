@@ -340,7 +340,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Returns bytes used to represent the FST </summary>
-        public long SizeInBytes()
+        public long GetSizeInBytes()
         {
             long size = bytes.Position;
             if (packed)

@@ -257,13 +257,13 @@ namespace Lucene.Net.Store
             }
         }
 
-        public long SizeInBytes()
+        public long GetSizeInBytes()
         {
             lock (this)
             {
                 if (m_input is RAMDirectory)
                 {
-                    return ((RAMDirectory)m_input).SizeInBytes();
+                    return ((RAMDirectory)m_input).GetSizeInBytes();
                 }
                 else
                 {
@@ -700,7 +700,7 @@ namespace Lucene.Net.Store
                     {
                         if (existing != null)
                         {
-                            ramdir.m_sizeInBytes.AddAndGet(-existing.SizeInBytes);
+                            ramdir.m_sizeInBytes.AddAndGet(-existing.GetSizeInBytes());
                             existing.directory = null;
                         }
                         ramdir.m_fileMap.Put(name, file);
@@ -835,12 +835,12 @@ namespace Lucene.Net.Store
                 {
                     if (!(m_input is RAMDirectory))
                     {
-                        return SizeInBytes();
+                        return GetSizeInBytes();
                     }
                     long size = 0;
                     foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)
                     {
-                        size += file.SizeInBytes;
+                        size += file.GetSizeInBytes();
                     }
                     return size;
                 }
@@ -862,7 +862,7 @@ namespace Lucene.Net.Store
                 {
                     if (!(m_input is RAMDirectory))
                     {
-                        return SizeInBytes();
+                        return GetSizeInBytes();
                     }
                     long size = 0;
                     foreach (RAMFile file in ((RAMDirectory)m_input).m_fileMap.Values)

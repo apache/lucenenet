@@ -409,7 +409,7 @@ namespace Lucene.Net.Index
                     SegmentCommitInfo info = infosSorted[idx];
                     if (merging.Contains(info))
                     {
-                        mergingBytes += info.SizeInBytes();
+                        mergingBytes += info.GetSizeInBytes();
                     }
                     else if (!toBeMerged.Contains(info))
                     {
@@ -524,7 +524,7 @@ namespace Lucene.Net.Index
                 long segBytes = Size(info);
                 totAfterMergeBytes += segBytes;
                 totAfterMergeBytesFloored += FloorSize(segBytes);
-                totBeforeMergeBytes += info.SizeInBytes();
+                totBeforeMergeBytes += info.GetSizeInBytes();
             }
 
             // Roughly measure "skew" of the merge, i.e. how

@@ -909,7 +909,7 @@ namespace Lucene.Net.Codecs.Memory
             long ramBytesUsed = 0;
             foreach (TermsReader r in fields.Values)
             {
-                ramBytesUsed += r.dict == null ? 0 : r.dict.SizeInBytes();
+                ramBytesUsed += r.dict == null ? 0 : r.dict.GetSizeInBytes();
             }
             return ramBytesUsed;
         }

@@ -580,7 +580,7 @@ namespace Lucene.Net.Index
 
                 if (infoStream.IsEnabled("DWPT"))
                 {
-                    double newSegmentSize = segmentInfoPerCommit.SizeInBytes() / 1024.0 / 1024.0;
+                    double newSegmentSize = segmentInfoPerCommit.GetSizeInBytes() / 1024.0 / 1024.0;
                     infoStream.Message("DWPT", "flushed: segment=" + segmentInfo.Name + " ramUsed=" + startMBUsed.ToString(nf) + " MB" + " newFlushedSize(includes docstores)=" + newSegmentSize.ToString(nf) + " MB" + " docs/MB=" + (flushState.SegmentInfo.DocCount / newSegmentSize).ToString(nf));
                 }
 
@@ -620,7 +620,7 @@ namespace Lucene.Net.Index
 
             IndexWriter.SetDiagnostics(newSegment.Info, IndexWriter.SOURCE_FLUSH);
 
-            IOContext context = new IOContext(new FlushInfo(newSegment.Info.DocCount, newSegment.SizeInBytes()));
+            IOContext context = new IOContext(new FlushInfo(newSegment.Info.DocCount, newSegment.GetSizeInBytes()));
 
             bool success = false;
             try

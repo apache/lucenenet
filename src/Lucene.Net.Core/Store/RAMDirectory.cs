@@ -152,7 +152,7 @@ namespace Lucene.Net.Store
         /// Return total size in bytes of all files in this directory. This is
         /// currently quantized to <see cref="RAMOutputStream.BUFFER_SIZE"/>.
         /// </summary>
-        public long SizeInBytes()
+        public long GetSizeInBytes()
         {
             EnsureOpen();
             return m_sizeInBytes.Get();

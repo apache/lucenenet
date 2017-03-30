@@ -690,7 +690,7 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual long Size(SegmentCommitInfo info)
         {
-            long byteSize = info.SizeInBytes();
+            long byteSize = info.GetSizeInBytes();
             int delCount = m_writer.Get().NumDeletedDocs(info);
             double delRatio = (info.Info.DocCount <= 0 ? 0.0f : ((float)delCount / (float)info.Info.DocCount));
             Debug.Assert(delRatio <= 1.0);

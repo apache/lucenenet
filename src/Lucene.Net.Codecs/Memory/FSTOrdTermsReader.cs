@@ -1003,7 +1003,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (r.index != null)
                 {
-                    ramBytesUsed += r.index.SizeInBytes();
+                    ramBytesUsed += r.index.GetSizeInBytes();
                     ramBytesUsed += RamUsageEstimator.SizeOf(r.metaBytesBlock);
                     ramBytesUsed += RamUsageEstimator.SizeOf(r.metaLongsBlock);
                     ramBytesUsed += RamUsageEstimator.SizeOf(r.skipInfo);

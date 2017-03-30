@@ -674,7 +674,7 @@ namespace Lucene.Net.Codecs.SimpleText
             /// <summary>Returns approximate RAM bytes used</summary>
             public virtual long RamBytesUsed()
             {
-                return (_fst != null) ? _fst.SizeInBytes() : 0;
+                return (_fst != null) ? _fst.GetSizeInBytes() : 0;
             }
 
             public override TermsEnum GetIterator(TermsEnum reuse)

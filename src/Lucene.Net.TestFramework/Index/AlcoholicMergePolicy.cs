@@ -58,10 +58,10 @@ namespace Lucene.Net.Index
                 Drink.Drink_e[] values = Enum.GetValues(typeof(Drink.Drink_e)).Cast<Drink.Drink_e>().ToArray();
                 // pick a random drink during the day
                 Drink.Drink_e drink = values[Random.Next(values.Length - 1)];
-                return (long)drink * info.SizeInBytes();
+                return (long)drink * info.GetSizeInBytes();
             }
 
-            return info.SizeInBytes();
+            return info.GetSizeInBytes();
         }
 
         private class Drink

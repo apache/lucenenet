@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 
             SegmentInfos sis = new SegmentInfos();
             sis.Read(dir);
-            double min = sis.Info(0).SizeInBytes();
+            double min = sis.Info(0).GetSizeInBytes();
 
             conf = NewWriterConfig();
             LogByteSizeMergePolicy lmp = new LogByteSizeMergePolicy();

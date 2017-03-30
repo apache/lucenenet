@@ -197,7 +197,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 return 0;
             }
-            return fst.SizeInBytes();
+            return fst.GetSizeInBytes();
         }
 
         private class AnalyzingComparer : IComparer<BytesRef>

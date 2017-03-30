@@ -430,7 +430,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     data.Seek(entry.offset);
                     instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
-                    ramBytesUsed.AddAndGet(instance.SizeInBytes());
+                    ramBytesUsed.AddAndGet(instance.GetSizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
             }
@@ -545,7 +545,7 @@ namespace Lucene.Net.Codecs.Memory
                 {
                     data.Seek(entry.offset);
                     instance = new FST<long?>(data, PositiveInt32Outputs.Singleton);
-                    ramBytesUsed.AddAndGet(instance.SizeInBytes());
+                    ramBytesUsed.AddAndGet(instance.GetSizeInBytes());
                     fstInstances[field.Number] = instance;
                 }
             }

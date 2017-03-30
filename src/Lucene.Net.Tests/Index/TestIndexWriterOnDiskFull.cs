@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
             // added.
 
             // String[] files = startDir.ListAll();
-            long diskUsage = startDir.SizeInBytes();
+            long diskUsage = startDir.GetSizeInBytes();
 
             long startDiskUsage = 0;
             string[] files_ = startDir.ListAll();

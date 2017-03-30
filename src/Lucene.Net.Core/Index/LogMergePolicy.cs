@@ -223,7 +223,7 @@ namespace Lucene.Net.Index
             {
                 return base.Size(info);
             }
-            return info.SizeInBytes();
+            return info.GetSizeInBytes();
         }
 
         /// <summary>

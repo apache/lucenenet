@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
         /// <p><b>NOTE:</b> this value is not correct for 3.0 segments
         /// that have shared docstores. To get the correct value, upgrade!
         /// </summary>
-        public virtual long SizeInBytes()
+        public virtual long GetSizeInBytes()
         {
             if (sizeInBytes == -1)
             {

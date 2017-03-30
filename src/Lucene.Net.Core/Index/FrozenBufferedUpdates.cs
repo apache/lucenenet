@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
                 foreach (NumericDocValuesUpdate update in numericUpdates.Values)
                 {
                     allNumericUpdates.Add(update);
-                    numericUpdatesSize += update.SizeInBytes();
+                    numericUpdatesSize += update.GetSizeInBytes();
                 }
             }
             numericDVUpdates = allNumericUpdates.ToArray();
@@ -125,12 +125,12 @@ namespace Lucene.Net.Index
                 foreach (BinaryDocValuesUpdate update in binaryUpdates.Values)
                 {
                     allBinaryUpdates.Add(update);
-                    binaryUpdatesSize += update.SizeInBytes();
+                    binaryUpdatesSize += update.GetSizeInBytes();
                 }
             }
             binaryDVUpdates = allBinaryUpdates.ToArray();
 
-            bytesUsed = (int)terms.SizeInBytes + queries.Length * BYTES_PER_DEL_QUERY + numericUpdatesSize + numericDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + binaryUpdatesSize + binaryDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+            bytesUsed = (int)terms.GetSizeInBytes() + queries.Length * BYTES_PER_DEL_QUERY + numericUpdatesSize + numericDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF + binaryUpdatesSize + binaryDVUpdates.Length * RamUsageEstimator.NUM_BYTES_OBJECT_REF;
 
             numTermDeletes = deletes.numTermDeletes.Get();
         }

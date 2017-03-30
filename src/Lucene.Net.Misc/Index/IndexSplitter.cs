@@ -102,7 +102,7 @@ namespace Lucene.Net.Index
             for (int x = 0; x < Infos.Count; x++)
             {
                 SegmentCommitInfo info = Infos.Info(x);
-                string sizeStr = string.Format(CultureInfo.InvariantCulture, "{0:###,###.###}", info.SizeInBytes());
+                string sizeStr = string.Format(CultureInfo.InvariantCulture, "{0:###,###.###}", info.GetSizeInBytes());
                 Console.WriteLine(info.Info.Name + " " + sizeStr);
             }
         }

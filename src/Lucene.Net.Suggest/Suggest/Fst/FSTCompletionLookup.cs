@@ -316,12 +316,12 @@ namespace Lucene.Net.Search.Suggest.Fst
             long mem = RamUsageEstimator.ShallowSizeOf(this) + RamUsageEstimator.ShallowSizeOf(normalCompletion) + RamUsageEstimator.ShallowSizeOf(higherWeightsCompletion);
             if (normalCompletion != null)
             {
-                mem += normalCompletion.FST.SizeInBytes();
+                mem += normalCompletion.FST.GetSizeInBytes();
             }
             if (higherWeightsCompletion != null && (normalCompletion == null || normalCompletion.FST != higherWeightsCompletion.FST))
             {
                 // the fst should be shared between the 2 completion instances, don't count it twice
-                mem += higherWeightsCompletion.FST.SizeInBytes();
+                mem += higherWeightsCompletion.FST.GetSizeInBytes();
             }
             return mem;
         }

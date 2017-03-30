@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
             long totalBytes = 0;
             foreach (SegmentCommitInfo sipc in infos.Segments)
             {
-                totalBytes += sipc.SizeInBytes();
+                totalBytes += sipc.GetSizeInBytes();
             }
             long totalBytes2 = 0;
             foreach (string fileName in dir.ListAll())
