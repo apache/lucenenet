@@ -955,7 +955,9 @@ namespace Lucene.Net.Index
                 {
                     report = !DidClose;
                 }
-                else if (t is FileNotFoundException/* || t is NoSuchFileException*/)
+                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+                // in Lucene, we need to handle it here to be on the safe side.
+                else if (t is FileNotFoundException/* || t is NoSuchFileException*/ || t is DirectoryNotFoundException)
                 {
                     report = !DidClose;
                 }
