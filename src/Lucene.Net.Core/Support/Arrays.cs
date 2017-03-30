@@ -87,19 +87,39 @@ namespace Lucene.Net.Support
         /// considered equal if (e1==null ? e2==null : e1.equals(e2)). In other
         /// words, the two arrays are equal if they contain the same elements in
         /// the same order. Also, two array references are considered equal if
-        /// both are null.</returns>
+        /// both are null.
+        /// <para/>
+        /// Note that if the type of <paramref name="T"/> is a <see cref="IDictionary{TKey, TValue}"/>,
+        /// <see cref="IList{T}"/>, or <see cref="ISet{T}"/>, its values and any nested collection values
+        /// will be compared for equality as well.
+        /// </returns>
         public static bool Equals<T>(T[] a, T[] b)
         {
-            if (a == null)
-                return b == null;
-
-            if (a.Length != b.Length)
-                return false;
-
-            for (int i = 0; i < a.Length; i++)
+            if (object.ReferenceEquals(a, b))
             {
-                if (!object.Equals(a[i], b[i]))
+                return true;
+            }
+            bool isValueType = typeof(T).IsValueType;
+            if (!isValueType && a == null)
+            {
+                return b == null;
+            }
+
+            int length = a.Length;
+
+            if (b.Length != length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < length; i++)
+            {
+                T o1 = a[i];
+                T o2 = b[i];
+                if (!(isValueType ? o1.Equals(o2) : (o1 == null ? o2 == null : Collections.Equals(o1, o2))))
+                {
                     return false;
+                }
             }
 
             return true;
