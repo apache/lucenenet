@@ -643,7 +643,6 @@
     <Compile Include="Support\ExceptionToClassNameConventionAttribute.cs" />
     <Compile Include="Support\ExceptionToNullableEnumConvention.cs" />
     <Compile Include="Support\FileStreamExtensions.cs" />
-    <Compile Include="Support\HashHelpers.cs" />
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\ICompletionService.cs" />
@@ -666,7 +665,6 @@
     <Compile Include="Support\MathExtension.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\NumberFormat.cs" />
-    <Compile Include="Support\ObjectExtensions.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReaderWriterLockSlimExtensions.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
