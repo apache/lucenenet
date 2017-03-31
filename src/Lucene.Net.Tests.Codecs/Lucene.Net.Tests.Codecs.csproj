@@ -63,7 +63,7 @@
     <Compile Include="SimpleText\TestSimpleTextStoredFieldsFormat.cs" />
     <Compile Include="SimpleText\TestSimpleTextTermVectorsFormat.cs" />
     <Compile Include="Support\TestExceptionSerialization.cs" />
-    <Compile Include="TestApiConsistency.cs" />
+    <Compile Include="Support\TestApiConsistency.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">

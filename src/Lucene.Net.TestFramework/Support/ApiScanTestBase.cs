@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections;
@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lucene.Net.Util
+namespace Lucene.Net.Support
 {
     /// <summary>
     /// LUCENENET specific - functionality for scanning the API to ensure 

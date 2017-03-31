@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Attributes;
-using Lucene.Net.Util;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 

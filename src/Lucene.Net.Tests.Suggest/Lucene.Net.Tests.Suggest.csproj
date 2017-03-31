@@ -73,7 +73,7 @@
     <Compile Include="Suggest\TestHighFrequencyDictionary.cs" />
     <Compile Include="Suggest\TestInputIterator.cs" />
     <Compile Include="Support\TestExceptionSerialization.cs" />
-    <Compile Include="TestApiConsistency.cs" />
+    <Compile Include="Support\TestApiConsistency.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">

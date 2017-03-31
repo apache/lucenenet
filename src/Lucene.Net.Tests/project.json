@@ -15,7 +15,7 @@
         "Util/JunitCompat"
       ],
       "excludeFiles": [
-        "TestApiConsistency.cs",
+        "Support/TestApiConsistency.cs",
         "TestMergeSchedulerExternal.cs",
         "TestWorstCaseTestBehavior.cs",
         "Index/TestConcurrentMergeScheduler.cs",

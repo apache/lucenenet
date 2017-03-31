@@ -54,7 +54,7 @@
         "compile": {
           "excludeFiles": [
             "Xml/TestQueryTemplateManager.cs",
-            "TestApiConsistency.cs"
+            "Support/TestApiConsistency.cs"
           ]
         }
       }

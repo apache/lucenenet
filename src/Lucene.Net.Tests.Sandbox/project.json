@@ -29,7 +29,7 @@
         "define": [ "FEATURE_EMBEDDED_RESOURCE" ],
         "compile": {
           "excludeFiles": [
-            "TestApiConsistency.cs"
+            "Support/TestApiConsistency.cs"
           ]
         }
       }

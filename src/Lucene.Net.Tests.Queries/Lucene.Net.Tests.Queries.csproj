@@ -56,7 +56,7 @@
     <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="TermFilterTest.cs" />
     <Compile Include="TermsFilterTest.cs" />
-    <Compile Include="TestApiConsistency.cs" />
+    <Compile Include="Support\TestApiConsistency.cs" />
     <Compile Include="TestCustomScoreQuery.cs" />
   </ItemGroup>
   <ItemGroup>

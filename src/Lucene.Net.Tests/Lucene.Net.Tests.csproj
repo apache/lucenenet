@@ -513,7 +513,7 @@
     <Compile Include="Support\TestWeakDictionary.cs" />
     <Compile Include="Support\TestWeakDictionaryBehavior.cs" />
     <Compile Include="Support\TestWeakDictionaryPerformance.cs" />
-    <Compile Include="TestApiConsistency.cs" />
+    <Compile Include="Support\TestApiConsistency.cs" />
     <Compile Include="TestAssertions.cs">
       <SubType>Code</SubType>
     </Compile>

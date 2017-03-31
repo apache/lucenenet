@@ -59,7 +59,7 @@
     <Compile Include="SpatialTestQuery.cs" />
     <Compile Include="StrategyTestCase.cs" />
     <Compile Include="Support\TestExceptionSerialization.cs" />
-    <Compile Include="TestApiConsistency.cs" />
+    <Compile Include="Support\TestApiConsistency.cs" />
     <Compile Include="TestTestFramework.cs" />
     <Compile Include="Vector\TestPointVectorStrategy.cs" />
   </ItemGroup>

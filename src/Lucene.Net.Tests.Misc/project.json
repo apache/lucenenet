@@ -21,7 +21,7 @@
       "buildOptions": {
         "compile": {
           "excludeFiles": [
-            "TestApiConsistency.cs"
+            "Support/TestApiConsistency.cs"
           ]
         }
       }
