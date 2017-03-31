@@ -23,7 +23,6 @@
             "Support/Inflater.cs",
             "Support/SharpZipLib.cs",
             "Support/StreamUtils.cs",
-            "Support/TextReaderWrapper.cs",
             "Util/AverageGuessMemoryModel.cs",
             "Util/BitVector.cs",
             "Util/CloseableThreadLocal-old.cs",
@@ -70,7 +69,6 @@
           ],
           "excludeFiles": [
             "RectangularArrays.cs",
-            "Support/TextReaderWrapper.cs",
             "Util/AverageGuessMemoryModel.cs",
             "Util/BitVector.cs",
             "Util/CloseableThreadLocal-old.cs",
