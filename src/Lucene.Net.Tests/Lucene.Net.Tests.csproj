@@ -47,6 +47,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -115,6 +116,10 @@
     <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
       <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
       <Name>Lucene.Net.Queries</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj">
+      <Project>{949ba34b-6ae6-4ce3-b578-61e13e4d76bf}</Project>
+      <Name>Lucene.Net.QueryParser</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
       <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
@@ -506,6 +511,7 @@
     <Compile Include="Support\TestLurchTableThreading.cs" />
     <Compile Include="Support\TestDataInputStream.cs" />
     <Compile Include="Support\TestDataOutputStream.cs" />
+    <Compile Include="Support\TestOldPatches.cs" />
     <Compile Include="Support\TestOSClass.cs" />
     <Compile Include="Support\TestSafeTextWriterWrapper.cs" />
     <Compile Include="Support\TestSerialization.cs" />
