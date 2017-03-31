@@ -501,6 +501,7 @@
     <Compile Include="Support\TestDataOutputStream.cs" />
     <Compile Include="Support\TestSafeTextWriterWrapper.cs" />
     <Compile Include="Support\TestStringBuilderExtensions.cs" />
+    <Compile Include="Support\TestCRC32.cs" />
     <Compile Include="Support\TestTreeDictionary.cs" />
     <Compile Include="Support\TestTreeSet.cs" />
     <Compile Include="Support\TestWeakDictionary.cs" />
