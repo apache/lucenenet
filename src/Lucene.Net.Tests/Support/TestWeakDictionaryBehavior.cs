@@ -1,30 +1,27 @@
-/*
- *
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- *
-*/
-
+using Lucene.Net.Attributes;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 
 namespace Lucene.Net.Support
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     [TestFixture]
     public class TestWeakDictionaryBehavior
     {
@@ -51,7 +48,7 @@ namespace Lucene.Net.Support
             dictionary = CreateDictionary();
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_Add()
         {
             string key = "A";
@@ -64,7 +61,7 @@ namespace Lucene.Net.Support
             CollectionAssert.AreEquivalent(dictionary.Values, new object[] { "value" });
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_Add_2()
         {
             string key = "A";
@@ -81,7 +78,7 @@ namespace Lucene.Net.Support
             CollectionAssert.AreEquivalent(dictionary.Values, new object[] { "value", "value2" });
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Keys()
         {
             string key = "A";
@@ -94,21 +91,19 @@ namespace Lucene.Net.Support
             CollectionAssert.AreEquivalent(dictionary.Keys, new object[] { key, key2 });
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_Add_Null()
         {
-            dictionary.Add(null, "value");
+            Assert.Throws<ArgumentNullException>(() => dictionary.Add(null, "value"));
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_Set_Null()
         {
-            dictionary[null] = "value";
+            Assert.Throws<ArgumentNullException>(() => dictionary[null] = "value");
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_AddReplace()
         {
             string key = "A";
@@ -122,7 +117,7 @@ namespace Lucene.Net.Support
             Assert.AreEqual("value2", dictionary[key]);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_AddRemove()
         {
             string key = "A";
@@ -135,7 +130,7 @@ namespace Lucene.Net.Support
             Assert.IsNull(dictionary[key]);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_Clear()
         {
             string key = "A";
@@ -148,7 +143,7 @@ namespace Lucene.Net.Support
             Assert.IsNull(dictionary[key]);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_AddRemove_2()
         {
             string key = "A";
@@ -162,21 +157,20 @@ namespace Lucene.Net.Support
             Assert.IsNull(dictionary[key]);
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_Get_Null()
         {
-            object value = dictionary[null];
+            object value;
+            Assert.Throws<ArgumentNullException>(() => value = dictionary[null]);
         }
 
-        [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_Remove_Null()
         {
-            dictionary.Remove(null);
+            Assert.Throws<ArgumentNullException>(() => dictionary.Remove(null));
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_GetEnumerator()
         {
             string key = "A";
@@ -189,7 +183,7 @@ namespace Lucene.Net.Support
             Assert.AreEqual("value", de.Current.Value);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Dictionary_ForEach()
         {
             string key = "A";
@@ -203,7 +197,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Collisions()
         {
             //Create 2 keys with same hashcode but that are not equal
@@ -220,7 +214,7 @@ namespace Lucene.Net.Support
             Assert.AreEqual(null, dictionary[key1]);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Weak_1()
         {
             BigObject key = new BigObject(1);
@@ -236,7 +230,7 @@ namespace Lucene.Net.Support
             Assert.AreEqual(1, dictionary.Count);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Weak_2()
         {
             BigObject key = new BigObject(1);
@@ -256,7 +250,7 @@ namespace Lucene.Net.Support
             Assert.IsNotNull(key2);
         }
 
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test_Weak_ForEach()
         {
             BigObject[] keys1 = new BigObject[20];
