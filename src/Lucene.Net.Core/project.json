@@ -19,7 +19,6 @@
           "excludeFiles": [
             "RectangularArrays.cs",
             "Index/ConcurrentMergeScheduler.cs",
-            "Store/CheckSumIndexOutput.cs",
             "Support/Deflater.cs",
             "Support/Inflater.cs",
             "Support/SharpZipLib.cs",
@@ -71,7 +70,6 @@
           ],
           "excludeFiles": [
             "RectangularArrays.cs",
-            "Store/CheckSumIndexOutput.cs",
             "Support/TextReaderWrapper.cs",
             "Util/AverageGuessMemoryModel.cs",
             "Util/BitVector.cs",
