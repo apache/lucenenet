@@ -441,6 +441,9 @@ namespace Lucene.Net.Index
         /// places if it is in "near real-time mode" (<see cref="GetReader()"/>
         /// has been called on this instance).
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class ReaderPool : IDisposable
         {
             private readonly IndexWriter outerInstance;
@@ -4039,6 +4042,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class MergedDeletesAndUpdates
         {
             internal ReadersAndUpdates mergedDeletesAndUpdates = null;
@@ -5612,6 +5618,9 @@ namespace Lucene.Net.Index
         /// <para/><b>NOTE</b>: <see cref="Warm(AtomicReader)"/> is called before any deletes have
         /// been carried over to the merged segment.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public abstract class IndexReaderWarmer
         {
             /// <summary>

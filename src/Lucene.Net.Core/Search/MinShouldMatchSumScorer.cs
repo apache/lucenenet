@@ -33,6 +33,9 @@ namespace Lucene.Net.Search
     /// prune the number of candidates, it is hence a mixture between a pure DisjunctionScorer
     /// and a ConjunctionScorer.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class MinShouldMatchSumScorer : Scorer
     {
         /// <summary>

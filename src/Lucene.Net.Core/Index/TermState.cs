@@ -26,6 +26,9 @@ namespace Lucene.Net.Index
     /// <seealso cref= TermsEnum#seekExact(Lucene.Net.Util.BytesRef, TermState) </seealso>
     /// <seealso cref= TermsEnum#termState()
     /// @lucene.experimental </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class TermState
     {
         /// <summary>

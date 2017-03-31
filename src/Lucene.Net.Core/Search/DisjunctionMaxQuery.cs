@@ -43,6 +43,9 @@ namespace Lucene.Net.Search
     /// include this term in only the best of those multiple fields, without confusing this with the better case of two different terms
     /// in the multiple fields.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class DisjunctionMaxQuery : Query, IEnumerable<Query>
     {
         /* The subqueries */
@@ -125,6 +128,9 @@ namespace Lucene.Net.Search
         /// <p>NOTE: this API and implementation is subject to
         /// change suddenly in the next release.</p>
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected class DisjunctionMaxWeight : Weight
         {
             private readonly DisjunctionMaxQuery outerInstance;

@@ -27,6 +27,9 @@ namespace Lucene.Net.Search.Similarities
     /// (e.g. stopwords), this model may give poor performance, such as
     /// abnormally high scores for low tf values.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class BasicModelP : BasicModel
     {
         /// <summary>

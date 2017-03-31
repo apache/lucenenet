@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -21,6 +23,9 @@ namespace Lucene.Net.Index
     /// A <seealso cref="MergeScheduler"/> that simply does each merge
     ///  sequentially, using the current thread.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SerialMergeScheduler : MergeScheduler
     {
         /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -35,6 +36,9 @@ namespace Lucene.Net.Search
     /// this can be used to perform these queries against an unindexed docvalues field.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class FieldCacheRewriteMethod : MultiTermQuery.RewriteMethod
     {
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
@@ -44,6 +48,9 @@ namespace Lucene.Net.Search
             return result;
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class MultiTermQueryFieldCacheWrapperFilter : Filter
         {
             protected internal readonly MultiTermQuery m_query;
@@ -126,6 +133,9 @@ namespace Lucene.Net.Search
                 return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader.MaxDoc, acceptDocs, fcsi, termSet);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class TermsAnonymousInnerClassHelper : Terms
             {
                 private readonly MultiTermQueryFieldCacheWrapperFilter outerInstance;
@@ -201,6 +211,9 @@ namespace Lucene.Net.Search
                 }
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
             {
                 private readonly MultiTermQueryFieldCacheWrapperFilter outerInstance;

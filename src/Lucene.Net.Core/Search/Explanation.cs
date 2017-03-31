@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -22,6 +23,9 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Expert: Describes the score computation for document and query. </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class Explanation
     {
         private float val; // the value of this node

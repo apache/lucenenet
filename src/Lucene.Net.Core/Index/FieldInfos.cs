@@ -27,6 +27,9 @@ namespace Lucene.Net.Index
     /// Collection of <seealso cref="FieldInfo"/>s (accessible by number or by name).
     ///  @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class FieldInfos : IEnumerable<FieldInfo>
     {
         private readonly bool hasFreq;
@@ -201,6 +204,9 @@ namespace Lucene.Net.Index
             return ret;
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class FieldNumbers
         {
             private readonly IDictionary<int?, string> numberToName;
@@ -337,6 +343,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class Builder
         {
             private readonly Dictionary<string, FieldInfo> byName = new Dictionary<string, FieldInfo>();

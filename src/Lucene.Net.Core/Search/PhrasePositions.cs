@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -22,6 +23,9 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Position of a term in a document that takes into account the term offset within the phrase.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class PhrasePositions
     {
         internal int doc; // current doc

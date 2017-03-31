@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -30,6 +31,9 @@ namespace Lucene.Net.Search
     /// several places, however all they have in hand is a <seealso cref="scorer"/> object, and
     /// might end up computing the score of a document more than once.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class ScoreCachingWrappingScorer : Scorer
     {
         private readonly Scorer scorer;

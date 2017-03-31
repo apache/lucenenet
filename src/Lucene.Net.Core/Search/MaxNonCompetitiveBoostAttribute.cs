@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -25,6 +27,9 @@ namespace Lucene.Net.Search
     /// Implementation class for <seealso cref="MaxNonCompetitiveBoostAttribute"/>.
     /// @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class MaxNonCompetitiveBoostAttribute : Attribute, IMaxNonCompetitiveBoostAttribute
     {
         private float maxNonCompetitiveBoost = float.NegativeInfinity;

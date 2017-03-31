@@ -23,6 +23,9 @@ namespace Lucene.Net.Search.Similarities
     /// Pareto-Zipf Normalization
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class NormalizationZ : Normalization
     {
         internal readonly float z;

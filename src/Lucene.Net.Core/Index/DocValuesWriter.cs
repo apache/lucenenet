@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -19,6 +21,9 @@ namespace Lucene.Net.Index
 
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal abstract class DocValuesWriter
     {
         public abstract void Abort();

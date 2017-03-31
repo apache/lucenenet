@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -21,6 +23,9 @@ namespace Lucene.Net.Search.Similarities
     /// Model of the information gain based on Laplace's law of succession.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class AfterEffectL : AfterEffect
     {
         /// <summary>

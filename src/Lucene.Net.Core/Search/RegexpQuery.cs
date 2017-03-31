@@ -48,6 +48,9 @@ namespace Lucene.Net.Search
     /// </summary>
     /// <seealso cref= RegExp
     /// @lucene.experimental </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class RegexpQuery : AutomatonQuery
     {
         /// <summary>
@@ -55,6 +58,9 @@ namespace Lucene.Net.Search
         /// </summary>
         private static readonly IAutomatonProvider defaultProvider = new AutomatonProviderAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class AutomatonProviderAnonymousInnerClassHelper : IAutomatonProvider
         {
             public Automaton GetAutomaton(string name)

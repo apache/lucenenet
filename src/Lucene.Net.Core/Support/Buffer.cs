@@ -5,6 +5,9 @@ namespace Lucene.Net.Support
     /// <summary>
     /// Base class for <see cref="ByteBuffer"/> and <see cref="Int64Buffer"/> (ported from Java)
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Buffer
     {
         private int mark = -1;

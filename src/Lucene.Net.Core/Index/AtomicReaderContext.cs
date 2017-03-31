@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -23,6 +24,9 @@ namespace Lucene.Net.Index
     /// <summary>
     /// <see cref="IndexReaderContext"/> for <see cref="Index.AtomicReader"/> instances.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class AtomicReaderContext : IndexReaderContext
     {
         /// <summary>

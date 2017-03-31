@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -19,6 +20,9 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class PhraseQueue : PriorityQueue<PhrasePositions>
     {
         internal PhraseQueue(int size)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -25,7 +26,9 @@ namespace Lucene.Net.Index
     /// all prior commits after a new commit is done.  this is
     /// the default deletion policy.
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class KeepOnlyLastCommitDeletionPolicy : IndexDeletionPolicy
     {
         /// <summary>

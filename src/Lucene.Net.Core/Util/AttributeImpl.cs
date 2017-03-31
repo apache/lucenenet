@@ -29,6 +29,9 @@ namespace Lucene.Net.Util
     /// Attributes are used to add data in a dynamic, yet type-safe way to a source
     /// of usually streamed objects, e. g. a <see cref="Lucene.Net.Analysis.TokenStream" />.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Attribute : IAttribute
 #if FEATURE_CLONEABLE
         , ICloneable

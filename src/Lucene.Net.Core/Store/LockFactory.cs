@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Store
 {
     /*
@@ -40,6 +42,9 @@ namespace Lucene.Net.Store
     /// <seealso cref="LockVerifyServer"/>
     /// <seealso cref="LockStressTest"/>
     /// <seealso cref="VerifyingLockFactory"/>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class LockFactory
     {
         protected string m_lockPrefix = null;

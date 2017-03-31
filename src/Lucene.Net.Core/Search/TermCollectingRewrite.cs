@@ -32,6 +32,9 @@ namespace Lucene.Net.Search
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class TermCollectingRewrite<Q> : MultiTermQuery.RewriteMethod where Q : Query
     {
         /// <summary>
@@ -95,6 +98,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal abstract class TermCollector
         {
             protected internal AtomicReaderContext m_readerContext;

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index
@@ -27,6 +28,9 @@ namespace Lucene.Net.Index
     /// <see cref="T:byte[]"/>.  This is used by <see cref="DocumentsWriter"/> to hold the
     /// posting list for many terms in RAM.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class ByteSliceWriter : DataOutput
     {
         private byte[] slice;

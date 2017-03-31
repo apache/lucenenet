@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
 
-        // LUCENENET TODO: Make remarks section
+    // LUCENENET TODO: Make remarks section
     /*
      * Final form of the un-inverted field:
      *   Each document points to a list of term numbers that are contained in that document.
@@ -102,7 +102,9 @@ namespace Lucene.Net.Index
      *   much like Lucene's own internal term index).
      *
      */
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class DocTermOrds
     {
         // Term ords are shifted by this, internally, to reserve
@@ -731,6 +733,9 @@ namespace Lucene.Net.Index
          * ord; in this case we "wrap" our own terms index
          * around it. */
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class OrdWrappedTermsEnum : TermsEnum
         {
             internal void InitializeInstanceFields()
@@ -947,6 +952,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class Iterator : SortedSetDocValues
         {
             private readonly DocTermOrds outerInstance;

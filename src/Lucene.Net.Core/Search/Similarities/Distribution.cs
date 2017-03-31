@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -22,6 +24,9 @@ namespace Lucene.Net.Search.Similarities
     /// in information-based models. </summary>
     /// <seealso cref= IBSimilarity
     /// @lucene.experimental </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Distribution
     {
         /// <summary>

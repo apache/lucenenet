@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -30,6 +31,9 @@ namespace Lucene.Net.Search
     /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
     /// greater than all that precede it.</p>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class TermRangeTermsEnum : FilteredTermsEnum
     {
         private readonly bool includeLower;

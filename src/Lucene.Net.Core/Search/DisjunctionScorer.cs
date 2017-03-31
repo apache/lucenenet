@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -24,6 +25,9 @@ namespace Lucene.Net.Search
     /// Base class for Scorers that score disjunctions.
     /// Currently this just provides helper methods to manage the heap.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal abstract class DisjunctionScorer : Scorer
     {
         protected readonly Scorer[] m_subScorers;

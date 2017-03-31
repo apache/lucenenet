@@ -33,6 +33,9 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="ICharTermAttribute"/>. </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute
 #if FEATURE_CLONEABLE
         , ICloneable

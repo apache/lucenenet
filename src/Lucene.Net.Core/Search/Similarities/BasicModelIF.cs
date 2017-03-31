@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -21,6 +23,9 @@ namespace Lucene.Net.Search.Similarities
     /// An approximation of the <em>I(n<sub>e</sub>)</em> model.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class BasicModelIF : BasicModel
     {
         /// <summary>

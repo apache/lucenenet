@@ -1,5 +1,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -36,6 +37,9 @@ namespace Lucene.Net.Documents
     /// If you also need to store the value, you should add a
     /// separate <see cref="StoredField"/> instance.</para>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SortedSetDocValuesField : Field
     {
         /// <summary>

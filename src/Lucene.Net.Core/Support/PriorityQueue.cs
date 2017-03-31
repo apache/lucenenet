@@ -70,6 +70,9 @@ namespace Lucene.Net.Support
     /// (<see cref="Peek()"/>, <see cref="Count"/>, and <see cref="Element()"/>).
     /// </remarks>
     /// <typeparam name="T">Type of elements</typeparam>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class PriorityQueue<T> : ICollection<T>
     {
         private static readonly int DEFAULT_INITIAL_CAPACITY = 11;

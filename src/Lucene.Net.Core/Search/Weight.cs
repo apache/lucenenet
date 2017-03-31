@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -50,6 +52,9 @@ namespace Lucene.Net.Search
     ///
     /// @since 2.9
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Weight
     {
         /// <summary>
@@ -137,6 +142,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Just wraps a Scorer and performs top scoring using it. </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class DefaultBulkScorer : BulkScorer
         {
             internal readonly Scorer scorer;

@@ -52,6 +52,9 @@ namespace Lucene.Net.Search
     /// terms) to add them to the query.
     ///
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class MultiPhraseQuery : Query
     {
         private string field;
@@ -160,6 +163,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class MultiPhraseWeight : Weight
         {
             private readonly MultiPhraseQuery outerInstance;
@@ -500,8 +506,14 @@ namespace Lucene.Net.Search
     /// </summary>
 
     // TODO: if ever we allow subclassing of the *PhraseScorer
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class UnionDocsAndPositionsEnum : DocsAndPositionsEnum
     {
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class DocsQueue : Util.PriorityQueue<DocsAndPositionsEnum>
         {
             internal DocsQueue(ICollection<DocsAndPositionsEnum> docsEnums)
@@ -527,6 +539,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was IntQueue in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class Int32Queue
         {
             public Int32Queue()

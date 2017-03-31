@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -24,6 +25,9 @@ namespace Lucene.Net.Index
     /// deleting them. this class is a singleton and can be accessed by referencing
     /// <seealso cref="#INSTANCE"/>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class NoDeletionPolicy : IndexDeletionPolicy
     {
         /// <summary>

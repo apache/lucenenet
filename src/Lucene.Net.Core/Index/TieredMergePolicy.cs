@@ -66,7 +66,9 @@ namespace Lucene.Net.Index
     //     merge is already running (under CMS) and then bias
     //     ourselves towards picking smaller merges if so (or,
     //     maybe CMS should do so)
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class TieredMergePolicy : MergePolicy
     {
         /// <summary>

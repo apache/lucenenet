@@ -46,6 +46,9 @@ namespace Lucene.Net.Documents
     /// Field it is used in.  It is strongly recommended that no
     /// changes be made after <see cref="Field"/> instantiation.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class Field : IIndexableField
     {
         /// <summary>

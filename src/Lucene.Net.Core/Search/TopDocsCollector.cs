@@ -32,6 +32,9 @@ namespace Lucene.Net.Search
     /// however, you might want to consider overriding all methods, in order to avoid
     /// a NullPointerException.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class TopDocsCollector<T> : ICollector, ITopDocsCollector where T : ScoreDoc
     {
         /// <summary>

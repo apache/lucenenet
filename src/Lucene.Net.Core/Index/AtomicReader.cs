@@ -46,6 +46,9 @@ namespace Lucene.Net.Index
     /// <see cref="IndexReader"/> instance; use your own
     /// (non-Lucene) objects instead.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class AtomicReader : IndexReader
     {
         private void InitializeInstanceFields()

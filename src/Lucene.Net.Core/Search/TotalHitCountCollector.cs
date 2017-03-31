@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -22,7 +24,9 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Just counts the total number of hits.
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class TotalHitCountCollector : ICollector
     {
         private int totalHits;

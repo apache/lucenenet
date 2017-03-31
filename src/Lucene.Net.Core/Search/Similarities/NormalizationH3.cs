@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -21,6 +23,9 @@ namespace Lucene.Net.Search.Similarities
     /// Dirichlet Priors normalization
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class NormalizationH3 : Normalization
     {
         private readonly float mu;

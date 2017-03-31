@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -35,6 +36,9 @@ namespace Lucene.Net.Index
     /// <seealso cref="UnsupportedOperationException"/> when a seeking method
     /// is called.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class FilteredTermsEnum : TermsEnum
     {
         private BytesRef initialSeekTerm = null;

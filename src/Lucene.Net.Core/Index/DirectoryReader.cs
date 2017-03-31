@@ -48,6 +48,9 @@ namespace Lucene.Net.Index
     /// <code>IndexReader</code> instance; use your own
     /// (non-Lucene) objects instead.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class DirectoryReader : BaseCompositeReader<AtomicReader>
     {
         /// <summary>

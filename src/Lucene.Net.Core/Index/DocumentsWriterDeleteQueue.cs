@@ -66,6 +66,9 @@ namespace Lucene.Net.Index
     /// will also not be added to its private deletes neither to the global deletes.
     ///
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class DocumentsWriterDeleteQueue
     {
         private Node tail; // LUCENENET NOTE: can't use type without specifying type parameter, also not volatile due to Interlocked
@@ -283,6 +286,9 @@ namespace Lucene.Net.Index
             return false;
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class DeleteSlice
         {
             // No need to be volatile, slices are thread captive (only accessed by one thread)!
@@ -370,6 +376,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class Node // LUCENENET specific - made internal instead of private because it is used in internal APIs
         {
             internal /*volatile*/ Node next;
@@ -396,6 +405,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class TermNode : Node
         {
             internal TermNode(Term term)
@@ -414,6 +426,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class QueryArrayNode : Node
         {
             internal QueryArrayNode(Query[] query)
@@ -430,6 +445,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class TermArrayNode : Node
         {
             internal TermArrayNode(Term[] term)
@@ -451,6 +469,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class NumericUpdateNode : Node
         {
             internal NumericUpdateNode(NumericDocValuesUpdate update)
@@ -469,6 +490,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class BinaryUpdateNode : Node
         {
             internal BinaryUpdateNode(BinaryDocValuesUpdate update)

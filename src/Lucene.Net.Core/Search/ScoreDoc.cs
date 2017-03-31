@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -19,7 +21,9 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Holds one hit in <seealso cref="TopDocs"/>. </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class ScoreDoc
     {
         /// <summary>

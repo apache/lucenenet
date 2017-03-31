@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -26,6 +28,9 @@ namespace Lucene.Net.Index
     /// Holder class for common parameters used during read.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SegmentReadState
     {
         /// <summary>

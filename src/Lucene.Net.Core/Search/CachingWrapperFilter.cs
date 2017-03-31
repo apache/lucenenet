@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -33,6 +34,9 @@ namespace Lucene.Net.Search
     /// filters to simply filter, and then wrap with this class
     /// to add caching.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class CachingWrapperFilter : Filter
     {
         private readonly Filter _filter;
@@ -154,6 +158,9 @@ namespace Lucene.Net.Search
         /// An empty {@code DocIdSet} instance </summary>
         protected static readonly DocIdSet EMPTY_DOCIDSET = new DocIdSetAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
             public override DocIdSetIterator GetIterator()

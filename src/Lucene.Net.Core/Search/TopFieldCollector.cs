@@ -1,4 +1,5 @@
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -31,6 +32,9 @@ namespace Lucene.Net.Search
     ///
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class TopFieldCollector : TopDocsCollector<Entry>
     {
         // TODO: one optimization we could do is to pre-fill
@@ -42,7 +46,9 @@ namespace Lucene.Net.Search
          * Implements a TopFieldCollector over one SortField criteria, without
          * tracking document scores and maxScore.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class OneComparerNonScoringCollector : TopFieldCollector
         {
             internal FieldComparer comparer;
@@ -114,7 +120,9 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore, and assumes out of orderness in doc
          * Ids collection.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class OutOfOrderOneComparerNonScoringCollector : OneComparerNonScoringCollector
         {
             public OutOfOrderOneComparerNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -163,7 +171,9 @@ namespace Lucene.Net.Search
          * Implements a TopFieldCollector over one SortField criteria, while tracking
          * document scores but no maxScore.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class OneComparerScoringNoMaxScoreCollector : OneComparerNonScoringCollector
         {
             internal Scorer scorer;
@@ -230,7 +240,9 @@ namespace Lucene.Net.Search
          * document scores but no maxScore, and assumes out of orderness in doc Ids
          * collection.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class OutOfOrderOneComparerScoringNoMaxScoreCollector : OneComparerScoringNoMaxScoreCollector
         {
             public OutOfOrderOneComparerScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -285,7 +297,9 @@ namespace Lucene.Net.Search
          * Implements a TopFieldCollector over one SortField criteria, with tracking
          * document scores and maxScore.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class OneComparerScoringMaxScoreCollector : OneComparerNonScoringCollector
         {
             internal Scorer scorer;
@@ -353,7 +367,9 @@ namespace Lucene.Net.Search
          * document scores and maxScore, and assumes out of orderness in doc Ids
          * collection.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class OutOfOrderOneComparerScoringMaxScoreCollector : OneComparerScoringMaxScoreCollector
         {
             public OutOfOrderOneComparerScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -407,7 +423,9 @@ namespace Lucene.Net.Search
          * Implements a TopFieldCollector over multiple SortField criteria, without
          * tracking document scores and maxScore.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class MultiComparerNonScoringCollector : TopFieldCollector
         {
             internal readonly FieldComparer[] comparers;
@@ -514,7 +532,9 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore, and assumes out of orderness in doc
          * Ids collection.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class OutOfOrderMultiComparerNonScoringCollector : MultiComparerNonScoringCollector
         {
             public OutOfOrderMultiComparerNonScoringCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -596,7 +616,9 @@ namespace Lucene.Net.Search
          * Implements a TopFieldCollector over multiple SortField criteria, with
          * tracking document scores and maxScore.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class MultiComparerScoringMaxScoreCollector : MultiComparerNonScoringCollector
         {
             internal Scorer scorer;
@@ -693,7 +715,9 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore, and assumes out of orderness in doc
          * Ids collection.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class OutOfOrderMultiComparerScoringMaxScoreCollector : MultiComparerScoringMaxScoreCollector
         {
             public OutOfOrderMultiComparerScoringMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -780,7 +804,9 @@ namespace Lucene.Net.Search
          * Implements a TopFieldCollector over multiple SortField criteria, with
          * tracking document scores and maxScore.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class MultiComparerScoringNoMaxScoreCollector : MultiComparerNonScoringCollector
         {
             internal Scorer scorer;
@@ -875,7 +901,9 @@ namespace Lucene.Net.Search
          * tracking document scores and maxScore, and assumes out of orderness in doc
          * Ids collection.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class OutOfOrderMultiComparerScoringNoMaxScoreCollector : MultiComparerScoringNoMaxScoreCollector
         {
             public OutOfOrderMultiComparerScoringNoMaxScoreCollector(FieldValueHitQueue<Entry> queue, int numHits, bool fillFields)
@@ -967,7 +995,9 @@ namespace Lucene.Net.Search
         /*
          * Implements a TopFieldCollector when after != null.
          */
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class PagingFieldCollector : TopFieldCollector
         {
             internal Scorer scorer;

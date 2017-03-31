@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Store
 {
     /*
@@ -23,6 +25,9 @@ namespace Lucene.Net.Store
     /// <see cref="GetNoLockFactory()"/> to get the instance.
     /// </summary>
     /// <seealso cref="LockFactory"/>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class NoLockFactory : LockFactory
     {
         // Single instance returned whenever makeLock is called.
@@ -48,6 +53,9 @@ namespace Lucene.Net.Store
         }
     }
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class NoLock : Lock
     {
         public override bool Obtain()

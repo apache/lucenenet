@@ -38,6 +38,9 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class ControlledRealTimeReopenThread<T> : ThreadClass, IDisposable
          where T : class
     {
@@ -81,6 +84,9 @@ namespace Lucene.Net.Search
             manager.AddListener(new HandleRefresh(this));
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class HandleRefresh : ReferenceManager.IRefreshListener
         {
             private readonly ControlledRealTimeReopenThread<T> outerInstance;

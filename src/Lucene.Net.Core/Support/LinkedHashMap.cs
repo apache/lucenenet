@@ -58,6 +58,9 @@ namespace Lucene.Net.Support
     ///     <item><see cref="LurchTable{TKey, TValue}"/> - use when you need to sort by most recent access or most recent update. Works well for LRU caching.</item>
     /// </list>
     /// </remarks>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class LinkedHashMap<TKey, TValue> : HashMap<TKey, TValue>, IDictionary<TKey, TValue>
     {
         private readonly HashMap<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>> dict;

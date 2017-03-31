@@ -35,6 +35,9 @@ namespace Lucene.Net.Store
     /// For efficiency, this class requires that the buffers
     /// are a power-of-two (<c>chunkSizePower</c>).
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class ByteBufferIndexInput : IndexInput
     {
         private ByteBuffer[] buffers;
@@ -52,6 +55,9 @@ namespace Lucene.Net.Store
         private bool isClone = false;
         private readonly WeakIdentityMap<ByteBufferIndexInput, BoolRefWrapper> clones;
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class BoolRefWrapper
         {
             // .NET port: this is needed as bool is not a reference type

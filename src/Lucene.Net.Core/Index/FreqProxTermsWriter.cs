@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -25,6 +26,9 @@ namespace Lucene.Net.Index
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class FreqProxTermsWriter : TermsHashConsumer
     {
         public override void Abort()

@@ -24,6 +24,9 @@ namespace Lucene.Net.Index
     /// A struct like class that represents a hierarchical relationship between
     /// <seealso cref="IndexReader"/> instances.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class IndexReaderContext
     {
         /// <summary>

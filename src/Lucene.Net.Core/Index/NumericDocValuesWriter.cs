@@ -1,4 +1,5 @@
 using Lucene.Net.Util.Packed;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -31,6 +32,9 @@ namespace Lucene.Net.Index
     /// Buffers up pending long per doc, then flushes when
     ///  segment flushes.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class NumericDocValuesWriter : DocValuesWriter
     {
         private const long MISSING = 0L;

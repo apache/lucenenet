@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -23,6 +24,9 @@ namespace Lucene.Net.Search
     /// Contains statistics for a collection (field)
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class CollectionStatistics
     {
         private readonly string field;

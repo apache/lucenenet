@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -33,6 +34,9 @@ namespace Lucene.Net.Index
     ///  TermVectorsConsumer}, write their own byte streams
     ///  under each term.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class TermsHash : InvertedDocConsumer
     {
         internal readonly TermsHashConsumer consumer;

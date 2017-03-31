@@ -42,6 +42,9 @@ namespace Lucene.Net.Index
     // Used by IndexWriter to hold open SegmentReaders (for
     // searching or merging), plus pending deletes and updates,
     // for a given segment
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class ReadersAndUpdates
     {
         // Not final because we replace (clone) when we need to

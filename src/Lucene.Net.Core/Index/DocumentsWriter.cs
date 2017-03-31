@@ -100,6 +100,9 @@ namespace Lucene.Net.Index
     /// deleted so that the document is always atomically ("all
     /// or none") added to the index.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class DocumentsWriter : IDisposable
     {
         private readonly Directory directory;
@@ -827,6 +830,9 @@ namespace Lucene.Net.Index
             events.Enqueue(@event);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class ApplyDeletesEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new ApplyDeletesEvent();
@@ -844,6 +850,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class MergePendingEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new MergePendingEvent();
@@ -861,6 +870,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class ForcedPurgeEvent : IEvent
         {
             internal static readonly IEvent INSTANCE = new ForcedPurgeEvent();
@@ -878,6 +890,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class FlushFailedEvent : IEvent
         {
             private readonly SegmentInfo info;
@@ -893,6 +908,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class DeleteNewFilesEvent : IEvent
         {
             private readonly ICollection<string> files;

@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Documents
@@ -25,6 +26,9 @@ namespace Lucene.Net.Documents
     /// vectors.  For example this would be used on a 'body'
     /// field, that contains the bulk of a document's text.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class TextField : Field
     {
         /// <summary>

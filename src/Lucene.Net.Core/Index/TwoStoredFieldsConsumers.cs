@@ -21,7 +21,9 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Just switches between two <seealso cref="DocFieldConsumer"/>s. </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class TwoStoredFieldsConsumers : StoredFieldsConsumer
     {
         private readonly StoredFieldsConsumer first;

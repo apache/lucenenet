@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -496,6 +497,9 @@ namespace Lucene.Net.Search.Similarities
     /// </summary>
     /// <seealso cref= Lucene.Net.Index.IndexWriterConfig#setSimilarity(Similarity) </seealso>
     /// <seealso cref= IndexSearcher#setSimilarity(Similarity) </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class TFIDFSimilarity : Similarity
     {
         /// <summary>
@@ -688,6 +692,9 @@ namespace Lucene.Net.Search.Similarities
             return new TFIDFSimScorer(this, idfstats, context.AtomicReader.GetNormValues(idfstats.Field));
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class TFIDFSimScorer : SimScorer
         {
             private readonly TFIDFSimilarity outerInstance;
@@ -732,6 +739,9 @@ namespace Lucene.Net.Search.Similarities
         /// to this model is idf.
         /// </summary>
         [ExceptionToClassNameConvention]
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class IDFStats : SimWeight
         {
             internal string Field { get; private set; }

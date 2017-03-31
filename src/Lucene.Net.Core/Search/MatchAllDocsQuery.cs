@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -31,8 +32,14 @@ namespace Lucene.Net.Search
     /// A query that matches all documents.
     ///
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class MatchAllDocsQuery : Query
     {
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class MatchAllScorer : Scorer
         {
             private readonly MatchAllDocsQuery outerInstance;
@@ -92,6 +99,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class MatchAllDocsWeight : Weight
         {
             private readonly MatchAllDocsQuery outerInstance;

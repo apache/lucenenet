@@ -40,7 +40,9 @@ namespace Lucene.Net.Search
     /// rewrite method.
     /// @since 2.9
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class TermRangeQuery : MultiTermQuery
     {
         private BytesRef lowerTerm;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -28,6 +29,9 @@ namespace Lucene.Net.Index
     /// executing merges, without going through the hassle of tweaking a merge
     /// policy's settings to achieve that, such as changing its merge factor.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class NoMergePolicy : MergePolicy
     {
         /// <summary>

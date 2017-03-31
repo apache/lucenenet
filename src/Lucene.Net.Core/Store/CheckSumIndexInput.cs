@@ -23,6 +23,9 @@ namespace Lucene.Net.Store
     /// Extension of <see cref="IndexInput"/>, computing checksum as it goes.
     /// Callers can retrieve the checksum via <see cref="Checksum"/>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class ChecksumIndexInput : IndexInput
     {
         /// <summary>

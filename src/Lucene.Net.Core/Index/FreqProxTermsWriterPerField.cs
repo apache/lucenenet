@@ -36,6 +36,9 @@ namespace Lucene.Net.Index
     // TODO: break into separate freq and prox writers as
     // codecs; make separate container (tii/tis/skip/*) that can
     // be configured as any number of files 1..N
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class FreqProxTermsWriterPerField : TermsHashConsumerPerField, IComparable<FreqProxTermsWriterPerField>
     {
         internal readonly FreqProxTermsWriter parent;
@@ -301,6 +304,9 @@ namespace Lucene.Net.Index
             return new FreqProxPostingsArray(size, hasFreq, hasProx, hasOffsets);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class FreqProxPostingsArray : ParallelPostingsArray
         {
             public FreqProxPostingsArray(int size, bool writeFreqs, bool writeProx, bool writeOffsets)

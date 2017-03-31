@@ -60,6 +60,9 @@ namespace Lucene.Net.Search
     /// MultiTermQueries using {@link
     /// #CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} by default.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class MultiTermQuery : Query
     {
         protected internal readonly string m_field;
@@ -67,6 +70,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Abstract class that defines how the query is rewritten. </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public abstract class RewriteMethod
         {
             public abstract Query Rewrite(IndexReader reader, MultiTermQuery query);
@@ -95,6 +101,9 @@ namespace Lucene.Net.Search
         ///  <seealso cref= #setRewriteMethod  </seealso>
         public static readonly RewriteMethod CONSTANT_SCORE_FILTER_REWRITE = new RewriteMethodAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class RewriteMethodAnonymousInnerClassHelper : RewriteMethod
         {
             public RewriteMethodAnonymousInnerClassHelper()
@@ -149,6 +158,9 @@ namespace Lucene.Net.Search
         /// <seealso cref="FuzzyQuery"/>.
         /// </summary>
         /// <seealso cref= #setRewriteMethod </seealso>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class TopTermsScoringBooleanQueryRewrite : TopTermsRewrite<BooleanQuery>
         {
             /// <summary>
@@ -193,6 +205,9 @@ namespace Lucene.Net.Search
         /// the boolean max clause count.
         /// </summary>
         /// <seealso cref= #setRewriteMethod </seealso>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class TopTermsBoostOnlyBooleanQueryRewrite : TopTermsRewrite<BooleanQuery>
         {
             /// <summary>
@@ -237,6 +252,9 @@ namespace Lucene.Net.Search
         ///  Otherwise, <seealso cref="#CONSTANT_SCORE_FILTER_REWRITE"/> is
         ///  used.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class ConstantScoreAutoRewrite : Lucene.Net.Search.ConstantScoreAutoRewrite
         {
         }
@@ -257,6 +275,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly RewriteMethod CONSTANT_SCORE_AUTO_REWRITE_DEFAULT = new ConstantScoreAutoRewriteAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class ConstantScoreAutoRewriteAnonymousInnerClassHelper : ConstantScoreAutoRewrite
         {
             public ConstantScoreAutoRewriteAnonymousInnerClassHelper()

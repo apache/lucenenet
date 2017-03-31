@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -39,6 +40,9 @@ namespace Lucene.Net.Search
     /// TopScoreDocCollector}) will not properly collect hits
     /// with these scores.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Scorer : DocsEnum
     {
         /// <summary>
@@ -88,6 +92,9 @@ namespace Lucene.Net.Search
         /// the meaning of the relationship depends upon the parent query.
         /// @lucene.experimental
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class ChildScorer
         {
             /// <summary>

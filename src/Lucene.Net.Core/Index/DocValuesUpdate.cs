@@ -1,4 +1,5 @@
 using Lucene.Net.Documents;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -25,6 +26,9 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// An in-place update to a DocValues field. </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class DocValuesUpdate
     {
         /* Rough logic: OBJ_HEADER + 3*PTR + INT
@@ -75,6 +79,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// An in-place update to a binary DocValues field </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class BinaryDocValuesUpdate : DocValuesUpdate
         {
             /* Size of BytesRef: 2*INT + ARRAY_HEADER + PTR */
@@ -95,6 +102,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// An in-place update to a numeric DocValues field </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class NumericDocValuesUpdate : DocValuesUpdate // LUCENENET NOTE: Made public rather than internal because it is on a public API
         {
             internal static readonly long? MISSING = new long?(0);

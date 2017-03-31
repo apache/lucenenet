@@ -23,6 +23,9 @@ namespace Lucene.Net.Index
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class NormsConsumerPerField : InvertedDocEndConsumerPerField, IComparable<NormsConsumerPerField>
     {
         private readonly FieldInfo fieldInfo;

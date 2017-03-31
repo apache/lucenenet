@@ -47,6 +47,9 @@ namespace Lucene.Net.Index
     /// @lucene.internal
     /// </summary>
     /// <seealso cref="MultiReader"/>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class BaseCompositeReader<R> : CompositeReader
         where R : IndexReader
     {

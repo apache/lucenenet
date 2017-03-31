@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -41,6 +42,9 @@ namespace Lucene.Net.Index
     /// may share the same core data.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class SegmentReader : AtomicReader
     {
         private readonly SegmentCommitInfo si;

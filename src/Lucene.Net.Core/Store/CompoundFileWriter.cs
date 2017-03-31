@@ -35,8 +35,14 @@ namespace Lucene.Net.Store
     /// @lucene.internal 
     /// </summary>
     /// <seealso cref="CompoundFileDirectory"/>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class CompoundFileWriter : IDisposable
     {
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class FileEntry
         {
             /// <summary>
@@ -351,6 +357,9 @@ namespace Lucene.Net.Store
             return entries.Keys.ToArray();
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class DirectCFSIndexOutput : IndexOutput
         {
             private readonly CompoundFileWriter outerInstance;

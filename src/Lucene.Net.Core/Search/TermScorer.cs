@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -25,6 +26,9 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Expert: A <code>Scorer</code> for documents matching a <code>Term</code>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class TermScorer : Scorer
     {
         private readonly DocsEnum docsEnum;

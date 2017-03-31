@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -26,6 +27,9 @@ namespace Lucene.Net.Search
     /// this <code>Scorer</code> implements <seealso cref="Scorer#advance(int)"/>,
     /// and it uses the skipTo() on the given scorers.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class ReqExclScorer : Scorer
     {
         private Scorer reqScorer;

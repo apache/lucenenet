@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -28,7 +29,9 @@ namespace Lucene.Net.Index
     ///  accessing this object.
     ///
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class FieldInfo
     {
         /// <summary>

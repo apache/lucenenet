@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Support
 {
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class IdentityHashMap<TKey, TValue> : HashMap<TKey, TValue>
     {
         public IdentityHashMap()

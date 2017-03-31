@@ -66,7 +66,9 @@ namespace Lucene.Net.Index
      * instantiating this class.  It opens segments_N file(s)
      * directly with no retry logic.
      */
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class IndexFileDeleter : IDisposable
     {
         /* Files that we tried to delete but failed (likely
@@ -750,6 +752,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Tracks the reference count for a single index file:
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class RefCount
         {
             // fileName used only for better assert error messages
@@ -790,7 +795,9 @@ namespace Lucene.Net.Index
         /// has a natural ordering that is inconsistent with
         /// equals.
         /// </summary>
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class CommitPoint : IndexCommit
         {
             internal ICollection<string> files;

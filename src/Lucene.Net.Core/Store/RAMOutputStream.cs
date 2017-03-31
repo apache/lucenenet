@@ -26,6 +26,9 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class RAMOutputStream : IndexOutput
     {
         internal const int BUFFER_SIZE = 1024;

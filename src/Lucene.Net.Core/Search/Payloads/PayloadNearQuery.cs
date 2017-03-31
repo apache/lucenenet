@@ -47,6 +47,9 @@ namespace Lucene.Net.Search.Payloads
     /// Payload scores are aggregated using a pluggable <seealso cref="PayloadFunction"/>.
     /// </summary>
     /// <seealso cref= Lucene.Net.Search.Similarities.Similarity.SimScorer#computePayloadFactor(int, int, int, BytesRef) </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class PayloadNearQuery : SpanNearQuery
     {
         protected string m_fieldName;
@@ -158,6 +161,9 @@ namespace Lucene.Net.Search.Payloads
             return true;
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class PayloadNearSpanWeight : SpanWeight
         {
             private readonly PayloadNearQuery outerInstance;
@@ -205,6 +211,9 @@ namespace Lucene.Net.Search.Payloads
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class PayloadNearSpanScorer : SpanScorer
         {
             private readonly PayloadNearQuery outerInstance;

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -30,6 +31,9 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class MultiBits : IBits
     {
         private readonly IBits[] subs;

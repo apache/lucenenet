@@ -63,6 +63,9 @@ namespace Lucene.Net.Index
     /// @since 3.1
     /// </summary>
     /// <seealso cref="IndexWriter.Config"/>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class IndexWriterConfig : LiveIndexWriterConfig
     {
         // LUCENENET specific: De-nested OpenMode enum from this class to prevent naming conflict

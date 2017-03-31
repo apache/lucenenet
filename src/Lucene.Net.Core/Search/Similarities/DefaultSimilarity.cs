@@ -44,6 +44,9 @@ namespace Lucene.Net.Search.Similarities
     /// Last, note that search time is too late to modify this <i>norm</i> part of
     /// scoring, e.g. by using a different <seealso cref="Similarity"/> for search.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class DefaultSimilarity : TFIDFSimilarity
     {
         /// <summary>

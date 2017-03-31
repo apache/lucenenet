@@ -41,6 +41,9 @@ namespace Lucene.Net.Search
     /// @since 2.9
     ///
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class NumericRangeFilter<T> : MultiTermQueryWrapperFilter<NumericRangeQuery<T>>
         where T : struct, IComparable<T>
     // real numbers in C# are structs and IComparable with themselves, best constraint we have

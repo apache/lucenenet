@@ -34,6 +34,9 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class SegmentInfo
     {
         // TODO: remove these from this class, for now this is the representation

@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -27,7 +28,9 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class MultiDocsEnum : DocsEnum
     {
         private readonly MultiTermsEnum parent;
@@ -189,6 +192,9 @@ namespace Lucene.Net.Index
         /// Holds a <seealso cref="DocsEnum"/> along with the
         ///  corresponding <seealso cref="ReaderSlice"/>.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class EnumWithSlice
         {
             internal EnumWithSlice()

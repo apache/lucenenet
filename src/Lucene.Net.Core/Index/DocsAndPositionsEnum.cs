@@ -49,6 +49,9 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Also iterates through positions. </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class DocsAndPositionsEnum : DocsEnum
     {
         // LUCENENET specific - made flags into their own [Flags] enum named DocsAndPositionsFlags and de-nested from this type

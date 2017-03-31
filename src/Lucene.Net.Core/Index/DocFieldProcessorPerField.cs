@@ -25,7 +25,9 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Holds all per thread, per field state.
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class DocFieldProcessorPerField
     {
         internal readonly DocFieldConsumerPerField consumer;

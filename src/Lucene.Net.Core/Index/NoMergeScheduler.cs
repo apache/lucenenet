@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -27,6 +29,9 @@ namespace Lucene.Net.Index
     /// <seealso cref="MergeScheduler"/> implementation is ever executed. Hence it is
     /// recommended to use both if you want to disable merges from ever happening.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class NoMergeScheduler : MergeScheduler
     {
         /// <summary>

@@ -36,6 +36,9 @@ namespace Lucene.Net.Documents
     /// </summary>
     /// <seealso cref="BinaryDocValuesField"/>
     [Obsolete("Use BinaryDocValuesField instead.")]
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class StraightBytesDocValuesField : BinaryDocValuesField
     {
         /// <summary>

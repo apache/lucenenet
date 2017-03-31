@@ -29,6 +29,9 @@ namespace Lucene.Net.Util
     /// <seealso cref="#EMPTY_CHARS"/> if necessary.
     /// @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class CharsRef : IComparable<CharsRef>, ICharSequence
     {
         /// <summary>

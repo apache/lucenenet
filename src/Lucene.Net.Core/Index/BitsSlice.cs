@@ -27,6 +27,9 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class BitsSlice : IBits
     {
         private readonly IBits parent;

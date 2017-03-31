@@ -33,6 +33,9 @@ namespace Lucene.Net.Search
     ///
     /// @since   lucene 1.4 </summary>
     /// <seealso cref= Sort </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SortField
     {
         // LUCENENET NOTE: de-nested the Type enum and renamed to SortFieldType to avoid potential naming collisions with System.Type
@@ -171,6 +174,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly object STRING_FIRST = new ObjectAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class ObjectAnonymousInnerClassHelper : object
         {
             public ObjectAnonymousInnerClassHelper()
@@ -189,6 +195,9 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly object STRING_LAST = new ObjectAnonymousInnerClassHelper2();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class ObjectAnonymousInnerClassHelper2 : object
         {
             public ObjectAnonymousInnerClassHelper2()

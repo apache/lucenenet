@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -27,7 +28,9 @@ namespace Lucene.Net.Index
     /// Implements a <seealso cref="TermsEnum"/> wrapping a provided
     /// <seealso cref="SortedSetDocValues"/>.
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class SortedSetDocValuesTermsEnum : TermsEnum
     {
         private readonly SortedSetDocValues values;

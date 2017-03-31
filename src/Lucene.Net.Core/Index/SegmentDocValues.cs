@@ -34,6 +34,9 @@ namespace Lucene.Net.Index
     /// Manages the <seealso cref="DocValuesProducer"/> held by <seealso cref="SegmentReader"/> and
     /// keeps track of their reference counting.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class SegmentDocValues
     {
         private readonly IDictionary<long?, RefCount<DocValuesProducer>> genDVProducers = new Dictionary<long?, RefCount<DocValuesProducer>>();
@@ -53,6 +56,9 @@ namespace Lucene.Net.Index
             return new RefCountHelper(this, dvFormat.FieldsProducer(srs), gen);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class RefCountHelper : RefCount<DocValuesProducer>
         {
             private readonly SegmentDocValues outerInstance;

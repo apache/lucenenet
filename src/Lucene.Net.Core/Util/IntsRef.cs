@@ -32,6 +32,9 @@ namespace Lucene.Net.Util
     /// 
     ///  @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class Int32sRef : IComparable<Int32sRef>
     {
         /// <summary>

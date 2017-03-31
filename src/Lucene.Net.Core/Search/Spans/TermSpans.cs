@@ -28,6 +28,9 @@ namespace Lucene.Net.Search.Spans
     /// Expert:
     /// Public for extension only
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class TermSpans : Spans
     {
         protected readonly DocsAndPositionsEnum m_postings;
@@ -151,6 +154,9 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class EmptyTermSpans : TermSpans
         {
             public override bool Next()

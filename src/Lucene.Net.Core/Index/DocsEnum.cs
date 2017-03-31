@@ -45,6 +45,9 @@ namespace Lucene.Net.Index
     ///  NOTE: you must first call <seealso cref="#nextDoc"/> before using
     ///  any of the per-doc methods.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class DocsEnum : DocIdSetIterator
     {
         // LUCENENET specific - made flags into their own [Flags] enum named DocsFlags and de-nested from this type

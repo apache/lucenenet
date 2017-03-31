@@ -27,6 +27,9 @@ namespace Lucene.Net.Search.Similarities
     /// preference to a specific base.</p>
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class DistributionSPL : Distribution
     {
         /// <summary>

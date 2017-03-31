@@ -1,5 +1,6 @@
 using Lucene.Net.Index;
 using Lucene.Net.Util;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -36,6 +37,9 @@ namespace Lucene.Net.Documents
     /// separate <see cref="StoredField"/> instance.
     /// </summary>
     /// <seealso cref="BinaryDocValues"/>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class BinaryDocValuesField : Field
     {
         /// <summary>

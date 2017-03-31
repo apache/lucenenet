@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -30,6 +31,9 @@ namespace Lucene.Net.Store
     /// <para/><see cref="DataOutput"/> may only be used from one thread, because it is not
     /// thread safe (it keeps internal state like file position).
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class DataOutput
     {
         /// <summary>

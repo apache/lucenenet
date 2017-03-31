@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -24,6 +26,9 @@ namespace Lucene.Net.Search
     /// Implementation class for <seealso cref="IBoostAttribute"/>.
     /// @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class BoostAttribute : Attribute, IBoostAttribute
     {
         /// <summary>

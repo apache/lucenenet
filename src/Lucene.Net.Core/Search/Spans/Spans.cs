@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
@@ -25,6 +26,9 @@ namespace Lucene.Net.Search.Spans
     /// are enumerated in order, by increasing document number, within that by
     /// increasing start position and finally by increasing end position.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Spans
     {
         /// <summary>

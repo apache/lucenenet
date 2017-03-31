@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -21,6 +23,9 @@ namespace Lucene.Net.Search.Similarities
     /// Computes lambda as {@code docFreq+1 / numberOfDocuments+1}.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class LambdaDF : Lambda
     {
         /// <summary>

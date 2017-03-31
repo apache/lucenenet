@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Payloads
 {
     /*
@@ -42,6 +44,9 @@ namespace Lucene.Net.Search.Payloads
     /// Payload scores are aggregated using a pluggable <seealso cref="PayloadFunction"/>. </summary>
     /// <seealso cref= Lucene.Net.Search.Similarities.Similarity.SimScorer#computePayloadFactor(int, int, int, BytesRef)
     ///  </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class PayloadTermQuery : SpanTermQuery
     {
         protected PayloadFunction m_function;
@@ -64,6 +69,9 @@ namespace Lucene.Net.Search.Payloads
             return new PayloadTermWeight(this, this, searcher);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected class PayloadTermWeight : SpanWeight
         {
             private readonly PayloadTermQuery outerInstance;
@@ -79,6 +87,9 @@ namespace Lucene.Net.Search.Payloads
                 return new PayloadTermSpanScorer(this, (TermSpans)m_query.GetSpans(context, acceptDocs, m_termContexts), this, m_similarity.GetSimScorer(m_stats, context));
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             protected class PayloadTermSpanScorer : SpanScorer
             {
                 private readonly PayloadTermQuery.PayloadTermWeight outerInstance;

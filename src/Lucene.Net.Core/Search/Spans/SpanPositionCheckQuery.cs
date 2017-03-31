@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
@@ -29,6 +30,9 @@ namespace Lucene.Net.Search.Spans
     /// Base class for filtering a SpanQuery based on the position of a match.
     ///
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class SpanPositionCheckQuery : SpanQuery
     {
         protected SpanQuery m_match;
@@ -123,6 +127,9 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected class PositionCheckSpan : Spans
         {
             private readonly SpanPositionCheckQuery outerInstance;

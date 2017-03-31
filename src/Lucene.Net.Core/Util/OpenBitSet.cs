@@ -76,6 +76,9 @@ namespace Lucene.Net.Util
     /// </tr>
     /// </table>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class OpenBitSet : DocIdSet, IBits
     {
         protected internal long[] m_bits;

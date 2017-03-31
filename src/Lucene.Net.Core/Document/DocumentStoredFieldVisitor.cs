@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Documents
@@ -30,6 +31,9 @@ namespace Lucene.Net.Documents
     ///
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class DocumentStoredFieldVisitor : StoredFieldVisitor
     {
         private readonly Documents.Document doc = new Documents.Document();

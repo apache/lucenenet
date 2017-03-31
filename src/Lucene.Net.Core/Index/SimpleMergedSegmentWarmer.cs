@@ -27,6 +27,9 @@ namespace Lucene.Net.Index
     /// A very simple merged segment warmer that just ensures
     /// data structures are initialized.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SimpleMergedSegmentWarmer : IndexReaderWarmer
     {
         private readonly InfoStream infoStream;

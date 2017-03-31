@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
+using System;
 using System.Linq;
 using System.Text;
 
@@ -34,6 +35,9 @@ namespace Lucene.Net.Search.Spans
     ///
     ///
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SpanPayloadCheckQuery : SpanPositionCheckQuery
     {
         protected readonly ICollection<byte[]> m_payloadToMatch;

@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -27,6 +29,9 @@ namespace Lucene.Net.Index
     /// Codecs can optionally extend this API if they support constant-time access
     /// to ordinals for the document.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class RandomAccessOrds : SortedSetDocValues
     {
         /// <summary>

@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -67,6 +68,9 @@ namespace Lucene.Net.Search.Similarities
     /// <seealso cref= DFRSimilarity
     /// @lucene.experimental  </seealso>
     [ExceptionToClassNameConvention]
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class IBSimilarity : SimilarityBase
     {
         /// <summary>

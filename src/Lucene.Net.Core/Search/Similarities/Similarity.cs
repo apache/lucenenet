@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -93,6 +95,9 @@ namespace Lucene.Net.Search.Similarities
     /// <seealso cref= Lucene.Net.Index.IndexWriterConfig#setSimilarity(Similarity) </seealso>
     /// <seealso cref= IndexSearcher#setSimilarity(Similarity)
     /// @lucene.experimental </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Similarity
     {
         /// <summary>
@@ -175,6 +180,9 @@ namespace Lucene.Net.Search.Similarities
         /// within-document frequency adjusted for "sloppiness" by
         /// <seealso cref="SimScorer#computeSlopFactor(int)"/>.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public abstract class SimScorer
         {
             /// <summary>
@@ -219,6 +227,9 @@ namespace Lucene.Net.Search.Similarities
         /// subclass {@code SimWeight} and define the statistics they require in the
         /// subclass. Examples include idf, average field length, etc.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public abstract class SimWeight
         {
             /// <summary>

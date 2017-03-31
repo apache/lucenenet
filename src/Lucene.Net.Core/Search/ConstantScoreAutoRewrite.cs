@@ -32,6 +32,9 @@ namespace Lucene.Net.Search
     using TermState = Lucene.Net.Index.TermState;
 
     // LUCENENET NOTE: made this class public, since a derived class with the same name is public
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
     {
         // LUCENENET specific - making constructor internal since the class was meant to be internal
@@ -132,6 +135,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class CutOffTermCollector : TermCollector
         {
             private void InitializeInstanceFields()
@@ -221,6 +227,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Special implementation of BytesStartArray that keeps parallel arrays for <seealso cref="TermContext"/> </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class TermStateByteStart : BytesRefHash.DirectBytesStartArray
         {
             internal TermContext[] termState;

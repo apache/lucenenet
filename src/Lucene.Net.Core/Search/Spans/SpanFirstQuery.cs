@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -32,6 +33,9 @@ namespace Lucene.Net.Search.Spans
     ///
     ///
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SpanFirstQuery : SpanPositionRangeQuery
     {
         /// <summary>

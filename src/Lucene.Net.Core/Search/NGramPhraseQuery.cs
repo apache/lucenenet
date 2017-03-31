@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Search
 {
@@ -30,6 +31,9 @@ namespace Lucene.Net.Search
     /// will query "AB/0 BC/1 CD/2" (where term/position).
     ///
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class NGramPhraseQuery : PhraseQuery
     {
         private readonly int n;

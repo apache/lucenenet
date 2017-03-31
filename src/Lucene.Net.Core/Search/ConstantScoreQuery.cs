@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -32,6 +33,9 @@ namespace Lucene.Net.Search
     /// query boost for every document that matches the filter or query.
     /// For queries it therefore simply strips of all scores and returns a constant one.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class ConstantScoreQuery : Query
     {
         protected readonly Filter m_filter;
@@ -129,6 +133,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected class ConstantWeight : Weight
         {
             private readonly ConstantScoreQuery outerInstance;
@@ -254,6 +261,9 @@ namespace Lucene.Net.Search
         ///  scorer (e.g. BooleanScorer) we can use that
         ///  top-level scorer.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected class ConstantBulkScorer : BulkScorer
         {
             private readonly ConstantScoreQuery outerInstance;
@@ -280,6 +290,9 @@ namespace Lucene.Net.Search
                 return new CollectorAnonymousInnerClassHelper(this, collector);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class CollectorAnonymousInnerClassHelper : ICollector
             {
                 private readonly ConstantBulkScorer outerInstance;
@@ -316,6 +329,9 @@ namespace Lucene.Net.Search
         }
 
         // LUCENENET NOTE: Marked internal for testing
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected internal class ConstantScorer : Scorer
         {
             private readonly ConstantScoreQuery outerInstance;

@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -21,6 +23,9 @@ namespace Lucene.Net.Index
     /// this is a <seealso cref="LogMergePolicy"/> that measures size of a
     ///  segment as the total byte size of the segment's files.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class LogByteSizeMergePolicy : LogMergePolicy
     {
         /// Default minimum segment size.  <seealso cref= setMinMergeMB </seealso>

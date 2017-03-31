@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -21,6 +23,9 @@ namespace Lucene.Net.Search.Similarities
     /// Stores all statistics commonly used ranking methods.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class BasicStats : Similarity.SimWeight
     {
         protected internal readonly string m_field;

@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -30,6 +31,9 @@ namespace Lucene.Net.Index
     /// (InvertedDocConsumerPerField).  It also interacts with an
     /// endConsumer (InvertedDocEndConsumerPerField).
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class DocInverterPerField : DocFieldConsumerPerField
     {
         internal readonly FieldInfo fieldInfo;

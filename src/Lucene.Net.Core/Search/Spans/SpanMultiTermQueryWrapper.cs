@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -42,6 +43,9 @@ namespace Lucene.Net.Search.Spans
     /// }
     /// </pre></blockquote>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SpanMultiTermQueryWrapper<Q> : SpanQuery, ISpanMultiTermQueryWrapper where Q : MultiTermQuery
     {
         protected readonly Q m_query;
@@ -179,6 +183,9 @@ namespace Lucene.Net.Search.Spans
         /// <seealso cref= #setRewriteMethod </seealso>
         public static readonly SpanRewriteMethod SCORING_SPAN_QUERY_REWRITE = new SpanRewriteMethodAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class SpanRewriteMethodAnonymousInnerClassHelper : SpanRewriteMethod
         {
             public SpanRewriteMethodAnonymousInnerClassHelper()
@@ -187,6 +194,9 @@ namespace Lucene.Net.Search.Spans
 
             private readonly ScoringRewrite<SpanOrQuery> @delegate = new ScoringRewriteAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class ScoringRewriteAnonymousInnerClassHelper : ScoringRewrite<SpanOrQuery>
             {
                 public ScoringRewriteAnonymousInnerClassHelper()
@@ -230,6 +240,9 @@ namespace Lucene.Net.Search.Spans
         /// the boolean max clause count.
         /// </summary>
         /// <seealso cref= #setRewriteMethod </seealso>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class TopTermsSpanBooleanQueryRewrite : SpanRewriteMethod
         {
             private readonly TopTermsRewrite<SpanOrQuery> @delegate;
@@ -243,6 +256,9 @@ namespace Lucene.Net.Search.Spans
                 @delegate = new TopTermsRewriteAnonymousInnerClassHelper(this, size);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class TopTermsRewriteAnonymousInnerClassHelper : TopTermsRewrite<SpanOrQuery>
             {
                 private readonly TopTermsSpanBooleanQueryRewrite outerInstance;
@@ -319,6 +335,9 @@ namespace Lucene.Net.Search.Spans
     /// <summary>
     /// Abstract class that defines how the query is rewritten. </summary>
     // LUCENENET specific - moved this class outside of SpanMultiTermQueryWrapper<Q>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class SpanRewriteMethod : MultiTermQuery.RewriteMethod
     {
         public override abstract Query Rewrite(IndexReader reader, MultiTermQuery query);

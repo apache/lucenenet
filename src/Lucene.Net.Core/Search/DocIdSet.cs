@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -23,6 +25,9 @@ namespace Lucene.Net.Search
     /// A DocIdSet contains a set of doc ids. Implementing classes must
     /// only implement <seealso cref="#iterator"/> to provide access to the set.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class DocIdSet
     {
         /// <summary>

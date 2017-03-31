@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -20,6 +22,9 @@ namespace Lucene.Net.Index
     /// <summary>
     /// A per-document numeric value.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class NumericDocValues
     {
         /// <summary>

@@ -46,6 +46,9 @@ namespace Lucene.Net.Search
     ///
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class CachingCollector : ICollector
     {
         // Max out at 512K arrays
@@ -58,6 +61,9 @@ namespace Lucene.Net.Search
         /// </summary>
         private static readonly int[] EMPTY_INT32_ARRAY = new int[0];
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class SegStart
         {
             public AtomicReaderContext ReaderContext { get; private set; }
@@ -70,6 +76,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class CachedScorer : Scorer
         {
             // NOTE: these members are package-private b/c that way accessing them from
@@ -117,6 +126,9 @@ namespace Lucene.Net.Search
         }
 
         // A CachingCollector which caches scores
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class ScoreCachingCollector : CachingCollector
         {
             private readonly CachedScorer cachedScorer;
@@ -248,6 +260,9 @@ namespace Lucene.Net.Search
         }
 
         // A CachingCollector which does not cache scores
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class NoScoreCachingCollector : CachingCollector
         {
             internal NoScoreCachingCollector(ICollector other, double maxRAMMB)
@@ -380,6 +395,9 @@ namespace Lucene.Net.Search
             return Create(other, cacheScores, maxRAMMB);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class CollectorAnonymousInnerClassHelper : ICollector
         {
             private bool acceptDocsOutOfOrder;

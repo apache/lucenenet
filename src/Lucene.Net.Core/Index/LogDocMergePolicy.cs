@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -22,7 +24,9 @@ namespace Lucene.Net.Index
     ///  segment as the number of documents (not taking deletions
     ///  into account).
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class LogDocMergePolicy : LogMergePolicy
     {
         /// Default minimum segment size.  <seealso cref= setMinMergeDocs </seealso>

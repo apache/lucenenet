@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -23,6 +25,9 @@ namespace Lucene.Net.Search.Similarities
     /// </summary>
     /// <seealso cref= DFRSimilarity
     /// @lucene.experimental </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Normalization
     {
         /// <summary>
@@ -58,6 +63,9 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Implementation used when there is no normalization. </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class NoNormalization : Normalization
         {
             /// <summary>

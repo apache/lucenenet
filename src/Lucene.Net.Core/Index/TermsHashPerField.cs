@@ -28,6 +28,9 @@ namespace Lucene.Net.Index
     using Counter = Lucene.Net.Util.Counter;
     using Int32BlockPool = Lucene.Net.Util.Int32BlockPool;
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class TermsHashPerField : InvertedDocConsumerPerField
     {
         private const int HASH_INIT_SIZE = 4;
@@ -333,6 +336,9 @@ namespace Lucene.Net.Index
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class PostingsBytesStartArray : BytesRefHash.BytesStartArray
         {
             private readonly TermsHashPerField perField;

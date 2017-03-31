@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -27,6 +28,9 @@ namespace Lucene.Net.Search.Spans
     /// Checks to see if the <seealso cref="#getMatch()"/> lies between a start and end position
     /// </summary>
     /// <seealso cref= Lucene.Net.Search.Spans.SpanFirstQuery for a derivation that is optimized for the case where start position is 0 </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SpanPositionRangeQuery : SpanPositionCheckQuery
     {
         protected int m_start = 0;

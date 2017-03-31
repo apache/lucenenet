@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Lucene.Net.Index
@@ -38,6 +39,9 @@ namespace Lucene.Net.Index
     /// <code>IndexReader</code> instance; use your own
     /// (non-Lucene) objects instead.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class MultiReader : BaseCompositeReader<IndexReader>
     {
         private readonly bool closeSubReaders;

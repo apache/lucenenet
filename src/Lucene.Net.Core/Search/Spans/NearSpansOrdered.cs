@@ -53,6 +53,9 @@ namespace Lucene.Net.Search.Spans
     /// Expert:
     /// Only public for subclassing.  Most implementations should not need this class
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class NearSpansOrdered : Spans
     {
         private readonly int allowedSlop;
@@ -78,6 +81,9 @@ namespace Lucene.Net.Search.Spans
         // perform better since it has a lower overhead than TimSorter for small arrays
         private readonly InPlaceMergeSorter sorter;
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
         {
             private readonly NearSpansOrdered outerInstance;

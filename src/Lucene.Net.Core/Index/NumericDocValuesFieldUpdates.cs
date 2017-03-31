@@ -35,8 +35,14 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class NumericDocValuesFieldUpdates : DocValuesFieldUpdates
     {
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         new internal sealed class Iterator : DocValuesFieldUpdates.Iterator
         {
             private readonly int size;
@@ -155,6 +161,9 @@ namespace Lucene.Net.Index
             return new Iterator(size, values, docsWithField, docs);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
         {
             private readonly NumericDocValuesFieldUpdates outerInstance;

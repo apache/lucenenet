@@ -30,6 +30,9 @@ namespace Lucene.Net.Index
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class TermVectorsConsumer : TermsHashConsumer
     {
         internal TermVectorsWriter writer;

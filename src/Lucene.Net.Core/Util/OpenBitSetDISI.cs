@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Util
 {
     /*
@@ -23,6 +25,9 @@ namespace Lucene.Net.Util
     /// OpenBitSet with added methods to bulk-update the bits
     ///  from a <seealso cref="DocIdSetIterator"/>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class OpenBitSetDISI : OpenBitSet
     {
         /// <summary>

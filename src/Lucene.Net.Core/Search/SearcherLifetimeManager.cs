@@ -93,11 +93,16 @@ namespace Lucene.Net.Search
     /// window.  Still you should budget plenty of heap in the
     /// JVM to have a good safety margin.</p>
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SearcherLifetimeManager : IDisposable
     {
         internal const double NANOS_PER_SEC = 1000000000.0;
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class SearcherTracker : IComparable<SearcherTracker>, IDisposable
         {
             public IndexSearcher Searcher { get; private set; }
@@ -230,6 +235,9 @@ namespace Lucene.Net.Search
         ///  more than the specified seconds, than the newest
         ///  searcher.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public sealed class PruneByAge : IPruner
         {
             private readonly double maxAgeSec;

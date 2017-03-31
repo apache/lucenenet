@@ -26,6 +26,9 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class BaseDirectory : Directory
     {
         private volatile bool isOpen = true;

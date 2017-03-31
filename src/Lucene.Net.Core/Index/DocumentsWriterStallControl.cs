@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -37,6 +38,9 @@ namespace Lucene.Net.Index
     /// than the number of active <seealso cref="ThreadState"/>s threads are released and can
     /// continue indexing.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class DocumentsWriterStallControl
     {
         private volatile bool stalled;

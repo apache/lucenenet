@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -18,7 +19,9 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal abstract class TermsHashConsumer
     {
         public abstract void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state);

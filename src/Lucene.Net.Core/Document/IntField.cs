@@ -111,6 +111,9 @@ namespace Lucene.Net.Documents
     /// </para>
     /// @since 2.9
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class Int32Field : Field
     {
         /// <summary>

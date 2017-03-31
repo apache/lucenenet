@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -22,6 +24,9 @@ namespace Lucene.Net.Index
     /// <summary>
     /// A per-document <see cref="T:byte[]"/>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class BinaryDocValues
     {
         /// <summary>

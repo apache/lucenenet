@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -23,6 +25,9 @@ namespace Lucene.Net.Search.Similarities
     /// and {@code N} is increased by {@code F}.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class BasicModelG : BasicModel
     {
         /// <summary>

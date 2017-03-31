@@ -1,4 +1,5 @@
 using Lucene.Net.Index;
+using System;
 
 namespace Lucene.Net.Documents
 {
@@ -26,6 +27,9 @@ namespace Lucene.Net.Documents
     /// field, or any field that you intend to use for sorting
     /// or access through the field cache.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class StringField : Field
     {
         /// <summary>

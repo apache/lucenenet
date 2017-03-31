@@ -31,6 +31,9 @@ namespace Lucene.Net.Search.Similarities
     /// abnormally high scores for low tf values.
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class BasicModelD : BasicModel
     {
         /// <summary>

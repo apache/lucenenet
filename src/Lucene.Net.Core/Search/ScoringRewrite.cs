@@ -38,6 +38,9 @@ namespace Lucene.Net.Search
     /// <p>
     /// @lucene.internal Only public to be accessible by spans package.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class ScoringRewrite<Q> : TermCollectingRewrite<Q> where Q : Query
     {
         /// <summary>
@@ -56,6 +59,9 @@ namespace Lucene.Net.Search
         ///  <seealso cref= MultiTermQuery#setRewriteMethod  </seealso>
         public static readonly ScoringRewrite<BooleanQuery> SCORING_BOOLEAN_QUERY_REWRITE = new ScoringRewriteAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class ScoringRewriteAnonymousInnerClassHelper : ScoringRewrite<BooleanQuery>
         {
             public ScoringRewriteAnonymousInnerClassHelper()
@@ -96,6 +102,9 @@ namespace Lucene.Net.Search
         ///  <seealso cref= MultiTermQuery#setRewriteMethod  </seealso>
         public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = new RewriteMethodAnonymousInnerClassHelper();
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class RewriteMethodAnonymousInnerClassHelper : RewriteMethod
         {
             public RewriteMethodAnonymousInnerClassHelper()
@@ -141,6 +150,9 @@ namespace Lucene.Net.Search
             return result;
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class ParallelArraysTermCollector : TermCollector
         {
             internal void InitializeInstanceFields()
@@ -194,6 +206,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Special implementation of BytesStartArray that keeps parallel arrays for boost and docFreq </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class TermFreqBoostByteStart : BytesRefHash.DirectBytesStartArray
         {
             internal float[] boost;

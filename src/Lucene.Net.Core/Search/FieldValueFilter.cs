@@ -30,6 +30,9 @@ namespace Lucene.Net.Search
     /// given field. this <seealso cref="Filter"/> request <seealso cref="IBits"/> from the
     /// <seealso cref="IFieldCache"/> and build the bits if not present.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class FieldValueFilter : Filter
     {
         private readonly string field;
@@ -103,6 +106,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
         {
             private readonly FieldValueFilter outerInstance;
@@ -122,6 +128,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FieldCacheDocIdSetAnonymousInnerClassHelper2 : FieldCacheDocIdSet
         {
             private readonly FieldValueFilter outerInstance;

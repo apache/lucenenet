@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 
 namespace Lucene.Net.Index
 {
@@ -25,6 +26,9 @@ namespace Lucene.Net.Index
     ///  table and provides an API for writing bytes into
     ///  multiple streams for each unique Token.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal abstract class TermsHashConsumerPerField
     {
         internal abstract bool Start(IIndexableField[] fields, int count);

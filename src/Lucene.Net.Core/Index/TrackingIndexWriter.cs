@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -37,7 +38,9 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class TrackingIndexWriter
     {
         private readonly IndexWriter writer;

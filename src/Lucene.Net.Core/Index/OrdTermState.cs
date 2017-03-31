@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index
@@ -24,6 +25,9 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class OrdTermState : TermState
     {
         /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index
@@ -28,6 +29,9 @@ namespace Lucene.Net.Index
     /// against e.g. FieldCache.getDocTermOrds that also works for single-valued
     /// fields.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal sealed class SingletonSortedSetDocValues : SortedSetDocValues
     {
         private readonly SortedDocValues @in;

@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -27,6 +29,9 @@ namespace Lucene.Net.Search.Similarities
     /// In Text REtrieval Conference (1993), pp. 243-252
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class MultiSimilarity : Similarity
     {
         /// <summary>
@@ -67,6 +72,9 @@ namespace Lucene.Net.Search.Similarities
             return new MultiSimScorer(subScorers);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class MultiSimScorer : SimScorer
         {
             private readonly SimScorer[] subScorers;
@@ -107,6 +115,9 @@ namespace Lucene.Net.Search.Similarities
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class MultiStats : SimWeight
         {
             internal readonly SimWeight[] subStats;

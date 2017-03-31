@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -24,6 +25,9 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class ReaderUtil
     {
         private ReaderUtil() // no instance

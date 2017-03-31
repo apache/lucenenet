@@ -32,6 +32,9 @@ namespace Lucene.Net.Search.Spans
 
     /// <summary>
     /// Matches the union of its clauses. </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SpanOrQuery : SpanQuery
     {
         private readonly EquatableList<SpanQuery> clauses;
@@ -175,6 +178,9 @@ namespace Lucene.Net.Search.Spans
             return h;
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class SpanQueue : Util.PriorityQueue<Spans>
         {
             private readonly SpanOrQuery outerInstance;
@@ -215,6 +221,9 @@ namespace Lucene.Net.Search.Spans
             return new SpansAnonymousInnerClassHelper(this, context, acceptDocs, termContexts);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class SpansAnonymousInnerClassHelper : Spans
         {
             private readonly SpanOrQuery outerInstance;

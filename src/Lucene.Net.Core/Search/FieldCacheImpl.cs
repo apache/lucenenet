@@ -53,6 +53,9 @@ namespace Lucene.Net.Search
     ///
     /// @since   lucene 1.4
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class FieldCacheImpl : IFieldCache
     {
         private IDictionary<Type, Cache> caches;
@@ -137,6 +140,9 @@ namespace Lucene.Net.Search
         // per-segment fieldcaches don't purge until the shared core closes.
         internal readonly SegmentReader.ICoreClosedListener purgeCore;
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.ICoreClosedListener
         {
             private FieldCacheImpl outerInstance;
@@ -155,6 +161,9 @@ namespace Lucene.Net.Search
         // composite/SlowMultiReaderWrapper fieldcaches don't purge until composite reader is closed.
         internal readonly IndexReader.IReaderClosedListener purgeReader;
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class ReaderClosedListenerAnonymousInnerClassHelper : IndexReader.IReaderClosedListener
         {
             private FieldCacheImpl outerInstance;
@@ -196,6 +205,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Internal cache. </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal abstract class Cache
         {
             internal Cache(FieldCacheImpl wrapper)
@@ -333,6 +345,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Every composite-key in the internal cache is of this type. </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class CacheKey
         {
             internal readonly string field; // which Field 
@@ -379,6 +394,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private abstract class Uninvert
         {
             internal IBits docsWithField; // LUCENENET NOTE: Changed from public to internal, since FieldCacheImpl is internal anyway
@@ -507,6 +525,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache.Bytes
         {
             private readonly FieldCacheImpl outerInstance;
@@ -525,6 +546,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class BytesFromArray : FieldCache.Bytes
         {
             private readonly sbyte[] values;
@@ -540,6 +564,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class ByteCache : Cache
         {
             internal ByteCache(FieldCacheImpl wrapper)
@@ -574,6 +601,9 @@ namespace Lucene.Net.Search
                 return new BytesFromArray(values);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
                 private readonly sbyte[] values;
@@ -645,6 +675,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FieldCache_Int16sAnonymousInnerClassHelper : FieldCache.Int16s
         {
             private readonly FieldCacheImpl outerInstance;
@@ -666,6 +699,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was ShortsFromArray in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class Int16sFromArray : FieldCache.Int16s
         {
             private readonly short[] values;
@@ -684,6 +720,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was ShortCache in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class Int16Cache : Cache
         {
             internal Int16Cache(FieldCacheImpl wrapper)
@@ -716,6 +755,9 @@ namespace Lucene.Net.Search
                 return new Int16sFromArray(values);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
                 private readonly Int16Cache outerInstance;
@@ -789,6 +831,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FieldCache_Int32sAnonymousInnerClassHelper : FieldCache.Int32s
         {
             private readonly FieldCacheImpl outerInstance;
@@ -810,6 +855,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was IntsFromArray in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class Int32sFromArray : FieldCache.Int32s
         {
             private readonly PackedInt32s.Reader values;
@@ -829,6 +877,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class HoldsOneThing<T>
         {
             private T it;
@@ -844,6 +895,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class GrowableWriterAndMinValue
         {
             internal GrowableWriterAndMinValue(GrowableWriter array, long minValue)
@@ -859,6 +913,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was IntCache in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class Int32Cache : Cache
         {
             internal Int32Cache(FieldCacheImpl wrapper)
@@ -904,6 +961,9 @@ namespace Lucene.Net.Search
                 return new Int32sFromArray(values.Writer.Mutable, (int)values.MinValue);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
                 private readonly Int32Cache outerInstance;
@@ -985,6 +1045,9 @@ namespace Lucene.Net.Search
             return (IBits)caches[typeof(DocsWithFieldCache)].Get(reader, new CacheKey(field, null), false);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class DocsWithFieldCache : Cache
         {
             internal DocsWithFieldCache(FieldCacheImpl wrapper)
@@ -1091,6 +1154,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FieldCache_SinglesAnonymousInnerClassHelper : FieldCache.Singles
         {
             private readonly FieldCacheImpl outerInstance;
@@ -1112,6 +1178,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was FloatsFromArray in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class SinglesFromArray : FieldCache.Singles
         {
             private readonly float[] values;
@@ -1130,6 +1199,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was FloatCache in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class SingleCache : Cache
         {
             internal SingleCache(FieldCacheImpl wrapper)
@@ -1176,6 +1248,9 @@ namespace Lucene.Net.Search
                 return new SinglesFromArray(values);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
                 private readonly SingleCache outerInstance;
@@ -1260,6 +1335,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FieldCache_Int64sAnonymousInnerClassHelper : FieldCache.Int64s
         {
             private readonly FieldCacheImpl outerInstance;
@@ -1281,6 +1359,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was LongsFromArray in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class Int64sFromArray : FieldCache.Int64s
         {
             private readonly PackedInt32s.Reader values;
@@ -1301,6 +1382,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was LongCache in Lucene
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class Int64Cache : Cache
         {
             internal Int64Cache(FieldCacheImpl wrapper)
@@ -1346,6 +1430,9 @@ namespace Lucene.Net.Search
                 return new Int64sFromArray(values.Writer.Mutable, values.MinValue);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
                 private readonly Int64Cache outerInstance;
@@ -1441,6 +1528,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache.Doubles
         {
             private readonly FieldCacheImpl outerInstance;
@@ -1459,6 +1549,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class DoublesFromArray : FieldCache.Doubles
         {
             private readonly double[] values;
@@ -1474,6 +1567,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class DoubleCache : Cache
         {
             internal DoubleCache(FieldCacheImpl wrapper)
@@ -1519,6 +1615,9 @@ namespace Lucene.Net.Search
                 return new DoublesFromArray(values);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
                 private readonly DoubleCache outerInstance;
@@ -1564,6 +1663,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class SortedDocValuesImpl : SortedDocValues
         {
             private readonly PagedBytes.Reader bytes;
@@ -1640,6 +1742,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class SortedDocValuesCache : Cache
         {
             internal SortedDocValuesCache(FieldCacheImpl wrapper)
@@ -1744,6 +1849,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class BinaryDocValuesImpl : BinaryDocValues
         {
             private readonly PagedBytes.Reader bytes;
@@ -1810,6 +1918,9 @@ namespace Lucene.Net.Search
             return (BinaryDocValues)caches[typeof(BinaryDocValues)].Get(reader, new CacheKey(field, acceptableOverheadRatio), setDocsWithField);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class BinaryDocValuesCache : Cache
         {
             internal BinaryDocValuesCache(FieldCacheImpl wrapper)
@@ -1907,6 +2018,9 @@ namespace Lucene.Net.Search
                 return new BinaryDocValuesImpl(bytes.Freeze(true), offsetReader);
             }
 
+#if FEATURE_SERIALIZABLE
+            [Serializable]
+#endif
             private class BitsAnonymousInnerClassHelper : IBits
             {
                 private readonly BinaryDocValuesCache outerInstance;
@@ -1967,6 +2081,9 @@ namespace Lucene.Net.Search
             return dto.GetIterator(reader);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class DocTermOrdsCache : Cache
         {
             internal DocTermOrdsCache(FieldCacheImpl wrapper)

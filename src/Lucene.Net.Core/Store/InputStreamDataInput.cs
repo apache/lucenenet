@@ -23,6 +23,9 @@ namespace Lucene.Net.Store
     /// <summary>
     /// A <see cref="DataInput"/> wrapping a plain <see cref="Stream"/>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class InputStreamDataInput : DataInput, IDisposable
     {
         private BinaryReader _reader;

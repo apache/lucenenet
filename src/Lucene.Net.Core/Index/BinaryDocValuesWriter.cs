@@ -36,6 +36,9 @@ namespace Lucene.Net.Index
     /// Buffers up pending <see cref="T:byte[]"/> per doc, then flushes when
     /// segment flushes.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class BinaryDocValuesWriter : DocValuesWriter
     {
         /// <summary>

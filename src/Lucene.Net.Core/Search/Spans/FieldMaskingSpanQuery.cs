@@ -72,6 +72,9 @@ namespace Lucene.Net.Search.Spans
     /// but with the term statistics of the real field. this may lead to exceptions,
     /// poor performance, and unexpected scoring behaviour.</p>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class FieldMaskingSpanQuery : SpanQuery
     {
         private SpanQuery maskedQuery;

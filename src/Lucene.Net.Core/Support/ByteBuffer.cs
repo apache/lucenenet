@@ -164,6 +164,9 @@ namespace Lucene.Net.Support
     /// @author JSR-51 Expert Group
     /// @since 1.4
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class ByteBuffer : Buffer, IComparable<ByteBuffer>
     {
         internal byte[] hb; // Non-null only for heap buffers
@@ -630,7 +633,9 @@ namespace Lucene.Net.Support
 
         //public abstract DoubleBuffer AsDoubleBuffer();
 
-
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class HeapByteBuffer : ByteBuffer
         {
             // For speed these fields are actually declared in X-Buffer;
@@ -1284,6 +1289,9 @@ namespace Lucene.Net.Support
             //}
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class HeapByteBufferR : HeapByteBuffer
         {
             internal HeapByteBufferR(int cap, int lim)
@@ -1592,6 +1600,9 @@ namespace Lucene.Net.Support
         /// <summary>
         /// NOTE: This was ByteBufferAsLongBuffer in the JDK
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class ByteBufferAsInt64Buffer : Int64Buffer
         {
             protected readonly ByteBuffer bb;

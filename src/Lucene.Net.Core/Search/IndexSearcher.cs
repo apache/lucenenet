@@ -65,6 +65,9 @@ namespace Lucene.Net.Search
     /// synchronize on the <code>IndexSearcher</code> instance;
     /// use your own (non-Lucene) objects instead.</p>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class IndexSearcher
     {
         internal readonly IndexReader reader; // package private for testing!
@@ -749,6 +752,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// A thread subclass for searching a single searchable
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class SearcherCallableNoSort : ICallable<TopDocs>
         {
             private readonly ReentrantLock @lock;
@@ -798,6 +804,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// A thread subclass for searching a single searchable
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class SearcherCallableWithSort : ICallable<TopFieldDocs>
         {
             private readonly ReentrantLock @lock;
@@ -865,6 +874,9 @@ namespace Lucene.Net.Search
         /// </summary>
         /// @param <T>
         ///          the type of the <seealso cref="Callable"/> return value </param>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private sealed class ExecutionHelper<T> : IEnumerator<T>, IEnumerable<T>
         {
             private readonly ICompletionService<T> service;
@@ -961,6 +973,9 @@ namespace Lucene.Net.Search
         ///
         /// @lucene.experimental
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class LeafSlice
         {
             internal AtomicReaderContext[] Leaves { get; private set; }

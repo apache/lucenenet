@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -31,12 +32,18 @@ namespace Lucene.Net.Search
     /// <br>Implements skipTo(), and has no limitations on the numbers of added scorers.
     /// <br>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class BooleanScorer2 : Scorer
     {
         private readonly IList<Scorer> requiredScorers;
         private readonly IList<Scorer> optionalScorers;
         private readonly IList<Scorer> prohibitedScorers;
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class Coordinator
         {
             private readonly BooleanScorer2 outerInstance;
@@ -109,6 +116,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Count a scorer as a single match. </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class SingleMatchScorer : Scorer
         {
             private readonly BooleanScorer2 outerInstance;
@@ -182,6 +192,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class MinShouldMatchSumScorerAnonymousInnerClassHelper : MinShouldMatchSumScorer
         {
             private readonly BooleanScorer2 outerInstance;
@@ -199,6 +212,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class DisjunctionSumScorerAnonymousInnerClassHelper : DisjunctionSumScorer
         {
             private readonly BooleanScorer2 outerInstance;
@@ -223,6 +239,9 @@ namespace Lucene.Net.Search
             return new ConjunctionScorerAnonymousInnerClassHelper(this, m_weight, requiredScorers.ToArray(), requiredNrMatchers);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class ConjunctionScorerAnonymousInnerClassHelper : ConjunctionScorer
         {
             private readonly BooleanScorer2 outerInstance;

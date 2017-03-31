@@ -31,6 +31,9 @@ namespace Lucene.Net.Index
     /// point we read the forwarding address of the next slice
     /// and then jump to it.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class ByteSliceReader : DataInput // LUCENENET specific - changed from internal to public because returned from public API
     {
         private ByteBlockPool pool;

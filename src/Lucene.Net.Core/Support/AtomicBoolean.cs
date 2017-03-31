@@ -1,7 +1,11 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace Lucene.Net.Support
 {
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class AtomicBoolean
     {
         private int value = 0;

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System;
 
 namespace Lucene.Net.Search.Similarities
 {
@@ -34,6 +35,9 @@ namespace Lucene.Net.Search.Similarities
     ///
     /// @lucene.experimental
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class LMSimilarity : SimilarityBase
     {
         /// <summary>
@@ -103,6 +107,9 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Stores the collection distribution of the current term. </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class LMStats : BasicStats
         {
             /// <summary>
@@ -153,6 +160,9 @@ namespace Lucene.Net.Search.Similarities
         /// Models {@code p(w|C)} as the number of occurrences of the term in the
         /// collection, divided by the total number of tokens {@code + 1}.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class DefaultCollectionModel : ICollectionModel
         {
             /// <summary>

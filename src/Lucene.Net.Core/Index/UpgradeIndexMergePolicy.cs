@@ -45,6 +45,9 @@ namespace Lucene.Net.Index
     /// delegate {@code MergePolicy} may also reorder documents.
     /// @lucene.experimental </summary>
     /// <seealso cref= IndexUpgrader </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class UpgradeIndexMergePolicy : MergePolicy
     {
         /// <summary>

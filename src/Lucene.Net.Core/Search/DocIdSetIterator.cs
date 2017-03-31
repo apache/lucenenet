@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -26,6 +27,9 @@ namespace Lucene.Net.Search
     /// a sentinel object. Implementations of this class are expected to consider
     /// <see cref="int.MaxValue"/> as an invalid value.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class DocIdSetIterator
     {
         /// <summary>

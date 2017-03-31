@@ -6,6 +6,9 @@ namespace Lucene.Net.Support
     /// <summary>
     /// Ported from Java's nio.LongBuffer
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Int64Buffer : Buffer, IComparable<Int64Buffer>
     {
         // These fields are declared here rather than in Heap-X-Buffer in order to
@@ -240,6 +243,9 @@ namespace Lucene.Net.Support
         /// <summary>
         /// NOTE: This was HeapLongBuffer in the JDK
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class HeapInt64Buffer : Int64Buffer
         {
             // For speed these fields are actually declared in X-Buffer;

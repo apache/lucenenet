@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search.Payloads
 {
     /*
@@ -27,6 +29,9 @@ namespace Lucene.Net.Search.Payloads
     ///               change
     ///
     ///  </seealso>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class PayloadFunction
     {
         /// <summary>

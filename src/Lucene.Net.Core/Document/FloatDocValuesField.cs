@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Documents
 {
     /*
@@ -32,6 +34,9 @@ namespace Lucene.Net.Documents
     /// NOTE: This was FloatDocValuesField in Lucene
     /// </para>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SingleDocValuesField : NumericDocValuesField
     {
         /// <summary>

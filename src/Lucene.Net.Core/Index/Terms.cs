@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -26,7 +27,9 @@ namespace Lucene.Net.Index
     /// Access to the terms in a specific field.  See <seealso cref="Fields"/>.
     /// @lucene.experimental
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Terms
     {
         /// <summary>

@@ -38,6 +38,9 @@ namespace Lucene.Net.Index
     /// new <seealso cref="DocumentsWriterPerThread"/> instance.
     /// </p>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal abstract class DocumentsWriterPerThreadPool
     {
         /// <summary>
@@ -51,6 +54,9 @@ namespace Lucene.Net.Index
         /// and release the lock in a finally block via <seealso cref="ThreadState#unlock()"/>
         /// before accessing the state.
         /// </summary>
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal sealed class ThreadState : ReentrantLock
         {
             internal DocumentsWriterPerThread dwpt;

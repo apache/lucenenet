@@ -48,6 +48,9 @@ namespace Lucene.Net.Search
     ///
     /// <p>this query may be combined with other terms or queries with a <seealso cref="BooleanQuery"/>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class PhraseQuery : Query
     {
         private string field;
@@ -175,6 +178,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         internal class PostingsAndFreq : IComparable<PostingsAndFreq>
         {
             internal readonly DocsAndPositionsEnum postings;
@@ -282,6 +288,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class PhraseWeight : Weight
         {
             private readonly PhraseQuery outerInstance;

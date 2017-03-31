@@ -25,6 +25,9 @@ namespace Lucene.Net.Search
     /// by the subquery scorers that generate that document, plus tieBreakerMultiplier times the sum of the scores
     /// for the other subqueries that generate the document.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class DisjunctionMaxScorer : DisjunctionScorer
     {
         /* Multiplier applied to non-maximum-scoring subqueries for a document as they are summed into the result. */

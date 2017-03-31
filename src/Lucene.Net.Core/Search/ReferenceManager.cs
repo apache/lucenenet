@@ -35,6 +35,9 @@ namespace Lucene.Net.Search
     ///          <seealso cref="#release(Object) released"/>.
     ///
     /// @lucene.experimental </param>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class ReferenceManager<G> : IDisposable
         where G : class //Make G nullable
     {

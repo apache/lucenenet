@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -23,6 +24,9 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Scorer for conjunctions, sets of queries, all of which are required. </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class ConjunctionScorer : Scorer
     {
         protected int m_lastDoc = -1;

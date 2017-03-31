@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -26,6 +27,9 @@ namespace Lucene.Net.Search
     /// <br>
     /// this <code>Scorer</code> implements <seealso cref="Scorer#advance(int)"/>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     internal class ReqOptSumScorer : Scorer
     {
         /// <summary>

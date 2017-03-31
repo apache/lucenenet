@@ -43,6 +43,9 @@ namespace Lucene.Net.Index.Sorter
     /// @lucene.experimental 
     /// </para>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class SortingMergePolicy : MergePolicy
     {
 

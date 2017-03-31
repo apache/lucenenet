@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -30,6 +32,9 @@ namespace Lucene.Net.Search
     /// I/O.
     /// @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class FieldCacheDocIdSet : DocIdSet
     {
         protected readonly int m_maxDoc;
@@ -63,6 +68,9 @@ namespace Lucene.Net.Search
             get { return (m_acceptDocs == null) ? (IBits)new BitsAnonymousInnerClassHelper(this) : new BitsAnonymousInnerClassHelper2(this); }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class BitsAnonymousInnerClassHelper : IBits
         {
             private readonly FieldCacheDocIdSet outerInstance;
@@ -83,6 +91,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class BitsAnonymousInnerClassHelper2 : IBits
         {
             private readonly FieldCacheDocIdSet outerInstance;
@@ -123,6 +134,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class DocIdSetIteratorAnonymousInnerClassHelper : DocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;
@@ -171,6 +185,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class FilteredDocIdSetIteratorAnonymousInnerClassHelper : FilteredDocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;
@@ -187,6 +204,9 @@ namespace Lucene.Net.Search
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class DocIdSetIteratorAnonymousInnerClassHelper2 : DocIdSetIterator
         {
             private readonly FieldCacheDocIdSet outerInstance;

@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Store
@@ -27,6 +28,9 @@ namespace Lucene.Net.Store
     /// <see cref="Directory.CreateOutput(string, IOContext)"/>
     /// </summary>
     [ExceptionToClassNameConvention]
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class IOContext
     {
         /// <summary>

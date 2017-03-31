@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -27,6 +29,9 @@ namespace Lucene.Net.Index
     /// that need only visit one term, but want to preserve
     /// MultiTermQuery semantics such as <see cref="Search.MultiTermQuery.MultiTermRewriteMethod"/>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class SingleTermsEnum : FilteredTermsEnum
     {
         private readonly BytesRef singleRef;
