@@ -19,31 +19,34 @@
  *
 */
 
-using Lucene.Net.Analysis;
-using Lucene.Net.Document;
+using Lucene.Net.Analysis.Core;
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Support
 {
     [TestFixture]
     public class TestIDisposable
     {
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestReadersWriters()
         {
-            Directory dir;
+            BaseDirectory dir;
             
             using(dir = new RAMDirectory())
             {
                 Document doc;
                 IndexWriter writer;
                 IndexReader reader;
+                IndexWriterConfig conf = new IndexWriterConfig(Util.LuceneVersion.LUCENE_CURRENT, new WhitespaceAnalyzer(Util.LuceneVersion.LUCENE_CURRENT));
 
-                using (writer = new IndexWriter(dir, new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED))
+                using (writer = new IndexWriter(dir, conf /*new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED)*/))
                 {
-                    Field field = new Field("name", "value", Field.Store.YES,Field.Index.ANALYZED);
+                    Field field = new TextField("name", "value", Field.Store.YES /*,Field.Index.ANALYZED*/);
                     doc = new Document();
                     doc.Add(field);
                     writer.AddDocument(doc);
@@ -51,17 +54,16 @@ namespace Lucene.Net.Support
 
                     using (reader = writer.GetReader())
                     {
-                        IndexReader r1 = reader.Reopen();
                     }
 
-                    Assert.Throws<AlreadyClosedException>(() => reader.Reopen(), "IndexReader shouldn't be open here");
+                    Assert.Throws<ObjectDisposedException>(() => reader.RemoveReaderClosedListener(null), "IndexReader shouldn't be open here");
                 }
                 
-                Assert.Throws<AlreadyClosedException>(() => writer.AddDocument(doc), "IndexWriter shouldn't be open here");
+                Assert.Throws<ObjectDisposedException>(() => writer.AddDocument(doc), "IndexWriter shouldn't be open here");
 
-                Assert.IsTrue(dir.isOpen_ForNUnit, "RAMDirectory");
+                Assert.IsTrue(dir.IsOpen, "RAMDirectory");
             }
-            Assert.IsFalse(dir.isOpen_ForNUnit, "RAMDirectory");
+            Assert.IsFalse(dir.IsOpen, "RAMDirectory");
         }
     }
 }

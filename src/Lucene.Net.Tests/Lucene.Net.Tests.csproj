@@ -498,6 +498,7 @@
     <Compile Include="Support\TestEquatableSet.cs" />
     <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="Support\TestHashMap.cs" />
+    <Compile Include="Support\TestIDisposable.cs" />
     <Compile Include="Support\TestLinkedHashMap.cs" />
     <Compile Include="Support\TestLongBuffer.cs" />
     <Compile Include="Support\TestByteBuffer.cs" />
