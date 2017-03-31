@@ -30,7 +30,9 @@ namespace Lucene.Net.Index
     ///  Note that terms may represent more than words from text fields, but also
     ///  things like dates, email addresses, urls, etc.
     /// </summary>
-
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class Term : IComparable<Term>, IEquatable<Term> // LUCENENET specific - class implements IEquatable<T>
     {
         /// <summary>

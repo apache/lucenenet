@@ -24,6 +24,9 @@ using System.Linq;
 using System.Reflection;
 using Lucene.Net.Search;
 using NUnit.Framework;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+using Lucene.Net.Attributes;
 
 namespace Lucene.Net.Support
 {
@@ -41,7 +44,8 @@ namespace Lucene.Net.Support
 
         void Index()
         {
-            Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(dir, new Lucene.Net.Analysis.WhitespaceAnalyzer(), Lucene.Net.Index.IndexWriter.MaxFieldLength.UNLIMITED);
+            var conf = new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, new Lucene.Net.Analysis.Core.WhitespaceAnalyzer(LuceneVersion.LUCENE_CURRENT));
+            Lucene.Net.Index.IndexWriter wr = new Lucene.Net.Index.IndexWriter(dir, conf/*new Lucene.Net.Analysis.Core.WhitespaceAnalyzer(LuceneVersion.LUCENE_CURRENT), Lucene.Net.Index.IndexWriter.MaxFieldLength.UNLIMITED*/);
 
             Lucene.Net.Documents.Document doc = null;
             Lucene.Net.Documents.Field f = null;
@@ -70,7 +74,7 @@ namespace Lucene.Net.Support
         }
 
 
-        [Test]
+        [Test, LuceneNetSpecific]
         [Description("LUCENENET-338  (also see LUCENENET-170)")]
         public void TestBooleanQuerySerialization()
         {
@@ -87,16 +91,20 @@ namespace Lucene.Net.Support
 
             Assert.AreEqual(lucQuery, lucQuery2, "Error in serialization");
 
-            Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
+            using (var reader = DirectoryReader.Open(dir))
+            {
+                //Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
+                Lucene.Net.Search.IndexSearcher searcher = new Lucene.Net.Search.IndexSearcher(reader);
 
-            int hitCount = searcher.Search(lucQuery, 20).TotalHits;
-            
-            searcher.Close();
-            searcher = new Lucene.Net.Search.IndexSearcher(dir, true);
-            
-            int hitCount2 = searcher.Search(lucQuery2, 20).TotalHits;
+                int hitCount = searcher.Search(lucQuery, 20).TotalHits;
 
-            Assert.AreEqual(hitCount, hitCount2, "Error in serialization - different hit counts");
+                //searcher.Close();
+                searcher = new Lucene.Net.Search.IndexSearcher(reader);
+
+                int hitCount2 = searcher.Search(lucQuery2, 20).TotalHits;
+
+                Assert.AreEqual(hitCount, hitCount2, "Error in serialization - different hit counts");
+            }
         }
     }
 }

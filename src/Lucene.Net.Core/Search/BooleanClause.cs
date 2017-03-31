@@ -21,6 +21,9 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// A clause in a BooleanQuery. </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class BooleanClause : IEquatable<BooleanClause>
     {
         // LUCENENET specific - de-nested Occur from BooleanClause in order to prevent

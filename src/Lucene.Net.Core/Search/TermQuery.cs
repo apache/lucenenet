@@ -41,6 +41,9 @@ namespace Lucene.Net.Search
     /// A Query that matches documents containing a term.
     ///  this may be combined with other terms with a <seealso cref="BooleanQuery"/>.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class TermQuery : Query
     {
         private readonly Term term;

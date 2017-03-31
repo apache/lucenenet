@@ -36,6 +36,9 @@ namespace Lucene.Net.Util
     /// is <b>wrong</b>, as it does not respect the correct character set
     /// and may return wrong results (depending on the platform's defaults)!
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class BytesRef : IComparable<BytesRef>, IComparable // LUCENENET specific - implemented IComparable for FieldComparator
     {
         /// <summary>

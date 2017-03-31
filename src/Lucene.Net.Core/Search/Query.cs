@@ -45,6 +45,9 @@ namespace Lucene.Net.Search
     ///    <p>See also the family of <seealso cref="Lucene.Net.Search.Spans Span Queries"/>
     ///       and additional queries available in the <a href="{@docRoot}/../queries/overview-summary.html">Queries module</a>
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public abstract class Query
     {
         // LUCENENET NOTE: We can't set the default boost in the constructor because the

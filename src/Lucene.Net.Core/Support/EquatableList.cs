@@ -30,6 +30,9 @@ namespace Lucene.Net.Support
     /// other functionality.
     /// </summary>
     /// <typeparam name="T">The type of elements in the list.</typeparam>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class EquatableList<T> : IList<T>, IEquatable<IList<T>>
 #if !NETSTANDARD
         , ICloneable
