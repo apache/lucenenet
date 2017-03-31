@@ -13,25 +13,13 @@
       "buildOptions": {
         "define": [ "FEATURE_TASKMERGESCHEDULER", "NETSTANDARD" ],
         "compile": {
-          "exclude": [
-            "Util/Cache/*"
-          ],
           "excludeFiles": [
             "RectangularArrays.cs",
             "Index/ConcurrentMergeScheduler.cs",
             "Support/Deflater.cs",
             "Support/Inflater.cs",
             "Support/SharpZipLib.cs",
-            "Support/StreamUtils.cs",
-            "Util/AverageGuessMemoryModel.cs",
-            "Util/BitVector.cs",
-            "Util/CloseableThreadLocal-old.cs",
-            "Util/IdentityDictionary.cs",
-            "Util/MemoryModel.cs",
-            "Util/ReaderUtil.cs",
-            "Util/ScorerDocQueue.cs",
-            "Util/SortedVIntList.cs",
-            "Util/SorterTemplate.cs"
+            "Support/StreamUtils.cs"
           ]
         }
       },
@@ -64,20 +52,8 @@
           "FEATURE_LIFETIME_SERVICE"
         ],
         "compile": {
-          "exclude": [
-            "Util/Cache/*"
-          ],
           "excludeFiles": [
-            "RectangularArrays.cs",
-            "Util/AverageGuessMemoryModel.cs",
-            "Util/BitVector.cs",
-            "Util/CloseableThreadLocal-old.cs",
-            "Util/IdentityDictionary.cs",
-            "Util/MemoryModel.cs",
-            "Util/ReaderUtil.cs",
-            "Util/ScorerDocQueue.cs",
-            "Util/SortedVIntList.cs",
-            "Util/SorterTemplate.cs"
+            "RectangularArrays.cs"
           ]
         }
       }
