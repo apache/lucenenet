@@ -63,6 +63,17 @@ namespace Lucene.Net.Analysis
             }
         }
 
+        public override string ReadToEnd()
+        {
+            if (pos < size)
+            {
+                string result = s.Substring(pos);
+                pos = size;
+                return result;
+            }
+            return null;
+        }
+
         protected override void Dispose(bool disposing)
         {
             pos = size; // this prevents NPE when reading after close!
