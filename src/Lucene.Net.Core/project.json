@@ -14,7 +14,6 @@
         "define": [ "FEATURE_TASKMERGESCHEDULER", "NETSTANDARD" ],
         "compile": {
           "excludeFiles": [
-            "RectangularArrays.cs",
             "Index/ConcurrentMergeScheduler.cs",
             "Support/Deflater.cs",
             "Support/Inflater.cs",
@@ -50,12 +49,7 @@
           "FEATURE_MARSHAL_BY_REF",
           "FEATURE_CLOSEABLE",
           "FEATURE_LIFETIME_SERVICE"
-        ],
-        "compile": {
-          "excludeFiles": [
-            "RectangularArrays.cs"
-          ]
-        }
+        ]
       }
     }
   }
