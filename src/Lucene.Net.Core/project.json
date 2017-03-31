@@ -14,7 +14,6 @@
         "define": [ "FEATURE_TASKMERGESCHEDULER", "NETSTANDARD" ],
         "compile": {
           "exclude": [
-            "Document/FieldSelector*.cs",
             "Index/CompoundFile*.cs",
             "Index/DefaultSkipList*.cs",
             "Index/FormatPostings*.cs",
@@ -33,14 +32,6 @@
           ],
           "excludeFiles": [
             "RectangularArrays.cs",
-            "Document/AbstractField.cs",
-            "Document/DateField.cs",
-            "Document/Fieldable.cs",
-            "Document/LoadFirstFieldSelector.cs",
-            "Document/MapFieldSelector.cs",
-            "Document/NumberTools.cs",
-            "Document/NumericField.cs",
-            "Document/SetBasedFieldSelector.cs",
             "Index/AbstractAllTermDocs.cs",
             "Index/AllTermDocs.cs",
             "Index/BufferedDeletes.cs",
@@ -156,7 +147,6 @@
         ],
         "compile": {
           "exclude": [
-            "Document/FieldSelector*.cs",
             "Index/CompoundFile*.cs",
             "Index/DefaultSkipList*.cs",
             "Index/FormatPostings*.cs",
@@ -175,14 +165,6 @@
           ],
           "excludeFiles": [
             "RectangularArrays.cs",
-            "Document/AbstractField.cs",
-            "Document/DateField.cs",
-            "Document/Fieldable.cs",
-            "Document/LoadFirstFieldSelector.cs",
-            "Document/MapFieldSelector.cs",
-            "Document/NumberTools.cs",
-            "Document/NumericField.cs",
-            "Document/SetBasedFieldSelector.cs",
             "Index/AbstractAllTermDocs.cs",
             "Index/AllTermDocs.cs",
             "Index/BufferedDeletes.cs",
