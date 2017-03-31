@@ -19,24 +19,25 @@
  *
 */
 
-using System;
 using Lucene.Net.Analysis;
-using Lucene.Net.Document;
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
 using NUnit.Framework;
-using Version = Lucene.Net.Util.Version;
+using System;
+using Version = Lucene.Net.Util.LuceneVersion;
 
 namespace Lucene.Net.Support
 {
     [TestFixture]
     public class TestCloseableThreadLocal
     {
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestMemLeakage()
         {
-            CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler = true;
+            DisposableThreadLocalProfiler.EnableIDisposableThreadLocalProfiler = true;
 
             int LoopCount = 100;
             Analyzer[] analyzers = new Analyzer[LoopCount];
@@ -47,7 +48,8 @@ namespace Lucene.Net.Support
                                                                   {
                                                                       analyzers[i] = new Lucene.Net.Analysis.Standard.StandardAnalyzer(Version.LUCENE_CURRENT);
                                                                       dirs[i] = new RAMDirectory();
-                                                                      indexWriters[i] = new IndexWriter(dirs[i], analyzers[i], true, IndexWriter.MaxFieldLength.UNLIMITED);
+                                                                      var conf = new IndexWriterConfig(Version.LUCENE_CURRENT, analyzers[i]);
+                                                                      indexWriters[i] = new IndexWriter(dirs[i], conf /*analyzers[i], true, IndexWriter.MaxFieldLength.UNLIMITED*/);
                                                                   });
 
             System.Threading.Tasks.Parallel.For(0, LoopCount, (i) =>
@@ -65,9 +67,11 @@ namespace Lucene.Net.Support
 
             System.Threading.Tasks.Parallel.For(0, LoopCount, (i) =>
                                                                   {
-                                                                      IndexSearcher searcher = new IndexSearcher(dirs[i]);
-                                                                      TopDocs d = searcher.Search(new TermQuery(new Term("field", "test")), 10);
-                                                                      searcher.Close();
+                                                                      using (IndexReader reader = DirectoryReader.Open(dirs[i]))
+                                                                      {
+                                                                          IndexSearcher searcher = new IndexSearcher(reader);
+                                                                          TopDocs d = searcher.Search(new TermQuery(new Term("field", "test")), 10);
+                                                                      }
                                                                   });
 
             System.Threading.Tasks.Parallel.For(0, LoopCount, (i) => dirs[i].Dispose());
@@ -76,13 +80,13 @@ namespace Lucene.Net.Support
             GC.WaitForPendingFinalizers();
 
             int aliveObjects = 0;
-            foreach (WeakReference w in CloseableThreadLocalProfiler.Instances)
+            foreach (WeakReference w in DisposableThreadLocalProfiler.Instances)
             {
                 object o = w.Target;
                 if (o != null) aliveObjects++;
             }
 
-            CloseableThreadLocalProfiler.EnableCloseableThreadLocalProfiler = false;
+            DisposableThreadLocalProfiler.EnableIDisposableThreadLocalProfiler = false;
 
             Assert.AreEqual(0, aliveObjects);
         }
