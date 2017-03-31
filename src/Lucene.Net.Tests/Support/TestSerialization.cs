@@ -28,6 +28,7 @@ using Lucene.Net.Index;
 using Lucene.Net.Util;
 using Lucene.Net.Attributes;
 
+#pragma warning disable 612, 618
 namespace Lucene.Net.Support
 {
     [TestFixture]
@@ -108,3 +109,4 @@ namespace Lucene.Net.Support
         }
     }
 }
+#pragma warning restore 612, 618

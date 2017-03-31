@@ -96,7 +96,9 @@ namespace Lucene.Net.Support
                     if (i % 1024 == 0) Console.WriteLine("Requested Mem: " + i.ToString() + " MB");
                     OOMECount = 0;
                 }
+#pragma warning disable 168
                 catch (OutOfMemoryException oom)
+#pragma warning restore 168
                 {
                     if (OOMECount++ > 10) throw new Exception("Memory Allocation Error in B_TestOutOfMemory");
                     //Try Again. GC will eventually release some memory.

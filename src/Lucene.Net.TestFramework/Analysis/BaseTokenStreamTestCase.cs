@@ -997,7 +997,9 @@ namespace Lucene.Net.Analysis
                         {
                             ts.Reset();
                         }
+#pragma warning disable 168
                         catch (Exception ex)
+#pragma warning restore 168
                         {
                             // ignore
                         }

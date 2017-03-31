@@ -62,7 +62,9 @@ namespace Lucene.Net.Analysis.Util
         /// Return a <see cref="CharacterUtils"/> instance compatible with Java 1.4. </summary>
         public static CharacterUtils GetJava4Instance(LuceneVersion matchVersion) // LUCENENET specific - added matchVersion parameter so we can support backward compatible Unicode support
         {
+#pragma warning disable 612, 618
             return matchVersion.OnOrAfter(LuceneVersion.LUCENE_31) ? JAVA_4 : JAVA_4_BW_COMPAT;
+#pragma warning restore 612, 618
         }
 
         /// <summary>

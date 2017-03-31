@@ -43,7 +43,9 @@ namespace Lucene.Net.Support
                     clone = (T)binaryFormatter.Deserialize(serializationStream);
                 }
             }
+#pragma warning disable 168
             catch (SerializationException ex)
+#pragma warning restore 168
             {
                 return false;
             }

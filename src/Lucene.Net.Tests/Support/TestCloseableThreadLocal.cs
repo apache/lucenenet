@@ -29,6 +29,7 @@ using NUnit.Framework;
 using System;
 using Version = Lucene.Net.Util.LuceneVersion;
 
+#pragma warning disable 612, 618
 namespace Lucene.Net.Support
 {
     [TestFixture]
@@ -108,5 +109,5 @@ namespace System.Threading.Tasks
         }
     }
 }
-
+#pragma warning restore 612, 618
 #endif

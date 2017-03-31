@@ -30,6 +30,7 @@ using Lucene.Net.Test;
 using NUnit.Framework;
 using Version = Lucene.Net.Util.LuceneVersion;
 
+#pragma warning disable 612, 618
 namespace Lucene.Net.Support
 {
     [TestFixture]
@@ -335,3 +336,4 @@ namespace Lucene.Net.Support
         ////-------------------------------------------
     }
 }
+#pragma warning restore 612, 618

@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
 
             internal bool DiskFull;
             internal Exception Error;
-            internal ObjectDisposedException Ace;
+            //internal ObjectDisposedException Ace; // LUCENENET: Not used
             internal IndexWriter Writer;
             internal bool NoErrors;
             internal volatile int AddCount;

@@ -120,7 +120,9 @@ namespace Lucene.Net.Util
             internal long Field1 = 5000L;
             internal string Name = "name";
             internal Holder Holder_Renamed;
+#pragma warning disable 649
             internal long Field2, Field3, Field4;
+#pragma warning restore 649
 
             internal Holder()
             {
@@ -135,8 +137,10 @@ namespace Lucene.Net.Util
 
         private class HolderSubclass : Holder
         {
+#pragma warning disable 649
             internal sbyte Foo;
             internal int Bar;
+#pragma warning restore 649
         }
 
         private class HolderSubclass2 : Holder

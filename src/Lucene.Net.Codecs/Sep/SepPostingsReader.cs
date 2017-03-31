@@ -294,7 +294,7 @@ namespace Lucene.Net.Codecs.Sep
             private int accum;
             private int count;
             private int freq;
-            private long freqStart;
+            //private long freqStart; // LUCENENET: Not used
 
             // TODO: -- should we do omitTF with 2 different enum classes?
             private bool omitTF;
@@ -488,7 +488,7 @@ namespace Lucene.Net.Codecs.Sep
             private int accum;
             private int count;
             private int freq;
-            private long freqStart;
+            //private long freqStart; // LUCENENET: Not used
 
             private bool storePayloads;
             private IBits liveDocs;
