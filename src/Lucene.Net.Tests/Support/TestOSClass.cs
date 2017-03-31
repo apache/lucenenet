@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 
 namespace Lucene.Net.Support
@@ -27,21 +28,21 @@ namespace Lucene.Net.Support
     public class TestOSClass
     {
         // LUCENENET-216
-        [Test]
+        [Test, LuceneNetSpecific]
         public void TestFSDirectorySync()
         {
             System.IO.DirectoryInfo path = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "testsync"));
             Lucene.Net.Store.Directory directory = new Lucene.Net.Store.SimpleFSDirectory(path, null);
             try
             {
-                Lucene.Net.Store.IndexOutput io = directory.CreateOutput("syncfile");
-                io.Close();
-                directory.Sync("syncfile");
+                Lucene.Net.Store.IndexOutput io = directory.CreateOutput("syncfile", new Store.IOContext());
+                io.Dispose();
+                directory.Sync(new string[] { "syncfile" });
             }
             finally
             {
-                directory.Close();
-                Lucene.Net.Util._TestUtil.RmDir(path);
+                directory.Dispose();
+                Lucene.Net.Util.TestUtil.Rm(path);
             }
         }
     }
