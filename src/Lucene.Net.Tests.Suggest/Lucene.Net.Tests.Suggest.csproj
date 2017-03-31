@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;FEATURE_SERIALIZABLE;FEATURE_THREAD_PRIORITY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -72,6 +72,7 @@
     <Compile Include="Suggest\PersistenceTest.cs" />
     <Compile Include="Suggest\TestHighFrequencyDictionary.cs" />
     <Compile Include="Suggest\TestInputIterator.cs" />
+    <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="TestApiConsistency.cs" />
   </ItemGroup>
   <ItemGroup>

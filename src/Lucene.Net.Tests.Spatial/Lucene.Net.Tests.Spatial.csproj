@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;FEATURE_SERIALIZABLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -58,6 +58,7 @@
     <Compile Include="SpatialTestData.cs" />
     <Compile Include="SpatialTestQuery.cs" />
     <Compile Include="StrategyTestCase.cs" />
+    <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="TestApiConsistency.cs" />
     <Compile Include="TestTestFramework.cs" />
     <Compile Include="Vector\TestPointVectorStrategy.cs" />

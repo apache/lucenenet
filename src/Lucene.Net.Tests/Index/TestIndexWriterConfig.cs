@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should have hit AlreadySetException");
             }
 #pragma warning disable 168
-            catch (SetOnce<IndexWriter>.AlreadySetException e)
+            catch (AlreadySetException e)
 #pragma warning restore 168
             {
                 // expected
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
                 Assert.Fail("should have hit AlreadySetException");
             }
 #pragma warning disable 168
-            catch (SetOnce<IndexWriter>.AlreadySetException e)
+            catch (AlreadySetException e)
 #pragma warning restore 168
             {
                 // expected

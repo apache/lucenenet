@@ -1,4 +1,9 @@
-﻿namespace Lucene.Net.QueryParsers.Surround.Query
+﻿using System;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
+
+namespace Lucene.Net.QueryParsers.Surround.Query
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -21,10 +26,30 @@
     /// Exception thrown when <see cref="BasicQueryFactory"/> would exceed the limit
     /// of query clauses.
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class TooManyBasicQueries : System.IO.IOException
     {
         public TooManyBasicQueries(int maxBasicQueries)
             : base("Exceeded maximum of " + maxBasicQueries + " basic queries.")
         { }
+
+        // For testing
+        internal TooManyBasicQueries(string message)
+            : base(message)
+        { }
+
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public TooManyBasicQueries(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 }

@@ -82,7 +82,7 @@ namespace Lucene.Net.Util
         {
             SetOnce<Integer> set = new SetOnce<Integer>(new Integer(5));
             Assert.AreEqual(5, set.Get().value);
-            Assert.Throws<SetOnce<Integer>.AlreadySetException>(() => set.Set(new Integer(7)));
+            Assert.Throws<AlreadySetException>(() => set.Set(new Integer(7)));
         }
 
         [Test]
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
             SetOnce<Integer> set = new SetOnce<Integer>();
             set.Set(new Integer(5));
             Assert.AreEqual(5, set.Get().value);
-            Assert.Throws<SetOnce<Integer>.AlreadySetException>(() => set.Set(new Integer(7)));
+            Assert.Throws<AlreadySetException>(() => set.Set(new Integer(7)));
         }
 
         [Test]

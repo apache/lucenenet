@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET451;FEATURE_SERIALIZABLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -496,6 +496,7 @@
     <Compile Include="Support\TestCollections.cs" />
     <Compile Include="Support\TestEquatableList.cs" />
     <Compile Include="Support\TestEquatableSet.cs" />
+    <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="Support\TestHashMap.cs" />
     <Compile Include="Support\TestLinkedHashMap.cs" />
     <Compile Include="Support\TestLongBuffer.cs" />

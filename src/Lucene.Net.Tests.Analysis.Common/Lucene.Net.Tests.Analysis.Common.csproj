@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;FEATURE_SERIALIZABLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -315,6 +315,7 @@
     <Compile Include="Collation\TestCollationKeyFilter.cs" />
     <Compile Include="Collation\TestCollationKeyFilterFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="TestApiConsistency.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -450,6 +451,7 @@
   <ItemGroup>
     <EmbeddedResource Include="Analysis\CharFilters\MS-Word14generated.htm" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

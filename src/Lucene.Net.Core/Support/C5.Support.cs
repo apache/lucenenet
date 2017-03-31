@@ -22,6 +22,9 @@
 using System;
 using System.Linq;
 using System.Reflection;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
 using SCG = System.Collections.Generic;
 
 namespace Lucene.Net.Support.C5
@@ -7093,6 +7096,18 @@ namespace Lucene.Net.Support.C5
     public class InternalException : Exception
     {
         internal InternalException(string message) : base(message) { }
+
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public InternalException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7115,6 +7130,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public ReadOnlyCollectionException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public ReadOnlyCollectionException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7134,6 +7160,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public FixedSizeCollectionException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public FixedSizeCollectionException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7153,6 +7190,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public UnlistenableEventException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public UnlistenableEventException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7168,7 +7216,6 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         public ConcurrentEnumerationException()
         {
-
         }
 
         /// <summary>
@@ -7176,6 +7223,18 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public ConcurrentEnumerationException(string message) : base(message) { }
+
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public ConcurrentEnumerationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
     /// <summary>
     /// An exception thrown by the MemorySafeEnumerator if the collection is enumerated multiple times when the 
@@ -7191,7 +7250,6 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         public MultipleEnumerationException()
         {
-
         }
 
         /// <summary>
@@ -7199,6 +7257,18 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public MultipleEnumerationException(string message) : base(message) { }
+
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public MultipleEnumerationException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
     /// <summary>
     /// An exception thrown by enumerators, range views etc. when accessed after 
@@ -7218,6 +7288,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public CollectionModifiedException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public CollectionModifiedException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7243,6 +7324,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public ViewDisposedException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public ViewDisposedException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7265,6 +7357,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public NoSuchItemException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public NoSuchItemException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7285,6 +7388,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public NotAViewException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public NotAViewException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7309,6 +7423,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public DuplicateNotAllowedException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public DuplicateNotAllowedException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7328,6 +7453,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public InvalidPriorityQueueHandleException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public InvalidPriorityQueueHandleException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7348,6 +7484,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public NotComparableException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public NotComparableException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
     /// <summary>
@@ -7368,6 +7515,17 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public IncompatibleViewException(string message) : base(message) { }
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public IncompatibleViewException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 
 

@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;FEATURE_SERIALIZABLE;FEATURE_THREAD_PRIORITY;FEATURE_THREADINTERRUPTEDEXCEPTION</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -43,6 +43,7 @@
     <Compile Include="Range\TestRangeFacetCounts.cs" />
     <Compile Include="SlowRAMDirectory.cs" />
     <Compile Include="SortedSet\TestSortedSetDocValuesFacets.cs" />
+    <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="Taxonomy\Directory\TestAddTaxonomy.cs" />
     <Compile Include="Taxonomy\Directory\TestConcurrentFacetedIndexing.cs" />
     <Compile Include="Taxonomy\Directory\TestDirectoryTaxonomyReader.cs" />

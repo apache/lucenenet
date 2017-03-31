@@ -428,6 +428,7 @@
     <Compile Include="Support\RandomizedTest.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Support\ExceptionSerializationTestBase.cs" />
     <Compile Include="Support\SystemProperties.cs" />
     <Compile Include="Util\ApiScanTestBase.cs" />
     <Compile Include="Util\Automaton\AutomatonTestUtil.cs">

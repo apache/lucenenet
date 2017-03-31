@@ -1,6 +1,9 @@
 // ANTLR GENERATED CODE: DO NOT EDIT (LUCENENET: Not really auto generated in the port)
 
 using System;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
 using Antlr.Runtime;
 
 namespace Lucene.Net.Expressions.JS
@@ -2169,7 +2172,26 @@ loop2_break: ;
     public class ParseException : Exception
     {
         public ParseException(string message, int charPositionInLine)
+            : base(message + ": " + charPositionInLine)
         {
         }
+
+        // For testing
+        internal ParseException(string message)
+            : base(message)
+        {
+        }
+
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public ParseException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 }

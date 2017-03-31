@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
 using System.Text;
 
 namespace Lucene.Net.QueryParsers.Classic
@@ -52,7 +55,27 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Do not catch this exception in your code, it means you are using methods that you should no longer use.
         /// </summary>
-        public class MethodRemovedUseAnother : Exception { }
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
+        public class MethodRemovedUseAnother : Exception
+        {
+            public MethodRemovedUseAnother()
+            { }
+
+#if FEATURE_SERIALIZABLE
+            /// <summary>
+            /// Initializes a new instance of this class with serialized data.
+            /// </summary>
+            /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+            public MethodRemovedUseAnother(SerializationInfo info, StreamingContext context)
+                : base(info, context)
+            {
+            }
+#endif
+        }
 
         protected const int CONJ_NONE = 0;
         protected const int CONJ_AND = 1;

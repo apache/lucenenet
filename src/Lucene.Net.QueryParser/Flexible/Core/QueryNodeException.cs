@@ -2,6 +2,9 @@
 using Lucene.Net.QueryParsers.Flexible.Messages;
 using System;
 using System.Globalization;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
 
 namespace Lucene.Net.QueryParsers.Flexible.Core
 {
@@ -56,6 +59,23 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         {
             this.m_message = message;
         }
+
+        // For testing
+        internal QueryNodeException(string message)
+            : base(message)
+        { }
+
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public QueryNodeException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
 
         public virtual IMessage MessageObject
         {

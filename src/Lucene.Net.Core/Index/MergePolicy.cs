@@ -2,6 +2,9 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
 using System.Text;
 using System.Threading;
 
@@ -496,6 +499,24 @@ namespace Lucene.Net.Index
                 this.dir = dir;
             }
 
+            // For testing purposes
+            internal MergeException(string message)
+                : base(message)
+            {
+            }
+
+#if FEATURE_SERIALIZABLE
+            /// <summary>
+            /// Initializes a new instance of this class with serialized data.
+            /// </summary>
+            /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+            public MergeException(SerializationInfo info, StreamingContext context)
+                : base(info, context)
+            {
+            }
+#endif
+
             /// <summary>
             /// Returns the <seealso cref="Directory"/> of the index that hit
             ///  the exception.
@@ -536,6 +557,18 @@ namespace Lucene.Net.Index
                 : base(message)
             {
             }
+
+#if FEATURE_SERIALIZABLE
+            /// <summary>
+            /// Initializes a new instance of this class with serialized data.
+            /// </summary>
+            /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+            public MergeAbortedException(SerializationInfo info, StreamingContext context)
+                : base(info, context)
+            {
+            }
+#endif
         }
 
         /// <summary>

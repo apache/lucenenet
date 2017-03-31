@@ -1,5 +1,8 @@
 using Lucene.Net.Support;
 using System;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
 
 namespace Lucene.Net.Util
 {
@@ -31,20 +34,6 @@ namespace Lucene.Net.Util
     /// </summary>
     public sealed class SetOnce<T> where T : class // LUCENENET specific - added class constraint so we don't accept value types (which cannot be volatile)
     {
-        /// <summary>
-        /// Thrown when <see cref="SetOnce.Set(T)"/> is called more than once. </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
-        public sealed class AlreadySetException : InvalidOperationException
-        {
-            public AlreadySetException()
-                : base("The object cannot be set twice!")
-            {
-            }
-        }
-
         private volatile T obj = default(T);
         private readonly AtomicBoolean set;
 
@@ -95,5 +84,33 @@ namespace Lucene.Net.Util
         {
             return obj == null ? new SetOnce<T>() : new SetOnce<T>(obj);
         }
+    }
+
+    /// <summary>
+    /// Thrown when <see cref="SetOnce{T}.Set(T)"/> is called more than once. </summary>
+    // LUCENENET specific - de-nested the class from SetOnce<T> to allow the test
+    // framework to serialize it without the generic type.
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
+    public sealed class AlreadySetException : InvalidOperationException
+    {
+        public AlreadySetException()
+            : base("The object cannot be set twice!")
+        {
+        }
+
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public AlreadySetException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 }

@@ -1,5 +1,8 @@
 using Lucene.Net.Support;
 using System;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
 using System.Threading;
 
 namespace Lucene.Net.Search
@@ -34,6 +37,10 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// Thrown when elapsed search time exceeds allowed search time. </summary>
+        // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         public class TimeExceededException : Exception
         {
             private long timeAllowed;
@@ -47,6 +54,24 @@ namespace Lucene.Net.Search
                 this.timeElapsed = timeElapsed;
                 this.lastDocCollected = lastDocCollected;
             }
+
+            // For testing purposes
+            internal TimeExceededException(string message)
+                : base(message)
+            {
+            }
+
+#if FEATURE_SERIALIZABLE
+            /// <summary>
+            /// Initializes a new instance of this class with serialized data.
+            /// </summary>
+            /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+            /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+            public TimeExceededException(SerializationInfo info, StreamingContext context)
+                : base(info, context)
+            {
+            }
+#endif
 
             /// <summary>
             /// Returns allowed time (milliseconds). </summary>
