@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Attributes;
 using NUnit.Framework;
 
 namespace Lucene.Net.Support
@@ -26,7 +27,7 @@ namespace Lucene.Net.Support
     [TestFixture]
     public class TestThreadClass
     {
-        [Test]
+        [Test, LuceneNetSpecific]
         public void Test()
         {
             ThreadClass thread = new ThreadClass();
