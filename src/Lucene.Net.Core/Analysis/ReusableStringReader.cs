@@ -63,6 +63,7 @@ namespace Lucene.Net.Analysis
             }
         }
 
+        // LUCENENET-150: ReadToEnd() method required for .NET
         public override string ReadToEnd()
         {
             if (pos < size)
