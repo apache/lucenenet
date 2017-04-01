@@ -141,10 +141,10 @@ namespace Lucene.Net.Analysis.Ga
             StopFilter s = new StopFilter(m_matchVersion, result, HYPHENATIONS);
 #pragma warning disable 612, 618
             if (!m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_44))
-#pragma warning restore 612, 618
             {
-                s.EnablePositionIncrements = false;
+                s.SetEnablePositionIncrements(false);
             }
+#pragma warning restore 612, 618
             result = s;
             result = new ElisionFilter(result, DEFAULT_ARTICLES);
             result = new IrishLowerCaseFilter(result);

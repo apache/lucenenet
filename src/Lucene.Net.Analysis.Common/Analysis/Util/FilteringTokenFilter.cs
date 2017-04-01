@@ -135,16 +135,31 @@ namespace Lucene.Net.Analysis.Util
             {
                 return enablePositionIncrements;
             }
-            // LUCENENET TODO:
-            // deprecated enablePositionIncrements=false is not supported anymore as of Lucene 4.4
-            // There doesn't appear to be a way to apply [Obsolete] on a property setter only. The only way
-            // to make it show the obsolete warning is to change this back to a separate Set method.
-            set
-            {
-                CheckPositionIncrement(m_version, value);
-                this.enablePositionIncrements = value;
-            }
         }
+
+        /// <summary>
+        /// If <c>true</c>, this <see cref="TokenFilter"/> will preserve
+        /// positions of the incoming tokens (ie, accumulate and
+        /// set position increments of the removed tokens).
+        /// Generally, <c>true</c> is best as it does not
+        /// lose information (positions of the original tokens)
+        /// during indexing.
+        /// 
+        /// <para/> When set, when a token is stopped
+        /// (omitted), the position increment of the following
+        /// token is incremented.
+        /// </summary>
+        // LUCENENET NOTE: Intentionally made this a setter method instead of a property
+        // because it is obsolete and there is no way to add the attibute to the setter but not
+        // the getter of a property. Since it is obsolete, this method will eventually be removed
+        // anyway.
+        [Obsolete("enablePositionIncrements=false is not supported anymore as of Lucene 4.4")]
+        public virtual void SetEnablePositionIncrements(bool enable)
+        {
+            CheckPositionIncrement(m_version, enable);
+            this.enablePositionIncrements = enable;
+        }
+        
 
         public override void End()
         {

@@ -112,7 +112,9 @@ namespace Lucene.Net.Analysis.Core
             CharArraySet stopSet1 = StopFilter.MakeStopSet(TEST_VERSION_CURRENT, stopWords1);
             reader = new StringReader(sb.ToString());
             StopFilter stpf0 = new StopFilter(TEST_VERSION_CURRENT, new MockTokenizer(reader, MockTokenizer.WHITESPACE, false), stopSet0); // first part of the set
-            stpf0.EnablePositionIncrements = true;
+#pragma warning disable 612, 618
+            stpf0.SetEnablePositionIncrements(true);
+#pragma warning restore 612, 618
             StopFilter stpf01 = new StopFilter(TEST_VERSION_CURRENT, stpf0, stopSet1); // two stop filters concatenated!
             DoTestStopPositons(stpf01, true);
         }
@@ -129,7 +131,9 @@ namespace Lucene.Net.Analysis.Core
         private void DoTestStopPositons(StopFilter stpf, bool enableIcrements)
         {
             log("---> test with enable-increments-" + (enableIcrements ? "enabled" : "disabled"));
-            stpf.EnablePositionIncrements = enableIcrements;
+#pragma warning disable 612, 618
+            stpf.SetEnablePositionIncrements(enableIcrements);
+#pragma warning restore 612, 618
             ICharTermAttribute termAtt = stpf.GetAttribute<ICharTermAttribute>();
             IPositionIncrementAttribute posIncrAtt = stpf.GetAttribute<IPositionIncrementAttribute>();
             stpf.Reset();
@@ -226,8 +230,8 @@ namespace Lucene.Net.Analysis.Core
                 TokenFilter filter = new MockSynonymFilter(outerInstance, tokenizer);
 #pragma warning disable 612, 618
                 StopFilter stopfilter = new StopFilter(Version.LUCENE_43, filter, StopAnalyzer.ENGLISH_STOP_WORDS_SET);
+                stopfilter.SetEnablePositionIncrements(false);
 #pragma warning restore 612, 618
-                stopfilter.EnablePositionIncrements = false;
                 return new TokenStreamComponents(tokenizer, stopfilter);
             }
         }

@@ -146,7 +146,9 @@ namespace Lucene.Net.Analysis.Core
         public override TokenStream Create(TokenStream input)
         {
             StopFilter stopFilter = new StopFilter(m_luceneMatchVersion, input, stopWords);
-            stopFilter.EnablePositionIncrements = enablePositionIncrements;
+#pragma warning disable 612, 618
+            stopFilter.SetEnablePositionIncrements(enablePositionIncrements);
+#pragma warning restore 612, 618
             return stopFilter;
         }
     }
