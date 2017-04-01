@@ -24,19 +24,18 @@ namespace Lucene.Net.Index
     using Lucene.Net.Support;
 
     /// <summary>
-    /// <seealso cref="DocumentsWriterPerThreadPool"/> controls <seealso cref="ThreadState"/> instances
-    /// and their thread assignments during indexing. Each <seealso cref="ThreadState"/> holds
-    /// a reference to a <seealso cref="DocumentsWriterPerThread"/> that is once a
-    /// <seealso cref="ThreadState"/> is obtained from the pool exclusively used for indexing a
+    /// <see cref="DocumentsWriterPerThreadPool"/> controls <see cref="ThreadState"/> instances
+    /// and their thread assignments during indexing. Each <see cref="ThreadState"/> holds
+    /// a reference to a <see cref="DocumentsWriterPerThread"/> that is once a
+    /// <see cref="ThreadState"/> is obtained from the pool exclusively used for indexing a
     /// single document by the obtaining thread. Each indexing thread must obtain
-    /// such a <seealso cref="ThreadState"/> to make progress. Depending on the
-    /// <seealso cref="DocumentsWriterPerThreadPool"/> implementation <seealso cref="ThreadState"/>
+    /// such a <see cref="ThreadState"/> to make progress. Depending on the
+    /// <see cref="DocumentsWriterPerThreadPool"/> implementation <see cref="ThreadState"/>
     /// assignments might differ from document to document.
-    /// <p>
-    /// Once a <seealso cref="DocumentsWriterPerThread"/> is selected for flush the thread pool
-    /// is reusing the flushing <seealso cref="DocumentsWriterPerThread"/>s ThreadState with a
-    /// new <seealso cref="DocumentsWriterPerThread"/> instance.
-    /// </p>
+    /// <para/>
+    /// Once a <see cref="DocumentsWriterPerThread"/> is selected for flush the thread pool
+    /// is reusing the flushing <see cref="DocumentsWriterPerThread"/>s <see cref="ThreadState"/> with a
+    /// new <see cref="DocumentsWriterPerThread"/> instance.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -44,15 +43,15 @@ namespace Lucene.Net.Index
     internal abstract class DocumentsWriterPerThreadPool
     {
         /// <summary>
-        /// <seealso cref="ThreadState"/> references and guards a
-        /// <seealso cref="DocumentsWriterPerThread"/> instance that is used during indexing to
-        /// build a in-memory index segment. <seealso cref="ThreadState"/> also holds all flush
-        /// related per-thread data controlled by <seealso cref="DocumentsWriterFlushControl"/>.
-        /// <p>
-        /// A <seealso cref="ThreadState"/>, its methods and members should only accessed by one
-        /// thread a time. Users must acquire the lock via <seealso cref="ThreadState#lock()"/>
-        /// and release the lock in a finally block via <seealso cref="ThreadState#unlock()"/>
-        /// before accessing the state.
+        /// <see cref="ThreadState"/> references and guards a
+        /// <see cref="Index.DocumentsWriterPerThread"/> instance that is used during indexing to
+        /// build a in-memory index segment. <see cref="ThreadState"/> also holds all flush
+        /// related per-thread data controlled by <see cref="DocumentsWriterFlushControl"/>.
+        /// <para/>
+        /// A <see cref="ThreadState"/>, its methods and members should only accessed by one
+        /// thread a time. Users must acquire the lock via <see cref="ReentrantLock.Lock()"/>
+        /// and release the lock in a finally block via <see cref="ReentrantLock.Unlock()"/>
+        /// (on the <see cref="ThreadState"/> instance) before accessing the state.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -78,11 +77,10 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Resets the internal <seealso cref="DocumentsWriterPerThread"/> with the given one.
-            /// if the given DWPT is <code>null</code> this ThreadState is marked as inactive and should not be used
+            /// Resets the internal <see cref="DocumentsWriterPerThread"/> with the given one.
+            /// if the given DWPT is <c>null</c> this <see cref="ThreadState"/> is marked as inactive and should not be used
             /// for indexing anymore. </summary>
-            /// <seealso cref= #isActive()   </seealso>
-
+            /// <seealso cref="IsActive"/>
             internal void Deactivate() // LUCENENET NOTE: Made internal because it is called outside of this context
             {
                 //Debug.Assert(this.HeldByCurrentThread);
@@ -99,9 +97,9 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Returns <code>true</code> if this ThreadState is still open. this will
-            /// only return <code>false</code> iff the DW has been closed and this
-            /// ThreadState is already checked out for flush.
+            /// Returns <c>true</c> if this <see cref="ThreadState"/> is still open. This will
+            /// only return <c>false</c> iff the DW has been disposed and this
+            /// <see cref="ThreadState"/> is already checked out for flush.
             /// </summary>
             internal bool IsActive
             {
@@ -123,7 +121,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns the number of currently active bytes in this ThreadState's
-            /// <seealso cref="DocumentsWriterPerThread"/>
+            /// <see cref="DocumentsWriterPerThread"/>
             /// </summary>
             public long BytesUsedPerThread
             {
@@ -136,7 +134,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Returns this <seealso cref="ThreadState"/>s <seealso cref="DocumentsWriterPerThread"/>
+            /// Returns this <see cref="ThreadState"/>s <see cref="DocumentsWriterPerThread"/>
             /// </summary>
             public DocumentsWriterPerThread DocumentsWriterPerThread
             {
@@ -149,8 +147,8 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Returns <code>true</code> iff this <seealso cref="ThreadState"/> is marked as flush
-            /// pending otherwise <code>false</code>
+            /// Returns <c>true</c> iff this <see cref="ThreadState"/> is marked as flush
+            /// pending otherwise <c>false</c>
             /// </summary>
             public bool IsFlushPending
             {
@@ -165,7 +163,7 @@ namespace Lucene.Net.Index
         private volatile int numThreadStatesActive;
 
         /// <summary>
-        /// Creates a new <seealso cref="DocumentsWriterPerThreadPool"/> with a given maximum of <seealso cref="ThreadState"/>s.
+        /// Creates a new <see cref="DocumentsWriterPerThreadPool"/> with a given maximum of <see cref="ThreadState"/>s.
         /// </summary>
         internal DocumentsWriterPerThreadPool(int maxNumThreadStates)
         {
@@ -202,8 +200,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the max number of <seealso cref="ThreadState"/> instances available in this
-        /// <seealso cref="DocumentsWriterPerThreadPool"/>
+        /// Returns the max number of <see cref="ThreadState"/> instances available in this
+        /// <see cref="DocumentsWriterPerThreadPool"/>
         /// </summary>
         public virtual int MaxThreadStates
         {
@@ -214,7 +212,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the active number of <seealso cref="ThreadState"/> instances.
+        /// Returns the active number of <see cref="ThreadState"/> instances.
         /// </summary>
         public virtual int NumThreadStatesActive // LUCENENET NOTE: Changed from getActiveThreadState() because the name wasn't clear
         {
@@ -225,14 +223,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a new <seealso cref="ThreadState"/> iff any new state is available otherwise
-        /// <code>null</code>.
-        /// <p>
-        /// NOTE: the returned <seealso cref="ThreadState"/> is already locked iff non-
-        /// <code>null</code>.
+        /// Returns a new <see cref="ThreadState"/> iff any new state is available otherwise
+        /// <c>null</c>.
+        /// <para/>
+        /// NOTE: the returned <see cref="ThreadState"/> is already locked iff non-<c>null</c>.
         /// </summary>
-        /// <returns> a new <seealso cref="ThreadState"/> iff any new state is available otherwise
-        ///         <code>null</code> </returns>
+        /// <returns> a new <see cref="ThreadState"/> iff any new state is available otherwise
+        ///         <c>null</c> </returns>
         public virtual ThreadState NewThreadState()
         {
             lock (this)
@@ -350,8 +347,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the ThreadState with the minimum estimated number of threads
-        /// waiting to acquire its lock or <code>null</code> if no <seealso cref="ThreadState"/>
+        /// Returns the <see cref="ThreadState"/> with the minimum estimated number of threads
+        /// waiting to acquire its lock or <c>null</c> if no <see cref="ThreadState"/>
         /// is yet visible to the calling thread.
         /// </summary>
         internal virtual ThreadState MinContendedThreadState()
@@ -370,10 +367,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the number of currently deactivated <seealso cref="ThreadState"/> instances.
-        /// A deactivated <seealso cref="ThreadState"/> should not be used for indexing anymore.
+        /// Returns the number of currently deactivated <see cref="ThreadState"/> instances.
+        /// A deactivated <see cref="ThreadState"/> should not be used for indexing anymore.
         /// </summary>
-        /// <returns> the number of currently deactivated <seealso cref="ThreadState"/> instances. </returns>
+        /// <returns> the number of currently deactivated <see cref="ThreadState"/> instances. </returns>
         internal virtual int NumDeactivatedThreadStates()
         {
             int count = 0;
@@ -397,9 +394,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Deactivates an active <seealso cref="ThreadState"/>. Inactive <seealso cref="ThreadState"/> can
-        /// not be used for indexing anymore once they are deactivated. this method should only be used
-        /// if the parent <seealso cref="DocumentsWriter"/> is closed or aborted.
+        /// Deactivates an active <see cref="ThreadState"/>. Inactive <see cref="ThreadState"/> can
+        /// not be used for indexing anymore once they are deactivated. This method should only be used
+        /// if the parent <see cref="DocumentsWriter"/> is closed or aborted.
         /// </summary>
         /// <param name="threadState"> the state to deactivate </param>
         internal virtual void DeactivateThreadState(ThreadState threadState)

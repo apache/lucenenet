@@ -38,49 +38,49 @@ namespace Lucene.Net.Index
     using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 
     /// <summary>
-    /// this class accepts multiple added documents and directly
+    /// This class accepts multiple added documents and directly
     /// writes segment files.
-    ///
-    /// Each added document is passed to the <seealso cref="DocConsumer"/>,
+    /// <para/>
+    /// Each added document is passed to the <see cref="DocConsumer"/>,
     /// which in turn processes the document and interacts with
     /// other consumers in the indexing chain.  Certain
-    /// consumers, like <seealso cref="StoredFieldsConsumer"/> and {@link
-    /// TermVectorsConsumer}, digest a document and
+    /// consumers, like <see cref="StoredFieldsConsumer"/> and 
+    /// <see cref="TermVectorsConsumer"/>, digest a document and
     /// immediately write bytes to the "doc store" files (ie,
     /// they do not consume RAM per document, except while they
     /// are processing the document).
-    ///
-    /// Other consumers, eg <seealso cref="FreqProxTermsWriter"/> and
-    /// <seealso cref="NormsConsumer"/>, buffer bytes in RAM and flush only
+    /// <para/>
+    /// Other consumers, eg <see cref="FreqProxTermsWriter"/> and
+    /// <see cref="NormsConsumer"/>, buffer bytes in RAM and flush only
     /// when a new segment is produced.
-    ///
+    /// <para/>
     /// Once we have used our allowed RAM buffer, or the number
     /// of added docs is large enough (in the case we are
     /// flushing by doc count instead of RAM usage), we create a
     /// real segment and flush it to the Directory.
-    ///
+    /// <para/>
     /// Threads:
-    ///
-    /// Multiple threads are allowed into addDocument at once.
-    /// There is an initial synchronized call to getThreadState
-    /// which allocates a ThreadState for this thread.  The same
-    /// thread will get the same ThreadState over time (thread
+    /// <para/>
+    /// Multiple threads are allowed into AddDocument at once.
+    /// There is an initial synchronized call to <see cref="DocumentsWriterPerThreadPool.GetThreadState(int)"/>
+    /// which allocates a <see cref="ThreadState"/> for this thread.  The same
+    /// thread will get the same <see cref="ThreadState"/> over time (thread
     /// affinity) so that if there are consistent patterns (for
     /// example each thread is indexing a different content
     /// source) then we make better use of RAM.  Then
-    /// processDocument is called on that ThreadState without
+    /// ProcessDocument is called on that <see cref="ThreadState"/> without
     /// synchronization (most of the "heavy lifting" is in this
     /// call).  Finally the synchronized "finishDocument" is
     /// called to flush changes to the directory.
-    ///
-    /// When flush is called by IndexWriter we forcefully idle
+    /// <para/>
+    /// When flush is called by <see cref="IndexWriter"/> we forcefully idle
     /// all threads and flush only once they are all idle.  this
     /// means you can call flush with a given thread even while
     /// other threads are actively adding/deleting documents.
-    ///
+    /// <para/>
     ///
     /// Exceptions:
-    ///
+    /// <para/>
     /// Because this class directly updates in-memory posting
     /// lists, and flushes stored fields and term vectors
     /// directly to files in the directory, there are certain
@@ -90,8 +90,8 @@ namespace Lucene.Net.Index
     /// exception while appending to the in-memory posting lists
     /// can corrupt that posting list.  We call such exceptions
     /// "aborting exceptions".  In these cases we must call
-    /// abort() to discard all docs added since the last flush.
-    ///
+    /// <see cref="Abort(IndexWriter)"/> to discard all docs added since the last flush.
+    /// <para/>
     /// All other exceptions ("non-aborting exceptions") can
     /// still partially update the index structures.  These
     /// updates are consistent, but, they represent only a part
@@ -119,12 +119,13 @@ namespace Lucene.Net.Index
         internal volatile DocumentsWriterDeleteQueue deleteQueue = new DocumentsWriterDeleteQueue();
 
         private readonly DocumentsWriterFlushQueue ticketQueue = new DocumentsWriterFlushQueue();
-        /*
-         * we preserve changes during a full flush since IW might not checkout before
-         * we release all changes. NRT Readers otherwise suddenly return true from
-         * isCurrent while there are actually changes currently committed. See also
-         * #anyChanges() & #flushAllThreads
-         */
+
+        /// <summary>
+        /// we preserve changes during a full flush since IW might not checkout before
+        /// we release all changes. NRT Readers otherwise suddenly return true from
+        /// IsCurrent() while there are actually changes currently committed. See also
+        /// <see cref="AnyChanges()"/> &amp; <see cref="FlushAllThreads(IndexWriter)"/>
+        /// </summary>
         private volatile bool pendingChangesInCurrentFullFlush;
 
         internal readonly DocumentsWriterPerThreadPool perThreadPool;

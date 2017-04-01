@@ -23,8 +23,8 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Holds updates of a single DocValues field, for a set of documents.
-    ///
+    /// Holds updates of a single <see cref="DocValues"/> field, for a set of documents.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         {
             /// <summary>
             /// Returns the next document which has an update, or
-            /// <seealso cref="DocIdSetIterator#NO_MORE_DOCS"/> if there are no more documents to
+            /// <see cref="Search.DocIdSetIterator.NO_MORE_DOCS"/> if there are no more documents to
             /// return.
             /// </summary>
             public abstract int NextDoc();
@@ -56,13 +56,13 @@ namespace Lucene.Net.Index
             public abstract int Doc { get; }
 
             /// <summary>
-            /// Returns the value of the document returned from <seealso cref="#nextDoc()"/>. A
-            /// {@code null} value means that it was unset for this document.
+            /// Returns the value of the document returned from <see cref="NextDoc()"/>. A
+            /// <c>null</c> value means that it was unset for this document.
             /// </summary>
             public abstract object Value { get; }
 
             /// <summary>
-            /// Reset the iterator's state. Should be called before <seealso cref="#nextDoc()"/>
+            /// Reset the iterator's state. Should be called before <see cref="NextDoc()"/>
             /// and <seealso cref="#value()"/>.
             /// </summary>
             public abstract void Reset();
@@ -159,18 +159,18 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Add an update to a document. For unsetting a value you should pass
-        /// {@code null}.
+        /// <c>null</c>.
         /// </summary>
         public abstract void Add(int doc, object value);
 
         /// <summary>
-        /// Returns an <seealso cref="Iterator"/> over the updated documents and their
+        /// Returns an <see cref="Iterator"/> over the updated documents and their
         /// values.
         /// </summary>
         public abstract Iterator GetIterator();
 
         /// <summary>
-        /// Merge with another <seealso cref="DocValuesFieldUpdates"/>. this is called for a
+        /// Merge with another <see cref="DocValuesFieldUpdates"/>. this is called for a
         /// segment which received updates while it was being merged. The given updates
         /// should override whatever updates are in that instance.
         /// </summary>

@@ -31,84 +31,90 @@ namespace Lucene.Net.Index
     using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
-    /// this class enables fast access to multiple term ords for
+    /// This class enables fast access to multiple term ords for
     /// a specified field across all docIDs.
-    ///
-    /// Like FieldCache, it uninverts the index and holds a
+    /// <para/>
+    /// Like <see cref="Search.IFieldCache"/>, it uninverts the index and holds a
     /// packed data structure in RAM to enable fast access.
-    /// Unlike FieldCache, it can handle multi-valued fields,
+    /// Unlike <see cref="Search.IFieldCache"/>, it can handle multi-valued fields,
     /// and, it does not hold the term bytes in RAM.  Rather, you
-    /// must obtain a TermsEnum from the <seealso cref="#getOrdTermsEnum"/>
+    /// must obtain a <see cref="TermsEnum"/> from the <see cref="GetOrdTermsEnum"/>
     /// method, and then seek-by-ord to get the term's bytes.
-    ///
-    /// While normally term ords are type long, in this API they are
-    /// int as the internal representation here cannot address
-    /// more than MAX_INT32 unique terms.  Also, typically this
+    /// <para/>
+    /// While normally term ords are type <see cref="long"/>, in this API they are
+    /// <see cref="int"/> as the internal representation here cannot address
+    /// more than <see cref="BufferedUpdates.MAX_INT32"/> unique terms.  Also, typically this
     /// class is used on fields with relatively few unique terms
     /// vs the number of documents.  In addition, there is an
     /// internal limit (16 MB) on how many bytes each chunk of
     /// documents may consume.  If you trip this limit you'll hit
-    /// an InvalidOperationException.
-    ///
+    /// an <see cref="InvalidOperationException"/>.
+    /// <para/>
     /// Deleted documents are skipped during uninversion, and if
     /// you look them up you'll get 0 ords.
-    ///
+    /// <para/>
     /// The returned per-document ords do not retain their
     /// original order in the document.  Instead they are returned
-    /// in sorted (by ord, ie term's BytesRef comparer) order.  They
+    /// in sorted (by ord, ie term's <see cref="BytesRef"/> comparer) order.  They
     /// are also de-dup'd (ie if doc has same term more than once
     /// in this field, you'll only get that ord back once).
-    ///
-    /// this class tests whether the provided reader is able to
+    /// <para/>
+    /// This class tests whether the provided reader is able to
     /// retrieve terms by ord (ie, it's single segment, and it
     /// uses an ord-capable terms index).  If not, this class
     /// will create its own term index internally, allowing to
-    /// create a wrapped TermsEnum that can handle ord.  The
-    /// <seealso cref="#getOrdTermsEnum"/> method then provides this
+    /// create a wrapped <see cref="TermsEnum"/> that can handle ord.  The
+    /// <see cref="GetOrdTermsEnum"/> method then provides this
     /// wrapped enum, if necessary.
-    ///
+    /// <para/>
     /// The RAM consumption of this class can be high!
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-
-    // LUCENENET TODO: Make remarks section
-    /*
-     * Final form of the un-inverted field:
-     *   Each document points to a list of term numbers that are contained in that document.
-     *
-     *   Term numbers are in sorted order, and are encoded as variable-length deltas from the
-     *   previous term number.  Real term numbers start at 2 since 0 and 1 are reserved.  A
-     *   term number of 0 signals the end of the termNumber list.
-     *
-     *   There is a single int[maxDoc()] which either contains a pointer into a byte[] for
-     *   the termNumber lists, or directly contains the termNumber list if it fits in the 4
-     *   bytes of an integer.  If the first byte in the integer is 1, the next 3 bytes
-     *   are a pointer into a byte[] where the termNumber list starts.
-     *
-     *   There are actually 256 byte arrays, to compensate for the fact that the pointers
-     *   into the byte arrays are only 3 bytes long.  The correct byte array for a document
-     *   is a function of it's id.
-     *
-     *   To save space and speed up faceting, any term that matches enough documents will
-     *   not be un-inverted... it will be skipped while building the un-inverted field structure,
-     *   and will use a set intersection method during faceting.
-     *
-     *   To further save memory, the terms (the actual string values) are not all stored in
-     *   memory, but a TermIndex is used to convert term numbers to term values only
-     *   for the terms needed after faceting has completed.  Only every 128th term value
-     *   is stored, along with it's corresponding term number, and this is used as an
-     *   index to find the closest term and iterate until the desired number is hit (very
-     *   much like Lucene's own internal term index).
-     *
-     */
+    /// <remarks>
+    /// Final form of the un-inverted field:
+    /// <list type="bullet">
+    ///     <item>Each document points to a list of term numbers that are contained in that document.</item>
+    ///     <item>
+    ///         Term numbers are in sorted order, and are encoded as variable-length deltas from the
+    ///         previous term number.  Real term numbers start at 2 since 0 and 1 are reserved.  A
+    ///         term number of 0 signals the end of the termNumber list.
+    ///     </item>
+    ///     <item>
+    ///         There is a single int[maxDoc()] which either contains a pointer into a byte[] for
+    ///         the termNumber lists, or directly contains the termNumber list if it fits in the 4
+    ///         bytes of an integer.  If the first byte in the integer is 1, the next 3 bytes
+    ///         are a pointer into a byte[] where the termNumber list starts.
+    ///     </item>
+    ///     <item>
+    ///         There are actually 256 byte arrays, to compensate for the fact that the pointers
+    ///         into the byte arrays are only 3 bytes long.  The correct byte array for a document
+    ///         is a function of it's id.
+    ///     </item>
+    ///     <item>
+    ///         To save space and speed up faceting, any term that matches enough documents will
+    ///         not be un-inverted... it will be skipped while building the un-inverted field structure,
+    ///         and will use a set intersection method during faceting.
+    ///     </item>
+    ///     <item>
+    ///         To further save memory, the terms (the actual string values) are not all stored in
+    ///         memory, but a TermIndex is used to convert term numbers to term values only
+    ///         for the terms needed after faceting has completed.  Only every 128th term value
+    ///         is stored, along with it's corresponding term number, and this is used as an
+    ///         index to find the closest term and iterate until the desired number is hit (very
+    ///         much like Lucene's own internal term index).
+    ///     </item>
+    /// </list>
+    /// </remarks>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public class DocTermOrds
     {
-        // Term ords are shifted by this, internally, to reserve
-        // values 0 (end term) and 1 (index is a pointer into byte array)
+        /// <summary>
+        /// Term ords are shifted by this, internally, to reserve
+        /// values 0 (end term) and 1 (index is a pointer into byte array)
+        /// </summary>
         private static readonly int TNUM_OFFSET = 2;
 
         /// <summary>
@@ -164,14 +170,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// If non-null, only terms matching this prefix were
-        ///  indexed.
+        /// indexed.
         /// </summary>
         protected BytesRef m_prefix;
 
         /// <summary>
         /// Ordinal of the first term in the field, or 0 if the
-        ///  <seealso cref="PostingsFormat"/> does not implement {@link
-        ///  TermsEnum#ord}.
+        /// <see cref="PostingsFormat"/> does not implement 
+        /// <see cref="TermsEnum.Ord"/>.
         /// </summary>
         protected int m_ordBase;
 
@@ -217,8 +223,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Inverts only terms starting w/ prefix, and only terms
-        ///  whose docFreq (not taking deletions into account) is
-        ///  <=  maxTermDocFreq
+        /// whose docFreq (not taking deletions into account) is
+        /// &lt;= <paramref name="maxTermDocFreq"/>
         /// </summary>
         public DocTermOrds(AtomicReader reader, IBits liveDocs, string field, BytesRef termPrefix, int maxTermDocFreq)
             : this(reader, liveDocs, field, termPrefix, maxTermDocFreq, DEFAULT_INDEX_INTERVAL_BITS)
@@ -227,9 +233,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Inverts only terms starting w/ prefix, and only terms
-        ///  whose docFreq (not taking deletions into account) is
-        ///  <=  maxTermDocFreq, with a custom indexing interval
-        ///  (default is every 128nd term).
+        /// whose docFreq (not taking deletions into account) is
+        /// &lt;=  <paramref name="maxTermDocFreq"/>, with a custom indexing interval
+        /// (default is every 128nd term).
         /// </summary>
         public DocTermOrds(AtomicReader reader, IBits liveDocs, string field, BytesRef termPrefix, int maxTermDocFreq, int indexIntervalBits)
             : this(field, maxTermDocFreq, indexIntervalBits)
@@ -239,7 +245,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Subclass inits w/ this, but be sure you then call
-        ///  uninvert, only once
+        /// uninvert, only once
         /// </summary>
         protected DocTermOrds(string field, int maxTermDocFreq, int indexIntervalBits)
         {
@@ -252,16 +258,16 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a TermsEnum that implements ord.  If the
-        ///  provided reader supports ord, we just return its
-        ///  TermsEnum; if it does not, we build a "private" terms
-        ///  index internally (WARNING: consumes RAM) and use that
-        ///  index to implement ord.  this also enables ord on top
-        ///  of a composite reader.  The returned TermsEnum is
-        ///  unpositioned.  this returns null if there are no terms.
+        /// Returns a <see cref="TermsEnum"/> that implements <see cref="TermsEnum.Ord"/>.  If the
+        /// provided <paramref name="reader"/> supports <see cref="TermsEnum.Ord"/>, we just return its
+        /// <see cref="TermsEnum"/>; if it does not, we build a "private" terms
+        /// index internally (WARNING: consumes RAM) and use that
+        /// index to implement <see cref="TermsEnum.Ord"/>.  This also enables <see cref="TermsEnum.Ord"/> on top
+        /// of a composite reader.  The returned <see cref="TermsEnum"/> is
+        /// unpositioned.  This returns <c>null</c> if there are no terms.
         ///
-        ///  <p><b>NOTE</b>: you must pass the same reader that was
-        ///  used when creating this class
+        /// <para/><b>NOTE</b>: you must pass the same reader that was
+        /// used when creating this class
         /// </summary>
         public virtual TermsEnum GetOrdTermsEnum(AtomicReader reader)
         {
@@ -299,7 +305,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns {@code true} if no terms were indexed.
+        /// Returns <c>true</c> if no terms were indexed.
         /// </summary>
         public virtual bool IsEmpty
         {
@@ -316,9 +322,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Invoked during <seealso cref="#uninvert(AtomicReader,Bits,BytesRef)"/>
-        ///  to record the document frequency for each uninverted
-        ///  term.
+        /// Invoked during <see cref="Uninvert(AtomicReader, IBits, BytesRef)"/>
+        /// to record the document frequency for each uninverted
+        /// term.
         /// </summary>
         protected virtual void SetActualDocFreq(int termNum, int df)
         {
@@ -729,10 +735,11 @@ namespace Lucene.Net.Index
             return pos;
         }
 
-        /* Only used if original IndexReader doesn't implement
-         * ord; in this case we "wrap" our own terms index
-         * around it. */
-
+        /// <summary>
+        /// Only used if original <see cref="IndexReader"/> doesn't implement
+        /// <see cref="TermsEnum.Ord"/>; in this case we "wrap" our own terms index
+        /// around it.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -929,8 +936,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the term (<seealso cref="BytesRef"/>) corresponding to
-        ///  the provided ordinal.
+        /// Returns the term (<see cref="BytesRef"/>) corresponding to
+        /// the provided ordinal.
         /// </summary>
         public virtual BytesRef LookupTerm(TermsEnum termsEnum, int ord)
         {
@@ -939,7 +946,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a SortedSetDocValues view of this instance </summary>
+        /// Returns a <see cref="SortedSetDocValues"/> view of this instance </summary>
         public virtual SortedSetDocValues GetIterator(AtomicReader reader)
         {
             if (IsEmpty)
@@ -997,9 +1004,9 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Buffer must be at least 5 ints long.  Returns number
-            ///  of term ords placed into buffer; if this count is
-            ///  less than buffer.length then that is the end.
+            /// Buffer must be at least 5 <see cref="int"/>s long.  Returns number
+            /// of term ords placed into buffer; if this count is
+            /// less than buffer.Length then that is the end.
             /// </summary>
             internal virtual int Read(int[] buffer)
             {

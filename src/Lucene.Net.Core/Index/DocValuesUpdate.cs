@@ -25,7 +25,7 @@ namespace Lucene.Net.Index
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
     /// <summary>
-    /// An in-place update to a DocValues field. </summary>
+    /// An in-place update to a <see cref="DocValues"/> field. </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -49,8 +49,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="term"> the <seealso cref="term"/> which determines the documents that will be updated </param>
-        /// <param name="field"> the <seealso cref="NumericDocValuesField"/> to update </param>
+        /// <param name="type"> the <see cref="DocValuesFieldUpdatesType"/> </param>
+        /// <param name="term"> the <see cref="Term"/> which determines the documents that will be updated </param>
+        /// <param name="field"> the <see cref="NumericDocValuesField"/> to update </param>
         /// <param name="value"> the updated value </param>
         protected DocValuesUpdate(DocValuesFieldUpdatesType type, Term term, string field, object value)
         {
@@ -78,7 +79,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// An in-place update to a binary DocValues field </summary>
+        /// An in-place update to a binary <see cref="DocValues"/> field </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -101,7 +102,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// An in-place update to a numeric DocValues field </summary>
+        /// An in-place update to a numeric <see cref="DocValues"/> field </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif

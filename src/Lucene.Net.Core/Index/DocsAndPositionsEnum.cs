@@ -87,10 +87,10 @@ namespace Lucene.Net.Index
         public abstract int EndOffset { get; }
 
         /// <summary>
-        /// Returns the payload at this position, or null if no
+        /// Returns the payload at this position, or <c>null</c> if no
         /// payload was indexed. You should not modify anything
-        /// (neither members of the returned BytesRef nor bytes
-        /// in the byte[]).
+        /// (neither members of the returned <see cref="BytesRef"/> nor bytes
+        /// in the <see cref="T:byte[]"/>).
         /// </summary>
         public abstract BytesRef GetPayload();
     }

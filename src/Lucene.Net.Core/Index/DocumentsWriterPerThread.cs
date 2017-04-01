@@ -48,8 +48,8 @@ namespace Lucene.Net.Index
     internal class DocumentsWriterPerThread
     {
         /// <summary>
-        /// The IndexingChain must define the <seealso cref="#getChain(DocumentsWriterPerThread)"/> method
-        /// which returns the DocConsumer that the DocumentsWriter calls to process the
+        /// The <see cref="IndexingChain"/> must define the <see cref="GetChain(DocumentsWriterPerThread)"/> method
+        /// which returns the <see cref="DocConsumer"/> that the <see cref="DocumentsWriter"/> calls to process the
         /// documents.
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -172,9 +172,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Called if we hit an exception at a bad time (when
-        ///  updating the index files) and must discard all
-        ///  currently buffered docs.  this resets our state,
-        ///  discarding any docs added since last flush.
+        /// updating the index files) and must discard all
+        /// currently buffered docs.  this resets our state,
+        /// discarding any docs added since last flush.
         /// </summary>
         internal virtual void Abort(ISet<string> createdFiles)
         {
@@ -482,7 +482,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the number of delete terms in this <seealso cref="DocumentsWriterPerThread"/>
+        /// Returns the number of delete terms in this <see cref="DocumentsWriterPerThread"/>
         /// </summary>
         public virtual int NumDeleteTerms
         {
@@ -494,7 +494,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the number of RAM resident documents in this <seealso cref="DocumentsWriterPerThread"/>
+        /// Returns the number of RAM resident documents in this <see cref="DocumentsWriterPerThread"/>
         /// </summary>
         public virtual int NumDocsInRAM
         {
@@ -507,7 +507,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Prepares this DWPT for flushing. this method will freeze and return the
-        /// <seealso cref="DocumentsWriterDeleteQueue"/>s global buffer and apply all pending
+        /// <see cref="DocumentsWriterDeleteQueue"/>s global buffer and apply all pending
         /// deletes to this DWPT.
         /// </summary>
         internal virtual FrozenBufferedUpdates PrepareFlush()
@@ -624,8 +624,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Seals the <seealso cref="SegmentInfo"/> for the new flushed segment and persists
-        /// the deleted documents <seealso cref="IMutableBits"/>.
+        /// Seals the <see cref="Index.SegmentInfo"/> for the new flushed segment and persists
+        /// the deleted documents <see cref="IMutableBits"/>.
         /// </summary>
         internal virtual void SealFlushedSegment(FlushedSegment flushedSegment)
         {
@@ -712,12 +712,16 @@ namespace Lucene.Net.Index
             get { return bytesUsed.Get() + pendingUpdates.bytesUsed.Get(); }
         }
 
-        /* Initial chunks size of the shared byte[] blocks used to
-           store postings data */
+        /// <summary>
+        /// Initial chunks size of the shared byte[] blocks used to
+        /// store postings data
+        /// </summary>
         internal static readonly int BYTE_BLOCK_NOT_MASK = ~ByteBlockPool.BYTE_BLOCK_MASK;
 
-        /* if you increase this, you must fix field cache impl for
-         * getTerms/getTermsIndex requires <= 32768 */
+        /// <summary>
+        /// if you increase this, you must fix field cache impl for
+        /// getTerms/getTermsIndex requires &lt;= 32768
+        /// </summary>
         internal static readonly int MAX_TERM_LENGTH_UTF8 = ByteBlockPool.BYTE_BLOCK_SIZE - 2;
 
         /// <summary>
@@ -736,8 +740,9 @@ namespace Lucene.Net.Index
                 this.bytesUsed = bytesUsed;
             }
 
-            /* Allocate another int[] from the shared pool */
-
+            /// <summary>
+            /// Allocate another int[] from the shared pool
+            /// </summary>
             public override int[] GetInt32Block()
             {
                 int[] b = new int[Int32BlockPool.INT32_BLOCK_SIZE];

@@ -25,8 +25,8 @@ namespace Lucene.Net.Index
     internal abstract class DocFieldConsumer
     {
         /// <summary>
-        /// Called when DocumentsWriterPerThread decides to create a new
-        ///  segment
+        /// Called when <see cref="DocumentsWriterPerThread"/> decides to create a new
+        /// segment
         /// </summary>
         internal abstract void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state);
 

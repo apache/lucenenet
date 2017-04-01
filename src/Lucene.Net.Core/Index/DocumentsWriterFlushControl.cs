@@ -27,15 +27,15 @@ namespace Lucene.Net.Index
     using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 
     /// <summary>
-    /// this class controls <seealso cref="DocumentsWriterPerThread"/> flushing during
+    /// This class controls <see cref="DocumentsWriterPerThread"/> flushing during
     /// indexing. It tracks the memory consumption per
-    /// <seealso cref="DocumentsWriterPerThread"/> and uses a configured <seealso cref="flushPolicy"/> to
-    /// decide if a <seealso cref="DocumentsWriterPerThread"/> must flush.
-    /// <p>
-    /// In addition to the <seealso cref="flushPolicy"/> the flush control might set certain
-    /// <seealso cref="DocumentsWriterPerThread"/> as flush pending iff a
-    /// <seealso cref="DocumentsWriterPerThread"/> exceeds the
-    /// <seealso cref="IndexWriterConfig#getRAMPerThreadHardLimitMB()"/> to prevent address
+    /// <see cref="DocumentsWriterPerThread"/> and uses a configured <see cref="flushPolicy"/> to
+    /// decide if a <see cref="DocumentsWriterPerThread"/> must flush.
+    /// <para/>
+    /// In addition to the <see cref="flushPolicy"/> the flush control might set certain
+    /// <see cref="DocumentsWriterPerThread"/> as flush pending iff a
+    /// <see cref="DocumentsWriterPerThread"/> exceeds the
+    /// <see cref="IndexWriterConfig.RAMPerThreadHardLimitMB"/> to prevent address
     /// space exhaustion.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -327,8 +327,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Sets flush pending state on the given <seealso cref="ThreadState"/>. The
-        /// <seealso cref="ThreadState"/> must have indexed at least on Document and must not be
+        /// Sets flush pending state on the given <see cref="ThreadState"/>. The
+        /// <see cref="ThreadState"/> must have indexed at least on <see cref="Documents.Document"/> and must not be
         /// already pending.
         /// </summary>
         public void SetFlushPending(ThreadState perThread)
@@ -491,7 +491,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns an iterator that provides access to all currently active <seealso cref="ThreadState"/>s
+        /// Returns an iterator that provides access to all currently active <see cref="ThreadState"/>s
         /// </summary>
         public IEnumerator<ThreadState> AllActiveThreadStates()
         {
@@ -865,7 +865,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <code>true</code> if a full flush is currently running
+        /// Returns <c>true</c> if a full flush is currently running
         /// </summary>
         internal bool IsFullFlush
         {
@@ -895,7 +895,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the number of flushes that are checked out but not yet available
-        /// for flushing. this only applies during a full flush if a DWPT needs
+        /// for flushing. This only applies during a full flush if a DWPT needs
         /// flushing but must not be flushed until the full flush has finished.
         /// </summary>
         internal int NumBlockedFlushes
@@ -926,7 +926,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// this method will block if too many DWPT are currently flushing and no
+        /// This method will block if too many DWPT are currently flushing and no
         /// checked out DWPT are available
         /// </summary>
         internal void WaitIfStalled()
@@ -939,7 +939,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <code>true</code> iff stalled
+        /// Returns <c>true</c> iff stalled
         /// </summary>
         internal bool AnyStalledThreads()
         {
@@ -947,7 +947,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="IndexWriter"/> <seealso cref="InfoStream"/>
+        /// Returns the <see cref="IndexWriter"/> <see cref="Util.InfoStream"/>
         /// </summary>
         public InfoStream InfoStream
         {

@@ -25,11 +25,11 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Holds state for inverting all occurrences of a single
-    /// field in the document.  this class doesn't do anything
+    /// field in the document.  This class doesn't do anything
     /// itself; instead, it forwards the tokens produced by
     /// analysis to its own consumer
-    /// (InvertedDocConsumerPerField).  It also interacts with an
-    /// endConsumer (InvertedDocEndConsumerPerField).
+    /// (<see cref="InvertedDocConsumerPerField"/>).  It also interacts with an
+    /// endConsumer (<see cref="InvertedDocEndConsumerPerField"/>).
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

@@ -27,42 +27,42 @@ namespace Lucene.Net.Index
     using Query = Lucene.Net.Search.Query;
 
     /// <summary>
-    /// <seealso cref="DocumentsWriterDeleteQueue"/> is a non-blocking linked pending deletes
+    /// <see cref="DocumentsWriterDeleteQueue"/> is a non-blocking linked pending deletes
     /// queue. In contrast to other queue implementation we only maintain the
     /// tail of the queue. A delete queue is always used in a context of a set of
     /// DWPTs and a global delete pool. Each of the DWPT and the global pool need to
-    /// maintain their 'own' head of the queue (as a DeleteSlice instance per DWPT).
+    /// maintain their 'own' head of the queue (as a <see cref="DeleteSlice"/> instance per DWPT).
     /// The difference between the DWPT and the global pool is that the DWPT starts
     /// maintaining a head once it has added its first document since for its segments
     /// private deletes only the deletes after that document are relevant. The global
     /// pool instead starts maintaining the head once this instance is created by
     /// taking the sentinel instance as its initial head.
-    /// <p>
-    /// Since each <seealso cref="DeleteSlice"/> maintains its own head and the list is only
+    /// <para/>
+    /// Since each <see cref="DeleteSlice"/> maintains its own head and the list is only
     /// single linked the garbage collector takes care of pruning the list for us.
     /// All nodes in the list that are still relevant should be either directly or
-    /// indirectly referenced by one of the DWPT's private <seealso cref="DeleteSlice"/> or by
-    /// the global <seealso cref="BufferedUpdates"/> slice.
-    /// <p>
+    /// indirectly referenced by one of the DWPT's private <see cref="DeleteSlice"/> or by
+    /// the global <see cref="BufferedUpdates"/> slice.
+    /// <para/>
     /// Each DWPT as well as the global delete pool maintain their private
     /// DeleteSlice instance. In the DWPT case updating a slice is equivalent to
     /// atomically finishing the document. The slice update guarantees a "happens
     /// before" relationship to all other updates in the same indexing session. When a
     /// DWPT updates a document it:
     ///
-    /// <ol>
-    /// <li>consumes a document and finishes its processing</li>
-    /// <li>updates its private <seealso cref="DeleteSlice"/> either by calling
-    /// <seealso cref="#updateSlice(DeleteSlice)"/> or <seealso cref="#add(Term, DeleteSlice)"/> (if the
-    /// document has a delTerm)</li>
-    /// <li>applies all deletes in the slice to its private <seealso cref="BufferedUpdates"/>
-    /// and resets it</li>
-    /// <li>increments its internal document id</li>
-    /// </ol>
+    /// <list type="number">
+    ///     <item>consumes a document and finishes its processing</item>
+    ///     <item>updates its private <see cref="DeleteSlice"/> either by calling
+    ///     <see cref="UpdateSlice(DeleteSlice)"/> or <see cref="Add(Term, DeleteSlice)"/> (if the
+    ///         document has a delTerm)</item>
+    ///     <item>applies all deletes in the slice to its private <see cref="BufferedUpdates"/>
+    ///         and resets it</item>
+    ///     <item>increments its internal document id</item>
+    /// </list>
     ///
     /// The DWPT also doesn't apply its current documents delete term until it has
     /// updated its delete slice which ensures the consistency of the update. If the
-    /// update fails before the DeleteSlice could have been updated the deleteTerm
+    /// update fails before the <see cref="DeleteSlice"/> could have been updated the deleteTerm
     /// will also not be added to its private deletes neither to the global deletes.
     ///
     /// </summary>

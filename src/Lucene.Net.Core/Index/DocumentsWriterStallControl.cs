@@ -24,18 +24,18 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Controls the health status of a <seealso cref="DocumentsWriter"/> sessions. this class
+    /// Controls the health status of a <see cref="DocumentsWriter"/> sessions. This class
     /// used to block incoming indexing threads if flushing significantly slower than
-    /// indexing to ensure the <seealso cref="DocumentsWriter"/>s healthiness. If flushing is
+    /// indexing to ensure the <see cref="DocumentsWriter"/>s healthiness. If flushing is
     /// significantly slower than indexing the net memory used within an
-    /// <seealso cref="IndexWriter"/> session can increase very quickly and easily exceed the
-    /// JVM's available memory.
-    /// <p>
-    /// To prevent OOM Errors and ensure IndexWriter's stability this class blocks
+    /// <see cref="IndexWriter"/> session can increase very quickly and easily exceed the
+    /// runtime's available memory.
+    /// <para/>
+    /// To prevent OOM Errors and ensure <see cref="IndexWriter"/>'s stability this class blocks
     /// incoming threads from indexing once 2 x number of available
-    /// <seealso cref="ThreadState"/>s in <seealso cref="DocumentsWriterPerThreadPool"/> is exceeded.
+    /// <see cref="ThreadState"/>s in <see cref="DocumentsWriterPerThreadPool"/> is exceeded.
     /// Once flushing catches up and the number of flushing DWPT is equal or lower
-    /// than the number of active <seealso cref="ThreadState"/>s threads are released and can
+    /// than the number of active <see cref="ThreadState"/>s threads are released and can
     /// continue indexing.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -50,11 +50,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Update the stalled flag status. this method will set the stalled flag to
-        /// <code>true</code> iff the number of flushing
-        /// <seealso cref="DocumentsWriterPerThread"/> is greater than the number of active
-        /// <seealso cref="DocumentsWriterPerThread"/>. Otherwise it will reset the
-        /// <seealso cref="DocumentsWriterStallControl"/> to healthy and release all threads
-        /// waiting on <seealso cref="#waitIfStalled()"/>
+        /// <c>true</c> iff the number of flushing
+        /// <see cref="DocumentsWriterPerThread"/> is greater than the number of active
+        /// <see cref="DocumentsWriterPerThread"/>. Otherwise it will reset the
+        /// <see cref="DocumentsWriterStallControl"/> to healthy and release all threads
+        /// waiting on <see cref="WaitIfStalled()"/>
         /// </summary>
         internal void UpdateStalled(bool stalled)
         {

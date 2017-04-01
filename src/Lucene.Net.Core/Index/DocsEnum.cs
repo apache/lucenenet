@@ -42,8 +42,8 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Iterates through the documents and term freqs.
-    ///  NOTE: you must first call <seealso cref="#nextDoc"/> before using
-    ///  any of the per-doc methods.
+    /// NOTE: you must first call <see cref="DocIdSetIterator.NextDoc()"/> before using
+    /// any of the per-doc methods.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected DocsEnum()
         {
@@ -64,12 +64,12 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns term frequency in the current document, or 1 if the field was
-        /// indexed with <seealso cref="IndexOptions#DOCS_ONLY"/>. Do not call this before
-        /// <seealso cref="#nextDoc"/> is first called, nor after <seealso cref="#nextDoc"/> returns
-        /// <seealso cref="DocIdSetIterator#NO_MORE_DOCS"/>.
+        /// indexed with <see cref="IndexOptions.DOCS_ONLY"/>. Do not call this before
+        /// <see cref="DocIdSetIterator.NextDoc()"/> is first called, nor after <see cref="DocIdSetIterator.NextDoc()"/> returns
+        /// <see cref="DocIdSetIterator.NO_MORE_DOCS"/>.
         ///
-        /// <p>
-        /// <b>NOTE:</b> if the <seealso cref="DocsEnum"/> was obtain with <seealso cref="#FLAG_NONE"/>,
+        /// <para/>
+        /// <b>NOTE:</b> if the <see cref="DocsEnum"/> was obtain with <see cref="DocsFlags.NONE"/>,
         /// the result of this method is undefined.
         /// </summary>
         public abstract int Freq { get; }

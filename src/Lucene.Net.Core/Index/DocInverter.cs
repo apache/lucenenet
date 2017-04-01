@@ -21,9 +21,9 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// this is a DocFieldConsumer that inverts each field,
-    ///  separately, from a Document, and accepts a
-    ///  InvertedTermsConsumer to process those terms.
+    /// This is a <see cref="DocFieldConsumer"/> that inverts each field,
+    /// separately, from a <see cref="Documents.Document"/>, and accepts a
+    /// <see cref="InvertedDocConsumer"/> to process those terms.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

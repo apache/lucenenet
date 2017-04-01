@@ -23,7 +23,7 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// this class contains utility methods and constants for DocValues
+    /// This class contains utility methods and constants for <see cref="DocValues"/>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -37,7 +37,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// An empty BinaryDocValues which returns <seealso cref="BytesRef#EMPTY_BYTES"/> for every document
+        /// An empty <see cref="BinaryDocValues"/> which returns <see cref="BytesRef.EMPTY_BYTES"/> for every document
         /// </summary>
         public static readonly BinaryDocValues EMPTY_BINARY = new BinaryDocValuesAnonymousInnerClassHelper();
 
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// An empty NumericDocValues which returns zero for every document
+        /// An empty <see cref="NumericDocValues"/> which returns zero for every document
         /// </summary>
         public static readonly NumericDocValues EMPTY_NUMERIC = new NumericDocValuesAnonymousInnerClassHelper();
 
@@ -79,7 +79,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// An empty SortedDocValues which returns <seealso cref="BytesRef#EMPTY_BYTES"/> for every document
+        /// An empty <see cref="SortedDocValues"/> which returns <see cref="BytesRef.EMPTY_BYTES"/> for every document
         /// </summary>
         public static readonly SortedDocValues EMPTY_SORTED = new SortedDocValuesAnonymousInnerClassHelper();
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// An empty SortedDocValues which returns <seealso cref="SortedSetDocValues#NO_MORE_ORDS"/> for every document
+        /// An empty <see cref="SortedDocValues"/> which returns <see cref="SortedSetDocValues.NO_MORE_ORDS"/> for every document
         /// </summary>
         public static readonly SortedSetDocValues EMPTY_SORTED_SET = new RandomAccessOrdsAnonymousInnerClassHelper();
 
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a multi-valued view over the provided SortedDocValues
+        /// Returns a multi-valued view over the provided <see cref="SortedDocValues"/>
         /// </summary>
         public static SortedSetDocValues Singleton(SortedDocValues dv)
         {
@@ -169,8 +169,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a single-valued view of the SortedSetDocValues, if it was previously
-        /// wrapped with <seealso cref="#singleton"/>, or null.
+        /// Returns a single-valued view of the <see cref="SortedSetDocValues"/>, if it was previously
+        /// wrapped with <see cref="Singleton"/>, or <c>null</c>.
         /// </summary>
         public static SortedDocValues UnwrapSingleton(SortedSetDocValues dv)
         {
@@ -185,7 +185,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a Bits representing all documents from <code>dv</code> that have a value.
+        /// Returns a <see cref="IBits"/> representing all documents from <paramref name="dv"/> that have a value.
         /// </summary>
         public static IBits DocsWithValue(SortedDocValues dv, int maxDoc)
         {
@@ -218,7 +218,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a Bits representing all documents from <code>dv</code> that have a value.
+        /// Returns a <see cref="IBits"/> representing all documents from <paramref name="dv"/> that have a value.
         /// </summary>
         public static IBits DocsWithValue(SortedSetDocValues dv, int maxDoc)
         {

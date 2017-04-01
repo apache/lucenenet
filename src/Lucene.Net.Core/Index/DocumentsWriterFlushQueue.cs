@@ -244,9 +244,9 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Publishes the flushed segment, segment private deletes (if any) and its
-            /// associated global delete (if present) to IndexWriter.  The actual
-            /// publishing operation is synced on IW -> BDS so that the <seealso cref="SegmentInfo"/>'s
-            /// delete generation is always GlobalPacket_deleteGeneration + 1
+            /// associated global delete (if present) to <see cref="IndexWriter"/>.  The actual
+            /// publishing operation is synced on IW -> BDS so that the <see cref="SegmentInfo"/>'s
+            /// delete generation is always <see cref="FrozenBufferedUpdates.DelGen"/> (<paramref name="globalPacket"/>) + 1
             /// </summary>
             protected void PublishFlushedSegment(IndexWriter indexWriter, FlushedSegment newSegment, FrozenBufferedUpdates globalPacket)
             {

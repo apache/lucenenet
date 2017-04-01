@@ -29,11 +29,11 @@ namespace Lucene.Net.Index
     using IOContext = Lucene.Net.Store.IOContext;
 
     /// <summary>
-    /// this is a DocConsumer that gathers all fields under the
+    /// This is a <see cref="DocConsumer"/> that gathers all fields under the
     /// same name, and calls per-field consumers to process field
-    /// by field.  this class doesn't doesn't do any "real" work
+    /// by field.  This class doesn't doesn't do any "real" work
     /// of its own: it just forwards the fields to a
-    /// DocFieldConsumer.
+    /// <see cref="DocFieldConsumer"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
