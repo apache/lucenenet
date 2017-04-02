@@ -257,15 +257,15 @@ namespace Lucene.Net.Analysis
                         int ret = m_input.Read(c, 1, 1);
                         return ret <= 0 ? -1 : c[1];
                     }
-                /* LUCENE TO-DO not sure if needed, CharBuffer not supported
-                  case 2:
-                  {
-                    // read(CharBuffer)
-                    char[] c = new char[1];
-                    CharBuffer cb = CharBuffer.Wrap(c);
-                    int ret = Input.Read(cb);
-                    return ret < 0 ? ret : c[0];
-                  }*/
+                // LUCENENET NOTE: CharBuffer not supported
+                //case 2:
+                //    {
+                //        // read(CharBuffer)
+                //        char[] c = new char[1];
+                //        CharBuffer cb = CharBuffer.Wrap(c);
+                //        int ret = m_input.Read(cb);
+                //        return ret < 0 ? ret : c[0];
+                //    }
                 default:
                     // read()
                     return m_input.Read();

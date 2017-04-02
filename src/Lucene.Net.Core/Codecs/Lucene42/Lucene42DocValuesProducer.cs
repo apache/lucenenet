@@ -290,7 +290,7 @@ namespace Lucene.Net.Codecs.Lucene42
                     return new NumericDocValuesAnonymousInnerClassHelper3(min, mult, quotientReader);
 
                 default:
-                    throw new InvalidOperationException(); // LUCENENET TODO: This was AssertionError in Lucene - does this need a fix?
+                    throw new InvalidOperationException();
             }
         }
 

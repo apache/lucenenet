@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene40
                     // fits in a byte[], would be more than 4bpv, just write byte[]
                     AddBytesField(field, data, values);
                 }
-                else if (minValue >= short.MinValue && maxValue <= short.MaxValue && PackedInt32s.BitsRequired(maxValue - minValue) > 8) // LUCENENET TODO: Shouldn't this be ushort.MinValue & MaxValue?
+                else if (minValue >= short.MinValue && maxValue <= short.MaxValue && PackedInt32s.BitsRequired(maxValue - minValue) > 8)
                 {
                     // fits in a short[], would be more than 8bpv, just write short[]
                     AddShortsField(field, data, values);

@@ -117,7 +117,7 @@ namespace Lucene.Net.Search
             reopenCond.Reset();
         }
 
-        public void Dispose() // LUCENENET TODO: Implement disposable pattern
+        public void Dispose()
         {
             finish = true;
             reopenCond.Set();
