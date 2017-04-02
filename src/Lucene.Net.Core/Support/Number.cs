@@ -202,26 +202,6 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Returns the index of the first bit that is set to true that occurs
-        /// on or after the specified starting index. If no such bit exists
-        /// then -1 is returned.
-        /// </summary>
-        /// <param name="bits">The BitArray object.</param>
-        /// <param name="fromIndex">The index to start checking from (inclusive).</param>
-        /// <returns>The index of the next set bit.</returns>
-        public static int NextSetBit(System.Collections.BitArray bits, int fromIndex)
-        {
-            for (int i = fromIndex; i < bits.Length; i++)
-            {
-                if (bits[i] == true)
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        /// <summary>
         /// Converts a System.String number to long.
         /// </summary>
         /// <param name="s"></param>

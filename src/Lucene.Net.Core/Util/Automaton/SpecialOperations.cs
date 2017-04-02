@@ -84,7 +84,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 return true;
             }
-            return IsFinite(a.initial, new BitArray(a.GetNumberOfStates()), new BitArray(a.GetNumberOfStates()));
+            return IsFinite(a.initial, new OpenBitSet(a.GetNumberOfStates()), new OpenBitSet(a.GetNumberOfStates()));
         }
 
         /// <summary>
@@ -93,18 +93,18 @@ namespace Lucene.Net.Util.Automaton
         /// </summary>
         // TODO: not great that this is recursive... in theory a
         // large automata could exceed java's stack
-        private static bool IsFinite(State s, BitArray path, BitArray visited)
+        private static bool IsFinite(State s, OpenBitSet path, OpenBitSet visited)
         {
-            path.SafeSet(s.number, true);
+            path.Set(s.number);
             foreach (Transition t in s.GetTransitions())
             {
-                if (path.SafeGet(t.to.number) || (!visited.SafeGet(t.to.number) && !IsFinite(t.to, path, visited)))
+                if (path.Get(t.to.number) || (!visited.Get(t.to.number) && !IsFinite(t.to, path, visited)))
                 {
                     return false;
                 }
             }
-            path.SafeSet(s.number, false);
-            visited.SafeSet(s.number, true);
+            path.Clear(s.number);
+            visited.Set(s.number);
             return true;
         }
 

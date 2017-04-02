@@ -87,8 +87,9 @@ namespace Lucene.Net.Util.Automaton
             StateList[,] active = new StateList[statesLen, sigmaLen];
             StateListNode[,] active2 = new StateListNode[statesLen, sigmaLen];
             LinkedList<Int32Pair> pending = new LinkedList<Int32Pair>();
-            BitArray pending2 = new BitArray(sigmaLen * statesLen);
-            BitArray split = new BitArray(statesLen), refine = new BitArray(statesLen), refine2 = new BitArray(statesLen);
+            OpenBitSet pending2 = new OpenBitSet(sigmaLen * statesLen);
+            OpenBitSet split = new OpenBitSet(statesLen), 
+                refine = new OpenBitSet(statesLen), refine2 = new OpenBitSet(statesLen);
             for (int q = 0; q < statesLen; q++)
             {
                 splitblock[q] = new List<State>();
@@ -135,7 +136,7 @@ namespace Lucene.Net.Util.Automaton
             {
                 int j = (active[0, x].Count <= active[1, x].Count) ? 0 : 1;
                 pending.AddLast(new Int32Pair(j, x));
-                pending2.SafeSet(x * statesLen + j, true);
+                pending2.Set(x * statesLen + j);
             }
             // process pending until fixed point
             int k = 2;
@@ -145,7 +146,7 @@ namespace Lucene.Net.Util.Automaton
                 pending.Remove(ip);
                 int p = ip.N1;
                 int x = ip.N2;
-                pending2.SafeSet(x * statesLen + p, false);
+                pending2.Clear(x * statesLen + p);
                 // find states that need to be split off their blocks
                 for (StateListNode m = active[p, x].First; m != null; m = m.Next)
                 {
@@ -155,22 +156,22 @@ namespace Lucene.Net.Util.Automaton
                         foreach (State s in r)
                         {
                             int i = s.number;
-                            if (!split.SafeGet(i))
+                            if (!split.Get(i))
                             {
-                                split.SafeSet(i, true);
+                                split.Set(i);
                                 int j = block[i];
                                 splitblock[j].Add(s);
-                                if (!refine2.SafeGet(j))
+                                if (!refine2.Get(j))
                                 {
-                                    refine2.SafeSet(j, true);
-                                    refine.SafeSet(j, true);
+                                    refine2.Set(j);
+                                    refine.Set(j);
                                 }
                             }
                         }
                     }
                 }
                 // refine blocks
-                for (int j = Number.NextSetBit(refine, 0); j >= 0; j = Number.NextSetBit(refine, j + 1))
+                for (int j = refine.NextSetBit(0); j >= 0; j = refine.NextSetBit(j + 1))
                 {
                     List<State> sb = splitblock[j];
                     if (sb.Count < partition[j].Count)
@@ -196,27 +197,27 @@ namespace Lucene.Net.Util.Automaton
                         for (int c = 0; c < sigmaLen; c++)
                         {
                             int aj = active[j, c].Count, ak = active[k, c].Count, ofs = c * statesLen;
-                            if (!pending2.SafeGet(ofs + j) && 0 < aj && aj <= ak)
+                            if (!pending2.Get(ofs + j) && 0 < aj && aj <= ak)
                             {
-                                pending2.SafeSet(ofs + j, true);
+                                pending2.Set(ofs + j);
                                 pending.AddLast(new Int32Pair(j, c));
                             }
                             else
                             {
-                                pending2.SafeSet(ofs + k, true);
+                                pending2.Set(ofs + k);
                                 pending.AddLast(new Int32Pair(k, c));
                             }
                         }
                         k++;
                     }
-                    refine2.SafeSet(j, false);
+                    refine2.Clear(j);
                     foreach (State s in sb)
                     {
-                        split.SafeSet(s.number, false);
+                        split.Clear(s.number);
                     }
                     sb.Clear();
                 }
-                refine.SetAll(false);
+                refine.Clear(0, refine.Length - 1);
             }
             // make a new state for each equivalence class, set initial state
             State[] newstates = new State[k];

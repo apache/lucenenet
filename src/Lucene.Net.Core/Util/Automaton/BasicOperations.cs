@@ -1079,8 +1079,8 @@ namespace Lucene.Net.Util.Automaton
                 State[] states = a.GetNumberedStates();
                 LinkedList<State> pp = new LinkedList<State>();
                 LinkedList<State> pp_other = new LinkedList<State>();
-                BitArray bb = new BitArray(states.Length);
-                BitArray bb_other = new BitArray(states.Length);
+                OpenBitSet bb = new OpenBitSet(states.Length);
+                OpenBitSet bb_other = new OpenBitSet(states.Length);
                 pp.AddLast(a.initial);
                 List<State> dest = new List<State>();
                 bool accept = a.initial.accept;
@@ -1089,7 +1089,7 @@ namespace Lucene.Net.Util.Automaton
                     c = Character.CodePointAt(s, i);
                     accept = false;
                     pp_other.Clear();
-                    bb_other.SetAll(false);
+                    bb_other.Clear(0, bb_other.Length - 1);
                     foreach (State p in pp)
                     {
                         dest.Clear();
@@ -1100,9 +1100,9 @@ namespace Lucene.Net.Util.Automaton
                             {
                                 accept = true;
                             }
-                            if (!bb_other.SafeGet(q.number))
+                            if (!bb_other.Get(q.number))
                             {
-                                bb_other.SafeSet(q.number, true);
+                                bb_other.Set(q.number);
                                 pp_other.AddLast(q);
                             }
                         }
@@ -1110,7 +1110,7 @@ namespace Lucene.Net.Util.Automaton
                     LinkedList<State> tp = pp;
                     pp = pp_other;
                     pp_other = tp;
-                    BitArray tb = bb;
+                    OpenBitSet tb = bb;
                     bb = bb_other;
                     bb_other = tb;
                 }
