@@ -55,9 +55,12 @@ namespace Lucene.Net.Codecs.IntBlock
             return new Reader(clone, buffer, GetBlockReader(clone, buffer));
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            input.Dispose();
+            if (disposing)
+            {
+                input.Dispose();
+            }
         }
 
         public override Int32IndexInput.Index GetIndex()

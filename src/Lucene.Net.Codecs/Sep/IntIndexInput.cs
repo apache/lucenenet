@@ -32,7 +32,15 @@ namespace Lucene.Net.Codecs.Sep
     public abstract class Int32IndexInput : IDisposable
     {
         public abstract Reader GetReader();
-        public abstract void Dispose();
+
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected abstract void Dispose(bool disposing);
+
         public abstract Index GetIndex();
 
         /// <summary>

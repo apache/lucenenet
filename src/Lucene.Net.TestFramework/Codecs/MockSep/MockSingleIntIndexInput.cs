@@ -45,9 +45,12 @@ namespace Lucene.Net.Codecs.MockSep
             return new MockReader((IndexInput)@in.Clone());
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            @in.Dispose();
+            if (disposing)
+            {
+                @in.Dispose();
+            }
         }
 
         /**
