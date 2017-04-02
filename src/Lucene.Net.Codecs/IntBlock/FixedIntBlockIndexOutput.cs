@@ -133,20 +133,23 @@ namespace Lucene.Net.Codecs.IntBlock
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                if (upto > 0)
+                try
                 {
-                    // NOTE: entries in the block after current upto are
-                    // invalid
-                    FlushBlock();
+                    if (upto > 0)
+                    {
+                        // NOTE: entries in the block after current upto are
+                        // invalid
+                        FlushBlock();
+                    }
                 }
-            }
-            finally
-            {
-                m_output.Dispose();
+                finally
+                {
+                    m_output.Dispose();
+                }
             }
         }
     }

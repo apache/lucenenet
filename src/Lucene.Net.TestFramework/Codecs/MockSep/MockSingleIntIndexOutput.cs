@@ -45,9 +45,12 @@ namespace Lucene.Net.Codecs.MockSep
             return new MockSingleIntIndexOutputIndex(this);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            @out.Dispose();
+            if (disposing)
+            {
+                @out.Dispose();
+            }
         }
 
         public override string ToString()

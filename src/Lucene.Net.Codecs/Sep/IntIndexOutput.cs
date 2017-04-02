@@ -64,6 +64,13 @@ namespace Lucene.Net.Codecs.Sep
         /// </summary>
         public abstract Index GetIndex();
 
-        public abstract void Dispose(); // LUCENENET TODO: Implement disposable pattern
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected abstract void Dispose(bool disposing);
     }
 }

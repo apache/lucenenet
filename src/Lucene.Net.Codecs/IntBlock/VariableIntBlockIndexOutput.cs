@@ -140,24 +140,27 @@ namespace Lucene.Net.Codecs.IntBlock
             Debug.Assert(upto >= 0);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                if (hitExcDuringWrite) return;
-
-                // stuff 0s in until the "real" data is flushed:
-                var stuffed = 0;
-                while (upto > stuffed)
+                try
                 {
-                    upto -= Add(0) - 1;
-                    Debug.Assert(upto >= 0);
-                    stuffed += 1;
+                    if (hitExcDuringWrite) return;
+
+                    // stuff 0s in until the "real" data is flushed:
+                    var stuffed = 0;
+                    while (upto > stuffed)
+                    {
+                        upto -= Add(0) - 1;
+                        Debug.Assert(upto >= 0);
+                        stuffed += 1;
+                    }
                 }
-            }
-            finally
-            {
-                m_output.Dispose();
+                finally
+                {
+                    m_output.Dispose();
+                }
             }
         }
     }
