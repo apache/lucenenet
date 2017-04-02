@@ -902,191 +902,194 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             lock (this)
             {
-                // files that we tried to delete, but couldn't because readers were open.
-                // all that matters is that we tried! (they will eventually go away)
-                ISet<string> pendingDeletions = new HashSet<string>(OpenFilesDeleted);
-                MaybeYield();
-                if (OpenFiles == null)
+                if (disposing)
                 {
-                    OpenFiles = new Dictionary<string, int>();
-                    OpenFilesDeleted = new HashSet<string>();
-                }
-                if (OpenFiles.Count > 0)
-                {
-                    // print the first one as its very verbose otherwise
-                    Exception cause = null;
-                    IEnumerator<Exception> stacktraces = OpenFileHandles.Values.GetEnumerator();
-                    if (stacktraces.MoveNext())
+                    // files that we tried to delete, but couldn't because readers were open.
+                    // all that matters is that we tried! (they will eventually go away)
+                    ISet<string> pendingDeletions = new HashSet<string>(OpenFilesDeleted);
+                    MaybeYield();
+                    if (OpenFiles == null)
                     {
-                        cause = stacktraces.Current;
+                        OpenFiles = new Dictionary<string, int>();
+                        OpenFilesDeleted = new HashSet<string>();
+                    }
+                    if (OpenFiles.Count > 0)
+                    {
+                        // print the first one as its very verbose otherwise
+                        Exception cause = null;
+                        IEnumerator<Exception> stacktraces = OpenFileHandles.Values.GetEnumerator();
+                        if (stacktraces.MoveNext())
+                        {
+                            cause = stacktraces.Current;
+                        }
+
+                        // RuntimeException instead ofSystem.IO.IOException because
+                        // super() does not throwSystem.IO.IOException currently:
+                        throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
+                            + string.Join(" ,", OpenFiles.ToArray().Select(x => x.Key)), cause);
+                    }
+                    if (OpenLocks.Count > 0)
+                    {
+                        throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
+                            + string.Join(" ,", OpenLocks.ToArray()));
                     }
 
-                    // RuntimeException instead ofSystem.IO.IOException because
-                    // super() does not throwSystem.IO.IOException currently:
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open files: "
-                        + String.Join(" ,", OpenFiles.ToArray().Select(x => x.Key)), cause);
-                }
-                if (OpenLocks.Count > 0)
-                {
-                    throw new Exception("MockDirectoryWrapper: cannot close: there are still open locks: "
-                        + String.Join(" ,", OpenLocks.ToArray()));
-                }
-
-                IsOpen = false;
-                if (CheckIndexOnClose)
-                {
-                    RandomIOExceptionRate_Renamed = 0.0;
-                    RandomIOExceptionRateOnOpen_Renamed = 0.0;
-                    if (DirectoryReader.IndexExists(this))
+                    IsOpen = false;
+                    if (CheckIndexOnClose)
                     {
-                        if (LuceneTestCase.VERBOSE)
+                        RandomIOExceptionRate_Renamed = 0.0;
+                        RandomIOExceptionRateOnOpen_Renamed = 0.0;
+                        if (DirectoryReader.IndexExists(this))
                         {
-                            Console.WriteLine("\nNOTE: MockDirectoryWrapper: now crush");
-                        }
-                        Crash(); // corrupt any unsynced-files
-                        if (LuceneTestCase.VERBOSE)
-                        {
-                            Console.WriteLine("\nNOTE: MockDirectoryWrapper: now run CheckIndex");
-                        }
-                        TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose);
-
-                        // TODO: factor this out / share w/ TestIW.assertNoUnreferencedFiles
-                        if (AssertNoUnreferencedFilesOnClose)
-                        {
-                            // now look for unreferenced files: discount ones that we tried to delete but could not
-                            HashSet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));
-                            allFiles.RemoveAll(pendingDeletions);
-                            string[] startFiles = allFiles.ToArray(/*new string[0]*/);
-                            IndexWriterConfig iwc = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null);
-                            iwc.SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
-                            (new IndexWriter(m_input, iwc)).Rollback();
-                            string[] endFiles = m_input.ListAll();
-
-                            ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles), StringComparer.Ordinal);
-                            ISet<string> endSet = new SortedSet<string>(Arrays.AsList(endFiles), StringComparer.Ordinal);
-
-                            if (pendingDeletions.Contains("segments.gen") && endSet.Contains("segments.gen"))
+                            if (LuceneTestCase.VERBOSE)
                             {
-                                // this is possible if we hit an exception while writing segments.gen, we try to delete it
-                                // and it ends out in pendingDeletions (but IFD wont remove this).
-                                startSet.Add("segments.gen");
-                                if (LuceneTestCase.VERBOSE)
-                                {
-                                    Console.WriteLine("MDW: Unreferenced check: Ignoring segments.gen that we could not delete.");
-                                }
+                                Console.WriteLine("\nNOTE: MockDirectoryWrapper: now crush");
                             }
-
-                            // its possible we cannot delete the segments_N on windows if someone has it open and
-                            // maybe other files too, depending on timing. normally someone on windows wouldnt have
-                            // an issue (IFD would nuke this stuff eventually), but we pass NoDeletionPolicy...
-                            foreach (string file in pendingDeletions)
+                            Crash(); // corrupt any unsynced-files
+                            if (LuceneTestCase.VERBOSE)
                             {
-                                if (file.StartsWith("segments", StringComparison.Ordinal) && !file.Equals("segments.gen", StringComparison.Ordinal) && endSet.Contains(file, StringComparer.Ordinal))
+                                Console.WriteLine("\nNOTE: MockDirectoryWrapper: now run CheckIndex");
+                            }
+                            TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose);
+
+                            // TODO: factor this out / share w/ TestIW.assertNoUnreferencedFiles
+                            if (AssertNoUnreferencedFilesOnClose)
+                            {
+                                // now look for unreferenced files: discount ones that we tried to delete but could not
+                                HashSet<string> allFiles = new HashSet<string>(Arrays.AsList(ListAll()));
+                                allFiles.RemoveAll(pendingDeletions);
+                                string[] startFiles = allFiles.ToArray(/*new string[0]*/);
+                                IndexWriterConfig iwc = new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null);
+                                iwc.SetIndexDeletionPolicy(NoDeletionPolicy.INSTANCE);
+                                (new IndexWriter(m_input, iwc)).Rollback();
+                                string[] endFiles = m_input.ListAll();
+
+                                ISet<string> startSet = new SortedSet<string>(Arrays.AsList(startFiles), StringComparer.Ordinal);
+                                ISet<string> endSet = new SortedSet<string>(Arrays.AsList(endFiles), StringComparer.Ordinal);
+
+                                if (pendingDeletions.Contains("segments.gen") && endSet.Contains("segments.gen"))
                                 {
-                                    startSet.Add(file);
+                                    // this is possible if we hit an exception while writing segments.gen, we try to delete it
+                                    // and it ends out in pendingDeletions (but IFD wont remove this).
+                                    startSet.Add("segments.gen");
                                     if (LuceneTestCase.VERBOSE)
                                     {
-                                        Console.WriteLine("MDW: Unreferenced check: Ignoring segments file: " + file + " that we could not delete.");
+                                        Console.WriteLine("MDW: Unreferenced check: Ignoring segments.gen that we could not delete.");
                                     }
-                                    SegmentInfos sis = new SegmentInfos();
-                                    try
-                                    {
-                                        sis.Read(m_input, file);
-                                    }
-#pragma warning disable 168
-                                    catch (System.IO.IOException ioe)
-#pragma warning restore 168
-                                    {
-                                        // OK: likely some of the .si files were deleted
-                                    }
+                                }
 
-                                    try
+                                // its possible we cannot delete the segments_N on windows if someone has it open and
+                                // maybe other files too, depending on timing. normally someone on windows wouldnt have
+                                // an issue (IFD would nuke this stuff eventually), but we pass NoDeletionPolicy...
+                                foreach (string file in pendingDeletions)
+                                {
+                                    if (file.StartsWith("segments", StringComparison.Ordinal) && !file.Equals("segments.gen", StringComparison.Ordinal) && endSet.Contains(file, StringComparer.Ordinal))
                                     {
-                                        ISet<string> ghosts = new HashSet<string>(sis.Files(m_input, false));
-                                        foreach (string s in ghosts)
+                                        startSet.Add(file);
+                                        if (LuceneTestCase.VERBOSE)
                                         {
-                                            if (endSet.Contains(s) && !startSet.Contains(s))
+                                            Console.WriteLine("MDW: Unreferenced check: Ignoring segments file: " + file + " that we could not delete.");
+                                        }
+                                        SegmentInfos sis = new SegmentInfos();
+                                        try
+                                        {
+                                            sis.Read(m_input, file);
+                                        }
+#pragma warning disable 168
+                                        catch (System.IO.IOException ioe)
+#pragma warning restore 168
+                                        {
+                                            // OK: likely some of the .si files were deleted
+                                        }
+
+                                        try
+                                        {
+                                            ISet<string> ghosts = new HashSet<string>(sis.Files(m_input, false));
+                                            foreach (string s in ghosts)
                                             {
-                                                Debug.Assert(pendingDeletions.Contains(s));
-                                                if (LuceneTestCase.VERBOSE)
+                                                if (endSet.Contains(s) && !startSet.Contains(s))
                                                 {
-                                                    Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + "from " + file + " that we could not delete.");
+                                                    Debug.Assert(pendingDeletions.Contains(s));
+                                                    if (LuceneTestCase.VERBOSE)
+                                                    {
+                                                        Console.WriteLine("MDW: Unreferenced check: Ignoring referenced file: " + s + " " + "from " + file + " that we could not delete.");
+                                                    }
+                                                    startSet.Add(s);
                                                 }
-                                                startSet.Add(s);
                                             }
                                         }
-                                    }
-                                    catch (Exception t)
-                                    {
-                                        Console.Error.WriteLine("ERROR processing leftover segments file " + file + ":");
-                                        Console.WriteLine(t.ToString());
-                                        Console.Write(t.StackTrace);
+                                        catch (Exception t)
+                                        {
+                                            Console.Error.WriteLine("ERROR processing leftover segments file " + file + ":");
+                                            Console.WriteLine(t.ToString());
+                                            Console.Write(t.StackTrace);
+                                        }
                                     }
                                 }
+
+                                startFiles = startSet.ToArray(/*new string[0]*/);
+                                endFiles = endSet.ToArray(/*new string[0]*/);
+
+                                if (!Arrays.Equals(startFiles, endFiles))
+                                {
+                                    IList<string> removed = new List<string>();
+                                    foreach (string fileName in startFiles)
+                                    {
+                                        if (!endSet.Contains(fileName))
+                                        {
+                                            removed.Add(fileName);
+                                        }
+                                    }
+
+                                    IList<string> added = new List<string>();
+                                    foreach (string fileName in endFiles)
+                                    {
+                                        if (!startSet.Contains(fileName))
+                                        {
+                                            added.Add(fileName);
+                                        }
+                                    }
+
+                                    string extras;
+                                    if (removed.Count != 0)
+                                    {
+                                        extras = "\n\nThese files were removed: " + removed;
+                                    }
+                                    else
+                                    {
+                                        extras = "";
+                                    }
+
+                                    if (added.Count != 0)
+                                    {
+                                        extras += "\n\nThese files were added (waaaaaaaaaat!): " + added;
+                                    }
+
+                                    if (pendingDeletions.Count != 0)
+                                    {
+                                        extras += "\n\nThese files we had previously tried to delete, but couldn't: " + pendingDeletions;
+                                    }
+
+                                    Debug.Assert(false, "unreferenced files: before delete:\n    " + Arrays.ToString(startFiles) + "\n  after delete:\n    " + Arrays.ToString(endFiles) + extras);
+                                }
+
+                                DirectoryReader ir1 = DirectoryReader.Open(this);
+                                int numDocs1 = ir1.NumDocs;
+                                ir1.Dispose();
+                                (new IndexWriter(this, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null))).Dispose();
+                                DirectoryReader ir2 = DirectoryReader.Open(this);
+                                int numDocs2 = ir2.NumDocs;
+                                ir2.Dispose();
+                                Debug.Assert(numDocs1 == numDocs2, "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
                             }
-
-                            startFiles = startSet.ToArray(/*new string[0]*/);
-                            endFiles = endSet.ToArray(/*new string[0]*/);
-
-                            if (!Arrays.Equals(startFiles, endFiles))
-                            {
-                                IList<string> removed = new List<string>();
-                                foreach (string fileName in startFiles)
-                                {
-                                    if (!endSet.Contains(fileName))
-                                    {
-                                        removed.Add(fileName);
-                                    }
-                                }
-
-                                IList<string> added = new List<string>();
-                                foreach (string fileName in endFiles)
-                                {
-                                    if (!startSet.Contains(fileName))
-                                    {
-                                        added.Add(fileName);
-                                    }
-                                }
-
-                                string extras;
-                                if (removed.Count != 0)
-                                {
-                                    extras = "\n\nThese files were removed: " + removed;
-                                }
-                                else
-                                {
-                                    extras = "";
-                                }
-
-                                if (added.Count != 0)
-                                {
-                                    extras += "\n\nThese files were added (waaaaaaaaaat!): " + added;
-                                }
-
-                                if (pendingDeletions.Count != 0)
-                                {
-                                    extras += "\n\nThese files we had previously tried to delete, but couldn't: " + pendingDeletions;
-                                }
-
-                                Debug.Assert(false, "unreferenced files: before delete:\n    " + Arrays.ToString(startFiles) + "\n  after delete:\n    " + Arrays.ToString(endFiles) + extras);
-                            }
-
-                            DirectoryReader ir1 = DirectoryReader.Open(this);
-                            int numDocs1 = ir1.NumDocs;
-                            ir1.Dispose();
-                            (new IndexWriter(this, new IndexWriterConfig(LuceneTestCase.TEST_VERSION_CURRENT, null))).Dispose();
-                            DirectoryReader ir2 = DirectoryReader.Open(this);
-                            int numDocs2 = ir2.NumDocs;
-                            ir2.Dispose();
-                            Debug.Assert(numDocs1 == numDocs2, "numDocs changed after opening/closing IW: before=" + numDocs1 + " after=" + numDocs2);
                         }
                     }
+                    m_input.Dispose();
                 }
-                m_input.Dispose();
             }
         }
 

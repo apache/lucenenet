@@ -292,24 +292,27 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             lock (this)
             {
-                if (!IsOpen)
+                if (disposing)
                 {
-                    // allow double close - usually to be consistent with other closeables
-                    return; // already closed
-                }
-                IsOpen = false;
-                if (writer != null)
-                {
-                    Debug.Assert(openForWrite);
-                    writer.Dispose();
-                }
-                else
-                {
-                    IOUtils.Close(handle);
+                    if (!IsOpen)
+                    {
+                        // allow double close - usually to be consistent with other closeables
+                        return; // already closed
+                    }
+                    IsOpen = false;
+                    if (writer != null)
+                    {
+                        Debug.Assert(openForWrite);
+                        writer.Dispose();
+                    }
+                    else
+                    {
+                        IOUtils.Close(handle);
+                    }
                 }
             }
         }

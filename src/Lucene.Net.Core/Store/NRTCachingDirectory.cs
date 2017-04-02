@@ -331,19 +331,22 @@ namespace Lucene.Net.Store
         /// Dispose this directory, which flushes any cached files
         /// to the delegate and then disposes the delegate.
         /// </summary>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            // NOTE: technically we shouldn't have to do this, ie,
-            // IndexWriter should have sync'd all files, but we do
-            // it for defensive reasons... or in case the app is
-            // doing something custom (creating outputs directly w/o
-            // using IndexWriter):
-            foreach (string fileName in cache.ListAll())
+            if (disposing)
             {
-                UnCache(fileName);
+                // NOTE: technically we shouldn't have to do this, ie,
+                // IndexWriter should have sync'd all files, but we do
+                // it for defensive reasons... or in case the app is
+                // doing something custom (creating outputs directly w/o
+                // using IndexWriter):
+                foreach (string fileName in cache.ListAll())
+                {
+                    UnCache(fileName);
+                }
+                cache.Dispose();
+                @delegate.Dispose();
             }
-            cache.Dispose();
-            @delegate.Dispose();
         }
 
         /// <summary>

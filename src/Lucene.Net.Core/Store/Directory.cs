@@ -129,7 +129,16 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Disposes the store. </summary>
-        public abstract void Dispose();
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes the store. </summary>
+        protected abstract void Dispose(bool disposing);
 
         /// <summary>
         /// Set the <see cref="Store.LockFactory"/> that this <see cref="Directory"/> instance should

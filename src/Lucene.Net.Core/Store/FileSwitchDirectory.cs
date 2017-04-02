@@ -70,9 +70,9 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (doClose)
+            if (disposing && doClose)
             {
                 try
                 {

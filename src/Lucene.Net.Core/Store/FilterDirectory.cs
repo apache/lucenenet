@@ -102,9 +102,12 @@ namespace Lucene.Net.Store
             m_input.ClearLock(name);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            m_input.Dispose();
+            if (disposing)
+            {
+                m_input.Dispose();
+            }
         }
 
         public override void SetLockFactory(LockFactory lockFactory)

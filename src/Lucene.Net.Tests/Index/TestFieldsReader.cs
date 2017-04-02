@@ -163,9 +163,12 @@ namespace Lucene.Net.Index
                 FsDir.Sync(names);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                FsDir.Dispose();
+                if (disposing)
+                {
+                    FsDir.Dispose();
+                }
             }
         }
 

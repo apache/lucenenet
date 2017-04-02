@@ -37,14 +37,17 @@ namespace Lucene.Net.Store
         {
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            IsOpen = false;
-            if (CheckIndexOnClose_Renamed && DirectoryReader.IndexExists(this))
+            if (disposing)
             {
-                TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose_Renamed);
+                IsOpen = false;
+                if (CheckIndexOnClose_Renamed && DirectoryReader.IndexExists(this))
+                {
+                    TestUtil.CheckIndex(this, CrossCheckTermVectorsOnClose_Renamed);
+                }
+                base.Dispose(disposing);
             }
-            base.Dispose();
         }
 
         public virtual bool Open

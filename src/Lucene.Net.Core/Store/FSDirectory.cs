@@ -400,9 +400,12 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Closes the store to future operations. </summary>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            IsOpen = false;
+            if (disposing)
+            {
+                IsOpen = false;
+            }
         }
 
         /// <summary> the underlying filesystem directory </summary>

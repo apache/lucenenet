@@ -366,9 +366,12 @@ namespace Lucene.Net.Store
                 return Dir.CreateOutput(name, context);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                Dir.Dispose();
+                if (disposing)
+                {
+                    Dir.Dispose();
+                }
             }
 
             public override void DeleteFile(string name)
