@@ -1354,7 +1354,7 @@ namespace Lucene.Net.Store
 
             private int disposed = 0;
 
-            public override void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
                 if (0 == Interlocked.CompareExchange(ref this.disposed, 1, 0))
                 {

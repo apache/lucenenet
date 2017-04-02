@@ -85,7 +85,7 @@ namespace Lucene.Net.Store
                 this.descriptor = descriptor;
             }
 
-            public override void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
                 if (disposing)
                 {

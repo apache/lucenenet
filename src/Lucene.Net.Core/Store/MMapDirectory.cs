@@ -219,9 +219,12 @@ namespace Lucene.Net.Store
                 return (IndexInput)full.Clone();
             }
 
-            public override void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
-                full.Dispose();
+                if (disposing)
+                {
+                    full.Dispose();
+                }
             }
         }
 

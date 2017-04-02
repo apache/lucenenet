@@ -158,11 +158,12 @@ namespace Lucene.Net.Store
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         /// <summary>
         /// Releases exclusive access. </summary>
-        public abstract void Dispose(bool disposing);
+        protected abstract void Dispose(bool disposing);
 
 
         /// <summary>

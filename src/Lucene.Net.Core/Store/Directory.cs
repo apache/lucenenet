@@ -278,7 +278,7 @@ namespace Lucene.Net.Store
                 return new SlicedIndexInput("SlicedIndexInput(" + sliceDescription + " in " + @base + ")", @base, offset, length);
             }
 
-            public override void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
                 if (disposing)
                 {
@@ -329,11 +329,12 @@ namespace Lucene.Net.Store
             [Obsolete("Only for reading CFS files from 3.x indexes.")]
             public abstract IndexInput OpenFullSlice(); // can we remove this somehow?
 
-            public abstract void Dispose(bool disposing);
+            protected abstract void Dispose(bool disposing);
 
             public void Dispose()
             {
                 Dispose(true);
+                GC.SuppressFinalize(this);
             }
         }
 

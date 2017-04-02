@@ -183,7 +183,7 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {

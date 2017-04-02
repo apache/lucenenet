@@ -448,7 +448,7 @@ namespace Lucene.Net.Store
                 this.entry = entry;
             }
 
-            public override void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
             }
 
