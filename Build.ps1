@@ -91,6 +91,9 @@ param(
     [string]$NuGetPackageDirectory
 )
 
+#Get the current working directory
+$PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+
 $root = $PSScriptRoot
 $defaultNugetPackageDirectory = Join-Path $root "NuGetPackages"
 $defaultTestResultsDirectory = Join-Path $root "TestResults"
