@@ -4,9 +4,10 @@
 
 //Code modified to work with latest version of framework.
 
-using System;
-using System.Collections.Immutable;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Support.Configuration
 {
@@ -19,14 +20,14 @@ namespace Lucene.Net.Support.Configuration
             return configuration?.GetSection(AppSettings)[name];
         }
         
-         public static ImmutableDictionary<string, IConfigurationSection> GetSection(this IConfiguration configuration, params string[] sectionNames)
+         public static IDictionary<string, IConfigurationSection> GetSection(this IConfiguration configuration, params string[] sectionNames)
         {
             if (sectionNames.Length == 0)
-                return ImmutableDictionary<string, IConfigurationSection>.Empty;
+                return Collections.UnmodifiableMap(new Dictionary<string, IConfigurationSection>());
             
             var fullKey = string.Join(ConfigurationPath.KeyDelimiter, sectionNames);
 
-            return configuration?.GetSection(fullKey).GetChildren()?.ToImmutableDictionary(x => x.Key, x => x);
+            return Collections.UnmodifiableMap(configuration?.GetSection(fullKey).GetChildren()?.ToDictionary(k => k.Key, v => v));
         }
 
         public static string GetValue(this IConfiguration configuration, params string[] keys)
