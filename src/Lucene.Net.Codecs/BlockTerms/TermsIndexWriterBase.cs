@@ -40,6 +40,13 @@ namespace Lucene.Net.Codecs.BlockTerms
 
         public abstract FieldWriter AddField(FieldInfo fieldInfo, long termsFilePointer);
 
-        public abstract void Dispose(); // LUCENENET TODO: Implement disposable pattern
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected abstract void Dispose(bool disposing);
     }
 }

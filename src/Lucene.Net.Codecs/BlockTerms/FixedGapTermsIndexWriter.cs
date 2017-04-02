@@ -230,55 +230,58 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (m_output != null)
+            if (disposing)
             {
-                bool success = false;
-                try
+                if (m_output != null)
                 {
-                    long dirStart = m_output.GetFilePointer();
-                    int fieldCount = fields.Count;
+                    bool success = false;
+                    try
+                    {
+                        long dirStart = m_output.GetFilePointer();
+                        int fieldCount = fields.Count;
 
-                    int nonNullFieldCount = 0;
-                    for (int i = 0; i < fieldCount; i++)
-                    {
-                        SimpleFieldWriter field = fields[i];
-                        if (field.numIndexTerms > 0)
+                        int nonNullFieldCount = 0;
+                        for (int i = 0; i < fieldCount; i++)
                         {
-                            nonNullFieldCount++;
+                            SimpleFieldWriter field = fields[i];
+                            if (field.numIndexTerms > 0)
+                            {
+                                nonNullFieldCount++;
+                            }
                         }
-                    }
 
-                    m_output.WriteVInt32(nonNullFieldCount);
-                    for (int i = 0; i < fieldCount; i++)
-                    {
-                        SimpleFieldWriter field = fields[i];
-                        if (field.numIndexTerms > 0)
+                        m_output.WriteVInt32(nonNullFieldCount);
+                        for (int i = 0; i < fieldCount; i++)
                         {
-                            m_output.WriteVInt32(field.fieldInfo.Number);
-                            m_output.WriteVInt32(field.numIndexTerms);
-                            m_output.WriteVInt64(field.termsStart);
-                            m_output.WriteVInt64(field.indexStart);
-                            m_output.WriteVInt64(field.packedIndexStart);
-                            m_output.WriteVInt64(field.packedOffsetsStart);
+                            SimpleFieldWriter field = fields[i];
+                            if (field.numIndexTerms > 0)
+                            {
+                                m_output.WriteVInt32(field.fieldInfo.Number);
+                                m_output.WriteVInt32(field.numIndexTerms);
+                                m_output.WriteVInt64(field.termsStart);
+                                m_output.WriteVInt64(field.indexStart);
+                                m_output.WriteVInt64(field.packedIndexStart);
+                                m_output.WriteVInt64(field.packedOffsetsStart);
+                            }
                         }
+                        WriteTrailer(dirStart);
+                        CodecUtil.WriteFooter(m_output);
+                        success = true;
                     }
-                    WriteTrailer(dirStart);
-                    CodecUtil.WriteFooter(m_output);
-                    success = true;
-                }
-                finally
-                {
-                    if (success)
+                    finally
                     {
-                        IOUtils.Close(m_output);
+                        if (success)
+                        {
+                            IOUtils.Close(m_output);
+                        }
+                        else
+                        {
+                            IOUtils.CloseWhileHandlingException(m_output);
+                        }
+                        m_output = null;
                     }
-                    else
-                    {
-                        IOUtils.CloseWhileHandlingException(m_output);
-                    }
-                    m_output = null;
                 }
             }
         }

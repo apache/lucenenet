@@ -318,42 +318,45 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (m_output != null)
+            if (disposing)
             {
-                try
+                if (m_output != null)
                 {
-                    long dirStart = m_output.GetFilePointer();
-                    int fieldCount = fields.Count;
-
-                    int nonNullFieldCount = 0;
-                    for (int i = 0; i < fieldCount; i++)
+                    try
                     {
-                        FSTFieldWriter field = fields[i];
-                        if (field.fst != null)
-                        {
-                            nonNullFieldCount++;
-                        }
-                    }
+                        long dirStart = m_output.GetFilePointer();
+                        int fieldCount = fields.Count;
 
-                    m_output.WriteVInt32(nonNullFieldCount);
-                    for (int i = 0; i < fieldCount; i++)
-                    {
-                        FSTFieldWriter field = fields[i];
-                        if (field.fst != null)
+                        int nonNullFieldCount = 0;
+                        for (int i = 0; i < fieldCount; i++)
                         {
-                            m_output.WriteVInt32(field.fieldInfo.Number);
-                            m_output.WriteVInt64(field.indexStart);
+                            FSTFieldWriter field = fields[i];
+                            if (field.fst != null)
+                            {
+                                nonNullFieldCount++;
+                            }
                         }
+
+                        m_output.WriteVInt32(nonNullFieldCount);
+                        for (int i = 0; i < fieldCount; i++)
+                        {
+                            FSTFieldWriter field = fields[i];
+                            if (field.fst != null)
+                            {
+                                m_output.WriteVInt32(field.fieldInfo.Number);
+                                m_output.WriteVInt64(field.indexStart);
+                            }
+                        }
+                        WriteTrailer(dirStart);
+                        CodecUtil.WriteFooter(m_output);
                     }
-                    WriteTrailer(dirStart);
-                    CodecUtil.WriteFooter(m_output);
-                }
-                finally
-                {
-                    m_output.Dispose();
-                    m_output = null;
+                    finally
+                    {
+                        m_output.Dispose();
+                        m_output = null;
+                    }
                 }
             }
         }
