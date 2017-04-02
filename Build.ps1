@@ -240,7 +240,7 @@ $ErrorActionPreference = "Stop"
 
 & dotnet.exe restore
 
-$projectJsons = Get-ChildItem $root\project.json -Recurse
+$projectJsons = Get-ChildItem -Path "project.json" -Recurse
 
 Compile-Projects $projectJsons
 
