@@ -42,7 +42,9 @@ namespace Lucene.Net.Store
             exclude.Add(typeof(Directory).GetMethod("OpenChecksumInput", new Type[] { typeof(string), typeof(IOContext) }).ToString());
             foreach (MethodInfo m in typeof(FilterDirectory).GetMethods())
             {
-                if (m.DeclaringType == typeof(Directory))
+                // LUCNENET specific - Dispose() is final (we have to override the protected method).
+                // Since it is abstract, no need for a check here - the compiler takes care of that.
+                if (!m.IsFinal && m.DeclaringType == typeof(Directory))
                 {
                     Assert.IsTrue(exclude.Contains(m.ToString()), "method " + m.Name + " not overridden!");
                 }
