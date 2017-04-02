@@ -242,13 +242,11 @@ namespace Lucene.Net.Index
                 {
                     threads[i] = new IndexerThread(writer, false, NewField)
 
-                        // LUCENENET specific - ConcurrentMergeScheduler 
-                        // seems to take too long for this test to index a single document
-                        // so, increasing the time from 200 to 300 ms
-
-                        // LUCENENET TODO: Find out what is taking so friggin long here -
-                        // probably boils down to using LINQ for something that needs to be fast
-                        { TimeToRunInMilliseconds = 300 };
+                        // LUCENENET NOTE - ConcurrentMergeScheduler 
+                        // used to take too long for this test to index a single document
+                        // so, increased the time from 200 to 300 ms. 
+                        // But it has now been restored to 200 ms like Lucene.
+                        { TimeToRunInMilliseconds = 200 };
                 }
 
                 for (int i = 0; i < NUM_THREADS; i++)
