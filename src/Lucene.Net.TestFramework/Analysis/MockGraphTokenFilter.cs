@@ -113,10 +113,13 @@ namespace Lucene.Net.Analysis
             this.Random = new Random((int)Seed);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
-            this.Random = null;
+            if (disposing)
+            {
+                base.Dispose();
+                this.Random = null;
+            }
         }
 
         public override bool IncrementToken()

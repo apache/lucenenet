@@ -200,6 +200,13 @@ namespace Lucene.Net.Analysis
         {
         }
 
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
         /// Releases resources associated with this stream.
         /// <para/>
@@ -207,7 +214,7 @@ namespace Lucene.Net.Analysis
         /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
         /// throw <see cref="InvalidOperationException"/> on reuse).
         /// </summary>
-        public virtual void Dispose()
+        protected virtual void Dispose(bool disposing)
         {
         }
     }

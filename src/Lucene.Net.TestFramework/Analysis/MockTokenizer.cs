@@ -304,14 +304,17 @@ namespace Lucene.Net.Analysis
             StreamState = State.RESET;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
-            // in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
-            // these tests should disable this check, by default we check the normal workflow.
-            // TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this
-            Assert.True(!EnableChecks_Renamed || StreamState == State.END || StreamState == State.CLOSE, "close() called in wrong state: " + StreamState);
-            StreamState = State.CLOSE;
+            if (disposing)
+            {
+                base.Dispose();
+                // in some exceptional cases (e.g. TestIndexWriterExceptions) a test can prematurely close()
+                // these tests should disable this check, by default we check the normal workflow.
+                // TODO: investigate the CachingTokenFilter "double-close"... for now we ignore this
+                Assert.True(!EnableChecks_Renamed || StreamState == State.END || StreamState == State.CLOSE, "close() called in wrong state: " + StreamState);
+                StreamState = State.CLOSE;
+            }
         }
 
         internal override bool SetReaderTestPoint()

@@ -174,10 +174,13 @@ namespace Lucene.Net.Analysis.Miscellaneous
             suffix.End();
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            prefix.Dispose();
-            suffix.Dispose();
+            if (disposing)
+            {
+                prefix.Dispose();
+                suffix.Dispose();
+            }
         }
 
         public override void Reset()

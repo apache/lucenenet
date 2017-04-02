@@ -591,9 +591,12 @@ namespace Lucene.Net.Index
                 return true;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                Pool.Release(Payload);
+                if (disposing)
+                {
+                    Pool.Release(Payload);
+                }
             }
         }
 

@@ -89,9 +89,12 @@
             suffix.Reset();
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            suffix.Dispose();
+            if (disposing)
+            {
+                suffix.Dispose();
+            }
         }
 
         public override void End()

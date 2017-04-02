@@ -250,10 +250,13 @@ namespace Lucene.Net.Analysis.Standard
             posIncrAtt.PositionIncrement = posIncrAtt.PositionIncrement + skippedPositions;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
-            scanner.YyReset(m_input);
+            if (disposing)
+            {
+                base.Dispose();
+                scanner.YyReset(m_input);
+            }
         }
 
         public override void Reset()

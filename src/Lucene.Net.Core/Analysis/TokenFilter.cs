@@ -67,15 +67,18 @@ namespace Lucene.Net.Analysis
         /// <para/>
         /// If you override this method, always call <c>base.Dispose()</c>, otherwise
         /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
-        /// throw <see cref="InvalidOperationException"/> on reuse).
+        /// throw <see cref="System.InvalidOperationException"/> on reuse).
         /// <para/>
         /// <b>NOTE:</b>
         /// The default implementation chains the call to the input TokenStream, so
         /// be sure to call <c>base.Dispose()</c> when overriding this method.
         /// </summary>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            m_input.Dispose();
+            if (disposing)
+            {
+                m_input.Dispose();
+            }
         }
 
         /// <summary>

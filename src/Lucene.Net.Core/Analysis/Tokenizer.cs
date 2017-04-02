@@ -76,13 +76,16 @@ namespace Lucene.Net.Analysis
         /// The default implementation closes the input <see cref="TextReader"/>, so
         /// be sure to call <c>base.Dispose()</c> when overriding this method.
         /// </remarks>
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            m_input.Dispose();
-            // LUCENE-2387: don't hold onto TextReader after close, so
-            // GC can reclaim
-            inputPending = ILLEGAL_STATE_READER;
-            m_input = ILLEGAL_STATE_READER;
+            if (disposing)
+            {
+                m_input.Dispose();
+                // LUCENE-2387: don't hold onto TextReader after close, so
+                // GC can reclaim
+                inputPending = ILLEGAL_STATE_READER;
+                m_input = ILLEGAL_STATE_READER;
+            }
         }
 
         /// <summary>

@@ -2166,10 +2166,13 @@ namespace Lucene.Net.Search.Highlight
         }
 
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            base.Dispose();
-            this.realStream.Dispose();
+            if (disposing)
+            {
+                base.Dispose();
+                this.realStream.Dispose();
+            }
         }
     }
 
