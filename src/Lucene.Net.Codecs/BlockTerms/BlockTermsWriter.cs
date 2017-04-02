@@ -130,38 +130,41 @@ namespace Lucene.Net.Codecs.BlockTerms
             return new TermsWriter(this, fieldIndexWriter, field, postingsWriter);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (m_output != null)
+            if (disposing)
             {
-                try
+                if (m_output != null)
                 {
-                    long dirStart = m_output.GetFilePointer();
-
-                    m_output.WriteVInt32(fields.Count);
-                    foreach (FieldMetaData field in fields)
+                    try
                     {
-                        m_output.WriteVInt32(field.FieldInfo.Number);
-                        m_output.WriteVInt64(field.NumTerms);
-                        m_output.WriteVInt64(field.TermsStartPointer);
-                        if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                        long dirStart = m_output.GetFilePointer();
+
+                        m_output.WriteVInt32(fields.Count);
+                        foreach (FieldMetaData field in fields)
                         {
-                            m_output.WriteVInt64(field.SumTotalTermFreq);
+                            m_output.WriteVInt32(field.FieldInfo.Number);
+                            m_output.WriteVInt64(field.NumTerms);
+                            m_output.WriteVInt64(field.TermsStartPointer);
+                            if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                            {
+                                m_output.WriteVInt64(field.SumTotalTermFreq);
+                            }
+                            m_output.WriteVInt64(field.SumDocFreq);
+                            m_output.WriteVInt32(field.DocCount);
+                            if (VERSION_CURRENT >= VERSION_META_ARRAY)
+                            {
+                                m_output.WriteVInt32(field.Int64sSize);
+                            }
                         }
-                        m_output.WriteVInt64(field.SumDocFreq);
-                        m_output.WriteVInt32(field.DocCount);
-                        if (VERSION_CURRENT >= VERSION_META_ARRAY)
-                        {
-                            m_output.WriteVInt32(field.Int64sSize);
-                        }
+                        WriteTrailer(dirStart);
+                        CodecUtil.WriteFooter(m_output);
                     }
-                    WriteTrailer(dirStart);
-                    CodecUtil.WriteFooter(m_output);
-                }
-                finally
-                {
-                    IOUtils.Close(m_output, postingsWriter, termsIndexWriter);
-                    m_output = null;
+                    finally
+                    {
+                        IOUtils.Close(m_output, postingsWriter, termsIndexWriter);
+                        m_output = null;
+                    }
                 }
             }
         }

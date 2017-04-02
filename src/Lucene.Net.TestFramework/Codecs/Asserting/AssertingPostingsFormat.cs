@@ -126,15 +126,12 @@ namespace Lucene.Net.Codecs.Asserting
                 return new AssertingTermsConsumer(consumer, field);
             }
 
-            public override void Dispose()
-            {
-                Dispose(true);
-            }
-
-            protected void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
                 if (disposing)
+                {
                     @in.Dispose();
+                }
             }
         }
 

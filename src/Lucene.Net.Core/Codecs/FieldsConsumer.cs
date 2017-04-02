@@ -60,7 +60,16 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called when we are done adding everything. </summary>
-        public abstract void Dispose();
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Called when we are done adding everything. </summary>
+        protected abstract void Dispose(bool disposing);
 
         /// <summary>
         /// Called during merging to merge all <seealso cref="Fields"/> from

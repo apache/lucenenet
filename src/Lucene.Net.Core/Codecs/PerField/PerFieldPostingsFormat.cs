@@ -157,10 +157,13 @@ namespace Lucene.Net.Codecs.PerField
                 return consumer.Consumer.AddField(field);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                // Close all subs
-                IOUtils.Close(formats.Values);
+                if (disposing)
+                {
+                    // Close all subs
+                    IOUtils.Close(formats.Values);
+                }
             }
         }
 

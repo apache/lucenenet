@@ -449,41 +449,44 @@ namespace Lucene.Net.Codecs.Bloom
                 return _delegateFieldsConsumer.AddField(field);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                _delegateFieldsConsumer.Dispose();
-                // Now we are done accumulating values for these fields
-                var nonSaturatedBlooms = (from entry in _bloomFilters.EntrySet() let bloomFilter = entry.Value where !outerInstance._bloomFilterFactory.IsSaturated(bloomFilter, entry.Key) select entry).ToList();
-
-                var bloomFileName = IndexFileNames.SegmentFileName(
-                    _state.SegmentInfo.Name, _state.SegmentSuffix, BLOOM_EXTENSION);
-                IndexOutput bloomOutput = null;
-
-                try
+                if (disposing)
                 {
-                    bloomOutput = _state.Directory.CreateOutput(bloomFileName, _state.Context);
-                    CodecUtil.WriteHeader(bloomOutput, /*BLOOM_CODEC_NAME*/ outerInstance.Name, VERSION_CURRENT);
-                    // remember the name of the postings format we will delegate to
-                    bloomOutput.WriteString(outerInstance._delegatePostingsFormat.Name);
+                    _delegateFieldsConsumer.Dispose();
+                    // Now we are done accumulating values for these fields
+                    var nonSaturatedBlooms = (from entry in _bloomFilters.EntrySet() let bloomFilter = entry.Value where !outerInstance._bloomFilterFactory.IsSaturated(bloomFilter, entry.Key) select entry).ToList();
 
-                    // First field in the output file is the number of fields+blooms saved
-                    bloomOutput.WriteInt32(nonSaturatedBlooms.Count);
-                    foreach (var entry in nonSaturatedBlooms)
+                    var bloomFileName = IndexFileNames.SegmentFileName(
+                        _state.SegmentInfo.Name, _state.SegmentSuffix, BLOOM_EXTENSION);
+                    IndexOutput bloomOutput = null;
+
+                    try
                     {
-                        var fieldInfo = entry.Key;
-                        var bloomFilter = entry.Value;
-                        bloomOutput.WriteInt32(fieldInfo.Number);
-                        SaveAppropriatelySizedBloomFilter(bloomOutput, bloomFilter, fieldInfo);
-                    }
+                        bloomOutput = _state.Directory.CreateOutput(bloomFileName, _state.Context);
+                        CodecUtil.WriteHeader(bloomOutput, /*BLOOM_CODEC_NAME*/ outerInstance.Name, VERSION_CURRENT);
+                        // remember the name of the postings format we will delegate to
+                        bloomOutput.WriteString(outerInstance._delegatePostingsFormat.Name);
 
-                    CodecUtil.WriteFooter(bloomOutput);
+                        // First field in the output file is the number of fields+blooms saved
+                        bloomOutput.WriteInt32(nonSaturatedBlooms.Count);
+                        foreach (var entry in nonSaturatedBlooms)
+                        {
+                            var fieldInfo = entry.Key;
+                            var bloomFilter = entry.Value;
+                            bloomOutput.WriteInt32(fieldInfo.Number);
+                            SaveAppropriatelySizedBloomFilter(bloomOutput, bloomFilter, fieldInfo);
+                        }
+
+                        CodecUtil.WriteFooter(bloomOutput);
+                    }
+                    finally
+                    {
+                        IOUtils.Close(bloomOutput);
+                    }
+                    //We are done with large bitsets so no need to keep them hanging around
+                    _bloomFilters.Clear();
                 }
-                finally
-                {
-                    IOUtils.Close(bloomOutput);
-                }
-                //We are done with large bitsets so no need to keep them hanging around
-                _bloomFilters.Clear();
             }
 
             private void SaveAppropriatelySizedBloomFilter(DataOutput bloomOutput,

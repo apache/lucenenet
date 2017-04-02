@@ -185,50 +185,53 @@ namespace Lucene.Net.Codecs.Memory
             return new TermsWriter(this, field);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (blockOut == null) return;
-
-            IOException ioe = null;
-            try
+            if (disposing)
             {
-                var blockDirStart = blockOut.GetFilePointer();
+                if (blockOut == null) return;
 
-                // write field summary
-                blockOut.WriteVInt32(_fields.Count);
-                foreach (var field in _fields)
+                IOException ioe = null;
+                try
                 {
-                    blockOut.WriteVInt32(field.FieldInfo.Number);
-                    blockOut.WriteVInt64(field.NumTerms);
-                    if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
-                    {
-                        blockOut.WriteVInt64(field.SumTotalTermFreq);
-                    }
-                    blockOut.WriteVInt64(field.SumDocFreq);
-                    blockOut.WriteVInt32(field.DocCount);
-                    blockOut.WriteVInt32(field.Int64sSize);
-                    blockOut.WriteVInt64(field.StatsOut.GetFilePointer());
-                    blockOut.WriteVInt64(field.MetaInt64sOut.GetFilePointer());
-                    blockOut.WriteVInt64(field.MetaBytesOut.GetFilePointer());
+                    var blockDirStart = blockOut.GetFilePointer();
 
-                    field.SkipOut.WriteTo(blockOut);
-                    field.StatsOut.WriteTo(blockOut);
-                    field.MetaInt64sOut.WriteTo(blockOut);
-                    field.MetaBytesOut.WriteTo(blockOut);
-                    field.Dict.Save(indexOut);
+                    // write field summary
+                    blockOut.WriteVInt32(_fields.Count);
+                    foreach (var field in _fields)
+                    {
+                        blockOut.WriteVInt32(field.FieldInfo.Number);
+                        blockOut.WriteVInt64(field.NumTerms);
+                        if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                        {
+                            blockOut.WriteVInt64(field.SumTotalTermFreq);
+                        }
+                        blockOut.WriteVInt64(field.SumDocFreq);
+                        blockOut.WriteVInt32(field.DocCount);
+                        blockOut.WriteVInt32(field.Int64sSize);
+                        blockOut.WriteVInt64(field.StatsOut.GetFilePointer());
+                        blockOut.WriteVInt64(field.MetaInt64sOut.GetFilePointer());
+                        blockOut.WriteVInt64(field.MetaBytesOut.GetFilePointer());
+
+                        field.SkipOut.WriteTo(blockOut);
+                        field.StatsOut.WriteTo(blockOut);
+                        field.MetaInt64sOut.WriteTo(blockOut);
+                        field.MetaBytesOut.WriteTo(blockOut);
+                        field.Dict.Save(indexOut);
+                    }
+                    WriteTrailer(blockOut, blockDirStart);
+                    CodecUtil.WriteFooter(indexOut);
+                    CodecUtil.WriteFooter(blockOut);
                 }
-                WriteTrailer(blockOut, blockDirStart);
-                CodecUtil.WriteFooter(indexOut);
-                CodecUtil.WriteFooter(blockOut);
-            }
-            catch (IOException ioe2)
-            {
-                ioe = ioe2;
-            }
-            finally
-            {
-                IOUtils.CloseWhileHandlingException(ioe, blockOut, indexOut, postingsWriter);
-                blockOut = null;
+                catch (IOException ioe2)
+                {
+                    ioe = ioe2;
+                }
+                finally
+                {
+                    IOUtils.CloseWhileHandlingException(ioe, blockOut, indexOut, postingsWriter);
+                    blockOut = null;
+                }
             }
         }
 

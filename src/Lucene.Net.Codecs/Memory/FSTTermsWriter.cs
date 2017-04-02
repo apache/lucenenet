@@ -164,41 +164,44 @@ namespace Lucene.Net.Codecs.Memory
             return new TermsWriter(this, field);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (_output == null) return;
-
-            IOException ioe = null;
-            try
+            if (disposing)
             {
-                // write field summary
-                var dirStart = _output.GetFilePointer();
+                if (_output == null) return;
 
-                _output.WriteVInt32(_fields.Count);
-                foreach (var field in _fields)
+                IOException ioe = null;
+                try
                 {
-                    _output.WriteVInt32(field.FieldInfo.Number);
-                    _output.WriteVInt64(field.NumTerms);
-                    if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                    // write field summary
+                    var dirStart = _output.GetFilePointer();
+
+                    _output.WriteVInt32(_fields.Count);
+                    foreach (var field in _fields)
                     {
-                        _output.WriteVInt64(field.SumTotalTermFreq);
+                        _output.WriteVInt32(field.FieldInfo.Number);
+                        _output.WriteVInt64(field.NumTerms);
+                        if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                        {
+                            _output.WriteVInt64(field.SumTotalTermFreq);
+                        }
+                        _output.WriteVInt64(field.SumDocFreq);
+                        _output.WriteVInt32(field.DocCount);
+                        _output.WriteVInt32(field.Int64sSize);
+                        field.Dict.Save(_output);
                     }
-                    _output.WriteVInt64(field.SumDocFreq);
-                    _output.WriteVInt32(field.DocCount);
-                    _output.WriteVInt32(field.Int64sSize);
-                    field.Dict.Save(_output);
+                    WriteTrailer(_output, dirStart);
+                    CodecUtil.WriteFooter(_output);
                 }
-                WriteTrailer(_output, dirStart);
-                CodecUtil.WriteFooter(_output);
-            }
-            catch (IOException ioe2)
-            {
-                ioe = ioe2;
-            }
-            finally
-            {
-                IOUtils.CloseWhileHandlingException(ioe, _output, _postingsWriter);
-                _output = null;
+                catch (IOException ioe2)
+                {
+                    ioe = ioe2;
+                }
+                finally
+                {
+                    IOUtils.CloseWhileHandlingException(ioe, _output, _postingsWriter);
+                    _output = null;
+                }
             }
         }
 

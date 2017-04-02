@@ -192,20 +192,23 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (_output == null) return;
+            if (disposing)
+            {
+                if (_output == null) return;
 
-            try
-            {
-                Write(END);
-                Newline();
-                SimpleTextUtil.WriteChecksum(_output, _scratch);
-            }
-            finally
-            {
-                _output.Dispose();
-                _output = null;
+                try
+                {
+                    Write(END);
+                    Newline();
+                    SimpleTextUtil.WriteChecksum(_output, _scratch);
+                }
+                finally
+                {
+                    _output.Dispose();
+                    _output = null;
+                }
             }
         }
     }

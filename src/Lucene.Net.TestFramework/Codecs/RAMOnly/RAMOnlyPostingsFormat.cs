@@ -317,7 +317,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 return TermsConsumer;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
                 // TODO: finalize stuff
             }

@@ -359,20 +359,22 @@ namespace Lucene.Net.Codecs.Memory
                 return new TermsWriter(@out, field, outerInstance.doPackFST, outerInstance.acceptableOverheadRatio);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                // EOF marker:
-                try
+                if (disposing)
                 {
-                    @out.WriteVInt32(0);
-                    CodecUtil.WriteFooter(@out);
-                }
-                finally
-                {
-                    @out.Dispose();
+                    // EOF marker:
+                    try
+                    {
+                        @out.WriteVInt32(0);
+                        CodecUtil.WriteFooter(@out);
+                    }
+                    finally
+                    {
+                        @out.Dispose();
+                    }
                 }
             }
-
         }
 
         private sealed class FSTDocsEnum : DocsEnum

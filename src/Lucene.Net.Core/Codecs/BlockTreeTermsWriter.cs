@@ -1197,44 +1197,47 @@ namespace Lucene.Net.Codecs
             internal readonly RAMOutputStream bytesWriter = new RAMOutputStream();
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            System.IO.IOException ioe = null;
-            try
+            if (disposing)
             {
-                long dirStart = @out.GetFilePointer();
-                long indexDirStart = indexOut.GetFilePointer();
-
-                @out.WriteVInt32(fields.Count);
-
-                foreach (FieldMetaData field in fields)
+                System.IO.IOException ioe = null;
+                try
                 {
-                    //System.out.println("  field " + field.fieldInfo.name + " " + field.numTerms + " terms");
-                    @out.WriteVInt32(field.FieldInfo.Number);
-                    @out.WriteVInt64(field.NumTerms);
-                    @out.WriteVInt32(field.RootCode.Length);
-                    @out.WriteBytes(field.RootCode.Bytes, field.RootCode.Offset, field.RootCode.Length);
-                    if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                    long dirStart = @out.GetFilePointer();
+                    long indexDirStart = indexOut.GetFilePointer();
+
+                    @out.WriteVInt32(fields.Count);
+
+                    foreach (FieldMetaData field in fields)
                     {
-                        @out.WriteVInt64(field.SumTotalTermFreq);
+                        //System.out.println("  field " + field.fieldInfo.name + " " + field.numTerms + " terms");
+                        @out.WriteVInt32(field.FieldInfo.Number);
+                        @out.WriteVInt64(field.NumTerms);
+                        @out.WriteVInt32(field.RootCode.Length);
+                        @out.WriteBytes(field.RootCode.Bytes, field.RootCode.Offset, field.RootCode.Length);
+                        if (field.FieldInfo.IndexOptions != IndexOptions.DOCS_ONLY)
+                        {
+                            @out.WriteVInt64(field.SumTotalTermFreq);
+                        }
+                        @out.WriteVInt64(field.SumDocFreq);
+                        @out.WriteVInt32(field.DocCount);
+                        @out.WriteVInt32(field.Int64sSize);
+                        indexOut.WriteVInt64(field.IndexStartFP);
                     }
-                    @out.WriteVInt64(field.SumDocFreq);
-                    @out.WriteVInt32(field.DocCount);
-                    @out.WriteVInt32(field.Int64sSize);
-                    indexOut.WriteVInt64(field.IndexStartFP);
+                    WriteTrailer(@out, dirStart);
+                    CodecUtil.WriteFooter(@out);
+                    WriteIndexTrailer(indexOut, indexDirStart);
+                    CodecUtil.WriteFooter(indexOut);
                 }
-                WriteTrailer(@out, dirStart);
-                CodecUtil.WriteFooter(@out);
-                WriteIndexTrailer(indexOut, indexDirStart);
-                CodecUtil.WriteFooter(indexOut);
-            }
-            catch (System.IO.IOException ioe2)
-            {
-                ioe = ioe2;
-            }
-            finally
-            {
-                IOUtils.CloseWhileHandlingException(ioe, @out, indexOut, postingsWriter);
+                catch (System.IO.IOException ioe2)
+                {
+                    ioe = ioe2;
+                }
+                finally
+                {
+                    IOUtils.CloseWhileHandlingException(ioe, @out, indexOut, postingsWriter);
+                }
             }
         }
     }

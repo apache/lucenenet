@@ -96,9 +96,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             return new PreFlexTermsWriter(this, field);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            IOUtils.Close(TermsOut, FreqOut, ProxOut);
+            if (disposing)
+            {
+                IOUtils.Close(TermsOut, FreqOut, ProxOut);
+            }
         }
 
         private class PreFlexTermsWriter : TermsConsumer
