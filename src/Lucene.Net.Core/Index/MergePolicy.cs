@@ -691,7 +691,17 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Release all resources for the policy.
         /// </summary>
-        public abstract void Dispose();
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Release all resources for the policy.
+        /// </summary>
+        protected abstract void Dispose(bool disposing);
 
         /// <summary>
         /// Returns true if a new segment (regardless of its origin) should use the

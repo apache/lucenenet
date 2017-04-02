@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             this.useCompoundFile = useCompoundFile;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
         }
 

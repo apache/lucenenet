@@ -258,9 +258,12 @@ namespace Lucene.Net.Index.Sorter
             return new SortingMergePolicy((MergePolicy)@in.Clone(), sort);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            @in.Dispose();
+            if (disposing)
+            {
+                @in.Dispose();
+            }
         }
 
         public override bool UseCompoundFile(SegmentInfos segments, SegmentCommitInfo newSegment)

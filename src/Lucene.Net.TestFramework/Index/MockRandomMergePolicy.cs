@@ -119,7 +119,7 @@ namespace Lucene.Net.Index
             return FindMerges((MergeTrigger)int.MinValue, segmentInfos);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
         }
 

@@ -742,7 +742,7 @@ namespace Lucene.Net.Index
             return spec;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
         }
 
