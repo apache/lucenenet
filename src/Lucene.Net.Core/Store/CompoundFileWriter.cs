@@ -90,7 +90,7 @@ namespace Lucene.Net.Store
         /// Create the compound stream in the specified file. The file name is the
         /// entire name (no extensions are added).
         /// </summary>
-        /// <exception cref="NullReferenceException">
+        /// <exception cref="ArgumentNullException">
         ///           if <paramref name="dir"/> or <paramref name="name"/> is <c>null</c> </exception>
         internal CompoundFileWriter(Directory dir, string name)
         {
