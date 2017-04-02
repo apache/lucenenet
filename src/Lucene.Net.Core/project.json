@@ -1,5 +1,6 @@
 ﻿{
   "version": "4.8.0-alpha",
+  "buildOptions": { "outputName": "Lucene.Net" },
   "dependencies": {
     "Microsoft.Extensions.Configuration": "1.0.0",
     "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
