@@ -63,42 +63,11 @@ namespace Lucene.Net.Util.Automaton
 
         // LUCENENET TODO:
         //
-        // DEBUG NOTE: 
-        //
-        // Worked with the below test quite a bit to get it to match Lucene,
-        // but no luck so far. However, I was able to determine that
-        // 
-        //    AutomatonTestUtil.MinimizeSimple(a);
-        //    Automaton b = (Automaton)a.Clone();
-        //    AutomatonTestUtil.MinimizeSimple(b);
-        //
-        // works and
-        //
-        //    MinimizationOperations.Minimize(a);
-        //    Automaton b = (Automaton)a.Clone();
-        //    MinimizationOperations.Minimize(b);
-        //
-        // works. So, it looks like the Clone() method is working.
-        // The only issue seems to be that the AutomatonTestUtil.MinimizeSimple()
-        // operation is somehow different than the MinimizationOperations.Minimize()
-        // operation. No more than one of them can be correct (but don't know which one, if either).
-        //
-        // I tried using the a.ToString() to compare what is happening against Java,
-        // but the results are coming back in a slightly different order. It is a strange implementation
-        // because SpecialOperations.Reverse() is called in AutomatonTestUtil.MinimizeSimple()
-        // but the results are stored in a HashSet<T>, which by definition is not ordered.
-        // So, it is not clear whether order is important or, if so, that it somehow depends 
-        // on Java's HashSet implementation to work. It also isn't very clear what 
-        // Automaton is supposed to do.
-        //
-        // I went over the AutomatonTestUtil line-by-line and although there were some things
-        // that needed correcting, the result is still the same.
+        // The initialstate after MinimizeSimple is always 0
+        // in Lucene.NET. However, it doesn't seem to be
+        // causing any issues with other tests failing.
 
         // HERE IS THE RESULT OF THE FOLLOWING TEST IN JAVA
-
-        // One thing of note is that in .NET, the initial state
-        // is always coming back as 0 but in Java it is > 0 after 
-        // the Minimize operation.
 
         //Before MinimizeSimple: initial state: 0
         //state 0 [accept]:
