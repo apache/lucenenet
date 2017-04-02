@@ -24,7 +24,7 @@ namespace Lucene.Net.Util
     // TODO: we should probably be a wrapper so verbose still works...
     public class FailOnNonBulkMergesInfoStream : InfoStream
     {
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
         }
 

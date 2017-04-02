@@ -543,9 +543,12 @@ namespace Lucene.Net.Index
                 this.TestPoint = testPoint;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                @delegate.Dispose();
+                if (disposing)
+                {
+                    @delegate.Dispose();
+                }
             }
 
             public override void Message(string component, string message)

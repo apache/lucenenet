@@ -1319,7 +1319,7 @@ namespace Lucene.Net.Index
                 return true;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
         }
@@ -2515,7 +2515,7 @@ namespace Lucene.Net.Index
                 return true;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
         }

@@ -47,7 +47,7 @@ namespace Lucene.Net.Util
                 return false;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
         }
@@ -87,7 +87,14 @@ namespace Lucene.Net.Util
             }
         }
 
-        public virtual void Dispose()
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
         }
 

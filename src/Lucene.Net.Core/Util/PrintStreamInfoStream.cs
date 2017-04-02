@@ -58,9 +58,9 @@ namespace Lucene.Net.Util
             return true;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (!IsSystemStream)
+            if (disposing && !IsSystemStream)
             {
                 m_stream.Dispose();
             }

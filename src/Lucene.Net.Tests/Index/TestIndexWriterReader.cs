@@ -1237,7 +1237,7 @@ namespace Lucene.Net.Index
                 this.DidWarm = didWarm;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
 
