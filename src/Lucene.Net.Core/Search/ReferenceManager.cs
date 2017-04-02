@@ -339,7 +339,7 @@ namespace Lucene.Net.Search
         {
             if (listener == null)
             {
-                throw new System.NullReferenceException("Listener cannot be null"); // LUCENENET TODO: ArgumentNullException ?
+                throw new System.ArgumentNullException("Listener cannot be null");
             }
             refreshListeners.Add(listener);
         }
@@ -351,7 +351,7 @@ namespace Lucene.Net.Search
         {
             if (listener == null)
             {
-                throw new System.NullReferenceException("Listener cannot be null"); // LUCENENET TODO: ArgumentNullException ?
+                throw new System.ArgumentNullException("Listener cannot be null");
             }
             refreshListeners.Remove(listener);
         }

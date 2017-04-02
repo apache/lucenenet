@@ -96,11 +96,11 @@ namespace Lucene.Net.Store
         {
             if (dir == null)
             {
-                throw new NullReferenceException("directory cannot be null"); // LUCENENET TODO: ArgumentNullException?
+                throw new ArgumentNullException("directory cannot be null"); 
             }
             if (name == null)
             {
-                throw new NullReferenceException("name cannot be null"); // LUCENENET TODO: ArgumentNullException?
+                throw new ArgumentNullException("name cannot be null"); 
             }
             directory = dir;
             entryTableName = IndexFileNames.SegmentFileName(IndexFileNames.StripExtension(name), "", IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION);
