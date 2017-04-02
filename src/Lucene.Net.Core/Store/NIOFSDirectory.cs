@@ -186,9 +186,9 @@ namespace Lucene.Net.Store
                 this.isClone = true;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                if (!isClone)
+                if (disposing && !isClone)
                 {
                     m_channel.Dispose();
                 }

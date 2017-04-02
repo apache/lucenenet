@@ -32,21 +32,24 @@ namespace Lucene.Net.Store
         {
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                Thread.Sleep(50);
-            }
+                try
+                {
+                    Thread.Sleep(50);
+                }
 #if !NETSTANDARD
-            catch (ThreadInterruptedException ie)
-            {
-                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-            }
+                catch (ThreadInterruptedException ie)
+                {
+                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+                }
 #endif
-            finally
-            {
-                base.Dispose();
+                finally
+                {
+                    base.Dispose();
+                }
             }
         }
     }

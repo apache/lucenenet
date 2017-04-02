@@ -364,46 +364,49 @@ namespace Lucene.Net.Store
             curBufIndex = 0;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                if (buffers == null)
+                try
                 {
-                    return;
-                }
-
-                // make local copy, then un-set early
-                ByteBuffer[] bufs = buffers;
-                UnsetBuffers();
-                if (clones != null)
-                {
-                    clones.Remove(this);
-                }
-
-                if (isClone)
-                {
-                    return;
-                }
-
-                // for extra safety unset also all clones' buffers:
-                if (clones != null)
-                {
-                    foreach (ByteBufferIndexInput clone in clones.Keys)
+                    if (buffers == null)
                     {
-                        clone.UnsetBuffers();
+                        return;
                     }
-                    this.clones.Clear();
-                }
 
-                foreach (ByteBuffer b in bufs)
-                {
-                    FreeBuffer(b);
+                    // make local copy, then un-set early
+                    ByteBuffer[] bufs = buffers;
+                    UnsetBuffers();
+                    if (clones != null)
+                    {
+                        clones.Remove(this);
+                    }
+
+                    if (isClone)
+                    {
+                        return;
+                    }
+
+                    // for extra safety unset also all clones' buffers:
+                    if (clones != null)
+                    {
+                        foreach (ByteBufferIndexInput clone in clones.Keys)
+                        {
+                            clone.UnsetBuffers();
+                        }
+                        this.clones.Clear();
+                    }
+
+                    foreach (ByteBuffer b in bufs)
+                    {
+                        FreeBuffer(b);
+                    }
                 }
-            }
-            finally
-            {
-                UnsetBuffers();
+                finally
+                {
+                    UnsetBuffers();
+                }
             }
         }
 

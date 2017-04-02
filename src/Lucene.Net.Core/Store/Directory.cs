@@ -389,9 +389,12 @@ namespace Lucene.Net.Store
             /// <summary>
             /// Closes the stream to further operations.
             /// </summary>
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                @base.Dispose();
+                if (disposing)
+                {
+                    @base.Dispose();
+                }
             }
 
             public override long Length

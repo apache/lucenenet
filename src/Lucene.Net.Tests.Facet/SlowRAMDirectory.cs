@@ -155,9 +155,12 @@ namespace Lucene.Net.Facet
             }
 
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                ii.Dispose();
+                if (disposing)
+                {
+                    ii.Dispose();
+                }
             }
             public override bool Equals(object o)
             {

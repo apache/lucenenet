@@ -338,9 +338,12 @@ namespace Lucene.Net.Codecs
                 input.ReadBytes(data, 0, length);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                data = null;
+                if (disposing)
+                {
+                    data = null;
+                }
             }
 
             public override long GetFilePointer()

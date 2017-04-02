@@ -43,24 +43,27 @@ namespace Lucene.Net.Store
             this.@delegate = @delegate;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                // turn on the following to look for leaks closing inputs,
-                // after fixing TestTransactions
-                // Dir.MaybeThrowDeterministicException();
-            }
-            finally
-            {
-                Closed = true;
-                @delegate.Dispose();
-                // Pending resolution on LUCENE-686 we may want to
-                // remove the conditional check so we also track that
-                // all clones get closed:
-                if (!IsClone)
+                try
                 {
-                    Dir.RemoveIndexInput(this, Name);
+                    // turn on the following to look for leaks closing inputs,
+                    // after fixing TestTransactions
+                    // Dir.MaybeThrowDeterministicException();
+                }
+                finally
+                {
+                    Closed = true;
+                    @delegate.Dispose();
+                    // Pending resolution on LUCENE-686 we may want to
+                    // remove the conditional check so we also track that
+                    // all clones get closed:
+                    if (!IsClone)
+                    {
+                        Dir.RemoveIndexInput(this, Name);
+                    }
                 }
             }
         }

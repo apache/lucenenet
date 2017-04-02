@@ -62,9 +62,12 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            main.Dispose();
+            if (disposing)
+            {
+                main.Dispose();
+            }
         }
 
         public override long GetFilePointer()

@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
             Pointer += len;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             // ignore
         }

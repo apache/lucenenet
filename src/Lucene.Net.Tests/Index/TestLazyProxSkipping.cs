@@ -228,9 +228,12 @@ namespace Lucene.Net.Index
                 this.Input.ReadBytes(b, offset, len);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                this.Input.Dispose();
+                if (disposing)
+                {
+                    this.Input.Dispose();
+                }
             }
 
             public override long GetFilePointer()

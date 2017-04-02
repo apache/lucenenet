@@ -159,9 +159,9 @@ namespace Lucene.Net.Store
                 this.IsClone = true;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                if (!IsClone)
+                if (disposing && !IsClone)
                 {
                     m_file.Dispose();
                 }

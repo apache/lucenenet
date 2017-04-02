@@ -57,7 +57,16 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Closes the stream to further operations. </summary>
-        public abstract void Dispose();
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Closes the stream to further operations. </summary>
+        protected abstract void Dispose(bool disposing);
 
         /// <summary>
         /// Returns the current position in this file, where the next read will

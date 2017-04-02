@@ -205,9 +205,12 @@ namespace Lucene.Net.Index
                 get { return @delegate.Length; }
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                @delegate.Dispose();
+                if (disposing)
+                {
+                    @delegate.Dispose();
+                }
             }
 
             public override object Clone()

@@ -58,7 +58,7 @@ namespace Lucene.Net.Store
             currentBuffer = null;
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
             // nothing to do here
         }

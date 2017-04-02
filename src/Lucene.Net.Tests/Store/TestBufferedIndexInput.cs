@@ -252,7 +252,7 @@ namespace Lucene.Net.Store
                 this.Pos = pos;
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
 

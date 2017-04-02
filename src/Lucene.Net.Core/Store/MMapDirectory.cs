@@ -240,14 +240,17 @@ namespace Lucene.Net.Store
                 this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
             }
 
-            public override sealed void Dispose()
+            protected override /*sealed*/ void Dispose(bool disposing) // LUCENENET specific - not marked sealed in case subclass needs to dispose
             {
-                if (null != this.memoryMappedFile)
+                if (disposing)
                 {
-                    this.memoryMappedFile.Dispose();
-                    this.memoryMappedFile = null;
+                    if (null != this.memoryMappedFile)
+                    {
+                        this.memoryMappedFile.Dispose();
+                        this.memoryMappedFile = null;
+                    }
+                    base.Dispose();
                 }
-                base.Dispose();
             }
 
             /// <summary>
