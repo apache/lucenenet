@@ -57,11 +57,14 @@ namespace Lucene.Net.Analysis
         /// <para/>
         /// <b>NOTE:</b>
         /// The default implementation closes the input <see cref="TextReader"/>, so
-        /// be sure to call <c>base.Dispose()</c> when overriding this method.
+        /// be sure to call <c>base.Dispose(disposing)</c> when overriding this method.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
-            m_input.Dispose();
+            if (disposing)
+            {
+                m_input.Dispose();
+            }
             base.Dispose(disposing);
         }
 

@@ -434,9 +434,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             protected override void Dispose(bool disposing)
             {
+                base.Dispose(disposing);
                 if (disposing)
                 {
-                    base.Dispose();
                     this.initialized = false;
                 }
             }
@@ -571,9 +571,9 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
             protected override void Dispose(bool disposing)
             {
+                base.Dispose(disposing);
                 if (disposing)
                 {
-                    base.Dispose();
                     this.str = null;
                 }
             }

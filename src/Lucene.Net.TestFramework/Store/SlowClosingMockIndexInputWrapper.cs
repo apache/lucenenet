@@ -48,7 +48,7 @@ namespace Lucene.Net.Store
 #endif
                 finally
                 {
-                    base.Dispose();
+                    base.Dispose(disposing);
                 }
             }
         }

@@ -280,7 +280,10 @@ namespace Lucene.Net.Store
 
             public override void Dispose(bool disposing)
             {
-                @base.Dispose();
+                if (disposing)
+                {
+                    @base.Dispose();
+                }
             }
 
             [Obsolete("Only for reading CFS files from 3.x indexes.")]

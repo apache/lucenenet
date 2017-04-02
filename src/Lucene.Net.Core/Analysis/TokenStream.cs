@@ -210,7 +210,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Releases resources associated with this stream.
         /// <para/>
-        /// If you override this method, always call <c>base.Dispose()</c>, otherwise
+        /// If you override this method, always call <c>base.Dispose(disposing)</c>, otherwise
         /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
         /// throw <see cref="InvalidOperationException"/> on reuse).
         /// </summary>

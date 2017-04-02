@@ -552,7 +552,7 @@ namespace Lucene.Net.Index
         /// Closes files associated with this index.
         /// This method implements the disposable pattern. 
         /// It may be overridden to dispose any managed or unmanaged resources,
-        /// but be sure to call <c>base.Dispose()</c> to close files associated with the
+        /// but be sure to call <c>base.Dispose(disposing)</c> to close files associated with the
         /// underlying <see cref="IndexReader"/>.
         /// </summary>
         /// <param name="disposing"><c>true</c> indicates to dispose all managed 

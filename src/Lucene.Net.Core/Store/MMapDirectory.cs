@@ -249,8 +249,8 @@ namespace Lucene.Net.Store
                         this.memoryMappedFile.Dispose();
                         this.memoryMappedFile = null;
                     }
-                    base.Dispose();
                 }
+                base.Dispose(disposing);
             }
 
             /// <summary>

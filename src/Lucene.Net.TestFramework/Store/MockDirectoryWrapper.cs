@@ -1435,7 +1435,7 @@ namespace Lucene.Net.Store
                 {
                     try
                     {
-                        base.Dispose();
+                        base.Dispose(disposing);
                     }
                     finally
                     {

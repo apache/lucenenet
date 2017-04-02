@@ -290,9 +290,9 @@ namespace Lucene.Net.Analysis.Core
 
             protected override void Dispose(bool disposing)
             {
+                base.Dispose(disposing);
                 if (disposing)
                 {
-                    base.Dispose();
                     Console.WriteLine(m_input.GetType().Name + ".close()");
                 }
             }

@@ -497,7 +497,7 @@ namespace Lucene.Net.Store
                         IOException priorE = null;
                         try
                         {
-                            base.Dispose();
+                            base.Dispose(disposing);
                         }
                         catch (IOException ioe)
                         {

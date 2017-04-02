@@ -117,7 +117,7 @@ namespace Lucene.Net.Analysis
         {
             if (disposing)
             {
-                base.Dispose();
+                base.Dispose(disposing);
                 this.Random = null;
             }
         }

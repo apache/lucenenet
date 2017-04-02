@@ -67,14 +67,14 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Releases resources associated with this stream.
         /// <para/>
-        /// If you override this method, always call <c>base.Dispose()</c>, otherwise
+        /// If you override this method, always call <c>base.Dispose(disposing)</c>, otherwise
         /// some internal state will not be correctly reset (e.g., <see cref="Tokenizer"/> will
         /// throw <see cref="InvalidOperationException"/> on reuse).
         /// </summary>
         /// <remarks>
         /// <b>NOTE:</b>
         /// The default implementation closes the input <see cref="TextReader"/>, so
-        /// be sure to call <c>base.Dispose()</c> when overriding this method.
+        /// be sure to call <c>base.Dispose(disposing)</c> when overriding this method.
         /// </remarks>
         protected override void Dispose(bool disposing)
         {

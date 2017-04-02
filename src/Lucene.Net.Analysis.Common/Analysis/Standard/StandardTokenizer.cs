@@ -252,9 +252,9 @@ namespace Lucene.Net.Analysis.Standard
 
         protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
             if (disposing)
             {
-                base.Dispose();
                 scanner.YyReset(m_input);
             }
         }

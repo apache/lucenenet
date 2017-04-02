@@ -2168,9 +2168,9 @@ namespace Lucene.Net.Search.Highlight
 
         protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
             if (disposing)
             {
-                base.Dispose();
                 this.realStream.Dispose();
             }
         }
