@@ -40,7 +40,14 @@ namespace Lucene.Net.Codecs.BlockTerms
     {
         public abstract FieldIndexEnum GetFieldEnum(FieldInfo fieldInfo);
 
-        public abstract void Dispose();
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected abstract void Dispose(bool disposing);
 
         public abstract bool SupportsOrd { get; }
 

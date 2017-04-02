@@ -460,11 +460,14 @@ namespace Lucene.Net.Codecs.BlockTerms
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (input != null && !indexLoaded)
+            if (disposing)
             {
-                input.Dispose();
+                if (input != null && !indexLoaded)
+                {
+                    input.Dispose();
+                }
             }
         }
 
