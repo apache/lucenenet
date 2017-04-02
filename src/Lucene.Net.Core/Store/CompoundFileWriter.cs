@@ -386,9 +386,9 @@ namespace Lucene.Net.Store
                 @delegate.Flush();
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                if (!closed)
+                if (disposing && !closed)
                 {
                     closed = true;
                     entry.Length = writtenBytes;

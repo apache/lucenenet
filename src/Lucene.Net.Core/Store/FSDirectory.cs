@@ -483,25 +483,28 @@ namespace Lucene.Net.Store
                 //Debug.Assert(size == 0);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                parent.OnIndexOutputClosed(this);
-                // only close the file if it has not been closed yet
-                if (isOpen)
-                {
-                    IOException priorE = null;
-                    try
+                if (disposing)
+                { 
+                    parent.OnIndexOutputClosed(this);
+                    // only close the file if it has not been closed yet
+                    if (isOpen)
                     {
-                        base.Dispose();
-                    }
-                    catch (IOException ioe)
-                    {
-                        priorE = ioe;
-                    }
-                    finally
-                    {
-                        isOpen = false;
-                        IOUtils.CloseWhileHandlingException(priorE, file);
+                        IOException priorE = null;
+                        try
+                        {
+                            base.Dispose();
+                        }
+                        catch (IOException ioe)
+                        {
+                            priorE = ioe;
+                        }
+                        finally
+                        {
+                            isOpen = false;
+                            IOUtils.CloseWhileHandlingException(priorE, file);
+                        }
                     }
                 }
             }

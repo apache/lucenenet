@@ -101,26 +101,29 @@ namespace Lucene.Net.Store
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                Dir.MaybeThrowDeterministicException();
-            }
-            finally
-            {
-                @delegate.Dispose();
-                if (Dir.TrackDiskUsage_Renamed)
+                try
                 {
-                    // Now compute actual disk usage & track the maxUsedSize
-                    // in the MockDirectoryWrapper:
-                    long size = Dir.RecomputedActualSizeInBytes;
-                    if (size > Dir.MaxUsedSize)
-                    {
-                        Dir.MaxUsedSize = size;
-                    }
+                    Dir.MaybeThrowDeterministicException();
                 }
-                Dir.RemoveIndexOutput(this, Name);
+                finally
+                {
+                    @delegate.Dispose();
+                    if (Dir.TrackDiskUsage_Renamed)
+                    {
+                        // Now compute actual disk usage & track the maxUsedSize
+                        // in the MockDirectoryWrapper:
+                        long size = Dir.RecomputedActualSizeInBytes;
+                        if (size > Dir.MaxUsedSize)
+                        {
+                            Dir.MaxUsedSize = size;
+                        }
+                    }
+                    Dir.RemoveIndexOutput(this, Name);
+                }
             }
         }
 

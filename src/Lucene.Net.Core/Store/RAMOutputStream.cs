@@ -120,9 +120,12 @@ namespace Lucene.Net.Store
             crc.Reset();
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            Flush();
+            if (disposing)
+            {
+                Flush();
+            }
         }
 
         [Obsolete("(4.1) this method will be removed in Lucene 5.0")]

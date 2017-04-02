@@ -148,9 +148,12 @@ namespace Lucene.Net.Store
         /// <param name="len"> the number of bytes to write </param>
         protected internal abstract void FlushBuffer(byte[] b, int offset, int len);
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            Flush();
+            if (disposing)
+            {
+                Flush();
+            }
         }
 
         public override long GetFilePointer()

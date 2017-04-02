@@ -78,15 +78,18 @@ namespace Lucene.Net.Util
             @delegate.Flush();
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                Sleep(CloseDelayMillis + GetDelay(true));
-            }
-            finally
-            {
-                @delegate.Dispose();
+                try
+                {
+                    Sleep(CloseDelayMillis + GetDelay(true));
+                }
+                finally
+                {
+                    @delegate.Dispose();
+                }
             }
         }
 

@@ -230,9 +230,12 @@ namespace Lucene.Net.Facet
                 io.WriteBytes(b, offset, length);
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                io.Dispose();
+                if (disposing)
+                {
+                    io.Dispose();
+                }
             }
             public override void Flush()
             {
