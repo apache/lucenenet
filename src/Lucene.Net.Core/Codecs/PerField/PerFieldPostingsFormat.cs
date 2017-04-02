@@ -254,9 +254,12 @@ namespace Lucene.Net.Codecs.PerField
                 get { return fields.Count; }
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                IOUtils.Close(formats.Values);
+                if (disposing)
+                {
+                    IOUtils.Close(formats.Values);
+                }
             }
 
             public override long RamBytesUsed()

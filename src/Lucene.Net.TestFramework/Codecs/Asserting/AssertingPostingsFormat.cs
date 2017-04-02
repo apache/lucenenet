@@ -64,15 +64,12 @@ namespace Lucene.Net.Codecs.Asserting
                 this.@in = @in;
             }
 
-            public override void Dispose()
-            {
-                Dispose(true);
-            }
-
-            protected void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
                 if (disposing)
+                {
                     @in.Dispose();
+                }
             }
 
             public override IEnumerator<string> GetEnumerator()

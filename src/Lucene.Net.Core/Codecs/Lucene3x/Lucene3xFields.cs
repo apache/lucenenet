@@ -194,9 +194,12 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            IOUtils.Close(Tis, TisNoIndex, /*cfsReader,*/ FreqStream, ProxStream); // LUCENENET NOTE: cfsReader not used
+            if (disposing)
+            {
+                IOUtils.Close(Tis, TisNoIndex, /*cfsReader,*/ FreqStream, ProxStream); // LUCENENET NOTE: cfsReader not used
+            }
         }
 
         private class PreTerms : Terms

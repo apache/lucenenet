@@ -185,9 +185,12 @@ namespace Lucene.Net.Codecs.Bloom
                 return _delegateFieldsProducer.GetEnumerator();
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                _delegateFieldsProducer.Dispose();
+                if (disposing)
+                {
+                    _delegateFieldsProducer.Dispose();
+                }
             }
 
             public override Terms GetTerms(string field)

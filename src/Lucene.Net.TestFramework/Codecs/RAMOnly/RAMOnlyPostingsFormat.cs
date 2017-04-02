@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.RAMOnly
                 return FieldToTerms.Keys.GetEnumerator();
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
 

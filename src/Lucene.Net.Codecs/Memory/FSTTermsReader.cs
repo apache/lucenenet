@@ -176,15 +176,18 @@ namespace Lucene.Net.Codecs.Memory
             get { return fields.Count; }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                IOUtils.Close(postingsReader);
-            }
-            finally
-            {
-                fields.Clear();
+                try
+                {
+                    IOUtils.Close(postingsReader);
+                }
+                finally
+                {
+                    fields.Clear();
+                }
             }
         }
 

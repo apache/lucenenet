@@ -263,17 +263,20 @@ namespace Lucene.Net.Codecs
         //   return "0x" + Integer.toHexString(v);
         // }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
-                IOUtils.Close(@in, postingsReader);
-            }
-            finally
-            {
-                // Clear so refs to terms index is GCable even if
-                // app hangs onto us:
-                fields.Clear();
+                try
+                {
+                    IOUtils.Close(@in, postingsReader);
+                }
+                finally
+                {
+                    // Clear so refs to terms index is GCable even if
+                    // app hangs onto us:
+                    fields.Clear();
+                }
             }
         }
 

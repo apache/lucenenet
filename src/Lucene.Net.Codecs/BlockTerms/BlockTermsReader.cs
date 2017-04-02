@@ -190,34 +190,37 @@ namespace Lucene.Net.Codecs.BlockTerms
             input.Seek(dirOffset);
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            try
+            if (disposing)
             {
                 try
                 {
-                    if (indexReader != null)
+                    try
                     {
-                        indexReader.Dispose();
+                        if (indexReader != null)
+                        {
+                            indexReader.Dispose();
+                        }
+                    }
+                    finally
+                    {
+                        // null so if an app hangs on to us (ie, we are not
+                        // GCable, despite being closed) we still free most
+                        // ram
+                        indexReader = null;
+                        if (input != null)
+                        {
+                            input.Dispose();
+                        }
                     }
                 }
                 finally
                 {
-                    // null so if an app hangs on to us (ie, we are not
-                    // GCable, despite being closed) we still free most
-                    // ram
-                    indexReader = null;
-                    if (input != null)
+                    if (postingsReader != null)
                     {
-                        input.Dispose();
+                        postingsReader.Dispose();
                     }
-                }
-            }
-            finally
-            {
-                if (postingsReader != null)
-                {
-                    postingsReader.Dispose();
                 }
             }
         }

@@ -171,7 +171,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
             }
 

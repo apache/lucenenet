@@ -768,9 +768,12 @@ namespace Lucene.Net.Codecs.SimpleText
             get { return -1; }
         }
 
-        public override void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            _input.Dispose();
+            if (disposing)
+            {
+                _input.Dispose();
+            }
         }
 
         public override long RamBytesUsed()

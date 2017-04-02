@@ -1089,12 +1089,15 @@ namespace Lucene.Net.Codecs.Memory
                 }
             }
 
-            public override void Dispose()
+            protected override void Dispose(bool disposing)
             {
-                // Drop ref to FST:
-                foreach (var field in _fields)
+                if (disposing)
                 {
-                    field.Value.fst = null;
+                    // Drop ref to FST:
+                    foreach (var field in _fields)
+                    {
+                        field.Value.fst = null;
+                    }
                 }
             }
 

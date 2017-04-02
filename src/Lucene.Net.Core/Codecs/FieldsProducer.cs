@@ -38,7 +38,14 @@ namespace Lucene.Net.Codecs
         {
         }
 
-        public abstract void Dispose();
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected abstract void Dispose(bool disposing);
 
         /// <summary>
         /// Returns approximate RAM bytes used </summary>
