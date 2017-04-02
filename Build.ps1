@@ -23,7 +23,7 @@
     An array of test categories to exclude in test runs. Default is LongRunningTest
 .PARAMETER ExcludeTestCategoriesNetCore
     An array of test categories to exclude in test runs when running against .NET Core.
-    Default is LongRunningTest, DtdProcessingTest, HasTimeout
+    Default is LongRunningTest, HasTimeout
 
 .PARAMETER FrameworksToTest
     An array of frameworks to run tests against. Default is "net451" and "netcoreapp1.0"
@@ -53,11 +53,11 @@
     Creates and uploads NuGet packages for .NET Core projects compiled as
     Release. Uploads projects to "http://myget.org/conniey/F/lucenenet-feed".
 .EXAMPLE
-    Build.ps1 -RunTests -ExcludeTestCategoriesNetCore @("DtdProcessingTest", "LongRunningTest") -FrameworksToTest @("netcoreapp1.0")
+    Build.ps1 -RunTests -ExcludeTestCategoriesNetCore @("HasTimeout", "LongRunningTest") -FrameworksToTest @("netcoreapp1.0")
 
     Build all .NET Core projects as Release and run all tests. Tests are run
-    against "netcoreapp1.0" frameworks and excludes "DtdProcessingTest" and
-    "LongRunningTests".
+    against "netcoreapp1.0" frameworks and excludes "HasTimeout" and
+    "LongRunningTest".
 
 .EXAMPLE
     Build.ps1 -ProjectsToTest @("Lucene.Net.Tests") -RunTests
@@ -83,7 +83,7 @@ param(
     
     [string[]]$ProjectsToTest,
     [string[]]$ExcludeTestCategories = @("LongRunningTest"),
-    [string[]]$ExcludeTestCategoriesNetCore = @("LongRunningTest", "DtdProcessingTest", "HasTimeout"),
+    [string[]]$ExcludeTestCategoriesNetCore = @("LongRunningTest", "HasTimeout"),
     [string[]]$FrameworksToTest = @("netcoreapp1.0"),
     
     [switch]$Quiet,
