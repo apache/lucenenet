@@ -36,6 +36,21 @@
 .PARAMETER NuGetPackageDirectory
     Directory for generated NuGet packages.  Default is $PSScriptRoot\release\NuGetPackages
 
+.PARAMETER Version
+	Version of the assembly (no pre-release tag). Default is 4.8.0.
+.PARAMETER PackageVersion
+	Version of the NuGet Package (including the pre-release tag). Default is Version parameter value.
+
+.PARAMETER AssemblyInfoFile
+	Path to the common assembly info file. Default is PSScriptRoot\src\CommonAssemblyInfo.cs
+.PARAMETER CopyrightYear
+	The end year that will be on the copyright. Default is the current year on the system.
+.PARAMETER Copyright
+	The copyright message that will be applied to AssemblyCopyrightAttribute and AssemblyTrademarkAttribute.
+	The default is "Copyright 2006 - $CopyrightYear The Apache Software Foundation".
+.PARAMETER ProductName
+	The value that will be used for the ProductNameAttribute. Default is "Lucene.Net".
+
 .EXAMPLE
     Build.ps1 -Configuration "Debug" -RunTests -Quiet
 
@@ -88,7 +103,16 @@ param(
     
     [switch]$Quiet,
     [string]$TestResultsDirectory,
-    [string]$NuGetPackageDirectory
+    [string]$NuGetPackageDirectory,
+	
+	[string]$Version = "4.8.0",
+	[string]$PackageVersion = "$Version",
+
+	[string]$AssemblyInfoFile = "$PSScriptRoot\src\CommonAssemblyInfo.cs",
+	[string]$CopyrightYear = [DateTime]::Today.Year.ToString(), #Get the current year from the system
+	[string]$Copyright = "Copyright 2006 - $CopyrightYear The Apache Software Foundation",
+	[string]$CompanyName = "The Apache Software Foundation",
+	[string]$ProductName = "Lucene.Net"
 )
 
 #Get the current working directory
@@ -116,6 +140,48 @@ function Ensure-Directory-Exists([string] $path)
 	}
 }
 
+function Generate-Assembly-Info {
+param(
+	[string]$product,
+	[string]$company,
+	[string]$copyright,
+	[string]$version,
+	[string]$packageVersion,
+	[string]$file = $(throw "file is a required parameter.")
+)
+	#Use only the major version as the assembly version.
+	#This ensures binary compatibility unless the major version changes.
+	$version-match "(^\d+)"
+	$AssemblyVersion = $Matches[0]
+	$AssemblyVersion = "$AssemblyVersion.0.0"
+
+  $asmInfo = "using System;
+using System.Reflection;
+
+[assembly: AssemblyProduct(""$product"")]
+[assembly: AssemblyCompany(""$company"")]
+[assembly: AssemblyTrademark(""$copyright"")]
+[assembly: AssemblyCopyright(""$copyright"")]
+[assembly: AssemblyVersion(""$AssemblyVersion"")] 
+[assembly: AssemblyFileVersion(""$version"")]
+[assembly: AssemblyInformationalVersion(""$packageVersion"")]
+"
+	$dir = [System.IO.Path]::GetDirectoryName($file)
+	Ensure-Directory-Exists $dir
+
+	Write-Host "Generating assembly info file: $file"
+	Out-File -filePath $file -encoding UTF8 -inputObject $asmInfo
+}
+
+function Backup-Assembly-Info() {
+	Move-Item $AssemblyInfoFile "$AssemblyInfoFile.bak" -Force
+}
+
+function Restore-Assembly-Info() {
+	Move-Item "$AssemblyInfoFile.bak" $AssemblyInfoFile -Force
+}
+
+
 if (Test-Path $ReleaseDirectory) {
 	Write-Host "Removing old build assets..."
 
@@ -125,13 +191,27 @@ Ensure-Directory-Exists $ReleaseDirectory
 
 function Compile-Projects($projects) {
 
-    foreach ($project in $projects) {
-        pushd $project.DirectoryName
+	try {
+		Backup-Assembly-Info 
+		
+		Generate-Assembly-Info `
+			-product $ProductName `
+			-company $CompanyName `
+			-copyright $Copyright `
+			-version $Version `
+			-packageVersion $PackageVersion `
+			-file $AssemblyInfoFile
+	
+		foreach ($project in $projects) {
+			pushd $project.DirectoryName
 
-        & dotnet.exe build --configuration $Configuration
+			& dotnet.exe build --configuration $Configuration
 
-        popd
-    }
+			popd
+		}
+	} finally {
+		Restore-Assembly-Info
+	}
 }
 
 function Generate-ExcludeCategoryString ($categories) {
@@ -162,7 +242,6 @@ function Test-Projects($projects) {
         Remove-Item $TestResultsDirectory -Recurse -Force
     }
 
-    #New-Item $TestResultsDirectory -ItemType Directory | Out-Null
 	Ensure-Directory-Exists $TestResultsDirectory
     
     # Setting the preference so that we can run all the tests regardless of
