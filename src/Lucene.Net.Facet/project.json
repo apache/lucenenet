@@ -5,6 +5,13 @@
     "Lucene.Net.Queries": "4.8.0-alpha",
     "Newtonsoft.Json": "9.0.1"
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
+    }
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",

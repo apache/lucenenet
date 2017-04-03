@@ -3,6 +3,13 @@
   "dependencies": {
     "Lucene.Net.Grouping": "4.8.0-alpha"
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
+    }
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",

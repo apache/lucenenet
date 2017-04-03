@@ -1,6 +1,13 @@
 ﻿{
   "version": "4.8.0-alpha",
-  "buildOptions": { "outputName": "Lucene.Net" },
+  "buildOptions": {
+    "outputName": "Lucene.Net",
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
+    }
+  },
   "dependencies": {
     "Microsoft.Extensions.Configuration": "1.0.0",
     "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",

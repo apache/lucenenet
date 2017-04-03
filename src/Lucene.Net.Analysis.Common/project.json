@@ -17,6 +17,7 @@
     },
     "compile": {
       "includeFiles": [
+        "../CommonAssemblyInfo.cs",
         "../IcuBreakIterator.cs"
       ],
       "exclude": [

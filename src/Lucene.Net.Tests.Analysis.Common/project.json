@@ -101,6 +101,9 @@
         "DateTimeHelperClass.cs",
         "HashMapHelperClass.cs",
         "StringHelperClass.cs"
+      ],
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
       ]
     }
   },

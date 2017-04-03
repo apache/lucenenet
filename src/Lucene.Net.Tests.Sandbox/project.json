@@ -12,6 +12,11 @@
       "includeFiles": [
         "Queries/fuzzyTestData.txt"
       ]
+    },
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
     }
   },
   "testRunner": "nunit",

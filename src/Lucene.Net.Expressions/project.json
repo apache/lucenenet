@@ -6,6 +6,13 @@
     "Microsoft.Extensions.Configuration": "1.0.0",
     "Microsoft.Extensions.Configuration.Abstractions": "1.0.0"
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
+    }
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",

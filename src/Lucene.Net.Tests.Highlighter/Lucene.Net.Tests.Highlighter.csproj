@@ -67,6 +67,9 @@
     <Compile Include="VectorHighlight\SimpleFragmentsBuilderTest.cs" />
     <Compile Include="VectorHighlight\SingleFragListBuilderTest.cs" />
     <Compile Include="VectorHighlight\WeightedFragListBuilderTest.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

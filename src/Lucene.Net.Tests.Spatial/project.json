@@ -24,6 +24,11 @@
         "Test-Files/states-Intersects-BBox.txt",
         "Test-Files/states-IsWithin-BBox.txt"
       ]
+    },
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
     }
   },
   "frameworks": {

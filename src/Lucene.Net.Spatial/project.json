@@ -15,6 +15,9 @@
         "Prefix/Tree/Node.cs",
         "Prefix/RecursivePrefixTreeFilter.cs",
         "Util/TermsEnumCompatibility.cs"
+      ],
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
       ]
     }
   },

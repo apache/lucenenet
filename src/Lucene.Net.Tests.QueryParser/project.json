@@ -38,6 +38,11 @@
         "Xml/UserInputQuery.xml",
         "Xml/UserInputQueryCustomField.xml"
       ]
+    },
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
     }
   },
   "frameworks": {

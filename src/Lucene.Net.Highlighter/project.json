@@ -9,6 +9,7 @@
   "buildOptions": {
     "compile": {
       "includeFiles": [
+        "../CommonAssemblyInfo.cs",
         "../IcuBreakIterator.cs"
       ]
     }

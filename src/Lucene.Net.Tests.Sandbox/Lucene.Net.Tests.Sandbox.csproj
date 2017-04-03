@@ -51,6 +51,9 @@
     <Compile Include="Queries\TestSortedSetSortFieldSelectors.cs" />
     <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="Support\TestApiConsistency.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

@@ -37,6 +37,9 @@
         "Support/TestWeakDictionaryBehavior.cs",
         "Support/TestWeakDictionaryPerformance.cs",
         "Util/TestMaxFailuresRule.cs"
+      ],
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
       ]
     },
     "embed": {

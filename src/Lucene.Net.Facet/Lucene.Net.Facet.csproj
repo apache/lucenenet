@@ -104,6 +104,9 @@
     <Compile Include="Taxonomy\WriterCache\TaxonomyWriterCache.cs" />
     <Compile Include="TopOrdAndFloatQueue.cs" />
     <Compile Include="TopOrdAndIntQueue.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">

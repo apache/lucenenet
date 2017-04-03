@@ -716,6 +716,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Util\TestWeakIdentityMap.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Util\Cache\" />

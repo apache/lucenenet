@@ -10,6 +10,9 @@
       "excludeFiles": [
         "RectangularArrays.cs",
         "StringHelperClass.cs"
+      ],
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
       ]
     }
   },

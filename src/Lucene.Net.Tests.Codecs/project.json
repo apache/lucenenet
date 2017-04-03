@@ -9,7 +9,13 @@
   },
 
   "testRunner": "nunit",
-
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
+    }
+  },
   "frameworks": {
     "netcoreapp1.0": {
       "buildOptions": {

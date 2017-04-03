@@ -50,6 +50,9 @@
     <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="Support\TestApiConsistency.cs" />
     <Compile Include="TestGrouping.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">

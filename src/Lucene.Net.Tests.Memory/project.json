@@ -14,11 +14,16 @@
         "Index/Memory/testqueries.txt",
         "Index/Memory/testqueries2.txt"
       ]
+    },
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
     }
   },
   
   "testRunner": "nunit",
-
+ 
   "frameworks": {
     "netcoreapp1.0": {
       "imports": "dnxcore50",

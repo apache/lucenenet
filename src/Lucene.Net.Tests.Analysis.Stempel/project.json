@@ -13,6 +13,11 @@
       "includeFiles": [
         "Egothor.Stemmer/testRules.txt"
       ]
+    },
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
     }
   },
   "frameworks": {

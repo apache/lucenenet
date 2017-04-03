@@ -62,6 +62,9 @@
     <Compile Include="Support\TestApiConsistency.cs" />
     <Compile Include="TestTestFramework.cs" />
     <Compile Include="Vector\TestPointVectorStrategy.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">

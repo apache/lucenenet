@@ -255,6 +255,9 @@
     <Compile Include="Xml\QueryBuilder.cs" />
     <Compile Include="Xml\QueryBuilderFactory.cs" />
     <Compile Include="Xml\QueryTemplateManager.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">

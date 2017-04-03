@@ -9,11 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Lucene.Net.Join")]
 [assembly: AssemblyDescription("The Apache Software Foundation Join Component of the Lucene.Net full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("The Apache Software Foundation")]
-[assembly: AssemblyProduct("Lucene.Net")]
-[assembly: AssemblyCopyright("Copyright 2006 - 2017 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2006 - 2017 The Apache Software Foundation")]
-[assembly: AssemblyDefaultAlias("Lucene.Net.Facet")]
+[assembly: AssemblyDefaultAlias("Lucene.Net.Join")]
 [assembly: AssemblyCulture("")]
 
 [assembly: CLSCompliant(true)]
@@ -29,15 +25,4 @@ using System.Runtime.InteropServices;
 // for testing
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Join")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+// NOTE: Version information is in CommonAssemblyInfo.cs

@@ -4,6 +4,13 @@
     "Lucene.Net.Core": "4.8.0-alpha",
     "Lucene.Net.Queries": "4.8.0-alpha"
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
+    }
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",

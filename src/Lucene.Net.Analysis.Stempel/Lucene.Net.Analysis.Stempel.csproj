@@ -60,6 +60,9 @@
     <Compile Include="Stempel\StempelPolishStemFilterFactory.cs" />
     <Compile Include="Stempel\StempelStemmer.cs" />
     <Compile Include="Util\TypeExtensions.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pl\stemmer_20000.tbl" />

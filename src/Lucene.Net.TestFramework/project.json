@@ -5,6 +5,13 @@
     "Lucene.Net.Codecs": "4.8.0-alpha",
     "NUnit": "3.5.0"
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
+    }
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",

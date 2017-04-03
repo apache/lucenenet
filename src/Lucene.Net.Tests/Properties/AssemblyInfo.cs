@@ -31,27 +31,10 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTitle("Apache Lucene.Net")]
 [assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("The Apache Software Foundation")]
-[assembly: AssemblyProduct("Lucene.Net.Test")]
-[assembly: AssemblyCopyright("Copyright 2006 - 2011 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2006 - 2011 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyInformationalVersionAttribute("4.8.0")]
-
-//
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
-
-[assembly: AssemblyVersion("3.0.3")]
+// NOTE: Version information is in CommonAssemblyInfo.cs
 
 //
 // In order to sign your assembly you must specify a key to use. Refer to the 

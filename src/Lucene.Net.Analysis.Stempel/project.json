@@ -9,6 +9,11 @@
         "Pl/stemmer_20000.tbl",
         "Pl/stopwords.txt"
       ]
+    },
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
     }
   },
   "frameworks": {

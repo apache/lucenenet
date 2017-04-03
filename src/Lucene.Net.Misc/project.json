@@ -5,7 +5,10 @@
   },
   "buildOptions": {
     "compile": {
-      "exclude": [ "Store/*" ]
+      "exclude": [ "Store/*" ],
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs"
+      ]
     }
   },
   "frameworks": {

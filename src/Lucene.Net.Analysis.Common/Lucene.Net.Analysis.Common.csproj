@@ -493,6 +493,9 @@
     <Compile Include="Tartarus\Snowball\Ext\SwedishStemmer.cs" />
     <Compile Include="Tartarus\Snowball\Ext\TurkishStemmer.cs" />
     <Compile Include="Tartarus\Snowball\SnowballProgram.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">

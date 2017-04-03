@@ -88,6 +88,9 @@
     <Compile Include="Suggest\Tst\TSTAutocomplete.cs" />
     <Compile Include="Suggest\Tst\TSTLookup.cs" />
     <Compile Include="Suggest\UnsortedInputIterator.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">

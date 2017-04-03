@@ -477,6 +477,9 @@
     <Compile Include="JavaCompatibility\LuceneTypesHelpers.cs" />
     <Compile Include="JavaCompatibility\SystemTypesHelpers.cs" />
     <Compile Include="Util\VirtualMethod.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">

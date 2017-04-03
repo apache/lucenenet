@@ -9,10 +9,6 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Lucene.Net.Expressions")]
 [assembly: AssemblyDescription("The Apache Software Foundation Expressions Component of the Lucene.Net full-text search engine library")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("The Apache Software Foundation")]
-[assembly: AssemblyProduct("Lucene.Net")]
-[assembly: AssemblyCopyright("Copyright 2006 - 2017 The Apache Software Foundation")]
-[assembly: AssemblyTrademark("Copyright 2006 - 2017 The Apache Software Foundation")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Expressions")]
 [assembly: AssemblyCulture("")]
 
@@ -26,15 +22,4 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("6f5d9768-c42b-4dca-881b-001f61618cac")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Build and Revision Numbers 
-// by using the '*' as shown below:
-// [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+// NOTE: Version information is in CommonAssemblyInfo.cs

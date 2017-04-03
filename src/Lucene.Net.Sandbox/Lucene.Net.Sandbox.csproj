@@ -47,6 +47,9 @@
     <Compile Include="Queries\SlowFuzzyQuery.cs" />
     <Compile Include="Queries\SlowFuzzyTermsEnum.cs" />
     <Compile Include="Queries\SortedSetSortField.cs" />
+	<Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
