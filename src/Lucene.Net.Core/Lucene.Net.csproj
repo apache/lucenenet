@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,8 +10,6 @@
     <AssemblyName>Lucene.Net</AssemblyName>
     <RootNamespace>Lucene.Net</RootNamespace>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -23,8 +22,6 @@
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
-    <DocumentationFile>
-    </DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -79,7 +76,6 @@
     <Compile Include="Analysis\Tokenizer.cs" />
     <Compile Include="Analysis\TokenStream.cs" />
     <Compile Include="Analysis\TokenStreamToAutomaton.cs" />
-    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Codecs\BlockTermState.cs" />
     <Compile Include="Codecs\BlockTreeTermsReader.cs" />
     <Compile Include="Codecs\BlockTreeTermsWriter.cs" />
@@ -382,6 +378,7 @@
     <Compile Include="Index\UpgradeIndexMergePolicy.cs" />
     <Compile Include="LucenePackage.cs" />
     <Compile Include="LZOCompressor.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AutomatonQuery.cs" />
     <Compile Include="Search\BitsFilteredDocIdSet.cs" />
     <Compile Include="Search\BooleanClause.cs" />
@@ -893,9 +890,5 @@
     <Compile Include="Util\WAH8DocIdSet.cs" />
     <Compile Include="Util\WeakIdentityMap.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
-  <ProjectExtensions>
-    <VisualStudio AllowExistingFolder="true" />
-  </ProjectExtensions>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
 </Project>

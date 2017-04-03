@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -166,7 +167,6 @@
     <Compile Include="Analysis\TrivialLookaheadFilter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Codecs\Compressing\AbstractTestCompressionMode.cs" />
     <Compile Include="Codecs\Compressing\AbstractTestLZ4CompressionMode.cs" />
     <Compile Include="Codecs\Compressing\TestCompressingStoredFieldsFormat.cs" />
@@ -340,6 +340,7 @@
     <Compile Include="Index\TestTryDelete.cs" />
     <Compile Include="Index\TestTwoPhaseCommitTool.cs" />
     <Compile Include="Index\TestUniqueTermCount.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RectangularArrays.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -726,8 +727,5 @@
   <ItemGroup>
     <EmbeddedResource Include="Support\ReadFully.txt" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
-  <ProjectExtensions>
-    <VisualStudio AllowExistingFolder="true" />
-  </ProjectExtensions>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
 </Project>
