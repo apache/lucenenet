@@ -32,9 +32,9 @@
     Silence output.  Useful for piping Test output into a log file instead of to console.
 
 .PARAMETER TestResultsDirectory
-    Directory for NUnit TestResults.  Default is $PSScriptRoot\TestResults
+    Directory for NUnit TestResults.  Default is $PSScriptRoot\release\TestResults
 .PARAMETER NuGetPackageDirectory
-    Directory for generated NuGet packages.  Default is $PSScriptRoot\NuGetPackages
+    Directory for generated NuGet packages.  Default is $PSScriptRoot\release\NuGetPackages
 
 .EXAMPLE
     Build.ps1 -Configuration "Debug" -RunTests -Quiet
@@ -95,12 +95,33 @@ param(
 $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
 $root = $PSScriptRoot
-$defaultNugetPackageDirectory = Join-Path $root "NuGetPackages"
-$defaultTestResultsDirectory = Join-Path $root "TestResults"
+
+#Release directory for all build assets
+$ReleaseDirectory = Join-Path $root "release"
+$defaultNugetPackageDirectory = Join-Path $ReleaseDirectory "NuGetPackages"
+$defaultTestResultsDirectory = Join-Path $ReleaseDirectory "TestResults"
 
 if ([string]::IsNullOrEmpty($NuGetPackageDirectory)) {
     $NuGetPackageDirectory = $defaultNugetPackageDirectory
 }
+
+if ([string]::IsNullOrEmpty($TestResultsDirectory)) {
+	$TestResultsDirectory = $defaultTestResultsDirectory
+}
+
+function Ensure-Directory-Exists([string] $path)
+{
+	if (!(Test-Path $path)) {
+		New-Item $path -ItemType Directory
+	}
+}
+
+if (Test-Path $ReleaseDirectory) {
+	Write-Host "Removing old build assets..."
+
+	Remove-Item $ReleaseDirectory -Recurse -Force
+}
+Ensure-Directory-Exists $ReleaseDirectory
 
 function Compile-Projects($projects) {
 
@@ -134,17 +155,15 @@ function Generate-ExcludeCategoryString ($categories) {
 }
 
 function Test-Projects($projects) {
-    if ([string]::IsNullOrEmpty($TestResultsDirectory)) {
-        $TestResultsDirectory = $defaultTestResultsDirectory
-    }
-
+    
     if (Test-Path $TestResultsDirectory) {
         Write-Host "Removing old test results..."
 
         Remove-Item $TestResultsDirectory -Recurse -Force
     }
 
-    New-Item $TestResultsDirectory -ItemType Directory | Out-Null
+    #New-Item $TestResultsDirectory -ItemType Directory | Out-Null
+	Ensure-Directory-Exists $TestResultsDirectory
     
     # Setting the preference so that we can run all the tests regardless of
     # errors that may happen.
@@ -204,23 +223,28 @@ function Test-Projects($projects) {
 # So, we copy Lucene.Net.Core to a new directory
 # Lucene.Net to work around this.
 function Copy-Lucene-Net() {
-	Copy-Item -Recurse -Force ".\src\Lucene.Net.Core" ".\Lucene.Net"
+	Copy-Item -Recurse -Force "$root\src\Lucene.Net.Core" "$ReleaseDirectory\Lucene.Net"
 }
 
 function Delete-Lucene-Net-Copy() {
-	Remove-Item ".\Lucene.Net" -Force -Recurse -ErrorAction SilentlyContinue
+	Remove-Item "$ReleaseDirectory\Lucene.Net" -Force -Recurse -ErrorAction SilentlyContinue
 }
 
 function Create-NuGetPackages($projects) {
+	
+	if (Test-Path $NuGetPackageDirectory) {
+        Write-Host "Removing old NuGet packages..."
+
+        Remove-Item $NuGetPackageDirectory -Recurse -Force
+    }
 
 	try
 	{
 		Copy-Lucene-Net
-		$projects = $projects += Get-ChildItem -Path "$root\Lucene.Net\project.json"
+		$projects = $projects += Get-ChildItem -Path "$ReleaseDirectory\Lucene.Net\project.json"
+		$projects = $projects | ? { !$_.Directory.Name.Equals("Lucene.Net.Core") }
 		
-		if (!(Test-Path $NuGetPackageDirectory)) {
-			New-Item $NuGetPackageDirectory -ItemType Directory
-		}
+		Ensure-Directory-Exists $NuGetPackageDirectory
     
 		foreach ($project in $projects) {
 			pushd $project.DirectoryName
@@ -295,3 +319,4 @@ if ($UploadPackages) {
 
     Upload-NuGetPackages
 }
+
