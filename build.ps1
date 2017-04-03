@@ -1,6 +1,6 @@
 ﻿<#
 .SYNOPSIS
-    Builds, runs, packages and uploads packages for Lucenen.NET's .NET Core libraries
+    Builds, runs, packages and uploads packages for Lucene.NET's .NET Core libraries
 
 .PARAMETER NuGetSource
     URI to upload NuGet packages to. Required for uploading NuGet packages
