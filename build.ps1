@@ -37,9 +37,9 @@
     Directory for generated NuGet packages.  Default is $PSScriptRoot\release\NuGetPackages
 
 .PARAMETER Version
-	Version of the assembly (no pre-release tag). Default is 4.8.0.
+	Version of the assembly (no pre-release tag). Default is 0.0.0 (indicating to parse the value from PackageVersion).
 .PARAMETER PackageVersion
-	Version of the NuGet Package (including the pre-release tag). Default is Version parameter value.
+	Version of the NuGet Package (including the pre-release tag). Default is 4.8.0.
 
 .PARAMETER AssemblyInfoFile
 	Path to the common assembly info file. Default is PSScriptRoot\src\CommonAssemblyInfo.cs
@@ -105,8 +105,8 @@ param(
     [string]$TestResultsDirectory,
     [string]$NuGetPackageDirectory,
 	
-	[string]$Version = "4.8.0",
-	[string]$PackageVersion = "$Version",
+	[string]$PackageVersion = "4.8.0",
+	[string]$Version = "0.0.0",
 
 	[string]$AssemblyInfoFile = "$PSScriptRoot\src\CommonAssemblyInfo.cs",
 	[string]$CopyrightYear = [DateTime]::Today.Year.ToString(), #Get the current year from the system
@@ -131,6 +131,14 @@ if ([string]::IsNullOrEmpty($NuGetPackageDirectory)) {
 
 if ([string]::IsNullOrEmpty($TestResultsDirectory)) {
 	$TestResultsDirectory = $defaultTestResultsDirectory
+}
+
+#If version is not passed in, parse it from $PackageVersion
+if ($Version -eq "0.0.0" -or [string]::IsNullOrEmpty($Version)) {
+	$Version = $PackageVersion
+	if ($Version.Contains("-") -eq $true) {
+		$Version = $Version.SubString(0, $Version.IndexOf("-"))
+	}
 }
 
 function Ensure-Directory-Exists([string] $path)
