@@ -302,11 +302,11 @@ function Test-Projects($projects) {
 # So, we copy Lucene.Net.Core to a new directory
 # Lucene.Net to work around this.
 function Copy-Lucene-Net() {
-	Copy-Item -Recurse -Force "$root\src\Lucene.Net.Core" "$ReleaseDirectory\Lucene.Net"
+	Copy-Item -Recurse -Force "$root\src\Lucene.Net.Core" "$root\src\Lucene.Net"
 }
 
 function Delete-Lucene-Net-Copy() {
-	Remove-Item "$ReleaseDirectory\Lucene.Net" -Force -Recurse -ErrorAction SilentlyContinue
+	Remove-Item "$root\src\Lucene.Net" -Force -Recurse -ErrorAction SilentlyContinue
 }
 
 function Create-NuGetPackages($projects) {
@@ -320,7 +320,7 @@ function Create-NuGetPackages($projects) {
 	try
 	{
 		Copy-Lucene-Net
-		$projects = $projects += Get-ChildItem -Path "$ReleaseDirectory\Lucene.Net\project.json"
+		$projects = $projects += Get-ChildItem -Path "$root\src\Lucene.Net\project.json"
 		$projects = $projects | ? { !$_.Directory.Name.Equals("Lucene.Net.Core") }
 		
 		Ensure-Directory-Exists $NuGetPackageDirectory
@@ -378,7 +378,7 @@ try {
 
 		$json = (Get-Content $projectJson) | ConvertFrom-Json
 		$json.version = $PackageVersion
-		$json | ConvertTo-Json -depth 100 | Out-File $projectJson -Force
+		$json | ConvertTo-Json -depth 100 | Out-File $projectJson -encoding UTF8 -Force
 	}
 
 	& dotnet.exe restore
