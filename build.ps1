@@ -371,6 +371,8 @@ if ($LASTEXITCODE -ne 0) {
     Write-Error "Could not find .NET CLI in PATH. Please install it."
 }
 
+& dotnet.exe --version
+
 # Stopping script if any errors occur
 $ErrorActionPreference = "Stop"
 
