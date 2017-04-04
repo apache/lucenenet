@@ -363,33 +363,56 @@ if ($LASTEXITCODE -ne 0) {
 # Stopping script if any errors occur
 $ErrorActionPreference = "Stop"
 
-& dotnet.exe restore
-
 $projectJsons = Get-ChildItem -Path "project.json" -Recurse
 
-Compile-Projects $projectJsons
+try {
 
-if ($RunTests) {
-    Write-Host "Running tests..."
+	foreach ($projectJson in $projectJsons) {
+		#Backup the project.json file
+		Copy-Item $projectJson "$projectJson.bak" -Force
 
-    if ($ProjectsToTest -ne $null -and $ProjectsToTest.Count -gt 0) {
-        $testProjects = $projectJsons | ? { $ProjectsToTest.Contains($_.Directory.Name) }
+		#Update version (for NuGet package) and dependency version of this project's inter-dependencies
+		(Get-Content $projectJson) | % {
+			$_-replace "(?<=""Lucene.Net[\w\.]*?""\s*?:\s*?"")([^""]+)", $PackageVersion
+		} | Set-Content $projectJson -Force
 
-        if (@($testProjects).Count -eq 0) {
-            Write-Warning "Could not find any test projects matching the given ProjectsToTest. No tests run."
-        }
-    } else {
-        $testProjects = $projectJsons | ? { $_.Directory.Name.Contains(".Tests") }
-    }
+		$json = (Get-Content $projectJson) | ConvertFrom-Json
+		$json.version = $PackageVersion
+		$json | ConvertTo-Json -depth 100 | Out-File $projectJson -Force
+	}
 
-    Test-Projects $testProjects
-}
+	& dotnet.exe restore
 
-if ($CreatePackages -or $UploadPackages) {
-    Write-Host "Creating NuGet packages..."
+	Compile-Projects $projectJsons
 
-    $projectsToPackage = $projectJsons | ? { !$_.Directory.Name.Contains(".Test") }
-    Create-NuGetPackages $projectsToPackage
+	if ($RunTests) {
+		Write-Host "Running tests..."
+
+		if ($ProjectsToTest -ne $null -and $ProjectsToTest.Count -gt 0) {
+			$testProjects = $projectJsons | ? { $ProjectsToTest.Contains($_.Directory.Name) }
+
+			if (@($testProjects).Count -eq 0) {
+				Write-Warning "Could not find any test projects matching the given ProjectsToTest. No tests run."
+			}
+		} else {
+			$testProjects = $projectJsons | ? { $_.Directory.Name.Contains(".Tests") }
+		}
+
+		Test-Projects $testProjects
+	}
+
+	if ($CreatePackages -or $UploadPackages) {
+		Write-Host "Creating NuGet packages..."
+
+		$projectsToPackage = $projectJsons | ? { !$_.Directory.Name.Contains(".Test") }
+		Create-NuGetPackages $projectsToPackage
+	}
+
+} finally {
+	#Restore the project.json files
+	foreach ($projectJson in $projectJsons) {
+		Move-Item "$projectJson.bak" $projectJson -Force
+	}
 }
 
 if ($UploadPackages) {
