@@ -12,6 +12,18 @@
       ]
     }
   },
+  "packOptions": {
+    "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
+    "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
+    "iconUrl": "https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true",
+    "owners": [
+      "The Apache Software Foundation"
+    ],
+    "repository": {
+      "url": "https://github.com/apache/lucenenet"
+    },
+    "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
