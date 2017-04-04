@@ -297,6 +297,21 @@ function Test-Projects($projects) {
     $ErrorActionPreference = $oldPreference
 }
 
+# Gets the description from the AssemblyDescriptionAttribute
+function Get-Assembly-Description($project) {
+	#project path has a project.json file, we need the path without it
+	$dir = [System.IO.Path]::GetDirectoryName($project).TrimEnd([System.IO.Path]::DirectorySeparatorChar)
+	$projectName = [System.IO.Path]::GetFileName($dir)
+	$projectAssemblyPath = "$dir\bin\$Configuration\net451\$projectName.dll"
+
+	$assembly = [Reflection.Assembly]::ReflectionOnlyLoadFrom($projectAssemblyPath)
+	$descriptionAttributes = [reflection.customattributedata]::GetCustomAttributes($assembly) | Where-Object {$_.AttributeType -like "System.Reflection.AssemblyDescriptionAttribute"}
+
+	if ($descriptionAttributes.Length -gt 0) {
+		$descriptionAttributes[0].ToString()-match "(?<=\[System.Reflection.AssemblyDescriptionAttribute\("")([^""]*)" | Out-Null
+		return $Matches[0]
+	}
+}
 
 function Create-NuGetPackages($projects) {
 	
@@ -310,6 +325,14 @@ function Create-NuGetPackages($projects) {
 
 	foreach ($project in $projects) {
 		pushd $project.DirectoryName
+
+		# Update the packOptions.summary with the value from AssemblyDescriptionAttribute
+		$assemblyDescription = Get-Assembly-Description $project
+		Write-Host "Updating package description with '$assemblyDescription'" -ForegroundColor Yellow
+
+		(Get-Content $project) | % {
+			$_-replace "(?<=""summary""\s*?:\s*?"")([^""]*)", $assemblyDescription
+		} | Set-Content $project -Force
 
 		Write-Host "Creating NuGet package for $project..." -ForegroundColor Magenta
 			
