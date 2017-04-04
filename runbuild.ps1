@@ -52,30 +52,30 @@
 	The value that will be used for the ProductNameAttribute. Default is "Lucene.Net".
 
 .EXAMPLE
-    Build.ps1 -Configuration "Debug" -RunTests -Quiet
+    runbuild.ps1 -Configuration "Debug" -RunTests -Quiet
 
     Build all .NET Core projects as Debug and run all tests. Tests are run
     against "net451" and "netcoreapp1.0" frameworks and excludes
     "LongRunningTests".  All output for tests is piped into an output.log and
     then placed in the $TestResultsDirectory.
 .EXAMPLE
-    Build.ps1 -CreatePackages
+    runbuild.ps1 -CreatePackages
 
     Creates NuGet packages for .NET Core projects compiled as Release.
 .EXAMPLE
-    Build.ps1 "http://myget.org/conniey/F/lucenenet-feed" "0000-0000-0000"
+    runbuild.ps1 "http://myget.org/conniey/F/lucenenet-feed" "0000-0000-0000"
 
     Creates and uploads NuGet packages for .NET Core projects compiled as
     Release. Uploads projects to "http://myget.org/conniey/F/lucenenet-feed".
 .EXAMPLE
-    Build.ps1 -RunTests -ExcludeTestCategoriesNetCore @("HasTimeout", "LongRunningTest") -FrameworksToTest @("netcoreapp1.0")
+    runbuild.ps1 -RunTests -ExcludeTestCategoriesNetCore @("HasTimeout", "LongRunningTest") -FrameworksToTest @("netcoreapp1.0")
 
     Build all .NET Core projects as Release and run all tests. Tests are run
     against "netcoreapp1.0" frameworks and excludes "HasTimeout" and
     "LongRunningTest".
 
 .EXAMPLE
-    Build.ps1 -ProjectsToTest @("Lucene.Net.Tests") -RunTests
+    runbuild.ps1 -ProjectsToTest @("Lucene.Net.Tests") -RunTests
 
     Builds all .NET Core projects as Release and runs the test project Lucene.Net.Tests.
 #>
@@ -139,6 +139,14 @@ if ($Version -eq "0.0.0" -or [string]::IsNullOrEmpty($Version)) {
 	if ($Version.Contains("-") -eq $true) {
 		$Version = $Version.SubString(0, $Version.IndexOf("-"))
 	}
+}
+
+#Environment variables to ensure all tests are run %BuildRunner% or %RunAllTests%
+if ($env:RunAllTests -eq "true") {
+	$RunTests = $true
+	$FrameworksToTest = @("net451", "netcoreapp1.0")
+	$ExcludeTestCategories = @()
+	$ExcludeTestCategoriesNetCore = @()
 }
 
 function Ensure-Directory-Exists([string] $path)
