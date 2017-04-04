@@ -25,7 +25,11 @@ using System.Runtime.CompilerServices;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("Lucene.Net")]
-[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
+[assembly: AssemblyDescription(
+    "Lucene.Net is a full-text search engine library capable of advanced text analysis, indexing, and searching. "
+    + "It can be used to easily add search capabilities to applications. " 
+    + "Lucene.Net is a C# port of the popular Java Lucene search engine framework from " 
+    + "The Apache Software Foundation, targeted at .NET Framework and .NET Core users.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]

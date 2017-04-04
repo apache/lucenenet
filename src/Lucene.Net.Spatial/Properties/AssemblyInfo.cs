@@ -25,7 +25,9 @@ using System.Security;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Lucene.Net.Spatial")]
-[assembly: AssemblyDescription("The Apache Software Foundation Spatial component of the Lucene.Net a full-text search engine library")]
+[assembly: AssemblyDescription(
+    "Geospatial search " +
+    "for the Lucene.Net full-text search engine library from The Apache Software Foundation.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Spatial")]
 [assembly: AssemblyCulture("")]

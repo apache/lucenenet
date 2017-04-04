@@ -7,7 +7,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Lucene.Net.Highlighter")]
-[assembly: AssemblyDescription("The Apache Software Foundation Highlighter Component of the Lucene.Net full-text search engine library")]
+[assembly: AssemblyDescription(
+    "Highlights search keywords in results " +
+    "of the Lucene.Net full-text search engine library from The Apache Software Foundation.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Highlighter")]
 [assembly: AssemblyCulture("")]

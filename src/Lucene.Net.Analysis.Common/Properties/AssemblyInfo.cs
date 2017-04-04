@@ -7,7 +7,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Lucene.Net.Analysis.Common")]
-[assembly: AssemblyDescription("The Apache Software Foundation Analysis.Common Component of the Lucene.Net full-text search engine library")]
+[assembly: AssemblyDescription(
+    "Analyzers for indexing content in different languages and domains " + 
+    "for the Lucene.Net full-text search engine library from The Apache Software Foundation.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Analysis.Common")]
 [assembly: AssemblyCulture("")]
