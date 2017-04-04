@@ -59,7 +59,7 @@
       <Project>{E067B8BB-D8E7-4040-BEB8-EFF8BB4149BD}</Project>
       <Name>Lucene.Net.Classification</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>

@@ -63,7 +63,7 @@
       <Project>{02BAB603-067D-48B1-AEDD-316849652568}</Project>
       <Name>Lucene.Net.Grouping</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>

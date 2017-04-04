@@ -326,7 +326,7 @@
       <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
       <Name>Lucene.Net.Analysis.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>

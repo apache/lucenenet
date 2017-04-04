@@ -490,7 +490,7 @@
       <Project>{3f79b6d4-4359-4f83-b64f-07f4f6262425}</Project>
       <Name>Lucene.Net.Codecs</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>

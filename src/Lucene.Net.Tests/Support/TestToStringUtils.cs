@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using Lucene.Net.Support;
 
-namespace Lucene.Net.Core.Support
+namespace Lucene.Net.Support
 {
     /// <summary>
     /// This test was added for .NET compatibility - LUCENENET specific

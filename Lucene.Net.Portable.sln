@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net", "src\Lucene.Net.Core\Lucene.Net.xproj", "{DBC3B677-805C-430E-AF78-A9ABF3975D17}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net", "src\Lucene.Net\Lucene.Net.xproj", "{DBC3B677-805C-430E-AF78-A9ABF3975D17}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Classification", "src\Lucene.Net.Classification\Lucene.Net.Classification.xproj", "{BA873F14-B93E-473C-9AE3-FB8709472651}"
 EndProject

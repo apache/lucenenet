@@ -620,13 +620,6 @@ namespace Lucene.Net.Expressions.JS
                     if (vals[0].Contains("Lucene.Net"))
                     {
                         clazz = GetType(vals[0] + ", Lucene.Net");
-
-                        // This may be the case if we are compiling components
-                        // with .NET Core projects.
-                        if (clazz == default(Type))
-                        {
-                            clazz = GetType(vals[0] + ", Lucene.Net.Core");
-                        }
                     }
                     else
                     {

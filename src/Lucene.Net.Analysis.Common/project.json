@@ -28,7 +28,7 @@
     "netstandard1.5": {
       "imports": "dnxcore50",
       "dependencies": {
-        "Lucene.Net.Core": "4.8.0-alpha",
+        "Lucene.Net": "4.8.0-alpha",
         "NETStandard.Library": "1.6.0"
       },
       "buildOptions": {
@@ -37,7 +37,7 @@
     },
     "net451": {
       "dependencies": {
-        "Lucene.Net.Core": "4.8.0-alpha"
+        "Lucene.Net": "4.8.0-alpha"
       },
       "frameworkAssemblies": {
         "System.Xml": "4.0.0.0",

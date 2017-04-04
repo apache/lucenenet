@@ -60,7 +60,7 @@
       <Project>{a76dad88-e3a5-40f9-9114-facd77bd8265}</Project>
       <Name>Lucene.Net.Analysis.Stempel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Core\Lucene.Net.csproj">
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
       <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
       <Name>Lucene.Net</Name>
     </ProjectReference>
