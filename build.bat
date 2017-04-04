@@ -78,4 +78,4 @@ FOR %%a IN (%*) DO (
 	)
 )
 
-powershell -ExecutionPolicy Bypass -Command "& .\build.ps1 -Version \"%version%\" -PackageVersion \"%PackageVersion%\" -Configuration \"%configuration%\" -CreatePackages"
+powershell -ExecutionPolicy Bypass -Command "& .\build.ps1 -CreatePackages -Version \"%version%\" -PackageVersion \"%PackageVersion%\" -Configuration \"%configuration%\""
