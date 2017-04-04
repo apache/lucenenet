@@ -297,17 +297,6 @@ function Test-Projects($projects) {
     $ErrorActionPreference = $oldPreference
 }
 
-# Hack because dotnet pack doesn't provide a way to override the directory
-# name for the NuGet package name when using project.json. 
-# So, we copy Lucene.Net.Core to a new directory
-# Lucene.Net to work around this.
-function Copy-Lucene-Net() {
-	Copy-Item -Recurse -Force "$root\src\Lucene.Net.Core" "$root\src\Lucene.Net"
-}
-
-function Delete-Lucene-Net-Copy() {
-	Remove-Item "$root\src\Lucene.Net" -Force -Recurse -ErrorAction SilentlyContinue
-}
 
 function Create-NuGetPackages($projects) {
 	
@@ -317,25 +306,16 @@ function Create-NuGetPackages($projects) {
         Remove-Item $NuGetPackageDirectory -Recurse -Force
     }
 
-	try
-	{
-		Copy-Lucene-Net
-		$projects = $projects += Get-ChildItem -Path "$root\src\Lucene.Net\project.json"
-		$projects = $projects | ? { !$_.Directory.Name.Equals("Lucene.Net.Core") }
-		
-		Ensure-Directory-Exists $NuGetPackageDirectory
-    
-		foreach ($project in $projects) {
-			pushd $project.DirectoryName
+	Ensure-Directory-Exists $NuGetPackageDirectory
 
-			Write-Host "Creating NuGet package for $project..." -ForegroundColor Magenta
+	foreach ($project in $projects) {
+		pushd $project.DirectoryName
+
+		Write-Host "Creating NuGet package for $project..." -ForegroundColor Magenta
 			
-			& dotnet.exe pack --configuration $Configuration --output $NuGetPackageDirectory --no-build
+		& dotnet.exe pack --configuration $Configuration --output $NuGetPackageDirectory --no-build
 
-			popd
-		}
-	} finally {
-		Delete-Lucene-Net-Copy
+		popd
 	}
 	
     return $NuGetPackageDirectory
