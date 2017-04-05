@@ -39,7 +39,8 @@
         "System.Xml.XmlDocument": "4.0.1"
       },
       "imports": "dnxcore50"
-    }
+    },
+    "net451": {}
   },
 
   "runtimes": {
