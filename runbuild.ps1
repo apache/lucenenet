@@ -302,7 +302,7 @@ function Test-Projects($projects) {
             }
 
             if (Test-Path ".\TestResult.xml") {
-                Move-Item ".\TestResult.xml" $(Join-Path $testFolder $testResult)
+                Copy-Item ".\TestResult.xml" $(Join-Path $testFolder $testResult)
             } else {
                 Write-Warning "Could not find TestResult.xml."
             }
