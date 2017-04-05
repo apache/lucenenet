@@ -17,7 +17,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET451;FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -34,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>Lucene.Net.Tests</RootNamespace>
-    <DefineConstants>$(DefineConstants);NET451</DefineConstants>
+    <DefineConstants>$(DefineConstants);NET451;FEATURE_SERIALIZABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
