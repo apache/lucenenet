@@ -194,9 +194,10 @@ function Backup-Assembly-Info() {
 }
 
 function Restore-Assembly-Info() {
-	Move-Item "$AssemblyInfoFile.bak" $AssemblyInfoFile -Force
+	if (Test-Path "$AssemblyInfoFile.bak") {
+		Move-Item "$AssemblyInfoFile.bak" $AssemblyInfoFile -Force
+	}
 }
-
 
 if (Test-Path $ReleaseDirectory) {
 	Write-Host "Removing old build assets..."
@@ -432,7 +433,9 @@ try {
 } finally {
 	#Restore the project.json files
 	foreach ($projectJson in $projectJsons) {
-		Move-Item "$projectJson.bak" $projectJson -Force
+		if (Test-Path "$projectJson.bak") {
+			Move-Item "$projectJson.bak" $projectJson -Force
+		}
 	}
 }
 
