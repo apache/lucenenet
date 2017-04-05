@@ -20,10 +20,7 @@
 .PARAMETER ProjectsToTest
     An array of project names to test. (ie. @("Lucene.Net.Tests", "Lucene.Net.Tests.Codecs"))
 .PARAMETER ExcludeTestCategories
-    An array of test categories to exclude in test runs. Default is LongRunningTest
-.PARAMETER ExcludeTestCategoriesNetCore
-    An array of test categories to exclude in test runs when running against .NET Core.
-    Default is LongRunningTest, HasTimeout
+    An array of test categories to exclude in test runs. Default is $null (don't exclude anything).
 
 .PARAMETER FrameworksToTest
     An array of frameworks to run tests against. Default is "net451" and "netcoreapp1.0"
@@ -97,8 +94,7 @@ param(
     [string]$Configuration = "Release",
     
     [string[]]$ProjectsToTest,
-    [string[]]$ExcludeTestCategories = @("LongRunningTest"),
-    [string[]]$ExcludeTestCategoriesNetCore = @("LongRunningTest", "HasTimeout"),
+    [string[]]$ExcludeTestCategories,
     [string[]]$FrameworksToTest = @("netcoreapp1.0"),
     
     [switch]$Quiet,
@@ -145,8 +141,6 @@ if ($Version -eq "0.0.0" -or [string]::IsNullOrEmpty($Version)) {
 if ($env:RunAllTests -eq "true") {
 	$RunTests = $true
 	$FrameworksToTest = @("net451", "netcoreapp1.0")
-	$ExcludeTestCategories = @()
-	$ExcludeTestCategoriesNetCore = @()
 }
 
 function Ensure-Directory-Exists([string] $path)
@@ -234,7 +228,7 @@ function Compile-Projects($projects) {
 function Generate-ExcludeCategoryString ($categories) {
     $contents = ""
 
-    if ($categories.Count -gt 0) {
+    if ($categories -ne $null -and $categories.Count -gt 0) {
         foreach ($category in $categories) {
             $formatted = [String]::Format("Category!={0}", $category);
 
@@ -268,7 +262,6 @@ function Test-Projects($projects) {
 
     # Generate the string to exclude categories from being tested
     $excludeCategories = Generate-ExcludeCategoryString $ExcludeTestCategories
-    $excludeCategoriesNetCoreApp = Generate-ExcludeCategoryString $ExcludeTestCategoriesNetCore
 
     foreach ($project in $projects) {
         
@@ -284,11 +277,7 @@ function Test-Projects($projects) {
             
             $testResult = "TestResult.$framework.xml"
 
-            if ($framework.StartsWith("netcore")) {
-                $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework --no-build $excludeCategoriesNetCoreApp"
-            } else {
-                $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework --no-build $excludeCategories"
-            }
+            $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework --no-build $excludeCategories"
 
             Write-Host $testExpression
             
