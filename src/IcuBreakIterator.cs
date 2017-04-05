@@ -292,28 +292,35 @@ namespace Lucene.Net
             IEnumerable<Icu.Boundary> icuBoundaries;
             string offsetText = text.Substring(start, end - start);
 
-            if (type == Icu.BreakIterator.UBreakIteratorType.WORD)
+            try
             {
-                if (enableHacks)
+                if (type == Icu.BreakIterator.UBreakIteratorType.WORD)
                 {
-                    // LUCENENET TODO: HACK - replacing hyphen with "a" so hyphenated words aren't broken
-                    offsetText = offsetText.Replace("-", "a");
-                }
-                
-                icuBoundaries = Icu.BreakIterator.GetWordBoundaries(locale, offsetText, true);
-            }
-            else
-            {
-                if (enableHacks && type == Icu.BreakIterator.UBreakIteratorType.SENTENCE)
-                {
-                    // LUCENENET TODO: HACK - newline character causes incorrect sentence breaking.
-                    offsetText = offsetText.Replace("\n", " ");
-                    // LUCENENET TODO: HACK - the ICU sentence logic doesn't work (in English anyway) when sentences don't
-                    // begin with capital letters.
-                    offsetText = CapitalizeFirst(offsetText);
-                }
+                    if (enableHacks)
+                    {
+                        // LUCENENET TODO: HACK - replacing hyphen with "a" so hyphenated words aren't broken
+                        offsetText = offsetText.Replace("-", "a");
+                    }
 
-                icuBoundaries = Icu.BreakIterator.GetBoundaries(type, locale, offsetText);
+                    icuBoundaries = Icu.BreakIterator.GetWordBoundaries(locale, offsetText, true);
+                }
+                else
+                {
+                    if (enableHacks && type == Icu.BreakIterator.UBreakIteratorType.SENTENCE)
+                    {
+                        // LUCENENET TODO: HACK - newline character causes incorrect sentence breaking.
+                        offsetText = offsetText.Replace("\n", " ");
+                        // LUCENENET TODO: HACK - the ICU sentence logic doesn't work (in English anyway) when sentences don't
+                        // begin with capital letters.
+                        offsetText = CapitalizeFirst(offsetText);
+                    }
+
+                    icuBoundaries = Icu.BreakIterator.GetBoundaries(type, locale, offsetText);
+                }
+            }
+            catch (AccessViolationException ace)
+            {
+                throw new Exception("Hit AccessViolationException: " + ace.ToString(), ace);
             }
 
             boundaries = icuBoundaries
