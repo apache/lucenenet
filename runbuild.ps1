@@ -264,7 +264,7 @@ function Test-Projects($projects) {
     $excludeCategories = Generate-ExcludeCategoryString $ExcludeTestCategories
 
     foreach ($project in $projects) {
-        
+
         pushd $project.DirectoryName
 
         $testName = $project.Directory.Name
@@ -277,9 +277,23 @@ function Test-Projects($projects) {
             
             $testResult = "TestResult.$framework.xml"
 
-            $testExpression = "dotnet.exe test --configuration $Configuration --framework $framework --no-build $excludeCategories"
+			if ($framework.StartsWith("netcore")) {
+				$testExpression = "dotnet.exe test --configuration $Configuration --framework $framework --no-build $excludeCategories"
+			} else {
+				$projectDirectory = $project.DirectoryName
 
-            Write-Host $testExpression
+				$testBinary = "$projectDirectory\bin\$Configuration\$framework\win7-x64\$testName.dll"
+				if (-not (Test-Path $testBinary)) {
+					$testBinary = "$projectDirectory\bin\$Configuration\$framework\win7-x32\$testName.dll"
+				}
+				if (-not (Test-Path $testBinary)) {
+					$testBinary = "$projectDirectory\bin\$Configuration\$framework\$testName.dll"
+				} 
+
+				$testExpression = "$root\lib\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary $excludeCategories"
+			}
+
+            Write-Host $testExpression -ForegroundColor Magenta
             
             if ($Quiet) {
                 $outputLog = "output.$framework.log"
