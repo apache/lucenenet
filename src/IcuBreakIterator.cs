@@ -292,8 +292,10 @@ namespace Lucene.Net
             IEnumerable<Icu.Boundary> icuBoundaries;
             string offsetText = text.Substring(start, end - start);
 
+#if !NETSTANDARD
             try
             {
+#endif
                 if (type == Icu.BreakIterator.UBreakIteratorType.WORD)
                 {
                     if (enableHacks)
@@ -317,11 +319,15 @@ namespace Lucene.Net
 
                     icuBoundaries = Icu.BreakIterator.GetBoundaries(type, locale, offsetText);
                 }
+#if !NETSTANDARD
             }
             catch (AccessViolationException ace)
             {
+                // LUCENENET TODO: Find a reliable way to reproduce and report the 
+                // AccessViolationException that happens here to the icu-dotnet project team
                 throw new Exception("Hit AccessViolationException: " + ace.ToString(), ace);
             }
+#endif
 
             boundaries = icuBoundaries
                 .Select(t => new[] { t.Start + start, t.End + start })
