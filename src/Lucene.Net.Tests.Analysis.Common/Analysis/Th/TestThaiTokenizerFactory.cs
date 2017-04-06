@@ -26,6 +26,15 @@ namespace Lucene.Net.Analysis.Th
     /// </summary>
     public class TestThaiTokenizerFactory : BaseTokenStreamFactoryTestCase
     {
+
+        public override void SetUp()
+        {
+            base.SetUp();
+#if NETSTANDARD
+            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
+#endif
+        }
+
         /// <summary>
         /// Ensure the filter actually decomposes text.
         /// </summary>

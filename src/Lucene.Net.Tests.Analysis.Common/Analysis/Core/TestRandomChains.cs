@@ -96,6 +96,11 @@ namespace Lucene.Net.Analysis.Core
                     // offsets offenders?
                     // doesn't actual reset itself:
                     typeof(CachingTokenFilter),
+
+#if NETSTANDARD
+                    // LUCENENET TODO: icu-dotnet is throwing AccessViolationException, bringing down the test runner
+                    typeof(Th.ThaiTokenizer),
+#endif
                     // Not broken: we forcefully add this, so we shouldn't
                     // also randomly pick it:
                     typeof(ValidatingTokenFilter)))
@@ -127,6 +132,8 @@ namespace Lucene.Net.Analysis.Core
                     typeof(CommonGramsQueryFilter),
                     // TODO: probably doesnt handle graph inputs, too afraid to try
                     typeof(WordDelimiterFilter)))
+
+
                 {
                     foreach (ConstructorInfo ctor in c.GetConstructors())
                     {
@@ -296,9 +303,9 @@ namespace Lucene.Net.Analysis.Core
             { typeof(Regex[]), new RegexArrayArgProducer() },
             { typeof(IPayloadEncoder), new PayloadEncoderArgProducer() },
             { typeof(Dictionary), new DictionaryArgProducer() },
-            #pragma warning disable 612, 618 
+#pragma warning disable 612, 618
             { typeof(Lucene43EdgeNGramTokenizer.Side), new Lucene43SideArgProducer() },
-            #pragma warning restore 612, 618 
+#pragma warning restore 612, 618
             { typeof(EdgeNGramTokenFilter.Side), new SideArgProducer() },
             { typeof(HyphenationTree), new HyphenationTreeArgProducer() },
             { typeof(SnowballProgram), new SnowballProgramArgProducer() },

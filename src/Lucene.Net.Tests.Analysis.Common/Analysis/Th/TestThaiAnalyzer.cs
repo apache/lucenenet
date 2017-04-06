@@ -37,6 +37,10 @@ namespace Lucene.Net.Analysis.Th
         {
             base.SetUp();
             AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
+
+#if NETSTANDARD
+            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
+#endif
         }
         /*
          * testcase for offsets

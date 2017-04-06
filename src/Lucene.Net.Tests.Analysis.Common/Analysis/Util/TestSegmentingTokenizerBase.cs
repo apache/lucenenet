@@ -34,6 +34,14 @@ namespace Lucene.Net.Analysis.Util
     [TestFixture]
     public class TestSegmentingTokenizerBase : BaseTokenStreamTestCase
     {
+        public override void SetUp()
+        {
+            base.SetUp();
+#if NETSTANDARD
+            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
+#endif
+        }
+
         private Analyzer sentence = new AnalyzerAnonymousInnerClassHelper();
 
         private class AnalyzerAnonymousInnerClassHelper : Analyzer
