@@ -34,7 +34,11 @@
         }
       }
     },
-    "net451": {}
+    "net451": {
+      "buildOptions": {
+        "define": [ "FEATURE_SERIALIZABLE", "FEATURE_THREAD_PRIORITY", "FEATURE_THREADINTERRUPTEDEXCEPTION" ]
+      }
+    }
   },
 
   "runtimes": {

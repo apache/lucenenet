@@ -50,6 +50,9 @@
       }
     },
     "net451": {
+      "buildOptions": {
+        "define": [ "FEATURE_SERIALIZABLE" ]
+      },
       "dependencies": {
         "Spatial4n.Core.NTS": "0.4.1.1-beta"
       }

@@ -9,7 +9,7 @@
     "NUnit": "3.5.0"
   },
   "buildOptions": {
-    "define": [ "NETSTANDARD", "FEATURE_TASKMERGESCHEDULER" ],
+    "define": [ "FEATURE_TASKMERGESCHEDULER" ],
     "compile": {
       "exclude": [
         "Util/JunitCompat"
@@ -91,6 +91,9 @@
 
   "frameworks": {
     "netcoreapp1.0": {
+      "buildOptions": {
+        "define": [ "NETSTANDARD" ]
+      },
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
