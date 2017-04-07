@@ -33,7 +33,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);NET451;FEATURE_CLONEABLE;FEATURE_SERIALIZABLE;FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CLONEABLE;FEATURE_SERIALIZABLE;FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />

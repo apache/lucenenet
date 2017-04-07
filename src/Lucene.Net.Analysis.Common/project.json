@@ -56,7 +56,7 @@
         "System.Xml.Linq": "4.0.0.0"
       },
       "buildOptions": {
-        "define": [ "NET451", "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ]
+        "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ]
       }
     }
   }

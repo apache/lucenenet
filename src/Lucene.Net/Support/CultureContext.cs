@@ -51,7 +51,7 @@ namespace Lucene.Net.Support
             this.originalUICulture = CultureInfo.CurrentUICulture;
 
             // Set both the culture and UI culture for this context.
-#if NET451
+#if !NETSTANDARD
             Thread.CurrentThread.CurrentCulture = culture;
             Thread.CurrentThread.CurrentUICulture = uiCulture;
 #else
@@ -77,7 +77,7 @@ namespace Lucene.Net.Support
         public void RestoreOriginalCulture()
         {
             // Restore the culture to the way it was before the constructor was called.
-#if NET451
+#if !NETSTANDARD
             Thread.CurrentThread.CurrentCulture = originalCulture;
             Thread.CurrentThread.CurrentUICulture = originalUICulture;
 #else

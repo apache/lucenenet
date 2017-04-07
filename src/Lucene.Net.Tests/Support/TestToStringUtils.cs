@@ -29,7 +29,7 @@ namespace Lucene.Net.Support
 
         public override void TearDown()
         {
-#if NET451
+#if !NETSTANDARD
             Thread.CurrentThread.CurrentCulture = originalCulture;
 #else
             CultureInfo.CurrentCulture = originalCulture;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Support
 
             foreach (CultureInfo culture in cultures)
             {
-#if NET451
+#if !NETSTANDARD
                 Thread.CurrentThread.CurrentCulture = culture;
 #else
                 CultureInfo.CurrentCulture = culture;
