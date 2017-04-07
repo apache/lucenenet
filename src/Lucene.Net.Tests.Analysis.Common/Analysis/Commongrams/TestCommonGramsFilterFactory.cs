@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.CommonGrams
         public virtual void TestInform()
         {
             //IResourceLoader loader = new ClasspathResourceLoader(typeof(TestStopFilter));
-            IResourceLoader loader = new ClasspathResourceLoader(typeof(TestAnalyzers), "Lucene.Net"); // LUCENENET: Need to set to a type that is in the same path as the files
+            IResourceLoader loader = new ClasspathResourceLoader(typeof(TestAnalyzers)); // LUCENENET: Need to set to a type that is in the same path as the files
             assertTrue("loader is null and it shouldn't be", loader != null);
             CommonGramsFilterFactory factory = (CommonGramsFilterFactory)TokenFilterFactory("CommonGrams", TEST_VERSION_CURRENT, loader, "words", "stop-1.txt", "ignoreCase", "true");
             CharArraySet words = factory.CommonWords;

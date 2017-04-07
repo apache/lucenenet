@@ -517,7 +517,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         public void TestCambridgeMA()
         {
             String text;
-            using (TextReader r = new StreamReader(getResourceAsStream(this.GetType(), "CambridgeMA.utf8"), Encoding.UTF8))
+            using (TextReader r = new StreamReader(this.GetType().getResourceAsStream("CambridgeMA.utf8"), Encoding.UTF8))
             {
                 text = r.ReadLine();
             }
@@ -547,27 +547,6 @@ namespace Lucene.Net.Search.PostingsHighlight
             assertTrue(snippets[0].Contains("<b>Porter</b>"));
             ir.Dispose();
             dir.Dispose();
-        }
-
-        private Stream getResourceAsStream(Type type, string filename)
-        {
-            var assembly = type.GetTypeInfo().Assembly;
-
-#if FEATURE_EMBEDDED_RESOURCE
-            string namespaceSegment = type.Namespace.Replace("Lucene.Net.Search", string.Empty);
-            string assemblyName = assembly.GetName().Name;
-            var name = string.Concat(assemblyName, namespaceSegment, ".", filename);
-#else
-            var name = string.Join(".", type.Namespace, filename);
-#endif
-            var stream = assembly.GetManifestResourceStream(name);
-
-            if (stream == default(Stream))
-            {
-                throw new ArgumentException($"Could not find a resource with the name: {name}");
-            }
-
-            return stream;
         }
 
         [Test]

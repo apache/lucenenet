@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Reflection;
 
 namespace Lucene.Net.Analysis.Util
@@ -32,7 +32,6 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET NOTE: This class was refactored significantly from its Java counterpart.
 
         private readonly Type clazz;
-        private readonly string namespaceExcludeRegex;
 
         /// <summary>
         /// Creates an instance using the System.Assembly of the given class to load Resources and classes
@@ -43,29 +42,12 @@ namespace Lucene.Net.Analysis.Util
             this.clazz = clazz;
         }
 
-        /// <summary>
-        /// Creates an instance using the System.Assembly of the given class to load Resources and classes
-        /// Resource names are relative to the resourcePrefix.
-        /// </summary>
-        /// <param name="clazz">The class type</param>
-        /// <param name="namespaceExcludeRegex">Removes the part of the namespace of the class that matches the regex. 
-        /// This is useful to get to the resource if the assembly name and namespace name don't happen to match.
-        /// If provided, the assembly name will be concatnated with the namespace name (excluding the part tha matches the regex)
-        /// to provide the complete path to the embedded resource in the assembly. Note you can view the entire path to all of 
-        /// the resources by calling Assembly.GetManifestResourceNames() so you can better understand how to build this path.</param>
-        public ClasspathResourceLoader(Type clazz, string namespaceExcludeRegex)
-        {
-            this.clazz = clazz;
-            this.namespaceExcludeRegex = namespaceExcludeRegex;
-        }
-
         public Stream OpenResource(string resource)
         {
-            var qualifiedResourceName = this.GetQualifiedResourceName(resource);
-            Stream stream = this.clazz.GetTypeInfo().Assembly.GetManifestResourceStream(qualifiedResourceName);
+            Stream stream = this.clazz.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(clazz, resource);
             if (stream == null)
             {
-                throw new IOException("Resource not found: " + qualifiedResourceName);
+                throw new IOException("Resource not found: " + resource);
             }
             return stream;
         }
@@ -103,33 +85,6 @@ namespace Lucene.Net.Analysis.Util
             {
                 throw new Exception("Cannot create instance: " + cname, e);
             }
-        }
-
-        /// <summary>
-        /// LUCENENET: Added for .NET help in finding the resource name.
-        /// </summary>
-        /// <param name="resource"></param>
-        /// <returns></returns>
-        private string GetQualifiedResourceName(string resource) 
-        {
-            // LUCENENET TODO: Need to ensure this works in .NET Core (and perhaps refactor to make it more reliable).
-            // Perhaps it would make more sense to use Assembly.GetManifestResourceStream(Type, string), which allows
-            // you to filter by the namespace of a Type.
-
-            var namespaceName = this.clazz.Namespace;
-            var assemblyName = clazz.GetTypeInfo().Assembly.GetName().Name;
-            if (string.IsNullOrEmpty(this.namespaceExcludeRegex) && (assemblyName.Equals(namespaceName, StringComparison.OrdinalIgnoreCase)))
-                return namespaceName;
-
-            string namespaceSegment = "";
-            if (!string.IsNullOrEmpty(this.namespaceExcludeRegex))
-            {
-                // Remove the part of the path that matches the Regex.
-                namespaceSegment = Regex.Replace(namespaceName, this.namespaceExcludeRegex, string.Empty, RegexOptions.Compiled);
-            }
-
-            // Qualify by namespace and separate by .
-            return string.Concat(assemblyName, ".", namespaceSegment.Trim('.'), ".", resource).Replace("..", ".");
         }
     }
 }

@@ -68,7 +68,7 @@ namespace Lucene.Net.Analysis.Synonym
         {
             Reader reader = new StringReader("GB");
             TokenStream stream = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
-            stream = TokenFilterFactory("Synonym", Version.LUCENE_33, new ClasspathResourceLoader(this.GetType(), "Lucene.Net"), "synonyms", "synonyms.txt").Create(stream);
+            stream = TokenFilterFactory("Synonym", Version.LUCENE_33, new ClasspathResourceLoader(this.GetType()), "synonyms", "synonyms.txt").Create(stream);
             assertTrue(stream is SlowSynonymFilter);
             AssertTokenStreamContents(stream, new string[] { "GB", "gib", "gigabyte", "gigabytes" }, new int[] { 1, 0, 0, 0 });
         }

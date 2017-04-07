@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected internal virtual TokenizerFactory TokenizerFactory(string name, Version version, params string[] keysAndValues)
         {
-            return TokenizerFactory(name, version, GetCurrentTypeResourceLoader(), keysAndValues);
+            return TokenizerFactory(name, version, new ClasspathResourceLoader(this.GetType()), keysAndValues);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected internal virtual TokenFilterFactory TokenFilterFactory(string name, Version version, params string[] keysAndValues)
         {
-            return TokenFilterFactory(name, version, GetCurrentTypeResourceLoader(), keysAndValues);
+            return TokenFilterFactory(name, version, new ClasspathResourceLoader(this.GetType()), keysAndValues);
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         protected internal virtual CharFilterFactory CharFilterFactory(string name, params string[] keysAndValues)
         {
-            return CharFilterFactory(name, TEST_VERSION_CURRENT, GetCurrentTypeResourceLoader(), keysAndValues);
+            return CharFilterFactory(name, TEST_VERSION_CURRENT, new ClasspathResourceLoader(this.GetType()), keysAndValues);
         }
 
         /// <summary>
@@ -168,16 +168,6 @@ namespace Lucene.Net.Analysis.Util
         protected internal virtual CharFilterFactory CharFilterFactory(string name, Version matchVersion, IResourceLoader loader, params string[] keysAndValues)
         {
             return (CharFilterFactory)AnalysisFactory(Lucene.Net.Analysis.Util.CharFilterFactory.LookupClass(name), matchVersion, loader, keysAndValues);
-        }
-
-        /// <summary>
-        /// Added for .NET support. Since the namespace of the classes don't match the assembly name, we need to
-        /// exclude part of the namespace.
-        /// </summary>
-        /// <returns></returns>
-        protected internal virtual IResourceLoader GetCurrentTypeResourceLoader()
-        {
-            return new ClasspathResourceLoader(this.GetType(), "Lucene.Net");
         }
     }
 }

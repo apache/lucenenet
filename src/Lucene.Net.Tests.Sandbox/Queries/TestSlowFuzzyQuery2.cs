@@ -85,7 +85,7 @@ namespace Lucene.Net.Sandbox.Queries
             {
                 Console.WriteLine("TEST: codePointTable=" + codePointTable);
             }
-            Stream stream = getResourceAsStream(GetType(), "fuzzyTestData.txt");
+            Stream stream = GetType().getResourceAsStream("fuzzyTestData.txt");
             TextReader reader = new StreamReader(stream, Encoding.UTF8);
 
             int bits = int.Parse(reader.ReadLine(), CultureInfo.InvariantCulture);
@@ -151,27 +151,6 @@ namespace Lucene.Net.Sandbox.Queries
             for (int j = 0; j < binary.Length; j++)
                 sb.AppendCodePoint(codePointTable[binary[j] - '0']);
             return sb.toString();
-        }
-
-        private Stream getResourceAsStream(Type type, string filename)
-        {
-            var assembly = type.GetTypeInfo().Assembly;
-
-#if FEATURE_EMBEDDED_RESOURCE
-            string namespaceSegment = type.Namespace.Replace("Lucene.Net.Sandbox", string.Empty);
-            string assemblyName = assembly.GetName().Name;
-            var name = string.Concat(assemblyName, namespaceSegment, ".", filename);
-#else
-            var name = string.Join(".", type.Namespace, filename);
-#endif
-            var stream = assembly.GetManifestResourceStream(name);
-
-            if (stream == default(Stream))
-            {
-                throw new ArgumentException($"Could not find a resource with the name: {name}");
-            }
-
-            return stream;
         }
 
         /* Code to generate test data

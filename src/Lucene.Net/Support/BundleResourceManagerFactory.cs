@@ -29,7 +29,7 @@ namespace Lucene.Net.Support
         /// <returns>A new <see cref="ResourceManager"/> instance.</returns>
         public virtual ResourceManager Create(Type resourceSource)
         {
-            return new ResourceManager(GetResourceType(resourceSource));
+            return new ResourceManager(GetResourceName(resourceSource), resourceSource.GetTypeInfo().Assembly);
         }
 
         /// <summary>
@@ -46,17 +46,20 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Converts the Java NLS type to the .NET resource type.
-        /// In Java, these were one and the same, but in .NET it is not possible to create resources
-        /// in Visual Studio with the same class name as a resource class because the resource generation process already
-        /// creates a backing class with the same name as the resource. So, by convention the resources must be
-        /// named &lt;messages class name&gt; + <see cref="ResourceSuffix"/> (default value "Bundle") in order to be found by NLS.
+        /// Gets the fully-qualified name of the bundle as it would appear
+        /// using <see cref="Assembly.GetManifestResourceNames()"/>, without the
+        /// <c>.resources</c> extension. This is the name that is passed to the
+        /// <c>baseName</c> parameter of
+        /// <see cref="ResourceManager.ResourceManager(string, Assembly)"/>.
         /// </summary>
-        /// <param name="clazz">The type of the NLS class where the field strings are located that identify resources.</param>
-        /// <returns>The type of resources (the class name + <see cref="ResourceSuffix"/>), as a .NET <see cref="Type"/> instance.</returns>
-        protected virtual Type GetResourceType(Type clazz)
+        /// <param name="clazz">The type of the NLS-derived class where the field strings are located that identify resources.</param>
+        /// <returns>The resource name.</returns>
+        protected virtual string GetResourceName(Type clazz)
         {
-            return Type.GetType(string.Concat(clazz.Namespace, ".", clazz.Name, ResourceSuffix, ", ", clazz.GetTypeInfo().Assembly.FullName));
+            string resource = clazz.GetTypeInfo().Assembly.FindResource(clazz, string.Concat(clazz.Name, ResourceSuffix, ".resources"));
+            return !string.IsNullOrEmpty(resource)
+                ? resource.Substring(0, resource.Length - 10)
+                : null;
         }
 
         /// <summary>

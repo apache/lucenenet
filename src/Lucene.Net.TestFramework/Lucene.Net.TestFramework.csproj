@@ -21,7 +21,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;FEATURE_SERIALIZABLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -477,7 +477,7 @@
     <Compile Include="JavaCompatibility\LuceneTypesHelpers.cs" />
     <Compile Include="JavaCompatibility\SystemTypesHelpers.cs" />
     <Compile Include="Util\VirtualMethod.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>

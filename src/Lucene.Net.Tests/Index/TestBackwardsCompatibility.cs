@@ -158,9 +158,6 @@ namespace Lucene.Net.Index
         }
         */
 
-        // LUCENENET specific to load resources for this type
-        internal const string CURRENT_RESOURCE_DIRECTORY = "Lucene.Net.Tests.Index.";
-
         internal static readonly string[] OldNames = new string[] {
             "40.cfs", "40.nocfs", "41.cfs", "41.nocfs", "42.cfs",
             "42.nocfs", "45.cfs", "45.nocfs", "461.cfs", "461.nocfs"
@@ -213,7 +210,7 @@ namespace Lucene.Net.Index
             foreach (string name in names)
             {
                 DirectoryInfo dir = CreateTempDir(name);
-                using (Stream zipFileStream = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + "index." + name + ".zip"))
+                using (Stream zipFileStream = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "index." + name + ".zip"))
                 {
                     TestUtil.Unzip(zipFileStream, dir);
                 }
@@ -244,7 +241,7 @@ namespace Lucene.Net.Index
                     Console.WriteLine("TEST: index " + UnsupportedNames[i]);
                 }
                 DirectoryInfo oldIndxeDir = CreateTempDir(UnsupportedNames[i]);
-                using (Stream dataFile = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + "unsupported." + UnsupportedNames[i] + ".zip"))
+                using (Stream dataFile = GetDataFile("unsupported." + UnsupportedNames[i] + ".zip"))
                 {
                     TestUtil.Unzip(dataFile, oldIndxeDir);
                 }
@@ -953,7 +950,7 @@ namespace Lucene.Net.Index
             foreach (string name in OldIndexDirs.Keys)
             {
                 DirectoryInfo dir = CreateTempDir(name);
-                using (Stream dataFile = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + "index." + name + ".zip"))
+                using (Stream dataFile = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "index." + name + ".zip"))
                 {
                     TestUtil.Unzip(dataFile, dir);
                 }
@@ -1061,7 +1058,7 @@ namespace Lucene.Net.Index
         public virtual void TestMoreTerms()
         {
             DirectoryInfo oldIndexDir = CreateTempDir("moreterms");
-            using (Stream dataFile = this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream(CURRENT_RESOURCE_DIRECTORY + MoreTermsIndex))
+            using (Stream dataFile = GetDataFile(MoreTermsIndex))
             {
                 TestUtil.Unzip(dataFile, oldIndexDir);
             }

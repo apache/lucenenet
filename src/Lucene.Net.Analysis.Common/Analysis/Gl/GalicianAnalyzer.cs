@@ -60,9 +60,8 @@ namespace Lucene.Net.Analysis.Gl
             {
                 try
                 {
-                    var resource = typeof(GalicianAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = WordlistLoader.GetWordSet(
-                        IOUtils.GetDecodingReader(typeof(GalicianAnalyzer), resource, Encoding.UTF8),
+                        IOUtils.GetDecodingReader(typeof(GalicianAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618

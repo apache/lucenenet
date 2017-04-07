@@ -457,7 +457,6 @@
     <Compile Include="Analysis\Util\StopwordAnalyzerBase.cs" />
     <Compile Include="Analysis\Util\TokenFilterFactory.cs" />
     <Compile Include="Analysis\Util\TokenizerFactory.cs" />
-    <Compile Include="Analysis\Util\TypeExtensions.cs" />
     <Compile Include="Analysis\Util\WordlistLoader.cs" />
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizer.cs" />
     <Compile Include="Analysis\Wikipedia\WikipediaTokenizerFactory.cs" />
@@ -493,7 +492,7 @@
     <Compile Include="Tartarus\Snowball\Ext\SwedishStemmer.cs" />
     <Compile Include="Tartarus\Snowball\Ext\TurkishStemmer.cs" />
     <Compile Include="Tartarus\Snowball\SnowballProgram.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>

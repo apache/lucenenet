@@ -71,8 +71,7 @@ namespace Lucene.Net.Analysis.Hi
             {
                 try
                 {
-                    var resource = typeof(HindiAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(HindiAnalyzer), resource, STOPWORDS_COMMENT);
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(HindiAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
                 }
                 catch (IOException)
                 {

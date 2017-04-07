@@ -24,7 +24,7 @@
   "frameworks": {
     "netcoreapp1.0": {
       "buildOptions": {
-        "define": [ "NETSTANDARD", "FEATURE_EMBEDDED_RESOURCE" ],
+        "define": [ "NETSTANDARD" ],
         "compile": {
           "excludeFiles": [
             "Support/TestApiConsistency.cs"

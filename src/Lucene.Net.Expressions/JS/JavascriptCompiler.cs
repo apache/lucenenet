@@ -660,10 +660,11 @@ namespace Lucene.Net.Expressions.JS
         {
 #if NETSTANDARD
             var assembly = typeof(JavascriptCompiler).GetTypeInfo().Assembly;
-            var settingsFile = string.Join(".", assembly.GetName().Name, "Properties", "Settings.settings");
+            //var settingsFile = string.Join(".", assembly.GetName().Name, "Properties", "Settings.settings");
+            var settingsFile = string.Join(".", "Properties", "Settings.settings");
             string contents;
 
-            using (var reader = new StreamReader(assembly.GetManifestResourceStream(settingsFile)))
+            using (var reader = new StreamReader(assembly.FindAndGetManifestResourceStream(typeof(JavascriptCompiler), settingsFile)))
             {
                 contents = reader.ReadToEnd();
             }

@@ -59,8 +59,7 @@ namespace Lucene.Net.Analysis.Cjk
             {
                 try
                 {
-                    var resource = typeof(CJKAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(CJKAnalyzer), resource, "#");
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(CJKAnalyzer), DEFAULT_STOPWORD_FILE, "#");
                 }
                 catch (IOException)
                 {

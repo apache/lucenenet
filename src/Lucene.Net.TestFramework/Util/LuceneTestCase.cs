@@ -1811,8 +1811,7 @@ namespace Lucene.Net.Util
         {
             try
             {
-                var resourceLoader = new ClasspathResourceLoader(this.GetType(), "Lucene.Net");
-                return resourceLoader.OpenResource(name);
+                return this.GetType().getResourceAsStream(name);
             }
 #pragma warning disable 168
             catch (Exception e)

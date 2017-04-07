@@ -44,7 +44,7 @@
         "NETStandard.Library": "1.6.0"
       },
       "buildOptions": {
-        "define": [ "NETSTANDARD", "FEATURE_EMBEDDED_RESOURCE" ]
+        "define": [ "NETSTANDARD" ]
       }
     },
     "net451": {

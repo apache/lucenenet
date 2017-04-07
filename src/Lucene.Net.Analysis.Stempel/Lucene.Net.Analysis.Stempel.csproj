@@ -59,8 +59,7 @@
     <Compile Include="Stempel\StempelFilter.cs" />
     <Compile Include="Stempel\StempelPolishStemFilterFactory.cs" />
     <Compile Include="Stempel\StempelStemmer.cs" />
-    <Compile Include="Util\TypeExtensions.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>

@@ -60,9 +60,8 @@ namespace Lucene.Net.Analysis.Lv
             {
                 try
                 {
-                    var resource = typeof(LatvianAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = WordlistLoader.GetWordSet(
-                        IOUtils.GetDecodingReader(typeof(LatvianAnalyzer), resource, Encoding.UTF8),
+                        IOUtils.GetDecodingReader(typeof(LatvianAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);
 #pragma warning restore 612, 618

@@ -595,6 +595,7 @@
     <Compile Include="Store\TrackingDirectoryWrapper.cs" />
     <Compile Include="Store\VerifyingLockFactory.cs" />
     <Compile Include="Support\AppSettings.cs" />
+    <Compile Include="Support\AssemblyExtensions.cs" />
     <Compile Include="Support\AtomicBoolean.cs" />
     <Compile Include="Support\AtomicInteger.cs" />
     <Compile Include="Support\AtomicLong.cs" />
@@ -889,7 +890,7 @@
     <Compile Include="Util\VirtualMethod.cs" />
     <Compile Include="Util\WAH8DocIdSet.cs" />
     <Compile Include="Util\WeakIdentityMap.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>

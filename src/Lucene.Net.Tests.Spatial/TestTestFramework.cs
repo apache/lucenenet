@@ -34,7 +34,7 @@ namespace Lucene.Net.Spatial
         {
             String name = StrategyTestCase.RESOURCE_PATH + StrategyTestCase.QTEST_Cities_Intersects_BBox;
 
-            Stream @in = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(name);
+            Stream @in = GetType().getResourceAsStream(name);
             SpatialContext ctx = SpatialContext.GEO;
             IEnumerator<SpatialTestQuery> iter = SpatialTestQuery.GetTestQueries(
                 new SpatialArgsParser(), ctx, name, @in);//closes the InputStream

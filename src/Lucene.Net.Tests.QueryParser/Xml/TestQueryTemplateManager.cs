@@ -79,16 +79,15 @@ namespace Lucene.Net.QueryParsers.Xml
             //}
             //Cache all the query templates we will be referring to.
             QueryTemplateManager qtm = new QueryTemplateManager();
-            Assembly assembly = GetType().Assembly;
-            using (var stream = assembly.GetManifestResourceStream(TestParser.RESOURCE_PATH + "albumBooleanQuery.xsl"))
+            using (var stream = GetType().getResourceAsStream("albumBooleanQuery.xsl"))
             {
                 qtm.AddQueryTemplate("albumBooleanQuery", stream);
             }
-            using (var stream = assembly.GetManifestResourceStream(TestParser.RESOURCE_PATH + "albumFilteredQuery.xsl"))
+            using (var stream = GetType().getResourceAsStream("albumFilteredQuery.xsl"))
             {
                 qtm.AddQueryTemplate("albumFilteredQuery", stream);
             }
-            using (var stream = assembly.GetManifestResourceStream(TestParser.RESOURCE_PATH + "albumLuceneClassicQuery.xsl"))
+            using (var stream = GetType().getResourceAsStream("albumLuceneClassicQuery.xsl"))
             {
                 qtm.AddQueryTemplate("albumLuceneClassicQuery", stream);
             }

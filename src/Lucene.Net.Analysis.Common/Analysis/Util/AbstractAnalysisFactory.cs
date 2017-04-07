@@ -360,7 +360,7 @@ namespace Lucene.Net.Analysis.Util
             {
                 // default stopwords list has 35 or so words, but maybe don't make it that
                 // big to start
-                words = new CharArraySet(m_luceneMatchVersion, files.Count() * 10, ignoreCase);
+                words = new CharArraySet(m_luceneMatchVersion, files.Count * 10, ignoreCase);
                 foreach (string file in files)
                 {
                     var wlist = GetLines(loader, file.Trim());

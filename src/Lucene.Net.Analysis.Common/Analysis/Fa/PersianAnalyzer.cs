@@ -74,8 +74,7 @@ namespace Lucene.Net.Analysis.Fa
             {
                 try
                 {
-                    var resource = typeof(PersianAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
-                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(PersianAnalyzer), resource, STOPWORDS_COMMENT);
+                    DEFAULT_STOP_SET = LoadStopwordSet(false, typeof(PersianAnalyzer), DEFAULT_STOPWORD_FILE, STOPWORDS_COMMENT);
                 }
                 catch (IOException)
                 {

@@ -13,10 +13,10 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void TestReadFully()
         {
-            const string READFULLY_TEST_FILE = "Lucene.Net.Tests.Support.ReadFully.txt";
+            const string READFULLY_TEST_FILE = "ReadFully.txt";
             byte[] buffer = new byte[1367];
 
-            Stream @in = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(READFULLY_TEST_FILE);
+            Stream @in = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), READFULLY_TEST_FILE);
             DataInputStream dis;
             using (dis = new DataInputStream(@in))
             { 
@@ -25,7 +25,7 @@ namespace Lucene.Net.Support
             }
 
             // Read past the end of the stream
-            @in = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(READFULLY_TEST_FILE);
+            @in = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), READFULLY_TEST_FILE);
             dis = new DataInputStream(@in);
             bool caughtException = false;
             try
@@ -47,7 +47,7 @@ namespace Lucene.Net.Support
 
             // Ensure we get an IndexOutOfRangeException exception when length is negative
             @in = GetType().GetTypeInfo().
-                Assembly.GetManifestResourceStream(READFULLY_TEST_FILE);
+                Assembly.FindAndGetManifestResourceStream(GetType(), READFULLY_TEST_FILE);
             dis = new DataInputStream(@in);
             caughtException = false;
             try

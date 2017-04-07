@@ -32,7 +32,7 @@ namespace Lucene.Net.Spatial
 
     public abstract class StrategyTestCase : SpatialTestCase
     {
-        public const string RESOURCE_PATH = "Lucene.Net.Tests.Spatial.Test_Files.";
+        public const string RESOURCE_PATH = "Test_Files.";
         public const string DATA_RESOURCE_PATH = RESOURCE_PATH + "Data.";
 
         public static readonly String DATA_SIMPLE_BBOX = "simple-bbox.txt";
@@ -111,7 +111,7 @@ namespace Lucene.Net.Spatial
         protected virtual IEnumerator<SpatialTestData> getSampleData(String testDataFile)
         {
             String path = DATA_RESOURCE_PATH + testDataFile;
-            Stream stream = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(path);
+            Stream stream = GetType().getResourceAsStream(path);
             if (stream == null)
                 throw new FileNotFoundException("classpath resource not found: " + path);
             return SpatialTestData.GetTestData(stream, ctx);//closes the InputStream
@@ -119,7 +119,7 @@ namespace Lucene.Net.Spatial
 
         protected virtual IEnumerator<SpatialTestQuery> getTestQueries(String testQueryFile, SpatialContext ctx)
         {
-            Stream @in = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(RESOURCE_PATH + testQueryFile);
+            Stream @in = GetType().getResourceAsStream(RESOURCE_PATH + testQueryFile);
             return SpatialTestQuery.GetTestQueries(
                 argsParser, ctx, testQueryFile, @in);//closes the InputStream
         }

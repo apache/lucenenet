@@ -65,16 +65,14 @@ namespace Egothor.Stemmer
 {
     public class TestCompile_ : LuceneTestCase
     {
-        private const string RULES_FILE = "Lucene.Net.Tests.Analysis.Stempel.Egothor.Stemmer.testRules.txt";
-
         [Test]
         public void TestCompile()
         {
             DirectoryInfo dir = CreateTempDir("testCompile");
             dir.Create();
             FileInfo output;
-            
-            using (Stream input = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(RULES_FILE))
+
+            using (Stream input = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "testRules.txt"))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);
@@ -94,7 +92,7 @@ namespace Egothor.Stemmer
             DirectoryInfo dir = CreateTempDir("testCompile");
             dir.Create();
             FileInfo output;
-            using (Stream input = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(RULES_FILE))
+            using (Stream input = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "testRules.txt"))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);
@@ -114,7 +112,7 @@ namespace Egothor.Stemmer
             DirectoryInfo dir = CreateTempDir("testCompile");
             dir.Create();
             FileInfo output;
-            using (Stream input = GetType().GetTypeInfo().Assembly.GetManifestResourceStream(RULES_FILE))
+            using (Stream input = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "testRules.txt"))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);

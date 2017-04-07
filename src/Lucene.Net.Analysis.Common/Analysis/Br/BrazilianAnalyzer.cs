@@ -62,9 +62,8 @@ namespace Lucene.Net.Analysis.Br
             {
                 try
                 {
-                    var resource = typeof(BrazilianAnalyzer).GetAnalysisResourceName(DEFAULT_STOPWORD_FILE);
                     DEFAULT_STOP_SET = WordlistLoader.GetWordSet(
-                        IOUtils.GetDecodingReader(typeof(BrazilianAnalyzer), resource, Encoding.UTF8),
+                        IOUtils.GetDecodingReader(typeof(BrazilianAnalyzer), DEFAULT_STOPWORD_FILE, Encoding.UTF8),
                         "#",
 #pragma warning disable 612, 618
                         LuceneVersion.LUCENE_CURRENT);

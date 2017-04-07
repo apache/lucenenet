@@ -336,7 +336,7 @@ namespace Lucene.Net.Util
             bool success = false;
             try
             {
-                stream = clazz.GetTypeInfo().Assembly.GetManifestResourceStream(resource);
+                stream = clazz.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(clazz, resource);
                 TextReader reader = GetDecodingReader(stream, charSet);
                 success = true;
                 return reader;

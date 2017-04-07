@@ -31,13 +31,6 @@ namespace Lucene.Net.QueryParsers.Xml
 
     public class TestParser : LuceneTestCase
     {
-        internal const string RESOURCE_PATH =
-#if NETSTANDARD
-            "Lucene.Net.Tests.QueryParser.Xml.";
-#else
-            "Lucene.Net.QueryParsers.Xml.";
-#endif
-
         private static CoreParser builder;
         private static Store.Directory dir;
         private static IndexReader reader;
@@ -54,8 +47,7 @@ namespace Lucene.Net.QueryParsers.Xml
             builder = new CorePlusExtensionsParser("contents", analyzer);
 
             TextReader d = new StreamReader(
-            //    typeof(TestParser).getResourceAsStream("reuters21578.txt"), Encoding.ASCII);
-                typeof(TestParser).GetTypeInfo().Assembly.GetManifestResourceStream(RESOURCE_PATH + "reuters21578.txt"), Encoding.ASCII);
+                typeof(TestParser).getResourceAsStream("reuters21578.txt"), Encoding.ASCII);
             dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer));
             String line = d.ReadLine();
@@ -255,9 +247,8 @@ namespace Lucene.Net.QueryParsers.Xml
 
         private Query Parse(String xmlFileName)
         {
-            //Stream xmlStream = typeof(TestParser).getResourceAsStream(xmlFileName);
-            using (Stream xmlStream = typeof(TestParser).GetTypeInfo().Assembly.GetManifestResourceStream(RESOURCE_PATH + xmlFileName))
-            { 
+            using (Stream xmlStream = typeof(TestParser).getResourceAsStream(xmlFileName))
+            {
                 Query result = builder.Parse(xmlStream);
                 return result;
             }

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Reflection;
@@ -95,10 +96,7 @@ namespace Lucene.Net.Analysis.Util
             TextReader reader = null;
             try
             {
-                //var resourceNames = aClass.GetTypeInfo().Assembly.GetManifestResourceNames();
-                // LUCENENET TODO: Maybe it would make more sense to use this overload?
-                //var resourceStream = aClass.GetTypeInfo().Assembly.GetManifestResourceStream(aClass, resource);
-                var resourceStream = aClass.GetTypeInfo().Assembly.GetManifestResourceStream(resource);
+                var resourceStream = aClass.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(aClass, resource);
                 reader = IOUtils.GetDecodingReader(resourceStream, Encoding.UTF8);
                 return WordlistLoader.GetWordSet(reader, comment, new CharArraySet(
 #pragma warning disable 612, 618

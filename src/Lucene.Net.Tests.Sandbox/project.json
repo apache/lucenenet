@@ -31,7 +31,6 @@
       },
       "imports": "dnxcore50",
       "buildOptions": {
-        "define": [ "FEATURE_EMBEDDED_RESOURCE" ],
         "compile": {
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
