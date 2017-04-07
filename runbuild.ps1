@@ -390,12 +390,14 @@ try {
 		#Backup the project.json file
 		Copy-Item $projectJson "$projectJson.bak" -Force
 
+		Write-Host "Updating project.json: $projectJson" -ForegroundColor Cyan
+		
 		#Update version (for NuGet package) and dependency version of this project's inter-dependencies
 		(Get-Content $projectJson) | % {
 			$_-replace "(?<=""Lucene.Net[\w\.]*?""\s*?:\s*?"")([^""]+)", $PackageVersion
 		} | Set-Content $projectJson -Force
 
-		$json = (Get-Content $projectJson) | ConvertFrom-Json
+		$json = (Get-Content $projectJson -Raw) | ConvertFrom-Json
 		$json.version = $PackageVersion
 		$json | ConvertTo-Json -depth 100 | Out-File $projectJson -encoding UTF8 -Force
 	}
