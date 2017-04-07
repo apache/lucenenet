@@ -137,12 +137,6 @@ if ($Version -eq "0.0.0" -or [string]::IsNullOrEmpty($Version)) {
 	}
 }
 
-#Environment variables to ensure all tests are run %BuildRunner% or %RunAllTests%
-if ($env:RunAllTests -eq "true") {
-	$RunTests = $true
-	$FrameworksToTest = @("net451", "netcoreapp1.0")
-}
-
 function Ensure-Directory-Exists([string] $path)
 {
 	if (!(Test-Path $path)) {

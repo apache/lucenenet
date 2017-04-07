@@ -18,6 +18,9 @@ GOTO endcommentblock
 ::   -Configuration:<Configuration>
 ::   -config:<Configuration> - MSBuild configuration for the build.
 ::
+::   -Test
+::   -t - Run the tests.
+::
 ::   All options are case insensitive.
 ::
 ::   To escape any of the options, put double quotes around the entire value, like this:
@@ -41,6 +44,7 @@ set configuration=Release
 IF NOT "%config%" == "" (
 	set configuration=%config%
 )
+set runtests=false
 
 FOR %%a IN (%*) DO (
 	FOR /f "useback tokens=*" %%a in ('%%a') do (
@@ -75,7 +79,23 @@ FOR %%a IN (%*) DO (
 		IF /I !test!==-configuration: (
 			set configuration=!value:~15!
 		)
+		
+		set test=!value:~0,2!
+		IF /I !test!==-t (
+			set runtests=true
+		)
+
+		set test=!value:~0,5!
+		IF /I !test!==-test: (
+			set runtests=true
+		)
 	)
 )
 
-powershell -ExecutionPolicy Bypass -Command "& .\runbuild.ps1 -CreatePackages -Version \"%version%\" -PackageVersion \"%PackageVersion%\" -Configuration \"%configuration%\""
+if "!runtests!"=="true" (
+	powershell -ExecutionPolicy Bypass -Command "& .\runbuild.ps1 -CreatePackages -Version \"%version%\" -PackageVersion \"%PackageVersion%\" -Configuration \"%configuration%\" -RunTests -FrameworksToTest @(\""net451\"", \""netcoreapp1.0\"")"
+) else (
+	powershell -ExecutionPolicy Bypass -Command "& .\runbuild.ps1 -CreatePackages -Version \"%version%\" -PackageVersion \"%PackageVersion%\" -Configuration \"%configuration%\""
+)
+
+endlocal
