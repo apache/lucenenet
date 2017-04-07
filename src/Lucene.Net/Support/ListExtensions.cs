@@ -15,7 +15,7 @@ namespace Lucene.Net.Support
             {
                 foreach (var item in values)
                 {
-                    lt.Add(item);
+                    list.Add(item);
                 }
             }
         }
