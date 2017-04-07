@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-#if FEATURE_MARSHAL_BY_REF
+#if !NETSTANDARD
 using System.Runtime.Remoting;
 #endif
 using System.Text;
@@ -67,14 +67,12 @@ namespace Lucene.Net.Support
             }
         }
 
-#if FEATURE_CLOSEABLE
+#if !NETSTANDARD
         public override void Close()
         {
             Run(() => textWriter.Close());
         }
-#endif
 
-#if FEATURE_MARSHAL_BY_REF
         public override ObjRef CreateObjRef(Type requestedType)
         {
             return Run(() => textWriter.CreateObjRef(requestedType));
@@ -101,7 +99,7 @@ namespace Lucene.Net.Support
             return Run(() => textWriter.GetHashCode());
         }
 
-#if FEATURE_LIFETIME_SERVICE
+#if !NETSTANDARD
         public override object InitializeLifetimeService()
         {
             return Run(() => textWriter.InitializeLifetimeService());

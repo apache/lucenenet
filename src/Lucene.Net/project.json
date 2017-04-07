@@ -64,10 +64,7 @@
         "define": [
           "FEATURE_CLONEABLE",
           "FEATURE_SERIALIZABLE",
-          "FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM",
-          "FEATURE_MARSHAL_BY_REF",
-          "FEATURE_CLOSEABLE",
-          "FEATURE_LIFETIME_SERVICE"
+          "FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM"
         ]
       }
     }
