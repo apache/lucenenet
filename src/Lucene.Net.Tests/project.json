@@ -75,7 +75,6 @@
             "TestMergeSchedulerExternal.cs",
             "Index/TestConcurrentMergeScheduler.cs",
             "Support/TestCase.cs",
-            "Support/TestEquatableList.cs",
             "Support/TestExceptionSerialization.cs",
             "Support/TestIDisposable.cs",
             "Support/TestOldPatches.cs",
