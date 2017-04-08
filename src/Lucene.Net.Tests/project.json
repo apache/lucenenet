@@ -79,12 +79,9 @@
             "Support/TestEquatableList.cs",
             "Support/TestExceptionSerialization.cs",
             "Support/TestIDisposable.cs",
-            "Support/TestLRUCache.cs",
             "Support/TestOldPatches.cs",
             "Support/TestOSClass.cs",
             "Support/TestSerialization.cs",
-            "Support/TestSupportClass.cs",
-            "Support/TestThreadClass.cs",
             "Util/TestMaxFailuresRule.cs"
           ]
         }
