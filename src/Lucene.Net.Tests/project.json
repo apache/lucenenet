@@ -74,9 +74,6 @@
             "Support/TestApiConsistency.cs",
             "TestMergeSchedulerExternal.cs",
             "Index/TestConcurrentMergeScheduler.cs",
-            "Support/BigObject.cs",
-            "Support/CollisionTester.cs",
-            "Support/SmallObject.cs",
             "Support/TestCase.cs",
             "Support/TestCloseableThreadLocal.cs",
             "Support/TestEquatableList.cs",
@@ -88,9 +85,6 @@
             "Support/TestSerialization.cs",
             "Support/TestSupportClass.cs",
             "Support/TestThreadClass.cs",
-            "Support/TestWeakDictionary.cs",
-            "Support/TestWeakDictionaryBehavior.cs",
-            "Support/TestWeakDictionaryPerformance.cs",
             "Util/TestMaxFailuresRule.cs"
           ]
         }
