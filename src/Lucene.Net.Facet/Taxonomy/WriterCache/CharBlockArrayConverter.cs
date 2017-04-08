@@ -8,8 +8,8 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
     internal class CharBlockArrayConverter : JsonConverter
     {
-        private const string BlockSize = "blockSize";
-        private const string Contents = "contents";
+        private const string BLOCK_SIZE = "blockSize";
+        private const string CONTENTS = "contents";
 
         public override bool CanConvert(Type objectType)
         {
@@ -28,11 +28,11 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             foreach (var property in properties)
             {
-                if (property.Name.Equals(BlockSize, StringComparison.OrdinalIgnoreCase))
+                if (property.Name.Equals(CharBlockArrayConverter.BLOCK_SIZE, StringComparison.OrdinalIgnoreCase))
                 {
                     blockSize = property.Value.Value<int>();
                 }
-                else if (property.Name.Equals(Contents, StringComparison.OrdinalIgnoreCase))
+                else if (property.Name.Equals(CharBlockArrayConverter.CONTENTS, StringComparison.OrdinalIgnoreCase))
                 {
                     contents = property.Value.Value<string>();
                 }
@@ -66,10 +66,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
             writer.WriteStartObject();
 
-            writer.WritePropertyName(BlockSize);
+            writer.WritePropertyName(BLOCK_SIZE);
             serializer.Serialize(writer, charBlockArray.blockSize);
 
-            writer.WritePropertyName(Contents);
+            writer.WritePropertyName(CONTENTS);
             serializer.Serialize(writer, charBlockArray.ToString());
 
             writer.WriteEndObject();
