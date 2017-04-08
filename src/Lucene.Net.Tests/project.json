@@ -76,7 +76,6 @@
             "Index/TestConcurrentMergeScheduler.cs",
             "Support/TestCase.cs",
             "Support/TestExceptionSerialization.cs",
-            "Support/TestIDisposable.cs",
             "Support/TestOldPatches.cs",
             "Support/TestOSClass.cs",
             "Support/TestSerialization.cs",
