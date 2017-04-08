@@ -25,6 +25,7 @@ namespace Lucene.Net
 
     public class TestWorstCaseTestBehavior : LuceneTestCase
     {
+#if !NETSTANDARD
         [Ignore("Ignored in Lucene")]
         [Test]
         public virtual void TestThreadLeak()
@@ -34,11 +35,12 @@ namespace Lucene.Net
 
             while (!t.IsAlive)
             {
-                Thread.@Yield();
+                Thread.Yield();
             }
 
             // once alive, leave it to run outside of the test scope.
         }
+#endif
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
         {
@@ -51,9 +53,12 @@ namespace Lucene.Net
 
             public override void Run()
             {
+#if !NETSTANDARD
                 try
                 {
+#endif
                     Thread.Sleep(10000);
+#if !NETSTANDARD
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)
@@ -61,6 +66,7 @@ namespace Lucene.Net
                 {
                     // Ignore.
                 }
+#endif
             }
         }
 
@@ -122,7 +128,11 @@ namespace Lucene.Net
         }
 
         [Ignore("Ignored in Lucene")]
-        [Test, Timeout(500)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(500)]
+#endif
+        [Test]
         public virtual void TestTimeout()
         {
             Thread.Sleep(5000);
@@ -130,20 +140,28 @@ namespace Lucene.Net
 
 
         [Ignore("Ignored in Lucene")]
-        [Test, Timeout(1000)]
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(1000)]
+#endif
+        [Test]
         public virtual void TestZombie()
         {
             while (true)
             {
+#if !NETSTANDARD
                 try
                 {
+#endif
                     Thread.Sleep(1000);
+#if !NETSTANDARD
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)
 #pragma warning restore 168
                 {
                 }
+#endif
             }
         }
     }

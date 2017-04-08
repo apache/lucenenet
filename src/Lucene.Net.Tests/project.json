@@ -73,7 +73,6 @@
           "excludeFiles": [
             "Support/TestApiConsistency.cs",
             "TestMergeSchedulerExternal.cs",
-            "TestWorstCaseTestBehavior.cs",
             "Index/TestConcurrentMergeScheduler.cs",
             "Support/BigObject.cs",
             "Support/CollisionTester.cs",
