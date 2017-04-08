@@ -86,7 +86,6 @@ namespace Lucene.Net.Support
                 string nameToFind = null;
                 while (resourceName.Length > 0 && resourceName.Contains('.') && (!(string.IsNullOrEmpty(prefix)) || resourceName.Equals(exactResourceName)))
                 {
-                    resourceName = resourceName.Substring(resourceName.IndexOf('.') + 1);
                     nameToFind = string.IsNullOrEmpty(prefix)
                         ? resourceName
                         : string.Concat(prefix, ".", resourceName);
@@ -101,6 +100,8 @@ namespace Lucene.Net.Support
                         result = matches[0]; // First of many
                         return false;
                     }
+
+                    resourceName = resourceName.Substring(resourceName.IndexOf('.') + 1);
                 }
                 result = null; // No match
                 return false;

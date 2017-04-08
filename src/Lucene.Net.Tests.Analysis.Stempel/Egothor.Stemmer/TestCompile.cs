@@ -1,10 +1,10 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
-using System.Reflection;
 
 /*
  Egothor Software License version 1.00
@@ -72,7 +72,7 @@ namespace Egothor.Stemmer
             dir.Create();
             FileInfo output;
 
-            using (Stream input = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "testRules.txt"))
+            using (Stream input = GetType().getResourceAsStream("testRules.txt"))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);
@@ -92,7 +92,7 @@ namespace Egothor.Stemmer
             DirectoryInfo dir = CreateTempDir("testCompile");
             dir.Create();
             FileInfo output;
-            using (Stream input = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "testRules.txt"))
+            using (Stream input = GetType().getResourceAsStream("testRules.txt"))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);
@@ -112,7 +112,7 @@ namespace Egothor.Stemmer
             DirectoryInfo dir = CreateTempDir("testCompile");
             dir.Create();
             FileInfo output;
-            using (Stream input = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), "testRules.txt"))
+            using (Stream input = GetType().getResourceAsStream("testRules.txt"))
             {
                 output = new FileInfo(Path.Combine(dir.FullName, "testRules.txt"));
                 Copy(input, output);
