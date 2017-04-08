@@ -9,34 +9,9 @@
     "NUnit": "3.5.0"
   },
   "buildOptions": {
-    "define": [ "FEATURE_TASKMERGESCHEDULER" ],
     "compile": {
       "exclude": [
         "Util/JunitCompat"
-      ],
-      "excludeFiles": [
-        "Support/TestApiConsistency.cs",
-        "TestMergeSchedulerExternal.cs",
-        "TestWorstCaseTestBehavior.cs",
-        "Index/TestConcurrentMergeScheduler.cs",
-        "Support/BigObject.cs",
-        "Support/CollisionTester.cs",
-        "Support/SmallObject.cs",
-        "Support/TestCase.cs",
-        "Support/TestCloseableThreadLocal.cs",
-        "Support/TestEquatableList.cs",
-        "Support/TestExceptionSerialization.cs",
-        "Support/TestIDisposable.cs",
-        "Support/TestLRUCache.cs",
-        "Support/TestOldPatches.cs",
-        "Support/TestOSClass.cs",
-        "Support/TestSerialization.cs",
-        "Support/TestSupportClass.cs",
-        "Support/TestThreadClass.cs",
-        "Support/TestWeakDictionary.cs",
-        "Support/TestWeakDictionaryBehavior.cs",
-        "Support/TestWeakDictionaryPerformance.cs",
-        "Util/TestMaxFailuresRule.cs"
       ],
       "includeFiles": [
         "../CommonAssemblyInfo.cs"
@@ -92,7 +67,31 @@
   "frameworks": {
     "netcoreapp1.0": {
       "buildOptions": {
-        "define": [ "NETSTANDARD" ]
+        "define": [ "NETSTANDARD", "FEATURE_TASKMERGESCHEDULER" ],
+        "excludeFiles": [
+          "Support/TestApiConsistency.cs",
+          "TestMergeSchedulerExternal.cs",
+          "TestWorstCaseTestBehavior.cs",
+          "Index/TestConcurrentMergeScheduler.cs",
+          "Support/BigObject.cs",
+          "Support/CollisionTester.cs",
+          "Support/SmallObject.cs",
+          "Support/TestCase.cs",
+          "Support/TestCloseableThreadLocal.cs",
+          "Support/TestEquatableList.cs",
+          "Support/TestExceptionSerialization.cs",
+          "Support/TestIDisposable.cs",
+          "Support/TestLRUCache.cs",
+          "Support/TestOldPatches.cs",
+          "Support/TestOSClass.cs",
+          "Support/TestSerialization.cs",
+          "Support/TestSupportClass.cs",
+          "Support/TestThreadClass.cs",
+          "Support/TestWeakDictionary.cs",
+          "Support/TestWeakDictionaryBehavior.cs",
+          "Support/TestWeakDictionaryPerformance.cs",
+          "Util/TestMaxFailuresRule.cs"
+        ]
       },
       "dependencies": {
         "Microsoft.NETCore.App": {
@@ -102,7 +101,11 @@
       },
       "imports": "dnxcore50"
     },
-    "net451": {}
+    "net451": {
+      "buildOptions": {
+        "define": [ "FEATURE_SERIALIZABLE" ]
+      }
+    }
   },
 
   "runtimes": {
