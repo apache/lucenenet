@@ -56,6 +56,7 @@ namespace Lucene.Net.Support
         //}
 
         //-------------------------------------------
+#if FEATURE_SERIALIZABLE
         [Test]
         [Description("LUCENENET-170")]
         public void Test_Util_Parameter()
@@ -77,8 +78,10 @@ namespace Lucene.Net.Support
 
             Assert.AreEqual(queryPreSerialized, queryPostSerialized, "See the issue: LUCENENET-170");
         }
+#endif
 
         //-------------------------------------------
+#if FEATURE_SERIALIZABLE
         [Test]
         [Description("LUCENENET-174")]
         public void Test_Store_RAMDirectory()
@@ -128,7 +131,7 @@ namespace Lucene.Net.Support
 
             Assert.AreEqual(topDocs.TotalHits, 2, "See the issue: LUCENENET-174");
         }
-
+#endif
 
 
         //-------------------------------------------
