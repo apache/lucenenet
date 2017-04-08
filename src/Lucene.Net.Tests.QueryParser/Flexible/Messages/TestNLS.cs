@@ -84,6 +84,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         [Test]
         public void TestNLSLoading_xx_XX()
         {
+            // LUCENENET NOTE: .NET Core throws a CultureNotFoundException in this case.
+            // There doesn't seem to be a reasonable way to test this as a result.
+#if !NETSTANDARD
             CultureInfo locale = new CultureInfo("xx-XX");
             String message = NLS.GetLocalizedMessage(
                 MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION,
@@ -103,6 +106,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
              */
             if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
                 assertEquals("Syntax Error: XXX", message);
+#endif
         }
 
         [Test]
