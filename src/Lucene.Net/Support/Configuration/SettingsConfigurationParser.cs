@@ -9,16 +9,16 @@ namespace Lucene.Net.Support.Configuration
 {
     public class SettingsConfigurationParser : IConfigurationParser
     {
-        public const string SettingsElement = "Settings";
-        private const string SettingElement = "Setting";
-        private const string Name = "Name";
-        private const string Value = "Value";
-        private const string Profile = "Profile";
+        public const string SETTINGS_ELEMENT = "Settings";
+        private const string SETTING_ELEMENT = "Setting";
+        private const string NAME = "Name";
+        private const string VALUE = "Value";
+        private const string PROFILE = "Profile";
 
         public bool CanParseElement(XElement element)
         {
             var ns = element.GetDefaultNamespace() ?? XNamespace.None;
-            var matching = element.DescendantsAndSelf(ns.GetName(SettingsElement)).ToArray();
+            var matching = element.DescendantsAndSelf(ns.GetName(SETTINGS_ELEMENT)).ToArray();
             return matching.Any();
         }
 
@@ -31,22 +31,22 @@ namespace Lucene.Net.Support.Configuration
                 return;
             }
 
-            context.Push(SettingsElement);
+            context.Push(SETTINGS_ELEMENT);
 
-            XName settingElement = ns.GetName(SettingElement);
-            XName valueAttribute = ns.GetName(Value);
+            XName settingElement = ns.GetName(SETTING_ELEMENT);
+            XName valueAttribute = ns.GetName(VALUE);
 
             var allSettings = element.DescendantsAndSelf(settingElement).ToArray();
 
             foreach (var setting in allSettings)
             {
-                var nameElement = setting.Attribute(Name);
+                var nameElement = setting.Attribute(NAME);
 
                 context.Push(nameElement.Value);
 
                 foreach (var valueElement in setting.Descendants(valueAttribute))
                 {
-                    var profileName = valueElement.Attribute(Profile).Value;
+                    var profileName = valueElement.Attribute(PROFILE).Value;
                     results.Add(GetKey(context, profileName), valueElement.Value);
                 }
 

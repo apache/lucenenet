@@ -671,7 +671,7 @@ namespace Lucene.Net.Expressions.JS
 
             var configuration = new ConfigurationBuilder().AddConfigFile(contents, new SettingsConfigurationParser()).Build();
 
-            var settingsSection = configuration.GetSection(SettingsConfigurationParser.SettingsElement);
+            var settingsSection = configuration.GetSection(SettingsConfigurationParser.SETTINGS_ELEMENT);
             var values = settingsSection.GetChildren().Select(section => new KeyValuePair<string, string>(section.Key, section.GetValue("(Default)"))).ToArray();
             return values;
 #else
