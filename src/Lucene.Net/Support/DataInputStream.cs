@@ -50,13 +50,17 @@ namespace Lucene.Net.Support
         public void ReadFully(byte[] b, int off, int len)
         {
             if (len < 0)
+            {
                 throw new IndexOutOfRangeException();
+            }
             int n = 0;
             while (n < len)
             {
                 int count = @in.Read(b, off + n, len - n);
                 if (count == 0)
+                {
                     throw new EndOfStreamException();
+                }
                 n += count;
             }
         }
@@ -92,7 +96,9 @@ namespace Lucene.Net.Support
         {
             int ch = @in.ReadByte();
             if (ch < 0)
+            {
                 throw new EndOfStreamException();
+            }
             return (ch != 0);
         }
 
@@ -103,7 +109,9 @@ namespace Lucene.Net.Support
         {
             int ch = @in.ReadByte();
             if (ch < 0)
+            {
                 throw new EndOfStreamException();
+            }
             return ch;
         }
 
@@ -114,7 +122,9 @@ namespace Lucene.Net.Support
         {
             int ch = @in.ReadByte();
             if (ch < 0)
+            {
                 throw new EndOfStreamException();
+            }
             return (byte)ch;
         }
 
@@ -126,7 +136,9 @@ namespace Lucene.Net.Support
             int ch1 = @in.ReadByte();
             int ch2 = @in.ReadByte();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
             return (short)((ch1 << 8) + (ch2 << 0));
         }
 
@@ -138,7 +150,9 @@ namespace Lucene.Net.Support
             int ch1 = @in.ReadByte();
             int ch2 = @in.ReadByte();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
             return (ch1 << 8) + (ch2 << 0);
         }
 
@@ -147,7 +161,9 @@ namespace Lucene.Net.Support
             int ch1 = @in.ReadByte();
             int ch2 = @in.ReadByte();
             if ((ch1 | ch2) < 0)
+            {
                 throw new EndOfStreamException();
+            }
             return (char)((ch1 << 8) + (ch2 << 0));
         }
 
@@ -161,7 +177,9 @@ namespace Lucene.Net.Support
             int ch3 = @in.ReadByte();
             int ch4 = @in.ReadByte();
             if ((ch1 | ch2 | ch3 | ch4) < 0)
+            {
                 throw new EndOfStreamException();
+            }
             return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
         }
 
@@ -320,12 +338,16 @@ namespace Lucene.Net.Support
                         /* 110x xxxx   10xx xxxx*/
                         count += 2;
                         if (count > utflen)
+                        {
                             throw new FormatException(
                                 "malformed input: partial character at end");
+                        }
                         char2 = (int)bytearr[count - 1];
                         if ((char2 & 0xC0) != 0x80)
+                        {
                             throw new FormatException(
                                 "malformed input around byte " + count);
+                        }
                         chararr[chararr_count++] = (char)(((c & 0x1F) << 6) |
                                                         (char2 & 0x3F));
                         break;
@@ -333,13 +355,17 @@ namespace Lucene.Net.Support
                         /* 1110 xxxx  10xx xxxx  10xx xxxx */
                         count += 3;
                         if (count > utflen)
+                        {
                             throw new FormatException(
                                 "malformed input: partial character at end");
+                        }
                         char2 = (int)bytearr[count - 2];
                         char3 = (int)bytearr[count - 1];
                         if (((char2 & 0xC0) != 0x80) || ((char3 & 0xC0) != 0x80))
+                        {
                             throw new FormatException(
                                 "malformed input around byte " + (count - 1));
+                        }
                         chararr[chararr_count++] = (char)(((c & 0x0F) << 12) |
                                                         ((char2 & 0x3F) << 6) |
                                                         ((char3 & 0x3F) << 0));

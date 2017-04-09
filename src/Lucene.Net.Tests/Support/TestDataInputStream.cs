@@ -14,22 +14,38 @@ namespace Lucene.Net.Support
         public void TestReadFully()
         {
             const string READFULLY_TEST_FILE = "ReadFully.txt";
-            byte[] buffer = new byte[1367];
+            int fileLength;
+            Stream @in;
 
-            Stream @in = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), READFULLY_TEST_FILE);
+            // Read one time to measure the length of the file (it may be different 
+            // on different operating systems because of line endings)
+            using (@in = GetType().getResourceAsStream(READFULLY_TEST_FILE))
+            {
+                using (var ms = new MemoryStream())
+                {
+                    @in.CopyTo(ms);
+                    fileLength = ms.ToArray().Length;
+                }
+            }
+
+            // Declare the buffer one byte too large
+            byte[] buffer = new byte[fileLength + 1];
+            @in = GetType().getResourceAsStream(READFULLY_TEST_FILE);
             DataInputStream dis;
             using (dis = new DataInputStream(@in))
             { 
-                // Read once for real
-                dis.ReadFully(buffer, 0, 1366);
+                // Read once for real (to the exact length)
+                dis.ReadFully(buffer, 0, fileLength);
             }
 
             // Read past the end of the stream
-            @in = GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(GetType(), READFULLY_TEST_FILE);
+            @in = GetType().getResourceAsStream(READFULLY_TEST_FILE);
             dis = new DataInputStream(@in);
             bool caughtException = false;
             try
             {
+                // Using the buffer length (that is 1 byte too many)
+                // should generate EndOfStreamException.
                 dis.ReadFully(buffer, 0, buffer.Length);
             }
 #pragma warning disable 168
@@ -46,8 +62,7 @@ namespace Lucene.Net.Support
             }
 
             // Ensure we get an IndexOutOfRangeException exception when length is negative
-            @in = GetType().GetTypeInfo().
-                Assembly.FindAndGetManifestResourceStream(GetType(), READFULLY_TEST_FILE);
+            @in = GetType().getResourceAsStream(READFULLY_TEST_FILE);
             dis = new DataInputStream(@in);
             caughtException = false;
             try
