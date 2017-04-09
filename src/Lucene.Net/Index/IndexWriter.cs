@@ -3995,7 +3995,9 @@ namespace Lucene.Net.Index
             get
             {
                 bool test = false;
-                Debug.Assert(test = true);
+                // LUCENENET NOTE: Must set test outside of Debug.Assert!!
+                bool isTest = test = true;
+                Debug.Assert(isTest);
                 return test ? docWriter : null;
             }
         }
