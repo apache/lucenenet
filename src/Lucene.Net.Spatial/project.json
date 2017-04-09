@@ -7,6 +7,7 @@
     "Spatial4n.Core": "0.4.1.1-beta"
   },
   "buildOptions": {
+    "debugType": "portable",
     "compile": {
       "exclude": [
         "BBox/*"

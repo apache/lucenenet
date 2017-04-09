@@ -6,6 +6,7 @@
     "NUnit": "3.5.0"
   },
   "buildOptions": {
+    "debugType": "portable",
     "compile": {
       "includeFiles": [
         "../CommonAssemblyInfo.cs"

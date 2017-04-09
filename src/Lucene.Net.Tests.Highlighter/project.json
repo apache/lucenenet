@@ -10,6 +10,7 @@
   },
   "testRunner": "nunit",
   "buildOptions": {
+    "debugType": "portable",
     "embed": {
       "includeFiles": [
         "PostingsHighlight/CambridgeMA.utf8"

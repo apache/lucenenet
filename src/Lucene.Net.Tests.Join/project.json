@@ -11,6 +11,7 @@
 
   "testRunner": "nunit",
   "buildOptions": {
+    "debugType": "portable",
     "compile": {
       "includeFiles": [
         "../CommonAssemblyInfo.cs"

@@ -6,6 +6,7 @@
     "Newtonsoft.Json": "9.0.1"
   },
   "buildOptions": {
+    "debugType": "portable",
     "compile": {
       "includeFiles": [
         "../CommonAssemblyInfo.cs"

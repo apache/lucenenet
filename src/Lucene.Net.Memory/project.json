@@ -4,6 +4,7 @@
     "Lucene.Net": "4.8.0-alpha"
   },
   "buildOptions": {
+    "debugType": "portable",
     "compile": {
       "includeFiles": [
         "../CommonAssemblyInfo.cs"

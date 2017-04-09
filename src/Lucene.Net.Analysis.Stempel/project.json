@@ -4,6 +4,7 @@
     "Lucene.Net.Analysis.Common": "4.8.0-alpha"
   },
   "buildOptions": {
+    "debugType": "portable",
     "embed": {
       "includeFiles": [
         "Pl/stemmer_20000.tbl",

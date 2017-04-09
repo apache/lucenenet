@@ -5,6 +5,7 @@
     "Lucene.Net.Queries": "4.8.0-alpha"
   },
   "buildOptions": {
+    "debugType": "portable",
     "compile": {
       "includeFiles": [
         "../CommonAssemblyInfo.cs"

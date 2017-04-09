@@ -4,6 +4,7 @@
     "Lucene.Net.Analysis.Common": "4.8.0-alpha"
   },
   "buildOptions": {
+    "debugType": "portable",
     "compile": {
       "exclude": [ "Store/*" ],
       "includeFiles": [

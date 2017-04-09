@@ -9,6 +9,7 @@
   },
   "testRunner": "nunit",
   "buildOptions": {
+    "debugType": "portable",
     "embed": {
       "includeFiles": [
         "Test-Files/cities-Intersects-BBox.txt",

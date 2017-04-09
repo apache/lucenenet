@@ -9,6 +9,7 @@
   },
 
   "buildOptions": {
+    "debugType": "portable",
     "embed": {
       "includeFiles": [
         "Index/Memory/testqueries.txt",

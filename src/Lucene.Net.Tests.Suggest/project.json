@@ -10,6 +10,7 @@
   },
 
   "buildOptions": {
+    "debugType": "portable",
     "embed": {
       "includeFiles": [
         "Suggest/Top50KWiki.utf8"

@@ -8,6 +8,7 @@
     "NUnit": "3.5.0"
   },
   "buildOptions": {
+    "debugType": "portable",
     "embed": {
       "includeFiles": [
         "Queries/fuzzyTestData.txt"

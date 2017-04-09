@@ -10,6 +10,7 @@
 
   "testRunner": "nunit",
   "buildOptions": {
+    "debugType": "portable",
     "embed": {
       "includeFiles": [
         "Xml/albumBooleanQuery.xsl",
