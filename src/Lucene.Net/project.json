@@ -65,7 +65,18 @@
           "FEATURE_CLONEABLE",
           "FEATURE_SERIALIZABLE",
           "FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM"
-        ]
+        ],
+        "compile": {
+          "excludeFiles": [
+            "Support/Configuration/ConfigFileConfigurationExtensions.cs",
+            "Support/Configuration/ConfigFileConfigurationProvider.cs",
+            "Support/Configuration/ConfigFileConfigurationSource.cs",
+            "Support/Configuration/ConfigurationExtensions.cs",
+            "Support/Configuration/IConfigurationParser.cs",
+            "Support/Configuration/KeyValueParser.cs",
+            "Support/Configuration/SettingsConfigurationParser.cs"
+          ]
+        }
       }
     }
   }
