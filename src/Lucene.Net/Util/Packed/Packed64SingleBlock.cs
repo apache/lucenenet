@@ -38,7 +38,7 @@ namespace Lucene.Net.Util.Packed
 
         public static bool IsSupported(int bitsPerValue)
         {
-            return SUPPORTED_BITS_PER_VALUE.ToList().BinarySearch(bitsPerValue) >= 0;
+            return Array.BinarySearch(SUPPORTED_BITS_PER_VALUE, bitsPerValue) >= 0;
         }
 
         private static int RequiredCapacity(int valueCount, int valuesPerBlock)
