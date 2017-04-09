@@ -5931,7 +5931,7 @@ namespace Lucene.Net.Index
         {
             try
             {
-                dir.OpenInput(fileName, IOContext.DEFAULT).Dispose();
+                using (var input = dir.OpenInput(fileName, IOContext.DEFAULT)) { }
                 return true;
             }
             catch (FileNotFoundException)
