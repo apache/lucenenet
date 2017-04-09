@@ -390,6 +390,10 @@ namespace Lucene.Net.Search
             return ret;
         }
 
+#if !NETSTANDARD
+        // LUCENENET: There is no Timeout on NUnit for .NET Core.
+        [Timeout(20000)] // LUCENENET TODO: Sometimes doesn't finish
+#endif
         [Test]
         public virtual void TestConjunctions()
         {
