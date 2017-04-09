@@ -10,7 +10,6 @@
   },
 
   "buildOptions": {
-    "define": [ "NETSTANDARD" ],
     "embed": {
       "includeFiles": [
         "Suggest/Top50KWiki.utf8"
@@ -35,6 +34,7 @@
         }
       },
       "buildOptions": {
+        "define": [ "NETSTANDARD" ],
         "compile": {
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
