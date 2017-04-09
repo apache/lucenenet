@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     using NUnit.Framework;
 
     [TestFixture]
-    public class TestFlushByRamOrCountsPolicy : LuceneTestCase
+    public class TestFlushByRamOrCountsPolicy : LuceneTestCase 
     {
 
         private static LineFileDocs LineDocFile;

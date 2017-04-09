@@ -672,7 +672,7 @@ namespace Lucene.Net.Index.Memory
                     postingsReader.Reset(sliceArray.start[ord], sliceArray.end[ord]);
                     result.Append(" [");
                     int iters = storeOffsets ? 3 : 1;
-                    while (!postingsReader.EndOfSlice())
+                    while (!postingsReader.IsEndOfSlice)
                     {
                         result.Append("(");
 
@@ -685,7 +685,7 @@ namespace Lucene.Net.Index.Memory
                             }
                         }
                         result.Append(")");
-                        if (!postingsReader.EndOfSlice())
+                        if (!postingsReader.IsEndOfSlice)
                         {
                             result.Append(",");
                         }

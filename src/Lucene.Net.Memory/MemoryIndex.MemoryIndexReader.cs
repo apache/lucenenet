@@ -530,7 +530,7 @@ namespace Lucene.Net.Index.Memory
                 public override int NextPosition()
                 {
                     Debug.Assert(posUpto++ < freq_Renamed);
-                    Debug.Assert(!sliceReader.EndOfSlice(), " stores offsets : " + startOffset_Renamed);
+                    Debug.Assert(!sliceReader.IsEndOfSlice, " stores offsets : " + startOffset_Renamed);
                     if (outerInstance.outerInstance.storeOffsets)
                     {
                         int pos = sliceReader.ReadInt32();

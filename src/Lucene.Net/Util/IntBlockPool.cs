@@ -426,10 +426,13 @@ namespace Lucene.Net.Util
             /// method returns <code>true</code> <seealso cref="SliceReader#readInt()"/> should not
             /// be called again on this slice.
             /// </summary>
-            public bool EndOfSlice() // LUCENENET TODO: API make property
+            public bool IsEndOfSlice
             {
-                Debug.Assert(upto + bufferOffset <= end);
-                return upto + bufferOffset == end;
+                get
+                {
+                    Debug.Assert(upto + bufferOffset <= end);
+                    return upto + bufferOffset == end;
+                }
             }
 
             /// <summary>
@@ -440,7 +443,7 @@ namespace Lucene.Net.Util
             /// <seealso cref= SliceReader#endOfSlice() </seealso>
             public int ReadInt32()
             {
-                Debug.Assert(!EndOfSlice());
+                Debug.Assert(!IsEndOfSlice);
                 Debug.Assert(upto <= limit);
                 if (upto == limit)
                 {

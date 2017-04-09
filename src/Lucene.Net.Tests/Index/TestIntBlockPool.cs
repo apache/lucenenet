@@ -56,7 +56,7 @@ namespace Lucene.Net.Index
                 {
                     Assert.AreEqual(i, reader.ReadInt32());
                 }
-                Assert.IsTrue(reader.EndOfSlice());
+                Assert.IsTrue(reader.IsEndOfSlice);
                 if (Random().NextBoolean())
                 {
                     pool.Reset(true, false);
@@ -161,7 +161,7 @@ namespace Lucene.Net.Index
             {
                 Assert.AreEqual(values.ValueOffset + i, reader.ReadInt32());
             }
-            Assert.IsTrue(reader.EndOfSlice());
+            Assert.IsTrue(reader.IsEndOfSlice);
         }
 
         private class StartEndAndValues
