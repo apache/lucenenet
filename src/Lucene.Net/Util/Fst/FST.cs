@@ -392,7 +392,8 @@ namespace Lucene.Net.Util.Fst
             cachedRootArcs = (FST.Arc<T>[])new FST.Arc<T>[0x80];
             ReadRootArcs(cachedRootArcs);
 
-            Debug.Assert(SetAssertingRootArcs(cachedRootArcs));
+            bool set = SetAssertingRootArcs(cachedRootArcs);
+            Debug.Assert(set);
             Debug.Assert(AssertRootArcs());
         }
 
@@ -455,7 +456,9 @@ namespace Lucene.Net.Util.Fst
                         : Collections.Equals(root.NextFinalOutput, asserting.NextFinalOutput));
                     Debug.Assert(root.Node == asserting.Node);
                     Debug.Assert(root.NumArcs == asserting.NumArcs);
-                    Debug.Assert(root.Output.Equals(asserting.Output));
+                    Debug.Assert(typeof(T).GetTypeInfo().IsValueType
+                        ? root.Output.Equals(asserting.Output)
+                        : Collections.Equals(root.Output, asserting.Output));
                     Debug.Assert(root.PosArcsStart == asserting.PosArcsStart);
                     Debug.Assert(root.Target == asserting.Target);
                 }
