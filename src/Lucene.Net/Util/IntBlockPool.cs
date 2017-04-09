@@ -426,7 +426,7 @@ namespace Lucene.Net.Util
             /// method returns <code>true</code> <seealso cref="SliceReader#readInt()"/> should not
             /// be called again on this slice.
             /// </summary>
-            public bool EndOfSlice()
+            public bool EndOfSlice() // LUCENENET TODO: API make property
             {
                 Debug.Assert(upto + bufferOffset <= end);
                 return upto + bufferOffset == end;
