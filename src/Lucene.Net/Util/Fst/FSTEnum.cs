@@ -422,7 +422,8 @@ namespace Lucene.Net.Util.Fst
                         arc.ArcIdx = (low > high ? high : low) - 1;
                         //System.out.println(" hasFloor arcIdx=" + (arc.arcIdx+1));
                         m_fst.ReadNextRealArc(arc, @in);
-                        Debug.Assert(arc.IsLast || m_fst.ReadNextArcLabel(arc, @in) > targetLabel);
+                        int label = m_fst.ReadNextArcLabel(arc, @in);
+                        Debug.Assert(arc.IsLast || label > targetLabel);
                         Debug.Assert(arc.Label < targetLabel, "arc.label=" + arc.Label + " vs targetLabel=" + targetLabel);
                         PushLast();
                         return;
