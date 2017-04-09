@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -34,6 +35,11 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
 [assembly: CLSCompliant(true)]
+
+// LUCENENET NOTE: This attribute is required to disable optimizations so the 
+// Lucene.Net.Tests.Index.TestIndexWriterExceptions.TestExceptionsDuringCommit() test
+// can read the stack trace information, otherwise the test fails.
+[assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default | DebuggableAttribute.DebuggingModes.DisableOptimizations)]
 
 // for testing
 //[assembly: InternalsVisibleTo("Lucene.Net.Test, PublicKey=002400000480000094000000060200000024000052534131000400000100010075a07ce602f88e" +
