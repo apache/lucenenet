@@ -1568,7 +1568,7 @@ namespace Lucene.Net.Search
 
             // results should be in alphabetical order
             Assert.AreEqual(10, td.TotalHits);
-            letters.Sort();
+            letters.Sort(StringComparer.Ordinal);
             for (int i = 0; i < letters.Count; i++)
             {
                 Assert.AreEqual(letters[i], searcher.Doc(td.ScoreDocs[i].Doc).Get("parser"));
@@ -1629,7 +1629,7 @@ namespace Lucene.Net.Search
 
             // results should be in alphabetical order
             Assert.AreEqual(10, td.TotalHits);
-            letters.Sort();
+            letters.Sort(StringComparer.Ordinal);
             for (int i = 0; i < letters.Count; i++)
             {
                 Assert.AreEqual(letters[i], searcher.Doc(td.ScoreDocs[i].Doc).Get("parser"));
@@ -1687,7 +1687,7 @@ namespace Lucene.Net.Search
 
             // results should be in alphabetical order
             Assert.AreEqual(10, td.TotalHits);
-            letters.Sort();
+            letters.Sort(StringComparer.Ordinal);
             for (int i = 0; i < letters.Count; i++)
             {
                 Assert.AreEqual(letters[i], searcher.Doc(td.ScoreDocs[i].Doc).Get("parser"));
@@ -1748,7 +1748,7 @@ namespace Lucene.Net.Search
 
             // results should be in alphabetical order
             Assert.AreEqual(10, td.TotalHits);
-            letters.Sort();
+            letters.Sort(StringComparer.Ordinal);
             for (int i = 0; i < letters.Count; i++)
             {
                 Assert.AreEqual(letters[i], searcher.Doc(td.ScoreDocs[i].Doc).Get("parser"));
@@ -1809,7 +1809,7 @@ namespace Lucene.Net.Search
 
             // results should be in alphabetical order
             Assert.AreEqual(10, td.TotalHits);
-            letters.Sort();
+            letters.Sort(StringComparer.Ordinal);
             for (int i = 0; i < letters.Count; i++)
             {
                 Assert.AreEqual(letters[i], searcher.Doc(td.ScoreDocs[i].Doc).Get("parser"));
@@ -1870,7 +1870,7 @@ namespace Lucene.Net.Search
 
             // results should be in alphabetical order
             Assert.AreEqual(10, td.TotalHits);
-            letters.Sort();
+            letters.Sort(StringComparer.Ordinal);
             for (int i = 0; i < letters.Count; i++)
             {
                 Assert.AreEqual(letters[i], searcher.Doc(td.ScoreDocs[i].Doc).Get("parser"));
