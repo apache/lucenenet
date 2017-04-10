@@ -84,29 +84,35 @@ namespace Lucene.Net.QueryParsers.Flexible.Messages
         [Test]
         public void TestNLSLoading_xx_XX()
         {
-            // LUCENENET NOTE: .NET Core throws a CultureNotFoundException in this case.
-            // There doesn't seem to be a reasonable way to test this as a result.
-#if !NETSTANDARD
-            CultureInfo locale = new CultureInfo("xx-XX");
-            String message = NLS.GetLocalizedMessage(
-                MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION,
-                locale);
-            /* 
-             * if the default locale is ja, you get ja as a fallback:
-             * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
-             */
-            if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
-                assertEquals("Truncated unicode escape sequence.", message);
+            try
+            {
+                CultureInfo locale = new CultureInfo("xx-XX");
+                String message = NLS.GetLocalizedMessage(
+                    MessagesTestBundle.Q0004E_INVALID_SYNTAX_ESCAPE_UNICODE_TRUNCATION,
+                    locale);
+                /* 
+                 * if the default locale is ja, you get ja as a fallback:
+                 * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
+                 */
+                if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
+                    assertEquals("Truncated unicode escape sequence.", message);
 
-            message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX,
-                locale, "XXX");
-            /* 
-             * if the default locale is ja, you get ja as a fallback:
-             * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
-             */
-            if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
-                assertEquals("Syntax Error: XXX", message);
-#endif
+                message = NLS.GetLocalizedMessage(MessagesTestBundle.Q0001E_INVALID_SYNTAX,
+                    locale, "XXX");
+                /* 
+                 * if the default locale is ja, you get ja as a fallback:
+                 * see ResourceBundle.html#getBundle(java.lang.String, java.util.Locale, java.lang.ClassLoader)
+                 */
+                if (!CultureInfo.CurrentUICulture.TwoLetterISOLanguageName.Equals("ja", StringComparison.OrdinalIgnoreCase))
+                    assertEquals("Syntax Error: XXX", message);
+            }
+            catch (CultureNotFoundException)
+            {
+                // ignore
+
+                // LUCENENET NOTE: .NET Core throws a CultureNotFoundException in this case.
+                // There doesn't seem to be a reasonable way to test this as a result.
+            }
         }
 
         [Test]
