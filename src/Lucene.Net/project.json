@@ -20,12 +20,6 @@
     },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
   },
-  "dependencies": {
-    "Microsoft.Extensions.Configuration": "1.0.0",
-    "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
-    "Microsoft.Extensions.DependencyModel": "1.0.0-rc2-final",
-    "Newtonsoft.Json": "9.0.1"
-  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
@@ -42,6 +36,10 @@
         }
       },
       "dependencies": {
+        "Microsoft.Extensions.Configuration": "1.0.0",
+        "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
+        "Microsoft.Extensions.DependencyModel": "1.0.0-rc2-final",
+        "Newtonsoft.Json": "9.0.1",
         "NETStandard.Library": "1.6.0",
         "System.Collections.NonGeneric": "4.0.1",
         "System.Collections.Specialized": "4.0.1",

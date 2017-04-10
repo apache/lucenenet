@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿#if !FEATURE_SERIALIZABLE
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
@@ -76,3 +77,4 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         }
     }
 }
+#endif

@@ -2,8 +2,7 @@
   "version": "4.8.0-alpha",
   "dependencies": {
     "Lucene.Net.Join": "4.8.0-alpha",
-    "Lucene.Net.Queries": "4.8.0-alpha",
-    "Newtonsoft.Json": "9.0.1"
+    "Lucene.Net.Queries": "4.8.0-alpha"
   },
   "buildOptions": {
     "debugType": "portable",
@@ -33,7 +32,8 @@
       },
       "dependencies": {
         "NETStandard.Library": "1.6.0",
-        "System.Threading.Thread": "4.0.0"
+        "System.Threading.Thread": "4.0.0",
+        "Newtonsoft.Json": "9.0.1"
       }
     },
     "net451": {

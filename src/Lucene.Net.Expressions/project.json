@@ -2,9 +2,7 @@
   "version": "4.8.0-alpha",
   "dependencies": {
     "antlr3.runtime.netcore": "3.6.0-rc2",
-    "Lucene.Net.Queries": "4.8.0-alpha",
-    "Microsoft.Extensions.Configuration": "1.0.0",
-    "Microsoft.Extensions.Configuration.Abstractions": "1.0.0"
+    "Lucene.Net.Queries": "4.8.0-alpha"
   },
   "buildOptions": {
     "debugType": "portable",
@@ -33,7 +31,9 @@
         "NETStandard.Library": "1.6.0",
         "System.Reflection.Emit": "4.0.1",
         "System.Reflection.Emit.ILGeneration": "4.0.1",
-        "System.Reflection.TypeExtensions": "4.1.0"
+        "System.Reflection.TypeExtensions": "4.1.0",
+        "Microsoft.Extensions.Configuration": "1.0.0",
+        "Microsoft.Extensions.Configuration.Abstractions": "1.0.0"
       },
       "buildOptions": {
         "define": [ "NETSTANDARD" ],
