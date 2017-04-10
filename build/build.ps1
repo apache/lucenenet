@@ -17,7 +17,7 @@
 	
 	#test paramters
 	[string]$frameworks_to_test = "net451,netcoreapp1.0"
-	[string]$where
+	[string]$where = ""
 }
 
 task default -depends Build
@@ -89,13 +89,16 @@ task Test -description "This task runs the tests" {
 	foreach ($framework in $frameworksToTest) {
 		Write-Host "Framework: $framework" -ForegroundColor Blue
 
-		if ($framework.StartsWith("netcore")) {
-			$testExpression = "dotnet.exe test --framework $framework --no-build"
-		} else {
-			foreach ($testProject in $testProjects) {
-				$projectDirectory = $testProject.DirectoryName
+		foreach ($testProject in $testProjects) {
+
+			$projectDirectory = $testProject.DirectoryName
+			Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+
+			if ($framework.StartsWith("netcore")) {
+				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --no-build"
+			} else {
 				$testName = $testProject.Directory.Name
-				$binaryRoot = "$projectDirectory\bin\$Configuration\$framework"
+				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
 
 				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
 				if (-not (Test-Path $testBinary)) {
@@ -105,24 +108,19 @@ task Test -description "This task runs the tests" {
 					$testBinary = "$binaryRoot\$testName.dll"
 				} 
 
-				if ($testBinaries -eq $null) {
-					$testBinaries = @($testBinary)
-				} else {
-					$testBinaries = $testBinaries += $testBinary
-				}
+				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
 			}
 
-			$binaryString = $testBinaries -join ';'
-			$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $binaryString"
+			$testExpression = "$testExpression --result:$projectDirectory\TestResult.xml"
+
+			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+				$testExpression = "$testExpression --where $where"
+			}
+
+			Write-Host $testExpression -ForegroundColor Magenta
+
+			Invoke-Expression $testExpression
 		}
-
-		if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-			$testExpression = "$testExpression --where $where"
-		}
-
-		Write-Host $testExpression -ForegroundColor Magenta
-
-		Invoke-Expression $testExpression
 	}
 }
 
