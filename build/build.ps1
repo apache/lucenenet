@@ -3,7 +3,8 @@
 	[string]$release_directory  = "$base_directory\release"
 	[string]$source_directory = "$base_directory"
 	[string]$tools_directory  = "$base_directory\lib"
-	[string]$nuget_package_directory = "$release_directory\packagesource"
+	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
+	[string]$test_results_directory = "$release_directory\TestResults"
 
 	[string]$packageVersion   = "1.0.0"
 	[string]$version          = "0.0.0"
@@ -91,13 +92,13 @@ task Test -description "This task runs the tests" {
 
 		foreach ($testProject in $testProjects) {
 
+			$testName = $testProject.Directory.Name
 			$projectDirectory = $testProject.DirectoryName
 			Write-Host "Directory: $projectDirectory" -ForegroundColor Green
 
 			if ($framework.StartsWith("netcore")) {
 				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --no-build"
 			} else {
-				$testName = $testProject.Directory.Name
 				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
 
 				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
@@ -111,7 +112,10 @@ task Test -description "This task runs the tests" {
 				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
 			}
 
-			$testExpression = "$testExpression --result:$projectDirectory\TestResult.xml"
+			$testResultDirectory = "$test_results_directory\$framework\$testName"
+			Ensure-Directory-Exists $testResultDirectory
+
+			$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml"
 
 			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
 				$testExpression = "$testExpression --where $where"
