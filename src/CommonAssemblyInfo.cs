@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using Lucene.Net.Support;
 
 // IMPORTANT: This file is overwritten by the build.ps1 script during release.
 // If you need to change this information, be sure to change the script as well.
@@ -25,4 +24,3 @@ using Lucene.Net.Support;
 [assembly: AssemblyVersion("4.0.0")] 
 [assembly: AssemblyFileVersion("4.8.0")]
 [assembly: AssemblyInformationalVersion("4.8.0")]
-[assembly: LuceneInformationalVersion("4.8.0")]
