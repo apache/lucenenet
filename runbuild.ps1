@@ -159,7 +159,8 @@ param(
 	$AssemblyVersion = $Matches[0]
 	$AssemblyVersion = "$AssemblyVersion.0.0"
 
-  $asmInfo = "using System;
+  $asmInfo = "using Lucene.Net.Support;
+using System;
 using System.Reflection;
 
 [assembly: AssemblyProduct(""$product"")]
@@ -169,6 +170,7 @@ using System.Reflection;
 [assembly: AssemblyVersion(""$AssemblyVersion"")] 
 [assembly: AssemblyFileVersion(""$version"")]
 [assembly: AssemblyInformationalVersion(""$packageVersion"")]
+[assembly: LuceneInformationalVersion(""$packageVersion"")]
 "
 	$dir = [System.IO.Path]::GetDirectoryName($file)
 	Ensure-Directory-Exists $dir

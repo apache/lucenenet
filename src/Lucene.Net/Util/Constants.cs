@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -113,31 +114,9 @@ namespace Lucene.Net.Util
 
             try
             {
-                // LUCENENET NOTE: Use the AssemblyFileVersion, since our AssemblyVersion should 
-                // remain at the major version (4.0.0.0). We only increment AssemblyVersion 
-                // during a major release because strong-naming means 
-                // incrementing this version makes it binary incompatible.
-                string versionString;
-#if NETSTANDARD
-                versionString = typeof(Constants).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-#else
-                versionString = FileVersionInfo.GetVersionInfo(typeof(Constants).GetTypeInfo().Assembly.Location).FileVersion;
-#endif
-                // LUCENENET NOTE: Convert to a 4-segment version number (in case it isn't)
-                switch (versionString.Count(x => x == '.'))
-                {
-                    case 2:
-                        versionString += ".0";
-                        break;
-                    case 1:
-                        versionString += ".0.0";
-                        break;
-                    case 0:
-                        versionString += ".0.0.0";
-                        break;
-                }
-
-                LUCENE_VERSION = versionString;
+                // LUCENENET NOTE: Added custom LuceneInformationalVersionAttribute to work around
+                // issues with reading the AssemblyInformationalVersion in .NET core.
+                LUCENE_VERSION = typeof(Constants).GetTypeInfo().Assembly.GetCustomAttribute<LuceneInformationalVersionAttribute>().Version;
             }
             catch (System.Security.SecurityException) //Ignore in medium trust.
             {

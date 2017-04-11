@@ -659,6 +659,7 @@
     <Compile Include="Support\LinkedHashMap.cs" />
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\LongBuffer.cs" />
+    <Compile Include="Support\LuceneInformationalVersionAttribute.cs" />
     <Compile Include="Support\LurchTable.cs" />
     <Compile Include="Support\MathExtension.cs" />
     <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
