@@ -111,38 +111,6 @@ namespace Lucene.Net.Util
                 RUNTIME_IS_64BIT = false;// 32 bit machine
             }
 
-            try
-            {
-                // LUCENENET NOTE: Use the AssemblyFileVersion, since our AssemblyVersion should 
-                // remain at the major version (4.0.0.0). We only increment AssemblyVersion 
-                // during a major release because strong-naming means 
-                // incrementing this version makes it binary incompatible.
-                string versionString;
-#if NETSTANDARD
-                versionString = typeof(Constants).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyFileVersionAttribute>().Version;
-#else
-                versionString = FileVersionInfo.GetVersionInfo(typeof(Constants).GetTypeInfo().Assembly.Location).FileVersion;
-#endif
-                // LUCENENET NOTE: Convert to a 4-segment version number (in case it isn't)
-                switch (versionString.Count(x => x == '.'))
-                {
-                    case 2:
-                        versionString += ".0";
-                        break;
-                    case 1:
-                        versionString += ".0.0";
-                        break;
-                    case 0:
-                        versionString += ".0.0.0";
-                        break;
-                }
-
-                LUCENE_VERSION = versionString;
-            }
-            catch (System.Security.SecurityException) //Ignore in medium trust.
-            {
-            }
-
             //LUCENENET NOTE: Well that was all over the top to check architechture
             //bool is64Bit = false;
             //try
@@ -213,10 +181,14 @@ namespace Lucene.Net.Util
         /// </summary>
         public static readonly string LUCENE_MAIN_VERSION = Ident("4.8");
 
+        // LUCENENET NOTE: This version is automatically updated by the
+        // build script, so there is no need to change it here (although
+        // it might make sense to change it when a major/minor/patch
+        // port to Lucene is done).
         /// <summary>
         /// this is the Lucene version for display purposes.
         /// </summary>
-        public static readonly string LUCENE_VERSION;
+        public static readonly string LUCENE_VERSION = "4.8.0";
 
         /// <summary>
         /// Returns a LUCENE_MAIN_VERSION without any ALPHA/BETA qualifier
