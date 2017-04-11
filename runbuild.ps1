@@ -187,6 +187,13 @@ function Restore-Assembly-Info() {
 	}
 }
 
+function Update-Constants-Version([string]$version) {
+	$constantsFile = "$root\src\Lucene.Net\Util\Constants.cs"
+	(Get-Content $constantsFile) | % {
+		$_-replace "(?<=LUCENE_VERSION\s*?=\s*?"")([^""]*)", $version
+	} | Set-Content $constantsFile -Force
+}
+
 if (Test-Path $ReleaseDirectory) {
 	Write-Host "Removing old build assets..."
 
@@ -206,7 +213,9 @@ function Compile-Projects($projects) {
 			-version $Version `
 			-packageVersion $PackageVersion `
 			-file $AssemblyInfoFile
-	
+
+		Update-Constants-Version $PackageVersion
+
 		foreach ($project in $projects) {
 			pushd $project.DirectoryName
 
