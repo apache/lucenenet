@@ -32,15 +32,11 @@ namespace Lucene.Net.Analysis.Th
 
     public class TestThaiAnalyzer : BaseTokenStreamTestCase
     {
-
+        [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             AssumeTrue("JRE does not support Thai dictionary-based BreakIterator", ThaiTokenizer.DBBI_AVAILABLE);
-
-#if NETSTANDARD
-            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
-#endif
         }
         /*
          * testcase for offsets
@@ -137,6 +133,7 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestRandomStrings()
         {
+            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
             CheckRandomData(Random(), new ThaiAnalyzer(TEST_VERSION_CURRENT), 1000 * RANDOM_MULTIPLIER);
         }
 
@@ -146,6 +143,7 @@ namespace Lucene.Net.Analysis.Th
         [Test]
         public virtual void TestRandomHugeStrings()
         {
+            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
             Random random = Random();
             CheckRandomData(random, new ThaiAnalyzer(TEST_VERSION_CURRENT), 100 * RANDOM_MULTIPLIER, 8192);
         }

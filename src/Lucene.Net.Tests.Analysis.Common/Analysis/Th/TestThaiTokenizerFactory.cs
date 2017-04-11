@@ -24,15 +24,13 @@ namespace Lucene.Net.Analysis.Th
     /// <summary>
     /// Simple tests to ensure the Thai word filter factory is working.
     /// </summary>
+
     public class TestThaiTokenizerFactory : BaseTokenStreamFactoryTestCase
     {
-
+        [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-#if NETSTANDARD
-            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
-#endif
         }
 
         /// <summary>

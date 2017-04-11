@@ -29,12 +29,10 @@ namespace Lucene.Net.Analysis.Th
     [Obsolete]
     public class TestThaiWordFilterFactory : BaseTokenStreamFactoryTestCase
     {
+        [SetUp]
         public override void SetUp()
         {
             base.SetUp();
-#if NETSTANDARD
-            fail("LUCENENET TODO: AccessViolationException being thrown from icu-dotnet");
-#endif
         }
 
         /// <summary>
