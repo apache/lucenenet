@@ -1,7 +1,8 @@
 ﻿{
-  "version": "4.8.0-alpha",
+  "version": "4.8.0",
   "dependencies": {
-    "icu.net": "54.1.1-alpha"
+    "icu.net": "54.1.1-alpha",
+    "Lucene.Net": "4.8.0"
   },
   "buildOptions": {
     "debugType": "portable",
@@ -41,7 +42,6 @@
     "netstandard1.5": {
       "imports": "dnxcore50",
       "dependencies": {
-        "Lucene.Net": "4.8.0-alpha",
         "NETStandard.Library": "1.6.0"
       },
       "buildOptions": {
@@ -49,9 +49,6 @@
       }
     },
     "net451": {
-      "dependencies": {
-        "Lucene.Net": "4.8.0-alpha"
-      },
       "frameworkAssemblies": {
         "System.Xml": "4.0.0.0",
         "System.Xml.Linq": "4.0.0.0"

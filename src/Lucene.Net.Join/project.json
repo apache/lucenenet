@@ -1,7 +1,7 @@
 ﻿{
-  "version": "4.8.0-alpha",
+  "version": "4.8.0",
   "dependencies": {
-    "Lucene.Net.Grouping": "4.8.0-alpha"
+    "Lucene.Net.Grouping": "4.8.0"
   },
   "buildOptions": {
     "debugType": "portable",

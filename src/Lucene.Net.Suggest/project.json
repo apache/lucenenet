@@ -1,9 +1,9 @@
 ﻿{
-  "version": "4.8.0-alpha",
+  "version": "4.8.0",
   "dependencies": {
-    "Lucene.Net.Analysis.Common": "4.8.0-alpha",
-    "Lucene.Net.Misc": "4.8.0-alpha",
-    "Lucene.Net.Queries": "4.8.0-alpha"
+    "Lucene.Net.Analysis.Common": "4.8.0",
+    "Lucene.Net.Misc": "4.8.0",
+    "Lucene.Net.Queries": "4.8.0"
   },
   "buildOptions": {
     "debugType": "portable",

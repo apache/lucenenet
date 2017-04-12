@@ -1,8 +1,8 @@
 ﻿{
-  "version": "4.8.0-alpha",
+  "version": "4.8.0",
   "dependencies": {
-    "Lucene.Net.Analysis.Common": "4.8.0-alpha",
-    "Lucene.Net.Codecs": "4.8.0-alpha",
+    "Lucene.Net.Analysis.Common": "4.8.0",
+    "Lucene.Net.Codecs": "4.8.0",
     "NUnit": "3.5.0"
   },
   "buildOptions": {

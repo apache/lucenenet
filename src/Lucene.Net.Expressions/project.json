@@ -1,8 +1,8 @@
 ﻿{
-  "version": "4.8.0-alpha",
+  "version": "4.8.0",
   "dependencies": {
     "antlr3.runtime.netcore": "3.6.0-rc2",
-    "Lucene.Net.Queries": "4.8.0-alpha"
+    "Lucene.Net.Queries": "4.8.0"
   },
   "buildOptions": {
     "debugType": "portable",

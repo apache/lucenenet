@@ -1,7 +1,7 @@
 ﻿{
-  "version": "4.8.0-alpha",
+  "version": "4.8.0",
   "dependencies": {
-    "Lucene.Net.Queries": "4.8.0-alpha",
+    "Lucene.Net.Queries": "4.8.0",
     "GeoAPI": "1.7.4",
     "NetTopologySuite": "1.14",
     "Spatial4n.Core": "0.4.1.1-beta"
@@ -46,7 +46,7 @@
     },
     "net451": {
       "dependencies": {
-        "Lucene.Net": "4.8.0-alpha"
+        "Lucene.Net": "4.8.0"
       },
       "buildOptions": {
         "define": [ "FEATURE_SERIALIZABLE" ]
