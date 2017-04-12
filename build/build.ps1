@@ -114,10 +114,10 @@ task Test -description "This task runs the tests" {
 				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
 			}
 
-			$testResultDirectory = "$test_results_directory\$framework\$testName"
-			Ensure-Directory-Exists $testResultDirectory
+			#$testResultDirectory = "$test_results_directory\$framework\$testName"
+			#Ensure-Directory-Exists $testResultDirectory
 
-			$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml --result:$projectDirectory\TestResult.xml"
+			$testExpression = "$testExpression --result:$projectDirectory\TestResult.xml"
 
 			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
 				$testExpression = "$testExpression --where $where"
