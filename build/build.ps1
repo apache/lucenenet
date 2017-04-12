@@ -85,6 +85,8 @@ task Test -description "This task runs the tests" {
 	$testProjects = Get-ChildItem -Path "project.json" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
 	popd
 
+	Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
+
 	$frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
 
 	foreach ($framework in $frameworksToTest) {
