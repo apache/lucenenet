@@ -10,8 +10,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 
 #if NETSTANDARD
-using Lucene.Net.Support.Configuration;
-using Microsoft.Extensions.Configuration;
 using System.IO;
 #else
 using System.Configuration;
@@ -656,30 +654,32 @@ namespace Lucene.Net.Expressions.JS
             }
         }
 
-        private static IEnumerable<KeyValuePair<string, string>> GetDefaultSettings()
+        private static IDictionary<string, string> GetDefaultSettings()
         {
 #if NETSTANDARD
-            var assembly = typeof(JavascriptCompiler).GetTypeInfo().Assembly;
-            //var settingsFile = string.Join(".", assembly.GetName().Name, "Properties", "Settings.settings");
-            var settingsFile = string.Join(".", "Properties", "Settings.settings");
-            string contents;
-
-            using (var reader = new StreamReader(assembly.FindAndGetManifestResourceStream(typeof(JavascriptCompiler), settingsFile)))
+            var settings = new Dictionary<string, string>();
+            var type = typeof(JavascriptCompiler);
+            var assembly = type.GetTypeInfo().Assembly;
+            using (var reader = new StreamReader(assembly.FindAndGetManifestResourceStream(type, type.GetTypeInfo().Name + ".properties")))
             {
-                contents = reader.ReadToEnd();
+                string line;
+                while(!string.IsNullOrWhiteSpace(line = reader.ReadLine()))
+                {
+                    if (line.StartsWith("#", StringComparison.Ordinal) || !line.Contains('='))
+                    {
+                        continue;
+                    }
+                    var parts = line.Split('=').Select(x => x.Trim()).ToArray();
+                    settings[parts[0]] = parts[1];
+                }
             }
-
-            var configuration = new ConfigurationBuilder().AddConfigFile(contents, new SettingsConfigurationParser()).Build();
-
-            var settingsSection = configuration.GetSection(SettingsConfigurationParser.SETTINGS_ELEMENT);
-            var values = settingsSection.GetChildren().Select(section => new KeyValuePair<string, string>(section.Key, section.GetValue("(Default)"))).ToArray();
-            return values;
+            return settings;
 #else
             var props = Properties.Settings.Default;
 
             return props.Properties
                 .Cast<SettingsProperty>()
-                .Select(property => new KeyValuePair<string, string>(property.Name, props[property.Name].ToString()));
+                .ToDictionary(key => key.Name, value => props[value.Name].ToString());
 #endif
 
         }

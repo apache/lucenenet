@@ -31,9 +31,7 @@
         "NETStandard.Library": "1.6.0",
         "System.Reflection.Emit": "4.0.1",
         "System.Reflection.Emit.ILGeneration": "4.0.1",
-        "System.Reflection.TypeExtensions": "4.1.0",
-        "Microsoft.Extensions.Configuration": "1.0.0",
-        "Microsoft.Extensions.Configuration.Abstractions": "1.0.0"
+        "System.Reflection.TypeExtensions": "4.1.0"
       },
       "buildOptions": {
         "define": [ "NETSTANDARD" ],
@@ -41,7 +39,7 @@
           "excludeFiles": [ "Properties/Settings.Designer.cs" ]
         },
         "embed": {
-          "includeFiles": [ "Properties/Settings.settings" ]
+          "includeFiles": [ "JS/JavascriptCompiler.properties" ]
         }
       }
     },
