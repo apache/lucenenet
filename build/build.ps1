@@ -6,13 +6,14 @@
 	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
 	[string]$test_results_directory = "$release_directory\TestResults"
 
-	[string]$packageVersion   = "1.0.0"
+	[string]$packageVersion   = "4.8.0"
 	[string]$version          = "0.0.0"
 	[string]$configuration    = "Release"
+	[bool]$backup_files        = $true
 
 	[string]$common_assembly_info = "$base_directory\src\CommonAssemblyInfo.cs"
 	[string]$copyright_year = [DateTime]::Today.Year.ToString() #Get the current year from the system
-	[string]$copyright = "Copyright © 2006 - $copyright_year The Apache Software Foundation"
+	[string]$copyright = "Copyright " + $([char]0x00A9) + " 2006 - $copyright_year The Apache Software Foundation"
 	[string]$company_name = "The Apache Software Foundation"
 	[string]$product_name = "Lucene.Net"
 	
@@ -21,10 +22,12 @@
 	[string]$where = ""
 }
 
-task default -depends Build
+$backedUpFiles = New-Object System.Collections.ArrayList
+
+task default -depends Pack
 
 task Clean -description "This task cleans up the build directory" {
-	#Remove-Item $release_directory -Force -Recurse -ErrorAction SilentlyContinue
+	Remove-Item $release_directory -Force -Recurse -ErrorAction SilentlyContinue
 }
 
 task Init -description "This task makes sure the build environment is correctly setup" {
@@ -56,84 +59,251 @@ task Init -description "This task makes sure the build environment is correctly 
 	Ensure-Directory-Exists "$release_directory"
 
 	#ensure we have the latest version of NuGet
-	#exec {
-	#	&"$tools_directory\nuget\nuget.exe" update -self
-	#} -ErrorAction SilentlyContinue
+	exec {
+		&"$tools_directory\nuget\nuget.exe" update -self
+	} -ErrorAction SilentlyContinue
 }
 
-task Restore -depends Clean -description "This task runs NuGet package restore" {
-	#& dotnet.exe restore
-}
+task Compile -depends Clean, Init -description "This task compiles the solution" {
+	try {
+		pushd $base_directory
+		$projects = Get-ChildItem -Path "project.json" -Recurse
+		popd
 
-#task Compile -depends Clean, Init, Restore -description "This task compiles the solution" -PreAction { Write-Host "Pre-action (compile)" } -Action {
-#	Write-Host "Compile"
-#} -PostAction { Write-Host "Post-action (compile)" }
+		Backup-Files $projects
+		Prepare-For-Build $projects
+		& dotnet.exe restore $base_directory
 
-#task Pack -depends Compile -description "This tasks creates the NuGet packages" -PreAction { Write-Host "Pre-action (pack)" } -Action {
-#	Write-Host "Pack"
-#	Start-Sleep 5
-#} -PostAction { Write-Host "Post-action (pack)" }
+		Build-Assemblies $projects
 
-task Build -depends Clean, Init, Restore -description "This task builds and packages the assemblies" {
+		Start-Sleep 10
 
-}
-
-task Test -description "This task runs the tests" {
-	Write-Host "Running tests..." -ForegroundColor DarkCyan
-
-	pushd $base_directory
-	$testProjects = Get-ChildItem -Path "project.json" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
-	popd
-
-	Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
-
-	$frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
-
-	foreach ($framework in $frameworksToTest) {
-		Write-Host "Framework: $framework" -ForegroundColor Blue
-
-		foreach ($testProject in $testProjects) {
-
-			$testName = $testProject.Directory.Name
-			$projectDirectory = $testProject.DirectoryName
-			Write-Host "Directory: $projectDirectory" -ForegroundColor Green
-
-			if ($framework.StartsWith("netcore")) {
-				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --no-build"
-			} else {
-				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
-
-				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
-				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot\win7-x32\$testName.dll"
-				}
-				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot\$testName.dll"
-				} 
-
-				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
-			}
-
-			#$testResultDirectory = "$test_results_directory\$framework\$testName"
-			#Ensure-Directory-Exists $testResultDirectory
-
-			$testExpression = "$testExpression --result:$projectDirectory\TestResult.xml"
-
-			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-				$testExpression = "$testExpression --where $where"
-			}
-
-			Write-Host $testExpression -ForegroundColor Magenta
-
-			Invoke-Expression $testExpression
+		$success = $true
+	} finally {
+		if ($success -ne $true) {
+			Restore-Files $backedUpFiles
 		}
 	}
 }
 
+task Pack -depends Compile -description "This task creates the NuGet packages" {
+	try {
+		pushd $base_directory
+		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") }
+		popd
 
+		Prepare-For-Pack $packages
+		Pack-Assemblies $packages
 
+		$success = $true
+	} finally {
+		#if ($success -ne $true) {
+			Restore-Files $backedUpFiles
+		#}
+	}
+}
 
+task Test -depends Compile -description "This task runs the tests" {
+	try {
+		Write-Host "Running tests..." -ForegroundColor DarkCyan
 
+		pushd $base_directory
+		$testProjects = Get-ChildItem -Path "project.json" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
+		popd
+
+		Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
+
+		$frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
+
+		foreach ($framework in $frameworksToTest) {
+			Write-Host "Framework: $framework" -ForegroundColor Blue
+
+			foreach ($testProject in $testProjects) {
+
+				$testName = $testProject.Directory.Name
+				$projectDirectory = $testProject.DirectoryName
+				Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+
+				if ($framework.StartsWith("netcore")) {
+					$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --no-build"
+				} else {
+					$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
+
+					$testBinary = "$binaryRoot\win7-x64\$testName.dll"
+					if (-not (Test-Path $testBinary)) {
+						$testBinary = "$binaryRoot\win7-x32\$testName.dll"
+					}
+					if (-not (Test-Path $testBinary)) {
+						$testBinary = "$binaryRoot\$testName.dll"
+					} 
+
+					$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
+				}
+
+				#$testResultDirectory = "$test_results_directory\$framework\$testName"
+				#Ensure-Directory-Exists $testResultDirectory
+
+				$testExpression = "$testExpression --result:$projectDirectory\TestResult.xml"
+
+				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+					$testExpression = "$testExpression --where $where"
+				}
+
+				Write-Host $testExpression -ForegroundColor Magenta
+
+				Invoke-Expression $testExpression
+			}
+		}
+		$success = $true
+	} finally {
+		#if ($success -ne $true) {
+			Restore-Files $backedUpFiles
+		#}
+	}
+}
+
+function Prepare-For-Build([string[]]$projects) {
+	Backup-File $common_assembly_info 
+		
+	Generate-Assembly-Info `
+		-product $product_name `
+		-company $company_name `
+		-copyright $copyright `
+		-version $version `
+		-packageVersion $packageVersion `
+		-file $common_assembly_info
+
+	Update-Constants-Version $packageVersion
+
+	foreach ($project in $projects) {
+		Write-Host "Updating project.json for build: $project" -ForegroundColor Cyan
+
+		#Update version (for NuGet package) and dependency version of this project's inter-dependencies
+		(Get-Content $project) | % {
+			$_-replace "(?<=""Lucene.Net[\w\.]*?""\s*?:\s*?"")([^""]+)", $packageVersion
+		} | Set-Content $project -Force
+
+		$json = (Get-Content $project -Raw) | ConvertFrom-Json
+		$json.version = $PackageVersion
+		$json | ConvertTo-Json -depth 100 | Out-File $project -encoding UTF8 -Force
+	}
+}
+
+function Update-Constants-Version([string]$version) {
+	$constantsFile = "$base_directory\src\Lucene.Net\Util\Constants.cs"
+
+	Backup-File $constantsFile
+	(Get-Content $constantsFile) | % {
+		$_-replace "(?<=LUCENE_VERSION\s*?=\s*?"")([^""]*)", $version
+	} | Set-Content $constantsFile -Force
+}
+
+function Generate-Assembly-Info {
+param(
+	[string]$product,
+	[string]$company,
+	[string]$copyright,
+	[string]$version,
+	[string]$packageVersion,
+	[string]$file = $(throw "file is a required parameter.")
+)
+	#Use only the major version as the assembly version.
+	#This ensures binary compatibility unless the major version changes.
+	$version-match "(^\d+)"
+	$assemblyVersion = $Matches[0]
+	$assemblyVersion = "$assemblyVersion.0.0"
+
+  $asmInfo = "using System;
+using System.Reflection;
+
+[assembly: AssemblyProduct(""$product"")]
+[assembly: AssemblyCompany(""$company"")]
+[assembly: AssemblyTrademark(""$copyright"")]
+[assembly: AssemblyCopyright(""$copyright"")]
+[assembly: AssemblyVersion(""$assemblyVersion"")] 
+[assembly: AssemblyFileVersion(""$version"")]
+[assembly: AssemblyInformationalVersion(""$packageVersion"")]
+"
+	$dir = [System.IO.Path]::GetDirectoryName($file)
+	Ensure-Directory-Exists $dir
+
+	Write-Host "Generating assembly info file: $file"
+	Out-File -filePath $file -encoding UTF8 -inputObject $asmInfo
+}
+
+function Build-Assemblies([string[]]$projects) {
+	foreach ($project in $projects) {
+		& dotnet.exe build $project --configuration $configuration
+	}
+}
+
+function Prepare-For-Pack([string[]]$projects) {
+	foreach ($project in $projects) {
+		Write-Host "Updating project.json for pack: $project" -ForegroundColor DarkYellow
+
+		# Update the packOptions.summary with the value from AssemblyDescriptionAttribute
+		$assemblyDescription = Get-Assembly-Description $project
+		Write-Host "Updating package description with '$assemblyDescription'" -ForegroundColor Yellow
+
+		(Get-Content $project) | % {
+			$_-replace "(?<=""summary""\s*?:\s*?"")([^""]*)", $assemblyDescription
+		} | Set-Content $project -Force
+	}
+}
+
+# Gets the description from the AssemblyDescriptionAttribute
+function Get-Assembly-Description($project) {
+	#project path has a project.json file, we need the path without it
+	$dir = [System.IO.Path]::GetDirectoryName($project).TrimEnd([System.IO.Path]::DirectorySeparatorChar)
+	$projectName = [System.IO.Path]::GetFileName($dir)
+	$projectAssemblyPath = "$dir\bin\$Configuration\net451\$projectName.dll"
+
+	$assembly = [Reflection.Assembly]::ReflectionOnlyLoadFrom($projectAssemblyPath)
+	$descriptionAttributes = [reflection.customattributedata]::GetCustomAttributes($assembly) | Where-Object {$_.AttributeType -like "System.Reflection.AssemblyDescriptionAttribute"}
+
+	if ($descriptionAttributes.Length -gt 0) {
+		$descriptionAttributes[0].ToString()-match "(?<=\[System.Reflection.AssemblyDescriptionAttribute\("")([^""]*)" | Out-Null
+		return $Matches[0]
+	}
+}
+
+function Pack-Assemblies([string[]]$projects) {
+	Ensure-Directory-Exists $nuget_package_directory
+	foreach ($project in $projects) {
+		Write-Host "Creating NuGet package for $project..." -ForegroundColor Magenta
+		& dotnet.exe pack $project --configuration $Configuration --output $nuget_package_directory --no-build
+	}
+}
+
+function Backup-Files([string[]]$paths) {
+	foreach ($path in $paths) {
+		Backup-File $path
+	}
+}
+
+function Backup-File([string]$path) {
+	if ($backup_files -eq $true) {
+		Copy-Item $path "$path.bak" -Force
+		$backedUpFiles.Insert(0, $path)
+	} else {
+		Write-Host "Ignoring backup of file $path" -ForegroundColor DarkRed
+	}
+}
+
+function Restore-Files([string[]]$paths) {
+	foreach ($path in $paths) {
+		Restore-File $path
+	}
+}
+
+function Restore-File([string]$path) {
+	if ($backup_files -eq $true) {
+		if (Test-Path "$path.bak") {
+			Move-Item "$path.bak" $path -Force
+		}
+		$backedUpFiles.Remove($path)
+	}
+}
 
 function Ensure-Directory-Exists([string] $path)
 {
