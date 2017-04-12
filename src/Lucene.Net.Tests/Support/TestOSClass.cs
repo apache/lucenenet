@@ -21,6 +21,7 @@
 
 using Lucene.Net.Attributes;
 using NUnit.Framework;
+using System.IO;
 
 namespace Lucene.Net.Support
 {
@@ -31,7 +32,7 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void TestFSDirectorySync()
         {
-            System.IO.DirectoryInfo path = new System.IO.DirectoryInfo(System.IO.Path.Combine(AppSettings.Get("tempDir", ""), "testsync"));
+            DirectoryInfo path = new DirectoryInfo(Path.Combine(Path.GetTempPath(), "testsync"));
             Lucene.Net.Store.Directory directory = new Lucene.Net.Store.SimpleFSDirectory(path, null);
             try
             {
