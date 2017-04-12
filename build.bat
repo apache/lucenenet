@@ -32,9 +32,9 @@ setlocal enabledelayedexpansion enableextensions
 
 REM Default values
 IF "%version%" == "" (
-	:: If version is not supplied, our build script should parse it
-	:: from the %PackageVersion% variable. We determine this by checking
-	:: whether it is 0.0.0 (uninitialized).
+	REM  If version is not supplied, our build script should parse it
+	REM  from the %PackageVersion% variable. We determine this by checking
+	REM  whether it is 0.0.0 (uninitialized).
 	set version=0.0.0
 )
 IF "%PackageVersion%" == "" (
