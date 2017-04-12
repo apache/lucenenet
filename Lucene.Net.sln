@@ -84,6 +84,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Highlighte
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9811D53E-7CC9-4FAB-AB08-ED2D5DE7C7BB}"
 	ProjectSection(SolutionItems) = preProject
+		build.bat = build.bat
 		build\build.ps1 = build\build.ps1
 	EndProjectSection
 EndProject
