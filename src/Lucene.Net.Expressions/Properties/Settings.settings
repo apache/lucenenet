@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Lucene.Net.Expressions.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="abs" Type="System.String" Scope="Application">
+    <Setting Name="abs" Type="System.String" Scope="User">
       <Value Profile="(Default)">System.Math, Abs, 1</Value>
     </Setting>
     <Setting Name="acos" Type="System.String" Scope="User">
