@@ -111,7 +111,7 @@ task Test -description "This task runs the tests" {
 					$testBinary = "$binaryRoot\$testName.dll"
 				} 
 
-				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
+				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
 			}
 
 			#$testResultDirectory = "$test_results_directory\$framework\$testName"
