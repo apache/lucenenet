@@ -93,9 +93,9 @@ FOR %%a IN (%*) DO (
 )
 
 if "!runtests!"=="true" (
-	powershell -ExecutionPolicy Bypass -Command "& .\runbuild.ps1 -CreatePackages -Version \"%version%\" -PackageVersion \"%PackageVersion%\" -Configuration \"%configuration%\" -RunTests -FrameworksToTest @(\""net451\"", \""netcoreapp1.0\"")"
+	powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -task Test -properties @{\"version\"=\"%version%\";\"configuration\"=\"%configuration%"\";\"packageVersion\"=\"%PackageVersion%"\"} }"
 ) else (
-	powershell -ExecutionPolicy Bypass -Command "& .\runbuild.ps1 -CreatePackages -Version \"%version%\" -PackageVersion \"%PackageVersion%\" -Configuration \"%configuration%\""
+	powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -properties @{\"version\"=\"%version%\";\"configuration\"=\"%configuration%"\";\"packageVersion\"=\"%PackageVersion%"\"} }"
 )
 
 endlocal
