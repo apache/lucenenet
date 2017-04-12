@@ -629,7 +629,6 @@
     <Compile Include="Support\Collections.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
-    <Compile Include="Support\Configuration\Configuration.cs" />
     <Compile Include="Support\CultureContext.cs" />
     <Compile Include="Support\DataInputStream.cs" />
     <Compile Include="Support\DataOutputStream.cs" />
