@@ -92,10 +92,10 @@ FOR %%a IN (%*) DO (
 	)
 )
 
+powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -properties @{\"version\"=\"%version%\";\"configuration\"=\"%configuration%"\";\"packageVersion\"=\"%PackageVersion%"\"} }"
+
 if "!runtests!"=="true" (
 	powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -task Test -properties @{\"version\"=\"%version%\";\"configuration\"=\"%configuration%"\";\"packageVersion\"=\"%PackageVersion%"\"} }"
-) else (
-	powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -properties @{\"version\"=\"%version%\";\"configuration\"=\"%configuration%"\";\"packageVersion\"=\"%PackageVersion%"\"} }"
 )
 
 endlocal

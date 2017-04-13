@@ -103,62 +103,55 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
-task Test -depends Compile -description "This task runs the tests" {
-	try {
-		Write-Host "Running tests..." -ForegroundColor DarkCyan
+task Test -description "This task runs the tests" {
+	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
-		pushd $base_directory
-		$testProjects = Get-ChildItem -Path "project.json" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
-		popd
+	pushd $base_directory
+	$testProjects = Get-ChildItem -Path "project.json" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
+	popd
 
-		Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
+	Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
 
-		$frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
+	$frameworksToTest = $frameworks_to_test -split "\s*?,\s*?"
 
-		foreach ($framework in $frameworksToTest) {
-			Write-Host "Framework: $framework" -ForegroundColor Blue
+	foreach ($framework in $frameworksToTest) {
+		Write-Host "Framework: $framework" -ForegroundColor Blue
 
-			foreach ($testProject in $testProjects) {
+		foreach ($testProject in $testProjects) {
 
-				$testName = $testProject.Directory.Name
-				$projectDirectory = $testProject.DirectoryName
-				Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+			$testName = $testProject.Directory.Name
+			$projectDirectory = $testProject.DirectoryName
+			Write-Host "Directory: $projectDirectory" -ForegroundColor Green
 
-				if ($framework.StartsWith("netcore")) {
-					$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --no-build"
-				} else {
-					$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
+			if ($framework.StartsWith("netcore")) {
+				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --no-build"
+			} else {
+				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
 
-					$testBinary = "$binaryRoot\win7-x64\$testName.dll"
-					if (-not (Test-Path $testBinary)) {
-						$testBinary = "$binaryRoot\win7-x32\$testName.dll"
-					}
-					if (-not (Test-Path $testBinary)) {
-						$testBinary = "$binaryRoot\$testName.dll"
-					} 
-
-					$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
+				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
+				if (-not (Test-Path $testBinary)) {
+					$testBinary = "$binaryRoot\win7-x32\$testName.dll"
 				}
+				if (-not (Test-Path $testBinary)) {
+					$testBinary = "$binaryRoot\$testName.dll"
+				} 
 
-				#$testResultDirectory = "$test_results_directory\$framework\$testName"
-				#Ensure-Directory-Exists $testResultDirectory
-
-				$testExpression = "$testExpression --result:$projectDirectory\TestResult.xml"
-
-				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-					$testExpression = "$testExpression --where $where"
-				}
-
-				Write-Host $testExpression -ForegroundColor Magenta
-
-				Invoke-Expression $testExpression
+				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
 			}
+
+			#$testResultDirectory = "$test_results_directory\$framework\$testName"
+			#Ensure-Directory-Exists $testResultDirectory
+
+			$testExpression = "$testExpression --result:$projectDirectory\TestResult.xml"
+
+			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+				$testExpression = "$testExpression --where $where"
+			}
+
+			Write-Host $testExpression -ForegroundColor Magenta
+
+			Invoke-Expression $testExpression
 		}
-		$success = $true
-	} finally {
-		#if ($success -ne $true) {
-			Restore-Files $backedUpFiles
-		#}
 	}
 }
 
