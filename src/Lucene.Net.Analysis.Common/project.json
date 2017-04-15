@@ -45,8 +45,7 @@
     },
     "net451": {
       "frameworkAssemblies": {
-        "System.Xml": "4.0.0.0",
-        "System.Xml.Linq": "4.0.0.0"
+        "System.Xml": "4.0.0.0"
       },
       "buildOptions": {
         "debugType": "portable",
