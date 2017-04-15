@@ -1,3 +1,4 @@
+#if FEATURE_COLLATION
 using Icu.Collation;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
@@ -339,3 +340,4 @@ namespace Lucene.Net.Analysis
 		}
 	}
 }
+#endif
