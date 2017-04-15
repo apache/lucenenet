@@ -22,8 +22,6 @@
           "excludeFiles": [
             "Support/TestApiConsistency.cs",
             "Support/TestCase.cs",
-            "Support/TestExceptionSerialization.cs",
-            "Support/TestSerialization.cs",
             "Util/TestMaxFailuresRule.cs"
           ],
           "exclude": [
