@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Support;
 using System.Text;
 
 namespace Lucene.Net.Search.VectorHighlight
@@ -52,3 +53,4 @@ namespace Lucene.Net.Search.VectorHighlight
         }
     }
 }
+#endif

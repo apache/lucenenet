@@ -34,7 +34,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>Lucene.Net.Tests</RootNamespace>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR;FEATURE_SERIALIZABLE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />

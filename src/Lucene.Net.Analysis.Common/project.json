@@ -51,7 +51,7 @@
       },
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ],
+        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs",

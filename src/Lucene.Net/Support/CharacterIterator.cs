@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FEATURE_BREAKITERATOR
+using System;
 
 namespace Lucene.Net.Support
 {
@@ -46,3 +47,4 @@ namespace Lucene.Net.Support
         public abstract string GetTextAsString();
     }
 }
+#endif

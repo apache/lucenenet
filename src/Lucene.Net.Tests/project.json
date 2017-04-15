@@ -89,7 +89,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_SERIALIZABLE" ],
+        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs"

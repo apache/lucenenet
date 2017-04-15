@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FEATURE_BREAKITERATOR
+using System;
 using Icu;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
@@ -184,5 +185,5 @@ namespace Lucene.Net.Analysis.Util
             }
         }
     }
-
 }
+#endif

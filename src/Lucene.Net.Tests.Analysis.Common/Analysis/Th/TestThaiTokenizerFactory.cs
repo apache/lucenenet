@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Analysis.Util;
 using NUnit.Framework;
 using System.IO;
 
@@ -62,3 +63,4 @@ namespace Lucene.Net.Analysis.Th
         }
     }
 }
+#endif

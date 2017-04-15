@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Support;
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
@@ -204,3 +205,4 @@ namespace Lucene.Net.Analysis.Util
         }
     }
 }
+#endif

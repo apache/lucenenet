@@ -98,9 +98,12 @@ namespace Lucene.Net.Analysis.Core
                     typeof(CachingTokenFilter),
 
 #if NETSTANDARD
+#if FEATURE_BREAKITERATOR
                     // LUCENENET TODO: icu-dotnet is throwing AccessViolationException, bringing down the test runner
                     typeof(Th.ThaiTokenizer),
 #endif
+#endif
+
                     // Not broken: we forcefully add this, so we shouldn't
                     // also randomly pick it:
                     typeof(ValidatingTokenFilter)))

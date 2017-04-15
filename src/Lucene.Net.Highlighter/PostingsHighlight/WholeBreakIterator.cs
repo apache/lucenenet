@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Support;
 using System;
 
 namespace Lucene.Net.Search.PostingsHighlight
@@ -169,3 +170,4 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
     }
 }
+#endif

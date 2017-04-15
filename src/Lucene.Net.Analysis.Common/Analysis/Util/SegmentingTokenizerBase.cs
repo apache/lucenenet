@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -243,3 +244,4 @@ namespace Lucene.Net.Analysis.Util
         protected abstract bool IncrementWord();
     }
 }
+#endif

@@ -1,4 +1,4 @@
-﻿//using Icu;
+﻿#if FEATURE_BREAKITERATOR
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
@@ -169,3 +169,4 @@ namespace Lucene.Net.Analysis.Th
         }
     }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -390,3 +391,4 @@ namespace Lucene.Net
         }
     }
 }
+#endif

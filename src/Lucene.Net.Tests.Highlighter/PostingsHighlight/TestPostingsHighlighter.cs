@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
@@ -1288,3 +1289,4 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
     }
 }
+#endif

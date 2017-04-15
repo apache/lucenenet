@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_CLONEABLE;FEATURE_DTD_PROCESSING;FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR;FEATURE_CLONEABLE;FEATURE_DTD_PROCESSING;FEATURE_SERIALIZABLE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />

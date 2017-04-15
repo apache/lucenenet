@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Core;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Util;
@@ -137,3 +138,4 @@ namespace Lucene.Net.Analysis.Th
         }
     }
 }
+#endif
