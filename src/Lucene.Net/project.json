@@ -1,13 +1,5 @@
 ﻿{
   "version": "4.8.0",
-  "buildOptions": {
-    "debugType": "portable",
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -24,8 +16,12 @@
     "netstandard1.5": {
       "imports": "dnxcore50",
       "buildOptions": {
+        "debugType": "portable",
         "define": [ "FEATURE_TASKMERGESCHEDULER", "NETSTANDARD" ],
         "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
           "excludeFiles": [
             "Index/ConcurrentMergeScheduler.cs",
             "Support/Deflater.cs",
@@ -57,11 +53,17 @@
         "System.Xml.Linq": "4.0.0.0"
       },
       "buildOptions": {
+        "debugType": "portable",
         "define": [
           "FEATURE_CLONEABLE",
           "FEATURE_SERIALIZABLE",
           "FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM"
-        ]
+        ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        }
       }
     }
   }
