@@ -2,7 +2,6 @@
   "version": "4.8.0",
   "dependencies": {
     "dotnet-test-nunit": "3.4.0-beta-3",
-    "icu.net": "54.1.1-alpha",
     "Lucene.Net.Analysis.Common": "4.8.0",
     "Lucene.Net.TestFramework": "4.8.0",
     "NETStandard.Library": "1.6.0",
@@ -208,6 +207,9 @@
             "Analysis/Compound/da_compoundDictionary.txt"
           ]
         }
+      },
+      "dependencies": {
+        "icu.net": "2.1.1-beta0003"
       }
     }
   },

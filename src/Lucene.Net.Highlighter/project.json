@@ -1,7 +1,6 @@
 {
   "version": "4.8.0",
   "dependencies": {
-    "icu.net": "54.1.1-alpha",
     "Lucene.Net.Memory": "4.8.0",
     "Lucene.Net.Analysis.Common": "4.8.0",
     "Lucene.Net.Queries": "4.8.0"
@@ -45,6 +44,9 @@
             "../IcuBreakIterator.cs"
           ]
         }
+      },
+      "dependencies": {
+        "icu.net": "2.1.1-beta0003"
       }
     }
   }

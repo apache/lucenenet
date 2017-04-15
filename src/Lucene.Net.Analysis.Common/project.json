@@ -1,7 +1,6 @@
 ﻿{
   "version": "4.8.0",
   "dependencies": {
-    "icu.net": "54.1.1-alpha",
     "Lucene.Net": "4.8.0"
   },
   "packOptions": {
@@ -69,6 +68,9 @@
             "Analysis/Compound/Hyphenation/hyphenation.dtd"
           ]
         }
+      },
+      "dependencies": {
+        "icu.net": "2.1.1-beta0003"
       }
     }
   }
