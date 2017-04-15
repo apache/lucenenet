@@ -23,10 +23,6 @@
       "buildOptions": {
         "debugType": "portable",
         "compile": {
-          "excludeFiles": [
-            "RectangularArrays.cs",
-            "StringHelperClass.cs"
-          ],
           "includeFiles": [
             "../CommonAssemblyInfo.cs"
           ]
@@ -41,10 +37,6 @@
         "debugType": "portable",
         "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
-          "excludeFiles": [
-            "RectangularArrays.cs",
-            "StringHelperClass.cs"
-          ],
           "includeFiles": [
             "../CommonAssemblyInfo.cs"
           ]
