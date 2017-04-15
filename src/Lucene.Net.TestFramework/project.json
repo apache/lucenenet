@@ -46,7 +46,6 @@
     },
     "net451": {
       "frameworkAssemblies": {
-        "System.Configuration": "4.0.0.0",
         "System.IO.Compression": "4.0.0.0",
         "System.Numerics": "4.0.0.0",
         "System.ServiceModel": "4.0.0.0"
