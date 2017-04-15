@@ -703,10 +703,12 @@ namespace Lucene.Net.Documents
                 used = false;
             }
 
-            public void Dispose(bool disposing)
+            protected override void Dispose(bool disposing)
             {
                 if (disposing)
+                {
                     value = null;
+                }
             }
         }
 
