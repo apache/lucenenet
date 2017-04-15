@@ -1,3 +1,4 @@
+#if FEATURE_CONCURRENTMERGESCHEDULER
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -436,3 +437,4 @@ namespace Lucene.Net.Index
         }
     }
 }
+#endif

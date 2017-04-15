@@ -10,7 +10,6 @@
     "NUnit": "3.5.0"
   },
   "testRunner": "nunit",
-
   "frameworks": {
     "netcoreapp1.0": {
       "buildOptions": {
@@ -20,17 +19,15 @@
           "includeFiles": [
             "../CommonAssemblyInfo.cs"
           ],
-          "exclude": [
-            "Util/JunitCompat"
-          ],
           "excludeFiles": [
-            "TestMergeSchedulerExternal.cs",
-            "Index/TestConcurrentMergeScheduler.cs",
             "Support/TestApiConsistency.cs",
             "Support/TestCase.cs",
             "Support/TestExceptionSerialization.cs",
             "Support/TestSerialization.cs",
             "Util/TestMaxFailuresRule.cs"
+          ],
+          "exclude": [
+            "Util/JunitCompat"
           ]
         },
         "embed": {
@@ -89,7 +86,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ],
+        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_CONCURRENTMERGESCHEDULER", "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs"

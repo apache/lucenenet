@@ -28,7 +28,9 @@ namespace Lucene.Net
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using Document = Documents.Document;
     using Field = Field;
+#if FEATURE_CONCURRENTMERGESCHEDULER
     using ConcurrentMergeScheduler = Lucene.Net.Index.ConcurrentMergeScheduler;
+#endif
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
@@ -48,7 +50,7 @@ namespace Lucene.Net
     /// </summary>
     public class TestMergeSchedulerExternal : LuceneTestCase
     {
-
+#if FEATURE_CONCURRENTMERGESCHEDULER
         internal volatile bool MergeCalled;
         internal volatile bool MergeThreadCreated;
         internal volatile bool ExcCalled;
@@ -133,6 +135,7 @@ namespace Lucene.Net
             Assert.IsTrue(ExcCalled);
             dir.Dispose();
         }
+#endif
 
         private class ReportingMergeScheduler : MergeScheduler
         {
