@@ -4,14 +4,6 @@
     "antlr3.runtime.netcore": "3.6.0-rc2",
     "Lucene.Net.Queries": "4.8.0"
   },
-  "buildOptions": {
-    "debugType": "portable",
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -27,20 +19,26 @@
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
+      "buildOptions": {
+        "debugType": "portable",
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
+          "excludeFiles": [
+            "Properties/Settings.Designer.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [ "JS/JavascriptCompiler.properties" ]
+        }
+      },
       "dependencies": {
         "NETStandard.Library": "1.6.0",
         "System.Reflection.Emit": "4.0.1",
         "System.Reflection.Emit.ILGeneration": "4.0.1",
         "System.Reflection.TypeExtensions": "4.1.0"
-      },
-      "buildOptions": {
-        "define": [ "NETSTANDARD" ],
-        "compile": {
-          "excludeFiles": [ "Properties/Settings.Designer.cs" ]
-        },
-        "embed": {
-          "includeFiles": [ "JS/JavascriptCompiler.properties" ]
-        }
       }
     },
     "net451": {
@@ -48,7 +46,12 @@
         "System.Configuration": "4.0.0.0"
       },
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE" ]
+        "define": [ "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        }
       }
     }
   }

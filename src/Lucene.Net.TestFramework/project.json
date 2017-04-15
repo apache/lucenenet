@@ -5,14 +5,6 @@
     "Lucene.Net.Codecs": "4.8.0",
     "NUnit": "3.5.0"
   },
-  "buildOptions": {
-    "debugType": "portable",
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
@@ -23,8 +15,12 @@
         "System.Threading.Thread": "4.0.0"
       },
       "buildOptions": {
+        "debugType": "portable",
         "define": [ "FEATURE_STACKTRACE", "NETSTANDARD" ],
         "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
           "excludeFiles": [
             "Support/ApiScanTestBase.cs",
             "Util/AbstractBeforeAfterRule.cs",
@@ -56,8 +52,12 @@
         "System.ServiceModel": "4.0.0.0"
       },
       "buildOptions": {
+        "debugType": "portable",
         "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
           "excludeFiles": [
             "Util/AbstractBeforeAfterRule.cs",
             "Util/CloseableDirectory.cs",

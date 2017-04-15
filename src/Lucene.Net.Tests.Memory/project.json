@@ -7,44 +7,49 @@
     "Lucene.Net.TestFramework": "4.8.0",
     "NUnit": "3.5.0"
   },
-
-  "buildOptions": {
-    "debugType": "portable",
-    "embed": {
-      "includeFiles": [
-        "Index/Memory/testqueries.txt",
-        "Index/Memory/testqueries2.txt"
-      ]
-    },
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
-  
   "testRunner": "nunit",
-
   "frameworks": {
     "netcoreapp1.0": {
       "imports": "dnxcore50",
+      "buildOptions": {
+        "debugType": "portable",
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
+          "excludeFiles": [
+            "Support/TestApiConsistency.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "Index/Memory/testqueries.txt",
+            "Index/Memory/testqueries2.txt"
+          ]
+        }
+      },
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.1"
         }
-      },
-      "buildOptions": {
-        "compile": {
-          "excludeFiles": [
-            "Support/TestApiConsistency.cs"
-          ]
-        }
       }
     },
     "net451": {
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "Index/Memory/testqueries.txt",
+            "Index/Memory/testqueries2.txt"
+          ]
+        }
       }
     }
   },

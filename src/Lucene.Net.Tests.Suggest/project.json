@@ -8,23 +8,7 @@
     "Lucene.Net.TestFramework": "4.8.0",
     "NUnit": "3.5.0"
   },
-
-  "buildOptions": {
-    "debugType": "portable",
-    "embed": {
-      "includeFiles": [
-        "Suggest/Top50KWiki.utf8"
-      ]
-    },
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
-
   "testRunner": "nunit",
-
   "frameworks": {
     "netcoreapp1.0": {
       "imports": "dnxcore50",
@@ -35,17 +19,37 @@
         }
       },
       "buildOptions": {
+        "debugType": "portable",
         "define": [ "NETSTANDARD" ],
         "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "Suggest/Top50KWiki.utf8"
           ]
         }
       }
     },
     "net451": {
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE", "FEATURE_THREAD_PRIORITY" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE", "FEATURE_THREAD_PRIORITY" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "Suggest/Top50KWiki.utf8"
+          ]
+        }
       }
     }
   },

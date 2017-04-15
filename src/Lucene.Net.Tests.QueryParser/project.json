@@ -7,67 +7,97 @@
     "Lucene.Net.TestFramework": "4.8.0",
     "NUnit": "3.5.0"
   },
-
   "testRunner": "nunit",
-  "buildOptions": {
-    "debugType": "portable",
-    "embed": {
-      "includeFiles": [
-        "Xml/albumBooleanQuery.xsl",
-        "Xml/albumFilteredQuery.xsl",
-        "Xml/albumLuceneClassicQuery.xsl",
-        "Xml/BooleanFilter.xml",
-        "Xml/BooleanQuery.xml",
-        "Xml/BoostingQuery.xml",
-        "Xml/BoostingTermQuery.xml",
-        "Xml/CachedFilter.xml",
-        "Xml/ConstantScoreQuery.xml",
-        "Xml/DisjunctionMaxQuery.xml",
-        "Xml/DuplicateFilterQuery.xml",
-        "Xml/FuzzyLikeThisQuery.xml",
-        "Xml/LikeThisQuery.xml",
-        "Xml/MatchAllDocsQuery.xml",
-        "Xml/NestedBooleanQuery.xml",
-        "Xml/NumericRangeFilterQuery.xml",
-        "Xml/NumericRangeQueryQuery.xml",
-        "Xml/RangeFilterQuery.xml",
-        "Xml/reuters21578.txt",
-        "Xml/SpanQuery.xml",
-        "Xml/TermQuery.xml",
-        "Xml/TermsFilterQuery.xml",
-        "Xml/TermsQuery.xml",
-        "Xml/UserInputQuery.xml",
-        "Xml/UserInputQueryCustomField.xml"
-      ]
-    },
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "frameworks": {
     "netcoreapp1.0": {
       "imports": "dnxcore50",
+      "buildOptions": {
+        "debugType": "portable",
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
+          "excludeFiles": [
+            "Xml/TestQueryTemplateManager.cs",
+            "Support/TestApiConsistency.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "Xml/albumBooleanQuery.xsl",
+            "Xml/albumFilteredQuery.xsl",
+            "Xml/albumLuceneClassicQuery.xsl",
+            "Xml/BooleanFilter.xml",
+            "Xml/BooleanQuery.xml",
+            "Xml/BoostingQuery.xml",
+            "Xml/BoostingTermQuery.xml",
+            "Xml/CachedFilter.xml",
+            "Xml/ConstantScoreQuery.xml",
+            "Xml/DisjunctionMaxQuery.xml",
+            "Xml/DuplicateFilterQuery.xml",
+            "Xml/FuzzyLikeThisQuery.xml",
+            "Xml/LikeThisQuery.xml",
+            "Xml/MatchAllDocsQuery.xml",
+            "Xml/NestedBooleanQuery.xml",
+            "Xml/NumericRangeFilterQuery.xml",
+            "Xml/NumericRangeQueryQuery.xml",
+            "Xml/RangeFilterQuery.xml",
+            "Xml/reuters21578.txt",
+            "Xml/SpanQuery.xml",
+            "Xml/TermQuery.xml",
+            "Xml/TermsFilterQuery.xml",
+            "Xml/TermsQuery.xml",
+            "Xml/UserInputQuery.xml",
+            "Xml/UserInputQueryCustomField.xml"
+          ]
+        }
+      },
       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.1"
         }
-      },
-      "buildOptions": {
-        "define": [ "NETSTANDARD" ],
-        "compile": {
-          "excludeFiles": [
-            "Xml/TestQueryTemplateManager.cs",
-            "Support/TestApiConsistency.cs"
-          ]
-        }
       }
     },
     "net451": {
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "Xml/albumBooleanQuery.xsl",
+            "Xml/albumFilteredQuery.xsl",
+            "Xml/albumLuceneClassicQuery.xsl",
+            "Xml/BooleanFilter.xml",
+            "Xml/BooleanQuery.xml",
+            "Xml/BoostingQuery.xml",
+            "Xml/BoostingTermQuery.xml",
+            "Xml/CachedFilter.xml",
+            "Xml/ConstantScoreQuery.xml",
+            "Xml/DisjunctionMaxQuery.xml",
+            "Xml/DuplicateFilterQuery.xml",
+            "Xml/FuzzyLikeThisQuery.xml",
+            "Xml/LikeThisQuery.xml",
+            "Xml/MatchAllDocsQuery.xml",
+            "Xml/NestedBooleanQuery.xml",
+            "Xml/NumericRangeFilterQuery.xml",
+            "Xml/NumericRangeQueryQuery.xml",
+            "Xml/RangeFilterQuery.xml",
+            "Xml/reuters21578.txt",
+            "Xml/SpanQuery.xml",
+            "Xml/TermQuery.xml",
+            "Xml/TermsFilterQuery.xml",
+            "Xml/TermsQuery.xml",
+            "Xml/UserInputQuery.xml",
+            "Xml/UserInputQueryCustomField.xml"
+          ]
+        }
       }
     }
   },

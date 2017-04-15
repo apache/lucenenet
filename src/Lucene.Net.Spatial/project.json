@@ -6,22 +6,6 @@
     "NetTopologySuite": "1.14",
     "Spatial4n.Core": "0.4.1.1-beta"
   },
-  "buildOptions": {
-    "debugType": "portable",
-    "compile": {
-      "exclude": [
-        "BBox/*"
-      ],
-      "excludeFiles": [
-        "Prefix/Tree/Node.cs",
-        "Prefix/RecursivePrefixTreeFilter.cs",
-        "Util/TermsEnumCompatibility.cs"
-      ],
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -37,11 +21,25 @@
   "frameworks": {
     "netstandard1.5": {
       "imports": [ "dnxcore50", "portable-net403+sl5+win8+wp8+wpa81" ],
+      "buildOptions": {
+        "debugType": "portable",
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "exclude": [
+            "BBox/*"
+          ],
+          "excludeFiles": [
+            "Prefix/Tree/Node.cs",
+            "Prefix/RecursivePrefixTreeFilter.cs",
+            "Util/TermsEnumCompatibility.cs"
+          ],
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        }
+      },
       "dependencies": {
         "NETStandard.Library": "1.6.0"
-      },
-      "buildOptions": {
-        "define": [ "NETSTANDARD" ]
       }
     },
     "net451": {
@@ -49,7 +47,21 @@
         "Lucene.Net": "4.8.0"
       },
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "exclude": [
+            "BBox/*"
+          ],
+          "excludeFiles": [
+            "Prefix/Tree/Node.cs",
+            "Prefix/RecursivePrefixTreeFilter.cs",
+            "Util/TermsEnumCompatibility.cs"
+          ],
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        }
       }
     }
   }

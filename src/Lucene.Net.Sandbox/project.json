@@ -3,14 +3,6 @@
   "dependencies": {
     "Lucene.Net": "4.8.0"
   },
-  "buildOptions": {
-    "debugType": "portable",
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -26,13 +18,27 @@
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
+      "buildOptions": {
+        "debugType": "portable",
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        }
+      },
       "dependencies": {
         "NETStandard.Library": "1.6.0"
       }
     },
     "net451": {
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        }
       }
     }
   }

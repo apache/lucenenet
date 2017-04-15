@@ -3,20 +3,6 @@
   "dependencies": {
     "Lucene.Net.Analysis.Common": "4.8.0"
   },
-  "buildOptions": {
-    "debugType": "portable",
-    "embed": {
-      "includeFiles": [
-        "Pl/stemmer_20000.tbl",
-        "Pl/stopwords.txt"
-      ]
-    },
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -33,7 +19,19 @@
     "netstandard1.5": {
       "imports": "dnxcore50",
       "buildOptions": {
-        "define": [ "NETSTANDARD" ]
+        "debugType": "portable",
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "Pl/stemmer_20000.tbl",
+            "Pl/stopwords.txt"
+          ]
+        }
       },
       "dependencies": {
         "NETStandard.Library": "1.6.0"
@@ -41,7 +39,19 @@
     },
     "net451": {
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "Pl/stemmer_20000.tbl",
+            "Pl/stopwords.txt"
+          ]
+        }
       }
     }
   }

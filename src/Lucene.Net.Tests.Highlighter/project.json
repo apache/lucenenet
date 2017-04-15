@@ -9,26 +9,22 @@
     "NUnit": "3.5.0"
   },
   "testRunner": "nunit",
-  "buildOptions": {
-    "debugType": "portable",
-    "embed": {
-      "includeFiles": [
-        "PostingsHighlight/CambridgeMA.utf8"
-      ]
-    },
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "frameworks": {
     "netcoreapp1.0": {
       "buildOptions": {
+        "debugType": "portable",
         "define": [ "NETSTANDARD" ],
         "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "PostingsHighlight/CambridgeMA.utf8"
           ]
         }
       },
@@ -43,7 +39,18 @@
     },
     "net451": {
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        },
+        "embed": {
+          "includeFiles": [
+            "PostingsHighlight/CambridgeMA.utf8"
+          ]
+        }
       }
     }
   },

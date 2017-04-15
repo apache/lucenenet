@@ -6,15 +6,6 @@
     "Lucene.Net.Analysis.Common": "4.8.0",
     "Lucene.Net.Queries": "4.8.0"
   },
-  "buildOptions": {
-    "debugType": "portable",
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs",
-        "../IcuBreakIterator.cs"
-      ]
-    }
-  },
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -30,16 +21,30 @@
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
+      "buildOptions": {
+        "debugType": "portable",
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs",
+            "../IcuBreakIterator.cs"
+          ]
+        }
+      },
       "dependencies": {
         "NETStandard.Library": "1.6.0"
-      },
-      "buildOptions": {
-        "define": [ "NETSTANDARD" ]
       }
     },
     "net451": {
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs",
+            "../IcuBreakIterator.cs"
+          ]
+        }
       }
     }
   }

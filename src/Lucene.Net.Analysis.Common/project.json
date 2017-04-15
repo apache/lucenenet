@@ -4,28 +4,6 @@
     "icu.net": "54.1.1-alpha",
     "Lucene.Net": "4.8.0"
   },
-  "buildOptions": {
-    "debugType": "portable",
-    "embed": {
-      "include": [
-        "Analysis/**/stopwords.txt",
-        "Analysis/Snowball/*_stop.txt"
-      ],
-      "includeFiles": [
-        "Analysis/Gl/galician.rslp",
-        "Analysis/Pt/portuguese.rslp",
-        "Analysis/Compound/Hyphenation/hyphenation.dtd"
-      ]
-    },
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs",
-        "../IcuBreakIterator.cs"
-      ],
-      "exclude": [
-      ]
-    }
-  },
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -45,7 +23,25 @@
         "NETStandard.Library": "1.6.0"
       },
       "buildOptions": {
-        "define": [ "NETSTANDARD" ]
+        "debugType": "portable",
+        "define": [ "NETSTANDARD" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs",
+            "../IcuBreakIterator.cs"
+          ]
+        },
+        "embed": {
+          "include": [
+            "Analysis/**/stopwords.txt",
+            "Analysis/Snowball/*_stop.txt"
+          ],
+          "includeFiles": [
+            "Analysis/Gl/galician.rslp",
+            "Analysis/Pt/portuguese.rslp",
+            "Analysis/Compound/Hyphenation/hyphenation.dtd"
+          ]
+        }
       }
     },
     "net451": {
@@ -54,7 +50,25 @@
         "System.Xml.Linq": "4.0.0.0"
       },
       "buildOptions": {
-        "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs",
+            "../IcuBreakIterator.cs"
+          ]
+        },
+        "embed": {
+          "include": [
+            "Analysis/**/stopwords.txt",
+            "Analysis/Snowball/*_stop.txt"
+          ],
+          "includeFiles": [
+            "Analysis/Gl/galician.rslp",
+            "Analysis/Pt/portuguese.rslp",
+            "Analysis/Compound/Hyphenation/hyphenation.dtd"
+          ]
+        }
       }
     }
   }

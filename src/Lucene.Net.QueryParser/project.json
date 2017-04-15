@@ -5,14 +5,6 @@
     "Lucene.Net.Queries": "4.8.0",
     "Lucene.Net.Sandbox": "4.8.0"
   },
-  "buildOptions": {
-    "debugType": "portable",
-    "compile": {
-      "includeFiles": [
-        "../CommonAssemblyInfo.cs"
-      ]
-    }
-  },
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -28,21 +20,31 @@
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
-      "dependencies": {
-        "NETStandard.Library": "1.6.0",
-        "System.Xml.XmlDocument": "4.0.1"
-      },
       "buildOptions": {
+        "debugType": "portable",
         "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ],
           "excludeFiles": [
             "Xml/QueryTemplateManager.cs"
           ]
         }
+      },
+      "dependencies": {
+        "NETStandard.Library": "1.6.0",
+        "System.Xml.XmlDocument": "4.0.1"
       }
     },
     "net451": {
       "buildOptions": {
-        "define": [ "FEATURE_SERIALIZABLE", "FEATURE_CLONEABLE" ]
+        "debugType": "portable",
+        "define": [ "FEATURE_SERIALIZABLE", "FEATURE_CLONEABLE" ],
+        "compile": {
+          "includeFiles": [
+            "../CommonAssemblyInfo.cs"
+          ]
+        }
       },
       "frameworkAssemblies": {
         "System.Xml": "4.0.0.0"
