@@ -19,9 +19,6 @@
             "../CommonAssemblyInfo.cs"
           ],
           "excludeFiles": [
-            "DateTimeHelperClass.cs",
-            "HashMapHelperClass.cs",
-            "StringHelperClass.cs",
             "Support/TestApiConsistency.cs"
           ]
         },
@@ -125,11 +122,6 @@
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs"
-          ],
-          "excludeFiles": [
-            "DateTimeHelperClass.cs",
-            "HashMapHelperClass.cs",
-            "StringHelperClass.cs"
           ]
         },
         "embed": {
