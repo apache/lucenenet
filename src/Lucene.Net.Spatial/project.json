@@ -25,14 +25,6 @@
         "debugType": "portable",
         "define": [ "NETSTANDARD" ],
         "compile": {
-          "exclude": [
-            "BBox/*"
-          ],
-          "excludeFiles": [
-            "Prefix/Tree/Node.cs",
-            "Prefix/RecursivePrefixTreeFilter.cs",
-            "Util/TermsEnumCompatibility.cs"
-          ],
           "includeFiles": [
             "../CommonAssemblyInfo.cs"
           ]
@@ -50,14 +42,6 @@
         "debugType": "portable",
         "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
-          "exclude": [
-            "BBox/*"
-          ],
-          "excludeFiles": [
-            "Prefix/Tree/Node.cs",
-            "Prefix/RecursivePrefixTreeFilter.cs",
-            "Util/TermsEnumCompatibility.cs"
-          ],
           "includeFiles": [
             "../CommonAssemblyInfo.cs"
           ]
