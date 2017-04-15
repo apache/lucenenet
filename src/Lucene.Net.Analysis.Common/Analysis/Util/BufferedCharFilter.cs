@@ -39,10 +39,12 @@ namespace Lucene.Net.Analysis.Util
         internal static int defaultCharBufferSize = 8192;
         private static int defaultExpectedLineLength = 80;
 
+#if !NETSTANDARD
         /// <summary>
         /// LUCENENET specific to throw an exception if the user calls <see cref="Close()"/> instead of <see cref="TextReader.Dispose()"/>
         /// </summary>
         private bool isDisposing = false;
+#endif
 
         /// <summary>
         /// Creates a buffering character-input stream that uses an input buffer of the specified size.
@@ -430,20 +432,25 @@ namespace Lucene.Net.Analysis.Util
         {
             if (disposing)
             {
+#if !NETSTANDARD
                 this.isDisposing = true;
+#endif
                 lock (this)
                 {
-                    if (@in == null)
-                        return;
-                    @in.Dispose();
-                    @in = null;
+                    if (@in != null)
+                    {
+                        @in.Dispose();
+                        @in = null;
+                    }
                     cb = null;
                 }
+#if !NETSTANDARD
                 this.isDisposing = false;
+#endif
             }
         }
 
-        #region LUCENENET Specific Methods
+#region LUCENENET Specific Methods
 
         public override int Peek()
         {
@@ -495,6 +502,6 @@ namespace Lucene.Net.Analysis.Util
             throw new NotImplementedException();
         }
 #endif
-        #endregion
+#endregion
     }
 }
