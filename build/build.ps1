@@ -124,7 +124,7 @@ task Test -description "This task runs the tests" {
 			Write-Host "Directory: $projectDirectory" -ForegroundColor Green
 
 			if ($framework.StartsWith("netcore")) {
-				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --no-build"
+				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --framework $framework --no-build"
 			} else {
 				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
 
