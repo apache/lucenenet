@@ -150,7 +150,7 @@ task Test -description "This task runs the tests" {
 
 			Write-Host $testExpression -ForegroundColor Magenta
 
-			Invoke-Expression $testExpression
+			#Invoke-Expression $testExpression
 		}
 	}
 }
