@@ -49,7 +49,7 @@
       },
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ],
+        "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs",
@@ -67,9 +67,6 @@
             "Analysis/Compound/Hyphenation/hyphenation.dtd"
           ]
         }
-      },
-      "dependencies": {
-        "icu.net": "2.1.1-beta0003"
       }
     }
   }

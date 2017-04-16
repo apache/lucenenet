@@ -50,7 +50,6 @@
       "buildOptions": {
         "debugType": "portable",
         "define": [
-          "FEATURE_BREAKITERATOR",
           "FEATURE_CLONEABLE",
           "FEATURE_CONCURRENTMERGESCHEDULER",
           "FEATURE_SERIALIZABLE",

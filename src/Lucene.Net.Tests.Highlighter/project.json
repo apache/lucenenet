@@ -39,7 +39,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ],
+        "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs"
@@ -50,10 +50,6 @@
             "PostingsHighlight/CambridgeMA.utf8"
           ]
         }
-      },
-      "dependencies": {
-        "icu.net": "2.1.1-beta0003",
-        "Icu4c.Win.Full.Lib": "56.1.21"
       }
     }
   },

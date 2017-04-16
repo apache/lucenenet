@@ -37,16 +37,13 @@
     "net451": {
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ],
+        "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs",
             "../IcuBreakIterator.cs"
           ]
         }
-      },
-      "dependencies": {
-        "icu.net": "2.1.1-beta0003"
       }
     }
   }

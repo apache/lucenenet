@@ -84,7 +84,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_CONCURRENTMERGESCHEDULER", "FEATURE_SERIALIZABLE" ],
+        "define": [ "FEATURE_CONCURRENTMERGESCHEDULER", "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs"
