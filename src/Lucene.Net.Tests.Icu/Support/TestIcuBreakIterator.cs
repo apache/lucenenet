@@ -5,7 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 
-namespace Lucene.Net.Search
+namespace Lucene.Net.Support
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
 	 * limitations under the License.
 	 */
 
-    public class TestBreakIterator : LuceneTestCase
+    public class TestIcuBreakIterator : LuceneTestCase
     {
         static readonly String TEXT =
             "Apache Lucene(TM) is a high-performance, full-featured text search engine library written entirely in Java.";

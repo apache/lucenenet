@@ -25,8 +25,7 @@
         "define": [ "NETSTANDARD" ],
         "compile": {
           "includeFiles": [
-            "../CommonAssemblyInfo.cs",
-            "../IcuBreakIterator.cs"
+            "../CommonAssemblyInfo.cs"
           ]
         }
       },
@@ -40,8 +39,7 @@
         "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
-            "../CommonAssemblyInfo.cs",
-            "../IcuBreakIterator.cs"
+            "../CommonAssemblyInfo.cs"
           ]
         }
       }

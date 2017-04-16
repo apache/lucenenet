@@ -55,10 +55,12 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Lucene.Net.Tests")]
 [assembly: InternalsVisibleTo("Lucene.Net.TestFramework")]
 [assembly: InternalsVisibleTo("Lucene.Net.Highlighter")] // For Automaton
+[assembly: InternalsVisibleTo("Lucene.Net.Icu")] // For Automaton
 [assembly: InternalsVisibleTo("Lucene.Net.Misc")]
 [assembly: InternalsVisibleTo("Lucene.Net.Suggest")] // For Automaton
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Common")] // For Automaton
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Highlighter")] // For Automaton
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Icu")] // For Analysis.Util.TestSegmentingTokenizerBase
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc")]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.QueryParser")]
 

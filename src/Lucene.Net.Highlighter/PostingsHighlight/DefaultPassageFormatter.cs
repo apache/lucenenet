@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if FEATURE_BREAKITERATOR
+using System;
 using System.Text;
 
 namespace Lucene.Net.Search.PostingsHighlight
@@ -161,3 +162,4 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
     }
 }
+#endif

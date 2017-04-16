@@ -32,7 +32,7 @@ namespace Lucene.Net
     /// defined by the <see cref="Icu.BreakIterator.UBreakIteratorType"/> enumeration.
     /// </summary>
     // LUCENENET specific type
-    internal class IcuBreakIterator : BreakIterator
+    public class IcuBreakIterator : BreakIterator
     {
         private readonly Icu.Locale locale;
         private readonly Icu.BreakIterator.UBreakIteratorType type;

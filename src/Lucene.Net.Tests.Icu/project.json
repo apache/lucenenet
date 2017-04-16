@@ -1,0 +1,67 @@
+﻿{
+  "version": "4.8.0",
+  "dependencies": {
+    "dotnet-test-nunit": "3.4.0-beta-3",
+    "Lucene.Net": "4.8.0",
+    "Lucene.Net.Analysis.Common": "4.8.0",
+    "Lucene.Net.Highlighter": "4.8.0",
+    "Lucene.Net.Icu": "4.8.0",
+    "Lucene.Net.TestFramework": "4.8.0",
+    "Lucene.Net.Tests.Analysis.Common": "4.8.0",
+    "NUnit": "3.5.0"
+  },
+  "buildOptions": {
+    "debugType": "portable",
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs",
+        "../Lucene.Net.Tests.Analysis.Common/Analysis/Th/TestThaiAnalyzer.cs",
+        "../Lucene.Net.Tests.Analysis.Common/Analysis/Th/TestThaiTokenizerFactory.cs",
+        "../Lucene.Net.Tests.Analysis.Common/Analysis/Th/TestThaiWordFilterFactory.cs",
+        "../Lucene.Net.Tests.Analysis.Common/Analysis/Util/TestCharArrayIterator.cs",
+        "../Lucene.Net.Tests.Analysis.Common/Analysis/Util/TestSegmentingTokenizerBase.cs",
+        "../Lucene.Net.Tests.Highlighter/PostingsHighlight/TestMultiTermHighlighting.cs",
+        "../Lucene.Net.Tests.Highlighter/PostingsHighlight/TestPostingsHighlighter.cs",
+        "../Lucene.Net.Tests.Highlighter/PostingsHighlight/TestPostingsHighlighterRanking.cs",
+        "../Lucene.Net.Tests.Highlighter/PostingsHighlight/TestWholeBreakIterator.cs",
+        "../Lucene.Net.Tests.Highlighter/VectorHighlight/BreakIteratorBoundaryScannerTest.cs"
+      ]
+    },
+    "embed": {
+      "includeFiles": [
+        "Search/PostingsHighlight/CambridgeMA.utf8"
+      ]
+    }
+  },
+  "testRunner": "nunit",
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "NETSTANDARD", "FEATURE_BREAKITERATOR" ],
+        "compile": {
+          "excludeFiles": [
+            "Support/TestApiConsistency.cs"
+          ]
+        }
+      },
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.1"
+        },
+        "System.Xml.XmlDocument": "4.0.1"
+      }
+    },
+    "net451": {
+      "buildOptions": {
+        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ]
+      }
+    }
+  },
+
+  "runtimes": {
+    "win7-x86": {},
+    "win7-x64": {}
+  }
+}

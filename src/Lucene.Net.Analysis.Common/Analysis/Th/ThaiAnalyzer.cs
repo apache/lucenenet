@@ -111,7 +111,7 @@ namespace Lucene.Net.Analysis.Th
         ///         built from a <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="ThaiWordFilter"/>, and
         ///         <see cref="StopFilter"/> </returns>
-        protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+        protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
         {
             if (m_matchVersion.OnOrAfter(LuceneVersion.LUCENE_48))
             {

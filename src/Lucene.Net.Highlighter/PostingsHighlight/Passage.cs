@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Util;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -183,3 +184,4 @@ namespace Lucene.Net.Search.PostingsHighlight
         }
     }
 }
+#endif

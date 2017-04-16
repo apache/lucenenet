@@ -26,8 +26,7 @@
         "define": [ "NETSTANDARD" ],
         "compile": {
           "includeFiles": [
-            "../CommonAssemblyInfo.cs",
-            "../IcuBreakIterator.cs"
+            "../CommonAssemblyInfo.cs"
           ]
         },
         "embed": {
@@ -52,8 +51,7 @@
         "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
-            "../CommonAssemblyInfo.cs",
-            "../IcuBreakIterator.cs"
+            "../CommonAssemblyInfo.cs"
           ]
         },
         "embed": {

@@ -599,7 +599,6 @@
     <Compile Include="Support\AtomicLong.cs" />
     <Compile Include="Support\AtomicObject.cs" />
     <Compile Include="Support\AtomicReferenceArray.cs" />
-    <Compile Include="Support\BreakIterator.cs" />
     <Compile Include="Support\Buffer.cs" />
     <Compile Include="Support\AttributeItem.cs" />
     <Compile Include="Support\BitArrayExtensions.cs" />
@@ -611,7 +610,6 @@
     <Compile Include="Support\C5.Support.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
-    <Compile Include="Support\CharacterIterator.cs" />
     <Compile Include="Support\Codecs\CodecNameAttribute.cs" />
     <Compile Include="Support\Codecs\DefaultDocValuesFormatFactory.cs" />
     <Compile Include="Support\Codecs\DefaultPostingsFormatFactory.cs" />
@@ -668,7 +666,6 @@
     <Compile Include="Support\SignedZeroComparer.cs" />
     <Compile Include="Support\StreamUtils.cs" />
     <Compile Include="Support\StringBuilderExtensions.cs" />
-    <Compile Include="Support\StringCharacterIterator.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\StringExtensions.cs" />
     <Compile Include="Support\StringTokenizer.cs" />

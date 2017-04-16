@@ -56,7 +56,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="Support\TestApiConsistency.cs" />
-    <Compile Include="TestBreakIterator.cs" />
     <Compile Include="VectorHighlight\AbstractTestCase.cs" />
     <Compile Include="VectorHighlight\BreakIteratorBoundaryScannerTest.cs" />
     <Compile Include="VectorHighlight\FastVectorHighlighterTest.cs" />
@@ -70,7 +69,7 @@
     <Compile Include="VectorHighlight\SimpleFragmentsBuilderTest.cs" />
     <Compile Include="VectorHighlight\SingleFragListBuilderTest.cs" />
     <Compile Include="VectorHighlight\WeightedFragListBuilderTest.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>

@@ -1,4 +1,5 @@
-﻿namespace Lucene.Net.Search.PostingsHighlight
+﻿#if FEATURE_BREAKITERATOR
+namespace Lucene.Net.Search.PostingsHighlight
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -42,3 +43,4 @@
         public abstract object Format(Passage[] passages, string content); // LUCENENET TODO: Make return type generic?
     }
 }
+#endif

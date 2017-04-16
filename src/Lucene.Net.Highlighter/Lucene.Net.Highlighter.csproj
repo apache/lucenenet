@@ -44,9 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\IcuBreakIterator.cs">
-      <Link>IcuBreakIterator.cs</Link>
-    </Compile>
     <Compile Include="Highlight\DefaultEncoder.cs" />
     <Compile Include="Highlight\GradientFormatter.cs" />
     <Compile Include="Highlight\Highlighter.cs" />
@@ -101,7 +98,7 @@
     <Compile Include="VectorHighlight\SingleFragListBuilder.cs" />
     <Compile Include="VectorHighlight\WeightedFieldFragList.cs" />
     <Compile Include="VectorHighlight\WeightedFragListBuilder.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
+    <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>

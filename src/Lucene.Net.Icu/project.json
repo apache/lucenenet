@@ -1,0 +1,63 @@
+{
+  "version": "4.8.0",
+  "dependencies": {
+    "icu.net": "54.1.1-alpha",
+    "Lucene.Net": "4.8.0",
+    "Lucene.Net.Analysis.Common": "4.8.0",
+    "Lucene.Net.Highlighter": "4.8.0"
+  },
+  "buildOptions": {
+    "debugType": "portable",
+    "compile": {
+      "includeFiles": [
+        "../CommonAssemblyInfo.cs",
+        "../Lucene.Net.Analysis.Common/Analysis/Th/ThaiAnalyzer.cs",
+        "../Lucene.Net.Analysis.Common/Analysis/Th/ThaiTokenizer.cs",
+        "../Lucene.Net.Analysis.Common/Analysis/Th/ThaiTokenizerFactory.cs",
+        "../Lucene.Net.Analysis.Common/Analysis/Th/ThaiWordFilter.cs",
+        "../Lucene.Net.Analysis.Common/Analysis/Th/ThaiWordFilterFactory.cs",
+        "../Lucene.Net.Analysis.Common/Analysis/Util/CharArrayIterator.cs",
+        "../Lucene.Net.Analysis.Common/Analysis/Util/SegmentingTokenizerBase.cs",
+        "../Lucene.Net.Highlighter/PostingsHighlight/DefaultPassageFormatter.cs",
+        "../Lucene.Net.Highlighter/PostingsHighlight/MultiTermHighlighting.cs",
+        "../Lucene.Net.Highlighter/PostingsHighlight/Passage.cs",
+        "../Lucene.Net.Highlighter/PostingsHighlight/PassageFormatter.cs",
+        "../Lucene.Net.Highlighter/PostingsHighlight/PassageScorer.cs",
+        "../Lucene.Net.Highlighter/PostingsHighlight/PostingsHighlighter.cs",
+        "../Lucene.Net.Highlighter/PostingsHighlight/WholeBreakIterator.cs",
+        "../Lucene.Net.Highlighter/VectorHighlight/BreakIteratorBoundaryScanner.cs"
+      ]
+    },
+    "embed": {
+      "includeFiles": [ "Analysis/Th/stopwords.txt" ]
+    }
+  },
+  "packOptions": {
+    "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
+    "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
+    "iconUrl": "https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true",
+    "owners": [
+      "The Apache Software Foundation"
+    ],
+    "repository": {
+      "url": "https://github.com/apache/lucenenet"
+    },
+    "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
+  },
+  "frameworks": {
+    "netstandard1.5": {
+      "imports": "dnxcore50",
+      "buildOptions": {
+        "define": [ "NETSTANDARD", "FEATURE_BREAKITERATOR" ]
+      },
+      "dependencies": {
+        "NETStandard.Library": "1.6.0"
+      }
+    },
+    "net451": {
+      "buildOptions": {
+        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ]
+      }
+    }
+  }
+}

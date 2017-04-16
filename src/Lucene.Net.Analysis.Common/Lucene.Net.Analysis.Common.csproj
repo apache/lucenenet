@@ -41,9 +41,6 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\IcuBreakIterator.cs">
-      <Link>IcuBreakIterator.cs</Link>
-    </Compile>
     <Compile Include="Analysis\Bg\BulgarianAnalyzer.cs" />
     <Compile Include="Analysis\Bg\BulgarianStemFilter.cs" />
     <Compile Include="Analysis\Bg\BulgarianStemFilterFactory.cs" />
