@@ -209,7 +209,8 @@
         }
       },
       "dependencies": {
-        "icu.net": "2.1.1-beta0003"
+        "icu.net": "2.1.1-beta0003",
+        "Icu4c.Win.Full.Lib": "56.1.21"
       }
     }
   },
