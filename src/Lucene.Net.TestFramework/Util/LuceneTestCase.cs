@@ -2787,16 +2787,17 @@ namespace Lucene.Net.Util
         {
             //DirectoryInfo @base = BaseTempDirForTestClass();
 
-            int attempt = 0;
-            FileInfo f;
-            do
-            {
-                if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
-                {
-                    throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
-                }
-                f = new FileInfo(Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + string.Format(CultureInfo.InvariantCulture, "%03d", attempt) + suffix));
-            } while (f.Create() == null);
+            //int attempt = 0;
+            FileInfo f = FileSupport.CreateTempFile(prefix, suffix, new DirectoryInfo(System.IO.Path.GetTempPath()));
+            //do
+            //{
+            //    if (attempt++ >= TEMP_NAME_RETRY_THRESHOLD)
+            //    {
+            //        throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
+            //    }
+            //    //f = new FileInfo(Path.Combine(System.IO.Path.GetTempPath(), prefix + "-" + string.Format(CultureInfo.InvariantCulture, "{0:D3}", attempt) + suffix));
+            //    f = FileSupport.CreateTempFile(prefix, suffix, new DirectoryInfo(System.IO.Path.GetTempPath()));
+            //} while (f.Create() == null);
 
             RegisterToRemoveAfterSuite(f);
             return f;
