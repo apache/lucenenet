@@ -112,7 +112,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
         {
             if (Random().NextBoolean())
             {
-                return new DiskOrdinalMap("taxoMap");
+                return new DiskOrdinalMap(CreateTempFile("taxoMap", "").FullName);
             }
             else
             {
