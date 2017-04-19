@@ -106,41 +106,41 @@ task Init -description "This task makes sure the build environment is correctly 
 }
 
 task Compile -depends Clean, Init -description "This task compiles the solution" {
-	#try {
-	#	pushd $base_directory
-	#	$projects = Get-ChildItem -Path "project.json" -Recurse
-	#	popd
+	try {
+		pushd $base_directory
+		$projects = Get-ChildItem -Path "project.json" -Recurse
+		popd
 
-	#	Backup-Files $projects
-	#	Prepare-For-Build $projects
-	#	& dotnet.exe restore $base_directory
+		Backup-Files $projects
+		Prepare-For-Build $projects
+		& dotnet.exe restore $base_directory
 
-	#	Build-Assemblies $projects
+		Build-Assemblies $projects
 
-	#	Start-Sleep 10
+		Start-Sleep 10
 
-	#	$success = $true
-	#} finally {
-	#	if ($success -ne $true) {
-	#		Restore-Files $backedUpFiles
-	#	}
-	#}
+		$success = $true
+	} finally {
+		if ($success -ne $true) {
+			Restore-Files $backedUpFiles
+		}
+	}
 }
 
 task Pack -depends Compile -description "This task creates the NuGet packages" {
-	#try {
-	#	pushd $base_directory
-	#	$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") }
-	#	popd
+	try {
+		pushd $base_directory
+		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") }
+		popd
 
-	#	Pack-Assemblies $packages
+		Pack-Assemblies $packages
 
-	#	$success = $true
-	#} finally {
-	#	#if ($success -ne $true) {
-	#		Restore-Files $backedUpFiles
-	#	#}
-	#}
+		$success = $true
+	} finally {
+		#if ($success -ne $true) {
+			Restore-Files $backedUpFiles
+		#}
+	}
 }
 
 task Test -description "This task runs the tests" {
