@@ -7,10 +7,10 @@
 	[string]$test_results_directory = "$release_directory\TestResults"
 
 	[string]$buildCounter     = ""
-	[string]$packageVersion   = "0.0.0"
+	[string]$packageVersion   = Get-Package-Version
 	[string]$version          = "0.0.0"
 	[string]$configuration    = "Release"
-	[bool]$backup_files        = $true
+	[bool]$backup_files       = $true
 
 	[string]$common_assembly_info = "$base_directory\src\CommonAssemblyInfo.cs"
 	[string]$copyright_year = [DateTime]::Today.Year.ToString() #Get the current year from the system
@@ -38,53 +38,11 @@ task Init -description "This task makes sure the build environment is correctly 
 		Write-Error "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK."
 	}
 
-	#If $packageVersion is not passed in, get it from Version.proj
-	if ([string]::IsNullOrEmpty($packageVersion) -or $packageVersion -eq "0.0.0" -or ![string]::IsNullOrWhiteSpace($env:BuildCounter)) {
-		#Get the version info
-		$versionFile = "$base_directory\Version.proj"
-		$xml = [xml](Get-Content $versionFile)
-
-		$versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
-		$versionSuffix = $xml.Project.PropertyGroup.VersionSuffix
-		Write-Host "VersionPrefix: $versionPrefix" -ForegroundColor Yellow
-		Write-Host "VersionSuffix: $versionSuffix" -ForegroundColor Yellow
-		
-		if ([string]::IsNullOrEmpty($buildCounter)) {
-			#attempt to get MyGet (or TeamCity) build counter environment variable
-			$buildCounter = "$env:BuildCounter"
-		}
-		Write-Host "buildCounter: $buildCounter"
-
-
-		if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
-			# this is a production release - use 4 segment version number 0.0.0.0
-			if ([string]::IsNullOrEmpty($buildCounter)) {
-				$buildCounter = "0"
-			}
-
-			$packageVersion = "$versionPrefix.$buildCounter"
-		} else {
-			# this is a pre-release - use 3 segment version number with (optional) zero-padded pre-release tag
-			if (![string]::IsNullOrEmpty($buildCounter)) {
-				$buildCounter = ([Int32]$buildCounter).ToString("00000")
-			}
-
-			$packageVersion = "$versionPrefix-$versionSuffix$buildCounter"
-		}
-	}
+	$version = Get-Version $packageVersion
 
 	#Update TeamCity or MyGet with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
 	Write-Output "##myget[buildNumber '$packageVersion']"
-
-	#If $version is not passed in, parse it from $packageVersion
-	if ([string]::IsNullOrEmpty($version) -or $version -eq "0.0.0") {
-		$version = $packageVersion
-		if ($version.Contains("-") -eq $true) {
-			$version = $version.SubString(0, $version.IndexOf("-"))
-		}
-		Write-Host "Updated version to: $version"
-	}
 
 	& dotnet.exe --version
 	Write-Host "Base Directory: $base_directory"
@@ -194,8 +152,57 @@ task Test -description "This task runs the tests" {
 	}
 }
 
+function Get-Package-Version() {
+	#If $packageVersion is not passed in, get it from Version.proj
+
+	#Get the version info
+	$versionFile = "$base_directory\Version.proj"
+	$xml = [xml](Get-Content $versionFile)
+
+	$versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
+	$versionSuffix = $xml.Project.PropertyGroup.VersionSuffix
+	Write-Host "VersionPrefix: $versionPrefix" -ForegroundColor Yellow
+	Write-Host "VersionSuffix: $versionSuffix" -ForegroundColor Yellow
+		
+	if ([string]::IsNullOrWhiteSpace($buildCounter)) {
+		#attempt to get MyGet (or TeamCity) build counter environment variable
+		$buildCounter = "$env:BuildCounter"
+	}
+	Write-Host "buildCounter: $buildCounter"
+
+	if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
+		# this is a production release - use 4 segment version number 0.0.0.0
+		if ([string]::IsNullOrWhiteSpace($buildCounter)) {
+			$buildCounter = "0"
+		}
+
+		$packageVersion = "$versionPrefix.$buildCounter"
+	} else {
+		# this is a pre-release - use 3 segment version number with (optional) zero-padded pre-release tag
+		if (![string]::IsNullOrWhiteSpace($buildCounter)) {
+			$buildCounter = ([Int32]$buildCounter).ToString("00000")
+		}
+
+		$packageVersion = "$versionPrefix-$versionSuffix$buildCounter"
+	}
+	return $packageVersion
+}
+
+function Get-Version([string]$packageVersion) {
+	#If $version is not passed in, parse it from $packageVersion
+	if ([string]::IsNullOrWhiteSpace($version) -or $version -eq "0.0.0") {
+		$version = $packageVersion
+		if ($version.Contains("-") -eq $true) {
+			$version = $version.SubString(0, $version.IndexOf("-"))
+		}
+	}
+	return $version
+}
+
 function Prepare-For-Build([string[]]$projects) {
 	Backup-File $common_assembly_info 
+	
+	$version = Get-Version $packageVersion
 		
 	Generate-Assembly-Info `
 		-product $product_name `
