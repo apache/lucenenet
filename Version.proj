@@ -1,12 +1,13 @@
 <Project>
 
+  <!-- IMPORTANT: When either of these values is changed, the TeamCity counter number should also be reset. -->
   <PropertyGroup>
-    <!-- IMPORTANT: VersionPrefix should always be the same as the Lucene version this is based on.
+    <!-- IMPORTANT: VersionPrefix must always be the same as the Lucene version this is based on.
       Never increment it for an individual build - only increment this when an entire version's changes
       are ported over from Lucene. This is what determines the version of all of the NuGet packages and binaries. -->
 	  <VersionPrefix>4.8.0</VersionPrefix>
-    <!-- VersionSuffix is the pre-release tag. A zero-padded version number will automatically be suffixed to this
-      by the build script. -->
+    <!-- VersionSuffix is the pre-release tag. If non-empty, a zero-padded counter number 
+      will automatically be suffixed to this by the build script (when running under TeamCity). -->
 	  <VersionSuffix>beta</VersionSuffix>
   </PropertyGroup>
 
