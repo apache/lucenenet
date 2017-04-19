@@ -13,7 +13,7 @@ GOTO endcommentblock
 ::                  as PackageVersion (excluding any pre-release tag).
 ::
 ::   -PackageVersion:<PackageVersion>
-::   -pv:<PackageVersion> - Nuget package version. Default is 1.0.0.
+::   -pv:<PackageVersion> - Nuget package version. Default is 0.0.0, which instructs the script to use the value in Version.proj.
 ::
 ::   -Configuration:<Configuration>
 ::   -config:<Configuration> - MSBuild configuration for the build.
@@ -38,7 +38,7 @@ IF "%version%" == "" (
 	set version=0.0.0
 )
 IF "%PackageVersion%" == "" (
-    set PackageVersion=1.0.0
+    set PackageVersion=0.0.0
 )
 set configuration=Release
 IF NOT "%config%" == "" (

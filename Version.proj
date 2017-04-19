@@ -1,0 +1,13 @@
+<Project>
+
+  <PropertyGroup>
+    <!-- IMPORTANT: VersionPrefix should always be the same as the Lucene version this is based on.
+      Never increment it for an individual build - only increment this when an entire version's changes
+      are ported over from Lucene. This is what determines the version of all of the NuGet packages and binaries. -->
+	  <VersionPrefix>4.8.0</VersionPrefix>
+    <!-- VersionSuffix is the pre-release tag. A zero-padded version number will automatically be suffixed to this
+      by the build script. -->
+	  <VersionSuffix>beta</VersionSuffix>
+  </PropertyGroup>
+
+</Project>

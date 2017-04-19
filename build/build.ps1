@@ -6,7 +6,7 @@
 	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
 	[string]$test_results_directory = "$release_directory\TestResults"
 
-	[string]$packageVersion   = "4.8.0"
+	[string]$packageVersion   = "0.0.0"
 	[string]$version          = "0.0.0"
 	[string]$configuration    = "Release"
 	[bool]$backup_files        = $true
@@ -37,6 +37,56 @@ task Init -description "This task makes sure the build environment is correctly 
 		Write-Error "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK."
 	}
 
+	#If $packageVersion is not passed in, get it from Version.proj
+	if ([string]::IsNullOrEmpty($packageVersion) -or $packageVersion -eq "0.0.0") {
+		#Get the version info
+		$versionFile = "$base_directory\Version.proj"
+		$xml = [xml](Get-Content $versionFile)
+
+		$versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
+		$versionSuffix = $xml.Project.PropertyGroup.VersionSuffix
+		Write-Host "VersionPrefix: $versionPrefix" -ForegroundColor Yellow
+		Write-Host "VersionSuffix: $versionSuffix" -ForegroundColor Yellow
+
+		#build counter from TeamCity
+		$buildCounter = "$env:build_counter"
+		Write-Host "TeamCity buildCounter : $buildCounter"
+		if ([string]::IsNullOrEmpty($buildCounter)) {
+			#attempt to get MyGet build counter
+			$buildCounter = "$env:BuildCounter"
+		}
+
+
+		if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
+			# this is a production release - use 4 segment version number 0.0.0.0
+			if ([string]::IsNullOrEmpty($buildCounter)) {
+				$buildCounter = "0"
+			}
+
+			$packageVersion = "$versionPrefix.$buildCounter"
+		} else {
+			# this is a pre-release - use 3 segment version number with (optional) zero-padded pre-release tag
+			if (![string]::IsNullOrEmpty($buildCounter)) {
+				$buildCounter = ([Int32]$buildCounter).ToString("00000")
+			}
+
+			$packageVersion = "$versionPrefix-$versionSuffix$buildCounter"
+		}
+	}
+
+	#Update TeamCity or MyGet with packageVersion
+	Write-Output "##teamcity[buildNumber '$packageVersion']"
+	Write-Output "##myget[buildNumber '$packageVersion']"
+
+	#If $version is not passed in, parse it from $packageVersion
+	if ([string]::IsNullOrEmpty($version) -or $version -eq "0.0.0") {
+		$version = $packageVersion
+		if ($version.Contains("-") -eq $true) {
+			$version = $version.SubString(0, $version.IndexOf("-"))
+		}
+		Write-Host "Updated version to: $version"
+	}
+
 	& dotnet.exe --version
 	Write-Host "Base Directory: $base_directory"
 	Write-Host "Release Directory: $release_directory"
@@ -47,15 +97,6 @@ task Init -description "This task makes sure the build environment is correctly 
 	Write-Host "Package Version: $packageVersion"
 	Write-Host "Configuration: $configuration"
 
-	#If version is not passed in, parse it from $packageVersion
-	if ($version -eq "0.0.0" -or [string]::IsNullOrEmpty($version)) {
-		$version = $packageVersion
-		if ($version.Contains("-") -eq $true) {
-			$version = $version.SubString(0, $version.IndexOf("-"))
-		}
-		Write-Host "Updated version to: $version"
-	}
-
 	Ensure-Directory-Exists "$release_directory"
 
 	#ensure we have the latest version of NuGet
@@ -65,41 +106,41 @@ task Init -description "This task makes sure the build environment is correctly 
 }
 
 task Compile -depends Clean, Init -description "This task compiles the solution" {
-	try {
-		pushd $base_directory
-		$projects = Get-ChildItem -Path "project.json" -Recurse
-		popd
+	#try {
+	#	pushd $base_directory
+	#	$projects = Get-ChildItem -Path "project.json" -Recurse
+	#	popd
 
-		Backup-Files $projects
-		Prepare-For-Build $projects
-		& dotnet.exe restore $base_directory
+	#	Backup-Files $projects
+	#	Prepare-For-Build $projects
+	#	& dotnet.exe restore $base_directory
 
-		Build-Assemblies $projects
+	#	Build-Assemblies $projects
 
-		Start-Sleep 10
+	#	Start-Sleep 10
 
-		$success = $true
-	} finally {
-		if ($success -ne $true) {
-			Restore-Files $backedUpFiles
-		}
-	}
+	#	$success = $true
+	#} finally {
+	#	if ($success -ne $true) {
+	#		Restore-Files $backedUpFiles
+	#	}
+	#}
 }
 
 task Pack -depends Compile -description "This task creates the NuGet packages" {
-	try {
-		pushd $base_directory
-		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") }
-		popd
+	#try {
+	#	pushd $base_directory
+	#	$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") }
+	#	popd
 
-		Pack-Assemblies $packages
+	#	Pack-Assemblies $packages
 
-		$success = $true
-	} finally {
-		#if ($success -ne $true) {
-			Restore-Files $backedUpFiles
-		#}
-	}
+	#	$success = $true
+	#} finally {
+	#	#if ($success -ne $true) {
+	#		Restore-Files $backedUpFiles
+	#	#}
+	#}
 }
 
 task Test -description "This task runs the tests" {
