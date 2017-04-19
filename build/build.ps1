@@ -6,6 +6,7 @@
 	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
 	[string]$test_results_directory = "$release_directory\TestResults"
 
+	[string]$buildCounter     = ""
 	[string]$packageVersion   = "0.0.0"
 	[string]$version          = "0.0.0"
 	[string]$configuration    = "Release"
@@ -38,7 +39,7 @@ task Init -description "This task makes sure the build environment is correctly 
 	}
 
 	#If $packageVersion is not passed in, get it from Version.proj
-	if ([string]::IsNullOrEmpty($packageVersion) -or $packageVersion -eq "0.0.0") {
+	if ([string]::IsNullOrEmpty($packageVersion) -or $packageVersion -eq "0.0.0" -or ![string]::IsNullOrWhiteSpace($env:BuildCounter)) {
 		#Get the version info
 		$versionFile = "$base_directory\Version.proj"
 		$xml = [xml](Get-Content $versionFile)
@@ -47,14 +48,12 @@ task Init -description "This task makes sure the build environment is correctly 
 		$versionSuffix = $xml.Project.PropertyGroup.VersionSuffix
 		Write-Host "VersionPrefix: $versionPrefix" -ForegroundColor Yellow
 		Write-Host "VersionSuffix: $versionSuffix" -ForegroundColor Yellow
-
-		#build counter from TeamCity
-		$buildCounter = "$env:build_counter"
-		Write-Host "TeamCity buildCounter : $buildCounter"
+		
 		if ([string]::IsNullOrEmpty($buildCounter)) {
-			#attempt to get MyGet build counter
+			#attempt to get MyGet (or TeamCity) build counter environment variable
 			$buildCounter = "$env:BuildCounter"
 		}
+		Write-Host "buildCounter: $buildCounter"
 
 
 		if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
