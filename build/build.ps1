@@ -92,7 +92,6 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") }
 		popd
 
-		Prepare-For-Pack $packages
 		Pack-Assemblies $packages
 
 		$success = $true
@@ -227,36 +226,6 @@ using System.Reflection;
 function Build-Assemblies([string[]]$projects) {
 	foreach ($project in $projects) {
 		& dotnet.exe build $project --configuration $configuration
-	}
-}
-
-function Prepare-For-Pack([string[]]$projects) {
-	foreach ($project in $projects) {
-		Write-Host "Updating project.json for pack: $project" -ForegroundColor DarkYellow
-
-		# Update the packOptions.summary with the value from AssemblyDescriptionAttribute
-		$assemblyDescription = Get-Assembly-Description $project
-		Write-Host "Updating package description with '$assemblyDescription'" -ForegroundColor Yellow
-
-		(Get-Content $project) | % {
-			$_-replace "(?<=""summary""\s*?:\s*?"")([^""]*)", $assemblyDescription
-		} | Set-Content $project -Force
-	}
-}
-
-# Gets the description from the AssemblyDescriptionAttribute
-function Get-Assembly-Description($project) {
-	#project path has a project.json file, we need the path without it
-	$dir = [System.IO.Path]::GetDirectoryName($project).TrimEnd([System.IO.Path]::DirectorySeparatorChar)
-	$projectName = [System.IO.Path]::GetFileName($dir)
-	$projectAssemblyPath = "$dir\bin\$Configuration\net451\$projectName.dll"
-
-	$assembly = [Reflection.Assembly]::ReflectionOnlyLoadFrom($projectAssemblyPath)
-	$descriptionAttributes = [reflection.customattributedata]::GetCustomAttributes($assembly) | Where-Object {$_.AttributeType -like "System.Reflection.AssemblyDescriptionAttribute"}
-
-	if ($descriptionAttributes.Length -gt 0) {
-		$descriptionAttributes[0].ToString()-match "(?<=\[System.Reflection.AssemblyDescriptionAttribute\("")([^""]*)" | Out-Null
-		return $Matches[0]
 	}
 }
 

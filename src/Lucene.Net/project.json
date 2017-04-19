@@ -3,7 +3,6 @@
   "title": "Lucene.Net",
   "description": "Lucene.Net is a full-text search engine library capable of advanced text analysis, indexing, and searching. It can be used to easily add search capabilities to applications. Lucene.Net is a C# port of the popular Java Lucene search engine framework from The Apache Software Foundation, targeted at .NET Framework and .NET Core users.",
   "packOptions": {
-    "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
     "iconUrl": "https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true",
     "owners": [
