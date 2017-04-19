@@ -1,5 +1,6 @@
 {
   "version": "4.8.0",
+  "title": "Lucene.Net.Tests.Suggest",
   "dependencies": {
     "dotnet-test-nunit": "3.4.0-beta-3",
     "Lucene.Net.Analysis.Common": "4.8.0",
@@ -53,7 +54,7 @@
       }
     }
   },
-  
+
   "runtimes": {
     "win7-x86": {},
     "win7-x64": {}

@@ -1,5 +1,7 @@
 ﻿{
   "version": "4.8.0",
+  "title": "Lucene.Net.TestFramework",
+  "description": "Framework for testing Lucene.Net-based applications from The Apache Software Foundation.",
   "dependencies": {
     "Lucene.Net.Analysis.Common": "4.8.0",
     "Lucene.Net.Codecs": "4.8.0",

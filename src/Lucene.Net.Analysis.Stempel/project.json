@@ -1,8 +1,7 @@
 ﻿{
   "version": "4.8.0",
-  "dependencies": {
-    "Lucene.Net.Analysis.Common": "4.8.0"
-  },
+  "title": "Lucene.Net.Analysis.Stempel",
+  "description": "Analyzer for indexing Polish for the Lucene.Net full-text search engine library from The Apache Software Foundation.",
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -14,6 +13,9 @@
       "url": "https://github.com/apache/lucenenet"
     },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query", "polish" ]
+  },
+  "dependencies": {
+    "Lucene.Net.Analysis.Common": "4.8.0"
   },
   "frameworks": {
     "netstandard1.5": {

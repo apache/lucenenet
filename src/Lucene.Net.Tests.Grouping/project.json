@@ -1,5 +1,6 @@
 ﻿{
   "version": "4.8.0",
+  "title": "Lucene.Net.Tests.Grouping",
   "dependencies": {
     "dotnet-test-nunit": "3.4.0-beta-3",
     "Lucene.Net.Grouping": "4.8.0",

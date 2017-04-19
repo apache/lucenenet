@@ -1,9 +1,7 @@
 ﻿{
   "version": "4.8.0",
-  "dependencies": {
-    "antlr3.runtime.netcore": "3.6.0-rc2",
-    "Lucene.Net.Queries": "4.8.0"
-  },
+  "title": "Lucene.Net.Expressions",
+  "description": "Dynamically computed values to sort/facet/search on based on a pluggable grammar for the Lucene.Net full-text search engine library from The Apache Software Foundation.",
   "packOptions": {
     "summary": "<Added from AssemblyDescriptionAttribute by the build script - do not remove this>",
     "licenseUrl": "https://github.com/apache/lucenenet/blob/master/LICENSE.txt",
@@ -15,6 +13,10 @@
       "url": "https://github.com/apache/lucenenet"
     },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
+  },
+  "dependencies": {
+    "antlr3.runtime.netcore": "3.6.0-rc2",
+    "Lucene.Net.Queries": "4.8.0"
   },
   "frameworks": {
     "netstandard1.5": {
