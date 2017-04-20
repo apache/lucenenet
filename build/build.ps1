@@ -1,4 +1,4 @@
- properties {
+properties {
 	[string]$base_directory   = Resolve-Path "..\."
 	[string]$release_directory  = "$base_directory\release"
 	[string]$source_directory = "$base_directory"
@@ -6,9 +6,11 @@
 	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
 	[string]$test_results_directory = "$release_directory\TestResults"
 
-	[string]$buildCounter     = ""
-	[string]$packageVersion   = Get-Package-Version
-	[string]$version          = "0.0.0"
+	[string]$buildCounter     = $(if ($buildCounter) { $buildCounter } else { $env:BuildCounter }) #NOTE: Pass in as a parameter (not a property) or environment variable to override
+	[string]$preReleaseCounterPattern = $(if ($preReleaseCounterPattern) { $preReleaseCounterPattern } else { if ($env:PreReleaseCounterPattern) { $env:PreReleaseCounterPattern } else { "00000" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
+	[string]$versionSuffix    = $(if ($versionSuffix) { $versionSuffix } else { $env:VersionSuffix })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
+	[string]$packageVersion   = Get-Package-Version #NOTE: Pass in as a parameter (not a property) or environment variable to override
+	[string]$version          = Get-Version
 	[string]$configuration    = "Release"
 	[bool]$backup_files       = $true
 
@@ -38,8 +40,6 @@ task Init -description "This task makes sure the build environment is correctly 
 		Write-Error "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK."
 	}
 
-	$version = Get-Version $packageVersion
-
 	#Update TeamCity or MyGet with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
 	Write-Output "##myget[buildNumber '$packageVersion']"
@@ -50,8 +50,11 @@ task Init -description "This task makes sure the build environment is correctly 
 	Write-Host "Source Directory: $source_directory"
 	Write-Host "Tools Directory: $tools_directory"
 	Write-Host "NuGet Package Directory: $nuget_package_directory"
-	Write-Host "Version: $version"
+	Write-Host "BuildCounter: $buildCounter"
+	Write-Host "PreReleaseCounterPattern: $preReleaseCounterPattern"
+	Write-Host "VersionSuffix: $versionSuffix"
 	Write-Host "Package Version: $packageVersion"
+	Write-Host "Version: $version"
 	Write-Host "Configuration: $configuration"
 
 	Ensure-Directory-Exists "$release_directory"
@@ -153,45 +156,38 @@ task Test -description "This task runs the tests" {
 }
 
 function Get-Package-Version() {
-	#If $packageVersion is not passed in, get it from Version.proj
+	Write-Host $parameters.packageVersion -ForegroundColor Red
 
-	#Get the version info
-	$versionFile = "$base_directory\Version.proj"
-	$xml = [xml](Get-Content $versionFile)
-
-	$versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
-	$versionSuffix = $xml.Project.PropertyGroup.VersionSuffix
-	Write-Host "VersionPrefix: $versionPrefix" -ForegroundColor Yellow
-	Write-Host "VersionSuffix: $versionSuffix" -ForegroundColor Yellow
-		
-	if ([string]::IsNullOrWhiteSpace($buildCounter)) {
-		#attempt to get MyGet (or TeamCity) build counter environment variable
-		$buildCounter = "$env:BuildCounter"
-	}
-	Write-Host "buildCounter: $buildCounter"
-
-	if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
-		# this is a production release - use 4 segment version number 0.0.0.0
-		if ([string]::IsNullOrWhiteSpace($buildCounter)) {
-			$buildCounter = "0"
-		}
-
-		$packageVersion = "$versionPrefix.$buildCounter"
+	#If $packageVersion is not passed in (as a parameter or environment variable), get it from Version.proj
+	if (![string]::IsNullOrWhiteSpace($parameters.packageVersion) -and $packageVersion -ne "0.0.0") {
+		return $packageVersion
+	} elseif (![string]::IsNullOrWhiteSpace($env:PackageVersion)) {
+		return $env:PackageVersion
 	} else {
-		# this is a pre-release - use 3 segment version number with (optional) zero-padded pre-release tag
-		if (![string]::IsNullOrWhiteSpace($buildCounter)) {
-			$buildCounter = ([Int32]$buildCounter).ToString("00000")
-		}
+		#Get the version info
+		$versionFile = "$base_directory\Version.proj"
+		$xml = [xml](Get-Content $versionFile)
 
-		$packageVersion = "$versionPrefix-$versionSuffix$buildCounter"
+		$versionPrefix = $xml.Project.PropertyGroup.VersionPrefix
+
+		if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
+			# this is a production release - use 4 segment version number 0.0.0.0
+			$packageVersion = "$versionPrefix.$buildCounter"
+		} else {
+			if (![string]::IsNullOrWhiteSpace($buildCounter)) {
+				$buildCounter = ([Int32]$buildCounter).ToString($preReleaseCounterPattern)
+			}
+			# this is a pre-release - use 3 segment version number with (optional) zero-padded pre-release tag
+			$packageVersion = "$versionPrefix-$versionSuffix$buildCounter"
+		}
+		return $packageVersion
 	}
-	return $packageVersion
 }
 
-function Get-Version([string]$packageVersion) {
+function Get-Version() {
 	#If $version is not passed in, parse it from $packageVersion
 	if ([string]::IsNullOrWhiteSpace($version) -or $version -eq "0.0.0") {
-		$version = $packageVersion
+		$version = Get-Package-Version
 		if ($version.Contains("-") -eq $true) {
 			$version = $version.SubString(0, $version.IndexOf("-"))
 		}
@@ -202,8 +198,6 @@ function Get-Version([string]$packageVersion) {
 function Prepare-For-Build([string[]]$projects) {
 	Backup-File $common_assembly_info 
 	
-	$version = Get-Version $packageVersion
-		
 	Generate-Assembly-Info `
 		-product $product_name `
 		-company $company_name `
