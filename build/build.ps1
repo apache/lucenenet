@@ -199,12 +199,15 @@ function Get-Version() {
 function Prepare-For-Build([string[]]$projects) {
 	Backup-File $common_assembly_info 
 	
+	$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
+	$pv = "$packageVersion commit:[$gitCommit]"
+
 	Generate-Assembly-Info `
 		-product $product_name `
 		-company $company_name `
 		-copyright $copyright `
 		-version $version `
-		-packageVersion $packageVersion `
+		-packageVersion $pv `
 		-file $common_assembly_info
 
 	Update-Constants-Version $packageVersion
