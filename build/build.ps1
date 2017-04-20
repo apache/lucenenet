@@ -140,10 +140,10 @@ task Test -description "This task runs the tests" {
 				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
 			}
 
-			#$testResultDirectory = "$test_results_directory\$framework\$testName"
-			#Ensure-Directory-Exists $testResultDirectory
+			$testResultDirectory = "$test_results_directory\$framework\$testName"
+			Ensure-Directory-Exists $testResultDirectory
 
-			$testExpression = "$testExpression --result:$projectDirectory\TestResult.xml"
+			$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml --teamcity"
 
 			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
 				$testExpression = "$testExpression --where $where"
@@ -181,6 +181,7 @@ function Get-Package-Version() {
 			# this is a pre-release - use 3 segment version number with (optional) zero-padded pre-release tag
 			$packageVersion = "$versionPrefix-$versionSuffix$buildCounter"
 		}
+
 		return $packageVersion
 	}
 }
