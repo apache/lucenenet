@@ -32,7 +32,7 @@
     },
     "net451": {
       "buildOptions": {
-        "debugType": "portable",
+        "debugType": "full",
         "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
           "exclude": [ "Store/*" ],

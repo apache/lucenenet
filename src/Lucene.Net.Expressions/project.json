@@ -42,6 +42,7 @@
     },
     "net451": {
       "buildOptions": {
+        "debugType": "full",
         "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [

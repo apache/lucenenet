@@ -46,7 +46,7 @@
         "System.Xml": "4.0.0.0"
       },
       "buildOptions": {
-        "debugType": "portable",
+        "debugType": "full",
         "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [

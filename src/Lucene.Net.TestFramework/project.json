@@ -53,7 +53,7 @@
         "System.ServiceModel": "4.0.0.0"
       },
       "buildOptions": {
-        "debugType": "portable",
+        "debugType": "full",
         "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [

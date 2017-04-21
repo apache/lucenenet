@@ -38,7 +38,7 @@
         "Lucene.Net": "4.8.0"
       },
       "buildOptions": {
-        "debugType": "portable",
+        "debugType": "full",
         "define": [ "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [

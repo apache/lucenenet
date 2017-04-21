@@ -18,7 +18,6 @@
     "Lucene.Net.Highlighter": "4.8.0"
   },
   "buildOptions": {
-    "debugType": "portable",
     "compile": {
       "includeFiles": [
         "../CommonAssemblyInfo.cs",
@@ -48,6 +47,7 @@
     "netstandard1.5": {
       "imports": "dnxcore50",
       "buildOptions": {
+        "debugType": "portable",
         "define": [ "NETSTANDARD", "FEATURE_BREAKITERATOR" ]
       },
       "dependencies": {
@@ -56,6 +56,7 @@
     },
     "net451": {
       "buildOptions": {
+        "debugType": "full",
         "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ]
       }
     }

@@ -84,7 +84,7 @@
     },
     "net451": {
       "buildOptions": {
-        "debugType": "portable",
+        "debugType": "full",
         "define": [ "FEATURE_CONCURRENTMERGESCHEDULER", "FEATURE_SERIALIZABLE" ],
         "compile": {
           "includeFiles": [
