@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿#if !NETSTANDARD
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Collections;
@@ -1072,3 +1073,4 @@ namespace Lucene.Net.Support
         }
     }
 }
+#endif

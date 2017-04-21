@@ -1,6 +1,17 @@
 {
   "version": "4.8.0",
   "title": "Lucene.Net.Tests.Memory",
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    },
+    "embed": {
+      "includeFiles": [
+        "Index/Memory/testqueries.txt",
+        "Index/Memory/testqueries2.txt"
+      ]
+    }
+  },
   "dependencies": {
     "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
     "Lucene.Net.Memory": "4.8.0",
@@ -15,17 +26,8 @@
       "buildOptions": {
         "debugType": "portable",
         "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ],
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "Index/Memory/testqueries.txt",
-            "Index/Memory/testqueries2.txt"
           ]
         }
       },
@@ -39,18 +41,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_SERIALIZABLE" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "Index/Memory/testqueries.txt",
-            "Index/Memory/testqueries2.txt"
-          ]
-        }
+        "define": [ "FEATURE_SERIALIZABLE" ]
       }
     }
   },

@@ -11,24 +11,17 @@
     "repository": { "url": "https://github.com/apache/lucenenet" },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    }
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_TASKMERGESCHEDULER", "NETSTANDARD" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ],
-          "excludeFiles": [
-            "Index/ConcurrentMergeScheduler.cs",
-            "Support/Deflater.cs",
-            "Support/Inflater.cs",
-            "Support/SharpZipLib.cs",
-            "Support/StreamUtils.cs"
-          ]
-        }
+        "define": [ "FEATURE_TASKMERGESCHEDULER", "NETSTANDARD" ]
       },
       "dependencies": {
         "Microsoft.Extensions.DependencyModel": "1.0.0-rc2-final",
@@ -53,12 +46,7 @@
           "FEATURE_CONCURRENTMERGESCHEDULER",
           "FEATURE_SERIALIZABLE",
           "FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM"
-        ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        }
+        ]
       }
     }
   }

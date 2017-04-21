@@ -11,6 +11,17 @@
     "repository": { "url": "https://github.com/apache/lucenenet" },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    },
+    "embed": {
+      "includeFiles": [
+        "Pl/stemmer_20000.tbl",
+        "Pl/stopwords.txt"
+      ]
+    }
+  },
   "dependencies": {
     "Lucene.Net.Analysis.Common": "4.8.0"
   },
@@ -19,18 +30,7 @@
       "imports": "dnxcore50",
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "NETSTANDARD" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "Pl/stemmer_20000.tbl",
-            "Pl/stopwords.txt"
-          ]
-        }
+        "define": [ "NETSTANDARD" ]
       },
       "dependencies": {
         "NETStandard.Library": "1.6.0"
@@ -39,18 +39,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_SERIALIZABLE" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "Pl/stemmer_20000.tbl",
-            "Pl/stopwords.txt"
-          ]
-        }
+        "define": [ "FEATURE_SERIALIZABLE" ]
       }
     }
   }

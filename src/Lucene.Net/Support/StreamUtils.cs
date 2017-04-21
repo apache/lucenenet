@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿#if FEATURE_SERIALIZABLE
+using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Lucene.Net.Support
@@ -30,3 +31,4 @@ namespace Lucene.Net.Support
         }
     }
 }
+#endif

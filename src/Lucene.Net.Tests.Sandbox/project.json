@@ -1,6 +1,16 @@
 ﻿{
   "version": "4.8.0",
   "title": "Lucene.Net.Tests.Sandbox",
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    },
+    "embed": {
+      "includeFiles": [
+        "Queries/fuzzyTestData.txt"
+      ]
+    }
+  },
   "dependencies": {
     "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
     "Lucene.Net.Codecs": "4.8.0",
@@ -15,16 +25,8 @@
       "buildOptions": {
         "debugType": "portable",
         "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ],
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "Queries/fuzzyTestData.txt"
           ]
         }
       },
@@ -38,17 +40,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_SERIALIZABLE" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "Queries/fuzzyTestData.txt"
-          ]
-        }
+        "define": [ "FEATURE_SERIALIZABLE" ]
       }
     }
   },

@@ -11,12 +11,6 @@
     "repository": { "url": "https://github.com/apache/lucenenet" },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
   },
-  "dependencies": {
-    "icu.net": "54.1.1-alpha",
-    "Lucene.Net": "4.8.0",
-    "Lucene.Net.Analysis.Common": "4.8.0",
-    "Lucene.Net.Highlighter": "4.8.0"
-  },
   "buildOptions": {
     "compile": {
       "includeFiles": [
@@ -42,7 +36,12 @@
       "includeFiles": [ "Analysis/Th/stopwords.txt" ]
     }
   },
-
+  "dependencies": {
+    "icu.net": "54.1.1-alpha",
+    "Lucene.Net": "4.8.0",
+    "Lucene.Net.Analysis.Common": "4.8.0",
+    "Lucene.Net.Highlighter": "4.8.0"
+  },
   "frameworks": {
     "netstandard1.5": {
       "imports": "dnxcore50",

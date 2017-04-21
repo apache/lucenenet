@@ -11,6 +11,11 @@
     "repository": { "url": "https://github.com/apache/lucenenet" },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    }
+  },
   "dependencies": {
     "Lucene.Net.Analysis.Common": "4.8.0",
     "Lucene.Net.Misc": "4.8.0",
@@ -20,12 +25,7 @@
     "netstandard1.5": {
       "imports": "dnxcore50",
       "buildOptions": {
-        "debugType": "portable",
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        }
+        "debugType": "portable"
       },
       "dependencies": {
         "NETStandard.Library": "1.6.0"
@@ -34,12 +34,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_SERIALIZABLE" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        }
+        "define": [ "FEATURE_SERIALIZABLE" ]
       }
     }
   }

@@ -1,6 +1,11 @@
 ﻿{
   "version": "4.8.0",
   "title": "Lucene.Net.Tests.Classification",
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    }
+  },
   "dependencies": {
     "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
     "Lucene.Net.Facet": "4.8.0",
@@ -16,9 +21,6 @@
         "debugType": "portable",
         "define": [ "NETSTANDARD" ],
         "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ],
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
           ]
@@ -38,12 +40,7 @@
           "FEATURE_SERIALIZABLE",
           "FEATURE_THREAD_PRIORITY",
           "FEATURE_THREADINTERRUPTEDEXCEPTION"
-        ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        }
+        ]
       }
     }
   },

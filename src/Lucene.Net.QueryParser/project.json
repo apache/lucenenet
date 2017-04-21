@@ -11,6 +11,11 @@
     "repository": { "url": "https://github.com/apache/lucenenet" },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    }
+  },
   "dependencies": {
     "Lucene.Net.Analysis.Common": "4.8.0",
     "Lucene.Net.Queries": "4.8.0",
@@ -22,9 +27,6 @@
       "buildOptions": {
         "debugType": "portable",
         "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ],
           "excludeFiles": [
             "Xml/QueryTemplateManager.cs"
           ]
@@ -38,12 +40,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_SERIALIZABLE", "FEATURE_CLONEABLE" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        }
+        "define": [ "FEATURE_SERIALIZABLE", "FEATURE_CLONEABLE" ]
       },
       "frameworkAssemblies": {
         "System.Xml": "4.0.0.0"

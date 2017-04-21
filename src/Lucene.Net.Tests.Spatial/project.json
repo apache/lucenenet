@@ -1,6 +1,27 @@
 {
   "version": "4.8.0",
   "title": "Lucene.Net.Tests.Spatial",
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    },
+    "embed": {
+      "includeFiles": [
+        "Test-Files/cities-Intersects-BBox.txt",
+        "Test-Files/Data/countries-bbox.txt",
+        "Test-Files/Data/countries-poly.txt",
+        "Test-Files/Data/geonames-IE.txt",
+        "Test-Files/Data/LUCENE-4464.txt",
+        "Test-Files/Data/simple-bbox.txt",
+        "Test-Files/Data/states-bbox.txt",
+        "Test-Files/Data/states-poly.txt",
+        "Test-Files/Data/world-cities-points.txt",
+        "Test-Files/simple-Queries-BBox.txt",
+        "Test-Files/states-Intersects-BBox.txt",
+        "Test-Files/states-IsWithin-BBox.txt"
+      ]
+    }
+  },
   "dependencies": {
     "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
     "Lucene.Net.Spatial": "4.8.0",
@@ -16,27 +37,8 @@
         "debugType": "portable",
         "define": [ "NETSTANDARD" ],
         "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ],
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "Test-Files/cities-Intersects-BBox.txt",
-            "Test-Files/Data/countries-bbox.txt",
-            "Test-Files/Data/countries-poly.txt",
-            "Test-Files/Data/geonames-IE.txt",
-            "Test-Files/Data/LUCENE-4464.txt",
-            "Test-Files/Data/simple-bbox.txt",
-            "Test-Files/Data/states-bbox.txt",
-            "Test-Files/Data/states-poly.txt",
-            "Test-Files/Data/world-cities-points.txt",
-            "Test-Files/simple-Queries-BBox.txt",
-            "Test-Files/states-Intersects-BBox.txt",
-            "Test-Files/states-IsWithin-BBox.txt"
           ]
         }
       },
@@ -50,28 +52,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_SERIALIZABLE" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "Test-Files/cities-Intersects-BBox.txt",
-            "Test-Files/Data/countries-bbox.txt",
-            "Test-Files/Data/countries-poly.txt",
-            "Test-Files/Data/geonames-IE.txt",
-            "Test-Files/Data/LUCENE-4464.txt",
-            "Test-Files/Data/simple-bbox.txt",
-            "Test-Files/Data/states-bbox.txt",
-            "Test-Files/Data/states-poly.txt",
-            "Test-Files/Data/world-cities-points.txt",
-            "Test-Files/simple-Queries-BBox.txt",
-            "Test-Files/states-Intersects-BBox.txt",
-            "Test-Files/states-IsWithin-BBox.txt"
-          ]
-        }
+        "define": [ "FEATURE_SERIALIZABLE" ]
       },
       "dependencies": {
         "Spatial4n.Core.NTS": "0.4.1.1-beta"

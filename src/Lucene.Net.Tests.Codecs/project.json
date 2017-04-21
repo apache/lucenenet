@@ -1,6 +1,11 @@
 ﻿{
   "version": "4.8.0",
   "title": "Lucene.Net.Tests.Codecs",
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    }
+  },
   "dependencies": {
     "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
     "Lucene.Net.Analysis.Common": "4.8.0",
@@ -16,9 +21,6 @@
         "debugType": "portable",
         "define": [ "NETSTANDARD" ],
         "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ],
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
           ]
@@ -34,12 +36,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_SERIALIZABLE" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        }
+        "define": [ "FEATURE_SERIALIZABLE" ]
       }
     }
   },

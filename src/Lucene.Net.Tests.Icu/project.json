@@ -1,16 +1,6 @@
 ﻿{
   "version": "4.8.0",
   "title": "Lucene.Net.Tests.Icu",
-  "dependencies": {
-    "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
-    "Lucene.Net": "4.8.0",
-    "Lucene.Net.Analysis.Common": "4.8.0",
-    "Lucene.Net.Highlighter": "4.8.0",
-    "Lucene.Net.Icu": "4.8.0",
-    "Lucene.Net.TestFramework": "4.8.0",
-    "Lucene.Net.Tests.Analysis.Common": "4.8.0",
-    "NUnit": "3.5.0"
-  },
   "buildOptions": {
     "compile": {
       "includeFiles": [
@@ -32,6 +22,16 @@
         "Search/PostingsHighlight/CambridgeMA.utf8"
       ]
     }
+  },
+  "dependencies": {
+    "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
+    "Lucene.Net": "4.8.0",
+    "Lucene.Net.Analysis.Common": "4.8.0",
+    "Lucene.Net.Highlighter": "4.8.0",
+    "Lucene.Net.Icu": "4.8.0",
+    "Lucene.Net.TestFramework": "4.8.0",
+    "Lucene.Net.Tests.Analysis.Common": "4.8.0",
+    "NUnit": "3.5.0"
   },
   "testRunner": "nunit-teamcity",
   "frameworks": {

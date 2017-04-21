@@ -1,3 +1,4 @@
+#if NET35
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -49,3 +50,4 @@ namespace Lucene.Net.Support
         }
     }
 }
+#endif

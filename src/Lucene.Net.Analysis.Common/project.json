@@ -11,6 +11,22 @@
     "repository": { "url": "https://github.com/apache/lucenenet" },
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
   },
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+    },
+    "embed": {
+      "include": [
+        "Analysis/**/stopwords.txt",
+        "Analysis/Snowball/*_stop.txt"
+      ],
+      "includeFiles": [
+        "Analysis/Gl/galician.rslp",
+        "Analysis/Pt/portuguese.rslp",
+        "Analysis/Compound/Hyphenation/hyphenation.dtd"
+      ]
+    }
+  },
   "dependencies": {
     "Lucene.Net": "4.8.0"
   },
@@ -22,23 +38,7 @@
       },
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "NETSTANDARD" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        },
-        "embed": {
-          "include": [
-            "Analysis/**/stopwords.txt",
-            "Analysis/Snowball/*_stop.txt"
-          ],
-          "includeFiles": [
-            "Analysis/Gl/galician.rslp",
-            "Analysis/Pt/portuguese.rslp",
-            "Analysis/Compound/Hyphenation/hyphenation.dtd"
-          ]
-        }
+        "define": [ "NETSTANDARD" ]
       }
     },
     "net451": {
@@ -47,23 +47,7 @@
       },
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ],
-        "compile": {
-          "includeFiles": [
-            "../CommonAssemblyInfo.cs"
-          ]
-        },
-        "embed": {
-          "include": [
-            "Analysis/**/stopwords.txt",
-            "Analysis/Snowball/*_stop.txt"
-          ],
-          "includeFiles": [
-            "Analysis/Gl/galician.rslp",
-            "Analysis/Pt/portuguese.rslp",
-            "Analysis/Compound/Hyphenation/hyphenation.dtd"
-          ]
-        }
+        "define": [ "FEATURE_CLONEABLE", "FEATURE_DTD_PROCESSING", "FEATURE_SERIALIZABLE" ]
       }
     }
   }
