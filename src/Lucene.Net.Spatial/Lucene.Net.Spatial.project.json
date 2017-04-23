@@ -5,7 +5,7 @@
   "dependencies": {
     "GeoAPI": "1.7.4",
     "NetTopologySuite": "1.14",
-    "Spatial4n.Core": "0.4.1.1-beta"
+    "Spatial4n.Core": "0.4.1-beta00001"
   },
   "frameworks": {
     "net451": {}
