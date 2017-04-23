@@ -61,7 +61,6 @@
         }
       },
       "dependencies": {
-        "icu.net": "54.1.1-alpha",
         "Microsoft.NETCore.App": {
           "type": "platform",
           "version": "1.0.1"
@@ -73,10 +72,6 @@
       "buildOptions": {
         "debugType": "full",
         "define": [ "FEATURE_SERIALIZABLE" ]
-      },
-      "dependencies": {
-        "icu.net": "2.1.1-beta0005",
-        "Icu4c.Win.Full.Lib": "56.1.21"
       }
     }
   },
