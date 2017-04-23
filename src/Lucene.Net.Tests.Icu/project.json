@@ -40,7 +40,7 @@
       "imports": "dnxcore50",
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "FEATURE_BREAKITERATOR" ],
+        "define": [ "NETSTANDARD" ],
         "compile": {
           "includeFiles": [
             "../CommonAssemblyInfo.cs",
