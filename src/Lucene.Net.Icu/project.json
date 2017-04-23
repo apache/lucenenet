@@ -37,7 +37,6 @@
     }
   },
   "dependencies": {
-    "icu.net": "54.1.1-alpha",
     "Lucene.Net": "4.8.0",
     "Lucene.Net.Analysis.Common": "4.8.0",
     "Lucene.Net.Highlighter": "4.8.0"
@@ -50,6 +49,7 @@
         "define": [ "NETSTANDARD", "FEATURE_BREAKITERATOR" ]
       },
       "dependencies": {
+        "icu.net": "54.1.1-alpha",
         "NETStandard.Library": "1.6.0"
       }
     },
@@ -57,6 +57,10 @@
       "buildOptions": {
         "debugType": "full",
         "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ]
+      },
+      "dependencies": {
+        "icu.net": "2.1.1-beta0005",
+        "Icu4c.Win.Full.Lib": "56.1.21"
       }
     }
   }
