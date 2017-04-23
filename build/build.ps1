@@ -147,6 +147,10 @@ task Test -description "This task runs the tests" {
 			Write-Host $testExpression -ForegroundColor Magenta
 
 			Invoke-Expression $testExpression
+			# fail the build on negative exit codes (NUnit errors - if positive it is a test count or, if 1, it could be a dotnet error)
+			if ($LASTEXITCODE -lt 0) {
+				throw "Test execution failed"
+			}
 		}
 	}
 }
