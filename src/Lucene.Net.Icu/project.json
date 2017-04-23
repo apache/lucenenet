@@ -12,6 +12,7 @@
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query" ]
   },
   "buildOptions": {
+    "define": [ "FEATURE_BREAKITERATOR" ],
     "compile": {
       "includeFiles": [
         "../CommonAssemblyInfo.cs",
@@ -46,7 +47,7 @@
       "imports": "dnxcore50",
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "NETSTANDARD", "FEATURE_BREAKITERATOR" ]
+        "define": [ "NETSTANDARD" ]
       },
       "dependencies": {
         "icu.net": "54.1.1-alpha",
@@ -56,7 +57,7 @@
     "net451": {
       "buildOptions": {
         "debugType": "full",
-        "define": [ "FEATURE_BREAKITERATOR", "FEATURE_SERIALIZABLE" ]
+        "define": [ "FEATURE_SERIALIZABLE" ]
       },
       "dependencies": {
         "icu.net": "2.1.1-beta0005",

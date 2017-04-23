@@ -179,7 +179,7 @@ namespace Lucene.Net.Analysis.Th
         /// LUCENENET: Tests scenario outlined in <see cref="ThaiWordBreaker"/>
         /// </summary>
         [Test][LuceneNetSpecific]
-        public void TestNumeralBreaking()
+        public virtual void TestNumeralBreaking()
         {
             ThaiAnalyzer analyzer = new ThaiAnalyzer(TEST_VERSION_CURRENT, CharArraySet.EMPTY_SET);
             AssertAnalyzesTo(analyzer, "๑๒๓456", new String[] { "๑๒๓456" });
