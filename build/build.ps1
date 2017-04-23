@@ -125,7 +125,9 @@ task Test -description "This task runs the tests" {
 			Write-Host "Directory: $projectDirectory" -ForegroundColor Green
 
 			if ($framework.StartsWith("netcore")) {
-				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --framework $framework --no-build"
+				#$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --framework $framework --no-build"
+				# HACK: taking off the no-build option because this command isn't finding the dependencies when running tests and dotnet restore doesn't help
+				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --framework $framework"
 			} else {
 				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
 
