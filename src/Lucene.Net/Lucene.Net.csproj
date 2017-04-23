@@ -42,8 +42,6 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Lucene.Net.Search.RemoteSearchable.config" />
-    <None Include="Lucene.Net.Search.TestSort.config" />
     <None Include="Lucene.Net.project.json" />
   </ItemGroup>
   <ItemGroup>
