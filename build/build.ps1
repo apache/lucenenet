@@ -38,7 +38,7 @@ task Init -description "This task makes sure the build environment is correctly 
 	& where.exe dotnet.exe
 
 	if ($LASTEXITCODE -ne 0) {
-		Write-Error "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK."
+		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK."
 	}
 
 	#Update TeamCity or MyGet with packageVersion
@@ -59,11 +59,6 @@ task Init -description "This task makes sure the build environment is correctly 
 	Write-Host "Configuration: $configuration"
 
 	Ensure-Directory-Exists "$release_directory"
-
-	#ensure we have the latest version of NuGet
-	exec {
-		&"$tools_directory\nuget\nuget.exe" update -self
-	} -ErrorAction SilentlyContinue
 }
 
 task Compile -depends Clean, Init -description "This task compiles the solution" {
@@ -74,11 +69,11 @@ task Compile -depends Clean, Init -description "This task compiles the solution"
 
 		Backup-Files $projects
 		Prepare-For-Build $projects
-		& dotnet.exe restore $base_directory
+		Exec {
+			& dotnet.exe restore $base_directory
+		}
 
 		Build-Assemblies $projects
-
-		Start-Sleep 10
 
 		$success = $true
 	} finally {
@@ -271,7 +266,9 @@ using System.Reflection;
 
 function Build-Assemblies([string[]]$projects) {
 	foreach ($project in $projects) {
-		& dotnet.exe build $project --configuration $configuration
+		Exec {
+			& dotnet.exe build $project --configuration $configuration
+		}
 	}
 }
 
@@ -279,7 +276,9 @@ function Pack-Assemblies([string[]]$projects) {
 	Ensure-Directory-Exists $nuget_package_directory
 	foreach ($project in $projects) {
 		Write-Host "Creating NuGet package for $project..." -ForegroundColor Magenta
-		& dotnet.exe pack $project --configuration $Configuration --output $nuget_package_directory --no-build
+		Exec {
+			& dotnet.exe pack $project --configuration $Configuration --output $nuget_package_directory --no-build
+		}
 	}
 }
 
