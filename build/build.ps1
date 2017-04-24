@@ -69,6 +69,7 @@ task Compile -depends Clean, Init -description "This task compiles the solution"
 
 		Backup-Files $projects
 		Prepare-For-Build $projects
+
 		Exec {
 			& dotnet.exe restore $base_directory
 		}
@@ -222,6 +223,13 @@ function Prepare-For-Build([string[]]$projects) {
 
 		$json = (Get-Content $project -Raw) | ConvertFrom-Json
 		$json.version = $PackageVersion
+		if (!$project.Contains("Test")) {
+			if ($json.buildOptions.xmlDoc -eq $null) {
+				$json.buildOptions | Add-Member -Name "xmlDoc" -Value true -MemberType NoteProperty
+			} else {
+				$json.buildOptions | % {$_.xmlDoc = true}
+			}
+		}
 		$json | ConvertTo-Json -depth 100 | Out-File $project -encoding UTF8 -Force
 	}
 }
