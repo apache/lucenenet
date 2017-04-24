@@ -1,10 +1,11 @@
-﻿using System;
-using System.Text;
-using NUnit.Framework;
+﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -51,39 +52,21 @@ namespace Lucene.Net.Analysis.Util
 
         private void assertClasspathDelegation(IResourceLoader rl)
         {
-            const string LuceneNetAnalysisCommon = "Lucene.Net.Analysis.Common";
-            var assemblyDirectory = System.IO.Path.GetDirectoryName(typeof(TestFilesystemResourceLoader).GetTypeInfo().Assembly.Location);
-            var current = new DirectoryInfo(assemblyDirectory);
-
-            DirectoryInfo analysisCommonFolder = null;
-
-            // LUCENENET: Searching upwards for the parent rather than using a
-            // relative path because in .NET Core, the base directory is not
-            // always under bin\Debug\. The program may be running from
-            // bin\Debug\netcoreapp1.0\win7-x64\.
-            while (current != null)
+            //var englishStopText = System.IO.Path.Combine(analysisCommonFolder.FullName, @"Analysis\Snowball\english_stop.txt");
+            // LUCENENET specific - rather than being completely dependent on the location of the file
+            // in the file system, we use the embedded resource to write the file to a known location
+            // before passing it to our resource loader.
+            string englishStopFile = "english_stop.txt";
+            var file = CreateTempFile(System.IO.Path.GetFileNameWithoutExtension(englishStopFile), System.IO.Path.GetExtension(englishStopFile));
+            using (var stream = typeof(Snowball.SnowballFilter).GetTypeInfo().Assembly.FindAndGetManifestResourceStream(typeof(Snowball.SnowballFilter), englishStopFile))
             {
-                var matching = current.GetDirectories(LuceneNetAnalysisCommon, SearchOption.TopDirectoryOnly);
-
-                if (matching == null || matching.Length == 0)
+                using (var outputStream = new FileStream(file.FullName, FileMode.OpenOrCreate, FileAccess.Write))
                 {
-                    current = Directory.GetParent(current.FullName);
-                }
-                else
-                {
-                    analysisCommonFolder = matching.First();
-                    break;
+                    stream.CopyTo(outputStream);
                 }
             }
-
-            if (analysisCommonFolder == null)
-            {
-                throw new InvalidOperationException("Should have been able to find " + LuceneNetAnalysisCommon + " as a parent of " + typeof(TestFilesystemResourceLoader).GetTypeInfo().Assembly.Location);
-            }
-
-            var englishStopText = System.IO.Path.Combine(analysisCommonFolder.FullName, @"Analysis\Snowball\english_stop.txt");
             // try a stopwords file from classpath
-            CharArraySet set = WordlistLoader.GetSnowballWordSet(new System.IO.StreamReader(rl.OpenResource(englishStopText), Encoding.UTF8), TEST_VERSION_CURRENT);
+            CharArraySet set = WordlistLoader.GetSnowballWordSet(new System.IO.StreamReader(rl.OpenResource(file.FullName), Encoding.UTF8), TEST_VERSION_CURRENT);
             assertTrue(set.contains("you"));
             // try to load a class; we use string comparison because classloader may be different...
             assertEquals("Lucene.Net.Analysis.Util.RollingCharBuffer", rl.NewInstance<object>("Lucene.Net.Analysis.Util.RollingCharBuffer").ToString());
