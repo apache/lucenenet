@@ -33,8 +33,6 @@ PM> Install-Package Lucene.Net
 
 Lucene.Net is now divided into several sub-packages. See the [complete list of Lucene.Net sub-packages on NuGet.org](https://www.nuget.org/packages?q=lucene.net)
 
-Our [continuous integration feed](https://myget.org/gallery/lucene-net-ci) is available on MyGet, for those who want to live on the edge.
-
 ## Documentation
 
 [Lucene.Net WIKI](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.Net)
