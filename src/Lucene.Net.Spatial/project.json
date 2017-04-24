@@ -20,10 +20,10 @@
     "Lucene.Net.Queries": "4.8.0",
     "GeoAPI": "1.7.4",
     "NetTopologySuite": "1.14",
-    "Spatial4n.Core": "0.4.1-beta00001"
+    "Spatial4n.Core": "0.4.1-beta00002"
   },
   "frameworks": {
-    "netstandard1.6": {
+    "netstandard1.5": {
       "imports": [ "dnxcore50", "portable-net403+sl5+win8+wp8+wpa81" ],
       "buildOptions": {
         "debugType": "portable",
