@@ -13,8 +13,11 @@ properties {
 	[string]$version          = Get-Version
 	[string]$configuration    = "Release"
 	[bool]$backup_files       = $true
+	[bool]$prepareForBuild    = $true
+	[bool]$generateBuildBat   = $false
 
 	[string]$common_assembly_info = "$base_directory\src\CommonAssemblyInfo.cs"
+	[string]$build_bat = "$base_directory\build.bat"
 	[string]$copyright_year = [DateTime]::Today.Year.ToString() #Get the current year from the system
 	[string]$copyright = "Copyright " + $([char]0x00A9) + " 2006 - $copyright_year The Apache Software Foundation"
 	[string]$company_name = "The Apache Software Foundation"
@@ -68,7 +71,9 @@ task Compile -depends Clean, Init -description "This task compiles the solution"
 		popd
 
 		Backup-Files $projects
-		Prepare-For-Build $projects
+		if ($prepareForBuild -eq $true) {
+			Prepare-For-Build $projects
+		}
 
 		Exec {
 			& dotnet.exe restore $base_directory
@@ -232,6 +237,11 @@ function Prepare-For-Build([string[]]$projects) {
 		}
 		$json | ConvertTo-Json -depth 100 | Out-File $project -encoding UTF8 -Force
 	}
+
+	if ($generateBuildBat -eq $true) {
+		Backup-File $build_bat
+		Generate-Build-Bat $build_bat
+	}
 }
 
 function Update-Constants-Version([string]$version) {
@@ -274,6 +284,20 @@ using System.Reflection;
 
 	Write-Host "Generating assembly info file: $file"
 	Out-File -filePath $file -encoding UTF8 -inputObject $asmInfo
+}
+
+function Generate-Build-Bat {
+param(
+	[string]$file = $(throw "file is a required parameter.")
+)
+  $buildBat = "
+powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -properties @{prepareForBuild='false';backup_files='false'} }""
+"
+	$dir = [System.IO.Path]::GetDirectoryName($file)
+	Ensure-Directory-Exists $dir
+
+	Write-Host "Generating build.bat file: $file"
+	Out-File -filePath $file -encoding UTF8 -inputObject $buildBat -Force
 }
 
 function Build-Assemblies([string[]]$projects) {
