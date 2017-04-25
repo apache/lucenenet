@@ -28,7 +28,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support 
 {
     /// <summary>
     /// An unbounded priority queue based on a priority heap.
