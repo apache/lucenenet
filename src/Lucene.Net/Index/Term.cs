@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Text;
 
 namespace Lucene.Net.Index
 {
@@ -94,10 +95,11 @@ namespace Lucene.Net.Index
         /// </summary>
         public static string ToString(BytesRef termText)
         {
+            // the term might not be text, but usually is. so we make a best effort
+            Encoding decoder = new UTF8Encoding(false, true);
             try
             {
-                // LUCENENET specific: termText already has this handy UTF8ToString method, so we're using that instead of Encoding.UTF8.GetBytes()
-                return termText.Utf8ToString();
+                return decoder.GetString(termText.Bytes, termText.Offset, termText.Length);
             }
             catch
             {
