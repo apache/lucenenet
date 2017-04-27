@@ -485,8 +485,14 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========
 
-The code in src/Lucene.Net/Support/C5.Suppport.cs, src/Lucene.Net/Support/TreeDictionary.cs, 
-and src/Lucene.Net/Support/TreeSet.cs falls under the following license:
+The code in 
+src/Lucene.Net/Support/C5.Suppport.cs
+src/Lucene.Net/Support/TreeDictionary.cs
+src/Lucene.Net/Support/TreeSet.cs
+src/Lucene.Net.Tests/Support/C5
+src/Lucene.Net.Tests/Support/TestTreeDictionary.cs
+src/Lucene.Net.Tests/Support/TestTreeSet.cs
+falls under the following license:
 
  Copyright (c) 2003-2016 Niels Kokholm, Peter Sestoft, and Rasmus Lystrøm
  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -507,47 +513,7 @@ and src/Lucene.Net/Support/TreeSet.cs falls under the following license:
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  
-
- 
-Some code in 
-src/Lucene.Net/Support/Buffer.cs
-src/Lucene.Net/Support/BufferExceptions.cs
-src/Lucene.Net/Support/ByteBuffer.cs
-src/Lucene.Net/Support/ByteOrder.cs
-src/Lucene.Net/Support/DataInputStream.cs
-src/Lucene.Net/Support/DataOutputStream.cs
-src/Lucene.Net/Support/ICallable.cs
-src/Lucene.Net/Support/IDataInput.cs
-src/Lucene.Net/Support/IDataOutput.cs
-src/Lucene.Net/Support/LongBuffer.cs
-src/Lucene.Net/Support/PriorityQueue.cs
-src/Lucene.Net.Analysis.Common/Util/BufferedCharFilter.cs 
-was derived from the Java Development Kit (JDK) and falls under the following license:
-
-Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
-DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
-
-This code is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License version 2 only, as
-published by the Free Software Foundation.  Oracle designates this
-particular file as subject to the "Classpath" exception as provided
-by Oracle in the LICENSE file that accompanied this code.
-
-This code is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-version 2 for more details (a copy is included in the LICENSE file that
-accompanied this code).
-
-You should have received a copy of the GNU General Public License version
-2 along with this work; if not, write to the Free Software Foundation,
-Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
-
-Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
-or visit www.oracle.com if you need additional information or have any
-questions.
-
-
+========
 
 The code in src/Lucene.Net/Support/LurchTable.cs falls under the following license:
 
@@ -564,7 +530,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-
+========
 
 Some code in src/Lucene.Net/Support/LimitedConcurrencyLevelTaskScheduler.cs 
 was derived from the MSDN web site and falls under the following license:
@@ -617,6 +583,7 @@ Windows operating system product, Microsoft run-time technology (such as the .NE
 Framework or Silverlight), or Microsoft application platform (such as Microsoft 
 Office or Microsoft Dynamics).
 
+========
 
 Some code in src/Lucene.Net/Support/LinkedHashMap.cs falls under the following license:
 
@@ -642,7 +609,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
-Some code in src/Lucene.Net.Analysis.Stempel/Egothor.Stemmer falls
+========
+
+Some code in src/Lucene.Net.Analysis.Stempel/Egothor.Stemmer and 
+src/Lucene.Net.Tests.Analysis.Stempel/Egothor.Stemmer falls
 under the following license
 
                     Egothor Software License version 1.00
@@ -682,7 +652,7 @@ under the following license
    "This product includes software developed by the Egothor Project.
     http://egothor.sf.net/"
 
-   THIS  SOFTWARE  IS  PROVIDED  ``AS  IS''  AND ANY EXPRESSED OR IMPLIED
+   THIS  SOFTWARE  IS  PROVIDED  "AS  IS"  AND  ANY  EXPRESSED OR IMPLIED
    WARRANTIES,  INCLUDING,  BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
    MERCHANTABILITY  AND  FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
    IN  NO  EVENT  SHALL THE EGOTHOR PROJECT OR ITS CONTRIBUTORS BE LIABLE
@@ -698,11 +668,15 @@ under the following license
    individuals  on  behalf  of  the  Egothor  Project  and was originally
    created by Leo Galambos (Leo.G@seznam.cz).
 
-The code RectangularArrays class falls under the following license
+========
+   
+The code RectangularArrays classes falls under the following license
 
  Copyright © 2007 - 2013 Tangible Software Solutions Inc.
  this class can be used by anyone provided that the copyright notice remains intact.
 
+========
+ 
 src/Lucene.Net.Suggest/Suggest/Jaspell/JaspellTernarySearchTrie.cs
 falls under the following license
 
@@ -732,3 +706,96 @@ falls under the following license
  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+ 
+The code in build/dotnet-install.ps1 falls under the following license:
+
+The MIT License (MIT)
+
+Copyright (c) 2015 .NET Foundation
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The code in build/psake.cmd, build/psake.ps1, build/psake.psd1, and build/psake.psm1
+falls under the following license:
+
+psake
+Copyright (c) 2012-13 James Kovacs, Damian Hickey and Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+
+=============================
+
+Some code in 
+src/Lucene.Net/Support/Buffer.cs
+src/Lucene.Net/Support/BufferExceptions.cs
+src/Lucene.Net/Support/ByteBuffer.cs
+src/Lucene.Net/Support/ByteOrder.cs
+src/Lucene.Net/Support/DataInputStream.cs
+src/Lucene.Net/Support/DataOutputStream.cs
+src/Lucene.Net/Support/ICallable.cs
+src/Lucene.Net/Support/IDataInput.cs
+src/Lucene.Net/Support/IDataOutput.cs
+src/Lucene.Net/Support/LongBuffer.cs
+src/Lucene.Net/Support/PriorityQueue.cs
+src/Lucene.Net.Analysis.Common/Util/BufferedCharFilter.cs 
+was derived from the Java Development Kit (JDK) and falls under the following license:
+
+Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
+DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+
+This code is free software; you can redistribute it and/or modify it
+under the terms of the GNU General Public License version 2 only, as
+published by the Free Software Foundation.  Oracle designates this
+particular file as subject to the "Classpath" exception as provided
+by Oracle in the LICENSE file that accompanied this code.
+
+This code is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+version 2 for more details (a copy is included in the LICENSE file that
+accompanied this code).
+
+You should have received a copy of the GNU General Public License version
+2 along with this work; if not, write to the Free Software Foundation,
+Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+
+Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
+or visit www.oracle.com if you need additional information or have any
+questions.
