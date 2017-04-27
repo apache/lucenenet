@@ -39,9 +39,24 @@ task Clean -description "This task cleans up the build directory" {
 
 task Init -description "This task makes sure the build environment is correctly setup" {
 	& where.exe dotnet.exe
+	$sdkVersion = ""
+
+	if ($LASTEXITCODE -eq 0) {
+		$sdkVersion = ((& dotnet.exe --version) | Out-String).Trim()
+	}
+	
+	Write-Host "Current SDK version: $sdkVersion" -ForegroundColor Yellow
+	if (!$sdkVersion.Equals("1.0.0-preview2-1-003177")) {
+		Write-Host "Require SDK version 1.0.0-preview2-1-003177, installing..." -ForegroundColor Red
+		#Install the correct version of the .NET SDK for this build
+	    Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.0-preview2-1-003177"
+	}
+
+	# Safety check - this should never happen
+	& where.exe dotnet.exe
 
 	if ($LASTEXITCODE -ne 0) {
-		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK."
+		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK version 1.0.0-preview2-1-003177."
 	}
 
 	#Update TeamCity or MyGet with packageVersion
@@ -205,8 +220,13 @@ function Get-Version() {
 function Prepare-For-Build([string[]]$projects) {
 	Backup-File $common_assembly_info 
 	
-	$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
-	$pv = "$packageVersion commit:[$gitCommit]"
+	$pv = $packageVersion
+	#check for presense of Git
+	& where.exe git.exe
+	if ($LASTEXITCODE -eq 0) {
+		$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
+		$pv = "$packageVersion commit:[$gitCommit]"
+	}
 
 	Generate-Assembly-Info `
 		-product $product_name `
