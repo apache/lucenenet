@@ -282,7 +282,7 @@ namespace Lucene.Net
 
         public static int read(this TextReader reader, char[] buffer)
         {
-            int bytesRead = reader.Read(buffer, 0, buffer.Length - 1);
+            int bytesRead = reader.Read(buffer, 0, buffer.Length);
             // Convert the .NET 0 based bytes to the Java -1 behavior when reading is done.
             return bytesRead == 0 ? -1 : bytesRead;
         }

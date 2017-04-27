@@ -58,7 +58,7 @@ namespace Lucene.Net.Analysis.CharFilters
         {
             //LUCENENET support to reset the reader.
             _input = GetBufferedReader(@in);
-            _input.Mark(BufferedCharFilter.defaultCharBufferSize);
+            _input.Mark(BufferedCharFilter.DEFAULT_CHAR_BUFFER_SIZE);
             buffer.Reset(_input);
             //buffer.Reset(@in);
 

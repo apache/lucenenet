@@ -1,27 +1,4 @@
-﻿/*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
- *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
- * or visit www.oracle.com if you need additional information or have any
- * questions.
- */
+﻿// This class was sourced from the Apache Harmony project's BufferedReader
 
 using Lucene.Net.Analysis.CharFilters;
 using System;
@@ -31,38 +8,66 @@ using System.Threading.Tasks;
 
 namespace Lucene.Net.Analysis.Util
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     /// <summary>
     /// LUCENENET specific class to mimic Java's BufferedReader (that is, a reader that is seekable) 
     /// so it supports Mark() and Reset() (which are part of the Java Reader class), but also 
     /// provide the Correct() method of BaseCharFilter.
-    /// 
-    /// At some point we might be able to make some readers accept streams (that are seekable) 
-    /// so this functionality can be .NET-ified.
     /// </summary>
     public class BufferedCharFilter : BaseCharFilter
     {
+        public const int DEFAULT_CHAR_BUFFER_SIZE = 8192;
+
+        /// <summary>
+        /// The object used to synchronize access to the reader.
+        /// </summary>
+        protected object m_lock = new object();
+
         private TextReader @in;
 
-        private char[] cb;
-        private int nChars, nextChar;
-
-        private static readonly int INVALIDATED = -2;
-        private static readonly int UNMARKED = -1;
-        private int markedChar = UNMARKED;
-        private int readAheadLimit = 0; /* Valid only when markedChar > 0 */
-
         /// <summary>
-        /// If the next character is a line feed, skip it
+        /// The characters that can be read and refilled in bulk. We maintain three
+        /// indices into this buffer:
+        /// <code>
+        /// { X X X X X X X X X X X X - - }
+        /// ^     ^             ^
+        /// |     |             |
+        /// mark   pos end
+        /// </code>
+        /// Pos points to the next readable character.End is one greater than the
+        /// last readable character.When<c> pos == end</c>, the buffer is empty and
+        /// must be <see cref="FillBuf()"/> before characters can be read.
+        ///
+        /// <para/> Mark is the value pos will be set to on calls to 
+        /// <see cref="Reset()"/>. Its value is in the range <c>[0...pos]</c>. If the mark is <c>-1</c>, the
+        /// buffer cannot be reset.
+        /// 
+        /// <para/> MarkLimit limits the distance between the mark and the pos.When this
+        /// limit is exceeded, <see cref="Reset()"/> is permitted (but not required) to
+        /// throw an exception. For shorter distances, <see cref="Reset()"/> shall not throw
+        /// (unless the reader is closed).
         /// </summary>
-        private bool skipLF = false;
-
-        /// <summary>
-        /// The skipLF flag when the mark was set
-        /// </summary>
-        private bool markedSkipLF = false;
-
-        internal static int defaultCharBufferSize = 8192;
-        private static int defaultExpectedLineLength = 80;
+        private char[] buf;
+        private int pos;
+        private int end;
+        private int mark = -1;
+        private int markLimit = -1;
 
 #if !NETSTANDARD
         /// <summary>
@@ -72,27 +77,116 @@ namespace Lucene.Net.Analysis.Util
 #endif
 
         /// <summary>
-        /// Creates a buffering character-input stream that uses an input buffer of the specified size.
-        /// </summary>
-        /// <param name="in">A TextReader</param>
-        /// <param name="sz">Input-buffer size</param>
-        public BufferedCharFilter(TextReader @in, int sz)
-            : base(@in)
-        {
-            if (sz <= 0)
-                throw new ArgumentOutOfRangeException("Buffer size <= 0");
-            this.@in = @in;
-            cb = new char[sz];
-            nextChar = nChars = 0;
-        }
-
-        /// <summary>
         /// Creates a buffering character-input stream that uses a default-sized input buffer.
         /// </summary>
         /// <param name="in">A TextReader</param>
         public BufferedCharFilter(TextReader @in)
-            : this(@in, defaultCharBufferSize)
+            : base(@in)
         {
+            this.@in = @in;
+            buf = new char[DEFAULT_CHAR_BUFFER_SIZE];
+        }
+
+        /// <summary>
+        /// Creates a buffering character-input stream that uses an input buffer of the specified size.
+        /// </summary>
+        /// <param name="in">A TextReader</param>
+        /// <param name="size">Input-buffer size</param>
+        public BufferedCharFilter(TextReader @in, int size)
+            : base(@in)
+        {
+            if (size <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Buffer size <= 0");
+            }
+            this.@in = @in;
+            buf = new char[size];
+        }
+
+        /// <summary>
+        /// Disposes this reader. This implementation closes the buffered source reader
+        /// and releases the buffer. Nothing is done if this reader has already been
+        /// disposed.
+        /// </summary>
+        /// <param name="disposing"></param>
+        /// <exception cref="IOException">if an error occurs while closing this reader.</exception>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+#if !NETSTANDARD
+                this.isDisposing = true;
+#endif
+                lock (m_lock)
+                {
+                    if (!IsClosed)
+                    {
+                        @in.Dispose();
+                        @in = null;
+                        buf = null;
+                    }
+                }
+#if !NETSTANDARD
+                this.isDisposing = false;
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Populates the buffer with data. It is an error to call this method when
+        /// the buffer still contains data; ie. if <c>pos &lt; end</c>.
+        /// </summary>
+        /// <returns>
+        /// the number of bytes read into the buffer, or -1 if the end of the
+        /// source stream has been reached.
+        /// </returns>
+        private int FillBuf()
+        {
+            // assert(pos == end);
+
+            if (mark == -1 || (pos - mark >= markLimit))
+            {
+                /* mark isn't set or has exceeded its limit. use the whole buffer */
+                int result = @in.Read(buf, 0, buf.Length);
+                if (result > 0)
+                {
+                    mark = -1;
+                    pos = 0;
+                    end = result;
+                }
+                // LUCENENET specific: convert result to -1 to mimic java's reader
+                return result == 0 ? -1 : result;
+            }
+
+            if (mark == 0 && markLimit > buf.Length)
+            {
+                /* the only way to make room when mark=0 is by growing the buffer */
+                int newLength = buf.Length * 2;
+                if (newLength > markLimit)
+                {
+                    newLength = markLimit;
+                }
+                char[] newbuf = new char[newLength];
+                System.Array.Copy(buf, 0, newbuf, 0, buf.Length);
+                buf = newbuf;
+            }
+            else if (mark > 0)
+            {
+                /* make room by shifting the buffered data to left mark positions */
+                System.Array.Copy(buf, mark, buf, 0, buf.Length - mark);
+                pos -= mark;
+                end -= mark;
+                mark = 0;
+            }
+
+            /* Set the new position and mark position */
+            int count = @in.Read(buf, pos, buf.Length - pos);
+            if (count > 0)
+            {
+                end += count;
+            }
+            // LUCENENET specific: convert result to -1 to mimic java's reader
+            return count == 0 ? -1 : count;
         }
 
         /// <summary>
@@ -100,313 +194,52 @@ namespace Lucene.Net.Analysis.Util
         /// </summary>
         private void EnsureOpen()
         {
-            if (@in == null)
-                throw new IOException("Stream closed");
-        }
-
-        /// <summary>
-        /// Fills the input buffer, taking the mark into account if it is valid.
-        /// </summary>
-        private void Fill()
-        {
-            int dst;
-            if (markedChar <= UNMARKED)
+            if (IsClosed)
             {
-                /* No mark */
-                dst = 0;
-            }
-            else
-            {
-                /* Marked */
-                int delta = nextChar - markedChar;
-                if (delta >= readAheadLimit)
-                {
-                    /* Gone past read-ahead limit: Invalidate mark */
-                    markedChar = INVALIDATED;
-                    readAheadLimit = 0;
-                    dst = 0;
-                }
-                else
-                {
-                    if (readAheadLimit <= cb.Length)
-                    {
-                        /* Shuffle in the current buffer */
-                        System.Array.Copy(cb, markedChar, cb, 0, delta);
-                        markedChar = 0;
-                        dst = delta;
-                    }
-                    else
-                    {
-                        /* Reallocate buffer to accommodate read-ahead limit */
-                        char[] ncb = new char[readAheadLimit];
-                        System.Array.Copy(cb, markedChar, ncb, 0, delta);
-                        cb = ncb;
-                        markedChar = 0;
-                        dst = delta;
-                    }
-                    nextChar = nChars = delta;
-                }
-            }
-
-            int n = @in.Read(cb, dst, cb.Length - dst);
-            // LUCENENET: .NET readers always return 0 when they are finished
-            // so there is nothing to do here but remove this loop.
-            //do
-            //{
-            //    n = @in.Read(cb, dst, cb.Length - dst);
-            //} while (n == 0);
-            if (n > 0)
-            {
-                nChars = dst + n;
-                nextChar = dst;
+                throw new IOException("Reader already closed");
             }
         }
 
         /// <summary>
-        /// Reads a single character.
+        /// Indicates whether or not this reader is closed.
         /// </summary>
-        /// <returns>The character read, as an integer in the range 0 to 65535 (0x00-0xffff), or -1 if the end of the stream has been reached</returns>
-        /// <exception cref="IOException">If an I/O error occurs</exception>
-        public override int Read()
+        private bool IsClosed
         {
-            lock (this)
+            get { return buf == null; }
+        }
+
+        /// <summary>
+        /// Sets a mark position in this reader. The parameter <paramref name="markLimit"/>
+        /// indicates how many characters can be read before the mark is invalidated.
+        /// Calling <see cref="Reset()"/> will reposition the reader back to the marked
+        /// position if <see cref="markLimit"/> has not been surpassed.
+        /// </summary>
+        /// <param name="markLimit">
+        /// the number of characters that can be read before the mark is
+        /// invalidated.
+        /// </param>
+        /// <exception cref="ArgumentOutOfRangeException">if <c>markLimit &lt; 0</c></exception>
+        /// <exception cref="IOException">if an error occurs while setting a mark in this reader.</exception>
+        public override void Mark(int markLimit)
+        {
+            if (markLimit < 0)
+            {
+                throw new ArgumentOutOfRangeException("Read-ahead limit < 0");
+            }
+            lock (m_lock)
             {
                 EnsureOpen();
-                for (;;)
-                {
-                    if (nextChar >= nChars)
-                    {
-                        Fill();
-                        if (nextChar >= nChars)
-                            return -1;
-                    }
-                    if (skipLF)
-                    {
-                        skipLF = false;
-                        if (cb[nextChar] == '\n')
-                        {
-                            nextChar++;
-                            continue;
-                        }
-                    }
-                    return cb[nextChar++];
-                }
+                this.markLimit = markLimit;
+                mark = pos;
             }
         }
 
         /// <summary>
-        /// Reads characters into a portion of an array.
-        /// This method implements the general contract of the corresponding read method of the TextReader class. 
-        /// As an additional convenience, it attempts to read as many characters as possible by repeatedly 
-        /// invoking the read method of the underlying stream.This iterated read continues until one of the 
-        /// following conditions becomes true:
-        /// 
-        /// <list type="bullet">
-        /// <item>The specified number of characters have been read,</item>
-        /// <item>The read method of the underlying stream returns -1, indicating end-of-file, or</item>
-        /// <item>The ready method of the underlying stream returns false, indicating that further input requests would block.</item>
-        /// </list>
-        /// If the first read on the underlying stream returns -1 to indicate end-of-file then this method returns -1. 
-        /// Otherwise this method returns the number of characters actually read.
-        /// Subclasses of this class are encouraged, but not required, to attempt to read as many characters 
-        /// as possible in the same fashion. Ordinarily this method takes characters from this stream's character 
-        /// buffer, filling it from the underlying stream as necessary. If, however, the buffer is empty, the mark 
-        /// is not valid, and the requested length is at least as large as the buffer, then this method will read 
-        /// characters directly from the underlying stream into the given array. Thus redundant BufferedReaders 
-        /// will not copy data unnecessarily.
+        /// Indicates whether this reader supports the <see cref="Mark(int)"/> and
+        /// <see cref="Reset()"/> methods. This implementation returns <c>true</c>.
         /// </summary>
-        /// <param name="buffer">Destination buffer</param>
-        /// <param name="index">Offset at which to start storing characters</param>
-        /// <param name="count">Maximum number of characters to read</param>
-        /// <returns></returns>
-        public override int Read(char[] buffer, int index, int count)
-        {
-            if (nextChar >= nChars)
-            {
-                /* If the requested length is at least as large as the buffer, and
-               if there is no mark/reset activity, and if line feeds are not
-               being skipped, do not bother to copy the characters into the
-               local buffer.  In this way buffered streams will cascade
-               harmlessly. */
-                if (count >= cb.Length && markedChar <= UNMARKED && !skipLF)
-                {
-                    return @in.Read(buffer, index, count);
-                }
-                Fill();
-            }
-            if (nextChar >= nChars) return -1;
-            if (skipLF)
-            {
-                skipLF = false;
-                if (cb[nextChar] == '\n')
-                {
-                    nextChar++;
-                    if (nextChar >= nChars)
-                        Fill();
-                    if (nextChar >= nChars)
-                        return -1;
-                }
-            }
-            int n = Math.Min(count, nChars - nextChar);
-            System.Array.Copy(cb, nextChar, buffer, index, n);
-            nextChar += n;
-            return n;
-        }
-
-        /// <summary>
-        /// Reads a line of text. A line is considered to be terminated by any one of a line feed ('\n'), a carriage return 
-        /// ('\r'), or a carriage return followed immediately by a linefeed.
-        /// </summary>
-        /// <returns>A String containing the contents of the line, not including any line-termination characters, 
-        /// or null if the end of the stream has been reached</returns>
-        /// <exception cref="IOException">If an I/O error occurs</exception>
-        public override string ReadLine()
-        {
-            StringBuilder s = null;
-            int startChar;
-
-            lock (this)
-            {
-                EnsureOpen();
-                bool omitLF = skipLF;
-
-                for (;;)
-                {
-                    if (nextChar >= nChars)
-                    {
-                        Fill();
-                    }
-                    if (nextChar >= nChars)
-                    { /* EOF */
-                        if (s != null && s.Length > 0)
-                            return s.ToString();
-                        else
-                            return null;
-                    }
-                    bool eol = false;
-                    char c = (char)0;
-                    int i;
-
-                    /* Skip a leftover '\n', if necessary */
-                    if (omitLF && (cb[nextChar] == '\n'))
-                        nextChar++;
-                    skipLF = false;
-                    omitLF = false;
-
-                    for (i = nextChar; i < nChars; i++)
-                    {
-                        c = cb[i];
-                        if ((c == '\n') || (c == '\r'))
-                        {
-                            eol = true;
-                            break;
-                        }
-                    }
-
-                    startChar = nextChar;
-                    nextChar = i;
-                    if (eol)
-                    {
-                        string str;
-                        if (s == null)
-                        {
-                            str = new string(cb, startChar, i - startChar);
-                        }
-                        else
-                        {
-                            s.Append(cb, startChar, i - startChar);
-                            str = s.ToString();
-                        }
-                        nextChar++;
-                        if (c == '\r')
-                        {
-                            skipLF = true;
-                        }
-                        return str;
-                    }
-
-                    if (s == null)
-                        s = new StringBuilder(defaultExpectedLineLength);
-                    s.Append(cb, startChar, i - startChar);
-                }
-            }
-        }
-
-        public override long Skip(int n)
-        {
-            if (n < 0L)
-            {
-                throw new ArgumentOutOfRangeException("skip value is negative");
-            }
-            lock (this)
-            {
-                EnsureOpen();
-                int r = n;
-                while (r > 0)
-                {
-                    if (nextChar >= nChars)
-                        Fill();
-                    if (nextChar >= nChars) /* EOF */
-                        break;
-                    if (skipLF)
-                    {
-                        skipLF = false;
-                        if (cb[nextChar] == '\n')
-                        {
-                            nextChar++;
-                        }
-                    }
-                    int d = nChars - nextChar;
-                    if (r <= d)
-                    {
-                        nextChar += r;
-                        r = 0;
-                        break;
-                    }
-                    else
-                    {
-                        r -= d;
-                        nextChar = nChars;
-                    }
-                }
-                return n - r;
-            }
-        }
-
-        /// <summary>
-        /// Tells whether this stream is ready to be read. A buffered character stream is ready if the buffer is not empty, or if the underlying character stream is ready.
-        /// </summary>
-        /// <returns></returns>
-        public override bool Ready()
-        {
-            lock (this)
-            {
-                EnsureOpen();
-
-                // If newline needs to be skipped and the next char to be read
-                // is a newline character, then just skip it right away.
-                if (skipLF)
-                {
-                    // Note that in.ready() will return true if and only if the next
-                    // read on the stream will not block.
-                    if (nextChar >= nChars /* && @in.Ready() */)
-                    {
-                        Fill();
-                    }
-                    if (nextChar < nChars)
-                    {
-                        if (cb[nextChar] == '\n')
-                            nextChar++;
-                        skipLF = false;
-                    }
-                }
-                return (nextChar < nChars) /* || @in.Ready() */;
-            }
-        }
-
-        /// <summary>
-        /// Tells whether this stream supports the mark() operation, which it does.
-        /// </summary>
+        /// <seealso cref="Mark(int)"/>
+        /// <seealso cref="Reset()"/>
         public override bool IsMarkSupported
         {
             get
@@ -415,63 +248,326 @@ namespace Lucene.Net.Analysis.Util
             }
         }
 
+
         /// <summary>
-        /// Marks the present position in the stream. Subsequent calls to reset() will attempt to reposition the stream to this point.
+        /// Reads a single character from this reader and returns it with the two
+        /// higher-order bytes set to 0. If possible, <see cref="BufferedCharFilter"/> returns a
+        /// character from the buffer. If there are no characters available in the
+        /// buffer, it fills the buffer and then returns a character. It returns -1
+        /// if there are no more characters in the source reader.
         /// </summary>
-        /// <param name="readAheadLimit">Limit on the number of characters that may be read while still preserving the mark. An attempt 
-        /// to reset the stream after reading characters up to this limit or beyond may fail. A limit value larger than the size of the 
-        /// input buffer will cause a new buffer to be allocated whose size is no smaller than limit. Therefore large values should be 
-        /// used with care.</param>
-        public override void Mark(int readAheadLimit)
+        /// <returns>The character read or -1 if the end of the source reader has been reached.</returns>
+        /// <exception cref="IOException">If this reader is disposed or some other I/O error occurs.</exception>
+        public override int Read()
         {
-            if (readAheadLimit < 0)
-            {
-                throw new ArgumentOutOfRangeException("Read-ahead limit < 0");
-            }
-            lock (this)
+            lock (m_lock)
             {
                 EnsureOpen();
-                this.readAheadLimit = readAheadLimit;
-                markedChar = nextChar;
-                markedSkipLF = skipLF;
+                /* Are there buffered characters available? */
+                if (pos < end || FillBuf() != -1)
+                {
+                    return buf[pos++];
+                }
+                return -1;
             }
         }
 
         /// <summary>
-        /// Resets the stream to the most recent mark.
+        /// Reads at most <paramref name="length"/> characters from this reader and stores them
+        /// at <paramref name="offset"/> in the character array <paramref name="buffer"/>. Returns the
+        /// number of characters actually read or -1 if the end of the source reader
+        /// has been reached. If all the buffered characters have been used, a mark
+        /// has not been set and the requested number of characters is larger than
+        /// this readers buffer size, BufferedReader bypasses the buffer and simply
+        /// places the results directly into <paramref name="buffer"/>.
         /// </summary>
-        /// <exception cref="IOException">If the stream has never been marked, or if the mark has been invalidated</exception>
+        /// <param name="buffer">the character array to store the characters read.</param>
+        /// <param name="offset">the initial position in <paramref name="buffer"/> to store the bytes read from this reader.</param>
+        /// <param name="length">the maximum number of characters to read, must be non-negative.</param>
+        /// <returns>number of characters read or -1 if the end of the source reader has been reached.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// if <c>offset &lt; 0</c> or <c>length &lt; 0</c>, or if
+        /// <c>offset + length</c> is greater than the size of
+        /// <paramref name="buffer"/>.
+        /// </exception>
+        /// <exception cref="IOException">if this reader is disposed or some other I/O error occurs.</exception>
+        public override int Read(char[] buffer, int offset, int length)
+        {
+            lock(m_lock)
+            {
+                EnsureOpen();
+                if (offset < 0 || offset > buffer.Length - length || length < 0)
+                {
+                    throw new ArgumentOutOfRangeException();
+                }
+                int outstanding = length;
+                while (outstanding > 0)
+                {
+
+                    /*
+                     * If there are bytes in the buffer, grab those first.
+                     */
+                    int available = end - pos;
+                    if (available > 0)
+                    {
+                        int count2 = available >= outstanding ? outstanding : available;
+                        System.Array.Copy(buf, pos, buffer, offset, count2);
+                        pos += count2;
+                        offset += count2;
+                        outstanding -= count2;
+                    }
+
+                    /*
+                     * Before attempting to read from the underlying stream, make
+                     * sure we really, really want to. We won't bother if we're
+                     * done, or if we've already got some bytes and reading from the
+                     * underlying stream would block.
+                     */
+                    if (outstanding == 0 /*|| (outstanding < length && !@in.ready())*/) {
+                        break;
+                    }
+
+                    // assert(pos == end);
+
+                    /*
+                     * If we're unmarked and the requested size is greater than our
+                     * buffer, read the bytes directly into the caller's buffer. We
+                     * don't read into smaller buffers because that could result in
+                     * a many reads.
+                     */
+                    if ((mark == -1 || (pos - mark >= markLimit))
+                            && outstanding >= buf.Length)
+                    {
+                        int count3 = @in.Read(buffer, offset, outstanding);
+                        if (count3 > 0)
+                        {
+                            offset += count3;
+                            outstanding -= count3;
+                            mark = -1;
+                        }
+
+                        break; // assume the source stream gave us all that it could
+                    }
+
+                    if (FillBuf() == -1)
+                    {
+                        break; // source is exhausted
+                    }
+                }
+
+                int count = length - outstanding;
+                return (count > 0 || count == length) ? count : 0 /*-1*/;
+            }
+        }
+
+        /// <summary>
+        /// Peeks at the next input character, refilling the buffer if necessary. If
+        /// this character is a newline character ("\n"), it is discarded.
+        /// </summary>
+        private void ChompNewline()
+        {
+            if ((pos != end || FillBuf() != -1)
+                && buf[pos] == '\n')
+            {
+                pos++;
+            }
+        }
+
+        /// <summary>
+        /// Returns the next line of text available from this reader. A line is
+        /// represented by zero or more characters followed by <c>'\n'</c>,
+        /// <c>'\r'</c>, <c>"\r\n"</c> or the end of the reader. The string does
+        /// not include the newline sequence.
+        /// </summary>
+        /// <returns>The contents of the line or <c>null</c> if no characters were 
+        /// read before the end of the reader has been reached.</returns>
+        /// <exception cref="IOException">if this reader is disposed or some other I/O error occurs.</exception>
+        public override string ReadLine()
+        {
+            lock(m_lock)
+            {
+                EnsureOpen();
+                /* has the underlying stream been exhausted? */
+                if (pos == end && FillBuf() == -1)
+                {
+                    return null;
+                }
+                for (int charPos = pos; charPos < end; charPos++)
+                {
+                    char ch = buf[charPos];
+                    if (ch > '\r')
+                    {
+                        continue;
+                    }
+                    if (ch == '\n')
+                    {
+                        string res = new string(buf, pos, charPos - pos);
+                        pos = charPos + 1;
+                        return res;
+                    }
+                    else if (ch == '\r')
+                    {
+                        string res = new string(buf, pos, charPos - pos);
+                        pos = charPos + 1;
+                        if (((pos < end) || (FillBuf() != -1))
+                                && (buf[pos] == '\n'))
+                        {
+                            pos++;
+                        }
+                        return res;
+                    }
+                }
+
+                char eol = '\0';
+                StringBuilder result = new StringBuilder(80);
+                /* Typical Line Length */
+
+                result.Append(buf, pos, end - pos);
+                while (true)
+                {
+                    pos = end;
+
+                    /* Are there buffered characters available? */
+                    if (eol == '\n')
+                    {
+                        return result.ToString();
+                    }
+                    // attempt to fill buffer
+                    if (FillBuf() == -1)
+                    {
+                        // characters or null.
+                        return result.Length > 0 || eol != '\0'
+                                ? result.ToString()
+                                : null;
+                    }
+                    for (int charPos = pos; charPos < end; charPos++)
+                    {
+                        char c = buf[charPos];
+                        if (eol == '\0')
+                        {
+                            if ((c == '\n' || c == '\r'))
+                            {
+                                eol = c;
+                            }
+                        }
+                        else if (eol == '\r' && c == '\n')
+                        {
+                            if (charPos > pos)
+                            {
+                                result.Append(buf, pos, charPos - pos - 1);
+                            }
+                            pos = charPos + 1;
+                            return result.ToString();
+                        }
+                        else
+                        {
+                            if (charPos > pos)
+                            {
+                                result.Append(buf, pos, charPos - pos - 1);
+                            }
+                            pos = charPos;
+                            return result.ToString();
+                        }
+                    }
+                    if (eol == '\0')
+                    {
+                        result.Append(buf, pos, end - pos);
+                    }
+                    else
+                    {
+                        result.Append(buf, pos, end - pos - 1);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether this reader is ready to be read without blocking.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if this reader will not block when <see cref="Read"/> is
+        /// called, <c>false</c> if unknown or blocking will occur.
+        /// </returns>
+        public override bool Ready()
+        {
+            lock (m_lock)
+            {
+                EnsureOpen();
+                return ((end - pos) > 0) /*|| in.ready()*/;
+            }
+        }
+
+        /// <summary>
+        /// Resets this reader's position to the last <see cref="Mark(int)"/> location.
+        /// Invocations of <see cref="Read()"/> and <see cref="Skip(int)"/> will occur from this new
+        /// location.
+        /// </summary>
+        /// <exception cref="IOException">If this reader is disposed or no mark has been set.</exception>
+        /// <seealso cref="Mark(int)"/>
+        /// <seealso cref="IsMarkSupported"/>
         public override void Reset()
         {
-            lock (this)
+            lock (m_lock)
             {
                 EnsureOpen();
-                if (markedChar < 0)
-                    throw new IOException((markedChar == INVALIDATED) ? "Mark invalid" : "Stream not marked");
-                nextChar = markedChar;
-                skipLF = markedSkipLF;
+                if (mark < 0)
+                {
+                    throw new IOException("Reader not marked");
+                }
+                pos = mark;
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Skips <paramref name="amount"/> characters in this reader. Subsequent
+        /// <see cref="Read()"/>s will not return these characters unless <see cref="Reset()"/>
+        /// is used. Skipping characters may invalidate a mark if <see cref="markLimit"/>
+        /// is surpassed.
+        /// </summary>
+        /// <param name="amount">the maximum number of characters to skip.</param>
+        /// <returns>the number of characters actually skipped.</returns>
+        /// <exception cref="ArgumentOutOfRangeException">if <c>amount &lt; 0</c>.</exception>
+        /// <exception cref="IOException">If this reader is disposed or some other I/O error occurs.</exception>
+        /// <seealso cref="Mark(int)"/>
+        /// <seealso cref="IsMarkSupported"/>
+        /// <seealso cref="Reset()"/>
+        public override long Skip(int amount)
         {
-            if (disposing)
+            if (amount < 0L)
             {
-#if !NETSTANDARD
-                this.isDisposing = true;
-#endif
-                lock (this)
+                throw new ArgumentOutOfRangeException("skip value is negative");
+            }
+            lock (m_lock)
+            {
+                EnsureOpen();
+                if (amount < 1)
                 {
-                    if (@in != null)
-                    {
-                        @in.Dispose();
-                        @in = null;
-                    }
-                    cb = null;
+                    return 0;
                 }
-#if !NETSTANDARD
-                this.isDisposing = false;
-#endif
+                if (end - pos >= amount)
+                {
+                    pos += amount;
+                    return amount;
+                }
+
+                int read = end - pos;
+                pos = end;
+                while (read < amount)
+                {
+                    if (FillBuf() == -1)
+                    {
+                        return read;
+                    }
+                    if (end - pos >= amount - read)
+                    {
+                        pos += amount - read;
+                        return amount;
+                    }
+                    // Couldn't get all the characters, skip what we read
+                    read += (end - pos);
+                    pos = end;
+                }
+                return amount;
             }
         }
 
@@ -511,8 +607,11 @@ namespace Lucene.Net.Analysis.Util
         {
             throw new NotImplementedException();
         }
-
 #if !NETSTANDARD
+        public override object InitializeLifetimeService()
+        {
+            throw new NotImplementedException();
+        }
 
         public override void Close()
         {
@@ -521,12 +620,7 @@ namespace Lucene.Net.Analysis.Util
                 throw new NotSupportedException("Close() is not supported. Call Dispose() instead.");
             }
         }
-
-        public override object InitializeLifetimeService()
-        {
-            throw new NotImplementedException();
-        }
 #endif
-#endregion
+        #endregion
     }
 }
