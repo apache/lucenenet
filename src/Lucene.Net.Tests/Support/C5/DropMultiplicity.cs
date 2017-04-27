@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2003-2016 Niels Kokholm, Peter Sestoft, and Rasmus Lystrøm
+ Copyright (c) 2003-2016 Niels Kokholm, Peter Sestoft, and Rasmus LystrÃ¸m
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
