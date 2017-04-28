@@ -323,7 +323,10 @@ namespace Lucene.Net.Analysis.Util
                      * done, or if we've already got some bytes and reading from the
                      * underlying stream would block.
                      */
-                    if (outstanding == 0 /*|| (outstanding < length && !@in.ready())*/) {
+                    // LUCENENET specific: only CharFilter derived types support IsReady
+                    var charFilter = @in as CharFilter;
+                    if (outstanding == 0 || (outstanding < length) && charFilter != null && !charFilter.IsReady)
+                    {
                         break;
                     }
 
@@ -488,12 +491,17 @@ namespace Lucene.Net.Analysis.Util
         /// <c>true</c> if this reader will not block when <see cref="Read"/> is
         /// called, <c>false</c> if unknown or blocking will occur.
         /// </returns>
-        public override bool Ready()
+        public override bool IsReady
         {
-            lock (m_lock)
+            get
             {
-                EnsureOpen();
-                return ((end - pos) > 0) /*|| in.ready()*/;
+                lock (m_lock)
+                {
+                    EnsureOpen();
+                    // LUCENENET specific: only CharFilter derived types support IsReady
+                    var charFilter = @in as CharFilter;
+                    return ((end - pos) > 0) || (charFilter != null && charFilter.IsReady);
+                }
             }
         }
 

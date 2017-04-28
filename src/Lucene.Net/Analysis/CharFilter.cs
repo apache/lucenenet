@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Skips characters. This method will block until some characters are available, an I/O error occurs, or the end of the stream is reached.
         /// 
-        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// LUCENENET specific. Moved here from the Reader class (in Java) so it can be overridden to provide reader buffering.
         /// </summary>
         /// <param name="n">The number of characters to skip</param>
         /// <returns>The number of characters actually skipped</returns>
@@ -102,7 +102,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// LUCENENET specific. Moved here from the Reader class (in Java) so it can be overridden to provide reader buffering.
         /// </summary>
         /// <returns></returns>
         public virtual void Reset()
@@ -116,18 +116,18 @@ namespace Lucene.Net.Analysis
         /// True if the next <see cref="TextReader.Read()"/> is guaranteed not to block for input, false otherwise. Note 
         /// that returning false does not guarantee that the next read will block.
         /// <para/>
-        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// LUCENENET specific. Moved here from the Reader class (in Java) so it can be overridden to provide reader buffering.
         /// </summary>
-        public virtual bool Ready()
+        public virtual bool IsReady
         {
-            return false;
+            get { return false; }
         }
 
         /// <summary>
         /// Tells whether this stream supports the <see cref="Mark(int)"/> operation. The default implementation always 
         /// returns false. Subclasses should override this method.
         /// <para/>
-        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// LUCENENET specific. Moved here from the Reader class (in Java) so it can be overridden to provide reader buffering.
         /// </summary>
         /// <returns>true if and only if this stream supports the mark operation.</returns>
         public virtual bool IsMarkSupported
@@ -139,7 +139,7 @@ namespace Lucene.Net.Analysis
         /// Marks the present position in the stream. Subsequent calls to <see cref="Reset"/> will attempt to 
         /// reposition the stream to this point. Not all character-input streams support the <see cref="Mark(int)"/> operation.
         /// <para/>
-        /// LUCENENET specific. Moved here from the Java Reader class so it can be overridden to provide reader buffering.
+        /// LUCENENET specific. Moved here from the Reader class (in Java) so it can be overridden to provide reader buffering.
         /// </summary>
         /// <param name="readAheadLimit">Limit on the number of characters that may be read while still preserving the mark. After 
         /// reading this many characters, attempting to reset the stream may fail.</param>

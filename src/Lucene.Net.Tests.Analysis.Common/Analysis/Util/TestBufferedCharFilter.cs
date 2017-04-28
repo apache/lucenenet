@@ -254,12 +254,16 @@ namespace Lucene.Net.Analysis.Util
             assertTrue(new BufferedCharFilter(new StringReader(new string(new char[5], 1, 0)), 2).Read() == -1);
         }
 
-        private class ReaderAnonymousInnerClassHelper : TextReader
+        private class ReaderAnonymousInnerClassHelper : CharFilter
         {
             private const int SIZE = 2;
             private int size = SIZE, pos = 0;
 
             private readonly char[] contents = new char[SIZE];
+
+            public ReaderAnonymousInnerClassHelper()
+                : base(null)
+            { }
 
             public override int Read()
             {
@@ -285,14 +289,19 @@ namespace Lucene.Net.Analysis.Util
                 return size - pos > 0;
             }
 
-#if !NETSTANDARD
-            public override void Close()
-            {
-            }
-#endif
+//#if !NETSTANDARD
+//            public override void Close()
+//            {
+//            }
+//#endif
 
             protected override void Dispose(bool disposing)
             {
+            }
+
+            protected override int Correct(int currentOff)
+            {
+                throw new NotImplementedException();
             }
         }
 
@@ -684,7 +693,7 @@ namespace Lucene.Net.Analysis.Util
             try
             {
                 br = new BufferedCharFilter(new StringReader(testString));
-                assertTrue("ready returned false", br.Ready());
+                assertTrue("IsReady returned false", br.IsReady);
             }
             catch (IOException e)
             {

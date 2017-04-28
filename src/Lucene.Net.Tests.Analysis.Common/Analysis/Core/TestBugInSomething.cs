@@ -118,9 +118,9 @@ namespace Lucene.Net.Analysis.Core
             //    throw new System.NotSupportedException("Read(CharBuffer)");
             //}
 
-            public override bool Ready()
+            public override bool IsReady
             {
-                throw new System.NotSupportedException("Ready()");
+                get { throw new System.NotSupportedException("Ready()"); }
             }
 
             public override void Reset()

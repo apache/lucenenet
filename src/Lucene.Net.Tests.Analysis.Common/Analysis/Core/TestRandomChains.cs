@@ -1120,9 +1120,9 @@ namespace Lucene.Net.Analysis.Core
                 }
             }
 
-            public override bool Ready()
+            public override bool IsReady
             {
-                return Input.Ready();
+                get { return Input.IsReady; }
             }
 
             public override void Reset()
