@@ -786,10 +786,6 @@ limitations under the License.
 =============================
 
 Some code in 
-src/Lucene.Net/Support/DataInputStream.cs
-src/Lucene.Net/Support/DataOutputStream.cs
-src/Lucene.Net/Support/IDataInput.cs
-src/Lucene.Net/Support/IDataOutput.cs
 src/Lucene.Net/Support/PriorityQueue.cs
 was derived from the Java Development Kit (JDK) and falls under the following license:
 

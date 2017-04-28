@@ -1,34 +1,28 @@
-﻿/*
- * Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * This code is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License version 2 only, as
- * published by the Free Software Foundation.  Oracle designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Oracle in the LICENSE file that accompanied this code.
- *
- * This code is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version
- * 2 along with this work; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
- *
- * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
- * or visit www.oracle.com if you need additional information or have any
- * questions.
- */
+﻿// This class was sourced from the Apache Harmony project
+// https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using System;
 using System.IO;
-using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Support.IO
 {
+    /*
+	 * Licensed to the Apache Software Foundation (ASF) under one or more
+	 * contributor license agreements.  See the NOTICE file distributed with
+	 * this work for additional information regarding copyright ownership.
+	 * The ASF licenses this file to You under the Apache License, Version 2.0
+	 * (the "License"); you may not use this file except in compliance with
+	 * the License.  You may obtain a copy of the License at
+	 *
+	 *     http://www.apache.org/licenses/LICENSE-2.0
+	 *
+	 * Unless required by applicable law or agreed to in writing, software
+	 * distributed under the License is distributed on an "AS IS" BASIS,
+	 * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+	 * See the License for the specific language governing permissions and
+	 * limitations under the License.
+	 */
+
     /// <summary>
     /// Java's DataOutputStream is similar to .NET's BinaryWriter. However, it writes
     /// in a modified UTF-8 format that cannot be read (or duplicated) using BinaryWriter.
@@ -43,252 +37,276 @@ namespace Lucene.Net.Support.IO
         private readonly object _lock = new object();
 
         /// <summary>
-        /// The number of bytes written to the data output stream so far.
-        /// If this counter overflows, it will be wrapped to <see cref="int.MaxValue"/>.
+        /// The number of bytes written out so far.
         /// </summary>
         protected int written;
-
-        /// <summary>
-        /// bytearr is initialized on demand by writeUTF
-        /// </summary>
-        private byte[] bytearr = null;
+        private byte[] buff;
 
 
         private readonly Stream @out;
 
         /// <summary>
-        /// Creates a new data output stream to write data to the specified
-        /// underlying output stream. The counter <code>written</code> is
-        /// set to zero.
+        /// Constructs a new <see cref="DataOutputStream"/> on the <see cref="Stream"/>
+        /// <paramref name="out"/>. Note that data written by this stream is not in a human
+        /// readable form but can be reconstructed by using a <see cref="DataInputStream"/>
+        /// on the resulting output.
         /// </summary>
-        /// <param name="out">the underlying output stream, to be saved for later use.</param>
+        /// <param name="out">the target stream for writing.</param>
+        /// <seealso cref="DataInputStream"/>
         public DataOutputStream(Stream @out)
         {
             this.@out = @out;
+            buff = new byte[8];
         }
 
-        /// <summary>
-        /// Increases the written counter by the specified value
-        /// until it reaches <see cref="int.MaxValue"/>.
-        /// </summary>
-        private void IncCount(int value)
-        {
-            int temp = written + value;
-            if (temp < 0)
-            {
-                temp = int.MaxValue;
-            }
-            written = temp;
-        }
-
-        /// <summary>
-        /// Writes the specified byte (the low eight bits of the argument
-        /// <code>b</code>) to the underlying output stream.If no exception
-        /// is thrown, the counter<code>written</code> is incremented by
-        /// <code>1</code>.
-        /// </summary>
-        /// <param name="b">the <code>byte</code> to be written.</param>
-        public virtual void Write(int b) 
-        {
-            lock (_lock)
-            {
-                @out.WriteByte((byte)b);
-                IncCount(1);
-            }
-        }
-
-        public virtual void Write(byte[] b, int off, int len)
-        {
-            lock (_lock)
-            {
-                @out.Write(b, off, len);
-                IncCount(len);
-            }
-        }
-
-        public virtual void Flush() 
+        public virtual void Flush()
         {
             @out.Flush();
         }
 
-        public void WriteBoolean(bool v)
-        {
-            @out.WriteByte((byte)(v ? 1 : 0));
-            IncCount(1);
-        }
-
-        public void WriteByte(int v)
-        {
-            @out.WriteByte((byte)v);
-            IncCount(1);
-        }
-
-        /// <summary>
-        /// NOTE: This was writeShort() in the JDK
-        /// </summary>
-        public void WriteInt16(int v)
-        {
-            @out.WriteByte((byte)((int)((uint)v >> 8) & 0xFF));
-            @out.WriteByte((byte)((int)((uint)v >> 0) & 0xFF));
-            IncCount(2);
-        }
-
-        public void WriteChar(int v)
-        {
-            @out.WriteByte((byte)((int)((uint)v >> 8) & 0xFF));
-            @out.WriteByte((byte)((int)((uint)v >> 0) & 0xFF));
-            IncCount(2);
-        }
-
-        /// <summary>
-        /// NOTE: This was writeInt() in the JDK
-        /// </summary>
-        public void WriteInt32(int v)
-        {
-            @out.WriteByte((byte)(int)(((uint)v >> 24) & 0xFF));
-            @out.WriteByte((byte)(int)(((uint)v >> 16) & 0xFF));
-            @out.WriteByte((byte)(int)(((uint)v >>  8) & 0xFF));
-            @out.WriteByte((byte)(int)(((uint)v >>  0) & 0xFF));
-            IncCount(4);
-        }
-
-        private byte[] writeBuffer = new byte[8];
-
-        /// <summary>
-        /// NOTE: This was writeLong() in the JDK
-        /// </summary>
-        public void WriteInt64(long v)
-        {
-            writeBuffer[0] = (byte)(long)((ulong)v >> 56);
-            writeBuffer[1] = (byte)(long)((ulong)v >> 48);
-            writeBuffer[2] = (byte)(long)((ulong)v >> 40);
-            writeBuffer[3] = (byte)(long)((ulong)v >> 32);
-            writeBuffer[4] = (byte)(long)((ulong)v >> 24);
-            writeBuffer[5] = (byte)(long)((ulong)v >> 16);
-            writeBuffer[6] = (byte)(long)((ulong)v >> 8);
-            writeBuffer[7] = (byte)(long)((ulong)v >> 0);
-            @out.Write(writeBuffer, 0, 8);
-            IncCount(8);
-        }
-
-        /// <summary>
-        /// NOTE: This was writeFloat() in the JDK
-        /// </summary>
-        public void WriteSingle(float v)
-        {
-            WriteInt32(Number.SingleToInt32Bits(v));
-        }
-
-        public void WriteDouble(double v)
-        {
-            WriteInt64(Number.DoubleToInt64Bits(v));
-        }
-
-        public void WriteBytes(string s)
-        {
-            int len = s.Length;
-            for (int i = 0; i < len; i++)
-            {
-                @out.WriteByte((byte)s[i]);
-            }
-            IncCount(len);
-        }
-
-        public void WriteChars(string s)
-        {
-            int len = s.Length;
-            for (int i = 0; i < len; i++)
-            {
-                int v = s[i];
-                @out.WriteByte((byte)(int)(((uint)v >> 8) & 0xFF));
-                @out.WriteByte((byte)(int)(((uint)v >> 0) & 0xFF));
-            }
-            IncCount(len * 2);
-        }
-
-        public void WriteUTF(string str) 
-        {
-            WriteUTF(str, this);
-        }
-
-        internal static int WriteUTF(string str, IDataOutput @out)
-        {
-            int strlen = str.Length;
-            int utflen = 0;
-            int c, count = 0;
-
-            /* use charAt instead of copying String to char array */
-            for (int i = 0; i < strlen; i++)
-            {
-                c = str[i];
-                if ((c >= 0x0001) && (c <= 0x007F))
-                {
-                    utflen++;
-                }
-                else if (c > 0x07FF)
-                {
-                    utflen += 3;
-                }
-                else
-                {
-                    utflen += 2;
-                }
-            }
-
-            if (utflen > 65535)
-                throw new FormatException(
-                    "encoded string too long: " + utflen + " bytes");
-
-            byte[] bytearr = null;
-            if (@out is DataOutputStream) {
-                DataOutputStream dos = (DataOutputStream)@out;
-                if (dos.bytearr == null || (dos.bytearr.Length < (utflen + 2)))
-                    dos.bytearr = new byte[(utflen * 2) + 2];
-                bytearr = dos.bytearr;
-            } else {
-                bytearr = new byte[utflen + 2];
-            }
-
-            bytearr[count++] = (byte)(int)(((uint)utflen >> 8) & 0xFF);
-            bytearr[count++] = (byte)(int)(((uint)utflen >> 0) & 0xFF);
-
-            int i2 = 0;
-            for (i2 = 0; i2 < strlen; i2++)
-            {
-                c = str[i2];
-                if (!((c >= 0x0001) && (c <= 0x007F))) break;
-                bytearr[count++] = (byte)c;
-            }
-
-            for (; i2 < strlen; i2++)
-            {
-                c = str[i2];
-                if ((c >= 0x0001) && (c <= 0x007F))
-                {
-                    bytearr[count++] = (byte)c;
-
-                }
-                else if (c > 0x07FF)
-                {
-                    bytearr[count++] = (byte)(0xE0 | ((c >> 12) & 0x0F));
-                    bytearr[count++] = (byte)(0x80 | ((c >> 6) & 0x3F));
-                    bytearr[count++] = (byte)(0x80 | ((c >> 0) & 0x3F));
-                }
-                else
-                {
-                    bytearr[count++] = (byte)(0xC0 | ((c >> 6) & 0x1F));
-                    bytearr[count++] = (byte)(0x80 | ((c >> 0) & 0x3F));
-                }
-            }
-            @out.Write(bytearr, 0, utflen + 2);
-            return utflen + 2;
-        }
-
         public int Length
         {
-            get { return written; }
+            get
+            {
+                if (written < 0)
+                {
+                    written = int.MaxValue;
+                }
+                return written;
+            }
         }
 
+        public virtual void Write(byte[] buffer, int offset, int count)
+        {
+            if (buffer == null)
+            {
+                throw new ArgumentNullException("buffer");
+            }
+            lock (_lock)
+            {
+                @out.Write(buffer, offset, count);
+                written += count;
+            }
+        }
+
+        public virtual void Write(int oneByte)
+        {
+            lock (_lock)
+            {
+                @out.WriteByte((byte)oneByte);
+                written++;
+            }
+        }
+
+        public void WriteBoolean(bool val)
+        {
+            lock (_lock)
+            {
+                @out.WriteByte((byte)(val ? 1 : 0));
+                written++;
+            }
+        }
+
+        public void WriteByte(int val)
+        {
+            lock (_lock)
+            {
+                @out.WriteByte((byte)val);
+                written++;
+            }
+        }
+
+        public void WriteBytes(string str)
+        {
+            lock (_lock)
+            {
+                if (str.Length == 0)
+                {
+                    return;
+                }
+                byte[] bytes = new byte[str.Length];
+                for (int index = 0; index < str.Length; index++)
+                {
+                    bytes[index] = (byte)str[index];
+                }
+                @out.Write(bytes, 0, bytes.Length);
+                written += bytes.Length;
+            }
+        }
+
+        public void WriteChar(int val)
+        {
+            lock (_lock)
+            {
+                buff[0] = (byte)(val >> 8);
+                buff[1] = (byte)val;
+                @out.Write(buff, 0, 2);
+                written += 2;
+            }
+        }
+
+        public void WriteChars(string str)
+        {
+            lock (_lock)
+            {
+                byte[] newBytes = new byte[str.Length * 2];
+                for (int index = 0; index < str.Length; index++)
+                {
+                    int newIndex = index == 0 ? index : index * 2;
+                    newBytes[newIndex] = (byte)(str[index] >> 8);
+                    newBytes[newIndex + 1] = (byte)str[index];
+                }
+                @out.Write(newBytes, 0, newBytes.Length);
+                written += newBytes.Length;
+            }
+        }
+
+        public void WriteDouble(double val)
+        {
+            WriteInt64(Number.DoubleToInt64Bits(val));
+        }
+
+        /// <summary>
+        /// NOTE: This was writeFloat() in Java
+        /// </summary>
+        public void WriteSingle(float val)
+        {
+            WriteInt32(Number.SingleToInt32Bits(val));
+        }
+
+        /// <summary>
+        /// NOTE: This was writeInt() in Java
+        /// </summary>
+        public void WriteInt32(int val)
+        {
+            lock (_lock)
+            {
+                buff[0] = (byte)(val >> 24);
+                buff[1] = (byte)(val >> 16);
+                buff[2] = (byte)(val >> 8);
+                buff[3] = (byte)val;
+                @out.Write(buff, 0, 4);
+                written += 4;
+            }
+        }
+
+        /// <summary>
+        /// NOTE: This was writeLong() in Java
+        /// </summary>
+        public void WriteInt64(long val)
+        {
+            lock (_lock)
+            {
+                buff[0] = (byte)(val >> 56);
+                buff[1] = (byte)(val >> 48);
+                buff[2] = (byte)(val >> 40);
+                buff[3] = (byte)(val >> 32);
+                buff[4] = (byte)(val >> 24);
+                buff[5] = (byte)(val >> 16);
+                buff[6] = (byte)(val >> 8);
+                buff[7] = (byte)val;
+                @out.Write(buff, 0, 8);
+                written += 8;
+            }
+        }
+
+        private int WriteInt64ToBuffer(long val,
+                          byte[] buffer, int offset)
+        {
+            buffer[offset++] = (byte)(val >> 56);
+            buffer[offset++] = (byte)(val >> 48);
+            buffer[offset++] = (byte)(val >> 40);
+            buffer[offset++] = (byte)(val >> 32);
+            buffer[offset++] = (byte)(val >> 24);
+            buffer[offset++] = (byte)(val >> 16);
+            buffer[offset++] = (byte)(val >> 8);
+            buffer[offset++] = (byte)val;
+            return offset;
+        }
+
+        /// <summary>
+        /// NOTE: This was writeShort() in Java
+        /// </summary>
+        public void WriteInt16(int val)
+        {
+            lock (_lock)
+            {
+                buff[0] = (byte)(val >> 8);
+                buff[1] = (byte)val;
+                @out.Write(buff, 0, 2);
+                written += 2;
+            }
+        }
+
+        private int WriteInt16ToBuffer(int val,
+                           byte[] buffer, int offset)
+        {
+            buffer[offset++] = (byte)(val >> 8);
+            buffer[offset++] = (byte)val;
+            return offset;
+        }
+
+        public void WriteUTF(string str)
+        {
+            long utfCount = CountUTFBytes(str);
+            if (utfCount > 65535)
+            {
+                throw new FormatException("data format too long"); //$NON-NLS-1$
+            }
+            byte[] buffer = new byte[(int)utfCount + 2];
+            int offset = 0;
+            offset = WriteInt16ToBuffer((int)utfCount, buffer, offset);
+            offset = WriteUTFBytesToBuffer(str, (int)utfCount, buffer, offset);
+            Write(buffer, 0, offset);
+        }
+
+        private long CountUTFBytes(string str)
+        {
+            int utfCount = 0, length = str.Length;
+            for (int i = 0; i < length; i++)
+            {
+                int charValue = str[i];
+                if (charValue > 0 && charValue <= 127)
+                {
+                    utfCount++;
+                }
+                else if (charValue <= 2047)
+                {
+                    utfCount += 2;
+                }
+                else
+                {
+                    utfCount += 3;
+                }
+            }
+            return utfCount;
+        }
+
+        private int WriteUTFBytesToBuffer(string str, long count,
+                              byte[] buffer, int offset)
+        {
+            int length = str.Length;
+            for (int i = 0; i < length; i++)
+            {
+                int charValue = str[i];
+                if (charValue > 0 && charValue <= 127)
+                {
+                    buffer[offset++] = (byte)charValue;
+                }
+                else if (charValue <= 2047)
+                {
+                    buffer[offset++] = (byte)(0xc0 | (0x1f & (charValue >> 6)));
+                    buffer[offset++] = (byte)(0x80 | (0x3f & charValue));
+                }
+                else
+                {
+                    buffer[offset++] = (byte)(0xe0 | (0x0f & (charValue >> 12)));
+                    buffer[offset++] = (byte)(0x80 | (0x3f & (charValue >> 6)));
+                    buffer[offset++] = (byte)(0x80 | (0x3f & charValue));
+                }
+            }
+            return offset;
+        }
 
         #region From FilterOutputStream
 
