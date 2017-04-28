@@ -4,7 +4,7 @@ using Lucene.Net.Queries.Function;
 using Lucene.Net.Search;
 using Lucene.Net.Spatial.Queries;
 using Lucene.Net.Spatial.Util;
-using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.IO;

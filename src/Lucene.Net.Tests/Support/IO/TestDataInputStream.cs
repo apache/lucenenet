@@ -27,7 +27,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     public class TestDataInputStream : LuceneTestCase
     {

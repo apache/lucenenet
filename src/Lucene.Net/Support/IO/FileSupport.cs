@@ -25,7 +25,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /// <summary>
     /// Represents the methods to support some operations over files.

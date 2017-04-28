@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Analysis;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Automaton;
 using Lucene.Net.Util.Fst;

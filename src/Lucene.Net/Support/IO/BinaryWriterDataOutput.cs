@@ -1,7 +1,8 @@
-﻿using System.IO;
-using System.Text;
+﻿using System;
+using System.IO;
+using Lucene.Net.Store;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,22 +20,28 @@ namespace Lucene.Net.Support
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-    // Used to wrap Java's ByteArrayOutputStream's ToString() method, as MemoryStream uses default impl
-    public class ByteArrayOutputStream : MemoryStream
+    public class BinaryWriterDataOutput : DataOutput, IDisposable
     {
-        public ByteArrayOutputStream()
+        private readonly BinaryWriter bw;
+
+        public BinaryWriterDataOutput(BinaryWriter bw)
         {
+            this.bw = bw;
         }
 
-        public ByteArrayOutputStream(int size)
-            : base(size)
+        public override void WriteByte(byte b)
         {
+            bw.Write(b);
         }
 
-        public override string ToString()
+        public override void WriteBytes(byte[] b, int offset, int length)
         {
-            return Encoding.UTF8.GetString(this.ToArray());
+            bw.Write(b, offset, length);
+        }
+
+        public void Dispose()
+        {
+            bw.Dispose();
         }
     }
 }

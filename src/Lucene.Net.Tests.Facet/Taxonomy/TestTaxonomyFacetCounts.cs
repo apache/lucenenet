@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
+using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
@@ -28,30 +29,30 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Documents.Document;
-    using Field = Lucene.Net.Documents.Field;
-    using StringField = Lucene.Net.Documents.StringField;
+    using System.Text;
+    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using DirectoryTaxonomyReader = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyReader;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Documents.Document;
+    using Field = Lucene.Net.Documents.Field;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
+    using IOUtils = Lucene.Net.Util.IOUtils;
+    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NoMergePolicy = Lucene.Net.Index.NoMergePolicy;
     using OpenMode = Lucene.Net.Index.OpenMode;
-    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
-    using Term = Lucene.Net.Index.Term;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
-    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
-    using Query = Lucene.Net.Search.Query;
-    using TermQuery = Lucene.Net.Search.TermQuery;
-    using DefaultSimilarity = Lucene.Net.Search.Similarities.DefaultSimilarity;
     using PerFieldSimilarityWrapper = Lucene.Net.Search.Similarities.PerFieldSimilarityWrapper;
+    using Query = Lucene.Net.Search.Query;
+    using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
-    using Directory = Lucene.Net.Store.Directory;
-    using IOUtils = Lucene.Net.Util.IOUtils;
+    using StringField = Lucene.Net.Documents.StringField;
+    using Term = Lucene.Net.Index.Term;
+    using TermQuery = Lucene.Net.Search.TermQuery;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using System.Text;
 
     [TestFixture]
     public class TestTaxonomyFacetCounts : FacetTestCase

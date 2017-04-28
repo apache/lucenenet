@@ -23,7 +23,7 @@
  * questions.
  */
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /// <summary>
     /// Equivalent to Java's DataInput interface

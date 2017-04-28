@@ -26,7 +26,7 @@
 using System;
 using System.IO;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /// <summary>
     /// Java's DataInputStream is similar to .NET's BinaryReader. However, it reads

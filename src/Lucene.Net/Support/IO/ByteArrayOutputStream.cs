@@ -1,8 +1,7 @@
-﻿using Lucene.Net.Store;
-using System;
-using System.IO;
+﻿using System.IO;
+using System.Text;
 
-namespace Lucene.Net.Support.Compatibility
+namespace Lucene.Net.Support.IO
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,31 +19,22 @@ namespace Lucene.Net.Support.Compatibility
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-    public class BinaryReaderDataInput : DataInput, IDisposable
+
+    // Used to wrap Java's ByteArrayOutputStream's ToString() method, as MemoryStream uses default impl
+    public class ByteArrayOutputStream : MemoryStream
     {
-        private readonly BinaryReader br;
-        public BinaryReaderDataInput(BinaryReader br)
+        public ByteArrayOutputStream()
         {
-            this.br = br;
-        }
-       
-        public override byte ReadByte()
-        {
-            return br.ReadByte();
         }
 
-        public override void ReadBytes(byte[] b, int offset, int len)
+        public ByteArrayOutputStream(int size)
+            : base(size)
         {
-            byte[] temp = br.ReadBytes(len);
-            for (int i = offset; i < (offset + len) && i < temp.Length; i++)
-            {
-                b[i] = temp[i];
-            }
         }
 
-        public void Dispose()
+        public override string ToString()
         {
-            br.Dispose();
+            return Encoding.UTF8.GetString(this.ToArray());
         }
     }
 }

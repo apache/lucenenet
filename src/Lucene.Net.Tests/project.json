@@ -48,7 +48,7 @@
         "Index/unsupported.24.nocfs.zip",
         "Index/unsupported.29.cfs.zip",
         "Index/unsupported.29.nocfs.zip",
-        "Support/ReadFully.txt"
+        "Support/IO/ReadFully.txt"
       ]
     }
   },

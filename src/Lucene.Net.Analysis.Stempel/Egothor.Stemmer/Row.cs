@@ -1,4 +1,4 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Support.IO;
 using System.Collections.Generic;
 using System.IO;
 

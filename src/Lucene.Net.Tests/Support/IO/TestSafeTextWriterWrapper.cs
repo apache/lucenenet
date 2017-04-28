@@ -24,7 +24,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     public class TestSafeTextWriterWrapper : LuceneTestCase
     {

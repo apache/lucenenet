@@ -620,7 +620,7 @@
     <Compile Include="Support\AttributeItem.cs" />
     <Compile Include="Support\BitArrayExtensions.cs" />
     <Compile Include="Support\BundleResourceManagerFactory.cs" />
-    <Compile Include="Support\ByteArrayOutputStream.cs" />
+    <Compile Include="Support\IO\ByteArrayOutputStream.cs" />
     <Compile Include="Support\C5.Support.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
@@ -635,14 +635,14 @@
     <Compile Include="Support\Codecs\ExcludePostingsFormatFromScanAttribute.cs" />
     <Compile Include="Support\Codecs\IPostingsFormatFactory.cs" />
     <Compile Include="Support\Codecs\PostingsFormatNameAttribute.cs" />
-    <Compile Include="Support\Compatibility\BinaryReaderDataInput.cs" />
-    <Compile Include="Support\Compatibility\BinaryWriterDataOutput.cs" />
+    <Compile Include="Support\IO\BinaryReaderDataInput.cs" />
+    <Compile Include="Support\IO\BinaryWriterDataOutput.cs" />
     <Compile Include="Support\Collections.cs" />
     <Compile Include="Support\ConcurrentHashMapWrapper.cs" />
     <Compile Include="Support\ConcurrentHashSet.cs" />
     <Compile Include="Support\CultureContext.cs" />
-    <Compile Include="Support\DataInputStream.cs" />
-    <Compile Include="Support\DataOutputStream.cs" />
+    <Compile Include="Support\IO\DataInputStream.cs" />
+    <Compile Include="Support\IO\DataOutputStream.cs" />
     <Compile Include="Support\Codecs\DefaultCodecFactory.cs" />
     <Compile Include="Support\Equatable.cs" />
     <Compile Include="Support\EquatableSet.cs" />
@@ -653,8 +653,8 @@
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\ICompletionService.cs" />
-    <Compile Include="Support\IDataInput.cs" />
-    <Compile Include="Support\IDataOutput.cs" />
+    <Compile Include="Support\IO\IDataInput.cs" />
+    <Compile Include="Support\IO\IDataOutput.cs" />
     <Compile Include="Support\IdentityComparer.cs" />
     <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityHashSet.cs" />
@@ -685,10 +685,10 @@
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReaderWriterLockSlimExtensions.cs" />
     <Compile Include="Support\ReentrantLock.cs" />
-    <Compile Include="Support\SafeTextWriterWrapper.cs" />
+    <Compile Include="Support\IO\SafeTextWriterWrapper.cs" />
     <Compile Include="Support\SetExtensions.cs" />
     <Compile Include="Support\SignedZeroComparer.cs" />
-    <Compile Include="Support\StreamUtils.cs" />
+    <Compile Include="Support\IO\StreamUtils.cs" />
     <Compile Include="Support\StringBuilderExtensions.cs" />
     <Compile Include="Support\StringCharSequenceWrapper.cs" />
     <Compile Include="Support\StringExtensions.cs" />
@@ -707,17 +707,17 @@
     <Compile Include="Support\Compatibility\ThreadLocal.cs" />
     <Compile Include="Support\Compatibility\WrappedHashSet.cs" />
     <Compile Include="Support\CRC32.cs" />
-    <Compile Include="Support\Deflater.cs" />
+    <Compile Include="Support\IO\Compression\Deflater.cs" />
     <Compile Include="Support\EquatableList.cs" />
-    <Compile Include="Support\FileSupport.cs" />
+    <Compile Include="Support\IO\FileSupport.cs" />
     <Compile Include="Support\GeneralKeyedCollection.cs" />
     <Compile Include="Support\HashMap.cs" />
     <Compile Include="Support\IChecksum.cs" />
-    <Compile Include="Support\Inflater.cs" />
+    <Compile Include="Support\IO\Compression\Inflater.cs" />
     <Compile Include="Support\IThreadRunnable.cs" />
     <Compile Include="Support\Number.cs" />
     <Compile Include="Support\OS.cs" />
-    <Compile Include="Support\SharpZipLib.cs" />
+    <Compile Include="Support\IO\Compression\SharpZipLib.cs" />
     <Compile Include="Support\ThreadClass.cs" />
     <Compile Include="Support\ThreadLock.cs" />
     <Compile Include="Support\Util\ExcludeServiceAttribute.cs" />
@@ -912,5 +912,6 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
 </Project>

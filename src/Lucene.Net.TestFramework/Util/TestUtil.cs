@@ -1,27 +1,27 @@
-using System.Numerics;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Numerics;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Lucene.Net.Util
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-
     //using RandomInts = com.carrotsearch.randomizedtesting.generators.RandomInts;
     //using RandomPicks = com.carrotsearch.randomizedtesting.generators.RandomPicks;
-    using NUnit.Framework;
-    using System.IO;
-    using System.IO.Compression;
-    using System.Text.RegularExpressions;
+    
     using AtomicReader = Lucene.Net.Index.AtomicReader;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using BinaryDocValuesField = BinaryDocValuesField;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -40,7 +40,6 @@ namespace Lucene.Net.Util
          */
 
     using Codec = Lucene.Net.Codecs.Codec;
-
     //using CheckIndex = Lucene.Net.Index.CheckIndex;
     using Directory = Lucene.Net.Store.Directory;
     using DocsAndPositionsEnum = Lucene.Net.Index.DocsAndPositionsEnum;
@@ -53,13 +52,12 @@ namespace Lucene.Net.Util
     using FieldDoc = Lucene.Net.Search.FieldDoc;
     using FieldType = FieldType;
     using FilteredQuery = Lucene.Net.Search.FilteredQuery;
-    using SingleField = SingleField;
     using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using Int32Field = Int32Field;
-    using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
     using Int64Field = Int64Field;
+    using LogMergePolicy = Lucene.Net.Index.LogMergePolicy;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using MergePolicy = Lucene.Net.Index.MergePolicy;
     using MergeScheduler = Lucene.Net.Index.MergeScheduler;
@@ -69,12 +67,12 @@ namespace Lucene.Net.Util
     using PerFieldPostingsFormat = Lucene.Net.Codecs.PerField.PerFieldPostingsFormat;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
+    using SingleField = SingleField;
     using SortedDocValuesField = SortedDocValuesField;
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
     using TopDocs = Lucene.Net.Search.TopDocs;
-    using Codecs;
 
     /// <summary>
     /// General utility methods for Lucene unit tests.

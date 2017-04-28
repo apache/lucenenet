@@ -6,7 +6,7 @@ using System.Runtime.Remoting;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

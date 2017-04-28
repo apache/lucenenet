@@ -1,16 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Threading;
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
-using NUnit.Framework;
-using System.IO;
+using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {

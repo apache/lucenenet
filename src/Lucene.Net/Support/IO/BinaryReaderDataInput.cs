@@ -1,8 +1,8 @@
-﻿#if FEATURE_SERIALIZABLE
+﻿using Lucene.Net.Store;
+using System;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -20,32 +20,31 @@ namespace Lucene.Net.Support
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-    public static class StreamUtils
+    public class BinaryReaderDataInput : DataInput, IDisposable
     {
-        static readonly BinaryFormatter formatter = new BinaryFormatter();
-
-        public static void SerializeToStream(object o, Stream outputStream)
+        private readonly BinaryReader br;
+        public BinaryReaderDataInput(BinaryReader br)
         {
-            formatter.Serialize(outputStream, o);
+            this.br = br;
+        }
+       
+        public override byte ReadByte()
+        {
+            return br.ReadByte();
         }
 
-        public static void SerializeToStream(object o, BinaryWriter writer)
+        public override void ReadBytes(byte[] b, int offset, int len)
         {
-            formatter.Serialize(writer.BaseStream, o);
+            byte[] temp = br.ReadBytes(len);
+            for (int i = offset; i < (offset + len) && i < temp.Length; i++)
+            {
+                b[i] = temp[i];
+            }
         }
 
-        public static object DeserializeFromStream(Stream stream)
+        public void Dispose()
         {
-            object o = formatter.Deserialize(stream);
-            return o;
-        }
-
-        public static object DeserializeFromStream(BinaryReader reader)
-        {
-            object o = formatter.Deserialize(reader.BaseStream);
-            return o;
+            br.Dispose();
         }
     }
 }
-#endif

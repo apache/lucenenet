@@ -15,8 +15,6 @@
 * limitations under the License.
 */
 
-using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
@@ -25,22 +23,28 @@ using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
+using Lucene.Net.TestFramework.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Threading.Tasks;
+using System.IO;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace Lucene.Net.Util
 {
-    using Lucene.Net.TestFramework.Support;
-    using System.IO;
-    using System.Reflection;
+    using Analysis;
+    using Attributes;
+    using Search.Similarities;
+    using System.Linq;
+    using System.Text.RegularExpressions;
     using AlcoholicMergePolicy = Lucene.Net.Index.AlcoholicMergePolicy;
-
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using AssertingAtomicReader = Lucene.Net.Index.AssertingAtomicReader;
     using AssertingDirectoryReader = Lucene.Net.Index.AssertingDirectoryReader;
@@ -75,7 +79,6 @@ namespace Lucene.Net.Util
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using Insanity = Lucene.Net.Util.FieldCacheSanityChecker.Insanity;
     using IOContext = Lucene.Net.Store.IOContext;
-
     //using Context = Lucene.Net.Store.IOContext.Context;
     using LockFactory = Lucene.Net.Store.LockFactory;
     using LogByteSizeMergePolicy = Lucene.Net.Index.LogByteSizeMergePolicy;
@@ -104,11 +107,6 @@ namespace Lucene.Net.Util
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TextField = TextField;
     using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
-    using Analysis;
-    using Search.Similarities;
-    using System.Linq;
-    using System.Text.RegularExpressions;
-    using Attributes;
 
     /*using After = org.junit.After;
     using AfterClass = org.junit.AfterClass;

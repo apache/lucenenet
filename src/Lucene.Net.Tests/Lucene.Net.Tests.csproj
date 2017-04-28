@@ -529,11 +529,11 @@
     <Compile Include="Support\IO\TestByteBuffer.cs" />
     <Compile Include="Support\TestLurchTable.cs" />
     <Compile Include="Support\TestLurchTableThreading.cs" />
-    <Compile Include="Support\TestDataInputStream.cs" />
-    <Compile Include="Support\TestDataOutputStream.cs" />
+    <Compile Include="Support\IO\TestDataInputStream.cs" />
+    <Compile Include="Support\IO\TestDataOutputStream.cs" />
     <Compile Include="Support\TestOldPatches.cs" />
     <Compile Include="Support\TestOSClass.cs" />
-    <Compile Include="Support\TestSafeTextWriterWrapper.cs" />
+    <Compile Include="Support\IO\TestSafeTextWriterWrapper.cs" />
     <Compile Include="Support\TestSerialization.cs" />
     <Compile Include="Support\TestStringBuilderExtensions.cs" />
     <Compile Include="Support\TestCRC32.cs" />
@@ -747,7 +747,7 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Support\ReadFully.txt" />
+    <EmbeddedResource Include="Support\IO\ReadFully.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.Targets" />
 </Project>

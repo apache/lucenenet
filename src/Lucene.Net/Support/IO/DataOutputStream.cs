@@ -27,7 +27,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /// <summary>
     /// Java's DataOutputStream is similar to .NET's BinaryWriter. However, it writes
