@@ -1,4 +1,5 @@
 ﻿// This class was sourced from the Apache Harmony project's BufferedReader
+// https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using Lucene.Net.Analysis.CharFilters;
 using System;

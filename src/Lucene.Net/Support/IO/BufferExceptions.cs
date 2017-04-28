@@ -1,4 +1,5 @@
 ﻿// These classes were sourced from the Apache Harmony project
+// https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using System;
 #if FEATURE_SERIALIZABLE

@@ -1,4 +1,5 @@
 ﻿// This class was sourced from the Apache Harmony project
+// https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using System;
 using System.Diagnostics;
