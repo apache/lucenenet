@@ -517,6 +517,7 @@
     <Compile Include="Support\Codecs\TestDefaultPostingsFormatFactory.cs" />
     <Compile Include="Support\CollisionTester.cs" />
     <Compile Include="Support\SmallObject.cs" />
+    <Compile Include="Support\TestPriorityQueue.cs" />
     <Compile Include="Support\Threading\TestCloseableThreadLocal.cs" />
     <Compile Include="Support\TestCollections.cs" />
     <Compile Include="Support\TestEquatableList.cs" />

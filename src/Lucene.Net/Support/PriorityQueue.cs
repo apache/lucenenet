@@ -112,7 +112,7 @@ namespace Lucene.Net.Support
         /// <see cref="IComparable{T}"/> natural ordering.
         /// </summary>
         public PriorityQueue()
-            : this(DEFAULT_INITIAL_CAPACITY, null)
+            : this(DEFAULT_INITIAL_CAPACITY, GetDefaultComparer())
         {
         }
 
@@ -123,7 +123,7 @@ namespace Lucene.Net.Support
         /// </summary>
         /// <param name="initialCapacity">initial capacity</param>
         public PriorityQueue(int initialCapacity)
-            : this(initialCapacity, null)
+            : this(initialCapacity, GetDefaultComparer())
         {
         }
 
@@ -188,14 +188,21 @@ namespace Lucene.Net.Support
                 this.comparer = ss.Comparer;
                 InitElementsFromEnumerable(collection);
             }
-            if (collection is PriorityQueue<T>)
+            else if (collection is TreeSet<T>)
+            {
+                var ss = (TreeSet<T>)collection;
+                this.comparer = ss.Comparer;
+                InitElementsFromEnumerable(collection);
+            }
+            else if (collection is PriorityQueue<T>)
             {
                 var pq = (PriorityQueue<T>)collection;
                 this.comparer = pq.Comparer;
+                InitFromPriorityQueue(pq);
             }
             else
             {
-                this.comparer = null;
+                this.comparer = null; //GetDefaultComparer();
                 InitFromEnumerable(collection);
             }
         }
@@ -217,6 +224,10 @@ namespace Lucene.Net.Support
         /// of its elements are null</see>
         public PriorityQueue(PriorityQueue<T> c)
         {
+            if (c == null)
+            {
+                throw new ArgumentNullException("c");
+            }
             this.comparer = c.Comparer;
             InitFromPriorityQueue(c);
         }
@@ -238,6 +249,10 @@ namespace Lucene.Net.Support
         /// </summary>
         public PriorityQueue(SortedSet<T> c)
         {
+            if (c == null)
+            {
+                throw new ArgumentNullException("c");
+            }
             this.comparer = c.Comparer;
             InitElementsFromEnumerable(c);
         }
@@ -282,6 +297,11 @@ namespace Lucene.Net.Support
         {
             InitElementsFromEnumerable(c);
             Heapify();
+        }
+
+        private static IComparer<T> GetDefaultComparer()
+        {
+            return typeof(T).IsAssignableFrom(typeof(IComparable<T>)) ? null : Comparer<T>.Default;
         }
 
         #endregion Initialization
