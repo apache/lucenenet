@@ -19,7 +19,7 @@
 
 using System;
 
-namespace Lucene.Net.Support.Compatibility
+namespace Lucene.Net.Support.Threading
 {
     public class ThreadLocal<T> : IDisposable
     {

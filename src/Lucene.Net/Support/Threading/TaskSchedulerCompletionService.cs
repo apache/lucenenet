@@ -1,6 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.Threading
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,14 +20,26 @@ namespace Lucene.Net.Support
 	 * limitations under the License.
 	 */
 
-    public interface ICompletionService<V>
+    public class TaskSchedulerCompletionService<T> : ICompletionService<T>
     {
-        //Task<V> Poll();
+        private readonly TaskFactory<T> factory;
+        private readonly Queue<Task<T>> taskQueue = new Queue<Task<T>>();
 
-        //Task<V> Poll(long timeout, TimeUnit unit);
+        public TaskSchedulerCompletionService(TaskScheduler scheduler)
+        {
+            this.factory = new TaskFactory<T>(scheduler ?? TaskScheduler.Default);
+        }
 
-        Task<V> Submit(ICallable<V> task);
+        public Task<T> Submit(ICallable<T> task)
+        {
+            var t = factory.StartNew(task.Call);
+            taskQueue.Enqueue(t);
+            return t;
+        }
 
-        Task<V> Take();
+        public Task<T> Take()
+        {
+            return taskQueue.Dequeue();
+        }
     }
 }

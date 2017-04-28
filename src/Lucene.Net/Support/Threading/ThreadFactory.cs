@@ -23,7 +23,7 @@
 
 //using System.Threading;
 
-//namespace Lucene.Net.Support
+//namespace Lucene.Net.Support.Threading
 //{
 //    public abstract class ThreadFactory
 //    {

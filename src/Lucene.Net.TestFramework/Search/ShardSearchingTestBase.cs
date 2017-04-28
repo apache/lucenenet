@@ -1,3 +1,5 @@
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -5,7 +7,6 @@ using System.Diagnostics;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Support;
     using Directory = Lucene.Net.Store.Directory;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;

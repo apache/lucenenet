@@ -21,7 +21,7 @@
 
 using System.Threading;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.Threading
 {
     /// <summary>
     /// Abstract base class that provides a synchronization interface

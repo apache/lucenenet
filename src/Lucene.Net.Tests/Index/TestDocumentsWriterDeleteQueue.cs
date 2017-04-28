@@ -1,5 +1,6 @@
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections;

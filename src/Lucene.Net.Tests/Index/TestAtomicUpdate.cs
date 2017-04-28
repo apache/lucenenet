@@ -1,8 +1,12 @@
-using System;
-using System.IO;
-using System.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -22,11 +26,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Store;
-    using Lucene.Net.Support;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
@@ -211,7 +210,7 @@ namespace Lucene.Net.Index
             }
 
             // Second in an FSDirectory:
-            DirectoryInfo dirPath = CreateTempDir("lucene.test.atomic");
+            System.IO.DirectoryInfo dirPath = CreateTempDir("lucene.test.atomic");
             using (directory = NewFSDirectory(dirPath))
             {
                 RunTest(directory);

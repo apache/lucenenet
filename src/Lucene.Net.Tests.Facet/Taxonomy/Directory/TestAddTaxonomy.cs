@@ -1,21 +1,22 @@
-﻿using System;
+﻿using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
 
 
-    using DiskOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.DiskOrdinalMap;
-    using MemoryOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.MemoryOrdinalMap;
-    using IOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.IOrdinalMap;
     using Directory = Lucene.Net.Store.Directory;
+    using DiskOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.DiskOrdinalMap;
+    using IOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.IOrdinalMap;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using MemoryOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.MemoryOrdinalMap;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /*

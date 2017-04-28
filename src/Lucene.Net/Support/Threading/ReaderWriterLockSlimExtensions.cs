@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.Threading
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

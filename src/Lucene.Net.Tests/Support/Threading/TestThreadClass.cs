@@ -22,7 +22,7 @@
 using Lucene.Net.Attributes;
 using NUnit.Framework;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.Threading
 {
     [TestFixture]
     public class TestThreadClass

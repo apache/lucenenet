@@ -1,7 +1,13 @@
-using System;
-using System.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -22,12 +28,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Lucene.Net.Search;
-    using Lucene.Net.Store;
-    using Lucene.Net.Support;
-
-    using Lucene.Net.Util;
-    using NUnit.Framework;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
 
     [TestFixture]

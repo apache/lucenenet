@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 
 namespace Lucene.Net.Facet.Taxonomy

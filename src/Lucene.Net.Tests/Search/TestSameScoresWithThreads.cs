@@ -1,11 +1,12 @@
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;

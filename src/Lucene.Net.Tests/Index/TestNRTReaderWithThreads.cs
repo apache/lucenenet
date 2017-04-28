@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using Lucene.Net.Attributes;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Threading;
 

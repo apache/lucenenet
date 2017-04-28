@@ -1,30 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
+using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {
 
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Documents.Document;
-    using MemoryOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.MemoryOrdinalMap;
-    using ITaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.ITaxonomyWriterCache;
     using Cl2oTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.Cl2oTaxonomyWriterCache;
-    using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
-    using IndexReader = Lucene.Net.Index.IndexReader;
-    using IndexWriter = Lucene.Net.Index.IndexWriter;
-    using OpenMode = Lucene.Net.Index.OpenMode;
-    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using SegmentInfos = Lucene.Net.Index.SegmentInfos;
-    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using Document = Lucene.Net.Documents.Document;
+    using IndexReader = Lucene.Net.Index.IndexReader;
+    using IndexSearcher = Lucene.Net.Search.IndexSearcher;
+    using IndexWriter = Lucene.Net.Index.IndexWriter;
+    using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using ITaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.ITaxonomyWriterCache;
+    using LruTaxonomyWriterCache = Lucene.Net.Facet.Taxonomy.WriterCache.LruTaxonomyWriterCache;
+    using MemoryOrdinalMap = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter.MemoryOrdinalMap;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using OpenMode = Lucene.Net.Index.OpenMode;
+    using SegmentInfos = Lucene.Net.Index.SegmentInfos;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     /*

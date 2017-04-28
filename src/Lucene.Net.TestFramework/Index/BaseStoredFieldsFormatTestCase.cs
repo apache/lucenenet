@@ -1,37 +1,31 @@
-using Lucene.Net.Attributes;
-using Lucene.Net.Codecs;
 using Lucene.Net.Codecs.SimpleText;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
-using Lucene.Net.Util;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 namespace Lucene.Net.Index
 {
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
-
     //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
     using Document = Documents.Document;
     using DoubleField = DoubleField;
     using Field = Field;
     using FieldType = FieldType;
-    using SingleField = SingleField;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Int32Field = Int32Field;
     using Int64Field = Int64Field;
     using Lucene46Codec = Lucene.Net.Codecs.Lucene46.Lucene46Codec;
     using MMapDirectory = Lucene.Net.Store.MMapDirectory;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -53,6 +47,7 @@ namespace Lucene.Net.Index
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using NumericRangeQuery = Lucene.Net.Search.NumericRangeQuery;
     using Query = Lucene.Net.Search.Query;
+    using SingleField = SingleField;
     using StoredField = StoredField;
     using StringField = StringField;
     using TermQuery = Lucene.Net.Search.TermQuery;

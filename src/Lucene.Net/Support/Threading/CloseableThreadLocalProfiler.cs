@@ -21,7 +21,7 @@
 
 using System;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.Threading
 {
     /// <summary>
     /// For Debuging purposes.

@@ -3,6 +3,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Index;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Threading;

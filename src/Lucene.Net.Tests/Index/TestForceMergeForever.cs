@@ -1,9 +1,10 @@
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;

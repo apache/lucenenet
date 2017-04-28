@@ -1,9 +1,11 @@
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -22,16 +24,15 @@ namespace Lucene.Net.Index
      */
 
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Documents.Document;
-    using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
     using Directory = Lucene.Net.Store.Directory;
-    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
+    using Document = Lucene.Net.Documents.Document;
     using LineFileDocs = Lucene.Net.Util.LineFileDocs;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
+    using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
+    
 
     [TestFixture]
     public class TestFlushByRamOrCountsPolicy : LuceneTestCase 

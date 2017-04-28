@@ -1,14 +1,15 @@
 using Lucene.Net.Analysis;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
-using NUnit.Framework;
-using System.IO;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -32,7 +33,6 @@ namespace Lucene.Net.Index
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CannedTokenStream = Lucene.Net.Analysis.CannedTokenStream;
     using Directory = Lucene.Net.Store.Directory;
@@ -40,6 +40,7 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexInput = Lucene.Net.Store.IndexInput;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;

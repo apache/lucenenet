@@ -22,7 +22,7 @@
 using System;
 using System.Threading;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.Threading
 {
     /// <summary>
     /// Support class used to handle threads

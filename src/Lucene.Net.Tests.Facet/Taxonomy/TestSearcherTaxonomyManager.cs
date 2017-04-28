@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Lucene.Net.Search;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Facet.Taxonomy
 {
-
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
      * contributor license agreements.  See the NOTICE file distributed with
@@ -26,18 +27,18 @@ namespace Lucene.Net.Facet.Taxonomy
      */
 
 
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
-    using Document = Lucene.Net.Documents.Document;
-    using SearcherAndTaxonomy = Lucene.Net.Facet.Taxonomy.SearcherTaxonomyManager.SearcherAndTaxonomy;
+    
+    using Directory = Lucene.Net.Store.Directory;
     using DirectoryTaxonomyWriter = Lucene.Net.Facet.Taxonomy.Directory.DirectoryTaxonomyWriter;
+    using Document = Lucene.Net.Documents.Document;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
-    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
-    using Lucene.Net.Search;
-    using Directory = Lucene.Net.Store.Directory;
     using IOUtils = Lucene.Net.Util.IOUtils;
+    using MatchAllDocsQuery = Lucene.Net.Search.MatchAllDocsQuery;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using SearcherAndTaxonomy = Lucene.Net.Facet.Taxonomy.SearcherTaxonomyManager.SearcherAndTaxonomy;
     using TestUtil = Lucene.Net.Util.TestUtil;
+    using TieredMergePolicy = Lucene.Net.Index.TieredMergePolicy;
     [TestFixture]
     public class TestSearcherTaxonomyManager : FacetTestCase
     {

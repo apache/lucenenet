@@ -1,17 +1,17 @@
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Search;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
-using Lucene.Net.Search;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -31,7 +31,6 @@ namespace Lucene.Net.Index
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using IBits = Lucene.Net.Util.IBits;
     using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using BytesRef = Lucene.Net.Util.BytesRef;
@@ -39,7 +38,7 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
-    using SingleDocValuesField = SingleDocValuesField;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using Lucene42DocValuesFormat = Lucene.Net.Codecs.Lucene42.Lucene42DocValuesFormat;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
@@ -47,6 +46,7 @@ namespace Lucene.Net.Index
     using Query = Lucene.Net.Search.Query;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using SeekStatus = Lucene.Net.Index.TermsEnum.SeekStatus;
+    using SingleDocValuesField = SingleDocValuesField;
     using SortedDocValuesField = SortedDocValuesField;
     using SortedSetDocValuesField = SortedSetDocValuesField;
     using StoredField = StoredField;

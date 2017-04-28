@@ -1,19 +1,21 @@
-using System;
-using System.Threading;
-using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
+    using Attributes;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
+    using IBits = Lucene.Net.Util.IBits;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
@@ -21,7 +23,6 @@ namespace Lucene.Net.Index
     using Store = Field.Store;
     using StringField = StringField;
     using TestUtil = Lucene.Net.Util.TestUtil;
-    using Attributes;
 
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

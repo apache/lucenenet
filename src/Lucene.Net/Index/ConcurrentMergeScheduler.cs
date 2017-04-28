@@ -1,5 +1,5 @@
 #if FEATURE_CONCURRENTMERGESCHEDULER
-using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Text;

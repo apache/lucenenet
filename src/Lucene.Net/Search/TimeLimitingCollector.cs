@@ -1,4 +1,4 @@
-using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 #if FEATURE_SERIALIZABLE
 using System.Runtime.Serialization;

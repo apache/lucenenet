@@ -1,11 +1,11 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Search;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
-using Lucene.Net.Documents;
-using Lucene.Net.Search;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -36,10 +36,8 @@ namespace Lucene.Net.Index
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using BaseDirectoryWrapper = Lucene.Net.Store.BaseDirectoryWrapper;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;
-
     //using SimpleTextCodec = Lucene.Net.Codecs.simpletext.SimpleTextCodec;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
     using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;
@@ -49,6 +47,7 @@ namespace Lucene.Net.Index
     using Document = Documents.Document;
     using Field = Field;
     using FieldType = FieldType;
+    using IBits = Lucene.Net.Util.IBits;
     using IndexOutput = Lucene.Net.Store.IndexOutput;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
     using IOContext = Lucene.Net.Store.IOContext;

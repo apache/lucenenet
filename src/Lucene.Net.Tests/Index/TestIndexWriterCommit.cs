@@ -1,6 +1,12 @@
+using Lucene.Net.Analysis;
+using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
+using System.IO;
 
 namespace Lucene.Net.Index
 {
@@ -21,11 +27,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Lucene.Net.Analysis;
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;

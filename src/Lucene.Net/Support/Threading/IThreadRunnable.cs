@@ -19,7 +19,7 @@
  *
 */
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.Threading
 {
     /// <summary>
     /// this interface should be implemented by any class whose instances are intended

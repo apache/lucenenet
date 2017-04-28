@@ -24,6 +24,7 @@ using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.TestFramework.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;

@@ -1,12 +1,12 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Threading;
 
 namespace Lucene.Net.Search
 {
-    using Attributes;
-    using NUnit.Framework;
     using Automaton = Lucene.Net.Util.Automaton.Automaton;
     using AutomatonTestUtil = Lucene.Net.Util.Automaton.AutomatonTestUtil;
     using BasicAutomata = Lucene.Net.Util.Automaton.BasicAutomata;

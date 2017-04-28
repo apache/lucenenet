@@ -1,6 +1,7 @@
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

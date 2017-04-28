@@ -1,12 +1,13 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Text;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
 
     /*

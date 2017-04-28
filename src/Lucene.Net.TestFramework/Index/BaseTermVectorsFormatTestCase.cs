@@ -1,17 +1,18 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
+using Lucene.Net.Codecs;
+using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Lucene.Net.Attributes;
-using Lucene.Net.Codecs;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using Attribute = Lucene.Net.Util.Attribute;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using CharTermAttribute = Lucene.Net.Analysis.TokenAttributes.CharTermAttribute;

@@ -1,16 +1,16 @@
-using System;
+using Lucene.Net.Codecs.Memory;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using System;
 
 namespace Lucene.Net.Index
 {
-    using Codecs.Memory;
     //using MemoryPostingsFormat = Lucene.Net.Codecs.memory.MemoryPostingsFormat;
-
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Store;
-    using Lucene.Net.Support;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
     using Codec = Lucene.Net.Codecs.Codec;
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 

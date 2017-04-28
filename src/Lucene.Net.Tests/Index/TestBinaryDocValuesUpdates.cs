@@ -1,24 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using Lucene.Net.Attributes;
 using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
     using AssertingDocValuesFormat = Lucene.Net.Codecs.Asserting.AssertingDocValuesFormat;
     using BinaryDocValuesField = BinaryDocValuesField;
-    using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
+    using IBits = Lucene.Net.Util.IBits;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using Lucene40RWCodec = Lucene.Net.Codecs.Lucene40.Lucene40RWCodec;
     using Lucene41RWCodec = Lucene.Net.Codecs.Lucene41.Lucene41RWCodec;

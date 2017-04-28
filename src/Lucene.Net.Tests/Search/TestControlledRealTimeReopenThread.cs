@@ -1,13 +1,14 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Lucene.Net.Attributes;
-using Lucene.Net.Randomized.Generators;
-using Lucene.Net.Support;
-using NUnit.Framework;
 
 namespace Lucene.Net.Search
 {
@@ -29,29 +30,29 @@ namespace Lucene.Net.Search
      */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
+    using Directory = Lucene.Net.Store.Directory;
+    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
     using Document = Lucene.Net.Documents.Document;
     using Field = Lucene.Net.Documents.Field;
-    using TextField = Lucene.Net.Documents.TextField;
-    using DirectoryReader = Lucene.Net.Index.DirectoryReader;
+    using IIndexableField = Lucene.Net.Index.IIndexableField;
     using IndexCommit = Lucene.Net.Index.IndexCommit;
     using IndexReader = Lucene.Net.Index.IndexReader;
     using IndexWriter = Lucene.Net.Index.IndexWriter;
     using IndexWriterConfig = Lucene.Net.Index.IndexWriterConfig;
-    using IIndexableField = Lucene.Net.Index.IIndexableField;
+    using IOUtils = Lucene.Net.Util.IOUtils;
     using KeepOnlyLastCommitDeletionPolicy = Lucene.Net.Index.KeepOnlyLastCommitDeletionPolicy;
+    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
+    using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using NoMergePolicy = Lucene.Net.Index.NoMergePolicy;
+    using NRTCachingDirectory = Lucene.Net.Store.NRTCachingDirectory;
     using OpenMode = Lucene.Net.Index.OpenMode;
     using RandomIndexWriter = Lucene.Net.Index.RandomIndexWriter;
     using SnapshotDeletionPolicy = Lucene.Net.Index.SnapshotDeletionPolicy;
     using Term = Lucene.Net.Index.Term;
+    using TestUtil = Lucene.Net.Util.TestUtil;
+    using TextField = Lucene.Net.Documents.TextField;
     using ThreadedIndexingAndSearchingTestCase = Lucene.Net.Index.ThreadedIndexingAndSearchingTestCase;
     using TrackingIndexWriter = Lucene.Net.Index.TrackingIndexWriter;
-    using Directory = Lucene.Net.Store.Directory;
-    using NRTCachingDirectory = Lucene.Net.Store.NRTCachingDirectory;
-    using IOUtils = Lucene.Net.Util.IOUtils;
-    using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
-    using TestUtil = Lucene.Net.Util.TestUtil;
     //using ThreadInterruptedException = Lucene.Net.Util.ThreadInterruptedException;
     using Version = Lucene.Net.Util.LuceneVersion;
 

@@ -30,7 +30,7 @@ using System;
 using Version = Lucene.Net.Util.LuceneVersion;
 
 #pragma warning disable 612, 618
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.Threading
 {
     [TestFixture]
     public class TestCloseableThreadLocal

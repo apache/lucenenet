@@ -1,9 +1,15 @@
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Lucene.Net.Attributes;
-using Lucene.Net.Documents;
 
 namespace Lucene.Net.Index
 {
@@ -24,11 +30,6 @@ namespace Lucene.Net.Index
      * limitations under the License.
      */
 
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.Collections.Concurrent;
-    using Util;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;

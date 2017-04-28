@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
 using System.Linq;

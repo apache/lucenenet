@@ -1,3 +1,4 @@
+using Lucene.Net.Support.Threading;
 using System;
 using System.Diagnostics;
 using System.Threading;
@@ -20,8 +21,6 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Support;
 
     /// <summary>
     /// <see cref="DocumentsWriterPerThreadPool"/> controls <see cref="ThreadState"/> instances
