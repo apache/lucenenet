@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -355,7 +356,8 @@ namespace Lucene.Net.Store
                     adjust = 1;
                 }
 
-                buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor((offset + bufferStart) - adjust, bufSize, MemoryMappedFileAccess.Read), -1, 0, bufSize, bufSize);
+                //buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor((offset + bufferStart) - adjust, bufSize, MemoryMappedFileAccess.Read), -1, 0, bufSize, bufSize);
+                buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor((offset + bufferStart) - adjust, bufSize, MemoryMappedFileAccess.Read), bufSize);
                 bufferStart += bufSize;
             }
 

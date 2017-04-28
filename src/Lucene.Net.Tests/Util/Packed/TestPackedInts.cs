@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using NUnit.Framework;
 
 namespace Lucene.Net.Util.Packed

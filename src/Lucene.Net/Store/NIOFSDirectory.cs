@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using System;
 using System.Diagnostics;
 using System.IO;

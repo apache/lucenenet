@@ -760,8 +760,10 @@ THE SOFTWARE.
 
 =============================
 
-Some code in 
+Some code in
+src/Lucene.Net/Support/IO
 src/Lucene.Net.Analysis.Common/Util/BufferedCharFilter.cs
+src/Lucene.Net.Tests/Support/IO
 src/Lucene.Net.Tests.Analysis.Common/Util/TestBufferedCharFilter.cs 
 was sourced from the Apache Harmony project, which falls under the 
 following license:
@@ -784,18 +786,11 @@ limitations under the License.
 =============================
 
 Some code in 
-src/Lucene.Net/Support/Buffer.cs
-src/Lucene.Net/Support/BufferExceptions.cs
-src/Lucene.Net/Support/ByteBuffer.cs
-src/Lucene.Net/Support/ByteOrder.cs
 src/Lucene.Net/Support/DataInputStream.cs
 src/Lucene.Net/Support/DataOutputStream.cs
-src/Lucene.Net/Support/ICallable.cs
 src/Lucene.Net/Support/IDataInput.cs
 src/Lucene.Net/Support/IDataOutput.cs
-src/Lucene.Net/Support/LongBuffer.cs
 src/Lucene.Net/Support/PriorityQueue.cs
-src/Lucene.Net.Analysis.Common/Util/BufferedCharFilter.cs 
 was derived from the Java Development Kit (JDK) and falls under the following license:
 
 Copyright (c) 1999, 2008, Oracle and/or its affiliates. All rights reserved.

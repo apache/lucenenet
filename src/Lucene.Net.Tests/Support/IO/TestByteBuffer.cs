@@ -24,7 +24,7 @@ using NUnit.Framework;
 using System;
 using System.Reflection;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /// <summary>
     /// Tests from JDK/nio/BasicByte.java
@@ -161,7 +161,7 @@ namespace Lucene.Net.Support
             b.Position = (p);
         }
 
-        private static void compact(Buffer b)
+        private static void compact(IO.Buffer b)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace Lucene.Net.Support
             }
         }
 
-        private static void checkInvalidMarkException(Buffer b)
+        private static void checkInvalidMarkException(IO.Buffer b)
         {
             tryCatch(b, typeof(InvalidMarkException), () =>
                 {
@@ -294,7 +294,7 @@ namespace Lucene.Net.Support
             fail(problem + string.Format(": x={0} y={1}", x, y), xb, yb);
         }
 
-        private static void tryCatch(Buffer b, Type ex, Action thunk)
+        private static void tryCatch(IO.Buffer b, Type ex, Action thunk)
         {
             bool caught = false;
             try
@@ -414,7 +414,7 @@ namespace Lucene.Net.Support
 
             // Comparison
             b.Rewind();
-            ByteBuffer b2 = Lucene.Net.Support.ByteBuffer.Allocate(b.Capacity);
+            ByteBuffer b2 = ByteBuffer.Allocate(b.Capacity);
             b2.Put(b);
             b2.Flip();
             b.Position = (2);
@@ -453,7 +453,7 @@ namespace Lucene.Net.Support
             // Check equals and compareTo with interesting values
             foreach (byte x in VALUES)
             {
-                ByteBuffer xb = Lucene.Net.Support.ByteBuffer.Wrap(new byte[] { x });
+                ByteBuffer xb = ByteBuffer.Wrap(new byte[] { x });
                 if (xb.CompareTo(xb) != 0)
                 {
                     fail("compareTo not reflexive", xb, xb, x, x);
@@ -464,7 +464,7 @@ namespace Lucene.Net.Support
                 }
                 foreach (byte y in VALUES)
                 {
-                    ByteBuffer yb = Lucene.Net.Support.ByteBuffer.Wrap(new byte[] { y });
+                    ByteBuffer yb = ByteBuffer.Wrap(new byte[] { y });
                     if (xb.CompareTo(yb) != -yb.CompareTo(xb))
                     {
                         fail("compareTo not anti-symmetric",
@@ -691,19 +691,19 @@ namespace Lucene.Net.Support
             ck(b, b.Limit, offset + length);
 
             // The offset must be non-negative and no larger than <array.length>.
-            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
+            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
             {
                 ByteBuffer.Wrap(ba, -1, ba.Length);
             });
-            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
+            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
             {
                 ByteBuffer.Wrap(ba, ba.Length + 1, ba.Length);
             });
-            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
+            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
             {
                 ByteBuffer.Wrap(ba, 0, -1);
             });
-            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
+            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
             {
                 ByteBuffer.Wrap(ba, 0, ba.Length + 1);
             });

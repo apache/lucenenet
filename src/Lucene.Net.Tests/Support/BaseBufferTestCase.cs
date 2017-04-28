@@ -26,7 +26,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /// <summary>
     /// Base class for tests from JDK/nio/Basic.java
@@ -41,7 +41,7 @@ namespace Lucene.Net.Support
             return j + 'a' + ((j > 26) ? 128 : 0);
         }
 
-        internal static string ToString(Lucene.Net.Support.Buffer b)
+        internal static string ToString(IO.Buffer b)
         {
             return (b.GetType().Name
                     + "[pos=" + b.Position
@@ -50,7 +50,7 @@ namespace Lucene.Net.Support
                     + "]");
         }
 
-        internal static void Show(int level, Lucene.Net.Support.Buffer b)
+        internal static void Show(int level, IO.Buffer b)
         {
             for (int i = 0; i < level; i++)
                 output.Write("  ");
@@ -62,18 +62,18 @@ namespace Lucene.Net.Support
         //    Assert.Fail(s);
         //}
 
-        internal static void fail(string s, Lucene.Net.Support.Buffer b)
+        internal static void fail(string s, IO.Buffer b)
         {
             fail(s + ": " + ToString(b));
         }
 
-        internal static void fail(String s, Lucene.Net.Support.Buffer b, Lucene.Net.Support.Buffer b2)
+        internal static void fail(String s, IO.Buffer b, IO.Buffer b2)
         {
             fail(s + ": "
                                        + ToString(b) + ", " + ToString(b2));
         }
 
-        internal static void fail(Lucene.Net.Support.Buffer b,
+        internal static void fail(IO.Buffer b,
                          string expected, char expectedChar,
                          string got, char gotChar)
         {
@@ -98,26 +98,26 @@ namespace Lucene.Net.Support
                                        + got);
         }
 
-        internal static void fail(Lucene.Net.Support.Buffer b, long expected, long got)
+        internal static void fail(IO.Buffer b, long expected, long got)
         {
             fail(b,
                  (expected).ToString("x4", CultureInfo.InvariantCulture), (char)expected,
                  (got).ToString("x4", CultureInfo.InvariantCulture), (char)got);
         }
 
-        internal static void ck(Lucene.Net.Support.Buffer b, bool cond)
+        internal static void ck(IO.Buffer b, bool cond)
         {
             if (!cond)
                 fail("Condition failed", b);
         }
 
-        internal static void ck(Lucene.Net.Support.Buffer b, long got, long expected)
+        internal static void ck(IO.Buffer b, long got, long expected)
         {
             if (expected != got)
                 fail(b, expected, got);
         }
 
-        internal static void ck(Lucene.Net.Support.Buffer b, float got, float expected)
+        internal static void ck(IO.Buffer b, float got, float expected)
         {
             if (expected != got)
                 fail(b,
@@ -125,7 +125,7 @@ namespace Lucene.Net.Support
                      got.ToString("0.0##########", CultureInfo.InvariantCulture), (char)got);
         }
 
-        internal static void ck(Lucene.Net.Support.Buffer b, double got, double expected)
+        internal static void ck(IO.Buffer b, double got, double expected)
         {
             if (expected != got)
                 fail(b,

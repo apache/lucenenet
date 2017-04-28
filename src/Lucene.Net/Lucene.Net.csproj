@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -618,14 +617,10 @@
     <Compile Include="Support\AtomicLong.cs" />
     <Compile Include="Support\AtomicObject.cs" />
     <Compile Include="Support\AtomicReferenceArray.cs" />
-    <Compile Include="Support\Buffer.cs" />
     <Compile Include="Support\AttributeItem.cs" />
     <Compile Include="Support\BitArrayExtensions.cs" />
-    <Compile Include="Support\BufferExceptions.cs" />
     <Compile Include="Support\BundleResourceManagerFactory.cs" />
     <Compile Include="Support\ByteArrayOutputStream.cs" />
-    <Compile Include="Support\ByteBuffer.cs" />
-    <Compile Include="Support\ByteOrder.cs" />
     <Compile Include="Support\C5.Support.cs" />
     <Compile Include="Support\Character.cs" />
     <Compile Include="Support\Arrays.cs" />
@@ -654,7 +649,7 @@
     <Compile Include="Support\ExceptionExtensions.cs" />
     <Compile Include="Support\ExceptionToClassNameConventionAttribute.cs" />
     <Compile Include="Support\ExceptionToNullableEnumConvention.cs" />
-    <Compile Include="Support\FileStreamExtensions.cs" />
+    <Compile Include="Support\IO\FileStreamExtensions.cs" />
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\ICompletionService.cs" />
@@ -664,17 +659,28 @@
     <Compile Include="Support\IdentityHashMap.cs" />
     <Compile Include="Support\IdentityHashSet.cs" />
     <Compile Include="Support\IdentityWeakReference.cs" />
+    <Compile Include="Support\IO\Buffer.cs" />
+    <Compile Include="Support\IO\BufferExceptions.cs" />
+    <Compile Include="Support\IO\ByteBuffer.cs" />
     <Compile Include="Support\DictionaryExtensions.cs" />
     <Compile Include="Support\ExceptionToNetNumericConventionAttribute.cs" />
     <Compile Include="Support\IndexWriterConfigExtensions.cs" />
+    <Compile Include="Support\IO\ByteOrder.cs" />
+    <Compile Include="Support\IO\Endianness.cs" />
+    <Compile Include="Support\IO\HeapByteBuffer.cs" />
+    <Compile Include="Support\IO\LongArrayBuffer.cs" />
+    <Compile Include="Support\IO\LongBuffer.cs" />
+    <Compile Include="Support\IO\LongToByteBufferAdapter.cs" />
+    <Compile Include="Support\IO\ReadOnlyHeapByteBuffer.cs" />
+    <Compile Include="Support\IO\ReadWriteHeapByteBuffer.cs" />
+    <Compile Include="Support\IO\ReadWriteLongArrayBuffer.cs" />
     <Compile Include="Support\IResourceManagerFactory.cs" />
     <Compile Include="Support\LimitedConcurrencyLevelTaskScheduler.cs" />
     <Compile Include="Support\LinkedHashMap.cs" />
     <Compile Include="Support\ListExtensions.cs" />
-    <Compile Include="Support\LongBuffer.cs" />
     <Compile Include="Support\LurchTable.cs" />
     <Compile Include="Support\MathExtension.cs" />
-    <Compile Include="Support\MemoryMappedFileByteBuffer.cs" />
+    <Compile Include="Support\IO\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\NumberFormat.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
     <Compile Include="Support\ReaderWriterLockSlimExtensions.cs" />

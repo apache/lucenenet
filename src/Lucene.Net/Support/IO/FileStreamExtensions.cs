@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

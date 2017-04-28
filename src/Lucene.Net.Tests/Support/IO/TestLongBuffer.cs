@@ -24,7 +24,7 @@ using NUnit.Framework;
 using System;
 using System.Reflection;
 
-namespace Lucene.Net.Support
+namespace Lucene.Net.Support.IO
 {
     /// <summary>
     /// Tests from JDK/nio/BasicLong.java
@@ -177,7 +177,7 @@ namespace Lucene.Net.Support
             fail(problem + string.Format(": x={0} y={1}", x, y), xb, yb);
         }
 
-        private static void tryCatch(Buffer b, Type ex, Action thunk)
+        private static void tryCatch(IO.Buffer b, Type ex, Action thunk)
         {
             bool caught = false;
             try
@@ -297,7 +297,7 @@ namespace Lucene.Net.Support
 
             // Comparison
             b.Rewind();
-            Int64Buffer b2 = Lucene.Net.Support.Int64Buffer.Allocate(b.Capacity);
+            Int64Buffer b2 = Int64Buffer.Allocate(b.Capacity);
             b2.Put(b);
             b2.Flip();
             b.Position = (2);
@@ -336,7 +336,7 @@ namespace Lucene.Net.Support
             // Check equals and compareTo with interesting values
             foreach (long x in VALUES)
             {
-                Int64Buffer xb = Lucene.Net.Support.Int64Buffer.Wrap(new long[] { x });
+                Int64Buffer xb = Int64Buffer.Wrap(new long[] { x });
                 if (xb.CompareTo(xb) != 0)
                 {
                     fail("compareTo not reflexive", xb, xb, x, x);
@@ -347,7 +347,7 @@ namespace Lucene.Net.Support
                 }
                 foreach (long y in VALUES)
                 {
-                    Int64Buffer yb = Lucene.Net.Support.Int64Buffer.Wrap(new long[] { y });
+                    Int64Buffer yb = Int64Buffer.Wrap(new long[] { y });
                     if (xb.CompareTo(yb) != -yb.CompareTo(xb))
                     {
                         fail("compareTo not anti-symmetric",
@@ -409,8 +409,8 @@ namespace Lucene.Net.Support
                 b.AsReadOnlyBuffer();
             });
 
-            // LUCENENET: AsReadOnlyBuffer() not implemented
-            //LongBuffer rb = b.AsReadOnlyBuffer();
+            //// LUCENENET: AsReadOnlyBuffer() not implemented
+            //Int64Buffer rb = b.AsReadOnlyBuffer();
             //if (!b.Equals(rb))
             //    fail("Buffer not equal to read-only view", b, rb);
             //Show(level + 1, rb);
@@ -436,7 +436,7 @@ namespace Lucene.Net.Support
             //});
 
             //// put(LongBuffer) should not change source position
-            //LongBuffer src = LongBuffer.Allocate(1);
+            //Int64Buffer src = Int64Buffer.Allocate(1);
             //tryCatch(b, typeof(ReadOnlyBufferException), () =>
             //{
             //    rb.Put(src);
@@ -490,29 +490,29 @@ namespace Lucene.Net.Support
             ck(b, b.Limit, offset + length);
 
             // The offset must be non-negative and no larger than <array.length>.
-            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
+            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
             {
                 Int64Buffer.Wrap(ba, -1, ba.Length);
             });
-            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
+            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
             {
                 Int64Buffer.Wrap(ba, ba.Length + 1, ba.Length);
             });
-            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
+            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
             {
                 Int64Buffer.Wrap(ba, 0, -1);
             });
-            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
+            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
             {
                 Int64Buffer.Wrap(ba, 0, ba.Length + 1);
             });
 
             // A NullPointerException will be thrown if the array is null.
-            tryCatch(ba, typeof(NullReferenceException), () =>
+            tryCatch(ba, typeof(ArgumentNullException), () =>
             {
                 Int64Buffer.Wrap((long[])null, 0, 5);
             });
-            tryCatch(ba, typeof(NullReferenceException), () =>
+            tryCatch(ba, typeof(ArgumentNullException), () =>
             {
                 Int64Buffer.Wrap((long[])null);
             });
