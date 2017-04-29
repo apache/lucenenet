@@ -2,7 +2,6 @@
 // https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using System;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text;

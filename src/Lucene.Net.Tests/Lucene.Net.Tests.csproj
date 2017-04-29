@@ -516,6 +516,10 @@
     <Compile Include="Support\Codecs\TestDefaultDocValuesFormatFactory.cs" />
     <Compile Include="Support\Codecs\TestDefaultPostingsFormatFactory.cs" />
     <Compile Include="Support\CollisionTester.cs" />
+    <Compile Include="Support\IO\AbstractBufferTest.cs" />
+    <Compile Include="Support\IO\TestByteBuffer.cs" />
+    <Compile Include="Support\IO\TestHeapByteBuffer.cs" />
+    <Compile Include="Support\IO\TestReadOnlyHeapByteBuffer.cs" />
     <Compile Include="Support\SmallObject.cs" />
     <Compile Include="Support\TestPriorityQueue.cs" />
     <Compile Include="Support\Threading\TestCloseableThreadLocal.cs" />
@@ -527,7 +531,7 @@
     <Compile Include="Support\TestIDisposable.cs" />
     <Compile Include="Support\TestLinkedHashMap.cs" />
     <Compile Include="Support\IO\TestLongBuffer.cs" />
-    <Compile Include="Support\IO\TestByteBuffer.cs" />
+    <Compile Include="Support\IO\TestByteBuffer2.cs" />
     <Compile Include="Support\TestLurchTable.cs" />
     <Compile Include="Support\TestLurchTableThreading.cs" />
     <Compile Include="Support\IO\TestDataInputStream.cs" />

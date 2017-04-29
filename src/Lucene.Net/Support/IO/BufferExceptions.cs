@@ -72,7 +72,7 @@ namespace Lucene.Net.Support.IO
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    internal sealed class ReadOnlyBufferException : Exception
+    internal sealed class ReadOnlyBufferException : NotSupportedException
     {
         public ReadOnlyBufferException()
         {
@@ -94,7 +94,7 @@ namespace Lucene.Net.Support.IO
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    internal sealed class InvalidMarkException : Exception
+    internal sealed class InvalidMarkException : InvalidOperationException
     {
         public InvalidMarkException()
         {
