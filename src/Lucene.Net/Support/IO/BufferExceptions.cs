@@ -72,7 +72,7 @@ namespace Lucene.Net.Support.IO
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    internal sealed class ReadOnlyBufferException : NotSupportedException
+    internal sealed class ReadOnlyBufferException : /*NotSupported*/ Exception
     {
         public ReadOnlyBufferException()
         {

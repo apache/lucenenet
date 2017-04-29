@@ -80,6 +80,12 @@ namespace Lucene.Net.Support.IO
                         // NotSupportedException
                         // or ReadOnlyBufferException, so catch all.
                     }
+                    // LUCENENET specific - ReadOnlyBufferException doesn't inherit
+                    // NotSupportedException.
+                    catch (ReadOnlyBufferException)
+                    {
+                        // expected
+                    }
                 }
                 else
                 {
@@ -89,6 +95,12 @@ namespace Lucene.Net.Support.IO
                         fail("Should throw Exception"); //$NON-NLS-1$
                     }
                     catch (NotSupportedException e)
+                    {
+                        // expected
+                    }
+                    // LUCENENET specific - ReadOnlyBufferException doesn't inherit
+                    // NotSupportedException.
+                    catch (ReadOnlyBufferException)
                     {
                         // expected
                     }
@@ -132,6 +144,12 @@ namespace Lucene.Net.Support.IO
                         // NotSupportedException
                         // or ReadOnlyBufferException, so catch all.
                     }
+                    // LUCENENET specific - ReadOnlyBufferException doesn't inherit
+                    // NotSupportedException.
+                    catch (ReadOnlyBufferException)
+                    {
+                        // expected
+                    }
                 }
                 else
                 {
@@ -141,6 +159,12 @@ namespace Lucene.Net.Support.IO
                         fail("Should throw Exception"); //$NON-NLS-1$
                     }
                     catch (NotSupportedException e)
+                    {
+                        // expected
+                    }
+                    // LUCENENET specific - ReadOnlyBufferException doesn't inherit
+                    // NotSupportedException.
+                    catch (ReadOnlyBufferException)
                     {
                         // expected
                     }
