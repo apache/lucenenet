@@ -394,7 +394,7 @@
     <Compile Include="Index\TwoStoredFieldsConsumers.cs" />
     <Compile Include="Index\UpgradeIndexMergePolicy.cs" />
     <Compile Include="LucenePackage.cs" />
-    <Compile Include="LZOCompressor.cs" />
+    <Compile Include="Support\IO\Compression\LZOCompressor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AutomatonQuery.cs" />
     <Compile Include="Search\BitsFilteredDocIdSet.cs" />

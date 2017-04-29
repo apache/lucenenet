@@ -1,3 +1,4 @@
+#if NET35
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,7 +23,7 @@
 // LZO.Net
 // $Id: LZOCompressor.cs,v 1.1 2004/02/22 17:44:04 laptop Exp $
 
-namespace Simplicit.Net.Lzo // LUCENENET TODO: Remove this class ? (not used)
+namespace Simplicit.Net.Lzo
 {
     using System;
 	using System.Diagnostics;
@@ -34,7 +35,7 @@ namespace Simplicit.Net.Lzo // LUCENENET TODO: Remove this class ? (not used)
 	public class LZOCompressor {
 		private static TraceSwitch _traceSwitch = new TraceSwitch("Simplicit.Net.Lzo", "Switch for tracing of the LZOCompressor-Class");
 
-		#region Dll-Imports
+#region Dll-Imports
 		[DllImport("lzo.dll")]
 		private static extern int __lzo_init3();
 		[DllImport("lzo.dll")]
@@ -56,7 +57,7 @@ namespace Simplicit.Net.Lzo // LUCENENET TODO: Remove this class ? (not used)
 			byte[] dst,
 			ref int dst_len,
 			byte[] wrkmem);
-		#endregion
+#endregion
 		
 		private byte[] _workMemory = new byte[16384L * 4];
 
@@ -134,3 +135,4 @@ namespace Simplicit.Net.Lzo // LUCENENET TODO: Remove this class ? (not used)
 		}
 	}
 }
+#endif
