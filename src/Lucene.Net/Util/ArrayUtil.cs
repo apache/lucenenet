@@ -793,6 +793,9 @@ namespace Lucene.Net.Util
         // LUCENENET specific - we don't have an IComparable<T> constraint -
         // the logic of GetNaturalComparer<T> handles that so we just
         // do a cast here.
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         private class NaturalComparer<T> : IComparer<T> //where T : IComparable<T>
         {
             internal NaturalComparer()

@@ -32,40 +32,47 @@ namespace Lucene.Net.Support
 
     public class TestPriorityQueue : Util.LuceneTestCase
     {
-        //private class Integer : IComparable<Integer>
-        //{
-        //    private readonly int value;
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
+        internal class Integer : IComparable<Integer>
+        {
+            internal readonly int value;
 
-        //    public Integer(int value)
-        //    {
-        //        this.value = value;
-        //    }
+            public Integer(int value)
+            {
+                this.value = value;
+            }
 
-        //    public int CompareTo(Integer other)
-        //    {
-        //        value.CompareTo()
-        //    }
+            public int CompareTo(Integer other)
+            {
+                if (other == null)
+                {
+                    return -1;
+                }
+                return value.CompareTo(other.value);
+            }
 
-        //    public override bool Equals(object obj)
-        //    {
-        //        if (!(obj is int))
-        //        {
-        //            return false;
-        //        }
+            public override bool Equals(object obj)
+            {
+                if (obj == null || !(obj is Integer))
+                {
+                    return false;
+                }
 
-        //        return value.Equals((int)obj);
-        //    }
+                return value.Equals(((Integer)obj).value);
+            }
 
-        //    public override int GetHashCode()
-        //    {
-        //        return value.GetHashCode();
-        //    }
+            public override int GetHashCode()
+            {
+                return value.GetHashCode();
+            }
 
-        //    public override string ToString()
-        //    {
-        //        return value.ToString();
-        //    }
-        //}
+            public override string ToString()
+            {
+                return value.ToString();
+            }
+        }
 
 
         /// <summary>
@@ -74,14 +81,14 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void Test_Iterator()
         {
-            PriorityQueue<int> integerQueue = new PriorityQueue<int>(Comparer<int>.Default);
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>();
             int[] array = { 2, 45, 7, -12, 9 };
             for (int i = 0; i < array.Length; i++)
             {
                 integerQueue.Offer(array[i]);
             }
-            List<int> iterResult = new List<int>();
-            using (IEnumerator<int> iter = integerQueue.GetEnumerator())
+            List<Integer> iterResult = new List<Integer>();
+            using (IEnumerator<Integer> iter = integerQueue.GetEnumerator())
             {
                 assertNotNull(iter);
 
@@ -93,14 +100,14 @@ namespace Lucene.Net.Support
             var resultArray = iterResult.ToArray();
             Array.Sort(array);
             Array.Sort(resultArray);
-            assertTrue(Arrays.Equals(array, resultArray));
+            assertTrue(ArraysEquals(array, resultArray));
         }
 
         [Test, LuceneNetSpecific]
         public void Test_Iterator_Empty()
         {
-            PriorityQueue<int?> integerQueue = new PriorityQueue<int?>(Comparer<int?>.Default);
-            IEnumerator<int?> iter;
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>();
+            IEnumerator<Integer> iter;
             using (iter = integerQueue.GetEnumerator())
             {
                 assertFalse(iter.MoveNext());
@@ -123,9 +130,9 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void Test_Iterator_Outofbound()
         {
-            PriorityQueue<int?> integerQueue = new PriorityQueue<int?>(Comparer<int?>.Default);
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>();
             integerQueue.Offer(0);
-            IEnumerator<int?> iter;
+            IEnumerator<Integer> iter;
 
             using (iter = integerQueue.GetEnumerator())
             {
@@ -154,7 +161,7 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void Test_Size()
         {
-            PriorityQueue<int?> integerQueue = new PriorityQueue<int?>(Comparer<int?>.Default);
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>();
             assertEquals(0, integerQueue.size());
             int[] array = { 2, 45, 7, -12, 9 };
             for (int i = 0; i < array.Length; i++)
@@ -225,8 +232,8 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void Test_ConstructorILComparer_cast()
         {
-            MockComparerCast<int> objectComparator = new MockComparerCast<int>();
-            PriorityQueue<int> integerQueue = new PriorityQueue<int>(100,
+            MockComparerCast<Integer> objectComparator = new MockComparerCast<Integer>();
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>(100,
                     objectComparator);
             assertNotNull(integerQueue);
             assertEquals(0, integerQueue.size());
@@ -242,8 +249,8 @@ namespace Lucene.Net.Support
         public void Test_ConstructorLCollection()
         {
             int[] array = { 2, 45, 7, -12, 9 };
-            List<int> list = Arrays.AsList(array);
-            PriorityQueue<int> integerQueue = new PriorityQueue<int>(list);
+            List<Integer> list = CreateIntegerList(array);
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>(list);
             assertEquals(array.Length, integerQueue.size());
             assertNull(integerQueue.Comparer);
             Array.Sort(array);
@@ -259,13 +266,13 @@ namespace Lucene.Net.Support
             List<Object> list = new List<Object>();
             list.Add(new float?(11));
             list.Add(null);
-            list.Add(new int?(10));
+            list.Add(new Integer(10));
             try
             {
                 new PriorityQueue<Object>(list);
-                fail("should throw NullReferenceException");
+                fail("should throw ArgumentNullException");
             }
-            catch (NullReferenceException e)
+            catch (ArgumentNullException e)
             {
                 // expected
             }
@@ -276,7 +283,7 @@ namespace Lucene.Net.Support
         {
             List<Object> list = new List<Object>();
             list.Add(new float?(11));
-            list.Add(new int?(10));
+            list.Add(new Integer(10));
             try
             {
                 new PriorityQueue<Object>(list);
@@ -312,15 +319,15 @@ namespace Lucene.Net.Support
         public void Test_ConstructorLCollection_from_sortedset()
         {
             int[] array = { 3, 5, 79, -17, 5 };
-            SortedSet<int> treeSet = new SortedSet<int>(new MockComparer<int>());
+            SortedSet<Integer> treeSet = new SortedSet<Integer>(new MockComparer<Integer>());
             for (int i = 0; i < array.Length; i++)
             {
-                treeSet.add(array[i]);
+                treeSet.Add(array[i]);
             }
-            ICollection<int> c = treeSet;
-            PriorityQueue<int> queue = new PriorityQueue<int>(c);
+            ICollection<Integer> c = treeSet;
+            PriorityQueue<Integer> queue = new PriorityQueue<Integer>(c);
             assertEquals(treeSet.Comparer, queue.Comparer);
-            IEnumerator<int> iter = treeSet.GetEnumerator();
+            IEnumerator<Integer> iter = treeSet.GetEnumerator();
             while (iter.MoveNext())
             {
                 assertEquals(iter.Current, queue.Poll());
@@ -332,15 +339,15 @@ namespace Lucene.Net.Support
         public void Test_ConstructorLCollection_from_treeset()
         {
             int[] array = { 3, 5, 79, -17, 5 };
-            TreeSet<int> treeSet = new TreeSet<int>(new MockComparer<int>());
+            TreeSet<Integer> treeSet = new TreeSet<Integer>(new MockComparer<Integer>());
             for (int i = 0; i < array.Length; i++)
             {
-                treeSet.add(array[i]);
+                treeSet.Add(array[i]);
             }
-            ICollection<int> c = treeSet;
-            PriorityQueue<int> queue = new PriorityQueue<int>(c);
+            ICollection<Integer> c = treeSet;
+            PriorityQueue<Integer> queue = new PriorityQueue<Integer>(c);
             assertEquals(treeSet.Comparer, queue.Comparer);
-            IEnumerator<int> iter = treeSet.GetEnumerator();
+            IEnumerator<Integer> iter = treeSet.GetEnumerator();
             while (iter.MoveNext())
             {
                 assertEquals(iter.Current, queue.Poll());
@@ -351,14 +358,14 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void Test_ConstructorLPriorityQueue()
         {
-            PriorityQueue<int> integerQueue = new PriorityQueue<int>();
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>();
             int[] array = { 2, 45, 7, -12, 9 };
             for (int i = 0; i < array.Length; i++)
             {
                 integerQueue.Offer(array[i]);
             }
             // Can't cast int > object in .NET
-            PriorityQueue<int> objectQueue = new PriorityQueue<int>(
+            PriorityQueue<Integer> objectQueue = new PriorityQueue<Integer>(
                     integerQueue);
             assertEquals(integerQueue.size(), objectQueue.size());
             assertEquals(integerQueue.Comparer, objectQueue.Comparer);
@@ -370,11 +377,11 @@ namespace Lucene.Net.Support
         }
 
         [Test, LuceneNetSpecific]
-        public void test_ConstructorLPriorityQueue_null()
+        public void Test_ConstructorLPriorityQueue_null()
         {
             try
             {
-                new PriorityQueue<int>((PriorityQueue<int>)null);
+                new PriorityQueue<Integer>((PriorityQueue<Integer>)null);
                 fail("should throw ArgumentNullException");
             }
             catch (ArgumentNullException e)
@@ -387,12 +394,12 @@ namespace Lucene.Net.Support
         public void Test_ConstructorLSortedSet()
         {
             int[] array = { 3, 5, 79, -17, 5 };
-            SortedSet<int> treeSet = new SortedSet<int>();
+            SortedSet<Integer> treeSet = new SortedSet<Integer>();
             for (int i = 0; i < array.Length; i++)
             {
-                treeSet.add(array[i]);
+                treeSet.Add(array[i]);
             }
-            PriorityQueue<int> queue = new PriorityQueue<int>(treeSet);
+            PriorityQueue<Integer> queue = new PriorityQueue<Integer>(treeSet);
             var iter = treeSet.GetEnumerator();
             while (iter.MoveNext())
             {
@@ -404,12 +411,12 @@ namespace Lucene.Net.Support
         public void Test_ConstructorLTreeSet()
         {
             int[] array = { 3, 5, 79, -17, 5 };
-            TreeSet<int> treeSet = new TreeSet<int>();
+            TreeSet<Integer> treeSet = new TreeSet<Integer>();
             for (int i = 0; i < array.Length; i++)
             {
-                treeSet.add(array[i]);
+                treeSet.Add(array[i]);
             }
-            PriorityQueue<int> queue = new PriorityQueue<int>(treeSet);
+            PriorityQueue<Integer> queue = new PriorityQueue<Integer>(treeSet);
             var iter = treeSet.GetEnumerator();
             while (iter.MoveNext())
             {
@@ -422,7 +429,7 @@ namespace Lucene.Net.Support
         {
             try
             {
-                new PriorityQueue<int>((SortedSet<int>) null);
+                new PriorityQueue<Integer>((SortedSet<Integer>) null);
                 fail("should throw ArgumentNullException");
             }
             catch (ArgumentNullException e)
@@ -436,7 +443,7 @@ namespace Lucene.Net.Support
         {
             try
             {
-                new PriorityQueue<int>((TreeSet<int>)null);
+                new PriorityQueue<Integer>((TreeSet<Integer>)null);
                 fail("should throw ArgumentNullException");
             }
             catch (ArgumentNullException e)
@@ -483,7 +490,7 @@ namespace Lucene.Net.Support
         public void Test_Offer_LObject_non_Comparable()
         {
             PriorityQueue<Object> queue = new PriorityQueue<Object>();
-            queue.Offer(new int?(10));
+            queue.Offer(new Integer(10));
             try
             {
                 queue.Offer(new float?(1.3f));
@@ -536,15 +543,15 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void Test_Peek()
         {
-            PriorityQueue<int> integerQueue = new PriorityQueue<int>();
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>();
             int[] array = { 2, 45, 7, -12, 9 };
             for (int i = 0; i < array.Length; i++)
             {
                 integerQueue.Add(array[i]);
             }
             Array.Sort(array);
-            assertEquals(new int?(array[0]), integerQueue.Peek());
-            assertEquals(new int?(array[0]), integerQueue.Peek());
+            assertEquals(new Integer(array[0]), integerQueue.Peek());
+            assertEquals(new Integer(array[0]), integerQueue.Peek());
         }
 
         [Test, LuceneNetSpecific]
@@ -559,7 +566,7 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void Test_Clear()
         {
-            PriorityQueue<int> integerQueue = new PriorityQueue<int>();
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>();
             int[] array = { 2, 45, 7, -12, 9 };
             for (int i = 0; i < array.Length; i++)
             {
@@ -572,7 +579,7 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific]
         public void Test_Add_LObject()
         {
-            PriorityQueue<int> integerQueue = new PriorityQueue<int>();
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>();
             int[] array = { 2, 45, 7, -12, 9 };
             for (int i = 0; i < array.Length; i++)
             {
@@ -634,11 +641,11 @@ namespace Lucene.Net.Support
         public void Test_Remove_LObject()
         {
             int[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
-            List<int> list = Arrays.AsList(array);
-            PriorityQueue<int> integerQueue = new PriorityQueue<int>(list);
+            List<Integer> list = CreateIntegerList(array);
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>(list);
             assertTrue(integerQueue.Remove(16));
             int[] newArray = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 39 };
-            Array.Sort(newArray);
+            Array.Sort(newArray, Util.ArrayUtil.GetNaturalComparer<int>());
             for (int i = 0; i < newArray.Length; i++)
             {
                 assertEquals(newArray[i], integerQueue.Poll());
@@ -663,30 +670,31 @@ namespace Lucene.Net.Support
         [Test, LuceneNetSpecific] // NOT Passing
         public void Test_Remove_LObject_not_exists()
         {
-            object[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
-            List<object> list = Arrays.AsList(array);
-            PriorityQueue<object> integerQueue = new PriorityQueue<object>(list);
+            int[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
+            List<Integer> list = CreateIntegerList(array);
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>(list);
             assertFalse(integerQueue.Remove(111));
             assertFalse(integerQueue.Remove(null));
-            assertFalse(integerQueue.Remove(""));
+            //assertFalse(integerQueue.Remove(""));
         }
 
         [Test, LuceneNetSpecific] // NOT Passing
         public void Test_Remove_LObject_null()
         {
-            int?[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
-            List<int?> list = Arrays.AsList(array);
-            PriorityQueue<int?> integerQueue = new PriorityQueue<int?>(list);
+            int[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
+            List<Integer> list = CreateIntegerList(array);
+            PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>(list);
             assertFalse(integerQueue.Remove(null));
         }
 
         [Test, LuceneNetSpecific] // NOT Passing
         public void Test_Remove_LObject_not_Compatible()
         {
-            object[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
-            List<object> list = Arrays.AsList(array);
-            PriorityQueue<object> integerQueue = new PriorityQueue<object>(list);
-            assertFalse(integerQueue.Remove(new float?(1.3F)));
+            // LUCENENET: Cannot remove a float from an integer queue - won't compile
+            //int[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
+            //List<Integer> list = CreateIntegerList(array);
+            //PriorityQueue<Integer> integerQueue = new PriorityQueue<Integer>(list);
+            //assertFalse(integerQueue.Remove(new float?(1.3F)));
 
             // although argument element type is not compatible with those in queue,
             // but comparator supports it.
@@ -718,12 +726,12 @@ namespace Lucene.Net.Support
         public void Test_Serialization()
         {
             int[] array = { 2, 45, 7, -12, 9, 23, 17, 1118, 10, 16, 39 };
-            List<int> list = Arrays.AsList(array);
-            PriorityQueue<int> srcIntegerQueue = new PriorityQueue<int>(
+            List<Integer> list = CreateIntegerList(array);
+            PriorityQueue<Integer> srcIntegerQueue = new PriorityQueue<Integer>(
                 list);
             //PriorityQueue<int> destIntegerQueue = (PriorityQueue<int>)SerializationTester
             //        .getDeserilizedObject(srcIntegerQueue);
-            PriorityQueue<int> destIntegerQueue = GetDeserializedObject(srcIntegerQueue);
+            PriorityQueue<Integer> destIntegerQueue = GetDeserializedObject(srcIntegerQueue);
             Array.Sort(array);
             for (int i = 0; i < array.Length; i++)
             {
@@ -747,7 +755,7 @@ namespace Lucene.Net.Support
         //    int I = (int)o;
         //    assertEquals(array[0], I);
         //}
-#endif
+
 
         private T GetDeserializedObject<T>(T objectToSerialize)
         {
@@ -759,6 +767,7 @@ namespace Lucene.Net.Support
                 return (T)bf.Deserialize(ms);
             }
         }
+#endif
 
         private class MockComparer<E> : IComparer<E>
         {
@@ -808,6 +817,70 @@ namespace Lucene.Net.Support
             {
                 return 0;
             }
+        }
+
+        private List<Integer> CreateIntegerList(IEnumerable<int> collection)
+        {
+            List<Integer> list = new List<Integer>();
+            foreach (var value in collection)
+            {
+                list.Add(new Integer(value));
+            }
+            return list;
+        }
+
+        internal void assertEquals(int expected, Integer actual)
+        {
+            Util.LuceneTestCase.assertEquals(expected, actual.value);
+        }
+
+        internal bool ArraysEquals(int[] expected, Integer[] actual)
+        {
+            int[] actual2 = new int[actual.Length];
+            for (int i = 0; i < actual.Length; i++)
+            {
+                actual2[i] = actual[i].value;
+            }
+            return Arrays.Equals(expected, actual2);
+        }
+    }
+
+    internal static class TestPriorityQueueExtensions
+    {
+        public static bool Offer(this PriorityQueue<TestPriorityQueue.Integer> pq, int value)
+        {
+            return pq.Offer(new TestPriorityQueue.Integer(value));
+        }
+
+        public static bool AddAll(this PriorityQueue<TestPriorityQueue.Integer> pq, ICollection<int> c)
+        {
+            bool result = false;
+            foreach (int value in c)
+            {
+                pq.Add(new TestPriorityQueue.Integer(value));
+                result = true;
+            }
+            return result;
+        }
+
+        public static void Add(this PriorityQueue<TestPriorityQueue.Integer> pq, int value)
+        {
+            pq.Add(new TestPriorityQueue.Integer(value));
+        }
+
+        public static bool Remove(this PriorityQueue<TestPriorityQueue.Integer> pq, int value)
+        {
+            return pq.Remove(new TestPriorityQueue.Integer(value));
+        }
+
+        public static bool Add(this SortedSet<TestPriorityQueue.Integer> ss, int value)
+        {
+            return ss.Add(new TestPriorityQueue.Integer(value));
+        }
+
+        public static bool Add(this TreeSet<TestPriorityQueue.Integer> ss, int value)
+        {
+            return ss.Add(new TestPriorityQueue.Integer(value));
         }
     }
 }
