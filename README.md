@@ -62,7 +62,7 @@ We recommend you join the [user mailing list](https://cwiki.apache.org/confluenc
 
 ### Report a Bug
 
-To report a bug, please use the [JIRA issue tracker](https://issues.apache.org/jira/browse/LUCENENET-574?jql=project%20%3D%20LUCENENET%20AND%20status%20%3D%20Open). You can signup for a JIRA account [here](https://cwiki.apache.org/confluence/signup.action) (it just takes a minute).
+To report a bug, please use the [JIRA issue tracker](https://issues.apache.org/jira/issues/?jql=project%20%3D%20LUCENENET%20AND%20status%20%3D%20Open). You can signup for a JIRA account [here](https://cwiki.apache.org/confluence/signup.action) (it just takes a minute).
 
 ### Start a Discussion
 
