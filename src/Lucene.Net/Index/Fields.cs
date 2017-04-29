@@ -23,7 +23,8 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Flex API for access to fields and terms
-    ///  @lucene.experimental
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -32,15 +33,15 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected Fields()
         {
         }
 
         /// <summary>
-        /// Returns an iterator that will step through all fields
-        ///  names.  this will not return null.
+        /// Returns an enumerator that will step through all field
+        /// names.  This will not return <c>null</c>.
         /// </summary>
         public abstract IEnumerator<string> GetEnumerator();
 
@@ -50,8 +51,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get the <see cref="Terms"/> for this field.  this will return
-        /// null if the field does not exist.
+        /// Get the <see cref="Terms"/> for this field.  This will return
+        /// <c>null</c> if the field does not exist.
         /// </summary>
         public abstract Terms GetTerms(string field);
 
@@ -59,21 +60,19 @@ namespace Lucene.Net.Index
         /// Gets the number of fields or -1 if the number of
         /// distinct field names is unknown. If &gt;= 0,
         /// <see cref="GetEnumerator"/> will return as many field names.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public abstract int Count { get; }
 
         /// <summary>
         /// Returns the number of terms for all fields, or -1 if this
-        ///  measure isn't stored by the codec. Note that, just like
-        ///  other term measures, this measure does not take deleted
-        ///  documents into account. </summary>
-        ///  @deprecated iterate fields and add their Count instead.
-        ///   this method is only provided as a transition mechanism
-        ///   to access this statistic for 3.x indexes, which do not
-        ///   have this statistic per-field.
-        ///  <seealso cref="Index.Terms.Count"></seealso>
-        [Obsolete("iterate fields and add their Count instead.")]
+        /// measure isn't stored by the codec. Note that, just like
+        /// other term measures, this measure does not take deleted
+        /// documents into account. 
+        /// </summary>
+        /// <seealso cref="Index.Terms.Count"></seealso>
+        [Obsolete("Iterate fields and add their Count instead. This method is only provided as a transition mechanism to access this statistic for 3.x indexes, which do not have this statistic per-field.")]
         public virtual long UniqueTermCount
         {
             get
@@ -98,7 +97,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Zero-length {@code Fields} array.
+        /// Zero-length <see cref="Fields"/> array.
         /// </summary>
         public static readonly Fields[] EMPTY_ARRAY = new Fields[0];
     }

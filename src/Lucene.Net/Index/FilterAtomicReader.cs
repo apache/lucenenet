@@ -26,22 +26,22 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    ///  A <code>FilterAtomicReader</code> contains another AtomicReader, which it
+    /// A <see cref="FilterAtomicReader"/> contains another <see cref="AtomicReader"/>, which it
     /// uses as its basic source of data, possibly transforming the data along the
     /// way or providing additional functionality. The class
-    /// <code>FilterAtomicReader</code> itself simply implements all abstract methods
-    /// of <code>IndexReader</code> with versions that pass all requests to the
-    /// contained index reader. Subclasses of <code>FilterAtomicReader</code> may
+    /// <see cref="FilterAtomicReader"/> itself simply implements all abstract methods
+    /// of <see cref="IndexReader"/> with versions that pass all requests to the
+    /// contained index reader. Subclasses of <see cref="FilterAtomicReader"/> may
     /// further override some of these methods and may also provide additional
     /// methods and fields.
-    /// <p><b>NOTE</b>: If you override <seealso cref="#getLiveDocs()"/>, you will likely need
-    /// to override <seealso cref="#numDocs()"/> as well and vice-versa.
-    /// <p><b>NOTE</b>: If this <seealso cref="FilterAtomicReader"/> does not change the
+    /// <para/><b>NOTE</b>: If you override <see cref="LiveDocs"/>, you will likely need
+    /// to override <see cref="NumDocs"/> as well and vice-versa.
+    /// <para/><b>NOTE</b>: If this <see cref="FilterAtomicReader"/> does not change the
     /// content the contained reader, you could consider overriding
-    /// <seealso cref="#getCoreCacheKey()"/> so that <seealso cref="IFieldCache"/> and
-    /// <seealso cref="CachingWrapperFilter"/> share the same entries for this atomic reader
-    /// and the wrapped one. <seealso cref="#getCombinedCoreAndDeletesKey()"/> could be
-    /// overridden as well if the <seealso cref="#getLiveDocs() live docs"/> are not changed
+    /// <see cref="IndexReader.CoreCacheKey"/> so that <see cref="Search.IFieldCache"/> and
+    /// <see cref="Search.CachingWrapperFilter"/> share the same entries for this atomic reader
+    /// and the wrapped one. <see cref="IndexReader.CombinedCoreAndDeletesKey"/> could be
+    /// overridden as well if the <see cref="LiveDocs"/> are not changed
     /// either.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -50,8 +50,8 @@ namespace Lucene.Net.Index
     public class FilterAtomicReader : AtomicReader
     {
         /// <summary>
-        /// Get the wrapped instance by <code>reader</code> as long as this reader is
-        ///  an intance of <seealso cref="FilterAtomicReader"/>.
+        /// Get the wrapped instance by <paramref name="reader"/> as long as this reader is
+        /// an intance of <see cref="FilterAtomicReader"/>.
         /// </summary>
         public static AtomicReader Unwrap(AtomicReader reader)
         {
@@ -63,8 +63,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Base class for filtering <seealso cref="Fields"/>
-        ///  implementations.
+        /// Base class for filtering <see cref="Index.Fields"/>
+        /// implementations.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -72,12 +72,12 @@ namespace Lucene.Net.Index
         public class FilterFields : Fields
         {
             /// <summary>
-            /// The underlying Fields instance. </summary>
+            /// The underlying <see cref="Index.Fields"/> instance. </summary>
             protected readonly Fields m_input;
 
             /// <summary>
-            /// Creates a new FilterFields. </summary>
-            /// <param name="input"> the underlying Fields instance. </param>
+            /// Creates a new <see cref="FilterFields"/>. </summary>
+            /// <param name="input"> the underlying <see cref="Index.Fields"/> instance. </param>
             public FilterFields(Fields input)
             {
                 this.m_input = input;
@@ -100,10 +100,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Base class for filtering <seealso cref="Terms"/> implementations.
-        /// <p><b>NOTE</b>: If the order of terms and documents is not changed, and if
+        /// Base class for filtering <see cref="Terms"/> implementations.
+        /// <para/><b>NOTE</b>: If the order of terms and documents is not changed, and if
         /// these terms are going to be intersected with automata, you could consider
-        /// overriding <seealso cref="#intersect"/> for better performance.
+        /// overriding <see cref="Terms.Intersect"/> for better performance.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -111,12 +111,12 @@ namespace Lucene.Net.Index
         public class FilterTerms : Terms
         {
             /// <summary>
-            /// The underlying Terms instance. </summary>
+            /// The underlying <see cref="Terms"/> instance. </summary>
             protected readonly Terms m_input;
 
             /// <summary>
-            /// Creates a new FilterTerms </summary>
-            /// <param name="input"> the underlying Terms instance. </param>
+            /// Creates a new <see cref="FilterTerms"/> </summary>
+            /// <param name="input"> the underlying <see cref="Terms"/> instance. </param>
             public FilterTerms(Terms input)
             {
                 this.m_input = input;
@@ -186,19 +186,19 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Base class for filtering <seealso cref="TermsEnum"/> implementations. </summary>
+        /// Base class for filtering <see cref="TermsEnum"/> implementations. </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
         public class FilterTermsEnum : TermsEnum
         {
             /// <summary>
-            /// The underlying TermsEnum instance. </summary>
+            /// The underlying <see cref="TermsEnum"/> instance. </summary>
             protected internal readonly TermsEnum m_input;
 
             /// <summary>
-            /// Creates a new FilterTermsEnum </summary>
-            /// <param name="input"> the underlying TermsEnum instance. </param>
+            /// Creates a new <see cref="FilterTermsEnum"/> </summary>
+            /// <param name="input"> the underlying <see cref="TermsEnum"/> instance. </param>
             public FilterTermsEnum(TermsEnum input)
             {
                 this.m_input = input;
@@ -264,20 +264,20 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Base class for filtering <seealso cref="DocsEnum"/> implementations. </summary>
+        /// Base class for filtering <see cref="DocsEnum"/> implementations. </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
         public class FilterDocsEnum : DocsEnum
         {
             /// <summary>
-            /// The underlying DocsEnum instance.
+            /// The underlying <see cref="DocsEnum"/> instance.
             /// </summary>
             protected internal DocsEnum m_input;
 
             /// <summary>
-            /// Create a new FilterDocsEnum </summary>
-            /// <param name="input"> the underlying DocsEnum instance. </param>
+            /// Create a new <see cref="FilterDocsEnum"/> </summary>
+            /// <param name="input"> the underlying <see cref="DocsEnum"/> instance. </param>
             public FilterDocsEnum(DocsEnum input)
             {
                 this.m_input = input;
@@ -315,19 +315,19 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Base class for filtering <seealso cref="DocsAndPositionsEnum"/> implementations. </summary>
+        /// Base class for filtering <see cref="DocsAndPositionsEnum"/> implementations. </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
         public class FilterDocsAndPositionsEnum : DocsAndPositionsEnum
         {
             /// <summary>
-            /// The underlying DocsAndPositionsEnum instance. </summary>
+            /// The underlying <see cref="DocsAndPositionsEnum"/> instance. </summary>
             protected internal readonly DocsAndPositionsEnum m_input;
 
             /// <summary>
-            /// Create a new FilterDocsAndPositionsEnum </summary>
-            /// <param name="input"> the underlying DocsAndPositionsEnum instance. </param>
+            /// Create a new <see cref="FilterDocsAndPositionsEnum"/> </summary>
+            /// <param name="input"> the underlying <see cref="DocsAndPositionsEnum"/> instance. </param>
             public FilterDocsAndPositionsEnum(DocsAndPositionsEnum input)
             {
                 this.m_input = input;
@@ -385,13 +385,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// The underlying AtomicReader. </summary>
+        /// The underlying <see cref="AtomicReader"/>. </summary>
         protected readonly AtomicReader m_input;
 
         /// <summary>
-        /// <p>Construct a FilterAtomicReader based on the specified base reader.
-        /// <p>Note that base reader is closed if this FilterAtomicReader is closed.</p> </summary>
-        /// <param name="in"> specified base reader. </param>
+        /// Construct a <see cref="FilterAtomicReader"/> based on the specified base reader.
+        /// <para/>
+        /// Note that base reader is closed if this <see cref="FilterAtomicReader"/> is closed.
+        /// </summary>
+        /// <param name="input"> specified base reader. </param>
         public FilterAtomicReader(AtomicReader input)
             : base()
         {
@@ -426,10 +428,8 @@ namespace Lucene.Net.Index
         {
             get
             {
-                {
-                    // Don't call ensureOpen() here (it could affect performance)
-                    return m_input.NumDocs;
-                }
+                // Don't call ensureOpen() here (it could affect performance)
+                return m_input.NumDocs;
             }
         }
 

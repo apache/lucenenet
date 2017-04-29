@@ -396,10 +396,11 @@ namespace Lucene.Net.Index
 
         internal BytesRef payload;
 
-        /* Walk through all unique text tokens (Posting
-         * instances) found in this field and serialize them
-         * into a single RAM segment. */
-
+        /// <summary>
+        /// Walk through all unique text tokens (Posting
+        /// instances) found in this field and serialize them
+        /// into a single RAM segment.
+        /// </summary>
         internal void Flush(string fieldName, FieldsConsumer consumer, SegmentWriteState state)
         {
             if (!fieldInfo.IsIndexed)

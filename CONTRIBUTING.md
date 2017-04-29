@@ -52,7 +52,7 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 1. Lucene.Net.Core (project)
    1. Codecs (namespace)
-   2. Index (namespace) (Except for types starting with letter A-D, LiveIndexWriterConfig, IndexWriter, IndexWriterConfig, IndexReader, and TieredMergePolicy)
+   2. Index (namespace) (Except for types starting with letter A-F, IndexWriter, IndexWriterConfig, IndexReader, LiveIndexWriterConfig, and TieredMergePolicy)
    3. Search (namespace)
    4. Support (namespace)
    5. Util (namespace) (Except for Util.Fst)

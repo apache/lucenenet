@@ -32,12 +32,12 @@ namespace Lucene.Net.Index
     internal sealed class FreqProxTermsWriter : TermsHashConsumer
     {
         public override void Abort()
+        { }
+
         // TODO: would be nice to factor out more of this, eg the
         // FreqProxFieldMergeState, and code to visit all Fields
         // under the same FieldInfo together, up into TermsHash*.
         // Other writers would presumably share alot of this...
-        {
-        }
 
         public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {

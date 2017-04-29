@@ -23,10 +23,10 @@ namespace Lucene.Net.Index
     using AttributeSource = Lucene.Net.Util.AttributeSource;
 
     /// <summary>
-    /// this class tracks the number and position / offset parameters of terms
+    /// This class tracks the number and position / offset parameters of terms
     /// being added to the index. The information collected in this class is
     /// also used to calculate the normalization factor for a field.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -46,8 +46,8 @@ namespace Lucene.Net.Index
         private AttributeSource attributeSource;
 
         /// <summary>
-        /// Creates {code FieldInvertState} for the specified
-        ///  field name.
+        /// Creates <see cref="FieldInvertState"/> for the specified
+        /// field name.
         /// </summary>
         public FieldInvertState(string name)
         {
@@ -55,8 +55,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates {code FieldInvertState} for the specified
-        ///  field name and values for all fields.
+        /// Creates <see cref="FieldInvertState"/> for the specified
+        /// field name and values for all fields.
         /// </summary>
         public FieldInvertState(string name, int position, int length, int numOverlap, int offset, float boost)
         {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get the last processed term position. </summary>
+        /// Gets the last processed term position. </summary>
         /// <returns> the position </returns>
         public int Position
         {
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get total number of terms in this field. </summary>
+        /// Gets or Sets total number of terms in this field. </summary>
         /// <returns> the length </returns>
         public int Length
         {
@@ -114,7 +114,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get the number of terms with <code>positionIncrement == 0</code>. </summary>
+        /// Gets or Sets the number of terms with <c>positionIncrement == 0</c>. </summary>
         /// <returns> the numOverlap </returns>
         public int NumOverlap
         {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get end offset of the last processed term. </summary>
+        /// Gets end offset of the last processed term. </summary>
         /// <returns> the offset </returns>
         public int Offset
         {
@@ -144,7 +144,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get boost value. this is the cumulative product of
+        /// Gets or Sets boost value. This is the cumulative product of
         /// document boost and field boost for all field instances
         /// sharing the same field name. </summary>
         /// <returns> the boost </returns>
@@ -178,7 +178,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the number of unique terms encountered in this field.
+        /// Gets the number of unique terms encountered in this field.
         /// </summary>
         public int UniqueTermCount
         {
@@ -193,9 +193,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="AttributeSource"/> from the {@link
-        ///  TokenStream} that provided the indexed tokens for this
-        ///  field.
+        /// Gets the <see cref="Util.AttributeSource"/> from the
+        /// <see cref="Analysis.TokenStream"/> that provided the indexed tokens for this
+        /// field.
         /// </summary>
         public AttributeSource AttributeSource
         {
@@ -210,7 +210,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the field's name
+        /// Gets the field's name
         /// </summary>
         public string Name
         {

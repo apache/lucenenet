@@ -24,8 +24,9 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Collection of <seealso cref="FieldInfo"/>s (accessible by number or by name).
-    ///  @lucene.experimental
+    /// Collection of <see cref="Index.FieldInfo"/>s (accessible by number or by name).
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -45,7 +46,7 @@ namespace Lucene.Net.Index
         private readonly ICollection<FieldInfo> values; // for an unmodifiable iterator
 
         /// <summary>
-        /// Constructs a new FieldInfos from an array of FieldInfo objects
+        /// Constructs a new <see cref="FieldInfos"/> from an array of <see cref="Index.FieldInfo"/> objects
         /// </summary>
         public FieldInfos(FieldInfo[] infos)
         {
@@ -100,49 +101,49 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if any fields have freqs </summary>
+        /// Returns <c>true</c> if any fields have freqs </summary>
         public virtual bool HasFreq
         {
             get { return hasFreq; }
         }
 
         /// <summary>
-        /// Returns true if any fields have positions </summary>
+        /// Returns <c>true</c> if any fields have positions </summary>
         public virtual bool HasProx
         {
             get { return hasProx; }
         }
 
         /// <summary>
-        /// Returns true if any fields have payloads </summary>
+        /// Returns <c>true</c> if any fields have payloads </summary>
         public virtual bool HasPayloads
         {
             get { return hasPayloads; }
         }
 
         /// <summary>
-        /// Returns true if any fields have offsets </summary>
+        /// Returns <c>true</c> if any fields have offsets </summary>
         public virtual bool HasOffsets
         {
             get { return hasOffsets; }
         }
 
         /// <summary>
-        /// Returns true if any fields have vectors </summary>
+        /// Returns <c>true</c> if any fields have vectors </summary>
         public virtual bool HasVectors
         {
             get { return hasVectors; }
         }
 
         /// <summary>
-        /// Returns true if any fields have norms </summary>
+        /// Returns <c>true</c> if any fields have norms </summary>
         public virtual bool HasNorms
         {
             get { return hasNorms; }
         }
 
         /// <summary>
-        /// Returns true if any fields have DocValues </summary>
+        /// Returns <c>true</c> if any fields have <see cref="DocValues"/> </summary>
         public virtual bool HasDocValues
         {
             get { return hasDocValues; }
@@ -150,6 +151,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the number of fields.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public virtual int Count
@@ -177,8 +179,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the fieldinfo object referenced by the field name </summary>
-        /// <returns> the FieldInfo object or null when the given fieldName
+        /// Return the <see cref="Index.FieldInfo"/> object referenced by the <paramref name="fieldName"/> </summary>
+        /// <returns> the <see cref="Index.FieldInfo"/> object or <c>null</c> when the given <paramref name="fieldName"/>
         /// doesn't exist. </returns>
         public virtual FieldInfo FieldInfo(string fieldName)
         {
@@ -188,11 +190,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the fieldinfo object referenced by the fieldNumber. </summary>
+        /// Return the <see cref="Index.FieldInfo"/> object referenced by the <paramref name="fieldNumber"/>. </summary>
         /// <param name="fieldNumber"> field's number. </param>
-        /// <returns> the FieldInfo object or null when the given fieldNumber
+        /// <returns> the <see cref="Index.FieldInfo"/> object or null when the given <paramref name="fieldNumber"/>
         /// doesn't exist. </returns>
-        /// <exception cref="IllegalArgumentException"> if fieldNumber is negative </exception>
+        /// <exception cref="ArgumentException"> if <paramref name="fieldNumber"/> is negative </exception>
         public virtual FieldInfo FieldInfo(int fieldNumber)
         {
             if (fieldNumber < 0)
@@ -207,7 +209,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        public sealed class FieldNumbers
+        internal sealed class FieldNumbers
         {
             private readonly IDictionary<int?, string> numberToName;
             private readonly IDictionary<string, int?> nameToNumber;
@@ -301,8 +303,8 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Returns true if the {@code fieldName} exists in the map and is of the
-            /// same {@code dvType}.
+            /// Returns <c>true</c> if the <paramref name="fieldName"/> exists in the map and is of the
+            /// same <paramref name="dvType"/>.
             /// </summary>
             internal bool Contains(string fieldName, DocValuesType dvType)
             {
@@ -357,7 +359,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Creates a new instance with the given <seealso cref="FieldNumbers"/>.
+            /// Creates a new instance with the given <see cref="FieldNumbers"/>.
             /// </summary>
             internal Builder(FieldNumbers globalFieldNumbers)
             {
@@ -375,10 +377,10 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// NOTE: this method does not carry over termVector
-            ///  booleans nor docValuesType; the indexer chain
-            ///  (TermVectorsConsumerPerField, DocFieldProcessor) must
-            ///  set these fields when they succeed in consuming
-            ///  the document
+            /// booleans nor docValuesType; the indexer chain
+            /// (TermVectorsConsumerPerField, DocFieldProcessor) must
+            /// set these fields when they succeed in consuming
+            /// the document
             /// </summary>
             public FieldInfo AddOrUpdate(string name, IIndexableFieldType fieldType)
             {

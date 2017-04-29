@@ -27,13 +27,13 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Abstract class for enumerating a subset of all terms.
-    ///
-    /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
-    /// greater than all that precede it.</p>
-    /// <p><em>Please note:</em> Consumers of this enum cannot
-    /// call {@code seek()}, it is forward only; it throws
-    /// <seealso cref="UnsupportedOperationException"/> when a seeking method
+    /// <para/>
+    /// Term enumerations are always ordered by
+    /// <see cref="Comparer"/>.  Each term in the enumeration is
+    /// greater than all that precede it.
+    /// <para/><c>Please note:</c> Consumers of this enumeration cannot
+    /// call <c>Seek()</c>, it is forward only; it throws
+    /// <see cref="NotSupportedException"/> when a seeking method
     /// is called.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -49,9 +49,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Return value, if term should be accepted or the iteration should
-        /// {@code END}. The {@code *_SEEK} values denote, that after handling the current term
-        /// the enum should call <seealso cref="#nextSeekTerm"/> and step forward. </summary>
-        /// <seealso cref= #accept(BytesRef) </seealso>
+        /// <see cref="END"/>. The <c>*_SEEK</c> values denote, that after handling the current term
+        /// the enum should call <see cref="NextSeekTerm(BytesRef)"/> and step forward. </summary>
+        /// <seealso cref="Accept(BytesRef)"/>
         protected internal enum AcceptStatus
         {
             /// <summary>
@@ -59,7 +59,7 @@ namespace Lucene.Net.Index
             YES,
 
             /// <summary>
-            /// Accept the term and advance (<seealso cref="FilteredTermsEnum#nextSeekTerm(BytesRef)"/>)
+            /// Accept the term and advance (<see cref="FilteredTermsEnum.NextSeekTerm(BytesRef)"/>)
             /// to the next term.
             /// </summary>
             YES_AND_SEEK,
@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
             NO,
 
             /// <summary>
-            /// Reject the term and advance (<seealso cref="FilteredTermsEnum#nextSeekTerm(BytesRef)"/>)
+            /// Reject the term and advance (<see cref="FilteredTermsEnum.NextSeekTerm(BytesRef)"/>)
             /// to the next term.
             /// </summary>
             NO_AND_SEEK,
@@ -86,7 +86,7 @@ namespace Lucene.Net.Index
         protected abstract AcceptStatus Accept(BytesRef term);
 
         /// <summary>
-        /// Creates a filtered <seealso cref="TermsEnum"/> on a terms enum. </summary>
+        /// Creates a filtered <see cref="TermsEnum"/> on a terms enum. </summary>
         /// <param name="tenum"> the terms enumeration to filter. </param>
         public FilteredTermsEnum(TermsEnum tenum)
             : this(tenum, true)
@@ -94,8 +94,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates a filtered <seealso cref="TermsEnum"/> on a terms enum. </summary>
+        /// Creates a filtered <see cref="TermsEnum"/> on a terms enum. </summary>
         /// <param name="tenum"> the terms enumeration to filter. </param>
+        /// <param name="startWithSeek"> start with seek </param>
         public FilteredTermsEnum(TermsEnum tenum, bool startWithSeek)
         {
             Debug.Assert(tenum != null);
@@ -104,13 +105,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Use this method to set the initial <seealso cref="BytesRef"/>
-        /// to seek before iterating. this is a convenience method for
-        /// subclasses that do not override <seealso cref="#nextSeekTerm"/>.
-        /// If the initial seek term is {@code null} (default),
+        /// Use this method to set the initial <see cref="BytesRef"/>
+        /// to seek before iterating. This is a convenience method for
+        /// subclasses that do not override <see cref="NextSeekTerm(BytesRef)"/>.
+        /// If the initial seek term is <c>null</c> (default),
         /// the enum is empty.
-        /// <P>You can only use this method, if you keep the default
-        /// implementation of <seealso cref="#nextSeekTerm"/>.
+        /// <para/>You can only use this method, if you keep the default
+        /// implementation of <see cref="NextSeekTerm(BytesRef)"/>.
         /// </summary>
         protected void SetInitialSeekTerm(BytesRef term)
         {
@@ -118,20 +119,21 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// On the first call to <seealso cref="#next"/> or if <seealso cref="#accept"/> returns
-        /// <seealso cref="AcceptStatus#YES_AND_SEEK"/> or <seealso cref="AcceptStatus#NO_AND_SEEK"/>,
-        /// this method will be called to eventually seek the underlying TermsEnum
+        /// On the first call to <see cref="Next()"/> or if <see cref="Accept(BytesRef)"/> returns
+        /// <see cref="AcceptStatus.YES_AND_SEEK"/> or <see cref="AcceptStatus.NO_AND_SEEK"/>,
+        /// this method will be called to eventually seek the underlying <see cref="TermsEnum"/>
         /// to a new position.
-        /// On the first call, {@code currentTerm} will be {@code null}, later
+        /// On the first call, <paramref name="currentTerm"/> will be <c>null</c>, later
         /// calls will provide the term the underlying enum is positioned at.
-        /// this method returns per default only one time the initial seek term
-        /// and then {@code null}, so no repositioning is ever done.
-        /// <p>Override this method, if you want a more sophisticated TermsEnum,
+        /// This method returns per default only one time the initial seek term
+        /// and then <c>null</c>, so no repositioning is ever done.
+        /// <para/>
+        /// Override this method, if you want a more sophisticated <see cref="TermsEnum"/>,
         /// that repositions the iterator during enumeration.
-        /// If this method always returns {@code null} the enum is empty.
-        /// <p><em>Please note:</em> this method should always provide a greater term
-        /// than the last enumerated term, else the behaviour of this enum
-        /// violates the contract for TermsEnums.
+        /// If this method always returns <c>null</c> the enum is empty.
+        /// <para/><c>Please note:</c> this method should always provide a greater term
+        /// than the last enumerated term, else the behavior of this enum
+        /// violates the contract for <see cref="TermsEnum"/>s.
         /// </summary>
         protected virtual BytesRef NextSeekTerm(BytesRef currentTerm)
         {
@@ -141,8 +143,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the related attributes, the returned <seealso cref="AttributeSource"/>
-        /// is shared with the delegate {@code TermsEnum}.
+        /// Returns the related attributes, the returned <see cref="AttributeSource"/>
+        /// is shared with the delegate <see cref="TermsEnum"/>.
         /// </summary>
         public override AttributeSource Attributes
         {
@@ -174,7 +176,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this enum does not support seeking! </summary>
-        /// <exception cref="UnsupportedOperationException"> In general, subclasses do not
+        /// <exception cref="NotSupportedException"> In general, subclasses do not
         ///         support seeking. </exception>
         public override bool SeekExact(BytesRef term)
         {
@@ -183,7 +185,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this enum does not support seeking! </summary>
-        /// <exception cref="UnsupportedOperationException"> In general, subclasses do not
+        /// <exception cref="NotSupportedException"> In general, subclasses do not
         ///         support seeking. </exception>
         public override SeekStatus SeekCeil(BytesRef term)
         {
@@ -192,7 +194,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this enum does not support seeking! </summary>
-        /// <exception cref="UnsupportedOperationException"> In general, subclasses do not
+        /// <exception cref="NotSupportedException"> In general, subclasses do not
         ///         support seeking. </exception>
         public override void SeekExact(long ord)
         {
@@ -216,7 +218,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this enum does not support seeking! </summary>
-        /// <exception cref="UnsupportedOperationException"> In general, subclasses do not
+        /// <exception cref="NotSupportedException"> In general, subclasses do not
         ///         support seeking. </exception>
         public override void SeekExact(BytesRef term, TermState state)
         {

@@ -22,14 +22,14 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// A FilterDirectoryReader wraps another DirectoryReader, allowing implementations
+    /// A <see cref="FilterDirectoryReader"/> wraps another <see cref="DirectoryReader"/>, allowing implementations
     /// to transform or extend it.
-    ///
-    /// Subclasses should implement doWrapDirectoryReader to return an instance of the
+    /// <para/>
+    /// Subclasses should implement <see cref="DoWrapDirectoryReader(DirectoryReader)"/> to return an instance of the
     /// subclass.
-    ///
-    /// If the subclass wants to wrap the DirectoryReader's subreaders, it should also
-    /// implement a SubReaderWrapper subclass, and pass an instance to its super
+    /// <para/>
+    /// If the subclass wants to wrap the <see cref="DirectoryReader"/>'s subreaders, it should also
+    /// implement a <see cref="SubReaderWrapper"/> subclass, and pass an instance to its base
     /// constructor.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -38,10 +38,10 @@ namespace Lucene.Net.Index
     public abstract class FilterDirectoryReader : DirectoryReader
     {
         /// <summary>
-        /// Factory class passed to FilterDirectoryReader constructor that allows
-        /// subclasses to wrap the filtered DirectoryReader's subreaders.  You
-        /// can use this to, e.g., wrap the subreaders with specialised
-        /// FilterAtomicReader implementations.
+        /// Factory class passed to <see cref="FilterDirectoryReader"/> constructor that allows
+        /// subclasses to wrap the filtered <see cref="DirectoryReader"/>'s subreaders.  You
+        /// can use this to, e.g., wrap the subreaders with specialized
+        /// <see cref="FilterAtomicReader"/> implementations.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -65,15 +65,15 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Wrap one of the parent DirectoryReader's subreaders </summary>
+            /// Wrap one of the parent <see cref="DirectoryReader"/>'s subreaders </summary>
             /// <param name="reader"> the subreader to wrap </param>
-            /// <returns> a wrapped/filtered AtomicReader </returns>
+            /// <returns> a wrapped/filtered <see cref="AtomicReader"/> </returns>
             public abstract AtomicReader Wrap(AtomicReader reader);
         }
 
         /// <summary>
-        /// A no-op SubReaderWrapper that simply returns the parent
-        /// DirectoryReader's original subreaders.
+        /// A no-op <see cref="SubReaderWrapper"/> that simply returns the parent
+        /// <see cref="DirectoryReader"/>'s original subreaders.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -93,22 +93,22 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// The filtered DirectoryReader </summary>
+        /// The filtered <see cref="DirectoryReader"/> </summary>
         protected readonly DirectoryReader m_input;
 
         /// <summary>
-        /// Create a new FilterDirectoryReader that filters a passed in DirectoryReader. </summary>
-        /// <param name="input"> the DirectoryReader to filter </param>
+        /// Create a new <see cref="FilterDirectoryReader"/> that filters a passed in <see cref="DirectoryReader"/>. </summary>
+        /// <param name="input"> the <see cref="DirectoryReader"/> to filter </param>
         public FilterDirectoryReader(DirectoryReader input)
             : this(input, new StandardReaderWrapper())
         {
         }
 
         /// <summary>
-        /// Create a new FilterDirectoryReader that filters a passed in DirectoryReader,
-        /// using the supplied SubReaderWrapper to wrap its subreader. </summary>
-        /// <param name="input"> the DirectoryReader to filter </param>
-        /// <param name="wrapper"> the SubReaderWrapper to use to wrap subreaders </param>
+        /// Create a new <see cref="FilterDirectoryReader"/> that filters a passed in <see cref="DirectoryReader"/>,
+        /// using the supplied <see cref="SubReaderWrapper"/> to wrap its subreader. </summary>
+        /// <param name="input"> the <see cref="DirectoryReader"/> to filter </param>
+        /// <param name="wrapper"> the <see cref="SubReaderWrapper"/> to use to wrap subreaders </param>
         public FilterDirectoryReader(DirectoryReader input, SubReaderWrapper wrapper)
             : base(input.Directory, wrapper.Wrap(input.GetSequentialSubReaders().OfType<AtomicReader>().ToList()))
         {
@@ -116,13 +116,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Called by the doOpenIfChanged() methods to return a new wrapped DirectoryReader.
-        ///
-        /// Implementations should just return an instantiation of themselves, wrapping the
-        /// passed in DirectoryReader.
+        /// Called by the <see cref="DoOpenIfChanged()"/> methods to return a new wrapped <see cref="DirectoryReader"/>.
+        /// <para/>
+        /// Implementations should just return an instance of themselves, wrapping the
+        /// passed in <see cref="DirectoryReader"/>.
         /// </summary>
-        /// <param name="input"> the DirectoryReader to wrap </param>
-        /// <returns> the wrapped DirectoryReader </returns>
+        /// <param name="input"> the <see cref="DirectoryReader"/> to wrap </param>
+        /// <returns> the wrapped <see cref="DirectoryReader"/> </returns>
         protected abstract DirectoryReader DoWrapDirectoryReader(DirectoryReader input);
 
         private DirectoryReader WrapDirectoryReader(DirectoryReader input)

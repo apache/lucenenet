@@ -25,33 +25,33 @@ namespace Lucene.Net.Index
     using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState;
 
     /// <summary>
-    /// <seealso cref="FlushPolicy"/> controls when segments are flushed from a RAM resident
-    /// internal data-structure to the <seealso cref="IndexWriter"/>s <seealso cref="Directory"/>.
-    /// <p>
+    /// <see cref="FlushPolicy"/> controls when segments are flushed from a RAM resident
+    /// internal data-structure to the <see cref="IndexWriter"/>s <see cref="Store.Directory"/>.
+    /// <para/>
     /// Segments are traditionally flushed by:
-    /// <ul>
-    /// <li>RAM consumption - configured via
-    /// <seealso cref="IndexWriterConfig#setRAMBufferSizeMB(double)"/></li>
-    /// <li>Number of RAM resident documents - configured via
-    /// <seealso cref="IndexWriterConfig#setMaxBufferedDocs(int)"/></li>
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item>RAM consumption - configured via
+    ///         <see cref="LiveIndexWriterConfig.RAMBufferSizeMB"/></item>
+    ///     <item>Number of RAM resident documents - configured via
+    ///         <see cref="LiveIndexWriterConfig.MaxBufferedDocs"/></item>
+    /// </list>
     /// The policy also applies pending delete operations (by term and/or query),
     /// given the threshold set in
-    /// <seealso cref="IndexWriterConfig#setMaxBufferedDeleteTerms(int)"/>.
-    /// <p>
-    /// <seealso cref="IndexWriter"/> consults the provided <seealso cref="FlushPolicy"/> to control the
+    /// <see cref="LiveIndexWriterConfig.MaxBufferedDeleteTerms"/>.
+    /// <para/>
+    /// <see cref="IndexWriter"/> consults the provided <seea cref="FlushPolicy"/> to control the
     /// flushing process. The policy is informed for each added or updated document
-    /// as well as for each delete term. Based on the <seealso cref="FlushPolicy"/>, the
-    /// information provided via <seealso cref="ThreadState"/> and
-    /// <seealso cref="DocumentsWriterFlushControl"/>, the <seealso cref="FlushPolicy"/> decides if a
-    /// <seealso cref="DocumentsWriterPerThread"/> needs flushing and mark it as flush-pending
-    /// via <seealso cref="DocumentsWriterFlushControl#setFlushPending"/>, or if deletes need
+    /// as well as for each delete term. Based on the <see cref="FlushPolicy"/>, the
+    /// information provided via <see cref="ThreadState"/> and
+    /// <see cref="DocumentsWriterFlushControl"/>, the <see cref="FlushPolicy"/> decides if a
+    /// <see cref="DocumentsWriterPerThread"/> needs flushing and mark it as flush-pending
+    /// via <see cref="DocumentsWriterFlushControl.SetFlushPending(ThreadState)"/>, or if deletes need
     /// to be applied.
     /// </summary>
-    /// <seealso cref= ThreadState </seealso>
-    /// <seealso cref= DocumentsWriterFlushControl </seealso>
-    /// <seealso cref= DocumentsWriterPerThread </seealso>
-    /// <seealso cref= IndexWriterConfig#setFlushPolicy(FlushPolicy) </seealso>
+    /// <seealso cref="ThreadState"/>
+    /// <seealso cref="DocumentsWriterFlushControl"/>
+    /// <seealso cref="DocumentsWriterPerThread"/>
+    /// <seealso cref="IndexWriterConfig.FlushPolicy"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -62,21 +62,21 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Called for each delete term. If this is a delete triggered due to an update
-        /// the given <seealso cref="ThreadState"/> is non-null.
-        /// <p>
+        /// the given <see cref="ThreadState"/> is non-null.
+        /// <para/>
         /// Note: this method is called synchronized on the given
-        /// <seealso cref="DocumentsWriterFlushControl"/> and it is guaranteed that the calling
-        /// thread holds the lock on the given <seealso cref="ThreadState"/>
+        /// <see cref="DocumentsWriterFlushControl"/> and it is guaranteed that the calling
+        /// thread holds the lock on the given <see cref="ThreadState"/>
         /// </summary>
         public abstract void OnDelete(DocumentsWriterFlushControl control, ThreadState state);
 
         /// <summary>
-        /// Called for each document update on the given <seealso cref="ThreadState"/>'s
-        /// <seealso cref="DocumentsWriterPerThread"/>.
-        /// <p>
+        /// Called for each document update on the given <see cref="ThreadState"/>'s
+        /// <see cref="DocumentsWriterPerThread"/>.
+        /// <para/>
         /// Note: this method is called  synchronized on the given
-        /// <seealso cref="DocumentsWriterFlushControl"/> and it is guaranteed that the calling
-        /// thread holds the lock on the given <seealso cref="ThreadState"/>
+        /// <see cref="DocumentsWriterFlushControl"/> and it is guaranteed that the calling
+        /// thread holds the lock on the given <see cref="ThreadState"/>
         /// </summary>
         public virtual void OnUpdate(DocumentsWriterFlushControl control, ThreadState state)
         {
@@ -85,17 +85,17 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Called for each document addition on the given <seealso cref="ThreadState"/>s
-        /// <seealso cref="DocumentsWriterPerThread"/>.
-        /// <p>
+        /// Called for each document addition on the given <see cref="ThreadState"/>s
+        /// <see cref="DocumentsWriterPerThread"/>.
+        /// <para/>
         /// Note: this method is synchronized by the given
-        /// <seealso cref="DocumentsWriterFlushControl"/> and it is guaranteed that the calling
-        /// thread holds the lock on the given <seealso cref="ThreadState"/>
+        /// <see cref="DocumentsWriterFlushControl"/> and it is guaranteed that the calling
+        /// thread holds the lock on the given <see cref="ThreadState"/>
         /// </summary>
         public abstract void OnInsert(DocumentsWriterFlushControl control, ThreadState state);
 
         /// <summary>
-        /// Called by DocumentsWriter to initialize the FlushPolicy
+        /// Called by <see cref="DocumentsWriter"/> to initialize the <see cref="FlushPolicy"/>
         /// </summary>
         protected internal virtual void Init(LiveIndexWriterConfig indexWriterConfig)
         {
@@ -107,10 +107,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the current most RAM consuming non-pending <seealso cref="ThreadState"/> with
+        /// Returns the current most RAM consuming non-pending <see cref="ThreadState"/> with
         /// at least one indexed document.
-        /// <p>
-        /// this method will never return <code>null</code>
+        /// <para/>
+        /// This method will never return <c>null</c>
         /// </summary>
         protected virtual ThreadState FindLargestNonPendingWriter(DocumentsWriterFlushControl control, ThreadState perThreadState)
         {

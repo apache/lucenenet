@@ -27,7 +27,6 @@ namespace Lucene.Net.Index
     ///  of this class are thread-safe for multiple readers, but only one thread can
     ///  be adding documents at a time, with no other reader or writer threads
     ///  accessing this object.
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -61,7 +60,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole Constructor.
-        ///
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public FieldInfo(string name, bool indexed, int number, bool storeTermVector, bool omitNorms, 
@@ -183,7 +182,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns IndexOptions for the field, or null if the field is not indexed </summary>
+        /// Returns <see cref="Index.IndexOptions"/> for the field, or <c>null</c> if the field is not indexed </summary>
         public IndexOptions IndexOptions
         {
             get
@@ -193,7 +192,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if this field has any docValues.
+        /// Returns <c>true</c> if this field has any docValues.
         /// </summary>
         public bool HasDocValues
         {
@@ -201,7 +200,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Sets the docValues generation of this field. </summary>
+        /// Gets or Sets the docValues generation of this field, or -1 if no docValues. </summary>
         public long DocValuesGen
         {
             set
@@ -250,7 +249,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if norms are explicitly omitted for this field
+        /// Returns <c>true</c> if norms are explicitly omitted for this field
         /// </summary>
         public bool OmitsNorms
         {
@@ -258,7 +257,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if this field actually has any norms.
+        /// Returns <c>true</c> if this field actually has any norms.
         /// </summary>
         public bool HasNorms
         {
@@ -266,7 +265,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if this field is indexed.
+        /// Returns <c>true</c> if this field is indexed.
         /// </summary>
         public bool IsIndexed
         {
@@ -277,7 +276,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if any payloads exist for this field.
+        /// Returns <c>true</c> if any payloads exist for this field.
         /// </summary>
         public bool HasPayloads
         {
@@ -285,7 +284,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if any term vectors exist for this field.
+        /// Returns <c>true</c> if any term vectors exist for this field.
         /// </summary>
         public bool HasVectors
         {
@@ -293,7 +292,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Get a codec attribute value, or null if it does not exist
+        /// Get a codec attribute value, or <c>null</c> if it does not exist
         /// </summary>
         public string GetAttribute(string key)
         {
@@ -311,11 +310,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Puts a codec attribute value.
-        /// <p>
+        /// <para/>
         /// this is a key-value mapping for the field that the codec can use
         /// to store additional metadata, and will be available to the codec
-        /// when reading the segment via <seealso cref="#getAttribute(String)"/>
-        /// <p>
+        /// when reading the segment via <see cref="GetAttribute(string)"/>
+        /// <para/>
         /// If a value already exists for the field, it will be replaced with
         /// the new value.
         /// </summary>
@@ -338,7 +337,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns internal codec attributes map. May be null if no mappings exist.
+        /// Returns internal codec attributes map. May be <c>null</c> if no mappings exist.
         /// </summary>
         public IDictionary<string, string> Attributes
         {
@@ -348,6 +347,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Controls how much information is stored in the postings lists.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public enum IndexOptions // LUCENENET specific: de-nested from FieldInfo to prevent naming collisions
