@@ -441,7 +441,7 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// </summary>
         protected virtual string[][] LoadFieldValues(IndexSearcher searcher, string[] fields, int[] docids, int maxLength)
         {
-            string[][] contents = RectangularArrays.ReturnRectangularStringArray(fields.Length, docids.Length);
+            string[][] contents = RectangularArrays.ReturnRectangularArray<string>(fields.Length, docids.Length);
             char[] valueSeparators = new char[fields.Length];
             for (int i = 0; i < fields.Length; i++)
             {

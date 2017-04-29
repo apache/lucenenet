@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Text;
 
 /*
@@ -198,8 +199,8 @@ namespace Egothor.Stemmer
             {
                 sizex = maxx + 8;
                 sizey = maxy + 8;
-                net = RectangularArrays.ReturnRectangularInt32Array(sizex, sizey);
-                way = RectangularArrays.ReturnRectangularInt32Array(sizex, sizey);
+                net = RectangularArrays.ReturnRectangularArray<int>(sizex, sizey);
+                way = RectangularArrays.ReturnRectangularArray<int>(sizex, sizey);
             }
 
             /*

@@ -119,7 +119,7 @@ namespace Lucene.Net.Search
             float theFloat = float.MaxValue;
             UnicodeStrings = new string[NUM_DOCS];
             //MultiValued = new BytesRef[NUM_DOCS, NUM_ORDS];
-            MultiValued = RectangularArrays.ReturnRectangularBytesRefArray(NUM_DOCS, NUM_ORDS);
+            MultiValued = RectangularArrays.ReturnRectangularArray<BytesRef>(NUM_DOCS, NUM_ORDS);
             if (VERBOSE)
             {
                 Console.WriteLine("TEST: setUp");

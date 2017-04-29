@@ -652,6 +652,7 @@
     <Compile Include="Support\IO\FileStreamExtensions.cs" />
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
+    <Compile Include="Support\RectangularArrays.cs" />
     <Compile Include="Support\Threading\ICompletionService.cs" />
     <Compile Include="Support\IO\IDataInput.cs" />
     <Compile Include="Support\IO\IDataOutput.cs" />

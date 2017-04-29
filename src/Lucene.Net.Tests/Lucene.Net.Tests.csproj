@@ -360,9 +360,6 @@
     <Compile Include="Index\TestTwoPhaseCommitTool.cs" />
     <Compile Include="Index\TestUniqueTermCount.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RectangularArrays.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Search\BaseTestRangeFilter.cs" />
     <Compile Include="Search\FuzzyTermOnShortTermsTest.cs" />
     <Compile Include="Search\JustCompileSearch.cs" />

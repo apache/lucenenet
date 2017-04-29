@@ -249,7 +249,7 @@ namespace Lucene.Net.Index
             int NUM_DOCS = AtLeast(200);
             int MAX_FIELDS = AtLeast(50);
 
-            int[][] docs = RectangularArrays.ReturnRectangularIntArray(NUM_DOCS, 4);
+            int[][] docs = RectangularArrays.ReturnRectangularArray<int>(NUM_DOCS, 4);
             for (int i = 0; i < docs.Length; i++)
             {
                 for (int j = 0; j < docs[i].Length; j++)

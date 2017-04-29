@@ -1,3 +1,4 @@
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -378,7 +379,7 @@ namespace Lucene.Net.Util.Automaton
             sa = target.ToCharArray();
             n = sa.Length;
             int m = other.Length;
-            d = RectangularArrays.ReturnRectangularIntArray(n + 1, m + 1);
+            d = RectangularArrays.ReturnRectangularArray<int>(n + 1, m + 1);
 
             if (n == 0 || m == 0)
             {

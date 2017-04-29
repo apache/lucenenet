@@ -269,7 +269,7 @@ namespace Lucene.Net.Search.VectorHighlight
             for (int i = 0; i < numDocs; i++)
             {
                 Document document = new Document();
-                String[][] fields = RectangularArrays.ReturnRectangularStringArray(numFields, numTerms); //new String[numFields][numTerms];
+                String[][] fields = RectangularArrays.ReturnRectangularArray<string>(numFields, numTerms); //new String[numFields][numTerms];
                 for (int j = 0; j < numFields; j++)
                 {
                     String[] fieldValues = new String[numTerms];

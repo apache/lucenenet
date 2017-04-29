@@ -1340,7 +1340,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             n = targetPoints.Length;
             int m = otherPoints.Length;
 
-            d = ReturnRectangularIntArray(n + 1, m + 1);
+            d = RectangularArrays.ReturnRectangularArray<int>(n + 1, m + 1);
 
 
             if (n == 0 || m == 0)
@@ -1391,26 +1391,6 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
 
             return d[n][m];
-        }
-
-        internal static int[][] ReturnRectangularIntArray(int size1, int size2)
-        {
-            int[][] array;
-            if (size1 > -1)
-            {
-                array = new int[size1][];
-                if (size2 > -1)
-                {
-                    for (int Array1 = 0; Array1 < size1; Array1++)
-                    {
-                        array[Array1] = new int[size2];
-                    }
-                }
-            }
-            else
-                array = null;
-
-            return array;
         }
 
         private static Int32sRef ToIntsRef(string s)

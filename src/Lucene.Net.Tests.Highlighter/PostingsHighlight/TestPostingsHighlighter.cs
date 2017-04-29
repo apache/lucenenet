@@ -778,7 +778,7 @@ namespace Lucene.Net.Search.PostingsHighlight
             {
                 Debug.Assert( fields.Length == 1);
                 Debug.Assert( docids.Length == 1);
-                String[][] contents = RectangularArrays.ReturnRectangularStringArray(1, 1); //= new String[1][1];
+                String[][] contents = RectangularArrays.ReturnRectangularArray<string>(1, 1); //= new String[1][1];
                 contents[0][0] = text;
                 return contents;
             }
