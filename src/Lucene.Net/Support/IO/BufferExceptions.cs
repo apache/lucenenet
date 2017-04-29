@@ -94,7 +94,7 @@ namespace Lucene.Net.Support.IO
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    internal sealed class InvalidMarkException : InvalidOperationException
+    internal sealed class InvalidMarkException : Exception
     {
         public InvalidMarkException()
         {
