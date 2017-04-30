@@ -594,7 +594,7 @@ namespace Lucene.Net.Index
                     {
                         int d = docs1.DocID;
                         int f = docs1.Freq;
-                        info1[len1] = (((long)d) << 32) | f;
+                        info1[len1] = (((long)d) << 32) | (uint)f;
                         len1++;
                     }
                     if (len1 > 0)
@@ -636,7 +636,7 @@ namespace Lucene.Net.Index
                     {
                         int d = r2r1[docs2.DocID];
                         int f = docs2.Freq;
-                        info2[len2] = (((long)d) << 32) | f;
+                        info2[len2] = (((long)d) << 32) | (uint)f;
                         len2++;
                     }
                     if (len2 > 0)

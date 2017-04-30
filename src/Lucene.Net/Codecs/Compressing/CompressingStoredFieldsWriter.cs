@@ -347,7 +347,7 @@ namespace Lucene.Net.Codecs.Compressing
                 }
             }
 
-            long infoAndBits = (((long)info.Number) << TYPE_BITS) | bits;
+            long infoAndBits = (((long)info.Number) << TYPE_BITS) | (uint)bits;
             bufferedDocs.WriteVInt64(infoAndBits);
 
             if (bytes != null)

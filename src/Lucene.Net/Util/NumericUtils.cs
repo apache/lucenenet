@@ -288,7 +288,7 @@ namespace Lucene.Net.Util
                 {
                     throw new System.FormatException("Invalid prefixCoded numerical value representation (byte " + (b & 0xff).ToString("x") + " at position " + (i - val.Offset) + " is invalid)");
                 }
-                sortableBits |= (sbyte)b;
+                sortableBits |= b;
             }
             return (int)((sortableBits << GetPrefixCodedInt32Shift(val)) ^ 0x80000000);
         }

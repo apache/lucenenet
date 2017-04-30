@@ -93,8 +93,8 @@ namespace Lucene.Net.Codecs.Lucene46
                     var dv = DocValuesByte(fi.DocValuesType);
                     var nrm = DocValuesByte(fi.NormType);
                     Debug.Assert((dv & (~0xF)) == 0 && (nrm & (~0x0F)) == 0);
-                    var val = unchecked((sbyte)(0xff & ((nrm << 4) | dv)));
-                    output.WriteByte((byte)val);
+                    var val = (byte)(0xff & ((nrm << 4) | (byte)dv));
+                    output.WriteByte(val);
                     output.WriteInt64(fi.DocValuesGen);
                     output.WriteStringStringMap(fi.Attributes);
                 }

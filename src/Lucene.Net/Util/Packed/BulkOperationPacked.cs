@@ -240,7 +240,7 @@ namespace Lucene.Net.Util.Packed
                 } // bitsLeft < 0
                 else
                 {
-                    nextBlock |= (int)((uint)(values[valuesOffset] & 0xFFFFFFFFL) >> -bitsLeft);
+                    nextBlock |= ((uint)(values[valuesOffset] & 0xFFFFFFFFL) >> -bitsLeft);
                     blocks[blocksOffset++] = nextBlock;
                     nextBlock = (values[valuesOffset++] & ((1L << -bitsLeft) - 1)) << (64 + bitsLeft);
                     bitsLeft += 64;
@@ -266,7 +266,7 @@ namespace Lucene.Net.Util.Packed
                 {
                     // flush as many blocks as possible
                     int bits = bitsPerValue - bitsLeft;
-                    blocks[blocksOffset++] = (byte)(nextBlock | ((long)((ulong)v >> bits)));
+                    blocks[blocksOffset++] = (byte)((uint)nextBlock | ((long)((ulong)v >> bits)));
                     while (bits >= 8)
                     {
                         bits -= 8;

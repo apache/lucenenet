@@ -371,7 +371,7 @@ namespace Lucene.Net.Codecs
         internal static long EncodeOutput(long fp, bool hasTerms, bool isFloor)
         {
             Debug.Assert(fp < (1L << 62));
-            return (fp << 2) | (hasTerms ? OUTPUT_FLAG_HAS_TERMS : 0) | (isFloor ? OUTPUT_FLAG_IS_FLOOR : 0);
+            return (fp << 2) | (uint)(hasTerms ? OUTPUT_FLAG_HAS_TERMS : 0) | (uint)(isFloor ? OUTPUT_FLAG_IS_FLOOR : 0);
         }
 
         private class PendingEntry
@@ -454,7 +454,7 @@ namespace Lucene.Net.Codecs
                         //}
                         scratchBytes.WriteByte((byte)(sbyte)sub.FloorLeadByte);
                         Debug.Assert(sub.Fp > Fp);
-                        scratchBytes.WriteVInt64((sub.Fp - Fp) << 1 | (sub.HasTerms ? 1 : 0));
+                        scratchBytes.WriteVInt64((sub.Fp - Fp) << 1 | (uint)(sub.HasTerms ? 1 : 0));
                     }
                 }
 

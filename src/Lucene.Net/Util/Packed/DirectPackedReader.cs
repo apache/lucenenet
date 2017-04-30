@@ -97,7 +97,7 @@ namespace Lucene.Net.Util.Packed
                     case 9:
                         // We must be very careful not to shift out relevant bits. So we account for right shift
                         // we would normally do on return here, and reset it.
-                        rawValue = (@in.ReadInt64() << (8 - shiftRightBits)) | ((int)((uint)(@in.ReadByte() & 0xFFL) >> shiftRightBits));
+                        rawValue = (@in.ReadInt64() << (8 - shiftRightBits)) | (((uint)(@in.ReadByte() & 0xFFL) >> shiftRightBits));
                         shiftRightBits = 0;
                         break;
 
