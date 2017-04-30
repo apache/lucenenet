@@ -347,8 +347,8 @@ namespace Lucene.Net.Util
                 else
                 {
                     // 2 byte to store length
-                    buffer[bufferUpto] = unchecked((byte)(0x80 | (length & 0x7f)));
-                    buffer[bufferUpto + 1] = unchecked((byte)((length >> 7) & 0xff));
+                    buffer[bufferUpto] = (byte)(0x80 | (length & 0x7f));
+                    buffer[bufferUpto + 1] = (byte)((length >> 7) & 0xff);
                     pool.ByteUpto += length + 2;
                     System.Buffer.BlockCopy(bytes.Bytes, bytes.Offset, buffer, bufferUpto + 2, length);
                 }

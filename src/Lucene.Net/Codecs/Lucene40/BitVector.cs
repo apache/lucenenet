@@ -325,7 +325,7 @@ namespace Lucene.Net.Codecs.Lucene40
         /// Set all bits </summary>
         public void SetAll()
         {
-            Arrays.Fill(bits, unchecked((byte)0xff));
+            Arrays.Fill(bits, (byte)0xff);
             ClearUnusedBits();
             count = size;
         }
@@ -350,7 +350,7 @@ namespace Lucene.Net.Codecs.Lucene40
             int numCleared = Length - Count();
             for (int i = 0; i < bits.Length && numCleared > 0; i++)
             {
-                if (bits[i] != unchecked((byte)0xff))
+                if (bits[i] != 0xff)
                 {
                     output.WriteVInt32(i - last);
                     output.WriteByte(bits[i]);

@@ -181,9 +181,9 @@ namespace Lucene.Net.Util
                     }
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
-                    @out[upto++] = unchecked((byte)0xEF);
-                    @out[upto++] = unchecked((byte)0xBF);
-                    @out[upto++] = unchecked((byte)0xBD);
+                    @out[upto++] = 0xEF;
+                    @out[upto++] = 0xBF;
+                    @out[upto++] = 0xBD;
                 }
             }
             //assert matches(source, offset, length, out, upto);
@@ -248,9 +248,9 @@ namespace Lucene.Net.Util
                     }
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
-                    @out[upto++] = unchecked((byte)0xEF);
-                    @out[upto++] = unchecked((byte)0xBF);
-                    @out[upto++] = unchecked((byte)0xBD);
+                    @out[upto++] = 0xEF;
+                    @out[upto++] = 0xBF;
+                    @out[upto++] = 0xBD;
                 }
             }
             //assert matches(s, offset, length, out, upto);
@@ -316,9 +316,9 @@ namespace Lucene.Net.Util
                     }
                     // replace unpaired surrogate or out-of-order low surrogate
                     // with substitution character
-                    @out[upto++] = unchecked((byte)0xEF);
-                    @out[upto++] = unchecked((byte)0xBF);
-                    @out[upto++] = unchecked((byte)0xBD);
+                    @out[upto++] = 0xEF;
+                    @out[upto++] = 0xBF;
+                    @out[upto++] = 0xBD;
                 }
             }
             //assert matches(s, offset, length, out, upto);

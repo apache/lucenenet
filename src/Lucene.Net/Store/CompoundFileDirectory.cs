@@ -131,7 +131,7 @@ namespace Lucene.Net.Store
         private static readonly sbyte CODEC_MAGIC_BYTE1 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 24);
         private static readonly sbyte CODEC_MAGIC_BYTE2 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 16);
         private static readonly sbyte CODEC_MAGIC_BYTE3 = (sbyte)Number.URShift(CodecUtil.CODEC_MAGIC, 8);
-        private static readonly sbyte CODEC_MAGIC_BYTE4 = unchecked((sbyte)CodecUtil.CODEC_MAGIC);
+        private static readonly sbyte CODEC_MAGIC_BYTE4 = (sbyte)CodecUtil.CODEC_MAGIC;
 
         /// <summary>
         /// Helper method that reads CFS entries from an input stream </summary>

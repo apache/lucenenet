@@ -714,22 +714,22 @@ namespace Lucene.Net.Index
             var a = ((int)((uint)x >> (7 * 4)));
             if (a != 0)
             {
-                arr[pos++] = unchecked((sbyte)(a | 0x80));
+                arr[pos++] = (sbyte)(a | 0x80);
             }
             a = ((int)((uint)x >> (7 * 3)));
             if (a != 0)
             {
-                arr[pos++] = unchecked((sbyte)(a | 0x80));
+                arr[pos++] = (sbyte)(a | 0x80);
             }
             a = ((int)((uint)x >> (7 * 2)));
             if (a != 0)
             {
-                arr[pos++] = unchecked((sbyte)(a | 0x80));
+                arr[pos++] = (sbyte)(a | 0x80);
             }
             a = ((int)((uint)x >> (7 * 1)));
             if (a != 0)
             {
-                arr[pos++] = unchecked((sbyte)(a | 0x80));
+                arr[pos++] = (sbyte)(a | 0x80);
             }
             arr[pos++] = (sbyte)(x & 0x7f);
             return pos;

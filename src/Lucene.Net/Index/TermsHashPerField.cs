@@ -321,7 +321,7 @@ namespace Lucene.Net.Index
             Debug.Assert(stream < streamCount);
             while ((i & ~0x7F) != 0)
             {
-                WriteByte(stream, unchecked((sbyte)((i & 0x7f) | 0x80)));
+                WriteByte(stream, (sbyte)((i & 0x7f) | 0x80));
                 i = (int)((uint)i >> 7);
             }
             WriteByte(stream, (sbyte)i);

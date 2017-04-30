@@ -361,10 +361,10 @@ namespace Lucene.Net.Codecs.Lucene3x
                 scratch[1] = (sbyte)term.Bytes[pos + 1];
                 scratch[2] = (sbyte)term.Bytes[pos + 2];
 
-                term.Bytes[pos] = unchecked((byte)0xf0);
-                term.Bytes[pos + 1] = unchecked((byte)0x90);
-                term.Bytes[pos + 2] = unchecked((byte)0x80);
-                term.Bytes[pos + 3] = unchecked((byte)0x80);
+                term.Bytes[pos] = 0xf0;
+                term.Bytes[pos + 1] = 0x90;
+                term.Bytes[pos + 2] = 0x80;
+                term.Bytes[pos + 3] = 0x80;
                 term.Length = 4 + pos;
 
                 if (DEBUG_SURROGATES)
@@ -505,7 +505,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 if (prevTerm.Length > newSuffixStart && IsNonBMPChar(prevTerm.Bytes, newSuffixStart) && IsHighBMPChar(scratchTerm.Bytes, newSuffixStart))
                 {
                     // Seek type 2 -- put 0xFF at this position:
-                    scratchTerm.Bytes[newSuffixStart] = unchecked((byte)0xff);
+                    scratchTerm.Bytes[newSuffixStart] = 0xff;
                     scratchTerm.Length = newSuffixStart + 1;
 
                     if (DEBUG_SURROGATES)
@@ -692,8 +692,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                         scratch[2] = (sbyte)scratchTerm.Bytes[upTo + 2];
 
                         scratchTerm.Bytes[upTo] = (byte)UTF8_HIGH_BMP_LEAD;
-                        scratchTerm.Bytes[upTo + 1] = unchecked((byte)0x80);
-                        scratchTerm.Bytes[upTo + 2] = unchecked((byte)0x80);
+                        scratchTerm.Bytes[upTo + 1] = 0x80;
+                        scratchTerm.Bytes[upTo + 2] = 0x80;
                         scratchTerm.Length = upTo + 3;
 
                         if (DEBUG_SURROGATES)
