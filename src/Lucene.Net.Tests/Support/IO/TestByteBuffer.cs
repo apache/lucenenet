@@ -73,7 +73,9 @@ namespace Lucene.Net.Support.IO
                         var _ = buf.Array;
                         fail("Should throw Exception"); //$NON-NLS-1$
                     }
+#pragma warning disable 168
                     catch (NotSupportedException e)
+#pragma warning restore 168
                     {
                         // expected
                         // Note:can not tell when to throw 
@@ -94,7 +96,9 @@ namespace Lucene.Net.Support.IO
                         var _ = buf.Array;
                         fail("Should throw Exception"); //$NON-NLS-1$
                     }
+#pragma warning disable 168
                     catch (NotSupportedException e)
+#pragma warning restore 168
                     {
                         // expected
                     }
@@ -137,7 +141,9 @@ namespace Lucene.Net.Support.IO
                         var _ = buf.ArrayOffset;
                         fail("Should throw Exception"); //$NON-NLS-1$
                     }
+#pragma warning disable 168
                     catch (NotSupportedException e)
+#pragma warning restore 168
                     {
                         // expected
                         // Note:can not tell when to throw 
@@ -158,7 +164,9 @@ namespace Lucene.Net.Support.IO
                         var _ = buf.ArrayOffset;
                         fail("Should throw Exception"); //$NON-NLS-1$
                     }
+#pragma warning disable 168
                     catch (NotSupportedException e)
+#pragma warning restore 168
                     {
                         // expected
                     }
@@ -208,7 +216,9 @@ namespace Lucene.Net.Support.IO
                     buf.Compact();
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -229,7 +239,9 @@ namespace Lucene.Net.Support.IO
                 buf.Reset();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (InvalidMarkException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -248,7 +260,9 @@ namespace Lucene.Net.Support.IO
                 buf.Reset();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (InvalidMarkException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -268,7 +282,9 @@ namespace Lucene.Net.Support.IO
                 buf.Reset();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (InvalidMarkException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -383,7 +399,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -409,7 +427,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(array);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -418,7 +438,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get((byte[])null);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -438,7 +460,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(new byte[buf.Capacity + 1], 0, buf.Capacity + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -448,7 +472,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(array, -1, array.Length);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -458,7 +484,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(array, array.Length + 1, 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -468,7 +496,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(array, 2, -1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -477,7 +507,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(array, 2, array.Length);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -486,7 +518,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get((byte[])null, -1, 0);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -495,7 +529,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(array, 1, int.MaxValue);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -504,7 +540,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(array, int.MaxValue, 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -534,7 +572,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -543,7 +583,9 @@ namespace Lucene.Net.Support.IO
                 buf.Get(buf.Limit);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -565,7 +607,9 @@ namespace Lucene.Net.Support.IO
                         var _ = buf.Array;
                         fail("Should throw Exception"); //$NON-NLS-1$
                     }
+#pragma warning disable 168
                     catch (NotSupportedException e)
+#pragma warning restore 168
                     {
                         // expected
                         // Note:can not tell when to throw 
@@ -580,7 +624,9 @@ namespace Lucene.Net.Support.IO
                         var _ = buf.Array;
                         fail("Should throw Exception"); //$NON-NLS-1$
                     }
+#pragma warning disable 168
                     catch (NotSupportedException e)
+#pragma warning restore 168
                     {
                         // expected
                     }
@@ -655,7 +701,9 @@ namespace Lucene.Net.Support.IO
                     buf.Put((byte)0);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -675,7 +723,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put((byte)0);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -695,7 +745,9 @@ namespace Lucene.Net.Support.IO
                     buf.Put(array);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -716,7 +768,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(array);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -725,7 +779,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put((byte[])null);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -746,7 +802,9 @@ namespace Lucene.Net.Support.IO
                     buf.Put(array, 0, array.Length);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -758,7 +816,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(new byte[buf.Capacity + 1], 0, buf.Capacity + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -768,7 +828,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(array, -1, array.Length);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -777,7 +839,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(array, array.Length + 1, 0);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -788,7 +852,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(array, 0, -1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -797,7 +863,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(array, 2, array.Length);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -807,7 +875,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(array, 2, int.MaxValue);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -816,7 +886,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(array, int.MaxValue, 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -825,7 +897,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put((byte[])null, 2, int.MaxValue);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -854,7 +928,9 @@ namespace Lucene.Net.Support.IO
                     buf.Put(other);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -864,7 +940,9 @@ namespace Lucene.Net.Support.IO
                     buf.Put((ByteBuffer)null);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -876,7 +954,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(buf);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -885,7 +965,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(ByteBuffer.Allocate(buf.Capacity + 1));
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -895,7 +977,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put((ByteBuffer)null);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -922,7 +1006,9 @@ namespace Lucene.Net.Support.IO
                     buf.Put(0, (byte)0);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -942,7 +1028,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(-1, (byte)0);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -951,7 +1039,9 @@ namespace Lucene.Net.Support.IO
                 buf.Put(buf.Limit, (byte)0);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -976,7 +1066,9 @@ namespace Lucene.Net.Support.IO
                 slice.Reset();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (InvalidMarkException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1429,7 +1521,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetChar();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1460,7 +1554,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetChar(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1469,7 +1565,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetChar(buf.Limit - nbytes + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1488,7 +1586,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutChar((char)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -1517,7 +1617,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutChar(value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1535,7 +1637,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutChar(0, (char)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -1563,7 +1667,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutChar(-1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1572,7 +1678,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutChar(buf.Limit - nbytes + 1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1585,7 +1693,9 @@ namespace Lucene.Net.Support.IO
                 //ByteBuffer.AllocateDirect(16).PutChar(int.MaxValue, 'h');
                 ByteBuffer.Allocate(16).PutChar(int.MaxValue, 'h');
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 //expected 
             }
@@ -1619,7 +1729,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetDouble();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1654,7 +1766,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetDouble(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1663,7 +1777,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetDouble(buf.Limit - nbytes + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1676,7 +1792,9 @@ namespace Lucene.Net.Support.IO
                 //ByteBuffer.AllocateDirect(16).GetDouble(int.MaxValue);
                 ByteBuffer.Allocate(16).GetDouble(int.MaxValue);
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 //expected 
             }
@@ -1693,7 +1811,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutDouble((double)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -1722,7 +1842,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutDouble(value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1740,7 +1862,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutDouble(0, (double)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -1768,7 +1892,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutDouble(-1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1777,7 +1903,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutDouble(buf.Limit - nbytes + 1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1813,7 +1941,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetSingle();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1848,7 +1978,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetSingle(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1857,7 +1989,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetSingle(buf.Limit - nbytes + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1876,7 +2010,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutSingle((float)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -1905,7 +2041,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutSingle(value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1923,7 +2061,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutSingle(0, (float)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -1951,7 +2091,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutSingle(-1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1960,7 +2102,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutSingle(buf.Limit - nbytes + 1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -1992,7 +2136,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt32();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2023,7 +2169,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt32(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2032,7 +2180,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt32(buf.Limit - nbytes + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2044,7 +2194,9 @@ namespace Lucene.Net.Support.IO
                 //ByteBuffer.AllocateDirect(16).GetInt32(int.MaxValue);
                 ByteBuffer.Allocate(16).GetInt32(int.MaxValue);
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 //expected 
             }
@@ -2061,7 +2213,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutInt32((int)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -2090,7 +2244,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt32(value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2108,7 +2264,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutInt32(0, (int)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -2136,7 +2294,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt32(-1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2145,7 +2305,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt32(buf.Limit - nbytes + 1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2177,7 +2339,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt64();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2208,7 +2372,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt64(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2217,7 +2383,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt64(buf.Limit - nbytes + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2236,7 +2404,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutInt64((long)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -2265,7 +2435,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt64(value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2283,7 +2455,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutInt64(0, (long)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -2311,7 +2485,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt64(-1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2320,7 +2496,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt64(buf.Limit - nbytes + 1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2352,7 +2530,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt16();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferUnderflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2383,7 +2563,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt16(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2392,7 +2574,9 @@ namespace Lucene.Net.Support.IO
                 buf.GetInt16(buf.Limit - nbytes + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2411,7 +2595,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutInt16((short)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -2440,7 +2626,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt16(value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (BufferOverflowException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2458,7 +2646,9 @@ namespace Lucene.Net.Support.IO
                     buf.PutInt16(0, (short)1);
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (ReadOnlyBufferException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -2486,7 +2676,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt16(-1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2495,7 +2687,9 @@ namespace Lucene.Net.Support.IO
                 buf.PutInt16(buf.Limit - nbytes + 1, value);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (IndexOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -2516,7 +2710,9 @@ namespace Lucene.Net.Support.IO
                 ByteBuffer.Wrap(array, -1, 0);
                 fail("Should throw NPE"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
             }
             try
@@ -2524,7 +2720,9 @@ namespace Lucene.Net.Support.IO
                 ByteBuffer.Wrap(new byte[10], int.MaxValue, 2);
                 fail("Should throw IndexOutOfRangeException"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (ArgumentOutOfRangeException e)
+#pragma warning restore 168
             {
             }
         }

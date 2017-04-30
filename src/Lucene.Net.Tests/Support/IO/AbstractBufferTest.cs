@@ -64,7 +64,9 @@ namespace Lucene.Net.Support.IO
                 baseBuf.Reset();
                 fail("Should throw Exception"); //$NON-NLS-1$S
             }
+#pragma warning disable 168
             catch (InvalidMarkException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -90,7 +92,9 @@ namespace Lucene.Net.Support.IO
                 baseBuf.Reset();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (InvalidMarkException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -167,7 +171,9 @@ namespace Lucene.Net.Support.IO
                     baseBuf.Reset();
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (InvalidMarkException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -178,7 +184,9 @@ namespace Lucene.Net.Support.IO
                 baseBuf.SetLimit(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -187,7 +195,9 @@ namespace Lucene.Net.Support.IO
                 baseBuf.SetLimit(baseBuf.Capacity + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -247,7 +257,9 @@ namespace Lucene.Net.Support.IO
                 baseBuf.SetPosition(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -256,7 +268,9 @@ namespace Lucene.Net.Support.IO
                 baseBuf.SetPosition(baseBuf.Limit + 1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -284,7 +298,9 @@ namespace Lucene.Net.Support.IO
                     baseBuf.Reset();
                     fail("Should throw Exception"); //$NON-NLS-1$
                 }
+#pragma warning disable 168
                 catch (InvalidMarkException e)
+#pragma warning restore 168
                 {
                     // expected
                 }
@@ -330,7 +346,9 @@ namespace Lucene.Net.Support.IO
                 baseBuf.Reset();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (InvalidMarkException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -355,7 +373,9 @@ namespace Lucene.Net.Support.IO
                 baseBuf.Reset();
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (InvalidMarkException e)
+#pragma warning restore 168
             {
                 // expected
             }

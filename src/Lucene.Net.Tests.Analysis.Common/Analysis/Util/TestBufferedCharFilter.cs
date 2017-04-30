@@ -104,7 +104,9 @@ namespace Lucene.Net.Analysis.Util
                 br.Read();
                 fail("Read on closed stream");
             }
+#pragma warning disable 168
             catch (IOException x)
+#pragma warning restore 168
             {
                 return;
             }
@@ -139,7 +141,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("Failed to invalidate mark properly");
             }
+#pragma warning disable 168
             catch (IOException x)
+#pragma warning restore 168
             {
                 // Expected
             }
@@ -222,7 +226,9 @@ namespace Lucene.Net.Analysis.Util
                         new char[] { '\u8765' })));
                 assertTrue("Wrong double byte character", br.Read() == '\u8765');
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 fail("Exception during read test");
             }
@@ -323,7 +329,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("null buffer reading zero bytes should throw NPE");
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 //expected
             }
@@ -344,7 +352,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("null buffer reading zero bytes on closed stream should throw IOException");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 //expected
             }
@@ -356,7 +366,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("Reading zero bytes on a closed reader should not work");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -373,7 +385,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("IOException should have been thrown");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -413,7 +427,9 @@ namespace Lucene.Net.Analysis.Util
                 assertTrue("Chars read improperly", new String(buf, 50, 500)
                         .equals(testString.Substring(0, 500 - 0)));
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
 
                 fail("Exception during read test");
@@ -473,7 +489,9 @@ namespace Lucene.Net.Analysis.Util
                 new BufferedCharFilter(new StringReader(""), 9).Read(new char[] { }, 7, 0);
                 fail("should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (ArgumentOutOfRangeException e)
+#pragma warning restore 168
             {
             }
 
@@ -486,7 +504,9 @@ namespace Lucene.Net.Analysis.Util
                 reader.Read(null, 1, 0);
                 fail("Assert 0: NullPointerException expected");
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // Expected
             }
@@ -499,7 +519,9 @@ namespace Lucene.Net.Analysis.Util
                 reader.Read(null, 1, 0);
                 fail("Assert 1: IOException expected");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // Expected
             }
@@ -511,7 +533,9 @@ namespace Lucene.Net.Analysis.Util
                 reader.Read(ch, 0, 42);
                 fail("Assert 2: IOException expected");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -533,7 +557,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (ArgumentOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -544,7 +570,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (ArgumentOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -555,7 +583,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw NullPointerException");
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -566,7 +596,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw NullPointerException");
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -577,7 +609,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw NullPointerException");
             }
+#pragma warning disable 168
             catch (NullReferenceException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -588,7 +622,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (ArgumentOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -599,7 +635,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (ArgumentOutOfRangeException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -614,7 +652,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (ArgumentOutOfRangeException e)
+#pragma warning restore 168
             {
                 //expected
             }
@@ -625,7 +665,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IndexOutOfBoundsException");
             }
+#pragma warning disable 168
             catch (ArgumentOutOfRangeException e)
+#pragma warning restore 168
             {
                 //expected
             }
@@ -638,7 +680,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IOException");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -649,7 +693,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IOException");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -660,7 +706,9 @@ namespace Lucene.Net.Analysis.Util
 
                 fail("should throw IOException");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -679,7 +727,9 @@ namespace Lucene.Net.Analysis.Util
                 assertEquals("readLine returned incorrect string", "Test_All_Tests", r
                         );
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 fail("Exception during readLine test");
             }
@@ -720,7 +770,9 @@ namespace Lucene.Net.Analysis.Util
                 assertTrue("Failed to reset properly", testString.Substring(500,
                         1000 - 500).equals(new String(buf, 0, 500)));
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 fail("Exception during reset test");
             }
@@ -731,7 +783,9 @@ namespace Lucene.Net.Analysis.Util
                 br.Reset();
                 fail("Reset succeeded on unmarked stream");
             }
+#pragma warning disable 168
             catch (IOException x)
+#pragma warning restore 168
             {
                 return;
 
@@ -755,7 +809,9 @@ namespace Lucene.Net.Analysis.Util
                 br.Reset();
                 fail("should throw IOException");
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 // Expected
             }
@@ -793,7 +849,9 @@ namespace Lucene.Net.Analysis.Util
                 assertTrue("Failed to set skip properly", testString.Substring(500,
                         1000 - 500).equals(new String(buf, 0, 500)));
             }
+#pragma warning disable 168
             catch (IOException e)
+#pragma warning restore 168
             {
                 fail("Exception during skip test");
             }
@@ -818,7 +876,9 @@ namespace Lucene.Net.Analysis.Util
             {
                 br.Dispose();
             }
+#pragma warning disable 168
             catch (Exception e)
+#pragma warning restore 168
             {
             }
         }

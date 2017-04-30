@@ -213,7 +213,9 @@ namespace Lucene.Net.Support
                 new PriorityQueue<Object>(0, new MockComparer<Object>());
                 fail("should throw ArgumentException");
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -223,7 +225,9 @@ namespace Lucene.Net.Support
                 new PriorityQueue<Object>(-1, new MockComparer<Object>());
                 fail("should throw ArgumentException");
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -272,7 +276,9 @@ namespace Lucene.Net.Support
                 new PriorityQueue<Object>(list);
                 fail("should throw ArgumentNullException");
             }
+#pragma warning disable 168
             catch (ArgumentNullException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -289,7 +295,9 @@ namespace Lucene.Net.Support
                 new PriorityQueue<Object>(list);
                 fail("should throw InvalidCastException");
             }
+#pragma warning disable 168
             catch (InvalidCastException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -384,7 +392,9 @@ namespace Lucene.Net.Support
                 new PriorityQueue<Integer>((PriorityQueue<Integer>)null);
                 fail("should throw ArgumentNullException");
             }
+#pragma warning disable 168
             catch (ArgumentNullException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -432,7 +442,9 @@ namespace Lucene.Net.Support
                 new PriorityQueue<Integer>((SortedSet<Integer>) null);
                 fail("should throw ArgumentNullException");
             }
+#pragma warning disable 168
             catch (ArgumentNullException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -446,7 +458,9 @@ namespace Lucene.Net.Support
                 new PriorityQueue<Integer>((TreeSet<Integer>)null);
                 fail("should throw ArgumentNullException");
             }
+#pragma warning disable 168
             catch (ArgumentNullException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -480,7 +494,9 @@ namespace Lucene.Net.Support
                 queue.Offer(null);
                 fail("should throw ArgumentNullException");
             }
+#pragma warning disable 168
             catch (ArgumentNullException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -496,7 +512,9 @@ namespace Lucene.Net.Support
                 queue.Offer(new float?(1.3f));
                 fail("should throw InvalidCastException");
             }
+#pragma warning disable 168
             catch (InvalidCastException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -508,7 +526,9 @@ namespace Lucene.Net.Support
                 queue.Offer(new Object());
                 fail("should throw InvalidCastException");
             }
+#pragma warning disable 168
             catch (InvalidCastException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -603,7 +623,9 @@ namespace Lucene.Net.Support
                 queue.Add(null);
                 fail("should throw ArgumentNullException");
             }
+#pragma warning disable 168
             catch (ArgumentNullException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -619,7 +641,9 @@ namespace Lucene.Net.Support
                 queue.Add(new float?(1.3f));
                 fail("should throw InvalidCastException");
             }
+#pragma warning disable 168
             catch (InvalidCastException e)
+#pragma warning restore 168
             {
                 // expected
             }
@@ -631,7 +655,9 @@ namespace Lucene.Net.Support
                 queue.Add(new Object());
                 fail("should throw InvalidCastException");
             }
+#pragma warning disable 168
             catch (InvalidCastException e)
+#pragma warning restore 168
             {
                 // expected
             }

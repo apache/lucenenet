@@ -49,7 +49,9 @@ namespace Lucene.Net.Support.IO
                 ByteBuffer.Allocate(-1);
                 fail("Should throw Exception"); //$NON-NLS-1$
             }
+#pragma warning disable 168
             catch (ArgumentException e)
+#pragma warning restore 168
             {
                 // expected 
             }
