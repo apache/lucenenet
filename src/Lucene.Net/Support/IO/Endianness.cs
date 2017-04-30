@@ -1,7 +1,4 @@
-﻿// This class was sourced from the Apache Harmony project
-// https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
-
-namespace Lucene.Net.Support.IO
+﻿namespace Lucene.Net.Support.IO
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -19,32 +16,10 @@ namespace Lucene.Net.Support.IO
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
-    public sealed class Endianness
+    
+    public enum Endianness
     {
-        public static readonly Endianness BIG_ENDIAN = new Endianness("BIG_ENDIAN");
-
-        public static readonly Endianness LITTLE_ENDIAN = new Endianness("LITTLE_ENDIAN");
-
-        // The string used to display the mapping mode.
-        private readonly string displayName;
-
-        /// <summary>
-        /// Private constructor prevents others creating new Endians.
-        /// </summary>
-        /// <param name="displayName"></param>
-        private Endianness(string displayName)
-        {
-            this.displayName = displayName;
-        }
-
-        /// <summary>
-        /// Answers a string version of the endianness
-        /// </summary>
-        /// <returns>the mode string.</returns>
-        public override string ToString()
-        {
-            return displayName;
-        }
+        LITTLE_ENDIAN,
+        BIG_ENDIAN
     }
 }
