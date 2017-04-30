@@ -486,29 +486,29 @@ namespace Lucene.Net.Support.IO
             ck(b, b.Limit, offset + length);
 
             // The offset must be non-negative and no larger than <array.length>.
-            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
+            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
             {
                 Int64Buffer.Wrap(ba, -1, ba.Length);
             });
-            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
+            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
             {
                 Int64Buffer.Wrap(ba, ba.Length + 1, ba.Length);
             });
-            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
+            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
             {
                 Int64Buffer.Wrap(ba, 0, -1);
             });
-            tryCatch(ba, typeof(IndexOutOfRangeException), () =>
+            tryCatch(ba, typeof(ArgumentOutOfRangeException), () =>
             {
                 Int64Buffer.Wrap(ba, 0, ba.Length + 1);
             });
 
             // A NullPointerException will be thrown if the array is null.
-            tryCatch(ba, typeof(ArgumentNullException), () =>
+            tryCatch(ba, typeof(NullReferenceException), () =>
             {
                 Int64Buffer.Wrap((long[])null, 0, 5);
             });
-            tryCatch(ba, typeof(ArgumentNullException), () =>
+            tryCatch(ba, typeof(NullReferenceException), () =>
             {
                 Int64Buffer.Wrap((long[])null);
             });

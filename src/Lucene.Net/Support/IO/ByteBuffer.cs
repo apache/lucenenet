@@ -101,7 +101,7 @@ namespace Lucene.Net.Support.IO
             int actualLength = array.Length;
             if ((start < 0) || (length < 0) || ((long)start + (long)length > actualLength))
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
             }
 
             ByteBuffer buf = new ReadWriteHeapByteBuffer(array);
@@ -265,7 +265,8 @@ namespace Lucene.Net.Support.IO
         /// </returns>
         public override bool Equals(object other)
         {
-            if (!(other is ByteBuffer)) {
+            if (!(other is ByteBuffer))
+            {
                 return false;
             }
             ByteBuffer otherBuffer = (ByteBuffer)other;

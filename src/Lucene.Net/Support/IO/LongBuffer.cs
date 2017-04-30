@@ -73,11 +73,11 @@ namespace Lucene.Net.Support.IO
         {
             if (array == null)
             {
-                throw new ArgumentNullException();
+                throw new NullReferenceException();
             }
             if (start < 0 || len < 0 || (long)len + (long)start > array.Length)
             {
-                throw new IndexOutOfRangeException();
+                throw new ArgumentOutOfRangeException();
             }
 
             Int64Buffer buf = new ReadWriteInt64ArrayBuffer(array);
@@ -138,7 +138,8 @@ namespace Lucene.Net.Support.IO
 
         public override bool Equals(object other)
         {
-            if (!(other is Int64Buffer)) {
+            if (!(other is Int64Buffer))
+            {
                 return false;
             }
             Int64Buffer otherBuffer = (Int64Buffer)other;

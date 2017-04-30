@@ -32,14 +32,14 @@ namespace Lucene.Net.Support.IO
 
         protected ByteBuffer buf;
 
-        public override void SetUp() 
+        public override void SetUp()
         {
             buf = ByteBuffer.Allocate(10);
             loadTestData1(buf);
             baseBuf = buf;
         }
 
-        public override void TearDown() 
+        public override void TearDown()
         {
             base.TearDown();
         }
@@ -611,7 +611,7 @@ namespace Lucene.Net.Support.IO
             buf.Clear();
             ByteBuffer @readonly = buf.AsReadOnlyBuffer();
             ByteBuffer duplicate = buf.Duplicate();
-            assertEquals(buf.GetHashCode(),@readonly.GetHashCode());
+            assertEquals(buf.GetHashCode(), @readonly.GetHashCode());
             duplicate.SetPosition(buf.Capacity / 2);
             assertTrue(buf.GetHashCode() != duplicate.GetHashCode());
         }
@@ -2524,7 +2524,7 @@ namespace Lucene.Net.Support.IO
                 ByteBuffer.Wrap(new byte[10], int.MaxValue, 2);
                 fail("Should throw IndexOutOfRangeException"); //$NON-NLS-1$
             }
-            catch (IndexOutOfRangeException e)
+            catch (ArgumentOutOfRangeException e)
             {
             }
         }
