@@ -97,42 +97,41 @@ namespace Lucene.Net.Store
             Seek(0L);
         }
 
-
         public override sealed byte ReadByte()
         {
-            try
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
+            if (curBuf.HasRemaining)
             {
                 return curBuf.Get();
             }
-            catch (BufferUnderflowException)
+
+            do
             {
-                do
+                curBufIndex++;
+                if (curBufIndex >= buffers.Length)
                 {
-                    curBufIndex++;
-                    if (curBufIndex >= buffers.Length)
-                    {
-                        throw new EndOfStreamException("read past EOF: " + this);
-                    }
-                    curBuf = buffers[curBufIndex];
-                    curBuf.Position = 0;
-                } while (!curBuf.HasRemaining);
-                return curBuf.Get();
-            }
-            catch (NullReferenceException)
-            {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
-            }
+                    throw new EndOfStreamException("read past EOF: " + this);
+                }
+                curBuf = buffers[curBufIndex];
+                curBuf.Position = 0;
+            } while (!curBuf.HasRemaining);
+            return curBuf.Get();
         }
 
         public override sealed void ReadBytes(byte[] b, int offset, int len)
         {
-            try
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
+            int curAvail = curBuf.Remaining;
+            if (len <= curAvail)
             {
                 curBuf.Get(b, offset, len);
             }
-            catch (BufferUnderflowException)
+            else
             {
-                int curAvail = curBuf.Remaining;
                 while (len > curAvail)
                 {
                     curBuf.Get(b, offset, curAvail);
@@ -149,10 +148,6 @@ namespace Lucene.Net.Store
                 }
                 curBuf.Get(b, offset, len);
             }
-            catch (NullReferenceException)
-            {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
-            }
         }
 
         /// <summary>
@@ -160,18 +155,14 @@ namespace Lucene.Net.Store
         /// </summary>
         public override sealed short ReadInt16()
         {
-            try
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
+            if (curBuf.Remaining >= 2)
             {
                 return curBuf.GetInt16();
             }
-            catch (BufferUnderflowException)
-            {
-                return base.ReadInt16();
-            }
-            catch (NullReferenceException)
-            {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
-            }
+            return base.ReadInt16();
         }
 
         /// <summary>
@@ -179,18 +170,14 @@ namespace Lucene.Net.Store
         /// </summary>
         public override sealed int ReadInt32()
         {
-            try
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
+            if (curBuf.Remaining >= 4)
             {
                 return curBuf.GetInt32();
             }
-            catch (BufferUnderflowException)
-            {
-                return base.ReadInt32();
-            }
-            catch (NullReferenceException)
-            {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
-            }
+            return base.ReadInt32();
         }
 
         /// <summary>
@@ -198,30 +185,22 @@ namespace Lucene.Net.Store
         /// </summary>
         public override sealed long ReadInt64()
         {
-            try
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
+            if (curBuf.Remaining >= 8)
             {
                 return curBuf.GetInt64();
             }
-            catch (BufferUnderflowException)
-            {
-                return base.ReadInt64();
-            }
-            catch (NullReferenceException)
-            {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
-            }
+            return base.ReadInt64();
         }
 
         public override sealed long GetFilePointer()
         {
-            try
-            {
-                return (((long)curBufIndex) << chunkSizePower) + curBuf.Position - offset;
-            }
-            catch (NullReferenceException)
-            {
-                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
-            }
+            // LUCENENET: Refactored to avoid calls on invalid conditions instead of
+            // catching and re-throwing exceptions in the normal workflow.
+            EnsureOpen();
+            return (((long)curBufIndex) << chunkSizePower) + curBuf.Position - offset;
         }
 
         public override sealed void Seek(long pos)
@@ -362,6 +341,16 @@ namespace Lucene.Net.Store
             buffers = null;
             curBuf = null;
             curBufIndex = 0;
+        }
+
+        // LUCENENET specific - rather than using all of this exception catching nonsense 
+        // for control flow, we check whether we are disposed first.
+        private void EnsureOpen()
+        {
+            if (buffers == null || curBuf == null)
+            {
+                throw new ObjectDisposedException(this.GetType().GetTypeInfo().FullName, "Already closed: " + this);
+            }
         }
 
         protected override void Dispose(bool disposing)
