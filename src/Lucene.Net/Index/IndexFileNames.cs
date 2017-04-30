@@ -26,18 +26,18 @@ namespace Lucene.Net.Index
     // TODO: put all files under codec and remove all the static extensions here
 
     /// <summary>
-    /// this class contains useful constants representing filenames and extensions
+    /// This class contains useful constants representing filenames and extensions
     /// used by lucene, as well as convenience methods for querying whether a file
-    /// name matches an extension ({@link #matchesExtension(String, String)
-    /// matchesExtension}), as well as generating file names from a segment name,
-    /// generation and extension (
-    /// <seealso cref="#fileNameFromGeneration(String, String, long) fileNameFromGeneration"/>,
-    /// <seealso cref="#segmentFileName(String, String, String) segmentFileName"/>).
+    /// name matches an extension (<see cref="MatchesExtension(string, string)"/>), 
+    /// as well as generating file names from a segment name,
+    /// generation and extension 
+    /// (<see cref="FileNameFromGeneration(string, string, long)"/>,
+    /// <see cref="SegmentFileName(string, string, string)"/>).
     ///
-    /// <p><b>NOTE</b>: extensions used by codecs are not
-    /// listed here.  You must interact with the <seealso cref="Codec"/>
+    /// <para/><b>NOTE</b>: extensions used by codecs are not
+    /// listed here.  You must interact with the <see cref="Codecs.Codec"/>
     /// directly.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -72,10 +72,10 @@ namespace Lucene.Net.Index
         public static readonly string COMPOUND_FILE_ENTRIES_EXTENSION = "cfe";
 
         /// <summary>
-        /// this array contains all filename extensions used by
+        /// This array contains all filename extensions used by
         /// Lucene's index files, with one exception, namely the
-        /// extension made up from  <code>.s</code> + a number.
-        /// Also note that Lucene's <code>segments_N</code> files
+        /// extension made up from  <c>.s</c> + a number.
+        /// Also note that Lucene's <c>segments_N</c> files
         /// do not have any filename extension.
         /// </summary>
         public static readonly string[] INDEX_EXTENSIONS = new string[] {
@@ -86,10 +86,11 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Computes the full file name from base, extension and generation. If the
-        /// generation is -1, the file name is null. If it's 0, the file name is
+        /// generation is -1, the file name is <c>null</c>. If it's 0, the file name is
         /// &lt;base&gt;.&lt;ext&gt;. If it's > 0, the file name is
-        /// &lt;base&gt;_&lt;gen&gt;.&lt;ext&gt;.<br>
-        /// <b>NOTE:</b> .&lt;ext&gt; is added to the name only if <code>ext</code> is
+        /// &lt;base&gt;_&lt;gen&gt;.&lt;ext&gt;.
+        /// <para/>
+        /// <b>NOTE:</b> .&lt;ext&gt; is added to the name only if <c>ext</c> is
         /// not an empty string.
         /// </summary>
         /// <param name="base"> main part of the file name </param>
@@ -125,13 +126,13 @@ namespace Lucene.Net.Index
         /// Returns a file name that includes the given segment name, your own custom
         /// name and extension. The format of the filename is:
         /// &lt;segmentName&gt;(_&lt;name&gt;)(.&lt;ext&gt;).
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> .&lt;ext&gt; is added to the result file name only if
         /// <code>ext</code> is not empty.
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> _&lt;segmentSuffix&gt; is added to the result file name only if
         /// it's not the empty string
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> all custom files should be named using this method, or
         /// otherwise some structures may fail to handle them properly (such as if they
         /// are added to compound files).
@@ -160,7 +161,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if the given filename ends with the given extension. One
+        /// Returns <c>true</c> if the given filename ends with the given extension. One
         /// should provide a <i>pure</i> extension, without '.'.
         /// </summary>
         public static bool MatchesExtension(string filename, string ext)
@@ -171,7 +172,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// locates the boundary of the segment name, or -1 </summary>
+        /// Locates the boundary of the segment name, or -1 </summary>
         private static int IndexOfSegmentName(string filename)
         {
             // If it is a .del file, there's an '_' after the first character
@@ -186,7 +187,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Strips the segment name out of the given file name. If you used
-        /// <seealso cref="#segmentFileName"/> or <seealso cref="#fileNameFromGeneration"/> to create your
+        /// <see cref="SegmentFileName"/> or <see cref="FileNameFromGeneration"/> to create your
         /// files, then this method simply removes whatever comes before the first '.',
         /// or the second '_' (excluding both).
         /// </summary>
@@ -250,7 +251,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// All files created by codecs much match this pattern (checked in
-        /// SegmentInfo).
+        /// <see cref="SegmentInfo"/>).
         /// </summary>
         public static readonly Regex CODEC_FILE_PATTERN = new Regex("_[a-z0-9]+(_.*)?\\..*", RegexOptions.Compiled);
     }

@@ -393,7 +393,7 @@ namespace Lucene.Net.Index
         /// Expert: <see cref="Index.MergePolicy"/> is invoked whenever there are changes to the
         /// segments in the index. Its role is to select which merges to do, if any,
         /// and return a <see cref="MergePolicy.MergeSpecification"/> describing the merges.
-        /// It also selects merges to do for forceMerge.
+        /// It also selects merges to do for <see cref="IndexWriter.ForceMerge(int)"/>.
         ///
         /// <para/>Only takes effect when <see cref="IndexWriter"/> is first created.
         /// </summary>

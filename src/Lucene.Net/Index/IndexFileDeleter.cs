@@ -30,69 +30,78 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using InfoStream = Lucene.Net.Util.InfoStream;
 
-    /*
-     * this class keeps track of each SegmentInfos instance that
-     * is still "live", either because it corresponds to a
-     * segments_N file in the Directory (a "commit", i.e. a
-     * committed SegmentInfos) or because it's an in-memory
-     * SegmentInfos that a writer is actively updating but has
-     * not yet committed.  this class uses simple reference
-     * counting to map the live SegmentInfos instances to
-     * individual files in the Directory.
-     *
-     * The same directory file may be referenced by more than
-     * one IndexCommit, i.e. more than one SegmentInfos.
-     * Therefore we count how many commits reference each file.
-     * When all the commits referencing a certain file have been
-     * deleted, the refcount for that file becomes zero, and the
-     * file is deleted.
-     *
-     * A separate deletion policy interface
-     * (IndexDeletionPolicy) is consulted on creation (onInit)
-     * and once per commit (onCommit), to decide when a commit
-     * should be removed.
-     *
-     * It is the business of the IndexDeletionPolicy to choose
-     * when to delete commit points.  The actual mechanics of
-     * file deletion, retrying, etc, derived from the deletion
-     * of commit points is the business of the IndexFileDeleter.
-     *
-     * The current default deletion policy is {@link
-     * KeepOnlyLastCommitDeletionPolicy}, which removes all
-     * prior commits when a new commit has completed.  this
-     * matches the behavior before 2.2.
-     *
-     * Note that you must hold the write.lock before
-     * instantiating this class.  It opens segments_N file(s)
-     * directly with no retry logic.
-     */
+    /// <summary>
+    /// This class keeps track of each SegmentInfos instance that
+    /// is still "live", either because it corresponds to a
+    /// segments_N file in the <see cref="Directory"/> (a "commit", i.e. a
+    /// committed <see cref="SegmentInfos"/>) or because it's an in-memory
+    /// <see cref="SegmentInfos"/> that a writer is actively updating but has
+    /// not yet committed.  This class uses simple reference
+    /// counting to map the live <see cref="SegmentInfos"/> instances to
+    /// individual files in the <see cref="Directory"/>.
+    /// <para/>
+    /// The same directory file may be referenced by more than
+    /// one <see cref="IndexCommit"/>, i.e. more than one <see cref="SegmentInfos"/>.
+    /// Therefore we count how many commits reference each file.
+    /// When all the commits referencing a certain file have been
+    /// deleted, the refcount for that file becomes zero, and the
+    /// file is deleted.
+    /// <para/>
+    /// A separate deletion policy interface
+    /// (<see cref="IndexDeletionPolicy"/>) is consulted on creation (OnInit)
+    /// and once per commit (OnCommit), to decide when a commit
+    /// should be removed.
+    /// <para/>
+    /// It is the business of the <see cref="IndexDeletionPolicy"/> to choose
+    /// when to delete commit points.  The actual mechanics of
+    /// file deletion, retrying, etc, derived from the deletion
+    /// of commit points is the business of the <see cref="IndexFileDeleter"/>.
+    /// <para/>
+    /// The current default deletion policy is
+    /// <see cref="KeepOnlyLastCommitDeletionPolicy"/>, which removes all
+    /// prior commits when a new commit has completed.  This
+    /// matches the behavior before 2.2.
+    /// <para/>
+    /// Note that you must hold the <c>write.lock</c> before
+    /// instantiating this class.  It opens segments_N file(s)
+    /// directly with no retry logic.
+    /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     internal sealed class IndexFileDeleter : IDisposable
     {
-        /* Files that we tried to delete but failed (likely
-         * because they are open and we are running on Windows),
-         * so we will retry them again later: */
+        /// <summary>
+        /// Files that we tried to delete but failed (likely
+        /// because they are open and we are running on Windows),
+        /// so we will retry them again later:
+        /// </summary>
         private IList<string> deletable;
 
-        /* Reference count for all files in the index.
-         * Counts how many existing commits reference a file.
-         **/
+        /// <summary>
+        /// Reference count for all files in the index.
+        /// Counts how many existing commits reference a file.
+        /// </summary>
         private IDictionary<string, RefCount> refCounts = new Dictionary<string, RefCount>();
 
-        /* Holds all commits (segments_N) currently in the index.
-         * this will have just 1 commit if you are using the
-         * default delete policy (KeepOnlyLastCommitDeletionPolicy).
-         * Other policies may leave commit points live for longer
-         * in which case this list would be longer than 1: */
+        /// <summary>
+        /// Holds all commits (segments_N) currently in the index.
+        /// this will have just 1 commit if you are using the
+        /// default delete policy (KeepOnlyLastCommitDeletionPolicy).
+        /// Other policies may leave commit points live for longer
+        /// in which case this list would be longer than 1:
+        /// </summary>
         private IList<CommitPoint> commits = new List<CommitPoint>();
 
-        /* Holds files we had incref'd from the previous
-         * non-commit checkpoint: */
+        /// <summary>
+        /// Holds files we had incref'd from the previous
+        /// non-commit checkpoint:
+        /// </summary>
         private readonly List<string> lastFiles = new List<string>();
 
-        /* Commits that the IndexDeletionPolicy have decided to delete: */
+        /// <summary>
+        /// Commits that the IndexDeletionPolicy have decided to delete:
+        /// </summary>
         private IList<CommitPoint> commitsToDelete = new List<CommitPoint>();
 
         private readonly InfoStream infoStream;
@@ -104,7 +113,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Change to true to see details of reference counts when
-        ///  infoStream is enabled
+        /// infoStream is enabled
         /// </summary>
         public static bool VERBOSE_REF_COUNTS = false;
 
@@ -120,7 +129,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Initialize the deleter: find all previous commits in
-        /// the Directory, incref the files they reference, call
+        /// the <see cref="Directory"/>, incref the files they reference, call
         /// the policy to let it delete commits.  this will remove
         /// any files not referenced by any of the commits. </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
@@ -402,7 +411,7 @@ namespace Lucene.Net.Index
         /// Writer calls this when it has hit an error and had to
         /// roll back, to tell us that there may now be
         /// unreferenced files in the filesystem.  So we re-list
-        /// the filesystem and delete such files.  If segmentName
+        /// the filesystem and delete such files.  If <paramref name="segmentName"/>
         /// is non-null, we will only delete files corresponding to
         /// that segment.
         /// </summary>
@@ -469,12 +478,12 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Revisits the <seealso cref="IndexDeletionPolicy"/> by calling its
-        /// <seealso cref="IndexDeletionPolicy#onCommit(List)"/> again with the known commits.
+        /// Revisits the <see cref="IndexDeletionPolicy"/> by calling its
+        /// <see cref="IndexDeletionPolicy.OnCommit{T}(IList{T})"/> again with the known commits.
         /// this is useful in cases where a deletion policy which holds onto index
         /// commits is used. The application may know that some commits are not held by
         /// the deletion policy anymore and call
-        /// <seealso cref="IndexWriter#deleteUnusedFiles()"/>, which will attempt to delete the
+        /// <see cref="IndexWriter.DeleteUnusedFiles()"/>, which will attempt to delete the
         /// unused commits again.
         /// </summary>
         internal void RevisitPolicy()
@@ -512,21 +521,21 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// For definition of "check point" see IndexWriter comments:
+        /// For definition of "check point" see <see cref="IndexWriter"/> comments:
         /// "Clarification: Check Points (and commits)".
-        ///
+        /// <para/>
         /// Writer calls this when it has made a "consistent
         /// change" to the index, meaning new files are written to
-        /// the index and the in-memory SegmentInfos have been
+        /// the index and the in-memory <see cref="SegmentInfos"/> have been
         /// modified to point to those files.
-        ///
-        /// this may or may not be a commit (segments_N may or may
+        /// <para/>
+        /// This may or may not be a commit (segments_N may or may
         /// not have been written).
-        ///
+        /// <para/>
         /// We simply incref the files referenced by the new
-        /// SegmentInfos and decref the files we had previously
+        /// <see cref="SegmentInfos"/> and decref the files we had previously
         /// seen (if any).
-        ///
+        /// <para/>
         /// If this is a commit, we also call the policy to give it
         /// a chance to remove other commits.  If any commits are
         /// removed, we decref their files as well.
@@ -689,7 +698,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Deletes the specified files, but only if they are new
-        ///  (have not yet been incref'd).
+        /// (have not yet been incref'd).
         /// </summary>
         internal void DeleteNewFiles(ICollection<string> files)
         {
@@ -790,7 +799,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Holds details for each commit point.  this class is
+        /// Holds details for each commit point.  This class is
         /// also passed to the deletion policy.  Note: this class
         /// has a natural ordering that is inconsistent with
         /// equals.
@@ -874,7 +883,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Called only be the deletion policy, to remove this
+            /// Called only by the deletion policy, to remove this
             /// commit point from the index.
             /// </summary>
             public override void Delete()

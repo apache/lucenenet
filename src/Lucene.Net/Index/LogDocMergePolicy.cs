@@ -20,21 +20,22 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// this is a <seealso cref="LogMergePolicy"/> that measures size of a
-    ///  segment as the number of documents (not taking deletions
-    ///  into account).
+    /// This is a <see cref="LogMergePolicy"/> that measures size of a
+    /// segment as the number of documents (not taking deletions
+    /// into account).
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public class LogDocMergePolicy : LogMergePolicy
     {
-        /// Default minimum segment size.  <seealso cref= setMinMergeDocs </seealso>
+        /// <summary> Default minimum segment size. </summary>
+        /// <seealso cref="MinMergeDocs"/>
         public static readonly int DEFAULT_MIN_MERGE_DOCS = 1000;
 
         /// <summary>
         /// Sole constructor, setting all settings to their
-        ///  defaults.
+        /// defaults.
         /// </summary>
         public LogDocMergePolicy()
         {
@@ -56,7 +57,7 @@ namespace Lucene.Net.Index
         /// Any segments below this size are considered to be on
         /// the same level (even if they vary drastically in size)
         /// and will be merged whenever there are mergeFactor of
-        /// them.  this effectively truncates the "long tail" of
+        /// them.  This effectively truncates the "long tail" of
         /// small segments that would otherwise be created into a
         /// single level.  If you set this too large, it could
         /// greatly increase the merging cost during indexing (if

@@ -21,69 +21,70 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Describes the properties of a field.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public interface IIndexableFieldType
     {
         /// <summary>
-        /// True if this field should be indexed (inverted) </summary>
+        /// <c>true</c> if this field should be indexed (inverted) </summary>
         bool IsIndexed { get; }
 
         /// <summary>
-        /// True if the field's value should be stored </summary>
+        /// <c>true</c> if the field's value should be stored </summary>
         bool IsStored { get; }
 
         /// <summary>
-        /// True if this field's value should be analyzed by the
-        /// <seealso cref="Analyzer"/>.
-        /// <p>
-        /// this has no effect if <seealso cref="#indexed()"/> returns false.
+        /// <c>true</c> if this field's value should be analyzed by the
+        /// <see cref="Analysis.Analyzer"/>.
+        /// <para/>
+        /// This has no effect if <see cref="IsIndexed"/> returns <c>false</c>.
         /// </summary>
         bool IsTokenized { get; }
 
         /// <summary>
-        /// True if this field's indexed form should be also stored
+        /// <c>true</c> if this field's indexed form should be also stored
         /// into term vectors.
-        /// <p>
+        /// <para/>
         /// this builds a miniature inverted-index for this field which
         /// can be accessed in a document-oriented way from
-        /// <seealso cref="IndexReader#getTermVector(int,String)"/>.
-        /// <p>
-        /// this option is illegal if <seealso cref="#indexed()"/> returns false.
+        /// <see cref="IndexReader.GetTermVector(int, string)"/>.
+        /// <para/>
+        /// This option is illegal if <see cref="IsIndexed"/> returns <c>false</c>.
         /// </summary>
         bool StoreTermVectors { get; }
 
         /// <summary>
-        /// True if this field's token character offsets should also
+        /// <c>true</c> if this field's token character offsets should also
         /// be stored into term vectors.
-        /// <p>
-        /// this option is illegal if term vectors are not enabled for the field
-        /// (<seealso cref="#storeTermVectors()"/> is false)
+        /// <para/>
+        /// This option is illegal if term vectors are not enabled for the field
+        /// (<see cref="StoreTermVectors"/> is <c>false</c>)
         /// </summary>
         bool StoreTermVectorOffsets { get; }
 
         /// <summary>
-        /// True if this field's token positions should also be stored
+        /// <c>true</c> if this field's token positions should also be stored
         /// into the term vectors.
-        /// <p>
-        /// this option is illegal if term vectors are not enabled for the field
-        /// (<seealso cref="#storeTermVectors()"/> is false).
+        /// <para/>
+        /// This option is illegal if term vectors are not enabled for the field
+        /// (<see cref="StoreTermVectors"/> is <c>false</c>).
         /// </summary>
         bool StoreTermVectorPositions { get; }
 
         /// <summary>
-        /// True if this field's token payloads should also be stored
+        /// <c>true</c> if this field's token payloads should also be stored
         /// into the term vectors.
-        /// <p>
-        /// this option is illegal if term vector positions are not enabled
-        /// for the field (<seealso cref="#storeTermVectors()"/> is false).
+        /// <para/>
+        /// This option is illegal if term vector positions are not enabled
+        /// for the field (<see cref="StoreTermVectors"/> is <c>false</c>).
         /// </summary>
         bool StoreTermVectorPayloads { get; }
 
         /// <summary>
-        /// True if normalization values should be omitted for the field.
+        /// <c>true</c> if normalization values should be omitted for the field.
         /// <para/>
-        /// this saves memory, but at the expense of scoring quality (length normalization
+        /// This saves memory, but at the expense of scoring quality (length normalization
         /// will be disabled), and if you omit norms, you cannot use index-time boosts.
         /// </summary>
         bool OmitNorms { get; }

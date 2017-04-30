@@ -22,7 +22,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// A struct like class that represents a hierarchical relationship between
-    /// <seealso cref="IndexReader"/> instances.
+    /// <see cref="IndexReader"/> instances.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -34,15 +34,15 @@ namespace Lucene.Net.Index
         public CompositeReaderContext Parent { get; private set; }
 
         /// <summary>
-        /// <code>true</code> if this context struct represents the top level reader within the hierarchical context </summary>
+        /// <c>true</c> if this context struct represents the top level reader within the hierarchical context </summary>
         public bool IsTopLevel { get; private set; }
 
         /// <summary>
-        /// the doc base for this reader in the parent, <tt>0</tt> if parent is null </summary>
+        /// the doc base for this reader in the parent, <c>0</c> if parent is <c>null</c> </summary>
         public int DocBaseInParent { get; private set; }
 
         /// <summary>
-        /// the ord for this reader in the parent, <tt>0</tt> if parent is null </summary>
+        /// the ord for this reader in the parent, <c>0</c> if parent is <c>null</c> </summary>
         public int OrdInParent { get; private set; }
 
         internal IndexReaderContext(CompositeReaderContext parent, int ordInParent, int docBaseInParent)
@@ -58,22 +58,22 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="IndexReader"/>, this context represents. </summary>
+        /// Returns the <see cref="IndexReader"/>, this context represents. </summary>
         public abstract IndexReader Reader { get; }
 
         /// <summary>
         /// Returns the context's leaves if this context is a top-level context.
-        /// For convenience, if this is an <seealso cref="AtomicReaderContext"/> this
+        /// For convenience, if this is an <see cref="AtomicReaderContext"/> this
         /// returns itself as the only leaf.
-        /// <p>Note: this is convenience method since leaves can always be obtained by
-        /// walking the context tree using <seealso cref="#children()"/>. </summary>
+        /// <para/>Note: this is convenience method since leaves can always be obtained by
+        /// walking the context tree using <see cref="Children"/>. </summary>
         /// <exception cref="InvalidOperationException"> if this is not a top-level context. </exception>
-        /// <seealso cref= #children() </seealso>
+        /// <seealso cref="Children"/>
         public abstract IList<AtomicReaderContext> Leaves { get; }
 
         /// <summary>
         /// Returns the context's children iff this context is a composite context
-        /// otherwise <code>null</code>.
+        /// otherwise <c>null</c>.
         /// </summary>
         public abstract IList<IndexReaderContext> Children { get; }
     }

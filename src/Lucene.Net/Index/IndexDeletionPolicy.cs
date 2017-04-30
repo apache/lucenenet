@@ -21,18 +21,18 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// <p>Expert: policy for deletion of stale <seealso cref="IndexCommit index commits"/>.
+    /// <para>Expert: policy for deletion of stale <see cref="IndexCommit"/>s.</para>
     ///
-    /// <p>Implement this interface, and pass it to one
-    /// of the <seealso cref="IndexWriter"/> or <seealso cref="IndexReader"/>
+    /// <para>Implement this interface, and pass it to one
+    /// of the <see cref="IndexWriter"/> or <see cref="IndexReader"/>
     /// constructors, to customize when older
-    /// <seealso cref="IndexCommit point-in-time commits"/>
+    /// point-in-time commits (<see cref="IndexCommit"/>)
     /// are deleted from the index directory.  The default deletion policy
-    /// is <seealso cref="KeepOnlyLastCommitDeletionPolicy"/>, which always
+    /// is <see cref="KeepOnlyLastCommitDeletionPolicy"/>, which always
     /// removes old commits as soon as a new commit is done (this
-    /// matches the behavior before 2.2).</p>
+    /// matches the behavior before 2.2).</para>
     ///
-    /// <p>One expected use case for this (and the reason why it
+    /// <para>One expected use case for this (and the reason why it
     /// was first created) is to work around problems with an
     /// index directory accessed via filesystems like NFS because
     /// NFS does not provide the "delete on last close" semantics
@@ -40,16 +40,16 @@ namespace Lucene.Net.Index
     /// By implementing a custom deletion policy, such as "a
     /// commit is only removed once it has been stale for more
     /// than X minutes", you can give your readers time to
-    /// refresh to the new commit before <seealso cref="IndexWriter"/>
+    /// refresh to the new commit before <see cref="IndexWriter"/>
     /// removes the old commits.  Note that doing so will
     /// increase the storage requirements of the index.  See <a
     /// target="top"
     /// href="http://issues.apache.org/jira/browse/LUCENE-710">LUCENE-710</a>
-    /// for details.</p>
+    /// for details.</para>
     ///
-    /// <p>Implementers of sub-classes should make sure that <seealso cref="#clone()"/>
-    /// returns an independent instance able to work with any other <seealso cref="IndexWriter"/>
-    /// or <seealso cref="Directory"/> instance.</p>
+    /// <para>Implementers of sub-classes should make sure that <see cref="Clone()"/>
+    /// returns an independent instance able to work with any other <see cref="IndexWriter"/>
+    /// or <see cref="Store.Directory"/> instance.</para>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -63,49 +63,49 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// <p>this is called once when a writer is first
+        /// <para>this is called once when a writer is first
         /// instantiated to give the policy a chance to remove old
-        /// commit points.</p>
+        /// commit points.</para>
         ///
-        /// <p>The writer locates all index commits present in the
+        /// <para>The writer locates all index commits present in the
         /// index directory and calls this method.  The policy may
         /// choose to delete some of the commit points, doing so by
         /// calling method <seealso cref="IndexCommit#delete delete()"/>
-        /// of <seealso cref="IndexCommit"/>.</p>
+        /// of <seealso cref="IndexCommit"/>.</para>
         ///
-        /// <p><u>Note:</u> the last CommitPoint is the most recent one,
+        /// <para><u>Note:</u> the last CommitPoint is the most recent one,
         /// i.e. the "front index state". Be careful not to delete it,
         /// unless you know for sure what you are doing, and unless
-        /// you can afford to lose the index content while doing that.
+        /// you can afford to lose the index content while doing that.</para>
         /// </summary>
-        /// <param name="commits"> List of current
-        /// <seealso cref="IndexCommit point-in-time commits"/>,
-        ///  sorted by age (the 0th one is the oldest commit).
-        ///  Note that for a new index this method is invoked with
-        ///  an empty list. </param>
+        /// <param name="commits"> List of current point-in-time commits
+        /// (<see cref="IndexCommit"/>),
+        /// sorted by age (the 0th one is the oldest commit).
+        /// Note that for a new index this method is invoked with
+        /// an empty list. </param>
         public abstract void OnInit<T>(IList<T> commits) where T : IndexCommit;
 
         /// <summary>
-        /// <p>this is called each time the writer completed a commit.
+        /// <para>this is called each time the writer completed a commit.
         /// this gives the policy a chance to remove old commit points
-        /// with each commit.</p>
+        /// with each commit.</para>
         ///
-        /// <p>The policy may now choose to delete old commit points
-        /// by calling method <seealso cref="IndexCommit#delete delete()"/>
-        /// of <seealso cref="IndexCommit"/>.</p>
+        /// <para>The policy may now choose to delete old commit points
+        /// by calling method <see cref="IndexCommit.Delete()"/>
+        /// of <see cref="IndexCommit"/>.</para>
         ///
-        /// <p>this method is only called when {@link
-        /// IndexWriter#commit} or <seealso cref="IndexWriter#close"/> is
-        /// called, or possibly not at all if the {@link
-        /// IndexWriter#rollback} is called.
+        /// <para>This method is only called when
+        /// <see cref="IndexWriter.Commit()"/>} or <see cref="IndexWriter.Dispose()"/> is
+        /// called, or possibly not at all if the 
+        /// <see cref="IndexWriter.Rollback()"/>} method is called.</para>
         ///
-        /// <p><u>Note:</u> the last CommitPoint is the most recent one,
+        /// <para><u>Note:</u> the last CommitPoint is the most recent one,
         /// i.e. the "front index state". Be careful not to delete it,
         /// unless you know for sure what you are doing, and unless
-        /// you can afford to lose the index content while doing that.
+        /// you can afford to lose the index content while doing that.</para>
         /// </summary>
-        /// <param name="commits"> List of <seealso cref="IndexCommit"/>,
-        ///  sorted by age (the 0th one is the oldest commit). </param>
+        /// <param name="commits"> List of <see cref="IndexCommit"/>s,
+        /// sorted by age (the 0th one is the oldest commit). </param>
         public abstract void OnCommit<T>(IList<T> commits) where T : IndexCommit;
 
         public virtual object Clone()

@@ -23,19 +23,19 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
 
     /// <summary>
-    /// <p>Expert: represents a single commit into an index as seen by the
-    /// <seealso cref="IndexDeletionPolicy"/> or <seealso cref="IndexReader"/>.</p>
+    /// <para>Expert: represents a single commit into an index as seen by the
+    /// <see cref="IndexDeletionPolicy"/> or <see cref="IndexReader"/>.</para>
     ///
-    /// <p> Changes to the content of an index are made visible
+    /// <para> Changes to the content of an index are made visible
     /// only after the writer who made that change commits by
     /// writing a new segments file
-    /// (<code>segments_N</code>). this point in time, when the
+    /// (<c>segments_N</c>). This point in time, when the
     /// action of writing of a new segments file to the directory
-    /// is completed, is an index commit.</p>
+    /// is completed, is an index commit.</para>
     ///
-    /// <p>Each index commit point has a unique segments file
+    /// <para>Each index commit point has a unique segments file
     /// associated with it. The segments file associated with a
-    /// later index commit point would have a larger N.</p>
+    /// later index commit point would have a larger N.</para>
     ///
     /// @lucene.experimental
     /// </summary>
@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
     public abstract class IndexCommit : IComparable<IndexCommit>
     {
         /// <summary>
-        /// Get the segments file (<code>segments_N</code>) associated
+        /// Get the segments file (<c>segments_N</c>) associated
         /// with this commit point.
         /// </summary>
         public abstract string SegmentsFileName { get; }
@@ -56,28 +56,28 @@ namespace Lucene.Net.Index
         public abstract ICollection<string> FileNames { get; }
 
         /// <summary>
-        /// Returns the <seealso cref="Directory"/> for the index.
+        /// Returns the <see cref="Store.Directory"/> for the index.
         /// </summary>
         public abstract Directory Directory { get; }
 
         /// <summary>
-        /// Delete this commit point.  this only applies when using
-        /// the commit point in the context of IndexWriter's
-        /// IndexDeletionPolicy.
-        /// <p>
+        /// Delete this commit point.  This only applies when using
+        /// the commit point in the context of <see cref="IndexWriter"/>'s
+        /// <see cref="IndexDeletionPolicy"/>.
+        /// <para/>
         /// Upon calling this, the writer is notified that this commit
         /// point should be deleted.
-        /// <p>
-        /// Decision that a commit-point should be deleted is taken by the <seealso cref="IndexDeletionPolicy"/> in effect
-        /// and therefore this should only be called by its <seealso cref="IndexDeletionPolicy#onInit onInit()"/> or
-        /// <seealso cref="IndexDeletionPolicy#onCommit onCommit()"/> methods.
+        /// <para/>
+        /// Decision that a commit-point should be deleted is taken by the <see cref="IndexDeletionPolicy"/> in effect
+        /// and therefore this should only be called by its <see cref="IndexDeletionPolicy.OnInit{T}(IList{T})"/> or
+        /// <see cref="IndexDeletionPolicy.OnCommit{T}(IList{T})"/> methods.
         /// </summary>
         public abstract void Delete();
 
         /// <summary>
-        /// Returns true if this commit should be deleted; this is
-        ///  only used by <seealso cref="IndexWriter"/> after invoking the
-        ///  <seealso cref="IndexDeletionPolicy"/>.
+        /// Returns <c>true</c> if this commit should be deleted; this is
+        /// only used by <see cref="IndexWriter"/> after invoking the
+        /// <see cref="IndexDeletionPolicy"/>.
         /// </summary>
         public abstract bool IsDeleted { get; }
 
@@ -87,14 +87,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected IndexCommit()
         {
         }
 
         /// <summary>
-        /// Two IndexCommits are equal if both their Directory and versions are equal. </summary>
+        /// Two IndexCommits are equal if both their <see cref="Store.Directory"/> and versions are equal. </summary>
         public override bool Equals(object other)
         {
             if (other is IndexCommit)
@@ -115,14 +115,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the generation (the _N in segments_N) for this
-        ///  IndexCommit
+        /// <see cref="IndexCommit"/>
         /// </summary>
         public abstract long Generation { get; }
 
         /// <summary>
-        /// Returns userData, previously passed to {@link
-        ///  IndexWriter#setCommitData(Map)} for this commit.  Map is
-        ///  String -> String.
+        /// Returns userData, previously passed to 
+        /// <see cref="IndexWriter.SetCommitData(IDictionary{string, string})"/>} for this commit.  
+        /// The dictionary is <see cref="string"/> -> <see cref="string"/>.
         /// </summary>
         public abstract IDictionary<string, string> UserData { get; }
 

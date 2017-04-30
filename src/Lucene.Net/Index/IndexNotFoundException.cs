@@ -24,7 +24,7 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Signals that no index was found in the Directory. Possibly because the
+    /// Signals that no index was found in the <see cref="Directory"/>. Possibly because the
     /// directory is empty, however can also indicate an index corruption.
     /// </summary>
     // LUCENENET: All exeption classes should be marked serializable
@@ -34,8 +34,8 @@ namespace Lucene.Net.Index
     public sealed class IndexNotFoundException : FileNotFoundException
     {
         /// <summary>
-        /// Creates IndexFileNotFoundException with the
-        ///  description message.
+        /// Creates <see cref="IndexNotFoundException"/> with the
+        /// description message.
         /// </summary>
         public IndexNotFoundException(string msg)
             : base(msg)

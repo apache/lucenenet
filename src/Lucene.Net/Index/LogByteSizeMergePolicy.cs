@@ -20,30 +20,33 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// this is a <seealso cref="LogMergePolicy"/> that measures size of a
-    ///  segment as the total byte size of the segment's files.
+    /// This is a <see cref="LogMergePolicy"/> that measures size of a
+    /// segment as the total byte size of the segment's files.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public class LogByteSizeMergePolicy : LogMergePolicy
     {
-        /// Default minimum segment size.  <seealso cref= setMinMergeMB </seealso>
+        /// <summary>Default minimum segment size. </summary>
+        /// <seealso cref="MinMergeMB"/>
         public static readonly double DEFAULT_MIN_MERGE_MB = 1.6;
 
         /// <summary>
-        /// Default maximum segment size.  A segment of this size </summary>
-        ///  or larger will never be merged.  <seealso cref= setMaxMergeMB  </seealso>
+        /// Default maximum segment size.  A segment of this size 
+        /// or larger will never be merged. </summary> 
+        /// <seealso cref="MaxMergeMB"/>
         public static readonly double DEFAULT_MAX_MERGE_MB = 2048;
 
         /// <summary>
-        /// Default maximum segment size.  A segment of this size </summary>
-        ///  or larger will never be merged during forceMerge.  <seealso cref= setMaxMergeMBForForceMerge  </seealso>
+        /// Default maximum segment size.  A segment of this size 
+        /// or larger will never be merged during <see cref="IndexWriter.ForceMerge(int)"/>.  </summary>
+        /// <seealso cref="MaxMergeMBForForcedMerge"/>
         public static readonly double DEFAULT_MAX_MERGE_MB_FOR_FORCED_MERGE = long.MaxValue;
 
         /// <summary>
         /// Sole constructor, setting all settings to their
-        ///  defaults.
+        /// defaults.
         /// </summary>
         public LogByteSizeMergePolicy()
         {
@@ -64,17 +67,17 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// <p>Determines the largest segment (measured by total
-        ///  byte size of the segment's files, in MB) that may be
-        ///  merged with other segments.  Small values (e.g., less
-        ///  than 50 MB) are best for interactive indexing, as this
-        ///  limits the length of pauses while indexing to a few
-        ///  seconds.  Larger values are best for batched indexing
-        ///  and speedier searches.</p>
+        /// <para>Determines the largest segment (measured by total
+        /// byte size of the segment's files, in MB) that may be
+        /// merged with other segments.  Small values (e.g., less
+        /// than 50 MB) are best for interactive indexing, as this
+        /// limits the length of pauses while indexing to a few
+        /// seconds.  Larger values are best for batched indexing
+        /// and speedier searches.</para>
         ///
-        ///  <p>Note that <seealso cref="#setMaxMergeDocs"/> is also
-        ///  used to check whether a segment is too large for
-        ///  merging (it's either or).</p>
+        /// <para>Note that <see cref="LogMergePolicy.MaxMergeDocs"/> is also
+        /// used to check whether a segment is too large for
+        /// merging (it's either or).</para>
         /// </summary>
         public virtual double MaxMergeMB
         {
@@ -93,11 +96,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// <p>Determines the largest segment (measured by total
-        ///  byte size of the segment's files, in MB) that may be
-        ///  merged with other segments during forceMerge. Setting
-        ///  it low will leave the index with more than 1 segment,
-        ///  even if <seealso cref="IndexWriter#forceMerge"/> is called.
+        /// Determines the largest segment (measured by total
+        /// byte size of the segment's files, in MB) that may be
+        /// merged with other segments during forceMerge. Setting
+        /// it low will leave the index with more than 1 segment,
+        /// even if <see cref="IndexWriter.ForceMerge(int)"/> is called.
         /// </summary>
         public virtual double MaxMergeMBForForcedMerge
         {
@@ -120,7 +123,7 @@ namespace Lucene.Net.Index
         /// Any segments below this size are considered to be on
         /// the same level (even if they vary drastically in size)
         /// and will be merged whenever there are mergeFactor of
-        /// them.  this effectively truncates the "long tail" of
+        /// them.  This effectively truncates the "long tail" of
         /// small segments that would otherwise be created into a
         /// single level.  If you set this too large, it could
         /// greatly increase the merging cost during indexing (if

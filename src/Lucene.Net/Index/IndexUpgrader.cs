@@ -29,24 +29,26 @@ namespace Lucene.Net.Index
     using InfoStream = Lucene.Net.Util.InfoStream;
 
     /// <summary>
-    /// this is an easy-to-use tool that upgrades all segments of an index from previous Lucene versions
+    /// This is an easy-to-use tool that upgrades all segments of an index from previous Lucene versions
     /// to the current segment file format. It can be used from command line:
-    /// <pre>
+    /// <code>
     ///  java -cp lucene-core.jar Lucene.Net.Index.IndexUpgrader [-delete-prior-commits] [-verbose] indexDir
-    /// </pre>
-    /// Alternatively this class can be instantiated and <seealso cref="#upgrade"/> invoked. It uses <seealso cref="UpgradeIndexMergePolicy"/>
-    /// and triggers the upgrade via an forceMerge request to <seealso cref="IndexWriter"/>.
-    /// <p>this tool keeps only the last commit in an index; for this
+    /// </code>
+    /// Alternatively this class can be instantiated and <see cref="Upgrade()"/> invoked. It uses <see cref="UpgradeIndexMergePolicy"/>
+    /// and triggers the upgrade via an <see cref="IndexWriter.ForceMerge(int)"/> request to <see cref="IndexWriter"/>.
+    /// <para/>
+    /// This tool keeps only the last commit in an index; for this
     /// reason, if the incoming index has more than one commit, the tool
-    /// refuses to run by default. Specify {@code -delete-prior-commits}
+    /// refuses to run by default. Specify <c>-delete-prior-commits</c>
     /// to override this, allowing the tool to delete all but the last commit.
-    /// From Java code this can be enabled by passing {@code true} to
-    /// <seealso cref="#IndexUpgrader(Directory,Version,StreamWriter,boolean)"/>.
-    /// <p><b>Warning:</b> this tool may reorder documents if the index was partially
+    /// From .NET code this can be enabled by passing <c>true</c> to
+    /// <see cref="IndexUpgrader(Directory, LuceneVersion, TextWriter, bool)"/>.
+    /// <para/>
+    /// <b>Warning:</b> this tool may reorder documents if the index was partially
     /// upgraded before execution (e.g., documents were added). If your application relies
     /// on &quot;monotonicity&quot; of doc IDs (which means that the order in which the documents
-    /// were added to the index is preserved), do a full forceMerge instead.
-    /// The <seealso cref="MergePolicy"/> set by <seealso cref="IndexWriterConfig"/> may also reorder
+    /// were added to the index is preserved), do a full ForceMerge instead.
+    /// The <see cref="MergePolicy"/> set by <see cref="IndexWriterConfig"/> may also reorder
     /// documents.
     /// </summary>
     public sealed class IndexUpgrader
@@ -66,13 +68,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Main method to run {code IndexUpgrader} from the
-        ///  command-line.
+        /// Main method to run <see cref="IndexUpgrader"/> from the
+        /// command-line.
         /// </summary>
-        /*public static void Main(string[] args)
+        public static void Main(string[] args)
         {
-          ParseArgs(args).Upgrade();
-        }*/
+            ParseArgs(args).Upgrade();
+        }
 
         public static IndexUpgrader ParseArgs(string[] args)
         {
@@ -136,8 +138,8 @@ namespace Lucene.Net.Index
         private readonly bool deletePriorCommits;
 
         /// <summary>
-        /// Creates index upgrader on the given directory, using an <seealso cref="IndexWriter"/> using the given
-        /// {@code matchVersion}. The tool refuses to upgrade indexes with multiple commit points.
+        /// Creates index upgrader on the given directory, using an <see cref="IndexWriter"/> using the given
+        /// <paramref name="matchVersion"/>. The tool refuses to upgrade indexes with multiple commit points.
         /// </summary>
         public IndexUpgrader(Directory dir, LuceneVersion matchVersion)
             : this(dir, new IndexWriterConfig(matchVersion, null), false)
@@ -145,9 +147,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates index upgrader on the given directory, using an <seealso cref="IndexWriter"/> using the given
-        /// {@code matchVersion}. You have the possibility to upgrade indexes with multiple commit points by removing
-        /// all older ones. If {@code infoStream} is not {@code null}, all logging output will be sent to this stream.
+        /// Creates index upgrader on the given directory, using an <see cref="IndexWriter"/> using the given
+        /// <paramref name="matchVersion"/>. You have the possibility to upgrade indexes with multiple commit points by removing
+        /// all older ones. If <paramref name="infoStream"/> is not <c>null</c>, all logging output will be sent to this stream.
         /// </summary>
         public IndexUpgrader(Directory dir, LuceneVersion matchVersion, TextWriter infoStream, bool deletePriorCommits)
             : this(dir, new IndexWriterConfig(matchVersion, null), deletePriorCommits)
@@ -159,7 +161,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates index upgrader on the given directory, using an <seealso cref="IndexWriter"/> using the given
+        /// Creates index upgrader on the given directory, using an <see cref="IndexWriter"/> using the given
         /// config. You have the possibility to upgrade indexes with multiple commit points by removing
         /// all older ones.
         /// </summary>

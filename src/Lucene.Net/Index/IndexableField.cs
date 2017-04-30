@@ -28,12 +28,11 @@ namespace Lucene.Net.Index
     // TODO: we need to break out separate StoredField...
 
     /// <summary>
-    /// Represents a single field for indexing.  IndexWriter
-    ///  consumes Iterable&lt;IndexableField&gt; as a document.
-    ///
-    ///  @lucene.experimental
+    /// Represents a single field for indexing. <see cref="IndexWriter"/>
+    /// consumes IEnumerable&lt;IndexableField&gt; as a document.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-
     public interface IIndexableField
     {
         /// <summary>
@@ -41,30 +40,31 @@ namespace Lucene.Net.Index
         string Name { get; }
 
         /// <summary>
-        /// <seealso cref="IIndexableFieldType"/> describing the properties
+        /// <see cref="IIndexableFieldType"/> describing the properties
         /// of this field.
         /// </summary>
         IIndexableFieldType FieldType { get; }
 
         /// <summary>
         /// Returns the field's index-time boost.
-        /// <p>
+        /// <para/>
         /// Only fields can have an index-time boost, if you want to simulate
         /// a "document boost", then you must pre-multiply it across all the
         /// relevant fields yourself.
-        /// <p>The boost is used to compute the norm factor for the field.  By
-        /// default, in the <seealso cref="Similarity#computeNorm(FieldInvertState)"/> method,
+        /// <para/>
+        /// The boost is used to compute the norm factor for the field.  By
+        /// default, in the <see cref="Search.Similarities.Similarity.ComputeNorm(FieldInvertState)"/> method,
         /// the boost value is multiplied by the length normalization factor and then
-        /// rounded by <seealso cref="DefaultSimilarity#encodeNormValue(float)"/> before it is stored in the
+        /// rounded by <see cref="Search.Similarities.DefaultSimilarity.EncodeNormValue(float)"/> before it is stored in the
         /// index.  One should attempt to ensure that this product does not overflow
         /// the range of that encoding.
-        /// <p>
+        /// <para/>
         /// It is illegal to return a boost other than 1.0f for a field that is not
-        /// indexed (<seealso cref="IIndexableFieldType#indexed()"/> is false) or omits normalization values
-        /// (<seealso cref="IIndexableFieldType#omitNorms()"/> returns true).
+        /// indexed (<see cref="IIndexableFieldType.IsIndexed"/> is false) or omits normalization values
+        /// (<see cref="IIndexableFieldType.OmitNorms"/> returns true).
         /// </summary>
-        /// <seealso cref= Similarity#computeNorm(FieldInvertState) </seealso>
-        /// <seealso cref= DefaultSimilarity#encodeNormValue(float) </seealso>
+        /// <seealso cref="Search.Similarities.Similarity.ComputeNorm(FieldInvertState)"/>
+        /// <seealso cref="Search.Similarities.DefaultSimilarity.EncodeNormValue(float)"/>
         float Boost { get; }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Lucene.Net.Index
         string GetStringValue();
 
         /// <summary>
-        /// Non-null if this field has a TextReader value </summary>
+        /// Non-null if this field has a <see cref="TextReader"/> value </summary>
         TextReader GetReaderValue();
 
         /// <summary>
@@ -84,13 +84,13 @@ namespace Lucene.Net.Index
         object GetNumericValue(); // LUCENENET TODO: Can we eliminate object?
 
         /// <summary>
-        /// Creates the TokenStream used for indexing this field.  If appropriate,
-        /// implementations should use the given Analyzer to create the TokenStreams.
+        /// Creates the <see cref="TokenStream"/> used for indexing this field.  If appropriate,
+        /// implementations should use the given <see cref="Analyzer"/> to create the <see cref="TokenStream"/>s.
         /// </summary>
-        /// <param name="analyzer"> Analyzer that should be used to create the TokenStreams from </param>
-        /// <returns> TokenStream value for indexing the document.  Should always return
+        /// <param name="analyzer"> <see cref="Analyzer"/> that should be used to create the <see cref="TokenStream"/>s from </param>
+        /// <returns> <see cref="TokenStream"/> value for indexing the document.  Should always return
         ///         a non-null value if the field is to be indexed </returns>
-        /// <exception cref="IOException"> Can be thrown while creating the TokenStream </exception>
+        /// <exception cref="IOException"> Can be thrown while creating the <see cref="TokenStream"/> </exception>
         TokenStream GetTokenStream(Analyzer analyzer);
     }
 }
