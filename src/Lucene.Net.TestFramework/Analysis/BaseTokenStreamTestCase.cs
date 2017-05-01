@@ -1,9 +1,13 @@
+using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
+using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -26,12 +30,7 @@ namespace Lucene.Net.Analysis
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-
-    using Lucene.Net.Analysis.TokenAttributes;
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using System.Globalization;
-    using System.IO;
+    
     using Attribute = Lucene.Net.Util.Attribute;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
