@@ -1,5 +1,19 @@
-﻿September 6th 2014 - Started work on revamping the project code and structure towards a v4.8 release
+﻿=================== Release 4.8.0-beta00001 =====================
 
+Bug
+•[LUCENENET-516] - ChainedFilter class not available in Lucene.net build 3.0.3
+•[LUCENENET-571] - Lucene.Net.QueryParser.Flexible Not Fully Implemented in .NET Core
+•[LUCENENET-558] - Some possible null reference exceptions in ListExtensions.cs
+•[LUCENENET-542] - Snowball Analyser - stemming issue
+
+Improvement
+•[LUCENENET-572] - Lucene.Net.Expressions - removed dependency on .NET Core configuration packages
+
+Task
+•[LUCENENET-540] - Make changes to Contrib\Analyzers\Miscellaneous to sync with Java 4.3 version
+
+May 6th 2017 - Completed most of v4.8
+September 6th 2014 - Started work on revamping the project code and structure towards a v4.8 release
 
 =================== 3.0.3 trunk (not yet released) =====================
 
