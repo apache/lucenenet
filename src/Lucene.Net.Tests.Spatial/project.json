@@ -28,7 +28,7 @@
     "Lucene.Net.TestFramework": "4.8.0",
     "NETStandard.Library": "1.6.0",
     "NUnit": "3.5.0",
-    "Spatial4n.Core": "0.4.1-beta00002"
+    "Spatial4n.Core": "0.4.1-beta00003"
   },
   "testRunner": "nunit-teamcity",
   "frameworks": {
@@ -56,7 +56,7 @@
         "define": [ "FEATURE_SERIALIZABLE" ]
       },
       "dependencies": {
-        "Spatial4n.Core.NTS": "0.4.1-beta00002"
+        "Spatial4n.Core.NTS": "0.4.1-beta00003"
       }
     }
   },

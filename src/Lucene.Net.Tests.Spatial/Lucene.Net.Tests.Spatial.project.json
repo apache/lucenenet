@@ -4,8 +4,8 @@
   },
   "dependencies": {
     "NUnit": "3.5.0",
-    "Spatial4n.Core": "0.4.1-beta00002",
-    "Spatial4n.Core.NTS": "0.4.1-beta00002"
+    "Spatial4n.Core": "0.4.1-beta00003",
+    "Spatial4n.Core.NTS": "0.4.1-beta00003"
   },
   "frameworks": {
     "net451": {}
