@@ -66,7 +66,7 @@ See [Documenting Lucene.Net](https://cwiki.apache.org/confluence/display/LUCENEN
 
 * [Lucene.Net.Demo](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/demo) (might be a good learning experience)
 * [Lucene.Net.Replicator](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/replicator)
-* [Lucene.Net.Analysis.Icu](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/icu)
+* [Lucene.Net.Analysis.ICU](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/icu) (note that we will be putting this functionality into the Lucene.Net.ICU package)
 * [Lucene.Net.Analysis.Kuromoji](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/kuromoji)
 * [Lucene.Net.Analysis.SmartCn](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/smartcn)
 

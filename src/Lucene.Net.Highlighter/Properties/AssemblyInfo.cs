@@ -45,9 +45,9 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("e9e769ea-8504-44bc-8dc9-ccf958765f8f")]
 
-[assembly: InternalsVisibleTo("Lucene.Net.Icu")]
+[assembly: InternalsVisibleTo("Lucene.Net.ICU")]
 // for testing
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Highlighter")]
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Icu")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.ICU")]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -19,7 +19,6 @@
  under the License.
 
 -->
-
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -29,7 +28,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Lucene.Net</RootNamespace>
-    <AssemblyName>Lucene.Net.Tests.Icu</AssemblyName>
+    <AssemblyName>Lucene.Net.Tests.ICU</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -107,9 +106,9 @@
       <Project>{e9e769ea-8504-44bc-8dc9-ccf958765f8f}</Project>
       <Name>Lucene.Net.Highlighter</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Icu\Lucene.Net.Icu.csproj">
+    <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj">
       <Project>{349cb7c9-7534-4e1d-9b0a-5521441af0ae}</Project>
-      <Name>Lucene.Net.Icu</Name>
+      <Name>Lucene.Net.ICU</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
       <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
@@ -125,7 +124,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Lucene.Net.Tests.Icu.project.json" />
+    <None Include="Lucene.Net.Tests.ICU.project.json" />
     <EmbeddedResource Include="Search\PostingsHighlight\CambridgeMA.utf8" />
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 {
   "version": "4.8.0",
-  "title": "Lucene.Net.Icu",
+  "title": "Lucene.Net.ICU",
   "description": "International Components for Unicode-based features including Thai analyzer support, an international postings highlighter, and BreakIterator support for the vector highlighter for the Lucene.Net full-text search engine library from The Apache Software Foundation.",
   "authors": [ "The Apache Software Foundation" ],
   "packOptions": {
