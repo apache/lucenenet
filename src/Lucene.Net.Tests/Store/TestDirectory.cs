@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Store
 {
@@ -421,6 +422,60 @@ namespace Lucene.Net.Store
 
                 // directory is still empty
                 Assert.AreEqual(0, fsdir.ListAll().Length);
+            }
+        }
+
+        [Test]
+        [Ignore("Not deterministic; depends on a race condition")]
+        [LuceneNetSpecific]
+        public virtual void ConcurrentIndexAccessThrowsWithoutSynchronizedStaleFiles()
+        {
+            DirectoryInfo tempDir = CreateTempDir(GetType().Name);
+            using (Directory dir = new SimpleFSDirectory(tempDir))
+            {
+                var ioContext = NewIOContext(Random());
+                var threads = new Thread[Environment.ProcessorCount];
+                int file = 0;
+                Exception exception = null;
+                bool stopped = false;
+
+                using (var @event = new ManualResetEvent(false))
+                {
+                    for (int i = 0; i < threads.Length; i++)
+                    {
+                        var thread = new Thread(() =>
+                        {
+                            while (!stopped)
+                            {
+                                int nextFile = Interlocked.Increment(ref file);
+                                try
+                                {
+                                    dir.CreateOutput("test" + nextFile, ioContext).Dispose();
+                                }
+                                catch (Exception ex)
+                                {
+                                    exception = ex;
+                                    @event.Set();
+                                    break;
+                                }
+                            }
+                        });
+                        thread.Start();
+                        threads[i] = thread;
+                    }
+
+                    bool raised = @event.WaitOne(TimeSpan.FromSeconds(5));
+
+                    stopped = true;
+
+                    if (raised)
+                        throw new Exception("Test failed", exception);
+                }
+
+                foreach (var thread in threads)
+                {
+                    thread.Join();
+                }
             }
         }
     }
