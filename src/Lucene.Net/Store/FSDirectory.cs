@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;// Used only for WRITE_LOCK_NAME in deprecated create=true case:
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -91,7 +92,7 @@ namespace Lucene.Net.Store
         public const int DEFAULT_READ_CHUNK_SIZE = 8192;
 
         protected readonly DirectoryInfo m_directory; // The underlying filesystem directory
-        protected readonly ISet<string> m_staleFiles = new HashSet<string>(); // Files written, but not yet sync'ed
+        protected readonly ISet<string> m_staleFiles = new ConcurrentHashSet<string>(); // Files written, but not yet sync'ed
 #pragma warning disable 612, 618
         private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
 #pragma warning restore 612, 618
