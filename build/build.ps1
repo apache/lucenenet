@@ -43,7 +43,7 @@ properties {
 	[string]$product_name = "Lucene.Net"
 	
 	#test paramters
-	[string]$frameworks_to_test = "net451,netcoreapp1.0"
+	[string]$frameworks_to_test = "netcoreapp1.0,net451"
 	[string]$where = ""
 }
 
@@ -56,7 +56,7 @@ task Clean -description "This task cleans up the build directory" {
 	Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
-task Init -description "This task makes sure the build environment is correctly setup" {
+task InstallSDK -description "This task makes sure the correct SDK version is installed" {
 	& where.exe dotnet.exe
 	$sdkVersion = ""
 
@@ -77,7 +77,9 @@ task Init -description "This task makes sure the build environment is correctly 
 	if ($LASTEXITCODE -ne 0) {
 		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK version 1.0.0-preview2-1-003177."
 	}
+}
 
+task Init -depends InstallSDK -description "This task makes sure the build environment is correctly setup" {
 	#Update TeamCity or MyGet with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
 	Write-Output "##myget[buildNumber '$packageVersion']"
@@ -98,6 +100,12 @@ task Init -description "This task makes sure the build environment is correctly 
 	Ensure-Directory-Exists "$release_directory"
 }
 
+task Restore -description "This task restores the dependencies" {
+	Exec {
+		& dotnet.exe restore $base_directory
+	}
+}
+
 task Compile -depends Clean, Init -description "This task compiles the solution" {
 	try {
 		pushd $base_directory
@@ -109,9 +117,7 @@ task Compile -depends Clean, Init -description "This task compiles the solution"
 			Prepare-For-Build $projects
 		}
 
-		Exec {
-			& dotnet.exe restore $base_directory
-		}
+		Invoke-Task Restore
 
 		Build-Assemblies $projects
 
@@ -139,7 +145,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
-task Test -description "This task runs the tests" {
+task Test -depends InstallSDK, Restore -description "This task runs the tests" {
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
