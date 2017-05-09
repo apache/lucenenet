@@ -199,9 +199,9 @@ function Get-Package-Version() {
 	Write-Host $parameters.packageVersion -ForegroundColor Red
 
 	#If $packageVersion is not passed in (as a parameter or environment variable), get it from Version.proj
-	if (![string]::IsNullOrWhiteSpace($parameters.packageVersion) -and $packageVersion -ne "0.0.0") {
-		return $packageVersion
-	} elseif (![string]::IsNullOrWhiteSpace($env:PackageVersion)) {
+	if (![string]::IsNullOrWhiteSpace($parameters.packageVersion) -and $parameters.packageVersion -ne "0.0.0") {
+		return $parameters.packageVersion
+	} elseif (![string]::IsNullOrWhiteSpace($env:PackageVersion) -and $env:PackageVersion -ne "0.0.0") {
 		return $env:PackageVersion
 	} else {
 		#Get the version info
@@ -212,6 +212,9 @@ function Get-Package-Version() {
 
 		if ([string]::IsNullOrWhiteSpace($versionSuffix)) {
 			# this is a production release - use 4 segment version number 0.0.0.0
+			if ([string]::IsNullOrWhiteSpace($buildCounter)) {
+				$buildCounter = "0"
+			}
 			$packageVersion = "$versionPrefix.$buildCounter"
 		} else {
 			if (![string]::IsNullOrWhiteSpace($buildCounter)) {
@@ -370,12 +373,43 @@ GOTO endcommentblock
 :: This file will build Lucene.Net and create the NuGet packages.
 ::
 :: Syntax:
-::   build[.bat]
+::   build[.bat] [<options>]
+::
+:: Available Options:
+::
+::   --Test
+::   -t - Run the tests.
 ::
 :: -----------------------------------------------------------------------------------
 :endcommentblock
+setlocal enabledelayedexpansion enableextensions
 
-powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -properties @{prepareForBuild='false';backup_files='false'} }""
+set runtests=false
+
+FOR %%a IN (%*) DO (
+	FOR /f ""useback tokens=*"" %%a in ('%%a') do (
+		set value=%%~a
+		
+		set test=!value:~0,2!
+		IF /I !test!==-t (
+			set runtests=true
+		)
+
+		set test=!value:~0,6!
+		IF /I !test!==--test: (
+			set runtests=true
+		)
+	)
+)
+
+set tasks=""Default""
+if ""!runtests!""==""true"" (
+	set tasks=""Default,Test""
+)
+
+powershell -ExecutionPolicy Bypass -Command ""& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -Task %tasks% -properties @{prepareForBuild='false';backup_files='false'} }""
+
+endlocal
 "
 	$dir = [System.IO.Path]::GetDirectoryName($file)
 	Ensure-Directory-Exists $dir

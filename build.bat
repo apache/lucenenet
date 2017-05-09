@@ -1,5 +1,7 @@
 @echo off
 GOTO endcommentblock
+:: -----------------------------------------------------------------------------------
+::
 ::  Licensed to the Apache Software Foundation (ASF) under one or more
 ::  contributor license agreements.  See the NOTICE file distributed with
 ::  this work for additional information regarding copyright ownership.
@@ -24,17 +26,17 @@ GOTO endcommentblock
 ::
 :: Available Options:
 ::
-::   -Version:<Version>
+::   --Version:<Version>
 ::   -v:<Version> - Assembly version number. If not supplied, the version will be the same 
 ::                  as PackageVersion (excluding any pre-release tag).
 ::
-::   -PackageVersion:<PackageVersion>
+::   --PackageVersion:<PackageVersion>
 ::   -pv:<PackageVersion> - Nuget package version. Default is 0.0.0, which instructs the script to use the value in Version.proj.
 ::
-::   -Configuration:<Configuration>
+::   --Configuration:<Configuration>
 ::   -config:<Configuration> - MSBuild configuration for the build.
 ::
-::   -Test
+::   --Test
 ::   -t - Run the tests.
 ::
 ::   All options are case insensitive.
@@ -51,14 +53,14 @@ IF "%version%" == "" (
 	REM  If version is not supplied, our build script should parse it
 	REM  from the %PackageVersion% variable. We determine this by checking
 	REM  whether it is 0.0.0 (uninitialized).
-	set version=0.0.0
+ 	set version=0.0.0
 )
 IF "%PackageVersion%" == "" (
     set PackageVersion=0.0.0
 )
 set configuration=Release
 IF NOT "%config%" == "" (
-	set configuration=%config%
+ 	set configuration=%config%
 )
 set runtests=false
 
@@ -71,9 +73,9 @@ FOR %%a IN (%*) DO (
 			set version=!value:~3!
 		)
 
-		set test=!value:~0,9!
-		IF /I !test! EQU -version: (
-			set version=!value:~9!
+		set test=!value:~0,10!
+		IF /I !test! EQU --version: (
+			set version=!value:~10!
 		)
 		
 		set test=!value:~0,4!
@@ -81,9 +83,9 @@ FOR %%a IN (%*) DO (
 			set packageversion=!value:~4!
 		)
 
-		set test=!value:~0,16!
-		IF /I !test!==-packageversion: (
-			set packageversion=!value:~16!
+		set test=!value:~0,17!
+		IF /I !test!==--packageversion: (
+			set packageversion=!value:~17!
 		)
 
 		set test=!value:~0,8!
@@ -91,9 +93,9 @@ FOR %%a IN (%*) DO (
 			set configuration=!value:~8!
 		)
 
-		set test=!value:~0,15!
-		IF /I !test!==-configuration: (
-			set configuration=!value:~15!
+		set test=!value:~0,16!
+		IF /I !test!==--configuration: (
+			set configuration=!value:~16!
 		)
 		
 		set test=!value:~0,2!
@@ -101,17 +103,18 @@ FOR %%a IN (%*) DO (
 			set runtests=true
 		)
 
-		set test=!value:~0,5!
-		IF /I !test!==-test: (
+		set test=!value:~0,6!
+		IF /I !test!==--test: (
 			set runtests=true
 		)
 	)
 )
 
-powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -properties @{\"version\"=\"%version%\";\"configuration\"=\"%configuration%"\";\"packageVersion\"=\"%PackageVersion%"\"} }"
-
+set tasks="Default"
 if "!runtests!"=="true" (
-	powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 -task Test -properties @{\"version\"=\"%version%\";\"configuration\"=\"%configuration%"\";\"packageVersion\"=\"%PackageVersion%"\"} }"
+	set tasks="Default,Test"
 )
+
+powershell -ExecutionPolicy Bypass -Command "& { Import-Module .\build\psake.psm1; Invoke-Psake .\build\build.ps1 %tasks% -properties @{configuration='%configuration%'} -parameters @{ packageVersion='%PackageVersion%';version='%version%' } }"
 
 endlocal
