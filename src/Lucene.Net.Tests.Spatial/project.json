@@ -42,12 +42,6 @@
             "Support/TestApiConsistency.cs"
           ]
         }
-      },
-      "dependencies": {
-        "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.1"
-        }
       }
     },
     "net451": {

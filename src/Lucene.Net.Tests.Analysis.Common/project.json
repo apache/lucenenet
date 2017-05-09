@@ -1,4 +1,4 @@
-{
+﻿{
   "version": "4.8.0",
   "title": "Lucene.Net.Tests.Analysis.Common",
   "buildOptions": {
@@ -107,12 +107,6 @@
           "excludeFiles": [
             "Support/TestApiConsistency.cs"
           ]
-        }
-      },
-      "dependencies": {
-        "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.1"
         }
       },
       "imports": "dnxcore50"

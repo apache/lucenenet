@@ -32,10 +32,6 @@
         }
       },
       "dependencies": {
-        "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.1"
-        },
         "System.Xml.XmlDocument": "4.0.1"
       }
     },
