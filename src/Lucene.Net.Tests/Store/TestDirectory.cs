@@ -426,7 +426,6 @@ namespace Lucene.Net.Store
         }
 
         [Test]
-        [Ignore("Not deterministic; depends on a race condition")]
         [LuceneNetSpecific]
         public virtual void ConcurrentIndexAccessThrowsWithoutSynchronizedStaleFiles()
         {
