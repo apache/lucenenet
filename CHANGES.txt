@@ -1,4 +1,16 @@
-﻿=================== Release 4.8.0-beta00001 =====================
+﻿=================== Release 4.8.0-beta00002 =====================
+
+Bug
+•[Pull Request #205] - Made FSDirectory stale files set synchronized
+
+Improvement
+•	Added InstallSDK and Restore tasks to the build script, and made them dependencies of the Test task
+	which will make the test more reliable from the CLI/CI server.
+•	Added ability to test from CLI in release.
+•	Updated syntax of build script to use the standard - (for short command) and -- (for long command),
+	i.e. "build -t" or "build --test".
+
+=================== Release 4.8.0-beta00001 =====================
 
 Bug
 •[LUCENENET-516] - ChainedFilter class not available in Lucene.net build 3.0.3
