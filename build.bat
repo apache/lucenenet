@@ -1,4 +1,4 @@
-@echo off
+﻿@echo off
 GOTO endcommentblock
 :: -----------------------------------------------------------------------------------
 ::
@@ -104,7 +104,7 @@ FOR %%a IN (%*) DO (
 		)
 
 		set test=!value:~0,6!
-		IF /I !test!==--test: (
+		IF /I !test!==--test (
 			set runtests=true
 		)
 	)
