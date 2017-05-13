@@ -81,7 +81,8 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                long @base = minValues[block] + (long)(averages[block] * (long)element);
+                // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                long @base = minValues[block] + (long)(float)(averages[block] * (long)element);
                 if (values[block] == null)
                 {
                     return @base;
@@ -108,7 +109,8 @@ namespace Lucene.Net.Util.Packed
                     int toFill = Math.Min(len, pending.Length - element);
                     for (int r = 0; r < toFill; r++, off++, element++)
                     {
-                        arr[off] = minValues[block] + (long)(averages[block] * (long)element);
+                        // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                        arr[off] = minValues[block] + (long)(float)(averages[block] * (long)element);
                     }
                     return toFill;
                 }
@@ -118,7 +120,8 @@ namespace Lucene.Net.Util.Packed
                     int read = values[block].Get(element, arr, off, len);
                     for (int r = 0; r < read; r++, off++, element++)
                     {
-                        arr[off] = minValues[block] + (long)(averages[block] * (long)element) + ZigZagDecode(arr[off]);
+                        // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                        arr[off] = minValues[block] + (long)(float)(averages[block] * (long)element) + ZigZagDecode(arr[off]);
                     }
                     return read;
                 }
@@ -140,7 +143,8 @@ namespace Lucene.Net.Util.Packed
 
             for (int i = 0; i < pendingOff; ++i)
             {
-                pending[i] = ZigZagEncode(pending[i] - minValues[valuesOff] - (long)(averages[valuesOff] * (long)i));
+                // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                pending[i] = ZigZagEncode(pending[i] - minValues[valuesOff] - (long)(float)(averages[valuesOff] * (long)i));
             }
             long maxDelta = 0;
             for (int i = 0; i < pendingOff; ++i)

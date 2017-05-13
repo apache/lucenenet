@@ -30,12 +30,12 @@
       }
     },
     "net451": {
-      "frameworkAssemblies": {
-        "System.Numerics": "4.0.0.0"
-      },
       "buildOptions": {
         "debugType": "full",
         "define": [ "FEATURE_SERIALIZABLE" ]
+      },
+      "frameworkAssemblies": {
+        "System.Numerics": "4.0.0.0"
       }
     }
   }

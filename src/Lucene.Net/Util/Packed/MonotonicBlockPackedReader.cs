@@ -81,7 +81,8 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(index >= 0 && index < valueCount);
             int block = (int)((long)((ulong)index >> blockShift));
             int idx = (int)(index & blockMask);
-            return minValues[block] + (long)(idx * averages[block]) + BlockPackedReaderIterator.ZigZagDecode(subReaders[block].Get(idx));
+            // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+            return minValues[block] + (long)(float)(idx * averages[block]) + BlockPackedReaderIterator.ZigZagDecode(subReaders[block].Get(idx));
         }
 
         /// <summary>

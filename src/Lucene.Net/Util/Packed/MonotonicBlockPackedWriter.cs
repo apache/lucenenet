@@ -79,7 +79,8 @@ namespace Lucene.Net.Util.Packed
             long maxZigZagDelta = 0;
             for (int i = 0; i < m_off; ++i)
             {
-                m_values[i] = ZigZagEncode(m_values[i] - min - (long)(avg * i));
+                // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                m_values[i] = ZigZagEncode(m_values[i] - min - (long)(float)(avg * i));
                 maxZigZagDelta = Math.Max(maxZigZagDelta, m_values[i]);
             }
 
