@@ -826,7 +826,7 @@ namespace Lucene.Net.Util
             int limit = offset + length;
             while (offset < limit)
             {
-                int b = ((sbyte)utf8[offset++]) & 0xff;
+                int b = utf8[offset++] & 0xff;
                 if (b < 0xc0)
                 {
                     Debug.Assert(b < 0x80);
