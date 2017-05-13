@@ -173,7 +173,7 @@ namespace Lucene.Net.Facet
         }
 
         /// <summary>
-        /// Returns the documents matched by the query, one <see cref="GetMatchingDocs"/> per
+        /// Returns the documents matched by the query, one <see cref="MatchingDocs"/> per
         /// visited segment.
         /// </summary>
         public virtual IList<MatchingDocs> GetMatchingDocs()
