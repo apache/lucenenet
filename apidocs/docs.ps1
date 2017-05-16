@@ -20,7 +20,10 @@
 param (
 	[Parameter(Mandatory=$false)]
 	[int]
-	$ServeDocs = 0
+	$ServeDocs = 0,
+	[Parameter(Mandatory=$false)]
+	[int]
+	$Clean = 1
 )
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
@@ -43,10 +46,12 @@ If ($FileExists -eq $False) {
 }
 
 # delete anything that already exists
-Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
-Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
-Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -recurse -force -ErrorAction SilentlyContinue
-Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyContinue
+if ($Clean -eq 1) {
+	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -recurse -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyContinue
+}
 
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
 
@@ -60,7 +65,7 @@ if($?) {
 	}
 	else {
 		# build + serve (for testing)
-		Write-Host "Building metadata and starting website..."
-		& $DocFxExe serve $DocFxJson
+		Write-Host "starting website..."
+		& $DocFxExe $DocFxJson --serve
 	}
 }
