@@ -1,4 +1,21 @@
-﻿=================== Release 4.8.0-beta00002 =====================
+﻿=================== Release 4.8.0-beta00003 =====================
+
+Bug
+•	BREAKING CHANGE: Fixed codec issue with incorrect calculation on x86 platforms that produced the wrong
+	result. This fix means this version or any future version may not be able to read indexes from any 
+	prior 4.8.x build that has indexes with binary doc values that were generated using an x86 platform.
+•	Added missing null check for values retrieved from table of Lucene45DocValuesProducer.
+•	Fixed assertion failure in FstEnum due to missing check for IsLast. This may have also produced
+	incorrect runtime behavior.
+•	Fixed assertion failure in UnicodeUtil due to incorrect cast.
+
+Improvement
+•	Added overloads of Analyzer.NewAnonymous() that accept a delegate method for InitReader.
+•	Added constructor overloads on MMapDirectory, NIOFSDirectory, and SimpleFSDirectory that accept
+	string rather than DirectoryInfo to specify the directory.
+•	Added test to verify index compatibility with Lucene when using binary doc values.
+
+=================== Release 4.8.0-beta00002 =====================
 
 Bug
 •[Pull Request #205] - Made FSDirectory stale files set synchronized
