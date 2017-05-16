@@ -10,12 +10,13 @@
             "**/obj/**",
             "**/bin/**",
             "_site/**",
-			"**/Lucene.Net.Test*/**",
+            "**/Lucene.Net.Test*/**"
           ],
-		  "cwd": "../src"
+          "cwd": "../src"
         }
       ],
-      "dest": "api"
+      "dest": "api",
+      "filter": "docfx.filter.yml"
     }
   ],
   "build": {
@@ -63,14 +64,14 @@
     ],
 	"globalMetadata": {
       "_appTitle": "Lucene.Net API docs",
-      "_enableSearch": true,
+      "_enableSearch": false,
       "_disableContribution": false
     },
     "dest": "_site",
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
     "template": [
-      "default"
+      "default", "lucenetemplate"
     ],
     "postProcessors": [],
     "noLangKeyword": false

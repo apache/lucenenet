@@ -1,0 +1,30 @@
+.navbar-inverse {
+  background: #4a95da;
+}
+.navbar-inverse .navbar-nav>li>a, .navbar-inverse .navbar-text {
+  color: #fff;
+}
+.navbar-inverse .navbar-nav>.active>a {
+    background-color: #1764AA;
+}
+.navbar-inverse .navbar-nav>.active>a:focus, .navbar-inverse .navbar-nav>.active>a:hover {
+    background-color: #1764AA;
+}
+.btn-primary:hover {
+    background-color: #1764AA;
+}
+button, a {
+    color: #1764AA;
+}
+button:hover,
+button:focus,
+a:hover,
+a:focus {
+  color: #143653;
+  text-decoration: none;
+}
+.navbar-header .navbar-brand {
+    background: url(https://raw.githubusercontent.com/apache/lucenenet/master/branding/logo/lucene-net-icon-64x64.png) left center no-repeat;
+    background-size: 40px auto;
+    width:50px;
+}

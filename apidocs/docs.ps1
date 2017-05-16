@@ -17,18 +17,16 @@
 #
 # -----------------------------------------------------------------------------------
 
-# Add-Type -AssemblyName System.IO.Compression.FileSystem
-# function Unzip
-# {
-#     param([string]$zipfile, [string]$outpath)
-#     [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
-# }
-
+param (
+	[Parameter(Mandatory=$false)]
+	[int]
+	$ServeDocs = 0
+)
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
 $RepoRoot = (get-item $PSScriptFilePath).Directory.Parent.FullName;
-$BuildFolder = Join-Path -Path $RepoRoot -ChildPath "build";
-$ToolsFolder = Join-Path -Path $BuildFolder -ChildPath "tools";
+$ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "apidocs";
+$ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
 
@@ -45,18 +43,23 @@ If ($FileExists -eq $False) {
 }
 
 # delete anything that already exists
-Remove-Item (Join-Path -Path $BuildFolder "docfx_project\*") -recurse -force -ErrorAction SilentlyContinue
-Remove-Item (Join-Path -Path $BuildFolder "docfx_project") -force -ErrorAction SilentlyContinue
-
-# generate default template
-#& $DocFxExe init -q
+Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
+Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
+Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -recurse -force -ErrorAction SilentlyContinue
+Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyContinue
 
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
 
-# build the docs
-Write-Host "Building metadata..."
-& $DocFxExe metadata $DocFxJson
-if($?) { 
-	Write-Host "Building docs..."
-	& $DocFxExe build $DocFxJson --repositoryRoot $RepoRoot
+if ($ServeDocs -eq 0){
+	# build the docs
+	Write-Host "Building metadata..."
+	& $DocFxExe metadata $DocFxJson
+	if($?) { 
+		Write-Host "Building docs..."
+		& $DocFxExe build $DocFxJson
+	}
+}
+else {
+	# build + serve (for testing)
+	& $DocFxExe build $DocFxJson
 }

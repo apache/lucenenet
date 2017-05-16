@@ -1,5 +1,7 @@
-- name: Articles
-  href: articles/
-- name: Api Documentation
+- name: Lucene.NET API Docs
   href: api/
   homepage: api/Lucene.Net.yml
+- name: Lucene.NET homepage
+  href: https://lucenenet.apache.org/
+- name: Lucene.NET GitHub
+  href: https://github.com/apache/lucenenet

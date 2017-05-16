@@ -52,5 +52,5 @@ release/
 [Tt]est[Rr]esult.xml
 apidocs/_site/*
 apidocs/api/*
-build/tools/docfx.zip
-build/tools/docfx/*
+apidocs/tools/docfx.zip
+apidocs/tools/docfx/*

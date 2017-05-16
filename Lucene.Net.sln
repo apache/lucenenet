@@ -94,6 +94,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.ICU", "src\Lucen
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.ICU", "src\Lucene.Net.Tests.ICU\Lucene.Net.Tests.ICU.csproj", "{D5AA1A22-1B28-4DF6-BFDA-02519A189839}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "apidocs", "apidocs", "{58FD6E39-F30F-4566-90E5-B7C9D6BC0660}"
+	ProjectSection(SolutionItems) = preProject
+		apidocs\docfx.filter.yml = apidocs\docfx.filter.yml
+		apidocs\docfx.json = apidocs\docfx.json
+		apidocs\docs.ps1 = apidocs\docs.ps1
+		apidocs\index.md = apidocs\index.md
+		apidocs\toc.yml = apidocs\toc.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
