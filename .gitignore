@@ -50,3 +50,7 @@ release/
 
 # NUnit test result file produced by nunit3-console.exe
 [Tt]est[Rr]esult.xml
+apidocs/_site/*
+apidocs/api/*
+build/tools/docfx.zip
+build/tools/docfx/*
