@@ -50,16 +50,17 @@ Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyC
 
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
 
-if ($ServeDocs -eq 0){
-	# build the docs
-	Write-Host "Building metadata..."
-	& $DocFxExe metadata $DocFxJson
-	if($?) { 
+Write-Host "Building metadata..."
+& $DocFxExe metadata $DocFxJson
+if($?) { 
+	if ($ServeDocs -eq 0){
+		# build the output		
 		Write-Host "Building docs..."
-		& $DocFxExe build $DocFxJson
+		& $DocFxExe build $DocFxJson	
 	}
-}
-else {
-	# build + serve (for testing)
-	& $DocFxExe build $DocFxJson
+	else {
+		# build + serve (for testing)
+		Write-Host "Building metadata and starting website..."
+		& $DocFxExe serve $DocFxJson
+	}
 }
