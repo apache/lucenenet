@@ -27,6 +27,7 @@
         "debugType": "portable",
         "define": [ "NETSTANDARD" ],
         "compile": {
+          "includeFiles": [ "../CommonAssemblyInfo.cs" ],
           "excludeFiles": [
             "Properties/Settings.Designer.cs"
           ]

@@ -27,6 +27,7 @@
       "buildOptions": {
         "debugType": "portable",
         "compile": {
+          "includeFiles": [ "../CommonAssemblyInfo.cs" ],
           "excludeFiles": [
             "Xml/QueryTemplateManager.cs"
           ]
