@@ -1,4 +1,13 @@
-﻿=================== Release 4.8.0-beta00003 =====================
+﻿=================== Release 4.8.0-beta00004 =====================
+
+Bug
+•	AssemblyVersion and other metadata not being set on .NET Standard assemblies 
+	for Lucene.Net.QueryParser and Lucene.Net.Expressions.
+•	Attempting to load default codec in static Codec constructor causes failure
+	in environments that don't allow Reflection to be used that early in the lifecycle.
+	This also improves performance when a custom DefaultCodecFactory is used.
+
+=================== Release 4.8.0-beta00003 =====================
 
 Bug
 •	BREAKING CHANGE: Fixed codec issue with incorrect calculation on x86 platforms that produced the wrong
