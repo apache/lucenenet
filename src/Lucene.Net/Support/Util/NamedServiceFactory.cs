@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 
 namespace Lucene.Net.Util
 {
@@ -28,17 +29,28 @@ namespace Lucene.Net.Util
     public abstract class NamedServiceFactory<TService>
     {
         private static Assembly codecsAssembly = null;
+        private bool initialized = false;
+        private object initializationLock = new object();
+        private object initializationTarget; // Dummy variable required by LazyInitializer.EnsureInitialized
 
-        protected NamedServiceFactory()
+        /// <summary>
+        /// Ensures the <see cref="Initialize"/> method has been called since the
+        /// last application start. This method is thread-safe.
+        /// </summary>
+        protected void EnsureInitialized()
         {
-            // Attempt to load the SimpleTextCodec type. If it loads it will not be null, 
-            // which means the assembly is referenced so we can load all of the named services from that assembly.
-            Type simpleTextType = Type.GetType("Lucene.Net.Codecs.SimpleText.SimpleTextCodec, Lucene.Net.Codecs");
-            if (simpleTextType != null)
+            LazyInitializer.EnsureInitialized(ref this.initializationTarget, ref this.initialized, ref this.initializationLock, () =>
             {
-                codecsAssembly = simpleTextType.GetTypeInfo().Assembly;
-            }
+                Initialize();
+                return null;
+            });
         }
+
+        /// <summary>
+        /// Initializes the dependencies of this factory (such as using Reflection to populate the type cache).
+        /// </summary>
+        protected abstract void Initialize();
+
 
         /// <summary>
         /// The Lucene.Net.Codecs assembly or <c>null</c> if the assembly is not referenced
@@ -48,6 +60,17 @@ namespace Lucene.Net.Util
         {
             get
             {
+                if (codecsAssembly == null)
+                {
+                    // Attempt to load the SimpleTextCodec type. If it loads it will not be null, 
+                    // which means the assembly is referenced so we can load all of the named services from that assembly.
+                    Type simpleTextType = Type.GetType("Lucene.Net.Codecs.SimpleText.SimpleTextCodec, Lucene.Net.Codecs");
+                    if (simpleTextType != null)
+                    {
+                        codecsAssembly = simpleTextType.GetTypeInfo().Assembly;
+                    }
+                }
+
                 return codecsAssembly;
             }
         }
@@ -142,6 +165,21 @@ namespace Lucene.Net.Util
         private static bool IsLetterOrDigit(char c)
         {
             return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9');
+        }
+
+        /// <summary>
+        /// Gets a value that indicates whether the current application domain executes with full trust.
+        /// </summary>
+        protected bool IsFullyTrusted
+        {
+            get
+            {
+#if NETSTANDARD
+                return true; // Partial trust is obsolete
+#else
+                return AppDomain.CurrentDomain.IsFullyTrusted; // Partial trust support
+#endif
+            }
         }
     }
 }

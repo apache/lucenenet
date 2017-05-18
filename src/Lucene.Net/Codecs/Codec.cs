@@ -60,14 +60,8 @@ namespace Lucene.Net.Codecs
     // the Java-centric NamedSPILoader
     public abstract class Codec //: NamedSPILoader.INamedSPI
     {
-        private static ICodecFactory codecFactory;
+        private static ICodecFactory codecFactory = new DefaultCodecFactory();
         private readonly string name;
-
-        static Codec()
-        {
-            codecFactory = new DefaultCodecFactory();
-            defaultCodec = Codec.ForName("Lucene46");
-        }
 
         /// <summary>
         /// Sets the <see cref="ICodecFactory"/> instance used to instantiate
@@ -80,7 +74,6 @@ namespace Lucene.Net.Codecs
             if (codecFactory == null)
                 throw new ArgumentNullException("codecFactory");
             Codec.codecFactory = codecFactory;
-            defaultCodec = Codec.ForName("Lucene46");
         }
 
         /// <summary>
@@ -95,13 +88,13 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Creates a new codec.
         /// <para/>
-        /// The provided name will be written into the index segment: in order for
+        /// The <see cref="Codec.Name"/> will be written into the index segment: in order for
         /// the segment to be read this class should be registered by subclassing <see cref="DefaultCodecFactory"/> and
         /// calling <see cref="DefaultCodecFactory.ScanForCodecs(System.Reflection.Assembly)"/> in the class constructor. 
         /// The new <see cref="ICodecFactory"/> can be registered by calling <see cref="SetCodecFactory"/> at application startup.</summary>
         protected Codec()
         {
-            this.name = NamedServiceFactory<Codec>.GetServiceName(this.GetType());
+            name = NamedServiceFactory<Codec>.GetServiceName(this.GetType());
         }
 
         /// <summary>
@@ -181,6 +174,12 @@ namespace Lucene.Net.Codecs
         {
             get
             {
+                // Lazy load the default codec if not already supplied
+                if (defaultCodec == null)
+                {
+                    defaultCodec = Codec.ForName("Lucene46");
+                }
+
                 return defaultCodec;
             }
             set

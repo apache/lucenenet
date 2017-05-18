@@ -28,8 +28,9 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class TestDocValuesFormatFactory : DefaultDocValuesFormatFactory
     {
-        public TestDocValuesFormatFactory()
+        protected override void Initialize()
         {
+            base.Initialize();
             base.ScanForDocValuesFormats(this.GetType().GetTypeInfo().Assembly);
         }
     }

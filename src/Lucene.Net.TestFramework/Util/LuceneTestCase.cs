@@ -639,8 +639,6 @@ namespace Lucene.Net.Util
             DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
             PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
 
-            // IMPORTANT: Call this line after calling Codec.SetCodecFactory() because both
-            // of them change Codec.Default
             ClassEnvRule.Before(this);
         }
 
