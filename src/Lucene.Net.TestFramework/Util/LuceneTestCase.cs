@@ -621,7 +621,6 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
-            //CleanupTemporaryFiles(); // LUCENENET TODO: Move this to OneTimeTearDown()? Calling it here deletes shared files too early.
         }
 
         // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once
