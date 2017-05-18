@@ -37,9 +37,9 @@ namespace Lucene.Net.Codecs
     ///         <see cref="DefaultDocValuesFormatFactory.GetDocValuesFormatType(string)"/> so a type new type can be
     ///         supplied that is not in the <see cref="DefaultDocValuesFormatFactory.docValuesFormatNameToTypeMap"/>.</item>
     ///     <item>subclass <see cref="DefaultDocValuesFormatFactory"/> to add new or override the default <see cref="DocValuesFormat"/> 
-    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutPostingsFormatType(Type)"/>.</item>
+    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutDocValuesFormatType(Type)"/>.</item>
     ///     <item>subclass <see cref="DefaultDocValuesFormatFactory"/> to scan additional assemblies for <see cref="DocValuesFormat"/>
-    ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForPostingsFormats(Assembly)"/>. 
+    ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForDocValuesFormats(Assembly)"/>. 
     ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</item>
     /// </list>
     /// <para/>
@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Gets a list of the available <see cref="DocValuesFormat"/>s (by name).
         /// </summary>
-        /// <returns>A <see cref="ICollection{string}"/> of <see cref="DocValuesFormat"/> names.</returns>
+        /// <returns>A <see cref="T:ICollection{string}"/> of <see cref="DocValuesFormat"/> names.</returns>
         public virtual ICollection<string> AvailableServices()
         {
             EnsureInitialized();

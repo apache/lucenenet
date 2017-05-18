@@ -37,9 +37,9 @@ namespace Lucene.Net.Codecs
     ///         <see cref="DefaultCodecFactory.GetCodecType(string)"/> so a type new type can be
     ///         supplied that is not in the <see cref="DefaultCodecFactory.codecNameToTypeMap"/>.</item>
     ///     <item>subclass <see cref="DefaultCodecFactory"/> to add new or override the default <see cref="Codec"/> 
-    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutPostingsFormatType(Type)"/>.</item>
+    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutCodecType(Type)"/>.</item>
     ///     <item>subclass <see cref="DefaultCodecFactory"/> to scan additional assemblies for <see cref="Codec"/>
-    ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForPostingsFormats(Assembly)"/>. 
+    ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForCodecs(Assembly)"/>. 
     ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</item>
     /// </list>
     /// <para/>

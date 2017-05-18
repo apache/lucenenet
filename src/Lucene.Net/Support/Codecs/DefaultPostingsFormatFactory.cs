@@ -32,7 +32,7 @@ namespace Lucene.Net.Codecs
     ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormat(Type)"/> so an external dependency injection
     ///         container can be used to supply the instances (lifetime should be singleton). Note that you could 
     ///         alternately use the "named type" feature that many DI containers have to supply the type based on name by 
-    ///         overriding <see cref="GetDocValuesFormat(string)"/>.</item>
+    ///         overriding <see cref="GetPostingsFormat(string)"/>.</item>
     ///     <item>subclass <see cref="DefaultPostingsFormatFactory"/> and override
     ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormatType(string)"/> so a type new type can be
     ///         supplied that is not in the <see cref="DefaultPostingsFormatFactory.postingsFormatNameToTypeMap"/>.</item>
@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs
     ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</item>
     /// </list>
     /// <para/>
-    /// To set the <see cref="IPostingsFormatFactory"/>, call <see cref="DocValuesFormat.SetPostingsFormatFactory(IPostingsFormatFactory)"/>.
+    /// To set the <see cref="IPostingsFormatFactory"/>, call <see cref="PostingsFormat.SetPostingsFormatFactory(IPostingsFormatFactory)"/>.
     /// </summary>
     public class DefaultPostingsFormatFactory : NamedServiceFactory<PostingsFormat>, IPostingsFormatFactory, IServiceListable
     {
@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Initializes the codec type cache with the known <see cref="PostingsFormat"/> types.
         /// Override this method (and optionally call <c>base.Initialize()</c>) to add your
-        /// own <see cref="PostingsFormat"/> types by calling <see cref="PutDocPostingsFormatType(Type)"/> 
+        /// own <see cref="PostingsFormat"/> types by calling <see cref="PutPostingsFormatType(Type)"/> 
         /// or <see cref="ScanForPostingsFormats(Assembly)"/>.
         /// <para/>
         /// If two types have the same name by using the <see cref="PostingsFormatNameAttribute"/>, the
@@ -105,7 +105,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Adds a <see cref="PostingsFormat"/> type to the <see cref="postingsFormaNameToTypeMap"/>, using 
+        /// Adds a <see cref="PostingsFormat"/> type to the <see cref="postingsFormatNameToTypeMap"/>, using 
         /// the name provided in the <see cref="PostingsFormatNameAttribute"/>, if present, or the name
         /// of the codec class minus the "Codec" suffix as the name by default.
         /// <para/>
@@ -190,7 +190,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Gets a list of the available <see cref="PostingsFormat"/>s (by name).
         /// </summary>
-        /// <returns>A <see cref="ICollection{string}"/> of <see cref="PostingsFormat"/> names.</returns>
+        /// <returns>A <see cref="T:ICollection{string}"/> of <see cref="PostingsFormat"/> names.</returns>
         public virtual ICollection<string> AvailableServices()
         {
             EnsureInitialized();

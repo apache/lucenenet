@@ -31,6 +31,10 @@ namespace Lucene.Net.Util
     /// </summary>
     public interface IServiceListable
     {
+        /// <summary>
+        /// Lists the available services for the current service type.
+        /// </summary>
+        /// <returns></returns>
         ICollection<string> AvailableServices();
     }
 }
