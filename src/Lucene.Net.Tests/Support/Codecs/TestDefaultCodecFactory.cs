@@ -45,8 +45,9 @@ namespace Lucene.Net.Codecs
 
         private class ScanningCodecFactory : DefaultCodecFactory
         {
-            public ScanningCodecFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.ScanForCodecs(this.GetType().GetTypeInfo().Assembly);
             }
         }
@@ -78,8 +79,9 @@ namespace Lucene.Net.Codecs
 
         private class ExplicitCodecFactory : DefaultCodecFactory
         {
-            public ExplicitCodecFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutCodecType(typeof(PrivateCodec));
             }
         }
@@ -96,8 +98,9 @@ namespace Lucene.Net.Codecs
 
         private class InvalidNameCodecFactory : DefaultCodecFactory
         {
-            public InvalidNameCodecFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutCodecType(typeof(InvalidNamedCodec));
             }
         }
@@ -105,13 +108,15 @@ namespace Lucene.Net.Codecs
         [Test]
         public void TestInvalidName()
         {
-            Assert.Throws<ArgumentException>(() => new InvalidNameCodecFactory());
+            var factory = new InvalidNameCodecFactory();
+            Assert.Throws<ArgumentException>(() => factory.GetCodec("SomeCodec"));
         }
 
         private class CustomNameCodecFactory : DefaultCodecFactory
         {
-            public CustomNameCodecFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutCodecType(typeof(CustomNamedCodec));
             }
         }
@@ -150,8 +155,9 @@ namespace Lucene.Net.Codecs
 
         private class ReplaceCodecFactory : DefaultCodecFactory
         {
-            public ReplaceCodecFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutCodecType(typeof(TestLucene40Codec));
             }
         }
