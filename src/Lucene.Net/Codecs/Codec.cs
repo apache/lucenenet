@@ -32,9 +32,9 @@ namespace Lucene.Net.Codecs
     /// To implement your own codec:
     /// <list type="number">
     ///     <item>Subclass this class.</item>
-    ///     <item>Subclass <see cref="DefaultCodecFactory"/> and add the line 
-    ///         <c>base.ScanForCodecs(typeof(YourCodec).GetTypeInfo().Assembly)</c> 
-    ///         to the constructor. If you have any codec classes in your assembly 
+    ///     <item>Subclass <see cref="DefaultCodecFactory"/>, override the <see cref="DefaultCodecFactory.Initialize()"/> method,
+    ///         and add the line <c>base.ScanForCodecs(typeof(YourCodec).GetTypeInfo().Assembly)</c>. 
+    ///         If you have any codec classes in your assembly 
     ///         that are not meant for reading, you can add the <see cref="ExcludeCodecFromScanAttribute"/> 
     ///         to them so they are ignored by the scan.</item>
     ///     <item>set the new <see cref="ICodecFactory"/> by calling <see cref="SetCodecFactory"/> at application startup.</item>
