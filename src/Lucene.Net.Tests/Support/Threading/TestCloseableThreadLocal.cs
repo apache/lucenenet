@@ -21,10 +21,12 @@
 
 using Lucene.Net.Analysis;
 using Lucene.Net.Attributes;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using Version = Lucene.Net.Util.LuceneVersion;
@@ -32,8 +34,9 @@ using Version = Lucene.Net.Util.LuceneVersion;
 #pragma warning disable 612, 618
 namespace Lucene.Net.Support.Threading
 {
+    [SuppressCodecs("Lucene3x")] // Suppress non-writable codecs
     [TestFixture]
-    public class TestCloseableThreadLocal
+    public class TestCloseableThreadLocal : LuceneTestCase
     {
         [Test, LuceneNetSpecific]
         public void TestMemLeakage()

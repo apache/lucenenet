@@ -32,8 +32,9 @@ using Lucene.Net.Attributes;
 #pragma warning disable 612, 618
 namespace Lucene.Net.Support
 {
+    [SuppressCodecs("Lucene3x")] // Suppress non-writable codecs
     [TestFixture]
-    public class TestSerialization
+    public class TestSerialization : LuceneTestCase
     {
         Lucene.Net.Store.RAMDirectory dir = null;
 
