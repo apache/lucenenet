@@ -8,7 +8,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 
-namespace Lucene.Net
+namespace Lucene.Net.Support
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Analysis.Util;
 using System.Collections.Generic;
 using System.Globalization;
 
