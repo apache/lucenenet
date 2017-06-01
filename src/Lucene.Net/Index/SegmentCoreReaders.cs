@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Holds core readers that are shared (unchanged) when
-    /// SegmentReader is cloned or reopened
+    /// <see cref="SegmentReader"/> is cloned or reopened
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

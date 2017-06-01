@@ -21,11 +21,11 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// A <seealso cref="MergePolicy"/> which never returns merges to execute (hence it's
+    /// A <see cref="MergePolicy"/> which never returns merges to execute (hence it's
     /// name). It is also a singleton and can be accessed through
-    /// <seealso cref="NoMergePolicy#NO_COMPOUND_FILES"/> if you want to indicate the index
-    /// does not use compound files, or through <seealso cref="NoMergePolicy#COMPOUND_FILES"/>
-    /// otherwise. Use it if you want to prevent an <seealso cref="IndexWriter"/> from ever
+    /// <see cref="NoMergePolicy.NO_COMPOUND_FILES"/> if you want to indicate the index
+    /// does not use compound files, or through <see cref="NoMergePolicy.COMPOUND_FILES"/>
+    /// otherwise. Use it if you want to prevent an <see cref="IndexWriter"/> from ever
     /// executing merges, without going through the hassle of tweaking a merge
     /// policy's settings to achieve that, such as changing its merge factor.
     /// </summary>
@@ -35,13 +35,13 @@ namespace Lucene.Net.Index
     public sealed class NoMergePolicy : MergePolicy
     {
         /// <summary>
-        /// A singleton <seealso cref="NoMergePolicy"/> which indicates the index does not use
+        /// A singleton <see cref="NoMergePolicy"/> which indicates the index does not use
         /// compound files.
         /// </summary>
         public static readonly MergePolicy NO_COMPOUND_FILES = new NoMergePolicy(false);
 
         /// <summary>
-        /// A singleton <seealso cref="NoMergePolicy"/> which indicates the index uses compound
+        /// A singleton <see cref="NoMergePolicy"/> which indicates the index uses compound
         /// files.
         /// </summary>
         public static readonly MergePolicy COMPOUND_FILES = new NoMergePolicy(true);

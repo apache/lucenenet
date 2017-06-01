@@ -24,7 +24,8 @@ namespace Lucene.Net.Index
     using CompiledAutomaton = Lucene.Net.Util.Automaton.CompiledAutomaton;
 
     /// <summary>
-    /// Access to the terms in a specific field.  See <seealso cref="Fields"/>.
+    /// Access to the terms in a specific field.  See <see cref="Fields"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -34,7 +35,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected Terms()
         {
@@ -42,25 +43,25 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns an iterator that will step through all
-        ///  terms. this method will not return null.  If you have
-        ///  a previous TermsEnum, for example from a different
-        ///  field, you can pass it for possible reuse if the
-        ///  implementation can do so.
+        /// terms. This method will not return <c>null</c>.  If you have
+        /// a previous <see cref="TermsEnum"/>, for example from a different
+        /// field, you can pass it for possible reuse if the
+        /// implementation can do so.
         /// </summary>
         public abstract TermsEnum GetIterator(TermsEnum reuse);
 
         /// <summary>
-        /// Returns a TermsEnum that iterates over all terms that
-        ///  are accepted by the provided {@link
-        ///  CompiledAutomaton}.  If the <code>startTerm</code> is
-        ///  provided then the returned enum will only accept terms
-        ///  > <code>startTerm</code>, but you still must call
-        ///  next() first to get to the first term.  Note that the
-        ///  provided <code>startTerm</code> must be accepted by
-        ///  the automaton.
+        /// Returns a <see cref="TermsEnum"/> that iterates over all terms that
+        /// are accepted by the provided 
+        /// <see cref="CompiledAutomaton"/>.  If the <paramref name="startTerm"/> is
+        /// provided then the returned enum will only accept terms
+        /// &gt; <paramref name="startTerm"/>, but you still must call
+        /// <see cref="TermsEnum.Next()"/> first to get to the first term.  Note that the
+        /// provided <paramref name="startTerm"/> must be accepted by
+        /// the automaton.
         ///
-        /// <p><b>NOTE</b>: the returned TermsEnum cannot
-        /// seek</p>.
+        /// <para><b>NOTE</b>: the returned <see cref="TermsEnum"/> cannot
+        /// seek</para>.
         /// </summary>
         public virtual TermsEnum Intersect(CompiledAutomaton compiled, BytesRef startTerm)
         {
@@ -105,11 +106,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the BytesRef Comparer used to sort terms
-        ///  provided by the iterator.  this method may return null
-        ///  if there are no terms.  this method may be invoked
-        ///  many times; it's best to cache a single instance &
-        ///  reuse it.
+        /// Return the <see cref="T:IComparer{BytesRef}"/> used to sort terms
+        /// provided by the iterator.  This method may return <c>null</c>
+        /// if there are no terms.  This method may be invoked
+        /// many times; it's best to cache a single instance &amp;
+        /// reuse it.
         /// </summary>
         public abstract IComparer<BytesRef> Comparer { get; }
 
@@ -123,53 +124,53 @@ namespace Lucene.Net.Index
         public abstract long Count { get; }
 
         /// <summary>
-        /// Returns the sum of <seealso cref="TermsEnum#totalTermFreq"/> for
-        ///  all terms in this field, or -1 if this measure isn't
-        ///  stored by the codec (or if this fields omits term freq
-        ///  and positions).  Note that, just like other term
-        ///  measures, this measure does not take deleted documents
-        ///  into account.
+        /// Returns the sum of <see cref="TermsEnum.TotalTermFreq"/> for
+        /// all terms in this field, or -1 if this measure isn't
+        /// stored by the codec (or if this fields omits term freq
+        /// and positions).  Note that, just like other term
+        /// measures, this measure does not take deleted documents
+        /// into account.
         /// </summary>
-        public abstract long SumTotalTermFreq { get; }
+        public abstract long SumTotalTermFreq { get; } // LUCENENET TODO: API Make GetSumTotalTermFreq() (conversion)
 
         /// <summary>
-        /// Returns the sum of <seealso cref="TermsEnum#docFreq()"/> for
-        ///  all terms in this field, or -1 if this measure isn't
-        ///  stored by the codec.  Note that, just like other term
-        ///  measures, this measure does not take deleted documents
-        ///  into account.
+        /// Returns the sum of <see cref="TermsEnum.DocFreq"/> for
+        /// all terms in this field, or -1 if this measure isn't
+        /// stored by the codec.  Note that, just like other term
+        /// measures, this measure does not take deleted documents
+        /// into account.
         /// </summary>
-        public abstract long SumDocFreq { get; }
+        public abstract long SumDocFreq { get; } // LUCENENET TODO: API Make GetSumDocFreq() (conversion)
 
         /// <summary>
         /// Returns the number of documents that have at least one
-        ///  term for this field, or -1 if this measure isn't
-        ///  stored by the codec.  Note that, just like other term
-        ///  measures, this measure does not take deleted documents
-        ///  into account.
+        /// term for this field, or -1 if this measure isn't
+        /// stored by the codec.  Note that, just like other term
+        /// measures, this measure does not take deleted documents
+        /// into account.
         /// </summary>
         public abstract int DocCount { get; }
 
         /// <summary>
         /// Returns true if documents in this field store
-        ///  per-document term frequency (<seealso cref="DocsEnum#freq"/>).
+        /// per-document term frequency (<see cref="DocsEnum.Freq"/>).
         /// </summary>
         public abstract bool HasFreqs { get; }
 
         /// <summary>
-        /// Returns true if documents in this field store offsets. </summary>
+        /// Returns <c>true</c> if documents in this field store offsets. </summary>
         public abstract bool HasOffsets { get; }
 
         /// <summary>
-        /// Returns true if documents in this field store positions. </summary>
+        /// Returns <c>true</c> if documents in this field store positions. </summary>
         public abstract bool HasPositions { get; }
 
         /// <summary>
-        /// Returns true if documents in this field store payloads. </summary>
+        /// Returns <c>true</c> if documents in this field store payloads. </summary>
         public abstract bool HasPayloads { get; }
 
         /// <summary>
-        /// Zero-length array of <seealso cref="Terms"/>. </summary>
+        /// Zero-length array of <see cref="Terms"/>. </summary>
         public static readonly Terms[] EMPTY_ARRAY = new Terms[0];
     }
 }

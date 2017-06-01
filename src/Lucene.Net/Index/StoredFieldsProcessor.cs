@@ -29,7 +29,7 @@ namespace Lucene.Net.Index
     using StoredFieldsWriter = Lucene.Net.Codecs.StoredFieldsWriter;
 
     /// <summary>
-    /// this is a StoredFieldsConsumer that writes stored fields. </summary>
+    /// This is a <see cref="StoredFieldsConsumer"/> that writes stored fields. </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif

@@ -52,10 +52,9 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 1. Lucene.Net.Core (project)
    1. Codecs (namespace)
-   2. Index (namespace) (Except for types starting with letter A-L and TieredMergePolicy)
-   3. Search (namespace)
-   4. Support (namespace)
-   5. Util (namespace) (Except for Util.Fst)
+   2. Search (namespace)
+   3. Support (namespace)
+   4. Util (namespace) (Except for Util.Fst)
 2. Lucene.Net.Codecs (project)
 
 See [Documenting Lucene.Net](https://cwiki.apache.org/confluence/display/LUCENENET/Documenting+Lucene.Net) for instructions. 

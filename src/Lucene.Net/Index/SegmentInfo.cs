@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Information about a segment such as it's name, directory, and files related
     /// to the segment.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -42,13 +42,13 @@ namespace Lucene.Net.Index
         // TODO: remove these from this class, for now this is the representation
         /// <summary>
         /// Used by some member fields to mean not present (e.g.,
-        ///  norms, deletions).
+        /// norms, deletions).
         /// </summary>
         public static readonly int NO = -1; // e.g. no norms; no deletes;
 
         /// <summary>
         /// Used by some member fields to mean present (e.g.,
-        ///  norms, deletions).
+        /// norms, deletions).
         /// </summary>
         public static readonly int YES = 1; // e.g. have norms; have deletes;
 
@@ -68,7 +68,6 @@ namespace Lucene.Net.Index
 
         private IDictionary<string, string> diagnostics;
 
-        /// @deprecated not used anymore
         [Obsolete("not used anymore")]
         private IDictionary<string, string> attributes;
 
@@ -79,6 +78,9 @@ namespace Lucene.Net.Index
         // see Constants.LUCENE_MAIN_VERSION.
         private string version;
 
+        /// <summary>
+        /// Gets or Sets diagnostics saved into the segment when it was written.
+        /// </summary>
         public IDictionary<string, string> Diagnostics
         {
             set
@@ -92,9 +94,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Construct a new complete SegmentInfo instance from input.
-        /// <p>Note: this is public only to allow access from
-        /// the codecs package.</p>
+        /// Construct a new complete <see cref="SegmentInfo"/> instance from input.
+        /// <para>Note: this is public only to allow access from
+        /// the codecs package.</para>
         /// </summary>
         public SegmentInfo(Directory dir, string version, string name, int docCount, bool isCompoundFile, Codec codec, IDictionary<string, string> diagnostics)
             : this(dir, version, name, docCount, isCompoundFile, codec, diagnostics, null)
@@ -102,9 +104,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Construct a new complete SegmentInfo instance from input.
-        /// <p>Note: this is public only to allow access from
-        /// the codecs package.</p>
+        /// Construct a new complete <see cref="SegmentInfo"/> instance from input.
+        /// <para>Note: this is public only to allow access from
+        /// the codecs package.</para>
         /// </summary>
         public SegmentInfo(Directory dir, string version, string name, int docCount, bool isCompoundFile, Codec codec, IDictionary<string, string> diagnostics, IDictionary<string, string> attributes)
         {
@@ -121,7 +123,6 @@ namespace Lucene.Net.Index
 #pragma warning restore 612, 618
         }
 
-        /// @deprecated separate norms are not supported in >= 4.0
         [Obsolete("separate norms are not supported in >= 4.0")]
         internal bool HasSeparateNorms
         {
@@ -129,10 +130,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Mark whether this segment is stored as a compound file.
+        /// Gets or Sets whether this segment is stored as a compound file.
+        /// <c>true</c> if this is a compound file;
+        /// else, <c>false</c>
         /// </summary>
-        /// <param name="isCompoundFile"> true if this is a compound file;
-        /// else, false </param>
         public bool UseCompoundFile
         {
             set
@@ -146,7 +147,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Can only be called once. </summary>
+        /// Gets or Sets <see cref="Codecs.Codec"/> that wrote this segment.
+        /// Setter can only be called once. </summary>
         public Codec Codec
         {
             set
@@ -166,7 +168,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns number of documents in this segment (deletions
-        ///  are not taken into account).
+        /// are not taken into account).
         /// </summary>
         public int DocCount
         {
@@ -189,7 +191,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return all files referenced by this SegmentInfo. </summary>
+        /// Return all files referenced by this <see cref="SegmentInfo"/>. </summary>
         public ISet<string> GetFiles()
         {
             if (setFiles == null)
@@ -207,13 +209,13 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Used for debugging.  Format may suddenly change.
         ///
-        ///  <p>Current format looks like
-        ///  <code>_a(3.1):c45/4</code>, which means the segment's
-        ///  name is <code>_a</code>; it was created with Lucene 3.1 (or
-        ///  '?' if it's unknown); it's using compound file
-        ///  format (would be <code>C</code> if not compound); it
-        ///  has 45 documents; it has 4 deletions (this part is
-        ///  left off when there are no deletions).</p>
+        /// <para>Current format looks like
+        /// <c>_a(3.1):c45/4</c>, which means the segment's
+        /// name is <c>_a</c>; it was created with Lucene 3.1 (or
+        /// '?' if it's unknown); it's using compound file
+        /// format (would be <c>C</c> if not compound); it
+        /// has 45 documents; it has 4 deletions (this part is
+        /// left off when there are no deletions).</para>
         /// </summary>
         public string ToString(Directory dir, int delCount)
         {
@@ -239,8 +241,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// We consider another SegmentInfo instance equal if it
-        ///  has the same dir and same name.
+        /// We consider another <see cref="SegmentInfo"/> instance equal if it
+        /// has the same dir and same name.
         /// </summary>
         public override bool Equals(object obj)
         {
@@ -268,11 +270,11 @@ namespace Lucene.Net.Index
         /// Used by DefaultSegmentInfosReader to upgrade a 3.0 segment to record its
         /// version is "3.0". this method can be removed when we're not required to
         /// support 3x indexes anymore, e.g. in 5.0.
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> this method is used for internal purposes only - you should
-        /// not modify the version of a SegmentInfo, or it may result in unexpected
+        /// not modify the version of a <see cref="SegmentInfo"/>, or it may result in unexpected
         /// exceptions thrown when you attempt to open the index.
-        ///
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public string Version
@@ -299,22 +301,20 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Add these files to the set of files written for this
-        ///  segment.
+        /// segment.
         /// </summary>
         public void AddFiles(ICollection<string> files)
         {
             CheckFileNames(files);
-            //SetFiles.AddAll(files);
             setFiles.UnionWith(files);
         }
 
         /// <summary>
         /// Add this file to the set of files written for this
-        ///  segment.
+        /// segment.
         /// </summary>
         public void AddFile(string file)
         {
-            //CheckFileNames(Collections.Singleton(file));
             CheckFileNames(new[] { file });
             setFiles.Add(file);
         }
@@ -334,7 +334,6 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Get a codec attribute value, or null if it does not exist
         /// </summary>
-        /// @deprecated no longer supported
         [Obsolete("no longer supported")]
         public string GetAttribute(string key)
         {
@@ -352,15 +351,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Puts a codec attribute value.
-        /// <p>
-        /// this is a key-value mapping for the field that the codec can use to store
+        /// <para/>
+        /// This is a key-value mapping for the field that the codec can use to store
         /// additional metadata, and will be available to the codec when reading the
-        /// segment via <seealso cref="#getAttribute(String)"/>
-        /// <p>
+        /// segment via <see cref="GetAttribute(string)"/>
+        /// <para/>
         /// If a value already exists for the field, it will be replaced with the new
         /// value.
         /// </summary>
-        /// @deprecated no longer supported
         [Obsolete("no longer supported")]
         public string PutAttribute(string key, string value)
         {
@@ -372,11 +370,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the internal codec attributes map.
+        /// Returns the internal codec attributes map. May be null if no mappings exist.
         /// </summary>
-        /// <returns> internal codec attributes map. May be null if no mappings exist.
-        /// </returns>
-        /// @deprecated no longer supported
         [Obsolete("no longer supported")]
         public IDictionary<string, string> Attributes
         {

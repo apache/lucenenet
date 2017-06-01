@@ -20,8 +20,8 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// A <seealso cref="MergeScheduler"/> that simply does each merge
-    ///  sequentially, using the current thread.
+    /// A <see cref="MergeScheduler"/> that simply does each merge
+    /// sequentially, using the current thread.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

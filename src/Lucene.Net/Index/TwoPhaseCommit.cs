@@ -19,9 +19,9 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// An interface for implementations that support 2-phase commit. You can use
-    /// <seealso cref="TwoPhaseCommitTool"/> to execute a 2-phase commit algorithm over several
-    /// <seealso cref="ITwoPhaseCommit"/>s.
-    ///
+    /// <see cref="TwoPhaseCommitTool"/> to execute a 2-phase commit algorithm over several
+    /// <see cref="ITwoPhaseCommit"/>s.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public interface ITwoPhaseCommit
@@ -29,14 +29,14 @@ namespace Lucene.Net.Index
         /// <summary>
         /// The first stage of a 2-phase commit. Implementations should do as much work
         /// as possible in this method, but avoid actual committing changes. If the
-        /// 2-phase commit fails, <seealso cref="#rollback()"/> is called to discard all changes
+        /// 2-phase commit fails, <see cref="Rollback()"/> is called to discard all changes
         /// since last successful commit.
         /// </summary>
         void PrepareCommit();
 
         /// <summary>
         /// The second phase of a 2-phase commit. Implementations should ideally do
-        /// very little work in this method (following <seealso cref="#prepareCommit()"/>, and
+        /// very little work in this method (following <see cref="PrepareCommit()"/>, and
         /// after it returns, the caller can assume that the changes were successfully
         /// committed to the underlying storage.
         /// </summary>
@@ -44,8 +44,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Discards any changes that have occurred since the last commit. In a 2-phase
-        /// commit algorithm, where one of the objects failed to <seealso cref="#commit()"/> or
-        /// <seealso cref="#prepareCommit()"/>, this method is used to roll all other objects
+        /// commit algorithm, where one of the objects failed to <see cref="Commit()"/> or
+        /// <see cref="PrepareCommit()"/>, this method is used to roll all other objects
         /// back to their previous state.
         /// </summary>
         void Rollback();

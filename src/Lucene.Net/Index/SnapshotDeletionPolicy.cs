@@ -24,20 +24,20 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
 
     /// <summary>
-    /// An <seealso cref="IndexDeletionPolicy"/> that wraps any other
-    /// <seealso cref="IndexDeletionPolicy"/> and adds the ability to hold and later release
-    /// snapshots of an index. While a snapshot is held, the <seealso cref="IndexWriter"/> will
+    /// An <see cref="IndexDeletionPolicy"/> that wraps any other
+    /// <see cref="IndexDeletionPolicy"/> and adds the ability to hold and later release
+    /// snapshots of an index. While a snapshot is held, the <see cref="IndexWriter"/> will
     /// not remove any files associated with it even if the index is otherwise being
     /// actively, arbitrarily changed. Because we wrap another arbitrary
-    /// <seealso cref="IndexDeletionPolicy"/>, this gives you the freedom to continue using
-    /// whatever <seealso cref="IndexDeletionPolicy"/> you would normally want to use with your
+    /// <see cref="IndexDeletionPolicy"/>, this gives you the freedom to continue using
+    /// whatever <see cref="IndexDeletionPolicy"/> you would normally want to use with your
     /// index.
     ///
-    /// <p>
-    /// this class maintains all snapshots in-memory, and so the information is not
+    /// <para/>
+    /// This class maintains all snapshots in-memory, and so the information is not
     /// persisted and not protected against system failures. If persistence is
-    /// important, you can use <seealso cref="PersistentSnapshotDeletionPolicy"/>.
-    ///
+    /// important, you can use <see cref="PersistentSnapshotDeletionPolicy"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -47,20 +47,20 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Records how many snapshots are held against each
-        ///  commit generation
+        /// commit generation
         /// </summary>
         protected IDictionary<long, int> m_refCounts = new Dictionary<long, int>();
 
         /// <summary>
-        /// Used to map gen to IndexCommit. </summary>
+        /// Used to map gen to <see cref="IndexCommit"/>. </summary>
         protected IDictionary<long?, IndexCommit> m_indexCommits = new Dictionary<long?, IndexCommit>();
 
         /// <summary>
-        /// Wrapped <seealso cref="IndexDeletionPolicy"/> </summary>
+        /// Wrapped <see cref="IndexDeletionPolicy"/> </summary>
         private IndexDeletionPolicy primary;
 
         /// <summary>
-        /// Most recently committed <seealso cref="IndexCommit"/>. </summary>
+        /// Most recently committed <see cref="IndexCommit"/>. </summary>
         protected IndexCommit m_lastCommit;
 
         /// <summary>
@@ -68,8 +68,8 @@ namespace Lucene.Net.Index
         private bool initCalled;
 
         /// <summary>
-        /// Sole constructor, taking the incoming {@link
-        ///  IndexDeletionPolicy} to wrap.
+        /// Sole constructor, taking the incoming 
+        /// <see cref="IndexDeletionPolicy"/> to wrap.
         /// </summary>
         public SnapshotDeletionPolicy(IndexDeletionPolicy primary)
         {
@@ -109,7 +109,7 @@ namespace Lucene.Net.Index
         /// Release a snapshotted commit.
         /// </summary>
         /// <param name="commit">
-        ///          the commit previously returned by <seealso cref="#snapshot"/> </param>
+        ///          the commit previously returned by <see cref="Snapshot()"/> </param>
         public virtual void Release(IndexCommit commit)
         {
             lock (this)
@@ -147,7 +147,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Increments the refCount for this <seealso cref="IndexCommit"/>. </summary>
+        /// Increments the refCount for this <see cref="IndexCommit"/>. </summary>
         protected internal virtual void IncRef(IndexCommit ic)
         {
             lock (this)
@@ -170,20 +170,20 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Snapshots the last commit and returns it. Once a commit is 'snapshotted,' it is protected
-        /// from deletion (as long as this <seealso cref="IndexDeletionPolicy"/> is used). The
-        /// snapshot can be removed by calling <seealso cref="#release(IndexCommit)"/> followed
-        /// by a call to <seealso cref="IndexWriter#deleteUnusedFiles()"/>.
+        /// from deletion (as long as this <see cref="IndexDeletionPolicy"/> is used). The
+        /// snapshot can be removed by calling <see cref="Release(IndexCommit)"/> followed
+        /// by a call to <see cref="IndexWriter.DeleteUnusedFiles()"/>.
         ///
-        /// <p>
+        /// <para/>
         /// <b>NOTE:</b> while the snapshot is held, the files it references will not
         /// be deleted, which will consume additional disk space in your index. If you
         /// take a snapshot at a particularly bad time (say just before you call
-        /// forceMerge) then in the worst case this could consume an extra 1X of your
+        /// <see cref="IndexWriter.ForceMerge(int)"/>) then in the worst case this could consume an extra 1X of your
         /// total index size, until you release the snapshot.
         /// </summary>
-        /// <exception cref="IllegalStateException">
+        /// <exception cref="InvalidOperationException">
         ///           if this index does not have any commits yet </exception>
-        /// <returns> the <seealso cref="IndexCommit"/> that was snapshotted. </returns>
+        /// <returns> the <see cref="IndexCommit"/> that was snapshotted. </returns>
         public virtual IndexCommit Snapshot()
         {
             lock (this)
@@ -205,7 +205,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns all IndexCommits held by at least one snapshot. </summary>
+        /// Returns all <see cref="IndexCommit"/>s held by at least one snapshot. </summary>
         public virtual IList<IndexCommit> GetSnapshots()
         {
             lock (this)
@@ -234,9 +234,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Retrieve an <seealso cref="IndexCommit"/> from its generation;
-        ///  returns null if this IndexCommit is not currently
-        ///  snapshotted
+        /// Retrieve an <see cref="IndexCommit"/> from its generation;
+        /// returns <c>null</c> if this <see cref="IndexCommit"/> is not currently
+        /// snapshotted
         /// </summary>
         public virtual IndexCommit GetIndexCommit(long gen)
         {
@@ -260,8 +260,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Wraps each <seealso cref="IndexCommit"/> as a {@link
-        ///  SnapshotCommitPoint}.
+        /// Wraps each <see cref="IndexCommit"/> as a 
+        /// <see cref="SnapshotCommitPoint"/>.
         /// </summary>
         private IList<IndexCommit> WrapCommits<T>(IList<T> commits)
             where T : IndexCommit
@@ -275,20 +275,20 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Wraps a provided <seealso cref="IndexCommit"/> and prevents it
-        ///  from being deleted.
+        /// Wraps a provided <see cref="IndexCommit"/> and prevents it
+        /// from being deleted.
         /// </summary>
         private class SnapshotCommitPoint : IndexCommit
         {
             private readonly SnapshotDeletionPolicy outerInstance;
 
             /// <summary>
-            /// The <seealso cref="IndexCommit"/> we are preventing from deletion. </summary>
+            /// The <see cref="IndexCommit"/> we are preventing from deletion. </summary>
             protected IndexCommit m_cp;
 
             /// <summary>
-            /// Creates a {@code SnapshotCommitPoint} wrapping the provided
-            ///  <seealso cref="IndexCommit"/>.
+            /// Creates a <see cref="SnapshotCommitPoint"/> wrapping the provided
+            /// <see cref="IndexCommit"/>.
             /// </summary>
             protected internal SnapshotCommitPoint(SnapshotDeletionPolicy outerInstance, IndexCommit cp)
             {

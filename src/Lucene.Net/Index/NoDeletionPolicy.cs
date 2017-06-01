@@ -21,9 +21,9 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// An <seealso cref="IndexDeletionPolicy"/> which keeps all index commits around, never
-    /// deleting them. this class is a singleton and can be accessed by referencing
-    /// <seealso cref="#INSTANCE"/>.
+    /// An <see cref="IndexDeletionPolicy"/> which keeps all index commits around, never
+    /// deleting them. This class is a singleton and can be accessed by referencing
+    /// <see cref="INSTANCE"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

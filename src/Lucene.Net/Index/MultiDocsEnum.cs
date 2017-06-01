@@ -23,9 +23,9 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Exposes <seealso cref="DocsEnum"/>, merged from <seealso cref="DocsEnum"/>
+    /// Exposes <see cref="DocsEnum"/>, merged from <see cref="DocsEnum"/>
     /// API of sub-segments.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -44,7 +44,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole constructor </summary>
-        /// <param name="parent"> The <seealso cref="MultiTermsEnum"/> that created us. </param>
+        /// <param name="parent"> The <see cref="MultiTermsEnum"/> that created us. </param>
         /// <param name="subReaderCount"> How many sub-readers are being merged.  </param>
         public MultiDocsEnum(MultiTermsEnum parent, int subReaderCount)
         {
@@ -70,8 +70,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns {@code true} if this instance can be reused by
-        ///  the provided <seealso cref="MultiTermsEnum"/>.
+        /// Returns <c>true</c> if this instance can be reused by
+        /// the provided <see cref="MultiTermsEnum"/>.
         /// </summary>
         public bool CanReuse(MultiTermsEnum parent)
         {
@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// How many sub-readers we are merging. </summary>
-        ///  <seealso cref= #getSubs  </seealso>
+        /// <seealso cref="Subs"/>
         public int NumSubs
         {
             get
@@ -189,8 +189,8 @@ namespace Lucene.Net.Index
 
         // TODO: implement bulk read more efficiently than super
         /// <summary>
-        /// Holds a <seealso cref="DocsEnum"/> along with the
-        ///  corresponding <seealso cref="ReaderSlice"/>.
+        /// Holds a <see cref="Index.DocsEnum"/> along with the
+        /// corresponding <see cref="ReaderSlice"/>.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -202,12 +202,12 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// <seealso cref="DocsEnum"/> of this sub-reader. </summary>
+            /// <see cref="Index.DocsEnum"/> of this sub-reader. </summary>
             public DocsEnum DocsEnum { get; internal set; } // LUCENENET NOTE: Made setter internal because ctor is internal
 
             /// <summary>
-            /// <seealso cref="ReaderSlice"/> describing how this sub-reader
-            ///  fits into the composite reader.
+            /// <see cref="ReaderSlice"/> describing how this sub-reader
+            /// fits into the composite reader.
             /// </summary>
             public ReaderSlice Slice { get; internal set; } // LUCENENET NOTE: Made setter internal because ctor is internal
 

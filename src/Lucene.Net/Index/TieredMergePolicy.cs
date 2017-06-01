@@ -57,7 +57,7 @@ namespace Lucene.Net.Index
     /// of the segments, always pro-rates by percent deletes,
     /// and does not apply any maximum segment size during
     /// forceMerge (unlike <see cref="LogByteSizeMergePolicy"/>).
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 

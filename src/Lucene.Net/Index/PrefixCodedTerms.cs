@@ -32,6 +32,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Prefix codes term instances (prefixes are shared)
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -136,7 +137,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Builds a PrefixCodedTerms: call add repeatedly, then finish. </summary>
+        /// Builds a <see cref="PrefixCodedTerms"/>: call add repeatedly, then finish. </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -186,8 +187,8 @@ namespace Lucene.Net.Index
                 }
             }
 
-            /// <summary>
-            /// return finalized form </summary>
+            /// <returns>
+            /// finalized form </returns>
             public virtual PrefixCodedTerms Finish()
             {
                 try

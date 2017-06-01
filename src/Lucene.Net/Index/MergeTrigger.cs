@@ -18,7 +18,7 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// MergeTrigger is passed to
+    /// <see cref="MergeTrigger"/> is passed to
     /// <see cref="MergePolicy.FindMerges(MergeTrigger, SegmentInfos)"/> to indicate the
     /// event that triggered the merge.
     /// </summary>
@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Merge was triggered by a full flush. Full flushes
-        /// can be caused by a commit, NRT reader reopen or a close call on the index writer.
+        /// can be caused by a commit, NRT reader reopen or a <see cref="IndexWriter.Dispose()"/> call on the index writer.
         /// </summary>
         FULL_FLUSH,
 
@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         MERGE_FINISHED,
 
         /// <summary>
-        /// Merge was triggered by a closing IndexWriter.
+        /// Merge was triggered by a disposing <see cref="IndexWriter"/>.
         /// </summary>
         CLOSING
     }

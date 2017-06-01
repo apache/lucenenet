@@ -21,8 +21,8 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Common util methods for dealing with <seealso cref="IndexReader"/>s and <seealso cref="IndexReaderContext"/>s.
-    ///
+    /// Common util methods for dealing with <see cref="IndexReader"/>s and <see cref="IndexReaderContext"/>s.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -48,7 +48,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns index of the searcher/reader for document <code>n</code> in the
+        /// Returns index of the searcher/reader for document <c>n</c> in the
         /// array used to construct this searcher/reader.
         /// </summary>
         public static int SubIndex(int n, int[] docStarts) // find
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns index of the searcher/reader for document <code>n</code> in the
+        /// Returns index of the searcher/reader for document <c>n</c> in the
         /// array used to construct this searcher/reader.
         /// </summary>
         public static int SubIndex(int n, IList<AtomicReaderContext> leaves) // find

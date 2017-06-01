@@ -25,8 +25,8 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// Implements a <seealso cref="TermsEnum"/> wrapping a provided
-    /// <seealso cref="SortedDocValues"/>.
+    /// Implements a <see cref="TermsEnum"/> wrapping a provided
+    /// <see cref="SortedDocValues"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
         private readonly BytesRef term = new BytesRef();
 
         /// <summary>
-        /// Creates a new TermsEnum over the provided values </summary>
+        /// Creates a new <see cref="TermsEnum"/> over the provided values </summary>
         public SortedDocValuesTermsEnum(SortedDocValues values)
         {
             this.values = values;

@@ -21,11 +21,12 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Encapsulates all required internal state to position the associated
-    /// <seealso cref="TermsEnum"/> without re-seeking.
+    /// <see cref="TermsEnum"/> without re-seeking.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= TermsEnum#seekExact(Lucene.Net.Util.BytesRef, TermState) </seealso>
-    /// <seealso cref= TermsEnum#termState()
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="TermsEnum.SeekExact(Lucene.Net.Util.BytesRef, TermState)"/>
+    /// <seealso cref="TermsEnum.GetTermState()"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -33,17 +34,17 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected TermState()
         {
         }
 
         /// <summary>
-        /// Copies the content of the given <seealso cref="TermState"/> to this instance
+        /// Copies the content of the given <see cref="TermState"/> to this instance
         /// </summary>
         /// <param name="other">
-        ///          the TermState to copy </param>
+        ///          the <see cref="TermState"/> to copy </param>
         public abstract void CopyFrom(TermState other);
 
         public virtual object Clone()

@@ -28,13 +28,13 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    ///  A <seealso cref="MergeScheduler"/> that runs each merge using
-    ///  Tasks on the default TaskScheduler.
+    /// A <see cref="MergeScheduler"/> that runs each merge using
+    /// <see cref="Task"/>s on the default <see cref="TaskScheduler"/>.
     /// 
-    ///  <p>If more than <seealso cref="#GetMaxMergeCount"/> merges are
-    ///  requested then this class will forcefully throttle the
-    ///  incoming threads by pausing until one more more merges
-    ///  complete.</p>
+    /// <para>If more than <see cref="MaxMergeCount"/> merges are
+    /// requested then this class will forcefully throttle the
+    /// incoming threads by pausing until one more more merges
+    /// complete.</para>
     ///  
     /// LUCENENET specific
     /// </summary>
@@ -49,27 +49,27 @@ namespace Lucene.Net.Index
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly ManualResetEventSlim _manualResetEvent = new ManualResetEventSlim();
         /// <summary>
-        /// List of currently active <seealso cref="MergeThread"/>s.</summary>
+        /// List of currently active <see cref="MergeThread"/>s.</summary>
         private readonly IList<MergeThread> _mergeThreads = new List<MergeThread>();
 
         /// <summary>
-        /// How many <seealso cref="MergeThread"/>s have kicked off (this is use
-        ///  to name them).
+        /// How many <see cref="MergeThread"/>s have kicked off (this is use
+        /// to name them).
         /// </summary>
         private int _mergeThreadCount;
 
         /// <summary>
-        /// <seealso cref="Directory"/> that holds the index. </summary>
+        /// <see cref="Directory"/> that holds the index. </summary>
         private Directory _directory;
 
         /// <summary>
-        /// <seealso cref="IndexWriter"/> that owns this instance.
+        /// <seea cref="IndexWriter"/> that owns this instance.
         /// </summary>
         private IndexWriter _writer;
 
         /// <summary>
         /// Sole constructor, with all settings set to default
-        ///  values.
+        /// values.
         /// </summary>
         public TaskMergeScheduler() : base()
         {
@@ -80,14 +80,14 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Sets the maximum number of merge threads and simultaneous merges allowed.
         /// </summary>
-        /// <param name="maxMergeCount"> the max # simultaneous merges that are allowed.
+        /// <param name="maxMergeCount"> The max # simultaneous merges that are allowed.
         ///       If a merge is necessary yet we already have this many
         ///       threads running, the incoming thread (that is calling
         ///       add/updateDocument) will block until a merge thread
         ///       has completed.  Note that we will only run the
-        ///       smallest <code>maxThreadCount</code> merges at a time. </param>
-        /// <param name="maxThreadCount"> the max # simultaneous merge threads that should
-        ///       be running at once.  this must be &lt;= <code>maxMergeCount</code> </param>
+        ///       smallest <paramref name="maxThreadCount"/> merges at a time. </param>
+        /// <param name="maxThreadCount"> The max # simultaneous merge threads that should
+        ///       be running at once.  This must be &lt;= <paramref name="maxMergeCount"/> </param>
         public void SetMaxMergesAndThreads(int maxMergeCount, int maxThreadCount)
         {
             // This is handled by TaskScheduler.Default.MaximumConcurrencyLevel
@@ -97,11 +97,11 @@ namespace Lucene.Net.Index
         /// Max number of merge threads allowed to be running at
         /// once.  When there are more merges then this, we
         /// forcefully pause the larger ones, letting the smaller
-        /// ones run, up until maxMergeCount merges at which point
+        /// ones run, up until <see cref="MaxMergeCount"/> merges at which point
         /// we forcefully pause incoming threads (that presumably
         /// are the ones causing so much merging).
         /// </summary>
-        /// <seealso cref= #setMaxMergesAndThreads(int, int)  </seealso>
+        /// <seealso cref="SetMaxMergesAndThreads(int, int)"/>
         public int MaxThreadCount { get; private set; }
 
         /// <summary>
@@ -134,8 +134,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Called whenever the running merges have changed, to pause & unpause
-        /// threads. this method sorts the merge threads by their merge size in
+        /// Called whenever the running merges have changed, to pause &amp; unpause
+        /// threads. This method sorts the merge threads by their merge size in
         /// descending order and then pauses/unpauses threads from first to last --
         /// that way, smaller merges are guaranteed to run before larger ones.
         /// </summary>
@@ -153,14 +153,14 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if verbosing is enabled. this method is usually used in
-        /// conjunction with <seealso cref="#message(String)"/>, like that:
+        /// Returns <c>true</c> if verbosing is enabled. This method is usually used in
+        /// conjunction with <see cref="Message(string)"/>, like that:
         ///
-        /// <pre class="prettyprint">
-        /// if (verbose()) {
-        ///   message(&quot;your message&quot;);
+        /// <code>
+        /// if (Verbose) {
+        ///     Message(&quot;your message&quot;);
         /// }
-        /// </pre>
+        /// </code>
         /// </summary>
         protected bool Verbose
         {
@@ -168,8 +168,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Outputs the given message - this method assumes <seealso cref="#verbose()"/> was
-        /// called and returned true.
+        /// Outputs the given message - this method assumes <see cref="Verbose"/> was
+        /// called and returned <c>true</c>.
         /// </summary>
         protected virtual void Message(string message)
         {
@@ -184,7 +184,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Wait for any running merge threads to finish. 
-        /// This call is not interruptible as used by <seealso cref="#Dispose()"/>.
+        /// This call is not interruptible as used by <see cref="MergeScheduler.Dispose()"/>.
         /// </summary>
         public virtual void Sync()
         {
@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the number of merge threads that are alive. Note that this number
-        /// is &lt;= <seealso cref="#mergeThreads"/> size.
+        /// is &lt;= <see cref="_mergeThreads"/> size.
         /// </summary>
         private int MergeThreadCount
         {
@@ -347,7 +347,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Create and return a new MergeThread </summary>
+        /// Create and return a new <see cref="MergeThread"/> </summary>
         private MergeThread CreateTask(IndexWriter writer, MergePolicy.OneMerge merge)
         {
             var count = Interlocked.Increment(ref _mergeThreadCount);
@@ -358,7 +358,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Called when an exception is hit in a background merge
-        ///  thread
+        /// thread
         /// </summary>
         protected virtual void HandleMergeException(Exception exc)
         {
@@ -424,7 +424,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Runs a merge thread, which may run one or more merges
-        ///  in sequence.
+        /// in sequence.
         /// </summary>
         internal class MergeThread : IDisposable
         {
@@ -491,8 +491,8 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Return the current merge, or null if this {@code
-            ///  MergeThread} is done.
+            /// Return the current merge, or <c>null</c> if this 
+            /// <see cref="MergeThread"/> is done.
             /// </summary>
             public virtual MergePolicy.OneMerge CurrentMerge
             {

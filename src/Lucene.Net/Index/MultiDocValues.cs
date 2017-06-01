@@ -32,16 +32,17 @@ namespace Lucene.Net.Index
     using TermsEnumWithSlice = Lucene.Net.Index.MultiTermsEnum.TermsEnumWithSlice;
 
     /// <summary>
-    /// A wrapper for CompositeIndexReader providing access to DocValues.
+    /// A wrapper for <see cref="CompositeReader"/> providing access to <see cref="DocValues"/>.
     ///
-    /// <p><b>NOTE</b>: for multi readers, you'll get better
+    /// <para/><b>NOTE</b>: for multi readers, you'll get better
     /// performance by gathering the sub readers using
-    /// <seealso cref="IndexReader#getContext()"/> to get the
+    /// <see cref="IndexReader.Context"/> to get the
     /// atomic leaves and then operate per-AtomicReader,
     /// instead of using this class.
     ///
-    /// <p><b>NOTE</b>: this is very costly.
+    /// <para/><b>NOTE</b>: this is very costly.
     ///
+    /// <para/>
     /// @lucene.experimental
     /// @lucene.internal
     /// </summary>
@@ -57,11 +58,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a NumericDocValues for a reader's norms (potentially merging on-the-fly).
-        /// <p>
-        /// this is a slow way to access normalization values. Instead, access them per-segment
-        /// with <seealso cref="AtomicReader#getNormValues(String)"/>
-        /// </p>
+        /// Returns a <see cref="NumericDocValues"/> for a reader's norms (potentially merging on-the-fly).
+        /// <para>
+        /// This is a slow way to access normalization values. Instead, access them per-segment
+        /// with <seealso cref="AtomicReader.GetNormValues(string)"/>
+        /// </para>
         /// </summary>
         public static NumericDocValues GetNormValues(IndexReader r, string field)
         {
@@ -128,12 +129,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a NumericDocValues for a reader's docvalues (potentially merging on-the-fly)
-        /// <p>
-        /// this is a slow way to access numeric values. Instead, access them per-segment
-        /// with <seealso cref="AtomicReader#getNumericDocValues(String)"/>
-        /// </p>
-        ///
+        /// Returns a <see cref="NumericDocValues"/> for a reader's docvalues (potentially merging on-the-fly)
+        /// <para>
+        /// This is a slow way to access numeric values. Instead, access them per-segment
+        /// with <see cref="AtomicReader.GetNumericDocValues(string)"/>
+        /// </para>
         /// </summary>
         public static NumericDocValues GetNumericValues(IndexReader r, string field)
         {
@@ -200,12 +200,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a Bits for a reader's docsWithField (potentially merging on-the-fly)
-        /// <p>
-        /// this is a slow way to access this bitset. Instead, access them per-segment
-        /// with <seealso cref="AtomicReader#getDocsWithField(String)"/>
-        /// </p>
-        ///
+        /// Returns a <see cref="IBits"/> for a reader's docsWithField (potentially merging on-the-fly)
+        /// <para>
+        /// This is a slow way to access this bitset. Instead, access them per-segment
+        /// with <see cref="AtomicReader.GetDocsWithField(string)"/>
+        /// </para>
         /// </summary>
         public static IBits GetDocsWithField(IndexReader r, string field)
         {
@@ -261,11 +260,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a BinaryDocValues for a reader's docvalues (potentially merging on-the-fly)
-        /// <p>
-        /// this is a slow way to access binary values. Instead, access them per-segment
-        /// with <seealso cref="AtomicReader#getBinaryDocValues(String)"/>
-        /// </p>
+        /// Returns a <see cref="BinaryDocValues"/> for a reader's docvalues (potentially merging on-the-fly)
+        /// <para>
+        /// This is a slow way to access binary values. Instead, access them per-segment
+        /// with <see cref="AtomicReader.GetBinaryDocValues(string)"/>
+        /// </para>
         /// </summary>
         public static BinaryDocValues GetBinaryValues(IndexReader r, string field)
         {
@@ -333,11 +332,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a SortedDocValues for a reader's docvalues (potentially doing extremely slow things).
-        /// <p>
+        /// Returns a <see cref="SortedDocValues"/> for a reader's docvalues (potentially doing extremely slow things).
+        /// <para>
         /// this is an extremely slow way to access sorted values. Instead, access them per-segment
-        /// with <seealso cref="AtomicReader#getSortedDocValues(String)"/>
-        /// </p>
+        /// with <see cref="AtomicReader.GetSortedDocValues(string)"/>
+        /// </para>
         /// </summary>
         public static SortedDocValues GetSortedValues(IndexReader r, string field)
         {
@@ -390,11 +389,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a SortedSetDocValues for a reader's docvalues (potentially doing extremely slow things).
-        /// <p>
-        /// this is an extremely slow way to access sorted values. Instead, access them per-segment
-        /// with <seealso cref="AtomicReader#getSortedSetDocValues(String)"/>
-        /// </p>
+        /// Returns a <see cref="SortedSetDocValues"/> for a reader's docvalues (potentially doing extremely slow things).
+        /// <para>
+        /// This is an extremely slow way to access sorted values. Instead, access them per-segment
+        /// with <see cref="AtomicReader.GetSortedSetDocValues(string)"/>
+        /// </para>
         /// </summary>
         public static SortedSetDocValues GetSortedSetValues(IndexReader r, string field)
         {
@@ -469,11 +468,11 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Creates an ordinal map that allows mapping ords to/from a merged
-            /// space from <code>subs</code>. </summary>
+            /// space from <c>subs</c>. </summary>
             /// <param name="owner"> a cache key </param>
-            /// <param name="subs"> TermsEnums that support <seealso cref="TermsEnum#ord()"/>. They need
-            ///             not be dense (e.g. can be FilteredTermsEnums}. </param>
-            /// <exception cref="IOException"> if an I/O error occurred. </exception>
+            /// <param name="subs"> <see cref="TermsEnum"/>s that support <see cref="TermsEnum.Ord"/>. They need
+            ///             not be dense (e.g. can be FilteredTermsEnums). </param>
+            /// <exception cref="System.IO.IOException"> if an I/O error occurred. </exception>
             public OrdinalMap(object owner, TermsEnum[] subs)
             {
                 // create the ordinal mappings by pulling a termsenum over each sub's
@@ -539,7 +538,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Given global ordinal, returns the ordinal of the first segment which contains
-            /// this ordinal (the corresponding to the segment return <seealso cref="#getFirstSegmentNumber"/>).
+            /// this ordinal (the corresponding to the segment return <see cref="GetFirstSegmentNumber(long)"/>).
             /// </summary>
             public virtual long GetFirstSegmentOrd(long globalOrd)
             {
@@ -581,7 +580,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Implements SortedDocValues over n subs, using an OrdinalMap
+        /// Implements <see cref="SortedDocValues"/> over n subs, using an <see cref="OrdinalMap"/>
+        /// <para/>
         /// @lucene.internal
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -590,7 +590,7 @@ namespace Lucene.Net.Index
         public class MultiSortedDocValues : SortedDocValues
         {
             /// <summary>
-            /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
+            /// docbase for each leaf: parallel with <see cref="Values"/> </summary>
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] DocStarts
@@ -610,7 +610,7 @@ namespace Lucene.Net.Index
             private readonly SortedDocValues[] values;
 
             /// <summary>
-            /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
+            /// ordinal map mapping ords from <c>values</c> to global ord space </summary>
             public OrdinalMap Mapping
             {
                 get { return mapping; }
@@ -618,7 +618,7 @@ namespace Lucene.Net.Index
             private readonly OrdinalMap mapping;
 
             /// <summary>
-            /// Creates a new MultiSortedDocValues over <code>values</code> </summary>
+            /// Creates a new <see cref="MultiSortedDocValues"/> over <paramref name="values"/> </summary>
             internal MultiSortedDocValues(SortedDocValues[] values, int[] docStarts, OrdinalMap mapping)
             {
                 Debug.Assert(values.Length == mapping.ordDeltas.Length);
@@ -652,7 +652,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Implements MultiSortedSetDocValues over n subs, using an OrdinalMap
+        /// Implements <see cref="MultiSortedSetDocValues"/> over n subs, using an <see cref="OrdinalMap"/>
+        /// <para/>
         /// @lucene.internal
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -661,7 +662,7 @@ namespace Lucene.Net.Index
         public class MultiSortedSetDocValues : SortedSetDocValues
         {
             /// <summary>
-            /// docbase for each leaf: parallel with <seealso cref="#values"/> </summary>
+            /// docbase for each leaf: parallel with <see cref="Values"/> </summary>
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
             public int[] DocStarts
@@ -681,7 +682,7 @@ namespace Lucene.Net.Index
             private readonly SortedSetDocValues[] values;
 
             /// <summary>
-            /// ordinal map mapping ords from <code>values</code> to global ord space </summary>
+            /// ordinal map mapping ords from <c>values</c> to global ord space </summary>
             public OrdinalMap Mapping
             {
                 get { return mapping; } 
@@ -691,7 +692,7 @@ namespace Lucene.Net.Index
             internal int currentSubIndex;
 
             /// <summary>
-            /// Creates a new MultiSortedSetDocValues over <code>values</code> </summary>
+            /// Creates a new <see cref="MultiSortedSetDocValues"/> over <paramref name="values"/> </summary>
             internal MultiSortedSetDocValues(SortedSetDocValues[] values, int[] docStarts, OrdinalMap mapping)
             {
                 Debug.Assert(values.Length == mapping.ordDeltas.Length);

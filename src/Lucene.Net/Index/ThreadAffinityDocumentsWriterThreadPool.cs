@@ -26,14 +26,14 @@ namespace Lucene.Net.Index
     using ThreadState = Lucene.Net.Index.DocumentsWriterPerThreadPool.ThreadState; //javadoc
 
     /// <summary>
-    /// A <seealso cref="DocumentsWriterPerThreadPool"/> implementation that tries to assign an
-    /// indexing thread to the same <seealso cref="ThreadState"/> each time the thread tries to
-    /// obtain a <seealso cref="ThreadState"/>. Once a new <seealso cref="ThreadState"/> is created it is
+    /// A <see cref="DocumentsWriterPerThreadPool"/> implementation that tries to assign an
+    /// indexing thread to the same <see cref="ThreadState"/> each time the thread tries to
+    /// obtain a <see cref="ThreadState"/>. Once a new <see cref="ThreadState"/> is created it is
     /// associated with the creating thread. Subsequently, if the threads associated
-    /// <seealso cref="ThreadState"/> is not in use it will be associated with the requesting
-    /// thread. Otherwise, if the <seealso cref="ThreadState"/> is used by another thread
-    /// <seealso cref="ThreadAffinityDocumentsWriterThreadPool"/> tries to find the currently
-    /// minimal contended <seealso cref="ThreadState"/>.
+    /// <see cref="ThreadState"/> is not in use it will be associated with the requesting
+    /// thread. Otherwise, if the <see cref="ThreadState"/> is used by another thread
+    /// <see cref="ThreadAffinityDocumentsWriterThreadPool"/> tries to find the currently
+    /// minimal contended <seea cref="ThreadState"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -43,7 +43,7 @@ namespace Lucene.Net.Index
         private IDictionary<Thread, ThreadState> threadBindings = new ConcurrentDictionary<Thread, ThreadState>();
 
         /// <summary>
-        /// Creates a new <seealso cref="ThreadAffinityDocumentsWriterThreadPool"/> with a given maximum of <seealso cref="ThreadState"/>s.
+        /// Creates a new <see cref="ThreadAffinityDocumentsWriterThreadPool"/> with a given maximum of <see cref="ThreadState"/>s.
         /// </summary>
         public ThreadAffinityDocumentsWriterThreadPool(int maxNumPerThreads)
             : base(maxNumPerThreads)

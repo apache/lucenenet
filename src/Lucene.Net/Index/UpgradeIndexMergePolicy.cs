@@ -23,39 +23,42 @@ namespace Lucene.Net.Index
     using Constants = Lucene.Net.Util.Constants;
 
     /// <summary>
-    /// this <seealso cref="MergePolicy"/> is used for upgrading all existing segments of
-    /// an index when calling <seealso cref="IndexWriter#forceMerge(int)"/>.
-    /// All other methods delegate to the base {@code MergePolicy} given to the constructor.
-    /// this allows for an as-cheap-as possible upgrade of an older index by only upgrading segments that
-    /// are created by previous Lucene versions. forceMerge does no longer really merge;
-    /// it is just used to &quot;forceMerge&quot; older segment versions away.
-    /// <p>In general one would use <seealso cref="IndexUpgrader"/>, but for a fully customizeable upgrade,
-    /// you can use this like any other {@code MergePolicy} and call <seealso cref="IndexWriter#forceMerge(int)"/>:
-    /// <pre class="prettyprint lang-java">
-    ///  IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_XX, new KeywordAnalyzer());
-    ///  iwc.setMergePolicy(new UpgradeIndexMergePolicy(iwc.getMergePolicy()));
-    ///  IndexWriter w = new IndexWriter(dir, iwc);
-    ///  w.forceMerge(1);
-    ///  w.Dispose();
-    /// </pre>
-    /// <p><b>Warning:</b> this merge policy may reorder documents if the index was partially
-    /// upgraded before calling forceMerge (e.g., documents were added). If your application relies
+    /// This <see cref="MergePolicy"/> is used for upgrading all existing segments of
+    /// an index when calling <see cref="IndexWriter.ForceMerge(int)"/>.
+    /// All other methods delegate to the base <see cref="MergePolicy"/> given to the constructor.
+    /// This allows for an as-cheap-as possible upgrade of an older index by only upgrading segments that
+    /// are created by previous Lucene versions. ForceMerge does no longer really merge;
+    /// it is just used to &quot;ForceMerge&quot; older segment versions away.
+    /// <para/>In general one would use <see cref="IndexUpgrader"/>, but for a fully customizeable upgrade,
+    /// you can use this like any other <see cref="MergePolicy"/> and call <see cref="IndexWriter.ForceMerge(int)"/>:
+    /// <code>
+    ///     IndexWriterConfig iwc = new IndexWriterConfig(LuceneVersion.LUCENE_XX, new KeywordAnalyzer());
+    ///     iwc.MergePolicy = new UpgradeIndexMergePolicy(iwc.MergePolicy);
+    ///     using (IndexWriter w = new IndexWriter(dir, iwc))
+    ///     {
+    ///         w.ForceMerge(1);
+    ///     }
+    /// </code>
+    /// <para/><b>Warning:</b> this merge policy may reorder documents if the index was partially
+    /// upgraded before calling <see cref="IndexWriter.ForceMerge(int)"/> (e.g., documents were added). If your application relies
     /// on &quot;monotonicity&quot; of doc IDs (which means that the order in which the documents
-    /// were added to the index is preserved), do a forceMerge(1) instead. Please note, the
-    /// delegate {@code MergePolicy} may also reorder documents.
-    /// @lucene.experimental </summary>
-    /// <seealso cref= IndexUpgrader </seealso>
+    /// were added to the index is preserved), do a <c>ForceMerge(1)</c> instead. Please note, the
+    /// delegate <see cref="MergePolicy"/> may also reorder documents.
+    /// <para/>
+    /// @lucene.experimental
+    /// </summary>
+    /// <seealso cref="IndexUpgrader"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public class UpgradeIndexMergePolicy : MergePolicy
     {
         /// <summary>
-        /// Wrapped <seealso cref="MergePolicy"/>. </summary>
+        /// Wrapped <see cref="MergePolicy"/>. </summary>
         protected readonly MergePolicy m_base;
 
         /// <summary>
-        /// Wrap the given <seealso cref="MergePolicy"/> and intercept forceMerge requests to
+        /// Wrap the given <see cref="MergePolicy"/> and intercept <see cref="IndexWriter.ForceMerge(int)"/> requests to
         /// only upgrade segments written with previous Lucene versions.
         /// </summary>
         public UpgradeIndexMergePolicy(MergePolicy @base)
@@ -64,8 +67,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns if the given segment should be upgraded. The default implementation
-        /// will return {@code !Constants.LUCENE_MAIN_VERSION.equals(si.getVersion())},
+        /// Returns <c>true</c> if the given segment should be upgraded. The default implementation
+        /// will return <c>!Constants.LUCENE_MAIN_VERSION.Equals(si.Version)</c>,
         /// so all segments created with a different version number than this Lucene version will
         /// get upgraded.
         /// </summary>

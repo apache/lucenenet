@@ -39,9 +39,11 @@ namespace Lucene.Net.Index
     using NumericDocValuesField = NumericDocValuesField;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
-    // Used by IndexWriter to hold open SegmentReaders (for
-    // searching or merging), plus pending deletes and updates,
-    // for a given segment
+    /// <summary>
+    /// Used by <see cref="IndexWriter"/> to hold open <see cref="SegmentReader"/>s (for
+    /// searching or merging), plus pending deletes and updates,
+    /// for a given segment
+    /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -159,7 +161,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a <seealso cref="SegmentReader"/>. </summary>
+        /// Returns a <see cref="SegmentReader"/>. </summary>
         public virtual SegmentReader GetReader(IOContext context)
         {
             if (reader == null)
@@ -287,8 +289,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a ref to a clone. NOTE: you should decRef() the reader when you're
-        /// dont (ie do not call close()).
+        /// Returns a ref to a clone. NOTE: you should <see cref="DecRef()"/> the reader when you're
+        /// done (ie do not call <see cref="IndexReader.Dispose()"/>).
         /// </summary>
         public virtual SegmentReader GetReadOnlyClone(IOContext context)
         {
@@ -734,178 +736,6 @@ namespace Lucene.Net.Index
                 }
             }
         }
-
-        /*
-	  private class IterableAnonymousInnerClassHelper : IEnumerable<Number>
-	  {
-		  private readonly ReadersAndUpdates OuterInstance;
-
-		  private Lucene.Net.Index.SegmentReader Reader;
-		  private string Field;
-		  private Lucene.Net.Index.NumericDocValuesFieldUpdates FieldUpdates;
-
-		  public IterableAnonymousInnerClassHelper(ReadersAndUpdates outerInstance, Lucene.Net.Index.SegmentReader reader, string field, Lucene.Net.Index.NumericDocValuesFieldUpdates fieldUpdates)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.Reader = reader;
-			  this.Field = field;
-			  this.FieldUpdates = fieldUpdates;
-			  currentValues = reader.GetNumericDocValues(field);
-			  docsWithField = reader.GetDocsWithField(field);
-			  maxDoc = reader.MaxDoc;
-			  updatesIter = fieldUpdates.Iterator();
-		  }
-
-		  internal readonly NumericDocValues currentValues;
-		  internal readonly Bits docsWithField;
-		  internal readonly int maxDoc;
-		  internal readonly NumericDocValuesFieldUpdates.Iterator updatesIter;
-		  public virtual IEnumerator<Number> GetEnumerator()
-		  {
-			updatesIter.Reset();
-			return new IteratorAnonymousInnerClassHelper(this);
-		  }
-
-		  private class IteratorAnonymousInnerClassHelper : IEnumerator<Number>
-		  {
-			  private readonly IterableAnonymousInnerClassHelper OuterInstance;
-
-			  public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance)
-			  {
-                  this.OuterInstance = outerInstance;
-				  curDoc = -1;
-				  updateDoc = updatesIter.NextDoc();
-			  }
-
-			  internal int curDoc;
-			  internal int updateDoc;
-
-			  public virtual bool HasNext()
-			  {
-				return curDoc < maxDoc - 1;
-			  }
-
-			  public virtual Number Next()
-			  {
-				if (++curDoc >= maxDoc)
-				{
-				  throw new NoSuchElementException("no more documents to return values for");
-				}
-				if (curDoc == updateDoc) // this document has an updated value
-				{
-				  long? value = updatesIter.value(); // either null (unset value) or updated value
-				  updateDoc = updatesIter.nextDoc(); // prepare for next round
-				  return value;
-				}
-				else
-				{
-				  // no update for this document
-				  Debug.Assert(curDoc < updateDoc);
-				  if (currentValues != null && docsWithField.Get(curDoc))
-				  {
-					// only read the current value if the document had a value before
-					return currentValues.Get(curDoc);
-				  }
-				  else
-				  {
-					return null;
-				  }
-				}
-			  }
-
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException("this iterator does not support removing elements");
-			  }
-		  }
-	  }*/
-        /*
-	  private class IterableAnonymousInnerClassHelper2 : IEnumerable<BytesRef>
-	  {
-		  private readonly ReadersAndUpdates OuterInstance;
-
-		  private Lucene.Net.Index.SegmentReader Reader;
-		  private string Field;
-		  private Lucene.Net.Index.BinaryDocValuesFieldUpdates DvFieldUpdates;
-
-		  public IterableAnonymousInnerClassHelper2(ReadersAndUpdates outerInstance, Lucene.Net.Index.SegmentReader reader, string field, Lucene.Net.Index.BinaryDocValuesFieldUpdates dvFieldUpdates)
-		  {
-			  this.OuterInstance = outerInstance;
-			  this.Reader = reader;
-			  this.Field = field;
-			  this.DvFieldUpdates = dvFieldUpdates;
-			  currentValues = reader.GetBinaryDocValues(field);
-			  docsWithField = reader.GetDocsWithField(field);
-			  maxDoc = reader.MaxDoc;
-			  updatesIter = dvFieldUpdates.Iterator();
-		  }
-
-		  internal readonly BinaryDocValues currentValues;
-		  internal readonly Bits docsWithField;
-		  internal readonly int maxDoc;
-		  internal readonly BinaryDocValuesFieldUpdates.Iterator updatesIter;
-		  public virtual IEnumerator<BytesRef> GetEnumerator()
-		  {
-			updatesIter.Reset();
-			return new IteratorAnonymousInnerClassHelper2(this);
-		  }
-
-		  private class IteratorAnonymousInnerClassHelper2 : IEnumerator<BytesRef>
-		  {
-			  private readonly IterableAnonymousInnerClassHelper2 OuterInstance;
-
-			  public IteratorAnonymousInnerClassHelper2(IterableAnonymousInnerClassHelper2 outerInstance)
-			  {
-                  this.OuterInstance = outerInstance;
-				  curDoc = -1;
-				  updateDoc = updatesIter.nextDoc();
-				  scratch = new BytesRef();
-			  }
-
-			  internal int curDoc;
-			  internal int updateDoc;
-			  internal BytesRef scratch;
-
-			  public virtual bool HasNext()
-			  {
-				return curDoc < maxDoc - 1;
-			  }
-
-			  public virtual BytesRef Next()
-			  {
-				if (++curDoc >= maxDoc)
-				{
-				  throw new NoSuchElementException("no more documents to return values for");
-				}
-				if (curDoc == updateDoc) // this document has an updated value
-				{
-				  BytesRef value = updatesIter.value(); // either null (unset value) or updated value
-				  updateDoc = updatesIter.nextDoc(); // prepare for next round
-				  return value;
-				}
-				else
-				{
-				  // no update for this document
-				  Debug.Assert(curDoc < updateDoc);
-				  if (currentValues != null && docsWithField.get(curDoc))
-				  {
-					// only read the current value if the document had a value before
-					currentValues.get(curDoc, scratch);
-					return scratch;
-				  }
-				  else
-				  {
-					return null;
-				  }
-				}
-			  }
-
-			  public virtual void Remove()
-			  {
-				throw new System.NotSupportedException("this iterator does not support removing elements");
-			  }
-		  }
-	  }*/
 
         /// <summary>
         /// Returns a reader for merge. this method applies field updates if there are

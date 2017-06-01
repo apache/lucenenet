@@ -27,9 +27,9 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// Exposes <seealso cref="TermsEnum"/> API, merged from <seealso cref="TermsEnum"/> API of sub-segments.
-    /// this does a merge sort, by term text, of the sub-readers.
-    ///
+    /// Exposes <see cref="TermsEnum"/> API, merged from <see cref="TermsEnum"/> API of sub-segments.
+    /// This does a merge sort, by term text, of the sub-readers.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -70,8 +70,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns how many sub-reader slices contain the current </summary>
-        ///  term.  <seealso cref= #getMatchArray  </seealso>
+        /// Returns how many sub-reader slices contain the current 
+        /// term.</summary> 
+        /// <seealso cref="MatchArray"/>
         public int MatchCount
         {
             get
@@ -91,8 +92,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Sole constructor. </summary>
-        ///  <param name="slices"> Which sub-reader slices we should
-        ///  merge.  </param>
+        /// <param name="slices"> Which sub-reader slices we should
+        /// merge.</param>
         public MultiTermsEnum(ReaderSlice[] slices)
         {
             queue = new TermMergeQueue(slices.Length);
@@ -125,8 +126,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// The terms array must be newly created TermsEnum, ie
-        ///  <seealso cref="TermsEnum#next"/> has not yet been called.
+        /// The terms array must be newly created <see cref="TermsEnum"/>, ie
+        /// <see cref="TermsEnum.Next()"/> has not yet been called.
         /// </summary>
         public TermsEnum Reset(TermsEnumIndex[] termsEnumsIndex)
         {

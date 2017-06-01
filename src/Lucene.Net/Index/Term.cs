@@ -24,12 +24,12 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    ///  A Term represents a word from text.  this is the unit of search.  It is
-    ///  composed of two elements, the text of the word, as a string, and the name of
-    ///  the field that the text occurred in.
-    ///
-    ///  Note that terms may represent more than words from text fields, but also
-    ///  things like dates, email addresses, urls, etc.
+    /// A <see cref="Term"/> represents a word from text.  This is the unit of search.  It is
+    /// composed of two elements, the text of the word, as a string, and the name of
+    /// the field that the text occurred in.
+    /// <para/>
+    /// Note that terms may represent more than words from text fields, but also
+    /// things like dates, email addresses, urls, etc.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -37,14 +37,14 @@ namespace Lucene.Net.Index
     public sealed class Term : IComparable<Term>, IEquatable<Term> // LUCENENET specific - class implements IEquatable<T>
     {
         /// <summary>
-        /// Constructs a Term with the given field and bytes.
-        /// <p>Note that a null field or null bytes value results in undefined
+        /// Constructs a <see cref="Term"/> with the given field and bytes.
+        /// <para/>Note that a null field or null bytes value results in undefined
         /// behavior for most Lucene APIs that accept a Term parameter.
         ///
-        /// <p>WARNING: the provided BytesRef is not copied, but used directly.
+        /// <para/>WARNING: the provided <see cref="BytesRef"/> is not copied, but used directly.
         /// Therefore the bytes should not be modified after construction, for
-        /// example, you should clone a copy by <seealso cref="BytesRef#deepCopyOf"/>
-        /// rather than pass reused bytes from a TermsEnum.
+        /// example, you should clone a copy by <see cref="BytesRef.DeepCopyOf(BytesRef)"/>
+        /// rather than pass reused bytes from a <see cref="TermsEnum"/>.
         /// </summary>
         public Term(string fld, BytesRef bytes)
         {
@@ -53,9 +53,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Constructs a Term with the given field and text.
-        /// <p>Note that a null field or null text value results in undefined
-        /// behavior for most Lucene APIs that accept a Term parameter.
+        /// Constructs a <see cref="Term"/> with the given field and text.
+        /// <para/>Note that a <c>null</c> field or null text value results in undefined
+        /// behavior for most Lucene APIs that accept a <see cref="Term"/> parameter.
         /// </summary>
         public Term(string fld, string text)
             : this(fld, new BytesRef(text))
@@ -63,8 +63,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Constructs a Term with the given field and empty text.
-        /// this serves two purposes: 1) reuse of a Term with the same field.
+        /// Constructs a <see cref="Term"/> with the given field and empty text.
+        /// this serves two purposes: 1) reuse of a <see cref="Term"/> with the same field.
         /// 2) pattern for a query.
         /// </summary>
         /// <param name="fld"> field's name </param>
@@ -74,15 +74,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the field of this term.   The field indicates
-        ///  the part of a document which this term came from.
+        /// Returns the field of this term.  The field indicates
+        /// the part of a document which this term came from.
         /// </summary>
         public string Field { get; internal set; }
 
         /// <summary>
         /// Returns the text of this term.  In the case of words, this is simply the
-        ///  text of the word.  In the case of dates and other types, this is an
-        ///  encoding of the object as a string.
+        /// text of the word.  In the case of dates and other types, this is an
+        /// encoding of the object as a string.
         /// </summary>
         public string Text()
         {
@@ -129,10 +129,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Compares two terms, returning a negative integer if this
-        ///  term belongs before the argument, zero if this term is equal to the
-        ///  argument, and a positive integer if this term belongs after the argument.
-        ///
-        ///  The ordering of terms is first by field, then by text.
+        /// term belongs before the argument, zero if this term is equal to the
+        /// argument, and a positive integer if this term belongs after the argument.
+        /// <para/>
+        /// The ordering of terms is first by field, then by text.
         /// </summary>
         public int CompareTo(Term other)
         {
@@ -148,8 +148,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Resets the field and text of a Term.
-        /// <p>WARNING: the provided BytesRef is not copied, but used directly.
+        /// Resets the field and text of a <see cref="Term"/>.
+        /// <para/>WARNING: the provided <see cref="BytesRef"/> is not copied, but used directly.
         /// Therefore the bytes should not be modified after construction, for
         /// example, you should clone a copy rather than pass reused bytes from
         /// a TermsEnum.

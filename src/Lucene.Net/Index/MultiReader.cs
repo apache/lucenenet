@@ -21,22 +21,22 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// A <seealso cref="CompositeReader"/> which reads multiple indexes, appending
-    ///  their content. It can be used to create a view on several
-    ///  sub-readers (like <seealso cref="DirectoryReader"/>) and execute searches on it.
+    /// A <see cref="CompositeReader"/> which reads multiple indexes, appending
+    /// their content. It can be used to create a view on several
+    /// sub-readers (like <see cref="DirectoryReader"/>) and execute searches on it.
     ///
-    /// <p> For efficiency, in this API documents are often referred to via
+    /// <para/> For efficiency, in this API documents are often referred to via
     /// <i>document numbers</i>, non-negative integers which each name a unique
     /// document in the index.  These document numbers are ephemeral -- they may change
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
     ///
-    /// <p><a name="thread-safety"></a><p><b>NOTE</b>: {@link
-    /// IndexReader} instances are completely thread
+    /// <para/><a name="thread-safety"></a><b>NOTE</b>: 
+    /// <see cref="IndexReader"/> instances are completely thread
     /// safe, meaning multiple threads can call any of its methods,
     /// concurrently.  If your application requires external
     /// synchronization, you should <b>not</b> synchronize on the
-    /// <code>IndexReader</code> instance; use your own
+    /// <see cref="IndexReader"/> instance; use your own
     /// (non-Lucene) objects instead.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -47,8 +47,8 @@ namespace Lucene.Net.Index
         private readonly bool closeSubReaders;
 
         /// <summary>
-        /// <p>Construct a MultiReader aggregating the named set of (sub)readers.
-        /// <p>Note that all subreaders are closed if this Multireader is closed.</p> </summary>
+        /// <para>Construct a <see cref="MultiReader"/> aggregating the named set of (sub)readers.</para>
+        /// <para>Note that all subreaders are closed if this Multireader is closed.</para> </summary>
         /// <param name="subReaders"> set of (sub)readers </param>
         public MultiReader(params IndexReader[] subReaders)
             : this(subReaders, true)
@@ -56,10 +56,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// <p>Construct a MultiReader aggregating the named set of (sub)readers. </summary>
+        /// Construct a <see cref="MultiReader"/> aggregating the named set of (sub)readers. </summary>
         /// <param name="subReaders"> set of (sub)readers; this array will be cloned. </param>
-        /// <param name="closeSubReaders"> indicates whether the subreaders should be closed
-        /// when this MultiReader is closed </param>
+        /// <param name="closeSubReaders"> indicates whether the subreaders should be disposed
+        /// when this <see cref="MultiReader"/> is disposed </param>
         public MultiReader(IndexReader[] subReaders, bool closeSubReaders)
             : base((IndexReader[])subReaders.Clone())
         {

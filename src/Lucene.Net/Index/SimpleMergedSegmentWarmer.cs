@@ -35,8 +35,8 @@ namespace Lucene.Net.Index
         private readonly InfoStream infoStream;
 
         /// <summary>
-        /// Creates a new SimpleMergedSegmentWarmer </summary>
-        /// <param name="infoStream"> InfoStream to log statistics about warming. </param>
+        /// Creates a new <see cref="SimpleMergedSegmentWarmer"/> </summary>
+        /// <param name="infoStream"> <see cref="InfoStream"/> to log statistics about warming. </param>
         public SimpleMergedSegmentWarmer(InfoStream infoStream)
         {
             this.infoStream = infoStream;

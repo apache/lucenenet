@@ -23,42 +23,42 @@ namespace Lucene.Net.Index
     using IndexSearcher = Lucene.Net.Search.IndexSearcher;
 
     /// <summary>
-    /// Utility class to safely share <seealso cref="DirectoryReader"/> instances across
-    /// multiple threads, while periodically reopening. this class ensures each
-    /// reader is closed only once all threads have finished using it.
+    /// Utility class to safely share <see cref="DirectoryReader"/> instances across
+    /// multiple threads, while periodically reopening. This class ensures each
+    /// reader is disposed only once all threads have finished using it.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= SearcherManager
-    ///
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="SearcherManager"/>
     public sealed class ReaderManager : ReferenceManager<DirectoryReader>
     {
         /// <summary>
-        /// Creates and returns a new ReaderManager from the given
-        /// <seealso cref="IndexWriter"/>.
+        /// Creates and returns a new <see cref="ReaderManager"/> from the given
+        /// <see cref="IndexWriter"/>.
         /// </summary>
         /// <param name="writer">
-        ///          the IndexWriter to open the IndexReader from. </param>
+        ///          the <see cref="IndexWriter"/> to open the <see cref="IndexReader"/> from. </param>
         /// <param name="applyAllDeletes">
-        ///          If <code>true</code>, all buffered deletes will be applied (made
-        ///          visible) in the <seealso cref="IndexSearcher"/> / <seealso cref="DirectoryReader"/>.
-        ///          If <code>false</code>, the deletes may or may not be applied, but
-        ///          remain buffered (in IndexWriter) so that they will be applied in
+        ///          If <c>true</c>, all buffered deletes will be applied (made
+        ///          visible) in the <see cref="IndexSearcher"/> / <see cref="DirectoryReader"/>.
+        ///          If <c>false</c>, the deletes may or may not be applied, but
+        ///          remain buffered (in <see cref="IndexWriter"/>) so that they will be applied in
         ///          the future. Applying deletes can be costly, so if your app can
         ///          tolerate deleted documents being returned you might gain some
-        ///          performance by passing <code>false</code>. See
-        ///          <seealso cref="DirectoryReader#openIfChanged(DirectoryReader, IndexWriter, boolean)"/>.
+        ///          performance by passing <c>false</c>. See
+        ///          <see cref="DirectoryReader.OpenIfChanged(DirectoryReader, IndexWriter, bool)"/>.
         /// </param>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
         public ReaderManager(IndexWriter writer, bool applyAllDeletes)
         {
             Current = DirectoryReader.Open(writer, applyAllDeletes);
         }
 
         /// <summary>
-        /// Creates and returns a new ReaderManager from the given <seealso cref="Directory"/>. </summary>
-        /// <param name="dir"> the directory to open the DirectoryReader on.
+        /// Creates and returns a new <see cref="ReaderManager"/> from the given <see cref="Directory"/>. </summary>
+        /// <param name="dir"> the directory to open the <see cref="DirectoryReader"/> on.
         /// </param>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
         public ReaderManager(Directory dir)
         {
             Current = DirectoryReader.Open(dir);

@@ -24,9 +24,9 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Exposes multi-valued view over a single-valued instance.
-    /// <p>
-    /// this can be used if you want to have one multi-valued implementation
-    /// against e.g. FieldCache.getDocTermOrds that also works for single-valued
+    /// <para/>
+    /// This can be used if you want to have one multi-valued implementation
+    /// against e.g. <see cref="Search.IFieldCache.GetDocTermOrds(AtomicReader, string)"/> that also works for single-valued
     /// fields.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
         private bool set;
 
         /// <summary>
-        /// Creates a multi-valued view over the provided SortedDocValues </summary>
+        /// Creates a multi-valued view over the provided <see cref="Index.SortedDocValues"/> </summary>
         public SingletonSortedSetDocValues(SortedDocValues @in)
         {
             this.@in = @in;
@@ -47,7 +47,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the wrapped <seealso cref="SortedDocValues"/> </summary>
+        /// Return the wrapped <see cref="Index.SortedDocValues"/> </summary>
         public SortedDocValues SortedDocValues
         {
             get

@@ -24,12 +24,12 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// Maintains a <seealso cref="IndexReader"/> <seealso cref="TermState"/> view over
-    /// <seealso cref="IndexReader"/> instances containing a single term. The
-    /// <seealso cref="TermContext"/> doesn't track if the given <seealso cref="TermState"/>
-    /// objects are valid, neither if the <seealso cref="TermState"/> instances refer to the
+    /// Maintains a <see cref="IndexReader"/> <see cref="TermState"/> view over
+    /// <see cref="IndexReader"/> instances containing a single term. The
+    /// <see cref="TermContext"/> doesn't track if the given <see cref="TermState"/>
+    /// objects are valid, neither if the <see cref="TermState"/> instances refer to the
     /// same terms in the associated readers.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -38,11 +38,11 @@ namespace Lucene.Net.Index
     public sealed class TermContext
     {
         /// <summary>
-        /// Holds the <seealso cref="IndexReaderContext"/> of the top-level
-        ///  <seealso cref="IndexReader"/>, used internally only for
-        ///  asserting.
-        ///
-        ///  @lucene.internal
+        /// Holds the <see cref="IndexReaderContext"/> of the top-level
+        /// <see cref="IndexReader"/>, used internally only for
+        /// asserting.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
         public IndexReaderContext TopReaderContext { get; private set; }
 
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
         //public static boolean DEBUG = BlockTreeTermsWriter.DEBUG;
 
         /// <summary>
-        /// Creates an empty <seealso cref="TermContext"/> from a <seealso cref="IndexReaderContext"/>
+        /// Creates an empty <see cref="TermContext"/> from a <see cref="IndexReaderContext"/>
         /// </summary>
         public TermContext(IndexReaderContext context)
         {
@@ -73,8 +73,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates a <seealso cref="TermContext"/> with an initial <seealso cref="TermState"/>,
-        /// <seealso cref="IndexReader"/> pair.
+        /// Creates a <see cref="TermContext"/> with an initial <see cref="TermState"/>,
+        /// <see cref="IndexReader"/> pair.
         /// </summary>
         public TermContext(IndexReaderContext context, TermState state, int ord, int docFreq, long totalTermFreq)
             : this(context)
@@ -83,11 +83,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates a <seealso cref="TermContext"/> from a top-level <seealso cref="IndexReaderContext"/> and the
-        /// given <seealso cref="Term"/>. this method will lookup the given term in all context's leaf readers
-        /// and register each of the readers containing the term in the returned <seealso cref="TermContext"/>
+        /// Creates a <see cref="TermContext"/> from a top-level <see cref="IndexReaderContext"/> and the
+        /// given <see cref="Term"/>. this method will lookup the given term in all context's leaf readers
+        /// and register each of the readers containing the term in the returned <see cref="TermContext"/>
         /// using the leaf reader's ordinal.
-        /// <p>
+        /// <para/>
         /// Note: the given context must be a top-level context.
         /// </summary>
         public static TermContext Build(IndexReaderContext context, Term term)
@@ -120,8 +120,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Clears the <seealso cref="TermContext"/> internal state and removes all
-        /// registered <seealso cref="TermState"/>s
+        /// Clears the <see cref="TermContext"/> internal state and removes all
+        /// registered <see cref="TermState"/>s
         /// </summary>
         public void Clear()
         {
@@ -130,8 +130,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Registers and associates a <seealso cref="TermState"/> with an leaf ordinal. The leaf ordinal
-        /// should be derived from a <seealso cref="IndexReaderContext"/>'s leaf ord.
+        /// Registers and associates a <see cref="TermState"/> with an leaf ordinal. The leaf ordinal
+        /// should be derived from a <see cref="IndexReaderContext"/>'s leaf ord.
         /// </summary>
         public void Register(TermState state, int ord, int docFreq, long totalTermFreq)
         {
@@ -151,13 +151,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="TermState"/> for an leaf ordinal or <code>null</code> if no
-        /// <seealso cref="TermState"/> for the ordinal was registered.
+        /// Returns the <see cref="TermState"/> for an leaf ordinal or <c>null</c> if no
+        /// <see cref="TermState"/> for the ordinal was registered.
         /// </summary>
         /// <param name="ord">
-        ///          the readers leaf ordinal to get the <seealso cref="TermState"/> for. </param>
-        /// <returns> the <seealso cref="TermState"/> for the given readers ord or <code>null</code> if no
-        ///         <seealso cref="TermState"/> for the reader was registered </returns>
+        ///          The readers leaf ordinal to get the <see cref="TermState"/> for. </param>
+        /// <returns> The <see cref="TermState"/> for the given readers ord or <c>null</c> if no
+        ///         <see cref="TermState"/> for the reader was registered </returns>
         public TermState Get(int ord)
         {
             Debug.Assert(ord >= 0 && ord < states.Length);
@@ -165,10 +165,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        ///  Returns the accumulated term frequency of all <seealso cref="TermState"/>
-        ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </summary>
-        /// <returns> the accumulated term frequency of all <seealso cref="TermState"/>
-        ///         instances passed to <seealso cref="#register(TermState, int, int, long)"/>. </returns>
+        ///  Returns the accumulated term frequency of all <see cref="TermState"/>
+        ///         instances passed to <see cref="Register(TermState, int, int, long)"/>. </summary>
+        /// <returns> the accumulated term frequency of all <see cref="TermState"/>
+        ///         instances passed to <see cref="Register(TermState, int, int, long)"/>. </returns>
         public long TotalTermFreq
         {
             get { return totalTermFreq; }
@@ -176,11 +176,12 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// expert: only available for queries that want to lie about docfreq
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public int DocFreq
         {
-            set
+            internal set
             {
                 this.docFreq = value;
             }

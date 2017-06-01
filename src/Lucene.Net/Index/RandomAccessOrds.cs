@@ -20,12 +20,12 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Extension of <seealso cref="SortedSetDocValues"/> that supports random access
+    /// Extension of <see cref="SortedSetDocValues"/> that supports random access
     /// to the ordinals of a document.
-    /// <p>
-    /// Operations via this API are independent of the iterator api (<seealso cref="#nextOrd()"/>)
+    /// <para/>
+    /// Operations via this API are independent of the iterator api (<see cref="SortedSetDocValues.NextOrd()"/>)
     /// and do not impact its state.
-    /// <p>
+    /// <para/>
     /// Codecs can optionally extend this API if they support constant-time access
     /// to ordinals for the document.
     /// </summary>
@@ -44,10 +44,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Retrieve the ordinal for the current document (previously
-        /// set by <seealso cref="#setDocument(int)"/> at the specified index.
-        /// <p>
-        /// An index ranges from {@code 0} to {@code cardinality()-1}.
-        /// The first ordinal value is at index {@code 0}, the next at index {@code 1},
+        /// set by <see cref="SortedSetDocValues.SetDocument(int)"/> at the specified index.
+        /// <para/>
+        /// An index ranges from <c>0</c> to <c>Cardinality()-1</c>.
+        /// The first ordinal value is at index <c>0</c>, the next at index <c>1</c>,
         /// and so on, as for array indexing. </summary>
         /// <param name="index"> index of the ordinal for the document. </param>
         /// <returns> ordinal for the document at the specified index. </returns>
@@ -55,7 +55,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the cardinality for the current document (previously
-        /// set by <seealso cref="#setDocument(int)"/>.
+        /// set by <see cref="SortedSetDocValues.SetDocument(int)"/>.
         /// </summary>
         public abstract int Cardinality();
     }

@@ -34,30 +34,30 @@ namespace Lucene.Net.Index
     //using AlreadySetException = Lucene.Net.Util.SetOnce.AlreadySetException;
 
     /// <summary>
-    /// <p>Expert: a MergePolicy determines the sequence of
-    /// primitive merge operations.</p>
+    /// <para>Expert: a <see cref="MergePolicy"/> determines the sequence of
+    /// primitive merge operations.</para>
     ///
-    /// <p>Whenever the segments in an index have been altered by
-    /// <seealso cref="IndexWriter"/>, either the addition of a newly
+    /// <para>Whenever the segments in an index have been altered by
+    /// <see cref="IndexWriter"/>, either the addition of a newly
     /// flushed segment, addition of many segments from
-    /// addIndexes* calls, or a previous merge that may now need
-    /// to cascade, <seealso cref="IndexWriter"/> invokes {@link
-    /// #findMerges} to give the MergePolicy a chance to pick
-    /// merges that are now required.  this method returns a
-    /// <seealso cref="MergeSpecification"/> instance describing the set of
+    /// AddIndexes* calls, or a previous merge that may now need
+    /// to cascade, <see cref="IndexWriter"/> invokes <see cref="FindMerges(MergeTrigger, SegmentInfos)"/>
+    /// to give the <see cref="MergePolicy"/> a chance to pick
+    /// merges that are now required.  This method returns a
+    /// <see cref="MergeSpecification"/> instance describing the set of
     /// merges that should be done, or null if no merges are
-    /// necessary.  When IndexWriter.forceMerge is called, it calls
-    /// <seealso cref="#findForcedMerges(SegmentInfos,int,Map)"/> and the MergePolicy should
-    /// then return the necessary merges.</p>
+    /// necessary.  When <see cref="IndexWriter.ForceMerge(int)"/> is called, it calls
+    /// <see cref="FindForcedMerges(SegmentInfos, int, IDictionary{SegmentCommitInfo, bool?})"/> and the <see cref="MergePolicy"/> should
+    /// then return the necessary merges.</para>
     ///
-    /// <p>Note that the policy can return more than one merge at
-    /// a time.  In this case, if the writer is using {@link
-    /// SerialMergeScheduler}, the merges will be run
-    /// sequentially but if it is using {@link
-    /// ConcurrentMergeScheduler} they will be run concurrently.</p>
+    /// <para>Note that the policy can return more than one merge at
+    /// a time.  In this case, if the writer is using 
+    /// <see cref="SerialMergeScheduler"/>, the merges will be run
+    /// sequentially but if it is using
+    /// <see cref="ConcurrentMergeScheduler"/> they will be run concurrently.</para>
     ///
-    /// <p>The default MergePolicy is {@link
-    /// TieredMergePolicy}.</p>
+    /// <para>The default MergePolicy is
+    /// <see cref="TieredMergePolicy"/>.</para>
     ///
     /// @lucene.experimental
     /// </summary>
@@ -131,7 +131,6 @@ namespace Lucene.Net.Index
             /// Estimated size in bytes of the merged segment. </summary>
             public long EstimatedMergeBytes { get; internal set; } // used by IndexWriter // LUCENENET NOTE: original was volatile, but long cannot be in .NET
 
-
             // Sum of sizeInBytes of all SegmentInfos; set by IW.mergeInit
             internal long totalMergeBytes; // LUCENENET NOTE: original was volatile, but long cannot be in .NET
 
@@ -172,8 +171,8 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Expert: Get the list of readers to merge. Note that this list does not
             ///  necessarily match the list of segments to merge and should only be used
-            ///  to feed SegmentMerger to initialize a merge. When a <seealso cref="OneMerge"/>
-            ///  reorders doc IDs, it must override <seealso cref="#getDocMap"/> too so that
+            ///  to feed SegmentMerger to initialize a merge. When a <see cref="OneMerge"/>
+            ///  reorders doc IDs, it must override <see cref="GetDocMap"/> too so that
             ///  deletes that happened during the merge can be applied to the newly
             ///  merged segment.
             /// </summary>
@@ -195,7 +194,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Expert: Sets the <seealso cref="SegmentCommitInfo"/> of this <seealso cref="OneMerge"/>.
+            /// Expert: Sets the <see cref="SegmentCommitInfo"/> of this <see cref="OneMerge"/>.
             /// Allows sub-classes to e.g. set diagnostics properties.
             /// </summary>
             public virtual SegmentCommitInfo Info
@@ -211,11 +210,11 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Expert: If <seealso cref="#getMergeReaders()"/> reorders document IDs, this method
-            ///  must be overridden to return a mapping from the <i>natural</i> doc ID
-            ///  (the doc ID that would result from a natural merge) to the actual doc
-            ///  ID. this mapping is used to apply deletions that happened during the
-            ///  merge to the new segment.
+            /// Expert: If <see cref="GetMergeReaders()"/> reorders document IDs, this method
+            /// must be overridden to return a mapping from the <i>natural</i> doc ID
+            /// (the doc ID that would result from a natural merge) to the actual doc
+            /// ID. This mapping is used to apply deletions that happened during the
+            /// merge to the new segment.
             /// </summary>
             public virtual DocMap GetDocMap(MergeState mergeState)
             {
@@ -239,7 +238,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Record that an exception occurred while executing
-            ///  this merge
+            /// this merge
             /// </summary>
             internal virtual Exception Exception
             {
@@ -261,8 +260,8 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Mark this merge as aborted.  If this is called
-            ///  before the merge is committed then the merge will
-            ///  not be committed.
+            /// before the merge is committed then the merge will
+            /// not be committed.
             /// </summary>
             internal virtual void Abort()
             {
@@ -274,7 +273,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Returns true if this merge was aborted. </summary>
+            /// Returns <c>true</c> if this merge was aborted. </summary>
             internal virtual bool IsAborted
             {
                 get
@@ -287,8 +286,8 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Called periodically by <seealso cref="IndexWriter"/> while
-            ///  merging to see if the merge is aborted.
+            /// Called periodically by <see cref="IndexWriter"/> while
+            /// merging to see if the merge is aborted.
             /// </summary>
             public virtual void CheckAborted(Directory dir)
             {
@@ -325,8 +324,8 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Set or clear whether this merge is paused paused (for example
-            ///  <seealso cref="ConcurrentMergeScheduler"/> will pause merges
-            ///  if too many are running).
+            /// <see cref="ConcurrentMergeScheduler"/> will pause merges
+            /// if too many are running).
             /// </summary>
             internal virtual void SetPause(bool paused)
             {
@@ -342,7 +341,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Returns true if this merge is paused.
+            /// Returns <c>true</c> if this merge is paused.
             /// </summary>
             /// <seealso cref="SetPause(bool)"/>
             internal virtual bool IsPaused
@@ -358,7 +357,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns a readable description of the current merge
-            ///  state.
+            /// state.
             /// </summary>
             public virtual string SegString(Directory dir)
             {
@@ -390,8 +389,8 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Returns the total size in bytes of this merge. Note that this does not
             /// indicate the size of the merged segment, but the
-            /// input total size. this is only set once the merge is
-            /// initialized by IndexWriter.
+            /// input total size. This is only set once the merge is
+            /// initialized by <see cref="IndexWriter"/>.
             /// </summary>
             public virtual long TotalBytesSize
             {
@@ -401,7 +400,6 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Returns the total number of documents that are included with this merge.
             /// Note that this does not indicate the number of documents after the merge.
-            ///
             /// </summary>
             public virtual int TotalNumDocs
             {
@@ -417,7 +415,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Return <seealso cref="MergeInfo"/> describing this merge. </summary>
+            /// Return <see cref="Store.MergeInfo"/> describing this merge. </summary>
             public virtual MergeInfo MergeInfo
             {
                 get
@@ -428,9 +426,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// A MergeSpecification instance provides the information
+        /// A <see cref="MergeSpecification"/> instance provides the information
         /// necessary to perform multiple merges.  It simply
-        /// contains a list of <seealso cref="OneMerge"/> instances.
+        /// contains a list of <see cref="OneMerge"/> instances.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -440,12 +438,11 @@ namespace Lucene.Net.Index
             /// <summary>
             /// The subset of segments to be included in the primitive merge.
             /// </summary>
-
             public IList<OneMerge> Merges { get; private set; }
 
             /// <summary>
-            /// Sole constructor.  Use {@link
-            ///  #add(MergePolicy.OneMerge)} to add merges.
+            /// Sole constructor.  Use 
+            /// <see cref="Add(OneMerge)"/> to add merges.
             /// </summary>
             public MergeSpecification()
             {
@@ -453,8 +450,8 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Adds the provided <seealso cref="OneMerge"/> to this
-            ///  specification.
+            /// Adds the provided <see cref="OneMerge"/> to this
+            /// specification.
             /// </summary>
             public virtual void Add(OneMerge merge)
             {
@@ -463,7 +460,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns a description of the merges in this
-            ///  specification.
+            /// specification.
             /// </summary>
             public virtual string SegString(Directory dir)
             {
@@ -480,7 +477,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Exception thrown if there are any problems while
-        ///  executing a merge.
+        /// executing a merge.
         /// </summary>
         // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE
@@ -525,8 +522,8 @@ namespace Lucene.Net.Index
 #endif
 
             /// <summary>
-            /// Returns the <seealso cref="Directory"/> of the index that hit
-            ///  the exception.
+            /// Returns the <see cref="Store.Directory"/> of the index that hit
+            /// the exception.
             /// </summary>
             public virtual Directory Directory
             {
@@ -539,9 +536,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Thrown when a merge was explicity aborted because
-        ///  <seealso cref="IndexWriter#close(boolean)"/> was called with
-        ///  <code>false</code>.  Normally this exception is
-        ///  privately caught and suppresed by <seealso cref="IndexWriter"/>.
+        /// <see cref="IndexWriter.Dispose(bool)"/> was called with
+        /// <c>false</c>.  Normally this exception is
+        /// privately caught and suppresed by <see cref="IndexWriter"/>.
         /// </summary>
         // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE
@@ -550,15 +547,15 @@ namespace Lucene.Net.Index
         public class MergeAbortedException : System.IO.IOException
         {
             /// <summary>
-            /// Create a <seealso cref="MergeAbortedException"/>. </summary>
+            /// Create a <see cref="MergeAbortedException"/>. </summary>
             public MergeAbortedException()
                 : base("merge is aborted")
             {
             }
 
             /// <summary>
-            /// Create a <seealso cref="MergeAbortedException"/> with a
-            ///  specified message.
+            /// Create a <see cref="MergeAbortedException"/> with a
+            /// specified message.
             /// </summary>
             public MergeAbortedException(string message)
                 : base(message)
@@ -579,30 +576,30 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Default ratio for compound file system usage. Set to <tt>1.0</tt>, always use
+        /// Default ratio for compound file system usage. Set to <c>1.0</c>, always use
         /// compound file system.
         /// </summary>
         protected static readonly double DEFAULT_NO_CFS_RATIO = 1.0;
 
         /// <summary>
-        /// Default max segment size in order to use compound file system. Set to <seealso cref="Long#MAX_VALUE"/>.
+        /// Default max segment size in order to use compound file system. Set to <see cref="long.MaxValue"/>.
         /// </summary>
         protected static readonly long DEFAULT_MAX_CFS_SEGMENT_SIZE = long.MaxValue;
 
         /// <summary>
-        /// <seealso cref="IndexWriter"/> that contains this instance. </summary>
+        /// <see cref="IndexWriter"/> that contains this instance. </summary>
         protected SetOnce<IndexWriter> m_writer;
 
         /// <summary>
         /// If the size of the merge segment exceeds this ratio of
-        ///  the total index size then it will remain in
-        ///  non-compound format
+        /// the total index size then it will remain in
+        /// non-compound format
         /// </summary>
         protected double m_noCFSRatio = DEFAULT_NO_CFS_RATIO;
 
         /// <summary>
         /// If the size of the merged segment exceeds
-        ///  this value then it will not use compound file format.
+        /// this value then it will not use compound file format.
         /// </summary>
         protected long m_maxCFSSegmentSize = DEFAULT_MAX_CFS_SEGMENT_SIZE;
 
@@ -617,8 +614,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Creates a new merge policy instance. Note that if you intend to use it
-        /// without passing it to <seealso cref="IndexWriter"/>, you should call
-        /// <seealso cref="#setIndexWriter(IndexWriter)"/>.
+        /// without passing it to <see cref="IndexWriter"/>, you should call
+        /// <see cref="SetIndexWriter(IndexWriter)"/>.
         /// </summary>
         public MergePolicy()
             : this(DEFAULT_NO_CFS_RATIO, DEFAULT_MAX_CFS_SEGMENT_SIZE)
@@ -626,9 +623,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Creates a new merge policy instance with default settings for noCFSRatio
-        /// and maxCFSSegmentSize. this ctor should be used by subclasses using different
-        /// defaults than the <seealso cref="MergePolicy"/>
+        /// Creates a new merge policy instance with default settings for <see cref="m_noCFSRatio"/>
+        /// and <see cref="m_maxCFSSegmentSize"/>. This ctor should be used by subclasses using different
+        /// defaults than the <see cref="MergePolicy"/>
         /// </summary>
         protected MergePolicy(double defaultNoCFSRatio, long defaultMaxCFSSegmentSize)
         {
@@ -638,11 +635,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Sets the <seealso cref="IndexWriter"/> to use by this merge policy. this method is
-        /// allowed to be called only once, and is usually set by IndexWriter. If it is
-        /// called more than once, <seealso cref="AlreadySetException"/> is thrown.
+        /// Sets the <see cref="IndexWriter"/> to use by this merge policy. This method is
+        /// allowed to be called only once, and is usually set by <see cref="IndexWriter"/>. If it is
+        /// called more than once, <see cref="AlreadySetException"/> is thrown.
         /// </summary>
-        /// <seealso cref= SetOnce </seealso>
+        /// <seealso cref="SetOnce{T}"/>
         public virtual void SetIndexWriter(IndexWriter writer)
         {
             this.m_writer.Set(writer);
@@ -651,7 +648,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Determine what set of merge operations are now necessary on the index.
         /// <see cref="IndexWriter"/> calls this whenever there is a change to the segments.
-        /// this call is always synchronized on the <see cref="IndexWriter"/> instance so
+        /// This call is always synchronized on the <see cref="IndexWriter"/> instance so
         /// only one thread at a time will call this method. </summary>
         /// <param name="mergeTrigger"> the event that triggered the merge </param>
         /// <param name="segmentInfos">
@@ -661,20 +658,20 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Determine what set of merge operations is necessary in
         /// order to merge to &lt;= the specified segment count. <see cref="IndexWriter"/> calls this when its
-        /// <see cref="IndexWriter.ForceMerge"/> method is called. this call is always
+        /// <see cref="IndexWriter.ForceMerge(int, bool)"/> method is called. This call is always
         /// synchronized on the <see cref="IndexWriter"/> instance so only one thread at a
         /// time will call this method.
         /// </summary>
         /// <param name="segmentInfos">
-        ///          the total set of segments in the index </param>
+        ///          The total set of segments in the index </param>
         /// <param name="maxSegmentCount">
-        ///          requested maximum number of segments in the index (currently this
+        ///          Requested maximum number of segments in the index (currently this
         ///          is always 1) </param>
         /// <param name="segmentsToMerge">
-        ///          contains the specific SegmentInfo instances that must be merged
-        ///          away. this may be a subset of all
-        ///          SegmentInfos.  If the value is True for a
-        ///          given SegmentInfo, that means this segment was
+        ///          Contains the specific <see cref="SegmentInfo"/> instances that must be merged
+        ///          away. This may be a subset of all
+        ///          SegmentInfos.  If the value is <c>true</c> for a
+        ///          given <see cref="SegmentInfo"/>, that means this segment was
         ///          an original segment present in the
         ///          to-be-merged index; else, it was a segment
         ///          produced by a cascaded merge. </param>
@@ -704,11 +701,11 @@ namespace Lucene.Net.Index
         protected abstract void Dispose(bool disposing);
 
         /// <summary>
-        /// Returns true if a new segment (regardless of its origin) should use the
-        /// compound file format. The default implementation returns <code>true</code>
+        /// Returns <c>true</c> if a new segment (regardless of its origin) should use the
+        /// compound file format. The default implementation returns <c>true</c>
         /// iff the size of the given mergedInfo is less or equal to
-        /// <seealso cref="#getMaxCFSSegmentSizeMB()"/> and the size is less or equal to the
-        /// TotalIndexSize * <seealso cref="#getNoCFSRatio()"/> otherwise <code>false</code>.
+        /// <see cref="MaxCFSSegmentSizeMB"/> and the size is less or equal to the
+        /// TotalIndexSize * <see cref="NoCFSRatio"/> otherwise <code>false</code>.
         /// </summary>
         public virtual bool UseCompoundFile(SegmentInfos infos, SegmentCommitInfo mergedInfo)
         {
@@ -734,9 +731,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the byte size of the provided {@link
-        ///  SegmentCommitInfo}, pro-rated by percentage of
-        ///  non-deleted documents is set.
+        /// Return the byte size of the provided 
+        /// <see cref="SegmentCommitInfo"/>, pro-rated by percentage of
+        /// non-deleted documents is set.
         /// </summary>
         protected virtual long Size(SegmentCommitInfo info)
         {
@@ -748,9 +745,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if this single info is already fully merged (has no
-        ///  pending deletes, is in the same dir as the
-        ///  writer, and matches the current compound file setting
+        /// Returns <c>true</c> if this single info is already fully merged (has no
+        /// pending deletes, is in the same dir as the
+        /// writer, and matches the current compound file setting
         /// </summary>
         protected bool IsMerged(SegmentInfos infos, SegmentCommitInfo info)
         {
@@ -766,9 +763,14 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns current {@code noCFSRatio}.
+        /// Gets or Sets current <see cref="m_noCFSRatio"/>.
+        /// <para/>
+        /// If a merged segment will be more than this percentage
+        /// of the total size of the index, leave the segment as
+        /// non-compound file even if compound file is enabled.
+        /// Set to 1.0 to always use CFS regardless of merge
+        /// size.
         /// </summary>
-        ///  <seealso cref= #setNoCFSRatio  </seealso>
         public double NoCFSRatio
         {
             get
@@ -786,7 +788,14 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the largest size allowed for a compound file segment </summary>
+        /// Gets or Sets the largest size allowed for a compound file segment.
+        /// <para/>
+        /// If a merged segment will be more than this value,
+        /// leave the segment as
+        /// non-compound file even if compound file is enabled.
+        /// Set this to <see cref="double.PositiveInfinity"/> (default) and <see cref="NoCFSRatio"/> to 1.0
+        /// to always use CFS regardless of merge size.
+        /// </summary>
         public double MaxCFSSegmentSizeMB
         {
             get

@@ -156,9 +156,10 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Called once per field per document if term vectors
-        ///  are enabled, to write the vectors to
-        ///  RAMOutputStream, which is then quickly flushed to
-        ///  the real term vectors files in the Directory. 	  /// </summary>
+        /// are enabled, to write the vectors to
+        /// RAMOutputStream, which is then quickly flushed to
+        /// the real term vectors files in the Directory. 	  
+        /// </summary>
         internal override void Finish()
         {
             if (!doVectors || termsHashPerField.bytesHash.Count == 0)

@@ -28,7 +28,7 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Exposes flex API, merged from flex API of
     /// sub-segments.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -47,9 +47,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Sole constructor.
         /// </summary>
-        /// <param name="subs"> The <seealso cref="Terms"/> instances of all sub-readers. </param>
-        /// <param name="subSlices"> A parallel array (matching {@code
-        ///        subs}) describing the sub-reader slices. </param>
+        /// <param name="subs"> The <see cref="Terms"/> instances of all sub-readers. </param>
+        /// <param name="subSlices"> A parallel array (matching 
+        ///        <paramref name="subs"/>) describing the sub-reader slices. </param>
         public MultiTerms(Terms[] subs, ReaderSlice[] subSlices)
         {
             this.subs = subs;
