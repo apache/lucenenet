@@ -26,8 +26,8 @@ namespace Lucene.Net.Analysis.Ar
     /// <para/>
     /// Stemming is defined as:
     /// <list type="bullet">
-    ///     <item> Removal of attached definite article, conjunction, and prepositions.</item>
-    ///     <item> Stemming of common suffixes.</item>
+    ///     <item><description> Removal of attached definite article, conjunction, and prepositions.</description></item>
+    ///     <item><description> Stemming of common suffixes.</description></item>
     /// </list>
     /// </summary>
     public class ArabicStemmer

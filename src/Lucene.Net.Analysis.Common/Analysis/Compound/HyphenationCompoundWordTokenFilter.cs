@@ -34,9 +34,9 @@ namespace Lucene.Net.Analysis.Compound
     /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
     /// <see cref="CompoundWordTokenFilterBase"/>:
     /// <list type="bullet">
-    ///     <item>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
+    ///     <item><description>As of 3.1, CompoundWordTokenFilterBase correctly handles Unicode 4.0
     ///     supplementary characters in strings and char arrays provided as compound word
-    ///     dictionaries.</item>
+    ///     dictionaries.</description></item>
     /// </list>
     /// </para>
     /// </summary>

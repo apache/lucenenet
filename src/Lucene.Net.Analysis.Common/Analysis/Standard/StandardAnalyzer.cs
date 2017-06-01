@@ -30,17 +30,17 @@ namespace Lucene.Net.Analysis.Standard
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="StandardAnalyzer"/>:
     /// <list type="bullet">
-    ///   <item> As of 3.4, Hiragana and Han characters are no longer wrongly split
+    ///   <item><description> As of 3.4, Hiragana and Han characters are no longer wrongly split
     ///        from their combining characters. If you use a previous version number,
-    ///        you get the exact broken behavior for backwards compatibility.</item>
-    ///   <item> As of 3.1, <see cref="StandardTokenizer"/> implements Unicode text segmentation,
+    ///        you get the exact broken behavior for backwards compatibility.</description></item>
+    ///   <item><description> As of 3.1, <see cref="StandardTokenizer"/> implements Unicode text segmentation,
     ///        and <see cref="StopFilter"/> correctly handles Unicode 4.0 supplementary characters
     ///        in stopwords.  <see cref="ClassicTokenizer"/> and <see cref="ClassicAnalyzer"/> 
     ///        are the pre-3.1 implementations of <see cref="StandardTokenizer"/> and
-    ///        <see cref="StandardAnalyzer"/>.</item>
-    ///   <item> As of 2.9, <see cref="StopFilter"/> preserves position increments</item>
-    ///   <item> As of 2.4, <see cref="Token"/>s incorrectly identified as acronyms
-    ///        are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</item>
+    ///        <see cref="StandardAnalyzer"/>.</description></item>
+    ///   <item><description> As of 2.9, <see cref="StopFilter"/> preserves position increments</description></item>
+    ///   <item><description> As of 2.4, <see cref="Token"/>s incorrectly identified as acronyms
+    ///        are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</description></item>
     /// </list>
     /// </para>
     /// </summary>

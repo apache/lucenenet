@@ -31,15 +31,15 @@ namespace Lucene.Net.Facet.Taxonomy
     /// A TaxonomyReader holds a list of categories. Each category has a serial
     /// number which we call an "ordinal", and a hierarchical "path" name:
     /// <list type="bullet">
-    /// <item>
+    /// <item><description>
     /// The ordinal is an integer that starts at 0 for the first category (which is
     /// always the root category), and grows contiguously as more categories are
     /// added; Note that once a category is added, it can never be deleted.
-    /// </item>
-    /// <item>
+    /// </description></item>
+    /// <item><description>
     /// The path is a CategoryPath object specifying the category's position in the
     /// hierarchy.
-    /// </item>
+    /// </description></item>
     /// </list>
     /// </para>
     /// <b>Notes about concurrent access to the taxonomy:</b>

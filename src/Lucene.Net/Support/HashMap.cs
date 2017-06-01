@@ -57,15 +57,15 @@ namespace Lucene.Net.Support
     /// <remarks>
     /// <h2>Unordered Dictionaries</h2>
     /// <list type="bullet">
-    ///     <item><see cref="Dictionary{TKey, TValue}"/> - use when order is not important and all keys are non-null.</item>
-    ///     <item><see cref="HashMap{TKey, TValue}"/> - use when order is not important and support for a null key is required.</item>
+    ///     <item><description><see cref="Dictionary{TKey, TValue}"/> - use when order is not important and all keys are non-null.</description></item>
+    ///     <item><description><see cref="HashMap{TKey, TValue}"/> - use when order is not important and support for a null key is required.</description></item>
     /// </list>
     /// <h2>Ordered Dictionaries</h2>
     /// <list type="bullet">
-    ///     <item><see cref="LinkedHashMap{TKey, TValue}"/> - use when you need to preserve entry insertion order. Keys are nullable.</item>
-    ///     <item><see cref="SortedDictionary{TKey, TValue}"/> - use when you need natural sort order. Keys must be unique.</item>
-    ///     <item><see cref="TreeDictionary{K, V}"/> - use when you need natural sort order. Keys may contain duplicates.</item>
-    ///     <item><see cref="LurchTable{TKey, TValue}"/> - use when you need to sort by most recent access or most recent update. Works well for LRU caching.</item>
+    ///     <item><description><see cref="LinkedHashMap{TKey, TValue}"/> - use when you need to preserve entry insertion order. Keys are nullable.</description></item>
+    ///     <item><description><see cref="SortedDictionary{TKey, TValue}"/> - use when you need natural sort order. Keys must be unique.</description></item>
+    ///     <item><description><see cref="TreeDictionary{K, V}"/> - use when you need natural sort order. Keys may contain duplicates.</description></item>
+    ///     <item><description><see cref="LurchTable{TKey, TValue}"/> - use when you need to sort by most recent access or most recent update. Works well for LRU caching.</description></item>
     /// </list>
     /// </remarks>
 #if FEATURE_SERIALIZABLE

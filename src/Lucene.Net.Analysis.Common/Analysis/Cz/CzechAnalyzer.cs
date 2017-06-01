@@ -38,10 +38,10 @@ namespace Lucene.Net.Analysis.Cz
     /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
     /// <see cref="CzechAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item>As of 3.1, words are stemmed with <see cref="CzechStemFilter"/></item>
-    ///     <item>As of 2.9, StopFilter preserves position increments</item>
-    ///     <item>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
-    ///     <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</item>
+    ///     <item><description>As of 3.1, words are stemmed with <see cref="CzechStemFilter"/></description></item>
+    ///     <item><description>As of 2.9, StopFilter preserves position increments</description></item>
+    ///     <item><description>As of 2.4, Tokens incorrectly identified as acronyms are corrected (see
+    ///     <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</description></item>
     /// </list>
     /// </para>
     /// </summary>

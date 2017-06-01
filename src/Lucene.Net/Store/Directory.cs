@@ -31,9 +31,9 @@ namespace Lucene.Net.Store
     /// .NET's i/o APIs not used directly, but rather all i/o is
     /// through this API.  This permits things such as: 
     /// <list type="bullet">
-    ///     <item> implementation of RAM-based indices;</item>
-    ///     <item> implementation indices stored in a database;</item>
-    ///     <item> implementation of an index as a single file;</item>
+    ///     <item><description> implementation of RAM-based indices;</description></item>
+    ///     <item><description> implementation indices stored in a database;</description></item>
+    ///     <item><description> implementation of an index as a single file;</description></item>
     /// </list>
     /// <para/>
     /// Directory locking is implemented by an instance of
@@ -67,9 +67,9 @@ namespace Lucene.Net.Store
         /// Returns the length of a file in the directory. this method follows the
         /// following contract:
         /// <list>
-        ///     <item>Throws <see cref="System.IO.FileNotFoundException"/>
-        ///         if the file does not exist.</item>
-        ///     <item>Returns a value &gt;=0 if the file exists, which specifies its length.</item>
+        ///     <item><description>Throws <see cref="System.IO.FileNotFoundException"/>
+        ///         if the file does not exist.</description></item>
+        ///     <item><description>Returns a value &gt;=0 if the file exists, which specifies its length.</description></item>
         /// </list>
         /// </summary>
         /// <param name="name"> the name of the file for which to return the length. </param>

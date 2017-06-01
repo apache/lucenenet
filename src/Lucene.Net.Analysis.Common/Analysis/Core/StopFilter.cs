@@ -28,9 +28,9 @@ namespace Lucene.Net.Analysis.Core
     /// You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="StopFilter"/>:
     /// <list type="bullet">
-    ///     <item>As of 3.1, StopFilter correctly handles Unicode 4.0
+    ///     <item><description>As of 3.1, StopFilter correctly handles Unicode 4.0
     ///         supplementary characters in stopwords and position
-    ///         increments are preserved</item>
+    ///         increments are preserved</description></item>
     /// </list>
     /// </para>
     /// </summary>

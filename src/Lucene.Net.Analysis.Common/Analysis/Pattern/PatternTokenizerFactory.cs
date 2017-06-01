@@ -29,8 +29,8 @@ namespace Lucene.Net.Analysis.Pattern
     /// for the input stream.  It takes two arguments:  "pattern" and "group".
     /// <para/>
     /// <list type="bullet">
-    ///     <item>"pattern" is the regular expression.</item>
-    ///     <item>"group" says which group to extract into tokens.</item>
+    ///     <item><description>"pattern" is the regular expression.</description></item>
+    ///     <item><description>"group" says which group to extract into tokens.</description></item>
     /// </list>
     /// <para>
     /// group=-1 (the default) is equivalent to "split".  In this case, the tokens will

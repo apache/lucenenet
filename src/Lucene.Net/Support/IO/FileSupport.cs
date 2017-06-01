@@ -134,8 +134,8 @@ namespace Lucene.Net.Support.IO
         /// Creates a new empty file in the specified directory, using the given prefix and suffix strings to generate its name. 
         /// If this method returns successfully then it is guaranteed that:
         /// <list type="number">
-        /// <item>The file denoted by the returned abstract pathname did not exist before this method was invoked, and</item>
-        /// <item>Neither this method nor any of its variants will return the same abstract pathname again in the current invocation of the virtual machine.</item>
+        /// <item><description>The file denoted by the returned abstract pathname did not exist before this method was invoked, and</description></item>
+        /// <item><description>Neither this method nor any of its variants will return the same abstract pathname again in the current invocation of the virtual machine.</description></item>
         /// </list>
         /// This method provides only part of a temporary-file facility.To arrange for a file created by this method to be deleted automatically, use the deleteOnExit() method.
         /// The prefix argument must be at least three characters long. It is recommended that the prefix be a short, meaningful string such as "hjb" or "mail". The suffix argument may be null, in which case the suffix ".tmp" will be used.

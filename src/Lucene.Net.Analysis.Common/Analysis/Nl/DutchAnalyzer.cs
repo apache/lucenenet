@@ -41,14 +41,14 @@ namespace Lucene.Net.Analysis.Nl
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="DutchAnalyzer"/>:
     /// <list type="bullet">
-    ///   <item> As of 3.6, <see cref="DutchAnalyzer(LuceneVersion, CharArraySet)"/> and
+    ///   <item><description> As of 3.6, <see cref="DutchAnalyzer(LuceneVersion, CharArraySet)"/> and
     ///        <see cref="DutchAnalyzer(LuceneVersion, CharArraySet, CharArraySet)"/> also populate
-    ///        the default entries for the stem override dictionary</item>
-    ///   <item> As of 3.1, Snowball stemming is done with SnowballFilter, 
+    ///        the default entries for the stem override dictionary</description></item>
+    ///   <item><description> As of 3.1, Snowball stemming is done with SnowballFilter, 
     ///        LowerCaseFilter is used prior to StopFilter, and Snowball 
-    ///        stopwords are used by default.</item>
-    ///   <item> As of 2.9, StopFilter preserves position
-    ///        increments</item>
+    ///        stopwords are used by default.</description></item>
+    ///   <item><description> As of 2.9, StopFilter preserves position
+    ///        increments</description></item>
     /// </list>
     /// 
     /// </para>

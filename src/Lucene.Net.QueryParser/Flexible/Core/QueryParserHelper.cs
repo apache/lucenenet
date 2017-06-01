@@ -195,19 +195,19 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         /// In this method the three phases are executed:
         /// <para/>
         /// <list type="number">
-        ///     <item>
+        ///     <item><description>
         ///     the query string is parsed using the
         ///     text parser returned by <see cref="SyntaxParser"/>, the result is a query
         ///     node tree.
-        ///     </item>
-        ///     <item>
+        ///     </description></item>
+        ///     <item><description>
         ///     the query node tree is processed by the
         ///     processor returned by <see cref="QueryNodeProcessor"/>.
-        ///     </item>
-        ///     <item>
+        ///     </description></item>
+        ///     <item><description>
         ///     a object is built from the query node
         ///     tree using the builder returned by <see cref="QueryBuilder"/>.
-        ///     </item>
+        ///     </description></item>
         /// </list>
         /// </summary>
         /// <param name="query">the query string</param>

@@ -30,11 +30,11 @@ namespace Lucene.Net.Support.IO
     /// <para/>
     /// A byte buffer can be created in either one of the following ways:
     /// <list type="bullet">
-    ///     <item><see cref="Allocate(int)"/> a new byte array and create a
-    ///     buffer based on it</item>
-    ///     <item><see cref="AllocateDirect(int)"/> a memory block and create a direct
-    ///     buffer based on it</item>
-    ///     <item><see cref="Wrap(byte[])"/> an existing byte array to create a new buffer</item>
+    ///     <item><description><see cref="Allocate(int)"/> a new byte array and create a
+    ///     buffer based on it</description></item>
+    ///     <item><description><see cref="AllocateDirect(int)"/> a memory block and create a direct
+    ///     buffer based on it</description></item>
+    ///     <item><description><see cref="Wrap(byte[])"/> an existing byte array to create a new buffer</description></item>
     /// </list>
     /// </summary>
 #if FEATURE_SERIALIZABLE

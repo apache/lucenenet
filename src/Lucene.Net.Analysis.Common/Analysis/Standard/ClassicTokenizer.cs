@@ -27,11 +27,11 @@ namespace Lucene.Net.Analysis.Standard
     /// <para> This should be a good tokenizer for most European-language documents:
     /// 
     /// <list type="bullet">
-    ///     <item>Splits words at punctuation characters, removing punctuation. However, a 
-    ///         dot that's not followed by whitespace is considered part of a token.</item>
-    ///     <item>Splits words at hyphens, unless there's a number in the token, in which case
-    ///         the whole token is interpreted as a product number and is not split.</item>
-    ///     <item>Recognizes email addresses and internet hostnames as one token.</item>
+    ///     <item><description>Splits words at punctuation characters, removing punctuation. However, a 
+    ///         dot that's not followed by whitespace is considered part of a token.</description></item>
+    ///     <item><description>Splits words at hyphens, unless there's a number in the token, in which case
+    ///         the whole token is interpreted as a product number and is not split.</description></item>
+    ///     <item><description>Recognizes email addresses and internet hostnames as one token.</description></item>
     /// </list>
     /// 
     /// </para>

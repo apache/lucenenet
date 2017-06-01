@@ -29,15 +29,15 @@ namespace Lucene.Net.Analysis.Compound
     /// <para/>
     /// This factory accepts the following parameters:
     /// <list type="bullet">
-    ///     <item><code>hyphenator</code> (mandatory): path to the FOP xml hyphenation pattern. 
-    ///     See <a href="http://offo.sourceforge.net/hyphenation/">http://offo.sourceforge.net/hyphenation/</a>.</item>
-    ///     <item><code>encoding</code> (optional): encoding of the xml hyphenation file. defaults to UTF-8.</item>
-    ///     <item><code>dictionary</code> (optional): dictionary of words. defaults to no dictionary.</item>
-    ///     <item><code>minWordSize</code> (optional): minimal word length that gets decomposed. defaults to 5.</item>
-    ///     <item><code>minSubwordSize</code> (optional): minimum length of subwords. defaults to 2.</item>
-    ///     <item><code>maxSubwordSize</code> (optional): maximum length of subwords. defaults to 15.</item>
-    ///     <item><code>onlyLongestMatch</code> (optional): if true, adds only the longest matching subword 
-    ///     to the stream. defaults to false.</item>
+    ///     <item><description><code>hyphenator</code> (mandatory): path to the FOP xml hyphenation pattern. 
+    ///     See <a href="http://offo.sourceforge.net/hyphenation/">http://offo.sourceforge.net/hyphenation/</a>.</description></item>
+    ///     <item><description><code>encoding</code> (optional): encoding of the xml hyphenation file. defaults to UTF-8.</description></item>
+    ///     <item><description><code>dictionary</code> (optional): dictionary of words. defaults to no dictionary.</description></item>
+    ///     <item><description><code>minWordSize</code> (optional): minimal word length that gets decomposed. defaults to 5.</description></item>
+    ///     <item><description><code>minSubwordSize</code> (optional): minimum length of subwords. defaults to 2.</description></item>
+    ///     <item><description><code>maxSubwordSize</code> (optional): maximum length of subwords. defaults to 15.</description></item>
+    ///     <item><description><code>onlyLongestMatch</code> (optional): if true, adds only the longest matching subword 
+    ///     to the stream. defaults to false.</description></item>
     /// </list>
     /// <para>
     /// <code>

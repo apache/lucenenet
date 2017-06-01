@@ -34,9 +34,9 @@ namespace Lucene.Net.Index
     /// <para/>
     /// The algorithm is such:
     /// <list type="number">
-    ///     <item>As long as matches are successful, keep reading sequentially.</item>
-    ///     <item>When a match fails, skip to the next string in lexicographic order that
-    ///         does not enter a reject state.</item>
+    ///     <item><description>As long as matches are successful, keep reading sequentially.</description></item>
+    ///     <item><description>When a match fails, skip to the next string in lexicographic order that
+    ///         does not enter a reject state.</description></item>
     /// </list>
     /// <para>
     /// The algorithm does not attempt to actually skip to the next string that is

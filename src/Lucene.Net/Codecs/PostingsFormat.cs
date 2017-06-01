@@ -32,14 +32,14 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// If you implement your own format:
     /// <list type="number">
-    ///     <item>Subclass this class.</item>
-    ///     <item>Subclass <see cref="DefaultPostingsFormatFactory"/>, override <see cref="DefaultPostingsFormatFactory.Initialize()"/>,
+    ///     <item><description>Subclass this class.</description></item>
+    ///     <item><description>Subclass <see cref="DefaultPostingsFormatFactory"/>, override <see cref="DefaultPostingsFormatFactory.Initialize()"/>,
     ///         and add the line <c>base.ScanForPostingsFormats(typeof(YourPostingsFormat).GetTypeInfo().Assembly)</c>. 
     ///         If you have any format classes in your assembly 
     ///         that are not meant for reading, you can add the <see cref="ExcludePostingsFormatFromScanAttribute"/> 
-    ///         to them so they are ignored by the scan.</item>
-    ///     <item>Set the new <see cref="IPostingsFormatFactory"/> by calling <see cref="SetPostingsFormatFactory(IPostingsFormatFactory)"/> 
-    ///         at application startup.</item>
+    ///         to them so they are ignored by the scan.</description></item>
+    ///     <item><description>Set the new <see cref="IPostingsFormatFactory"/> by calling <see cref="SetPostingsFormatFactory(IPostingsFormatFactory)"/> 
+    ///         at application startup.</description></item>
     /// </list>
     /// If your format has dependencies, you may also override <see cref="DefaultPostingsFormatFactory.GetPostingsFormat(Type)"/> to inject 
     /// them via pure DI or a DI container. See <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framework/">DI-Friendly Framework</a>

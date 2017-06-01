@@ -49,9 +49,9 @@ namespace Lucene.Net.Analysis.Synonym
     /// <see cref="SynonymMap.Parser"/> class name. The default is <c>solr</c>.
     /// A custom <see cref="SynonymMap.Parser"/> is expected to have a constructor taking:
     /// <list type="bullet">
-    ///     <item><c><see cref="bool"/> dedup</c> - true if duplicates should be ignored, false otherwise</item>
-    ///     <item><c><see cref="bool"/> expand</c> - true if conflation groups should be expanded, false if they are one-directional</item>
-    ///     <item><c><see cref="Analyzer"/> analyzer</c> - an analyzer used for each raw synonym</item>
+    ///     <item><description><c><see cref="bool"/> dedup</c> - true if duplicates should be ignored, false otherwise</description></item>
+    ///     <item><description><c><see cref="bool"/> expand</c> - true if conflation groups should be expanded, false if they are one-directional</description></item>
+    ///     <item><description><c><see cref="Analyzer"/> analyzer</c> - an analyzer used for each raw synonym</description></item>
     /// </list>
     /// </para>
     /// </summary>

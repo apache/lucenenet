@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.Es
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="SpanishAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.6, <see cref="SpanishLightStemFilter"/> is used for less aggressive stemming.</item>
+    ///     <item><description> As of 3.6, <see cref="SpanishLightStemFilter"/> is used for less aggressive stemming.</description></item>
     /// </list>
     /// </para>
     /// </summary>

@@ -39,15 +39,15 @@ namespace Lucene.Net.Sandbox.Queries
     /// <para/>
     /// Limitations:
     /// <list type="bullet">
-    ///     <item>
+    ///     <item><description>
     ///     Fields containing <see cref="int.MaxValue"/> or more unique values
     ///     are unsupported.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///     Selectors other than the default <see cref="Selector.MIN"/> require 
     ///     optional codec support. However several codecs provided by Lucene,
     ///     including the current default codec, support this.
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// </summary>
     public class SortedSetSortField : SortField

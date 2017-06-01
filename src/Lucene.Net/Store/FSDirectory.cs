@@ -36,14 +36,14 @@ namespace Lucene.Net.Store
     ///
     /// <list type="bullet">
     ///
-    ///     <item> <see cref="SimpleFSDirectory"/> is a straightforward
+    ///     <item><description> <see cref="SimpleFSDirectory"/> is a straightforward
     ///         implementation using <see cref="System.IO.FileStream"/>.
     ///         However, it has poor concurrent performance
     ///         (multiple threads will bottleneck) as it
     ///         synchronizes when multiple threads read from the
-    ///         same file.</item>
+    ///         same file.</description></item>
     ///
-    ///     <item> <see cref="NIOFSDirectory"/> uses java.nio's
+    ///     <item><description> <see cref="NIOFSDirectory"/> uses java.nio's
     ///         FileChannel's positional io when reading to avoid
     ///         synchronization when reading from the same file.
     ///         Unfortunately, due to a Windows-only <a
@@ -53,9 +53,9 @@ namespace Lucene.Net.Store
     ///         choice. Applications using <see cref="System.Threading.Thread.Interrupt()"/> or
     ///         <see cref="System.Threading.Tasks.Task{TResult}"/> should use
     ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="NIOFSDirectory"/> java doc
-    ///         for details.</item>
+    ///         for details.</description></item>
     ///
-    ///     <item> <see cref="MMapDirectory"/> uses memory-mapped IO when
+    ///     <item><description> <see cref="MMapDirectory"/> uses memory-mapped IO when
     ///         reading. This is a good choice if you have plenty
     ///         of virtual memory relative to your index size, eg
     ///         if you are running on a 64 bit runtime, or you are
@@ -65,7 +65,7 @@ namespace Lucene.Net.Store
     ///         Applications using <see cref="System.Threading.Thread.Interrupt()"/> or
     ///         <see cref="System.Threading.Tasks.Task"/> should use
     ///         <see cref="SimpleFSDirectory"/> instead. See <see cref="MMapDirectory"/>
-    ///         doc for details.</item>
+    ///         doc for details.</description></item>
     /// </list>
     ///
     /// Unfortunately, because of system peculiarities, there is

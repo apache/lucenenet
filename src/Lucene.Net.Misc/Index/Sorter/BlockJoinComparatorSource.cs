@@ -28,9 +28,9 @@ namespace Lucene.Net.Index.Sorter
     /// Note that this class is intended to used with <see cref="SortingMergePolicy"/>,
     /// and for other purposes has some limitations:
     /// <list type="bullet">
-    ///    <item>Cannot yet be used with <see cref="IndexSearcher.SearchAfter(ScoreDoc, Query, Filter, int, Sort)">
-    ///    IndexSearcher.SearchAfter</see></item>
-    ///    <item>Filling sort field values is not yet supported.</item>
+    ///    <item><description>Cannot yet be used with <see cref="IndexSearcher.SearchAfter(ScoreDoc, Query, Filter, int, Sort)">
+    ///    IndexSearcher.SearchAfter</see></description></item>
+    ///    <item><description>Filling sort field values is not yet supported.</description></item>
     /// </list>
     /// @lucene.experimental
     /// </para>

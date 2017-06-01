@@ -34,9 +34,9 @@ namespace Lucene.Net.Analysis.El
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="GreekAnalyzer"/>:
     /// <list type="bullet">
-    ///   <item> As of 3.1, StandardFilter and GreekStemmer are used by default.</item>
-    ///   <item> As of 2.9, StopFilter preserves position
-    ///        increments</item>
+    ///   <item><description> As of 3.1, StandardFilter and GreekStemmer are used by default.</description></item>
+    ///   <item><description> As of 2.9, StopFilter preserves position
+    ///        increments</description></item>
     /// </list>
     /// </para>
     /// <para><c>NOTE</c>: This class uses the same <see cref="LuceneVersion"/>

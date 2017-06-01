@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Pt
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="PortugueseAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.6, PortugueseLightStemFilter is used for less aggressive stemming.</item>
+    ///     <item><description> As of 3.6, PortugueseLightStemFilter is used for less aggressive stemming.</description></item>
     /// </list>
     /// </para>
     /// </summary>

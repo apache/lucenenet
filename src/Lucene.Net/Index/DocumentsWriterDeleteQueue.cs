@@ -52,13 +52,13 @@ namespace Lucene.Net.Index
     /// DWPT updates a document it:
     ///
     /// <list type="number">
-    ///     <item>consumes a document and finishes its processing</item>
-    ///     <item>updates its private <see cref="DeleteSlice"/> either by calling
+    ///     <item><description>consumes a document and finishes its processing</description></item>
+    ///     <item><description>updates its private <see cref="DeleteSlice"/> either by calling
     ///     <see cref="UpdateSlice(DeleteSlice)"/> or <see cref="Add(Term, DeleteSlice)"/> (if the
-    ///         document has a delTerm)</item>
-    ///     <item>applies all deletes in the slice to its private <see cref="BufferedUpdates"/>
-    ///         and resets it</item>
-    ///     <item>increments its internal document id</item>
+    ///         document has a delTerm)</description></item>
+    ///     <item><description>applies all deletes in the slice to its private <see cref="BufferedUpdates"/>
+    ///         and resets it</description></item>
+    ///     <item><description>increments its internal document id</description></item>
     /// </list>
     ///
     /// The DWPT also doesn't apply its current documents delete term until it has

@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.Ru
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="RussianAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.1, <see cref="StandardTokenizer"/> is used, Snowball stemming is done with
-    ///        <see cref="SnowballFilter"/>, and Snowball stopwords are used by default.</item>
+    ///     <item><description> As of 3.1, <see cref="StandardTokenizer"/> is used, Snowball stemming is done with
+    ///        <see cref="SnowballFilter"/>, and Snowball stopwords are used by default.</description></item>
     /// </list>
     /// </para>
     /// </summary>

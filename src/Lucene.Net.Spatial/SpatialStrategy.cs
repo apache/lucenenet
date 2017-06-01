@@ -32,11 +32,11 @@ namespace Lucene.Net.Spatial
     /// Different implementations will support different features. A strategy should
     /// document these common elements:
     /// <list type="bullet">
-    ///     <item>Can it index more than one shape per field?</item>
-    ///     <item>What types of shapes can be indexed?</item>
-    ///     <item>What types of query shapes can be used?</item>
-    ///     <item>What types of query operations are supported? This might vary per shape.</item>
-    ///     <item>Does it use the <see cref="FieldCache"/>, or some other type of cache?  When?</item>
+    ///     <item><description>Can it index more than one shape per field?</description></item>
+    ///     <item><description>What types of shapes can be indexed?</description></item>
+    ///     <item><description>What types of query shapes can be used?</description></item>
+    ///     <item><description>What types of query operations are supported? This might vary per shape.</description></item>
+    ///     <item><description>Does it use the <see cref="FieldCache"/>, or some other type of cache?  When?</description></item>
     /// </list>
     /// If a strategy only supports certain shapes at index or query time, then in
     /// general it will throw an exception if given an incompatible one.  It will not

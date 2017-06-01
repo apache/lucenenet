@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Hi
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating HindiAnalyzer:
     /// <list type="bullet">
-    ///     <item> As of 3.6, StandardTokenizer is used for tokenization</item>
+    ///     <item><description> As of 3.6, StandardTokenizer is used for tokenization</description></item>
     /// </list>
     /// </para>
     /// </summary>

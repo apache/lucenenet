@@ -28,19 +28,19 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// The most common use cases are:
     /// <list type="bullet">
-    ///     <item>subclass <see cref="DefaultCodecFactory"/> and override
+    ///     <item><description>subclass <see cref="DefaultCodecFactory"/> and override
     ///         <see cref="DefaultCodecFactory.GetCodec(Type)"/> so an external dependency injection
     ///         container can be used to supply the instances (lifetime should be singleton). Note that you could 
     ///         alternately use the "named type" feature that many DI containers have to supply the type based on name by 
-    ///         overriding <see cref="GetCodec(string)"/>.</item>
-    ///     <item>subclass <see cref="DefaultCodecFactory"/> and override
+    ///         overriding <see cref="GetCodec(string)"/>.</description></item>
+    ///     <item><description>subclass <see cref="DefaultCodecFactory"/> and override
     ///         <see cref="DefaultCodecFactory.GetCodecType(string)"/> so a type new type can be
-    ///         supplied that is not in the <see cref="DefaultCodecFactory.codecNameToTypeMap"/>.</item>
-    ///     <item>subclass <see cref="DefaultCodecFactory"/> to add new or override the default <see cref="Codec"/> 
-    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutCodecType(Type)"/>.</item>
-    ///     <item>subclass <see cref="DefaultCodecFactory"/> to scan additional assemblies for <see cref="Codec"/>
+    ///         supplied that is not in the <see cref="DefaultCodecFactory.codecNameToTypeMap"/>.</description></item>
+    ///     <item><description>subclass <see cref="DefaultCodecFactory"/> to add new or override the default <see cref="Codec"/> 
+    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutCodecType(Type)"/>.</description></item>
+    ///     <item><description>subclass <see cref="DefaultCodecFactory"/> to scan additional assemblies for <see cref="Codec"/>
     ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForCodecs(Assembly)"/>. 
-    ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</item>
+    ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</description></item>
     /// </list>
     /// <para/>
     /// To set the <see cref="ICodecFactory"/>, call <see cref="Codec.SetCodecFactory(ICodecFactory)"/>.

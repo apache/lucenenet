@@ -813,14 +813,14 @@ namespace Lucene.Net.Util
         /// <para/>
         /// The comparer returned depends on the <typeparam name="T"/> argument:
         /// <list type="number">
-        ///     <item>If the type is <see cref="string"/>, the comparer returned uses
+        ///     <item><description>If the type is <see cref="string"/>, the comparer returned uses
         ///         the <see cref="string.CompareOrdinal(string, string)"/> to make the comparison
         ///         to ensure that the current culture doesn't affect the results. This is the
-        ///         default string comparison used in Java, and what Lucene's design depends on.</item>
-        ///     <item>If the type implements <see cref="IComparable{T}"/>, the comparer uses
+        ///         default string comparison used in Java, and what Lucene's design depends on.</description></item>
+        ///     <item><description>If the type implements <see cref="IComparable{T}"/>, the comparer uses
         ///         <see cref="IComparable{T}.CompareTo(T)"/> for the comparison. This allows
-        ///         the use of types with custom comparison schemes.</item>
-        ///     <item>If neither of the above conditions are true, will default to <see cref="Comparer{T}.Default"/>.</item>
+        ///         the use of types with custom comparison schemes.</description></item>
+        ///     <item><description>If neither of the above conditions are true, will default to <see cref="Comparer{T}.Default"/>.</description></item>
         /// </list>
         /// <para/>
         /// NOTE: This was naturalComparer() in Lucene

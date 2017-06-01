@@ -69,14 +69,14 @@ namespace Lucene.Net.QueryParsers.Simple
     /// to decipher what it can; however, this may mean odd or unexpected results.
     /// <h4>Query Operators</h4>
     /// <list type="bullet">
-    ///  <item>'<c>+</c>' specifies <c>AND</c> operation: <c>token1+token2</c></item>
-    ///  <item>'<c>|</c>' specifies <c>OR</c> operation: <c>token1|token2</c></item>
-    ///  <item>'<c>-</c>' negates a single token: <c>-token0</c></item>
-    ///  <item>'<c>"</c>' creates phrases of terms: <c>"term1 term2 ..."</c></item>
-    ///  <item>'<c>*</c>' at the end of terms specifies prefix query: <c>term*</c></item>
-    ///  <item>'<c>~</c>N' at the end of terms specifies fuzzy query: <c>term~1</c></item>
-    ///  <item>'<c>~</c>N' at the end of phrases specifies near query: <c>"term1 term2"~5</c></item>
-    ///  <item>'<c>(</c>' and '<c>)</c>' specifies precedence: <c>token1 + (token2 | token3)</c></item>
+    ///  <item><description>'<c>+</c>' specifies <c>AND</c> operation: <c>token1+token2</c></description></item>
+    ///  <item><description>'<c>|</c>' specifies <c>OR</c> operation: <c>token1|token2</c></description></item>
+    ///  <item><description>'<c>-</c>' negates a single token: <c>-token0</c></description></item>
+    ///  <item><description>'<c>"</c>' creates phrases of terms: <c>"term1 term2 ..."</c></description></item>
+    ///  <item><description>'<c>*</c>' at the end of terms specifies prefix query: <c>term*</c></description></item>
+    ///  <item><description>'<c>~</c>N' at the end of terms specifies fuzzy query: <c>term~1</c></description></item>
+    ///  <item><description>'<c>~</c>N' at the end of phrases specifies near query: <c>"term1 term2"~5</c></description></item>
+    ///  <item><description>'<c>(</c>' and '<c>)</c>' specifies precedence: <c>token1 + (token2 | token3)</c></description></item>
     /// </list>
     /// <para/>
     /// The default operator is <c>OR</c> if no other operator is specified.
@@ -99,20 +99,20 @@ namespace Lucene.Net.QueryParsers.Simple
     /// beyond the first character do not need to be escaped.
     /// For example:
     /// <list type="bullet">
-    ///   <item><c>-term1</c>   -- Specifies <c>NOT</c> operation against <c>term1</c></item>
-    ///   <item><c>\-term1</c>  -- Searches for the term <c>-term1</c>.</item>
-    ///   <item><c>term-1</c>   -- Searches for the term <c>term-1</c>.</item>
-    ///   <item><c>term\-1</c>  -- Searches for the term <c>term-1</c>.</item>
+    ///   <item><description><c>-term1</c>   -- Specifies <c>NOT</c> operation against <c>term1</c></description></item>
+    ///   <item><description><c>\-term1</c>  -- Searches for the term <c>-term1</c>.</description></item>
+    ///   <item><description><c>term-1</c>   -- Searches for the term <c>term-1</c>.</description></item>
+    ///   <item><description><c>term\-1</c>  -- Searches for the term <c>term-1</c>.</description></item>
     /// </list>
     /// <para/>
     /// The '<c>*</c>' operator is a special case. On individual terms (not phrases) the last
     /// character of a term that is '<c>*</c>' must be escaped; however, any '<c>*</c>' characters
     /// before the last character do not need to be escaped:
     /// <list type="bullet">
-    ///   <item><c>term1*</c>  --  Searches for the prefix <c>term1</c></item>
-    ///   <item><c>term1\*</c> --  Searches for the term <c>term1*</c></item>
-    ///   <item><c>term*1</c>  --  Searches for the term <c>term*1</c></item>
-    ///   <item><c>term\*1</c> --  Searches for the term <c>term*1</c></item>
+    ///   <item><description><c>term1*</c>  --  Searches for the prefix <c>term1</c></description></item>
+    ///   <item><description><c>term1\*</c> --  Searches for the term <c>term1*</c></description></item>
+    ///   <item><description><c>term*1</c>  --  Searches for the term <c>term*1</c></description></item>
+    ///   <item><description><c>term\*1</c> --  Searches for the term <c>term*1</c></description></item>
     /// </list>
     /// <para/>
     /// Note that above examples consider the terms before text processing.

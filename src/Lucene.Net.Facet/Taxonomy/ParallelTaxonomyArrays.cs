@@ -23,12 +23,12 @@ namespace Lucene.Net.Facet.Taxonomy
     /// <summary>
     /// Returns 3 arrays for traversing the taxonomy:
     /// <list type="bullet">
-    /// <item> <see cref="Parents"/>: <c>Parents[i]</c> denotes the parent of category
-    /// ordinal <c>i</c>.</item>
-    /// <item> <see cref="Children"/>: <c>Children[i]</c> denotes a child of category ordinal
-    /// <c>i</c>.</item>
-    /// <item> <see cref="Siblings"/>: <c>Siblings[i]</c> denotes the sibling of category
-    /// ordinal <c>i</c>.</item>
+    /// <item><description> <see cref="Parents"/>: <c>Parents[i]</c> denotes the parent of category
+    /// ordinal <c>i</c>.</description></item>
+    /// <item><description> <see cref="Children"/>: <c>Children[i]</c> denotes a child of category ordinal
+    /// <c>i</c>.</description></item>
+    /// <item><description> <see cref="Siblings"/>: <c>Siblings[i]</c> denotes the sibling of category
+    /// ordinal <c>i</c>.</description></item>
     /// </list>
     /// 
     /// To traverse the taxonomy tree, you typically start with <c>Children[0]</c>

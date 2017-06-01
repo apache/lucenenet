@@ -33,15 +33,15 @@ namespace Lucene.Net.Search.Suggest
     /// </para>
     /// <b>NOTE:</b> 
     ///  <list type="bullet">
-    ///    <item>
+    ///    <item><description>
     ///      The term and (optionally) payload fields have to be
     ///      stored
-    ///    </item>
-    ///    <item>
+    ///    </description></item>
+    ///    <item><description>
     ///      if the term or (optionally) payload fields supplied
     ///      do not have a value for a document, then the document is 
     ///      rejected by the dictionary
-    ///    </item>
+    ///    </description></item>
     ///  </list>
     ///  <para>
     ///  In practice the <see cref="ValueSource"/> will likely be obtained

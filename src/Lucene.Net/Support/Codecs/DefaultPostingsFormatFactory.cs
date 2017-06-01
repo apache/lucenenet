@@ -28,19 +28,19 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// The most common use cases are:
     /// <list type="bullet">
-    ///     <item>subclass <see cref="DefaultPostingsFormatFactory"/> and override
+    ///     <item><description>subclass <see cref="DefaultPostingsFormatFactory"/> and override
     ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormat(Type)"/> so an external dependency injection
     ///         container can be used to supply the instances (lifetime should be singleton). Note that you could 
     ///         alternately use the "named type" feature that many DI containers have to supply the type based on name by 
-    ///         overriding <see cref="GetPostingsFormat(string)"/>.</item>
-    ///     <item>subclass <see cref="DefaultPostingsFormatFactory"/> and override
+    ///         overriding <see cref="GetPostingsFormat(string)"/>.</description></item>
+    ///     <item><description>subclass <see cref="DefaultPostingsFormatFactory"/> and override
     ///         <see cref="DefaultPostingsFormatFactory.GetPostingsFormatType(string)"/> so a type new type can be
-    ///         supplied that is not in the <see cref="DefaultPostingsFormatFactory.postingsFormatNameToTypeMap"/>.</item>
-    ///     <item>subclass <see cref="DefaultPostingsFormatFactory"/> to add new or override the default <see cref="PostingsFormat"/> 
-    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutPostingsFormatType(Type)"/>.</item>
-    ///     <item>subclass <see cref="DefaultPostingsFormatFactory"/> to scan additional assemblies for <see cref="PostingsFormat"/>
+    ///         supplied that is not in the <see cref="DefaultPostingsFormatFactory.postingsFormatNameToTypeMap"/>.</description></item>
+    ///     <item><description>subclass <see cref="DefaultPostingsFormatFactory"/> to add new or override the default <see cref="PostingsFormat"/> 
+    ///         types by overriding <see cref="Initialize()"/> and calling <see cref="PutPostingsFormatType(Type)"/>.</description></item>
+    ///     <item><description>subclass <see cref="DefaultPostingsFormatFactory"/> to scan additional assemblies for <see cref="PostingsFormat"/>
     ///         subclasses in by overriding <see cref="Initialize()"/> and calling <see cref="ScanForPostingsFormats(Assembly)"/>. 
-    ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</item>
+    ///         For performance reasons, the default behavior only loads Lucene.Net codecs.</description></item>
     /// </list>
     /// <para/>
     /// To set the <see cref="IPostingsFormatFactory"/>, call <see cref="PostingsFormat.SetPostingsFormatFactory(IPostingsFormatFactory)"/>.

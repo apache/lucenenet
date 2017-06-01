@@ -86,11 +86,11 @@ namespace Lucene.Net.Queries.Mlt
     /// <para/>
     /// Thus you:
     /// <list type="bullet">
-    ///     <item>do your normal, Lucene setup for searching,</item>
-    ///     <item>create a MoreLikeThis,</item>
-    ///     <item>get the text of the doc you want to find similarities to</item>
-    ///     <item>then call one of the <see cref="Like"/> calls to generate a similarity query</item>
-    ///     <item>call the searcher to find the similar docs</item>
+    ///     <item><description>do your normal, Lucene setup for searching,</description></item>
+    ///     <item><description>create a MoreLikeThis,</description></item>
+    ///     <item><description>get the text of the doc you want to find similarities to</description></item>
+    ///     <item><description>then call one of the <see cref="Like"/> calls to generate a similarity query</description></item>
+    ///     <item><description>call the searcher to find the similar docs</description></item>
     /// </list>
     /// <para/>
     /// <b>More Advanced Usage</b>
@@ -103,15 +103,15 @@ namespace Lucene.Net.Queries.Mlt
     /// may want to call the other set methods to control how the similarity queries are
     /// generated:
     /// <list type="bullet">
-    ///     <item><see cref="MinTermFreq"/></item>
-    ///     <item><see cref="MinDocFreq"/></item>
-    ///     <item><see cref="MaxDocFreq"/></item>
-    ///     <item><see cref="SetMaxDocFreqPct(int)"/></item>
-    ///     <item><see cref="MinWordLen"/></item>
-    ///     <item><see cref="MaxWordLen"/></item>
-    ///     <item><see cref="MaxQueryTerms"/></item>
-    ///     <item><see cref="MaxNumTokensParsed"/></item>
-    ///     <item><see cref="StopWords"/></item>
+    ///     <item><description><see cref="MinTermFreq"/></description></item>
+    ///     <item><description><see cref="MinDocFreq"/></description></item>
+    ///     <item><description><see cref="MaxDocFreq"/></description></item>
+    ///     <item><description><see cref="SetMaxDocFreqPct(int)"/></description></item>
+    ///     <item><description><see cref="MinWordLen"/></description></item>
+    ///     <item><description><see cref="MaxWordLen"/></description></item>
+    ///     <item><description><see cref="MaxQueryTerms"/></description></item>
+    ///     <item><description><see cref="MaxNumTokensParsed"/></description></item>
+    ///     <item><description><see cref="StopWords"/></description></item>
     /// </list>
     /// </summary>
     /// <remarks>
@@ -650,12 +650,12 @@ namespace Lucene.Net.Queries.Mlt
         /// Each array has 6 elements.
         /// The elements are:
         /// <list type="bullet">
-        ///     <item>The word (<see cref="string"/>)</item>
-        ///     <item>The top field that this word comes from (<see cref="string"/>)</item>
-        ///     <item>The score for this word (<see cref="float"/>)</item>
-        ///     <item>The IDF value (<see cref="float"/>)</item>
-        ///     <item>The frequency of this word in the index (<see cref="int"/>)</item>
-        ///     <item>The frequency of this word in the source document (<see cref="int"/>)</item>
+        ///     <item><description>The word (<see cref="string"/>)</description></item>
+        ///     <item><description>The top field that this word comes from (<see cref="string"/>)</description></item>
+        ///     <item><description>The score for this word (<see cref="float"/>)</description></item>
+        ///     <item><description>The IDF value (<see cref="float"/>)</description></item>
+        ///     <item><description>The frequency of this word in the index (<see cref="int"/>)</description></item>
+        ///     <item><description>The frequency of this word in the source document (<see cref="int"/>)</description></item>
         /// </list>
         /// This is a somewhat "advanced" routine, and in general only the 1st entry in the array is of interest.
         /// This method is exposed so that you can identify the "interesting words" in a document.

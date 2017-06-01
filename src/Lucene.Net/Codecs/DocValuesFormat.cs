@@ -34,14 +34,14 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// To implement your own format:
     /// <list type="number">
-    ///     <item>Subclass this class.</item>
-    ///     <item>Subclass <see cref="DefaultDocValuesFormatFactory"/>, override the <see cref="DefaultDocValuesFormatFactory.Initialize()"/> method,
+    ///     <item><description>Subclass this class.</description></item>
+    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/>, override the <see cref="DefaultDocValuesFormatFactory.Initialize()"/> method,
     ///         and add the line <c>base.ScanForDocValuesFormats(typeof(YourDocValuesFormat).GetTypeInfo().Assembly)</c>. 
     ///         If you have any format classes in your assembly 
     ///         that are not meant for reading, you can add the <see cref="ExcludeDocValuesFormatFromScanAttribute"/> 
-    ///         to them so they are ignored by the scan.</item>
-    ///     <item>Set the new <see cref="IDocValuesFormatFactory"/> by calling <see cref="SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>
-    ///         at application startup.</item>
+    ///         to them so they are ignored by the scan.</description></item>
+    ///     <item><description>Set the new <see cref="IDocValuesFormatFactory"/> by calling <see cref="SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>
+    ///         at application startup.</description></item>
     /// </list>
     /// If your format has dependencies, you may also override <see cref="DefaultDocValuesFormatFactory.GetDocValuesFormat(Type)"/>
     /// to inject them via pure DI or a DI container. See <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framework/">DI-Friendly Framework</a>

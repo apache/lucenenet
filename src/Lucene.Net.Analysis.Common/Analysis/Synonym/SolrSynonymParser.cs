@@ -26,21 +26,21 @@ namespace Lucene.Net.Analysis.Synonym
     /// <summary>
     /// Parser for the Solr synonyms format.
     /// <list type="bullet">
-    ///     <item> Blank lines and lines starting with '#' are comments.</item>
-    ///     <item> Explicit mappings match any token sequence on the LHS of "=>"
+    ///     <item><description> Blank lines and lines starting with '#' are comments.</description></item>
+    ///     <item><description> Explicit mappings match any token sequence on the LHS of "=>"
     ///         and replace with all alternatives on the RHS.  These types of mappings
     ///         ignore the expand parameter in the constructor.
     ///         Example:
     ///         <code>i-pod, i pod => ipod</code>
-    ///     </item>
-    ///     <item> Equivalent synonyms may be separated with commas and give
+    ///     </description></item>
+    ///     <item><description> Equivalent synonyms may be separated with commas and give
     ///         no explicit mapping.  In this case the mapping behavior will
     ///         be taken from the expand parameter in the constructor.  This allows
     ///         the same synonym file to be used in different synonym handling strategies.
     ///         Example:
     ///         <code>ipod, i-pod, i pod</code>
-    ///     </item>
-    ///     <item> Multiple synonym mapping entries are merged.
+    ///     </description></item>
+    ///     <item><description> Multiple synonym mapping entries are merged.
     ///         Example:
     ///         <code>
     ///             foo => foo bar
@@ -48,7 +48,7 @@ namespace Lucene.Net.Analysis.Synonym
     ///             is equivalent to
     ///             foo => foo bar, baz
     ///         </code>
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// @lucene.experimental
     /// </summary>

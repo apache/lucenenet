@@ -43,9 +43,9 @@ namespace Lucene.Net.Search.PostingsHighlight
         /// <summary>
         /// Creates <see cref="PassageScorer"/> with these default values:
         /// <list type="bullet">
-        ///     <item><c>k1 = 1.2</c></item>
-        ///     <item><c>b = 0.75</c></item>
-        ///     <item><c>pivot = 87</c></item>
+        ///     <item><description><c>k1 = 1.2</c></description></item>
+        ///     <item><description><c>b = 0.75</c></description></item>
+        ///     <item><description><c>pivot = 87</c></description></item>
         /// </list>
         /// </summary>
         public PassageScorer()

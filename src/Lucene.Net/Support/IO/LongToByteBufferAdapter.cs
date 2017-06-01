@@ -28,10 +28,10 @@ namespace Lucene.Net.Support.IO
     /// <para/>
     /// Implementation notice:
     /// <list type="bullet">
-    ///     <item>After a byte buffer instance is wrapped, it becomes privately owned by
-    ///     the adapter. It must NOT be accessed outside the adapter any more.</item>
-    ///     <item>The byte buffer's position and limit are NOT linked with the adapter.
-    ///     The adapter extends Buffer, thus has its own position and limit.</item>
+    ///     <item><description>After a byte buffer instance is wrapped, it becomes privately owned by
+    ///     the adapter. It must NOT be accessed outside the adapter any more.</description></item>
+    ///     <item><description>The byte buffer's position and limit are NOT linked with the adapter.
+    ///     The adapter extends Buffer, thus has its own position and limit.</description></item>
     /// </list>
     /// </summary>
     internal sealed class Int64ToByteBufferAdapter : Int64Buffer

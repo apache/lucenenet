@@ -33,21 +33,21 @@ namespace Lucene.Net.Analysis.Standard
     /// <para/>
     /// Tokens produced are of the following types:
     /// <list type="bullet">
-    ///     <item>&lt;ALPHANUM&gt;: A sequence of alphabetic and numeric characters</item>
-    ///     <item>&lt;NUM&gt;: A number</item>
-    ///     <item>&lt;URL&gt;: A URL</item>
-    ///     <item>&lt;EMAIL&gt;: An email address</item>
-    ///     <item>&lt;SOUTHEAST_ASIAN&gt;: A sequence of characters from South and Southeast
-    ///         Asian languages, including Thai, Lao, Myanmar, and Khmer</item>
-    ///     <item>&lt;IDEOGRAPHIC&gt;: A single CJKV ideographic character</item>
-    ///     <item>&lt;HIRAGANA&gt;: A single hiragana character</item>
+    ///     <item><description>&lt;ALPHANUM&gt;: A sequence of alphabetic and numeric characters</description></item>
+    ///     <item><description>&lt;NUM&gt;: A number</description></item>
+    ///     <item><description>&lt;URL&gt;: A URL</description></item>
+    ///     <item><description>&lt;EMAIL&gt;: An email address</description></item>
+    ///     <item><description>&lt;SOUTHEAST_ASIAN&gt;: A sequence of characters from South and Southeast
+    ///         Asian languages, including Thai, Lao, Myanmar, and Khmer</description></item>
+    ///     <item><description>&lt;IDEOGRAPHIC&gt;: A single CJKV ideographic character</description></item>
+    ///     <item><description>&lt;HIRAGANA&gt;: A single hiragana character</description></item>
     /// </list>
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="UAX29URLEmailTokenizer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.4, Hiragana and Han characters are no longer wrongly split
+    ///     <item><description> As of 3.4, Hiragana and Han characters are no longer wrongly split
     ///         from their combining characters. If you use a previous version number,
-    ///         you get the exact broken behavior for backwards compatibility.</item>
+    ///         you get the exact broken behavior for backwards compatibility.</description></item>
     /// </list>
     /// </para>
     /// </summary>

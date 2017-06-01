@@ -920,8 +920,8 @@ namespace Lucene.Net.Documents
         /// <exception cref="ArgumentNullException">if <paramref name="name"/> or <paramref name="value"/> is <c>null</c></exception>
         /// <exception cref="ArgumentException">in any of the following situations:
         /// <list type="bullet">
-        ///     <item>the field is neither stored nor indexed</item>
-        ///     <item>the field is not indexed but termVector is <see cref="TermVector.YES"/></item>
+        ///     <item><description>the field is neither stored nor indexed</description></item>
+        ///     <item><description>the field is not indexed but termVector is <see cref="TermVector.YES"/></description></item>
         /// </list>
         /// </exception>
         [Obsolete("Use StringField, TextField instead.")]

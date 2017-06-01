@@ -29,9 +29,9 @@ namespace Lucene.Net.Analysis.Core
     /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
     /// <see cref="WhitespaceTokenizer"/>:
     /// <list type="bullet">
-    ///     <item>As of 3.1, <see cref="CharTokenizer"/> uses an int based API to normalize and
+    ///     <item><description>As of 3.1, <see cref="CharTokenizer"/> uses an int based API to normalize and
     ///     detect token characters. See <see cref="CharTokenizer.IsTokenChar(int)"/> and
-    ///     <see cref="CharTokenizer.Normalize(int)"/> for details.</item>
+    ///     <see cref="CharTokenizer.Normalize(int)"/> for details.</description></item>
     /// </list>
     /// </para>
     /// </summary>

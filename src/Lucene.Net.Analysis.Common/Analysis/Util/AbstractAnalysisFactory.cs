@@ -33,10 +33,10 @@ namespace Lucene.Net.Analysis.Util
     /// <para>
     /// The typical lifecycle for a factory consumer is:
     /// <list type="bullet">
-    ///     <item>Create factory via its constructor (or via XXXFactory.ForName)</item>
-    ///     <item>(Optional) If the factory uses resources such as files, 
-    ///         <see cref="IResourceLoaderAware.Inform(IResourceLoader)"/> is called to initialize those resources.</item>
-    ///     <item>Consumer calls create() to obtain instances.</item>
+    ///     <item><description>Create factory via its constructor (or via XXXFactory.ForName)</description></item>
+    ///     <item><description>(Optional) If the factory uses resources such as files, 
+    ///         <see cref="IResourceLoaderAware.Inform(IResourceLoader)"/> is called to initialize those resources.</description></item>
+    ///     <item><description>Consumer calls create() to obtain instances.</description></item>
     /// </list>
     /// </para>
     /// </summary>

@@ -65,21 +65,21 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// There are some limitations:
     /// <list type="number">
     /// 
-    ///   <item> A lookup from a query like "net" in English won't
+    ///   <item><description> A lookup from a query like "net" in English won't
     ///        be any different than "net " (ie, user added a
     ///        trailing space) because analyzers don't reflect
     ///        when they've seen a token separator and when they
-    ///        haven't.</item>
+    ///        haven't.</description></item>
     /// 
-    ///   <item> If you're using <see cref="Analysis.Core.StopFilter"/>, and the user will
+    ///   <item><description> If you're using <see cref="Analysis.Core.StopFilter"/>, and the user will
     ///        type "fast apple", but so far all they've typed is
     ///        "fast a", again because the analyzer doesn't convey whether
     ///        it's seen a token separator after the "a",
     ///        <see cref="Analysis.Core.StopFilter"/> will remove that "a" causing
-    ///        far more matches than you'd expect.</item>
+    ///        far more matches than you'd expect.</description></item>
     /// 
-    ///   <item> Lookups with the empty string return no results
-    ///        instead of all results.</item>
+    ///   <item><description> Lookups with the empty string return no results
+    ///        instead of all results.</description></item>
     /// </list>
     /// 
     /// @lucene.experimental

@@ -33,8 +33,8 @@ namespace Lucene.Net.Analysis.Ca
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating CatalanAnalyzer:
     /// <list>
-    ///   <item> As of 3.6, <see cref="ElisionFilter"/> with a set of Catalan 
-    ///        contractions is used by default.</item>
+    ///   <item><description> As of 3.6, <see cref="ElisionFilter"/> with a set of Catalan 
+    ///        contractions is used by default.</description></item>
     /// </list>
     /// </para>
     /// </summary>

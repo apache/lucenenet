@@ -40,16 +40,16 @@ namespace Lucene.Net.Collation
     ///   same at query time):
     /// </para>
     /// <list type="number">
-    ///   <item>JVM vendor</item>
-    ///   <item>JVM version, including patch version</item>
-    ///   <item>
+    ///   <item><description>JVM vendor</description></item>
+    ///   <item><description>JVM version, including patch version</description></item>
+    ///   <item><description>
     ///     The language (and country and variant, if specified) of the Locale
     ///     used when constructing the collator via
     ///     <see cref="Collator.Create(System.Globalization.CultureInfo)"/>.
-    ///   </item>
-    ///   <item>
+    ///   </description></item>
+    ///   <item><description>
     ///     The collation strength used - see <see cref="Collator.Strength"/>
-    ///   </item>
+    ///   </description></item>
     /// </list> 
     /// <para>
     ///   The <c>ICUCollationKeyFilter</c> in the analysis-icu package 

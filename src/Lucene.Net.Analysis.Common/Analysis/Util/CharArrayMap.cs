@@ -41,8 +41,8 @@ namespace Lucene.Net.Analysis.Util
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="CharArrayMap"/>:
     /// <list type="bullet">
-    ///   <item> As of 3.1, supplementary characters are
-    ///       properly lowercased.</item>
+    ///   <item><description> As of 3.1, supplementary characters are
+    ///       properly lowercased.</description></item>
     /// </list>
     /// Before 3.1 supplementary characters could not be
     /// lowercased correctly due to the lack of Unicode 4

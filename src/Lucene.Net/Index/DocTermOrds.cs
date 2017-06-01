@@ -74,36 +74,36 @@ namespace Lucene.Net.Index
     /// <remarks>
     /// Final form of the un-inverted field:
     /// <list type="bullet">
-    ///     <item>Each document points to a list of term numbers that are contained in that document.</item>
-    ///     <item>
+    ///     <item><description>Each document points to a list of term numbers that are contained in that document.</description></item>
+    ///     <item><description>
     ///         Term numbers are in sorted order, and are encoded as variable-length deltas from the
     ///         previous term number.  Real term numbers start at 2 since 0 and 1 are reserved.  A
     ///         term number of 0 signals the end of the termNumber list.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         There is a single int[maxDoc()] which either contains a pointer into a byte[] for
     ///         the termNumber lists, or directly contains the termNumber list if it fits in the 4
     ///         bytes of an integer.  If the first byte in the integer is 1, the next 3 bytes
     ///         are a pointer into a byte[] where the termNumber list starts.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         There are actually 256 byte arrays, to compensate for the fact that the pointers
     ///         into the byte arrays are only 3 bytes long.  The correct byte array for a document
     ///         is a function of it's id.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         To save space and speed up faceting, any term that matches enough documents will
     ///         not be un-inverted... it will be skipped while building the un-inverted field structure,
     ///         and will use a set intersection method during faceting.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         To further save memory, the terms (the actual string values) are not all stored in
     ///         memory, but a TermIndex is used to convert term numbers to term values only
     ///         for the terms needed after faceting has completed.  Only every 128th term value
     ///         is stored, along with it's corresponding term number, and this is used as an
     ///         index to find the closest term and iterate until the desired number is hit (very
     ///         much like Lucene's own internal term index).
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// </remarks>
 #if FEATURE_SERIALIZABLE

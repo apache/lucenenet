@@ -98,41 +98,41 @@ namespace Lucene.Net.Analysis.Miscellaneous
     /// Splits words into subwords and performs optional transformations on subword
     /// groups. Words are split into subwords with the following rules:
     /// <list type="bullet">
-    ///     <item>split on intra-word delimiters (by default, all non alpha-numeric
-    ///         characters): <c>"Wi-Fi"</c> &#8594; <c>"Wi", "Fi"</c></item>
-    ///     <item>split on case transitions: <c>"PowerShot"</c> &#8594;
-    ///         <c>"Power", "Shot"</c></item>
-    ///     <item>split on letter-number transitions: <c>"SD500"</c> &#8594;
-    ///         <c>"SD", "500"</c></item>
-    ///     <item>leading and trailing intra-word delimiters on each subword are ignored:
+    ///     <item><description>split on intra-word delimiters (by default, all non alpha-numeric
+    ///         characters): <c>"Wi-Fi"</c> &#8594; <c>"Wi", "Fi"</c></description></item>
+    ///     <item><description>split on case transitions: <c>"PowerShot"</c> &#8594;
+    ///         <c>"Power", "Shot"</c></description></item>
+    ///     <item><description>split on letter-number transitions: <c>"SD500"</c> &#8594;
+    ///         <c>"SD", "500"</c></description></item>
+    ///     <item><description>leading and trailing intra-word delimiters on each subword are ignored:
     ///         <c>"//hello---there, 'dude'"</c> &#8594;
-    ///         <c>"hello", "there", "dude"</c></item>
-    ///     <item>trailing "'s" are removed for each subword: <c>"O'Neil's"</c>
+    ///         <c>"hello", "there", "dude"</c></description></item>
+    ///     <item><description>trailing "'s" are removed for each subword: <c>"O'Neil's"</c>
     ///         &#8594; <c>"O", "Neil"</c>
     ///         <ul>
-    ///             <item>Note: this step isn't performed in a separate filter because of possible
-    ///                 subword combinations.</item>
+    ///             <item><description>Note: this step isn't performed in a separate filter because of possible
+    ///                 subword combinations.</description></item>
     ///         </ul>
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// <para/>
     /// The <b>combinations</b> parameter affects how subwords are combined:
     /// <list type="bullet">
-    ///     <item>combinations="0" causes no subword combinations: <code>"PowerShot"</code>
-    ///         &#8594; <c>0:"Power", 1:"Shot"</c> (0 and 1 are the token positions)</item>
-    ///     <item>combinations="1" means that in addition to the subwords, maximum runs of
+    ///     <item><description>combinations="0" causes no subword combinations: <code>"PowerShot"</code>
+    ///         &#8594; <c>0:"Power", 1:"Shot"</c> (0 and 1 are the token positions)</description></item>
+    ///     <item><description>combinations="1" means that in addition to the subwords, maximum runs of
     ///         non-numeric subwords are catenated and produced at the same position of the
     ///         last subword in the run:
     ///         <ul>
-    ///             <item><c>"PowerShot"</c> &#8594;
-    ///                 <c>0:"Power", 1:"Shot" 1:"PowerShot"</c></item>
-    ///             <item><c>"A's+B's&amp;C's"</c> -gt; <c>0:"A", 1:"B", 2:"C", 2:"ABC"</c>
-    ///             </item>
-    ///             <item><c>"Super-Duper-XL500-42-AutoCoder!"</c> &#8594;
+    ///             <item><description><c>"PowerShot"</c> &#8594;
+    ///                 <c>0:"Power", 1:"Shot" 1:"PowerShot"</c></description></item>
+    ///             <item><description><c>"A's+B's&amp;C's"</c> -gt; <c>0:"A", 1:"B", 2:"C", 2:"ABC"</c>
+    ///             </description></item>
+    ///             <item><description><c>"Super-Duper-XL500-42-AutoCoder!"</c> &#8594;
     ///                 <c>0:"Super", 1:"Duper", 2:"XL", 2:"SuperDuperXL", 3:"500" 4:"42", 5:"Auto", 6:"Coder", 6:"AutoCoder"</c>
-    ///             </item>
+    ///             </description></item>
     ///         </ul>
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// <para/>
     /// One use for <see cref="WordDelimiterFilter"/> is to help match words with different

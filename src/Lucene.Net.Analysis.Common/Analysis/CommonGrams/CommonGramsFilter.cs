@@ -34,10 +34,10 @@ namespace Lucene.Net.Analysis.CommonGrams
     /// use of <see cref="PositionIncrementAttribute.PositionIncrement"/>. Bigrams have a type
     /// of <see cref="GRAM_TYPE"/> Example:
     /// <list type="bullet">
-    ///     <item>input:"the quick brown fox"</item>
-    ///     <item>output:|"the","the-quick"|"brown"|"fox"|</item>
-    ///     <item>"the-quick" has a position increment of 0 so it is in the same position
-    /// as "the" "the-quick" has a term.type() of "gram"</item>
+    ///     <item><description>input:"the quick brown fox"</description></item>
+    ///     <item><description>output:|"the","the-quick"|"brown"|"fox"|</description></item>
+    ///     <item><description>"the-quick" has a position increment of 0 so it is in the same position
+    /// as "the" "the-quick" has a term.type() of "gram"</description></item>
     /// </list>
     /// </summary>
 

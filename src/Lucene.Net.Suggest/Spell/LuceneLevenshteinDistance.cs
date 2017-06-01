@@ -27,13 +27,13 @@ namespace Lucene.Net.Search.Spell
     ///  
     ///  Notes:
     ///  <list type="bullet">
-    ///    <item> This metric treats full unicode codepoints as characters</item>
-    ///    <item> This metric scales raw edit distances into a floating point score
-    ///         based upon the shortest of the two terms</item>
-    ///    <item> Transpositions of two adjacent codepoints are treated as primitive 
-    ///         edits.</item>
-    ///    <item> Edits are applied in parallel: for example, "ab" and "bca" have 
-    ///         distance 3.</item>
+    ///    <item><description> This metric treats full unicode codepoints as characters</description></item>
+    ///    <item><description> This metric scales raw edit distances into a floating point score
+    ///         based upon the shortest of the two terms</description></item>
+    ///    <item><description> Transpositions of two adjacent codepoints are treated as primitive 
+    ///         edits.</description></item>
+    ///    <item><description> Edits are applied in parallel: for example, "ab" and "bca" have 
+    ///         distance 3.</description></item>
     ///  </list>
     ///  
     ///  NOTE: this class is not particularly efficient. It is only intended

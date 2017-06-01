@@ -45,22 +45,22 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// For some concrete implementations bundled with Lucene, look in the analysis modules:
     /// <list type="bullet">
-    ///   <item>Common:
-    ///       Analyzers for indexing content in different languages and domains.</item>
-    ///   <item>ICU:
-    ///       Exposes functionality from ICU to Apache Lucene.</item>
-    ///   <item>Kuromoji:
-    ///       Morphological analyzer for Japanese text.</item>
-    ///   <item>Morfologik:
-    ///       Dictionary-driven lemmatization for the Polish language.</item>
-    ///   <item>Phonetic:
-    ///       Analysis for indexing phonetic signatures (for sounds-alike search).</item>
-    ///   <item>Smart Chinese:
-    ///       Analyzer for Simplified Chinese, which indexes words.</item>
-    ///   <item>Stempel:
-    ///       Algorithmic Stemmer for the Polish Language.</item>
-    ///   <item>UIMA:
-    ///       Analysis integration with Apache UIMA.</item>
+    ///   <item><description>Common:
+    ///       Analyzers for indexing content in different languages and domains.</description></item>
+    ///   <item><description>ICU:
+    ///       Exposes functionality from ICU to Apache Lucene.</description></item>
+    ///   <item><description>Kuromoji:
+    ///       Morphological analyzer for Japanese text.</description></item>
+    ///   <item><description>Morfologik:
+    ///       Dictionary-driven lemmatization for the Polish language.</description></item>
+    ///   <item><description>Phonetic:
+    ///       Analysis for indexing phonetic signatures (for sounds-alike search).</description></item>
+    ///   <item><description>Smart Chinese:
+    ///       Analyzer for Simplified Chinese, which indexes words.</description></item>
+    ///   <item><description>Stempel:
+    ///       Algorithmic Stemmer for the Polish Language.</description></item>
+    ///   <item><description>UIMA:
+    ///       Analysis integration with Apache UIMA.</description></item>
     /// </list>
     /// </summary>
     public abstract class Analyzer : IDisposable

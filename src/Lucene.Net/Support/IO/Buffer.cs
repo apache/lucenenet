@@ -27,39 +27,39 @@ namespace Lucene.Net.Support.IO
     /// <para/>
     /// A buffer can be described by the following properties:
     /// <list type="bullet">
-    ///     <item>
+    ///     <item><description>
     ///         Capacity:
     ///         The number of elements a buffer can hold. Capacity may not be
     ///         negative and never changes.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         Position:
     ///         A cursor of this buffer. Elements are read or written at the
     ///         position if you do not specify an index explicitly. Position may not be
     ///         negative and not greater than the limit.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         Limit:
     ///         Controls the scope of accessible elements. You can only read or
     ///         write elements from index zero to <c>limit - 1</c>. Accessing
     ///         elements out of the scope will cause an exception. Limit may not be negative
     ///         and not greater than capacity.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         Mark: 
     ///         Used to remember the current position, so that you can reset the
     ///         position later. Mark may not be negative and no greater than position.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         A buffer can be read-only or read-write. Trying to modify the elements
     ///         of a read-only buffer will cause a <see cref="ReadOnlyBufferException"/>,
     ///         while changing the position, limit and mark of a read-only buffer is OK.
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         A buffer can be direct or indirect. A direct buffer will try its best to
     ///         take advantage of native memory APIs and it may not stay in the heap,
     ///         thus it is not affected by garbage collection.
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// <para/>
     /// Buffers are not thread-safe. If concurrent access to a buffer instance is

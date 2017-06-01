@@ -41,27 +41,27 @@ namespace Lucene.Net.Spatial.Prefix
     /// 
     /// <h4>Characteristics:</h4>
     /// <list type="bullet">
-    /// <item>Can index any shape; however only
+    /// <item><description>Can index any shape; however only
     /// <see cref="RecursivePrefixTreeStrategy">RecursivePrefixTreeStrategy</see>
-    /// can effectively search non-point shapes.</item>
-    /// <item>Can index a variable number of shapes per field value. This strategy
+    /// can effectively search non-point shapes.</description></item>
+    /// <item><description>Can index a variable number of shapes per field value. This strategy
     /// can do it via multiple calls to <see cref="CreateIndexableFields(IShape)"/>
     /// for a document or by giving it some sort of Shape aggregate (e.g. NTS
     /// WKT MultiPoint).  The shape's boundary is approximated to a grid precision.
-    /// </item>
-    /// <item>Can query with any shape.  The shape's boundary is approximated to a grid
-    /// precision.</item>
-    /// <item>Only <see cref="SpatialOperation.Intersects"/>
+    /// </description></item>
+    /// <item><description>Can query with any shape.  The shape's boundary is approximated to a grid
+    /// precision.</description></item>
+    /// <item><description>Only <see cref="SpatialOperation.Intersects"/>
     /// is supported.  If only points are indexed then this is effectively equivalent
-    /// to IsWithin.</item>
-    /// <item>The strategy supports <see cref="MakeDistanceValueSource(IPoint, double)"/>
+    /// to IsWithin.</description></item>
+    /// <item><description>The strategy supports <see cref="MakeDistanceValueSource(IPoint, double)"/>
     /// even for multi-valued data, so long as the indexed data is all points; the
     /// behavior is undefined otherwise.  However, <c>it will likely be removed in
     /// the future</c> in lieu of using another strategy with a more scalable
     /// implementation.  Use of this call is the only
     /// circumstance in which a cache is used.  The cache is simple but as such
     /// it doesn't scale to large numbers of points nor is it real-time-search
-    /// friendly.</item>
+    /// friendly.</description></item>
     /// </list>
     /// 
     /// <h4>Implementation:</h4>

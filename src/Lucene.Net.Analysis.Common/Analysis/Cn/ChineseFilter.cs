@@ -27,15 +27,15 @@ namespace Lucene.Net.Analysis.Cn
     /// <summary>
     /// A <see cref="TokenFilter"/> with a stop word table.  
     /// <list type="bullet">
-    ///     <item>Numeric tokens are removed.</item>
-    ///     <item>English tokens must be larger than 1 character.</item>
-    ///     <item>One Chinese character as one Chinese word.</item>
+    ///     <item><description>Numeric tokens are removed.</description></item>
+    ///     <item><description>English tokens must be larger than 1 character.</description></item>
+    ///     <item><description>One Chinese character as one Chinese word.</description></item>
     /// </list>
     /// TO DO:
     /// <list type="number">
-    ///     <item>Add Chinese stop words, such as \ue400</item>
-    ///     <item>Dictionary based Chinese word extraction</item>
-    ///     <item>Intelligent Chinese word extraction</item>
+    ///     <item><description>Add Chinese stop words, such as \ue400</description></item>
+    ///     <item><description>Dictionary based Chinese word extraction</description></item>
+    ///     <item><description>Intelligent Chinese word extraction</description></item>
     /// </list>
     /// </summary>
     /// @deprecated (3.1) Use <see cref="Core.StopFilter"/> instead, which has the same functionality.

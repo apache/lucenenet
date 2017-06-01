@@ -31,13 +31,13 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// To implement your own codec:
     /// <list type="number">
-    ///     <item>Subclass this class.</item>
-    ///     <item>Subclass <see cref="DefaultCodecFactory"/>, override the <see cref="DefaultCodecFactory.Initialize()"/> method,
+    ///     <item><description>Subclass this class.</description></item>
+    ///     <item><description>Subclass <see cref="DefaultCodecFactory"/>, override the <see cref="DefaultCodecFactory.Initialize()"/> method,
     ///         and add the line <c>base.ScanForCodecs(typeof(YourCodec).GetTypeInfo().Assembly)</c>. 
     ///         If you have any codec classes in your assembly 
     ///         that are not meant for reading, you can add the <see cref="ExcludeCodecFromScanAttribute"/> 
-    ///         to them so they are ignored by the scan.</item>
-    ///     <item>set the new <see cref="ICodecFactory"/> by calling <see cref="SetCodecFactory"/> at application startup.</item>
+    ///         to them so they are ignored by the scan.</description></item>
+    ///     <item><description>set the new <see cref="ICodecFactory"/> by calling <see cref="SetCodecFactory"/> at application startup.</description></item>
     /// </list>
     /// If your codec has dependencies, you may also override <see cref="DefaultCodecFactory.GetCodec(Type)"/> to inject 
     /// them via pure DI or a DI container. See <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framework/">DI-Friendly Framework</a>

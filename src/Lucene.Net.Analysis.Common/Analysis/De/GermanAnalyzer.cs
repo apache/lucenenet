@@ -45,11 +45,11 @@ namespace Lucene.Net.Analysis.De
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating GermanAnalyzer:
     /// <list>
-    ///   <item> As of 3.6, GermanLightStemFilter is used for less aggressive stemming.</item>
-    ///   <item> As of 3.1, Snowball stemming is done with SnowballFilter, and 
-    ///        Snowball stopwords are used by default.</item>
-    ///   <item> As of 2.9, StopFilter preserves position
-    ///        increments</item>
+    ///   <item><description> As of 3.6, GermanLightStemFilter is used for less aggressive stemming.</description></item>
+    ///   <item><description> As of 3.1, Snowball stemming is done with SnowballFilter, and 
+    ///        Snowball stopwords are used by default.</description></item>
+    ///   <item><description> As of 2.9, StopFilter preserves position
+    ///        increments</description></item>
     /// </list>
     /// 
     /// </para>

@@ -44,14 +44,14 @@ namespace Lucene.Net.Analysis.Pt
     /// <code>{ "suffix", N, "replacement", { "exception1", "exception2", ...}}</code>
     /// where:
     /// <list type="bullet">
-    ///   <item><c>suffix</c> is the suffix to be removed (such as "inho").</item>
-    ///   <item><c>N</c> is the min stem size, where stem is defined as the candidate stem 
-    ///       after removing the suffix (but before appending the replacement!)</item>
-    ///   <item><c>replacement</c> is an optimal string to append after removing the suffix.
-    ///       This can be the empty string.</item>
-    ///   <item><c>exceptions</c> is an optional list of exceptions, patterns that should 
+    ///   <item><description><c>suffix</c> is the suffix to be removed (such as "inho").</description></item>
+    ///   <item><description><c>N</c> is the min stem size, where stem is defined as the candidate stem 
+    ///       after removing the suffix (but before appending the replacement!)</description></item>
+    ///   <item><description><c>replacement</c> is an optimal string to append after removing the suffix.
+    ///       This can be the empty string.</description></item>
+    ///   <item><description><c>exceptions</c> is an optional list of exceptions, patterns that should 
     ///       not be stemmed. These patterns can be specified as whole word or suffix (ends-with) 
-    ///       patterns, depending upon the exceptions format flag in the step header.</item>
+    ///       patterns, depending upon the exceptions format flag in the step header.</description></item>
     /// </list>
     /// </para>
     /// <para>
@@ -61,17 +61,17 @@ namespace Lucene.Net.Analysis.Pt
     /// </blockquote>
     /// where:
     /// <list type="bullet">
-    ///   <item><c>name</c> is a name for the step (such as "Plural").</item>
-    ///   <item><c>N</c> is the min word size. Words that are less than this length bypass
+    ///   <item><description><c>name</c> is a name for the step (such as "Plural").</description></item>
+    ///   <item><description><c>N</c> is the min word size. Words that are less than this length bypass
     ///       the step completely, as an optimization. Note: N can be zero, in this case this 
     ///       implementation will automatically calculate the appropriate value from the underlying 
-    ///       rules.</item>
-    ///   <item><c>B</c> is a "boolean" flag specifying how exceptions in the rules are matched.
+    ///       rules.</description></item>
+    ///   <item><description><c>B</c> is a "boolean" flag specifying how exceptions in the rules are matched.
     ///       A value of 1 indicates whole-word pattern matching, a value of 0 indicates that 
-    ///       exceptions are actually suffixes and should be matched with ends-with.</item>
-    ///   <item><c>conds</c> are an optional list of conditions to enter the step at all. If
+    ///       exceptions are actually suffixes and should be matched with ends-with.</description></item>
+    ///   <item><description><c>conds</c> are an optional list of conditions to enter the step at all. If
     ///       the list is non-empty, then a word must end with one of these conditions or it will
-    ///       bypass the step completely as an optimization.</item>
+    ///       bypass the step completely as an optimization.</description></item>
     /// </list>
     /// </para>
     /// <a href="http://www.inf.ufrgs.br/~viviane/rslp/index.htm">RSLP description</a>

@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Th
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="ThaiAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.6, a set of Thai stopwords is used by default</item>
+    ///     <item><description> As of 3.6, a set of Thai stopwords is used by default</description></item>
     /// </list>
     /// </para>
     /// </summary>

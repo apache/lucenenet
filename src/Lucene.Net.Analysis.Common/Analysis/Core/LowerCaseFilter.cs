@@ -26,7 +26,7 @@ namespace Lucene.Net.Analysis.Core
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating LowerCaseFilter:
     /// <list type="bullet">
-    ///     <item> As of 3.1, supplementary characters are properly lowercased.</item>
+    ///     <item><description> As of 3.1, supplementary characters are properly lowercased.</description></item>
     /// </list>
     /// </para>
     /// </summary>

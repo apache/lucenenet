@@ -36,16 +36,16 @@ namespace Lucene.Net.Index
     ///
     /// <para/>There are two different types of <see cref="IndexReader"/>s:
     /// <list type="bullet">
-    ///     <item><see cref="AtomicReader"/>: These indexes do not consist of several sub-readers,
+    ///     <item><description><see cref="AtomicReader"/>: These indexes do not consist of several sub-readers,
     ///         they are atomic. They support retrieval of stored fields, doc values, terms,
-    ///         and postings.</item>
-    ///     <item><see cref="CompositeReader"/>: Instances (like <see cref="DirectoryReader"/>)
+    ///         and postings.</description></item>
+    ///     <item><description><see cref="CompositeReader"/>: Instances (like <see cref="DirectoryReader"/>)
     ///         of this reader can only
     ///         be used to get stored fields from the underlying <see cref="AtomicReader"/>s,
     ///         but it is not possible to directly retrieve postings. To do that, get
     ///         the sub-readers via <see cref="CompositeReader.GetSequentialSubReaders()"/>.
     ///         Alternatively, you can mimic an <see cref="AtomicReader"/> (with a serious slowdown),
-    ///         by wrapping composite readers with <see cref="SlowCompositeReaderWrapper"/>.</item>
+    ///         by wrapping composite readers with <see cref="SlowCompositeReaderWrapper"/>.</description></item>
     /// </list>
     ///
     /// <para/><see cref="IndexReader"/> instances for indexes on disk are usually constructed
