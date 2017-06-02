@@ -48,14 +48,13 @@ namespace Lucene.Net.Search.Spans
         private bool collectPayloads;
 
         /// <summary>
-        /// Construct a SpanNearQuery.  Matches spans matching a span from each
-        /// clause, with up to <code>slop</code> total unmatched positions between
-        /// them.  * When <code>inOrder</code> is true, the spans from each clause
-        /// must be * ordered as in <code>clauses</code>. </summary>
-        /// <param name="clauses"> the clauses to find near each other </param>
+        /// Construct a <see cref="SpanNearQuery"/>.  Matches spans matching a span from each
+        /// clause, with up to <paramref name="slop"/> total unmatched positions between
+        /// them.  * When <paramref name="inOrder"/> is <c>true</c>, the spans from each clause
+        /// must be * ordered as in <paramref name="clauses"/>. </summary>
+        /// <param name="clauses"> The clauses to find near each other </param>
         /// <param name="slop"> The slop value </param>
-        /// <param name="inOrder"> true if order is important
-        ///  </param>
+        /// <param name="inOrder"> <c>true</c> if order is important</param>
         public SpanNearQuery(SpanQuery[] clauses, int slop, bool inOrder)
             : this(clauses, slop, inOrder, true)
         {
@@ -101,7 +100,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Return true if matches are required to be in-order. </summary>
+        /// Return <c>true</c> if matches are required to be in-order. </summary>
         public virtual bool IsInOrder
         {
             get
@@ -129,7 +128,7 @@ namespace Lucene.Net.Search.Spans
         public override string ToString(string field)
         {
             StringBuilder buffer = new StringBuilder();
-            buffer.Append("spanNear([");
+            buffer.Append("SpanNear([");
             IEnumerator<SpanQuery> i = m_clauses.GetEnumerator();
             bool isFirst = true;
             while (i.MoveNext())

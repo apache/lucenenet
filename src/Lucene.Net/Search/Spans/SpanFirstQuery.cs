@@ -26,12 +26,9 @@ namespace Lucene.Net.Search.Spans
 
     /// <summary>
     /// Matches spans near the beginning of a field.
-    /// <p/>
-    /// this class is a simple extension of <seealso cref="SpanPositionRangeQuery"/> in that it assumes the
+    /// <para/>
+    /// This class is a simple extension of <see cref="SpanPositionRangeQuery"/> in that it assumes the
     /// start to be zero and only checks the end boundary.
-    ///
-    ///
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -39,8 +36,8 @@ namespace Lucene.Net.Search.Spans
     public class SpanFirstQuery : SpanPositionRangeQuery
     {
         /// <summary>
-        /// Construct a SpanFirstQuery matching spans in <code>match</code> whose end
-        /// position is less than or equal to <code>end</code>.
+        /// Construct a <see cref="SpanFirstQuery"/> matching spans in <paramref name="match"/> whose end
+        /// position is less than or equal to <paramref name="end"/>.
         /// </summary>
         public SpanFirstQuery(SpanQuery match, int end)
             : base(match, 0, end)

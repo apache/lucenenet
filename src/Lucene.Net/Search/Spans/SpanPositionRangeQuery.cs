@@ -25,9 +25,9 @@ namespace Lucene.Net.Search.Spans
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// Checks to see if the <seealso cref="#getMatch()"/> lies between a start and end position
+    /// Checks to see if the <see cref="SpanPositionCheckQuery.Match"/> lies between a start and end position
     /// </summary>
-    /// <seealso cref= Lucene.Net.Search.Spans.SpanFirstQuery for a derivation that is optimized for the case where start position is 0 </seealso>
+    /// <seealso cref="Lucene.Net.Search.Spans.SpanFirstQuery">for a derivation that is optimized for the case where start position is 0</seealso>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -69,7 +69,7 @@ namespace Lucene.Net.Search.Spans
             }
         }
 
-        /// <returns> the maximum end position permitted in a match. </returns>
+        /// <returns> The maximum end position permitted in a match. </returns>
         public virtual int End
         {
             get

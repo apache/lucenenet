@@ -52,7 +52,7 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 1. Lucene.Net.Core (project)
    1. Codecs (namespace)
-   2. Search (namespace) (Except for Search.Payloads and Search.Similarities)
+   2. Search (namespace) (Except for Search.Payloads, Search.Similarities, and Search.Spans)
    3. Support (namespace)
    4. Util (namespace) (Except for Util.Fst)
 2. Lucene.Net.Codecs (project)

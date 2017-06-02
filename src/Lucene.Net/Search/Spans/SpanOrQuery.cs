@@ -41,7 +41,7 @@ namespace Lucene.Net.Search.Spans
         private string field;
 
         /// <summary>
-        /// Construct a SpanOrQuery merging the provided clauses. </summary>
+        /// Construct a <see cref="SpanOrQuery"/> merging the provided <paramref name="clauses"/>. </summary>
         public SpanOrQuery(params SpanQuery[] clauses)
         {
             // copy clauses array into an ArrayList
@@ -53,7 +53,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Adds a clause to this query </summary>
+        /// Adds a <paramref name="clause"/> to this query </summary>
         public void AddClause(SpanQuery clause)
         {
             if (field == null)

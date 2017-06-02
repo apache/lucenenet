@@ -27,8 +27,7 @@ namespace Lucene.Net.Search.Spans
     using TermContext = Lucene.Net.Index.TermContext;
 
     /// <summary>
-    /// Base class for filtering a SpanQuery based on the position of a match.
-    ///
+    /// Base class for filtering a <see cref="SpanQuery"/> based on the position of a match.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -42,9 +41,9 @@ namespace Lucene.Net.Search.Spans
             this.m_match = match;
         }
 
-        /// <returns> the SpanQuery whose matches are filtered.
-        ///
-        ///  </returns>
+        /// <returns> 
+        /// The <see cref="SpanQuery"/> whose matches are filtered.
+        /// </returns>
         public virtual SpanQuery Match
         {
             get
@@ -67,7 +66,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Return value for <seealso cref="SpanPositionCheckQuery#acceptPosition(Spans)"/>.
+        /// Return value for <see cref="SpanPositionCheckQuery.AcceptPosition(Spans)"/>.
         /// </summary>
         protected internal enum AcceptStatus
         {
@@ -88,17 +87,15 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Implementing classes are required to return whether the current position is a match for the passed in
-        /// "match" <seealso cref="Lucene.Net.Search.Spans.SpanQuery"/>.
-        ///
-        /// this is only called if the underlying <seealso cref="Lucene.Net.Search.Spans.Spans#next()"/> for the
+        /// "match" <see cref="Lucene.Net.Search.Spans.SpanQuery"/>.
+        /// <para/>
+        /// This is only called if the underlying <see cref="Lucene.Net.Search.Spans.Spans.Next()"/> for the
         /// match is successful
-        ///
         /// </summary>
-        /// <param name="spans"> The <seealso cref="Lucene.Net.Search.Spans.Spans"/> instance, positioned at the spot to check </param>
-        /// <returns> whether the match is accepted, rejected, or rejected and should move to the next doc.
+        /// <param name="spans"> The <see cref="Lucene.Net.Search.Spans.Spans"/> instance, positioned at the spot to check </param>
+        /// <returns> Whether the match is accepted, rejected, or rejected and should move to the next doc.
         /// </returns>
-        /// <seealso cref= Lucene.Net.Search.Spans.Spans#next()
-        ///  </seealso>
+        /// <seealso cref="Lucene.Net.Search.Spans.Spans.Next()"/>
         protected abstract AcceptStatus AcceptPosition(Spans spans);
 
         public override Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts)
@@ -198,8 +195,8 @@ namespace Lucene.Net.Search.Spans
                 get { return spans.Start; }
             }
 
-            public override int End
             // TODO: Remove warning after API has been finalized
+            public override int End
             {
                 get { return spans.End; }
             }
@@ -215,7 +212,6 @@ namespace Lucene.Net.Search.Spans
             }
 
             // TODO: Remove warning after API has been finalized
-
             public override bool IsPayloadAvailable
             {
                 get

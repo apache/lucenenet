@@ -43,7 +43,7 @@ namespace Lucene.Net.Search.Spans
         protected Term m_term;
 
         /// <summary>
-        /// Construct a SpanTermQuery matching the named term's spans. </summary>
+        /// Construct a <see cref="SpanTermQuery"/> matching the named term's spans. </summary>
         public SpanTermQuery(Term term)
         {
             this.m_term = term;

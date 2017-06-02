@@ -40,8 +40,8 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Returns the name of the field matched by this query.
-        /// <p>
-        /// Note that this may return null if the query matches no terms.
+        /// <para/>
+        /// Note that this may return <c>null</c> if the query matches no terms.
         /// </summary>
         public abstract string Field { get; }
 

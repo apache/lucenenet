@@ -28,8 +28,8 @@ namespace Lucene.Net.Search.Spans
     using TermContext = Lucene.Net.Index.TermContext;
 
     /// <summary>
-    /// Similar to <seealso cref="NearSpansOrdered"/>, but for the unordered case.
-    ///
+    /// Similar to <see cref="NearSpansOrdered"/>, but for the unordered case.
+    /// <para/>
     /// Expert:
     /// Only public for subclassing.  Most implementations should not need this class
     /// </summary>
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Wraps a Spans, and can be used to form a linked list. </summary>
+        /// Wraps a <see cref="Spans"/>, and can be used to form a linked list. </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -142,8 +142,8 @@ namespace Lucene.Net.Search.Spans
                 get { return spans.Start; }
             }
 
-            public override int End
             // TODO: Remove warning after API has been finalized
+            public override int End
             {
                 get { return spans.End; }
             }
@@ -309,17 +309,17 @@ namespace Lucene.Net.Search.Spans
             get { return Min.Start; }
         }
 
-        // TODO: Remove warning after API has been finalized
-        /// <summary>
-        /// WARNING: The List is not necessarily in order of the the positions </summary>
-        /// <returns> Collection of <code>byte[]</code> payloads </returns>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public override int End
         
         {
             get { return max.End; }
         }
 
+        // TODO: Remove warning after API has been finalized
+        /// <summary>
+        /// WARNING: The List is not necessarily in order of the the positions </summary>
+        /// <returns> Collection of <see cref="T:byte[]"/> payloads </returns>
+        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
         public override ICollection<byte[]> GetPayload()
         {
             var matchPayload = new HashSet<byte[]>();
