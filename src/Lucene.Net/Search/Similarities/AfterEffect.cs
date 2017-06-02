@@ -20,14 +20,15 @@ namespace Lucene.Net.Search.Similarities
      */
 
     /// <summary>
-    /// this class acts as the base class for the implementations of the <em>first
-    /// normalization of the informative content</em> in the DFR framework. this
+    /// This class acts as the base class for the implementations of the <em>first
+    /// normalization of the informative content</em> in the DFR framework. This
     /// component is also called the <em>after effect</em> and is defined by the
     /// formula <em>Inf<sub>2</sub> = 1 - Prob<sub>2</sub></em>, where
     /// <em>Prob<sub>2</sub></em> measures the <em>information gain</em>.
+    /// <para/>
+    /// @lucene.experimental 
     /// </summary>
-    /// <seealso cref= DFRSimilarity
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="DFRSimilarity"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif

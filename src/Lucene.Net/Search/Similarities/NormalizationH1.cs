@@ -21,12 +21,12 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Normalization model that assumes a uniform distribution of the term frequency.
-    /// <p>While this model is parameterless in the
+    /// <para>While this model is parameterless in the
     /// <a href="http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.101.742">
     /// original article</a>, <a href="http://dl.acm.org/citation.cfm?id=1835490">
-    /// information-based models</a> (see <seealso cref="IBSimilarity"/>) introduced a
+    /// information-based models</a> (see <see cref="IBSimilarity"/>) introduced a
     /// multiplying factor.
-    /// The default value for the {@code c} parameter is {@code 1}.</p>
+    /// The default value for the <c>c</c> parameter is <c>1</c>.</para>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -37,8 +37,8 @@ namespace Lucene.Net.Search.Similarities
         private readonly float c;
 
         /// <summary>
-        /// Creates NormalizationH1 with the supplied parameter <code>c</code>. </summary>
-        /// <param name="c"> hyper-parameter that controls the term frequency
+        /// Creates <see cref="NormalizationH1"/> with the supplied parameter <paramref name="c"/>. </summary>
+        /// <param name="c"> Hyper-parameter that controls the term frequency
         /// normalization with respect to the document length. </param>
         public NormalizationH1(float c)
         {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Calls <seealso cref="#NormalizationH1(float) NormalizationH1(1)"/>
+        /// Calls <see cref="T:NormalizationH1(1)"/>
         /// </summary>
         public NormalizationH1()
             : this(1)
@@ -64,8 +64,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns the <code>c</code> parameter. </summary>
-        /// <seealso cref= #NormalizationH1(float) </seealso>
+        /// Returns the <c>c</c> parameter. </summary>
+        /// <seealso cref="NormalizationH1(float)"/>
         public virtual float C
         {
             get

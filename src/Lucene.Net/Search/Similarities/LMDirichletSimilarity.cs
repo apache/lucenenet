@@ -27,12 +27,12 @@ namespace Lucene.Net.Search.Similarities
     /// Ad Hoc information retrieval. In Proceedings of the 24th annual international
     /// ACM SIGIR conference on Research and development in information retrieval
     /// (SIGIR '01). ACM, New York, NY, USA, 334-342.
-    /// <p>
+    /// <para>
     /// The formula as defined the paper assigns a negative score to documents that
     /// contain the term, but with fewer occurrences than predicted by the collection
-    /// language model. The Lucene implementation returns {@code 0} for such
+    /// language model. The Lucene implementation returns <c>0</c> for such
     /// documents.
-    /// </p>
+    /// </para>
     ///
     /// @lucene.experimental
     /// </summary>
@@ -42,11 +42,11 @@ namespace Lucene.Net.Search.Similarities
     public class LMDirichletSimilarity : LMSimilarity
     {
         /// <summary>
-        /// The &mu; parameter. </summary>
+        /// The &#956; parameter. </summary>
         private readonly float mu;
 
         /// <summary>
-        /// Instantiates the similarity with the provided &mu; parameter. </summary>
+        /// Instantiates the similarity with the provided &#956; parameter. </summary>
         public LMDirichletSimilarity(ICollectionModel collectionModel, float mu)
             : base(collectionModel)
         {
@@ -54,21 +54,21 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Instantiates the similarity with the provided &mu; parameter. </summary>
+        /// Instantiates the similarity with the provided &#956; parameter. </summary>
         public LMDirichletSimilarity(float mu)
         {
             this.mu = mu;
         }
 
         /// <summary>
-        /// Instantiates the similarity with the default &mu; value of 2000. </summary>
+        /// Instantiates the similarity with the default &#956; value of 2000. </summary>
         public LMDirichletSimilarity(ICollectionModel collectionModel)
             : this(collectionModel, 2000)
         {
         }
 
         /// <summary>
-        /// Instantiates the similarity with the default &mu; value of 2000. </summary>
+        /// Instantiates the similarity with the default &#956; value of 2000. </summary>
         public LMDirichletSimilarity()
             : this(2000)
         {
@@ -97,7 +97,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns the &mu; parameter. </summary>
+        /// Returns the &#956; parameter. </summary>
         public virtual float Mu
         {
             get

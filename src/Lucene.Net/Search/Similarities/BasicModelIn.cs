@@ -21,6 +21,7 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// The basic tf-idf model of randomness.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE

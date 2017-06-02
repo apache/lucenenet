@@ -23,16 +23,16 @@ namespace Lucene.Net.Search.Similarities
     /// <summary>
     /// Abstract superclass for language modeling Similarities. The following inner
     /// types are introduced:
-    /// <ul>
-    ///   <li><seealso cref="LMStats"/>, which defines a new statistic, the probability that
-    ///   the collection language model generates the current term;</li>
-    ///   <li><seealso cref="ICollectionModel"/>, which is a strategy interface for object that
-    ///   compute the collection language model {@code p(w|C)};</li>
-    ///   <li><seealso cref="DefaultCollectionModel"/>, an implementation of the former, that
-    ///   computes the term probability as the number of occurrences of the term in the
-    ///   collection, divided by the total number of tokens.</li>
-    /// </ul>
-    ///
+    /// <list type="bullet">
+    ///     <item><description><see cref="LMStats"/>, which defines a new statistic, the probability that
+    ///         the collection language model generates the current term;</description></item>
+    ///     <item><description><see cref="ICollectionModel"/>, which is a strategy interface for object that
+    ///         compute the collection language model <c>p(w|C)</c>;</description></item>
+    ///     <item><description><see cref="DefaultCollectionModel"/>, an implementation of the former, that
+    ///         computes the term probability as the number of occurrences of the term in the
+    ///         collection, divided by the total number of tokens.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -82,16 +82,16 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// Returns the name of the LM method. The values of the parameters should be
         /// included as well.
-        /// <p>Used in <seealso cref="#toString()"/></p>.
+        /// <para>Used in <see cref="ToString()"/></para>.
         /// </summary>
         public abstract string GetName();
 
         /// <summary>
         /// Returns the name of the LM method. If a custom collection model strategy is
         /// used, its name is included as well. </summary>
-        /// <seealso cref= #getName() </seealso>
-        /// <seealso cref= CollectionModel#getName() </seealso>
-        /// <seealso cref= DefaultCollectionModel  </seealso>
+        /// <seealso cref="GetName()"/>
+        /// <seealso cref="ICollectionModel.Name"/>
+        /// <seealso cref="DefaultCollectionModel"/>
         public override string ToString()
         {
             string coll = m_collectionModel.Name;
@@ -117,7 +117,7 @@ namespace Lucene.Net.Search.Similarities
             private float collectionProbability;
 
             /// <summary>
-            /// Creates LMStats for the provided field and query-time boost
+            /// Creates <see cref="LMStats"/> for the provided field and query-time boost
             /// </summary>
             public LMStats(string field, float queryBoost)
                 : base(field, queryBoost)
@@ -146,19 +146,19 @@ namespace Lucene.Net.Search.Similarities
         public interface ICollectionModel
         {
             /// <summary>
-            /// Computes the probability {@code p(w|C)} according to the language model
+            /// Computes the probability <c>p(w|C)</c> according to the language model
             /// strategy for the current term.
             /// </summary>
             float ComputeProbability(BasicStats stats);
 
             /// <summary>
             /// The name of the collection model strategy. </summary>
-            string Name { get; }
+            string Name { get; } // LUCENENET TODO: API Change to GetName() ? (consistency)
         }
 
         /// <summary>
-        /// Models {@code p(w|C)} as the number of occurrences of the term in the
-        /// collection, divided by the total number of tokens {@code + 1}.
+        /// Models <c>p(w|C)</c> as the number of occurrences of the term in the
+        /// collection, divided by the total number of tokens <c>+ 1</c>.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]

@@ -21,6 +21,7 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Stores all statistics commonly used ranking methods.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -28,7 +29,7 @@ namespace Lucene.Net.Search.Similarities
 #endif
     public class BasicStats : Similarity.SimWeight
     {
-        protected internal readonly string m_field;
+        protected internal readonly string m_field; // LUCENENET TODO: API This was internal in Lucene
 
         /// <summary>
         /// The number of documents. </summary>
@@ -79,7 +80,7 @@ namespace Lucene.Net.Search.Similarities
         // ------------------------- Getter/setter methods -------------------------
 
         /// <summary>
-        /// Returns the number of documents. </summary>
+        /// Gets or Sets the number of documents. </summary>
         public virtual long NumberOfDocuments
         {
             get
@@ -94,7 +95,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Returns the total number of tokens in the field. </summary>
-        /// <seealso cref= Terms#getSumTotalTermFreq() </seealso>
+        /// <seealso cref="Index.Terms.SumTotalTermFreq"/>
         public virtual long NumberOfFieldTokens
         {
             get
@@ -149,7 +150,7 @@ namespace Lucene.Net.Search.Similarities
             }
         }
 
-        public virtual string Field
+        public virtual string Field // LUCENENET TODO: API - eliminate and use internal field instead
         {
             get { return m_field; }
         }
@@ -158,7 +159,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// The square of the raw normalization value. </summary>
-        /// <seealso cref= #rawNormalizationValue()  </seealso>
+        /// <seealso cref="RawNormalizationValue()"/>
         public override float GetValueForNormalization()
         {
             float rawValue = RawNormalizationValue();
@@ -166,10 +167,10 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Computes the raw normalization value. this basic implementation returns
+        /// Computes the raw normalization value. This basic implementation returns
         /// the query boost. Subclasses may override this method to include other
         /// factors (such as idf), or to save the value for inclusion in
-        /// <seealso cref="#normalize(float, float)"/>, etc.
+        /// <seealso cref="Normalize(float, float)"/>, etc.
         /// </summary>
         protected internal virtual float RawNormalizationValue()
         {
@@ -177,7 +178,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// No normalization is done. {@code topLevelBoost} is saved in the object,
+        /// No normalization is done. <paramref name="topLevelBoost"/> is saved in the object,
         /// however.
         /// </summary>
         public override void Normalize(float queryNorm, float topLevelBoost)

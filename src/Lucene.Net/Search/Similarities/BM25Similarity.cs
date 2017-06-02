@@ -30,6 +30,7 @@ namespace Lucene.Net.Search.Similarities
     /// Susan Jones, Micheline Hancock-Beaulieu, and Mike Gatford. Okapi at TREC-3.
     /// In Proceedings of the Third <b>T</b>ext <b>RE</b>trieval <b>C</b>onference (TREC 1994).
     /// Gaithersburg, USA, November 1994.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -53,10 +54,10 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// BM25 with these default values:
-        /// <ul>
-        ///   <li>{@code k1 = 1.2},
-        ///   <li>{@code b = 0.75}.</li>
-        /// </ul>
+        /// <list type="bullet">
+        ///   <item><description><c>k1 = 1.2</c>,</description></item>
+        ///   <item><description><c>b = 0.75</c>.</description></item>
+        /// </list>
         /// </summary>
         public BM25Similarity()
         {
@@ -65,29 +66,29 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Implemented as <code>log(1 + (numDocs - docFreq + 0.5)/(docFreq + 0.5))</code>. </summary>
+        /// Implemented as <c>log(1 + (numDocs - docFreq + 0.5)/(docFreq + 0.5))</c>. </summary>
         protected internal virtual float Idf(long docFreq, long numDocs)
         {
             return (float)Math.Log(1 + (numDocs - docFreq + 0.5D) / (docFreq + 0.5D));
         }
 
         /// <summary>
-        /// Implemented as <code>1 / (distance + 1)</code>. </summary>
+        /// Implemented as <c>1 / (distance + 1)</c>. </summary>
         protected internal virtual float SloppyFreq(int distance)
         {
             return 1.0f / (distance + 1);
         }
 
         /// <summary>
-        /// The default implementation returns <code>1</code> </summary>
+        /// The default implementation returns <c>1</c> </summary>
         protected internal virtual float ScorePayload(int doc, int start, int end, BytesRef payload)
         {
             return 1;
         }
 
         /// <summary>
-        /// The default implementation computes the average as <code>sumTotalTermFreq / maxDoc</code>,
-        /// or returns <code>1</code> if the index does not store sumTotalTermFreq (Lucene 3.x indexes
+        /// The default implementation computes the average as <c>sumTotalTermFreq / maxDoc</c>,
+        /// or returns <c>1</c> if the index does not store sumTotalTermFreq (Lucene 3.x indexes
         /// or any field that omits frequency information).
         /// </summary>
         protected internal virtual float AvgFieldLength(CollectionStatistics collectionStats)
@@ -104,10 +105,10 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// The default implementation encodes <code>boost / sqrt(length)</code>
-        /// with <seealso cref="SmallSingle#floatToByte315(float)"/>.  this is compatible with
+        /// The default implementation encodes <c>boost / sqrt(length)</c>
+        /// with <see cref="SmallSingle.SingleToByte315(float)"/>.  This is compatible with
         /// Lucene's default implementation.  If you change this, then you should
-        /// change <seealso cref="#decodeNormValue(byte)"/> to match.
+        /// change <see cref="DecodeNormValue(byte)"/> to match.
         /// </summary>
         protected internal virtual byte EncodeNormValue(float boost, int fieldLength) 
         {
@@ -115,8 +116,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// The default implementation returns <code>1 / f<sup>2</sup></code>
-        /// where <code>f</code> is <seealso cref="SmallSingle#byte315ToFloat(byte)"/>.
+        /// The default implementation returns <c>1 / f<sup>2</sup></c>
+        /// where <c>f</c> is <see cref="SmallSingle.Byte315ToSingle(byte)"/>.
         /// </summary>
         protected internal virtual float DecodeNormValue(byte b)
         {
@@ -130,9 +131,9 @@ namespace Lucene.Net.Search.Similarities
         private bool discountOverlaps = true; // LUCENENET specific: made private, since value can be set/get through propery
 
         /// <summary>
-        /// Sets whether overlap tokens (Tokens with 0 position increment) are
-        ///  ignored when computing norm.  By default this is true, meaning overlap
-        ///  tokens do not count when computing norms.
+        /// Gets or Sets whether overlap tokens (Tokens with 0 position increment) are
+        /// ignored when computing norm.  By default this is true, meaning overlap
+        /// tokens do not count when computing norms.
         /// </summary>
         public virtual bool DiscountOverlaps
         {
@@ -169,22 +170,22 @@ namespace Lucene.Net.Search.Similarities
         /// Computes a score factor for a simple term and returns an explanation
         /// for that score factor.
         ///
-        /// <p>
+        /// <para/>
         /// The default implementation uses:
         ///
-        /// <pre class="prettyprint">
-        /// idf(docFreq, searcher.maxDoc());
-        /// </pre>
+        /// <code>
+        ///     Idf(docFreq, searcher.MaxDoc);
+        /// </code>
         ///
-        /// Note that <seealso cref="CollectionStatistics#maxDoc()"/> is used instead of
-        /// <seealso cref="Lucene.Net.Index.IndexReader#numDocs() IndexReader#numDocs()"/> because also
-        /// <seealso cref="TermStatistics#docFreq()"/> is used, and when the latter
-        /// is inaccurate, so is <seealso cref="CollectionStatistics#maxDoc()"/>, and in the same direction.
-        /// In addition, <seealso cref="CollectionStatistics#maxDoc()"/> is more efficient to compute
+        /// Note that <see cref="CollectionStatistics.MaxDoc"/> is used instead of
+        /// <see cref="Lucene.Net.Index.IndexReader.NumDocs"/> because also
+        /// <see cref="TermStatistics.DocFreq"/> is used, and when the latter
+        /// is inaccurate, so is <see cref="CollectionStatistics.MaxDoc"/>, and in the same direction.
+        /// In addition, <see cref="CollectionStatistics.MaxDoc"/> is more efficient to compute
         /// </summary>
         /// <param name="collectionStats"> collection-level statistics </param>
         /// <param name="termStats"> term-level statistics for the term </param>
-        /// <returns> an Explain object that includes both an idf score factor
+        /// <returns> an <see cref="Explanation"/> object that includes both an idf score factor
         ///           and an explanation for the term. </returns>
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics termStats)
         {
@@ -197,13 +198,13 @@ namespace Lucene.Net.Search.Similarities
         /// <summary>
         /// Computes a score factor for a phrase.
         ///
-        /// <p>
+        /// <para/>
         /// The default implementation sums the idf factor for
         /// each term in the phrase.
         /// </summary>
         /// <param name="collectionStats"> collection-level statistics </param>
         /// <param name="termStats"> term-level statistics for the terms in the phrase </param>
-        /// <returns> an Explain object that includes both an idf
+        /// <returns> an <see cref="Explanation"/> object that includes both an idf
         ///         score factor for the phrase and an explanation
         ///         for each term. </returns>
         public virtual Explanation IdfExplain(CollectionStatistics collectionStats, TermStatistics[] termStats)
@@ -388,8 +389,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns the <code>k1</code> parameter </summary>
-        /// <seealso cref= #BM25Similarity(float, float)  </seealso>
+        /// Returns the <c>k1</c> parameter </summary>
+        /// <seealso cref="BM25Similarity(float, float)"/>
         public virtual float K1
         {
             get
@@ -399,8 +400,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns the <code>b</code> parameter </summary>
-        /// <seealso cref= #BM25Similarity(float, float)  </seealso>
+        /// Returns the <c>b</c> parameter </summary>
+        /// <seealso cref="BM25Similarity(float, float)"/>
         public virtual float B
         {
             get

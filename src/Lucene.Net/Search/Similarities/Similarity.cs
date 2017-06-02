@@ -30,71 +30,72 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Similarity defines the components of Lucene scoring.
-    /// <p>
+    /// <para/>
     /// Expert: Scoring API.
-    /// <p>
-    /// this is a low-level API, you should only extend this API if you want to implement
+    /// <para/>
+    /// This is a low-level API, you should only extend this API if you want to implement
     /// an information retrieval <i>model</i>.  If you are instead looking for a convenient way
     /// to alter Lucene's scoring, consider extending a higher-level implementation
-    /// such as <seealso cref="TFIDFSimilarity"/>, which implements the vector space model with this API, or
-    /// just tweaking the default implementation: <seealso cref="DefaultSimilarity"/>.
-    /// <p>
+    /// such as <see cref="TFIDFSimilarity"/>, which implements the vector space model with this API, or
+    /// just tweaking the default implementation: <see cref="DefaultSimilarity"/>.
+    /// <para/>
     /// Similarity determines how Lucene weights terms, and Lucene interacts with
     /// this class at both <a href="#indextime">index-time</a> and
     /// <a href="#querytime">query-time</a>.
-    /// <p>
+    /// <para/>
     /// <a name="indextime"/>
-    /// At indexing time, the indexer calls <seealso cref="#computeNorm(FieldInvertState)"/>, allowing
-    /// the Similarity implementation to set a per-document value for the field that will
-    /// be later accessible via <seealso cref="AtomicReader#getNormValues(String)"/>.  Lucene makes no assumption
+    /// At indexing time, the indexer calls <see cref="ComputeNorm(FieldInvertState)"/>, allowing
+    /// the <see cref="Similarity"/> implementation to set a per-document value for the field that will
+    /// be later accessible via <see cref="Index.AtomicReader.GetNormValues(string)"/>.  Lucene makes no assumption
     /// about what is in this norm, but it is most useful for encoding length normalization
     /// information.
-    /// <p>
+    /// <para/>
     /// Implementations should carefully consider how the normalization is encoded: while
-    /// Lucene's classical <seealso cref="TFIDFSimilarity"/> encodes a combination of index-time boost
-    /// and length normalization information with <seealso cref="SmallFloat"/> into a single byte, this
+    /// Lucene's classical <see cref="TFIDFSimilarity"/> encodes a combination of index-time boost
+    /// and length normalization information with <see cref="Util.SmallSingle"/> into a single byte, this
     /// might not be suitable for all purposes.
-    /// <p>
+    /// <para/>
     /// Many formulas require the use of average document length, which can be computed via a
-    /// combination of <seealso cref="CollectionStatistics#sumTotalTermFreq()"/> and
-    /// <seealso cref="CollectionStatistics#maxDoc()"/> or <seealso cref="CollectionStatistics#docCount()"/>,
+    /// combination of <see cref="CollectionStatistics.SumTotalTermFreq"/> and
+    /// <see cref="CollectionStatistics.MaxDoc"/> or <see cref="CollectionStatistics.DocCount"/>,
     /// depending upon whether the average should reflect field sparsity.
-    /// <p>
+    /// <para/>
     /// Additional scoring factors can be stored in named
-    /// <code>NumericDocValuesField</code>s and accessed
-    /// at query-time with <seealso cref="AtomicReader#getNumericDocValues(String)"/>.
-    /// <p>
+    /// <see cref="Documents.NumericDocValuesField"/>s and accessed
+    /// at query-time with <see cref="Index.AtomicReader.GetNumericDocValues(string)"/>.
+    /// <para/>
     /// Finally, using index-time boosts (either via folding into the normalization byte or
-    /// via DocValues), is an inefficient way to boost the scores of different fields if the
+    /// via <see cref="Index.DocValues"/>), is an inefficient way to boost the scores of different fields if the
     /// boost will be the same for every document, instead the Similarity can simply take a constant
-    /// boost parameter <i>C</i>, and <seealso cref="PerFieldSimilarityWrapper"/> can return different
+    /// boost parameter <i>C</i>, and <see cref="PerFieldSimilarityWrapper"/> can return different
     /// instances with different boosts depending upon field name.
-    /// <p>
+    /// <para/>
     /// <a name="querytime"/>
     /// At query-time, Queries interact with the Similarity via these steps:
-    /// <ol>
-    ///   <li>The <seealso cref="#computeWeight(float, CollectionStatistics, TermStatistics...)"/> method is called a single time,
+    /// <list type="number">
+    ///   <item><description>The <see cref="ComputeWeight(float, CollectionStatistics, TermStatistics[])"/> method is called a single time,
     ///       allowing the implementation to compute any statistics (such as IDF, average document length, etc)
-    ///       across <i>the entire collection</i>. The <seealso cref="TermStatistics"/> and <seealso cref="CollectionStatistics"/> passed in
-    ///       already contain all of the raw statistics involved, so a Similarity can freely use any combination
+    ///       across <i>the entire collection</i>. The <see cref="TermStatistics"/> and <see cref="CollectionStatistics"/> passed in
+    ///       already contain all of the raw statistics involved, so a <see cref="Similarity"/> can freely use any combination
     ///       of statistics without causing any additional I/O. Lucene makes no assumption about what is
-    ///       stored in the returned <seealso cref="Similarity.SimWeight"/> object.
-    ///   <li>The query normalization process occurs a single time: <seealso cref="Similarity.SimWeight#getValueForNormalization()"/>
-    ///       is called for each query leaf node, <seealso cref="Similarity#queryNorm(float)"/> is called for the top-level
-    ///       query, and finally <seealso cref="Similarity.SimWeight#normalize(float, float)"/> passes down the normalization value
-    ///       and any top-level boosts (e.g. from enclosing <seealso cref="BooleanQuery"/>s).
-    ///   <li>For each segment in the index, the Query creates a <seealso cref="#simScorer(SimWeight, AtomicReaderContext)"/>
-    ///       The score() method is called for each matching document.
-    /// </ol>
-    /// <p>
+    ///       stored in the returned <see cref="Similarity.SimWeight"/> object.</description></item>
+    ///   <item><description>The query normalization process occurs a single time: <see cref="Similarity.SimWeight.GetValueForNormalization()"/>
+    ///       is called for each query leaf node, <see cref="Similarity.QueryNorm(float)"/> is called for the top-level
+    ///       query, and finally <see cref="Similarity.SimWeight.Normalize(float, float)"/> passes down the normalization value
+    ///       and any top-level boosts (e.g. from enclosing <see cref="BooleanQuery"/>s).</description></item>
+    ///   <item><description>For each segment in the index, the <see cref="Query"/> creates a <see cref="GetSimScorer(SimWeight, AtomicReaderContext)"/>
+    ///       The GetScore() method is called for each matching document.</description></item>
+    /// </list>
+    /// <para/>
     /// <a name="explaintime"/>
-    /// When <seealso cref="IndexSearcher#explain(Lucene.Net.Search.Query, int)"/> is called, queries consult the Similarity's DocScorer for an
+    /// When <see cref="IndexSearcher.Explain(Lucene.Net.Search.Query, int)"/> is called, queries consult the Similarity's DocScorer for an
     /// explanation of how it computed its score. The query passes in a the document id and an explanation of how the frequency
     /// was computed.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= Lucene.Net.Index.IndexWriterConfig#setSimilarity(Similarity) </seealso>
-    /// <seealso cref= IndexSearcher#setSimilarity(Similarity)
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="Lucene.Net.Index.IndexWriterConfig.Similarity"/>
+    /// <seealso cref="IndexSearcher.Similarity"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -110,10 +111,10 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Hook to integrate coordinate-level matching.
-        /// <p>
-        /// By default this is disabled (returns <code>1</code>), as with
+        /// <para/>
+        /// By default this is disabled (returns <c>1</c>), as with
         /// most modern models this will only skew performance, but some
-        /// implementations such as <seealso cref="TFIDFSimilarity"/> override this.
+        /// implementations such as <see cref="TFIDFSimilarity"/> override this.
         /// </summary>
         /// <param name="overlap"> the number of query terms matched in the document </param>
         /// <param name="maxOverlap"> the total number of terms in the query </param>
@@ -125,14 +126,14 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Computes the normalization value for a query given the sum of the
-        /// normalized weights <seealso cref="SimWeight#getValueForNormalization()"/> of
+        /// normalized weights <see cref="SimWeight.GetValueForNormalization()"/> of
         /// each of the query terms.  this value is passed back to the
-        /// weight (<seealso cref="SimWeight#normalize(float, float)"/> of each query
+        /// weight (<see cref="SimWeight.Normalize(float, float)"/> of each query
         /// term, to provide a hook to attempt to make scores from different
         /// queries comparable.
-        /// <p>
-        /// By default this is disabled (returns <code>1</code>), but some
-        /// implementations such as <seealso cref="TFIDFSimilarity"/> override this.
+        /// <para/>
+        /// By default this is disabled (returns <c>1</c>), but some
+        /// implementations such as <see cref="TFIDFSimilarity"/> override this.
         /// </summary>
         /// <param name="valueForNormalization"> the sum of the term normalization values </param>
         /// <returns> a normalization factor for query weights </returns>
@@ -143,12 +144,12 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Computes the normalization value for a field, given the accumulated
-        /// state of term processing for this field (see <seealso cref="FieldInvertState"/>).
+        /// state of term processing for this field (see <see cref="FieldInvertState"/>).
         ///
-        /// <p>Matches in longer fields are less precise, so implementations of this
-        /// method usually set smaller values when <code>state.getLength()</code> is large,
-        /// and larger values when <code>state.getLength()</code> is small.
-        ///
+        /// <para/>Matches in longer fields are less precise, so implementations of this
+        /// method usually set smaller values when <c>state.Length</c> is large,
+        /// and larger values when <code>state.Length</code> is small.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         /// <param name="state"> current processing state for this field </param>
@@ -161,24 +162,24 @@ namespace Lucene.Net.Search.Similarities
         /// <param name="queryBoost"> the query-time boost. </param>
         /// <param name="collectionStats"> collection-level statistics, such as the number of tokens in the collection. </param>
         /// <param name="termStats"> term-level statistics, such as the document frequency of a term across the collection. </param>
-        /// <returns> SimWeight object with the information this Similarity needs to score a query. </returns>
+        /// <returns> <see cref="SimWeight"/> object with the information this <see cref="Similarity"/> needs to score a query. </returns>
         public abstract SimWeight ComputeWeight(float queryBoost, CollectionStatistics collectionStats, params TermStatistics[] termStats);
 
         /// <summary>
-        /// Creates a new <seealso cref="Similarity.SimScorer"/> to score matching documents from a segment of the inverted index. </summary>
-        /// <param name="weight"> collection information from <seealso cref="#computeWeight(float, CollectionStatistics, TermStatistics...)"/> </param>
+        /// Creates a new <see cref="Similarity.SimScorer"/> to score matching documents from a segment of the inverted index. </summary>
+        /// <param name="weight"> collection information from <see cref="ComputeWeight(float, CollectionStatistics, TermStatistics[])"/> </param>
         /// <param name="context"> segment of the inverted index to be scored. </param>
-        /// <returns> SloppySimScorer for scoring documents across <code>context</code> </returns>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <returns> Sloppy <see cref="SimScorer"/> for scoring documents across <c>context</c> </returns>
+        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
         public abstract SimScorer GetSimScorer(SimWeight weight, AtomicReaderContext context);
 
         /// <summary>
-        /// API for scoring "sloppy" queries such as <seealso cref="TermQuery"/>,
-        /// <seealso cref="SpanQuery"/>, and <seealso cref="PhraseQuery"/>.
-        /// <p>
+        /// API for scoring "sloppy" queries such as <see cref="TermQuery"/>,
+        /// <see cref="Spans.SpanQuery"/>, and <see cref="PhraseQuery"/>.
+        /// <para/>
         /// Frequencies are floating-point values: an approximate
         /// within-document frequency adjusted for "sloppiness" by
-        /// <seealso cref="SimScorer#computeSlopFactor(int)"/>.
+        /// <see cref="SimScorer.ComputeSlopFactor(int)"/>.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -223,8 +224,8 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Stores the weight for a query across the indexed collection. this abstract
-        /// implementation is empty; descendants of {@code Similarity} should
-        /// subclass {@code SimWeight} and define the statistics they require in the
+        /// implementation is empty; descendants of <see cref="Similarity"/> should
+        /// subclass <see cref="SimWeight"/> and define the statistics they require in the
         /// subclass. Examples include idf, average field length, etc.
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -242,8 +243,8 @@ namespace Lucene.Net.Search.Similarities
 
             /// <summary>
             /// The value for normalization of contained query clauses (e.g. sum of squared weights).
-            /// <p>
-            /// NOTE: a Similarity implementation might not use any query normalization at all,
+            /// <para/>
+            /// NOTE: a <see cref="Similarity"/> implementation might not use any query normalization at all,
             /// its not required. However, if it wants to participate in query normalization,
             /// it can return a value here.
             /// </summary>
@@ -251,10 +252,10 @@ namespace Lucene.Net.Search.Similarities
 
             /// <summary>
             /// Assigns the query normalization factor and boost from parent queries to this.
-            /// <p>
-            /// NOTE: a Similarity implementation might not use this normalized value at all,
+            /// <para/>
+            /// NOTE: a <see cref="Similarity"/> implementation might not use this normalized value at all,
             /// its not required. However, its usually a good idea to at least incorporate
-            /// the topLevelBoost (e.g. from an outer BooleanQuery) into its score.
+            /// the <paramref name="topLevelBoost"/> (e.g. from an outer <see cref="BooleanQuery"/>) into its score.
             /// </summary>
             public abstract void Normalize(float queryNorm, float topLevelBoost);
         }

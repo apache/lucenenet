@@ -21,6 +21,7 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// An approximation of the <em>I(n<sub>e</sub>)</em> model.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE

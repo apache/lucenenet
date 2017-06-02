@@ -20,10 +20,12 @@ namespace Lucene.Net.Search.Similarities
      */
 
     /// <summary>
-    /// The <em>lambda (&lambda;<sub>w</sub>)</em> parameter in information-based
-    /// models. </summary>
-    /// <seealso cref= IBSimilarity
-    /// @lucene.experimental </seealso>
+    /// The <em>lambda (&#955;<sub>w</sub>)</em> parameter in information-based
+    /// models. 
+    /// <para/>
+    /// @lucene.experimental
+    /// </summary>
+    /// <seealso cref="IBSimilarity"/> 
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif

@@ -21,6 +21,7 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Pareto-Zipf Normalization
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -31,7 +32,7 @@ namespace Lucene.Net.Search.Similarities
         internal readonly float z;
 
         /// <summary>
-        /// Calls <seealso cref="#NormalizationZ(float) NormalizationZ(0.3)"/>
+        /// Calls <see cref="T:NormalizationZ(0.3)"/>
         /// </summary>
         public NormalizationZ()
             : this(0.30F)
@@ -39,8 +40,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Creates NormalizationZ with the supplied parameter <code>z</code>. </summary>
-        /// <param name="z"> represents <code>A/(A+1)</code> where <code>A</code>
+        /// Creates <see cref="NormalizationZ"/> with the supplied parameter <paramref name="z"/>. </summary>
+        /// <param name="z"> represents <c>A/(A+1)</c> where <c>A</c>
         ///          measures the specificity of the language. </param>
         public NormalizationZ(float z)
         {
@@ -58,8 +59,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns the parameter <code>z</code> </summary>
-        /// <seealso cref= #NormalizationZ(float) </seealso>
+        /// Returns the parameter <c>z</c> </summary>
+        /// <seealso cref="NormalizationZ(float)"/>
         public virtual float Z
         {
             get

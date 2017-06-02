@@ -21,8 +21,9 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Geometric as limiting form of the Bose-Einstein model.  The formula used in Lucene differs
-    /// slightly from the one in the original paper: {@code F} is increased by {@code 1}
-    /// and {@code N} is increased by {@code F}.
+    /// slightly from the one in the original paper: <c>F</c> is increased by <c>1</c>
+    /// and <c>N</c> is increased by <c>F</c>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE

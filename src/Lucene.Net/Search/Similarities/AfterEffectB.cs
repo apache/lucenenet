@@ -21,6 +21,7 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Model of the information gain based on the ratio of two Bernoulli processes.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE

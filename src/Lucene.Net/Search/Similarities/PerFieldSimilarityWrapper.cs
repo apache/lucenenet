@@ -23,11 +23,11 @@ namespace Lucene.Net.Search.Similarities
     using FieldInvertState = Lucene.Net.Index.FieldInvertState;
 
     /// <summary>
-    /// Provides the ability to use a different <seealso cref="Similarity"/> for different fields.
-    /// <p>
-    /// Subclasses should implement <seealso cref="#get(String)"/> to return an appropriate
-    /// Similarity (for example, using field-specific parameter values) for the field.
-    ///
+    /// Provides the ability to use a different <see cref="Similarity"/> for different fields.
+    /// <para/>
+    /// Subclasses should implement <see cref="Get(string)"/> to return an appropriate
+    /// <see cref="Similarity"/> (for example, using field-specific parameter values) for the field.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns a <seealso cref="Similarity"/> for scoring a field.
+        /// Returns a <see cref="Similarity"/> for scoring a field.
         /// </summary>
         public abstract Similarity Get(string name);
 

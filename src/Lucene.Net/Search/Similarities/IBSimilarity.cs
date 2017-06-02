@@ -22,51 +22,64 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Provides a framework for the family of information-based models, as described
-    /// in St&eacute;phane Clinchant and Eric Gaussier. 2010. Information-based
+    /// in St&#201;phane Clinchant and Eric Gaussier. 2010. Information-based
     /// models for ad hoc IR. In Proceeding of the 33rd international ACM SIGIR
     /// conference on Research and development in information retrieval (SIGIR '10).
     /// ACM, New York, NY, USA, 234-241.
-    /// <p>The retrieval function is of the form <em>RSV(q, d) = &sum;
+    /// <para>The retrieval function is of the form <em>RSV(q, d) = &#8721;
     /// -x<sup>q</sup><sub>w</sub> log Prob(X<sub>w</sub> &gt;=
-    /// t<sup>d</sup><sub>w</sub> | &lambda;<sub>w</sub>)</em>, where
-    /// <ul>
-    ///   <li><em>x<sup>q</sup><sub>w</sub></em> is the query boost;</li>
-    ///   <li><em>X<sub>w</sub></em> is a random variable that counts the occurrences
-    ///   of word <em>w</em>;</li>
-    ///   <li><em>t<sup>d</sup><sub>w</sub></em> is the normalized term frequency;</li>
-    ///   <li><em>&lambda;<sub>w</sub></em> is a parameter.</li>
-    /// </ul>
-    /// </p>
-    /// <p>The framework described in the paper has many similarities to the DFR
-    /// framework (see <seealso cref="DFRSimilarity"/>). It is possible that the two
-    /// Similarities will be merged at one point.</p>
-    /// <p>To construct an IBSimilarity, you must specify the implementations for
+    /// t<sup>d</sup><sub>w</sub> | &#955;<sub>w</sub>)</em>, where
+    /// <list type="bullet">
+    ///     <item><description><em>x<sup>q</sup><sub>w</sub></em> is the query boost;</description></item>
+    ///     <item><description><em>X<sub>w</sub></em> is a random variable that counts the occurrences
+    ///         of word <em>w</em>;</description></item>
+    ///     <item><description><em>t<sup>d</sup><sub>w</sub></em> is the normalized term frequency;</description></item>
+    ///     <item><description><em>&#955;<sub>w</sub></em> is a parameter.</description></item>
+    /// </list>
+    /// </para>
+    /// <para>The framework described in the paper has many similarities to the DFR
+    /// framework (see <see cref="DFRSimilarity"/>). It is possible that the two
+    /// Similarities will be merged at one point.</para>
+    /// <para>To construct an <see cref="IBSimilarity"/>, you must specify the implementations for
     /// all three components of the Information-Based model.
-    /// <ol>
-    ///     <li><seealso cref="Distribution"/>: Probabilistic distribution used to
-    ///         model term occurrence
-    ///         <ul>
-    ///             <li><seealso cref="DistributionLL"/>: Log-logistic</li>
-    ///             <li><seealso cref="DistributionLL"/>: Smoothed power-law</li>
-    ///         </ul>
-    ///     </li>
-    ///     <li><seealso cref="Lambda"/>: &lambda;<sub>w</sub> parameter of the
-    ///         probability distribution
-    ///         <ul>
-    ///             <li><seealso cref="LambdaDF"/>: <code>N<sub>w</sub>/N</code> or average
-    ///                 number of documents where w occurs</li>
-    ///             <li><seealso cref="LambdaTTF"/>: <code>F<sub>w</sub>/N</code> or
-    ///                 average number of occurrences of w in the collection</li>
-    ///         </ul>
-    ///     </li>
-    ///     <li><seealso cref="Normalization"/>: Term frequency normalization
-    ///         <blockquote>Any supported DFR normalization (listed in
-    ///                      <seealso cref="DFRSimilarity"/>)</blockquote>
-    ///     </li>
-    /// </ol>
-    /// <p> </summary>
-    /// <seealso cref= DFRSimilarity
-    /// @lucene.experimental  </seealso>
+    /// <list type="table">
+    ///     <listheader>
+    ///         <term>Component</term>
+    ///         <term>Implementations</term>
+    ///     </listheader>
+    ///     <item>
+    ///         <term><see cref="Distribution"/>: Probabilistic distribution used to
+    ///             model term occurrence</term>
+    ///         <term>
+    ///             <list type="bullet">
+    ///                 <item><description><see cref="DistributionLL"/>: Log-logistic</description></item>
+    ///                 <item><description><see cref="DistributionLL"/>: Smoothed power-law</description></item>
+    ///             </list>
+    ///         </term>
+    ///     </item>
+    ///     <item>
+    ///         <term><see cref="Lambda"/>: &#955;<sub>w</sub> parameter of the
+    ///             probability distribution</term>
+    ///         <term>
+    ///             <list type="bullet">
+    ///                 <item><description><see cref="LambdaDF"/>: <c>N<sub>w</sub>/N</c> or average
+    ///                     number of documents where w occurs</description></item>
+    ///                 <item><description><see cref="LambdaTTF"/>: <c>F<sub>w</sub>/N</c> or
+    ///                     average number of occurrences of w in the collection</description></item>
+    ///             </list>
+    ///         </term>
+    ///     </item>
+    ///     <item>
+    ///         <term><see cref="Normalization"/>: Term frequency normalization</term>
+    ///         <term>Any supported DFR normalization (listed in
+    ///                      <see cref="DFRSimilarity"/>)
+    ///         </term>
+    ///     </item>
+    /// </list>
+    /// </para>
+    /// @lucene.experimental
+    /// </summary>
+    /// <seealso cref="DFRSimilarity"/>
     [ExceptionToClassNameConvention]
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -78,7 +91,7 @@ namespace Lucene.Net.Search.Similarities
         protected internal readonly Distribution m_distribution;
 
         /// <summary>
-        /// The <em>lambda (&lambda;<sub>w</sub>)</em> parameter. </summary>
+        /// The <em>lambda (&#955;<sub>w</sub>)</em> parameter. </summary>
         protected internal readonly Lambda m_lambda;
 
         /// <summary>
@@ -87,12 +100,12 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Creates IBSimilarity from the three components.
-        /// <p>
-        /// Note that <code>null</code> values are not allowed:
+        /// <para/>
+        /// Note that <c>null</c> values are not allowed:
         /// if you want no normalization, instead pass
-        /// <seealso cref="NoNormalization"/>. </summary>
+        /// <see cref="Normalization.NoNormalization"/>. </summary>
         /// <param name="distribution"> probabilistic distribution modeling term occurrence </param>
-        /// <param name="lambda"> distribution's &lambda;<sub>w</sub> parameter </param>
+        /// <param name="lambda"> distribution's &#955;<sub>w</sub> parameter </param>
         /// <param name="normalization"> term frequency normalization </param>
         public IBSimilarity(Distribution distribution, Lambda lambda, Normalization normalization)
         {
@@ -121,9 +134,9 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// The name of IB methods follow the pattern
-        /// {@code IB <distribution> <lambda><normalization>}. The name of the
+        /// <c>IB &lt;distribution&gt; &lt;lambda&gt;&lt;normalization&gt;</c>. The name of the
         /// distribution is the same as in the original paper; for the names of lambda
-        /// parameters, refer to the javadoc of the <seealso cref="Lambda"/> classes.
+        /// parameters, refer to the doc of the <see cref="Similarities.Lambda"/> classes.
         /// </summary>
         public override string ToString()
         {

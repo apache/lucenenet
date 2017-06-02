@@ -21,12 +21,14 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Limiting form of the Bose-Einstein model. The formula used in Lucene differs
-    /// slightly from the one in the original paper: {@code F} is increased by {@code tfn+1}
-    /// and {@code N} is increased by {@code F}
+    /// slightly from the one in the original paper: <c>F</c> is increased by <c>tfn+1</c>
+    /// and <c>N</c> is increased by <c>F</c>
+    /// <para/>
     /// @lucene.experimental
+    /// <para/>
     /// NOTE: in some corner cases this model may give poor performance with Normalizations that
-    /// return large values for {@code tfn} such as NormalizationH3. Consider using the
-    /// geometric approximation (<seealso cref="BasicModelG"/>) instead, which provides the same relevance
+    /// return large values for <c>tfn</c> such as <see cref="NormalizationH3"/>. Consider using the
+    /// geometric approximation (<see cref="BasicModelG"/>) instead, which provides the same relevance
     /// but with less practical problems.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -45,12 +47,12 @@ namespace Lucene.Net.Search.Similarities
             double F = stats.TotalTermFreq + 1 + tfn;
             // approximation only holds true when F << N, so we use N += F
             double N = F + stats.NumberOfDocuments;
-            return (float)(-SimilarityBase.Log2((N - 1) * Math.E) + f(N + F - 1, N + F - tfn - 2) - f(F, F - tfn));
+            return (float)(-SimilarityBase.Log2((N - 1) * Math.E) + this.F(N + F - 1, N + F - tfn - 2) - this.F(F, F - tfn));
         }
 
         /// <summary>
         /// The <em>f</em> helper function defined for <em>B<sub>E</sub></em>. </summary>
-        private double f(double n, double m)
+        private double F(double n, double m)
         {
             return (m + 0.5) * SimilarityBase.Log2(n / m) + (n - m) * SimilarityBase.Log2(n);
         }

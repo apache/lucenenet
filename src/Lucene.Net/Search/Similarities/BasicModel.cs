@@ -20,13 +20,14 @@ namespace Lucene.Net.Search.Similarities
      */
 
     /// <summary>
-    /// this class acts as the base class for the specific <em>basic model</em>
+    /// This class acts as the base class for the specific <em>basic model</em>
     /// implementations in the DFR framework. Basic models compute the
     /// <em>informative content Inf<sub>1</sub> = -log<sub>2</sub>Prob<sub>1</sub>
     /// </em>.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= DFRSimilarity
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="DFRSimilarity"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -46,10 +47,10 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Returns an explanation for the score.
-        /// <p>Most basic models use the number of documents and the total term
+        /// <para>Most basic models use the number of documents and the total term
         /// frequency to compute Inf<sub>1</sub>. this method provides a generic
         /// explanation for such models. Subclasses that use other statistics must
-        /// override this method.</p>
+        /// override this method.</para>
         /// </summary>
         public virtual Explanation Explain(BasicStats stats, float tfn)
         {

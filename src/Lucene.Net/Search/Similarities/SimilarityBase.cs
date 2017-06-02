@@ -26,18 +26,19 @@ namespace Lucene.Net.Search.Similarities
      */
 
     /// <summary>
-    /// A subclass of {@code Similarity} that provides a simplified API for its
-    /// descendants. Subclasses are only required to implement the <seealso cref="#score"/>
-    /// and <seealso cref="#toString()"/> methods. Implementing
-    /// <seealso cref="#explain(Explanation, BasicStats, int, float, float)"/> is optional,
-    /// inasmuch as SimilarityBase already provides a basic explanation of the score
+    /// A subclass of <see cref="Similarity"/> that provides a simplified API for its
+    /// descendants. Subclasses are only required to implement the <see cref="Score(BasicStats, float, float)"/>
+    /// and <see cref="ToString()"/> methods. Implementing
+    /// <see cref="Explain(Explanation, BasicStats, int, float, float)"/> is optional,
+    /// inasmuch as <see cref="SimilarityBase"/> already provides a basic explanation of the score
     /// and the term frequency. However, implementers of a subclass are encouraged to
     /// include as much detail about the scoring method as possible.
-    /// <p>
+    /// <para/>
     /// Note: multi-word queries such as phrase queries are scored in a different way
     /// than Lucene's default ranking algorithm: whereas it "fakes" an IDF value for
     /// the phrase as a whole (since it does not know it), this class instead scores
     /// phrases as a summation of the individual term scores.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -46,7 +47,7 @@ namespace Lucene.Net.Search.Similarities
     public abstract class SimilarityBase : Similarity
     {
         /// <summary>
-        /// For <seealso cref="#log2(double)"/>. Precomputed for efficiency reasons. </summary>
+        /// For <see cref="Log2(double)"/>. Precomputed for efficiency reasons. </summary>
         private static readonly double LOG_2 = Math.Log(2);
 
         /// <summary>
@@ -65,13 +66,13 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Determines whether overlap tokens (Tokens with
-        ///  0 position increment) are ignored when computing
-        ///  norm.  By default this is true, meaning overlap
-        ///  tokens do not count when computing norms.
-        ///
-        ///  @lucene.experimental
+        /// 0 position increment) are ignored when computing
+        /// norm.  By default this is <c>true</c>, meaning overlap
+        /// tokens do not count when computing norms.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
-        ///  <seealso cref= #computeNorm </seealso>
+        /// <seealso cref="ComputeNorm(FieldInvertState)"/>
         public virtual bool DiscountOverlaps
         {
             set
@@ -103,8 +104,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Fills all member fields defined in {@code BasicStats} in {@code stats}.
-        ///  Subclasses can override this method to fill additional stats.
+        /// Fills all member fields defined in <see cref="BasicStats"/> in <paramref name="stats"/>.
+        /// Subclasses can override this method to fill additional stats.
         /// </summary>
         protected internal virtual void FillBasicStats(BasicStats stats, CollectionStatistics collectionStats, TermStatistics termStats)
         {
@@ -150,8 +151,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Scores the document {@code doc}.
-        /// <p>Subclasses must apply their scoring formula in this class.</p> </summary>
+        /// Scores the document <c>doc</c>.
+        /// <para>Subclasses must apply their scoring formula in this class.</para> </summary>
         /// <param name="stats"> the corpus level statistics. </param>
         /// <param name="freq"> the term frequency. </param>
         /// <param name="docLen"> the document length. </param>
@@ -159,11 +160,11 @@ namespace Lucene.Net.Search.Similarities
         public abstract float Score(BasicStats stats, float freq, float docLen);
 
         /// <summary>
-        /// Subclasses should implement this method to explain the score. {@code expl}
+        /// Subclasses should implement this method to explain the score. <paramref name="expl"/>
         /// already contains the score, the name of the class and the doc id, as well
         /// as the term frequency and its explanation; subclasses can add additional
         /// clauses to explain details of their scoring formulae.
-        /// <p>The default implementation does nothing.</p>
+        /// <para>The default implementation does nothing.</para>
         /// </summary>
         /// <param name="expl"> the explanation to extend with details. </param>
         /// <param name="stats"> the corpus level statistics. </param>
@@ -176,12 +177,12 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Explains the score. The implementation here provides a basic explanation
-        /// in the format <em>score(name-of-similarity, doc=doc-id,
+        /// in the format <em>Score(name-of-similarity, doc=doc-id,
         /// freq=term-frequency), computed from:</em>, and
-        /// attaches the score (computed via the <seealso cref="#score(BasicStats, float, float)"/>
+        /// attaches the score (computed via the <see cref="Score(BasicStats, float, float)"/>
         /// method) and the explanation for the term frequency. Subclasses content with
         /// this format may add additional details in
-        /// <seealso cref="#explain(Explanation, BasicStats, int, float, float)"/>.
+        /// <see cref="Explain(Explanation, BasicStats, int, float, float)"/>.
         /// </summary>
         /// <param name="stats"> the corpus level statistics. </param>
         /// <param name="doc"> the document id. </param>
@@ -223,7 +224,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Subclasses must override this method to return the name of the Similarity
+        /// Subclasses must override this method to return the name of the <see cref="Similarity"/>
         /// and preferably the values of parameters (if any) as well.
         /// </summary>
         public override abstract string ToString();
@@ -244,7 +245,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Encodes the document length in the same way as <seealso cref="TFIDFSimilarity"/>. </summary>
+        /// Encodes the document length in the same way as <see cref="TFIDFSimilarity"/>. </summary>
         public override long ComputeNorm(FieldInvertState state)
         {
             float numTerms;
@@ -261,14 +262,14 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Decodes a normalization factor (document length) stored in an index. </summary>
-        /// <seealso cref= #encodeNormValue(float,float) </seealso>
+        /// <see cref="EncodeNormValue(float,float)"/>
         protected internal virtual float DecodeNormValue(byte norm)
         {
             return NORM_TABLE[norm & 0xFF]; // & 0xFF maps negative bytes to positive above 127
         }
 
         /// <summary>
-        /// Encodes the length to a byte via SmallFloat. </summary>
+        /// Encodes the length to a byte via <see cref="SmallSingle"/>. </summary>
         protected internal virtual byte EncodeNormValue(float boost, float length)
         {
             return SmallSingle.SingleToByte315((boost / (float)Math.Sqrt(length)));
@@ -277,7 +278,7 @@ namespace Lucene.Net.Search.Similarities
         // ----------------------------- Static methods ------------------------------
 
         /// <summary>
-        /// Returns the base two logarithm of {@code x}. </summary>
+        /// Returns the base two logarithm of <c>x</c>. </summary>
         public static double Log2(double x)
         {
             // Put this to a 'util' class if we need more of these.
@@ -287,10 +288,10 @@ namespace Lucene.Net.Search.Similarities
         // --------------------------------- Classes ---------------------------------
 
         /// <summary>
-        /// Delegates the <seealso cref="#score(int, float)"/> and
-        /// <seealso cref="#explain(int, Explanation)"/> methods to
-        /// <seealso cref="SimilarityBase#score(BasicStats, float, float)"/> and
-        /// <seealso cref="SimilarityBase#explain(BasicStats, int, Explanation, float)"/>,
+        /// Delegates the <see cref="Score(int, float)"/> and
+        /// <see cref="Explain(int, Explanation)"/> methods to
+        /// <see cref="SimilarityBase.Score(BasicStats, float, float)"/> and
+        /// <see cref="SimilarityBase.Explain(BasicStats, int, Explanation, float)"/>,
         /// respectively.
         /// </summary>
 #if FEATURE_SERIALIZABLE
