@@ -141,11 +141,11 @@ namespace Lucene.Net.Analysis.Pl
         }
 
         /// <summary>
-        /// Creates a <see cref="Analyzer.TokenStreamComponents"/>
+        /// Creates a <see cref="TokenStreamComponents"/>
         /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns>
-        /// A <see cref="Analyzer.TokenStreamComponents"/> built from an <see cref="StandardTokenizer"/>
+        /// A <see cref="TokenStreamComponents"/> built from an <see cref="StandardTokenizer"/>
         /// filtered with <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>, 
         /// <see cref="SetKeywordMarkerFilter"/> if a stem excusion set is provided and <see cref="StempelFilter"/>.
         /// </returns>
