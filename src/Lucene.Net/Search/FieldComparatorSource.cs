@@ -20,10 +20,9 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Provides a <seealso cref="FieldComparer"/> for custom field sorting.
-    ///
+    /// Provides a <see cref="FieldComparer"/> for custom field sorting.
+    /// <para/>
     /// @lucene.experimental
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -35,8 +34,8 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="fieldname">
         ///          Name of the field to create comparer for. </param>
-        /// <returns> FieldComparer. </returns>
-        /// <exception cref="IOException">
+        /// <returns> <see cref="FieldComparer"/>. </returns>
+        /// <exception cref="System.IO.IOException">
         ///           If an error occurs reading the index. </exception>
         public abstract FieldComparer NewComparer(string fieldname, int numHits, int sortPos, bool reversed);
     }

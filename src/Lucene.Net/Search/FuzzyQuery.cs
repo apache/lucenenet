@@ -31,26 +31,26 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Implements the fuzzy search query. The similarity measurement
     /// is based on the Damerau-Levenshtein (optimal string alignment) algorithm,
-    /// though you can explicitly choose classic Levenshtein by passing <code>false</code>
-    /// to the <code>transpositions</code> parameter.
+    /// though you can explicitly choose classic Levenshtein by passing <c>false</c>
+    /// to the <c>transpositions</c> parameter.
     ///
-    /// <p>this query uses <seealso cref="MultiTermQuery.TopTermsScoringBooleanQueryRewrite"/>
+    /// <para/>this query uses <see cref="MultiTermQuery.TopTermsScoringBooleanQueryRewrite"/>
     /// as default. So terms will be collected and scored according to their
-    /// edit distance. Only the top terms are used for building the <seealso cref="BooleanQuery"/>.
+    /// edit distance. Only the top terms are used for building the <see cref="BooleanQuery"/>.
     /// It is not recommended to change the rewrite mode for fuzzy queries.
     ///
-    /// <p>At most, this query will match terms up to
-    /// {@value Lucene.Net.Util.Automaton.LevenshteinAutomata#MAXIMUM_SUPPORTED_DISTANCE} edits.
+    /// <para/>At most, this query will match terms up to
+    /// <see cref="Lucene.Net.Util.Automaton.LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE"/> edits.
     /// Higher distances (especially with transpositions enabled), are generally not useful and
     /// will match a significant amount of the term dictionary. If you really want this, consider
     /// using an n-gram indexing technique (such as the SpellChecker in the
     /// <a href="{@docRoot}/../suggest/overview-summary.html">suggest module</a>) instead.
     ///
-    /// <p>NOTE: terms of length 1 or 2 will sometimes not match because of how the scaled
+    /// <para/>NOTE: terms of length 1 or 2 will sometimes not match because of how the scaled
     /// distance between two terms is computed.  For a term to match, the edit distance between
     /// the terms must be less than the minimum length term (either the input term, or
-    /// the candidate term).  For example, FuzzyQuery on term "abcd" with maxEdits=2 will
-    /// not match an indexed term "ab", and FuzzyQuery on term "a" with maxEdits=2 will not
+    /// the candidate term).  For example, <see cref="FuzzyQuery"/> on term "abcd" with maxEdits=2 will
+    /// not match an indexed term "ab", and <see cref="FuzzyQuery"/> on term "a" with maxEdits=2 will not
     /// match an indexed term "abc".
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -70,19 +70,19 @@ namespace Lucene.Net.Search
         private readonly Term term;
 
         /// <summary>
-        /// Create a new FuzzyQuery that will match terms with an edit distance
-        /// of at most <code>maxEdits</code> to <code>term</code>.
-        /// If a <code>prefixLength</code> &gt; 0 is specified, a common prefix
+        /// Create a new <see cref="FuzzyQuery"/> that will match terms with an edit distance
+        /// of at most <paramref name="maxEdits"/> to <paramref name="term"/>.
+        /// If a <paramref name="prefixLength"/> &gt; 0 is specified, a common prefix
         /// of that length is also required.
         /// </summary>
-        /// <param name="term"> the term to search for </param>
-        /// <param name="maxEdits"> must be >= 0 and <= <seealso cref="LevenshteinAutomata#MAXIMUM_SUPPORTED_DISTANCE"/>. </param>
-        /// <param name="prefixLength"> length of common (non-fuzzy) prefix </param>
-        /// <param name="maxExpansions"> the maximum number of terms to match. If this number is
-        ///  greater than <seealso cref="BooleanQuery#getMaxClauseCount"/> when the query is rewritten,
-        ///  then the maxClauseCount will be used instead. </param>
-        /// <param name="transpositions"> true if transpositions should be treated as a primitive
-        ///        edit operation. If this is false, comparisons will implement the classic
+        /// <param name="term"> The term to search for </param>
+        /// <param name="maxEdits"> Must be &gt;= 0 and &lt;= <see cref="LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE"/>. </param>
+        /// <param name="prefixLength"> Length of common (non-fuzzy) prefix </param>
+        /// <param name="maxExpansions"> The maximum number of terms to match. If this number is
+        /// greater than <see cref="BooleanQuery.MaxClauseCount"/> when the query is rewritten,
+        /// then the maxClauseCount will be used instead. </param>
+        /// <param name="transpositions"> <c>true</c> if transpositions should be treated as a primitive
+        ///        edit operation. If this is <c>false</c>, comparisons will implement the classic
         ///        Levenshtein algorithm. </param>
         public FuzzyQuery(Term term, int maxEdits, int prefixLength, int maxExpansions, bool transpositions)
             : base(term.Field)
@@ -109,8 +109,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Calls {@link #FuzzyQuery(Term, int, int, int, boolean)
-        /// FuzzyQuery(term, maxEdits, prefixLength, defaultMaxExpansions, defaultTranspositions)}.
+        /// Calls <see cref="FuzzyQuery.FuzzyQuery(Term, int, int, int, bool)">
+        /// FuzzyQuery(term, maxEdits, prefixLength, defaultMaxExpansions, defaultTranspositions)</see>.
         /// </summary>
         public FuzzyQuery(Term term, int maxEdits, int prefixLength)
             : this(term, maxEdits, prefixLength, DefaultMaxExpansions, DefaultTranspositions)
@@ -118,7 +118,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Calls <seealso cref="#FuzzyQuery(Term, int, int) FuzzyQuery(term, maxEdits, defaultPrefixLength)"/>.
+        /// Calls <see cref="FuzzyQuery(Term, int, int)">FuzzyQuery(term, maxEdits, defaultPrefixLength)</see>.
         /// </summary>
         public FuzzyQuery(Term term, int maxEdits)
             : this(term, maxEdits, DefaultPrefixLength)
@@ -126,14 +126,14 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Calls <seealso cref="#FuzzyQuery(Term, int) FuzzyQuery(term, defaultMaxEdits)"/>.
+        /// Calls <see cref="FuzzyQuery(Term, int)">FuzzyQuery(term, defaultMaxEdits)</see>.
         /// </summary>
         public FuzzyQuery(Term term)
             : this(term, DefaultMaxEdits)
         {
         }
 
-        /// <returns> the maximum number of edit distances allowed for this query to match. </returns>
+        /// <returns> The maximum number of edit distances allowed for this query to match. </returns>
         public virtual int MaxEdits
         {
             get
@@ -143,7 +143,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the non-fuzzy prefix length. this is the number of characters at the start
+        /// Returns the non-fuzzy prefix length. This is the number of characters at the start
         /// of a term that must be identical (not fuzzy) to the query term if the query
         /// is to match that term.
         /// </summary>
@@ -156,8 +156,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true if transpositions should be treated as a primitive edit operation.
-        /// If this is false, comparisons will implement the classic Levenshtein algorithm.
+        /// Returns <c>true</c> if transpositions should be treated as a primitive edit operation.
+        /// If this is <c>false</c>, comparisons will implement the classic Levenshtein algorithm.
         /// </summary>
         public virtual bool Transpositions
         {
@@ -269,10 +269,9 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: this was floatToEdits() in Lucene
         /// </summary>
-        /// <param name="minimumSimilarity"> scaled similarity </param>
-        /// <param name="termLen"> length (in unicode codepoints) of the term. </param>
-        /// <returns> equivalent number of maxEdits </returns>
-        /// @deprecated pass integer edit distances instead.
+        /// <param name="minimumSimilarity"> Scaled similarity </param>
+        /// <param name="termLen"> Length (in unicode codepoints) of the term. </param>
+        /// <returns> Equivalent number of maxEdits </returns>
         [Obsolete("pass integer edit distances instead.")]
         public static int SingleToEdits(float minimumSimilarity, int termLen)
         {

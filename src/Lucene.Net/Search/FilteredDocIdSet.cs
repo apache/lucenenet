@@ -22,22 +22,22 @@ namespace Lucene.Net.Search
     using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
-    /// Abstract decorator class for a DocIdSet implementation
+    /// Abstract decorator class for a <see cref="DocIdSet"/> implementation
     /// that provides on-demand filtering/validation
-    /// mechanism on a given DocIdSet.
+    /// mechanism on a given <see cref="DocIdSet"/>.
     ///
-    /// <p/>
+    /// <para/>
     ///
     /// Technically, this same functionality could be achieved
     /// with ChainedFilter (under queries/), however the
     /// benefit of this class is it never materializes the full
-    /// bitset for the filter.  Instead, the <seealso cref="#match"/>
+    /// bitset for the filter.  Instead, the <see cref="Match(int)"/>
     /// method is invoked on-demand, per docID visited during
     /// searching.  If you know few docIDs will be visited, and
-    /// the logic behind <seealso cref="#match"/> is relatively costly,
+    /// the logic behind <see cref="Match(int)"/> is relatively costly,
     /// this may be a better way to filter than ChainedFilter.
     /// </summary>
-    /// <seealso cref= DocIdSet </seealso>
+    /// <seealso cref="DocIdSet"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -47,14 +47,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Constructor. </summary>
-        /// <param name="innerSet"> Underlying DocIdSet </param>
+        /// <param name="innerSet"> Underlying <see cref="DocIdSet"/> </param>
         public FilteredDocIdSet(DocIdSet innerSet)
         {
             this.innerSet = innerSet;
         }
 
         /// <summary>
-        /// this DocIdSet implementation is cacheable if the inner set is cacheable. </summary>
+        /// This <see cref="DocIdSet"/> implementation is cacheable if the inner set is cacheable. </summary>
         public override bool IsCacheable
         {
             get
@@ -101,13 +101,13 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Validation method to determine whether a docid should be in the result set. </summary>
         /// <param name="docid"> docid to be tested </param>
-        /// <returns> true if input docid should be in the result set, false otherwise. </returns>
+        /// <returns> <c>true</c> if input docid should be in the result set, false otherwise. </returns>
         protected abstract bool Match(int docid);
 
         /// <summary>
-        /// Implementation of the contract to build a DocIdSetIterator. </summary>
-        /// <seealso cref= DocIdSetIterator </seealso>
-        /// <seealso cref= FilteredDocIdSetIterator </seealso>
+        /// Implementation of the contract to build a <see cref="DocIdSetIterator"/>. </summary>
+        /// <seealso cref="DocIdSetIterator"/>
+        /// <seealso cref="FilteredDocIdSetIterator"/>
         public override DocIdSetIterator GetIterator()
         {
             DocIdSetIterator iterator = innerSet.GetIterator();

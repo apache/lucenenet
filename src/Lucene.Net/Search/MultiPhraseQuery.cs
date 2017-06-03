@@ -44,13 +44,13 @@ namespace Lucene.Net.Search
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// MultiPhraseQuery is a generalized version of PhraseQuery, with an added
-    /// method <seealso cref="#add(Term[])"/>.
+    /// <see cref="MultiPhraseQuery"/> is a generalized version of <see cref="PhraseQuery"/>, with an added
+    /// method <see cref="Add(Term[])"/>.
+    /// <para/>
     /// To use this class, to search for the phrase "Microsoft app*" first use
-    /// add(Term) on the term "Microsoft", then find all terms that have "app" as
-    /// prefix using IndexReader.terms(Term), and use MultiPhraseQuery.add(Term[]
-    /// terms) to add them to the query.
-    ///
+    /// <see cref="Add(Term)"/> on the term "Microsoft", then find all terms that have "app" as
+    /// prefix using <c>MultiFields.GetFields(IndexReader).GetTerms(string)</c>, and use <see cref="MultiPhraseQuery.Add(Term[])"/>
+    /// to add them to the query.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -65,7 +65,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sets the phrase slop for this query. </summary>
-        /// <seealso cref= PhraseQuery#setSlop(int) </seealso>
+        /// <seealso cref="PhraseQuery.Slop"/>
         public virtual int Slop
         {
             set
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Add a single term at the next position in the phrase. </summary>
-        /// <seealso cref= PhraseQuery#add(Term) </seealso>
+        /// <seealso cref="PhraseQuery.Add(Term)"/>
         public virtual void Add(Term term)
         {
             Add(new Term[] { term });
@@ -94,7 +94,7 @@ namespace Lucene.Net.Search
         /// Add multiple terms at the next position in the phrase.  Any of the terms
         /// may match.
         /// </summary>
-        /// <seealso cref= PhraseQuery#add(Term) </seealso>
+        /// <seealso cref="PhraseQuery.Add(Term)"/>
         public virtual void Add(Term[] terms)
         {
             int position = 0;
@@ -109,7 +109,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Allows to specify the relative position of terms within the phrase.
         /// </summary>
-        /// <seealso cref= PhraseQuery#add(Term, int) </seealso>
+        /// <seealso cref="PhraseQuery.Add(Term, int)"/>
         public virtual void Add(Term[] terms, int position)
         {
             if (termArrays.Count == 0)
@@ -151,7 +151,11 @@ namespace Lucene.Net.Search
             return result;
         }
 
-        // inherit javadoc
+        /// <summary>
+        /// Expert: adds all terms occurring in this query to the terms set. Only
+        /// works if this query is in its rewritten (<see cref="Rewrite(IndexReader)"/>) form.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> If this query is not yet rewritten </exception>
         public override void ExtractTerms(ISet<Term> terms)
         {
             foreach (Term[] arr in termArrays)
@@ -436,7 +440,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true if <code>o</code> is equal to this. </summary>
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (!(o is MultiPhraseQuery))
@@ -502,7 +506,7 @@ namespace Lucene.Net.Search
     }
 
     /// <summary>
-    /// Takes the logical union of multiple DocsEnum iterators.
+    /// Takes the logical union of multiple <see cref="DocsEnum"/> iterators.
     /// </summary>
 
     // TODO: if ever we allow subclassing of the *PhraseScorer

@@ -35,8 +35,8 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Base rewrite method that translates each term into a query, and keeps
     /// the scores as computed by the query.
-    /// <p>
-    /// @lucene.internal Only public to be accessible by spans package.
+    /// <para/>
+    /// @lucene.internal - Only public to be accessible by spans package.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -45,18 +45,18 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// A rewrite method that first translates each term into
-        ///  <seealso cref="Occur#SHOULD"/> clause in a
-        ///  BooleanQuery, and keeps the scores as computed by the
-        ///  query.  Note that typically such scores are
-        ///  meaningless to the user, and require non-trivial CPU
-        ///  to compute, so it's almost always better to use {@link
-        ///  MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT} instead.
+        /// <see cref="Occur.SHOULD"/> clause in a
+        /// <see cref="BooleanQuery"/>, and keeps the scores as computed by the
+        /// query.  Note that typically such scores are
+        /// meaningless to the user, and require non-trivial CPU
+        /// to compute, so it's almost always better to use 
+        /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/> instead.
         ///
-        ///  <p><b>NOTE</b>: this rewrite method will hit {@link
-        ///  BooleanQuery.TooManyClauses} if the number of terms
-        ///  exceeds <seealso cref="BooleanQuery#getMaxClauseCount"/>.
+        /// <para/><b>NOTE</b>: this rewrite method will hit 
+        /// <see cref="BooleanQuery.TooManyClausesException"/> if the number of terms
+        /// exceeds <see cref="BooleanQuery.MaxClauseCount"/>.
         /// </summary>
-        ///  <seealso cref= MultiTermQuery#setRewriteMethod  </seealso>
+        ///  <seealso cref="MultiTermQuery.MultiTermRewriteMethod"/>
         public static readonly ScoringRewrite<BooleanQuery> SCORING_BOOLEAN_QUERY_REWRITE = new ScoringRewriteAnonymousInnerClassHelper();
 
 #if FEATURE_SERIALIZABLE
@@ -90,16 +90,16 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Like <seealso cref="#SCORING_BOOLEAN_QUERY_REWRITE"/> except
-        ///  scores are not computed.  Instead, each matching
-        ///  document receives a constant score equal to the
-        ///  query's boost.
+        /// Like <see cref="SCORING_BOOLEAN_QUERY_REWRITE"/> except
+        /// scores are not computed.  Instead, each matching
+        /// document receives a constant score equal to the
+        /// query's boost.
         ///
-        ///  <p><b>NOTE</b>: this rewrite method will hit {@link
-        ///  BooleanQuery.TooManyClauses} if the number of terms
-        ///  exceeds <seealso cref="BooleanQuery#getMaxClauseCount"/>.
+        /// <para/><b>NOTE</b>: this rewrite method will hit 
+        /// <see cref="BooleanQuery.TooManyClausesException"/> if the number of terms
+        /// exceeds <see cref="BooleanQuery.MaxClauseCount"/>.
         /// </summary>
-        ///  <seealso cref= MultiTermQuery#setRewriteMethod  </seealso>
+        /// <seealso cref="MultiTermQuery.MultiTermRewriteMethod"/>
         public static readonly RewriteMethod CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE = new RewriteMethodAnonymousInnerClassHelper();
 
 #if FEATURE_SERIALIZABLE
@@ -122,8 +122,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// this method is called after every new term to check if the number of max clauses
-        /// (e.g. in BooleanQuery) is not exceeded. Throws the corresponding <seealso cref="RuntimeException"/>.
+        /// This method is called after every new term to check if the number of max clauses
+        /// (e.g. in <see cref="BooleanQuery"/>) is not exceeded. Throws the corresponding <see cref="Exception"/>.
         /// </summary>
         protected abstract void CheckMaxClauseCount(int count);
 
@@ -205,7 +205,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Special implementation of BytesStartArray that keeps parallel arrays for boost and docFreq </summary>
+        /// Special implementation of <see cref="BytesRefHash.BytesStartArray"/> that keeps parallel arrays for boost and docFreq </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif

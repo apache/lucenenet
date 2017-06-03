@@ -27,11 +27,11 @@ namespace Lucene.Net.Search
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// A Query that matches documents containing terms with a specified prefix. A PrefixQuery
-    /// is built by QueryParser for input like <code>app*</code>.
+    /// A <see cref="Query"/> that matches documents containing terms with a specified prefix. A <see cref="PrefixQuery"/>
+    /// is built by QueryParser for input like <c>app*</c>.
     ///
-    /// <p>this query uses the {@link
-    /// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
+    /// <para/>This query uses the
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
     /// rewrite method.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -42,7 +42,7 @@ namespace Lucene.Net.Search
         private readonly Term _prefix;
 
         /// <summary>
-        /// Constructs a query for terms starting with <code>prefix</code>. </summary>
+        /// Constructs a query for terms starting with <paramref name="prefix"/>. </summary>
         public PrefixQuery(Term prefix)
             : base(prefix.Field)
         {

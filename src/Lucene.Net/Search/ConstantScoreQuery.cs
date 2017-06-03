@@ -43,7 +43,7 @@ namespace Lucene.Net.Search
         protected readonly Query m_query;
 
         /// <summary>
-        /// Strips off scores from the passed in Query. The hits will get a constant score
+        /// Strips off scores from the passed in <see cref="Search.Query"/>. The hits will get a constant score
         /// dependent on the boost factor of this query.
         /// </summary>
         public ConstantScoreQuery(Query query)
@@ -57,11 +57,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Wraps a Filter as a Query. The hits will get a constant score
+        /// Wraps a <see cref="Search.Filter"/> as a <see cref="Search.Query"/>. The hits will get a constant score
         /// dependent on the boost factor of this query.
-        /// If you simply want to strip off scores from a Query, no longer use
-        /// {@code new ConstantScoreQuery(new QueryWrapperFilter(query))}, instead
-        /// use <seealso cref="#ConstantScoreQuery(Query)"/>!
+        /// If you simply want to strip off scores from a <see cref="Search.Query"/>, no longer use
+        /// <c>new ConstantScoreQuery(new QueryWrapperFilter(query))</c>, instead
+        /// use <see cref="ConstantScoreQuery(Query)"/>!
         /// </summary>
         public ConstantScoreQuery(Filter filter)
         {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the encapsulated filter, returns {@code null} if a query is wrapped. </summary>
+        /// Returns the encapsulated filter, returns <c>null</c> if a query is wrapped. </summary>
         public virtual Filter Filter
         {
             get
@@ -84,7 +84,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the encapsulated query, returns {@code null} if a filter is wrapped. </summary>
+        /// Returns the encapsulated query, returns <c>null</c> if a filter is wrapped. </summary>
         public virtual Query Query
         {
             get
@@ -162,9 +162,9 @@ namespace Lucene.Net.Search
             public override float GetValueForNormalization()
             {
                 // we calculate sumOfSquaredWeights of the inner weight, but ignore it (just to initialize everything)
-                /*if (InnerWeight != null)
+                /*if (InnerWeight != null) // LUCENENET TODO: BUG This code was in the original
                 {
-                    InnerWeight.ValueForNormalization;
+                    return innerWeight.GetValueForNormalization();
                 }*/
                 queryWeight = outerInstance.Boost;
                 return queryWeight * queryWeight;
@@ -257,10 +257,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// We return this as our <seealso cref="bulkScorer"/> so that if the CSQ
-        ///  wraps a query with its own optimized top-level
-        ///  scorer (e.g. BooleanScorer) we can use that
-        ///  top-level scorer.
+        /// We return this as our <see cref="BulkScorer"/> so that if the CSQ
+        /// wraps a query with its own optimized top-level
+        /// scorer (e.g. <see cref="BooleanScorer"/>) we can use that
+        /// top-level scorer.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]

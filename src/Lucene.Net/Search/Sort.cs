@@ -24,77 +24,77 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Encapsulates sort criteria for returned hits.
     ///
-    /// <p>The fields used to determine sort order must be carefully chosen.
-    /// Documents must contain a single term in such a field,
+    /// <para/>The fields used to determine sort order must be carefully chosen.
+    /// <see cref="Documents.Document"/>s must contain a single term in such a field,
     /// and the value of the term should indicate the document's relative position in
     /// a given sort order.  The field must be indexed, but should not be tokenized,
     /// and does not need to be stored (unless you happen to want it back with the
     /// rest of your document data).  In other words:
     ///
-    /// <p><code>document.add (new Field ("byNumber", Integer.toString(x), Field.Store.NO, Field.Index.NOT_ANALYZED));</code></p>
+    /// <para/><code>document.Add(new Field("byNumber", x.ToString(CultureInfo.InvariantCulture), Field.Store.NO, Field.Index.NOT_ANALYZED));</code>
     ///
     ///
-    /// <p><h3>Valid Types of Values</h3>
+    /// <para/><h3>Valid Types of Values</h3>
     ///
-    /// <p>There are four possible kinds of term values which may be put into
-    /// sorting fields: Integers, Longs, Floats, or Strings.  Unless
-    /// <seealso cref="SortField SortField"/> objects are specified, the type of value
+    /// <para/>There are four possible kinds of term values which may be put into
+    /// sorting fields: <see cref="int"/>s, <see cref="long"/>s, <see cref="float"/>s, or <see cref="string"/>s.  Unless
+    /// <see cref="SortField"/> objects are specified, the type of value
     /// in the field is determined by parsing the first term in the field.
     ///
-    /// <p>Integer term values should contain only digits and an optional
+    /// <para/><see cref="int"/> term values should contain only digits and an optional
     /// preceding negative sign.  Values must be base 10 and in the range
     /// <see cref="int.MinValue"/> and <see cref="int.MaxValue"/> inclusive.
     /// Documents which should appear first in the sort
     /// should have low value integers, later documents high values
-    /// (i.e. the documents should be numbered <code>1..n</code> where
-    /// <code>1</code> is the first and <code>n</code> the last).
+    /// (i.e. the documents should be numbered <c>1..n</c> where
+    /// <c>1</c> is the first and <c>n</c> the last).
     ///
-    /// <p>Long term values should contain only digits and an optional
+    /// <para/><see cref="long"/> term values should contain only digits and an optional
     /// preceding negative sign.  Values must be base 10 and in the range
-    /// <code>Long.MIN_VALUE</code> and <code>Long.MAX_VALUE</code> inclusive.
+    /// <see cref="long.MinValue"/> and <see cref="long.MaxValue"/> inclusive.
     /// Documents which should appear first in the sort
     /// should have low value integers, later documents high values.
     ///
-    /// <p>Float term values should conform to values accepted by
-    /// <seealso cref="Float Float.valueOf(String)"/> (except that <code>NaN</code>
-    /// and <code>Infinity</code> are not supported).
-    /// Documents which should appear first in the sort
+    /// <para/><see cref="float"/> term values should conform to values accepted by
+    /// <see cref="Single"/> (except that <c>NaN</c>
+    /// and <c>Infinity</c> are not supported).
+    /// <see cref="Documents.Document"/>s which should appear first in the sort
     /// should have low values, later documents high values.
     ///
-    /// <p>String term values can contain any valid String, but should
+    /// <para/><see cref="string"/> term values can contain any valid <see cref="string"/>, but should
     /// not be tokenized.  The values are sorted according to their
-    /// <seealso cref="Comparable natural order"/>.  Note that using this type
+    /// comparable natural order (<see cref="StringComparer.Ordinal"/>).  Note that using this type
     /// of term value has higher memory requirements than the other
     /// two types.
     ///
-    /// <p><h3>Object Reuse</h3>
+    /// <para/><h3>Object Reuse</h3>
     ///
-    /// <p>One of these objects can be
+    /// <para/>One of these objects can be
     /// used multiple times and the sort order changed between usages.
     ///
-    /// <p>this class is thread safe.
+    /// <para/>This class is thread safe.
     ///
-    /// <p><h3>Memory Usage</h3>
+    /// <para/><h3>Memory Usage</h3>
     ///
-    /// <p>Sorting uses of caches of term values maintained by the
-    /// internal HitQueue(s).  The cache is static and contains an integer
-    /// or float array of length <code>IndexReader.maxDoc()</code> for each field
+    /// <para/>Sorting uses of caches of term values maintained by the
+    /// internal HitQueue(s).  The cache is static and contains an <see cref="int"/>
+    /// or <see cref="float"/> array of length <c>IndexReader.MaxDoc</c> for each field
     /// name for which a sort is performed.  In other words, the size of the
     /// cache in bytes is:
     ///
-    /// <p><code>4 * IndexReader.maxDoc() * (# of different fields actually used to sort)</code>
+    /// <para/><code>4 * IndexReader.MaxDoc * (# of different fields actually used to sort)</code>
     ///
-    /// <p>For String fields, the cache is larger: in addition to the
+    /// <para/>For <see cref="string"/> fields, the cache is larger: in addition to the
     /// above array, the value of every term in the field is kept in memory.
     /// If there are many unique terms in the field, this could
     /// be quite large.
     ///
-    /// <p>Note that the size of the cache is not affected by how many
+    /// <para/>Note that the size of the cache is not affected by how many
     /// fields are in the index and <i>might</i> be used to sort - only by
     /// the ones actually used to sort a result set.
     ///
-    /// <p>Created: Feb 12, 2004 10:53:57 AM
-    ///
+    /// <para/>Created: Feb 12, 2004 10:53:57 AM
+    /// <para/>
     /// @since   lucene 1.4
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -105,7 +105,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Represents sorting by computed relevance. Using this sort criteria returns
         /// the same results as calling
-        /// <seealso cref="IndexSearcher#search(Query,int) IndexSearcher#search()"/>without a sort criteria,
+        /// <see cref="IndexSearcher.Search(Query, int)"/>without a sort criteria,
         /// only with slightly more overhead.
         /// </summary>
         public static readonly Sort RELEVANCE = new Sort();
@@ -118,8 +118,8 @@ namespace Lucene.Net.Search
         internal SortField[] fields;
 
         /// <summary>
-        /// Sorts by computed relevance. this is the same sort criteria as calling
-        /// <seealso cref="IndexSearcher#search(Query,int) IndexSearcher#search()"/>without a sort criteria,
+        /// Sorts by computed relevance. This is the same sort criteria as calling
+        /// <see cref="IndexSearcher.Search(Query, int)"/> without a sort criteria,
         /// only with slightly more overhead.
         /// </summary>
         public Sort()
@@ -128,14 +128,14 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Sorts by the criteria in the given SortField. </summary>
+        /// Sorts by the criteria in the given <see cref="SortField"/>. </summary>
         public Sort(SortField field)
         {
             SetSort(field);
         }
 
         /// <summary>
-        /// Sorts in succession by the criteria in each SortField. </summary>
+        /// Sorts in succession by the criteria in each <see cref="SortField"/>. </summary>
         public Sort(params SortField[] fields)
         {
             SetSort(fields);
@@ -154,7 +154,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary> Representation of the sort criteria.</summary>
-        /// <returns> Array of SortField objects used in this sort criteria
+        /// <returns> Array of <see cref="SortField"/> objects used in this sort criteria
         /// </returns>
         [WritableArray]
         public virtual SortField[] GetSort()
@@ -163,14 +163,15 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Rewrites the SortFields in this Sort, returning a new Sort if any of the fields
+        /// Rewrites the <see cref="SortField"/>s in this <see cref="Sort"/>, returning a new <see cref="Sort"/> if any of the fields
         /// changes during their rewriting.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
-        /// <param name="searcher"> IndexSearcher to use in the rewriting </param>
-        /// <returns> {@code this} if the Sort/Fields have not changed, or a new Sort if there
+        /// <param name="searcher"> <see cref="IndexSearcher"/> to use in the rewriting </param>
+        /// <returns> <c>this</c> if the Sort/Fields have not changed, or a new <see cref="Sort"/> if there
         ///        is a change </returns>
-        /// <exception cref="IOException"> Can be thrown by the rewriting
-        /// @lucene.experimental </exception>
+        /// <exception cref="System.IO.IOException"> Can be thrown by the rewriting</exception>
         public virtual Sort Rewrite(IndexSearcher searcher)
         {
             bool changed = false;
@@ -205,7 +206,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true if <code>o</code> is equal to this. </summary>
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (this == o)
@@ -228,7 +229,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true if the relevance score is needed to sort documents. </summary>
+        /// Returns <c>true</c> if the relevance score is needed to sort documents. </summary>
         public virtual bool NeedsScores
         {
             get

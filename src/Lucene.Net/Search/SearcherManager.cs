@@ -26,35 +26,38 @@ namespace Lucene.Net.Search
     using IndexWriter = Lucene.Net.Index.IndexWriter;
 
     /// <summary>
-    /// Utility class to safely share <seealso cref="IndexSearcher"/> instances across multiple
-    /// threads, while periodically reopening. this class ensures each searcher is
-    /// closed only once all threads have finished using it.
+    /// Utility class to safely share <see cref="IndexSearcher"/> instances across multiple
+    /// threads, while periodically reopening. This class ensures each searcher is
+    /// disposed only once all threads have finished using it.
     ///
-    /// <p>
-    /// Use <seealso cref="#acquire"/> to obtain the current searcher, and <seealso cref="#release"/> to
+    /// <para/>
+    /// Use <see cref="ReferenceManager{G}.Acquire()"/> to obtain the current searcher, and <see cref="ReferenceManager{G}.Release(G)"/> to
     /// release it, like this:
     ///
-    /// <pre class="prettyprint">
-    /// IndexSearcher s = manager.acquire();
-    /// try {
-    ///   // Do searching, doc retrieval, etc. with s
-    /// } finally {
-    ///   manager.release(s);
+    /// <code>
+    /// IndexSearcher s = manager.Acquire();
+    /// try 
+    /// {
+    ///     // Do searching, doc retrieval, etc. with s
+    /// } 
+    /// finally 
+    /// {
+    ///     manager.Release(s);
+    ///     // Do not use s after this!
+    ///     s = null;
     /// }
-    /// // Do not use s after this!
-    /// s = null;
-    /// </pre>
+    /// </code>
     ///
-    /// <p>
-    /// In addition you should periodically call <seealso cref="#maybeRefresh"/>. While it's
+    /// <para/>
+    /// In addition you should periodically call <see cref="ReferenceManager{G}.MaybeRefresh()"/>. While it's
     /// possible to call this just before running each query, this is discouraged
     /// since it penalizes the unlucky queries that do the reopen. It's better to use
-    /// a separate background thread, that periodically calls maybeReopen. Finally,
-    /// be sure to call <seealso cref="#close"/> once you are done.
+    /// a separate background thread, that periodically calls <see cref="ReferenceManager{G}.MaybeRefresh()"/>. Finally,
+    /// be sure to call <see cref="ReferenceManager{G}.Dispose()"/> once you are done.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
     /// <seealso cref="SearcherFactory"/>
-    ///
-    /// @lucene.experimental </seealso>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -63,26 +66,26 @@ namespace Lucene.Net.Search
         private readonly SearcherFactory searcherFactory;
 
         /// <summary>
-        /// Creates and returns a new SearcherManager from the given
-        /// <seealso cref="IndexWriter"/>.
+        /// Creates and returns a new <see cref="SearcherManager"/> from the given
+        /// <see cref="IndexWriter"/>.
         /// </summary>
         /// <param name="writer">
-        ///          the IndexWriter to open the IndexReader from. </param>
+        ///          The <see cref="IndexWriter"/> to open the <see cref="IndexReader"/> from. </param>
         /// <param name="applyAllDeletes">
-        ///          If <code>true</code>, all buffered deletes will be applied (made
-        ///          visible) in the <seealso cref="IndexSearcher"/> / <seealso cref="DirectoryReader"/>.
-        ///          If <code>false</code>, the deletes may or may not be applied, but
-        ///          remain buffered (in IndexWriter) so that they will be applied in
+        ///          If <c>true</c>, all buffered deletes will be applied (made
+        ///          visible) in the <see cref="IndexSearcher"/> / <see cref="DirectoryReader"/>.
+        ///          If <c>false</c>, the deletes may or may not be applied, but
+        ///          remain buffered (in <see cref="IndexWriter"/>) so that they will be applied in
         ///          the future. Applying deletes can be costly, so if your app can
         ///          tolerate deleted documents being returned you might gain some
-        ///          performance by passing <code>false</code>. See
-        ///          <seealso cref="DirectoryReader#openIfChanged(DirectoryReader, IndexWriter, boolean)"/>. </param>
+        ///          performance by passing <c>false</c>. See
+        ///          <see cref="DirectoryReader.OpenIfChanged(DirectoryReader, IndexWriter, bool)"/>. </param>
         /// <param name="searcherFactory">
-        ///          An optional <see cref="SearcherFactory"/>. Pass <code>null</code> if you
+        ///          An optional <see cref="SearcherFactory"/>. Pass <c>null</c> if you
         ///          don't require the searcher to be warmed before going live or other
         ///          custom behavior.
         /// </param>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
         public SearcherManager(IndexWriter writer, bool applyAllDeletes, SearcherFactory searcherFactory)
         {
             if (searcherFactory == null)
@@ -94,13 +97,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Creates and returns a new SearcherManager from the given <seealso cref="Directory"/>. </summary>
-        /// <param name="dir"> the directory to open the DirectoryReader on. </param>
+        /// Creates and returns a new <see cref="SearcherManager"/> from the given <see cref="Directory"/>. </summary>
+        /// <param name="dir"> The directory to open the <see cref="DirectoryReader"/> on. </param>
         /// <param name="searcherFactory"> An optional <see cref="SearcherFactory"/>. Pass
-        ///        <code>null</code> if you don't require the searcher to be warmed
+        ///        <c>null</c> if you don't require the searcher to be warmed
         ///        before going live or other custom behavior.
         /// </param>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
         public SearcherManager(Directory dir, SearcherFactory searcherFactory)
         {
             if (searcherFactory == null)
@@ -142,9 +145,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns <code>true</code> if no changes have occured since this searcher
-        /// ie. reader was opened, otherwise <code>false</code>. </summary>
-        /// <seealso cref= DirectoryReader#isCurrent()  </seealso>
+        /// Returns <c>true</c> if no changes have occured since this searcher
+        /// ie. reader was opened, otherwise <c>false</c>. </summary>
+        /// <seealso cref="DirectoryReader.IsCurrent()"/>
         public bool IsSearcherCurrent()
         {
             IndexSearcher searcher = Acquire();
@@ -161,9 +164,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Expert: creates a searcher from the provided {@link
-        ///  IndexReader} using the provided {@link
-        ///  SearcherFactory}.  NOTE: this decRefs incoming reader
+        /// Expert: creates a searcher from the provided 
+        /// <see cref="IndexReader"/> using the provided 
+        /// <see cref="SearcherFactory"/>.  NOTE: this decRefs incoming reader
         /// on throwing an exception.
         /// </summary>
         public static IndexSearcher GetSearcher(SearcherFactory searcherFactory, IndexReader reader)

@@ -31,10 +31,16 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TermState = Lucene.Net.Index.TermState;
 
+    internal interface ITopTermsRewrite
+    {
+        int Count { get; } // LUCENENET NOTE: This was size() in Lucene.
+    }
+
     /// <summary>
     /// Base rewrite method for collecting only the top terms
     /// via a priority queue.
-    /// @lucene.internal Only public to be accessible by spans package.
+    /// <para/>
+    /// @lucene.internal - Only public to be accessible by spans package.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -45,10 +51,10 @@ namespace Lucene.Net.Search
         private readonly int size;
 
         /// <summary>
-        /// Create a TopTermsBooleanQueryRewrite for
+        /// Create a <see cref="TopTermsRewrite{Q}"/> for
         /// at most <paramref name="count"/> terms.
-        /// <p>
-        /// NOTE: if <seealso cref="BooleanQuery#getMaxClauseCount"/> is smaller than
+        /// <para/>
+        /// NOTE: if <see cref="BooleanQuery.MaxClauseCount"/> is smaller than
         /// <paramref name="count"/>, then it will be used instead.
         /// </summary>
         public TopTermsRewrite(int count)
@@ -57,7 +63,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// return the maximum priority queue size.
+        /// Return the maximum priority queue size.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public virtual int Count
@@ -69,7 +76,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// return the maximum size of the priority queue (for boolean rewrites this is BooleanQuery#getMaxClauseCount). </summary>
+        /// Return the maximum size of the priority queue (for boolean rewrites this is <see cref="BooleanQuery.MaxClauseCount"/>). </summary>
         protected abstract int MaxSize { get; }
 
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)

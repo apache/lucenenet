@@ -22,6 +22,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Contains statistics for a collection (field)
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -35,6 +36,9 @@ namespace Lucene.Net.Search
         private readonly long sumTotalTermFreq;
         private readonly long sumDocFreq;
 
+        /// <summary>
+        /// Sole constructor.
+        /// </summary>
         public CollectionStatistics(string field, long maxDoc, long docCount, long sumTotalTermFreq, long sumDocFreq)
         {
             Debug.Assert(maxDoc >= 0);
@@ -49,41 +53,41 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// returns the field name </summary>
+        /// Returns the field name </summary>
         public string Field
         {
             get { return field; }
         }
 
         /// <summary>
-        /// returns the total number of documents, regardless of
+        /// Returns the total number of documents, regardless of
         /// whether they all contain values for this field. </summary>
-        /// <seealso cref= IndexReader#maxDoc()  </seealso>
+        /// <seealso cref="Index.IndexReader.MaxDoc"/>
         public long MaxDoc
         {
             get { return maxDoc; }
         }
 
         /// <summary>
-        /// returns the total number of documents that
+        /// Returns the total number of documents that
         /// have at least one term for this field. </summary>
-        /// <seealso cref= Terms#getDocCount()  </seealso>
+        /// <seealso cref="Index.Terms.DocCount"/>
         public long DocCount
         {
             get { return docCount; }
         }
 
         /// <summary>
-        /// returns the total number of tokens for this field </summary>
-        /// <seealso cref= Terms#getSumTotalTermFreq()  </seealso>
+        /// Returns the total number of tokens for this field </summary>
+        /// <seealso cref="Index.Terms.SumTotalTermFreq"/>
         public long SumTotalTermFreq
         {
             get { return sumTotalTermFreq; }
         }
 
         /// <summary>
-        /// returns the total number of postings for this field </summary>
-        /// <seealso cref= Terms#getSumDocFreq()  </seealso>
+        /// Returns the total number of postings for this field </summary>
+        /// <seealso cref="Index.Terms.SumDocFreq"/>
         public long SumDocFreq
         {
             get { return sumDocFreq; }

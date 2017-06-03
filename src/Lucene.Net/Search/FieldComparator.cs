@@ -30,66 +30,63 @@ namespace Lucene.Net.Search
     using SortedDocValues = Lucene.Net.Index.SortedDocValues;
 
     /// <summary>
-    /// Expert: a FieldComparer compares hits so as to determine their
-    /// sort order when collecting the top results with {@link
-    /// TopFieldCollector}.  The concrete public FieldComparer
-    /// classes here correspond to the SortField types.
+    /// Expert: a <see cref="FieldComparer"/> compares hits so as to determine their
+    /// sort order when collecting the top results with
+    /// <see cref="TopFieldCollector"/>.  The concrete public <see cref="FieldComparer"/>
+    /// classes here correspond to the <see cref="SortField"/> types.
     ///
-    /// <p>this API is designed to achieve high performance
-    /// sorting, by exposing a tight interaction with {@link
-    /// FieldValueHitQueue} as it visits hits.  Whenever a hit is
+    /// <para>This API is designed to achieve high performance
+    /// sorting, by exposing a tight interaction with 
+    /// <see cref="FieldValueHitQueue"/> as it visits hits.  Whenever a hit is
     /// competitive, it's enrolled into a virtual slot, which is
-    /// an int ranging from 0 to numHits-1.  The {@link
-    /// FieldComparer} is made aware of segment transitions
+    /// an <see cref="int"/> ranging from 0 to numHits-1.  The 
+    /// <see cref="FieldComparer"/> is made aware of segment transitions
     /// during searching in case any internal state it's tracking
-    /// needs to be recomputed during these transitions.</p>
+    /// needs to be recomputed during these transitions.</para>
     ///
-    /// <p>A comparer must define these functions:</p>
+    /// <para>A comparer must define these functions:</para>
     ///
-    /// <ul>
+    /// <list type="bullet">
     ///
-    ///  <li> <seealso cref="#compare"/> Compare a hit at 'slot a'
-    ///       with hit 'slot b'.
+    ///  <item><term><see cref="Compare(int, int)"/></term> <description> Compare a hit at 'slot a'
+    ///       with hit 'slot b'.</description></item>
     ///
-    ///  <li> <seealso cref="#setBottom"/> this method is called by
-    ///       <seealso cref="FieldValueHitQueue"/> to notify the
-    ///       FieldComparer of the current weakest ("bottom")
+    ///  <item><term><see cref="SetBottom(int)"/></term> <description>This method is called by
+    ///       <see cref="FieldValueHitQueue"/> to notify the
+    ///       <see cref="FieldComparer"/> of the current weakest ("bottom")
     ///       slot.  Note that this slot may not hold the weakest
     ///       value according to your comparer, in cases where
     ///       your comparer is not the primary one (ie, is only
-    ///       used to break ties from the comparers before it).
+    ///       used to break ties from the comparers before it).</description></item>
     ///
-    ///  <li> <seealso cref="#compareBottom"/> Compare a new hit (docID)
-    ///       against the "weakest" (bottom) entry in the queue.
+    ///  <item><term><see cref="CompareBottom(int)"/></term> <description>Compare a new hit (docID)
+    ///       against the "weakest" (bottom) entry in the queue.</description></item>
     ///
-    ///  <li> <seealso cref="#setTopValue"/> this method is called by
-    ///       <seealso cref="TopFieldCollector"/> to notify the
-    ///       FieldComparer of the top most value, which is
-    ///       used by future calls to <seealso cref="#compareTop"/>.
+    ///  <item><term><see cref="SetTopValue(object)"/></term> <description>This method is called by
+    ///       <see cref="TopFieldCollector"/> to notify the
+    ///       <see cref="FieldComparer"/> of the top most value, which is
+    ///       used by future calls to <see cref="CompareTop(int)"/>.</description></item>
     ///
-    ///  <li> <seealso cref="#compareBottom"/> Compare a new hit (docID)
-    ///       against the "weakest" (bottom) entry in the queue.
-    ///
-    ///  <li> <seealso cref="#compareTop"/> Compare a new hit (docID)
+    ///  <item><term><see cref="CompareTop(int)"/></term> <description>Compare a new hit (docID)
     ///       against the top value previously set by a call to
-    ///       <seealso cref="#setTopValue"/>.
+    ///       <see cref="SetTopValue(object)"/>.</description></item>
     ///
-    ///  <li> <seealso cref="#copy"/> Installs a new hit into the
-    ///       priority queue.  The <seealso cref="FieldValueHitQueue"/>
-    ///       calls this method when a new hit is competitive.
+    ///  <item><term><see cref="Copy(int, int)"/></term> <description>Installs a new hit into the
+    ///       priority queue.  The <see cref="FieldValueHitQueue"/>
+    ///       calls this method when a new hit is competitive.</description></item>
     ///
-    ///  <li> <seealso cref="#setNextReader(AtomicReaderContext)"/> Invoked
+    ///  <item><term><see cref="SetNextReader(AtomicReaderContext)"/></term> <description>Invoked
     ///       when the search is switching to the next segment.
     ///       You may need to update internal state of the
     ///       comparer, for example retrieving new values from
-    ///       the <seealso cref="IFieldCache"/>.
+    ///       the <see cref="IFieldCache"/>.</description></item>
     ///
-    ///  <li> <seealso cref="#value"/> Return the sort value stored in
-    ///       the specified slot.  this is only called at the end
-    ///       of the search, in order to populate {@link
-    ///       FieldDoc#fields} when returning the top results.
-    /// </ul>
-    ///
+    ///  <item><term><see cref="FieldComparer.this[int]"/></term> <description>Return the sort value stored in
+    ///       the specified slot.  This is only called at the end
+    ///       of the search, in order to populate
+    ///       <see cref="FieldDoc.Fields"/> when returning the top results.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -98,93 +95,93 @@ namespace Lucene.Net.Search
     public abstract class FieldComparer<T> : FieldComparer
     {
         /// <summary>
-        /// Compare hit at slot1 with hit at slot2.
+        /// Compare hit at <paramref name="slot1"/> with hit at <paramref name="slot2"/>.
         /// </summary>
         /// <param name="slot1"> first slot to compare </param>
         /// <param name="slot2"> second slot to compare </param>
-        /// <returns> any N < 0 if slot2's value is sorted after
-        /// slot1, any N > 0 if the slot2's value is sorted before
-        /// slot1 and 0 if they are equal </returns>
+        /// <returns> any N &lt; 0 if <paramref name="slot2"/>'s value is sorted after
+        /// <paramref name="slot1"/>, any N &gt; 0 if the <paramref name="slot2"/>'s value is sorted before
+        /// <paramref name="slot1"/> and 0 if they are equal </returns>
         public abstract override int Compare(int slot1, int slot2);
 
         /// <summary>
         /// Set the bottom slot, ie the "weakest" (sorted last)
-        /// entry in the queue.  When <seealso cref="#compareBottom"/> is
-        /// called, you should compare against this slot.  this
-        /// will always be called before <seealso cref="#compareBottom"/>.
+        /// entry in the queue.  When <see cref="CompareBottom(int)"/> is
+        /// called, you should compare against this slot.  This
+        /// will always be called before <see cref="CompareBottom(int)"/>.
         /// </summary>
         /// <param name="slot"> the currently weakest (sorted last) slot in the queue </param>
         public abstract override void SetBottom(int slot);
 
         /// <summary>
-        /// Record the top value, for future calls to {@link
-        /// #compareTop}.  this is only called for searches that
-        /// use searchAfter (deep paging), and is called before any
-        /// calls to <seealso cref="#setNextReader"/>.
+        /// Record the top value, for future calls to 
+        /// <see cref="CompareTop(int)"/>.  This is only called for searches that
+        /// use SearchAfter (deep paging), and is called before any
+        /// calls to <see cref="SetNextReader(AtomicReaderContext)"/>.
         /// </summary>
         public abstract override void SetTopValue(object value);
 
         /// <summary>
-        /// Compare the bottom of the queue with this doc.  this will
-        /// only invoked after setBottom has been called.  this
-        /// should return the same result as {@link
-        /// #compare(int,int)}} as if bottom were slot1 and the new
+        /// Compare the bottom of the queue with this doc.  This will
+        /// only invoked after <see cref="SetBottom(int)"/> has been called.  This
+        /// should return the same result as 
+        /// <see cref="Compare(int, int)"/> as if bottom were slot1 and the new
         /// document were slot 2.
         ///
-        /// <p>For a search that hits many results, this method
+        /// <para>For a search that hits many results, this method
         /// will be the hotspot (invoked by far the most
-        /// frequently).</p>
+        /// frequently).</para>
         /// </summary>
-        /// <param name="doc"> that was hit </param>
-        /// <returns> any N < 0 if the doc's value is sorted after
-        /// the bottom entry (not competitive), any N > 0 if the
+        /// <param name="doc"> Doc that was hit </param>
+        /// <returns> Any N &lt; 0 if the doc's value is sorted after
+        /// the bottom entry (not competitive), any N &gt; 0 if the
         /// doc's value is sorted before the bottom entry and 0 if
         /// they are equal. </returns>
         public abstract override int CompareBottom(int doc);
 
         /// <summary>
-        /// Compare the top value with this doc.  this will
-        /// only invoked after setTopValue has been called.  this
-        /// should return the same result as {@link
-        /// #compare(int,int)}} as if topValue were slot1 and the new
-        /// document were slot 2.  this is only called for searches that
-        /// use searchAfter (deep paging).
+        /// Compare the top value with this doc.  This will
+        /// only invoked after <see cref="SetTopValue(object)"/> has been called.  This
+        /// should return the same result as 
+        /// <see cref="Compare(int, int)"/> as if topValue were slot1 and the new
+        /// document were slot 2.  This is only called for searches that
+        /// use SearchAfter (deep paging).
         /// </summary>
-        /// <param name="doc"> that was hit </param>
-        /// <returns> any N < 0 if the doc's value is sorted after
-        /// the bottom entry (not competitive), any N > 0 if the
+        /// <param name="doc"> Doc that was hit </param>
+        /// <returns> Any N &lt; 0 if the doc's value is sorted after
+        /// the bottom entry (not competitive), any N &gt; 0 if the
         /// doc's value is sorted before the bottom entry and 0 if
         /// they are equal. </returns>
         public abstract override int CompareTop(int doc);
 
         /// <summary>
-        /// this method is called when a new hit is competitive.
+        /// This method is called when a new hit is competitive.
         /// You should copy any state associated with this document
         /// that will be required for future comparisons, into the
         /// specified slot.
         /// </summary>
-        /// <param name="slot"> which slot to copy the hit to </param>
-        /// <param name="doc"> docID relative to current reader </param>
+        /// <param name="slot"> Which slot to copy the hit to </param>
+        /// <param name="doc"> DocID relative to current reader </param>
         public abstract override void Copy(int slot, int doc);
 
         /// <summary>
-        /// Set a new <seealso cref="AtomicReaderContext"/>. All subsequent docIDs are relative to
+        /// Set a new <see cref="AtomicReaderContext"/>. All subsequent docIDs are relative to
         /// the current reader (you must add docBase if you need to
         /// map it to a top-level docID).
         /// </summary>
-        /// <param name="context"> current reader context </param>
-        /// <returns> the comparer to use for this segment; most
+        /// <param name="context"> Current reader context </param>
+        /// <returns> The comparer to use for this segment; most
         ///   comparers can just return "this" to reuse the same
         ///   comparer across segments </returns>
-        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level IO error </exception>
         public abstract override FieldComparer SetNextReader(AtomicReaderContext context);
 
         /// <summary>
         /// Returns -1 if first is less than second.  Default
-        ///  impl to assume the type implements Comparable and
-        ///  invoke .compareTo; be sure to override this method if
-        ///  your FieldComparer's type isn't a Comparable or
-        ///  if your values may sometimes be null
+        /// impl to assume the type implements <see cref="IComparable{T}"/> and
+        /// invoke <see cref="IComparable{T}.CompareTo(T)"/>; be sure to override this method if
+        /// your FieldComparer's type isn't a <see cref="IComparable{T}"/> or
+        /// if your values may sometimes be <c>null</c>
         /// </summary>
         public virtual int CompareValues(T first, T second)
         {
@@ -204,6 +201,13 @@ namespace Lucene.Net.Search
             }
         }
 
+        /// <summary>
+        /// Returns -1 if first is less than second.  Default
+        /// impl to assume the type implements <see cref="IComparable{T}"/> and
+        /// invoke <see cref="IComparable{T}.CompareTo(T)"/>; be sure to override this method if
+        /// your FieldComparer's type isn't a <see cref="IComparable{T}"/> or
+        /// if your values may sometimes be <c>null</c>
+        /// </summary>
         public override int CompareValues(object first, object second)
         {
             return CompareValues((T)first, (T)second);
@@ -221,92 +225,92 @@ namespace Lucene.Net.Search
 
         //Set up abstract methods
         /// <summary>
-        /// Compare hit at slot1 with hit at slot2.
+        /// Compare hit at <paramref name="slot1"/> with hit at <paramref name="slot2"/>.
         /// </summary>
         /// <param name="slot1"> first slot to compare </param>
         /// <param name="slot2"> second slot to compare </param>
-        /// <returns> any N < 0 if slot2's value is sorted after
-        /// slot1, any N > 0 if the slot2's value is sorted before
-        /// slot1 and 0 if they are equal </returns>
+        /// <returns> any N &lt; 0 if <paramref name="slot2"/>'s value is sorted after
+        /// <paramref name="slot1"/>, any N &gt; 0 if the <paramref name="slot2"/>'s value is sorted before
+        /// <paramref name="slot1"/> and 0 if they are equal </returns>
         public abstract int Compare(int slot1, int slot2);
 
         /// <summary>
         /// Set the bottom slot, ie the "weakest" (sorted last)
-        /// entry in the queue.  When <seealso cref="#compareBottom"/> is
-        /// called, you should compare against this slot.  this
-        /// will always be called before <seealso cref="#compareBottom"/>.
+        /// entry in the queue.  When <see cref="CompareBottom(int)"/> is
+        /// called, you should compare against this slot.  This
+        /// will always be called before <see cref="CompareBottom(int)"/>.
         /// </summary>
-        /// <param name="slot"> the currently weakest (sorted last) slot in the queue </param>
+        /// <param name="slot"> The currently weakest (sorted last) slot in the queue </param>
         public abstract void SetBottom(int slot);
 
         /// <summary>
-        /// Record the top value, for future calls to {@link
-        /// #compareTop}.  this is only called for searches that
-        /// use searchAfter (deep paging), and is called before any
-        /// calls to <seealso cref="#setNextReader"/>.
+        /// Record the top value, for future calls to 
+        /// <see cref="CompareTop(int)"/>.  This is only called for searches that
+        /// use SearchAfter (deep paging), and is called before any
+        /// calls to <see cref="SetNextReader(AtomicReaderContext)"/>.
         /// </summary>
         public abstract void SetTopValue(object value);
 
         /// <summary>
-        /// Compare the bottom of the queue with this doc.  this will
-        /// only invoked after setBottom has been called.  this
-        /// should return the same result as {@link
-        /// #compare(int,int)}} as if bottom were slot1 and the new
+        /// Compare the bottom of the queue with this doc.  This will
+        /// only invoked after setBottom has been called.  This
+        /// should return the same result as 
+        /// <see cref="Compare(int, int)"/> as if bottom were slot1 and the new
         /// document were slot 2.
         ///
-        /// <p>For a search that hits many results, this method
+        /// <para>For a search that hits many results, this method
         /// will be the hotspot (invoked by far the most
-        /// frequently).</p>
+        /// frequently).</para>
         /// </summary>
-        /// <param name="doc"> that was hit </param>
-        /// <returns> any N < 0 if the doc's value is sorted after
-        /// the bottom entry (not competitive), any N > 0 if the
+        /// <param name="doc"> Doc that was hit </param>
+        /// <returns> Any N &lt; 0 if the doc's value is sorted after
+        /// the bottom entry (not competitive), any N &gt; 0 if the
         /// doc's value is sorted before the bottom entry and 0 if
         /// they are equal. </returns>
         public abstract int CompareBottom(int doc);
 
         /// <summary>
-        /// Compare the top value with this doc.  this will
-        /// only invoked after setTopValue has been called.  this
-        /// should return the same result as {@link
-        /// #compare(int,int)}} as if topValue were slot1 and the new
-        /// document were slot 2.  this is only called for searches that
-        /// use searchAfter (deep paging).
+        /// Compare the top value with this doc.  This will
+        /// only invoked after <see cref="SetTopValue(object)"/> has been called.  This
+        /// should return the same result as 
+        /// <see cref="Compare(int, int)"/> as if topValue were slot1 and the new
+        /// document were slot 2.  This is only called for searches that
+        /// use SearchAfter (deep paging).
         /// </summary>
-        /// <param name="doc"> that was hit </param>
-        /// <returns> any N < 0 if the doc's value is sorted after
-        /// the bottom entry (not competitive), any N > 0 if the
+        /// <param name="doc"> Doc that was hit </param>
+        /// <returns> Any N &lt; 0 if the doc's value is sorted after
+        /// the bottom entry (not competitive), any N &gt; 0 if the
         /// doc's value is sorted before the bottom entry and 0 if
         /// they are equal. </returns>
         public abstract int CompareTop(int doc);
 
         /// <summary>
-        /// this method is called when a new hit is competitive.
+        /// This method is called when a new hit is competitive.
         /// You should copy any state associated with this document
         /// that will be required for future comparisons, into the
         /// specified slot.
         /// </summary>
-        /// <param name="slot"> which slot to copy the hit to </param>
-        /// <param name="doc"> docID relative to current reader </param>
+        /// <param name="slot"> Which slot to copy the hit to </param>
+        /// <param name="doc"> DocID relative to current reader </param>
         public abstract void Copy(int slot, int doc);
 
         /// <summary>
-        /// Set a new <seealso cref="AtomicReaderContext"/>. All subsequent docIDs are relative to
+        /// Set a new <see cref="AtomicReaderContext"/>. All subsequent docIDs are relative to
         /// the current reader (you must add docBase if you need to
         /// map it to a top-level docID).
         /// </summary>
-        /// <param name="context"> current reader context </param>
-        /// <returns> the comparer to use for this segment; most
+        /// <param name="context"> Current reader context </param>
+        /// <returns> The comparer to use for this segment; most
         ///   comparers can just return "this" to reuse the same
         ///   comparer across segments </returns>
-        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
         public abstract FieldComparer SetNextReader(AtomicReaderContext context);
 
         /// <summary>
-        /// Sets the Scorer to use in case a document's score is
-        ///  needed.
+        /// Sets the <see cref="Scorer"/> to use in case a document's score is
+        /// needed.
         /// </summary>
-        /// <param name="scorer"> Scorer instance that you should use to
+        /// <param name="scorer"> <see cref="Scorer"/> instance that you should use to
         /// obtain the current hit's score, if necessary.  </param>
         public virtual void SetScorer(Scorer scorer)
         {
@@ -318,14 +322,12 @@ namespace Lucene.Net.Search
         /// Return the actual value in the slot.
         /// LUCENENET NOTE: This was value(int) in Lucene.
         /// </summary>
-        /// <param name="slot"> the value </param>
-        /// <returns> value in this slot </returns>
+        /// <param name="slot"> The value </param>
+        /// <returns> Value in this slot </returns>
         public abstract IComparable this[int slot] { get; }
 
 
         internal static readonly IComparer<double> SIGNED_ZERO_COMPARER = new SignedZeroComparer();
-
-
 
         /// <summary>
         /// Base FieldComparer class for numeric types
@@ -366,8 +368,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as byte (using {@link
-        ///  FieldCache#getBytes} and sorts by ascending value
+        /// Parses field's values as <see cref="byte"/> (using 
+        /// <see cref="IFieldCache.GetBytes(Index.AtomicReader, string, FieldCache.IByteParser, bool)"/> and sorts by ascending value
         /// </summary>
         [Obsolete, CLSCompliant(false)] // LUCENENET NOTE: marking non-CLS compliant because of sbyte - it is obsolete, anyway
 #if FEATURE_SERIALIZABLE
@@ -457,8 +459,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as double (using {@link
-        ///  FieldCache#getDoubles} and sorts by ascending value
+        /// Parses field's values as <see cref="double"/> (using 
+        /// <see cref="IFieldCache.GetDoubles(Index.AtomicReader, string, FieldCache.IDoubleParser, bool)"/> and sorts by ascending value
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -559,8 +561,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as float (using {@link
-        ///  FieldCache#getFloats} and sorts by ascending value
+        /// Parses field's values as <see cref="float"/> (using 
+        /// <see cref="IFieldCache.GetSingles(Index.AtomicReader, string, FieldCache.ISingleParser, bool)"/>  and sorts by ascending value
         /// <para/>
         /// NOTE: This was FloatComparator in Lucene
         /// </summary>
@@ -664,8 +666,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as short (using {@link
-        /// FieldCache#getShorts} and sorts by ascending value
+        /// Parses field's values as <see cref="short"/> (using 
+        /// <see cref="IFieldCache.GetInt16s(Index.AtomicReader, string, FieldCache.IInt16Parser, bool)"/> and sorts by ascending value
         /// <para/>
         /// NOTE: This was ShortComparator in Lucene
         /// </summary>
@@ -758,8 +760,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as int (using {@link
-        /// FieldCache#getInts} and sorts by ascending value
+        /// Parses field's values as <see cref="int"/> (using 
+        /// <see cref="IFieldCache.GetInt32s(Index.AtomicReader, string, FieldCache.IInt32Parser, bool)"/> and sorts by ascending value
         /// <para/>
         /// NOTE: This was IntComparator in Lucene
         /// </summary>
@@ -848,8 +850,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Parses field's values as long (using {@link
-        /// FieldCache#getLongs} and sorts by ascending value
+        /// Parses field's values as <see cref="long"/> (using
+        /// <see cref="IFieldCache.GetInt64s(Index.AtomicReader, string, FieldCache.IInt64Parser, bool)"/> and sorts by ascending value
         /// <para/>
         /// NOTE: This was LongComparator in Lucene
         /// </summary>
@@ -944,11 +946,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sorts by descending relevance.  NOTE: if you are
-        ///  sorting only by descending relevance and then
-        ///  secondarily by ascending docID, performance is faster
-        ///  using <seealso cref="TopScoreDocCollector"/> directly (which {@link
-        ///  IndexSearcher#search} uses when no <seealso cref="Sort"/> is
-        ///  specified).
+        /// sorting only by descending relevance and then
+        /// secondarily by ascending docID, performance is faster
+        /// using <see cref="TopScoreDocCollector"/> directly (which all overloads of
+        /// <see cref="IndexSearcher.Search(Query, int)"/> use when no <see cref="Sort"/> is
+        /// specified).
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -1101,63 +1103,90 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Sorts by field's natural Term sort order, using
-        ///  ordinals.  this is functionally equivalent to {@link
-        ///  Lucene.Net.Search.FieldComparer.TermValComparer}, but it first resolves the string
-        ///  to their relative ordinal positions (using the index
-        ///  returned by <seealso cref="IFieldCache#getTermsIndex"/>), and
-        ///  does most comparisons using the ordinals.  For medium
-        ///  to large results, this comparer will be much faster
-        ///  than <seealso cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>.  For very small
-        ///  result sets it may be slower.
+        /// Sorts by field's natural <see cref="Index.Term"/> sort order, using
+        /// ordinals.  This is functionally equivalent to 
+        /// <see cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>, but it first resolves the string
+        /// to their relative ordinal positions (using the index
+        /// returned by <see cref="IFieldCache.GetTermsIndex(Index.AtomicReader, string, float)"/>), and
+        /// does most comparisons using the ordinals.  For medium
+        /// to large results, this comparer will be much faster
+        /// than <see cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>.  For very small
+        /// result sets it may be slower.
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
         public class TermOrdValComparer : FieldComparer<BytesRef>
         {
-            /* Ords for each slot.
-	            @lucene.internal */
+            /// <summary>
+            /// Ords for each slot.
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal readonly int[] ords;
 
-            /* Values for each slot.
-	            @lucene.internal */
+            /// <summary>
+            /// Values for each slot.
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal readonly BytesRef[] values;
 
-            /* Which reader last copied a value into the slot. When
-	            we compare two slots, we just compare-by-ord if the
-	            readerGen is the same; else we must compare the
-	            values (slower).
-	            @lucene.internal */
+            /// <summary>
+            /// Which reader last copied a value into the slot. When
+            /// we compare two slots, we just compare-by-ord if the
+            /// readerGen is the same; else we must compare the
+            /// values(slower).
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal readonly int[] readerGen;
 
-            /* Gen of current reader we are on.
-	            @lucene.internal */
+            /// <summary>
+            /// Gen of current reader we are on.
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal int currentReaderGen = -1;
 
-            /* Current reader's doc ord/values.
-	            @lucene.internal */
+            /// <summary>
+            /// Current reader's doc ord/values.
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal SortedDocValues termsIndex;
 
             internal readonly string field;
 
-            /* Bottom slot, or -1 if queue isn't full yet
-	            @lucene.internal */
+            /// <summary>
+            /// Bottom slot, or -1 if queue isn't full yet
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal int bottomSlot = -1;
 
-            /* Bottom ord (same as ords[bottomSlot] once bottomSlot
-	            is set).  Cached for faster compares.
-	            @lucene.internal */
+            /// <summary>
+            /// Bottom ord (same as ords[bottomSlot] once bottomSlot
+            /// is set).  Cached for faster compares.
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal int bottomOrd;
 
-            /* True if current bottom slot matches the current
-	            reader.
-	            @lucene.internal */
+            /// <summary>
+            /// True if current bottom slot matches the current
+            /// reader.
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal bool bottomSameReader;
 
-            /* Bottom value (same as values[bottomSlot] once
-	            bottomSlot is set).  Cached for faster compares.
-	            @lucene.internal */
+            /// <summary>
+            /// Bottom value (same as values[bottomSlot] once
+            /// bottomSlot is set).  Cached for faster compares.
+            /// <para/>
+            /// @lucene.internal
+            /// </summary>
             internal BytesRef bottomValue;
 
             /// <summary>
@@ -1188,8 +1217,8 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Creates this, with control over how missing values
-            ///  are sorted.  Pass sortMissingLast=true to put
-            ///  missing values at the end.
+            /// are sorted.  Pass true for <paramref name="sortMissingLast"/> to put
+            /// missing values at the end.
             /// </summary>
             public TermOrdValComparer(int numHits, string field, bool sortMissingLast)
             {
@@ -1281,7 +1310,7 @@ namespace Lucene.Net.Search
             }
 
             /// <summary>
-            /// Retrieves the SortedDocValues for the field in this segment </summary>
+            /// Retrieves the <see cref="SortedDocValues"/> for the field in this segment </summary>
             protected virtual SortedDocValues GetSortedDocValues(AtomicReaderContext context, string field)
             {
                 return FieldCache.DEFAULT.GetTermsIndex((context.AtomicReader), field);
@@ -1422,10 +1451,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Sorts by field's natural Term sort order.  All
-        ///  comparisons are done using BytesRef.compareTo, which is
-        ///  slow for medium to large result sets but possibly
-        ///  very fast for very small results sets.
+        /// Sorts by field's natural <see cref="Index.Term"/> sort order.  All
+        /// comparisons are done using <see cref="BytesRef.CompareTo(BytesRef)"/>, which is
+        /// slow for medium to large result sets but possibly
+        /// very fast for very small results sets.
         /// </summary>
         // TODO: should we remove this?  who really uses it?
 #if FEATURE_SERIALIZABLE

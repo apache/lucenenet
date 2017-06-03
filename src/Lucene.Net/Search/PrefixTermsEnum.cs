@@ -25,11 +25,11 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
     /// <summary>
-    /// Subclass of FilteredTermEnum for enumerating all terms that match the
+    /// Subclass of <see cref="FilteredTermsEnum"/> for enumerating all terms that match the
     /// specified prefix filter term.
-    /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
-    /// greater than all that precede it.</p>
+    /// <para>Term enumerations are always ordered by
+    /// <see cref="TermsEnum.Comparer"/>.  Each term in the enumeration is
+    /// greater than all that precede it.</para>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

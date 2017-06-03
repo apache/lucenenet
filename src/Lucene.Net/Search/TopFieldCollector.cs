@@ -24,12 +24,12 @@ namespace Lucene.Net.Search
     using Entry = Lucene.Net.Search.FieldValueHitQueue.Entry;
 
     /// <summary>
-    /// A <seealso cref="ICollector"/> that sorts by <seealso cref="SortField"/> using
-    /// <seealso cref="FieldComparer"/>s.
-    /// <p/>
-    /// See the <seealso cref="#create(Lucene.Net.Search.Sort, int, boolean, boolean, boolean, boolean)"/> method
-    /// for instantiating a TopFieldCollector.
-    ///
+    /// A <see cref="ICollector"/> that sorts by <see cref="SortField"/> using
+    /// <see cref="FieldComparer"/>s.
+    /// <para/>
+    /// See the <see cref="Create(Lucene.Net.Search.Sort, int, bool, bool, bool, bool)"/> method
+    /// for instantiating a <see cref="TopFieldCollector"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -42,10 +42,10 @@ namespace Lucene.Net.Search
         // always compare lower than a real hit; this would
         // save having to check queueFull on each insert
 
-        /*
-         * Implements a TopFieldCollector over one SortField criteria, without
-         * tracking document scores and maxScore.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over one <see cref="SortField"/> criteria, without
+        /// tracking document scores and maxScore.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -115,11 +115,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over one SortField criteria, without
-         * tracking document scores and maxScore, and assumes out of orderness in doc
-         * Ids collection.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over one <see cref="SortField"/> criteria, without
+        /// tracking document scores and maxScore, and assumes out of orderness in doc
+        /// Ids collection.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -167,10 +167,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over one SortField criteria, while tracking
-         * document scores but no maxScore.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over one <see cref="SortField"/> criteria, while tracking
+        /// document scores but no maxScore.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -235,11 +235,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over one SortField criteria, while tracking
-         * document scores but no maxScore, and assumes out of orderness in doc Ids
-         * collection.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over one <see cref="SortField"/> criteria, while tracking
+        /// document scores but no maxScore, and assumes out of orderness in doc Ids
+        /// collection.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -293,10 +293,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over one SortField criteria, with tracking
-         * document scores and maxScore.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over one <see cref="SortField"/> criteria, with tracking
+        /// document scores and maxScore.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -362,11 +362,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over one SortField criteria, with tracking
-         * document scores and maxScore, and assumes out of orderness in doc Ids
-         * collection.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over one <see cref="SortField"/> criteria, with tracking
+        /// document scores and maxScore, and assumes out of orderness in doc Ids
+        /// collection.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -419,10 +419,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over multiple SortField criteria, without
-         * tracking document scores and maxScore.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over multiple <see cref="SortField"/> criteria, without
+        /// tracking document scores and maxScore.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -527,11 +527,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over multiple SortField criteria, without
-         * tracking document scores and maxScore, and assumes out of orderness in doc
-         * Ids collection.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over multiple <see cref="SortField"/> criteria, without
+        /// tracking document scores and maxScore, and assumes out of orderness in doc
+        /// Ids collection.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -612,10 +612,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over multiple SortField criteria, with
-         * tracking document scores and maxScore.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over multiple <see cref="SortField"/> criteria, with
+        /// tracking document scores and maxScore.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -710,11 +710,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over multiple SortField criteria, with
-         * tracking document scores and maxScore, and assumes out of orderness in doc
-         * Ids collection.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over multiple <see cref="SortField"/> criteria, with
+        /// tracking document scores and maxScore, and assumes out of orderness in doc
+        /// Ids collection.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -800,10 +800,10 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over multiple SortField criteria, with
-         * tracking document scores and maxScore.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over multiple <see cref="SortField"/> criteria, with
+        /// tracking document scores and maxScore.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -896,11 +896,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector over multiple SortField criteria, with
-         * tracking document scores and maxScore, and assumes out of orderness in doc
-         * Ids collection.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> over multiple <see cref="SortField"/> criteria, with
+        /// tracking document scores and maxScore, and assumes out of orderness in doc
+        /// Ids collection.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -992,9 +992,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        /*
-         * Implements a TopFieldCollector when after != null.
-         */
+        /// <summary>
+        /// Implements a <see cref="TopFieldCollector"/> when after != null.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -1218,82 +1218,82 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="TopFieldCollector"/> from the given
+        /// Creates a new <see cref="TopFieldCollector"/> from the given
         /// arguments.
         ///
-        /// <p><b>NOTE</b>: The instances returned by this method
+        /// <para/><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length
-        /// <code>numHits</code>.
+        /// <paramref name="numHits"/>.
         /// </summary>
         /// <param name="sort">
-        ///          the sort criteria (SortFields). </param>
+        ///          The sort criteria (<see cref="SortField"/>s). </param>
         /// <param name="numHits">
-        ///          the number of results to collect. </param>
+        ///          The number of results to collect. </param>
         /// <param name="fillFields">
-        ///          specifies whether the actual field values should be returned on
-        ///          the results (FieldDoc). </param>
+        ///          Specifies whether the actual field values should be returned on
+        ///          the results (<see cref="FieldDoc"/>). </param>
         /// <param name="trackDocScores">
-        ///          specifies whether document scores should be tracked and set on the
-        ///          results. Note that if set to false, then the results' scores will
-        ///          be set to Float.NaN. Setting this to true affects performance, as
+        ///          Specifies whether document scores should be tracked and set on the
+        ///          results. Note that if set to <c>false</c>, then the results' scores will
+        ///          be set to <see cref="float.NaN"/>. Setting this to <c>true</c> affects performance, as
         ///          it incurs the score computation on each competitive result.
         ///          Therefore if document scores are not required by the application,
-        ///          it is recommended to set it to false. </param>
+        ///          it is recommended to set it to <c>false</c>. </param>
         /// <param name="trackMaxScore">
-        ///          specifies whether the query's maxScore should be tracked and set
-        ///          on the resulting <seealso cref="TopDocs"/>. Note that if set to false,
-        ///          <seealso cref="TopDocs#getMaxScore()"/> returns Float.NaN. Setting this to
-        ///          true affects performance as it incurs the score computation on
-        ///          each result. Also, setting this true automatically sets
-        ///          <code>trackDocScores</code> to true as well. </param>
+        ///          Specifies whether the query's <see cref="maxScore"/> should be tracked and set
+        ///          on the resulting <see cref="TopDocs"/>. Note that if set to <c>false</c>,
+        ///          <see cref="TopDocs.MaxScore"/> returns <see cref="float.NaN"/>. Setting this to
+        ///          <c>true</c> affects performance as it incurs the score computation on
+        ///          each result. Also, setting this <c>true</c> automatically sets
+        ///          <paramref name="trackDocScores"/> to <c>true</c> as well. </param>
         /// <param name="docsScoredInOrder">
-        ///          specifies whether documents are scored in doc Id order or not by
-        ///          the given <seealso cref="Scorer"/> in <seealso cref="#setScorer(Scorer)"/>. </param>
-        /// <returns> a <seealso cref="TopFieldCollector"/> instance which will sort the results by
+        ///          Specifies whether documents are scored in doc Id order or not by
+        ///          the given <see cref="Scorer"/> in <see cref="ICollector.SetScorer(Scorer)"/>. </param>
+        /// <returns> A <see cref="TopFieldCollector"/> instance which will sort the results by
         ///         the sort criteria. </returns>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
         public static TopFieldCollector Create(Sort sort, int numHits, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
         {
             return Create(sort, numHits, null, fillFields, trackDocScores, trackMaxScore, docsScoredInOrder);
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="TopFieldCollector"/> from the given
+        /// Creates a new <see cref="TopFieldCollector"/> from the given
         /// arguments.
         ///
-        /// <p><b>NOTE</b>: The instances returned by this method
+        /// <para/><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length
-        /// <code>numHits</code>.
+        /// <paramref name="numHits"/>.
         /// </summary>
         /// <param name="sort">
-        ///          the sort criteria (SortFields). </param>
+        ///          The sort criteria (<see cref="SortField"/>s). </param>
         /// <param name="numHits">
-        ///          the number of results to collect. </param>
+        ///          The number of results to collect. </param>
         /// <param name="after">
-        ///          only hits after this FieldDoc will be collected </param>
+        ///          Only hits after this <see cref="FieldDoc"/> will be collected </param>
         /// <param name="fillFields">
-        ///          specifies whether the actual field values should be returned on
-        ///          the results (FieldDoc). </param>
+        ///          Specifies whether the actual field values should be returned on
+        ///          the results (<see cref="FieldDoc"/>). </param>
         /// <param name="trackDocScores">
-        ///          specifies whether document scores should be tracked and set on the
-        ///          results. Note that if set to false, then the results' scores will
-        ///          be set to Float.NaN. Setting this to true affects performance, as
+        ///          Specifies whether document scores should be tracked and set on the
+        ///          results. Note that if set to <c>false</c>, then the results' scores will
+        ///          be set to <see cref="float.NaN"/>. Setting this to <c>true</c> affects performance, as
         ///          it incurs the score computation on each competitive result.
         ///          Therefore if document scores are not required by the application,
-        ///          it is recommended to set it to false. </param>
+        ///          it is recommended to set it to <c>false</c>. </param>
         /// <param name="trackMaxScore">
-        ///          specifies whether the query's maxScore should be tracked and set
-        ///          on the resulting <seealso cref="TopDocs"/>. Note that if set to false,
-        ///          <seealso cref="TopDocs#getMaxScore()"/> returns Float.NaN. Setting this to
-        ///          true affects performance as it incurs the score computation on
-        ///          each result. Also, setting this true automatically sets
-        ///          <code>trackDocScores</code> to true as well. </param>
+        ///          Specifies whether the query's maxScore should be tracked and set
+        ///          on the resulting <see cref="TopDocs"/>. Note that if set to <c>false</c>,
+        ///          <see cref="TopDocs.MaxScore"/> returns <see cref="float.NaN"/>. Setting this to
+        ///          <c>true</c> affects performance as it incurs the score computation on
+        ///          each result. Also, setting this <c>true</c> automatically sets
+        ///          <paramref name="trackDocScores"/> to <c>true</c> as well. </param>
         /// <param name="docsScoredInOrder">
-        ///          specifies whether documents are scored in doc Id order or not by
-        ///          the given <seealso cref="Scorer"/> in <seealso cref="#setScorer(Scorer)"/>. </param>
-        /// <returns> a <seealso cref="TopFieldCollector"/> instance which will sort the results by
+        ///          Specifies whether documents are scored in doc Id order or not by
+        ///          the given <see cref="Scorer"/> in <see cref="ICollector.SetScorer(Scorer)"/>. </param>
+        /// <returns> A <see cref="TopFieldCollector"/> instance which will sort the results by
         ///         the sort criteria. </returns>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
         public static TopFieldCollector Create(Sort sort, int numHits, FieldDoc after, bool fillFields, bool trackDocScores, bool trackMaxScore, bool docsScoredInOrder)
         {
             if (sort.fields.Length == 0)

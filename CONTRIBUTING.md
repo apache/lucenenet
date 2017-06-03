@@ -52,9 +52,8 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 1. Lucene.Net.Core (project)
    1. Codecs (namespace)
-   2. Search (namespace) (Except for Search.Payloads, Search.Similarities, and Search.Spans)
-   3. Support (namespace)
-   4. Util (namespace) (Except for Util.Fst)
+   2. Support (namespace)
+   3. Util (namespace) (Except for Util.Fst)
 2. Lucene.Net.Codecs (project)
 
 See [Documenting Lucene.Net](https://cwiki.apache.org/confluence/display/LUCENENET/Documenting+Lucene.Net) for instructions. 

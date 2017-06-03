@@ -24,12 +24,13 @@ namespace Lucene.Net.Search
     using OpenBitSet = Lucene.Net.Util.OpenBitSet;
 
     /// <summary>
-    /// Base class for DocIdSet to be used with FieldCache. The implementation
+    /// Base class for <see cref="DocIdSet"/> to be used with <see cref="IFieldCache"/>. The implementation
     /// of its iterator is very stupid and slow if the implementation of the
-    /// <seealso cref="#matchDoc"/> method is not optimized, as iterators simply increment
-    /// the document id until {@code matchDoc(int)} returns true. Because of this
-    /// {@code matchDoc(int)} must be as fast as possible and in no case do any
+    /// <see cref="MatchDoc(int)"/> method is not optimized, as iterators simply increment
+    /// the document id until <see cref="MatchDoc(int)"/> returns <c>true</c>. Because of this
+    /// <see cref="MatchDoc(int)"/> must be as fast as possible and in no case do any
     /// I/O.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -47,12 +48,12 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// this method checks, if a doc is a hit
+        /// This method checks, if a doc is a hit
         /// </summary>
         protected internal abstract bool MatchDoc(int doc);
 
         /// <summary>
-        /// this DocIdSet is always cacheable (does not go back
+        /// This DocIdSet is always cacheable (does not go back
         /// to the reader for iteration)
         /// </summary>
         public override sealed bool IsCacheable

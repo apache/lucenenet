@@ -21,9 +21,9 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// this abstract class defines methods to iterate over a set of non-decreasing
+    /// This abstract class defines methods to iterate over a set of non-decreasing
     /// doc ids. Note that this class assumes it iterates on doc Ids, and therefore
-    /// <seealso cref="#NO_MORE_DOCS"/> is set to {@value #NO_MORE_DOCS} in order to be used as
+    /// <see cref="NO_MORE_DOCS"/> is set to <see cref="int.MaxValue"/> in order to be used as
     /// a sentinel object. Implementations of this class are expected to consider
     /// <see cref="int.MaxValue"/> as an invalid value.
     /// </summary>
@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
     public abstract class DocIdSetIterator
     {
         /// <summary>
-        /// An empty {@code DocIdSetIterator} instance </summary>
+        /// An empty <see cref="DocIdSetIterator"/> instance </summary>
         public static DocIdSetIterator GetEmpty()
         {
             return new DocIdSetIteratorAnonymousInnerClassHelper();
@@ -74,20 +74,20 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// When returned by <seealso cref="#nextDoc()"/>, <seealso cref="#advance(int)"/> and
-        /// <seealso cref="#docID()"/> it means there are no more docs in the iterator.
+        /// When returned by <see cref="NextDoc()"/>, <see cref="Advance(int)"/> and
+        /// <see cref="DocID()"/> it means there are no more docs in the iterator.
         /// </summary>
         public const int NO_MORE_DOCS = int.MaxValue;
 
         /// <summary>
         /// Returns the following:
-        /// <ul>
-        /// <li>-1 or <seealso cref="#NO_MORE_DOCS"/> if <seealso cref="#nextDoc()"/> or
-        /// <seealso cref="#advance(int)"/> were not called yet.
-        /// <li><seealso cref="#NO_MORE_DOCS"/> if the iterator has exhausted.
-        /// <li>Otherwise it should return the doc ID it is currently on.
-        /// </ul>
-        /// <p>
+        /// <list type="bullet">
+        /// <item><description>-1 or <see cref="NO_MORE_DOCS"/> if <see cref="NextDoc()"/> or
+        /// <seealso cref="Advance(int)"/> were not called yet.</description></item>
+        /// <item><description><see cref="NO_MORE_DOCS"/> if the iterator has exhausted.</description></item>
+        /// <item><description>Otherwise it should return the doc ID it is currently on.</description></item>
+        /// </list>
+        /// <para/>
         ///
         /// @since 2.9
         /// </summary>
@@ -95,12 +95,12 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Advances to the next document in the set and returns the doc it is
-        /// currently on, or <seealso cref="#NO_MORE_DOCS"/> if there are no more docs in the
-        /// set.<br>
+        /// currently on, or <see cref="NO_MORE_DOCS"/> if there are no more docs in the
+        /// set.
         ///
-        /// <b>NOTE:</b> after the iterator has exhausted you should not call this
+        /// <para/><b>NOTE:</b> after the iterator has exhausted you should not call this
         /// method, as it may result in unpredicted behavior.
-        ///
+        /// <para/>
         /// @since 2.9
         /// </summary>
         public abstract int NextDoc();
@@ -108,39 +108,41 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Advances to the first beyond the current whose document number is greater
         /// than or equal to <i>target</i>, and returns the document number itself.
-        /// Exhausts the iterator and returns <seealso cref="#NO_MORE_DOCS"/> if <i>target</i>
+        /// Exhausts the iterator and returns <see cref="NO_MORE_DOCS"/> if <i>target</i>
         /// is greater than the highest document number in the set.
-        /// <p>
+        /// <para/>
         /// The behavior of this method is <b>undefined</b> when called with
-        /// <code> target &lt;= current</code>, or after the iterator has exhausted.
+        /// <c> target &lt;= current</c>, or after the iterator has exhausted.
         /// Both cases may result in unpredicted behavior.
-        /// <p>
-        /// When <code> target &gt; current</code> it behaves as if written:
+        /// <para/>
+        /// When <c> target &gt; current</c> it behaves as if written:
         ///
-        /// <pre class="prettyprint">
-        /// int advance(int target) {
-        ///   int doc;
-        ///   while ((doc = nextDoc()) &lt; target) {
-        ///   }
-        ///   return doc;
+        /// <code>
+        /// int Advance(int target) 
+        /// {
+        ///     int doc;
+        ///     while ((doc = NextDoc()) &lt; target) 
+        ///     {
+        ///     }
+        ///     return doc;
         /// }
-        /// </pre>
+        /// </code>
         ///
         /// Some implementations are considerably more efficient than that.
-        /// <p>
-        /// <b>NOTE:</b> this method may be called with <seealso cref="#NO_MORE_DOCS"/> for
-        /// efficiency by some Scorers. If your implementation cannot efficiently
+        /// <para/>
+        /// <b>NOTE:</b> this method may be called with <see cref="NO_MORE_DOCS"/> for
+        /// efficiency by some <see cref="Scorer"/>s. If your implementation cannot efficiently
         /// determine that it should exhaust, it is recommended that you check for that
         /// value in each call to this method.
-        /// <p>
+        /// <para/>
         ///
         /// @since 2.9
         /// </summary>
         public abstract int Advance(int target);
 
         /// <summary>
-        /// Slow (linear) implementation of <seealso cref="#advance"/> relying on
-        ///  <seealso cref="#nextDoc()"/> to advance beyond the target position.
+        /// Slow (linear) implementation of <see cref="Advance(int)"/> relying on
+        /// <see cref="NextDoc()"/> to advance beyond the target position.
         /// </summary>
         protected internal int SlowAdvance(int target)
         {
@@ -154,9 +156,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the estimated cost of this <seealso cref="DocIdSetIterator"/>.
-        /// <p>
-        /// this is generally an upper bound of the number of documents this iterator
+        /// Returns the estimated cost of this <see cref="DocIdSetIterator"/>.
+        /// <para/>
+        /// This is generally an upper bound of the number of documents this iterator
         /// might match, but may be a rough heuristic, hardcoded value, or otherwise
         /// completely inaccurate.
         /// </summary>

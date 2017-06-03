@@ -29,25 +29,26 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// A fast regular expression query based on the
-    /// <seealso cref="Lucene.Net.Util.Automaton"/> package.
-    /// <ul>
-    /// <li>Comparisons are <a
-    /// href="http://tusker.org/regex/regex_benchmark.html">fast</a>
-    /// <li>The term dictionary is enumerated in an intelligent way, to avoid
-    /// comparisons. See <seealso cref="AutomatonQuery"/> for more details.
-    /// </ul>
-    /// <p>
-    /// The supported syntax is documented in the <seealso cref="RegExp"/> class.
+    /// <see cref="Lucene.Net.Util.Automaton"/> package.
+    /// <list type="bullet">
+    ///     <item><description>Comparisons are <a
+    ///         href="http://tusker.org/regex/regex_benchmark.html">fast</a></description></item>
+    ///     <item><description>The term dictionary is enumerated in an intelligent way, to avoid
+    ///         comparisons. See <see cref="AutomatonQuery"/> for more details.</description></item>
+    /// </list>
+    /// <para>
+    /// The supported syntax is documented in the <see cref="RegExp"/> class.
     /// Note this might be different than other regular expression implementations.
     /// For some alternatives with different syntax, look under the sandbox.
-    /// </p>
-    /// <p>
+    /// </para>
+    /// <para>
     /// Note this query can be slow, as it needs to iterate over many terms. In order
-    /// to prevent extremely slow RegexpQueries, a Regexp term should not start with
-    /// the expression <code>.*</code>
+    /// to prevent extremely slow <see cref="RegexpQuery"/>s, a <see cref="RegExp"/> term should not start with
+    /// the expression <c>.*</c>
+    /// </para>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= RegExp
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="RegExp"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -70,33 +71,33 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Constructs a query for terms matching <code>term</code>.
-        /// <p>
+        /// Constructs a query for terms matching <paramref name="term"/>.
+        /// <para>
         /// By default, all regular expression features are enabled.
-        /// </p>
+        /// </para>
         /// </summary>
-        /// <param name="term"> regular expression. </param>
+        /// <param name="term"> Regular expression. </param>
         public RegexpQuery(Term term)
             : this(term, RegExpSyntax.ALL)
         {
         }
 
         /// <summary>
-        /// Constructs a query for terms matching <code>term</code>.
+        /// Constructs a query for terms matching <paramref name="term"/>.
         /// </summary>
-        /// <param name="term"> regular expression. </param>
-        /// <param name="flags"> optional RegExp features from <see cref="RegExpSyntax"/> </param>
+        /// <param name="term"> Regular expression. </param>
+        /// <param name="flags"> Optional <see cref="RegExp"/> features from <see cref="RegExpSyntax"/> </param>
         public RegexpQuery(Term term, RegExpSyntax flags)
             : this(term, flags, defaultProvider)
         {
         }
 
         /// <summary>
-        /// Constructs a query for terms matching <code>term</code>.
+        /// Constructs a query for terms matching <paramref name="term"/>.
         /// </summary>
-        /// <param name="term"> regular expression. </param>
-        /// <param name="flags"> optional RegExp features from <see cref="RegExpSyntax"/> </param>
-        /// <param name="provider"> custom AutomatonProvider for named automata </param>
+        /// <param name="term"> Regular expression. </param>
+        /// <param name="flags"> Optional <see cref="RegExp"/> features from <see cref="RegExpSyntax"/> </param>
+        /// <param name="provider"> Custom <see cref="IAutomatonProvider"/> for named automata </param>
         public RegexpQuery(Term term, RegExpSyntax flags, IAutomatonProvider provider)
             : base(term, (new RegExp(term.Text(), flags)).ToAutomaton(provider))
         {

@@ -1,4 +1,5 @@
-using System;
+using Lucene.Net.Util;
+using BytesRef = Lucene.Net.Util.BytesRef;
 
 namespace Lucene.Net.Search
 {
@@ -19,57 +20,28 @@ namespace Lucene.Net.Search
      * limitations under the License.
      */
 
-    using Attribute = Lucene.Net.Util.Attribute;
-    using IAttribute = Lucene.Net.Util.IAttribute;
-    using BytesRef = Lucene.Net.Util.BytesRef;
-
     /// <summary>
-    /// Implementation class for <seealso cref="MaxNonCompetitiveBoostAttribute"/>.
+    /// Add this <see cref="IAttribute"/> to a fresh <see cref="AttributeSource"/> before calling
+    /// <see cref="MultiTermQuery.GetTermsEnum(Index.Terms, AttributeSource)"/>.
+    /// <see cref="FuzzyQuery"/> is using this to control its internal behaviour
+    /// to only return competitive terms.
+    /// <para/><b>Please note:</b> this attribute is intended to be added by the <see cref="MultiTermQuery.RewriteMethod"/>
+    /// to an empty <see cref="AttributeSource"/> that is shared for all segments
+    /// during query rewrite. This attribute source is passed to all segment enums
+    /// on <see cref="MultiTermQuery.GetTermsEnum(Index.Terms,AttributeSource)"/>.
+    /// <see cref="TopTermsRewrite{Q}"/> uses this attribute to
+    /// inform all enums about the current boost, that is not competitive.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
-    public sealed class MaxNonCompetitiveBoostAttribute : Attribute, IMaxNonCompetitiveBoostAttribute
+    public interface IMaxNonCompetitiveBoostAttribute : IAttribute
     {
-        private float maxNonCompetitiveBoost = float.NegativeInfinity;
-        private BytesRef competitiveTerm = null;
+        /// <summary>
+        /// This is the maximum boost that would not be competitive. </summary>
+        float MaxNonCompetitiveBoost { set; get; }
 
-        public float MaxNonCompetitiveBoost
-        {
-            set
-            {
-                this.maxNonCompetitiveBoost = value;
-            }
-            get
-            {
-                return maxNonCompetitiveBoost;
-            }
-        }
-
-        public BytesRef CompetitiveTerm
-        {
-            set
-            {
-                this.competitiveTerm = value;
-            }
-            get
-            {
-                return competitiveTerm;
-            }
-        }
-
-        public override void Clear()
-        {
-            maxNonCompetitiveBoost = float.NegativeInfinity;
-            competitiveTerm = null;
-        }
-
-        public override void CopyTo(IAttribute target)
-        {
-            MaxNonCompetitiveBoostAttribute t = (MaxNonCompetitiveBoostAttribute)target;
-            t.MaxNonCompetitiveBoost = maxNonCompetitiveBoost;
-            t.CompetitiveTerm = competitiveTerm;
-        }
+        /// <summary>
+        /// This is the term or <c>null</c> of the term that triggered the boost change. </summary>
+        BytesRef CompetitiveTerm { set; get; }
     }
 }

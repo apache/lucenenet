@@ -445,11 +445,10 @@
     <Compile Include="Search\FuzzyTermsEnum.cs" />
     <Compile Include="Search\HitQueue.cs" />
     <Compile Include="Search\IndexSearcher.cs" />
-    <Compile Include="Search\ITopTermsRewrite.cs" />
     <Compile Include="Search\LiveFieldValues.cs" />
     <Compile Include="Search\MatchAllDocsQuery.cs" />
-    <Compile Include="Search\IMaxNonCompetitiveBoostAttribute.cs" />
     <Compile Include="Search\MaxNonCompetitiveBoostAttribute.cs" />
+    <Compile Include="Search\MaxNonCompetitiveBoostAttributeImpl.cs" />
     <Compile Include="Search\MinShouldMatchSumScorer.cs" />
     <Compile Include="Search\MultiCollector.cs" />
     <Compile Include="Search\MultiPhraseQuery.cs" />

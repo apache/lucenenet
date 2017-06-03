@@ -23,15 +23,15 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// A <seealso cref="ICollector"/> implementation that collects the top-scoring hits,
-    /// returning them as a <seealso cref="TopDocs"/>. this is used by <seealso cref="IndexSearcher"/> to
-    /// implement <seealso cref="TopDocs"/>-based search. Hits are sorted by score descending
+    /// A <see cref="ICollector"/> implementation that collects the top-scoring hits,
+    /// returning them as a <see cref="TopDocs"/>. this is used by <see cref="IndexSearcher"/> to
+    /// implement <see cref="TopDocs"/>-based search. Hits are sorted by score descending
     /// and then (when the scores are tied) docID ascending. When you create an
     /// instance of this collector you should know in advance whether documents are
     /// going to be collected in doc Id order or not.
     ///
-    /// <p><b>NOTE</b>: The values <seealso cref="Float#NaN"/> and
-    /// <seealso cref="Float#NEGATIVE_INFINITY"/> are not valid scores.  this
+    /// <para/><b>NOTE</b>: The values <see cref="float.NaN"/> and
+    /// <see cref="float.NegativeInfinity"/> are not valid scores.  This
     /// collector will not properly collect hits with such
     /// scores.
     /// </summary>
@@ -261,13 +261,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="TopScoreDocCollector"/> given the number of hits to
+        /// Creates a new <see cref="TopScoreDocCollector"/> given the number of hits to
         /// collect and whether documents are scored in order by the input
-        /// <seealso cref="Scorer"/> to <seealso cref="#setScorer(Scorer)"/>.
+        /// <see cref="Scorer"/> to <see cref="SetScorer(Scorer)"/>.
         ///
-        /// <p><b>NOTE</b>: The instances returned by this method
+        /// <para/><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length
-        /// <code>numHits</code>, and fill the array with sentinel
+        /// <paramref name="numHits"/>, and fill the array with sentinel
         /// objects.
         /// </summary>
         public static TopScoreDocCollector Create(int numHits, bool docsScoredInOrder)
@@ -276,13 +276,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="TopScoreDocCollector"/> given the number of hits to
+        /// Creates a new <see cref="TopScoreDocCollector"/> given the number of hits to
         /// collect, the bottom of the previous page, and whether documents are scored in order by the input
-        /// <seealso cref="Scorer"/> to <seealso cref="#setScorer(Scorer)"/>.
+        /// <see cref="Scorer"/> to <see cref="SetScorer(Scorer)"/>.
         ///
-        /// <p><b>NOTE</b>: The instances returned by this method
+        /// <para/><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length
-        /// <code>numHits</code>, and fill the array with sentinel
+        /// <paramref name="numHits"/>, and fill the array with sentinel
         /// objects.
         /// </summary>
         public static TopScoreDocCollector Create(int numHits, ScoreDoc after, bool docsScoredInOrder)

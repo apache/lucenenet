@@ -147,7 +147,7 @@ namespace Lucene.Net.Search
         /// until the searcher is reopened, by another via
         /// <see cref="ReferenceManager{T}.MaybeRefresh()"/> or until the <see cref="ReferenceManager{T}"/> is closed.
         /// </summary>
-        /// <param name="targetGen"> the generation to wait for </param>
+        /// <param name="targetGen"> The generation to wait for </param>
         public virtual void WaitForGeneration(long targetGen)
         {
             WaitForGeneration(targetGen, -1);
@@ -160,16 +160,16 @@ namespace Lucene.Net.Search
         /// generation, this method will block until the
         /// searcher has been reopened by another thread via
         /// <see cref="ReferenceManager{T}.MaybeRefresh()"/>, the given waiting time has elapsed, or until
-        /// the <seealso cref="ReferenceManager{T}"/> is closed.
+        /// the <see cref="ReferenceManager{T}"/> is closed.
         /// <para/>
         /// NOTE: if the waiting time elapses before the requested target generation is
         /// available the current <see cref="SearcherManager"/> is returned instead.
         /// </summary>
         /// <param name="targetGen">
-        ///          the generation to wait for </param>
+        ///          The generation to wait for </param>
         /// <param name="maxMS">
-        ///          maximum milliseconds to wait, or -1 to wait indefinitely </param>
-        /// <returns> true if the <paramref name="targetGen"/> is now available,
+        ///          Maximum milliseconds to wait, or -1 to wait indefinitely </param>
+        /// <returns> <c>true</c> if the <paramref name="targetGen"/> is now available,
         ///         or false if <paramref name="maxMS"/> wait time was exceeded </returns>
         public virtual bool WaitForGeneration(long targetGen, int maxMS)
         {

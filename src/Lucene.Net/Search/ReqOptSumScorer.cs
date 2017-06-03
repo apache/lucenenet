@@ -22,10 +22,10 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A Scorer for queries with a required part and an optional part.
-    /// Delays skipTo() on the optional part until a score() is needed.
-    /// <br>
-    /// this <code>Scorer</code> implements <seealso cref="Scorer#advance(int)"/>.
+    /// A <see cref="Scorer"/> for queries with a required part and an optional part.
+    /// Delays SkipTo() on the optional part until a GetScore() is needed.
+    /// <para/>
+    /// This <see cref="Scorer"/> implements <see cref="DocIdSetIterator.Advance(int)"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -34,16 +34,16 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// The scorers passed from the constructor.
-        /// These are set to null as soon as their next() or skipTo() returns false.
+        /// These are set to <c>null</c> as soon as their Next() or SkipTo() returns <c>false</c>.
         /// </summary>
         private Scorer reqScorer;
 
         private Scorer optScorer;
 
         /// <summary>
-        /// Construct a <code>ReqOptScorer</code>. </summary>
-        /// <param name="reqScorer"> The required scorer. this must match. </param>
-        /// <param name="optScorer"> The optional scorer. this is used for scoring only. </param>
+        /// Construct a <see cref="ReqOptSumScorer"/>. </summary>
+        /// <param name="reqScorer"> The required scorer. This must match. </param>
+        /// <param name="optScorer"> The optional scorer. This is used for scoring only. </param>
         public ReqOptSumScorer(Scorer reqScorer, Scorer optScorer)
             : base(reqScorer.m_weight)
         {
@@ -70,7 +70,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the score of the current document matching the query.
-        /// Initially invalid, until <seealso cref="#nextDoc()"/> is called the first time. </summary>
+        /// Initially invalid, until <see cref="NextDoc()"/> is called the first time. </summary>
         /// <returns> The score of the required scorer, eventually increased by the score
         /// of the optional scorer when it also matches the current document. </returns>
         public override float GetScore()

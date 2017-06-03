@@ -204,6 +204,7 @@ namespace Lucene.Net.Search
         [Test]
         public virtual void Test()
         {
+#pragma warning disable 612, 618
             IFieldCache cache = FieldCache.DEFAULT;
             FieldCache.Doubles doubles = cache.GetDoubles(Reader, "theDouble", Random().NextBoolean());
             Assert.AreSame(doubles, cache.GetDoubles(Reader, "theDouble", Random().NextBoolean()), "Second request to cache return same array");
@@ -221,7 +222,6 @@ namespace Lucene.Net.Search
                 Assert.IsTrue(longs.Get(i) == (long.MaxValue - i), longs.Get(i) + " does not equal: " + (long.MaxValue - i) + " i=" + i);
             }
 
-#pragma warning disable 612, 618
             FieldCache.Bytes bytes = cache.GetBytes(Reader, "theByte", Random().NextBoolean());
             Assert.AreSame(bytes, cache.GetBytes(Reader, "theByte", Random().NextBoolean()), "Second request to cache return same array");
             Assert.AreSame(bytes, cache.GetBytes(Reader, "theByte", FieldCache.DEFAULT_BYTE_PARSER, Random().NextBoolean()), "Second request with explicit parser return same array");
@@ -237,7 +237,6 @@ namespace Lucene.Net.Search
             {
                 Assert.IsTrue(shorts.Get(i) == (short)(short.MaxValue - i), shorts.Get(i) + " does not equal: " + (short.MaxValue - i));
             }
-#pragma warning restore 612, 618
 
             FieldCache.Int32s ints = cache.GetInt32s(Reader, "theInt", Random().NextBoolean());
             Assert.AreSame(ints, cache.GetInt32s(Reader, "theInt", Random().NextBoolean()), "Second request to cache return same array");
@@ -254,6 +253,7 @@ namespace Lucene.Net.Search
             {
                 Assert.IsTrue(floats.Get(i) == (float.MaxValue - i), floats.Get(i) + " does not equal: " + (float.MaxValue - i));
             }
+#pragma warning restore 612, 618
 
             IBits docsWithField = cache.GetDocsWithField(Reader, "theLong");
             Assert.AreSame(docsWithField, cache.GetDocsWithField(Reader, "theLong"), "Second request to cache return same array");

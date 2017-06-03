@@ -31,11 +31,12 @@ namespace Lucene.Net.Search
     /// <summary>
     /// A query that applies a filter to the results of another query.
     ///
-    /// <p>Note: the bits are retrieved from the filter each time this
-    /// query is used in a search - use a CachingWrapperFilter to avoid
+    /// <para/>Note: the bits are retrieved from the filter each time this
+    /// query is used in a search - use a <see cref="CachingWrapperFilter"/> to avoid
     /// regenerating the bits every time.
+    /// <para/>
     /// @since   1.4 </summary>
-    /// <seealso cref=     CachingWrapperFilter </seealso>
+    /// <seealso cref="CachingWrapperFilter"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -47,9 +48,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Constructs a new query which applies a filter to the results of the original query.
-        /// <seealso cref="Filter#getDocIdSet"/> will be called every time this query is used in a search. </summary>
-        /// <param name="query">  Query to be filtered, cannot be <code>null</code>. </param>
-        /// <param name="filter"> Filter to apply to query results, cannot be <code>null</code>. </param>
+        /// <see cref="Filter.GetDocIdSet(AtomicReaderContext, IBits)"/> will be called every time this query is used in a search. </summary>
+        /// <param name="query">  Query to be filtered, cannot be <c>null</c>. </param>
+        /// <param name="filter"> Filter to apply to query results, cannot be <c>null</c>. </param>
         public FilteredQuery(Query query, Filter filter)
             : this(query, filter, RANDOM_ACCESS_FILTER_STRATEGY)
         {
@@ -57,12 +58,12 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Constructs a new query which applies a filter to the results of the original query.
-        /// <seealso cref="Filter#getDocIdSet"/> will be called every time this query is used in a search. </summary>
-        /// <param name="query">  Query to be filtered, cannot be <code>null</code>. </param>
-        /// <param name="filter"> Filter to apply to query results, cannot be <code>null</code>. </param>
-        /// <param name="strategy"> a filter strategy used to create a filtered scorer.
+        /// <see cref="Filter.GetDocIdSet(AtomicReaderContext, IBits)"/> will be called every time this query is used in a search. </summary>
+        /// <param name="query">  Query to be filtered, cannot be <c>null</c>. </param>
+        /// <param name="filter"> Filter to apply to query results, cannot be <c>null</c>. </param>
+        /// <param name="strategy"> A filter strategy used to create a filtered scorer.
         /// </param>
-        /// <seealso cref= FilterStrategy </seealso>
+        /// <seealso cref="FilterStrategy"/>
         public FilteredQuery(Query query, Filter filter, FilterStrategy strategy)
         {
             if (query == null || filter == null)
@@ -79,8 +80,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a Weight that applies the filter to the enclosed query's Weight.
-        /// this is accomplished by overriding the Scorer returned by the Weight.
+        /// Returns a <see cref="Weight"/> that applies the filter to the enclosed query's <see cref="Weight"/>.
+        /// this is accomplished by overriding the <see cref="Scorer"/> returned by the <see cref="Weight"/>.
         /// </summary>
         public override Weight CreateWeight(IndexSearcher searcher)
         {
@@ -181,8 +182,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A scorer that consults the filter iff a document was matched by the
-        /// delegate scorer. this is useful if the filter computation is more expensive
+        /// A scorer that consults the filter if a document was matched by the
+        /// delegate scorer. This is useful if the filter computation is more expensive
         /// than document scoring or if the filter has a linear running time to compute
         /// the next matching doc like exact geo distances.
         /// </summary>
@@ -299,7 +300,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A Scorer that uses a "leap-frog" approach (also called "zig-zag join"). The scorer and the filter
+        /// A <see cref="Scorer"/> that uses a "leap-frog" approach (also called "zig-zag join"). The scorer and the filter
         /// take turns trying to advance to each other's next matching document, often
         /// jumping past the target document. When both land on the same document, it's
         /// collected.
@@ -418,8 +419,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Rewrites the query. If the wrapped is an instance of
-        /// <seealso cref="MatchAllDocsQuery"/> it returns a <seealso cref="ConstantScoreQuery"/>. Otherwise
-        /// it returns a new {@code FilteredQuery} wrapping the rewritten query.
+        /// <see cref="MatchAllDocsQuery"/> it returns a <see cref="ConstantScoreQuery"/>. Otherwise
+        /// it returns a new <see cref="FilteredQuery"/> wrapping the rewritten query.
         /// </summary>
         public override Query Rewrite(IndexReader reader)
         {
@@ -440,7 +441,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns this FilteredQuery's (unfiltered) Query </summary>
+        /// Returns this <see cref="FilteredQuery"/>'s (unfiltered) <see cref="Query"/> </summary>
         public Query Query
         {
             get
@@ -450,7 +451,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns this FilteredQuery's filter </summary>
+        /// Returns this <see cref="FilteredQuery"/>'s filter </summary>
         public Filter Filter
         {
             get
@@ -460,7 +461,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns this FilteredQuery's <seealso cref="FilterStrategy"/> </summary>
+        /// Returns this <see cref="FilteredQuery"/>'s <seealso cref="FilterStrategy"/> </summary>
         public virtual FilterStrategy Strategy
         {
             get
@@ -469,7 +470,11 @@ namespace Lucene.Net.Search
             }
         }
 
-        // inherit javadoc
+        /// <summary>
+        /// Expert: adds all terms occurring in this query to the terms set. Only
+        /// works if this query is in its rewritten (<see cref="Rewrite(IndexReader)"/>) form.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"> If this query is not yet rewritten </exception>
         public override void ExtractTerms(ISet<Term> terms)
         {
             Query.ExtractTerms(terms);
@@ -489,7 +494,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true iff <code>o</code> is equal to this. </summary>
+        /// Returns true if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (o == this)
@@ -517,16 +522,16 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A <seealso cref="FilterStrategy"/> that conditionally uses a random access filter if
-        /// the given <seealso cref="DocIdSet"/> supports random access (returns a non-null value
-        /// from <seealso cref="DocIdSet#bits()"/>) and
-        /// <seealso cref="RandomAccessFilterStrategy#useRandomAccess(Bits, int)"/> returns
-        /// <code>true</code>. Otherwise this strategy falls back to a "zig-zag join" (
-        /// <seealso cref="FilteredQuery#LEAP_FROG_FILTER_FIRST_STRATEGY"/>) strategy.
+        /// A <see cref="FilterStrategy"/> that conditionally uses a random access filter if
+        /// the given <see cref="DocIdSet"/> supports random access (returns a non-null value
+        /// from <see cref="DocIdSet.Bits"/>) and
+        /// <see cref="RandomAccessFilterStrategy.UseRandomAccess(IBits, int)"/> returns
+        /// <c>true</c>. Otherwise this strategy falls back to a "zig-zag join" (
+        /// <see cref="FilteredQuery.LEAP_FROG_FILTER_FIRST_STRATEGY"/>) strategy.
         ///
-        /// <p>
-        /// Note: this strategy is the default strategy in <seealso cref="FilteredQuery"/>
-        /// </p>
+        /// <para>
+        /// Note: this strategy is the default strategy in <see cref="FilteredQuery"/>
+        /// </para>
         /// </summary>
         public static readonly FilterStrategy RANDOM_ACCESS_FILTER_STRATEGY = new RandomAccessFilterStrategy();
 
@@ -536,9 +541,9 @@ namespace Lucene.Net.Search
         /// take turns trying to advance to each other's next matching document, often
         /// jumping past the target document. When both land on the same document, it's
         /// collected.
-        /// <p>
+        /// <para>
         /// Note: this strategy uses the filter to lead the iteration.
-        /// </p>
+        /// </para>
         /// </summary>
         public static readonly FilterStrategy LEAP_FROG_FILTER_FIRST_STRATEGY = new LeapFrogFilterStrategy(false);
 
@@ -548,55 +553,56 @@ namespace Lucene.Net.Search
         /// take turns trying to advance to each other's next matching document, often
         /// jumping past the target document. When both land on the same document, it's
         /// collected.
-        /// <p>
+        /// <para>
         /// Note: this strategy uses the query to lead the iteration.
-        /// </p>
+        /// </para>
         /// </summary>
         public static readonly FilterStrategy LEAP_FROG_QUERY_FIRST_STRATEGY = new LeapFrogFilterStrategy(true);
 
         /// <summary>
-        /// A filter strategy that advances the Query or rather its <seealso cref="Scorer"/> first and consults the
-        /// filter <seealso cref="DocIdSet"/> for each matched document.
-        /// <p>
-        /// Note: this strategy requires a <seealso cref="DocIdSet#bits()"/> to return a non-null value. Otherwise
-        /// this strategy falls back to <seealso cref="FilteredQuery#LEAP_FROG_QUERY_FIRST_STRATEGY"/>
-        /// </p>
-        /// <p>
+        /// A filter strategy that advances the <see cref="Search.Query"/> or rather its <see cref="Scorer"/> first and consults the
+        /// filter <see cref="DocIdSet"/> for each matched document.
+        /// <para>
+        /// Note: this strategy requires a <see cref="DocIdSet.Bits"/> to return a non-null value. Otherwise
+        /// this strategy falls back to <see cref="FilteredQuery.LEAP_FROG_QUERY_FIRST_STRATEGY"/>
+        /// </para>
+        /// <para>
         /// Use this strategy if the filter computation is more expensive than document
         /// scoring or if the filter has a linear running time to compute the next
         /// matching doc like exact geo distances.
-        /// </p>
+        /// </para>
         /// </summary>
         public static readonly FilterStrategy QUERY_FIRST_FILTER_STRATEGY = new QueryFirstFilterStrategy();
 
         /// <summary>
-        /// Abstract class that defines how the filter (<seealso cref="DocIdSet"/>) applied during document collection. </summary>
+        /// Abstract class that defines how the filter (<see cref="DocIdSet"/>) applied during document collection. </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
         public abstract class FilterStrategy
         {
             /// <summary>
-            /// Returns a filtered <seealso cref="Scorer"/> based on this strategy.
+            /// Returns a filtered <see cref="Scorer"/> based on this strategy.
             /// </summary>
             /// <param name="context">
-            ///          the <seealso cref="AtomicReaderContext"/> for which to return the <seealso cref="Scorer"/>. </param>
-            /// <param name="weight"> the <seealso cref="FilteredQuery"/> <seealso cref="Weight"/> to create the filtered scorer. </param>
-            /// <param name="docIdSet"> the filter <seealso cref="DocIdSet"/> to apply </param>
+            ///          the <see cref="AtomicReaderContext"/> for which to return the <see cref="Scorer"/>. </param>
+            /// <param name="weight"> the <see cref="FilteredQuery"/> <see cref="Weight"/> to create the filtered scorer. </param>
+            /// <param name="docIdSet"> the filter <see cref="DocIdSet"/> to apply </param>
             /// <returns> a filtered scorer
             /// </returns>
-            /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
+            /// <exception cref="System.IO.IOException"> if an <see cref="System.IO.IOException"/> occurs </exception>
             public abstract Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet);
 
             /// <summary>
-            /// Returns a filtered <seealso cref="BulkScorer"/> based on this
+            /// Returns a filtered <see cref="BulkScorer"/> based on this
             /// strategy.  this is an optional method: the default
-            /// implementation just calls <seealso cref="#filteredScorer"/> and
-            /// wraps that into a BulkScorer.
+            /// implementation just calls <see cref="FilteredScorer(AtomicReaderContext, Weight, DocIdSet)"/> and
+            /// wraps that into a <see cref="BulkScorer"/>.
             /// </summary>
             /// <param name="context">
             ///          the <seealso cref="AtomicReaderContext"/> for which to return the <seealso cref="Scorer"/>. </param>
             /// <param name="weight"> the <seealso cref="FilteredQuery"/> <seealso cref="Weight"/> to create the filtered scorer. </param>
+            /// <param name="scoreDocsInOrder"> <c>true</c> to score docs in order </param>
             /// <param name="docIdSet"> the filter <seealso cref="DocIdSet"/> to apply </param>
             /// <returns> a filtered top scorer </returns>
             public virtual BulkScorer FilteredBulkScorer(AtomicReaderContext context, Weight weight, bool scoreDocsInOrder, DocIdSet docIdSet)
@@ -613,12 +619,12 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A <seealso cref="FilterStrategy"/> that conditionally uses a random access filter if
-        /// the given <seealso cref="DocIdSet"/> supports random access (returns a non-null value
-        /// from <seealso cref="DocIdSet#bits()"/>) and
-        /// <seealso cref="RandomAccessFilterStrategy#useRandomAccess(Bits, int)"/> returns
+        /// A <see cref="FilterStrategy"/> that conditionally uses a random access filter if
+        /// the given <see cref="DocIdSet"/> supports random access (returns a non-null value
+        /// from <see cref="DocIdSet.Bits"/>) and
+        /// <see cref="RandomAccessFilterStrategy.UseRandomAccess(IBits, int)"/> returns
         /// <code>true</code>. Otherwise this strategy falls back to a "zig-zag join" (
-        /// <seealso cref="FilteredQuery#LEAP_FROG_FILTER_FIRST_STRATEGY"/>) strategy .
+        /// <see cref="FilteredQuery.LEAP_FROG_FILTER_FIRST_STRATEGY"/>) strategy .
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
@@ -661,14 +667,14 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Expert: decides if a filter should be executed as "random-access" or not.
-            /// random-access means the filter "filters" in a similar way as deleted docs are filtered
-            /// in Lucene. this is faster when the filter accepts many documents.
+            /// Random-access means the filter "filters" in a similar way as deleted docs are filtered
+            /// in Lucene. This is faster when the filter accepts many documents.
             /// However, when the filter is very sparse, it can be faster to execute the query+filter
             /// as a conjunction in some cases.
-            ///
-            /// The default implementation returns <code>true</code> if the first document accepted by the
-            /// filter is < 100.
-            ///
+            /// <para/>
+            /// The default implementation returns <c>true</c> if the first document accepted by the
+            /// filter is &lt; 100.
+            /// <para/>
             /// @lucene.internal
             /// </summary>
             protected virtual bool UseRandomAccess(IBits bits, int firstFilterDoc)
@@ -717,17 +723,17 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A filter strategy that advances the <seealso cref="Scorer"/> first and consults the
-        /// <seealso cref="DocIdSet"/> for each matched document.
-        /// <p>
-        /// Note: this strategy requires a <seealso cref="DocIdSet#bits()"/> to return a non-null value. Otherwise
-        /// this strategy falls back to <seealso cref="FilteredQuery#LEAP_FROG_QUERY_FIRST_STRATEGY"/>
-        /// </p>
-        /// <p>
+        /// A filter strategy that advances the <see cref="Scorer"/> first and consults the
+        /// <see cref="DocIdSet"/> for each matched document.
+        /// <para>
+        /// Note: this strategy requires a <see cref="DocIdSet.Bits"/> to return a non-null value. Otherwise
+        /// this strategy falls back to <see cref="FilteredQuery.LEAP_FROG_QUERY_FIRST_STRATEGY"/>
+        /// </para>
+        /// <para>
         /// Use this strategy if the filter computation is more expensive than document
         /// scoring or if the filter has a linear running time to compute the next
         /// matching doc like exact geo distances.
-        /// </p>
+        /// </para>
         /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]

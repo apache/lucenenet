@@ -31,17 +31,17 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
     /// <summary>
-    /// A wrapper for <seealso cref="MultiTermQuery"/>, that exposes its
-    /// functionality as a <seealso cref="Filter"/>.
-    /// <P>
-    /// <code>MultiTermQueryWrapperFilter</code> is not designed to
-    /// be used by itself. Normally you subclass it to provide a Filter
-    /// counterpart for a <seealso cref="MultiTermQuery"/> subclass.
-    /// <P>
-    /// For example, <seealso cref="TermRangeFilter"/> and <seealso cref="PrefixFilter"/> extend
-    /// <code>MultiTermQueryWrapperFilter</code>.
-    /// this class also provides the functionality behind
-    /// <seealso cref="MultiTermQuery#CONSTANT_SCORE_FILTER_REWRITE"/>;
+    /// A wrapper for <see cref="MultiTermQuery"/>, that exposes its
+    /// functionality as a <see cref="Filter"/>.
+    /// <para/>
+    /// <see cref="MultiTermQueryWrapperFilter{Q}"/> is not designed to
+    /// be used by itself. Normally you subclass it to provide a <see cref="Filter"/>
+    /// counterpart for a <see cref="MultiTermQuery"/> subclass.
+    /// <para/>
+    /// For example, <see cref="TermRangeFilter"/> and <see cref="PrefixFilter"/> extend
+    /// <see cref="MultiTermQueryWrapperFilter{Q}"/>.
+    /// This class also provides the functionality behind
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/>;
     /// this is why it is not abstract.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         protected readonly Q m_query;
 
         /// <summary>
-        /// Wrap a <seealso cref="MultiTermQuery"/> as a Filter.
+        /// Wrap a <see cref="MultiTermQuery"/> as a <see cref="Filter"/>.
         /// </summary>
         protected internal MultiTermQueryWrapperFilter(Q query)
         {
@@ -98,7 +98,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a DocIdSet with documents that should be permitted in search
+        /// Returns a <see cref="DocIdSet"/> with documents that should be permitted in search
         /// results.
         /// </summary>
         public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)

@@ -23,14 +23,14 @@ namespace Lucene.Net.Search
 
     using BooleanWeight = Lucene.Net.Search.BooleanQuery.BooleanWeight;
 
-    /* See the description in BooleanScorer.java, comparing
-     * BooleanScorer & BooleanScorer2 */
-
     /// <summary>
-    /// An alternative to BooleanScorer that also allows a minimum number
+    /// See the description in <see cref="BooleanScorer"/> comparing
+    /// <see cref="BooleanScorer"/> &amp; <see cref="BooleanScorer2"/>.
+    /// <para/>
+    /// An alternative to <see cref="BooleanScorer"/> that also allows a minimum number
     /// of optional scorers that should match.
-    /// <br>Implements skipTo(), and has no limitations on the numbers of added scorers.
-    /// <br>Uses ConjunctionScorer, DisjunctionScorer, ReqOptScorer and ReqExclScorer.
+    /// <para/>Implements SkipTo(), and has no limitations on the numbers of added scorers.
+    /// <para/>Uses <see cref="ConjunctionScorer"/>, <see cref="DisjunctionScorer"/>, <see cref="ReqOptSumScorer"/> and <see cref="ReqExclScorer"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -78,25 +78,27 @@ namespace Lucene.Net.Search
         private int doc = -1;
 
         /// <summary>
-        /// Creates a <seealso cref="Scorer"/> with the given similarity and lists of required,
+        /// Creates a <see cref="Scorer"/> with the given similarity and lists of required,
         /// prohibited and optional scorers. In no required scorers are added, at least
         /// one of the optional scorers will have to match during the search.
         /// </summary>
         /// <param name="weight">
-        ///          The BooleanWeight to be used. </param>
+        ///          The <see cref="BooleanWeight"/> to be used. </param>
         /// <param name="disableCoord">
-        ///          If this parameter is true, coordination level matching
-        ///          (<seealso cref="Similarity#coord(int, int)"/>) is not used. </param>
+        ///          If this parameter is <c>true</c>, coordination level matching
+        ///          (<see cref="Similarities.Similarity.Coord(int, int)"/>) is not used. </param>
         /// <param name="minNrShouldMatch">
         ///          The minimum number of optional added scorers that should match
         ///          during the search. In case no required scorers are added, at least
         ///          one of the optional scorers will have to match during the search. </param>
         /// <param name="required">
-        ///          the list of required scorers. </param>
+        ///          The list of required scorers. </param>
         /// <param name="prohibited">
-        ///          the list of prohibited scorers. </param>
+        ///          The list of prohibited scorers. </param>
         /// <param name="optional">
-        ///          the list of optional scorers. </param>
+        ///          The list of optional scorers. </param>
+        /// <param name="maxCoord">
+        ///          The max coord. </param>
         public BooleanScorer2(BooleanWeight weight, bool disableCoord, int minNrShouldMatch, IList<Scorer> required, IList<Scorer> prohibited, IList<Scorer> optional, int maxCoord)
             : base(weight)
         {

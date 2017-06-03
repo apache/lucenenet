@@ -20,10 +20,10 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Abstract decorator class of a DocIdSetIterator
+    /// Abstract decorator class of a <see cref="DocIdSetIterator"/>
     /// implementation that provides on-demand filter/validation
-    /// mechanism on an underlying DocIdSetIterator.  See {@link
-    /// FilteredDocIdSet}.
+    /// mechanism on an underlying <see cref="DocIdSetIterator"/>.  See 
+    /// <see cref="DocIdSetIterator"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -35,7 +35,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Constructor. </summary>
-        /// <param name="innerIter"> Underlying DocIdSetIterator. </param>
+        /// <param name="innerIter"> Underlying <see cref="DocIdSetIterator"/>. </param>
         public FilteredDocIdSetIterator(DocIdSetIterator innerIter)
         {
             if (innerIter == null)
@@ -49,8 +49,8 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Validation method to determine whether a docid should be in the result set. </summary>
         /// <param name="doc"> docid to be tested </param>
-        /// <returns> true if input docid should be in the result set, false otherwise. </returns>
-        /// <seealso cref= #FilteredDocIdSetIterator(DocIdSetIterator) </seealso>
+        /// <returns> <c>true</c> if input docid should be in the result set, <c>false</c> otherwise. </returns>
+        /// <seealso cref="FilteredDocIdSetIterator(DocIdSetIterator)"/>
         protected abstract bool Match(int doc);
 
         public override int DocID

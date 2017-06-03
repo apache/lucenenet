@@ -135,17 +135,15 @@ namespace Lucene.Net.Search
         }
 
         /// <summary> Creates a hit queue sorted by the given list of fields.
-        ///
-        /// <p/><b>NOTE</b>: The instances returned by this method
+        /// <para/><b>NOTE</b>: The instances returned by this method
         /// pre-allocate a full array of length <c>numHits</c>.
-        ///
         /// </summary>
-        /// <param name="fields">SortField array we are sorting by in priority order (highest
+        /// <param name="fields"><see cref="SortField"/> array we are sorting by in priority order (highest
         /// priority first); cannot be <c>null</c> or empty
         /// </param>
         /// <param name="size">The number of hits to retain. Must be greater than zero.
         /// </param>
-        /// <throws>  IOException </throws>
+        /// <exception cref="System.IO.IOException">If there is a low-level IO error</exception>
         public static FieldValueHitQueue<T> Create<T>(SortField[] fields, int size)
             where T : FieldValueHitQueue.Entry
         {
@@ -167,13 +165,13 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Expert: A hit queue for sorting by hits by terms in more than one field.
-    /// Uses <code>FieldCache.DEFAULT</code> for maintaining
+    /// Uses <c>FieldCache.DEFAULT</c> for maintaining
     /// internal term lookup tables.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// @since 2.9 </summary>
-    /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
-    /// <seealso cref= FieldCache </seealso>
+    /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
+    /// <seealso cref="FieldCache"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -237,15 +235,15 @@ namespace Lucene.Net.Search
         //public abstract bool LessThan(FieldValueHitQueue.Entry a, FieldValueHitQueue.Entry b);
 
         /// <summary>
-        /// Given a queue Entry, creates a corresponding FieldDoc
+        /// Given a queue <see cref="FieldValueHitQueue.Entry"/>, creates a corresponding <see cref="FieldDoc"/>
         /// that contains the values used to sort the given document.
         /// These values are not the raw values out of the index, but the internal
-        /// representation of them. this is so the given search hit can be collated by
+        /// representation of them. This is so the given search hit can be collated by
         /// a MultiSearcher with other search hits.
         /// </summary>
-        /// <param name="entry"> The Entry used to create a FieldDoc </param>
-        /// <returns> The newly created FieldDoc </returns>
-        /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
+        /// <param name="entry"> The <see cref="FieldValueHitQueue.Entry"/> used to create a <see cref="FieldDoc"/> </param>
+        /// <returns> The newly created <see cref="FieldDoc"/> </returns>
+        /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
         internal virtual FieldDoc FillFields(FieldValueHitQueue.Entry entry)
         {
             int n = m_comparers.Length;
@@ -259,7 +257,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the SortFields being used by this hit queue. </summary>
+        /// Returns the <see cref="SortField"/>s being used by this hit queue. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         internal virtual SortField[] Fields

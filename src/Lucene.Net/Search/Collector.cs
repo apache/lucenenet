@@ -20,102 +20,117 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// <p>Expert: Collectors are primarily meant to be used to
+    /// <para>Expert: Collectors are primarily meant to be used to
     /// gather raw results from a search, and implement sorting
-    /// or custom result filtering, collation, etc. </p>
+    /// or custom result filtering, collation, etc. </para>
     ///
-    /// <p>Lucene's core collectors are derived from Collector.
+    /// <para>Lucene's core collectors are derived from Collector.
     /// Likely your application can use one of these classes, or
-    /// subclass <seealso cref="TopDocsCollector"/>, instead of
-    /// implementing Collector directly:
+    /// subclass <see cref="TopDocsCollector{T}"/>, instead of
+    /// implementing <see cref="ICollector"/> directly:
     ///
-    /// <ul>
+    /// <list type="bullet">
     ///
-    ///   <li><seealso cref="TopDocsCollector"/> is an abstract base class
+    ///   <item><description><see cref="TopDocsCollector{T}"/> is an abstract base class
     ///   that assumes you will retrieve the top N docs,
     ///   according to some criteria, after collection is
-    ///   done.  </li>
+    ///   done.  </description></item>
     ///
-    ///   <li><seealso cref="TopScoreDocCollector"/> is a concrete subclass
-    ///   <seealso cref="TopDocsCollector"/> and sorts according to score +
-    ///   docID.  this is used internally by the {@link
-    ///   IndexSearcher} search methods that do not take an
-    ///   explicit <seealso cref="Sort"/>. It is likely the most frequently
-    ///   used collector.</li>
+    ///   <item><description><see cref="TopScoreDocCollector"/> is a concrete subclass
+    ///   <see cref="TopDocsCollector{T}"/> and sorts according to score +
+    ///   docID.  This is used internally by the 
+    ///   <see cref="IndexSearcher"/> search methods that do not take an
+    ///   explicit <see cref="Sort"/>. It is likely the most frequently
+    ///   used collector.</description></item>
     ///
-    ///   <li><seealso cref="TopFieldCollector"/> subclasses {@link
-    ///   TopDocsCollector} and sorts according to a specified
-    ///   <seealso cref="Sort"/> object (sort by field).  this is used
-    ///   internally by the <seealso cref="IndexSearcher"/> search methods
-    ///   that take an explicit <seealso cref="Sort"/>.
+    ///   <item><description><see cref="TopFieldCollector"/> subclasses 
+    ///   <see cref="TopDocsCollector{T}"/> and sorts according to a specified
+    ///   <see cref="Sort"/> object (sort by field).  This is used
+    ///   internally by the <see cref="IndexSearcher"/> search methods
+    ///   that take an explicit <see cref="Sort"/>.</description></item>
     ///
-    ///   <li><seealso cref="TimeLimitingCollector"/>, which wraps any other
+    ///   <item><description><see cref="TimeLimitingCollector"/>, which wraps any other
     ///   Collector and aborts the search if it's taken too much
-    ///   time.</li>
+    ///   time.</description></item>
     ///
-    ///   <li><seealso cref="PositiveScoresOnlyCollector"/> wraps any other
-    ///   Collector and prevents collection of hits whose score
-    ///   is &lt;= 0.0</li>
+    ///   <item><description><see cref="PositiveScoresOnlyCollector"/> wraps any other
+    ///   <see cref="ICollector"/> and prevents collection of hits whose score
+    ///   is &lt;= 0.0</description></item>
     ///
-    /// </ul>
+    /// </list>
+    /// </para>
     ///
-    /// <p>Collector decouples the score from the collected doc:
+    /// <para><see cref="ICollector"/> decouples the score from the collected doc:
     /// the score computation is skipped entirely if it's not
     /// needed.  Collectors that do need the score should
-    /// implement the <seealso cref="#setScorer"/> method, to hold onto the
-    /// passed <seealso cref="Scorer"/> instance, and call {@link
-    /// Scorer#score()} within the collect method to compute the
+    /// implement the <see cref="SetScorer(Scorer)"/> method, to hold onto the
+    /// passed <see cref="Scorer"/> instance, and call 
+    /// <see cref="Scorer.GetScore()"/> within the collect method to compute the
     /// current hit's score.  If your collector may request the
     /// score for a single hit multiple times, you should use
-    /// <seealso cref="ScoreCachingWrappingScorer"/>. </p>
+    /// <see cref="ScoreCachingWrappingScorer"/>. </para>
     ///
-    /// <p><b>NOTE:</b> The doc that is passed to the collect
+    /// <para><b>NOTE:</b> The doc that is passed to the collect
     /// method is relative to the current reader. If your
     /// collector needs to resolve this to the docID space of the
     /// Multi*Reader, you must re-base it by recording the
-    /// docBase from the most recent setNextReader call.  Here's
-    /// a simple example showing how to collect docIDs into a
-    /// BitSet:</p>
+    /// docBase from the most recent <see cref="SetNextReader(AtomicReaderContext)"/> call.  Here's
+    /// a simple example showing how to collect docIDs into an
+    /// <see cref="Util.OpenBitSet"/>:</para>
     ///
-    /// <pre class="prettyprint">
+    /// <code>
+    /// private class MySearchCollector : ICollector
+    /// {
+    ///     private readonly OpenBitSet bits;
+    ///     private int docBase;
+    /// 
+    ///     public MySearchCollector(OpenBitSet bits)
+    ///     {
+    ///         if (bits == null) throw new ArgumentNullException("bits");
+    ///         this.bits = bits;
+    ///     }
+    /// 
+    ///     // ignore scorer
+    ///     public void SetScorer(Scorer scorer)
+    ///     { 
+    ///     }
+    ///     
+    ///     // accept docs out of order (for a BitSet it doesn't matter)
+    ///     public bool AcceptDocsOutOfOrder
+    ///     {
+    ///         get { return true; }
+    ///     }
+    ///     
+    ///     public void Collect(int doc)
+    ///     {
+    ///         bits.Set(doc + docBase);
+    ///     }
+    ///     
+    ///     public void SetNextReader(AtomicReaderContext context)
+    ///     {
+    ///         this.docBase = context.DocBase;
+    ///     }
+    /// }
+    /// 
     /// IndexSearcher searcher = new IndexSearcher(indexReader);
-    /// final BitSet bits = new BitSet(indexReader.maxDoc());
-    /// searcher.search(query, new Collector() {
-    ///   private int docBase;
+    /// OpenBitSet bits = new OpenBitSet(indexReader.MaxDoc);
+    /// searcher.Search(query, new MySearchCollector(bits));
+    /// </code>
     ///
-    ///   <em>// ignore scorer</em>
-    ///   public void setScorer(Scorer scorer) {
-    ///   }
-    ///
-    ///   <em>// accept docs out of order (for a BitSet it doesn't matter)</em>
-    ///   public boolean acceptsDocsOutOfOrder() {
-    ///     return true;
-    ///   }
-    ///
-    ///   public void collect(int doc) {
-    ///     bits.set(doc + docBase);
-    ///   }
-    ///
-    ///   public void setNextReader(AtomicReaderContext context) {
-    ///     this.docBase = context.docBase;
-    ///   }
-    /// });
-    /// </pre>
-    ///
-    /// <p>Not all collectors will need to rebase the docID.  For
+    /// <para>Not all collectors will need to rebase the docID.  For
     /// example, a collector that simply counts the total number
-    /// of hits would skip it.</p>
+    /// of hits would skip it.</para>
     ///
-    /// <p><b>NOTE:</b> Prior to 2.9, Lucene silently filtered
-    /// out hits with score &lt;= 0.  As of 2.9, the core Collectors
+    /// <para><b>NOTE:</b> Prior to 2.9, Lucene silently filtered
+    /// out hits with score &lt;= 0.  As of 2.9, the core <see cref="ICollector"/>s
     /// no longer do that.  It's very unusual to have such hits
     /// (a negative query boost, or function query returning
     /// negative custom scores, could cause it to happen).  If
-    /// you need that behavior, use {@link
-    /// PositiveScoresOnlyCollector}.</p>
+    /// you need that behavior, use 
+    /// <see cref="PositiveScoresOnlyCollector"/>.</para>
     ///
     /// @lucene.experimental
-    ///
+    /// <para/>
     /// @since 2.9
     /// </summary>
     public interface ICollector // LUCENENET NOTE: This was an abstract class in Lucene, but made into an interface since we need one for Grouping's covariance
@@ -123,8 +138,8 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Called before successive calls to <see cref="Collect(int)"/>. Implementations
         /// that need the score of the current document (passed-in to
-        /// <also cref="Collect(int)"/>), should save the passed-in <see cref="Scorer"/> and call
-        /// scorer.Score() when needed.
+        /// <see cref="Collect(int)"/>), should save the passed-in <see cref="Scorer"/> and call
+        /// <c>scorer.GetScore()</c> when needed.
         /// </summary>
         void SetScorer(Scorer scorer);
 
@@ -146,8 +161,8 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Called before collecting from each <see cref="AtomicReaderContext"/>. All doc ids in
         /// <see cref="Collect(int)"/> will correspond to <see cref="Index.IndexReaderContext.Reader"/>.
-        ///
-        /// Add <see cref="AtomicReaderContext#docBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
+        /// <para/>
+        /// Add <see cref="AtomicReaderContext.DocBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
         /// internal document id to re-base ids in <see cref="Collect(int)"/>.
         /// </summary>
         /// <param name="context">next atomic reader context </param>
@@ -172,3 +187,5 @@ namespace Lucene.Net.Search
         bool AcceptsDocsOutOfOrder { get; }
     }
 }
+
+// LUCENENET TODO: API: Create Collector.NewAnonymous() static delegate method to allow creation of collectors inline.

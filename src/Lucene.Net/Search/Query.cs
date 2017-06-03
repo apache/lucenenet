@@ -26,23 +26,23 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// The abstract base class for queries.
-    ///    <p>Instantiable subclasses are:
-    ///    <ul>
-    ///    <li> <seealso cref="TermQuery"/>
-    ///    <li> <seealso cref="BooleanQuery"/>
-    ///    <li> <seealso cref="WildcardQuery"/>
-    ///    <li> <seealso cref="PhraseQuery"/>
-    ///    <li> <seealso cref="PrefixQuery"/>
-    ///    <li> <seealso cref="MultiPhraseQuery"/>
-    ///    <li> <seealso cref="FuzzyQuery"/>
-    ///    <li> <seealso cref="RegexpQuery"/>
-    ///    <li> <seealso cref="TermRangeQuery"/>
-    ///    <li> <seealso cref="NumericRangeQuery"/>
-    ///    <li> <seealso cref="ConstantScoreQuery"/>
-    ///    <li> <seealso cref="DisjunctionMaxQuery"/>
-    ///    <li> <seealso cref="MatchAllDocsQuery"/>
-    ///    </ul>
-    ///    <p>See also the family of <seealso cref="Lucene.Net.Search.Spans Span Queries"/>
+    ///    <para/>Instantiable subclasses are:
+    ///    <list type="bullet">
+    ///    <item><description> <seealso cref="TermQuery"/> </description></item>
+    ///    <item><description> <seealso cref="BooleanQuery"/> </description></item>
+    ///    <item><description> <seealso cref="WildcardQuery"/> </description></item>
+    ///    <item><description> <seealso cref="PhraseQuery"/> </description></item>
+    ///    <item><description> <seealso cref="PrefixQuery"/> </description></item>
+    ///    <item><description> <seealso cref="MultiPhraseQuery"/> </description></item>
+    ///    <item><description> <seealso cref="FuzzyQuery"/> </description></item>
+    ///    <item><description> <seealso cref="RegexpQuery"/> </description></item>
+    ///    <item><description> <seealso cref="TermRangeQuery"/> </description></item>
+    ///    <item><description> <seealso cref="NumericRangeQuery"/> </description></item>
+    ///    <item><description> <seealso cref="ConstantScoreQuery"/> </description></item>
+    ///    <item><description> <seealso cref="DisjunctionMaxQuery"/> </description></item>
+    ///    <item><description> <seealso cref="MatchAllDocsQuery"/> </description></item>
+    ///    </list>
+    ///    <para/>See also the family of Span Queries (<see cref="Lucene.Net.Search.Spans"/>)
     ///       and additional queries available in the <a href="{@docRoot}/../queries/overview-summary.html">Queries module</a>
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -56,9 +56,9 @@ namespace Lucene.Net.Search
 
 
         /// <summary>
-        /// Sets the boost for this query clause to <code>b</code>.  Documents
+        /// Gets or Sets the boost for this query clause.  Documents
         /// matching this clause will (in addition to the normal weightings) have
-        /// their score multiplied by <code>b</code>.
+        /// their score multiplied by <see cref="Boost"/>. The boost is 1.0 by default.
         /// </summary>
         public virtual float Boost
         {
@@ -67,7 +67,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Prints a query to a string, with <code>field</code> assumed to be the
+        /// Prints a query to a string, with <paramref name="field"/> assumed to be the
         /// default field and omitted.
         /// </summary>
         public abstract string ToString(string field);
@@ -80,9 +80,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Expert: Constructs an appropriate Weight implementation for this query.
+        /// Expert: Constructs an appropriate <see cref="Weight"/> implementation for this query.
         ///
-        /// <p>
+        /// <para/>
         /// Only implemented by primitive queries, which re-write to themselves.
         /// </summary>
         public virtual Weight CreateWeight(IndexSearcher searcher)
@@ -92,8 +92,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: called to re-write queries into primitive queries. For example,
-        /// a PrefixQuery will be rewritten into a BooleanQuery that consists
-        /// of TermQuerys.
+        /// a <see cref="PrefixQuery"/> will be rewritten into a <see cref="BooleanQuery"/> that consists
+        /// of <see cref="TermQuery"/>s.
         /// </summary>
         public virtual Query Rewrite(IndexReader reader)
         {
@@ -102,9 +102,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: adds all terms occurring in this query to the terms set. Only
-        /// works if this query is in its <seealso cref="#rewrite rewritten"/> form.
+        /// works if this query is in its rewritten (<see cref="Rewrite(IndexReader)"/>) form.
         /// </summary>
-        /// <exception cref="InvalidOperationException"> if this query is not yet rewritten </exception>
+        /// <exception cref="InvalidOperationException"> If this query is not yet rewritten </exception>
         public virtual void ExtractTerms(ISet<Term> terms)
         {
             // needs to be implemented by query subclasses

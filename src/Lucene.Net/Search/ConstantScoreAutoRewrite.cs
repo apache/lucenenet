@@ -40,13 +40,17 @@ namespace Lucene.Net.Search
         // LUCENENET specific - making constructor internal since the class was meant to be internal
         internal ConstantScoreAutoRewrite() { }
 
-        // Defaults derived from rough tests with a 20.0 million
-        // doc Wikipedia index.  With more than 350 terms in the
-        // query, the filter method is fastest:
+        /// <summary>
+        /// Defaults derived from rough tests with a 20.0 million
+        /// doc Wikipedia index.  With more than 350 terms in the
+        /// query, the filter method is fastest:
+        /// </summary>
         public static int DEFAULT_TERM_COUNT_CUTOFF = 350;
 
-        // If the query will hit more than 1 in 1000 of the docs
-        // in the index (0.1%), the filter method is fastest:
+        /// <summary>
+        /// If the query will hit more than 1 in 1000 of the docs
+        /// in the index (0.1%), the filter method is fastest:
+        /// </summary>
         public static double DEFAULT_DOC_COUNT_PERCENT = 0.1;
 
         private int termCountCutoff = DEFAULT_TERM_COUNT_CUTOFF;
@@ -54,8 +58,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// If the number of terms in this query is equal to or
-        ///  larger than this setting then {@link
-        ///  MultiTermQuery#CONSTANT_SCORE_FILTER_REWRITE} is used.
+        /// larger than this setting then 
+        /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/> is used.
         /// </summary>
         public virtual int TermCountCutoff
         {
@@ -71,10 +75,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// If the number of documents to be visited in the
-        ///  postings exceeds this specified percentage of the
-        ///  maxDoc() for the index, then {@link
-        ///  MultiTermQuery#CONSTANT_SCORE_FILTER_REWRITE} is used. </summary>
-        ///  <param name="percent"> 0.0 to 100.0  </param>
+        /// postings exceeds this specified percentage of the
+        /// <see cref="Index.IndexReader.MaxDoc"/> for the index, then
+        /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/> is used. 
+        /// Value may be 0.0 to 100.0.
+        /// </summary>
         public virtual double DocCountPercent
         {
             set
@@ -226,7 +231,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Special implementation of BytesStartArray that keeps parallel arrays for <seealso cref="TermContext"/> </summary>
+        /// Special implementation of <see cref="BytesRefHash.BytesStartArray"/> that keeps parallel arrays for <see cref="TermContext"/> </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif

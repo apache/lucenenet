@@ -22,10 +22,10 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// A <seealso cref="ICollector"/> which allows running a search with several
-    /// <seealso cref="ICollector"/>s. It offers a static <seealso cref="#wrap"/> method which accepts a
-    /// list of collectors and wraps them with <seealso cref="MultiCollector"/>, while
-    /// filtering out the <code>null</code> null ones.
+    /// A <see cref="ICollector"/> which allows running a search with several
+    /// <see cref="ICollector"/>s. It offers a static <see cref="Wrap(ICollector[])"/> method which accepts a
+    /// list of collectors and wraps them with <see cref="MultiCollector"/>, while
+    /// filtering out the <c>null</c> ones.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -33,20 +33,20 @@ namespace Lucene.Net.Search
     public class MultiCollector : ICollector
     {
         /// <summary>
-        /// Wraps a list of <seealso cref="ICollector"/>s with a <seealso cref="MultiCollector"/>. this
+        /// Wraps a list of <see cref="ICollector"/>s with a <see cref="MultiCollector"/>. This
         /// method works as follows:
-        /// <ul>
-        /// <li>Filters out the <code>null</code> collectors, so they are not used
-        /// during search time.
-        /// <li>If the input contains 1 real collector (i.e. non-<code>null</code> ),
-        /// it is returned.
-        /// <li>Otherwise the method returns a <seealso cref="MultiCollector"/> which wraps the
-        /// non-<code>null</code> ones.
-        /// </ul>
+        /// <list type="bullet">
+        /// <item><description>Filters out the <c>null</c> collectors, so they are not used
+        /// during search time.</description></item>
+        /// <item><description>If the input contains 1 real collector (i.e. non-<c>null</c> ),
+        /// it is returned.</description></item>
+        /// <item><description>Otherwise the method returns a <see cref="MultiCollector"/> which wraps the
+        /// non-<code>null</code> ones.</description></item>
+        /// </list>
         /// </summary>
-        /// <exception cref="IllegalArgumentException">
+        /// <exception cref="ArgumentException">
         ///           if either 0 collectors were input, or all collectors are
-        ///           <code>null</code>. </exception>
+        ///           <c>null</c>. </exception>
         public static ICollector Wrap(params ICollector[] collectors)
         {
             // For the user's convenience, we allow null collectors to be passed.

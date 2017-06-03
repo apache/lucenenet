@@ -44,8 +44,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// The match status of this explanation node. </summary>
-        /// <returns> May be null if match status is unknown </returns>
+        /// Gets or Sets the match status assigned to this explanation node. 
+        /// May be <c>null</c> if match status is unknown.
+        /// </summary>
         public virtual bool? Match
         {
             get
@@ -59,13 +60,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Indicates whether or not this Explanation models a good match.
+        /// Indicates whether or not this <see cref="Explanation"/> models a good match.
         ///
-        /// <p>
+        /// <para>
         /// If the match status is explicitly set (i.e.: not null) this method
         /// uses it; otherwise it defers to the superclass.
-        /// </p> </summary>
-        /// <seealso cref= #getMatch </seealso>
+        /// </para> </summary>
+        /// <seealso cref="Match"/>
         public override bool IsMatch
         {
             get

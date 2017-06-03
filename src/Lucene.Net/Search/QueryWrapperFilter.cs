@@ -26,10 +26,10 @@ namespace Lucene.Net.Search
     /// Constrains search results to only match those which also match a provided
     /// query.
     ///
-    /// <p> this could be used, for example, with a <seealso cref="NumericRangeQuery"/> on a suitably
+    /// <para/> This could be used, for example, with a <see cref="NumericRangeQuery"/> on a suitably
     /// formatted date field to implement date filtering.  One could re-use a single
-    /// CachingWrapperFilter(QueryWrapperFilter) that matches, e.g., only documents modified
-    /// within the last week.  this would only need to be reconstructed once per day.
+    /// <c>CachingWrapperFilter(QueryWrapperFilter)</c> that matches, e.g., only documents modified
+    /// within the last week.  This would only need to be reconstructed once per day.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -40,7 +40,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Constructs a filter which only matches documents matching
-        /// <code>query</code>.
+        /// <paramref name="query"/>.
         /// </summary>
         public QueryWrapperFilter(Query query)
         {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// returns the inner Query </summary>
+        /// Returns the inner Query </summary>
         public Query Query
         {
             get

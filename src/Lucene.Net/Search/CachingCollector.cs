@@ -27,22 +27,22 @@ namespace Lucene.Net.Search
     /// Caches all docs, and optionally also scores, coming from
     /// a search, and is then able to replay them to another
     /// collector.  You specify the max RAM this class may use.
-    /// Once the collection is done, call <seealso cref="#isCached"/>. If
-    /// this returns true, you can use <seealso cref="#replay(Collector)"/>
-    /// against a new collector.  If it returns false, this means
+    /// Once the collection is done, call <see cref="IsCached"/>. If
+    /// this returns <c>true</c>, you can use <see cref="Replay(ICollector)"/>
+    /// against a new collector.  If it returns <c>false</c>, this means
     /// too much RAM was required and you must instead re-run the
     /// original search.
     ///
-    /// <p><b>NOTE</b>: this class consumes 4 (or 8 bytes, if
+    /// <para/><b>NOTE</b>: this class consumes 4 (or 8 bytes, if
     /// scoring is cached) per collected document.  If the result
     /// set is large this can easily be a very substantial amount
     /// of RAM!
     ///
-    /// <p><b>NOTE</b>: this class caches at least 128 documents
+    /// <para/><b>NOTE</b>: this class caches at least 128 documents
     /// before checking RAM limits.
     ///
-    /// <p>See the Lucene <tt>modules/grouping</tt> module for more
-    /// details including a full code example.</p>
+    /// <para>See the Lucene <c>modules/grouping</c> module for more
+    /// details including a full code example.</para>
     ///
     /// @lucene.experimental
     /// </summary>
@@ -125,7 +125,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        // A CachingCollector which caches scores
+        /// <summary>
+        /// A <see cref="CachingCollector"/> which caches scores
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -259,7 +261,9 @@ namespace Lucene.Net.Search
             }
         }
 
-        // A CachingCollector which does not cache scores
+        /// <summary>
+        /// A <see cref="CachingCollector"/> which does not cache scores
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -383,9 +387,8 @@ namespace Lucene.Net.Search
         protected int m_lastDocBase;
 
         /// <summary>
-        /// Creates a <seealso cref="CachingCollector"/> which does not wrap another collector.
-        /// The cached documents and scores can later be {@link #replay(Collector)
-        /// replayed}.
+        /// Creates a <see cref="CachingCollector"/> which does not wrap another collector.
+        /// The cached documents and scores can later be replayed (<see cref="Replay(ICollector)"/>).
         /// </summary>
         /// <param name="acceptDocsOutOfOrder">
         ///          whether documents are allowed to be collected out-of-order </param>
@@ -426,16 +429,16 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Create a new <seealso cref="CachingCollector"/> that wraps the given collector and
+        /// Create a new <see cref="CachingCollector"/> that wraps the given collector and
         /// caches documents and scores up to the specified RAM threshold.
         /// </summary>
         /// <param name="other">
-        ///          the Collector to wrap and delegate calls to. </param>
+        ///          The <see cref="ICollector"/> to wrap and delegate calls to. </param>
         /// <param name="cacheScores">
-        ///          whether to cache scores in addition to document IDs. Note that
-        ///          this increases the RAM consumed per doc </param>
+        ///          Whether to cache scores in addition to document IDs. Note that
+        ///          this increases the RAM consumed per doc. </param>
         /// <param name="maxRAMMB">
-        ///          the maximum RAM in MB to consume for caching the documents and
+        ///          The maximum RAM in MB to consume for caching the documents and
         ///          scores. If the collector exceeds the threshold, no documents and
         ///          scores are cached. </param>
         public static CachingCollector Create(ICollector other, bool cacheScores, double maxRAMMB)
@@ -444,16 +447,16 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Create a new <seealso cref="CachingCollector"/> that wraps the given collector and
+        /// Create a new <see cref="CachingCollector"/> that wraps the given collector and
         /// caches documents and scores up to the specified max docs threshold.
         /// </summary>
         /// <param name="other">
-        ///          the Collector to wrap and delegate calls to. </param>
+        ///          The <see cref="ICollector"/> to wrap and delegate calls to. </param>
         /// <param name="cacheScores">
-        ///          whether to cache scores in addition to document IDs. Note that
-        ///          this increases the RAM consumed per doc </param>
+        ///          Whether to cache scores in addition to document IDs. Note that
+        ///          this increases the RAM consumed per doc. </param>
         /// <param name="maxDocsToCache">
-        ///          the maximum number of documents for caching the documents and
+        ///          The maximum number of documents for caching the documents and
         ///          possible the scores. If the collector exceeds the threshold,
         ///          no documents and scores are cached. </param>
         public static CachingCollector Create(ICollector other, bool cacheScores, int maxDocsToCache)
@@ -517,7 +520,7 @@ namespace Lucene.Net.Search
         /// Called before successive calls to <see cref="Collect(int)"/>. Implementations
         /// that need the score of the current document (passed-in to
         /// <also cref="Collect(int)"/>), should save the passed-in <see cref="Scorer"/> and call
-        /// scorer.Score() when needed.
+        /// <see cref="Scorer.GetScore()"/> when needed.
         /// </summary>
         public abstract void SetScorer(Scorer scorer);
 
@@ -559,15 +562,15 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Replays the cached doc IDs (and scores) to the given Collector. If this
-        /// instance does not cache scores, then Scorer is not set on
-        /// {@code other.setScorer} as well as scores are not replayed.
+        /// Replays the cached doc IDs (and scores) to the given <see cref="ICollector"/>. If this
+        /// instance does not cache scores, then <see cref="Scorer"/> is not set on
+        /// <c>other.SetScorer(Scorer)</c> as well as scores are not replayed.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        ///           if this collector is not cached (i.e., if the RAM limits were too
+        ///           If this collector is not cached (i.e., if the RAM limits were too
         ///           low for the number of documents + scores to cache). </exception>
-        /// <exception cref="IllegalArgumentException">
-        ///           if the given Collect's does not support out-of-order collection,
+        /// <exception cref="ArgumentException">
+        ///           If the given Collect's does not support out-of-order collection,
         ///           while the collector passed to the ctor does. </exception>
         public abstract void Replay(ICollector other);
     }

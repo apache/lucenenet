@@ -29,21 +29,21 @@ namespace Lucene.Net.Search
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// A <seealso cref="Query"/> that will match terms against a finite-state machine.
-    /// <p>
-    /// this query will match documents that contain terms accepted by a given
+    /// A <see cref="Query"/> that will match terms against a finite-state machine.
+    /// <para>
+    /// This query will match documents that contain terms accepted by a given
     /// finite-state machine. The automaton can be constructed with the
-    /// <seealso cref="Lucene.Net.Util.Automaton"/> API. Alternatively, it can be
-    /// created from a regular expression with <seealso cref="RegexpQuery"/> or from
-    /// the standard Lucene wildcard syntax with <seealso cref="WildcardQuery"/>.
-    /// </p>
-    /// <p>
+    /// <see cref="Lucene.Net.Util.Automaton"/> API. Alternatively, it can be
+    /// created from a regular expression with <see cref="RegexpQuery"/> or from
+    /// the standard Lucene wildcard syntax with <see cref="WildcardQuery"/>.
+    /// </para>
+    /// <para>
     /// When the query is executed, it will create an equivalent DFA of the
     /// finite-state machine, and will enumerate the term dictionary in an
     /// intelligent way to reduce the number of comparisons. For example: the regular
-    /// expression of <code>[dl]og?</code> will make approximately four comparisons:
+    /// expression of <c>[dl]og?</c> will make approximately four comparisons:
     /// do, dog, lo, and log.
-    /// </p>
+    /// </para>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -52,21 +52,21 @@ namespace Lucene.Net.Search
     public class AutomatonQuery : MultiTermQuery
     {
         /// <summary>
-        /// the automaton to match index terms against </summary>
+        /// The automaton to match index terms against </summary>
         protected readonly Automaton m_automaton;
 
         protected readonly CompiledAutomaton m_compiled;
 
         /// <summary>
-        /// term containing the field, and possibly some pattern structure </summary>
+        /// Term containing the field, and possibly some pattern structure </summary>
         protected readonly Term m_term;
 
         /// <summary>
-        /// Create a new AutomatonQuery from an <seealso cref="Automaton"/>.
+        /// Create a new AutomatonQuery from an <see cref="Automaton"/>.
         /// </summary>
-        /// <param name="term"> Term containing field and possibly some pattern structure. The
+        /// <param name="term"> <see cref="Term"/> containing field and possibly some pattern structure. The
         ///        term text is ignored. </param>
-        /// <param name="automaton"> Automaton to run, terms that are accepted are considered a
+        /// <param name="automaton"> <see cref="Automaton"/> to run, terms that are accepted are considered a
         ///        match. </param>
         public AutomatonQuery(Term term, Automaton automaton)
             : base(term.Field)

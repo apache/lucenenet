@@ -21,8 +21,8 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Used by <seealso cref="BulkScorer"/>s that need to pass a {@link
-    ///  Scorer} to <seealso cref="ICollector#setScorer"/>.
+    /// Used by <see cref="BulkScorer"/>s that need to pass a
+    /// <see cref="Scorer"/> to <see cref="ICollector.SetScorer(Scorer)"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
     using WAH8DocIdSet = Lucene.Net.Util.WAH8DocIdSet;
 
     /// <summary>
-    /// Wraps another <seealso cref="Filter"/>'s result and caches it.  The purpose is to allow
+    /// Wraps another <see cref="Search.Filter"/>'s result and caches it.  The purpose is to allow
     /// filters to simply filter, and then wrap with this class
     /// to add caching.
     /// </summary>
@@ -64,13 +64,14 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        ///  Provide the DocIdSet to be cached, using the DocIdSet provided
-        ///  by the wrapped Filter. <p>this implementation returns the given <seealso cref="DocIdSet"/>,
-        ///  if <seealso cref="DocIdSet#isCacheable"/> returns <code>true</code>, else it calls
-        ///  <seealso cref="#cacheImpl(DocIdSetIterator,AtomicReader)"/>
-        ///  <p>Note: this method returns <seealso cref="#EMPTY_DOCIDSET"/> if the given docIdSet
-        ///  is <code>null</code> or if <seealso cref="DocIdSet#iterator()"/> return <code>null</code>. The empty
-        ///  instance is use as a placeholder in the cache instead of the <code>null</code> value.
+        /// Provide the <see cref="DocIdSet"/> to be cached, using the <see cref="DocIdSet"/> provided
+        /// by the wrapped Filter. 
+        /// <para/>This implementation returns the given <see cref="DocIdSet"/>,
+        /// if <see cref="DocIdSet.IsCacheable"/> returns <c>true</c>, else it calls
+        /// <see cref="CacheImpl(DocIdSetIterator, AtomicReader)"/>
+        /// <para/>Note: this method returns <see cref="EMPTY_DOCIDSET"/> if the given <paramref name="docIdSet"/>
+        /// is <c>null</c> or if <see cref="DocIdSet.GetIterator()"/> return <c>null</c>. The empty
+        /// instance is use as a placeholder in the cache instead of the <c>null</c> value.
         /// </summary>
         protected virtual DocIdSet DocIdSetToCache(DocIdSet docIdSet, AtomicReader reader)
         {
@@ -101,7 +102,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Default cache implementation: uses <seealso cref="WAH8DocIdSet"/>.
+        /// Default cache implementation: uses <see cref="WAH8DocIdSet"/>.
         /// </summary>
         protected virtual DocIdSet CacheImpl(DocIdSetIterator iterator, AtomicReader reader)
         {
@@ -155,7 +156,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// An empty {@code DocIdSet} instance </summary>
+        /// An empty <see cref="DocIdSet"/> instance </summary>
         protected static readonly DocIdSet EMPTY_DOCIDSET = new DocIdSetAnonymousInnerClassHelper();
 
 #if FEATURE_SERIALIZABLE

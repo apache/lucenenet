@@ -20,7 +20,7 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A clause in a BooleanQuery. </summary>
+    /// A clause in a <see cref="BooleanQuery"/>. </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
         private Occur occur;
 
         /// <summary>
-        /// Constructs a BooleanClause.
+        /// Constructs a <see cref="BooleanClause"/>.
         /// </summary>
         public BooleanClause(Query query, Occur occur)
         {
@@ -104,7 +104,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true if <code>o</code> is equal to this. </summary>
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             BooleanClause bc = o as BooleanClause;
@@ -126,7 +126,7 @@ namespace Lucene.Net.Search
             bool success = true;
             if (object.ReferenceEquals(null, other))
             {
-                return object.ReferenceEquals(null, this);
+                return object.ReferenceEquals(null, this); // LUCENENET TODO: This can never happen - revert to original code
             }
             if (query == null)
             {
@@ -152,16 +152,16 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Use this operator for clauses that <i>should</i> appear in the
-        /// matching documents. For a BooleanQuery with no <code>MUST</code>
-        /// clauses one or more <code>SHOULD</code> clauses must match a document
-        /// for the BooleanQuery to match. </summary>
-        /// <seealso cref= BooleanQuery#setMinimumNumberShouldMatch</seealso>
+        /// matching documents. For a <see cref="BooleanQuery"/> with no <see cref="MUST"/>
+        /// clauses one or more <see cref="SHOULD"/> clauses must match a document
+        /// for the <see cref="BooleanQuery"/> to match. </summary>
+        /// <seealso cref="BooleanQuery.MinimumNumberShouldMatch"/>
         SHOULD,
 
         /// <summary>
         /// Use this operator for clauses that <i>must not</i> appear in the matching documents.
         /// Note that it is not possible to search for queries that only consist
-        /// of a <code>MUST_NOT</code> clause.
+        /// of a <see cref="MUST_NOT"/> clause.
         /// </summary>
         MUST_NOT
     }

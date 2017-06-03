@@ -40,30 +40,30 @@ namespace Lucene.Net.Search
     using Terms = Lucene.Net.Index.Terms;
 
     /// <summary>
-    /// Implements search over a single IndexReader.
+    /// Implements search over a single <see cref="Index.IndexReader"/>.
     ///
-    /// <p>Applications usually need only call the inherited
-    /// <seealso cref="#search(Query,int)"/>
-    /// or <seealso cref="#search(Query,Filter,int)"/> methods. For
+    /// <para/>Applications usually need only call the inherited
+    /// <see cref="Search(Query,int)"/>
+    /// or <see cref="Search(Query,Filter,int)"/> methods. For
     /// performance reasons, if your index is unchanging, you
-    /// should share a single IndexSearcher instance across
+    /// should share a single <see cref="IndexSearcher"/> instance across
     /// multiple searches instead of creating a new one
     /// per-search.  If your index has changed and you wish to
     /// see the changes reflected in searching, you should
-    /// use <seealso cref="DirectoryReader#openIfChanged(DirectoryReader)"/>
+    /// use <see cref="Index.DirectoryReader.OpenIfChanged(Index.DirectoryReader)"/>
     /// to obtain a new reader and
-    /// then create a new IndexSearcher from that.  Also, for
+    /// then create a new <see cref="IndexSearcher"/> from that.  Also, for
     /// low-latency turnaround it's best to use a near-real-time
-    /// reader (<seealso cref="DirectoryReader#open(IndexWriter,boolean)"/>).
-    /// Once you have a new <seealso cref="IndexReader"/>, it's relatively
-    /// cheap to create a new IndexSearcher from it.
+    /// reader (<see cref="Index.DirectoryReader.Open(Index.IndexWriter,bool)"/>).
+    /// Once you have a new <see cref="Index.IndexReader"/>, it's relatively
+    /// cheap to create a new <see cref="IndexSearcher"/> from it.
     ///
-    /// <a name="thread-safety"></a><p><b>NOTE</b>: <code>{@link
-    /// IndexSearcher}</code> instances are completely
+    /// <para/><a name="thread-safety"></a><p><b>NOTE</b>: 
+    /// <see cref="IndexSearcher"/> instances are completely
     /// thread safe, meaning multiple threads can call any of its
     /// methods, concurrently.  If your application requires
     /// external synchronization, you should <b>not</b>
-    /// synchronize on the <code>IndexSearcher</code> instance;
+    /// synchronize on the <see cref="IndexSearcher"/> instance;
     /// use your own (non-Lucene) objects instead.</p>
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
         protected internal readonly IList<AtomicReaderContext> m_leafContexts;
 
         /// <summary>
-        /// used with executor - each slice holds a set of leafs executed within one thread </summary>
+        /// Used with executor - each slice holds a set of leafs executed within one thread </summary>
         protected readonly LeafSlice[] m_leafSlices;
 
         // These are only used for multi-threaded search
@@ -90,10 +90,11 @@ namespace Lucene.Net.Search
         private static readonly Similarity defaultSimilarity = new DefaultSimilarity();
 
         /// <summary>
-        /// Expert: returns a default Similarity instance.
+        /// Expert: returns a default <see cref="Similarities.Similarity"/> instance.
         /// In general, this method is only called to initialize searchers and writers.
         /// User code and query implementations should respect
-        /// <seealso cref="IndexSearcher#getSimilarity()"/>.
+        /// <see cref="IndexSearcher.Similarity"/>.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public static Similarity DefaultSimilarity
@@ -105,7 +106,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// The Similarity implementation used by this searcher. </summary>
+        /// The <see cref="Similarities.Similarity"/> implementation used by this searcher. </summary>
         private Similarity similarity = defaultSimilarity;
 
         /// <summary>
@@ -117,15 +118,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Runs searches for each segment separately, using the
-        ///  provided ExecutorService.  IndexSearcher will not
-        ///  shutdown/awaitTermination this ExecutorService on
-        ///  close; you must do so, eventually, on your own.  NOTE:
-        ///  if you are using <seealso cref="NIOFSDirectory"/>, do not use
-        ///  the shutdownNow method of ExecutorService as this uses
-        ///  Thread.interrupt under-the-hood which can silently
-        ///  close file descriptors (see <a
-        ///  href="https://issues.apache.org/jira/browse/LUCENE-2239">LUCENE-2239</a>).
-        ///
+        /// provided <see cref="TaskScheduler"/>.  <see cref="IndexSearcher"/> will not
+        /// shutdown/awaitTermination this <see cref="TaskScheduler"/> on
+        /// dispose; you must do so, eventually, on your own.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public IndexSearcher(IndexReader r, TaskScheduler executor)
@@ -134,20 +130,17 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Creates a searcher searching the provided top-level <seealso cref="IndexReaderContext"/>.
-        /// <p>
-        /// Given a non-<code>null</code> <seealso cref="ExecutorService"/> this method runs
-        /// searches for each segment separately, using the provided ExecutorService.
-        /// IndexSearcher will not shutdown/awaitTermination this ExecutorService on
-        /// close; you must do so, eventually, on your own. NOTE: if you are using
-        /// <seealso cref="NIOFSDirectory"/>, do not use the shutdownNow method of
-        /// ExecutorService as this uses Thread.interrupt under-the-hood which can
-        /// silently close file descriptors (see <a
-        /// href="https://issues.apache.org/jira/browse/LUCENE-2239">LUCENE-2239</a>).
+        /// Creates a searcher searching the provided top-level <see cref="IndexReaderContext"/>.
+        /// <para/>
+        /// Given a non-<c>null</c> <see cref="TaskScheduler"/> this method runs
+        /// searches for each segment separately, using the provided <see cref="TaskScheduler"/>.
+        /// <see cref="IndexSearcher"/> will not shutdown/awaitTermination this <see cref="TaskScheduler"/> on
+        /// close; you must do so, eventually, on your own.
+        /// <para/>
+        /// @lucene.experimental 
         /// </summary>
-        /// <seealso cref= IndexReaderContext </seealso>
-        /// <seealso cref= IndexReader#getContext()
-        /// @lucene.experimental </seealso>
+        /// <seealso cref="IndexReaderContext"/>
+        /// <seealso cref="IndexReader.Context"/>
         public IndexSearcher(IndexReaderContext context, TaskScheduler executor)
         {
             Debug.Assert(context.IsTopLevel, "IndexSearcher's ReaderContext must be topLevel for reader" + context.Reader);
@@ -159,11 +152,12 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Creates a searcher searching the provided top-level <seealso cref="IndexReaderContext"/>.
+        /// Creates a searcher searching the provided top-level <see cref="IndexReaderContext"/>.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
-        /// <seealso cref= IndexReaderContext </seealso>
-        /// <seealso cref= IndexReader#getContext()
-        /// @lucene.experimental </seealso>
+        /// <seealso cref="IndexReaderContext"/>
+        /// <seealso cref="IndexReader.Context"/>
         public IndexSearcher(IndexReaderContext context)
             : this(context, null)
         {
@@ -171,8 +165,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Creates an array of leaf slices each holding a subset of the given leaves.
-        /// Each <seealso cref="LeafSlice"/> is executed in a single thread. By default there
-        /// will be one <seealso cref="LeafSlice"/> per leaf (<seealso cref="AtomicReaderContext"/>).
+        /// Each <see cref="LeafSlice"/> is executed in a single thread. By default there
+        /// will be one <see cref="LeafSlice"/> per leaf (<see cref="AtomicReaderContext"/>).
         /// </summary>
         protected virtual LeafSlice[] Slices(IList<AtomicReaderContext> leaves)
         {
@@ -185,7 +179,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Return the <seealso cref="IndexReader"/> this searches. </summary>
+        /// Return the <see cref="Index.IndexReader"/> this searches. </summary>
         public virtual IndexReader IndexReader
         {
             get
@@ -195,30 +189,30 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Sugar for <code>.getIndexReader().document(docID)</code> </summary>
-        /// <seealso cref= IndexReader#document(int)  </seealso>
+        /// Sugar for <code>.IndexReader.Document(docID)</code> </summary>
+        /// <seealso cref="IndexReader.Document(int)"/>
         public virtual Document Doc(int docID)
         {
             return reader.Document(docID);
         }
 
         /// <summary>
-        /// Sugar for <code>.getIndexReader().document(docID, fieldVisitor)</code> </summary>
-        /// <seealso cref= IndexReader#document(int, StoredFieldVisitor)  </seealso>
+        /// Sugar for <code>.IndexReader.Document(docID, fieldVisitor)</code> </summary>
+        /// <seealso cref="IndexReader.Document(int, StoredFieldVisitor)"/>
         public virtual void Doc(int docID, StoredFieldVisitor fieldVisitor)
         {
             reader.Document(docID, fieldVisitor);
         }
 
         /// <summary>
-        /// Sugar for <code>.getIndexReader().document(docID, fieldsToLoad)</code> </summary>
-        /// <seealso cref= IndexReader#document(int, Set)  </seealso>
+        /// Sugar for <code>.IndexReader.Document(docID, fieldsToLoad)</code> </summary>
+        /// <seealso cref="IndexReader.Document(int, ISet{string})"/>
         public virtual Document Doc(int docID, ISet<string> fieldsToLoad)
         {
             return reader.Document(docID, fieldsToLoad);
         }
 
-        /// @deprecated Use <seealso cref="#doc(int, Set)"/> instead.
+        /// @deprecated Use <see cref="Doc(int, ISet{string})"/> instead.
         [Obsolete("Use <seealso cref=#doc(int, java.util.Set)/> instead.")]
         public Document Document(int docID, ISet<string> fieldsToLoad)
         {
@@ -226,8 +220,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Expert: Set the Similarity implementation used by this IndexSearcher.
-        ///
+        /// Expert: Set the <see cref="Similarities.Similarity"/> implementation used by this IndexSearcher.
         /// </summary>
         public virtual Similarity Similarity
         {
@@ -249,54 +242,54 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Finds the top <code>n</code>
-        /// hits for <code>query</code> where all results are after a previous
-        /// result (<code>after</code>).
-        /// <p>
-        /// By passing the bottom result from a previous page as <code>after</code>,
+        /// Finds the top <paramref name="n"/>
+        /// hits for top <paramref name="query"/> where all results are after a previous
+        /// result (top <paramref name="after"/>).
+        /// <para/>
+        /// By passing the bottom result from a previous page as <paramref name="after"/>,
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n)
         {
             return Search(CreateNormalizedWeight(query), after, n);
         }
 
         /// <summary>
-        /// Finds the top <code>n</code>
-        /// hits for <code>query</code>, applying <code>filter</code> if non-null,
-        /// where all results are after a previous result (<code>after</code>).
-        /// <p>
-        /// By passing the bottom result from a previous page as <code>after</code>,
+        /// Finds the top <paramref name="n"/>
+        /// hits for <paramref name="query"/>, applying <paramref name="filter"/> if non-null,
+        /// where all results are after a previous result (<paramref name="after"/>).
+        /// <para/>
+        /// By passing the bottom result from a previous page as <paramref name="after"/>,
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), after, n);
         }
 
         /// <summary>
-        /// Finds the top <code>n</code>
-        /// hits for <code>query</code>.
+        /// Finds the top <paramref name="n"/>
+        /// hits for <paramref name="query"/>.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs Search(Query query, int n)
         {
             return Search(query, null, n);
         }
 
         /// <summary>
-        /// Finds the top <code>n</code>
-        /// hits for <code>query</code>, applying <code>filter</code> if non-null.
+        /// Finds the top <paramref name="n"/>
+        /// hits for <paramref name="query"/>, applying <paramref name="filter"/> if non-null.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs Search(Query query, Filter filter, int n)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), null, n);
@@ -305,14 +298,14 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Lower-level search API.
         ///
-        /// <p><seealso cref="ICollector#collect(int)"/> is called for every matching
+        /// <para/><see cref="ICollector.Collect(int)"/> is called for every matching
         /// document.
         /// </summary>
-        /// <param name="query"> to match documents </param>
-        /// <param name="filter"> if non-null, used to permit documents to be collected. </param>
-        /// <param name="results"> to receive hits </param>
+        /// <param name="query"> To match documents </param>
+        /// <param name="filter"> Ef non-null, used to permit documents to be collected. </param>
+        /// <param name="results"> To receive hits </param>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual void Search(Query query, Filter filter, ICollector results)
         {
             Search(m_leafContexts, CreateNormalizedWeight(WrapFilter(query, filter)), results);
@@ -321,10 +314,10 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Lower-level search API.
         ///
-        /// <p><seealso cref="ICollector#collect(int)"/> is called for every matching document.
+        /// <para/><seealso cref="ICollector.Collect(int)"/> is called for every matching document.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual void Search(Query query, ICollector results)
         {
             Search(m_leafContexts, CreateNormalizedWeight(query), results);
@@ -332,16 +325,16 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Search implementation with arbitrary sorting.  Finds
-        /// the top <code>n</code> hits for <code>query</code>, applying
-        /// <code>filter</code> if non-null, and sorting the hits by the criteria in
-        /// <code>sort</code>.
+        /// the top <paramref name="n"/> hits for <paramref name="query"/>, applying
+        /// <paramref name="filter"/> if non-null, and sorting the hits by the criteria in
+        /// <paramref name="sort"/>.
         ///
-        /// <p>NOTE: this does not compute scores by default; use
-        /// <seealso cref="IndexSearcher#search(Query,Filter,int,Sort,boolean,boolean)"/> to
+        /// <para/>NOTE: this does not compute scores by default; use
+        /// <see cref="IndexSearcher.Search(Query,Filter,int,Sort,bool,bool)"/> to
         /// control scoring.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, false, false);
@@ -351,32 +344,32 @@ namespace Lucene.Net.Search
         /// Search implementation with arbitrary sorting, plus
         /// control over whether hit scores and max score
         /// should be computed.  Finds
-        /// the top <code>n</code> hits for <code>query</code>, applying
-        /// <code>filter</code> if non-null, and sorting the hits by the criteria in
-        /// <code>sort</code>.  If <code>doDocScores</code> is <code>true</code>
+        /// the top <paramref name="n"/> hits for <paramref name="query"/>, applying
+        /// <paramref name="filter"/> if non-null, and sorting the hits by the criteria in
+        /// <paramref name="sort"/>.  If <paramref name="doDocScores"/> is <c>true</c>
         /// then the score of each hit will be computed and
-        /// returned.  If <code>doMaxScore</code> is
-        /// <code>true</code> then the maximum score over all
+        /// returned.  If <paramref name="doMaxScore"/> is
+        /// <c>true</c> then the maximum score over all
         /// collected hits will be computed.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopFieldDocs Search(Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
             return Search(CreateNormalizedWeight(WrapFilter(query, filter)), n, sort, doDocScores, doMaxScore);
         }
 
         /// <summary>
-        /// Finds the top <code>n</code>
-        /// hits for <code>query</code>, applying <code>filter</code> if non-null,
-        /// where all results are after a previous result (<code>after</code>).
-        /// <p>
-        /// By passing the bottom result from a previous page as <code>after</code>,
+        /// Finds the top <paramref name="n"/>
+        /// hits for <paramref name="query"/>, applying <paramref name="filter"/> if non-null,
+        /// where all results are after a previous result (<paramref name="after"/>).
+        /// <para/>
+        /// By passing the bottom result from a previous page as <paramref name="after"/>,
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <seealso cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort)
         {
             if (after != null && !(after is FieldDoc))
@@ -392,25 +385,25 @@ namespace Lucene.Net.Search
         /// Search implementation with arbitrary sorting and no filter. </summary>
         /// <param name="query"> The query to search for </param>
         /// <param name="n"> Return only the top n results </param>
-        /// <param name="sort"> The <seealso cref="Lucene.Net.Search.Sort"/> object </param>
-        /// <returns> The top docs, sorted according to the supplied <seealso cref="Lucene.Net.Search.Sort"/> instance </returns>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <param name="sort"> The <see cref="Lucene.Net.Search.Sort"/> object </param>
+        /// <returns> The top docs, sorted according to the supplied <see cref="Lucene.Net.Search.Sort"/> instance </returns>
+        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
         public virtual TopFieldDocs Search(Query query, int n, Sort sort)
         {
             return Search(CreateNormalizedWeight(query), n, sort, false, false);
         }
 
         /// <summary>
-        /// Finds the top <code>n</code>
-        /// hits for <code>query</code> where all results are after a previous
-        /// result (<code>after</code>).
-        /// <p>
-        /// By passing the bottom result from a previous page as <code>after</code>,
+        /// Finds the top <paramref name="n"/>
+        /// hits for <paramref name="query"/> where all results are after a previous
+        /// result (<paramref name="after"/>).
+        /// <para/>
+        /// By passing the bottom result from a previous page as <paramref name="after"/>,
         /// this method can be used for efficient 'deep-paging' across potentially
         /// large result sets.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, int n, Sort sort)
         {
             if (after != null && !(after is FieldDoc))
@@ -423,21 +416,21 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Finds the top <code>n</code>
-        /// hits for <code>query</code> where all results are after a previous
-        /// result (<code>after</code>), allowing control over
+        /// Finds the top <paramref name="n"/>
+        /// hits for <paramref name="query"/> where all results are after a previous
+        /// result (<paramref name="after"/>), allowing control over
         /// whether hit scores and max score should be computed.
-        /// <p>
-        /// By passing the bottom result from a previous page as <code>after</code>,
+        /// <para/>
+        /// By passing the bottom result from a previous page as <paramref name="after"/>,
         /// this method can be used for efficient 'deep-paging' across potentially
-        /// large result sets.  If <code>doDocScores</code> is <code>true</code>
+        /// large result sets.  If <paramref name="doDocScores"/> is <c>true</c>
         /// then the score of each hit will be computed and
-        /// returned.  If <code>doMaxScore</code> is
-        /// <code>true</code> then the maximum score over all
+        /// returned.  If <paramref name="doMaxScore"/> is
+        /// <c>true</c> then the maximum score over all
         /// collected hits will be computed.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual TopDocs SearchAfter(ScoreDoc after, Query query, Filter filter, int n, Sort sort, bool doDocScores, bool doMaxScore)
         {
             if (after != null && !(after is FieldDoc))
@@ -450,13 +443,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Expert: Low-level search implementation.  Finds the top <code>n</code>
-        /// hits for <code>query</code>, applying <code>filter</code> if non-null.
+        /// Expert: Low-level search implementation.  Finds the top <paramref name="nDocs"/>
+        /// hits for <c>query</c>, applying <c>filter</c> if non-null.
         ///
-        /// <p>Applications should usually call <seealso cref="IndexSearcher#search(Query,int)"/> or
-        /// <seealso cref="IndexSearcher#search(Query,Filter,int)"/> instead. </summary>
+        /// <para/>Applications should usually call <see cref="IndexSearcher.Search(Query,int)"/> or
+        /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         protected virtual TopDocs Search(Weight weight, ScoreDoc after, int nDocs)
         {
             int limit = reader.MaxDoc;
@@ -508,12 +501,12 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: Low-level search implementation.  Finds the top <code>n</code>
-        /// hits for <code>query</code>.
+        /// hits for <c>query</c>.
         ///
-        /// <p>Applications should usually call <seealso cref="IndexSearcher#search(Query,int)"/> or
-        /// <seealso cref="IndexSearcher#search(Query,Filter,int)"/> instead. </summary>
+        /// <para/>Applications should usually call <see cref="IndexSearcher.Search(Query,int)"/> or
+        /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> instead. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         protected virtual TopDocs Search(IList<AtomicReaderContext> leaves, Weight weight, ScoreDoc after, int nDocs)
         {
             // single thread
@@ -532,23 +525,23 @@ namespace Lucene.Net.Search
         /// Expert: Low-level search implementation with arbitrary
         /// sorting and control over whether hit scores and max
         /// score should be computed.  Finds
-        /// the top <code>n</code> hits for <code>query</code> and sorting the hits
-        /// by the criteria in <code>sort</code>.
+        /// the top <paramref name="nDocs"/> hits for <c>query</c> and sorting the hits
+        /// by the criteria in <paramref name="sort"/>.
         ///
-        /// <p>Applications should usually call {@link
-        /// IndexSearcher#search(Query,Filter,int,Sort)} instead.
+        /// <para/>Applications should usually call 
+        /// <see cref="IndexSearcher.Search(Query,Filter,int,Sort)"/> instead.
         /// </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         protected virtual TopFieldDocs Search(Weight weight, int nDocs, Sort sort, bool doDocScores, bool doMaxScore)
         {
             return Search(weight, null, nDocs, sort, true, doDocScores, doMaxScore);
         }
 
         /// <summary>
-        /// Just like <seealso cref="#search(Weight, int, Sort, boolean, boolean)"/>, but you choose
-        /// whether or not the fields in the returned <seealso cref="FieldDoc"/> instances should
-        /// be set by specifying fillFields.
+        /// Just like <see cref="Search(Weight, int, Sort, bool, bool)"/>, but you choose
+        /// whether or not the fields in the returned <see cref="FieldDoc"/> instances should
+        /// be set by specifying <paramref name="fillFields"/>.
         /// </summary>
         protected virtual TopFieldDocs Search(Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
@@ -597,9 +590,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Just like <seealso cref="#search(Weight, int, Sort, boolean, boolean)"/>, but you choose
-        /// whether or not the fields in the returned <seealso cref="FieldDoc"/> instances should
-        /// be set by specifying fillFields.
+        /// Just like <see cref="Search(Weight, int, Sort, bool, bool)"/>, but you choose
+        /// whether or not the fields in the returned <see cref="FieldDoc"/> instances should
+        /// be set by specifying <paramref name="fillFields"/>.
         /// </summary>
         protected virtual TopFieldDocs Search(IList<AtomicReaderContext> leaves, Weight weight, FieldDoc after, int nDocs, Sort sort, bool fillFields, bool doDocScores, bool doMaxScore)
         {
@@ -619,21 +612,21 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Lower-level search API.
         ///
-        /// <p>
-        /// <seealso cref="ICollector#collect(int)"/> is called for every document. <br>
+        /// <para/>
+        /// <seealso cref="ICollector.Collect(int)"/> is called for every document. 
         ///
-        /// <p>
+        /// <para/>
         /// NOTE: this method executes the searches on all given leaves exclusively.
-        /// To search across all the searchers leaves use <seealso cref="#leafContexts"/>.
+        /// To search across all the searchers leaves use <see cref="m_leafContexts"/>.
         /// </summary>
         /// <param name="leaves">
-        ///          the searchers leaves to execute the searches on </param>
+        ///          The searchers leaves to execute the searches on </param>
         /// <param name="weight">
-        ///          to match documents </param>
+        ///          To match documents </param>
         /// <param name="collector">
-        ///          to receive hits </param>
+        ///          To receive hits </param>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         protected virtual void Search(IList<AtomicReaderContext> leaves, Weight weight, ICollector collector)
         {
             // TODO: should we make this
@@ -670,7 +663,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Expert: called to re-write queries into primitive queries. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         public virtual Query Rewrite(Query original)
         {
             Query query = original;
@@ -682,10 +675,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns an Explanation that describes how <code>doc</code> scored against
-        /// <code>query</code>.
+        /// Returns an <see cref="Explanation"/> that describes how <paramref name="doc"/> scored against
+        /// <paramref name="query"/>.
         ///
-        /// <p>this is intended to be used in developing Similarity implementations,
+        /// <para/>This is intended to be used in developing <see cref="Similarities.Similarity"/> implementations,
         /// and, for good performance, should not be displayed with every hit.
         /// Computing an explanation is as expensive as executing the query over the
         /// entire index.
@@ -697,16 +690,16 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Expert: low-level implementation method
-        /// Returns an Explanation that describes how <code>doc</code> scored against
-        /// <code>weight</code>.
+        /// Returns an <see cref="Explanation"/> that describes how <paramref name="doc"/> scored against
+        /// <paramref name="weight"/>.
         ///
-        /// <p>this is intended to be used in developing Similarity implementations,
+        /// <para/>This is intended to be used in developing <see cref="Similarities.Similarity"/> implementations,
         /// and, for good performance, should not be displayed with every hit.
         /// Computing an explanation is as expensive as executing the query over the
         /// entire index.
-        /// <p>Applications should call <seealso cref="IndexSearcher#explain(Query, int)"/>. </summary>
+        /// <para/>Applications should call <see cref="IndexSearcher.Explain(Query, int)"/>. </summary>
         /// <exception cref="BooleanQuery.TooManyClausesException"> If a query would exceed
-        ///         <seealso cref="BooleanQuery#getMaxClauseCount()"/> clauses. </exception>
+        ///         <see cref="BooleanQuery.MaxClauseCount"/> clauses. </exception>
         protected virtual Explanation Explain(Weight weight, int doc)
         {
             int n = ReaderUtil.SubIndex(doc, m_leafContexts);
@@ -717,10 +710,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Creates a normalized weight for a top-level <seealso cref="Query"/>.
-        /// The query is rewritten by this method and <seealso cref="Query#createWeight"/> called,
-        /// afterwards the <seealso cref="Weight"/> is normalized. The returned {@code Weight}
-        /// can then directly be used to get a <seealso cref="Scorer"/>.
+        /// Creates a normalized weight for a top-level <see cref="Query"/>.
+        /// The query is rewritten by this method and <see cref="Query.CreateWeight(IndexSearcher)"/> called,
+        /// afterwards the <see cref="Weight"/> is normalized. The returned <see cref="Weight"/>
+        /// can then directly be used to get a <see cref="Scorer"/>.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public virtual Weight CreateNormalizedWeight(Query query)
@@ -738,8 +732,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns this searchers the top-level <seealso cref="IndexReaderContext"/>. </summary>
-        /// <seealso cref= IndexReader#getContext() </seealso>
+        /// Returns this searchers the top-level <see cref="IndexReaderContext"/>. </summary>
+        /// <seealso cref="IndexReader.Context"/>
         /* sugar for #getReader().getTopReaderContext() */
 
         public virtual IndexReaderContext TopReaderContext
@@ -870,11 +864,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A helper class that wraps a <seealso cref="CompletionService"/> and provides an
-        /// iterable interface to the completed <seealso cref="Callable"/> instances.
+        /// A helper class that wraps a <see cref="ICompletionService{T}"/> and provides an
+        /// iterable interface to the completed <see cref="ICallable{V}"/> instances.
         /// </summary>
-        /// @param <T>
-        ///          the type of the <seealso cref="Callable"/> return value </param>
+        /// <typeparam name="T">the type of the <see cref="ICallable{V}"/> return value</typeparam>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -969,9 +962,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A class holding a subset of the <seealso cref="IndexSearcher"/>s leaf contexts to be
+        /// A class holding a subset of the <see cref="IndexSearcher"/>s leaf contexts to be
         /// executed within a single thread.
-        ///
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -993,10 +986,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns <seealso cref="TermStatistics"/> for a term.
-        ///
-        /// this can be overridden for example, to return a term's statistics
+        /// Returns <see cref="Search.TermStatistics"/> for a term.
+        /// <para/>
+        /// This can be overridden for example, to return a term's statistics
         /// across a distributed collection.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public virtual TermStatistics TermStatistics(Term term, TermContext context)
@@ -1005,10 +999,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns <seealso cref="CollectionStatistics"/> for a field.
-        ///
-        /// this can be overridden for example, to return a field's statistics
+        /// Returns <see cref="Search.CollectionStatistics"/> for a field.
+        /// <para/>
+        /// This can be overridden for example, to return a field's statistics
         /// across a distributed collection.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public virtual CollectionStatistics CollectionStatistics(string field)

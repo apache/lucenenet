@@ -22,13 +22,13 @@ namespace Lucene.Net.Search
     using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
-    /// this implementation supplies a filtered DocIdSet, that excludes all
-    /// docids which are not in a Bits instance. this is especially useful in
-    /// <seealso cref="Lucene.Net.Search.Filter"/> to apply the {@code acceptDocs}
-    /// passed to {@code getDocIdSet()} before returning the final DocIdSet.
+    /// This implementation supplies a filtered <see cref="DocIdSet"/>, that excludes all
+    /// docids which are not in a <see cref="IBits"/> instance. This is especially useful in
+    /// <see cref="Lucene.Net.Search.Filter"/> to apply the <see cref="acceptDocs"/>
+    /// passed to <see cref="Filter.GetDocIdSet(Index.AtomicReaderContext, IBits)"/> before returning the final <see cref="DocIdSet"/>.
     /// </summary>
-    /// <seealso cref= DocIdSet </seealso>
-    /// <seealso cref= Lucene.Net.Search.Filter </seealso>
+    /// <seealso cref="DocIdSet"/>
+    /// <seealso cref="Lucene.Net.Search.Filter"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -37,10 +37,10 @@ namespace Lucene.Net.Search
         private readonly IBits acceptDocs;
 
         /// <summary>
-        /// Convenience wrapper method: If {@code acceptDocs == null} it returns the original set without wrapping. </summary>
-        /// <param name="set"> Underlying DocIdSet. If {@code null}, this method returns {@code null} </param>
-        /// <param name="acceptDocs"> Allowed docs, all docids not in this set will not be returned by this DocIdSet.
-        /// If {@code null}, this method returns the original set without wrapping. </param>
+        /// Convenience wrapper method: If <c>acceptDocs == null</c> it returns the original set without wrapping. </summary>
+        /// <param name="set"> Underlying DocIdSet. If <c>null</c>, this method returns <c>null</c> </param>
+        /// <param name="acceptDocs"> Allowed docs, all docids not in this set will not be returned by this <see cref="DocIdSet"/>.
+        /// If <c>null</c>, this method returns the original set without wrapping. </param>
         public static DocIdSet Wrap(DocIdSet set, IBits acceptDocs)
         {
             return (set == null || acceptDocs == null) ? set : new BitsFilteredDocIdSet(set, acceptDocs);
@@ -48,14 +48,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Constructor. </summary>
-        /// <param name="innerSet"> Underlying DocIdSet </param>
-        /// <param name="acceptDocs"> Allowed docs, all docids not in this set will not be returned by this DocIdSet </param>
+        /// <param name="innerSet"> Underlying <see cref="DocIdSet"/> </param>
+        /// <param name="acceptDocs"> Allowed docs, all docids not in this set will not be returned by this <see cref="DocIdSet"/> </param>
         public BitsFilteredDocIdSet(DocIdSet innerSet, IBits acceptDocs)
             : base(innerSet)
         {
             if (acceptDocs == null)
             {
-                throw new System.NullReferenceException("acceptDocs is null");
+                throw new System.NullReferenceException("acceptDocs is null"); // LUCENENET TODO: API throw ArgumentNullException ?
             }
             this.acceptDocs = acceptDocs;
         }

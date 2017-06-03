@@ -1639,7 +1639,9 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
+#pragma warning disable 612, 618
         private class ByteParserAnonymousInnerClassHelper : FieldCache.IByteParser
+#pragma warning restore 612, 618
         {
             private readonly TestSort OuterInstance;
 
@@ -1697,7 +1699,9 @@ namespace Lucene.Net.Search
             dir.Dispose();
         }
 
+#pragma warning disable 612, 618
         private class ShortParserAnonymousInnerClassHelper : FieldCache.IInt16Parser
+#pragma warning restore 612, 618
         {
             private readonly TestSort OuterInstance;
 

@@ -24,12 +24,11 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
-    /// this is a <seealso cref="PhraseQuery"/> which is optimized for n-gram phrase query.
+    /// This is a <see cref="PhraseQuery"/> which is optimized for n-gram phrase query.
     /// For example, when you query "ABCD" on a 2-gram field, you may want to use
-    /// NGramPhraseQuery rather than <seealso cref="PhraseQuery"/>, because NGramPhraseQuery
-    /// will <seealso cref="#rewrite(IndexReader)"/> the query to "AB/0 CD/2", while <seealso cref="PhraseQuery"/>
+    /// <see cref="NGramPhraseQuery"/> rather than <see cref="PhraseQuery"/>, because <see cref="NGramPhraseQuery"/>
+    /// will <see cref="Rewrite(IndexReader)"/> the query to "AB/0 CD/2", while <see cref="PhraseQuery"/>
     /// will query "AB/0 BC/1 CD/2" (where term/position).
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -93,7 +92,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true iff <code>o</code> is equal to this. </summary>
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (!(o is NGramPhraseQuery))

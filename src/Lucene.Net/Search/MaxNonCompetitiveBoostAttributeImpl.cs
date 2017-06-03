@@ -21,36 +21,56 @@ namespace Lucene.Net.Search
 
     using Attribute = Lucene.Net.Util.Attribute;
     using IAttribute = Lucene.Net.Util.IAttribute;
+    using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// Implementation class for <see cref="IBoostAttribute"/>.
+    /// Implementation class for <see cref="IMaxNonCompetitiveBoostAttribute"/>.
     /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class BoostAttribute : Attribute, IBoostAttribute
+    public sealed class MaxNonCompetitiveBoostAttribute : Attribute, IMaxNonCompetitiveBoostAttribute
     {
-        private float boost = 1.0f;
+        private float maxNonCompetitiveBoost = float.NegativeInfinity;
+        private BytesRef competitiveTerm = null;
 
-        /// <summary>
-        /// Gets or Sets the boost in this attribute. Default is <c>1.0f</c>.
-        /// </summary>
-        public float Boost
+        public float MaxNonCompetitiveBoost
         {
-            get { return boost; }
-            set { boost = value; }
+            set
+            {
+                this.maxNonCompetitiveBoost = value;
+            }
+            get
+            {
+                return maxNonCompetitiveBoost;
+            }
+        }
+
+        public BytesRef CompetitiveTerm
+        {
+            set
+            {
+                this.competitiveTerm = value;
+            }
+            get
+            {
+                return competitiveTerm;
+            }
         }
 
         public override void Clear()
         {
-            boost = 1.0f;
+            maxNonCompetitiveBoost = float.NegativeInfinity;
+            competitiveTerm = null;
         }
 
         public override void CopyTo(IAttribute target)
         {
-            ((BoostAttribute)target).Boost = boost;
+            MaxNonCompetitiveBoostAttribute t = (MaxNonCompetitiveBoostAttribute)target;
+            t.MaxNonCompetitiveBoost = maxNonCompetitiveBoost;
+            t.CompetitiveTerm = competitiveTerm;
         }
     }
 }
