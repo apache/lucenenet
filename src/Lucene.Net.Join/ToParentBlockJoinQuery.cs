@@ -28,7 +28,8 @@ namespace Lucene.Net.Join
     /// <summary>
     /// This query requires that you index
     /// children and parent docs as a single block, using the
-    /// <see cref="IndexWriter.AddDocuments"/> or <see cref="IndexWriter.UpdateDocuments"/>
+    /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/> 
+    /// or <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>
     /// API.  In each block, the
     /// child documents must appear first, ending with the parent
     /// document.  At search time you provide a <see cref="Filter"/>
