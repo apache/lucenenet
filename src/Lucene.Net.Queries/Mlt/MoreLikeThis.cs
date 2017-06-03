@@ -89,7 +89,7 @@ namespace Lucene.Net.Queries.Mlt
     ///     <item><description>do your normal, Lucene setup for searching,</description></item>
     ///     <item><description>create a MoreLikeThis,</description></item>
     ///     <item><description>get the text of the doc you want to find similarities to</description></item>
-    ///     <item><description>then call one of the <see cref="Like"/> calls to generate a similarity query</description></item>
+    ///     <item><description>then call one of the <see cref="Like(TextReader, string)"/> calls to generate a similarity query</description></item>
     ///     <item><description>call the searcher to find the similar docs</description></item>
     /// </list>
     /// <para/>
@@ -659,13 +659,13 @@ namespace Lucene.Net.Queries.Mlt
         /// </list>
         /// This is a somewhat "advanced" routine, and in general only the 1st entry in the array is of interest.
         /// This method is exposed so that you can identify the "interesting words" in a document.
-        /// For an easier method to call see <see cref="RetrieveInterestingTerms"/>.
+        /// For an easier method to call see <see cref="RetrieveInterestingTerms(TextReader, string)"/>.
         /// </summary>
         /// <param name="r"> the reader that has the content of the document </param>
         /// <param name="fieldName"> field passed to the analyzer to use when analyzing the content </param>
         /// <returns> the most interesting words in the document ordered by score, with the highest scoring, or best entry, first </returns>
         /// <exception cref="IOException"/>
-        /// <seealso cref="RetrieveInterestingTerms"/>
+        /// <seealso cref="RetrieveInterestingTerms(TextReader, string)"/>
         public Util.PriorityQueue<object[]> RetrieveTerms(TextReader r, string fieldName)
         {
             IDictionary<string, Int32> words = new Dictionary<string, Int32>();

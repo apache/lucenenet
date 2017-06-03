@@ -29,7 +29,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInt32s"/> and makes
+    /// Obtains <see cref="int"/> field values from <see cref="IFieldCache.GetInt32s(AtomicReader, string, FieldCache.IInt32Parser, bool)"/> and makes
     /// those values available as other numeric types, casting as needed.
     /// StrVal of the value is not the <see cref="int"/> value, but its <see cref="string"/> (displayed) value
     /// </summary>

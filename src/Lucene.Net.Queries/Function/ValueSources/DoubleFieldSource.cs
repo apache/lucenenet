@@ -25,7 +25,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains <see cref="double"/> field values from <see cref="IFieldCache.GetDoubles"/> and makes
+    /// Obtains <see cref="double"/> field values from <see cref="IFieldCache.GetDoubles(AtomicReader, string, FieldCache.IDoubleParser, bool)"/> and makes
     /// those values available as other numeric types, casting as needed.
     /// </summary>
     public class DoubleFieldSource : FieldCacheSource
