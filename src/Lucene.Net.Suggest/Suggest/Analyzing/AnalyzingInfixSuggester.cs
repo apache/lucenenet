@@ -292,7 +292,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// instead if you want to replace a previous suggestion.
         /// After adding or updating a batch of new suggestions,
         /// you must call <see cref="Refresh()"/> in the end in order to
-        /// see the suggestions in <see cref="DoLookup"/> 
+        /// see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool)"/> 
         /// </summary>
         public virtual void Add(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
         /// this text is not already present you can use <see cref="Add"/> 
         /// instead.  After adding or updating a batch of
         /// new suggestions, you must call <see cref="Refresh()"/> in the
-        /// end in order to see the suggestions in <see cref="DoLookup"/> 
+        /// end in order to see the suggestions in <see cref="DoLookup(string, IEnumerable{BytesRef}, int, bool, bool)"/> 
         /// </summary>
         public virtual void Update(BytesRef text, IEnumerable<BytesRef> contexts, long weight, BytesRef payload)
         {

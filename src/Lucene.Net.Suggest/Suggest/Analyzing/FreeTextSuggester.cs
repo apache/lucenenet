@@ -39,9 +39,9 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     //   - add pruning of low-freq ngrams?   
 
     /// <summary>
-    /// Builds an ngram model from the text sent to <see cref="Build"/>
+    /// Builds an ngram model from the text sent to <see cref="Build(IInputIterator, double)"/>
     /// and predicts based on the last grams-1 tokens in
-    /// the request sent to <see cref="DoLookup"/>.  This tries to
+    /// the request sent to <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int)"/>.  This tries to
     /// handle the "long tail" of suggestions for when the
     /// incoming query is a never before seen query string.
     /// 
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// "Large language models in machine translation"</a> for details.
     /// 
     /// </para>
-    /// <para> From <see cref="DoLookup"/>, the key of each result is the
+    /// <para> From <see cref="DoLookup(string, IEnumerable{BytesRef}, bool, int)"/>, the key of each result is the
     /// ngram token; the value is <see cref="long.MaxValue"/> * score (fixed
     /// point, cast to long).  Divide by <see cref="long.MaxValue"/> to get
     /// the score back, which ranges from 0.0 to 1.0.
