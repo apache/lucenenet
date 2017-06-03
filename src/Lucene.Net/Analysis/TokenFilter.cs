@@ -39,7 +39,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// This method is called by the consumer after the last token has been
-        /// consumed, after <see cref="IncrementToken()"/> returned <c>false</c>
+        /// consumed, after <see cref="TokenStream.IncrementToken()"/> returned <c>false</c>
         /// (using the new <see cref="TokenStream"/> API). Streams implementing the old API
         /// should upgrade to use this feature.
         /// <para/>

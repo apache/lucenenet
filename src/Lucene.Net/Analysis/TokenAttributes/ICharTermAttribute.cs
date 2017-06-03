@@ -124,30 +124,30 @@ namespace Lucene.Net.Analysis.TokenAttributes
         ICharTermAttribute Append(char c);
 
         /// <summary>
-        /// Appends the contents of the <see cref="char[]"/> array to this character sequence.
+        /// Appends the contents of the <see cref="T:char[]"/> array to this character sequence.
         /// <para>
-        /// The characters of the <see cref="char[]"/> argument are appended, in order, increasing the length of
+        /// The characters of the <see cref="T:char[]"/> argument are appended, in order, increasing the length of
         /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
         /// characters <c>"null"</c> are appended.
         /// </para>
         /// </summary>
-        /// <param name="csq">The <see cref="char[]"/> array to append.</param>
+        /// <param name="csq">The <see cref="T:char[]"/> array to append.</param>
         /// <remarks>
         /// LUCENENET specific method, added to simulate using the CharBuffer class in Java.
         /// </remarks>
         ICharTermAttribute Append(char[] csq);
 
         /// <summary>
-        /// Appends the contents of the <see cref="char[]"/> array to this character sequence, beginning and ending
+        /// Appends the contents of the <see cref="T:char[]"/> array to this character sequence, beginning and ending
         /// at the specified indices.
         /// <para>
-        /// The characters of the <see cref="char[]"/> argument are appended, in order, increasing the length of
+        /// The characters of the <see cref="T:char[]"/> argument are appended, in order, increasing the length of
         /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
         /// characters <c>"null"</c> are appended.
         /// </para>
         /// </summary>
-        /// <param name="csq">The <see cref="char[]"/> array to append.</param>
-        /// <param name="start">The start index of the <see cref="char[]"/> to begin copying characters.</param>
+        /// <param name="csq">The <see cref="T:char[]"/> array to append.</param>
+        /// <param name="start">The start index of the <see cref="T:char[]"/> to begin copying characters.</param>
         /// <param name="end">The index of the character following the last character in the subsequence.</param>
         /// <remarks>
         /// LUCENENET specific method, added to simulate using the CharBuffer class in Java. Note that
@@ -201,7 +201,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         /// <summary>
         /// Appends the specified <see cref="StringBuilder"/> to this character sequence.
-        /// <p>The characters of the <see cref="StringBuilder"/> argument are appended, in order, increasing the length of
+        /// <para/>The characters of the <see cref="StringBuilder"/> argument are appended, in order, increasing the length of
         /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
         /// characters <c>"null"</c> are appended.
         /// </summary>
@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         /// <summary>
         /// Appends the contents of the other <see cref="ICharTermAttribute"/> to this character sequence.
-        /// <p>The characters of the <see cref="ICharTermAttribute"/> argument are appended, in order, increasing the length of
+        /// <para/>The characters of the <see cref="ICharTermAttribute"/> argument are appended, in order, increasing the length of
         /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
         /// characters <c>"null"</c> are appended.
         /// </summary>

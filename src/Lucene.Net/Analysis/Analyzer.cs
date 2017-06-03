@@ -281,7 +281,7 @@ namespace Lucene.Net.Analysis
         /// </summary>
         /// <param name="fieldName">the name of the field the created <see cref="Analysis.TokenStream"/> is used for</param>
         /// <param name="text">the <see cref="string"/> the streams source reads from </param>
-        /// <returns><see cref="Analysis.TokenStream"/> for iterating the analyzed content of <paramref name="reader"/></returns>
+        /// <returns><see cref="Analysis.TokenStream"/> for iterating the analyzed content of <c>reader</c></returns>
         /// <exception cref="ObjectDisposedException"> if the Analyzer is disposed. </exception>
         /// <exception cref="IOException"> if an i/o error occurs (may rarely happen for strings). </exception>
         /// <seealso cref="GetTokenStream(string, TextReader)"/>
@@ -425,11 +425,10 @@ namespace Lucene.Net.Analysis
         /// </summary>
         [Obsolete("this implementation class will be hidden in Lucene 5.0. Use Analyzer.PER_FIELD_REUSE_STRATEGY instead!")]
         public class PerFieldReuseStrategy : ReuseStrategy
-
-        /// <summary>
-        /// Sole constructor. (For invocation by subclass constructors, typically implicit.)
-        /// </summary>
         {
+            /// <summary>
+            /// Sole constructor. (For invocation by subclass constructors, typically implicit.)
+            /// </summary>
             [Obsolete("Don't create instances of this class, use Analyzer.PER_FIELD_REUSE_STRATEGY")]
             public PerFieldReuseStrategy()
             {
@@ -463,7 +462,8 @@ namespace Lucene.Net.Analysis
         /// LUCENENET specific helper class to mimick Java's ability to create anonymous classes.
         /// Clearly, the design of <see cref="Analyzer"/> took this feature of Java into consideration.
         /// Since it doesn't exist in .NET, we can use a delegate method to call the constructor of
-        /// this concrete instance to fake it (by calling <see cref="Analyzer.NewAnonymous"/>).
+        /// this concrete instance to fake it (by calling an overload of 
+        /// <see cref="Analyzer.NewAnonymous(Func{string, TextReader, TokenStreamComponents})"/>).
         /// </summary>
         private class AnonymousAnalyzer : Analyzer
         {
@@ -603,6 +603,7 @@ namespace Lucene.Net.Analysis
         /// Stores the given <see cref="TokenStreamComponents"/> as the reusable components for the
         /// field with the give name.
         /// </summary>
+        /// <param name="analyzer"> Analyzer </param>
         /// <param name="fieldName"> Name of the field whose <see cref="TokenStreamComponents"/> are being set </param>
         /// <param name="components"> <see cref="TokenStreamComponents"/> which are to be reused for the field </param>
         public abstract void SetReusableComponents(Analyzer analyzer, string fieldName, TokenStreamComponents components);
@@ -624,6 +625,7 @@ namespace Lucene.Net.Analysis
         /// <summary>
         /// Sets the stored value.
         /// </summary>
+        /// <param name="analyzer"> Analyzer </param>
         /// <param name="storedValue"> Value to store </param>
         /// <exception cref="ObjectDisposedException"> if the <see cref="Analyzer"/> is closed. </exception>
         protected internal void SetStoredValue(Analyzer analyzer, object storedValue)

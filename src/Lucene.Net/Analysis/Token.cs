@@ -477,7 +477,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="CopyBuffer(char[], int, int)"/>,
+        /// <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -496,7 +496,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="CopyBuffer(char[], int, int)"/>,
+        /// <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -513,7 +513,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="Append(string)"/>,
+        /// <see cref="ICharTermAttribute.Append(string)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -530,7 +530,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="Append(string, int, int)"/>,
+        /// <see cref="ICharTermAttribute.Append(string, int, int)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -547,7 +547,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="Append(string)"/>,
+        /// <see cref="ICharTermAttribute.Append(string)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -564,7 +564,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="Append(string, int, int)"/>,
+        /// <see cref="ICharTermAttribute.Append(string, int, int)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
