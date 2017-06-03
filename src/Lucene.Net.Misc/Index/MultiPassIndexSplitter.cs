@@ -39,8 +39,8 @@ namespace Lucene.Net.Index
     /// 
     /// </para>
     /// <para><b>NOTE</b>: this tool is unaware of documents added
-    /// atomically via <see cref="IndexWriter.AddDocuments"/> or 
-    /// <see cref="IndexWriter.UpdateDocuments"/>, which means it can easily
+    /// atomically via <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/> or 
+    /// <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>, which means it can easily
     /// break up such document groups.
     /// </para>
     /// </summary>
