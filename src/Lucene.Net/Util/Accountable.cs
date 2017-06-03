@@ -19,7 +19,7 @@
 
 	/// <summary>
 	/// An object whose RAM usage can be computed.
-	/// 
+	/// <para/>
 	/// @lucene.internal
 	/// </summary>
 	public interface IAccountable // LUCENENET NOTE: This interface wasn't added until Lucene 4.9

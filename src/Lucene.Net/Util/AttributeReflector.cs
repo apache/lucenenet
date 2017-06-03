@@ -19,11 +19,24 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
+    /// <summary>
+    /// This interface is used to reflect contents of <see cref="AttributeSource"/> or <see cref="Attribute"/>.
+    /// </summary>
     public interface IAttributeReflector
     {
+        /// <summary>
+        /// LUCENENET specific overload to support generics.
+        /// </summary>
         void Reflect<T>(string key, object value)
             where T : IAttribute;
 
+        /// <summary>
+        /// This method gets called for every property in an <see cref="Attribute"/>/<see cref="AttributeSource"/>
+        /// passing the <see cref="Type"/> of the <see cref="IAttribute"/>, a <paramref name="key"/> and the actual <paramref name="value"/>.
+        /// E.g., an invocation of <see cref="Analysis.TokenAttributes.CharTermAttribute.ReflectWith(IAttributeReflector)"/>
+        /// would call this method once using <see cref="T:typeof(Analysis.TokenAttributes.ICharTermAttribute)"/>
+        /// as attribute type, <c>"term"</c> as <paramref name="key"/> and the actual <paramref name="value"/> as a <see cref="string"/>.
+        /// </summary>
         void Reflect(Type type, string key, object value);
     }
 }

@@ -26,23 +26,22 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Class that Posting and PostingVector use to write byte
-    /// streams into shared fixed-size byte[] arrays.  The idea
-    /// is to allocate slices of increasing lengths For
+    /// streams into shared fixed-size <see cref="T:byte[]"/> arrays.  The idea
+    /// is to allocate slices of increasing lengths. For
     /// example, the first slice is 5 bytes, the next slice is
     /// 14, etc.  We start by writing our bytes into the first
     /// 5 bytes.  When we hit the end of the slice, we allocate
     /// the next slice and then write the address of the new
     /// slice into the last 4 bytes of the previous slice (the
     /// "forwarding address").
-    ///
+    /// <para/>
     /// Each slice is filled with 0's initially, and we mark
-    /// the end with a non-zero byte.  this way the methods
+    /// the end with a non-zero byte.  This way the methods
     /// that are writing into the slice don't need to record
     /// its length and instead allocate a new slice once they
     /// hit a non-zero byte.
-    ///
+    /// <para/>
     /// @lucene.internal
-    ///
     /// </summary>
     public sealed class ByteBlockPool
     {
@@ -52,7 +51,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Abstract class for allocating and freeing byte
-        ///  blocks.
+        /// blocks.
         /// </summary>
         public abstract class Allocator
         {
@@ -78,7 +77,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A simple <seealso cref="Allocator"/> that never recycles. </summary>
+        /// A simple <see cref="Allocator"/> that never recycles. </summary>
         public sealed class DirectAllocator : Allocator
         {
             public DirectAllocator()
@@ -97,8 +96,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A simple <seealso cref="Allocator"/> that never recycles, but
-        ///  tracks how much total RAM is in use.
+        /// A simple <see cref="Allocator"/> that never recycles, but
+        /// tracks how much total RAM is in use.
         /// </summary>
         public class DirectTrackingAllocator : Allocator
         {
@@ -132,7 +131,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// array of buffers currently used in the pool. Buffers are allocated if
+        /// Array of buffers currently used in the pool. Buffers are allocated if
         /// needed don't modify this outside of this class.
         /// </summary>
         [WritableArray]
@@ -181,9 +180,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Resets the pool to its initial state reusing the first buffer and fills all
-        /// buffers with <tt>0</tt> bytes before they reused or passed to
-        /// <seealso cref="Allocator#recycleByteBlocks(byte[][], int, int)"/>. Calling
-        /// <seealso cref="ByteBlockPool#nextBuffer()"/> is not needed after reset.
+        /// buffers with <c>0</c> bytes before they reused or passed to
+        /// <see cref="Allocator.RecycleByteBlocks(byte[][], int, int)"/>. Calling
+        /// <see cref="ByteBlockPool.NextBuffer()"/> is not needed after reset.
         /// </summary>
         public void Reset()
         {
@@ -192,12 +191,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert: Resets the pool to its initial state reusing the first buffer. Calling
-        /// <seealso cref="ByteBlockPool#nextBuffer()"/> is not needed after reset. </summary>
-        /// <param name="zeroFillBuffers"> if <code>true</code> the buffers are filled with <tt>0</tt>.
-        ///        this should be set to <code>true</code> if this pool is used with slices. </param>
-        /// <param name="reuseFirst"> if <code>true</code> the first buffer will be reused and calling
-        ///        <seealso cref="ByteBlockPool#nextBuffer()"/> is not needed after reset iff the
-        ///        block pool was used before ie. <seealso cref="ByteBlockPool#nextBuffer()"/> was called before. </param>
+        /// <see cref="ByteBlockPool.NextBuffer()"/> is not needed after reset. </summary>
+        /// <param name="zeroFillBuffers"> if <c>true</c> the buffers are filled with <tt>0</tt>.
+        ///        this should be set to <c>true</c> if this pool is used with slices. </param>
+        /// <param name="reuseFirst"> if <c>true</c> the first buffer will be reused and calling
+        ///        <see cref="ByteBlockPool.NextBuffer()"/> is not needed after reset if the
+        ///        block pool was used before ie. <see cref="ByteBlockPool.NextBuffer()"/> was called before. </param>
         public void Reset(bool zeroFillBuffers, bool reuseFirst)
         {
             if (bufferUpto != -1)
@@ -209,11 +208,9 @@ namespace Lucene.Net.Util
                     for (int i = 0; i < bufferUpto; i++)
                     {
                         // Fully zero fill buffers that we fully used
-                        //Array.Clear(Buffers[i], 0, Buffers[i].Length);
                         Arrays.Fill(buffers[i], (byte)0);
                     }
                     // Partial zero fill the final buffer
-                    //Array.Clear(Buffers[BufferUpto], 0, BufferUpto);
                     Arrays.Fill(buffers[bufferUpto], 0, ByteUpto, (byte)0);
                 }
 
@@ -222,7 +219,6 @@ namespace Lucene.Net.Util
                     int offset = reuseFirst ? 1 : 0;
                     // Recycle all but the first buffer
                     allocator.RecycleByteBlocks(buffers, offset, 1 + bufferUpto);
-                    //Array.Clear(Buffers, 0, Buffers.Length);
                     Arrays.Fill(buffers, offset, 1 + bufferUpto, null);
                 }
                 if (reuseFirst)
@@ -244,9 +240,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Advances the pool to its next buffer. this method should be called once
+        /// Advances the pool to its next buffer. This method should be called once
         /// after the constructor to initialize the pool. In contrast to the
-        /// constructor a <seealso cref="ByteBlockPool#reset()"/> call will advance the pool to
+        /// constructor a <see cref="ByteBlockPool.Reset()"/> call will advance the pool to
         /// its first buffer immediately.
         /// </summary>
         public void NextBuffer()
@@ -266,7 +262,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Allocates a new slice with the given size.</summary>
-        /// <seealso>ByteBlockPool#FIRST_LEVEL_SIZE</seealso>
+        /// <seealso cref="ByteBlockPool.FIRST_LEVEL_SIZE"/>
         public int NewSlice(int size)
         {
             if (ByteUpto > BYTE_BLOCK_SIZE - size)
@@ -286,7 +282,7 @@ namespace Lucene.Net.Util
         // bytes, next slice is 14 bytes, etc.
 
         /// <summary>
-        /// An array holding the offset into the <seealso cref="ByteBlockPool#LEVEL_SIZE_ARRAY"/>
+        /// An array holding the offset into the <see cref="ByteBlockPool.LEVEL_SIZE_ARRAY"/>
         /// to quickly navigate to the next slice level.
         /// </summary>
         public static readonly int[] NEXT_LEVEL_ARRAY = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 9 };
@@ -298,7 +294,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// The first level size for new slices </summary>
-        /// <seealso cref= ByteBlockPool#newSlice(int) </seealso>
+        /// <seealso cref="ByteBlockPool.NewSlice(int)"/>
         public static readonly int FIRST_LEVEL_SIZE = LEVEL_SIZE_ARRAY[0];
 
         /// <summary>
@@ -361,7 +357,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Appends the bytes in the provided <seealso cref="BytesRef"/> at
+        /// Appends the bytes in the provided <see cref="BytesRef"/> at
         /// the current position.
         /// </summary>
         public void Append(BytesRef bytes)
@@ -398,8 +394,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Reads bytes bytes out of the pool starting at the given offset with the given
-        /// length into the given byte array at offset <tt>off</tt>.
-        /// <p>Note: this method allows to copy across block boundaries.</p>
+        /// length into the given byte array at offset <c>off</c>.
+        /// <para>Note: this method allows to copy across block boundaries.</para>
         /// </summary>
         public void ReadBytes(long offset, byte[] bytes, int off, int length)
         {

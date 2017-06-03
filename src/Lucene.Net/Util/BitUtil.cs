@@ -20,7 +20,8 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
      */
 
     /// <summary>
-    ///  A variety of high efficiency bit twiddling routines.
+    /// A variety of high efficiency bit twiddling routines.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class BitUtil
@@ -50,19 +51,20 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         // should be faster than accessing an array for each index, and
         // the total array size is kept smaller (256*sizeof(int))=1K
         /// <summary>
-        ///*** the python code that generated bitlist
+        /// the python code that generated bitlist
+        /// <code>
         /// def bits2int(val):
         /// arr=0
         /// for shift in range(8,0,-1):
-        ///  if val & 0x80:
-        ///    arr = (arr << 4) | shift
-        ///  val = val << 1
+        ///  if val &amp; 0x80:
+        ///    arr = (arr &lt;&lt; 4) | shift
+        ///  val = val &lt;&lt; 1
         /// return arr
         ///
         /// def int_table():
         ///  tbl = [ hex(bits2int(val)).strip('L') for val in range(256) ]
         ///  return ','.join(tbl)
-        /// *****
+        /// </code>
         /// </summary>
         private static readonly int[] BIT_LISTS = new int[] {
             0x0, 0x1, 0x2, 0x21, 0x3, 0x31, 0x32, 0x321, 0x4, 0x41, 0x42, 0x421, 0x43,
@@ -100,21 +102,22 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         }
 
         /// <summary>
-        /// Return the number of bits sets in b. </summary>
+        /// Return the number of bits sets in <paramref name="b"/>. </summary>
         public static int BitCount(byte b)
         {
             return BYTE_COUNTS[b & 0xFF];
         }
 
         /// <summary>
-        /// Return the list of bits which are set in b encoded as followed:
-        /// <code>(i >>> (4 * n)) & 0x0F</code> is the offset of the n-th set bit of
+        /// Return the list of bits which are set in <paramref name="b"/> encoded as followed:
+        /// <code>(i >>> (4 * n)) &amp; 0x0F</code> is the offset of the n-th set bit of
         /// the given byte plus one, or 0 if there are n or less bits set in the given
-        /// byte. For example <code>bitList(12)</code> returns 0x43:<ul>
-        /// <li><code>0x43 & 0x0F</code> is 3, meaning the the first bit set is at offset 3-1 = 2,</li>
-        /// <li><code>(0x43 >>> 4) & 0x0F</code> is 4, meaning there is a second bit set at offset 4-1=3,</li>
-        /// <li><code>(0x43 >>> 8) & 0x0F</code> is 0, meaning there is no more bit set in this byte.</li>
-        /// </ul>
+        /// byte. For example <code>bitList(12)</code> returns 0x43:
+        /// <list type="bullet">
+        ///     <item><description><code>0x43 &amp; 0x0F</code> is 3, meaning the the first bit set is at offset 3-1 = 2,</description></item>
+        ///     <item><description><code>(0x43 >>> 4) &amp; 0x0F</code> is 4, meaning there is a second bit set at offset 4-1=3,</description></item>
+        ///     <item><description><code>(0x43 >>> 8) &amp; 0x0F</code> is 0, meaning there is no more bit set in this byte.</description></item>
+        /// </list>
         /// </summary>
         public static int BitList(byte b)
         {
@@ -126,7 +129,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         // intrinsic since Java 6u18) in a naive loop, see LUCENE-2221
 
         /// <summary>
-        /// Returns the number of set bits in an array of longs. </summary>
+        /// Returns the number of set bits in an array of <see cref="long"/>s. </summary>
         public static long Pop_Array(long[] arr, int wordOffset, int numWords)
         {
             long popCount = 0;
@@ -139,7 +142,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 
         /// <summary>
         /// Returns the popcount or cardinality of the two sets after an intersection.
-        ///  Neither array is modified.
+        /// Neither array is modified.
         /// </summary>
         public static long Pop_Intersect(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
@@ -153,7 +156,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
 
         /// <summary>
         /// Returns the popcount or cardinality of the union of two sets.
-        ///  Neither array is modified.
+        /// Neither array is modified.
         /// </summary>
         public static long Pop_Union(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
@@ -166,8 +169,8 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         }
 
         /// <summary>
-        /// Returns the popcount or cardinality of A & ~B.
-        ///  Neither array is modified.
+        /// Returns the popcount or cardinality of A &amp; ~B.
+        /// Neither array is modified.
         /// </summary>
         public static long Pop_AndNot(long[] arr1, long[] arr2, int wordOffset, int numWords)
         {
@@ -194,7 +197,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         }
 
         /// <summary>
-        /// returns the next highest power of two, or the current value if it's already a power of two or zero </summary>
+        /// Returns the next highest power of two, or the current value if it's already a power of two or zero </summary>
         public static int NextHighestPowerOfTwo(int v)
         {
             v--;
@@ -208,7 +211,7 @@ namespace Lucene.Net.Util // from org.apache.solr.util rev 555343
         }
 
         /// <summary>
-        /// returns the next highest power of two, or the current value if it's already a power of two or zero </summary>
+        /// Returns the next highest power of two, or the current value if it's already a power of two or zero </summary>
         public static long NextHighestPowerOfTwo(long v)
         {
             v--;

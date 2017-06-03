@@ -23,14 +23,14 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Methods and constants inspired by the article
     /// "Broadword Implementation of Rank/Select Queries" by Sebastiano Vigna, January 30, 2012:
-    /// <ul>
-    /// <li>algorithm 1: <seealso cref="#bitCount(long)"/>, count of set bits in a <code>long</code>
-    /// <li>algorithm 2: <seealso cref="#select(long, int)"/>, selection of a set bit in a <code>long</code>,
-    /// <li>bytewise signed smaller &lt;<sub><small>8</small></sub> operator: <seealso cref="#smallerUpTo7_8(long,long)"/>.
-    /// <li>shortwise signed smaller &lt;<sub><small>16</small></sub> operator: <seealso cref="#smallerUpto15_16(long,long)"/>.
-    /// <li>some of the Lk and Hk constants that are used by the above:
-    /// L8 <seealso cref="#L8_L"/>, H8 <seealso cref="#H8_L"/>, L9 <seealso cref="#L9_L"/>, L16 <seealso cref="#L16_L"/>and H16 <seealso cref="#H8_L"/>.
-    /// </ul>
+    /// <list type="bullet">
+    ///     <item><description>algorithm 1: <see cref="BitCount(long)"/>, count of set bits in a <see cref="long"/></description></item>
+    ///     <item><description>algorithm 2: <see cref="Select(long, int)"/>, selection of a set bit in a <see cref="long"/>,</description></item>
+    ///     <item><description>bytewise signed smaller &lt;<sub><small>8</small></sub> operator: <see cref="SmallerUpTo7_8(long,long)"/>.</description></item>
+    ///     <item><description>shortwise signed smaller &lt;<sub><small>16</small></sub> operator: <see cref="SmallerUpto15_16(long,long)"/>.</description></item>
+    ///     <item><description>some of the Lk and Hk constants that are used by the above:
+    ///         L8 <see cref="L8_L"/>, H8 <see cref="H8_L"/>, L9 <see cref="L9_L"/>, L16 <see cref="L16_L"/>and H16 <see cref="H8_L"/>.</description></item>
+    /// </list>
     /// @lucene.internal
     /// </summary>
     public sealed class BroadWord
@@ -41,9 +41,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Bit count of a long.
-        /// Only here to compare the implementation with <seealso cref="#select(long,int)"/>,
-        /// normally <seealso cref="Long#bitCount"/> is preferable. </summary>
+        /// Bit count of a <see cref="long"/>.
+        /// Only here to compare the implementation with <see cref="Select(long, int)"/>,
+        /// normally <see cref="Number.BitCount(long)"/> is preferable. </summary>
         /// <returns> The total number of 1 bits in x. </returns>
         internal static int BitCount(long x)
         {
@@ -58,7 +58,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Select a 1-bit from a long. </summary>
+        /// Select a 1-bit from a <see cref="long"/>. </summary>
         /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
         public static int Select(long x, int r)
         {
@@ -89,9 +89,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A signed bytewise smaller &lt;<sub><small>8</small></sub> operator, for operands 0L<= x, y <=0x7L.
-        /// this uses the following numbers of basic long operations: 1 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
-        /// <returns> A long with bits set in the <seealso cref="#H8_L"/> positions corresponding to each input signed byte pair that compares smaller. </returns>
+        /// A signed bytewise smaller &lt;<sub><small>8</small></sub> operator, for operands 0L&lt;= x, y &lt;=0x7L.
+        /// This uses the following numbers of basic <see cref="long"/> operations: 1 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
+        /// <returns> A <see cref="long"/> with bits set in the <see cref="H8_L"/> positions corresponding to each input signed byte pair that compares smaller. </returns>
         public static long SmallerUpTo7_8(long x, long y)
         {
             // See section 4, page 5, line 14 of the Vigna article:
@@ -100,8 +100,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// An unsigned bytewise smaller &lt;<sub><small>8</small></sub> operator.
-        /// this uses the following numbers of basic long operations: 3 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
-        /// <returns> A long with bits set in the <seealso cref="#H8_L"/> positions corresponding to each input unsigned byte pair that compares smaller. </returns>
+        /// This uses the following numbers of basic <see cref="long"/> operations: 3 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
+        /// <returns> A <see cref="long"/> with bits set in the <see cref="H8_L"/> positions corresponding to each input unsigned byte pair that compares smaller. </returns>
         public static long Smalleru_8(long x, long y)
         {
             // See section 4, 8th line from the bottom of the page 5, of the Vigna article:
@@ -110,8 +110,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// An unsigned bytewise not equals 0 operator.
-        /// this uses the following numbers of basic long operations: 2 or, 1 and, 1 minus. </summary>
-        /// <returns> A long with bits set in the <seealso cref="#H8_L"/> positions corresponding to each unsigned byte that does not equal 0. </returns>
+        /// This uses the following numbers of basic <see cref="long"/> operations: 2 or, 1 and, 1 minus. </summary>
+        /// <returns> A <see cref="long"/> with bits set in the <see cref="H8_L"/> positions corresponding to each unsigned byte that does not equal 0. </returns>
         public static long NotEquals0_8(long x)
         {
             // See section 4, line 6-8 on page 6, of the Vigna article:
@@ -120,8 +120,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// A bytewise smaller &lt;<sub><small>16</small></sub> operator.
-        /// this uses the following numbers of basic long operations: 1 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
-        /// <returns> A long with bits set in the <seealso cref="#H16_L"/> positions corresponding to each input signed short pair that compares smaller. </returns>
+        /// This uses the following numbers of basic <see cref="long"/> operations: 1 or, 2 and, 2 xor, 1 minus, 1 not. </summary>
+        /// <returns> A <see cref="long"/> with bits set in the <see cref="H16_L"/> positions corresponding to each input signed short pair that compares smaller. </returns>
         public static long SmallerUpto15_16(long x, long y)
         {
             return (((x | H16_L) - (y & (~H16_L))) ^ x ^ ~y) & H16_L;
@@ -129,8 +129,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Lk denotes the constant whose ones are in position 0, k, 2k, . . .
-        ///  These contain the low bit of each group of k bits.
-        ///  The suffix _L indicates the long implementation.
+        /// These contain the low bit of each group of k bits.
+        /// The suffix _L indicates the <see cref="long"/> implementation.
         /// </summary>
         public const long L8_L = 0x0101010101010101L;
 
@@ -138,16 +138,16 @@ namespace Lucene.Net.Util
         public const long L16_L = 0x0001000100010001L;
 
         /// <summary>
-        /// Hk = Lk << (k-1) .
-        ///  These contain the high bit of each group of k bits.
-        ///  The suffix _L indicates the long implementation.
+        /// Hk = Lk &lt;&lt; (k-1) .
+        /// These contain the high bit of each group of k bits.
+        /// The suffix _L indicates the <see cref="long"/> implementation.
         /// </summary>
         public static readonly long H8_L = L8_L << 7;
 
         public static readonly long H16_L = L16_L << 15;
 
         /// <summary>
-        /// Naive implementation of <seealso cref="#select(long,int)"/>, using <seealso cref="Long#numberOfTrailingZeros"/> repetitively.
+        /// Naive implementation of <see cref="Select(long, int)"/>, using <see cref="Number.NumberOfLeadingZeros(long)"/> repetitively.
         /// Works relatively fast for low ranks. </summary>
         /// <returns> The index of the r-th 1 bit in x, or if no such bit exists, 72. </returns>
         public static int SelectNaive(long x, int r)

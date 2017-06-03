@@ -28,10 +28,11 @@ namespace Lucene.Net.Util
     using IndexReader = Lucene.Net.Index.IndexReader;
 
     /// <summary>
+    /// <para>
     /// Provides methods for sanity checking that entries in the FieldCache
     /// are not wasteful or inconsistent.
-    /// </p>
-    /// <p>
+    /// </para>
+    /// <para>
     /// Lucene 2.9 Introduced numerous enhancements into how the FieldCache
     /// is used by the low levels of Lucene searching (for Sorting and
     /// ValueSourceQueries) to improve both the speed for Sorting, as well
@@ -40,14 +41,15 @@ namespace Lucene.Net.Util
     /// MultiReader or DirectoryReader) down to the leaf level SegmentReaders.
     /// As a result, existing applications that directly access the FieldCache
     /// may find RAM usage increase significantly when upgrading to 2.9 or
-    /// Later.  this class provides an API for these applications (or their
+    /// Later.  This class provides an API for these applications (or their
     /// Unit tests) to check at run time if the FieldCache contains "insane"
     /// usages of the FieldCache.
-    /// </p>
-    /// @lucene.experimental </summary>
-    /// <seealso cref= FieldCache </seealso>
-    /// <seealso cref= FieldCacheSanityChecker.Insanity </seealso>
-    /// <seealso cref= FieldCacheSanityChecker.InsanityType </seealso>
+    /// </para>
+    /// @lucene.experimental 
+    /// </summary>
+    /// <seealso cref="IFieldCache"/>
+    /// <seealso cref="FieldCacheSanityChecker.Insanity"/>
+    /// <seealso cref="FieldCacheSanityChecker.InsanityType"/>
     public sealed class FieldCacheSanityChecker
     {
         private bool estimateRam;
@@ -57,7 +59,7 @@ namespace Lucene.Net.Util
             /* NOOP */
         }
 
-        /// <param name="estimateRam">If set, estimate size for all CacheEntry objects will be calculated.</param>
+        /// <param name="estimateRam">If set, estimate size for all <see cref="FieldCache.CacheEntry"/> objects will be calculated.</param>
         // LUCENENET specific - added this constructor overload so we wouldn't need a (ridiculous) SetRamUsageEstimator() method
         public FieldCacheSanityChecker(bool estimateRam)
         {
@@ -75,7 +77,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Quick and dirty convenience method </summary>
-        /// <seealso cref= #check </seealso>
+        /// <seealso cref="Check(FieldCache.CacheEntry[])"/>
         public static Insanity[] CheckSanity(IFieldCache cache)
         {
             return CheckSanity(cache.GetCacheEntries());
@@ -83,8 +85,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Quick and dirty convenience method that instantiates an instance with
-        /// "good defaults" and uses it to test the CacheEntrys </summary>
-        /// <seealso cref= #check </seealso>
+        /// "good defaults" and uses it to test the <see cref="FieldCache.CacheEntry"/>s </summary>
+        /// <seealso cref="Check(FieldCache.CacheEntry[])"/>
         public static Insanity[] CheckSanity(params FieldCache.CacheEntry[] cacheEntries)
         {
             FieldCacheSanityChecker sanityChecker = new FieldCacheSanityChecker(estimateRam: true);
@@ -93,10 +95,10 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Tests a CacheEntry[] for indication of "insane" cache usage.
-        /// <p>
-        /// <B>NOTE:</b>FieldCache CreationPlaceholder objects are ignored.
+        /// <para>
+        /// <b>NOTE:</b>FieldCache CreationPlaceholder objects are ignored.
         /// (:TODO: is this a bad idea? are we masking a real problem?)
-        /// </p>
+        /// </para>
         /// </summary>
         public Insanity[] Check(params FieldCache.CacheEntry[] cacheEntries)
         {
@@ -164,10 +166,10 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Internal helper method used by check that iterates over
-        /// valMismatchKeys and generates a Collection of Insanity
-        /// instances accordingly.  The MapOfSets are used to populate
-        /// the Insanity objects. </summary>
-        /// <seealso cref= InsanityType#VALUEMISMATCH </seealso>
+        /// <paramref name="valMismatchKeys"/> and generates a <see cref="ICollection{T}"/> of <see cref="Insanity"/>
+        /// instances accordingly.  The <see cref="MapOfSets{TKey, TValue}"/> are used to populate
+        /// the <see cref="Insanity"/> objects. </summary>
+        /// <seealso cref="InsanityType.VALUEMISMATCH"/>
         private ICollection<Insanity> CheckValueMismatch(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds, ISet<ReaderField> valMismatchKeys)
         {
             List<Insanity> insanity = new List<Insanity>(valMismatchKeys.Count * 3);
@@ -200,11 +202,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Internal helper method used by check that iterates over
-        /// the keys of readerFieldToValIds and generates a Collection
-        /// of Insanity instances whenever two (or more) ReaderField instances are
+        /// the keys of <paramref name="readerFieldToValIds"/> and generates a <see cref="ICollection{T}"/>
+        /// of <see cref="Insanity"/> instances whenever two (or more) <see cref="ReaderField"/> instances are
         /// found that have an ancestry relationships.
         /// </summary>
-        /// <seealso cref= InsanityType#SUBREADER </seealso>
+        /// <seealso cref="InsanityType.SUBREADER"/>
         private ICollection<Insanity> CheckSubreaders(MapOfSets<int, FieldCache.CacheEntry> valIdToItems, MapOfSets<ReaderField, int> readerFieldToValIds)
         {
             List<Insanity> insanity = new List<Insanity>(23);
@@ -281,9 +283,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Checks if the seed is an IndexReader, and if so will walk
+        /// Checks if the <paramref name="seed"/> is an <see cref="IndexReader"/>, and if so will walk
         /// the hierarchy of subReaders building up a list of the objects
-        /// returned by {@code seed.getCoreCacheKey()}
+        /// returned by <c>seed.CoreCacheKey</c>
         /// </summary>
         private IList<object> GetAllDescendantReaderKeys(object seed)
         {
@@ -359,9 +361,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Simple container for a collection of related CacheEntry objects that
+        /// Simple container for a collection of related <see cref="FieldCache.CacheEntry"/> objects that
         /// in conjunction with each other represent some "insane" usage of the
-        /// FieldCache.
+        /// <see cref="IFieldCache"/>.
         /// </summary>
         public sealed class Insanity
         {
@@ -396,7 +398,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Description of hte insane behavior
+            /// Description of the insane behavior
             /// </summary>
             public string Msg
             {
@@ -407,7 +409,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// CacheEntry objects which suggest a problem
+            /// <see cref="FieldCache.CacheEntry"/> objects which suggest a problem
             /// </summary>
             [WritableArray]
             [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
@@ -417,8 +419,8 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Multi-Line representation of this Insanity object, starting with
-            /// the Type and Msg, followed by each CacheEntry.toString() on it's
+            /// Multi-Line representation of this <see cref="Insanity"/> object, starting with
+            /// the Type and Msg, followed by each CacheEntry.ToString() on it's
             /// own line prefaced by a tab character
             /// </summary>
             public override string ToString()
@@ -446,11 +448,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// An Enumeration of the different types of "insane" behavior that
-        /// may be detected in a FieldCache.
+        /// may be detected in a <see cref="IFieldCache"/>.
         /// </summary>
-        /// <seealso cref= InsanityType#SUBREADER </seealso>
-        /// <seealso cref= InsanityType#VALUEMISMATCH </seealso>
-        /// <seealso cref= InsanityType#EXPECTED </seealso>
+        /// <seealso cref="InsanityType.SUBREADER"/>
+        /// <seealso cref="InsanityType.VALUEMISMATCH"/>
+        /// <seealso cref="InsanityType.EXPECTED"/>
         public sealed class InsanityType
         {
             private readonly string label;
@@ -472,24 +474,24 @@ namespace Lucene.Net.Util
             public static readonly InsanityType SUBREADER = new InsanityType("SUBREADER");
 
             /// <summary>
-            /// <p>
+            /// <para>
             /// Indicates entries have the same reader+fieldname but
-            /// different cached values.  this can happen if different datatypes,
+            /// different cached values.  This can happen if different datatypes,
             /// or parsers are used -- and while it's not necessarily a bug
             /// it's typically an indication of a possible problem.
-            /// </p>
-            /// <p>
+            /// </para>
+            /// <para>
             /// <b>NOTE:</b> Only the reader, fieldname, and cached value are actually
             /// tested -- if two cache entries have different parsers or datatypes but
-            /// the cached values are the same Object (== not just equal()) this method
-            /// does not consider that a red flag.  this allows for subtle variations
+            /// the cached values are the same Object (== not just Equal()) this method
+            /// does not consider that a red flag.  This allows for subtle variations
             /// in the way a Parser is specified (null vs DEFAULT_INT64_PARSER, etc...)
-            /// </p>
+            /// </para>
             /// </summary>
             public static readonly InsanityType VALUEMISMATCH = new InsanityType("VALUEMISMATCH");
 
             /// <summary>
-            /// Indicates an expected bit of "insanity".  this may be useful for
+            /// Indicates an expected bit of "insanity".  This may be useful for
             /// clients that wish to preserve/log information about insane usage
             /// but indicate that it was expected.
             /// </summary>

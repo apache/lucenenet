@@ -20,27 +20,27 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// A simple iterator interface for <seealso cref="BytesRef"/> iteration.
+    /// A simple iterator interface for <see cref="BytesRef"/> iteration.
     /// </summary>
     public interface IBytesRefIterator
     {
         /// <summary>
-        /// Increments the iteration to the next <seealso cref="BytesRef"/> in the iterator.
-        /// Returns the resulting <seealso cref="BytesRef"/> or <code>null</code> if the end of
-        /// the iterator is reached. The returned BytesRef may be re-used across calls
-        /// to next. After this method returns null, do not call it again: the results
+        /// Increments the iteration to the next <see cref="BytesRef"/> in the iterator.
+        /// Returns the resulting <see cref="BytesRef"/> or <c>null</c> if the end of
+        /// the iterator is reached. The returned <see cref="BytesRef"/> may be re-used across calls
+        /// to <see cref="Next()"/>. After this method returns <c>null</c>, do not call it again: the results
         /// are undefined.
         /// </summary>
-        /// <returns> the next <seealso cref="BytesRef"/> in the iterator or <code>null</code> if
+        /// <returns> The next <see cref="BytesRef"/> in the iterator or <c>null</c> if
         ///         the end of the iterator is reached. </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         BytesRef Next();
 
         /// <summary>
-        /// Return the <seealso cref="BytesRef"/> Comparer used to sort terms provided by the
-        /// iterator. this may return null if there are no items or the iterator is not
+        /// Return the <see cref="BytesRef"/> Comparer used to sort terms provided by the
+        /// iterator. This may return <c>null</c> if there are no items or the iterator is not
         /// sorted. Callers may invoke this method many times, so it's best to cache a
-        /// single instance & reuse it.
+        /// single instance &amp; reuse it.
         /// </summary>
         IComparer<BytesRef> Comparer { get; }
     }
@@ -56,6 +56,9 @@ namespace Lucene.Net.Util
     {
         private BytesRefIterator() { } // Disallow creation
 
+        /// <summary>
+        /// Singleton <see cref="BytesRefIterator"/> that iterates over 0 BytesRefs.
+        /// </summary>
         public static readonly IBytesRefIterator EMPTY = new EmptyBytesRefIterator();
 
         private class EmptyBytesRefIterator : IBytesRefIterator

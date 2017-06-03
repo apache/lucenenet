@@ -26,7 +26,7 @@ namespace Lucene.Net.Util
     /// Sort methods work directly on the supplied lists and don't copy to/from arrays
     /// before/after. For medium size collections as used in the Lucene indexer that is
     /// much more efficient.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class CollectionUtil
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
         /// This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small lists. 
         /// </summary>
-        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="list">This <see cref="IList{T}"/></param>
         /// <param name="comp">The <see cref="IComparer{T}"/> to use for the sort.</param>
         public static void IntroSort<T>(IList<T> list, IComparer<T> comp)
         {
@@ -157,7 +157,7 @@ namespace Lucene.Net.Util
         /// This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small lists. 
         /// </summary>
-        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="list">This <see cref="IList{T}"/></param>
         public static void IntroSort<T>(IList<T> list)
             //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
@@ -193,7 +193,7 @@ namespace Lucene.Net.Util
         /// Sorts the given <see cref="IList{T}"/> in natural order.
         /// This method uses the Tim sort
         /// algorithm, but falls back to binary sort for small lists. </summary>
-        /// <param name="list">this <see cref="IList{T}"/></param>
+        /// <param name="list">This <see cref="IList{T}"/></param>
         public static void TimSort<T>(IList<T> list)
             //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {

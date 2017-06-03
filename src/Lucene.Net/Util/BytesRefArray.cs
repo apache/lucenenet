@@ -22,12 +22,11 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// A simple append only random-access <seealso cref="BytesRef"/> array that stores full
-    /// copies of the appended bytes in a <seealso cref="ByteBlockPool"/>.
-    ///
-    ///
+    /// A simple append only random-access <see cref="BytesRef"/> array that stores full
+    /// copies of the appended bytes in a <see cref="ByteBlockPool"/>.
+    /// <para/>
     /// <b>Note: this class is not Thread-Safe!</b>
-    ///
+    /// <para/>
     /// @lucene.internal
     /// @lucene.experimental
     /// </summary>
@@ -43,7 +42,7 @@ namespace Lucene.Net.Util
         private readonly Counter bytesUsed;
 
         /// <summary>
-        /// Creates a new <seealso cref="BytesRefArray"/> with a counter to track allocated bytes
+        /// Creates a new <see cref="BytesRefArray"/> with a counter to track allocated bytes
         /// </summary>
         public BytesRefArray(Counter bytesUsed)
         {
@@ -54,7 +53,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Clears this <seealso cref="BytesRefArray"/>
+        /// Clears this <see cref="BytesRefArray"/>
         /// </summary>
         public void Clear()
         {
@@ -65,9 +64,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Appends a copy of the given <seealso cref="BytesRef"/> to this <seealso cref="BytesRefArray"/>. </summary>
-        /// <param name="bytes"> the bytes to append </param>
-        /// <returns> the index of the appended bytes </returns>
+        /// Appends a copy of the given <see cref="BytesRef"/> to this <see cref="BytesRefArray"/>. </summary>
+        /// <param name="bytes"> The bytes to append </param>
+        /// <returns> The index of the appended bytes </returns>
         public int Append(BytesRef bytes)
         {
             if (lastElement >= offsets.Length)
@@ -84,19 +83,20 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the current size of this <see cref="BytesRefArray"/>.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        /// <returns> the current size of this <see cref="BytesRefArray"/> </returns>
+        /// <returns> The current size of this <see cref="BytesRefArray"/> </returns>
         public int Length
         {
             get { return lastElement; }
         }
 
         /// <summary>
-        /// Returns the <i>n'th</i> element of this <seealso cref="BytesRefArray"/> </summary>
-        /// <param name="spare"> a spare <seealso cref="BytesRef"/> instance </param>
-        /// <param name="index"> the elements index to retrieve </param>
-        /// <returns> the <i>n'th</i> element of this <seealso cref="BytesRefArray"/> </returns>
+        /// Returns the <i>n'th</i> element of this <see cref="BytesRefArray"/> </summary>
+        /// <param name="spare"> A spare <see cref="BytesRef"/> instance </param>
+        /// <param name="index"> The elements index to retrieve </param>
+        /// <returns> The <i>n'th</i> element of this <see cref="BytesRefArray"/> </returns>
         public BytesRef Get(BytesRef spare, int index)
         {
             if (lastElement > index)
@@ -171,7 +171,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// sugar for <seealso cref="#iterator(Comparer)"/> with a <code>null</code> comparer
+        /// Sugar for <see cref="GetIterator(IComparer{BytesRef})"/> with a <c>null</c> comparer
         /// </summary>
         public IBytesRefIterator GetIterator()
         {
@@ -179,18 +179,18 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// <p>
-        /// Returns a <seealso cref="IBytesRefIterator"/> with point in time semantics. The
-        /// iterator provides access to all so far appended <seealso cref="BytesRef"/> instances.
-        /// </p>
-        /// <p>
-        /// If a non <code>null</code> <seealso cref="Comparer"/> is provided the iterator will
+        /// <para>
+        /// Returns a <see cref="IBytesRefIterator"/> with point in time semantics. The
+        /// iterator provides access to all so far appended <see cref="BytesRef"/> instances.
+        /// </para>
+        /// <para>
+        /// If a non <c>null</c> <see cref="T:IComparer{BytesRef}"/> is provided the iterator will
         /// iterate the byte values in the order specified by the comparer. Otherwise
         /// the order is the same as the values were appended.
-        /// </p>
-        /// <p>
-        /// this is a non-destructive operation.
-        /// </p>
+        /// </para>
+        /// <para>
+        /// This is a non-destructive operation.
+        /// </para>
         /// </summary>
         public IBytesRefIterator GetIterator(IComparer<BytesRef> comp)
         {

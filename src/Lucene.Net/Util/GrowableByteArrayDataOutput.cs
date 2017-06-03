@@ -23,7 +23,8 @@ namespace Lucene.Net.Util
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// A <seealso cref="DataOutput"/> that can be used to build a byte[].
+    /// A <see cref="DataOutput"/> that can be used to build a <see cref="T:byte[]"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class GrowableByteArrayDataOutput : DataOutput
@@ -44,7 +45,7 @@ namespace Lucene.Net.Util
         public int Length { get; set; }
 
         /// <summary>
-        /// Create a <seealso cref="GrowableByteArrayDataOutput"/> with the given initial capacity. </summary>
+        /// Create a <see cref="GrowableByteArrayDataOutput"/> with the given initial capacity. </summary>
         public GrowableByteArrayDataOutput(int cp)
         {
             this.bytes = new byte[ArrayUtil.Oversize(cp, 1)];

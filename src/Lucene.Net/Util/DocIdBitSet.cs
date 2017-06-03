@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     /// <summary>
-    /// Simple DocIdSet and DocIdSetIterator backed by a BitSet 
+    /// Simple <see cref="DocIdSet"/> and <see cref="DocIdSetIterator"/> backed by a <see cref="BitArray"/> 
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this DocIdSet implementation is cacheable. </summary>
+        /// This DocIdSet implementation is cacheable. </summary>
         public override bool IsCacheable
         {
             get
@@ -60,7 +60,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the underlying BitSet.
+        /// Returns the underlying <see cref="BitArray"/>.
         /// </summary>
         public virtual BitArray BitSet
         {
