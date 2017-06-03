@@ -46,10 +46,10 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// <para/>
     /// You can customize the behavior by subclassing this highlighter, some important hooks:
     /// <list type="bullet">
-    ///     <item><see cref="GetBreakIterator(string)"/>: Customize how the text is divided into passages.</description></item>
-    ///     <item><see cref="GetScorer(string)"/>: Customize how passages are ranked.</description></item>
-    ///     <item><see cref="GetFormatter(string)"/>: Customize how snippets are formatted.</description></item>
-    ///     <item><see cref="GetIndexAnalyzer(string)"/>: Enable highlighting of MultiTermQuerys such as <see cref="WildcardQuery"/>.</description></item>
+    ///     <item><description><see cref="GetBreakIterator(string)"/>: Customize how the text is divided into passages.</description></item>
+    ///     <item><description><see cref="GetScorer(string)"/>: Customize how passages are ranked.</description></item>
+    ///     <item><description><see cref="GetFormatter(string)"/>: Customize how snippets are formatted.</description></item>
+    ///     <item><description><see cref="GetIndexAnalyzer(string)"/>: Enable highlighting of MultiTermQuerys such as <see cref="WildcardQuery"/>.</description></item>
     /// </list>
     /// <para/>
     /// <b>WARNING</b>: The code is very new and probably still has some exciting bugs!
