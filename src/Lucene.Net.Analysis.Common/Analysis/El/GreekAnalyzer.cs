@@ -105,10 +105,10 @@ namespace Lucene.Net.Analysis.El
 
         /// <summary>
         /// Creates
-        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// <see cref="TokenStreamComponents"/>
         /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        /// <returns> <see cref="TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="GreekLowerCaseFilter"/>, <see cref="StandardFilter"/>,
         ///         <see cref="StopFilter"/>, and <see cref="GreekStemFilter"/> </returns>

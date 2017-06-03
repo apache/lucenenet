@@ -86,11 +86,11 @@ namespace Lucene.Net.Analysis.NGram
     /// <para>This tokenizer changed a lot in Lucene 4.4 in order to:
     /// <list type="bullet">
     ///     <item><description>tokenize in a streaming fashion to support streams which are larger
-    ///         than 1024 chars (limit of the previous version),</item>
+    ///         than 1024 chars (limit of the previous version),</description></item>
     ///     <item><description>count grams based on unicode code points instead of java chars (and
-    ///         never split in the middle of surrogate pairs),</item>
+    ///         never split in the middle of surrogate pairs),</description></item>
     ///     <item><description>give the ability to pre-tokenize the stream (<see cref="IsTokenChar(int)"/>)
-    ///         before computing n-grams.</item>
+    ///         before computing n-grams.</description></item>
     /// </list>
     /// </para>
     /// <para>Additionally, this class doesn't trim trailing whitespaces and emits

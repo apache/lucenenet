@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.No
         private readonly IKeywordAttribute keywordAttr;
 
         /// <summary>
-        /// Calls <see cref="NorwegianLightStemFilter.NorwegianLightStemFilter(TokenStream, int)"/> -
+        /// Calls <see cref="NorwegianLightStemFilter.NorwegianLightStemFilter(TokenStream, NorwegianStandard)"/> -
         /// NorwegianMinimalStemFilter(input, BOKMAAL)
         /// </summary>
         public NorwegianMinimalStemFilter(TokenStream input)
@@ -46,8 +46,8 @@ namespace Lucene.Net.Analysis.No
         /// <summary>
         /// Creates a new <see cref="NorwegianLightStemFilter"/> </summary>
         /// <param name="input"> the source <see cref="TokenStream"/> to filter </param>
-        /// <param name="flags"> set to <see cref="NorwegianLightStemmer.BOKMAAL"/>, 
-        ///                     <see cref="NorwegianLightStemmer.NYNORSK"/>, or both. </param>
+        /// <param name="flags"> set to <see cref="NorwegianStandard.BOKMAAL"/>, 
+        ///                     <see cref="NorwegianStandard.NYNORSK"/>, or both. </param>
         public NorwegianMinimalStemFilter(TokenStream input, NorwegianStandard flags)
             : base(input)
         {

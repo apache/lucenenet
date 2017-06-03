@@ -489,7 +489,7 @@ namespace Lucene.Net.Analysis.Util
         /// Indicates whether this reader is ready to be read without blocking.
         /// </summary>
         /// <returns>
-        /// <c>true</c> if this reader will not block when <see cref="Read"/> is
+        /// <c>true</c> if this reader will not block when <see cref="Read()"/> is
         /// called, <c>false</c> if unknown or blocking will occur.
         /// </returns>
         public override bool IsReady

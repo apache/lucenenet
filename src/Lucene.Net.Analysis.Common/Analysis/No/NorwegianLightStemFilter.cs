@@ -35,7 +35,7 @@ namespace Lucene.Net.Analysis.No
         private readonly IKeywordAttribute keywordAttr;
 
         /// <summary>
-        /// Calls <see cref="NorwegianLightStemFilter.NorwegianLightStemFilter(TokenStream, int)"/>
+        /// Calls <see cref="NorwegianLightStemFilter.NorwegianLightStemFilter(TokenStream, NorwegianStandard)"/>
         /// - NorwegianLightStemFilter(input, BOKMAAL)
         /// </summary>
         /// <param name="input"> the source <see cref="TokenStream"/> to filter </param>
