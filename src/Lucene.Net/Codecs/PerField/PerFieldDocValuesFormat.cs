@@ -37,18 +37,21 @@ namespace Lucene.Net.Codecs.PerField
 
     /// <summary>
     /// Enables per field docvalues support.
-    /// <p>
-    /// Note, when extending this class, the name (<seealso cref="#getName"/>) is
+    /// <para/>
+    /// Note, when extending this class, the name (<see cref="DocValuesFormat.Name"/>) is
     /// written into the index. In order for the field to be read, the
-    /// name must resolve to your implementation via <seealso cref="#forName(String)"/>.
-    /// this method uses Java's
-    /// <seealso cref="ServiceLoader Service Provider Interface"/> to resolve format names.
-    /// <p>
+    /// name must resolve to your implementation via <see cref="DocValuesFormat.ForName(string)"/>.
+    /// This method uses <see cref="IDocValuesFormatFactory.GetDocValuesFormat(string)"/> to resolve format names.
+    /// See <see cref="DefaultDocValuesFormatFactory"/> for information about how to implement your own <see cref="DocValuesFormat"/>.
+    /// <para/>
     /// Files written by each docvalues format have an additional suffix containing the
-    /// format name. For example, in a per-field configuration instead of <tt>_1.dat</tt>
-    /// filenames would look like <tt>_1_Lucene40_0.dat</tt>. </summary>
-    /// <seealso cref= ServiceLoader
-    /// @lucene.experimental </seealso>
+    /// format name. For example, in a per-field configuration instead of <c>_1.dat</c>
+    /// filenames would look like <c>_1_Lucene40_0.dat</c>. 
+    /// <para/>
+    /// @lucene.experimental
+    /// </summary>
+    /// <seealso cref="IDocValuesFormatFactory"/>
+    /// <seealso cref="DefaultDocValuesFormatFactory"/>
     [DocValuesFormatName("PerFieldDV40")]
     public abstract class PerFieldDocValuesFormat : DocValuesFormat
     {
@@ -58,14 +61,14 @@ namespace Lucene.Net.Codecs.PerField
         //public static readonly string PER_FIELD_NAME = "PerFieldDV40";
 
         /// <summary>
-        /// <seealso cref="FieldInfo"/> attribute name used to store the
-        ///  format name for each field.
+        /// <see cref="FieldInfo"/> attribute name used to store the
+        /// format name for each field.
         /// </summary>
         public static readonly string PER_FIELD_FORMAT_KEY = typeof(PerFieldDocValuesFormat).Name + ".format";
 
         /// <summary>
-        /// <seealso cref="FieldInfo"/> attribute name used to store the
-        ///  segment suffix name for each field.
+        /// <see cref="FieldInfo"/> attribute name used to store the
+        /// segment suffix name for each field.
         /// </summary>
         public static readonly string PER_FIELD_SUFFIX_KEY = typeof(PerFieldDocValuesFormat).Name + ".suffix";
 
@@ -395,8 +398,8 @@ namespace Lucene.Net.Codecs.PerField
 
         /// <summary>
         /// Returns the doc values format that should be used for writing
-        /// new segments of <code>field</code>.
-        /// <p>
+        /// new segments of <paramref name="field"/>.
+        /// <para/>
         /// The field to format mapping is written to the index, so
         /// this method is only invoked when writing, not when reading.
         /// </summary>
