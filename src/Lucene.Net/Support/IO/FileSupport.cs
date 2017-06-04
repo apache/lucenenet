@@ -208,7 +208,7 @@ namespace Lucene.Net.Support.IO
 
         /// <summary>
         /// Generates a new random file name with the provided <paramref name="directory"/>, 
-        /// <paramref name="prefix"/> and optional <see cref="suffix"/>.
+        /// <paramref name="prefix"/> and optional <paramref name="suffix"/>.
         /// </summary>
         /// <param name="prefix">The prefix string to be used in generating the file's name</param>
         /// <param name="suffix">The suffix string to be used in generating the file's name; may be null, in which case a random suffix will be generated</param>

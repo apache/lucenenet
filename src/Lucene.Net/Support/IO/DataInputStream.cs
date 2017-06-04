@@ -29,7 +29,7 @@ namespace Lucene.Net.Support.IO
     /// This is a port of DataInputStream that is fully compatible with Java's DataOutputStream.
     /// <para>
     /// Usage Note: Always favor BinaryReader over DataInputStream unless you specifically need
-    /// the modified UTF-8 format and/or the <see cref="ReadUTF(IDataInput)"/> method.
+    /// the modified UTF-8 format and/or the <see cref="ReadUTF()"/> or <see cref="DecodeUTF(int)"/> method.
     /// </para>
     /// </summary>
     public class DataInputStream : IDataInput, IDisposable

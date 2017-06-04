@@ -58,7 +58,7 @@ namespace Lucene.Net.Support
         /// <see cref="EquatableList{T}.EquatableList(IEnumerable{T})"/> overload). 
         /// <para/>
         /// The internal <paramref name="collection"/> is used for
-        /// all operations except for <see cref="Equals()"/>, <see cref="GetHashCode()"/>,
+        /// all operations except for <see cref="Equals(object)"/>, <see cref="GetHashCode()"/>,
         /// and <see cref="ToString()"/>, which are all based on deep analysis
         /// of this collection and any nested collections.
         /// </summary>
@@ -85,7 +85,8 @@ namespace Lucene.Net.Support
         /// Initializes a new 
         /// instance of the <see cref="EquatableList{T}"/>
         /// class that contains elements copied from the specified collection and has
-        /// sufficient capacity to accommodate the number of elements copied. 
+        /// sufficient capacity to accommodate the number of elements copied.
+        /// </summary>
         /// <param name="collection">The collection whose elements are copied to the new list.</param>
         public EquatableList(IEnumerable<T> collection)
         {
@@ -338,17 +339,17 @@ namespace Lucene.Net.Support
         /// Therefore, <see cref="EquatableList{T}"/> can equal any <see cref="IList{T}"/>
         /// with the exact same values in the same order.
         /// </summary>
-        /// <param name="obj">The other object
+        /// <param name="other">The other object
         /// to compare against.</param>
         /// <returns><c>true</c> if the sequence in <paramref name="other"/>
         /// is the same as this one.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object other)
         {
-            if (!(obj is IList<T>))
+            if (!(other is IList<T>))
             {
                 return false;
             }
-            return this.Equals(obj as IList<T>);
+            return this.Equals(other as IList<T>);
         }
 
         /// <summary>

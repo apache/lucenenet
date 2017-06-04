@@ -41,7 +41,7 @@ namespace Lucene.Net.Support
         /// </list>
         /// This method is a convenience to replace the .NET CompareTo method 
         /// on all strings, provided the logic does not expect specific values
-        /// but is simply comparing them with <code>></code> or <code><</code>.
+        /// but is simply comparing them with <c>&gt;</c> or <c>&lt;</c>.
         /// </summary>
         /// <param name="str"></param>
         /// <param name="value">The string to compare with.</param>

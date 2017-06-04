@@ -169,7 +169,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Sets the bit at the given <paramref name="index"/> to true.
+        /// Sets the bit at the given index range to true.
         /// </summary>
         /// <param name="bits">The BitArray object.</param>
         /// <param name="fromIndex">The start of the range to set(inclusive)</param>

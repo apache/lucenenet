@@ -59,7 +59,7 @@ namespace Lucene.Net.Support
 
         /// <summary>
         /// If the underlying type is <see cref="List{T}"/>,
-        /// calls <see cref="List{T}.Sort"/>. If not, 
+        /// calls <see cref="List{T}.Sort()"/>. If not, 
         /// uses <see cref="Util.CollectionUtil.TimSort{T}(IList{T})"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -135,6 +135,7 @@ namespace Lucene.Net.Support
             Util.CollectionUtil.TimSort(list, comparer);
         }
 
+        /// <summary>
         /// Sorts the given <see cref="IList{T}"/> using the <see cref="IComparer{T}"/>.
         /// This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small lists. 

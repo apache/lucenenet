@@ -91,7 +91,7 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
-        /// Builder method for <see cref="LiveLiveIndexWriterConfig.ReaderTermsIndexDivisor"/>.
+        /// Builder method for <see cref="LiveIndexWriterConfig.ReaderTermsIndexDivisor"/>.
         /// </summary>
         /// <param name="config">this <see cref="LiveIndexWriterConfig"/> instance</param>
         /// <param name="divisor"></param>

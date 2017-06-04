@@ -29,7 +29,7 @@ namespace Lucene.Net.Support.IO
     /// This is a port of DataOutputStream that is fully compatible with Java's DataInputStream.
     /// <para>
     /// Usage Note: Always favor BinaryWriter over DataOutputStream unless you specifically need
-    /// the modified UTF-8 format and/or the <see cref="WriteUTF(IDataOutput)"/> method.
+    /// the modified UTF-8 format and/or the <see cref="WriteUTF(string)"/> method.
     /// </para>
     /// </summary>
     public class DataOutputStream : IDataOutput, IDisposable

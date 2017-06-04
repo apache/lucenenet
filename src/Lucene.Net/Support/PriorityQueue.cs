@@ -187,9 +187,8 @@ namespace Lucene.Net.Support
         /// cannot be compared to one another according to <paramref name="collection"/>'s
         /// ordering
         /// </exception>
-        /// <see cref="ArgumentNullException">if the specified collection or any
-        /// of its elements are null</see>
-        /// </summary>
+        /// <exception cref="ArgumentNullException">if the specified collection or any
+        /// of its elements are null</exception>
         public PriorityQueue(SortedSet<T> collection)
         {
             if (collection == null)
@@ -215,9 +214,8 @@ namespace Lucene.Net.Support
         /// cannot be compared to one another according to <paramref name="collection"/>'s
         /// ordering
         /// </exception>
-        /// <see cref="ArgumentNullException">if the specified collection or any
-        /// of its elements are null</see>
-        /// </summary>
+        /// <exception cref="ArgumentNullException">if the specified collection or any
+        /// of its elements are null</exception>
         public PriorityQueue(TreeSet<T> collection)
         {
             if (collection == null)
