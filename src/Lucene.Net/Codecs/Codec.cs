@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Returns this codec's name </summary>
+        /// Returns this codec's name. </summary>
         public string Name
         {
             get
@@ -108,46 +108,46 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Encodes/decodes postings </summary>
+        /// Encodes/decodes postings. </summary>
         public abstract PostingsFormat PostingsFormat { get; }
 
         /// <summary>
-        /// Encodes/decodes docvalues </summary>
+        /// Encodes/decodes docvalues. </summary>
         public abstract DocValuesFormat DocValuesFormat { get; }
 
         /// <summary>
-        /// Encodes/decodes stored fields </summary>
+        /// Encodes/decodes stored fields. </summary>
         public abstract StoredFieldsFormat StoredFieldsFormat { get; }
 
         /// <summary>
-        /// Encodes/decodes term vectors </summary>
+        /// Encodes/decodes term vectors. </summary>
         public abstract TermVectorsFormat TermVectorsFormat { get; }
 
         /// <summary>
-        /// Encodes/decodes field infos file </summary>
+        /// Encodes/decodes field infos file. </summary>
         public abstract FieldInfosFormat FieldInfosFormat { get; }
 
         /// <summary>
-        /// Encodes/decodes segment info file </summary>
+        /// Encodes/decodes segment info file. </summary>
         public abstract SegmentInfoFormat SegmentInfoFormat { get; }
 
         /// <summary>
-        /// Encodes/decodes document normalization values </summary>
+        /// Encodes/decodes document normalization values. </summary>
         public abstract NormsFormat NormsFormat { get; }
 
         /// <summary>
-        /// Encodes/decodes live docs </summary>
+        /// Encodes/decodes live docs. </summary>
         public abstract LiveDocsFormat LiveDocsFormat { get; }
 
         /// <summary>
-        /// looks up a codec by name </summary>
+        /// Looks up a codec by name. </summary>
         public static Codec ForName(string name)
         {
             return codecFactory.GetCodec(name);
         }
 
         /// <summary>
-        /// returns a list of all available codec names </summary>
+        /// Returns a list of all available codec names. </summary>
         public static ICollection<string> AvailableCodecs()
         {
             if (codecFactory is IServiceListable)
@@ -166,8 +166,8 @@ namespace Lucene.Net.Codecs
         private static Codec defaultCodec;
 
         /// <summary>
-        /// expert: returns the default codec used for newly created
-        ///  <seealso cref="IndexWriterConfig"/>s.
+        /// Expert: returns the default codec used for newly created
+        /// <seealso cref="Index.IndexWriterConfig"/>s.
         /// </summary>
         // TODO: should we use this, or maybe a system property is better?
         public static Codec Default
@@ -189,7 +189,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// returns the codec's name. Subclasses can override to provide
+        /// Returns the codec's name. Subclasses can override to provide
         /// more detail (such as parameters).
         /// </summary>
         public override string ToString()

@@ -51,9 +51,25 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 ### Documentation Comments == up for grabs:
 
 1. Lucene.Net.Core (project)
-   1. Codecs (namespace)
-   2. Util.Packed (namespace)
+   1. Codecs.Compressing (namespace)
+   2. Codecs.Lucene3x (namespace)
+   3. Codecs.Lucene40 (namespace)
+   4. Codecs.Lucene41 (namespace)
+   5. Codecs.Lucene42 (namespace)
+   6. Codecs.Lucene45 (namespace)
+   7. Codecs.Lucene46 (namespace)
+   8. Codecs.PerField (namespace)
+   9. Util.Packed (namespace)
 2. Lucene.Net.Codecs (project)
+   1. Appending (namespace)
+   2. BlockTerms (namespace)
+   3. Bloom (namespace)
+   4. DiskDV (namespace)
+   5. IntBlock (namespace)
+   6. Memory (namespace)
+   7. Pulsing (namespace)
+   8. Sep (namespace)
+   9. SimpleText (namespace)
 
 See [Documenting Lucene.Net](https://cwiki.apache.org/confluence/display/LUCENENET/Documenting+Lucene.Net) for instructions. 
 

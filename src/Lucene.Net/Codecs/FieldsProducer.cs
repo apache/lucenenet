@@ -23,39 +23,45 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Abstract API that produces terms, doc, freq, prox, offset and
-    ///  payloads postings.
-    ///
+    /// payloads postings.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-
     public abstract class FieldsProducer : Fields, IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal FieldsProducer()
         {
         }
 
         // LUCENENET specific - implementing proper dispose pattern
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
 
         /// <summary>
-        /// Returns approximate RAM bytes used </summary>
+        /// Returns approximate RAM bytes used. </summary>
         public abstract long RamBytesUsed();
 
         /// <summary>
         /// Checks consistency of this reader.
-        /// <p>
+        /// <para/>
         /// Note that this may be costly in terms of I/O, e.g.
         /// may involve computing a checksum value against large data files.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public abstract void CheckIntegrity();

@@ -23,46 +23,54 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Codec API for reading stored fields.
-    /// 
-    /// You need to implement visitDocument(int, StoredFieldVisitor) to
-    /// read the stored fields for a document, implement clone( (creating
-    /// clones of any IndexInputs used, etc), and close() 
-    /// 
+    /// <para/>
+    /// You need to implement <see cref="VisitDocument(int, StoredFieldVisitor)"/> to
+    /// read the stored fields for a document, implement <see cref="Clone()"/> (creating
+    /// clones of any <see cref="Store.IndexInput"/>s used, etc), and <see cref="Dispose(bool)"/>
+    /// to cleanup any allocated resources.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class StoredFieldsReader : IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal StoredFieldsReader()
         {
         }
 
         /// <summary>
-        /// Visit the stored fields for document <code>n</code> </summary>
+        /// Visit the stored fields for document <paramref name="n"/>. </summary>
         public abstract void VisitDocument(int n, StoredFieldVisitor visitor);
 
         public abstract object Clone();
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
 
         /// <summary>
-        /// Returns approximate RAM bytes used </summary>
+        /// Returns approximate RAM bytes used. </summary>
         public abstract long RamBytesUsed();
 
         /// <summary>
         /// Checks consistency of this reader.
-        /// 
+        /// <para/>
         /// Note that this may be costly in terms of I/O, e.g.
         /// may involve computing a checksum value against large data files.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public abstract void CheckIntegrity();

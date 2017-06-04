@@ -37,31 +37,31 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Codec API for writing term vectors:
-    /// <p>
-    /// <ol>
-    ///   <li>For every document, <seealso cref="#startDocument(int)"/> is called,
-    ///       informing the Codec how many fields will be written.
-    ///   <li><seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/> is called for
+    /// <para/>
+    /// <list type="number">
+    ///   <item><description>For every document, <see cref="StartDocument(int)"/> is called,
+    ///       informing the <see cref="Codec"/> how many fields will be written.</description></item>
+    ///   <item><description><see cref="StartField(FieldInfo, int, bool, bool, bool)"/> is called for
     ///       each field in the document, informing the codec how many terms
     ///       will be written for that field, and whether or not positions,
-    ///       offsets, or payloads are enabled.
-    ///   <li>Within each field, <seealso cref="#startTerm(BytesRef, int)"/> is called
-    ///       for each term.
-    ///   <li>If offsets and/or positions are enabled, then
-    ///       <seealso cref="#addPosition(int, int, int, BytesRef)"/> will be called for each term
-    ///       occurrence.
-    ///   <li>After all documents have been written, <seealso cref="#finish(FieldInfos, int)"/>
-    ///       is called for verification/sanity-checks.
-    ///   <li>Finally the writer is closed (<seealso cref="#close()"/>)
-    /// </ol>
-    ///
+    ///       offsets, or payloads are enabled.</description></item>
+    ///   <item><description>Within each field, <see cref="StartTerm(BytesRef, int)"/> is called
+    ///       for each term.</description></item>
+    ///   <item><description>If offsets and/or positions are enabled, then
+    ///       <see cref="AddPosition(int, int, int, BytesRef)"/> will be called for each term
+    ///       occurrence.</description></item>
+    ///   <item><description>After all documents have been written, <see cref="Finish(FieldInfos, int)"/>
+    ///       is called for verification/sanity-checks.</description></item>
+    ///   <item><description>Finally the writer is disposed (<see cref="Dispose(bool)"/>)</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class TermVectorsWriter : IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal TermVectorsWriter()
         {
@@ -69,11 +69,11 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called before writing the term vectors of the document.
-        ///  <seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/> will
-        ///  be called <code>numVectorFields</code> times. Note that if term
-        ///  vectors are enabled, this is called even if the document
-        ///  has no vector fields, in this case <code>numVectorFields</code>
-        ///  will be zero.
+        /// <see cref="StartField(FieldInfo, int, bool, bool, bool)"/> will
+        /// be called <paramref name="numVectorFields"/> times. Note that if term
+        /// vectors are enabled, this is called even if the document
+        /// has no vector fields, in this case <paramref name="numVectorFields"/>
+        /// will be zero.
         /// </summary>
         public abstract void StartDocument(int numVectorFields);
 
@@ -85,7 +85,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called before writing the terms of the field.
-        ///  <seealso cref="#startTerm(BytesRef, int)"/> will be called <code>numTerms</code> times.
+        /// <see cref="StartTerm(BytesRef, int)"/> will be called <paramref name="numTerms"/> times.
         /// </summary>
         public abstract void StartField(FieldInfo info, int numTerms, bool positions, bool offsets, bool payloads);
 
@@ -96,10 +96,10 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Adds a term and its term frequency <code>freq</code>.
+        /// Adds a <paramref name="term"/> and its term frequency <paramref name="freq"/>.
         /// If this field has positions and/or offsets enabled, then
-        /// <seealso cref="#addPosition(int, int, int, BytesRef)"/> will be called
-        /// <code>freq</code> times respectively.
+        /// <see cref="AddPosition(int, int, int, BytesRef)"/> will be called
+        /// <paramref name="freq"/> times respectively.
         /// </summary>
         public abstract void StartTerm(BytesRef term, int freq);
 
@@ -110,36 +110,37 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Adds a term position and offsets </summary>
+        /// Adds a term <paramref name="position"/> and offsets. </summary>
         public abstract void AddPosition(int position, int startOffset, int endOffset, BytesRef payload);
 
         /// <summary>
         /// Aborts writing entirely, implementation should remove
-        ///  any partially-written files, etc.
+        /// any partially-written files, etc.
         /// </summary>
         public abstract void Abort();
 
         /// <summary>
-        /// Called before <seealso cref="#close()"/>, passing in the number
-        ///  of documents that were written. Note that this is
-        ///  intentionally redundant (equivalent to the number of
-        ///  calls to <seealso cref="#startDocument(int)"/>, but a Codec should
-        ///  check that this is the case to detect the JRE bug described
-        ///  in LUCENE-1282.
+        /// Called before <see cref="Dispose(bool)"/>, passing in the number
+        /// of documents that were written. Note that this is
+        /// intentionally redundant (equivalent to the number of
+        /// calls to <see cref="StartDocument(int)"/>, but a <see cref="Codec"/> should
+        /// check that this is the case to detect the bug described
+        /// in LUCENE-1282.
         /// </summary>
         public abstract void Finish(FieldInfos fis, int numDocs);
 
         /// <summary>
-        /// Called by IndexWriter when writing new segments.
-        /// <p>
-        /// this is an expert API that allows the codec to consume
+        /// Called by <see cref="Index.IndexWriter"/> when writing new segments.
+        /// <para/>
+        /// This is an expert API that allows the codec to consume
         /// positions and offsets directly from the indexer.
-        /// <p>
-        /// The default implementation calls <seealso cref="#addPosition(int, int, int, BytesRef)"/>,
+        /// <para/>
+        /// The default implementation calls <see cref="AddPosition(int, int, int, BytesRef)"/>,
         /// but subclasses can override this if they want to efficiently write
         /// all the positions, then all the offsets, for example.
-        /// <p>
+        /// <para/>
         /// NOTE: this API is extremely expert and subject to change or removal!!!
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         // TODO: we should probably nuke this and make a more efficient 4.x format
@@ -206,14 +207,14 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Merges in the term vectors from the readers in
-        ///  <code>mergeState</code>. The default implementation skips
-        ///  over deleted documents, and uses <seealso cref="#startDocument(int)"/>,
-        ///  <seealso cref="#startField(FieldInfo, int, boolean, boolean, boolean)"/>,
-        ///  <seealso cref="#startTerm(BytesRef, int)"/>, <seealso cref="#addPosition(int, int, int, BytesRef)"/>,
-        ///  and <seealso cref="#finish(FieldInfos, int)"/>,
-        ///  returning the number of documents that were written.
-        ///  Implementations can override this method for more sophisticated
-        ///  merging (bulk-byte copying, etc).
+        /// <paramref name="mergeState"/>. The default implementation skips
+        /// over deleted documents, and uses <see cref="StartDocument(int)"/>,
+        /// <see cref="StartField(FieldInfo, int, bool, bool, bool)"/>,
+        /// <see cref="StartTerm(BytesRef, int)"/>, <see cref="AddPosition(int, int, int, BytesRef)"/>,
+        /// and <see cref="Finish(FieldInfos, int)"/>,
+        /// returning the number of documents that were written.
+        /// Implementations can override this method for more sophisticated
+        /// merging (bulk-byte copying, etc).
         /// </summary>
         public virtual int Merge(MergeState mergeState)
         {
@@ -245,7 +246,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Safe (but, slowish) default method to write every
-        ///  vector field in the document.
+        /// vector field in the document.
         /// </summary>
         protected void AddAllDocVectors(Fields vectors, MergeState mergeState)
         {
@@ -350,17 +351,23 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Return the BytesRef Comparer used to sort terms
-        ///  before feeding to this API.
+        /// Return the <see cref="T:IComparer{BytesRef}"/> used to sort terms
+        /// before feeding to this API.
         /// </summary>
         public abstract IComparer<BytesRef> Comparer { get; }
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
     }
 }

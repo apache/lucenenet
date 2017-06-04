@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs
     /// <summary>
     /// Exposes flex API, merged from flex API of sub-segments,
     /// remapping docIDs (this is used for segment merging).
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class MappingMultiDocsEnum : DocsEnum
@@ -58,8 +58,8 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Sets the <seealso cref="MergeState"/>, which is used to re-map
-        ///  document IDs.
+        /// Sets the <see cref="MergeState"/>, which is used to re-map
+        /// document IDs.
         /// </summary>
         public MergeState MergeState
         {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// How many sub-readers we are merging. </summary>
-        ///  <seealso cref= #getSubs  </seealso>
+        /// <seealso cref="Subs"/>
         public int NumSubs
         {
             get

@@ -23,23 +23,23 @@ namespace Lucene.Net.Codecs
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Specifies an API for classes that can write out <seealso cref="SegmentInfo"/> data.
+    /// Specifies an API for classes that can write out <see cref="SegmentInfo"/> data.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-
     public abstract class SegmentInfoWriter
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal SegmentInfoWriter()
         {
         }
 
         /// <summary>
-        /// Write <seealso cref="SegmentInfo"/> data. </summary>
-        /// <exception cref="IOException"> If an I/O error occurs </exception>
+        /// Write <see cref="SegmentInfo"/> data. </summary>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurs. </exception>
         public abstract void Write(Directory dir, SegmentInfo info, FieldInfos fis, IOContext ioContext);
     }
 }

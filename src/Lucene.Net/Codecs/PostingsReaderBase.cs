@@ -29,14 +29,15 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// The core terms dictionaries (BlockTermsReader,
-    ///  BlockTreeTermsReader) interact with a single instance
-    ///  of this class to manage creation of <seealso cref="DocsEnum"/> and
-    ///  <seealso cref="DocsAndPositionsEnum"/> instances.  It provides an
-    ///  IndexInput (termsIn) where this class may read any
-    ///  previously stored data that it had written in its
-    ///  corresponding <seealso cref="PostingsWriterBase"/> at indexing
-    ///  time.
-    ///  @lucene.experimental
+    /// <see cref="BlockTreeTermsReader"/>) interact with a single instance
+    /// of this class to manage creation of <see cref="DocsEnum"/> and
+    /// <see cref="DocsAndPositionsEnum"/> instances.  It provides an
+    /// <see cref="IndexInput"/> (termsIn) where this class may read any
+    /// previously stored data that it had written in its
+    /// corresponding <see cref="PostingsWriterBase"/> at indexing
+    /// time.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
 
     // TODO: find a better name; this defines the API that the
@@ -46,7 +47,7 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal PostingsReaderBase()
         {
@@ -54,51 +55,58 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Performs any initialization, such as reading and
-        ///  verifying the header from the provided terms
-        ///  dictionary <seealso cref="IndexInput"/>.
+        /// verifying the header from the provided terms
+        /// dictionary <see cref="IndexInput"/>.
         /// </summary>
         public abstract void Init(IndexInput termsIn);
 
         /// <summary>
-        /// Return a newly created empty TermState </summary>
+        /// Return a newly created empty <see cref="TermState"/>. </summary>
         public abstract BlockTermState NewTermState();
 
         /// <summary>
-        /// Actually decode metadata for next term </summary>
-        ///  <seealso cref= PostingsWriterBase#encodeTerm  </seealso>
+        /// Actually decode metadata for next term. </summary>
+        /// <seealso cref="PostingsWriterBase.EncodeTerm(long[], Store.DataOutput, FieldInfo, BlockTermState, bool)"/>
         public abstract void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState state, bool absolute);
 
         /// <summary>
         /// Must fully consume state, since after this call that
-        ///  TermState may be reused.
+        /// <see cref="TermState"/> may be reused.
         /// </summary>
         public abstract DocsEnum Docs(FieldInfo fieldInfo, BlockTermState state, IBits skipDocs, DocsEnum reuse, DocsFlags flags);
 
         /// <summary>
         /// Must fully consume state, since after this call that
-        ///  TermState may be reused.
+        /// <see cref="TermState"/> may be reused.
         /// </summary>
         public abstract DocsAndPositionsEnum DocsAndPositions(FieldInfo fieldInfo, BlockTermState state, IBits skipDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags);
 
         /// <summary>
-        /// Returns approximate RAM bytes used </summary>
+        /// Returns approximate RAM bytes used. </summary>
         public abstract long RamBytesUsed();
 
         /// <summary>
         /// Checks consistency of this reader.
-        /// <p>
+        /// <para/>
         /// Note that this may be costly in terms of I/O, e.g.
         /// may involve computing a checksum value against large data files.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public abstract void CheckIntegrity();
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
     }
 }

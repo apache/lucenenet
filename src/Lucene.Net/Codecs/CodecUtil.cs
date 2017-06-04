@@ -24,13 +24,12 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Utility class for reading and writing versioned headers.
-    /// <p>
+    /// <para/>
     /// Writing codec headers is useful to ensure that a file is in
     /// the format you think it is.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-
     public sealed class CodecUtil
     {
         private CodecUtil() // no instance
@@ -49,29 +48,29 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes a codec header, which records both a string to
-        /// identify the file and a version number. this header can
+        /// identify the file and a version number. This header can
         /// be parsed and validated with
-        /// <seealso cref="#checkHeader(DataInput, String, int, int) checkHeader()"/>.
-        /// <p>
+        /// <see cref="CheckHeader(DataInput, string, int, int)"/>.
+        /// <para/>
         /// CodecHeader --&gt; Magic,CodecName,Version
-        /// <ul>
-        ///    <li>Magic --&gt; <seealso cref="DataOutput#writeInt Uint32"/>. this
-        ///        identifies the start of the header. It is always {@value #CODEC_MAGIC}.
-        ///    <li>CodecName --&gt; <seealso cref="DataOutput#writeString String"/>. this
-        ///        is a string to identify this file.
-        ///    <li>Version --&gt; <seealso cref="DataOutput#writeInt Uint32"/>. Records
-        ///        the version of the file.
-        /// </ul>
-        /// <p>
+        /// <list type="bullet">
+        ///    <item><description>Magic --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>). this
+        ///        identifies the start of the header. It is always <see cref="CODEC_MAGIC"/>.</description></item>
+        ///    <item><description>CodecName --&gt; String (<see cref="DataOutput.WriteString(string)"/>). this
+        ///        is a string to identify this file.</description></item>
+        ///    <item><description>Version --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>). Records
+        ///        the version of the file.</description></item>
+        /// </list>
+        /// <para/>
         /// Note that the length of a codec header depends only upon the
         /// name of the codec, so this length can be computed at any time
-        /// with <seealso cref="#headerLength(String)"/>.
+        /// with <see cref="HeaderLength(string)"/>.
         /// </summary>
         /// <param name="out"> Output stream </param>
         /// <param name="codec"> String to identify this file. It should be simple ASCII,
         ///              less than 128 characters in length. </param>
         /// <param name="version"> Version number </param>
-        /// <exception cref="IOException"> If there is an I/O error writing to the underlying medium. </exception>
+        /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
         public static void WriteHeader(DataOutput @out, string codec, int version)
         {
             BytesRef bytes = new BytesRef(codec);
@@ -88,8 +87,8 @@ namespace Lucene.Net.Codecs
         /// Computes the length of a codec header.
         /// </summary>
         /// <param name="codec"> Codec name. </param>
-        /// <returns> length of the entire codec header. </returns>
-        /// <seealso cref= #writeHeader(DataOutput, String, int) </seealso>
+        /// <returns> Length of the entire codec header. </returns>
+        /// <seealso cref="WriteHeader(DataOutput, string, int)"/>
         public static int HeaderLength(string codec)
         {
             return 9 + codec.Length;
@@ -97,10 +96,10 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Reads and validates a header previously written with
-        /// <seealso cref="#writeHeader(DataOutput, String, int)"/>.
-        /// <p>
-        /// When reading a file, supply the expected <code>codec</code> and
-        /// an expected version range (<code>minVersion to maxVersion</code>).
+        /// <see cref="WriteHeader(DataOutput, string, int)"/>.
+        /// <para/>
+        /// When reading a file, supply the expected <paramref name="codec"/> and
+        /// an expected version range (<paramref name="minVersion"/> to <paramref name="maxVersion"/>).
         /// </summary>
         /// <param name="in"> Input stream, positioned at the point where the
         ///        header was previously written. Typically this is located
@@ -109,18 +108,18 @@ namespace Lucene.Net.Codecs
         /// <param name="minVersion"> The minimum supported expected version number. </param>
         /// <param name="maxVersion"> The maximum supported expected version number. </param>
         /// <returns> The actual version found, when a valid header is found
-        ///         that matches <code>codec</code>, with an actual version
-        ///         where <code>minVersion <= actual <= maxVersion</code>.
+        ///         that matches <paramref name="codec"/>, with an actual version
+        ///         where <c>minVersion &lt;= actual &lt;= maxVersion</c>.
         ///         Otherwise an exception is thrown. </returns>
-        /// <exception cref="CorruptIndexException"> If the first four bytes are not
-        ///         <seealso cref="#CODEC_MAGIC"/>, or if the actual codec found is
-        ///         not <code>codec</code>. </exception>
-        /// <exception cref="IndexFormatTooOldException"> If the actual version is less
-        ///         than <code>minVersion</code>. </exception>
-        /// <exception cref="IndexFormatTooNewException"> If the actual version is greater
-        ///         than <code>maxVersion</code>. </exception>
-        /// <exception cref="IOException"> If there is an I/O error reading from the underlying medium. </exception>
-        /// <seealso cref= #writeHeader(DataOutput, String, int) </seealso>
+        /// <exception cref="Index.CorruptIndexException"> If the first four bytes are not
+        ///         <see cref="CODEC_MAGIC"/>, or if the actual codec found is
+        ///         not <paramref name="codec"/>. </exception>
+        /// <exception cref="Index.IndexFormatTooOldException"> If the actual version is less
+        ///         than <paramref name="minVersion"/>. </exception>
+        /// <exception cref="Index.IndexFormatTooNewException"> If the actual version is greater
+        ///         than <paramref name="maxVersion"/>. </exception>
+        /// <exception cref="System.IO.IOException"> If there is an I/O error reading from the underlying medium. </exception>
+        /// <seealso cref="WriteHeader(DataOutput, string, int)"/>
         public static int CheckHeader(DataInput @in, string codec, int minVersion, int maxVersion)
         {
             // Safety to guard against reading a bogus string:
@@ -133,10 +132,10 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Like {@link
-        ///  #checkHeader(DataInput,String,int,int)} except this
-        ///  version assumes the first int has already been read
-        ///  and validated from the input.
+        /// Like 
+        /// <see cref="CheckHeader(DataInput,string,int,int)"/> except this
+        /// version assumes the first <see cref="int"/> has already been read
+        /// and validated from the input.
         /// </summary>
         public static int CheckHeaderNoMagic(DataInput @in, string codec, int minVersion, int maxVersion)
         {
@@ -161,24 +160,24 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes a codec footer, which records both a checksum
-        /// algorithm ID and a checksum. this footer can
+        /// algorithm ID and a checksum. This footer can
         /// be parsed and validated with
-        /// <seealso cref="#checkFooter(ChecksumIndexInput) checkFooter()"/>.
-        /// <p>
+        /// <see cref="CheckFooter(ChecksumIndexInput)"/>.
+        /// <para/>
         /// CodecFooter --&gt; Magic,AlgorithmID,Checksum
-        /// <ul>
-        ///    <li>Magic --&gt; <seealso cref="DataOutput#writeInt Uint32"/>. this
-        ///        identifies the start of the footer. It is always {@value #FOOTER_MAGIC}.
-        ///    <li>AlgorithmID --&gt; <seealso cref="DataOutput#writeInt Uint32"/>. this
+        /// <list type="bullet">
+        ///    <item><description>Magic --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>). this
+        ///        identifies the start of the footer. It is always {@value #FOOTER_MAGIC}.</description></item>
+        ///    <item><description>AlgorithmID --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>). this
         ///        indicates the checksum algorithm used. Currently this is always 0,
-        ///        for zlib-crc32.
-        ///    <li>Checksum --&gt; <seealso cref="DataOutput#writeLong Uint32"/>. The
+        ///        for zlib-crc32.</description></item>
+        ///    <item><description>Checksum --&gt; Uint32 (<see cref="DataOutput.WriteInt64(long)"/>). The
         ///        actual checksum value for all previous bytes in the stream, including
-        ///        the bytes from Magic and AlgorithmID.
-        /// </ul>
+        ///        the bytes from Magic and AlgorithmID.</description></item>
+        /// </list>
         /// </summary>
         /// <param name="out"> Output stream </param>
-        /// <exception cref="IOException"> If there is an I/O error writing to the underlying medium. </exception>
+        /// <exception cref="System.IO.IOException"> If there is an I/O error writing to the underlying medium. </exception>
         public static void WriteFooter(IndexOutput @out)
         {
             @out.WriteInt32(FOOTER_MAGIC);
@@ -189,18 +188,18 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Computes the length of a codec footer.
         /// </summary>
-        /// <returns> length of the entire codec footer. </returns>
-        /// <seealso cref= #writeFooter(IndexOutput) </seealso>
+        /// <returns> Length of the entire codec footer. </returns>
+        /// <seealso cref="WriteFooter(IndexOutput)"/>
         public static int FooterLength()
         {
             return 16;
         }
 
         /// <summary>
-        /// Validates the codec footer previously written by <seealso cref="#writeFooter"/>. </summary>
-        /// <returns> actual checksum value </returns>
-        /// <exception cref="IOException"> if the footer is invalid, if the checksum does not match,
-        ///                     or if {@code in} is not properly positioned before the footer
+        /// Validates the codec footer previously written by <see cref="WriteFooter(IndexOutput)"/>. </summary>
+        /// <returns> Actual checksum value. </returns>
+        /// <exception cref="System.IO.IOException"> If the footer is invalid, if the checksum does not match,
+        ///                     or if <paramref name="in"/> is not properly positioned before the footer
         ///                     at the end of the stream. </exception>
         public static long CheckFooter(ChecksumIndexInput @in)
         {
@@ -219,9 +218,9 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Returns (but does not validate) the checksum previously written by <seealso cref="#checkFooter"/>. </summary>
+        /// Returns (but does not validate) the checksum previously written by <see cref="CheckFooter(ChecksumIndexInput)"/>. </summary>
         /// <returns> actual checksum value </returns>
-        /// <exception cref="IOException"> if the footer is invalid </exception>
+        /// <exception cref="System.IO.IOException"> If the footer is invalid. </exception>
         public static long RetrieveChecksum(IndexInput @in)
         {
             @in.Seek(@in.Length - FooterLength());
@@ -247,8 +246,7 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Checks that the stream is positioned at the end, and throws exception
         /// if it is not. </summary>
-        /// @deprecated Use <seealso cref="#checkFooter"/> instead, this should only used for files without checksums
-        [Obsolete("Use CheckFooter() instead")]
+        [Obsolete("Use CheckFooter(ChecksumIndexInput) instead, this should only used for files without checksums.")]
         public static void CheckEOF(IndexInput @in)
         {
             if (@in.GetFilePointer() != @in.Length)
@@ -258,10 +256,10 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Clones the provided input, reads all bytes from the file, and calls <seealso cref="#checkFooter"/>
-        /// <p>
+        /// Clones the provided input, reads all bytes from the file, and calls <see cref="CheckFooter(ChecksumIndexInput)"/>
+        /// <para/>
         /// Note that this method may be slow, as it must process the entire file.
-        /// If you just need to extract the checksum value, call <seealso cref="#retrieveChecksum"/>.
+        /// If you just need to extract the checksum value, call <see cref="RetrieveChecksum(IndexInput)"/>.
         /// </summary>
         public static long ChecksumEntireFile(IndexInput input)
         {

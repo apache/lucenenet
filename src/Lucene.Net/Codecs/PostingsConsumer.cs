@@ -29,29 +29,29 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Abstract API that consumes postings for an individual term.
-    /// <p>
+    /// <para/>
     /// The lifecycle is:
-    /// <ol>
-    ///    <li>PostingsConsumer is returned for each term by
-    ///        <seealso cref="TermsConsumer#startTerm(BytesRef)"/>.
-    ///    <li><seealso cref="#startDoc(int, int)"/> is called for each
+    /// <list type="number">
+    ///    <item><description>PostingsConsumer is returned for each term by
+    ///        <see cref="TermsConsumer.StartTerm(BytesRef)"/>.</description></item>
+    ///    <item><description><see cref="StartDoc(int, int)"/> is called for each
     ///        document where the term occurs, specifying id
-    ///        and term frequency for that document.
-    ///    <li>If positions are enabled for the field, then
-    ///        <seealso cref="#addPosition(int, BytesRef, int, int)"/>
+    ///        and term frequency for that document.</description></item>
+    ///    <item><description>If positions are enabled for the field, then
+    ///        <see cref="AddPosition(int, BytesRef, int, int)"/>
     ///        will be called for each occurrence in the
-    ///        document.
-    ///    <li><seealso cref="#finishDoc()"/> is called when the producer
-    ///        is done adding positions to the document.
-    /// </ol>
-    ///
+    ///        document.</description></item>
+    ///    <item><description><see cref="FinishDoc()"/> is called when the producer
+    ///        is done adding positions to the document.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class PostingsConsumer
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal PostingsConsumer()
         {
@@ -59,30 +59,30 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Adds a new doc in this term.
-        /// <code>freq</code> will be -1 when term frequencies are omitted
+        /// <paramref name="freq"/> will be -1 when term frequencies are omitted
         /// for the field.
         /// </summary>
         public abstract void StartDoc(int docId, int freq);
 
         /// <summary>
-        /// Add a new position & payload, and start/end offset.  A
-        ///  null payload means no payload; a non-null payload with
-        ///  zero length also means no payload.  Caller may reuse
-        ///  the <seealso cref="BytesRef"/> for the payload between calls
-        ///  (method must fully consume the payload). <code>startOffset</code>
-        ///  and <code>endOffset</code> will be -1 when offsets are not indexed.
+        /// Add a new position &amp; payload, and start/end offset.  A
+        /// <c>null</c> <paramref name="payload"/> means no payload; a non-<c>null</c> <paramref name="payload"/> with
+        /// zero length also means no payload.  Caller may reuse
+        /// the <see cref="BytesRef"/> for the <paramref name="payload"/> between calls
+        /// (method must fully consume the payload). <paramref name="startOffset"/>
+        /// and <paramref name="endOffset"/> will be -1 when offsets are not indexed.
         /// </summary>
         public abstract void AddPosition(int position, BytesRef payload, int startOffset, int endOffset);
 
         /// <summary>
-        /// Called when we are done adding positions & payloads
-        ///  for each doc.
+        /// Called when we are done adding positions &amp; payloads
+        /// for each doc.
         /// </summary>
         public abstract void FinishDoc();
 
         /// <summary>
         /// Default merge impl: append documents, mapping around
-        ///  deletes
+        /// deletes.
         /// </summary>
         public virtual TermStats Merge(MergeState mergeState, IndexOptions indexOptions, DocsEnum postings, FixedBitSet visitedDocs)
         {

@@ -21,30 +21,30 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Expert: Controls the format of the
-    /// <seealso cref="SegmentInfo"/> (segment metadata file).
-    /// <p>
+    /// <see cref="SegmentInfo"/> (segment metadata file).
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= SegmentInfo
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="SegmentInfo"/>
     public abstract class SegmentInfoFormat
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal SegmentInfoFormat()
         {
         }
 
         /// <summary>
-        /// Returns the <seealso cref="SegmentInfoReader"/> for reading
-        ///  <seealso cref="SegmentInfo"/> instances.
+        /// Returns the <see cref="Codecs.SegmentInfoReader"/> for reading
+        /// <see cref="SegmentInfo"/> instances.
         /// </summary>
         public abstract SegmentInfoReader SegmentInfoReader { get; }
 
         /// <summary>
-        /// Returns the <seealso cref="SegmentInfoWriter"/> for writing
-        ///  <seealso cref="SegmentInfo"/> instances.
+        /// Returns the <see cref="Codecs.SegmentInfoWriter"/> for writing
+        /// <see cref="SegmentInfo"/> instances.
         /// </summary>
         public abstract SegmentInfoWriter SegmentInfoWriter { get; }
     }

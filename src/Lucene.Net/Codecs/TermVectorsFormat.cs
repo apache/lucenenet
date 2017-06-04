@@ -23,27 +23,27 @@ namespace Lucene.Net.Codecs
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Controls the format of term vectors
+    /// Controls the format of term vectors.
     /// </summary>
     public abstract class TermVectorsFormat
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal TermVectorsFormat()
         {
         }
 
         /// <summary>
-        /// Returns a <seealso cref="TermVectorsReader"/> to read term
-        ///  vectors.
+        /// Returns a <see cref="TermVectorsReader"/> to read term
+        /// vectors.
         /// </summary>
         public abstract TermVectorsReader VectorsReader(Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, IOContext context);
 
         /// <summary>
-        /// Returns a <seealso cref="TermVectorsWriter"/> to write term
-        ///  vectors.
+        /// Returns a <see cref="TermVectorsWriter"/> to write term
+        /// vectors.
         /// </summary>
         public abstract TermVectorsWriter VectorsWriter(Directory directory, SegmentInfo segmentInfo, IOContext context);
     }

@@ -35,10 +35,10 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <ul>
     ///   <li>
     ///   <b>Packed Blocks and VInt Blocks</b>:
-    ///   <p>In packed blocks, integers are encoded with the same bit width (<seealso cref="PackedInts packed format"/>):
+    ///   <p>In packed blocks, integers are encoded with the same bit width packed format (<see cref="Util.Packed.PackedInt32s"/>):
     ///      the block size (i.e. number of integers inside block) is fixed (currently 128). Additionally blocks
     ///      that are all the same value are encoded in an optimized way.</p>
-    ///   <p>In VInt blocks, integers are encoded as <seealso cref="DataOutput#writeVInt VInt"/>:
+    ///   <p>In VInt blocks, integers are encoded as VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>):
     ///      the block size is variable.</p>
     ///   </li>
     ///

@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs
     /// Note, when extending this class, the name (<see cref="Name"/>) may
     /// written into the index in certain configurations. In order for the segment
     /// to be read, the name must resolve to your implementation via <see cref="ForName(string)"/>.
-    /// this method uses <see cref="IPostingsFormatFactory.GetPostingsFormat(string)"/> to resolve format names.
+    /// This method uses <see cref="IPostingsFormatFactory.GetPostingsFormat(string)"/> to resolve format names.
     /// <para/>
     /// If you implement your own format:
     /// <list type="number">
@@ -105,14 +105,14 @@ namespace Lucene.Net.Codecs
         /// (such as when using <see cref="PerField.PerFieldPostingsFormat"/>): in such configurations,
         /// for the segment to be read this class should be registered by subclassing <see cref="DefaultPostingsFormatFactory"/> and
         /// calling <see cref="DefaultPostingsFormatFactory.ScanForPostingsFormats(System.Reflection.Assembly)"/> in the class constructor. 
-        /// The new <see cref="IPostingsFormatFactory"/> can be registered by calling <see cref="SetPostingsFormatFactory"/> at application startup.</summary>
+        /// The new <see cref="IPostingsFormatFactory"/> can be registered by calling <see cref="SetPostingsFormatFactory(IPostingsFormatFactory)"/> at application startup.</summary>
         protected PostingsFormat()
         {
             this.name = NamedServiceFactory<PostingsFormat>.GetServiceName(this.GetType());
         }
 
         /// <summary>
-        /// Returns this posting format's name </summary>
+        /// Returns this posting format's name. </summary>
         public string Name
         {
             get
@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Writes a new segment </summary>
+        /// Writes a new segment. </summary>
         public abstract FieldsConsumer FieldsConsumer(SegmentWriteState state);
 
         /// <summary>
@@ -131,8 +131,8 @@ namespace Lucene.Net.Codecs
         /// use; else, those files may be deleted.
         /// Additionally, required files may be deleted during the execution of
         /// this call before there is a chance to open them. Under these
-        /// circumstances an IOException should be thrown by the implementation.
-        /// IOExceptions are expected and will automatically cause a retry of the
+        /// circumstances an <see cref="System.IO.IOException"/> should be thrown by the implementation.
+        /// <see cref="System.IO.IOException"/>s are expected and will automatically cause a retry of the
         /// segment opening logic with the newly revised segments.
         /// </summary>
         public abstract FieldsProducer FieldsProducer(SegmentReadState state);
@@ -143,14 +143,14 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// looks up a format by name </summary>
+        /// Looks up a format by name. </summary>
         public static PostingsFormat ForName(string name)
         {
             return postingsFormatFactory.GetPostingsFormat(name);
         }
 
         /// <summary>
-        /// returns a list of all available format names </summary>
+        /// Returns a list of all available format names. </summary>
         public static ICollection<string> AvailablePostingsFormats()
         {
             if (postingsFormatFactory is IServiceListable)
