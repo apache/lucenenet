@@ -20,7 +20,7 @@ namespace Lucene.Net.Util.Automaton
      */
 
     /// <summary>
-    /// Automaton representation for matching char[].
+    /// Automaton representation for matching <see cref="T:char[]"/>.
     /// </summary>
     public class CharacterRunAutomaton : RunAutomaton
     {
@@ -30,7 +30,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if the given string is accepted by this automaton.
+        /// Returns <c>true</c> if the given string is accepted by this automaton.
         /// </summary>
         public virtual bool Run(string s)
         {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if the given string is accepted by this automaton
+        /// Returns <c>true</c> if the given string is accepted by this automaton.
         /// </summary>
         public virtual bool Run(char[] s, int offset, int length)
         {

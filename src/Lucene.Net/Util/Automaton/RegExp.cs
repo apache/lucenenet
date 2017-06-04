@@ -83,281 +83,283 @@ namespace Lucene.Net.Util.Automaton
 
 
     /// <summary>
-    /// Regular Expression extension to <code>Automaton</code>.
-    /// <p>
+    /// Regular Expression extension to <see cref="Util.Automaton.Automaton"/>.
+    /// <para/>
     /// Regular expressions are built from the following abstract syntax:
-    /// <p>
-    /// <table border=0>
-    /// <tr>
-    /// <td><i>regexp</i></td>
-    /// <td>::=</td>
-    /// <td><i>unionexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>unionexp</i></td>
-    /// <td>::=</td>
-    /// <td><i>interexp</i>&nbsp;<tt><b>|</b></tt>&nbsp;<i>unionexp</i></td>
-    /// <td>(union)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>interexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>interexp</i></td>
-    /// <td>::=</td>
-    /// <td><i>concatexp</i>&nbsp;<tt><b>&amp;</b></tt>&nbsp;<i>interexp</i></td>
-    /// <td>(intersection)</td>
-    /// <td><small>[OPTIONAL]</small></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>concatexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>concatexp</i></td>
-    /// <td>::=</td>
-    /// <td><i>repeatexp</i>&nbsp;<i>concatexp</i></td>
-    /// <td>(concatenation)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>repeatexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>repeatexp</i></td>
-    /// <td>::=</td>
-    /// <td><i>repeatexp</i>&nbsp;<tt><b>?</b></tt></td>
-    /// <td>(zero or one occurrence)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>repeatexp</i>&nbsp;<tt><b>*</b></tt></td>
-    /// <td>(zero or more occurrences)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>repeatexp</i>&nbsp;<tt><b>+</b></tt></td>
-    /// <td>(one or more occurrences)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>repeatexp</i>&nbsp;<tt><b>{</b><i>n</i><b>}</b></tt></td>
-    /// <td>(<tt><i>n</i></tt> occurrences)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>repeatexp</i>&nbsp;<tt><b>{</b><i>n</i><b>,}</b></tt></td>
-    /// <td>(<tt><i>n</i></tt> or more occurrences)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>repeatexp</i>&nbsp;<tt><b>{</b><i>n</i><b>,</b><i>m</i><b>}</b></tt></td>
-    /// <td>(<tt><i>n</i></tt> to <tt><i>m</i></tt> occurrences, including both)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>complexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>complexp</i></td>
-    /// <td>::=</td>
-    /// <td><tt><b>~</b></tt>&nbsp;<i>complexp</i></td>
-    /// <td>(complement)</td>
-    /// <td><small>[OPTIONAL]</small></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>charclassexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>charclassexp</i></td>
-    /// <td>::=</td>
-    /// <td><tt><b>[</b></tt>&nbsp;<i>charclasses</i>&nbsp;<tt><b>]</b></tt></td>
-    /// <td>(character class)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>[^</b></tt>&nbsp;<i>charclasses</i>&nbsp;<tt><b>]</b></tt></td>
-    /// <td>(negated character class)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>simpleexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>charclasses</i></td>
-    /// <td>::=</td>
-    /// <td><i>charclass</i>&nbsp;<i>charclasses</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>charclass</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>charclass</i></td>
-    /// <td>::=</td>
-    /// <td><i>charexp</i>&nbsp;<tt><b>-</b></tt>&nbsp;<i>charexp</i></td>
-    /// <td>(character range, including end-points)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><i>charexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>simpleexp</i></td>
-    /// <td>::=</td>
-    /// <td><i>charexp</i></td>
-    /// <td></td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>.</b></tt></td>
-    /// <td>(any single character)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>#</b></tt></td>
-    /// <td>(the empty language)</td>
-    /// <td><small>[OPTIONAL]</small></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>@</b></tt></td>
-    /// <td>(any string)</td>
-    /// <td><small>[OPTIONAL]</small></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>"</b></tt>&nbsp;&lt;Unicode string without double-quotes&gt;&nbsp; <tt><b>"</b></tt></td>
-    /// <td>(a string)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>(</b></tt>&nbsp;<tt><b>)</b></tt></td>
-    /// <td>(the empty string)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>(</b></tt>&nbsp;<i>unionexp</i>&nbsp;<tt><b>)</b></tt></td>
-    /// <td>(precedence override)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>&lt;</b></tt>&nbsp;&lt;identifier&gt;&nbsp;<tt><b>&gt;</b></tt></td>
-    /// <td>(named automaton)</td>
-    /// <td><small>[OPTIONAL]</small></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>&lt;</b><i>n</i>-<i>m</i><b>&gt;</b></tt></td>
-    /// <td>(numerical interval)</td>
-    /// <td><small>[OPTIONAL]</small></td>
-    /// </tr>
-    ///
-    /// <tr>
-    /// <td><i>charexp</i></td>
-    /// <td>::=</td>
-    /// <td>&lt;Unicode character&gt;</td>
-    /// <td>(a single non-reserved character)</td>
-    /// <td></td>
-    /// </tr>
-    /// <tr>
-    /// <td></td>
-    /// <td>|</td>
-    /// <td><tt><b>\</b></tt>&nbsp;&lt;Unicode character&gt;&nbsp;</td>
-    /// <td>(a single character)</td>
-    /// <td></td>
-    /// </tr>
-    /// </table>
-    /// <p>
+    /// <para/>
+    /// <list type="table">
+    ///     <item>
+    ///         <term><i>regexp</i></term>
+    ///         <term>::=</term>
+    ///         <term><i>unionexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>unionexp</i></term>
+    ///         <term>::=</term>
+    ///         <term><i>interexp</i>&#160;<tt><b>|</b></tt>&#160;<i>unionexp</i></term>
+    ///         <term>(union)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>interexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>interexp</i></term>
+    ///         <term>::=</term>
+    ///         <term><i>concatexp</i>&#160;<tt><b>&amp;</b></tt>&#160;<i>interexp</i></term>
+    ///         <term>(intersection)</term>
+    ///         <term><small>[OPTIONAL]</small></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>concatexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>concatexp</i></term>
+    ///         <term>::=</term>
+    ///         <term><i>repeatexp</i>&#160;<i>concatexp</i></term>
+    ///         <term>(concatenation)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>repeatexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>repeatexp</i></term>
+    ///         <term>::=</term>
+    ///         <term><i>repeatexp</i>&#160;<tt><b>?</b></tt></term>
+    ///         <term>(zero or one occurrence)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>repeatexp</i>&#160;<tt><b>*</b></tt></term>
+    ///         <term>(zero or more occurrences)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>repeatexp</i>&#160;<tt><b>+</b></tt></term>
+    ///         <term>(one or more occurrences)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>repeatexp</i>&#160;<tt><b>{</b><i>n</i><b>}</b></tt></term>
+    ///         <term>(<tt><i>n</i></tt> occurrences)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>repeatexp</i>&#160;<tt><b>{</b><i>n</i><b>,}</b></tt></term>
+    ///         <term>(<tt><i>n</i></tt> or more occurrences)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>repeatexp</i>&#160;<tt><b>{</b><i>n</i><b>,</b><i>m</i><b>}</b></tt></term>
+    ///         <term>(<tt><i>n</i></tt> to <tt><i>m</i></tt> occurrences, including both)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>complexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>complexp</i></term>
+    ///         <term>::=</term>
+    ///         <term><tt><b>~</b></tt>&#160;<i>complexp</i></term>
+    ///         <term>(complement)</term>
+    ///         <term><small>[OPTIONAL]</small></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>charclassexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>charclassexp</i></term>
+    ///         <term>::=</term>
+    ///         <term><tt><b>[</b></tt>&#160;<i>charclasses</i>&#160;<tt><b>]</b></tt></term>
+    ///         <term>(character class)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>[^</b></tt>&#160;<i>charclasses</i>&#160;<tt><b>]</b></tt></term>
+    ///         <term>(negated character class)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>simpleexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>charclasses</i></term>
+    ///         <term>::=</term>
+    ///         <term><i>charclass</i>&#160;<i>charclasses</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>charclass</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>charclass</i></term>
+    ///         <term>::=</term>
+    ///         <term><i>charexp</i>&#160;<tt><b>-</b></tt>&#160;<i>charexp</i></term>
+    ///         <term>(character range, including end-points)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><i>charexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>simpleexp</i></term>
+    ///         <term>::=</term>
+    ///         <term><i>charexp</i></term>
+    ///         <term></term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>.</b></tt></term>
+    ///         <term>(any single character)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>#</b></tt></term>
+    ///         <term>(the empty language)</term>
+    ///         <term><small>[OPTIONAL]</small></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>@</b></tt></term>
+    ///         <term>(any string)</term>
+    ///         <term><small>[OPTIONAL]</small></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>"</b></tt>&#160;&lt;Unicode string without double-quotes&gt;&#160; <tt><b>"</b></tt></term>
+    ///         <term>(a string)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>(</b></tt>&#160;<tt><b>)</b></tt></term>
+    ///         <term>(the empty string)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>(</b></tt>&#160;<i>unionexp</i>&#160;<tt><b>)</b></tt></term>
+    ///         <term>(precedence override)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>&lt;</b></tt>&#160;&lt;identifier&gt;&#160;<tt><b>&gt;</b></tt></term>
+    ///         <term>(named automaton)</term>
+    ///         <term><small>[OPTIONAL]</small></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>&lt;</b><i>n</i>-<i>m</i><b>&gt;</b></tt></term>
+    ///         <term>(numerical interval)</term>
+    ///         <term><small>[OPTIONAL]</small></term>
+    ///     </item>
+    ///     
+    ///     <item>
+    ///         <term><i>charexp</i></term>
+    ///         <term>::=</term>
+    ///         <term>&lt;Unicode character&gt;</term>
+    ///         <term>(a single non-reserved character)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     <item>
+    ///         <term></term>
+    ///         <term>|</term>
+    ///         <term><tt><b>\</b></tt>&#160;&lt;Unicode character&gt;&#160;</term>
+    ///         <term>(a single character)</term>
+    ///         <term></term>
+    ///     </item>
+    ///     
+    /// </list>
+    /// 
+    /// <para/>
     /// The productions marked <small>[OPTIONAL]</small> are only allowed if
-    /// specified by the syntax flags passed to the <code>RegExp</code> constructor.
+    /// specified by the syntax flags passed to the <see cref="RegExp"/> constructor.
     /// The reserved characters used in the (enabled) syntax must be escaped with
-    /// backslash (<tt><b>\</b></tt>) or double-quotes (<tt><b>"..."</b></tt>). (In
+    /// backslash (<c>\</c>) or double-quotes (<c>"..."</c>). (In
     /// contrast to other regexp syntaxes, this is required also in character
-    /// classes.) Be aware that dash (<tt><b>-</b></tt>) has a special meaning in
+    /// classes.) Be aware that dash (<c>-</c>) has a special meaning in
     /// <i>charclass</i> expressions. An identifier is a string not containing right
-    /// angle bracket (<tt><b>&gt;</b></tt>) or dash (<tt><b>-</b></tt>). Numerical
+    /// angle bracket (<c>&gt;</c>) or dash (<c>-</c>). Numerical
     /// intervals are specified by non-negative decimal integers and include both end
-    /// points, and if <tt><i>n</i></tt> and <tt><i>m</i></tt> have the same number
+    /// points, and if <c>n</c> and <c>m</c> have the same number
     /// of digits, then the conforming strings must have that length (i.e. prefixed
     /// by 0's).
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class RegExp
@@ -406,9 +408,9 @@ namespace Lucene.Net.Util.Automaton
         /// Constructs new <see cref="RegExp"/> from a string. Same as
         /// <c>RegExp(s, RegExpSyntax.ALL)</c>.
         /// </summary>
-        /// <param name="s"> regexp string </param>
-        /// <exception cref="ArgumentException"> if an error occured while parsing the
-        ///              regular expression </exception>
+        /// <param name="s"> Regexp string. </param>
+        /// <exception cref="ArgumentException"> If an error occured while parsing the
+        ///              regular expression. </exception>
         public RegExp(string s)
             : this(s, RegExpSyntax.ALL)
         {
@@ -417,10 +419,10 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Constructs new <see cref="RegExp"/> from a string.
         /// </summary>
-        /// <param name="s"> regexp string </param>
-        /// <param name="syntax_flags"> boolean 'or' of optional <see cref="RegExpSyntax"/> constructs to be
-        ///          enabled </param>
-        /// <exception cref="ArgumentException"> if an error occured while parsing the
+        /// <param name="s"> Regexp string. </param>
+        /// <param name="syntax_flags"> Boolean 'or' of optional <see cref="RegExpSyntax"/> constructs to be
+        ///          enabled. </param>
+        /// <exception cref="ArgumentException"> If an error occured while parsing the
         ///              regular expression </exception>
         public RegExp(string s, RegExpSyntax syntax_flags)
         {
@@ -453,8 +455,8 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Constructs new <code>Automaton</code> from this <code>RegExp</code>. Same
-        /// as <code>toAutomaton(null)</code> (empty automaton map).
+        /// Constructs new <see cref="Automaton"/> from this <see cref="RegExp"/>. Same
+        /// as <c>ToAutomaton(null)</c> (empty automaton map).
         /// </summary>
         public virtual Automaton ToAutomaton()
         {
@@ -462,27 +464,27 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Constructs new <code>Automaton</code> from this <code>RegExp</code>. The
+        /// Constructs new <see cref="Automaton"/> from this <see cref="RegExp"/>. The
         /// constructed automaton is minimal and deterministic and has no transitions
         /// to dead states.
         /// </summary>
-        /// <param name="automaton_provider"> provider of automata for named identifiers </param>
-        /// <exception cref="IllegalArgumentException"> if this regular expression uses a named
-        ///              identifier that is not available from the automaton provider </exception>
+        /// <param name="automaton_provider"> Provider of automata for named identifiers. </param>
+        /// <exception cref="ArgumentException"> If this regular expression uses a named
+        ///              identifier that is not available from the automaton provider. </exception>
         public virtual Automaton ToAutomaton(IAutomatonProvider automaton_provider)
         {
             return ToAutomatonAllowMutate(null, automaton_provider);
         }
 
         /// <summary>
-        /// Constructs new <code>Automaton</code> from this <code>RegExp</code>. The
+        /// Constructs new <see cref="Automaton"/> from this <see cref="RegExp"/>. The
         /// constructed automaton is minimal and deterministic and has no transitions
         /// to dead states.
         /// </summary>
-        /// <param name="automata"> a map from automaton identifiers to automata (of type
-        ///          <code>Automaton</code>). </param>
-        /// <exception cref="IllegalArgumentException"> if this regular expression uses a named
-        ///              identifier that does not occur in the automaton map </exception>
+        /// <param name="automata"> A map from automaton identifiers to automata (of type
+        ///          <see cref="Automaton"/>). </param>
+        /// <exception cref="ArgumentException"> If this regular expression uses a named
+        ///              identifier that does not occur in the automaton map. </exception>
         public virtual Automaton ToAutomaton(IDictionary<string, Automaton> automata)
         {
             return ToAutomatonAllowMutate(automata, null);
@@ -493,8 +495,8 @@ namespace Lucene.Net.Util.Automaton
         /// construction uses mutable automata, which is slightly faster but not thread
         /// safe. By default, the flag is not set.
         /// </summary>
-        /// <param name="flag"> if true, the flag is set </param>
-        /// <returns> previous value of the flag </returns>
+        /// <param name="flag"> If <c>true</c>, the flag is set </param>
+        /// <returns> Previous value of the flag. </returns>
         public virtual bool SetAllowMutate(bool flag)
         {
             bool b = allow_mutation;

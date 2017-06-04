@@ -31,9 +31,9 @@ namespace Lucene.Net.Util.Automaton
 
     /// <summary>
     /// Immutable class holding compiled details for a given
-    /// Automaton.  The Automaton is deterministic, must not have
+    /// <see cref="Automaton"/>.  The <see cref="Automaton"/> is deterministic, must not have
     /// dead states but is not necessarily minimal.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class CompiledAutomaton
@@ -57,7 +57,7 @@ namespace Lucene.Net.Util.Automaton
             SINGLE,
 
             /// <summary>
-            /// Automaton that matches all Strings with a constant prefix. </summary>
+            /// Automaton that matches all strings with a constant prefix. </summary>
             PREFIX,
 
             /// <summary>
@@ -68,14 +68,14 @@ namespace Lucene.Net.Util.Automaton
         public AUTOMATON_TYPE Type { get; private set; }
 
         /// <summary>
-        /// For <seealso cref="AUTOMATON_TYPE#PREFIX"/>, this is the prefix term;
-        /// for <seealso cref="AUTOMATON_TYPE#SINGLE"/> this is the singleton term.
+        /// For <see cref="AUTOMATON_TYPE.PREFIX"/>, this is the prefix term;
+        /// for <see cref="AUTOMATON_TYPE.SINGLE"/> this is the singleton term.
         /// </summary>
         public BytesRef Term { get; private set; }
 
         /// <summary>
-        /// Matcher for quickly determining if a byte[] is accepted.
-        /// only valid for <seealso cref="AUTOMATON_TYPE#NORMAL"/>.
+        /// Matcher for quickly determining if a <see cref="T:byte[]"/> is accepted.
+        /// only valid for <see cref="AUTOMATON_TYPE.NORMAL"/>.
         /// </summary>
         public ByteRunAutomaton RunAutomaton { get; private set; }
 
@@ -84,8 +84,9 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Two dimensional array of transitions, indexed by state
         /// number for traversal. The state numbering is consistent with
-        /// <seealso cref="#runAutomaton"/>.
-        /// Only valid for <seealso cref="AUTOMATON_TYPE#NORMAL"/>.
+        /// <see cref="RunAutomaton"/>.
+        /// <para/>
+        /// Only valid for <see cref="AUTOMATON_TYPE.NORMAL"/>.
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
@@ -97,7 +98,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Shared common suffix accepted by the automaton. Only valid
-        /// for <seealso cref="AUTOMATON_TYPE#NORMAL"/>, and only when the
+        /// for <see cref="AUTOMATON_TYPE.NORMAL"/>, and only when the
         /// automaton accepts an infinite language.
         /// </summary>
         public BytesRef CommonSuffixRef { get; private set; }
@@ -105,7 +106,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Indicates if the automaton accepts a finite set of strings.
         /// Null if this was not computed.
-        /// Only valid for <seealso cref="AUTOMATON_TYPE#NORMAL"/>.
+        /// Only valid for <see cref="AUTOMATON_TYPE.NORMAL"/>.
         /// </summary>
         public bool? Finite { get; private set; }
 
@@ -312,12 +313,12 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Finds largest term accepted by this Automaton, that's
-        ///  <= the provided input term.  The result is placed in
-        ///  output; it's fine for output and input to point to
-        ///  the same BytesRef.  The returned result is either the
-        ///  provided output, or null if there is no floor term
-        ///  (ie, the provided input term is before the first term
-        ///  accepted by this Automaton).
+        /// &lt;= the provided input term.  The result is placed in
+        /// output; it's fine for output and input to point to
+        /// the same <see cref="BytesRef"/>.  The returned result is either the
+        /// provided output, or <c>null</c> if there is no floor term
+        /// (ie, the provided input term is before the first term
+        /// accepted by this <see cref="Automaton"/>).
         /// </summary>
         public virtual BytesRef Floor(BytesRef input, BytesRef output)
         {

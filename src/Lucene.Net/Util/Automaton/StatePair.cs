@@ -31,7 +31,7 @@ namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
     /// Pair of states.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class StatePair
@@ -50,8 +50,8 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Constructs a new state pair.
         /// </summary>
-        /// <param name="s1"> first state </param>
-        /// <param name="s2"> second state </param>
+        /// <param name="s1"> First state. </param>
+        /// <param name="s2"> Second state. </param>
         public StatePair(State s1, State s2)
         {
             this.S1 = s1;
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns first component of this pair.
         /// </summary>
-        /// <returns> first state </returns>
+        /// <returns> First state. </returns>
         public virtual State FirstState
         {
             get
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns second component of this pair.
         /// </summary>
-        /// <returns> second state </returns>
+        /// <returns> Second state. </returns>
         public virtual State SecondState
         {
             get
@@ -85,9 +85,9 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Checks for equality.
         /// </summary>
-        /// <param name="obj"> object to compare with </param>
-        /// <returns> true if <tt>obj</tt> represents the same pair of states as this
-        ///         pair </returns>
+        /// <param name="obj"> Object to compare with. </param>
+        /// <returns> <c>true</c> if <paramref name="obj"/> represents the same pair of states as this
+        ///         pair. </returns>
         public override bool Equals(object obj)
         {
             if (obj is StatePair)
@@ -104,7 +104,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns hash code.
         /// </summary>
-        /// <returns> hash code </returns>
+        /// <returns> Hash code. </returns>
         public override int GetHashCode()
         {
             return S1.GetHashCode() + S2.GetHashCode();

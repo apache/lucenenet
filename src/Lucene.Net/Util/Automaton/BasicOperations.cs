@@ -38,7 +38,7 @@ namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
     /// Basic automata operations.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     internal sealed class BasicOperations
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns an automaton that accepts the concatenation of the languages of the
         /// given automata.
-        /// <p>
+        /// <para/>
         /// Complexity: linear in number of states.
         /// </summary>
         public static Automaton Concatenate(Automaton a1, Automaton a2)
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns an automaton that accepts the concatenation of the languages of the
         /// given automata.
-        /// <p>
+        /// <para/>
         /// Complexity: linear in total number of states.
         /// </summary>
         public static Automaton Concatenate(IList<Automaton> l)
@@ -190,7 +190,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns an automaton that accepts the union of the empty string and the
         /// language of the given automaton.
-        /// <p>
+        /// <para/>
         /// Complexity: linear in number of states.
         /// </summary>
         public static Automaton Optional(Automaton a)
@@ -211,7 +211,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns an automaton that accepts the Kleene star (zero or more
         /// concatenated repetitions) of the language of the given automaton. Never
         /// modifies the input automaton language.
-        /// <p>
+        /// <para/>
         /// Complexity: linear in number of states.
         /// </summary>
         public static Automaton Repeat(Automaton a)
@@ -233,10 +233,10 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns an automaton that accepts <code>min</code> or more concatenated
+        /// Returns an automaton that accepts <paramref name="min"/> or more concatenated
         /// repetitions of the language of the given automaton.
-        /// <p>
-        /// Complexity: linear in number of states and in <code>min</code>.
+        /// <para/>
+        /// Complexity: linear in number of states and in <paramref name="min"/>.
         /// </summary>
         public static Automaton Repeat(Automaton a, int min)
         {
@@ -254,12 +254,12 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns an automaton that accepts between <code>min</code> and
-        /// <code>max</code> (including both) concatenated repetitions of the language
+        /// Returns an automaton that accepts between <paramref name="min"/> and
+        /// <paramref name="max"/> (including both) concatenated repetitions of the language
         /// of the given automaton.
-        /// <p>
-        /// Complexity: linear in number of states and in <code>min</code> and
-        /// <code>max</code>.
+        /// <para/>
+        /// Complexity: linear in number of states and in <paramref name="min"/> and
+        /// <paramref name="max"/>.
         /// </summary>
         public static Automaton Repeat(Automaton a, int min, int max)
         {
@@ -314,7 +314,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns a (deterministic) automaton that accepts the complement of the
         /// language of the given automaton.
-        /// <p>
+        /// <para/>
         /// Complexity: linear in number of states (if already deterministic).
         /// </summary>
         public static Automaton Complement(Automaton a)
@@ -332,10 +332,10 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns a (deterministic) automaton that accepts the intersection of the
-        /// language of <code>a1</code> and the complement of the language of
-        /// <code>a2</code>. As a side-effect, the automata may be determinized, if not
+        /// language of <paramref name="a1"/> and the complement of the language of
+        /// <paramref name="a2"/>. As a side-effect, the automata may be determinized, if not
         /// already deterministic.
-        /// <p>
+        /// <para/>
         /// Complexity: quadratic in number of states (if already deterministic).
         /// </summary>
         public static Automaton Minus(Automaton a1, Automaton a2)
@@ -365,7 +365,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns an automaton that accepts the intersection of the languages of the
         /// given automata. Never modifies the input automata languages.
-        /// <p>
+        /// <para/>
         /// Complexity: quadratic in number of states.
         /// </summary>
         public static Automaton Intersection(Automaton a1, Automaton a2)
@@ -445,10 +445,10 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if these two automata accept exactly the
-        ///  same language.  this is a costly computation!  Note
-        ///  also that a1 and a2 will be determinized as a side
-        ///  effect.
+        /// Returns <c>true</c> if these two automata accept exactly the
+        /// same language.  This is a costly computation!  Note
+        /// also that <paramref name="a1"/> and <paramref name="a2"/> will be determinized as a side
+        /// effect.
         /// </summary>
         public static bool SameLanguage(Automaton a1, Automaton a2)
         {
@@ -472,10 +472,10 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if the language of <code>a1</code> is a subset of the language
-        /// of <code>a2</code>. As a side-effect, <code>a2</code> is determinized if
+        /// Returns true if the language of <paramref name="a1"/> is a subset of the language
+        /// of <paramref name="a2"/>. As a side-effect, <paramref name="a2"/> is determinized if
         /// not already marked as deterministic.
-        /// <p>
+        /// <para/>
         /// Complexity: quadratic in number of states.
         /// </summary>
         public static bool SubsetOf(Automaton a1, Automaton a2)
@@ -552,7 +552,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns an automaton that accepts the union of the languages of the given
         /// automata.
-        /// <p>
+        /// <para/>
         /// Complexity: linear in number of states.
         /// </summary>
         public static Automaton Union(Automaton a1, Automaton a2)
@@ -585,7 +585,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns an automaton that accepts the union of the languages of the given
         /// automata.
-        /// <p>
+        /// <para/>
         /// Complexity: linear in number of states.
         /// </summary>
         public static Automaton Union(ICollection<Automaton> l)
@@ -780,7 +780,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Determinizes the given automaton.
-        /// <p>
+        /// <para/>
         /// Worst case complexity: exponential in number of states.
         /// </summary>
         public static void Determinize(Automaton a)
@@ -922,13 +922,14 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Adds epsilon transitions to the given automaton. this method adds extra
+        /// Adds epsilon transitions to the given automaton. This method adds extra
         /// character interval transitions that are equivalent to the given set of
         /// epsilon transitions.
         /// </summary>
-        /// <param name="pairs"> collection of <seealso cref="StatePair"/> objects representing pairs of
+        /// <param name="a"> Automaton. </param>
+        /// <param name="pairs"> Collection of <see cref="StatePair"/> objects representing pairs of
         ///          source/destination states where epsilon transitions should be
-        ///          added </param>
+        ///          added. </param>
         public static void AddEpsilons(Automaton a, ICollection<StatePair> pairs)
         {
             a.ExpandSingleton();
@@ -1001,7 +1002,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if the given automaton accepts the empty string and nothing
+        /// Returns <c>true</c> if the given automaton accepts the empty string and nothing
         /// else.
         /// </summary>
         public static bool IsEmptyString(Automaton a)
@@ -1017,7 +1018,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if the given automaton accepts no strings.
+        /// Returns <c>true</c> if the given automaton accepts no strings.
         /// </summary>
         public static bool IsEmpty(Automaton a)
         {
@@ -1029,7 +1030,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if the given automaton accepts all strings.
+        /// Returns <c>true</c> if the given automaton accepts all strings.
         /// </summary>
         public static bool IsTotal(Automaton a)
         {
@@ -1048,11 +1049,11 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if the given string is accepted by the automaton.
-        /// <p>
+        /// Returns <c>true</c> if the given string is accepted by the automaton.
+        /// <para/>
         /// Complexity: linear in the length of the string.
-        /// <p>
-        /// <b>Note:</b> for full performance, use the <seealso cref="RunAutomaton"/> class.
+        /// <para/>
+        /// <b>Note:</b> for full performance, use the <see cref="RunAutomaton"/> class.
         /// </summary>
         public static bool Run(Automaton a, string s)
         {

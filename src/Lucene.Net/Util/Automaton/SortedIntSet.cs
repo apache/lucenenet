@@ -23,9 +23,9 @@ namespace Lucene.Net.Util.Automaton
      */
 
     /// <summary>
-    /// Just holds a set of int[] states, plus a corresponding
-    /// int[] count per state.  Used by
-    /// BasicOperations.determinize
+    /// Just holds a set of <see cref="T:int[]"/> states, plus a corresponding
+    /// <see cref="T:int[]"/> count per state.  Used by
+    /// <see cref="BasicOperations.Determinize(Automaton)"/>.
     /// <para/>
     /// NOTE: This was SortedIntSet in Lucene
     /// </summary>

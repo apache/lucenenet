@@ -23,16 +23,16 @@ namespace Lucene.Net.Util.Automaton
      */
 
     /// <summary>
-    /// Builds a minimal, deterministic <seealso cref="Automaton"/> that accepts a set of
+    /// Builds a minimal, deterministic <see cref="Automaton"/> that accepts a set of
     /// strings. The algorithm requires sorted input data, but is very fast
     /// (nearly linear with the input size).
     /// </summary>
-    /// <seealso cref= #build(Collection) </seealso>
-    /// <seealso cref= BasicAutomata#makeStringUnion(Collection) </seealso>
+    /// <seealso cref="Build(ICollection{BytesRef})"/>
+    /// <seealso cref="BasicAutomata.MakeStringUnion(ICollection{BytesRef})"/>
     internal sealed class DaciukMihovAutomatonBuilder
     {
         /// <summary>
-        /// DFSA state with <code>char</code> labels on transitions.
+        /// DFSA state with <see cref="char"/> labels on transitions.
         /// </summary>
         public sealed class State // LUCENENET NOTE: Made public because it is returned from a public member
         {
@@ -45,27 +45,27 @@ namespace Lucene.Net.Util.Automaton
             private static readonly State[] NO_STATES = new State[0];
 
             /// <summary>
-            /// Labels of outgoing transitions. Indexed identically to <seealso cref="#states"/>.
+            /// Labels of outgoing transitions. Indexed identically to <see cref="states"/>.
             /// Labels must be sorted lexicographically.
             /// </summary>
             internal int[] labels = NO_LABELS;
 
             /// <summary>
             /// States reachable from outgoing transitions. Indexed identically to
-            /// <seealso cref="#labels"/>.
+            /// <see cref="labels"/>.
             /// </summary>
             internal State[] states = NO_STATES;
 
             /// <summary>
-            /// <code>true</code> if this state corresponds to the end of at least one
+            /// <c>true</c> if this state corresponds to the end of at least one
             /// input sequence.
             /// </summary>
             internal bool is_final;
 
             /// <summary>
             /// Returns the target state of a transition leaving this state and labeled
-            /// with <code>label</code>. If no such transition exists, returns
-            /// <code>null</code>.
+            /// with <paramref name="label"/>. If no such transition exists, returns
+            /// <c>null</c>.
             /// </summary>
             internal State GetState(int label)
             {
@@ -75,12 +75,12 @@ namespace Lucene.Net.Util.Automaton
 
             /// <summary>
             /// Two states are equal if:
-            /// <ul>
-            /// <li>they have an identical number of outgoing transitions, labeled with
-            /// the same labels</li>
-            /// <li>corresponding outgoing transitions lead to the same states (to states
-            /// with an identical right-language).
-            /// </ul>
+            /// <list type="bullet">
+            ///     <item><description>They have an identical number of outgoing transitions, labeled with
+            ///         the same labels.</description></item>
+            ///     <item><description>Corresponding outgoing transitions lead to the same states (to states
+            ///         with an identical right-language).</description></item>
+            /// </list>
             /// </summary>
             public override bool Equals(object obj)
             {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             /// <summary>
-            /// Return <code>true</code> if this state has any children (outgoing
+            /// Return <c>true</c> if this state has any children (outgoing
             /// transitions).
             /// </summary>
             internal bool HasChildren
@@ -125,7 +125,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             /// <summary>
-            /// Create a new outgoing transition labeled <code>label</code> and return
+            /// Create a new outgoing transition labeled <paramref name="label"/> and return
             /// the newly created target state for this transition.
             /// </summary>
             internal State NewState(int label)
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util.Automaton
 
             /// <summary>
             /// Return the associated state if the most recent transition is labeled with
-            /// <code>label</code>.
+            /// <paramref name="label"/>.
             /// </summary>
             internal State LastChild(int label)
             {
@@ -166,7 +166,7 @@ namespace Lucene.Net.Util.Automaton
 
             /// <summary>
             /// Replace the last added outgoing transition's target state with the given
-            /// state.
+            /// <paramref name="state"/>.
             /// </summary>
             internal void ReplaceLastChild(State state)
             {
@@ -207,7 +207,7 @@ namespace Lucene.Net.Util.Automaton
         private State root = new State();
 
         /// <summary>
-        /// Previous sequence added to the automaton in <seealso cref="#add(CharsRef)"/>.
+        /// Previous sequence added to the automaton in <see cref="Add(CharsRef)"/>.
         /// </summary>
         private CharsRef previous;
 
@@ -295,7 +295,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Build a minimal, deterministic automaton from a sorted list of <seealso cref="BytesRef"/> representing
+        /// Build a minimal, deterministic automaton from a sorted list of <see cref="BytesRef"/> representing
         /// strings in UTF-8. These strings must be binary-sorted.
         /// </summary>
         public static Automaton Build(ICollection<BytesRef> input)
@@ -316,7 +316,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Copy <code>current</code> into an internal buffer.
+        /// Copy <paramref name="current"/> into an internal buffer.
         /// </summary>
         private bool SetPrevious(CharsRef current)
         {
@@ -327,7 +327,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Replace last child of <code>state</code> with an already registered state
+        /// Replace last child of <paramref name="state"/> with an already registered state
         /// or stateRegistry the last child state.
         /// </summary>
         private void ReplaceOrRegister(State state)
@@ -351,8 +351,8 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Add a suffix of <code>current</code> starting at <code>fromIndex</code>
-        /// (inclusive) to state <code>state</code>.
+        /// Add a suffix of <paramref name="current"/> starting at <paramref name="fromIndex"/>
+        /// (inclusive) to state <paramref name="state"/>.
         /// </summary>
         private void AddSuffix(State state, ICharSequence current, int fromIndex)
         {

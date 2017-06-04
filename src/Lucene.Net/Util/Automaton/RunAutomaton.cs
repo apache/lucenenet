@@ -35,7 +35,7 @@ namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
     /// Finite-state automaton with fast run operation.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class RunAutomaton
@@ -100,6 +100,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns number of states in automaton.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public int Count
@@ -139,7 +140,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Gets character class of given codepoint
+        /// Gets character class of given codepoint.
         /// </summary>
         internal int GetCharClass(int c)
         {
@@ -147,10 +148,10 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Constructs a new <code>RunAutomaton</code> from a deterministic
-        /// <code>Automaton</code>.
+        /// Constructs a new <see cref="RunAutomaton"/> from a deterministic
+        /// <see cref="Automaton"/>.
         /// </summary>
-        /// <param name="a"> an automaton </param>
+        /// <param name="a"> An automaton. </param>
         /// <param name="maxInterval"></param>
         /// <param name="tableize"></param>
         public RunAutomaton(Automaton a, int maxInterval, bool tableize)
@@ -205,7 +206,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns the state obtained by reading the given char from the given state.
         /// Returns -1 if not obtaining any such state. (If the original
-        /// <code>Automaton</code> had no dead states, -1 is returned here if and only
+        /// <see cref="Automaton"/> had no dead states, -1 is returned here if and only
         /// if a dead state is entered in an equivalent automaton with a total
         /// transition function.)
         /// </summary>

@@ -37,8 +37,8 @@ using System.Text;
 namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
-    /// <tt>Automaton</tt> state.
-    ///
+    /// <see cref="Automaton"/> state.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class State : IComparable<State>
@@ -150,7 +150,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns the set of outgoing transitions. Subsequent changes are reflected
         /// in the automaton.
         /// </summary>
-        /// <returns> transition set </returns>
+        /// <returns> Transition set. </returns>
         public virtual IEnumerable<Transition> GetTransitions()
         {
             return new TransitionsIterable(this);
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Adds an outgoing transition.
         /// </summary>
-        /// <param name="t"> transition </param>
+        /// <param name="t"> Transition. </param>
         public virtual void AddTransition(Transition t)
         {
             if (numTransitions == transitionsArray.Length)
@@ -183,9 +183,8 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Sets acceptance for this state.
+        /// Sets acceptance for this state. If <c>true</c>, this state is an accept state.
         /// </summary>
-        /// <param name="accept"> if true, this state is an accept state </param>
         public virtual bool Accept
         {
             set
@@ -201,9 +200,9 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Performs lookup in transitions, assuming determinism.
         /// </summary>
-        /// <param name="c"> codepoint to look up </param>
-        /// <returns> destination state, null if no matching outgoing transition </returns>
-        /// <seealso cref= #step(int, Collection) </seealso>
+        /// <param name="c"> Codepoint to look up. </param>
+        /// <returns> Destination state, <c>null</c> if no matching outgoing transition. </returns>
+        /// <seealso cref="Step(int, ICollection{State})"/>
         public virtual State Step(int c)
         {
             Debug.Assert(c >= 0);
@@ -221,9 +220,9 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Performs lookup in transitions, allowing nondeterminism.
         /// </summary>
-        /// <param name="c"> codepoint to look up </param>
-        /// <param name="dest"> collection where destination states are stored </param>
-        /// <seealso cref= #step(int) </seealso>
+        /// <param name="c"> Codepoint to look up. </param>
+        /// <param name="dest"> Collection where destination states are stored. </param>
+        /// <seealso cref="Step(int)"/>
         public virtual void Step(int c, ICollection<State> dest)
         {
             for (int i = 0; i < numTransitions; i++)
@@ -238,9 +237,9 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Virtually adds an epsilon transition to the target
-        ///  {@code to} state.  this is implemented by copying all
-        ///  transitions from {@code to} to this state, and if {@code
-        ///  to} is an accept state then set accept for this state.
+        /// <paramref name="to"/> state.  this is implemented by copying all
+        /// transitions from <paramref name="to"/> to this state, and if 
+        /// <paramref name="to"/> is an accept state then set accept for this state.
         /// </summary>
         internal virtual void AddEpsilon(State to)
         {
@@ -255,7 +254,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Downsizes transitionArray to numTransitions </summary>
+        /// Downsizes transitionArray to numTransitions. </summary>
         public virtual void TrimTransitionsArray()
         {
             if (numTransitions < transitionsArray.Length)
@@ -324,9 +323,8 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns sorted list of outgoing transitions.
         /// </summary>
-        /// <param name="to_first"> if true, order by (to, min, reverse max); otherwise (min,
-        ///          reverse max, to) </param>
-        /// <returns> transition list </returns>
+        /// <param name="comparer"> Comparer to sort with. </param>
+        /// <returns> Transition list. </returns>
 
         /// <summary>
         /// Sorts transitions array in-place. </summary>
@@ -341,10 +339,10 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Return this state's number.
-        /// <p>
-        /// Expert: Will be useless unless <seealso cref="Automaton#getNumberedStates"/>
+        /// <para/>
+        /// Expert: Will be useless unless <see cref="Automaton.GetNumberedStates()"/>
         /// has been called first to number the states. </summary>
-        /// <returns> the number </returns>
+        /// <returns> The number. </returns>
         public virtual int Number
         {
             get
@@ -355,7 +353,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns string describing this state. Normally invoked via
-        /// <seealso cref="Automaton#toString()"/>.
+        /// <see cref="Automaton.ToString()"/>.
         /// </summary>
         public override string ToString()
         {
