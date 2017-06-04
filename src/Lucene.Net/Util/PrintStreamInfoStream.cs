@@ -23,12 +23,12 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// InfoStream implementation over a <seealso cref="PrintStream"/>
-    /// such as <code>System.out</code>.
-    ///
+    /// InfoStream implementation over a <see cref="TextWriter"/>
+    /// such as <see cref="Console.Out"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
-    public class PrintStreamInfoStream : InfoStream
+    public class PrintStreamInfoStream : InfoStream // LUCENENET TODO: API - Rename to TextWriterInfoStream
     {
         // Used for printing messages
         private static readonly AtomicInt32 MESSAGE_ID = new AtomicInt32();

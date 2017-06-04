@@ -90,21 +90,19 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Class to encode java's UTF16 char[] into UTF8 byte[]
-    /// without always allocating a new byte[] as
-    /// String.getBytes(StandardCharsets.UTF_8) does.
-    ///
+    /// Class to encode .NET's UTF16 <see cref="T:char[]"/> into UTF8 <see cref="T:byte[]"/>
+    /// without always allocating a new <see cref="T:byte[]"/> as
+    /// <see cref="Encoding.GetBytes(string)"/> of <see cref="Encoding.UTF8"/> does.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
-
     public static class UnicodeUtil
     {
         /// <summary>
         /// A binary term consisting of a number of 0xff bytes, likely to be bigger than other terms
-        ///  (e.g. collation keys) one would normally encounter, and definitely bigger than any UTF-8 terms.
-        ///  <p>
-        ///  WARNING: this is not a valid UTF8 Term
-        ///
+        /// (e.g. collation keys) one would normally encounter, and definitely bigger than any UTF-8 terms.
+        /// <para/>
+        /// WARNING: this is not a valid UTF8 Term
         /// </summary>
         public static readonly BytesRef BIG_TERM = new BytesRef(new byte[] { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }); // TODO this is unrelated here find a better place for it
 
@@ -113,7 +111,6 @@ namespace Lucene.Net.Util
         public const int UNI_SUR_LOW_START = 0xDC00;
         public const int UNI_SUR_LOW_END = 0xDFFF;
         public const int UNI_REPLACEMENT_CHAR = 0xFFFD;
-        //private const int MIN_SUPPLEMENTARY_CODE_POINT = 0x10000;
 
         private const long UNI_MAX_BMP = 0x0000FFFF;
 
@@ -123,8 +120,8 @@ namespace Lucene.Net.Util
         private const int SURROGATE_OFFSET = Character.MIN_SUPPLEMENTARY_CODE_POINT - (UNI_SUR_HIGH_START << (int)HALF_SHIFT) - UNI_SUR_LOW_START;
 
         /// <summary>
-        /// Encode characters from a char[] source, starting at
-        ///  offset for length chars. After encoding, result.offset will always be 0.
+        /// Encode characters from a <see cref="T:char[]"/> <paramref name="source"/>, starting at
+        /// <paramref name="offset"/> for <paramref name="length"/> chars. After encoding, <c>result.Offset</c> will always be 0.
         /// </summary>
         // TODO: broken if incoming result.offset != 0
         public static void UTF16toUTF8(char[] source, int offset, int length, BytesRef result)
@@ -191,8 +188,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Encode characters from this <see cref="ICharSequence"/>, starting at offset
-        ///  for length characters. After encoding, result.offset will always be 0.
+        /// Encode characters from this <see cref="ICharSequence"/>, starting at <paramref name="offset"/>
+        /// for <paramref name="length"/> characters. After encoding, <c>result.Offset</c> will always be 0.
         /// </summary>
         // TODO: broken if incoming result.offset != 0
         public static void UTF16toUTF8(ICharSequence s, int offset, int length, BytesRef result)
@@ -258,8 +255,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Encode characters from this <see cref="string"/>, starting at offset
-        /// for length characters. After encoding, result.offset will always be 0.
+        /// Encode characters from this <see cref="string"/>, starting at <paramref name="offset"/>
+        /// for <paramref name="length"/> characters. After encoding, <c>result.Offset</c> will always be 0.
+        /// <para/>
         /// LUCENENET specific.
         /// </summary>
         // TODO: broken if incoming result.offset != 0
@@ -566,12 +564,12 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns the number of code points in this UTF8 sequence.
         ///
-        /// <p>this method assumes valid UTF8 input. this method
-        /// <strong>does not perform</strong> full UTF8 validation, it will check only the
+        /// <para/>This method assumes valid UTF8 input. This method
+        /// <b>does not perform</b> full UTF8 validation, it will check only the
         /// first byte of each codepoint (for multi-byte sequences any bytes after
         /// the head are skipped).
         /// </summary>
-        /// <exception cref="IllegalArgumentException"> If invalid codepoint header byte occurs or the
+        /// <exception cref="ArgumentException"> If invalid codepoint header byte occurs or the
         ///    content is prematurely truncated. </exception>
         public static int CodePointCount(BytesRef utf8)
         {
@@ -603,12 +601,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// <p>this method assumes valid UTF8 input. this method
-        /// <strong>does not perform</strong> full UTF8 validation, it will check only the
+        /// This method assumes valid UTF8 input. This method
+        /// <b>does not perform</b> full UTF8 validation, it will check only the
         /// first byte of each codepoint (for multi-byte sequences any bytes after
         /// the head are skipped).
         /// </summary>
-        /// <exception cref="IllegalArgumentException"> If invalid codepoint header byte occurs or the
+        /// <exception cref="ArgumentException"> If invalid codepoint header byte occurs or the
         ///    content is prematurely truncated. </exception>
         public static void UTF8toUTF32(BytesRef utf8, Int32sRef utf32)
         {
@@ -674,30 +672,30 @@ namespace Lucene.Net.Util
         private const int TRAIL_SURROGATE_MASK_ = 0x3FF;
 
         /// <summary>
-        /// Trail surrogate minimum value </summary>
+        /// Trail surrogate minimum value. </summary>
         private const int TRAIL_SURROGATE_MIN_VALUE = 0xDC00;
 
         /// <summary>
-        /// Lead surrogate minimum value </summary>
+        /// Lead surrogate minimum value. </summary>
         private const int LEAD_SURROGATE_MIN_VALUE = 0xD800;
 
         /// <summary>
-        /// The minimum value for Supplementary code points </summary>
+        /// The minimum value for Supplementary code points. </summary>
         private const int SUPPLEMENTARY_MIN_VALUE = 0x10000;
 
         /// <summary>
-        /// Value that all lead surrogate starts with </summary>
+        /// Value that all lead surrogate starts with. </summary>
         private static readonly int LEAD_SURROGATE_OFFSET_ = LEAD_SURROGATE_MIN_VALUE - (SUPPLEMENTARY_MIN_VALUE >> LEAD_SURROGATE_SHIFT_);
 
         /// <summary>
-        /// Cover JDK 1.5 API. Create a String from an array of codePoints.
+        /// Cover JDK 1.5 API. Create a String from an array of <paramref name="codePoints"/>.
         /// </summary>
-        /// <param name="codePoints"> The code array </param>
-        /// <param name="offset"> The start of the text in the code point array </param>
-        /// <param name="count"> The number of code points </param>
-        /// <returns> a String representing the code points between offset and count </returns>
-        /// <exception cref="IllegalArgumentException"> If an invalid code point is encountered </exception>
-        /// <exception cref="IndexOutOfBoundsException"> If the offset or count are out of bounds. </exception>
+        /// <param name="codePoints"> The code array. </param>
+        /// <param name="offset"> The start of the text in the code point array. </param>
+        /// <param name="count"> The number of code points. </param>
+        /// <returns> a String representing the code points between offset and count. </returns>
+        /// <exception cref="ArgumentException"> If an invalid code point is encountered. </exception>
+        /// <exception cref="IndexOutOfRangeException"> If the offset or count are out of bounds. </exception>
         public static string NewString(int[] codePoints, int offset, int count)
         {
             char[] chars = ToCharArray(codePoints, offset, count);
@@ -706,13 +704,13 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Generates char array that represents the provided input code points.
-        /// 
+        /// <para/>
         /// LUCENENET specific.
         /// </summary>
-        /// <param name="codePoints"> The code array </param>
-        /// <param name="offset"> The start of the text in the code point array </param>
-        /// <param name="count"> The number of code points </param>
-        /// <returns> a char array representing the code points between offset and count </returns>
+        /// <param name="codePoints"> The code array. </param>
+        /// <param name="offset"> The start of the text in the code point array. </param>
+        /// <param name="count"> The number of code points. </param>
+        /// <returns> a char array representing the code points between offset and count. </returns>
         // LUCENENET NOTE: This code was originally in the NewString() method (above).
         // It has been refactored from the original to remove the exception throw/catch and
         // instead proactively resizes the array instead of relying on excpetions + copy operations
@@ -811,11 +809,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Interprets the given byte array as UTF-8 and converts to UTF-16. The <seealso cref="CharsRef"/> will be extended if
+        /// Interprets the given byte array as UTF-8 and converts to UTF-16. The <see cref="CharsRef"/> will be extended if
         /// it doesn't provide enough space to hold the worst case of each byte becoming a UTF-16 codepoint.
-        /// <p>
+        /// <para/>
         /// NOTE: Full characters are read, even if this reads past the length passed (and
-        /// can result in an ArrayOutOfBoundsException if invalid UTF-8 is passed).
+        /// can result in an <see cref="IndexOutOfRangeException"/> if invalid UTF-8 is passed).
         /// Explicit checks for valid UTF-8 are not performed.
         /// </summary>
         // TODO: broken if chars.offset != 0
@@ -862,8 +860,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Utility method for <seealso cref="#UTF8toUTF16(byte[], int, int, CharsRef)"/> </summary>
-        /// <seealso cref= #UTF8toUTF16(byte[], int, int, CharsRef) </seealso>
+        /// Utility method for <see cref="UTF8toUTF16(byte[], int, int, CharsRef)"/> </summary>
+        /// <seealso cref="UTF8toUTF16(byte[], int, int, CharsRef)"/>
         public static void UTF8toUTF16(BytesRef bytesRef, CharsRef chars)
         {
             UTF8toUTF16(bytesRef.Bytes, bytesRef.Offset, bytesRef.Length, chars);

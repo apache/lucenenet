@@ -21,21 +21,23 @@ namespace Lucene.Net.Util
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
-    /// Abstraction over an array of longs.
-    ///  this class extends NumericDocValues so that we don't need to add another
-    ///  level of abstraction every time we want eg. to use the <seealso cref="PackedInt32s"/>
-    ///  utility classes to represent a <seealso cref="NumericDocValues"/> instance.
+    /// Abstraction over an array of <see cref="long"/>s.
+    /// This class extends <see cref="NumericDocValues"/> so that we don't need to add another
+    /// level of abstraction every time we want eg. to use the <see cref="PackedInt32s"/>
+    /// utility classes to represent a <see cref="NumericDocValues"/> instance.
     /// <para/>
     /// NOTE: This was LongValues in Lucene
-    /// 
-    ///  @lucene.internal
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
     public abstract class Int64Values : NumericDocValues
     {
         /// <summary>
-        /// Get value at <code>index</code>. </summary>
+        /// Get value at <paramref name="index"/>. </summary>
         public abstract long Get(long index);
 
+        /// <summary>
+        /// Get value at <paramref name="idx"/>. </summary>
         public override long Get(int idx)
         {
             return Get((long)idx);

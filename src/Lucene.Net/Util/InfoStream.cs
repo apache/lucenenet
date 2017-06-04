@@ -21,18 +21,18 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Debugging API for Lucene classes such as <seealso cref="IndexWriter"/>
-    /// and <seealso cref="SegmentInfos"/>.
-    /// <p>
+    /// Debugging API for Lucene classes such as <see cref="Index.IndexWriter"/>
+    /// and <see cref="Index.SegmentInfos"/>.
+    /// <para>
     /// NOTE: Enabling infostreams may cause performance degradation
     /// in some components.
-    ///
+    /// </para>
     /// @lucene.internal
     /// </summary>
     public abstract class InfoStream : IDisposable
     {
         /// <summary>
-        /// Instance of InfoStream that does no logging at all. </summary>
+        /// Instance of <see cref="InfoStream"/> that does no logging at all. </summary>
         public static readonly InfoStream NO_OUTPUT = new NoOutput();
 
         private sealed class NoOutput : InfoStream
@@ -53,18 +53,17 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// prints a message </summary>
+        /// Prints a message </summary>
         public abstract void Message(string component, string message);
 
         /// <summary>
-        /// returns true if messages are enabled and should be posted to <seealso cref="#message"/>. </summary>
+        /// Returns <c>true</c> if messages are enabled and should be posted to <see cref="Message(string, string)"/>. </summary>
         public abstract bool IsEnabled(string component);
 
         private static InfoStream defaultInfoStream = NO_OUTPUT;
 
         /// <summary>
-        /// The default {@code InfoStream} used by a newly instantiated classes. </summary>
-        /// <seealso cref= #setDefault  </seealso>
+        /// Gets or Sets the default <see cref="InfoStream"/> used by a newly instantiated classes. </summary>
         public static InfoStream Default
         {
             get
@@ -88,16 +87,25 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET specific - implementing proper dispose pattern
+        /// <summary>
+        /// Disposes this <see cref="InfoStream"/>
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Disposes this <see cref="InfoStream"/>
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
         }
 
+        /// <summary>
+        /// Clones this <see cref="InfoStream"/>
+        /// </summary>
         public virtual object Clone()
         {
             try

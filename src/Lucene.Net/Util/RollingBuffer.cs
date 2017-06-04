@@ -20,8 +20,15 @@ namespace Lucene.Net.Util
      * limitations under the License.
      */
 
+    /// <summary>
+    /// LUCENENET specific class to allow referencing static members of
+    /// <see cref="RollingBuffer{T}"/> without referencing its generic closing type.
+    /// </summary>
     public static class RollingBuffer
     {
+        /// <summary>
+        /// Implement to reset an instance
+        /// </summary>
         public interface IResettable
         {
             void Reset();
@@ -29,10 +36,10 @@ namespace Lucene.Net.Util
     }
 
     /// <summary>
-    /// Acts like forever growing T[], but internally uses a
-    ///  circular buffer to reuse instances of T.
-    ///
-    ///  @lucene.internal
+    /// Acts like forever growing <see cref="T:T[]"/>, but internally uses a
+    /// circular buffer to reuse instances of <typeparam name="T"/>.
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
     public abstract class RollingBuffer<T>
         where T : RollingBuffer.IResettable
@@ -101,9 +108,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Get T instance for this absolute position;
-        ///  this is allowed to be arbitrarily far "in the
-        ///  future" but cannot be before the last freeBefore.
+        /// Get <typeparamref name="T"/> instance for this absolute position;
+        /// This is allowed to be arbitrarily far "in the
+        /// future" but cannot be before the last <see cref="FreeBefore(int)"/>.
         /// </summary>
         public virtual T Get(int pos)
         {
@@ -138,7 +145,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the maximum position looked up, or -1 if no
-        ///  position has been looked up sinc reset/init.
+        /// position has been looked up since <see cref="Reset()"/>/init.
         /// </summary>
         public virtual int MaxPos
         {

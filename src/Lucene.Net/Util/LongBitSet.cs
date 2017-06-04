@@ -22,12 +22,12 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// BitSet of fixed length (numBits), backed by accessible (<seealso cref="#getBits"/>)
-    /// long[], accessed with a long index. Use it only if you intend to store more
-    /// than 2.1B bits, otherwise you should use <seealso cref="FixedBitSet"/>.
+    /// BitSet of fixed length (<see cref="numBits"/>), backed by accessible (<see cref="GetBits()"/>)
+    /// <see cref="T:long[]"/>, accessed with a <see cref="long"/> index. Use it only if you intend to store more
+    /// than 2.1B bits, otherwise you should use <see cref="FixedBitSet"/>.
     /// <para/>
     /// NOTE: This was LongBitSet in Lucene
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -40,14 +40,14 @@ namespace Lucene.Net.Util
         private readonly int numWords;
 
         /// <summary>
-        /// If the given <seealso cref="Int64BitSet"/> is large enough to hold
-        /// {@code numBits}, returns the given bits, otherwise returns a new
-        /// <seealso cref="Int64BitSet"/> which can hold the requested number of bits.
+        /// If the given <see cref="Int64BitSet"/> is large enough to hold
+        /// <paramref name="numBits"/>, returns the given <paramref name="bits"/>, otherwise returns a new
+        /// <see cref="Int64BitSet"/> which can hold the requested number of bits.
         ///
-        /// <p>
-        /// <b>NOTE:</b> the returned bitset reuses the underlying {@code long[]} of
-        /// the given {@code bits} if possible. Also, calling <seealso cref="#length()"/> on the
-        /// returned bits may return a value greater than {@code numBits}.
+        /// <para/>
+        /// <b>NOTE:</b> the returned bitset reuses the underlying <see cref="T:long[]"/> of
+        /// the given <paramref name="bits"/> if possible. Also, reading <see cref="Length"/> on the
+        /// returned bits may return a value greater than <paramref name="numBits"/>.
         /// </summary>
         public static Int64BitSet EnsureCapacity(Int64BitSet bits, long numBits)
         {
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// returns the number of 64 bit words it would take to hold numBits </summary>
+        /// Returns the number of 64 bit words it would take to hold <paramref name="numBits"/>. </summary>
         public static int Bits2words(long numBits)
         {
             int numLong = (int)((long)((ulong)numBits >> 6));
@@ -114,8 +114,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns number of set bits.  NOTE: this visits every
-        ///  long in the backing bits array, and the result is not
-        ///  internally cached!
+        /// long in the backing bits array, and the result is not
+        /// internally cached!
         /// </summary>
         public long Cardinality()
         {
@@ -174,8 +174,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the index of the first set bit starting at the index specified.
-        ///  -1 is returned if there are no more set bits.
+        /// Returns the index of the first set bit starting at the <paramref name="index"/> specified.
+        /// -1 is returned if there are no more set bits.
         /// </summary>
         public long NextSetBit(long index)
         {
@@ -202,8 +202,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the index of the last set bit before or on the index specified.
-        ///  -1 is returned if there are no more set bits.
+        /// Returns the index of the last set bit before or on the <paramref name="index"/> specified.
+        /// -1 is returned if there are no more set bits.
         /// </summary>
         public long PrevSetBit(long index)
         {
@@ -254,7 +254,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// returns true if the sets have any elements in common </summary>
+        /// Returns <c>true</c> if the sets have any elements in common </summary>
         public bool Intersects(Int64BitSet other)
         {
             int pos = Math.Min(numWords, other.numWords);
@@ -301,8 +301,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Flips a range of bits
         /// </summary>
-        /// <param name="startIndex"> lower index </param>
-        /// <param name="endIndex"> one-past the last bit to flip </param>
+        /// <param name="startIndex"> Lower index </param>
+        /// <param name="endIndex"> One-past the last bit to flip </param>
         public void Flip(long startIndex, long endIndex)
         {
             Debug.Assert(startIndex >= 0 && startIndex < numBits);
@@ -346,8 +346,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sets a range of bits
         /// </summary>
-        /// <param name="startIndex"> lower index </param>
-        /// <param name="endIndex"> one-past the last bit to set </param>
+        /// <param name="startIndex"> Lower index </param>
+        /// <param name="endIndex"> One-past the last bit to set </param>
         public void Set(long startIndex, long endIndex)
         {
             Debug.Assert(startIndex >= 0 && startIndex < numBits);
@@ -377,8 +377,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Clears a range of bits.
         /// </summary>
-        /// <param name="startIndex"> lower index </param>
-        /// <param name="endIndex"> one-past the last bit to clear </param>
+        /// <param name="startIndex"> Lower index </param>
+        /// <param name="endIndex"> One-past the last bit to clear </param>
         public void Clear(long startIndex, long endIndex)
         {
             Debug.Assert(startIndex >= 0 && startIndex < numBits);
@@ -420,7 +420,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// returns true if both sets have the same bits set </summary>
+        /// Returns <c>true</c> if both sets have the same bits set </summary>
         public override bool Equals(object o)
         {
             if (this == o)

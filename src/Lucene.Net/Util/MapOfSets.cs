@@ -21,20 +21,21 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Helper class for keeping Lists of Objects associated with keys. <b>WARNING: this CLASS IS NOT THREAD SAFE</b>
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class MapOfSets<TKey, TValue>
     {
-        private readonly IDictionary<TKey, HashSet<TValue>> theMap;
+        private readonly IDictionary<TKey, HashSet<TValue>> theMap; // LUCENENET TODO: API Change to ISet
 
-        /// <param name="m"> the backing store for this object </param>
-        public MapOfSets(IDictionary<TKey, HashSet<TValue>> m)
+        /// <param name="m"> The backing store for this object. </param>
+        public MapOfSets(IDictionary<TKey, HashSet<TValue>> m) // LUCENENET TODO: API Change to ISet
         {
             theMap = m;
         }
 
-        /// <returns> direct access to the map backing this object. </returns>
-        public virtual IDictionary<TKey, HashSet<TValue>> Map
+        /// <returns> Direct access to the map backing this object. </returns>
+        public virtual IDictionary<TKey, HashSet<TValue>> Map // LUCENENET TODO: API Change to ISet
         {
             get
             {
@@ -43,12 +44,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Adds val to the Set associated with key in the Map.  If key is not
-        /// already in the map, a new Set will first be created. </summary>
-        /// <returns> the size of the Set associated with key once val is added to it. </returns>
+        /// Adds <paramref name="val"/> to the <see cref="ISet{T}"/> associated with key in the <see cref="IDictionary{TKey, TValue}"/>.  
+        /// If <paramref name="key"/> is not
+        /// already in the map, a new <see cref="ISet{T}"/> will first be created. </summary>
+        /// <returns> The size of the <see cref="ISet{T}"/> associated with key once val is added to it. </returns>
         public virtual int Put(TKey key, TValue val)
         {
-            HashSet<TValue> theSet;
+            HashSet<TValue> theSet; // LUCENENET TODO: API Change to ISet
             if (theMap.ContainsKey(key))
             {
                 theSet = theMap[key];
@@ -63,13 +65,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Adds multiple vals to the Set associated with key in the Map.
-        /// If key is not
-        /// already in the map, a new Set will first be created. </summary>
-        /// <returns> the size of the Set associated with key once val is added to it. </returns>
+        /// Adds multiple <paramref name="vals"/> to the <see cref="ISet{T}"/> associated with key in the <see cref="IDictionary{TKey, TValue}"/>.
+        /// If <paramref name="key"/> is not
+        /// already in the map, a new <see cref="ISet{T}"/> will first be created. </summary>
+        /// <returns> The size of the <see cref="ISet{T}"/> associated with key once val is added to it. </returns>
         public virtual int PutAll(TKey key, IEnumerable<TValue> vals)
         {
-            HashSet<TValue> theSet;
+            HashSet<TValue> theSet; // LUCENENET TODO: API Change to ISet
             if (theMap.ContainsKey(key))
             {
                 theSet = theMap[key];

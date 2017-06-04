@@ -21,7 +21,7 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Helper methods to ease implementing <seealso cref="Object#toString()"/>.
+    /// Helper methods to ease implementing <see cref="object.ToString()"/>.
     /// </summary>
     public sealed class ToStringUtils
     {
@@ -30,7 +30,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// for printing boost only if not 1.0
+        /// For printing boost only if not 1.0.
         /// </summary>
         public static string Boost(float boost)
         {

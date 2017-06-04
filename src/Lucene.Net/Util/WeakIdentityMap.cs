@@ -24,38 +24,38 @@ namespace Lucene.Net.Util
 	 */
 
     /// <summary>
-    /// Implements a combination of <seealso cref="java.util.WeakHashMap"/> and
-    /// <seealso cref="java.util.IdentityHashMap"/>.
-    /// Useful for caches that need to key off of a {@code ==} comparison
-    /// instead of a {@code .equals}.
+    /// Implements a combination of <c>java.util.WeakHashMap</c> and
+    /// <c>java.util.IdentityHashMap</c>.
+    /// Useful for caches that need to key off of a <c>==</c> comparison
+    /// instead of a <c>.Equals(object)</c>.
     ///
-    /// <p>this class is not a general-purpose <seealso cref="java.util.Map"/>
+    /// <para/>This class is not a general-purpose <see cref="IDictionary{TKey, TValue}"/>
     /// implementation! It intentionally violates
-    /// Map's general contract, which mandates the use of the equals method
-    /// when comparing objects. this class is designed for use only in the
+    /// <see cref="IDictionary{TKey, TValue}"/>'s general contract, which mandates the use of the <see cref="object.Equals(object)"/> method
+    /// when comparing objects. This class is designed for use only in the
     /// rare cases wherein reference-equality semantics are required.
     ///
-    /// <p>this implementation was forked from <a href="http://cxf.apache.org/">Apache CXF</a>
-    /// but modified to <b>not</b> implement the <seealso cref="java.util.Map"/> interface and
+    /// <para/>This implementation was forked from <a href="http://cxf.apache.org/">Apache CXF</a>
+    /// but modified to <b>not</b> implement the <see cref="IDictionary{TKey, TValue}"/> interface and
     /// without any set views on it, as those are error-prone and inefficient,
-    /// if not implemented carefully. The map only contains <seealso cref="Iterator"/> implementations
-    /// on the values and not-GCed keys. Lucene's implementation also supports {@code null}
+    /// if not implemented carefully. The map only contains <see cref="IEnumerable{T}.GetEnumerator()"/> implementations
+    /// on the values and not-GCed keys. Lucene's implementation also supports <c>null</c>
     /// keys, but those are never weak!
     ///
-    /// <p><a name="reapInfo" />The map supports two modes of operation:
-    /// <ul>
-    ///  <li>{@code reapOnRead = true}: this behaves identical to a <seealso cref="java.util.WeakHashMap"/>
-    ///  where it also cleans up the reference queue on every read operation (<seealso cref="#get(Object)"/>,
-    ///  <seealso cref="#containsKey(Object)"/>, <seealso cref="#size()"/>, <seealso cref="#valueIterator()"/>), freeing map entries
-    ///  of already GCed keys.</li>
-    ///  <li>{@code reapOnRead = false}: this mode does not call <seealso cref="#reap()"/> on every read
-    ///  operation. In this case, the reference queue is only cleaned up on write operations
-    ///  (like <seealso cref="#put(Object, Object)"/>). this is ideal for maps with few entries where
-    ///  the keys are unlikely be garbage collected, but there are lots of <seealso cref="#get(Object)"/>
-    ///  operations. The code can still call <seealso cref="#reap()"/> to manually clean up the queue without
-    ///  doing a write operation.</li>
-    /// </ul>
-    ///
+    /// <para/><a name="reapInfo" />The map supports two modes of operation:
+    /// <list type="bullet">
+    ///     <item><term><c>reapOnRead = true</c>:</term><description> This behaves identical to a <c>java.util.WeakHashMap</c>
+    ///         where it also cleans up the reference queue on every read operation (<see cref="Get(object)"/>,
+    ///         <see cref="ContainsKey(object)"/>, <see cref="Count"/>, <see cref="GetValueEnumerator()"/>), freeing map entries
+    ///         of already GCed keys.</description></item>
+    ///     <item><term><c>reapOnRead = false</c>:</term><description> This mode does not call <see cref="Reap()"/> on every read
+    ///         operation. In this case, the reference queue is only cleaned up on write operations
+    ///         (like <see cref="Put(TKey, TValue)"/>). This is ideal for maps with few entries where
+    ///         the keys are unlikely be garbage collected, but there are lots of <see cref="Get(object)"/>
+    ///         operations. The code can still call <see cref="Reap()"/> to manually clean up the queue without
+    ///         doing a write operation.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class WeakIdentityMap<TKey, TValue>
@@ -66,7 +66,7 @@ namespace Lucene.Net.Util
         private readonly bool reapOnRead;
 
         /// <summary>
-        /// Creates a new {@code WeakIdentityMap} based on a non-synchronized <seealso cref="HashMap"/>.
+        /// Creates a new <see cref="WeakIdentityMap{TKey, TValue}"/> based on a non-synchronized <see cref="Dictionary{TKey, TValue}"/>.
         /// The map <a href="#reapInfo">cleans up the reference queue on every read operation</a>.
         /// </summary>
         public static WeakIdentityMap<TKey, TValue> NewHashMap()
@@ -75,7 +75,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new {@code WeakIdentityMap} based on a non-synchronized <seealso cref="HashMap"/>. </summary>
+        /// Creates a new <see cref="WeakIdentityMap{TKey, TValue}"/> based on a non-synchronized <see cref="Dictionary{TKey, TValue}"/>. </summary>
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
         public static WeakIdentityMap<TKey, TValue> NewHashMap(bool reapOnRead)
         {
@@ -83,7 +83,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new {@code WeakIdentityMap} based on a <seealso cref="ConcurrentHashMap"/>.
+        /// Creates a new <see cref="WeakIdentityMap{TKey, TValue}"/> based on a <see cref="ConcurrentDictionary{TKey, TValue}"/>.
         /// The map <a href="#reapInfo">cleans up the reference queue on every read operation</a>.
         /// </summary>
         public static WeakIdentityMap<TKey, TValue> NewConcurrentHashMap()
@@ -92,7 +92,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new {@code WeakIdentityMap} based on a <seealso cref="ConcurrentHashMap"/>. </summary>
+        /// Creates a new <see cref="WeakIdentityMap{TKey, TValue}"/> based on a <see cref="ConcurrentDictionary{TKey, TValue}"/>. </summary>
         /// <param name="reapOnRead"> controls if the map <a href="#reapInfo">cleans up the reference queue on every read operation</a>. </param>
         public static WeakIdentityMap<TKey, TValue> NewConcurrentHashMap(bool reapOnRead)
         {
@@ -116,7 +116,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns {@code true} if this map contains a mapping for the specified key. </summary>
+        /// Returns <c>true</c> if this map contains a mapping for the specified key. </summary>
         public bool ContainsKey(object key)
         {
             if (reapOnRead)
@@ -157,7 +157,10 @@ namespace Lucene.Net.Util
             return backingStore[new IdentityWeakReference(key)] = value;
         }
 
-        public IEnumerable<TKey> Keys
+        /// <summary>
+        /// Gets an <see cref="ICollection{TKey}"/> object containing the keys of the <see cref="WeakIdentityMap{TKey, TValue}"/>.
+        /// </summary>
+        public IEnumerable<TKey> Keys // LUCENENET TODO: API - change to ICollection<T>
         {
             get
             {
@@ -193,7 +196,10 @@ namespace Lucene.Net.Util
             }
         }
 
-        public IEnumerable<TValue> Values
+        /// <summary>
+        /// Gets an <see cref="ICollection{TKey}"/> object containing the values of the <see cref="WeakIdentityMap{TKey, TValue}"/>.
+        /// </summary>
+        public IEnumerable<TValue> Values // LUCENENET TODO: API - change to ICollection<T>
         {
             get
             {
@@ -203,7 +209,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns {@code true} if this map contains no key-value mappings. </summary>
+        /// Returns <c>true</c> if this map contains no key-value mappings. </summary>
         public bool IsEmpty
         {
             get
@@ -215,8 +221,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Removes the mapping for a key from this weak hash map if it is present.
         /// Returns the value to which this map previously associated the key,
-        /// or {@code null} if the map contained no mapping for the key.
-        /// A return value of {@code null} does not necessarily indicate that
+        /// or <c>null</c> if the map contained no mapping for the key.
+        /// A return value of <c>null</c> does not necessarily indicate that
         /// the map contained.
         /// </summary>
         public bool Remove(object key)
@@ -226,9 +232,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the number of key-value mappings in this map. this result is a snapshot,
+        /// Returns the number of key-value mappings in this map. This result is a snapshot,
         /// and may not reflect unprocessed entries that will be removed before next
         /// attempted access because they are no longer referenced.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public int Count
@@ -308,9 +315,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns an iterator over all values of this map.
-        /// this iterator may return values whose key is already
+        /// This iterator may return values whose key is already
         /// garbage collected while iterator is consumed,
-        /// especially if {@code reapOnRead} is {@code false}.
+        /// especially if <see cref="reapOnRead"/> is <c>false</c>.
         /// <para/>
         /// NOTE: This was valueIterator() in Lucene.
         /// </summary>
@@ -324,11 +331,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this method manually cleans up the reference queue to remove all garbage
+        /// This method manually cleans up the reference queue to remove all garbage
         /// collected key/value pairs from the map. Calling this method is not needed
-        /// if {@code reapOnRead = true}. Otherwise it might be a good idea
-        /// to call this method when there is spare time (e.g. from a background thread). </summary>
-        /// <seealso cref= <a href="#reapInfo">Information about the <code>reapOnRead</code> setting</a> </seealso>			
+        /// if <c>reapOnRead = true</c>. Otherwise it might be a good idea
+        /// to call this method when there is spare time (e.g. from a background thread). 
+        /// <a href="#reapInfo">Information about the <c>reapOnRead</c> setting</a>		
+        /// </summary>
         public void Reap()
         {
             List<IdentityWeakReference> keysToRemove = null;

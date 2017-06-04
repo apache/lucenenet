@@ -23,7 +23,7 @@ namespace Lucene.Net.Util
     /// Floating point numbers smaller than 32 bits.
     /// <para/>
     /// NOTE: This was SmallFloat in Lucene
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class SmallSingle
@@ -36,15 +36,15 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Converts a 32 bit <see cref="float"/> to an 8 bit <see cref="float"/>.
-        /// <br>Values less than zero are all mapped to zero.
-        /// <br>Values are truncated (rounded down) to the nearest 8 bit value.
-        /// <br>Values between zero and the smallest representable value
+        /// <para/>Values less than zero are all mapped to zero.
+        /// <para/>Values are truncated (rounded down) to the nearest 8 bit value.
+        /// <para/>Values between zero and the smallest representable value
         /// are rounded up.
         /// </summary>
-        /// <param name="f"> the 32 bit <see cref="float"/> to be converted to an 8 bit <see cref="float"/> (<see cref="byte"/>)  </param>
-        /// <param name="numMantissaBits"> the number of mantissa bits to use in the byte, with the remainder to be used in the exponent </param>
-        /// <param name="zeroExp"> the zero-point in the range of exponent values </param>
-        /// <returns> the 8 bit float representation </returns>
+        /// <param name="f"> The 32 bit <see cref="float"/> to be converted to an 8 bit <see cref="float"/> (<see cref="byte"/>).  </param>
+        /// <param name="numMantissaBits"> The number of mantissa bits to use in the byte, with the remainder to be used in the exponent. </param>
+        /// <param name="zeroExp"> The zero-point in the range of exponent values. </param>
+        /// <returns> The 8 bit float representation. </returns>
         // LUCENENET specific overload for CLS compliance
         public static byte SingleToByte(float f, int numMantissaBits, int zeroExp)
         {
@@ -60,10 +60,10 @@ namespace Lucene.Net.Util
         /// <para/>
         /// NOTE: This was floatToByte() in Lucene
         /// </summary>
-        /// <param name="f"> the 32 bit <see cref="float"/> to be converted to an 8 bit <see cref="float"/> (<see cref="sbyte"/>) </param>
-        /// <param name="numMantissaBits"> the number of mantissa bits to use in the byte, with the remainder to be used in the exponent </param>
-        /// <param name="zeroExp"> the zero-point in the range of exponent values </param>
-        /// <returns> the 8 bit float representation </returns>
+        /// <param name="f"> The 32 bit <see cref="float"/> to be converted to an 8 bit <see cref="float"/> (<see cref="sbyte"/>). </param>
+        /// <param name="numMantissaBits"> The number of mantissa bits to use in the byte, with the remainder to be used in the exponent. </param>
+        /// <param name="zeroExp"> The zero-point in the range of exponent values. </param>
+        /// <returns> The 8 bit float representation. </returns>
         [CLSCompliant(false)]
         public static sbyte SingleToSByte(float f, int numMantissaBits, int zeroExp)
         {

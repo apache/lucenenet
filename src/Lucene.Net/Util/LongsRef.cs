@@ -25,12 +25,12 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Represents <see cref="T:long[]"/>, as a slice (offset + length) into an
-    /// existing <see cref="T:long[]"/>.  The <see cref="Int64s"/> member should never be null; use
+    /// existing <see cref="T:long[]"/>.  The <see cref="Int64s"/> member should never be <c>null</c>; use
     /// <see cref="EMPTY_INT64S"/> if necessary.
     /// <para/>
     /// NOTE: This was LongsRef in Lucene
-    ///
-    ///  @lucene.internal
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -38,14 +38,14 @@ namespace Lucene.Net.Util
     public sealed class Int64sRef : IComparable<Int64sRef>
     {
         /// <summary>
-        /// An empty long array for convenience
+        /// An empty <see cref="long"/> array for convenience
         /// <para/>
         /// NOTE: This was EMPTY_LONGS in Lucene
         /// </summary>
         public static readonly long[] EMPTY_INT64S = new long[0];
 
         /// <summary>
-        /// The contents of the LongsRef. Should never be {@code null}. 
+        /// The contents of the <see cref="Int64sRef"/>. Should never be <c>null</c>. 
         /// <para/>
         /// NOTE: This was longs (field) in Lucene
         /// </summary>
@@ -74,14 +74,14 @@ namespace Lucene.Net.Util
         public int Length { get; set; }
 
         /// <summary>
-        /// Create a LongsRef with <see cref="EMPTY_INT64S"/> </summary>
+        /// Create a <see cref="Int64sRef"/> with <see cref="EMPTY_INT64S"/> </summary>
         public Int64sRef()
         {
             longs = EMPTY_INT64S;
         }
 
         /// <summary>
-        /// Create a LongsRef pointing to a new array of size <code>capacity</code>.
+        /// Create a <see cref="Int64sRef"/> pointing to a new array of size <paramref name="capacity"/>.
         /// Offset and length will both be zero.
         /// </summary>
         public Int64sRef(int capacity)
@@ -90,8 +90,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this instance will directly reference longs w/o making a copy.
-        /// longs should not be null
+        /// This instance will directly reference <paramref name="longs"/> w/o making a copy.
+        /// <paramref name="longs"/> should not be <c>null</c>.
         /// </summary>
         public Int64sRef(long[] longs, int offset, int length)
         {
@@ -102,11 +102,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns a shallow clone of this instance (the underlying longs are
+        /// Returns a shallow clone of this instance (the underlying <see cref="long"/>s are
         /// <b>not</b> copied and will be shared by both the returned object and this
         /// object.
         /// </summary>
-        /// <seealso cref= #deepCopyOf </seealso>
+        /// <seealso cref="DeepCopyOf(Int64sRef)"/>
         public object Clone()
         {
             return new Int64sRef(longs, Offset, Length);
@@ -163,7 +163,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Signed int order comparison </summary>
+        /// Signed <see cref="int"/> order comparison </summary>
         public int CompareTo(Int64sRef other)
         {
             if (this == other)
@@ -212,8 +212,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Used to grow the reference array.
-        ///
+        /// <para/>
         /// In general this should not be used as it does not take the offset into account.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public void Grow(int newLength)
@@ -243,10 +244,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new IntsRef that points to a copy of the longs from
-        /// <code>other</code>
-        /// <p>
-        /// The returned IntsRef will have a length of other.length
+        /// Creates a new <see cref="Int64sRef"/> that points to a copy of the <see cref="long"/>s from
+        /// <paramref name="other"/>.
+        /// <para/>
+        /// The returned <see cref="Int64sRef"/> will have a length of <c>other.Length</c>
         /// and an offset of zero.
         /// </summary>
         public static Int64sRef DeepCopyOf(Int64sRef other)
@@ -258,7 +259,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Performs internal consistency checks.
-        /// Always returns true (or throws InvalidOperationException)
+        /// Always returns <c>true</c> (or throws <see cref="InvalidOperationException"/>)
         /// </summary>
         public bool IsValid()
         {

@@ -20,12 +20,13 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// <seealso cref="Sorter"/> implementation based on a variant of the quicksort algorithm
+    /// <see cref="Sorter"/> implementation based on a variant of the quicksort algorithm
     /// called <a href="http://en.wikipedia.org/wiki/Introsort">introsort</a>: when
     /// the recursion level exceeds the log of the length of the array to sort, it
-    /// falls back to heapsort. this prevents quicksort from running into its
+    /// falls back to heapsort. This prevents quicksort from running into its
     /// worst-case quadratic runtime. Small arrays are sorted with
     /// insertion sort.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public abstract class IntroSorter : Sorter
@@ -37,11 +38,15 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Create a new <seealso cref="IntroSorter"/>. </summary>
+        /// Create a new <see cref="IntroSorter"/>. </summary>
         public IntroSorter()
         {
         }
 
+        /// <summary>
+        /// Sort the slice which starts at <paramref name="from"/> (inclusive) and ends at
+        /// <paramref name="to"/> (exclusive).
+        /// </summary>
         public override sealed void Sort(int from, int to)
         {
             CheckRange(from, to);
@@ -109,14 +114,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Save the value at slot <code>i</code> so that it can later be used as a
-        /// pivot, see <seealso cref="#comparePivot(int)"/>.
+        /// Save the value at slot <paramref name="i"/> so that it can later be used as a
+        /// pivot, see <see cref="ComparePivot(int)"/>.
         /// </summary>
         protected abstract void SetPivot(int i);
 
         /// <summary>
-        /// Compare the pivot with the slot at <code>j</code>, similarly to
-        ///  <seealso cref="#compare(int, int) compare(i, j)"/>.
+        /// Compare the pivot with the slot at <paramref name="j"/>, similarly to
+        /// Compare(i, j) (<see cref="Sorter.Compare(int, int)"/>).
         /// </summary>
         protected abstract int ComparePivot(int j);
     }
