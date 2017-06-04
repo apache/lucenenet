@@ -18,8 +18,8 @@ namespace Lucene.Net.Util.Mutable
      */
 
     /// <summary>
-    /// <seealso cref="MutableValue"/> implementation of type
-    /// <code>boolean</code>.
+    /// <see cref="MutableValue"/> implementation of type
+    /// <see cref="bool"/>.
     /// </summary>
     public class MutableValueBool : MutableValue
     {

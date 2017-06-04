@@ -20,8 +20,8 @@ namespace Lucene.Net.Util.Mutable
      */
 
     /// <summary>
-    /// <seealso cref="MutableValue"/> implementation of type
-    /// <code>double</code>.
+    /// <see cref="MutableValue"/> implementation of type
+    /// <see cref="double"/>.
     /// </summary>
     public class MutableValueDouble : MutableValue
     {
