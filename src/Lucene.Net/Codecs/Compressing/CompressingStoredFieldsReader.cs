@@ -43,7 +43,8 @@ namespace Lucene.Net.Codecs.Compressing
     using StoredFieldVisitor = Lucene.Net.Index.StoredFieldVisitor;
 
     /// <summary>
-    /// <seealso cref="StoredFieldsReader"/> impl for <seealso cref="CompressingStoredFieldsFormat"/>.
+    /// <see cref="StoredFieldsReader"/> impl for <see cref="CompressingStoredFieldsFormat"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class CompressingStoredFieldsReader : StoredFieldsReader
@@ -163,7 +164,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        /// <exception cref="ObjectDisposedException"> if this FieldsReader is closed </exception>
+        /// <exception cref="ObjectDisposedException"> If this FieldsReader is disposed. </exception>
         private void EnsureOpen()
         {
             if (closed)
@@ -173,7 +174,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// Close the underlying <seealso cref="IndexInput"/>s.
+        /// Dispose the underlying <see cref="IndexInput"/>s.
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -501,7 +502,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
 
             /// <summary>
-            /// Go to the chunk containing the provided doc ID.
+            /// Go to the chunk containing the provided <paramref name="doc"/> ID.
             /// </summary>
             internal void Next(int doc)
             {

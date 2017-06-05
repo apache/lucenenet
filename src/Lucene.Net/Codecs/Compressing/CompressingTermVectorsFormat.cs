@@ -24,8 +24,9 @@ namespace Lucene.Net.Codecs.Compressing
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// A <seealso cref="TermVectorsFormat"/> that compresses chunks of documents together in
+    /// A <see cref="TermVectorsFormat"/> that compresses chunks of documents together in
     /// order to improve the compression ratio.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class CompressingTermVectorsFormat : TermVectorsFormat
@@ -36,30 +37,30 @@ namespace Lucene.Net.Codecs.Compressing
         private readonly int chunkSize;
 
         /// <summary>
-        /// Create a new <seealso cref="CompressingTermVectorsFormat"/>.
-        /// <p>
-        /// <code>formatName</code> is the name of the format. this name will be used
+        /// Create a new <see cref="CompressingTermVectorsFormat"/>.
+        /// <para/>
+        /// <paramref name="formatName"/> is the name of the format. this name will be used
         /// in the file formats to perform
-        /// <seealso cref="CodecUtil#checkHeader(Lucene.Net.Store.DataInput, String, int, int) codec header checks"/>.
-        /// <p>
-        /// The <code>compressionMode</code> parameter allows you to choose between
+        /// codec header checks (<see cref="CodecUtil.CheckHeader(Lucene.Net.Store.DataInput, string, int, int)"/>).
+        /// <para/>
+        /// The <paramref name="compressionMode"/> parameter allows you to choose between
         /// compression algorithms that have various compression and decompression
         /// speeds so that you can pick the one that best fits your indexing and
         /// searching throughput. You should never instantiate two
-        /// <seealso cref="CompressingTermVectorsFormat"/>s that have the same name but
-        /// different <seealso cref="compressionMode"/>s.
-        /// <p>
-        /// <code>chunkSize</code> is the minimum byte size of a chunk of documents.
-        /// Higher values of <code>chunkSize</code> should improve the compression
+        /// <see cref="CompressingTermVectorsFormat"/>s that have the same name but
+        /// different <see cref="CompressionMode"/>s.
+        /// <para/>
+        /// <paramref name="chunkSize"/> is the minimum byte size of a chunk of documents.
+        /// Higher values of <paramref name="chunkSize"/> should improve the compression
         /// ratio but will require more memory at indexing time and might make document
         /// loading a little slower (depending on the size of your OS cache compared
         /// to the size of your index).
         /// </summary>
-        /// <param name="formatName"> the name of the <seealso cref="StoredFieldsFormat"/> </param>
-        /// <param name="segmentSuffix"> a suffix to append to files created by this format </param>
-        /// <param name="compressionMode"> the <seealso cref="compressionMode"/> to use </param>
-        /// <param name="chunkSize"> the minimum number of bytes of a single chunk of stored documents </param>
-        /// <seealso cref= compressionMode </seealso>
+        /// <param name="formatName"> The name of the <see cref="StoredFieldsFormat"/>. </param>
+        /// <param name="segmentSuffix"> A suffix to append to files created by this format. </param>
+        /// <param name="compressionMode"> The <see cref="CompressionMode"/> to use. </param>
+        /// <param name="chunkSize"> The minimum number of bytes of a single chunk of stored documents. </param>
+        /// <seealso cref="CompressionMode"/>
         public CompressingTermVectorsFormat(string formatName, string segmentSuffix, CompressionMode compressionMode, int chunkSize)
         {
             this.formatName = formatName;

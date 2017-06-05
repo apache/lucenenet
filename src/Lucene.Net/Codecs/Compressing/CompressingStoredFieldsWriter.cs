@@ -28,7 +28,8 @@ namespace Lucene.Net.Codecs.Compressing
      */
 
     /// <summary>
-    /// <seealso cref="StoredFieldsWriter"/> impl for <seealso cref="CompressingStoredFieldsFormat"/>.
+    /// <see cref="StoredFieldsWriter"/> impl for <see cref="CompressingStoredFieldsFormat"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class CompressingStoredFieldsWriter : StoredFieldsWriter
@@ -167,7 +168,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// NOTE: This was saveInts() in Lucene
+        /// NOTE: This was saveInts() in Lucene.
         /// </summary>
         private static void SaveInt32s(int[] values, int length, DataOutput @out)
         {

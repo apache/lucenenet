@@ -30,6 +30,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <summary>
     /// A compression mode. Tells how much effort should be spent on compression and
     /// decompression of stored fields.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class CompressionMode
@@ -95,8 +96,8 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// this compression mode is similar to <seealso cref="#FAST"/> but it spends more time
-        /// compressing in order to improve the compression ratio. this compression
+        /// This compression mode is similar to <see cref="FAST"/> but it spends more time
+        /// compressing in order to improve the compression ratio. This compression
         /// mode is best used with indices that have a low update rate but should be
         /// able to load documents from disk quickly.
         /// </summary>
@@ -131,12 +132,12 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// Create a new <seealso cref="Compressor"/> instance.
+        /// Create a new <see cref="Compressor"/> instance.
         /// </summary>
         public abstract Compressor NewCompressor();
 
         /// <summary>
-        /// Create a new <seealso cref="Decompressor"/> instance.
+        /// Create a new <see cref="Decompressor"/> instance.
         /// </summary>
         public abstract Decompressor NewDecompressor();
 

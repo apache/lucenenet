@@ -31,8 +31,8 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// Compress bytes into <code>out</code>. It it the responsibility of the
-        /// compressor to add all necessary information so that a <seealso cref="Decompressor"/>
+        /// Compress bytes into <paramref name="out"/>. It it the responsibility of the
+        /// compressor to add all necessary information so that a <see cref="Decompressor"/>
         /// will know when to stop decompressing bytes from the stream.
         /// </summary>
         public abstract void Compress(byte[] bytes, int off, int len, DataOutput @out);

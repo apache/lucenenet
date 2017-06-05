@@ -24,45 +24,48 @@ namespace Lucene.Net.Codecs.Compressing
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
-    /// Efficient index format for block-based <seealso cref="Codec"/>s.
-    /// <p> this writer generates a file which can be loaded into memory using
+    /// Efficient index format for block-based <see cref="Codec"/>s.
+    /// <para/> this writer generates a file which can be loaded into memory using
     /// memory-efficient data structures to quickly locate the block that contains
     /// any document.
-    /// <p>In order to have a compact in-memory representation, for every block of
+    /// <para>In order to have a compact in-memory representation, for every block of
     /// 1024 chunks, this index computes the average number of bytes per
-    /// chunk and for every chunk, only stores the difference between<ul>
+    /// chunk and for every chunk, only stores the difference between
+    /// <list type="bullet">
     /// <li>${chunk number} * ${average length of a chunk}</li>
-    /// <li>and the actual start offset of the chunk</li></ul></p>
-    /// <p>Data is written as follows:</p>
-    /// <ul>
+    /// <li>and the actual start offset of the chunk</li>
+    /// </list>
+    /// </para>
+    /// <para>Data is written as follows:</para>
+    /// <list type="bullet">
     /// <li>PackedIntsVersion, &lt;Block&gt;<sup>BlockCount</sup>, BlocksEndMarker</li>
-    /// <li>PackedIntsVersion --&gt; <seealso cref="PackedInt32s#VERSION_CURRENT"/> as a <seealso cref="DataOutput#writeVInt VInt"/></li>
-    /// <li>BlocksEndMarker --&gt; <tt>0</tt> as a <seealso cref="DataOutput#writeVInt VInt"/>, this marks the end of blocks since blocks are not allowed to start with <tt>0</tt></li>
+    /// <li>PackedIntsVersion --&gt; <see cref="PackedInt32s.VERSION_CURRENT"/> as a VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </li>
+    /// <li>BlocksEndMarker --&gt; <tt>0</tt> as a VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) , this marks the end of blocks since blocks are not allowed to start with <tt>0</tt></li>
     /// <li>Block --&gt; BlockChunks, &lt;DocBases&gt;, &lt;StartPointers&gt;</li>
-    /// <li>BlockChunks --&gt; a <seealso cref="DataOutput#writeVInt VInt"/> which is the number of chunks encoded in the block</li>
+    /// <li>BlockChunks --&gt; a VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>)  which is the number of chunks encoded in the block</li>
     /// <li>DocBases --&gt; DocBase, AvgChunkDocs, BitsPerDocBaseDelta, DocBaseDeltas</li>
-    /// <li>DocBase --&gt; first document ID of the block of chunks, as a <seealso cref="DataOutput#writeVInt VInt"/></li>
-    /// <li>AvgChunkDocs --&gt; average number of documents in a single chunk, as a <seealso cref="DataOutput#writeVInt VInt"/></li>
+    /// <li>DocBase --&gt; first document ID of the block of chunks, as a VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </li>
+    /// <li>AvgChunkDocs --&gt; average number of documents in a single chunk, as a VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </li>
     /// <li>BitsPerDocBaseDelta --&gt; number of bits required to represent a delta from the average using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a></li>
-    /// <li>DocBaseDeltas --&gt; <seealso cref="PackedInt32s packed"/> array of BlockChunks elements of BitsPerDocBaseDelta bits each, representing the deltas from the average doc base using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a>.</li>
+    /// <li>DocBaseDeltas --&gt; packed (<see cref="PackedInt32s"/>) array of BlockChunks elements of BitsPerDocBaseDelta bits each, representing the deltas from the average doc base using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a>.</li>
     /// <li>StartPointers --&gt; StartPointerBase, AvgChunkSize, BitsPerStartPointerDelta, StartPointerDeltas</li>
-    /// <li>StartPointerBase --&gt; the first start pointer of the block, as a <seealso cref="DataOutput#writeVLong VLong"/></li>
-    /// <li>AvgChunkSize --&gt; the average size of a chunk of compressed documents, as a <seealso cref="DataOutput#writeVLong VLong"/></li>
+    /// <li>StartPointerBase --&gt; the first start pointer of the block, as a VLong (<see cref="Store.DataOutput.WriteVInt64(long)"/>) </li>
+    /// <li>AvgChunkSize --&gt; the average size of a chunk of compressed documents, as a VLong (<see cref="Store.DataOutput.WriteVInt64(long)"/>) </li>
     /// <li>BitsPerStartPointerDelta --&gt; number of bits required to represent a delta from the average using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a></li>
-    /// <li>StartPointerDeltas --&gt; <seealso cref="PackedInt32s packed"/> array of BlockChunks elements of BitsPerStartPointerDelta bits each, representing the deltas from the average start pointer using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a></li>
-    /// <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
-    /// </ul>
-    /// <p>Notes</p>
-    /// <ul>
+    /// <li>StartPointerDeltas --&gt; packed (<see cref="PackedInt32s"/>) array of BlockChunks elements of BitsPerStartPointerDelta bits each, representing the deltas from the average start pointer using <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">ZigZag encoding</a></li>
+    /// <li>Footer --&gt; CodecFooter (<see cref="CodecUtil.WriteFooter(IndexOutput)"/>) </li>
+    /// </list>
+    /// <para>Notes</para>
+    /// <list type="bullet">
     /// <li>For any block, the doc base of the n-th chunk can be restored with
-    /// <code>DocBase + AvgChunkDocs * n + DocBaseDeltas[n]</code>.</li>
+    /// <c>DocBase + AvgChunkDocs * n + DocBaseDeltas[n]</c>.</li>
     /// <li>For any block, the start pointer of the n-th chunk can be restored with
-    /// <code>StartPointerBase + AvgChunkSize * n + StartPointerDeltas[n]</code>.</li>
+    /// <c>StartPointerBase + AvgChunkSize * n + StartPointerDeltas[n]</c>.</li>
     /// <li>Once data is loaded into memory, you can lookup the start pointer of any
     /// document by performing two binary searches: a first one based on the values
     /// of DocBase in order to find the right block, and then inside the block based
     /// on DocBaseDeltas (by reconstructing the doc bases for every chunk).</li>
-    /// </ul>
+    /// </list>
     /// @lucene.internal
     /// </summary>
     public sealed class CompressingStoredFieldsIndexWriter : IDisposable

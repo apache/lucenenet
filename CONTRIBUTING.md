@@ -50,9 +50,8 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 ### Documentation Comments == up for grabs:
 
-1. Lucene.Net.Core (project)
-   1. Codecs.Compressing (namespace)
-   2. Util.Packed (namespace)
+1. Lucene.Net (project)
+   1. Util.Packed (namespace)
 2. Lucene.Net.Codecs (project)
    1. Appending (namespace)
    2. BlockTerms (namespace)
