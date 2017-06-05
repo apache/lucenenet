@@ -28,10 +28,11 @@ namespace Lucene.Net.Codecs.Lucene46
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Lucene 4.6 implementation of <seealso cref="SegmentInfoReader"/>.
+    /// Lucene 4.6 implementation of <see cref="SegmentInfoReader"/>.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= Lucene46SegmentInfoFormat
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="Lucene46SegmentInfoFormat"/>
     public class Lucene46SegmentInfoReader : SegmentInfoReader
     {
         /// <summary>

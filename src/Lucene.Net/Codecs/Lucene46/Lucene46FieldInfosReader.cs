@@ -34,9 +34,10 @@ namespace Lucene.Net.Codecs.Lucene46
 
     /// <summary>
     /// Lucene 4.6 FieldInfos reader.
-    ///
-    /// @lucene.experimental </summary>
-    /// <seealso cref= Lucene46FieldInfosFormat </seealso>
+    /// <para/>
+    /// @lucene.experimental 
+    /// </summary>
+    /// <seealso cref="Lucene46FieldInfosFormat"/>
     internal sealed class Lucene46FieldInfosReader : FieldInfosReader
     {
         /// <summary>
