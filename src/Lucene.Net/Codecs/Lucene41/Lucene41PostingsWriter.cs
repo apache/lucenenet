@@ -35,11 +35,12 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <summary>
     /// Concrete class that writes docId(maybe frq,pos,offset,payloads) list
     /// with postings format.
-    ///
+    /// <para/>
     /// Postings list for each term will be stored separately.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= Lucene41SkipWriter for details about skipping setting and postings layout.
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="Lucene41SkipWriter"/> for details about skipping setting and postings layout.
     public sealed class Lucene41PostingsWriter : PostingsWriterBase
     {
         /// <summary>
@@ -347,7 +348,7 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// Add a new position & payload </summary>
+        /// Add a new position &amp; payload </summary>
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             // if (DEBUG) {
@@ -433,7 +434,7 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// Called when we are done adding docs to this term </summary>
+        /// Called when we are done adding docs to this term. </summary>
         public override void FinishTerm(BlockTermState state)
         {
             Int32BlockTermState state2 = (Int32BlockTermState)state;

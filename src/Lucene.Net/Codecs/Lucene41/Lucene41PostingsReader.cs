@@ -27,9 +27,10 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <summary>
     /// Concrete class that reads docId(maybe frq,pos,offset,payloads) list
     /// with postings format.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= Lucene41SkipReader for details
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="Lucene41SkipReader"/>
     public sealed class Lucene41PostingsReader : PostingsReaderBase
     {
         private readonly IndexInput docIn;
@@ -95,7 +96,7 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// Read values that have been written using variable-length encoding instead of bit-packing.
         /// <para/>
-        /// NOTE: This was readVIntBlock() in Lucene
+        /// NOTE: This was readVIntBlock() in Lucene.
         /// </summary>
         internal static void ReadVInt32Block(IndexInput docIn, int[] docBuffer, int[] freqBuffer, int num, bool indexHasFreq)
         {
