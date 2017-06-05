@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.Lucene42
     using Util = Lucene.Net.Util.Fst.Util;
 
     /// <summary>
-    /// Reader for <seealso cref="Lucene42DocValuesFormat"/>
+    /// Reader for <see cref="Lucene42DocValuesFormat"/>.
     /// </summary>
     internal class Lucene42DocValuesProducer : DocValuesProducer
     {

@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Lucene42
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
-    /// Writer for <seealso cref="Lucene42NormsFormat"/>
+    /// Writer for <see cref="Lucene42NormsFormat"/>.
     /// </summary>
     internal class Lucene42NormsConsumer : DocValuesConsumer
     {
