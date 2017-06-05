@@ -20,11 +20,13 @@ namespace Lucene.Net.Util.Packed
     using Mutable = Lucene.Net.Util.Packed.PackedInt32s.Mutable;
 
     /// <summary>
-    /// A <seealso cref="PagedGrowableWriter"/>. this class slices data into fixed-size blocks
+    /// A <see cref="PagedGrowableWriter"/>. This class slices data into fixed-size blocks
     /// which have independent numbers of bits per value and grow on-demand.
-    /// <p>You should use this class instead of the <seealso cref="AbstractAppendingInt64Buffer"/> related ones only when
+    /// <para/>
+    /// You should use this class instead of the <see cref="AbstractAppendingInt64Buffer"/> related ones only when
     /// you need random write-access. Otherwise this class will likely be slower and
     /// less memory-efficient.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class PagedGrowableWriter : AbstractPagedMutable<PagedGrowableWriter>
@@ -32,12 +34,12 @@ namespace Lucene.Net.Util.Packed
         internal readonly float acceptableOverheadRatio;
 
         /// <summary>
-        /// Create a new <seealso cref="PagedGrowableWriter"/> instance.
+        /// Create a new <see cref="PagedGrowableWriter"/> instance.
         /// </summary>
-        /// <param name="size"> the number of values to store. </param>
-        /// <param name="pageSize"> the number of values per page </param>
-        /// <param name="startBitsPerValue"> the initial number of bits per value </param>
-        /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio </param>
+        /// <param name="size"> The number of values to store. </param>
+        /// <param name="pageSize"> The number of values per page. </param>
+        /// <param name="startBitsPerValue"> The initial number of bits per value. </param>
+        /// <param name="acceptableOverheadRatio"> An acceptable overhead ratio. </param>
         public PagedGrowableWriter(long size, int pageSize, int startBitsPerValue, float acceptableOverheadRatio)
             : this(size, pageSize, startBitsPerValue, acceptableOverheadRatio, true)
         {

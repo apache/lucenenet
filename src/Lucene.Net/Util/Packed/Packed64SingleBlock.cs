@@ -27,7 +27,7 @@ namespace Lucene.Net.Util.Packed
     using DataInput = Lucene.Net.Store.DataInput;
 
     /// <summary>
-    /// this class is similar to <seealso cref="Packed64"/> except that it trades space for
+    /// This class is similar to <see cref="Packed64"/> except that it trades space for
     /// speed by ensuring that a single block needs to be read/written in order to
     /// read/write a value.
     /// </summary>

@@ -27,6 +27,7 @@ namespace Lucene.Net.Util.Packed
 
     /// <summary>
     /// Direct wrapping of 32-bits values to a backing array.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     internal sealed class Direct32 : PackedInt32s.MutableImpl

@@ -27,6 +27,7 @@ namespace Lucene.Net.Util.Packed
 
     /// <summary>
     /// Packs integers into 3 bytes (24 bits per value).
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     internal sealed class Packed8ThreeBlocks : PackedInt32s.MutableImpl

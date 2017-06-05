@@ -25,9 +25,11 @@ namespace Lucene.Net.Util.Packed
     using IndexInput = Lucene.Net.Store.IndexInput;
 
     /// <summary>
-    /// Reader for sequences of longs written with <seealso cref="BlockPackedWriter"/>. </summary>
-    /// <seealso cref= BlockPackedWriter
-    /// @lucene.internal </seealso>
+    /// Reader for sequences of <see cref="long"/>s written with <see cref="BlockPackedWriter"/>. 
+    /// <para/>
+    /// @lucene.internal
+    /// </summary>
+    /// <seealso cref="BlockPackedWriter"/>
     public sealed class BlockPackedReaderIterator
     {
         internal static long ZigZagDecode(long n)
@@ -37,7 +39,7 @@ namespace Lucene.Net.Util.Packed
 
         // same as DataInput.ReadVInt64 but supports negative values
         /// <summary>
-        /// NOTE: This was readVLong() in Lucene
+        /// NOTE: This was readVLong() in Lucene.
         /// </summary>
         internal static long ReadVInt64(DataInput @in)
         {
@@ -106,9 +108,9 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Sole constructor. </summary>
-        /// <param name="blockSize"> the number of values of a block, must be equal to the
-        ///                  block size of the <seealso cref="BlockPackedWriter"/> which has
-        ///                  been used to write the stream </param>
+        /// <param name="blockSize"> The number of values of a block, must be equal to the
+        ///                  block size of the <see cref="BlockPackedWriter"/> which has
+        ///                  been used to write the stream. </param>
         public BlockPackedReaderIterator(DataInput @in, int packedIntsVersion, int blockSize, long valueCount)
         {
             PackedInt32s.CheckBlockSize(blockSize, AbstractBlockPackedWriter.MIN_BLOCK_SIZE, AbstractBlockPackedWriter.MAX_BLOCK_SIZE);
@@ -120,8 +122,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Reset the current reader to wrap a stream of <code>valueCount</code>
-        /// values contained in <code>in</code>. The block size remains unchanged.
+        /// Reset the current reader to wrap a stream of <paramref name="valueCount"/>
+        /// values contained in <paramref name="in"/>. The block size remains unchanged.
         /// </summary>
         public void Reset(DataInput @in, long valueCount)
         {
@@ -133,7 +135,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Skip exactly <code>count</code> values. </summary>
+        /// Skip exactly <paramref name="count"/> values. </summary>
         public void Skip(long count)
         {
             Debug.Assert(count >= 0);
@@ -224,7 +226,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Read between <tt>1</tt> and <code>count</code> values. </summary>
+        /// Read between <c>1</c> and <paramref name="count"/> values. </summary>
         public Int64sRef Next(int count)
         {
             Debug.Assert(count > 0);

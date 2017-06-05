@@ -21,7 +21,8 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Base implementation for <seealso cref="PagedMutable"/> and <seealso cref="PagedGrowableWriter"/>.
+    /// Base implementation for <see cref="PagedMutable"/> and <see cref="PagedGrowableWriter"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public abstract class AbstractPagedMutable<T> : Int64Values where T : AbstractPagedMutable<T> // LUCENENET NOTE: made public rather than internal because has public subclasses
@@ -71,6 +72,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// The number of values.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public long Count
@@ -97,7 +99,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Set value at <code>index</code>. </summary>
+        /// Set value at <paramref name="index"/>. </summary>
         public void Set(long index, long value)
         {
             Debug.Assert(index >= 0 && index < size);
@@ -127,9 +129,9 @@ namespace Lucene.Net.Util.Packed
         protected abstract T NewUnfilledCopy(long newSize);
 
         /// <summary>
-        /// Create a new copy of size <code>newSize</code> based on the content of
-        ///  this buffer. this method is much more efficient than creating a new
-        ///  instance and copying values one by one.
+        /// Create a new copy of size <paramref name="newSize"/> based on the content of
+        /// this buffer. This method is much more efficient than creating a new
+        /// instance and copying values one by one.
         /// </summary>
         public T Resize(long newSize)
         {
@@ -151,7 +153,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Similar to <seealso cref="ArrayUtil#grow(long[], int)"/>. </summary>
+        /// Similar to <see cref="ArrayUtil.Grow(long[], int)"/>. </summary>
         public T Grow(long minSize)
         {
             Debug.Assert(minSize >= 0);
@@ -170,7 +172,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Similar to <seealso cref="ArrayUtil#grow(long[])"/>. </summary>
+        /// Similar to <see cref="ArrayUtil.Grow(long[])"/>. </summary>
         public T Grow()
         {
             return Grow(Count + 1);

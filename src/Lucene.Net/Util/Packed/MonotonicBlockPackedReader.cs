@@ -24,7 +24,8 @@ namespace Lucene.Net.Util.Packed
 
     /// <summary>
     /// Provides random access to a stream written with
-    /// <seealso cref="MonotonicBlockPackedWriter"/>.
+    /// <see cref="MonotonicBlockPackedWriter"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class MonotonicBlockPackedReader : Int64Values
@@ -87,6 +88,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Returns the number of values.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public long Count
@@ -95,7 +97,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Returns the approximate RAM bytes used </summary>
+        /// Returns the approximate RAM bytes used. </summary>
         public long RamBytesUsed()
         {
             long sizeInBytes = 0;

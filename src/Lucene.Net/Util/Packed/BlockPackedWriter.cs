@@ -24,37 +24,39 @@ namespace Lucene.Net.Util.Packed
 
     /// <summary>
     /// A writer for large sequences of longs.
-    /// <p>
+    /// <para/>
     /// The sequence is divided into fixed-size blocks and for each block, the
     /// difference between each value and the minimum value of the block is encoded
     /// using as few bits as possible. Memory usage of this class is proportional to
     /// the block size. Each block has an overhead between 1 and 10 bytes to store
     /// the minimum value and the number of bits per value of the block.
-    /// <p>
+    /// <para/>
     /// Format:
-    /// <ul>
-    /// <li>&lt;BLock&gt;<sup>BlockCount</sup>
-    /// <li>BlockCount: &lceil; ValueCount / BlockSize &rceil;
-    /// <li>Block: &lt;Header, (Ints)&gt;
-    /// <li>Header: &lt;Token, (MinValue)&gt;
-    /// <li>Token: a <seealso cref="DataOutput#writeByte(byte) byte"/>, first 7 bits are the
-    ///     number of bits per value (<tt>bitsPerValue</tt>). If the 8th bit is 1,
-    ///     then MinValue (see next) is <tt>0</tt>, otherwise MinValue and needs to
-    ///     be decoded
-    /// <li>MinValue: a
+    /// <list type="bullet">
+    /// <item><description>&lt;BLock&gt;<sup>BlockCount</sup></description></item>
+    /// <item><description>BlockCount: &#8968; ValueCount / BlockSize &#8969;</description></item>
+    /// <item><description>Block: &lt;Header, (Ints)&gt;</description></item>
+    /// <item><description>Header: &lt;Token, (MinValue)&gt;</description></item>
+    /// <item><description>Token: a byte (<see cref="DataOutput.WriteByte(byte)"/>), first 7 bits are the
+    ///     number of bits per value (<c>bitsPerValue</c>). If the 8th bit is 1,
+    ///     then MinValue (see next) is <c>0</c>, otherwise MinValue and needs to
+    ///     be decoded</description></item>
+    /// <item><description>MinValue: a
     ///     <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">zigzag-encoded</a>
-    ///     <seealso cref="DataOutput#writeVLong(long) variable-length long"/> whose value
+    ///      variable-length <see cref="long"/> (<see cref="DataOutput.WriteVInt64(long)"/>) whose value
     ///     should be added to every int from the block to restore the original
-    ///     values
-    /// <li>Ints: If the number of bits per value is <tt>0</tt>, then there is
+    ///     values</description></item>
+    /// <item><description>Ints: If the number of bits per value is <c>0</c>, then there is
     ///     nothing to decode and all ints are equal to MinValue. Otherwise: BlockSize
-    ///     <seealso cref="PackedInt32s packed ints"/> encoded on exactly <tt>bitsPerValue</tt>
+    ///     packed ints (<see cref="PackedInt32s"/>) encoded on exactly <c>bitsPerValue</c>
     ///     bits per value. They are the subtraction of the original values and
-    ///     MinValue
-    /// </ul> </summary>
-    /// <seealso cref= BlockPackedReaderIterator </seealso>
-    /// <seealso cref= BlockPackedReader
-    /// @lucene.internal </seealso>
+    ///     MinValue</description></item>
+    /// </list>
+    /// <para/>
+    /// @lucene.internal
+    /// </summary>
+    /// <seealso cref="BlockPackedReaderIterator"/>
+    /// <seealso cref="BlockPackedReader"/>
     public sealed class BlockPackedWriter : AbstractBlockPackedWriter
     {
         /// <summary>

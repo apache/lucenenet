@@ -23,10 +23,12 @@ namespace Lucene.Net.Util.Packed
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// A <seealso cref="DataOutput"/> wrapper to write unaligned, variable-length packed
-    /// integers. </summary>
-    /// <seealso cref= PackedDataInput
-    /// @lucene.internal </seealso>
+    /// A <see cref="DataOutput"/> wrapper to write unaligned, variable-length packed
+    /// integers.
+    /// <para/>
+    /// @lucene.internal
+    /// </summary>
+    /// <seealso cref="PackedDataInput"/>
     public sealed class PackedDataOutput
     {
         internal readonly DataOutput @out;
@@ -34,7 +36,7 @@ namespace Lucene.Net.Util.Packed
         internal int remainingBits;
 
         /// <summary>
-        /// Create a new instance that wraps <code>out</code>.
+        /// Create a new instance that wraps <paramref name="out"/>.
         /// </summary>
         public PackedDataOutput(DataOutput @out)
         {
@@ -44,9 +46,9 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Write a value using exactly <code>bitsPerValue</code> bits.
+        /// Write a value using exactly <paramref name="bitsPerValue"/> bits.
         /// <para/>
-        /// NOTE: This was writeLong() in Lucene
+        /// NOTE: This was writeLong() in Lucene.
         /// </summary>
         public void WriteInt64(long value, int bitsPerValue)
         {
@@ -67,7 +69,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Flush pending bits to the underlying <seealso cref="DataOutput"/>.
+        /// Flush pending bits to the underlying <see cref="DataOutput"/>.
         /// </summary>
         public void Flush()
         {

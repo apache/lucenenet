@@ -22,7 +22,8 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Provides random access to a stream written with <seealso cref="BlockPackedWriter"/>.
+    /// Provides random access to a stream written with <see cref="BlockPackedWriter"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class BlockPackedReader : Int64Values
@@ -89,7 +90,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Returns approximate RAM bytes used </summary>
+        /// Returns approximate RAM bytes used. </summary>
         public long RamBytesUsed()
         {
             long size = 0;
