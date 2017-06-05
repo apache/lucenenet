@@ -32,13 +32,13 @@ namespace Lucene.Net.Codecs.Lucene3x
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
-    /// this stores a monotonically increasing set of <Term, TermInfo> pairs in a
-    /// Directory.  Pairs are accessed either by Term or by ordinal position the
-    /// set </summary>
-    /// @deprecated (4.0) this class has been replaced by
-    /// FormatPostingsTermsDictReader, except for reading old segments.
+    /// This stores a monotonically increasing set of <c>Term, TermInfo</c> pairs in a
+    /// Directory.  Pairs are accessed either by <see cref="Term"/> or by ordinal position the
+    /// set.
+    /// <para/>
     /// @lucene.experimental
-    [Obsolete("(4.0) this class has been replaced by")]
+    /// </summary>
+    [Obsolete("(4.0) this class has been replaced by FormatPostingsTermsDictReader, except for reading old segments.")]
     internal sealed class TermInfosReader : IDisposable
     {
         private readonly Directory directory;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly DoubleBarrelLRUCache<CloneableTerm, TermInfoAndOrd> termsCache = new DoubleBarrelLRUCache<CloneableTerm, TermInfoAndOrd>(DEFAULT_CACHE_SIZE);
 
         /// <summary>
-        /// Per-thread resources managed by ThreadLocal
+        /// Per-thread resources managed by ThreadLocal.
         /// </summary>
         private sealed class ThreadResources
         {
@@ -186,7 +186,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Returns the number of term/value pairs in the set. 
+        /// Returns the number of term/value pairs in the set.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         internal long Count
@@ -221,14 +222,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Returns the TermInfo for a Term in the set, or null. </summary>
+        /// Returns the <see cref="TermInfo"/> for a <see cref="Term"/> in the set, or <c>null</c>. </summary>
         internal TermInfo Get(Term term)
         {
             return Get(term, false);
         }
 
         /// <summary>
-        /// Returns the TermInfo for a Term in the set, or null. </summary>
+        /// Returns the <see cref="TermInfo"/> for a <see cref="Term"/> in the set, or <c>null</c>. </summary>
         private TermInfo Get(Term term, bool mustSeekEnum)
         {
             if (size == 0)
@@ -391,7 +392,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Returns the position of a Term in the set or -1. </summary>
+        /// Returns the position of a <see cref="Term"/> in the set or -1. </summary>
         internal long GetPosition(Term term)
         {
             if (size == 0)
@@ -420,7 +421,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Returns an enumeration of all the Terms and TermInfos in the set. </summary>
+        /// Returns an enumeration of all the <see cref="Term"/>s and <see cref="TermInfo"/>s in the set. </summary>
         public SegmentTermEnum Terms()
         {
             return (SegmentTermEnum)origEnum.Clone();

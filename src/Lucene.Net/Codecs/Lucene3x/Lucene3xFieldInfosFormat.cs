@@ -20,10 +20,10 @@ namespace Lucene.Net.Codecs.Lucene3x
      */
 
     /// <summary>
-    /// Lucene3x ReadOnly FieldInfosFromat implementation </summary>
-    /// @deprecated (4.0) this is only used to read indexes created
-    /// before 4.0.
+    /// Lucene3x ReadOnly <see cref="FieldInfosFormat"/> implementation.
+    /// <para/>
     /// @lucene.experimental
+    /// </summary>
     [Obsolete("(4.0) this is only used to read indexes created before 4.0")]
     internal class Lucene3xFieldInfosFormat : FieldInfosFormat
     {

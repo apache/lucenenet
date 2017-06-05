@@ -43,8 +43,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// <summary>
     /// Exposes flex API on a pre-flex index, as a codec.
-    /// @lucene.experimental </summary>
-    /// @deprecated (4.0)
+    /// <para/>
+    /// @lucene.experimental 
+    /// </summary>
     [Obsolete("(4.0)")]
     internal class Lucene3xFields : FieldsProducer
     {

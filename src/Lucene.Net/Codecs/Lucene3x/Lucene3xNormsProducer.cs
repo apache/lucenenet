@@ -41,22 +41,23 @@ namespace Lucene.Net.Codecs.Lucene3x
     using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
-    /// Reads Lucene 3.x norms format and exposes it via DocValues API
-    /// @lucene.experimental </summary>
-    /// @deprecated Only for reading existing 3.x indexes
+    /// Reads Lucene 3.x norms format and exposes it via <see cref="Index.DocValues"/> API.
+    /// <para/>
+    /// @lucene.experimental 
+    /// </summary>
     [Obsolete("Only for reading existing 3.x indexes")]
     internal class Lucene3xNormsProducer : DocValuesProducer
     {
         /// <summary>
-        /// norms header placeholder </summary>
+        /// Norms header placeholder. </summary>
         internal static readonly sbyte[] NORMS_HEADER = { (sbyte)'N', (sbyte)'R', (sbyte)'M', -1 };
 
         /// <summary>
-        /// Extension of norms file </summary>
+        /// Extension of norms file. </summary>
         internal const string NORMS_EXTENSION = "nrm";
 
         /// <summary>
-        /// Extension of separate norms file </summary>
+        /// Extension of separate norms file. </summary>
         internal const string SEPARATE_NORMS_EXTENSION = "s";
 
         private readonly IDictionary<string, NormsDocValues> norms = new Dictionary<string, NormsDocValues>();

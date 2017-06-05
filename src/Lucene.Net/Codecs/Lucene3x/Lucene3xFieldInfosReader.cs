@@ -35,12 +35,11 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// <summary>
     /// @lucene.experimental </summary>
-    /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
     internal class Lucene3xFieldInfosReader : FieldInfosReader
     {
         /// <summary>
-        /// Extension of field infos </summary>
+        /// Extension of field infos. </summary>
         internal const string FIELD_INFOS_EXTENSION = "fnm";
 
         // First used in 2.9; prior to 2.9 there was no format header

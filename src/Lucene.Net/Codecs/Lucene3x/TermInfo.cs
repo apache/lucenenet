@@ -20,12 +20,9 @@ namespace Lucene.Net.Codecs.Lucene3x
      */
 
     /// <summary>
-    /// A TermInfo is the record of information stored for a
-    /// term </summary>
-    /// @deprecated (4.0) this class is no longer used in flexible
-    /// indexing.
-
-    [Obsolete]
+    /// A <see cref="TermInfo"/> is the record of information stored for a
+    /// term. </summary>
+    [Obsolete("(4.0) this class is no longer used in flexible indexing.")]
     internal class TermInfo
     {
         /// <summary>

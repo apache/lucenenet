@@ -26,10 +26,9 @@ namespace Lucene.Net.Codecs.Lucene3x
     using IndexInput = Lucene.Net.Store.IndexInput;
     using Term = Lucene.Net.Index.Term;
 
-    /// @deprecated (4.0) No longer used with flex indexing, except for
-    /// reading old segments
+    /// <summary>
     /// @lucene.experimental
-
+    /// </summary>
     [Obsolete("(4.0) No longer used with flex indexing, except for reading old segments")]
     internal sealed class SegmentTermEnum : IDisposable
     {
@@ -204,7 +203,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the current Term in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
+        /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
         public Term Term()
         {
@@ -212,15 +211,15 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Returns the previous Term enumerated. Initially null. </summary>
+        /// Returns the previous Term enumerated. Initially <c>null</c>. </summary>
         internal Term Prev()
         {
             return prevBuffer.ToTerm();
         }
 
         /// <summary>
-        /// Returns the current TermInfo in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
+        /// Returns the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
+        /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
         internal TermInfo TermInfo()
         {
@@ -228,8 +227,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Sets the argument to the current TermInfo in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
+        /// Sets the argument to the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
+        /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
         internal void TermInfo(TermInfo ti)
         {
@@ -237,25 +236,27 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Returns the docFreq from the current TermInfo in the enumeration.
-        /// Initially invalid, valid after next() called for the first time.
+        /// Returns the docFreq from the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
+        /// Initially invalid, valid after <see cref="Next()"/> called for the first time.
         /// </summary>
         public int DocFreq
         {
             get { return termInfo.DocFreq; }
         }
 
-        /* Returns the freqPointer from the current TermInfo in the enumeration.
-          Initially invalid, valid after next() called for the first time.*/
-
+        /// <summary>
+        /// Returns the freqPointer from the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
+        /// Initially invalid, valid after<see cref="Next()"/> called for the first time.
+        /// </summary>
         internal long FreqPointer
         {
             get { return termInfo.FreqPointer; }
         }
 
-        /* Returns the proxPointer from the current TermInfo in the enumeration.
-          Initially invalid, valid after next() called for the first time.*/
-
+        /// <summary>
+        /// Returns the proxPointer from the current <see cref="Lucene3x.TermInfo"/> in the enumeration.
+        /// Initially invalid, valid after<see cref="Next()"/> called for the first time.
+        /// </summary>
         internal long ProxPointer
         {
             get { return termInfo.ProxPointer; }

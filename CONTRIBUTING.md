@@ -52,8 +52,7 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 1. Lucene.Net.Core (project)
    1. Codecs.Compressing (namespace)
-   2. Codecs.Lucene3x (namespace)
-   3. Util.Packed (namespace)
+   2. Util.Packed (namespace)
 2. Lucene.Net.Codecs (project)
    1. Appending (namespace)
    2. BlockTerms (namespace)

@@ -23,23 +23,23 @@ namespace Lucene.Net.Codecs.Lucene3x
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Lucene3x ReadOnly SegmentInfoFormat implementation </summary>
-    /// @deprecated (4.0) this is only used to read indexes created
-    /// before 4.0.
+    /// Lucene3x ReadOnly <see cref="SegmentInfoFormat"/> implementation.
+    /// <para/>
     /// @lucene.experimental
-    [Obsolete("(4.0) this is only used to read indexes created")]
+    /// </summary>
+    [Obsolete("(4.0) this is only used to read indexes created before 4.0.")]
     public class Lucene3xSegmentInfoFormat : SegmentInfoFormat
     {
         private readonly SegmentInfoReader reader = new Lucene3xSegmentInfoReader();
 
         /// <summary>
-        /// this format adds optional per-segment String
-        ///  diagnostics storage, and switches userData to Map
+        /// This format adds optional per-segment String
+        /// diagnostics storage, and switches userData to Map.
         /// </summary>
         public static readonly int FORMAT_DIAGNOSTICS = -9;
 
         /// <summary>
-        /// Each segment records whether it has term vectors </summary>
+        /// Each segment records whether it has term vectors. </summary>
         public static readonly int FORMAT_HAS_VECTORS = -10;
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Extension used for saving each SegmentInfo, once a 3.x
-        ///  index is first committed to with 4.0.
+        /// index is first committed to with 4.0.
         /// </summary>
         public static readonly string UPGRADED_SI_EXTENSION = "si";
 
@@ -80,22 +80,22 @@ namespace Lucene.Net.Codecs.Lucene3x
         public static readonly string NORMGEN_KEY = typeof(Lucene3xSegmentInfoFormat).Name + ".normgen";
         public static readonly string NORMGEN_PREFIX = typeof(Lucene3xSegmentInfoFormat).Name + ".normfield";
 
-        /// <returns> if this segment shares stored fields & vectors, this
-        ///         offset is where in that file this segment's docs begin  </returns>
+        /// <returns> If this segment shares stored fields &amp; vectors, this
+        ///         offset is where in that file this segment's docs begin.  </returns>
         public static int GetDocStoreOffset(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_OFFSET_KEY);
             return v == null ? -1 : Convert.ToInt32(v, CultureInfo.InvariantCulture);
         }
 
-        /// <returns> name used to derive fields/vectors file we share with other segments </returns>
+        /// <returns> Name used to derive fields/vectors file we share with other segments. </returns>
         public static string GetDocStoreSegment(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_NAME_KEY);
             return v == null ? si.Name : v;
         }
 
-        /// <returns> whether doc store files are stored in compound file (*.cfx) </returns>
+        /// <returns> Whether doc store files are stored in compound file (*.cfx). </returns>
         public static bool GetDocStoreIsCompoundFile(SegmentInfo si)
         {
             string v = si.GetAttribute(DS_COMPOUND_KEY);

@@ -22,9 +22,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     using IndexInput = Lucene.Net.Store.IndexInput;
 
-    /// @deprecated (4.0) this is only used to read indexes created
-    /// before 4.0.
-    [Obsolete("(4.0) this is only used to read indexes created")]
+    [Obsolete("(4.0) this is only used to read indexes created before 4.0.")]
     internal sealed class Lucene3xSkipListReader : MultiLevelSkipListReader
     {
         private bool currentFieldStoresPayloads;
@@ -58,7 +56,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the freq pointer of the doc to which the last call of
-        /// <seealso cref="MultiLevelSkipListReader#skipTo(int)"/> has skipped.
+        /// <see cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
         public long FreqPointer
         {
@@ -70,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the prox pointer of the doc to which the last call of
-        /// <seealso cref="MultiLevelSkipListReader#skipTo(int)"/> has skipped.
+        /// <see cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
         public long ProxPointer
         {
@@ -82,7 +80,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns the payload length of the payload stored just before
-        /// the doc to which the last call of <seealso cref="MultiLevelSkipListReader#skipTo(int)"/>
+        /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/>
         /// has skipped.
         /// </summary>
         public int PayloadLength

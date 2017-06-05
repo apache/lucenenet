@@ -24,7 +24,6 @@ namespace Lucene.Net.Codecs.Lucene3x
     using IOContext = Lucene.Net.Store.IOContext;
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
-    /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
     internal class Lucene3xStoredFieldsFormat : StoredFieldsFormat
     {

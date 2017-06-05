@@ -27,8 +27,9 @@ namespace Lucene.Net.Codecs.Lucene3x
     using IndexOptions = Lucene.Net.Index.IndexOptions;
     using Term = Lucene.Net.Index.Term;
 
-    /// @deprecated (4.0)
-    ///  @lucene.experimental
+    /// <summary>
+    /// @lucene.experimental
+    /// </summary>
     [Obsolete("(4.0)")]
     internal class SegmentTermDocs
     {
@@ -256,7 +257,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Overridden by SegmentTermPositions to skip in prox stream. </summary>
+        /// Overridden by <see cref="SegmentTermPositions"/> to skip in prox stream. </summary>
         protected internal virtual void SkipProx(long proxPointer, int payloadLength)
         {
         }

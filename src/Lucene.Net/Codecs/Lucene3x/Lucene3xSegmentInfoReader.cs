@@ -36,9 +36,10 @@ namespace Lucene.Net.Codecs.Lucene3x
     using SegmentInfos = Lucene.Net.Index.SegmentInfos;
 
     /// <summary>
-    /// Lucene 3x implementation of <seealso cref="SegmentInfoReader"/>.
-    /// @lucene.experimental </summary>
-    /// @deprecated Only for reading existing 3.x indexes
+    /// Lucene 3x implementation of <see cref="SegmentInfoReader"/>.
+    /// <para/>
+    /// @lucene.experimental 
+    /// </summary>
     [Obsolete("Only for reading existing 3.x indexes")]
     public class Lucene3xSegmentInfoReader : SegmentInfoReader
     {
@@ -138,7 +139,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// reads from legacy 3.x segments_N </summary>
+        /// Reads from legacy 3.x segments_N. </summary>
         private SegmentCommitInfo ReadLegacySegmentInfo(Directory dir, int format, IndexInput input)
         {
             // check that it is a format we can understand
