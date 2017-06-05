@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs.Lucene45
     using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
-    /// writer for <seealso cref="Lucene45DocValuesFormat"/> </summary>
+    /// Writer for <see cref="Lucene45DocValuesFormat"/> </summary>
     public class Lucene45DocValuesConsumer : DocValuesConsumer, IDisposable
     {
         internal static readonly int BLOCK_SIZE = 16384;
@@ -45,7 +45,7 @@ namespace Lucene.Net.Codecs.Lucene45
         internal static readonly long MISSING_ORD = BitConverter.DoubleToInt64Bits(-1);
 
         /// <summary>
-        /// Compressed using packed blocks of ints. </summary>
+        /// Compressed using packed blocks of <see cref="int"/>s. </summary>
         public const int DELTA_COMPRESSED = 0;
 
         /// <summary>
@@ -70,13 +70,13 @@ namespace Lucene.Net.Codecs.Lucene45
 
         /// <summary>
         /// Standard storage for sorted set values with 1 level of indirection:
-        ///  docId -> address -> ord.
+        /// docId -> address -> ord.
         /// </summary>
         public static readonly int SORTED_SET_WITH_ADDRESSES = 0;
 
         /// <summary>
         /// Single-valued sorted set values, encoded as sorted values, so no level
-        ///  of indirection: docId -> ord.
+        /// of indirection: docId -> ord.
         /// </summary>
         public static readonly int SORTED_SET_SINGLE_VALUED_SORTED = 1;
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.Lucene45
         internal readonly int maxDoc;
 
         /// <summary>
-        /// expert: Creates a new writer </summary>
+        /// Expert: Creates a new writer. </summary>
         public Lucene45DocValuesConsumer(SegmentWriteState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension)
         {
             bool success = false;
@@ -353,7 +353,7 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// expert: writes a value dictionary for a sorted/sortedset field </summary>
+        /// Expert: writes a value dictionary for a sorted/sortedset field. </summary>
         protected internal virtual void AddTermsDict(FieldInfo field, IEnumerable<BytesRef> values)
         {
             // first check if its a "fixed-length" terms dict
@@ -497,156 +497,6 @@ namespace Lucene.Net.Codecs.Lucene45
 
             Debug.Assert(!ordsIter.MoveNext());
         }
-
-        /*
-      private class IterableAnonymousInnerClassHelper : IEnumerable<int>
-	  {
-		  private readonly Lucene45DocValuesConsumer OuterInstance;
-
-		  private IEnumerable<int> DocToOrdCount;
-		  private IEnumerable<long> Ords;
-
-		  public IterableAnonymousInnerClassHelper(IEnumerable<int> docToOrdCount, IEnumerable<long> ords)
-		  {
-			  //this.OuterInstance = outerInstance;
-			  this.DocToOrdCount = docToOrdCount;
-			  this.Ords = ords;
-		  }
-
-          public virtual IEnumerator<BytesRef> GetEnumerator()
-		  {
-			*/
-        /*IEnumerator<Number> docToOrdCountIt = DocToOrdCount.GetEnumerator();
-      IEnumerator<Number> ordsIt = Ords.GetEnumerator();
-      return new IteratorAnonymousInnerClassHelper(this, docToOrdCountIt, ordsIt);*/
-        /*
-return new SortedSetIterator(DocToOrdCount.GetEnumerator(), Ords.GetEnumerator());
-}
-
-System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
-{
-return GetEnumerator();
-}
-
-private class SortedSetIterator : IEnumerator<BytesRef>
-{
-internal byte[] buffer = new byte[10]; //Initial size, will grow if needed
-internal ByteArrayDataOutput output = new ByteArrayDataOutput();
-internal BytesRef bytesRef = new BytesRef();
-
-internal IEnumerator<int> counts;
-internal IEnumerator<long> ords;
-
-internal SortedSetIterator(IEnumerator<int> counts, IEnumerator<long> ords)
-{
-this.counts = counts;
-this.ords = ords;
-}
-
-public BytesRef Current
-{
-get
-{
-return bytesRef;
-}
-}
-
-public void Dispose()
-{
-counts.Dispose();
-ords.Dispose();
-}
-
-object System.Collections.IEnumerator.Current
-{
-get { return bytesRef;  }
-}
-
-public bool MoveNext()
-{
-if (!counts.MoveNext())
-return false;
-
-int count = counts.Current;
-int maxSize = count * 9;//worst case
-if (maxSize > buffer.Length)
-buffer = ArrayUtil.Grow(buffer, maxSize);
-
-try
-{
-EncodeValues(count);
-}
-catch (System.IO.IOException)
-{
-throw;
-}
-
-bytesRef.Bytes = buffer;
-bytesRef.Offset = 0;
-bytesRef.Length = output.Position;
-
-return true;
-}
-
-private void EncodeValues(int count)
-{
-output.Reset(buffer);
-long lastOrd = 0;
-for (int i = 0; i < count; i++)
-{
-ords.MoveNext();
-long ord = ords.Current;
-output.WriteVLong(ord - lastOrd);
-lastOrd = ord;
-}
-}
-
-public void Reset()
-{
-throw new NotImplementedException();
-}
-}*/
-
-        /*private class IteratorAnonymousInnerClassHelper : IEnumerator<Number>
-        {
-            private readonly IterableAnonymousInnerClassHelper OuterInstance;
-
-            private IEnumerator<Number> DocToOrdCountIt;
-            private IEnumerator<Number> OrdsIt;
-
-            public IteratorAnonymousInnerClassHelper(IterableAnonymousInnerClassHelper outerInstance, IEnumerator<Number> docToOrdCountIt, IEnumerator<Number> ordsIt)
-            {
-                this.OuterInstance = outerInstance;
-                this.DocToOrdCountIt = docToOrdCountIt;
-                this.OrdsIt = ordsIt;
-            }
-
-            public virtual bool HasNext()
-            {
-              return DocToOrdCountIt.HasNext();
-            }
-
-            public virtual Number Next()
-            {
-              Number ordCount = DocToOrdCountIt.next();
-              if ((long)ordCount == 0)
-              {
-                return MISSING_ORD;
-              }
-              else
-              {
-                Debug.Assert((long)ordCount == 1);
-                return OrdsIt.next();
-              }
-            }
-
-            public virtual void Remove()
-            {
-              throw new System.NotSupportedException();
-            }
-        }*/
-
-        //}
 
         protected override void Dispose(bool disposing)
         {
