@@ -50,10 +50,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Lucene 4.0 Term Vectors writer.
-    /// <p>
+    /// <para/>
     /// It writes .tvd, .tvf, and .tvx files.
     /// </summary>
-    /// <seealso cref= Lucene40TermVectorsFormat </seealso>
+    /// <seealso cref="Lucene40TermVectorsFormat"/>
     public sealed class Lucene40TermVectorsWriter : TermVectorsWriter
     {
         private readonly Directory directory;
@@ -335,7 +335,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Do a bulk copy of numDocs documents from reader to our
-        /// streams.  this is used to expedite merging, if the
+        /// streams.  This is used to expedite merging, if the
         /// field numbers are congruent.
         /// </summary>
         private void AddRawDocuments(Lucene40TermVectorsReader reader, int[] tvdLengths, int[] tvfLengths, int numDocs)
@@ -395,7 +395,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Maximum number of contiguous documents to bulk-copy
-        ///    when merging term vectors
+        /// when merging term vectors.
         /// </summary>
         private const int MAX_RAW_MERGE_DOCS = 4192;
 

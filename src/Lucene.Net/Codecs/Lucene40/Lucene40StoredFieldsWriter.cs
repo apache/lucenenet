@@ -39,11 +39,12 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Class responsible for writing stored document fields.
-    /// <p/>
+    /// <para/>
     /// It uses &lt;segment&gt;.fdt and &lt;segment&gt;.fdx; files.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= Lucene40StoredFieldsFormat
-    /// @lucene.experimental  </seealso>
+    /// <seealso cref="Lucene40StoredFieldsFormat"/>
     public sealed class Lucene40StoredFieldsWriter : StoredFieldsWriter
     {
         // NOTE: bit 0 is free here!  You can steal it!
@@ -71,11 +72,11 @@ namespace Lucene.Net.Codecs.Lucene40
         internal static readonly long HEADER_LENGTH_DAT = CodecUtil.HeaderLength(CODEC_NAME_DAT);
 
         /// <summary>
-        /// Extension of stored fields file </summary>
+        /// Extension of stored fields file. </summary>
         public const string FIELDS_EXTENSION = "fdt";
 
         /// <summary>
-        /// Extension of stored fields index file </summary>
+        /// Extension of stored fields index file. </summary>
         public const string FIELDS_INDEX_EXTENSION = "fdx";
 
         private readonly Directory directory;
@@ -242,10 +243,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Bulk write a contiguous series of documents.  The
-        ///  lengths array is the length (in bytes) of each raw
-        ///  document.  The stream IndexInput is the
-        ///  fieldsStream from which we should bulk-copy all
-        ///  bytes.
+        /// <paramref name="lengths"/> array is the length (in bytes) of each raw
+        /// document.  The <paramref name="stream"/> <see cref="IndexInput"/> is the
+        /// fieldsStream from which we should bulk-copy all
+        /// bytes.
         /// </summary>
         public void AddRawDocuments(IndexInput stream, int[] lengths, int numDocs)
         {
@@ -309,7 +310,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Maximum number of contiguous documents to bulk-copy
-        ///    when merging stored fields
+        /// when merging stored fields.
         /// </summary>
         private const int MAX_RAW_MERGE_DOCS = 4192;
 

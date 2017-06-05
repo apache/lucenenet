@@ -19,54 +19,49 @@ namespace Lucene.Net.Codecs.Lucene40
      * limitations under the License.
      */
 
-    // javadocs
-    using SegmentInfo = Lucene.Net.Index.SegmentInfo; // javadocs
-
-    // javadocs
-    // javadocs
+    using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
     /// Lucene 4.0 Segment info format.
-    /// <p>
+    /// <para>
     /// Files:
-    /// <ul>
-    ///   <li><tt>.si</tt>: Header, SegVersion, SegSize, IsCompoundFile, Diagnostics, Attributes, Files
-    /// </ul>
-    /// </p>
+    /// <list type="bullet">
+    ///   <item><description><tt>.si</tt>: Header, SegVersion, SegSize, IsCompoundFile, Diagnostics, Attributes, Files</description></item>
+    /// </list>
+    /// </para>
     /// Data types:
-    /// <p>
-    /// <ul>
-    ///   <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    ///   <li>SegSize --&gt; <seealso cref="DataOutput#writeInt Int32"/></li>
-    ///   <li>SegVersion --&gt; <seealso cref="DataOutput#writeString String"/></li>
-    ///   <li>Files --&gt; <seealso cref="DataOutput#writeStringSet Set&lt;String&gt;"/></li>
-    ///   <li>Diagnostics, Attributes --&gt; <seealso cref="DataOutput#writeStringStringMap Map&lt;String,String&gt;"/></li>
-    ///   <li>IsCompoundFile --&gt; <seealso cref="DataOutput#writeByte Int8"/></li>
-    /// </ul>
-    /// </p>
+    /// <para>
+    /// <list type="bullet">
+    ///   <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) </description></item>
+    ///   <item><description>SegSize --&gt; Int32 (<see cref="Store.DataOutput.WriteInt32(int)"/>) </description></item>
+    ///   <item><description>SegVersion --&gt; String (<see cref="Store.DataOutput.WriteString(string)"/>) </description></item>
+    ///   <item><description>Files --&gt; ISet&lt;String&gt; (<see cref="Store.DataOutput.WriteStringSet(System.Collections.Generic.ISet{string})"/>) </description></item>
+    ///   <item><description>Diagnostics, Attributes --&gt; IDictionary&lt;String,String&gt; (<see cref="Store.DataOutput.WriteStringStringMap(System.Collections.Generic.IDictionary{string, string})"/>) </description></item>
+    ///   <item><description>IsCompoundFile --&gt; Int8 (<see cref="Store.DataOutput.WriteByte(byte)"/>) </description></item>
+    /// </list>
+    /// </para>
     /// Field Descriptions:
-    /// <p>
-    /// <ul>
-    ///   <li>SegVersion is the code version that created the segment.</li>
-    ///   <li>SegSize is the number of documents contained in the segment index.</li>
-    ///   <li>IsCompoundFile records whether the segment is written as a compound file or
+    /// <para>
+    /// <list type="bullet">
+    ///   <item><description>SegVersion is the code version that created the segment.</description></item>
+    ///   <item><description>SegSize is the number of documents contained in the segment index.</description></item>
+    ///   <item><description>IsCompoundFile records whether the segment is written as a compound file or
     ///       not. If this is -1, the segment is not a compound file. If it is 1, the segment
-    ///       is a compound file.</li>
-    ///   <li>Checksum contains the CRC32 checksum of all bytes in the segments_N file up
-    ///       until the checksum. this is used to verify integrity of the file on opening the
-    ///       index.</li>
-    ///   <li>The Diagnostics Map is privately written by <seealso cref="IndexWriter"/>, as a debugging aid,
+    ///       is a compound file.</description></item>
+    ///   <item><description>Checksum contains the CRC32 checksum of all bytes in the segments_N file up
+    ///       until the checksum. This is used to verify integrity of the file on opening the
+    ///       index.</description></item>
+    ///   <item><description>The Diagnostics Map is privately written by <see cref="Index.IndexWriter"/>, as a debugging aid,
     ///       for each segment it creates. It includes metadata like the current Lucene
-    ///       version, OS, Java version, why the segment was created (merge, flush,
-    ///       addIndexes), etc.</li>
-    ///   <li>Attributes: a key-value map of codec-private attributes.</li>
-    ///   <li>Files is a list of files referred to by this segment.</li>
-    /// </ul>
-    /// </p>
+    ///       version, OS, .NET/Java version, why the segment was created (merge, flush,
+    ///       addIndexes), etc.</description></item>
+    ///   <item><description>Attributes: a key-value map of codec-private attributes.</description></item>
+    ///   <item><description>Files is a list of files referred to by this segment.</description></item>
+    /// </list>
+    /// </para>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= SegmentInfos
-    /// @lucene.experimental </seealso>
-    /// @deprecated Only for reading old 4.0-4.5 segments, and supporting IndexWriter.addIndexes
+    /// <seealso cref="Index.SegmentInfos"/>
     [Obsolete("Only for reading old 4.0-4.5 segments, and supporting IndexWriter.AddIndexes()")]
     public class Lucene40SegmentInfoFormat : SegmentInfoFormat
     {
@@ -98,7 +93,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// File extension used to store <seealso cref="SegmentInfo"/>. </summary>
+        /// File extension used to store <see cref="SegmentInfo"/>. </summary>
         public readonly static string SI_EXTENSION = "si";
 
         internal readonly static string CODEC_NAME = "Lucene40SegmentInfo";

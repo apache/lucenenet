@@ -29,10 +29,11 @@ namespace Lucene.Net.Codecs.Lucene40
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Lucene 4.0 implementation of <seealso cref="SegmentInfoWriter"/>.
+    /// Lucene 4.0 implementation of <see cref="SegmentInfoWriter"/>.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= Lucene40SegmentInfoFormat
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="Lucene40SegmentInfoFormat"/>
     [Obsolete]
     public class Lucene40SegmentInfoWriter : SegmentInfoWriter
     {

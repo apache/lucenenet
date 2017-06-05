@@ -32,16 +32,16 @@ namespace Lucene.Net.Codecs.Lucene40
     using IMutableBits = Lucene.Net.Util.IMutableBits;
 
     /// <summary>
-    /// Optimized implementation of a vector of bits.  this is more-or-less like
-    ///  java.util.BitSet, but also includes the following:
-    ///  <ul>
-    ///  <li>a count() method, which efficiently computes the number of one bits;</li>
-    ///  <li>optimized read from and write to disk;</li>
-    ///  <li>inlinable get() method;</li>
-    ///  <li>store and load, as bit set or d-gaps, depending on sparseness;</li>
-    ///  </ul>
-    ///
-    ///  @lucene.internal
+    /// Optimized implementation of a vector of bits.  This is more-or-less like
+    /// <c>java.util.BitSet</c>, but also includes the following:
+    /// <list type="bullet">
+    ///     <item><description>a count() method, which efficiently computes the number of one bits;</description></item>
+    ///     <item><description>optimized read from and write to disk;</description></item>
+    ///     <item><description>inlinable get() method;</description></item>
+    ///     <item><description>store and load, as bit set or d-gaps, depending on sparseness;</description></item>
+    /// </list>
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
     // pkg-private: if this thing is generally useful then it can go back in .util,
     // but the serialization must be here underneath the codec.
@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene40
         private int version;
 
         /// <summary>
-        /// Constructs a vector capable of holding <code>n</code> bits. </summary>
+        /// Constructs a vector capable of holding <paramref name="n"/> bits. </summary>
         public BitVector(int n)
         {
             size = n;
@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Sets the value of <code>bit</code> to one. </summary>
+        /// Sets the value of <paramref name="bit"/> to one. </summary>
         public void Set(int bit)
         {
             if (bit >= size)
@@ -100,8 +100,8 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Sets the value of <code>bit</code> to true, and
-        ///  returns true if bit was already set
+        /// Sets the value of <paramref name="bit"/> to <c>true</c>, and
+        /// returns <c>true</c> if bit was already set.
         /// </summary>
         public bool GetAndSet(int bit)
         {
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Sets the value of <code>bit</code> to zero. </summary>
+        /// Sets the value of <paramref name="bit"/> to zero. </summary>
         public void Clear(int bit)
         {
             if (bit >= size)
@@ -166,8 +166,8 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Returns <code>true</code> if <code>bit</code> is one and
-        ///  <code>false</code> if it is zero.
+        /// Returns <c>true</c> if <paramref name="bit"/> is one and
+        /// <c>false</c> if it is zero.
         /// </summary>
         public bool Get(int bit)
         {
@@ -186,8 +186,9 @@ namespace Lucene.Net.Codecs.Lucene40
         //}
 
         /// <summary>
-        /// Returns the number of bits in this vector.  this is also one greater than
+        /// Returns the number of bits in this vector.  This is also one greater than
         /// the number of the largest valid bit number.
+        /// <para/>
         /// This is the equivalent of either size() or length() in Lucene.
         /// </summary>
         public int Length
@@ -196,9 +197,9 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Returns the total number of one bits in this vector.  this is efficiently
-        ///  computed and cached, so that, if the vector is not changed, no
-        ///  recomputation is done for repeated calls.
+        /// Returns the total number of one bits in this vector.  This is efficiently
+        /// computed and cached, so that, if the vector is not changed, no
+        /// recomputation is done for repeated calls.
         /// </summary>
         public int Count()
         {
@@ -257,9 +258,9 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Writes this vector to the file <code>name</code> in Directory
-        ///  <code>d</code>, in a format that can be read by the constructor {@link
-        ///  #BitVector(Directory, String, IOContext)}.
+        /// Writes this vector to the file <paramref name="name"/> in Directory
+        /// <paramref name="d"/>, in a format that can be read by the constructor 
+        /// <see cref="BitVector(Directory, string, IOContext)"/>.
         /// </summary>
         public void Write(Directory d, string name, IOContext context)
         {
@@ -289,7 +290,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Invert all bits </summary>
+        /// Invert all bits. </summary>
         public void InvertAll()
         {
             if (count != -1)
@@ -322,7 +323,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Set all bits </summary>
+        /// Set all bits. </summary>
         public void SetAll()
         {
             Arrays.Fill(bits, (byte)0xff);
@@ -331,7 +332,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Write as a bit set </summary>
+        /// Write as a bit set. </summary>
         private void WriteBits(IndexOutput output)
         {
             output.WriteInt32(Length); // write size
@@ -340,7 +341,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Write as a d-gaps list </summary>
+        /// Write as a d-gaps list. </summary>
         private void WriteClearedDgaps(IndexOutput output)
         {
             output.WriteInt32(-1); // mark using d-gaps
@@ -412,8 +413,8 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Constructs a bit vector from the file <code>name</code> in Directory
-        ///  <code>d</code>, as written by the <seealso cref="#write"/> method.
+        /// Constructs a bit vector from the file <paramref name="name"/> in Directory
+        /// <paramref name="d"/>, as written by the <see cref="Write(Directory, string, IOContext)"/> method.
         /// </summary>
         public BitVector(Directory d, string name, IOContext context)
         {
@@ -486,7 +487,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Read as a bit set </summary>
+        /// Read as a bit set. </summary>
         private void ReadBits(IndexInput input)
         {
             count = input.ReadInt32(); // read count
@@ -495,7 +496,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// read as a d-gaps list </summary>
+        /// Read as a d-gaps list. </summary>
         private void ReadSetDgaps(IndexInput input)
         {
             size = input.ReadInt32(); // (re)read size
@@ -513,7 +514,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// read as a d-gaps cleared bits list </summary>
+        /// Read as a d-gaps cleared bits list. </summary>
         private void ReadClearedDgaps(IndexInput input)
         {
             size = input.ReadInt32(); // (re)read size

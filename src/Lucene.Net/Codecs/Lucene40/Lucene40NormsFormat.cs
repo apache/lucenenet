@@ -25,18 +25,18 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Lucene 4.0 Norms Format.
-    /// <p>
+    /// <para/>
     /// Files:
-    /// <ul>
-    ///   <li><tt>.nrm.cfs</tt>: <seealso cref="CompoundFileDirectory compound container"/></li>
-    ///   <li><tt>.nrm.cfe</tt>: <seealso cref="CompoundFileDirectory compound entries"/></li>
-    /// </ul>
+    /// <list type="bullet">
+    ///   <item><description><c>.nrm.cfs</c>: compound container (<see cref="Store.CompoundFileDirectory"/>) </description></item>
+    ///   <item><description><c>.nrm.cfe</c>: compound entries (<see cref="Store.CompoundFileDirectory"/>) </description></item>
+    /// </list>
     /// Norms are implemented as DocValues, so other than file extension, norms are
-    /// written exactly the same way as <seealso cref="Lucene40DocValuesFormat DocValues"/>.
+    /// written exactly the same way as <see cref="Lucene40DocValuesFormat"/>.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= Lucene40DocValuesFormat
-    /// @lucene.experimental </seealso>
-    /// @deprecated Only for reading old 4.0 and 4.1 segments
+    /// <seealso cref="Lucene40DocValuesFormat"/>
     [Obsolete("Only for reading old 4.0 and 4.1 segments")]
     public class Lucene40NormsFormat : NormsFormat
     {

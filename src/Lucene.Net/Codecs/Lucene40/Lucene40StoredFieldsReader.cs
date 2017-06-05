@@ -35,11 +35,12 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Class responsible for access to stored document fields.
-    /// <p/>
+    /// <para/>
     /// It uses &lt;segment&gt;.fdt and &lt;segment&gt;.fdx; files.
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
-    /// <seealso cref= Lucene40StoredFieldsFormat
-    /// @lucene.internal </seealso>
+    /// <seealso cref="Lucene40StoredFieldsFormat"/>
     public sealed class Lucene40StoredFieldsReader : StoredFieldsReader, IDisposable
     {
         private readonly FieldInfos fieldInfos;
@@ -51,10 +52,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns a cloned FieldsReader that shares open
-        ///  IndexInputs with the original one.  It is the caller's
-        ///  job not to close the original FieldsReader until all
-        ///  clones are called (eg, currently SegmentReader manages
-        ///  this logic).
+        /// <see cref="IndexInput"/>s with the original one.  It is the caller's
+        /// job not to dispose the original FieldsReader until all
+        /// clones are called (eg, currently <see cref="Index.SegmentReader"/> manages
+        /// this logic).
         /// </summary>
         public override object Clone()
         {
@@ -120,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
-        /// <exception cref="ObjectDisposedException"> if this FieldsReader is closed </exception>
+        /// <exception cref="ObjectDisposedException"> if this FieldsReader is disposed. </exception>
         private void EnsureOpen()
         {
             if (closed)
@@ -130,10 +131,10 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Closes the underlying <seealso cref="Lucene.Net.Store.IndexInput"/> streams.
-        /// this means that the Fields values will not be accessible.
+        /// Closes the underlying <see cref="Lucene.Net.Store.IndexInput"/> streams.
+        /// This means that the <see cref="Index.Fields"/> values will not be accessible.
         /// </summary>
-        /// <exception cref="IOException"> If an I/O error occurs </exception>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurs. </exception>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -148,6 +149,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns number of documents.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public int Count
@@ -265,9 +267,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns the length in bytes of each raw document in a
-        ///  contiguous range of length numDocs starting with
-        ///  startDocID.  Returns the IndexInput (the fieldStream),
-        ///  already seeked to the starting point for startDocID.
+        /// contiguous range of length <paramref name="numDocs"/> starting with
+        /// <paramref name="startDocID"/>.  Returns the <see cref="IndexInput"/> (the fieldStream),
+        /// already seeked to the starting point for <paramref name="startDocID"/>.
         /// </summary>
         public IndexInput RawDocs(int[] lengths, int startDocID, int numDocs)
         {

@@ -34,10 +34,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Lucene 4.0 FieldInfos reader.
-    ///
-    /// @lucene.experimental </summary>
-    /// <seealso cref= Lucene40FieldInfosFormat </seealso>
-    /// @deprecated Only for reading old 4.0 and 4.1 segments
+    /// <para/>
+    /// @lucene.experimental 
+    /// </summary>
+    /// <seealso cref="Lucene40FieldInfosFormat"/>
     [Obsolete("Only for reading old 4.0 and 4.1 segments")]
     internal class Lucene40FieldInfosReader : FieldInfosReader
     {

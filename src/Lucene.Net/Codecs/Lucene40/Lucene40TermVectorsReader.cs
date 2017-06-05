@@ -41,10 +41,10 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Lucene 4.0 Term Vectors reader.
-    /// <p>
+    /// <para/>
     /// It reads .tvd, .tvf, and .tvx files.
     /// </summary>
-    /// <seealso cref= Lucene40TermVectorsFormat </seealso>
+    /// <seealso cref="Lucene40TermVectorsFormat"/>
     public class Lucene40TermVectorsReader : TermVectorsReader, IDisposable
     {
         internal const sbyte STORE_POSITIONS_WITH_TERMVECTOR = 0x1;
@@ -54,15 +54,15 @@ namespace Lucene.Net.Codecs.Lucene40
         internal const sbyte STORE_PAYLOAD_WITH_TERMVECTOR = 0x4;
 
         /// <summary>
-        /// Extension of vectors fields file </summary>
+        /// Extension of vectors fields file. </summary>
         internal const string VECTORS_FIELDS_EXTENSION = "tvf";
 
         /// <summary>
-        /// Extension of vectors documents file </summary>
+        /// Extension of vectors documents file. </summary>
         internal const string VECTORS_DOCUMENTS_EXTENSION = "tvd";
 
         /// <summary>
-        /// Extension of vectors index file </summary>
+        /// Extension of vectors index file. </summary>
         internal const string VECTORS_INDEX_EXTENSION = "tvx";
 
         internal const string CODEC_NAME_FIELDS = "Lucene40TermVectorsFields";
@@ -181,11 +181,11 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Retrieve the length (in bytes) of the tvd and tvf
-        ///  entries for the next numDocs starting with
-        ///  startDocID.  this is used for bulk copying when
-        ///  merging segments, if the field numbers are
-        ///  congruent.  Once this returns, the tvf & tvd streams
-        ///  are seeked to the startDocID.
+        /// entries for the next <paramref name="numDocs"/> starting with
+        /// <paramref name="startDocID"/>.  This is used for bulk copying when
+        /// merging segments, if the field numbers are
+        /// congruent.  Once this returns, the tvf &amp; tvd streams
+        /// are seeked to the <paramref name="startDocID"/>.
         /// </summary>
         internal void RawDocs(int[] tvdLengths, int[] tvfLengths, int startDocID, int numDocs)
         {
@@ -238,7 +238,8 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// The number of documents in the reader 
+        /// The number of documents in the reader.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         internal virtual int Count

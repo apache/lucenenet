@@ -23,11 +23,9 @@ namespace Lucene.Net.Codecs.Lucene40
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
-    /// Provides a <seealso cref="PostingsReaderBase"/> and {@link
-    /// PostingsWriterBase}.
+    /// Provides a <see cref="Codecs.PostingsReaderBase"/> and
+    /// <see cref="Codecs.PostingsWriterBase"/>.
     /// </summary>
-    /// @deprecated Only for reading old 4.0 segments
-
     // TODO: should these also be named / looked up via SPI?
     [Obsolete("Only for reading old 4.0 segments")]
     public sealed class Lucene40PostingsBaseFormat : PostingsBaseFormat
