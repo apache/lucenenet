@@ -51,7 +51,7 @@ namespace Lucene.Net.Store
         public const long LOCK_OBTAIN_WAIT_FOREVER = -1;
 
         /// <summary>
-        /// Creates a new instance with the ability to specify the <see cref="With.DoBody()"/> method
+        /// Creates a new instance with the ability to specify the <see cref="With{T}.DoBody()"/> method
         /// through the <paramref name="doBody"/> argument
         /// <para/>
         /// Simple example:

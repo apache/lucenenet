@@ -1069,9 +1069,9 @@ namespace Lucene.Net.Util.Fst
         }
 
         /// <summary>
-        /// Checks if <paramref name="arc"/>'s target state is in expanded (or vector) format.
+        /// Checks if arc's target state is in expanded (or vector) format.
         /// </summary>
-        /// <returns> Returns <c>true</c> if <paramref name="arc"/> points to a state in an
+        /// <returns> Returns <c>true</c> if arc points to a state in an
         /// expanded array format. </returns>
         internal bool IsExpandedTarget(FST.Arc<T> follow, FST.BytesReader @in)
         {
@@ -2105,17 +2105,17 @@ namespace Lucene.Net.Util.Fst
         internal const sbyte ARCS_AS_FIXED_ARRAY = BIT_ARC_HAS_FINAL_OUTPUT;
 
         /// <summary>
-        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
+        /// <see cref="Builder.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_SHALLOW_DISTANCE = 3;
 
         /// <summary>
-        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
+        /// <see cref="Builder.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_NUM_ARCS_SHALLOW = 5;
 
         /// <summary>
-        /// <see cref="Builder{T}.UnCompiledNode{S}"/>
+        /// <see cref="Builder.UnCompiledNode{S}"/>
         /// </summary>
         public const int FIXED_ARRAY_NUM_ARCS_DEEP = 10;
 

@@ -63,7 +63,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Reset the iterator's state. Should be called before <see cref="NextDoc()"/>
-            /// and <seealso cref="#value()"/>.
+            /// and <see cref="Value"/>.
             /// </summary>
             public abstract void Reset();
         }

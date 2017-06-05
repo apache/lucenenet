@@ -38,8 +38,7 @@ namespace Lucene.Net.Index
     /// as documents are added to and deleted from an index.  Clients should thus not
     /// rely on a given document having the same number between sessions.
     ///
-    /// <para/>
-    /// <p><b>NOTE</b>:
+    /// <para/><b>NOTE</b>:
     /// <see cref="IndexReader"/> instances are completely thread
     /// safe, meaning multiple threads can call any of its methods,
     /// concurrently.  If your application requires external
@@ -127,8 +126,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: returns an <see cref=""/>IndexReader reading the index in the given
-        ///  <seealso cref="IndexCommit"/> and <paramref name="termInfosIndexDivisor"/>. </summary>
+        /// Expert: returns an <see cref="IndexReader"/> reading the index in the given
+        /// <seealso cref="Index.IndexCommit"/> and <paramref name="termInfosIndexDivisor"/>. </summary>
         /// <param name="commit"> the commit point to open </param>
         /// <param name="termInfosIndexDivisor"> Subsamples which indexed
         /// terms are loaded into RAM. this has the same effect as setting
@@ -462,14 +461,14 @@ namespace Lucene.Net.Index
         /// Check whether any new changes have occurred to the
         /// index since this reader was opened.
         ///
-        /// <para>If this reader was created by calling <see cref="Open"/>,
+        /// <para>If this reader was created by calling an overload of <see cref="Open(Directory)"/>,
         /// then this method checks if any further commits
         /// (see <see cref="IndexWriter.Commit()"/>) have occurred in the
         /// directory.</para>
         ///
         /// <para>If instead this reader is a near real-time reader
         /// (ie, obtained by a call to 
-        /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/>, or by calling <see cref="OpenIfChanged"/>
+        /// <see cref="DirectoryReader.Open(IndexWriter, bool)"/>, or by calling an overload of <see cref="OpenIfChanged(DirectoryReader)"/>
         /// on a near real-time reader), then this method checks if
         /// either a new commit has occurred, or any new
         /// uncommitted changes have taken place via the writer.
@@ -477,7 +476,7 @@ namespace Lucene.Net.Index
         /// merging, this method will still return <c>false</c>.</para>
         ///
         /// <para>In any event, if this returns <c>false</c>, you should call
-        /// <see cref="OpenIfChanged"/> to get a new reader that sees the
+        /// an overload of <see cref="OpenIfChanged(DirectoryReader)"/> to get a new reader that sees the
         /// changes.</para>
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>

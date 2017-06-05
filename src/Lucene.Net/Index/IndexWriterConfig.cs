@@ -155,7 +155,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Gets or sets the <see cref="IndexWriter"/> this config is attached to.
         /// </summary>
-        /// <exception cref="Util.SetOnce{T}.AlreadySetException">
+        /// <exception cref="Util.AlreadySetException">
         ///           if this config is already attached to a writer. </exception>
         internal IndexWriterConfig SetIndexWriter(IndexWriter writer)
         {

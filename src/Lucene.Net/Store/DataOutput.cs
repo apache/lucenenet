@@ -43,7 +43,7 @@ namespace Lucene.Net.Store
         /// accessed as sequences of bytes. All other data types are defined
         /// as sequences of bytes, so file formats are byte-order independent.
         /// </summary>
-        /// <seealso cref="IndexInput.ReadByte()"/>
+        /// <seealso cref="DataInput.ReadByte()"/>
         public abstract void WriteByte(byte b);
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace Lucene.Net.Store
         /// <para/>
         /// NOTE: this was writeLong() in Lucene
         /// </summary>
-        /// <seealso cref="DataInput.ReadLong()"/>
+        /// <seealso cref="DataInput.ReadInt64()"/>
         public virtual void WriteInt64(long i)
         {
             WriteInt32((int)(i >> 32));
