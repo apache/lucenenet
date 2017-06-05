@@ -27,18 +27,18 @@ namespace Lucene.Net.Codecs.BlockTerms
 
     /// <summary>
     /// Selects index terms according to provided pluggable
-    /// {@link IndexTermSelector}, and stores them in a prefix trie that's
-    /// loaded entirely in RAM stored as an FST.  This terms
+    /// <see cref="IndexTermSelector"/>, and stores them in a prefix trie that's
+    /// loaded entirely in RAM stored as an <see cref="FST{T}"/>.  This terms
     /// index only supports unsigned byte term sort order
     /// (unicode codepoint order when the bytes are UTF8).
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class VariableGapTermsIndexWriter : TermsIndexWriterBase
     {
         protected IndexOutput m_output;
 
-        /// <summary>Extension of terms index file</summary>
+        /// <summary>Extension of terms index file.</summary>
         internal readonly static string TERMS_INDEX_EXTENSION = "tiv";
 
         internal readonly static string CODEC_NAME = "VARIABLE_GAP_TERMS_INDEX";
@@ -53,27 +53,27 @@ namespace Lucene.Net.Codecs.BlockTerms
         private readonly IndexTermSelector policy;
 
         /// <summary>
-        /// Hook for selecting which terms should be placed in the terms index
-        /// 
-        /// IsIndexTerm for each term in that field
-        /// NewField is called at the start of each new field
-        /// 
+        /// Hook for selecting which terms should be placed in the terms index.
+        /// <para/>
+        /// <see cref="NewField(FieldInfo)"/> is called at the start of each new field, and
+        /// <see cref="IsIndexTerm(BytesRef, TermStats)"/> for each term in that field.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public abstract class IndexTermSelector
         {
             /// <summary>
-            /// Called sequentially on every term being written
-            /// returning true if this term should be indexed
+            /// Called sequentially on every term being written,
+            /// returning <c>true</c> if this term should be indexed.
             /// </summary>
             public abstract bool IsIndexTerm(BytesRef term, TermStats stats);
 
-            /// <summary>Called when a new field is started</summary>
+            /// <summary>Called when a new field is started.</summary>
             public abstract void NewField(FieldInfo fieldInfo);
         }
 
         /// <remarks>
-        /// Same policy as {@link FixedGapTermsIndexWriter}
+        /// Same policy as <see cref="FixedGapTermsIndexWriter"/>
         /// </remarks>
         public sealed class EveryNTermSelector : IndexTermSelector
         {
@@ -216,8 +216,8 @@ namespace Lucene.Net.Codecs.BlockTerms
         }
 
         /// <remarks>
-        /// Note: If your codec does not sort in unicode code point order,
-        /// you must override this method to simplly return IndexedTerm.Length
+        /// NOTE: If your codec does not sort in unicode code point order,
+        /// you must override this method to simply return <c>indexedTerm.Length</c>.
         /// </remarks>
         protected virtual int IndexedTermPrefixLength(BytesRef priorTerm, BytesRef indexedTerm)
         {

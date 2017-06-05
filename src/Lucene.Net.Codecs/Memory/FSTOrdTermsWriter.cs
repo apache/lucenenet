@@ -38,22 +38,24 @@ namespace Lucene.Net.Codecs.Memory
 
     /// <summary>
     /// FST-based term dict, using ord as FST output.
-    /// 
+    /// <para/>
     /// The FST holds the mapping between &lt;term, ord&gt;, and 
     /// term's metadata is delta encoded into a single byte block.
-    /// 
+    /// <para/>
     /// Typically the byte block consists of four parts:
-    /// 1. term statistics: docFreq, totalTermFreq;
-    /// 2. monotonic long[], e.g. the pointer to the postings list for that term;
-    /// 3. generic byte[], e.g. other information customized by postings base.
-    /// 4. single-level skip list to speed up metadata decoding by ord.
-    /// 
+    /// <list type="number">
+    ///     <item><description>term statistics: docFreq, totalTermFreq;</description></item>
+    ///     <item><description>monotonic long[], e.g. the pointer to the postings list for that term;</description></item>
+    ///     <item><description>generic byte[], e.g. other information customized by postings base.</description></item>
+    ///     <item><description>single-level skip list to speed up metadata decoding by ord.</description></item>
+    /// </list>
+    /// <para/>
     /// <para>
     /// Files:
-    /// <ul>
-    ///  <li><tt>.tix</tt>: <a href="#Termindex">Term Index</a></li>
-    ///  <li><tt>.tbk</tt>: <a href="#Termblock">Term Block</a></li>
-    /// </ul>
+    /// <list type="bullet">
+    ///  <item><description><c>.tix</c>: <a href="#Termindex">Term Index</a></description></item>
+    ///  <item><description><c>.tbk</c>: <a href="#Termblock">Term Block</a></description></item>
+    /// </list>
     /// </para>
     /// 
     /// <a name="Termindex" id="Termindex"></a>
@@ -63,76 +65,76 @@ namespace Lucene.Net.Codecs.Memory
     ///  The FST maps a term to its corresponding order in current field.
     /// </para>
     /// 
-    /// <ul>
-    ///  <li>TermIndex(.tix) --&gt; Header, TermFST<sup>NumFields</sup>, Footer</li>
-    ///  <li>TermFST --&gt; <seealso cref="FST"/></li>
-    ///  <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    ///  <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
-    /// </ul>
+    /// <list type="bullet">
+    ///  <item><description>TermIndex(.tix) --&gt; Header, TermFST<sup>NumFields</sup>, Footer</description></item>
+    ///  <item><description>TermFST --&gt; <see cref="FST{T}"/></description></item>
+    ///  <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) </description></item>
+    ///  <item><description>Footer --&gt; CodecFooter (<see cref="CodecUtil.WriteFooter(IndexOutput)"/>) </description></item>
+    /// </list>
     /// 
     /// <para>Notes:</para>
-    /// <ul>
-    ///  <li>
+    /// <list type="bullet">
+    ///  <item><description>
     ///  Since terms are already sorted before writing to <a href="#Termblock">Term Block</a>, 
     ///  their ords can directly used to seek term metadata from term block.
-    ///  </li>
-    /// </ul>
+    ///  </description></item>
+    /// </list>
     /// 
     /// <a name="Termblock" id="Termblock"></a>
     /// <h3>Term Block</h3>
     /// <para>
-    ///  The .tbk contains all the statistics and metadata for terms, along with field summary (e.g. 
-    ///  per-field data like number of documents in current field). For each field, there are four blocks:
-    ///  <ul>
-    ///   <li>statistics bytes block: contains term statistics; </li>
-    ///   <li>metadata longs block: delta-encodes monotonic part of metadata; </li>
-    ///   <li>metadata bytes block: encodes other parts of metadata; </li>
-    ///   <li>skip block: contains skip data, to speed up metadata seeking and decoding</li>
-    ///  </ul>
+    /// The .tbk contains all the statistics and metadata for terms, along with field summary (e.g. 
+    /// per-field data like number of documents in current field). For each field, there are four blocks:
+    /// <list type="bullet">
+    ///   <item><description>statistics bytes block: contains term statistics; </description></item>
+    ///   <item><description>metadata longs block: delta-encodes monotonic part of metadata; </description></item>
+    ///   <item><description>metadata bytes block: encodes other parts of metadata; </description></item>
+    ///   <item><description>skip block: contains skip data, to speed up metadata seeking and decoding</description></item>
+    /// </list>
     /// </para>
     /// 
     /// <para>File Format:</para>
-    /// <ul>
-    ///  <li>TermBlock(.tbk) --&gt; Header, <i>PostingsHeader</i>, FieldSummary, DirOffset</li>
-    ///  <li>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, SumTotalTermFreq?, SumDocFreq,
-    ///                                         DocCount, LongsSize, DataBlock &gt; <sup>NumFields</sup>, Footer</li>
+    /// <list type="bullet">
+    ///  <item><description>TermBlock(.tbk) --&gt; Header, <i>PostingsHeader</i>, FieldSummary, DirOffset</description></item>
+    ///  <item><description>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, SumTotalTermFreq?, SumDocFreq,
+    ///                                         DocCount, LongsSize, DataBlock &gt; <sup>NumFields</sup>, Footer</description></item>
     /// 
-    ///  <li>DataBlock --&gt; StatsBlockLength, MetaLongsBlockLength, MetaBytesBlockLength, 
-    ///                       SkipBlock, StatsBlock, MetaLongsBlock, MetaBytesBlock </li>
-    ///  <li>SkipBlock --&gt; &lt; StatsFPDelta, MetaLongsSkipFPDelta, MetaBytesSkipFPDelta, 
-    ///                            MetaLongsSkipDelta<sup>LongsSize</sup> &gt;<sup>NumTerms</sup></li>
-    ///  <li>StatsBlock --&gt; &lt; DocFreq[Same?], (TotalTermFreq-DocFreq) ? &gt; <sup>NumTerms</sup></li>
-    ///  <li>MetaLongsBlock --&gt; &lt; LongDelta<sup>LongsSize</sup>, BytesSize &gt; <sup>NumTerms</sup></li>
-    ///  <li>MetaBytesBlock --&gt; Byte <sup>MetaBytesBlockLength</sup></li>
-    ///  <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    ///  <li>DirOffset --&gt; <seealso cref="DataOutput#writeLong Uint64"/></li>
-    ///  <li>NumFields, FieldNumber, DocCount, DocFreq, LongsSize, 
-    ///        FieldNumber, DocCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    ///  <li>NumTerms, SumTotalTermFreq, SumDocFreq, StatsBlockLength, MetaLongsBlockLength, MetaBytesBlockLength,
+    ///  <item><description>DataBlock --&gt; StatsBlockLength, MetaLongsBlockLength, MetaBytesBlockLength, 
+    ///                       SkipBlock, StatsBlock, MetaLongsBlock, MetaBytesBlock </description></item>
+    ///  <item><description>SkipBlock --&gt; &lt; StatsFPDelta, MetaLongsSkipFPDelta, MetaBytesSkipFPDelta, 
+    ///                            MetaLongsSkipDelta<sup>LongsSize</sup> &gt;<sup>NumTerms</sup></description></item>
+    ///  <item><description>StatsBlock --&gt; &lt; DocFreq[Same?], (TotalTermFreq-DocFreq) ? &gt; <sup>NumTerms</sup></description></item>
+    ///  <item><description>MetaLongsBlock --&gt; &lt; LongDelta<sup>LongsSize</sup>, BytesSize &gt; <sup>NumTerms</sup></description></item>
+    ///  <item><description>MetaBytesBlock --&gt; Byte <sup>MetaBytesBlockLength</sup></description></item>
+    ///  <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) </description></item>
+    ///  <item><description>DirOffset --&gt; Uint64 (<see cref="Store.DataOutput.WriteInt64(long)"/>) </description></item>
+    ///  <item><description>NumFields, FieldNumber, DocCount, DocFreq, LongsSize, 
+    ///        FieldNumber, DocCount --&gt; VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </description></item>
+    ///  <item><description>NumTerms, SumTotalTermFreq, SumDocFreq, StatsBlockLength, MetaLongsBlockLength, MetaBytesBlockLength,
     ///        StatsFPDelta, MetaLongsSkipFPDelta, MetaBytesSkipFPDelta, MetaLongsSkipStart, TotalTermFreq, 
-    ///        LongDelta,--&gt; <seealso cref="DataOutput#writeVLong VLong"/></li>
-    ///  <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
-    /// </ul>
+    ///        LongDelta,--&gt; VLong (<see cref="Store.DataOutput.WriteVInt64(long)"/>) </description></item>
+    ///  <item><description>Footer --&gt; CodecFooter (<see cref="CodecUtil.WriteFooter(IndexOutput)"/>) </description></item>
+    /// </list>
     /// <para>Notes: </para>
-    /// <ul>
-    ///  <li>
+    /// <list type="bullet">
+    ///  <item><description>
     ///   The format of PostingsHeader and MetaBytes are customized by the specific postings implementation:
     ///   they contain arbitrary per-file data (such as parameters or versioning information), and per-term data 
     ///   (non-monotonic ones like pulsed postings data).
-    ///  </li>
-    ///  <li>
+    ///  </description></item>
+    ///  <item><description>
     ///   During initialization the reader will load all the blocks into memory. SkipBlock will be decoded, so that during seek
     ///   term dict can lookup file pointers directly. StatsFPDelta, MetaLongsSkipFPDelta, etc. are file offset
     ///   for every SkipInterval's term. MetaLongsSkipDelta is the difference from previous one, which indicates
     ///   the value of preceding metadata longs for every SkipInterval's term.
-    ///  </li>
-    ///  <li>
+    ///  </description></item>
+    ///  <item><description>
     ///   DocFreq is the count of documents which contain the term. TotalTermFreq is the total number of occurrences of the term. 
     ///   Usually these two values are the same for long tail terms, therefore one bit is stole from DocFreq to check this case,
     ///   so that encoding of TotalTermFreq may be omitted.
-    ///  </li>
-    /// </ul>
-    /// 
+    ///  </description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental 
     /// </summary>
     public class FSTOrdTermsWriter : FieldsConsumer
@@ -253,7 +255,7 @@ namespace Lucene.Net.Codecs.Memory
             public long SumDocFreq { get; set; }
             public int DocCount { get; set; }
             /// <summary>
-            /// NOTE: This was longsSize (field) in Lucene
+            /// NOTE: This was longsSize (field) in Lucene.
             /// </summary>
             public int Int64sSize { get; set; }
             public FST<long?> Dict { get; set; }
@@ -266,7 +268,7 @@ namespace Lucene.Net.Codecs.Memory
             public RAMOutputStream StatsOut { get; set; }
             // vint encode monotonic long[] and length for corresponding byte[]
             /// <summary>
-            /// NOTE: This was metaLongsOut (field) in Lucene
+            /// NOTE: This was metaLongsOut (field) in Lucene.
             /// </summary>
             public RAMOutputStream MetaInt64sOut { get; set; }
             // generic byte[]

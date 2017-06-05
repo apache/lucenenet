@@ -36,19 +36,20 @@ namespace Lucene.Net.Codecs.Memory
 
     /// <summary>
     /// FST-based term dict, using metadata as FST output.
-    /// 
+    /// <para/>
     /// The FST directly holds the mapping between &lt;term, metadata&gt;.
-    /// 
+    /// <para/>
     /// Term metadata consists of three parts:
-    /// 1. term statistics: docFreq, totalTermFreq;
-    /// 2. monotonic long[], e.g. the pointer to the postings list for that term;
-    /// 3. generic byte[], e.g. other information need by postings reader.
-    /// 
+    /// <list type="number">
+    ///     <item><description>term statistics: docFreq, totalTermFreq;</description></item>
+    ///     <item><description>monotonic long[], e.g. the pointer to the postings list for that term;</description></item>
+    ///     <item><description>generic byte[], e.g. other information need by postings reader.</description></item>
+    /// </list>
     /// <para>
     /// File:
-    /// <ul>
-    ///   <li><tt>.tst</tt>: <a href="#Termdictionary">Term Dictionary</a></li>
-    /// </ul>
+    /// <list type="bullet">
+    ///   <item><description><c>.tst</c>: <a href="#Termdictionary">Term Dictionary</a></description></item>
+    /// </list>
     /// </para>
     /// <para>
     /// 
@@ -62,53 +63,53 @@ namespace Lucene.Net.Codecs.Memory
     ///  to postings list).
     /// </para>
     /// <para>
-    ///  Typically the metadata is separated into two parts:
-    ///  <ul>
-    ///   <li>
+    /// Typically the metadata is separated into two parts:
+    /// <list type="bullet">
+    ///   <item><description>
     ///    Monotonical long array: Some metadata will always be ascending in order
     ///    with the corresponding term. This part is used by FST to share outputs between arcs.
-    ///   </li>
-    ///   <li>
+    ///   </description></item>
+    ///   <item><description>
     ///    Generic byte array: Used to store non-monotonic metadata.
-    ///   </li>
-    ///  </ul>
+    ///   </description></item>
+    /// </list>
     /// </para>
     /// 
     /// File format:
-    /// <ul>
-    ///  <li>TermsDict(.tst) --&gt; Header, <i>PostingsHeader</i>, FieldSummary, DirOffset</li>
-    ///  <li>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, SumTotalTermFreq?, 
-    ///                                      SumDocFreq, DocCount, LongsSize, TermFST &gt;<sup>NumFields</sup></li>
-    ///  <li>TermFST TermData
-    ///  <li>TermData --&gt; Flag, BytesSize?, LongDelta<sup>LongsSize</sup>?, Byte<sup>BytesSize</sup>?, 
-    ///                      &lt; DocFreq[Same?], (TotalTermFreq-DocFreq) &gt; ? </li>
-    ///  <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    ///  <li>DirOffset --&gt; <seealso cref="DataOutput#writeLong Uint64"/></li>
-    ///  <li>DocFreq, LongsSize, BytesSize, NumFields,
-    ///        FieldNumber, DocCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    ///  <li>TotalTermFreq, NumTerms, SumTotalTermFreq, SumDocFreq, LongDelta --&gt; 
-    ///        <seealso cref="DataOutput#writeVLong VLong"/></li>
-    /// </ul>
+    /// <list type="bullet">
+    ///  <item><description>TermsDict(.tst) --&gt; Header, <i>PostingsHeader</i>, FieldSummary, DirOffset</description></item>
+    ///  <item><description>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, SumTotalTermFreq?, 
+    ///                                      SumDocFreq, DocCount, LongsSize, TermFST &gt;<sup>NumFields</sup></description></item>
+    ///  <item><description>TermFST TermData</description></item>
+    ///  <item><description>TermData --&gt; Flag, BytesSize?, LongDelta<sup>LongsSize</sup>?, Byte<sup>BytesSize</sup>?, 
+    ///                      &lt; DocFreq[Same?], (TotalTermFreq-DocFreq) &gt; ? </description></item>
+    ///  <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) </description></item>
+    ///  <item><description>DirOffset --&gt; Uint64 (<see cref="Store.DataOutput.WriteInt64(long)"/>) </description></item>
+    ///  <item><description>DocFreq, LongsSize, BytesSize, NumFields,
+    ///        FieldNumber, DocCount --&gt; VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </description></item>
+    ///  <item><description>TotalTermFreq, NumTerms, SumTotalTermFreq, SumDocFreq, LongDelta --&gt; 
+    ///        VLong (<see cref="Store.DataOutput.WriteVInt64(long)"/>) </description></item>
+    /// </list>
     /// <para>Notes:</para>
-    /// <ul>
-    ///  <li>
+    /// <list type="bullet">
+    ///  <item><description>
     ///   The format of PostingsHeader and generic meta bytes are customized by the specific postings implementation:
     ///   they contain arbitrary per-file data (such as parameters or versioning information), and per-term data
     ///   (non-monotonic ones like pulsed postings data).
-    ///  </li>
-    ///  <li>
+    ///  </description></item>
+    ///  <item><description>
     ///   The format of TermData is determined by FST, typically monotonic metadata will be dense around shallow arcs,
     ///   while in deeper arcs only generic bytes and term statistics exist.
-    ///  </li>
-    ///  <li>
+    ///  </description></item>
+    ///  <item><description>
     ///   The byte Flag is used to indicate which part of metadata exists on current arc. Specially the monotonic part
     ///   is omitted when it is an array of 0s.
-    ///  </li>
-    ///  <li>
+    ///  </description></item>
+    ///  <item><description>
     ///   Since LongsSize is per-field fixed, it is only written once in field summary.
-    ///  </li>
-    /// </ul>
-    /// 
+    ///  </description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class FSTTermsWriter : FieldsConsumer
@@ -213,7 +214,7 @@ namespace Lucene.Net.Codecs.Memory
             public long SumDocFreq { get; private set; }
             public int DocCount { get; private set; }
             /// <summary>
-            /// NOTE: This was longsSize (field) in Lucene
+            /// NOTE: This was longsSize (field) in Lucene.
             /// </summary>
             public int Int64sSize { get; private set; }
             public FST<FSTTermOutputs.TermData> Dict { get; private set; }

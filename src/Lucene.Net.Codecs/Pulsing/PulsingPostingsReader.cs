@@ -27,14 +27,13 @@ namespace Lucene.Net.Codecs.Pulsing
      */
 
     /// <summary>
-    /// Concrete class that reads the current doc/freq/skip postings format 
-    /// 
+    /// Concrete class that reads the current doc/freq/skip postings format.
+    /// <para/>
     /// @lucene.experimental
-    /// 
-    /// TODO: -- should we switch "hasProx" higher up?  and
-    /// create two separate docs readers, one that also reads
-    /// prox and one that doesn't?
     /// </summary>
+    // TODO: -- should we switch "hasProx" higher up?  and
+    // create two separate docs readers, one that also reads
+    // prox and one that doesn't?
     public class PulsingPostingsReader : PostingsReaderBase
     {
         // Fallback reader for non-pulsed terms:
@@ -651,11 +650,11 @@ namespace Lucene.Net.Codecs.Pulsing
         }
 
         /// <summary>
-        /// for a docsenum, gets the 'other' reused enum.
+        /// For a docsenum, gets the 'other' reused enum.
         /// Example: Pulsing(Standard).
-        /// when doing a term range query you are switching back and forth
-        /// between Pulsing and Standard
-        ///  
+        /// When doing a term range query you are switching back and forth
+        /// between Pulsing and Standard.
+        /// <para/>
         /// The way the reuse works is that Pulsing.other = Standard and
         /// Standard.other = Pulsing.
         /// </summary>
@@ -671,8 +670,8 @@ namespace Lucene.Net.Codecs.Pulsing
         }
 
         /// <summary>
-        /// for a docsenum, sets the 'other' reused enum.
-        /// see GetOther for an example.
+        /// For a docsenum, sets the 'other' reused enum.
+        /// see <see cref="GetOther(DocsEnum)"/> for an example.
         /// </summary>
         private DocsEnum SetOther(DocsEnum de, DocsEnum other)
         {
@@ -684,7 +683,7 @@ namespace Lucene.Net.Codecs.Pulsing
         /// A per-docsenum attribute that stores additional reuse information
         /// so that pulsing enums can keep a reference to their wrapped enums,
         /// and vice versa. this way we can always reuse.
-        /// 
+        /// <para/>
         /// @lucene.internal 
         /// </summary>
         public interface IPulsingEnumAttribute : IAttribute
@@ -693,9 +692,9 @@ namespace Lucene.Net.Codecs.Pulsing
         }
 
         /// <summary>
-        /// Implementation of {@link PulsingEnumAttribute} for reuse of
+        /// Implementation of <see cref="PulsingEnumAttribute"/> for reuse of
         /// wrapped postings readers underneath pulsing.
-        /// 
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public sealed class PulsingEnumAttribute : Util.Attribute, IPulsingEnumAttribute

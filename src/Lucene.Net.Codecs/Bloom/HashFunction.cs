@@ -22,18 +22,18 @@ namespace Lucene.Net.Codecs.Bloom
     /// <summary>
     /// Base class for hashing functions that can be referred to by name.
     /// Subclasses are expected to provide threadsafe implementations of the hash function
-    /// on the range of bytes referenced in the provided {@link BytesRef}
-    /// 
+    /// on the range of bytes referenced in the provided <see cref="BytesRef"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class HashFunction
     {
 
         /// <summary>
-        /// Hashes the contents of the referenced bytes
-        /// @param bytes the data to be hashed
-        /// @return the hash of the bytes referenced by bytes.offset and length bytes.length
+        /// Hashes the contents of the referenced bytes.
         /// </summary>
+        /// <param name="bytes">The data to be hashed.</param>
+        /// <returns>The hash of the bytes referenced by bytes.offset and length bytes.Length.</returns>
         public abstract int Hash(BytesRef bytes);
     }
 }

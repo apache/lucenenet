@@ -26,7 +26,7 @@ namespace Lucene.Net.Codecs.Memory
 	 */
 
     /// <summary>
-    /// TextReader for <seealso cref="DirectDocValuesFormat"/>
+    /// TextReader for <see cref="DirectDocValuesFormat"/>.
     /// </summary>
     internal class DirectDocValuesProducer : DocValuesProducer
     {

@@ -20,21 +20,21 @@ namespace Lucene.Net.Codecs.Sep
      */
 
     /// <summary>
-    /// Provides int reader and writer to specified files.
+    /// Provides <see cref="int"/> reader and writer to specified files.
     /// <para/>
     /// NOTE: This was IntStreamFactory in Lucene
-    /// 
+    /// <para/>
     /// @lucene.experimental 
     /// </summary>
     public abstract class Int32StreamFactory
     {
         /// <summary>
-        /// Create an <seealso cref="Int32IndexInput"/> on the provided fileName. 
+        /// Create an <see cref="Int32IndexInput"/> on the provided fileName. 
         /// </summary>
         public abstract Int32IndexInput OpenInput(Directory dir, string fileName, IOContext context);
 
         /// <summary>
-        /// Create an <seealso cref="Int32IndexOutput"/> on the provided fileName. 
+        /// Create an <see cref="Int32IndexOutput"/> on the provided fileName. 
         /// </summary>
         public abstract Int32IndexOutput CreateOutput(Directory dir, string fileName, IOContext context);
     }

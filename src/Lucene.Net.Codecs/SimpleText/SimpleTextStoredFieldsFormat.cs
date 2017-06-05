@@ -23,11 +23,11 @@
     using IOContext = Store.IOContext;
 
     /// <summary>
-    /// plain text stored fields format.
+    /// Plain text stored fields format.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextStoredFieldsFormat : StoredFieldsFormat
     {

@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.DiskDV
     /// <summary>
     /// DocValues format that keeps most things on disk.
     /// Only things like disk offsets are loaded into ram.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     [DocValuesFormatName("Disk")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name

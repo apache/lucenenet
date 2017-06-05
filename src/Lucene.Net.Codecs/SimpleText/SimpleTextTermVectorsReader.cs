@@ -48,9 +48,9 @@ namespace Lucene.Net.Codecs.SimpleText
     /// <summary>
     /// Reads plain-text term vectors.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextTermVectorsReader : TermVectorsReader
     {
@@ -259,7 +259,7 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         /// <summary>
-        /// NOTE: This was parseIntAt() in Lucene
+        /// NOTE: This was parseIntAt() in Lucene.
         /// </summary>
         private int ParseInt32At(int offset)
         {

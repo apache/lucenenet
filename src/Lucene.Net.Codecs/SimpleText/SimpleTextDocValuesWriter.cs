@@ -406,7 +406,7 @@ namespace Lucene.Net.Codecs.SimpleText
             }
         }
 
-        /// <summary>Write the header for this field </summary>
+        /// <summary>Write the header for this field. </summary>
         private void WriteFieldEntry(FieldInfo field, DocValuesType type)
         {
             SimpleTextUtil.Write(data, FIELD);

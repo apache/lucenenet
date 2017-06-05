@@ -22,7 +22,7 @@ namespace Lucene.Net.Codecs.Appending
      */
 
     /// <summary>
-    /// Appending Postigns Implementation
+    /// Appending Postings Implementation
     /// </summary>
     [PostingsFormatName("Appending")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     internal class AppendingPostingsFormat : PostingsFormat

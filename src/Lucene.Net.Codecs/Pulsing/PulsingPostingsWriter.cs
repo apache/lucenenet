@@ -23,20 +23,20 @@ namespace Lucene.Net.Codecs.Pulsing
      * limitations under the License.
      */
 
+    // TODO: we now inline based on total TF of the term,
+    // but it might be better to inline by "net bytes used"
+    // so that a term that has only 1 posting but a huge
+    // payload would not be inlined.  Though this is
+    // presumably rare in practice...
+
     /// <summary>
-    /// TODO: we now inline based on total TF of the term,
-    /// but it might be better to inline by "net bytes used"
-    /// so that a term that has only 1 posting but a huge
-    /// payload would not be inlined.  Though this is
-    /// presumably rare in practice...
-    /// 
     /// Writer for the pulsing format. 
-    ///
+    /// <para/>
     /// Wraps another postings implementation and decides 
     /// (based on total number of occurrences), whether a terms 
     /// postings should be inlined into the term dictionary,
     /// or passed through to the wrapped writer.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class PulsingPostingsWriter : PostingsWriterBase
@@ -96,7 +96,7 @@ namespace Lucene.Net.Codecs.Pulsing
             internal int FieldNumber { get; private set; }
 
             /// <summary>
-            /// NOTE: This was longsSize (field) in Lucene
+            /// NOTE: This was longsSize (field) in Lucene.
             /// </summary>
             internal int Int64sSize { get; private set; }
 
@@ -115,8 +115,8 @@ namespace Lucene.Net.Codecs.Pulsing
 
         /// <summary>
         /// If the total number of positions (summed across all docs
-        /// for this term) is less than or equal maxPositions, then the postings are
-        /// inlined into terms dict
+        /// for this term) is less than or equal <paramref name="maxPositions"/>, then the postings are
+        /// inlined into terms dict.
         /// </summary>
         public PulsingPostingsWriter(SegmentWriteState state, int maxPositions, PostingsWriterBase wrappedPostingsWriter)
         {
@@ -152,14 +152,13 @@ namespace Lucene.Net.Codecs.Pulsing
             Debug.Assert(_pendingCount == 0);
         }
 
+        // TODO: -- should we NOT reuse across fields?  would
+        // be cleaner
+
         /// <summary>
-        /// TODO: -- should we NOT reuse across fields?  would
-        /// be cleaner
         /// Currently, this instance is re-used across fields, so
-        /// our parent calls setField whenever the field changes
+        /// our parent calls setField whenever the field changes.
         /// </summary>
-        /// <param name="fieldInfo"></param>
-        /// <returns></returns>
         public override int SetField(FieldInfo fieldInfo)
         {
             _indexOptions = fieldInfo.IndexOptions;
@@ -261,9 +260,8 @@ namespace Lucene.Net.Codecs.Pulsing
         private readonly RAMOutputStream _buffer = new RAMOutputStream();
 
         /// <summary>
-        /// Called when we are done adding docs to this term
+        /// Called when we are done adding docs to this term.
         /// </summary>
-        /// <param name="state"></param>
         public override void FinishTerm(BlockTermState state)
         {
             var state2 = (PulsingTermState)state;
@@ -465,7 +463,9 @@ namespace Lucene.Net.Codecs.Pulsing
             }
         }
 
-        // Pushes pending positions to the wrapped codec
+        /// <summary>
+        /// Pushes pending positions to the wrapped codec.
+        /// </summary>
         private void Push()
         {
             Debug.Assert(_pendingCount == _pending.Length);

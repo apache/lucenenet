@@ -26,8 +26,9 @@
 
     /// <summary>
     /// FST + Pulsing41, test only, since
-    ///  FST does no delta encoding here!
-    ///  @lucene.experimental 
+    /// FST does no delta encoding here!
+    /// <para/>
+    /// @lucene.experimental 
     /// </summary>
     [PostingsFormatName("FSTPulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class FSTPulsing41PostingsFormat : PostingsFormat

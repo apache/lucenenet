@@ -30,7 +30,7 @@ namespace Lucene.Net.Codecs.Memory
     using SegmentWriteState = Index.SegmentWriteState;
 
     /// <summary>
-    /// Writer for <seealso cref="DirectDocValuesFormat"/>
+    /// Writer for <see cref="DirectDocValuesFormat"/>.
     /// </summary>
     internal class DirectDocValuesConsumer : DocValuesConsumer
     {

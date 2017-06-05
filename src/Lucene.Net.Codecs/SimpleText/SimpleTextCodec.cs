@@ -18,11 +18,11 @@
      */
 
     /// <summary>
-    /// plain text index format.
+    /// Plain text index format.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     [CodecName("SimpleText")] // LUCENENET specific - using CodecName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class SimpleTextCodec : Codec

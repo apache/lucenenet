@@ -31,7 +31,7 @@ namespace Lucene.Net.Codecs.Memory
     using Util = Lucene.Net.Util.Fst.Util;
 
     /// <summary>
-    /// TextReader for <seealso cref="MemoryDocValuesFormat"/>
+    /// TextReader for <see cref="MemoryDocValuesFormat"/>.
     /// </summary>
     internal class MemoryDocValuesProducer : DocValuesProducer
     {

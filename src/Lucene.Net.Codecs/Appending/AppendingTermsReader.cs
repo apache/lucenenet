@@ -23,7 +23,7 @@ namespace Lucene.Net.Codecs.Appending
 
     /// <summary>
     /// Reads append-only terms from AppendingTermsWriter.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     [Obsolete("Only for reading old Appending segments")]

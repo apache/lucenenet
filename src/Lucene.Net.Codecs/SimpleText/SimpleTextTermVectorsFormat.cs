@@ -23,11 +23,11 @@
     using IOContext = Store.IOContext;
 
     /// <summary>
-    /// plain text term vectors format.
+    /// Plain text term vectors format.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextTermVectorsFormat : TermVectorsFormat
     {

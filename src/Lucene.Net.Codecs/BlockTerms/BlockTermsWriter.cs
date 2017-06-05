@@ -25,16 +25,15 @@ namespace Lucene.Net.Codecs.BlockTerms
      * limitations under the License.
      */
 
+    // TODO: Currently we encode all terms between two indexed terms as a block
+    // But we could decouple the two, ie allow several blocks in between two indexed terms
+
     /// <summary>
     /// Writes terms dict, block-encoding (column stride) each term's metadata 
-    /// for each set of terms between two index terms
-    /// 
-    /// lucene.experimental
+    /// for each set of terms between two index terms.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <remarks>
-    /// TODO Currently we encode all terms between two indexed terms as a block
-    /// But we could decouple the two, ie allow several blocks in between two indexed terms
-    /// </remarks>
     public class BlockTermsWriter : FieldsConsumer
     {
         internal readonly static string CODEC_NAME = "BLOCK_TERMS_DICT";
@@ -64,7 +63,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             public long SumDocFreq { get; private set; }
             public int DocCount { get; private set; }
             /// <summary>
-            /// NOTE: This was longsSize (field) in Lucene
+            /// NOTE: This was longsSize (field) in Lucene.
             /// </summary>
             public int Int64sSize { get; private set; }
 

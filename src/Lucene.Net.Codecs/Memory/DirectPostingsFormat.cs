@@ -51,27 +51,26 @@ namespace Lucene.Net.Codecs.Memory
     //   - or: longer dense skip lists than just next byte?
 
     /// <summary>
-    /// Wraps <seealso cref="Lucene41PostingsFormat"/> format for on-disk
-    ///  storage, but then at read time loads and stores all
-    ///  terms & postings directly in RAM as byte[], int[].
+    /// Wraps <see cref="Lucene41.Lucene41PostingsFormat"/> format for on-disk
+    /// storage, but then at read time loads and stores all
+    /// terms &amp; postings directly in RAM as byte[], int[].
     /// 
-    ///  <para><b>WARNING</b>: This is
-    ///  exceptionally RAM intensive: it makes no effort to
-    ///  compress the postings data, storing terms as separate
-    ///  byte[] and postings as separate int[], but as a result it 
-    ///  gives substantial increase in search performance.
-    /// 
-    /// </para>
-    ///  <para>This postings format supports <seealso cref="TermsEnum#ord"/>
-    ///  and <seealso cref="TermsEnum#seekExact(long)"/>.
+    /// <para><b>WARNING</b>: This is
+    /// exceptionally RAM intensive: it makes no effort to
+    /// compress the postings data, storing terms as separate
+    /// byte[] and postings as separate int[], but as a result it 
+    /// gives substantial increase in search performance.
     /// 
     /// </para>
-    ///  <para>Because this holds all term bytes as a single
-    ///  byte[], you cannot have more than 2.1GB worth of term
-    ///  bytes in a single segment.
+    /// <para>This postings format supports <see cref="TermsEnum.Ord"/>
+    /// and <see cref="TermsEnum.SeekExact(long)"/>.
     /// 
+    /// </para>
+    /// <para>Because this holds all term bytes as a single
+    /// byte[], you cannot have more than 2.1GB worth of term
+    /// bytes in a single segment.
+    /// </para>
     /// @lucene.experimental 
-    /// </para>
     /// </summary>
     [PostingsFormatName("Direct")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class DirectPostingsFormat : PostingsFormat
@@ -90,11 +89,11 @@ namespace Lucene.Net.Codecs.Memory
         }
 
         /// <summary>
-        /// minSkipCount is how many terms in a row must have the
-        ///  same prefix before we put a skip pointer down.  Terms
-        ///  with docFreq less than or equal lowFreqCutoff will use a single int[]
-        ///  to hold all docs, freqs, position and offsets; terms
-        ///  with higher docFreq will use separate arrays. 
+        /// <paramref name="minSkipCount"/> is how many terms in a row must have the
+        /// same prefix before we put a skip pointer down.  Terms
+        /// with docFreq less than or equal <paramref name="lowFreqCutoff"/> will use a single int[]
+        /// to hold all docs, freqs, position and offsets; terms
+        /// with higher docFreq will use separate arrays. 
         /// </summary>
         public DirectPostingsFormat(int minSkipCount, int lowFreqCutoff) 
             : base()
@@ -207,7 +206,7 @@ namespace Lucene.Net.Codecs.Memory
                 private int[] skips;
 
                 /// <summary>
-                /// Returns the approximate number of RAM bytes used </summary>
+                /// Returns the approximate number of RAM bytes used. </summary>
                 public abstract long RamBytesUsed();
             }
 
@@ -362,7 +361,7 @@ namespace Lucene.Net.Codecs.Memory
             private readonly int minSkipCount;
 
             /// <summary>
-            /// NOTE: This was IntArrayWriter in Lucene
+            /// NOTE: This was IntArrayWriter in Lucene.
             /// </summary>
             private sealed class Int32ArrayWriter
             {
@@ -647,7 +646,7 @@ namespace Lucene.Net.Codecs.Memory
                 Debug.Assert(skipOffset == skipCount);
             }
 
-            /// <summary>Returns approximate RAM bytes used </summary>
+            /// <summary>Returns approximate RAM bytes used. </summary>
             public long RamBytesUsed()
             {
                 long sizeInBytes = 0;

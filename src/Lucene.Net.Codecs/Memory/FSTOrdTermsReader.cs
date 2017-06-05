@@ -30,11 +30,11 @@ namespace Lucene.Net.Codecs.Memory
 
     /// <summary>
     /// FST-based terms dictionary reader.
-    /// 
+    /// <para/>
     /// The FST index maps each term and its ord, and during seek 
     /// the ord is used fetch metadata from a single block.
     /// The term dictionary is fully memory resident.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class FSTOrdTermsReader : FieldsProducer
@@ -377,7 +377,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Decodes stats data into term state </summary>
+                /// Decodes stats data into term state. </summary>
                 internal virtual void DecodeStats()
                 {
                     int upto = (int)ord % INTERVAL;
@@ -392,7 +392,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Let PBF decode metadata </summary>
+                /// Let PBF decode metadata. </summary>
                 internal virtual void DecodeMetaData()
                 {
                     int upto = (int)ord % INTERVAL;
@@ -407,7 +407,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load current stats shard </summary>
+                /// Load current stats shard. </summary>
                 internal void RefillStats()
                 {
                     var offset = statsBlockOrd * outerInstance.numSkipInfo;
@@ -436,7 +436,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load current metadata shard </summary>
+                /// Load current metadata shard. </summary>
                 internal void RefillMetadata()
                 {
                     var offset = metaBlockOrd * outerInstance.numSkipInfo;
@@ -604,10 +604,10 @@ namespace Lucene.Net.Codecs.Memory
             {
                 private readonly FSTOrdTermsReader.TermsReader outerInstance;
 
-                /// <summary>True when current term's metadata is decoded</summary>
+                /// <summary>True when current term's metadata is decoded.</summary>
                 private bool decoded;
 
-                /// <summary>True when there is pending term when calling Next()</summary>
+                /// <summary>True when there is pending term when calling <see cref="Next()"/>.</summary>
                 private bool pending;
 
                 /// <summary>
@@ -624,7 +624,7 @@ namespace Lucene.Net.Codecs.Memory
                 private readonly FST.BytesReader fstReader;
                 private readonly Outputs<long?> fstOutputs;
 
-                /// <summary>query automaton to intersect with</summary>
+                /// <summary>Query automaton to intersect with.</summary>
                 private readonly ByteRunAutomaton fsa;
 
                 private sealed class Frame
@@ -792,7 +792,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Virtual frame, never pop </summary>
+                /// Virtual frame, never pop. </summary>
                 private Frame LoadVirtualFrame(Frame frame)
                 {
                     frame.arc.Output = fstOutputs.NoOutput;
@@ -802,7 +802,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load frame for start arc(node) on fst </summary>
+                /// Load frame for start arc(node) on fst. </summary>
                 private Frame LoadFirstFrame(Frame frame)
                 {
                     frame.arc = fst.GetFirstArc(frame.arc);
@@ -811,7 +811,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load frame for target arc(node) on fst </summary>
+                /// Load frame for target arc(node) on fst. </summary>
                 private Frame LoadExpandFrame(Frame top, Frame frame)
                 {
                     if (!CanGrow(top))
@@ -829,7 +829,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load frame for sibling arc(node) on fst </summary>
+                /// Load frame for sibling arc(node) on fst. </summary>
                 private Frame LoadNextFrame(Frame top, Frame frame)
                 {
                     if (!CanRewind(frame))
@@ -855,7 +855,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 /// <summary>
                 /// Load frame for target arc(node) on fst, so that 
-                ///  arc.label >= label and !fsa.reject(arc.label) 
+                /// arc.label >= label and !fsa.reject(arc.label) 
                 /// </summary>
                 private Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {

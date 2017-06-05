@@ -50,10 +50,10 @@ namespace Lucene.Net.Codecs.Memory
 
     /// <summary>
     /// FST-based terms dictionary reader.
-    /// 
+    /// <para/>
     /// The FST directly maps each term and its metadata, 
     /// it is memory resident.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class FSTTermsReader : FieldsProducer
@@ -287,18 +287,18 @@ namespace Lucene.Net.Codecs.Memory
             {
                 private readonly FSTTermsReader.TermsReader outerInstance;
 
-                /// <summary>Current term, null when enum ends or unpositioned</summary>
+                /// <summary>Current term, null when enum ends or unpositioned.</summary>
                 internal BytesRef term_Renamed;
 
-                /// <summary>Current term stats + decoded metadata (customized by PBF)</summary>
+                /// <summary>Current term stats + decoded metadata (customized by PBF).</summary>
                 internal readonly BlockTermState state;
 
-                /// <summary>Current term stats + undecoded metadata (long[] & byte[])</summary>
+                /// <summary>Current term stats + undecoded metadata (long[] &amp; byte[]).</summary>
                 internal FSTTermOutputs.TermData meta;
                 internal ByteArrayDataInput bytesReader;
 
                 /// <summary>
-                /// Decodes metadata into customized term state </summary>
+                /// Decodes metadata into customized term state. </summary>
                 internal abstract void DecodeMetaData();
 
                 internal BaseTermsEnum(FSTTermsReader.TermsReader outerInstance)
@@ -366,10 +366,10 @@ namespace Lucene.Net.Codecs.Memory
 
                 private readonly BytesRefFSTEnum<FSTTermOutputs.TermData> fstEnum;
 
-                /// <summary>True when current term's metadata is decoded</summary>
+                /// <summary>True when current term's metadata is decoded.</summary>
                 private bool decoded;
 
-                /// <summary>True when current enum is 'positioned' by seekExact(TermState)</summary>
+                /// <summary>True when current enum is 'positioned' by <see cref="SeekExact(BytesRef, TermState)"/>.</summary>
                 private bool seekPending;
 
                 internal SegmentTermsEnum(FSTTermsReader.TermsReader outerInstance) 
@@ -469,43 +469,43 @@ namespace Lucene.Net.Codecs.Memory
             {
                 private readonly FSTTermsReader.TermsReader outerInstance;
 
-                /// <summary>True when current term's metadata is decoded</summary>
+                /// <summary>True when current term's metadata is decoded.</summary>
                 private bool decoded;
 
-                /// <summary>True when there is pending term when calling Next()</summary>
+                /// <summary>True when there is pending term when calling <see cref="Next()"/>.</summary>
                 private bool pending;
      
                 /// <summary>
                 /// stack to record how current term is constructed,
                 /// used to accumulate metadata or rewind term:
                 ///   level == term.Length + 1,
-                ///     == 0 when term is null */
+                ///     == 0 when term is null
                 /// </summary>
                 private Frame[] stack;
                 private int level;
 
                 /// <summary>
-                /// to which level the metadata is accumulated
-                /// so that we can accumulate metadata lazily
+                /// To which level the metadata is accumulated
+                /// so that we can accumulate metadata lazily.
                 /// </summary>
                 private int metaUpto;
 
-                /// <summary>term dict fst</summary>
+                /// <summary>Term dict fst.</summary>
                 private readonly FST<FSTTermOutputs.TermData> fst;
                 private readonly FST.BytesReader fstReader;
                 private readonly Outputs<FSTTermOutputs.TermData> fstOutputs;
 
-                /// <summary>query automaton to intersect with</summary>
+                /// <summary>Query automaton to intersect with.</summary>
                 private readonly ByteRunAutomaton fsa;
 
                 internal sealed class Frame
                 {
                     private readonly FSTTermsReader.TermsReader.IntersectTermsEnum outerInstance;
 
-                    /// <summary>fst stats</summary>
+                    /// <summary>Fst stats.</summary>
                     internal FST.Arc<FSTTermOutputs.TermData> fstArc;
 
-                    /// <summary>automaton stats</summary>
+                    /// <summary>Automaton stats.</summary>
                     internal int fsaState;
 
                     internal Frame(FSTTermsReader.TermsReader.IntersectTermsEnum outerInstance)
@@ -581,7 +581,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Lazily accumulate meta data, when we got a accepted term </summary>
+                /// Lazily accumulate meta data, when we got a accepted term. </summary>
                 /// <exception cref="System.IO.IOException"/>
                 internal void LoadMetaData()
                 {
@@ -708,7 +708,7 @@ namespace Lucene.Net.Codecs.Memory
                     return null;
                 }
 
-                /// <summary> Virtual frame, never pop </summary>
+                /// <summary> Virtual frame, never pop. </summary>
                 private Frame LoadVirtualFrame(Frame frame)
                 {
                     frame.fstArc.Output = fstOutputs.NoOutput;
@@ -717,7 +717,7 @@ namespace Lucene.Net.Codecs.Memory
                     return frame;
                 }
 
-                /// <summary> Load frame for start arc(node) on fst </summary>
+                /// <summary> Load frame for start arc(node) on fst. </summary>
                 private Frame LoadFirstFrame(Frame frame)
                 {
                     frame.fstArc = fst.GetFirstArc(frame.fstArc);
@@ -726,7 +726,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
 
                 /// <summary>
-                /// Load frame for target arc(node) on fst </summary>
+                /// Load frame for target arc(node) on fst. </summary>
                 private Frame LoadExpandFrame(Frame top, Frame frame)
                 {
                     if (!CanGrow(top))
@@ -743,7 +743,7 @@ namespace Lucene.Net.Codecs.Memory
                     return frame;
                 }
 
-                /// <summary> Load frame for sibling arc(node) on fst </summary>
+                /// <summary> Load frame for sibling arc(node) on fst. </summary>
                 private Frame LoadNextFrame(Frame top, Frame frame)
                 {
                     if (!CanRewind(frame))
@@ -769,7 +769,7 @@ namespace Lucene.Net.Codecs.Memory
 
                 /// <summary>
                 /// Load frame for target arc(node) on fst, so that 
-                ///  arc.label >= label and !fsa.reject(arc.label) 
+                /// arc.label >= label and !fsa.reject(arc.label) 
                 /// </summary>
                 private Frame LoadCeilFrame(int label, Frame top, Frame frame)
                 {

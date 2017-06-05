@@ -30,11 +30,11 @@ namespace Lucene.Net.Codecs.SimpleText
     using SegmentInfo = Index.SegmentInfo;
 
     /// <summary>
-    /// writes plaintext segments files
+    /// Writes plain text segments files.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextSegmentInfoWriter : SegmentInfoWriter
     {

@@ -21,21 +21,24 @@ namespace Lucene.Net.Codecs.IntBlock
      * limitations under the License.
      */
 
-    // Naive int block API that writes vInts.  This is
-    // expected to give poor performance; it's really only for
-    // testing the pluggability.  One should typically use pfor instead. 
+
 
     /// <summary>
     /// Abstract base class that reads fixed-size blocks of ints
-    ///  from an IndexInput.  While this is a simple approach, a
-    ///  more performant approach would directly create an impl
-    ///  of IntIndexInput inside Directory.  Wrapping a generic
-    ///  IndexInput will likely cost performance.
+    /// from an <see cref="IndexInput"/>.  While this is a simple approach, a
+    /// more performant approach would directly create an impl
+    /// of <see cref="Int32IndexInput"/> inside <see cref="Directory"/>.  Wrapping a generic
+    /// <see cref="IndexInput"/> will likely cost performance.
     /// <para/>
     /// NOTE: This was FixedIntBlockIndexInput in Lucene
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
+    /// <remarks>
+    /// Naive int block API that writes vInts.  This is
+    /// expected to give poor performance; it's really only for
+    /// testing the pluggability.  One should typically use pfor instead.
+    /// </remarks>
     public abstract class FixedInt32BlockIndexInput : Int32IndexInput
     {
         private readonly IndexInput input;

@@ -29,33 +29,33 @@ namespace Lucene.Net.Codecs.Bloom
 
     /// <summary>
     /// 
-    /// A {@link PostingsFormat} useful for low doc-frequency fields such as primary
+    /// A <see cref="PostingsFormat"/> useful for low doc-frequency fields such as primary
     /// keys. Bloom filters are maintained in a ".blm" file which offers "fast-fail"
     /// for reads in segments known to have no record of the key. A choice of
-    /// delegate PostingsFormat is used to record all other Postings data.
-    /// 
-    /// A choice of {@link BloomFilterFactory} can be passed to tailor Bloom Filter
+    /// delegate <see cref="PostingsFormat"/> is used to record all other Postings data.
+    /// <para/>
+    /// A choice of <see cref="BloomFilterFactory"/> can be passed to tailor Bloom Filter
     /// settings on a per-field basis. The default configuration is
-    /// {@link DefaultBloomFilterFactory} which allocates a ~8mb bitset and hashes
-    /// values using {@link MurmurHash2}. This should be suitable for most purposes.
-    ///
+    /// <see cref="DefaultBloomFilterFactory"/> which allocates a ~8mb bitset and hashes
+    /// values using <see cref="MurmurHash2"/>. This should be suitable for most purposes.
+    /// <para/>
     /// The format of the blm file is as follows:
     ///
-    /// <ul>
-    /// <li>BloomFilter (.blm) --&gt; Header, DelegatePostingsFormatName,
-    /// NumFilteredFields, Filter<sup>NumFilteredFields</sup>, Footer</li>
-    /// <li>Filter --&gt; FieldNumber, FuzzySet</li>
-    /// <li>FuzzySet --&gt;See {@link FuzzySet#serialize(DataOutput)}</li>
-    /// <li>Header --&gt; {@link CodecUtil#writeHeader CodecHeader}</li>
-    /// <li>DelegatePostingsFormatName --&gt; {@link DataOutput#writeString(String)
-    /// String} The name of a ServiceProvider registered {@link PostingsFormat}</li>
-    /// <li>NumFilteredFields --&gt; {@link DataOutput#writeInt Uint32}</li>
-    /// <li>FieldNumber --&gt; {@link DataOutput#writeInt Uint32} The number of the
-    /// field in this segment</li>
-    /// <li>Footer --&gt; {@link CodecUtil#writeFooter CodecFooter}</li>
-    /// </ul>
-    ///
-    ///  @lucene.experimental
+    /// <list type="bullet">
+    ///     <item><description>BloomFilter (.blm) --&gt; Header, DelegatePostingsFormatName,
+    ///         NumFilteredFields, Filter<sup>NumFilteredFields</sup>, Footer</description></item>
+    ///     <item><description>Filter --&gt; FieldNumber, FuzzySet</description></item>
+    ///     <item><description>FuzzySet --&gt;See <see cref="FuzzySet.Serialize(DataOutput)"/></description></item>
+    ///     <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(DataOutput, string, int)"/>) </description></item>
+    ///     <item><description>DelegatePostingsFormatName --&gt; String (<see cref="DataOutput.WriteString(string)"/>)
+    ///         The name of a ServiceProvider registered <see cref="PostingsFormat"/></description></item>
+    ///     <item><description>NumFilteredFields --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) </description></item>
+    ///     <item><description>FieldNumber --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The number of the
+    ///         field in this segment</description></item>
+    ///     <item><description>Footer --&gt; CodecFooter (<see cref="CodecUtil.WriteFooter(IndexOutput)"/>) </description></item>
+    /// </list>
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
     [PostingsFormatName("BloomFilter")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class BloomFilteringPostingsFormat : PostingsFormat
@@ -66,20 +66,20 @@ namespace Lucene.Net.Codecs.Bloom
         public static readonly int VERSION_CHECKSUM = 2;
         public static readonly int VERSION_CURRENT = VERSION_CHECKSUM;
 
-        /// <summary>Extension of Bloom Filters file</summary>
+        /// <summary>Extension of Bloom Filters file.</summary>
         private const string BLOOM_EXTENSION = "blm";
 
         private readonly BloomFilterFactory _bloomFilterFactory = new DefaultBloomFilterFactory();
         private readonly PostingsFormat _delegatePostingsFormat;
-        
+
         /// <summary>
-        ///  Creates Bloom filters for a selection of fields created in the index. This
+        /// Creates Bloom filters for a selection of fields created in the index. This
         /// is recorded as a set of Bitsets held as a segment summary in an additional
-        /// "blm" file. This PostingsFormat delegates to a choice of delegate
-        /// PostingsFormat for encoding all other postings data.
+        /// "blm" file. This <see cref="PostingsFormat"/> delegates to a choice of delegate
+        /// <see cref="PostingsFormat"/> for encoding all other postings data.
         /// </summary>
-        /// <param name="delegatePostingsFormat">The PostingsFormat that records all the non-bloom filter data i.e. postings info.</param>
-        /// <param name="bloomFilterFactory">The {@link BloomFilterFactory} responsible for sizing BloomFilters appropriately</param>
+        /// <param name="delegatePostingsFormat">The <see cref="PostingsFormat"/> that records all the non-bloom filter data i.e. postings info.</param>
+        /// <param name="bloomFilterFactory">The <see cref="BloomFilterFactory"/> responsible for sizing BloomFilters appropriately.</param>
         public BloomFilteringPostingsFormat(PostingsFormat delegatePostingsFormat,
             BloomFilterFactory bloomFilterFactory) : base()
         {
@@ -90,12 +90,12 @@ namespace Lucene.Net.Codecs.Bloom
         /// <summary>
         /// Creates Bloom filters for a selection of fields created in the index. This
         /// is recorded as a set of Bitsets held as a segment summary in an additional
-        /// "blm" file. This PostingsFormat delegates to a choice of delegate
-        /// PostingsFormat for encoding all other postings data. This choice of
-        /// constructor defaults to the {@link DefaultBloomFilterFactory} for
+        /// "blm" file. This <see cref="PostingsFormat"/> delegates to a choice of delegate
+        /// <see cref="PostingsFormat"/> for encoding all other postings data. This choice of
+        /// constructor defaults to the <see cref="DefaultBloomFilterFactory"/> for
         /// configuring per-field BloomFilters.
         /// </summary>
-        /// <param name="delegatePostingsFormat">The PostingsFormat that records all the non-bloom filter data i.e. postings info.</param>
+        /// <param name="delegatePostingsFormat">The <see cref="PostingsFormat"/> that records all the non-bloom filter data i.e. postings info.</param>
         public BloomFilteringPostingsFormat(PostingsFormat delegatePostingsFormat)
             : this(delegatePostingsFormat, new DefaultBloomFilterFactory())
         {

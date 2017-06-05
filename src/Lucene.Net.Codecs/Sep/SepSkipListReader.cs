@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Sep
     /// <summary>
     /// Implements the skip list reader for the default posting list format
     /// that stores positions and payloads.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 
@@ -126,7 +126,7 @@ namespace Lucene.Net.Codecs.Sep
 
         /// <summary>
         /// Returns the payload length of the payload stored just before 
-        /// the doc to which the last call of <seealso cref="MultiLevelSkipListReader#skipTo(int)"/> 
+        /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/> 
         /// has skipped.  
         /// </summary>
         internal virtual int PayloadLength

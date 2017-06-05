@@ -48,23 +48,6 @@ with minimal cleaning up. We are working on tools and code
 helpers to help with that, see for examples see our [Java style methods to avoid many search-replace in porting tests](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.TestFramework/JavaCompatibility), and a
 [R# plugin that will help making some stuff auto-port when pasting](https://resharper-plugins.jetbrains.com/packages/ReSharper.ExJava/).
 
-### Documentation Comments == up for grabs:
-
-1. Lucene.Net.Codecs (project)
-   1. Appending (namespace)
-   2. BlockTerms (namespace)
-   3. Bloom (namespace)
-   4. DiskDV (namespace)
-   5. IntBlock (namespace)
-   6. Memory (namespace)
-   7. Pulsing (namespace)
-   8. Sep (namespace)
-   9. SimpleText (namespace)
-
-See [Documenting Lucene.Net](https://cwiki.apache.org/confluence/display/LUCENENET/Documenting+Lucene.Net) for instructions. 
-
-> While it is assumed that the documentation comments for the other projects are finished, they could probably all use a review. Also be sure to check the comments against [Lucene 4.8.0](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene) to ensure they are correct and complete!
-
 ### Code that is currently pending being ported from scratch (+ tests) == up for grabs:
 
 * [Lucene.Net.Demo](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/demo) (might be a good learning experience)
@@ -92,7 +75,7 @@ probably may also want to set a constant seed for working locally. See
 and
 <https://github.com/apache/lucenenet/blob/master/src/Lucene.Net.TestFramework/Util/LuceneTestCase.cs#L610>
 
-* Note that tests should be run both on .NET Framework and .NET Core. Currently, we have 2 different solutions (Lucene.Net.sln for .NET Framework and Lucene.Net.Portable.sln for .NET Core) that only run in Visual Studio 2015 and onwards. We are setup to use NUnit 3.x and you will need the appropriate [test adapter](https://marketplace.visualstudio.com/items?itemName=NUnitDevelopers.NUnit3TestAdapter) for Visual Studio to detect the tests. Tests can also be run from the command line using the [dotnet test]() command
+* Note that tests should be run both on .NET Framework and .NET Core. Currently, we have 2 different solutions (Lucene.Net.sln for .NET Framework and Lucene.Net.Portable.sln for .NET Core) that only run in Visual Studio 2015 and onwards. We are setup to use NUnit 3.x and you will need the appropriate [test adapter](https://marketplace.visualstudio.com/items?itemName=NUnitDevelopers.NUnit3TestAdapter) for Visual Studio to detect the tests. Tests can also be run from the command line using the [dotnet test](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test) command
 
 * Run, debug, iterate. When you think you fixed a bug or a test, please
 send a PR as fast as possible. There are multiple people working in this
@@ -105,7 +88,7 @@ you will receive notifications also via this list.
 
 ## Other types of help
 
-We will definitely need more help (like optimizing code, normalizing tabs/spaces, license headers, automating stuff, etc) but we are not there yet!
+We will definitely need more help (like optimizing code, normalizing tabs/spaces, writing tutorials, helping with API documentation, automating stuff, etc) but we are not there yet!
 
 Also, check out the [JIRA issue tracker](https://issues.apache.org/jira/browse/LUCENENET-586?jql=project%20%3D%20LUCENENET%20AND%20status%20%3D%20Open%20AND%20assignee%20in%20(EMPTY)) for any other issues that you might be interested in helping with. You can signup for a JIRA account [here](https://cwiki.apache.org/confluence/signup.action) (it just takes a minute).
 

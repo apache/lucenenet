@@ -673,7 +673,7 @@ namespace Lucene.Net.Codecs.SimpleText
             
             }
 
-            /// <summary>Returns approximate RAM bytes used</summary>
+            /// <summary>Returns approximate RAM bytes used.</summary>
             public virtual long RamBytesUsed()
             {
                 return (_fst != null) ? _fst.GetSizeInBytes() : 0;

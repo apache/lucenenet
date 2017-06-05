@@ -27,16 +27,16 @@ namespace Lucene.Net.Codecs.BlockTerms
 
     /// <summary>
     /// Handles a terms dict, but decouples all details of
-    /// doc/freqs/positions reading to an instance of {@link
-    /// PostingsReaderBase}.  This class is reusable for
+    /// doc/freqs/positions reading to an instance of 
+    /// <see cref="PostingsReaderBase"/>.  This class is reusable for
     /// codecs that use a different format for
     /// docs/freqs/positions (though codecs are also free to
     /// make their own terms dict impl).
-    ///
-    /// This class also interacts with an instance of {@link
-    /// TermsIndexReaderBase}, to abstract away the specific
+    /// <para/>
+    /// This class also interacts with an instance of
+    /// <see cref="TermsIndexReaderBase"/>, to abstract away the specific
     /// implementation of the terms dict index. 
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class BlockTermsReader : FieldsProducer

@@ -57,16 +57,15 @@ namespace Lucene.Net.Codecs.Memory
     // to disk.
 
     /// <summary>
-    /// Stores terms & postings (docs, positions, payloads) in
-    ///  RAM, using an FST.
+    /// Stores terms &amp; postings (docs, positions, payloads) in
+    /// RAM, using an FST.
     /// 
     /// <para>Note that this codec implements advance as a linear
     /// scan!  This means if you store large fields in here,
     /// queries that rely on advance will (AND BooleanQuery,
     /// PhraseQuery) will be relatively slow!
-    /// 
-    /// @lucene.experimental 
     /// </para>
+    /// @lucene.experimental 
     /// </summary>
 
     // TODO: Maybe name this 'Cached' or something to reflect
@@ -84,10 +83,10 @@ namespace Lucene.Net.Codecs.Memory
         }
 
         /// <summary>
-        /// Create MemoryPostingsFormat, specifying advanced FST options. </summary>
-        /// <param name="doPackFST"> true if a packed FST should be built.
+        /// Create <see cref="MemoryPostingsFormat"/>, specifying advanced FST options. </summary>
+        /// <param name="doPackFST"> <c>true</c> if a packed FST should be built.
         ///        NOTE: packed FSTs are limited to ~2.1 GB of postings. </param>
-        /// <param name="acceptableOverheadRatio"> allowable overhead for packed ints
+        /// <param name="acceptableOverheadRatio"> Allowable overhead for packed <see cref="int"/>s
         ///        during FST construction. </param>
         public MemoryPostingsFormat(bool doPackFST, float acceptableOverheadRatio) 
             : base()

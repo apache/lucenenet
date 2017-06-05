@@ -21,8 +21,8 @@ namespace Lucene.Net.Codecs.Bloom
 
     /// <summary>
     /// Default policy is to allocate a bitset with 10% saturation given a unique term per document.
-    /// Bits are set via MurmurHash2 hashing function.
-    ///
+    /// Bits are set via <see cref="MurmurHash2"/> hashing function.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class DefaultBloomFilterFactory : BloomFilterFactory
