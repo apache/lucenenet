@@ -1040,7 +1040,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-#pragma warning disable 612, 618
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static bool IsIndexed(this Field.Index index)
         {
             switch (index)
@@ -1059,6 +1059,7 @@ namespace Lucene.Net.Documents
             }
         }
 
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static bool IsAnalyzed(this Field.Index index)
         {
             switch (index)
@@ -1077,6 +1078,7 @@ namespace Lucene.Net.Documents
             }
         }
 
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static bool OmitNorms(this Field.Index index)
         {
             switch (index)
@@ -1095,6 +1097,7 @@ namespace Lucene.Net.Documents
             }
         }
 
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static bool IsStored(this Field.TermVector tv)
         {
             switch (tv)
@@ -1113,6 +1116,7 @@ namespace Lucene.Net.Documents
             }
         }
 
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static bool WithPositions(this Field.TermVector tv)
         {
             switch (tv)
@@ -1131,6 +1135,7 @@ namespace Lucene.Net.Documents
             }
         }
 
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static bool WithOffsets(this Field.TermVector tv)
         {
             switch (tv)
@@ -1149,12 +1154,14 @@ namespace Lucene.Net.Documents
             }
         }
 
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static Field.Index ToIndex(bool indexed, bool analyed)
         {
             return ToIndex(indexed, analyed, false);
         }
 
-        public static Field.Index ToIndex(bool indexed, bool analyzed, bool omitNorms)
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
+        public static Field.Index ToIndex(bool indexed, bool analyzed, bool omitNorms) 
         {
             // If it is not indexed nothing else matters
             if (!indexed)
@@ -1183,6 +1190,7 @@ namespace Lucene.Net.Documents
         /// <summary>
         /// Get the best representation of a TermVector given the flags.
         /// </summary>
+        [Obsolete("This is here only to ease transition from the pre-4.0 APIs.")]
         public static Field.TermVector ToTermVector(bool stored, bool withOffsets, bool withPositions)
         {
             // If it is not stored, nothing else matters.
@@ -1206,6 +1214,5 @@ namespace Lucene.Net.Documents
             }
             return Field.TermVector.YES;
         }
-#pragma warning restore 612, 618
     }
 }
