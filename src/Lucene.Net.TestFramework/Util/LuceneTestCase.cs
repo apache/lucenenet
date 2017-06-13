@@ -1606,32 +1606,7 @@ namespace Lucene.Net.Util
             {
                 int maxNumThreadStates = Rarely(random) ? TestUtil.NextInt32(random, 5, 20) : TestUtil.NextInt32(random, 1, 4); // reasonable value -  crazy value
 
-                if (Rarely(random))
-                {
-                    //// Retrieve the package-private setIndexerThreadPool
-                    //// method:
-                    ////MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetMethod("SetIndexerThreadPool", new Type[] { typeof(DocumentsWriterPerThreadPool) });
-                    //MethodInfo setIndexerThreadPoolMethod = typeof(IndexWriterConfig).GetMethod(
-                    //    "SetIndexerThreadPool", 
-                    //    BindingFlags.NonPublic | BindingFlags.Instance, 
-                    //    null, 
-                    //    new Type[] { typeof(DocumentsWriterPerThreadPool) }, 
-                    //    null);
-                    ////setIndexerThreadPoolMethod.setAccessible(true);
-                    //Type clazz = typeof(RandomDocumentsWriterPerThreadPool);
-                    //ConstructorInfo ctor = clazz.GetConstructor(new[] { typeof(int), typeof(Random) });
-                    ////ctor.Accessible = true;
-                    //// random thread pool
-                    //setIndexerThreadPoolMethod.Invoke(c, new[] { ctor.Invoke(new object[] { maxNumThreadStates, r }) });
-
-                    // LUCENENET specific: Since we are using InternalsVisibleTo, there is no need for Reflection
-                    c.SetIndexerThreadPool(new RandomDocumentsWriterPerThreadPool(maxNumThreadStates, random));
-                }
-                else
-                {
-                    // random thread pool
-                    c.SetMaxThreadStates(maxNumThreadStates);
-                }
+				c.SetMaxThreadStates(maxNumThreadStates);
             }
 #if !FEATURE_INSTANCE_TESTDATA_INITIALIZATION
             c.SetMergePolicy(NewMergePolicy(random));
