@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
         public virtual IDictionary<string, Document> IndexRandom(int nThreads, int iterations, int range, Directory dir, int maxThreadStates, bool doReaderPooling)
         {
             IDictionary<string, Document> docs = new Dictionary<string, Document>();
-            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(maxBufferedDocs).SetIndexerThreadPool(new ThreadAffinityDocumentsWriterThreadPool(maxThreadStates)).SetReaderPooling(doReaderPooling).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
+            IndexWriter w = RandomIndexWriter.MockIndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random)).SetOpenMode(OpenMode.CREATE).SetRAMBufferSizeMB(0.1).SetMaxBufferedDocs(MaxBufferedDocs).SetIndexerThreadPool(new DocumentsWriterPerThreadPool(maxThreadStates)).SetReaderPooling(doReaderPooling).SetMergePolicy(NewLogMergePolicy()), new YieldTestPoint(this));
             LogMergePolicy lmp = (LogMergePolicy)w.Config.MergePolicy;
             lmp.NoCFSRatio = 0.0;
             lmp.MergeFactor = mergeFactor;
