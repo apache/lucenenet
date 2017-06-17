@@ -190,7 +190,7 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// Whether or not there are remaining values. </summary>
-            public bool HasNext // LUCENENET TODO: API - Change to HasNext() method (makes calculation)
+            public bool HasNext
             {
                 get { return pOff < currentCount; }
             }
