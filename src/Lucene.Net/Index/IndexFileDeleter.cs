@@ -577,7 +577,7 @@ namespace Lucene.Net.Index
                 lastFiles.Clear();
 
                 // Save files so we can decr on next checkpoint/commit:
-                lastFiles.AddRange(segmentInfos.Files(directory, false));
+                lastFiles.AddRange(segmentInfos.GetFiles(directory, false));
             }
             if (infoStream.IsEnabled("IFD"))
             {
@@ -591,7 +591,7 @@ namespace Lucene.Net.Index
             Debug.Assert(IsLocked);
             // If this is a commit point, also incRef the
             // segments_N file:
-            foreach (string fileName in segmentInfos.Files(directory, isCommit))
+            foreach (string fileName in segmentInfos.GetFiles(directory, isCommit))
             {
                 IncRef(fileName);
             }
@@ -652,7 +652,7 @@ namespace Lucene.Net.Index
         internal void DecRef(SegmentInfos segmentInfos)
         {
             Debug.Assert(IsLocked);
-            foreach (string file in segmentInfos.Files(directory, false))
+            foreach (string file in segmentInfos.GetFiles(directory, false))
             {
                 DecRef(file);
             }
@@ -825,7 +825,7 @@ namespace Lucene.Net.Index
                 userData = segmentInfos.UserData;
                 segmentsFileName = segmentInfos.GetSegmentsFileName();
                 generation = segmentInfos.Generation;
-                files = segmentInfos.Files(directory, true);
+                files = segmentInfos.GetFiles(directory, true);
                 segmentCount = segmentInfos.Count;
             }
 

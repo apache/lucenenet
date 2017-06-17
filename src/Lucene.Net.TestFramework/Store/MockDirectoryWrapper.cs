@@ -1008,7 +1008,7 @@ namespace Lucene.Net.Store
 
                                         try
                                         {
-                                            ISet<string> ghosts = new HashSet<string>(sis.Files(m_input, false));
+                                            ISet<string> ghosts = new HashSet<string>(sis.GetFiles(m_input, false));
                                             foreach (string s in ghosts)
                                             {
                                                 if (endSet.Contains(s) && !startSet.Contains(s))

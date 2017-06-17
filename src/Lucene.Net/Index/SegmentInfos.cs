@@ -1157,7 +1157,7 @@ namespace Lucene.Net.Index
         /// The returned collection is recomputed on each
         /// invocation.
         /// </summary>
-        public ICollection<string> Files(Directory dir, bool includeSegmentsFile) // LUCENENET TODO: API Rename GetFiles()
+        public ICollection<string> GetFiles(Directory dir, bool includeSegmentsFile)
         {
             var files = new HashSet<string>();
             if (includeSegmentsFile)

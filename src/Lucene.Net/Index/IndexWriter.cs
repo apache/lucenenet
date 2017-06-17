@@ -1975,7 +1975,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    return segmentInfos.Files(directory, true);
+                    return segmentInfos.GetFiles(directory, true);
                 }
             }
         }
@@ -3599,7 +3599,7 @@ namespace Lucene.Net.Index
                                 // we are trying to sync all referenced files, a
                                 // merge completes which would otherwise have
                                 // removed the files we are now syncing.
-                                filesToCommit = toCommit.Files(directory, false);
+                                filesToCommit = toCommit.GetFiles(directory, false);
                                 deleter.IncRef(filesToCommit);
                             }
                             success = true;
@@ -5409,7 +5409,7 @@ namespace Lucene.Net.Index
         // called only from assert
         private bool FilesExist(SegmentInfos toSync)
         {
-            ICollection<string> files = toSync.Files(directory, false);
+            ICollection<string> files = toSync.GetFiles(directory, false);
             foreach (string fileName in files)
             {
                 Debug.Assert(SlowFileExists(directory, fileName), "file " + fileName + " does not exist; files=" + Arrays.ToString(directory.ListAll()));
@@ -5529,7 +5529,7 @@ namespace Lucene.Net.Index
                     ICollection<string> filesToSync;
                     try
                     {
-                        filesToSync = toSync.Files(directory, false);
+                        filesToSync = toSync.GetFiles(directory, false);
                         directory.Sync(filesToSync);
                         success = true;
                     }
