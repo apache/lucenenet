@@ -26,16 +26,16 @@ namespace Lucene.Net.Util
     /// </summary>
     public class MapOfSets<TKey, TValue>
     {
-        private readonly IDictionary<TKey, HashSet<TValue>> theMap; // LUCENENET TODO: API Change to ISet
+        private readonly IDictionary<TKey, ISet<TValue>> theMap;
 
         /// <param name="m"> The backing store for this object. </param>
-        public MapOfSets(IDictionary<TKey, HashSet<TValue>> m) // LUCENENET TODO: API Change to ISet
+        public MapOfSets(IDictionary<TKey, ISet<TValue>> m) 
         {
             theMap = m;
         }
 
         /// <returns> Direct access to the map backing this object. </returns>
-        public virtual IDictionary<TKey, HashSet<TValue>> Map // LUCENENET TODO: API Change to ISet
+        public virtual IDictionary<TKey, ISet<TValue>> Map
         {
             get
             {
@@ -50,7 +50,7 @@ namespace Lucene.Net.Util
         /// <returns> The size of the <see cref="ISet{T}"/> associated with key once val is added to it. </returns>
         public virtual int Put(TKey key, TValue val)
         {
-            HashSet<TValue> theSet; // LUCENENET TODO: API Change to ISet
+            ISet<TValue> theSet;
             if (theMap.ContainsKey(key))
             {
                 theSet = theMap[key];
@@ -71,7 +71,7 @@ namespace Lucene.Net.Util
         /// <returns> The size of the <see cref="ISet{T}"/> associated with key once val is added to it. </returns>
         public virtual int PutAll(TKey key, IEnumerable<TValue> vals)
         {
-            HashSet<TValue> theSet; // LUCENENET TODO: API Change to ISet
+            ISet<TValue> theSet;
             if (theMap.ContainsKey(key))
             {
                 theSet = theMap[key];
