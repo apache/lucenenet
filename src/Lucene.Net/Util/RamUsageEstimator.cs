@@ -349,7 +349,29 @@ namespace Lucene.Net.Util
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_DOUBLE * arr.Length);
         }
 
-        // LUCENENET TODO: API - Add SizeOf() overloads for ulong, ushort, uint
+        /// <summary>
+        /// Returns the size in bytes of the <see cref="T:ulong[]"/> object. </summary>
+        [CLSCompliant(false)]
+        public static long SizeOf(ulong[] arr)
+        {
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT64 * arr.Length);
+        }
+
+        /// <summary>
+        /// Returns the size in bytes of the <see cref="T:uint[]"/> object. </summary>
+        [CLSCompliant(false)]
+        public static long SizeOf(uint[] arr)
+        {
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT32 * arr.Length);
+        }
+
+        /// <summary>
+        /// Returns the size in bytes of the <see cref="T:ushort[]"/> object. </summary>
+        [CLSCompliant(false)]
+        public static long SizeOf(ushort[] arr)
+        {
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT16 * arr.Length);
+        }
 
         /// <summary>
         /// Estimates the RAM usage by the given object. It will
