@@ -87,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     fieldCounter++;
                 }
                 TermInfo termInfo = indexEnum.TermInfo();
-                indexToTerms.Set(i, dataOutput.Position);
+                indexToTerms.Set(i, dataOutput.GetPosition());
                 dataOutput.WriteVInt32(fieldCounter);
                 dataOutput.WriteString(term.Text());
                 dataOutput.WriteVInt32(termInfo.DocFreq);

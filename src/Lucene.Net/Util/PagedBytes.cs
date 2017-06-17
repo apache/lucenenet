@@ -262,18 +262,15 @@ namespace Lucene.Net.Util
             return new PagedBytes.Reader(this);
         }
 
-        public long Pointer // LUCENENET TODO: API - Change to GetPointer() (makes conversion)
+        public long GetPointer()
         {
-            get
+            if (currentBlock == null)
             {
-                if (currentBlock == null)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return (blocks.Count * ((long)blockSize)) + upto;
-                }
+                return 0;
+            }
+            else
+            {
+                return (blocks.Count * ((long)blockSize)) + upto;
             }
         }
 
@@ -311,7 +308,7 @@ namespace Lucene.Net.Util
                 upto = 0;
             }
 
-            long pointer = Pointer;
+            long pointer = GetPointer();
 
             if (bytes.Length < 128)
             {
@@ -345,22 +342,19 @@ namespace Lucene.Net.Util
             public override object Clone()
             {
                 PagedBytesDataInput clone = outerInstance.GetDataInput();
-                clone.SetPosition(Position);
+                clone.SetPosition(GetPosition());
                 return clone;
             }
 
             /// <summary>
             /// Returns the current byte position. </summary>
-            public long Position // LUCENENET TODO: API - Change to GetPosition() (makes conversion)
+            public long GetPosition()
             {
-                get
-                {
-                    return (long)currentBlockIndex * outerInstance.blockSize + currentBlockUpto;
-                }
+                return (long)currentBlockIndex * outerInstance.blockSize + currentBlockUpto;
             }
 
             /// <summary>
-            /// Seek to a position previously obtained from <see cref="Position"/>.
+            /// Seek to a position previously obtained from <see cref="GetPosition()"/>.
             /// </summary>
             /// <param name="position"></param>
             public void SetPosition(long position)
@@ -480,12 +474,9 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Return the current byte position. </summary>
-            public long Position // LUCENENET TODO: API - Change to GetPosition() (makes conversion)
+            public long GetPosition()
             {
-                get
-                {
-                    return outerInstance.Pointer;
-                }
+                return outerInstance.GetPointer();
             }
         }
 
