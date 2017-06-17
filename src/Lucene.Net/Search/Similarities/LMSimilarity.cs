@@ -90,11 +90,11 @@ namespace Lucene.Net.Search.Similarities
         /// Returns the name of the LM method. If a custom collection model strategy is
         /// used, its name is included as well. </summary>
         /// <seealso cref="GetName()"/>
-        /// <seealso cref="ICollectionModel.Name"/>
+        /// <seealso cref="ICollectionModel.GetName()"/>
         /// <seealso cref="DefaultCollectionModel"/>
         public override string ToString()
         {
-            string coll = m_collectionModel.Name;
+            string coll = m_collectionModel.GetName();
             if (coll != null)
             {
                 return string.Format("LM {0} - {1}", GetName(), coll);
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search.Similarities
 
             /// <summary>
             /// The name of the collection model strategy. </summary>
-            string Name { get; } // LUCENENET TODO: API Change to GetName() ? (consistency)
+            string GetName();
         }
 
         /// <summary>
@@ -176,12 +176,9 @@ namespace Lucene.Net.Search.Similarities
                 return (stats.TotalTermFreq + 1F) / (stats.NumberOfFieldTokens + 1F);
             }
 
-            public virtual string Name
+            public virtual string GetName()
             {
-                get
-                {
-                    return null;
-                }
+                return null;
             }
         }
     }
