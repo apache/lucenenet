@@ -139,12 +139,12 @@ namespace Lucene.Net.Search
         }
 
         // per-segment fieldcaches don't purge until the shared core closes.
-        internal readonly SegmentReader.ICoreClosedListener purgeCore;
+        internal readonly SegmentReader.ICoreDisposedListener purgeCore;
 
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.ICoreClosedListener
+        private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.ICoreDisposedListener
         {
             private FieldCacheImpl outerInstance;
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
             }
 
-            public void OnClose(object ownerCoreCacheKey)
+            public void OnDispose(object ownerCoreCacheKey)
             {
                 outerInstance.PurgeByCacheKey(ownerCoreCacheKey);
             }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
         {
             if (reader is SegmentReader)
             {
-                ((SegmentReader)reader).AddCoreClosedListener(purgeCore);
+                ((SegmentReader)reader).AddCoreDisposedListener(purgeCore);
             }
             else
             {

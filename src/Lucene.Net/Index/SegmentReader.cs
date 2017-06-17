@@ -666,39 +666,41 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Called when the shared core for this <see cref="SegmentReader"/>
         /// is disposed.
-        /// <para>
+        /// <para/>
         /// This listener is called only once all <see cref="SegmentReader"/>s
         /// sharing the same core are disposed.  At this point it
         /// is safe for apps to evict this reader from any caches
         /// keyed on <see cref="CoreCacheKey"/>.  This is the same
         /// interface that <see cref="Search.IFieldCache"/> uses, internally,
-        /// to evict entries.</para>
-        ///
+        /// to evict entries.
+        /// <para/>
+        /// NOTE: This was CoreClosedListener in Lucene.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public interface ICoreClosedListener // LUCENENET TODO: API Rename ICoreDisposedListener
+        public interface ICoreDisposedListener 
         {
             /// <summary>
             /// Invoked when the shared core of the original 
             /// <see cref="SegmentReader"/> has disposed.
             /// </summary>
-            void OnClose(object ownerCoreCacheKey); // LUCENENET TODO: API Rename OnDispose()
+            void OnDispose(object ownerCoreCacheKey);
         }
 
         /// <summary>
-        /// Expert: adds a <see cref="ICoreClosedListener"/> to this reader's shared core </summary>
-        public void AddCoreClosedListener(ICoreClosedListener listener)
+        /// Expert: adds a <see cref="ICoreDisposedListener"/> to this reader's shared core </summary>
+        public void AddCoreDisposedListener(ICoreDisposedListener listener)
         {
             EnsureOpen();
-            core.AddCoreClosedListener(listener);
+            core.AddCoreDisposedListener(listener);
         }
 
         /// <summary>
-        /// Expert: removes a <see cref="ICoreClosedListener"/> from this reader's shared core </summary>
-        public void RemoveCoreClosedListener(ICoreClosedListener listener)
+        /// Expert: removes a <see cref="ICoreDisposedListener"/> from this reader's shared core </summary>
+        public void RemoveCoreDisposedListener(ICoreDisposedListener listener)
         {
             EnsureOpen();
-            core.RemoveCoreClosedListener(listener);
+            core.RemoveCoreDisposedListener(listener);
         }
 
         /// <summary>
