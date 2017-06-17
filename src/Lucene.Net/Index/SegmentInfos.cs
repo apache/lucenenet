@@ -1175,7 +1175,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(info.Info.Dir == dir);
                 if (info.Info.Dir == dir)
                 {
-                    files.UnionWith(info.Files());
+                    files.UnionWith(info.GetFiles());
                 }
             }
 

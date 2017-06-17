@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
             if (sizeInBytes == -1)
             {
                 long sum = 0;
-                foreach (string fileName in Files())
+                foreach (string fileName in GetFiles())
                 {
                     sum += Info.Dir.FileLength(fileName);
                 }
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns all files in use by this segment. </summary>
-        public virtual ICollection<string> Files() // LUCENENET TODO: API Rename GetFiles()
+        public virtual ICollection<string> GetFiles()
         {
             // Start from the wrapped info's files:
             ISet<string> files = new HashSet<string>(Info.GetFiles());

@@ -3096,7 +3096,7 @@ namespace Lucene.Net.Index
                     {
                         foreach (SegmentCommitInfo sipc in infos)
                         {
-                            foreach (string file in sipc.Files())
+                            foreach (string file in sipc.GetFiles())
                             {
                                 try
                                 {
@@ -3124,7 +3124,7 @@ namespace Lucene.Net.Index
                         {
                             foreach (SegmentCommitInfo sipc in infos)
                             {
-                                foreach (string file in sipc.Files())
+                                foreach (string file in sipc.GetFiles())
                                 {
                                     try
                                     {
@@ -3267,7 +3267,7 @@ namespace Lucene.Net.Index
                 {
                     if (stopMerges)
                     {
-                        deleter.DeleteNewFiles(infoPerCommit.Files());
+                        deleter.DeleteNewFiles(infoPerCommit.GetFiles());
                         return;
                     }
                     EnsureOpen();
@@ -3277,7 +3277,7 @@ namespace Lucene.Net.Index
                 // Now create the compound file if needed
                 if (useCompoundFile)
                 {
-                    ICollection<string> filesToDelete = infoPerCommit.Files();
+                    ICollection<string> filesToDelete = infoPerCommit.GetFiles();
                     try
                     {
                         CreateCompoundFile(infoStream, directory, CheckAbort.NONE, info, context);
@@ -3393,7 +3393,7 @@ namespace Lucene.Net.Index
 
             // Build up new segment's file names.  Must do this
             // before writing SegmentInfo:
-            foreach (string file in info.Files())
+            foreach (string file in info.GetFiles())
             {
                 string newFileName;
                 if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
@@ -3438,7 +3438,7 @@ namespace Lucene.Net.Index
             try
             {
                 // Copy the segment's files
-                foreach (string file in info.Files())
+                foreach (string file in info.GetFiles())
                 {
                     string newFileName;
                     if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
@@ -4388,7 +4388,7 @@ namespace Lucene.Net.Index
                     // doing this  makes  MockDirWrapper angry in
                     // TestNRTThreads (LUCENE-5434):
                     readerPool.Drop(merge.info);
-                    deleter.DeleteNewFiles(merge.info.Files());
+                    deleter.DeleteNewFiles(merge.info.GetFiles());
                     return false;
                 }
 
@@ -4455,7 +4455,7 @@ namespace Lucene.Net.Index
                 {
                     Debug.Assert(!segmentInfos.Contains(merge.info));
                     readerPool.Drop(merge.info);
-                    deleter.DeleteNewFiles(merge.info.Files());
+                    deleter.DeleteNewFiles(merge.info.GetFiles());
                 }
 
                 bool success_ = false;
@@ -5121,7 +5121,7 @@ namespace Lucene.Net.Index
                 {
                     success = false;
 
-                    ICollection<string> filesToRemove = merge.info.Files();
+                    ICollection<string> filesToRemove = merge.info.GetFiles();
 
                     try
                     {
@@ -5161,7 +5161,7 @@ namespace Lucene.Net.Index
                             {
                                 deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION));
                                 deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
-                                deleter.DeleteNewFiles(merge.info.Files());
+                                deleter.DeleteNewFiles(merge.info.GetFiles());
                             }
                         }
                     }
@@ -5215,7 +5215,7 @@ namespace Lucene.Net.Index
                     {
                         lock (this)
                         {
-                            deleter.DeleteNewFiles(merge.info.Files());
+                            deleter.DeleteNewFiles(merge.info.GetFiles());
                         }
                     }
                 }

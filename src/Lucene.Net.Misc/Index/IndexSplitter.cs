@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
                 SegmentInfo newInfo = new SegmentInfo(destFSDir, info.Version, info.Name, info.DocCount, info.UseCompoundFile, info.Codec, info.Diagnostics);
                 destInfos.Add(new SegmentCommitInfo(newInfo, infoPerCommit.DelCount, infoPerCommit.DelGen, infoPerCommit.FieldInfosGen));
                 // now copy files over
-                ICollection<string> files = infoPerCommit.Files();
+                ICollection<string> files = infoPerCommit.GetFiles();
                 foreach (string srcName in files)
                 {
                     FileInfo srcFile = new FileInfo(Path.Combine(dir.FullName, srcName));

@@ -741,8 +741,8 @@ namespace Lucene.Net.Index
                     segInfoStat.Codec = codec;
                     Msg(infoStream, "    compound=" + info.Info.UseCompoundFile);
                     segInfoStat.Compound = info.Info.UseCompoundFile;
-                    Msg(infoStream, "    numFiles=" + info.Files().Count);
-                    segInfoStat.NumFiles = info.Files().Count;
+                    Msg(infoStream, "    numFiles=" + info.GetFiles().Count);
+                    segInfoStat.NumFiles = info.GetFiles().Count;
                     segInfoStat.SizeMB = info.GetSizeInBytes() / (1024.0 * 1024.0);
 #pragma warning disable 612, 618
                     if (info.Info.GetAttribute(Lucene3xSegmentInfoFormat.DS_OFFSET_KEY) == null)
