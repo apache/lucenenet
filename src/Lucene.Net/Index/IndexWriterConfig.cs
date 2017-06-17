@@ -27,7 +27,7 @@ namespace Lucene.Net.Index
     using IndexingChain = Lucene.Net.Index.DocumentsWriterPerThread.IndexingChain;
     using IndexReaderWarmer = Lucene.Net.Index.IndexWriter.IndexReaderWarmer;
     using InfoStream = Lucene.Net.Util.InfoStream;
-    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
+    using TextWriterInfoStream = Lucene.Net.Util.TextWriterInfoStream;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
     /// <summary>
@@ -664,7 +664,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Convenience method that uses <see cref="PrintStreamInfoStream"/> to write to the passed in <see cref="TextWriter"/>. 
+        /// Convenience method that uses <see cref="TextWriterInfoStream"/> to write to the passed in <see cref="TextWriter"/>. 
         /// Must not be <c>null</c>.
         /// </summary>
         public IndexWriterConfig SetInfoStream(TextWriter printStream)
@@ -673,7 +673,7 @@ namespace Lucene.Net.Index
             {
                 throw new System.ArgumentException("printStream must not be null");
             }
-            return SetInfoStream(new PrintStreamInfoStream(printStream));
+            return SetInfoStream(new TextWriterInfoStream(printStream));
         }
 
         // LUCENENET NOTE: These were only here for casting purposes, but since we are

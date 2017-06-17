@@ -33,7 +33,7 @@ namespace Lucene.Net.Search
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using OpenMode = Lucene.Net.Index.OpenMode;
-    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
+    using TextWriterInfoStream = Lucene.Net.Util.TextWriterInfoStream;
     using Term = Lucene.Net.Index.Term;
     using TermContext = Lucene.Net.Index.TermContext;
     using TestUtil = Lucene.Net.Util.TestUtil;
@@ -548,7 +548,7 @@ namespace Lucene.Net.Search
                 iwc.SetOpenMode(OpenMode.CREATE);
                 if (VERBOSE)
                 {
-                    iwc.SetInfoStream(new PrintStreamInfoStream(Console.Out));
+                    iwc.SetInfoStream(new TextWriterInfoStream(Console.Out));
                 }
                 Writer = new IndexWriter(Dir, iwc);
                 Mgr = new SearcherManager(Writer, true, null);

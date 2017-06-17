@@ -23,12 +23,29 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// InfoStream implementation over a <see cref="TextWriter"/>
+    /// LUCENENET specific stub to assist with migration to <see cref="TextWriterInfoStream"/>.
+    /// </summary>
+    [Obsolete("Use TextWriterInfoStream in .NET. This class is provided only to assist with the transition.")]
+    public class PrintStreamInfoStream : TextWriterInfoStream
+    {
+        public PrintStreamInfoStream(TextWriter stream)
+            : base(stream)
+        { }
+
+        public PrintStreamInfoStream(TextWriter stream, int messageID)
+            : base(stream, messageID)
+        { }
+    }
+
+    /// <summary>
+    /// <see cref="InfoStream"/> implementation over a <see cref="TextWriter"/>
     /// such as <see cref="Console.Out"/>.
+    /// <para/>
+    /// NOTE: This is analogous to PrintStreamInfoStream in Lucene.
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public class PrintStreamInfoStream : InfoStream // LUCENENET TODO: API - Rename to TextWriterInfoStream
+    public class TextWriterInfoStream : InfoStream
     {
         // Used for printing messages
         private static readonly AtomicInt32 MESSAGE_ID = new AtomicInt32();
@@ -37,12 +54,12 @@ namespace Lucene.Net.Util
 
         protected readonly TextWriter m_stream;
 
-        public PrintStreamInfoStream(TextWriter stream)
+        public TextWriterInfoStream(TextWriter stream)
             : this(stream, MESSAGE_ID.GetAndIncrement())
         {
         }
 
-        public PrintStreamInfoStream(TextWriter stream, int messageID)
+        public TextWriterInfoStream(TextWriter stream, int messageID)
         {
             this.m_stream = stream;
             this.m_messageID = messageID;
