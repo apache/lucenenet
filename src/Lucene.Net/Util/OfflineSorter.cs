@@ -141,11 +141,6 @@ namespace Lucene.Net.Util
         /// </summary>
         public class SortInfo
         {
-            internal virtual void InitializeInstanceFields()
-            {
-                BufferSize = outerInstance.ramBufferSize.bytes;
-            }
-
             private readonly OfflineSorter outerInstance;
 
             /// <summary>
@@ -171,7 +166,7 @@ namespace Lucene.Net.Util
             public long ReadTime { get; set; }
             /// <summary>
             /// Read buffer size (in bytes) </summary>
-            public long BufferSize { get; set; } // LUCENENET TODO: API - make setter private
+            public long BufferSize { get; private set; }
 
             /// <summary>
             /// Create a new <see cref="SortInfo"/> (with empty statistics) for debugging. </summary>
@@ -179,7 +174,7 @@ namespace Lucene.Net.Util
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                BufferSize = outerInstance.ramBufferSize.bytes;
             }
 
             /// <summary>
