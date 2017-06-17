@@ -697,7 +697,7 @@ namespace Lucene.Net.Util
         /// <para/>
         /// TODO: If this is useful outside this class, make it public - needs some work
         /// </summary>
-        public sealed class IdentityHashSet<KType> : IEnumerable<KType> // LUCENENET TODO: API - This was internal in Lucene
+        internal sealed class IdentityHashSet<KType> : IEnumerable<KType>
         {
             /// <summary>
             /// Default load factor.
