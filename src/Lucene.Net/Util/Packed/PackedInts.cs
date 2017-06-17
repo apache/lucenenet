@@ -169,9 +169,9 @@ namespace Lucene.Net.Util.Packed
 
             private static readonly Format[] values = new Format[] { PACKED, PACKED_SINGLE_BLOCK };
 
-            public static IEnumerable<Format> Values() // LUCENENET TODO: API - make property
+            public static IEnumerable<Format> Values
             {
-                return values;
+                get { return values; }
             }
 
             /// <summary>
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util.Packed
             /// </summary>
             public static Format ById(int id)
             {
-                foreach (Format format in Values())
+                foreach (Format format in Values)
                 {
                     if (format.Id == id)
                     {

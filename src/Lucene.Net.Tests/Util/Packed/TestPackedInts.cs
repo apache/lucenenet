@@ -48,7 +48,7 @@ namespace Lucene.Net.Util.Packed
             for (int i = 0; i < iters; ++i)
             {
                 int valueCount = RandomInts.NextIntBetween(Random(), 1, int.MaxValue);
-                foreach (PackedInt32s.Format format in PackedInt32s.Format.Values())
+                foreach (PackedInt32s.Format format in PackedInt32s.Format.Values)
                 {
                     for (int bpv = 1; bpv <= 64; ++bpv)
                     {
@@ -222,7 +222,7 @@ namespace Lucene.Net.Util.Packed
             {
                 for (int bpv = 1; bpv <= 64; ++bpv)
                 {
-                    foreach (PackedInt32s.Format format in PackedInt32s.Format.Values())
+                    foreach (PackedInt32s.Format format in PackedInt32s.Format.Values)
                     {
                         if (!format.IsSupported(bpv))
                         {
@@ -993,7 +993,7 @@ namespace Lucene.Net.Util.Packed
         [Test]
         public virtual void TestEncodeDecode()
         {
-            foreach (PackedInt32s.Format format in PackedInt32s.Format.Values())
+            foreach (PackedInt32s.Format format in PackedInt32s.Format.Values)
             {
                 for (int bpv = 1; bpv <= 64; ++bpv)
                 {

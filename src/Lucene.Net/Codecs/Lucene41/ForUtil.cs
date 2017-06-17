@@ -53,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene41
             int maxDataSize = 0;
             for (int version = PackedInt32s.VERSION_START; version <= PackedInt32s.VERSION_CURRENT; version++)
             {
-                foreach (PackedInt32s.Format format in PackedInt32s.Format.Values()/* Enum.GetValues(typeof(PackedInts.Format))*/)
+                foreach (PackedInt32s.Format format in PackedInt32s.Format.Values/* Enum.GetValues(typeof(PackedInts.Format))*/)
                 {
                     for (int bpv = 1; bpv <= 32; ++bpv)
                     {
