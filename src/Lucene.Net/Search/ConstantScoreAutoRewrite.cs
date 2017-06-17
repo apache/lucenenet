@@ -31,15 +31,24 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TermState = Lucene.Net.Index.TermState;
 
-    // LUCENENET NOTE: made this class public, since a derived class with the same name is public
+
+    /// <summary>
+    /// A rewrite method that tries to pick the best
+    /// constant-score rewrite method based on term and
+    /// document counts from the query.  If both the number of
+    /// terms and documents is small enough, then 
+    /// <see cref="CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE"/> is used.
+    /// Otherwise, <see cref="CONSTANT_SCORE_FILTER_REWRITE"/> is
+    /// used.
+    /// </summary>
+    // LUCENENET specific: made this class public. In Lucene there was a derived class 
+    // with the same name that was nested within MultiTermQuery, but in .NET it is 
+    // more intuitive if our classes are not nested.
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
     {
-        // LUCENENET specific - making constructor internal since the class was meant to be internal
-        internal ConstantScoreAutoRewrite() { }
-
         /// <summary>
         /// Defaults derived from rough tests with a 20.0 million
         /// doc Wikipedia index.  With more than 350 terms in the
