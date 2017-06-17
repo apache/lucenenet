@@ -55,7 +55,7 @@ namespace Lucene.Net.Search
         {
             if (acceptDocs == null)
             {
-                throw new System.NullReferenceException("acceptDocs is null"); // LUCENENET TODO: API throw ArgumentNullException ?
+                throw new ArgumentNullException("acceptDocs is null");
             }
             this.acceptDocs = acceptDocs;
         }
