@@ -923,9 +923,7 @@ namespace Lucene.Net.Util
                 get { return Assigned; }
             }
 
-            // LUCENENET TODO: API - bring back this IsEmpty property (doesn't work the same as !Any())
-
-            //public bool Empty // LUCENENET NOTE: in .NET we can just use !Any() on IEnumerable<T>
+            //public bool IsEmpty // LUCENENET NOTE: in .NET we can just use !Any() on IEnumerable<T>
             //{
             //    get
             //    {
