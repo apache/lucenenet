@@ -89,11 +89,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(reader);
+                    IOUtils.Dispose(reader);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(reader);
+                    IOUtils.DisposeWhileHandlingException(reader);
                 }
             }
         }
@@ -118,11 +118,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(w);
+                    IOUtils.Dispose(w);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(w);
+                    IOUtils.DisposeWhileHandlingException(w);
                 }
             }
         }

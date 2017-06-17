@@ -589,11 +589,11 @@ namespace Lucene.Net.Util.Fst
             {
                 if (success)
                 {
-                    IOUtils.Close(bs);
+                    IOUtils.Dispose(bs);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(bs);
+                    IOUtils.DisposeWhileHandlingException(bs);
                 }
             }
         }
@@ -2195,11 +2195,11 @@ namespace Lucene.Net.Util.Fst
             {
                 if (success)
                 {
-                    IOUtils.Close(bs);
+                    IOUtils.Dispose(bs);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(bs);
+                    IOUtils.DisposeWhileHandlingException(bs);
                 }
             }
         }

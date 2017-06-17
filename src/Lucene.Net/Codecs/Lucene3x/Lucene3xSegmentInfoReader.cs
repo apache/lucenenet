@@ -121,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
                 else
                 {

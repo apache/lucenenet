@@ -81,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene46
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
                 else
                 {

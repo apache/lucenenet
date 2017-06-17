@@ -107,11 +107,11 @@ namespace Lucene.Net.Index
                 {
                     if (success)
                     {
-                        IOUtils.Close(@in);
+                        IOUtils.Dispose(@in);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(@in);
+                        IOUtils.DisposeWhileHandlingException(@in);
                     }
                 }
             }

@@ -80,7 +80,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
                 Assert.AreEqual(terms.Count, enums.Count);
             }
-            IOUtils.Close(writer, open, dir);
+            IOUtils.Dispose(writer, open, dir);
         }
 
         // tests for reuse only if bits are the same either null or the same instance
@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 Assert.AreEqual(1, enums.Count);
             }
-            IOUtils.Close(writer, open, dir);
+            IOUtils.Dispose(writer, open, dir);
         }
 
         // make sure we never reuse from another reader even if it is the same field & codec etc
@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 Assert.AreEqual(terms.Count, enums.Count);
             }
-            IOUtils.Close(writer, firstReader, secondReader, dir);
+            IOUtils.Dispose(writer, firstReader, secondReader, dir);
         }
 
         public virtual DocsEnum RandomDocsEnum(string field, BytesRef term, IList<AtomicReaderContext> readers, IBits bits)

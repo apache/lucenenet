@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    IOUtils.Close(writer);
+                    IOUtils.Dispose(writer);
                     writer = null;
                     lastDocID = 0;
                     hasVectors = false;

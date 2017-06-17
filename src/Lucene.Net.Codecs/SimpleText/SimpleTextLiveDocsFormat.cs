@@ -103,11 +103,11 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (success)
                 {
-                    IOUtils.Close(input);
+                    IOUtils.Dispose(input);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
             }
         }
@@ -154,11 +154,11 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (success)
                 {
-                    IOUtils.Close(output);
+                    IOUtils.Dispose(output);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                 }
             }
         }

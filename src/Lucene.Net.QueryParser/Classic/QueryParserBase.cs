@@ -624,7 +624,7 @@ namespace Lucene.Net.QueryParsers.Classic
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(source);
+                IOUtils.DisposeWhileHandlingException(source);
             }
         }
 

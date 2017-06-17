@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                 Exception th = null;
                 try
                 {
-                    IOUtils.Close(termVectorsLocal, fieldsReaderLocal, normsLocal, fields, termVectorsReaderOrig, fieldsReaderOrig, cfsReader, normsProducer);
+                    IOUtils.Dispose(termVectorsLocal, fieldsReaderLocal, normsLocal, fields, termVectorsReaderOrig, fieldsReaderOrig, cfsReader, normsProducer);
                 }
                 catch (Exception throwable)
                 {

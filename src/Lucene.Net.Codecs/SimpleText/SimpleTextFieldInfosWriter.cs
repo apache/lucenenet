@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                 }
             }
         }

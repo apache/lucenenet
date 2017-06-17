@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(@out);
+                        IOUtils.DisposeWhileHandlingException(@out);
                         try
                         {
                             dir.DeleteFile(fileName);
@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        IOUtils.Close(@out);
+                        IOUtils.Dispose(@out);
                     }
                 }
 

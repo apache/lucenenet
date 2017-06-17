@@ -88,11 +88,11 @@ namespace Lucene.Net.Index
                 {
                     if (success)
                     {
-                        IOUtils.Close(fieldsWriter);
+                        IOUtils.Dispose(fieldsWriter);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(fieldsWriter);
+                        IOUtils.DisposeWhileHandlingException(fieldsWriter);
                     }
                 }
             }

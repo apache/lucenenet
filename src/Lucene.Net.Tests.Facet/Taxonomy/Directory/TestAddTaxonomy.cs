@@ -71,7 +71,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             validate(dirs[0], dirs[1], map);
 
-            IOUtils.Close(dirs);
+            IOUtils.Dispose(dirs);
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
@@ -175,7 +175,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             validate(dest, src, map);
 
-            IOUtils.Close(dest, src);
+            IOUtils.Dispose(dest, src);
         }
 
         [Test]
@@ -196,7 +196,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             validate(dest, src, map);
 
-            IOUtils.Close(dest, src);
+            IOUtils.Dispose(dest, src);
         }
 
         // A more comprehensive and big random test.
@@ -242,7 +242,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
             validate(dest, src, map);
 
-            IOUtils.Close(dest, src);
+            IOUtils.Dispose(dest, src);
         }
 
         [Test]
@@ -285,7 +285,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
             dtr.Dispose();
 
-            IOUtils.Close(src, dest);
+            IOUtils.Dispose(src, dest);
         }
 
         private class ThreadAnonymousInnerClassHelper2 : ThreadClass

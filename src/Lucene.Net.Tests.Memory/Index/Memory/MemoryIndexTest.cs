@@ -141,7 +141,7 @@ namespace Lucene.Net.Index.Memory
             AtomicReader reader = (AtomicReader)memory.CreateSearcher().IndexReader;
             DirectoryReader competitor = DirectoryReader.Open(ramdir);
             DuellReaders(competitor, reader);
-            IOUtils.Close(reader, competitor);
+            IOUtils.Dispose(reader, competitor);
             AssertAllQueries(memory, ramdir, analyzer);
             ramdir.Dispose();
         }
@@ -506,7 +506,7 @@ namespace Lucene.Net.Index.Memory
                 DirectoryReader competitor = DirectoryReader.Open(dir);
                 AtomicReader memIndexReader = (AtomicReader)memory.CreateSearcher().IndexReader;
                 DuellReaders(competitor, memIndexReader);
-                IOUtils.Close(competitor, memIndexReader);
+                IOUtils.Dispose(competitor, memIndexReader);
                 memory.Reset();
                 dir.Dispose();
             }

@@ -212,7 +212,7 @@ namespace Lucene.Net.QueryParsers.Analyzing
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(stream);
+                IOUtils.DisposeWhileHandlingException(stream);
             }
             return analyzed;
         }

@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
             return result;
         }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
             return result;
         }
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
             return result;
         }
@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
             return result;
         }

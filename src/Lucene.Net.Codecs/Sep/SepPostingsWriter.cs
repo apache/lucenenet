@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.Sep
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docOut, skipOut, freqOut, posOut, payloadOut);
+                    IOUtils.DisposeWhileHandlingException(docOut, skipOut, freqOut, posOut, payloadOut);
                 }
             }
         }
@@ -408,7 +408,7 @@ namespace Lucene.Net.Codecs.Sep
         {
             if (disposing)
             {
-                IOUtils.Close(docOut, skipOut, freqOut, posOut, payloadOut);
+                IOUtils.Dispose(docOut, skipOut, freqOut, posOut, payloadOut);
             }
         }
     }

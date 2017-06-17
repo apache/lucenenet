@@ -126,11 +126,11 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         if (success)
                         {
-                            IOUtils.Close(input);
+                            IOUtils.Dispose(input);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(input);
+                            IOUtils.DisposeWhileHandlingException(input);
                         }
                     }
                     numericInstances[field.Number] = instance;
@@ -476,11 +476,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(input);
+                    IOUtils.Dispose(input);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
             }
         }
@@ -530,11 +530,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(data, index);
+                    IOUtils.Dispose(data, index);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data, index);
+                    IOUtils.DisposeWhileHandlingException(data, index);
                 }
             }
         }
@@ -588,11 +588,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(data, index);
+                    IOUtils.Dispose(data, index);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data, index);
+                    IOUtils.DisposeWhileHandlingException(data, index);
                 }
             }
         }
@@ -646,11 +646,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(data, index);
+                    IOUtils.Dispose(data, index);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data, index);
+                    IOUtils.DisposeWhileHandlingException(data, index);
                 }
             }
         }
@@ -726,11 +726,11 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         if (success)
                         {
-                            IOUtils.Close(data, index);
+                            IOUtils.Dispose(data, index);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(data, index);
+                            IOUtils.DisposeWhileHandlingException(data, index);
                         }
                     }
                     sortedInstances[field.Number] = instance;

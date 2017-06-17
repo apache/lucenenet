@@ -199,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (disposing)
             {
-                IOUtils.Close(Tis, TisNoIndex, /*cfsReader,*/ FreqStream, ProxStream); // LUCENENET NOTE: cfsReader not used
+                IOUtils.Dispose(Tis, TisNoIndex, /*cfsReader,*/ FreqStream, ProxStream); // LUCENENET NOTE: cfsReader not used
             }
         }
 

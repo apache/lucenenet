@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs.PerField
                 if (disposing)
                 {
                     // Close all subs
-                    IOUtils.Close(formats.Values);
+                    IOUtils.Dispose(formats.Values);
                 }
             }
         }
@@ -280,7 +280,7 @@ namespace Lucene.Net.Codecs.PerField
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(formats.Values);
+                        IOUtils.DisposeWhileHandlingException(formats.Values);
                     }
                 }
             }
@@ -362,7 +362,7 @@ namespace Lucene.Net.Codecs.PerField
             {
                 if (disposing)
                 {
-                    IOUtils.Close(formats.Values);
+                    IOUtils.Dispose(formats.Values);
                 }
             }
 

@@ -1280,7 +1280,7 @@ namespace Lucene.Net.Index
                                     }
                                     finally
                                     {
-                                        IOUtils.CloseWhileHandlingException(r);
+                                        IOUtils.DisposeWhileHandlingException(r);
                                     }
                                 }
                                 if (i % 10 == 0)
@@ -1379,7 +1379,7 @@ namespace Lucene.Net.Index
                 }
                 try
                 {
-                    IOUtils.Close(dir);
+                    IOUtils.Dispose(dir);
                 }
                 catch (IOException e)
                 {
@@ -1387,7 +1387,7 @@ namespace Lucene.Net.Index
                 }
                 try
                 {
-                    IOUtils.Close(Adder);
+                    IOUtils.Dispose(Adder);
                 }
                 catch (IOException e)
                 {
@@ -2589,7 +2589,7 @@ namespace Lucene.Net.Index
                 }
             }
             Assert.IsTrue(liveIds.Count == 0);
-            IOUtils.Close(reader, w, dir);
+            IOUtils.Dispose(reader, w, dir);
         }
 
         private class RandomFailingFieldIterable : IEnumerable<IEnumerable<IIndexableField>>

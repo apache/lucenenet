@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (!closed)
                 {
-                    IOUtils.Close(fieldsStream, indexStream);
+                    IOUtils.Dispose(fieldsStream, indexStream);
                     closed = true;
                 }
             }

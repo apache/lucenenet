@@ -212,7 +212,7 @@ namespace Lucene.Net.Codecs
                 if (!success)
                 {
                     // this.Dispose() will close in:
-                    IOUtils.CloseWhileHandlingException(indexIn, this);
+                    IOUtils.DisposeWhileHandlingException(indexIn, this);
                 }
             }
         }
@@ -272,7 +272,7 @@ namespace Lucene.Net.Codecs
             {
                 try
                 {
-                    IOUtils.Close(@in, postingsReader);
+                    IOUtils.Dispose(@in, postingsReader);
                 }
                 finally
                 {

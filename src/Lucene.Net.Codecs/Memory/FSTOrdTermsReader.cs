@@ -107,11 +107,11 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (success)
                 {
-                    IOUtils.Close(indexIn, blockIn);
+                    IOUtils.Dispose(indexIn, blockIn);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(indexIn, blockIn);
+                    IOUtils.DisposeWhileHandlingException(indexIn, blockIn);
                 }
             }
         }
@@ -186,7 +186,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 try
                 {
-                    IOUtils.Close(postingsReader);
+                    IOUtils.Dispose(postingsReader);
                 }
                 finally
                 {

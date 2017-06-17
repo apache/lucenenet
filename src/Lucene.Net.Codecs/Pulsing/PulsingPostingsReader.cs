@@ -88,7 +88,7 @@ namespace Lucene.Net.Codecs.Pulsing
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
             }
         }

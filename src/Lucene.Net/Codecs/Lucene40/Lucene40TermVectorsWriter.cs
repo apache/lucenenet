@@ -511,7 +511,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 // make an effort to close all streams we can but remember and re-throw
                 // the first exception encountered in this process
-                IOUtils.Close(tvx, tvd, tvf);
+                IOUtils.Dispose(tvx, tvd, tvf);
                 tvx = tvd = tvf = null;
             }
         }

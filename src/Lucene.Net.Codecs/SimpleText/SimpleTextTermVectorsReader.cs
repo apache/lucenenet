@@ -244,7 +244,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             try
             {
-                IOUtils.Close(_input);
+                IOUtils.Dispose(_input);
             }
             finally
             {

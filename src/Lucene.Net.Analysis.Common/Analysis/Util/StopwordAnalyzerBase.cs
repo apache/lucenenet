@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
         }
 
@@ -131,7 +131,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
         }
 
@@ -155,7 +155,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(stopwords);
+                IOUtils.Dispose(stopwords);
             }
         }
     }

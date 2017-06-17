@@ -32,7 +32,7 @@ namespace Lucene.Net.Analysis.Util
         {
             try
             {
-                IOUtils.CloseWhileHandlingException(rl.OpenResource("/this-directory-really-really-really-should-not-exist/foo/bar.txt"));
+                IOUtils.DisposeWhileHandlingException(rl.OpenResource("/this-directory-really-really-really-should-not-exist/foo/bar.txt"));
                 fail("The resource does not exist, should fail!");
             }
             catch (IOException)
@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Util
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(os);
+                    IOUtils.DisposeWhileHandlingException(os);
                 }
 
                 IResourceLoader rl = new FilesystemResourceLoader(@base);

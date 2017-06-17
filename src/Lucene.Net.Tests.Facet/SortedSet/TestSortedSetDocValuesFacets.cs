@@ -95,7 +95,7 @@ namespace Lucene.Net.Facet.SortedSet
             TopDocs hits = searcher.Search(q, 1);
             Assert.AreEqual(1, hits.TotalHits);
 
-            IOUtils.Close(writer, searcher.IndexReader, dir);
+            IOUtils.Dispose(writer, searcher.IndexReader, dir);
         }
 
         // LUCENE-5090
@@ -280,7 +280,7 @@ namespace Lucene.Net.Facet.SortedSet
             // Ask for top 10 labels for any dims that have counts:
             Assert.AreEqual("dim=a path=[] value=2 childCount=2\n  foo1 (1)\n  foo2 (1)\n", facets.GetTopChildren(10, "a").ToString());
 
-            IOUtils.Close(writer, searcher.IndexReader, dir);
+            IOUtils.Dispose(writer, searcher.IndexReader, dir);
         }
 
 
@@ -387,7 +387,7 @@ namespace Lucene.Net.Facet.SortedSet
                 CollectionAssert.AreEqual(expected, actual);
             }
 
-            IOUtils.Close(w, searcher.IndexReader, indexDir, taxoDir);
+            IOUtils.Dispose(w, searcher.IndexReader, indexDir, taxoDir);
         }
     }
 

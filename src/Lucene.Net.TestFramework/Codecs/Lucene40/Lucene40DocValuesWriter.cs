@@ -93,11 +93,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(data);
+                    IOUtils.Dispose(data);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data);
+                    IOUtils.DisposeWhileHandlingException(data);
                 }
             }
         }
@@ -232,11 +232,11 @@ namespace Lucene.Net.Codecs.Lucene40
                 {
                     if (success)
                     {
-                        IOUtils.Close(data, index);
+                        IOUtils.Dispose(data, index);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(data, index);
+                        IOUtils.DisposeWhileHandlingException(data, index);
                     }
                 }
             }
@@ -258,11 +258,11 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         if (success)
                         {
-                            IOUtils.Close(data);
+                            IOUtils.Dispose(data);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(data);
+                            IOUtils.DisposeWhileHandlingException(data);
                         }
                     }
                 }
@@ -285,11 +285,11 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         if (success)
                         {
-                            IOUtils.Close(data, index);
+                            IOUtils.Dispose(data, index);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(data, index);
+                            IOUtils.DisposeWhileHandlingException(data, index);
                         }
                     }
                 }
@@ -520,11 +520,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(data, index);
+                    IOUtils.Dispose(data, index);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data, index);
+                    IOUtils.DisposeWhileHandlingException(data, index);
                 }
             }
         }

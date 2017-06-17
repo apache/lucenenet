@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(m_output);
+                    IOUtils.DisposeWhileHandlingException(m_output);
                 }
             }
         }
@@ -274,11 +274,11 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         if (success)
                         {
-                            IOUtils.Close(m_output);
+                            IOUtils.Dispose(m_output);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(m_output);
+                            IOUtils.DisposeWhileHandlingException(m_output);
                         }
                         m_output = null;
                     }

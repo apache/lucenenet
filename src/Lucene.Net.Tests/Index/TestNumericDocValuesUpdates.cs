@@ -222,7 +222,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, ((AtomicReader)reader1.Leaves[0].Reader).GetNumericDocValues("val").Get(0));
             Assert.AreEqual(10, ((AtomicReader)reader2.Leaves[0].Reader).GetNumericDocValues("val").Get(0));
 
-            IOUtils.Close(writer, reader1, reader2, dir);
+            IOUtils.Dispose(writer, reader1, reader2, dir);
         }
 
         [Test]
@@ -938,7 +938,7 @@ namespace Lucene.Net.Index
                 //      System.out.println();
             }
 
-            IOUtils.Close(writer, reader, dir);
+            IOUtils.Dispose(writer, reader, dir);
         }
 
         [Test]
@@ -1499,7 +1499,7 @@ namespace Lucene.Net.Index
             }
             reader_.Dispose();
 
-            IOUtils.Close(dir1, dir2);
+            IOUtils.Dispose(dir1, dir2);
         }
 
         [Test]

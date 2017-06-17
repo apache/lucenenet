@@ -61,7 +61,7 @@ namespace Lucene.Net.Codecs.NestedPulsing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsWriter, pulsingWriterInner, pulsingWriter);
+                    IOUtils.DisposeWhileHandlingException(docsWriter, pulsingWriterInner, pulsingWriter);
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.NestedPulsing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsReader, pulsingReaderInner, pulsingReader);
+                    IOUtils.DisposeWhileHandlingException(docsReader, pulsingReaderInner, pulsingReader);
                 }
             }
         }

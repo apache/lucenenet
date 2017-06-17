@@ -296,11 +296,11 @@ namespace Lucene.Net.Util
                 {
                     if (success)
                     {
-                        IOUtils.Close(inputStream);
+                        IOUtils.Dispose(inputStream);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(inputStream);
+                        IOUtils.DisposeWhileHandlingException(inputStream);
                     }
                 }
 
@@ -442,11 +442,11 @@ namespace Lucene.Net.Util
                 // happening in closing streams.
                 try
                 {
-                    IOUtils.Close(streams);
+                    IOUtils.Dispose(streams);
                 }
                 finally
                 {
-                    IOUtils.Close(@out);
+                    IOUtils.Dispose(@out);
                 }
             }
         }

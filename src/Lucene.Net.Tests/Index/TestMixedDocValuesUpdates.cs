@@ -221,7 +221,7 @@ namespace Lucene.Net.Index
                 //      System.out.println();
             }
 
-            IOUtils.Close(writer, reader, dir);
+            IOUtils.Dispose(writer, reader, dir);
         }
 
         [Test]

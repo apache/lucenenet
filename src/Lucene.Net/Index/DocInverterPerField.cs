@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
                     {
                         if (!succeededInProcessingField)
                         {
-                            IOUtils.CloseWhileHandlingException(stream);
+                            IOUtils.DisposeWhileHandlingException(stream);
                         }
                         else
                         {

@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(freqIn, proxIn);
+                    IOUtils.DisposeWhileHandlingException(freqIn, proxIn);
                 }
             }
         }

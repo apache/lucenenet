@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
                 else
                 {

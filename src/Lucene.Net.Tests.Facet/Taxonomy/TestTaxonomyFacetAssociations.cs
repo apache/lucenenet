@@ -211,7 +211,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // expected
             }
-            IOUtils.Close(writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, dir, taxoDir);
         }
 
         [Test]
@@ -236,7 +236,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // expected
             }
-            IOUtils.Close(writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, dir, taxoDir);
         }
 
         [Test]
@@ -261,7 +261,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // expected
             }
-            IOUtils.Close(writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, dir, taxoDir);
         }
 
         [Test]

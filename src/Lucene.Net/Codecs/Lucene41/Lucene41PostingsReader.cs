@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docIn, posIn, payIn);
+                    IOUtils.DisposeWhileHandlingException(docIn, posIn, payIn);
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace Lucene.Net.Codecs.Lucene41
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                IOUtils.Close(docIn, posIn, payIn);
+                IOUtils.Dispose(docIn, posIn, payIn);
         }
 
         public override void DecodeTerm(long[] longs, DataInput @in, FieldInfo fieldInfo, BlockTermState termState, bool absolute)

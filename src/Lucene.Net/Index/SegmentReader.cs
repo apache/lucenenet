@@ -311,7 +311,7 @@ namespace Lucene.Net.Index
                 dvProducersByField.Clear();
                 try
                 {
-                    IOUtils.Close(docValuesLocal, docsWithFieldLocal);
+                    IOUtils.Dispose(docValuesLocal, docsWithFieldLocal);
                 }
                 finally
                 {

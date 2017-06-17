@@ -72,14 +72,104 @@ namespace Lucene.Net.Util
         /// } 
         /// finally 
         /// {
-        ///     CloseWhileHandlingException(priorE, resource1, resource2, resource3);
+        ///     IOUtils.CloseWhileHandlingException(priorE, resource1, resource2, resource3);
         /// }
         /// </code>
         /// </para> 
         /// </summary>
         /// <param name="priorException">  <c>null</c> or an exception that will be rethrown after method completion. </param>
         /// <param name="objects">         Objects to call <see cref="IDisposable.Dispose()"/> on. </param>
-        public static void CloseWhileHandlingException(Exception priorException, params IDisposable[] objects) // LUCENENET TODO: API rename DisposeWhileHandlingException()
+        [Obsolete("Use DisposeWhileHandlingException(Exception, params IDisposable[]) instead.")]
+        public static void CloseWhileHandlingException(Exception priorException, params IDisposable[] objects)
+        {
+            DisposeWhileHandlingException(priorException, objects);
+        }
+
+        /// <summary>
+        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
+        /// <seealso cref="DisposeWhileHandlingException(Exception, IDisposable[])"/>
+        [Obsolete("Use DisposeWhileHandlingException(Exception, IEnumerable<IDisposable>) instead.")]
+        public static void CloseWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects)
+        {
+            DisposeWhileHandlingException(priorException, objects);
+        }
+
+        /// <summary>
+        /// Disposes all given <see cref="IDisposable"/>s.  Some of the
+        /// <see cref="IDisposable"/>s may be <c>null</c>; they are
+        /// ignored.  After everything is closed, the method either
+        /// throws the first exception it hit while closing, or
+        /// completes normally if there were no exceptions.
+        /// </summary>
+        /// <param name="objects">
+        ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
+        [Obsolete("Use Dispose(params IDisposable[]) instead.")]
+        public static void Close(params IDisposable[] objects)
+        {
+            Dispose(objects);
+        }
+
+        /// <summary>
+        /// Disposes all given <see cref="IDisposable"/>s. </summary>
+        /// <seealso cref="Dispose(IDisposable[])"/>
+        [Obsolete("Use Dispose(IEnumerable<IDisposable>) instead.")]
+        public static void Close(IEnumerable<IDisposable> objects)
+        {
+            Dispose(objects);
+        }
+
+        /// <summary>
+        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions.
+        /// Some of the <see cref="IDisposable"/>s may be <c>null</c>, they are ignored.
+        /// </summary>
+        /// <param name="objects">
+        ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
+        [Obsolete("Use DisposeWhileHandlingException(params IDisposable[]) instead.")]
+        public static void CloseWhileHandlingException(params IDisposable[] objects)
+        {
+            DisposeWhileHandlingException(objects);
+        }
+
+        /// <summary>
+        /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
+        /// <seealso cref="DisposeWhileHandlingException(IEnumerable{IDisposable})"/>
+        /// <seealso cref="DisposeWhileHandlingException(IDisposable[])"/>
+        [Obsolete("Use DisposeWhileHandlingException(IEnumerable<IDisposable>) instead.")]
+        public static void CloseWhileHandlingException(IEnumerable<IDisposable> objects)
+        {
+            DisposeWhileHandlingException(objects);
+        }
+
+
+        // LUCENENET specific - added overloads starting with Dispose... instead of Close...
+
+        /// <summary>
+        /// <para>Disposes all given <c>IDisposable</c>s, suppressing all thrown exceptions. Some of the <c>IDisposable</c>s
+        /// may be <c>null</c>, they are ignored. After everything is disposed, method either throws <paramref name="priorException"/>,
+        /// if one is supplied, or the first of suppressed exceptions, or completes normally.</para>
+        /// <para>Sample usage:
+        /// <code>
+        /// IDisposable resource1 = null, resource2 = null, resource3 = null;
+        /// ExpectedException priorE = null;
+        /// try 
+        /// {
+        ///     resource1 = ...; resource2 = ...; resource3 = ...; // Acquisition may throw ExpectedException
+        ///     ..do..stuff.. // May throw ExpectedException
+        /// } 
+        /// catch (ExpectedException e) 
+        /// {
+        ///     priorE = e;
+        /// } 
+        /// finally 
+        /// {
+        ///     IOUtils.DisposeWhileHandlingException(priorE, resource1, resource2, resource3);
+        /// }
+        /// </code>
+        /// </para> 
+        /// </summary>
+        /// <param name="priorException">  <c>null</c> or an exception that will be rethrown after method completion. </param>
+        /// <param name="objects">         Objects to call <see cref="IDisposable.Dispose()"/> on. </param>
+        public static void DisposeWhileHandlingException(Exception priorException, params IDisposable[] objects)
         {
             Exception th = null;
 
@@ -114,8 +204,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
-        /// <seealso cref="CloseWhileHandlingException(Exception, IDisposable[])"/>
-        public static void CloseWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects) // LUCENENET TODO: API rename DisposeWhileHandlingException()
+        /// <seealso cref="DisposeWhileHandlingException(Exception, IDisposable[])"/>
+        public static void DisposeWhileHandlingException(Exception priorException, IEnumerable<IDisposable> objects) 
         {
             Exception th = null;
 
@@ -157,7 +247,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="objects">
         ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
-        public static void Close(params IDisposable[] objects) // LUCENENET TODO: API rename Dispose()
+        public static void Dispose(params IDisposable[] objects) 
         {
             Exception th = null;
 
@@ -185,8 +275,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Disposes all given <see cref="IDisposable"/>s. </summary>
-        /// <seealso cref="Close(IDisposable[])"/>
-        public static void Close(IEnumerable<IDisposable> objects) // LUCENENET TODO: API rename Dispose()
+        /// <seealso cref="Dispose(IDisposable[])"/>
+        public static void Dispose(IEnumerable<IDisposable> objects)
         {
             Exception th = null;
 
@@ -218,7 +308,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="objects">
         ///          Objects to call <see cref="IDisposable.Dispose()"/> on </param>
-        public static void CloseWhileHandlingException(params IDisposable[] objects) // LUCENENET TODO: API rename DisposeWhileHandlingException()
+        public static void DisposeWhileHandlingException(params IDisposable[] objects) 
         {
             foreach (var o in objects)
             {
@@ -238,8 +328,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Disposes all given <see cref="IDisposable"/>s, suppressing all thrown exceptions. </summary>
-        /// <seealso cref="CloseWhileHandlingException(IDisposable[])"/>
-        public static void CloseWhileHandlingException(IEnumerable<IDisposable> objects) // LUCENENET TODO: API rename DisposeWhileHandlingException()
+        /// <seealso cref="DisposeWhileHandlingException(IDisposable[])"/>
+        public static void DisposeWhileHandlingException(IEnumerable<IDisposable> objects)
         {
             foreach (IDisposable @object in objects)
             {
@@ -318,7 +408,7 @@ namespace Lucene.Net.Util
             {
                 if (!success)
                 {
-                    IOUtils.Close(stream);
+                    IOUtils.Dispose(stream);
                 }
             }
         }
@@ -350,7 +440,7 @@ namespace Lucene.Net.Util
             {
                 if (!success)
                 {
-                    IOUtils.Close(stream);
+                    IOUtils.Dispose(stream);
                 }
             }
         }
@@ -397,7 +487,7 @@ namespace Lucene.Net.Util
             }
             finally
             {
-                Close(fis, fos);
+                Dispose(fis, fos);
             }
         }
 

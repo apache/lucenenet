@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.VectorHighlight
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(tokenStream);
+                IOUtils.DisposeWhileHandlingException(tokenStream);
             }
 
             return bytesRefs;

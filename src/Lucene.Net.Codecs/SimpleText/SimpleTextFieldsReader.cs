@@ -76,7 +76,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException();
+                    IOUtils.DisposeWhileHandlingException();
                 }
             }
         }

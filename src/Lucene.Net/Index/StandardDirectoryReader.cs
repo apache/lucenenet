@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                     {
                         if (!success)
                         {
-                            IOUtils.CloseWhileHandlingException(prior, readers);
+                            IOUtils.DisposeWhileHandlingException(prior, readers);
                         }
                     }
                 }

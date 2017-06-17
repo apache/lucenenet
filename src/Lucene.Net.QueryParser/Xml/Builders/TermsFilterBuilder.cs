@@ -69,7 +69,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
             return new TermsFilter(fieldName, terms);
         }

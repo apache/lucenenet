@@ -609,11 +609,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 if (success)
                 {
-                    IOUtils.Close(reader, writer);
+                    IOUtils.Dispose(reader, writer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(reader, writer);
+                    IOUtils.DisposeWhileHandlingException(reader, writer);
                 }
 
                 tempInput.Delete();
@@ -958,7 +958,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
 
             ReplaceSep(automaton);
@@ -988,7 +988,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
 
             // TODO: we could use the end offset to "guess"

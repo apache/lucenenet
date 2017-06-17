@@ -168,14 +168,14 @@ namespace Lucene.Net.Codecs.Bloom
 #pragma warning restore 612, 618
                     }
 
-                    IOUtils.Close(bloomIn);
+                    IOUtils.Dispose(bloomIn);
                     success = true;
                 }
                 finally
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(bloomIn, _delegateFieldsProducer);
+                        IOUtils.DisposeWhileHandlingException(bloomIn, _delegateFieldsProducer);
                     }
                 }
             }
@@ -482,7 +482,7 @@ namespace Lucene.Net.Codecs.Bloom
                     }
                     finally
                     {
-                        IOUtils.Close(bloomOutput);
+                        IOUtils.Dispose(bloomOutput);
                     }
                     //We are done with large bitsets so no need to keep them hanging around
                     _bloomFilters.Clear();

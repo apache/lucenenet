@@ -207,7 +207,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             try
             {
-                IOUtils.Close(_output);
+                IOUtils.Dispose(_output);
             }
             finally
             {

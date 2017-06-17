@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                     }
                     else
                     {
-                        IOUtils.Close(reader);
+                        IOUtils.Dispose(reader);
                         scratch = null;
                     }
                     success = true;
@@ -150,7 +150,7 @@ namespace Lucene.Net.Search.Suggest.Fst
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(reader);
+                        IOUtils.DisposeWhileHandlingException(reader);
                     }
                 }
             }

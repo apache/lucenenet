@@ -71,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                     si.Dir.DeleteFile(fileName);
                 }
                 else

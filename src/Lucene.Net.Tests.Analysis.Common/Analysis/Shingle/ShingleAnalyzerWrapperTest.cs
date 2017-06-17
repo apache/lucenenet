@@ -110,7 +110,7 @@ namespace Lucene.Net.Analysis.Shingle
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
 
             ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;
@@ -143,7 +143,7 @@ namespace Lucene.Net.Analysis.Shingle
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
 
             ScoreDoc[] hits = searcher.Search(q, null, 1000).ScoreDocs;

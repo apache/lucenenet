@@ -435,11 +435,11 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (success)
                 {
-                    IOUtils.Close(data);
+                    IOUtils.Dispose(data);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data);
+                    IOUtils.DisposeWhileHandlingException(data);
                 }
                 data = null;
             }

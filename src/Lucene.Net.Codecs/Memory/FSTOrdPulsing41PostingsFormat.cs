@@ -65,7 +65,7 @@
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsWriter, pulsingWriter);
+                    IOUtils.DisposeWhileHandlingException(docsWriter, pulsingWriter);
                 }
             }
         }
@@ -87,7 +87,7 @@
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsReader, pulsingReader);
+                    IOUtils.DisposeWhileHandlingException(docsReader, pulsingReader);
                 }
             }
         }

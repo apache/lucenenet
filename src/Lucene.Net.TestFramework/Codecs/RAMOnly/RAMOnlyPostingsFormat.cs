@@ -686,11 +686,11 @@ namespace Lucene.Net.Codecs.RAMOnly
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(@out);
+                    IOUtils.DisposeWhileHandlingException(@out);
                 }
                 else
                 {
-                    IOUtils.Close(@out);
+                    IOUtils.Dispose(@out);
                 }
             }
 
@@ -721,11 +721,11 @@ namespace Lucene.Net.Codecs.RAMOnly
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(@in);
+                    IOUtils.DisposeWhileHandlingException(@in);
                 }
                 else
                 {
-                    IOUtils.Close(@in);
+                    IOUtils.Dispose(@in);
                 }
             }
 

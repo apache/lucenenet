@@ -184,7 +184,7 @@ namespace Lucene.Net.Store
                     }
                     finally
                     {
-                        IOUtils.CloseWhileHandlingException(cs);
+                        IOUtils.DisposeWhileHandlingException(cs);
                     }
                 }
             }

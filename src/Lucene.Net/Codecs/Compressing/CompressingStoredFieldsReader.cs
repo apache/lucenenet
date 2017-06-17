@@ -159,7 +159,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this, indexStream);
+                    IOUtils.DisposeWhileHandlingException(this, indexStream);
                 }
             }
         }
@@ -180,7 +180,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (!closed)
             {
-                IOUtils.Close(fieldsStream);
+                IOUtils.Dispose(fieldsStream);
                 closed = true;
             }
         }

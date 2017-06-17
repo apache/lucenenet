@@ -86,7 +86,7 @@ namespace Lucene.Net.Facet
 
             assertOrdinalsExist("$facets", ir);
 
-            IOUtils.Close(tr, ir, iw, tw, indexDir, taxoDir);
+            IOUtils.Dispose(tr, ir, iw, tw, indexDir, taxoDir);
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace Lucene.Net.Facet
             assertOrdinalsExist("$facets", ir);
             assertOrdinalsExist("$author", ir);
 
-            IOUtils.Close(tr, ir, iw, tw, indexDir, taxoDir);
+            IOUtils.Dispose(tr, ir, iw, tw, indexDir, taxoDir);
         }
 
         [Test]
@@ -168,7 +168,7 @@ namespace Lucene.Net.Facet
             assertOrdinalsExist("$music", ir);
             assertOrdinalsExist("$music", ir);
 
-            IOUtils.Close(tr, ir, iw, tw, indexDir, taxoDir);
+            IOUtils.Dispose(tr, ir, iw, tw, indexDir, taxoDir);
         }
 
         private void assertOrdinalsExist(string field, IndexReader ir)
@@ -222,7 +222,7 @@ namespace Lucene.Net.Facet
             assertOrdinalsExist("$bands", ir);
             assertOrdinalsExist("$composers", ir);
 
-            IOUtils.Close(tr, ir, iw, tw, indexDir, taxoDir);
+            IOUtils.Dispose(tr, ir, iw, tw, indexDir, taxoDir);
         }
 
         [Test]
@@ -265,8 +265,8 @@ namespace Lucene.Net.Facet
             assertOrdinalsExist("$music", ir);
             assertOrdinalsExist("$literature", ir);
 
-            IOUtils.Close(tr, ir, iw, tw);
-            IOUtils.Close(indexDir, taxoDir);
+            IOUtils.Dispose(tr, ir, iw, tw);
+            IOUtils.Dispose(indexDir, taxoDir);
         }
 
         

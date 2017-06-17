@@ -555,7 +555,7 @@ namespace Lucene.Net.Index
                             }
                             else
                             {
-                                IOUtils.CloseWhileHandlingException(fieldsConsumer);
+                                IOUtils.DisposeWhileHandlingException(fieldsConsumer);
                             }
                         }
                     }

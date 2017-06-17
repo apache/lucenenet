@@ -155,7 +155,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard.Processors
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(source);
+                    IOUtils.DisposeWhileHandlingException(source);
                 }
 
                 // rewind the buffer stream

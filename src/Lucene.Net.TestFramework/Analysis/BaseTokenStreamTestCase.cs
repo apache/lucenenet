@@ -725,11 +725,11 @@ namespace Lucene.Net.Analysis
             {
                 if (success)
                 {
-                    IOUtils.Close(iw, dir);
+                    IOUtils.Dispose(iw, dir);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(iw, dir); // checkindex
+                    IOUtils.DisposeWhileHandlingException(iw, dir); // checkindex
                 }
             }
         }
@@ -862,7 +862,7 @@ namespace Lucene.Net.Analysis
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(docs);
+                IOUtils.DisposeWhileHandlingException(docs);
             }
         }
 

@@ -174,7 +174,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docOut, posOut, payOut);
+                    IOUtils.DisposeWhileHandlingException(docOut, posOut, payOut);
                 }
             }
 
@@ -679,11 +679,11 @@ namespace Lucene.Net.Codecs.Lucene41
                 {
                     if (success)
                     {
-                        IOUtils.Close(docOut, posOut, payOut);
+                        IOUtils.Dispose(docOut, posOut, payOut);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(docOut, posOut, payOut);
+                        IOUtils.DisposeWhileHandlingException(docOut, posOut, payOut);
                     }
                     docOut = posOut = payOut = null;
                 }

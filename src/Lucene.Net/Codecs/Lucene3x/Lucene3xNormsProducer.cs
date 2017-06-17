@@ -141,7 +141,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(openFiles);
+                    IOUtils.DisposeWhileHandlingException(openFiles);
                 }
             }
             ramBytesUsed = new AtomicInt64();
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 try
                 {
-                    IOUtils.Close(openFiles.ToArray());
+                    IOUtils.Dispose(openFiles.ToArray());
                 }
                 finally
                 {

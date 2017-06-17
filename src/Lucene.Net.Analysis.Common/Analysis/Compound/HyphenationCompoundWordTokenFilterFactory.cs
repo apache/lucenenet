@@ -105,7 +105,7 @@ namespace Lucene.Net.Analysis.Compound
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(stream);
+                IOUtils.DisposeWhileHandlingException(stream);
             }
         }
 

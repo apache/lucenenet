@@ -59,7 +59,7 @@ namespace Lucene.Net.Analysis.Core
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(stream);
+                IOUtils.DisposeWhileHandlingException(stream);
             }
         }
 
@@ -84,7 +84,7 @@ namespace Lucene.Net.Analysis.Core
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(stream);
+                IOUtils.DisposeWhileHandlingException(stream);
             }
         }
 
@@ -114,7 +114,7 @@ namespace Lucene.Net.Analysis.Core
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(stream);
+                IOUtils.DisposeWhileHandlingException(stream);
             }
         }
     }

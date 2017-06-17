@@ -54,7 +54,7 @@
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(postingsWriter);
+                    IOUtils.DisposeWhileHandlingException(postingsWriter);
                 }
             }
         }
@@ -74,7 +74,7 @@
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(postingsReader);
+                    IOUtils.DisposeWhileHandlingException(postingsReader);
                 }
             }
         }

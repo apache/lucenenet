@@ -78,11 +78,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(normsConsumer);
+                    IOUtils.Dispose(normsConsumer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(normsConsumer);
+                    IOUtils.DisposeWhileHandlingException(normsConsumer);
                 }
             }
         }

@@ -264,11 +264,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(consumer);
+                    IOUtils.Dispose(consumer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(consumer);
+                    IOUtils.DisposeWhileHandlingException(consumer);
                 }
             }
         }
@@ -304,11 +304,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(consumer);
+                    IOUtils.Dispose(consumer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(consumer);
+                    IOUtils.DisposeWhileHandlingException(consumer);
                 }
             }
         }
@@ -471,11 +471,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(consumer);
+                    IOUtils.Dispose(consumer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(consumer);
+                    IOUtils.DisposeWhileHandlingException(consumer);
                 }
             }
         }

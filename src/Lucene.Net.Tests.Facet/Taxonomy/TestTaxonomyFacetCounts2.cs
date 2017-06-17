@@ -88,7 +88,7 @@ namespace Lucene.Net.Facet.Taxonomy
         [OneTimeTearDown]
         public override void AfterClass() // LUCENENET specific - renamed from AfterClassCountingFacetsAggregatorTest() to ensure calling order
         {
-            IOUtils.Close(indexDir, taxoDir);
+            IOUtils.Dispose(indexDir, taxoDir);
             base.AfterClass();
         }
 
@@ -280,7 +280,7 @@ namespace Lucene.Net.Facet.Taxonomy
             // segment w/ categories and some content
             IndexDocsWithFacetsAndSomeTerms(indexWriter, taxoWriter, allExpectedCounts);
 
-            IOUtils.Close(indexWriter, taxoWriter);
+            IOUtils.Dispose(indexWriter, taxoWriter);
         }
 
         [Test]
@@ -308,7 +308,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Assert.AreEqual(termExpectedCounts[CP_B + "/" + labelValue.Label], labelValue.Value);
             }
 
-            IOUtils.Close(indexReader, taxoReader);
+            IOUtils.Dispose(indexReader, taxoReader);
         }
 
         [Test]
@@ -343,7 +343,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 prevValue = (int)labelValue.Value;
             }
 
-            IOUtils.Close(indexReader, taxoReader);
+            IOUtils.Dispose(indexReader, taxoReader);
         }
 
         [Test]
@@ -371,7 +371,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Assert.AreEqual(allExpectedCounts[CP_B + "/" + labelValue.Label], labelValue.Value);
             }
 
-            IOUtils.Close(indexReader, taxoReader);
+            IOUtils.Dispose(indexReader, taxoReader);
         }
 
         [Test]
@@ -399,7 +399,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Assert.AreEqual(allExpectedCounts[CP_D + "/" + labelValue.Label], labelValue.Value);
             }
 
-            IOUtils.Close(indexReader, taxoReader);
+            IOUtils.Dispose(indexReader, taxoReader);
         }
     }
 

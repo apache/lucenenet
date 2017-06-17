@@ -261,7 +261,7 @@ namespace Lucene.Net.Index
             Assert.AreEqual(1, GetValue(bdv1, 0, scratch));
             Assert.AreEqual(10, GetValue(bdv2, 0, scratch));
 
-            IOUtils.Close(writer, reader1, reader2, dir);
+            IOUtils.Dispose(writer, reader1, reader2, dir);
         }
 
         [Test]
@@ -988,7 +988,7 @@ namespace Lucene.Net.Index
                 //      System.out.println();
             }
 
-            IOUtils.Close(writer, reader, dir);
+            IOUtils.Dispose(writer, reader, dir);
         }
 
         [Test]
@@ -1583,7 +1583,7 @@ namespace Lucene.Net.Index
             }
             reader_.Dispose();
 
-            IOUtils.Close(dir1, dir2);
+            IOUtils.Dispose(dir1, dir2);
         }
 
         [Test]
@@ -1852,7 +1852,7 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                IOUtils.Close(indexReader, taxoReader, nFsd);
+                IOUtils.Dispose(indexReader, taxoReader, nFsd);
             }
         }
 

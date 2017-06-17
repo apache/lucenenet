@@ -336,7 +336,7 @@ namespace Lucene.Net.Search
                     _searchers.TryRemove(tracker.Version, out _);
                 }
 
-                IOUtils.Close(toClose);
+                IOUtils.Dispose(toClose);
 
                 // Make some effort to catch mis-use:
                 if (_searchers.Count != 0)

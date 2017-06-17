@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
                 else
                 {

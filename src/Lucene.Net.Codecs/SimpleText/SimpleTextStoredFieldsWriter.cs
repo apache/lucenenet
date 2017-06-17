@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs.SimpleText
 	        if (!disposing) return;
 	        try
 	        {
-	            IOUtils.Close(_output);
+	            IOUtils.Dispose(_output);
 	        }
 	        finally
 	        {

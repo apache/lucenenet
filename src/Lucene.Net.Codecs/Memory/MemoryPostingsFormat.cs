@@ -333,7 +333,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(@out);
+                    IOUtils.DisposeWhileHandlingException(@out);
                 }
             }
 

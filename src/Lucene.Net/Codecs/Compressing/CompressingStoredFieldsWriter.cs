@@ -124,7 +124,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(indexStream);
+                    IOUtils.DisposeWhileHandlingException(indexStream);
                     Abort();
                 }
             }
@@ -136,7 +136,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 try
                 {
-                    IOUtils.Close(fieldsStream, indexWriter);
+                    IOUtils.Dispose(fieldsStream, indexWriter);
                 }
                 finally
                 {
@@ -421,7 +421,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void Abort()
         {
-            IOUtils.CloseWhileHandlingException(this);
+            IOUtils.DisposeWhileHandlingException(this);
             IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION));
         }
 

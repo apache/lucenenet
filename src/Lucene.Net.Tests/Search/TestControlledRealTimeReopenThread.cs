@@ -435,7 +435,7 @@ namespace Lucene.Net.Search
             }
             thread.Dispose();
             thread.Join();
-            IOUtils.Close(manager, _writer, d);
+            IOUtils.Dispose(manager, _writer, d);
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass

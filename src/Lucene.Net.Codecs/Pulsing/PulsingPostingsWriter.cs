@@ -459,7 +459,7 @@ namespace Lucene.Net.Codecs.Pulsing
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(output);
+                IOUtils.DisposeWhileHandlingException(output);
             }
         }
 

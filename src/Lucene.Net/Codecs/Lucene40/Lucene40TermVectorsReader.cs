@@ -234,7 +234,7 @@ namespace Lucene.Net.Codecs.Lucene40
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                IOUtils.Close(tvx, tvd, tvf);
+                IOUtils.Dispose(tvx, tvd, tvf);
         }
 
         /// <summary>

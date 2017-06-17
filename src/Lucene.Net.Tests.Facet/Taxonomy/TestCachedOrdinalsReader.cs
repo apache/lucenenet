@@ -78,7 +78,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
             }
 
-            IOUtils.Close(writer, taxoWriter, reader, indexDir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, reader, indexDir, taxoDir);
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass

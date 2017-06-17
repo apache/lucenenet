@@ -86,11 +86,11 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (success)
                 {
-                    IOUtils.Close(@in);
+                    IOUtils.Dispose(@in);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(@in);
+                    IOUtils.DisposeWhileHandlingException(@in);
                 }
             }
 
@@ -111,7 +111,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this.data);
+                    IOUtils.DisposeWhileHandlingException(this.data);
                 }
             }
         }

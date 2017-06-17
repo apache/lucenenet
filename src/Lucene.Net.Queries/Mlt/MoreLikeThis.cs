@@ -619,7 +619,7 @@ namespace Lucene.Net.Queries.Mlt
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
         }
 

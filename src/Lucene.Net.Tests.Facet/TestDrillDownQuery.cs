@@ -59,7 +59,7 @@ namespace Lucene.Net.Facet
         [OneTimeTearDown]
         public override void AfterClass() // LUCENENET specific - renamed from AfterClassDrillDownQueryTest() to ensure calling order
         {
-            IOUtils.Close(reader, taxo, dir, taxoDir);
+            IOUtils.Dispose(reader, taxo, dir, taxoDir);
             reader = null;
             taxo = null;
             dir = null;

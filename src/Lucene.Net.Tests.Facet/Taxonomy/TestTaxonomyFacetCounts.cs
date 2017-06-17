@@ -148,7 +148,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.True(result.IndexOf("  /2012", StringComparison.Ordinal) != -1);
             Assert.True(result.IndexOf("      /20", StringComparison.Ordinal) != -1);
 
-            IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, taxoDir, dir);
+            IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, taxoDir, dir);
         }
 
         // LUCENE-5333
@@ -209,7 +209,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual("dim=b path=[] value=2 childCount=2\n  bar1 (1)\n  bar2 (1)\n", results[1].ToString());
             Assert.AreEqual("dim=c path=[] value=1 childCount=1\n  baz1 (1)\n", results[2].ToString());
 
-            IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, taxoDir, dir);
+            IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, taxoDir, dir);
         }
 
         [Test]
@@ -279,7 +279,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 // expected
             }
 
-            IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, taxoDir, dir);
+            IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, taxoDir, dir);
         }
 
         [Test]
@@ -297,7 +297,7 @@ namespace Lucene.Net.Facet.Taxonomy
             doc.Add(NewTextField("field", "text", Field.Store.NO));
             doc.Add(new FacetField("a", "path"));
             writer.AddDocument(config.Build(taxoWriter, doc));
-            IOUtils.Close(writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, dir, taxoDir);
         }
 
         private class PerFieldSimilarityWrapperAnonymousInnerClassHelper : PerFieldSimilarityWrapper
@@ -366,7 +366,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(1, result.LabelValues.Length);
             Assert.AreEqual(1, (int)result.LabelValues[0].Value);
 
-            IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
         }
 
         [Test]
@@ -401,7 +401,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             FacetResult result = facets.GetTopChildren(10, "dim");
             Assert.AreEqual("dim=dim path=[] value=-1 childCount=2\n  test\u001Fone (1)\n  test\u001Etwo (1)\n", result.ToString());
-            IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
         }
 
         [Test]
@@ -455,7 +455,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             Assert.AreEqual(1, facets.GetSpecificValue("dim2"));
             Assert.AreEqual(1, facets.GetSpecificValue("dim3"));
-            IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
         }
 
         // LUCENE-4583: make sure if we require > 32 KB for one
@@ -509,7 +509,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             Assert.AreEqual(numLabels, allLabels.Count);
 
-            IOUtils.Close(searcher.IndexReader, taxoWriter, writer, taxoReader, dir, taxoDir);
+            IOUtils.Dispose(searcher.IndexReader, taxoWriter, writer, taxoReader, dir, taxoDir);
         }
 
         // Make sure we catch when app didn't declare field as
@@ -535,7 +535,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // expected
             }
-            IOUtils.Close(writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, dir, taxoDir);
         }
 
         // Make sure we catch when app didn't declare field as
@@ -562,7 +562,7 @@ namespace Lucene.Net.Facet.Taxonomy
             {
                 // expected
             }
-            IOUtils.Close(writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, dir, taxoDir);
         }
 
         [Test]
@@ -594,7 +594,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets2 = GetTaxonomyFacetCounts(taxoReader, config, sfc, "$b");
             Assert.AreEqual(r.MaxDoc, (int)facets1.GetTopChildren(10, "a").Value);
             Assert.AreEqual(r.MaxDoc, (int)facets2.GetTopChildren(10, "b").Value);
-            IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
         [Test]
@@ -626,7 +626,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Assert.AreEqual(r.NumDocs, (int)result.Value);
             }
 
-            IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
         [Test]
@@ -656,7 +656,7 @@ namespace Lucene.Net.Facet.Taxonomy
             IList<FacetResult> res2 = facets.GetAllDims(10);
             Assert.AreEqual(res1, res2, "calling getFacetResults twice should return the .equals()=true result");
 
-            IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
         [Test]
@@ -685,7 +685,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             Assert.AreEqual(10, facets.GetTopChildren(2, "a").ChildCount);
 
-            IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
         private void indexTwoDocs(ITaxonomyWriter taxoWriter, IndexWriter indexWriter, FacetsConfig config, bool withContent)
@@ -731,7 +731,7 @@ namespace Lucene.Net.Facet.Taxonomy
             indexTwoDocs(taxoWriter, indexWriter, null, true); // 5th segment, with content, no categories
             indexTwoDocs(taxoWriter, indexWriter, config, true); // 6th segment, with content, with categories
             indexTwoDocs(taxoWriter, indexWriter, null, true); // 7th segment, with content, no categories
-            IOUtils.Close(indexWriter, taxoWriter);
+            IOUtils.Dispose(indexWriter, taxoWriter);
 
             DirectoryReader indexReader = DirectoryReader.Open(indexDir);
             var taxoReader = new DirectoryTaxonomyReader(taxoDir);
@@ -749,7 +749,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Assert.AreEqual(2, (int)labelValue.Value, "wrong weight for child " + labelValue.Label);
             }
 
-            IOUtils.Close(indexReader, taxoReader, indexDir, taxoDir);
+            IOUtils.Dispose(indexReader, taxoReader, indexDir, taxoDir);
         }
 
         [Test]
@@ -854,7 +854,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Assert.AreEqual(expected, actual);
             }
 
-            IOUtils.Close(w, tw, searcher.IndexReader, tr, indexDir, taxoDir);
+            IOUtils.Dispose(w, tw, searcher.IndexReader, tr, indexDir, taxoDir);
         }
     }
 

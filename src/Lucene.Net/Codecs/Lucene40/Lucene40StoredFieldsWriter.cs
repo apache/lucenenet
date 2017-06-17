@@ -129,7 +129,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 try
                 {
-                    IOUtils.Close(fieldsStream, indexStream);
+                    IOUtils.Dispose(fieldsStream, indexStream);
                 }
                 finally
                 {

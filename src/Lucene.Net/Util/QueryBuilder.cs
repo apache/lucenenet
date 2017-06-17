@@ -258,7 +258,7 @@ namespace Lucene.Net.Util
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(source);
+                IOUtils.DisposeWhileHandlingException(source);
             }
 
             // rewind the buffer stream

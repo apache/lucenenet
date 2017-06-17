@@ -98,7 +98,7 @@ namespace Lucene.Net.Codecs.Sep
         {
             if (disposing)
             {
-                IOUtils.Close(freqIn, docIn, skipIn, posIn, payloadIn);
+                IOUtils.Dispose(freqIn, docIn, skipIn, posIn, payloadIn);
             }
         }
 

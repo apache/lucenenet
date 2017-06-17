@@ -507,7 +507,7 @@ namespace Lucene.Net.Store
                         finally
                         {
                             isOpen = false;
-                            IOUtils.CloseWhileHandlingException(priorE, file);
+                            IOUtils.DisposeWhileHandlingException(priorE, file);
                         }
                     }
                 }

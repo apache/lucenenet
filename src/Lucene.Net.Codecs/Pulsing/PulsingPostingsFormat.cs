@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsWriter, pulsingWriter);
+                    IOUtils.DisposeWhileHandlingException(docsWriter, pulsingWriter);
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsReader, pulsingReader);
+                    IOUtils.DisposeWhileHandlingException(docsReader, pulsingReader);
                 }
             }
         }

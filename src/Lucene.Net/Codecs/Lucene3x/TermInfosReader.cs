@@ -182,7 +182,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         public void Dispose()
         {
-            IOUtils.Close(origEnum, threadResources);
+            IOUtils.Dispose(origEnum, threadResources);
         }
 
         /// <summary>

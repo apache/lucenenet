@@ -111,7 +111,7 @@ namespace Lucene.Net.Store
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(handle);
+                        IOUtils.DisposeWhileHandlingException(handle);
                     }
                 }
                 this.IsOpen = true;
@@ -204,7 +204,7 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(priorE, stream, entriesStream);
+                IOUtils.DisposeWhileHandlingException(priorE, stream, entriesStream);
             }
             // this is needed until Java 7's real try-with-resources:
             throw new InvalidOperationException("impossible to get here");
@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
                     }
                     else
                     {
-                        IOUtils.Close(handle);
+                        IOUtils.Dispose(handle);
                     }
                 }
             }

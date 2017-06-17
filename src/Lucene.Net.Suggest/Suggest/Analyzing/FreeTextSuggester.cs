@@ -415,11 +415,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     {
                         if (success)
                         {
-                            IOUtils.Close(writer, reader);
+                            IOUtils.Dispose(writer, reader);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(writer, reader);
+                            IOUtils.DisposeWhileHandlingException(writer, reader);
                         }
                     }
                     finally
@@ -800,7 +800,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
         }
 

@@ -427,7 +427,7 @@ namespace Lucene.Net.Index
             {
                 if (!success2)
                 {
-                    IOUtils.CloseWhileHandlingException(r);
+                    IOUtils.DisposeWhileHandlingException(r);
                 }
             }
             return r;
@@ -945,7 +945,7 @@ namespace Lucene.Net.Index
                     {
                         infoStream.Message("IW", "init: hit exception on init; releasing write lock");
                     }
-                    IOUtils.CloseWhileHandlingException(writeLock);
+                    IOUtils.DisposeWhileHandlingException(writeLock);
                     writeLock = null;
                 }
             }
@@ -1237,7 +1237,7 @@ namespace Lucene.Net.Index
                     finally
                     {
                         // shutdown policy, scheduler and all threads (this call is not interruptible):
-                        IOUtils.CloseWhileHandlingException(mergePolicy, mergeScheduler);
+                        IOUtils.DisposeWhileHandlingException(mergePolicy, mergeScheduler);
                     }
                 }
 
@@ -2593,7 +2593,7 @@ namespace Lucene.Net.Index
                     deleter.Refresh();
                     deleter.Dispose();
 
-                    IOUtils.Close(writeLock); // release write lock
+                    IOUtils.Dispose(writeLock); // release write lock
                     writeLock = null;
 
                     Debug.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates, "" + docWriter.perThreadPool.NumDeactivatedThreadStates() + " " + docWriter.perThreadPool.MaxThreadStates);
@@ -2612,7 +2612,7 @@ namespace Lucene.Net.Index
                     // Must not hold IW's lock while closing
                     // mergePolicy/Scheduler: this can lead to deadlock,
                     // e.g. TestIW.testThreadInterruptDeadlock
-                    IOUtils.CloseWhileHandlingException(mergePolicy, mergeScheduler);
+                    IOUtils.DisposeWhileHandlingException(mergePolicy, mergeScheduler);
                 }
                 lock (this)
                 {
@@ -2634,7 +2634,7 @@ namespace Lucene.Net.Index
                         }
 
                         // close all the closeables we can (but important is readerPool and writeLock to prevent leaks)
-                        IOUtils.CloseWhileHandlingException(readerPool, deleter, writeLock);
+                        IOUtils.DisposeWhileHandlingException(readerPool, deleter, writeLock);
                         writeLock = null;
                     }
                     closed = true;
@@ -2962,7 +2962,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Acquires write locks on all the directories; be sure
-        /// to match with a call to <see cref="IOUtils.Close(IEnumerable{IDisposable})"/> in a
+        /// to match with a call to <see cref="IOUtils.Dispose(IEnumerable{IDisposable})"/> in a
         /// finally clause.
         /// </summary>
         private IEnumerable<Lock> AcquireWriteLocks(params Directory[] dirs)
@@ -2983,7 +2983,7 @@ namespace Lucene.Net.Index
                     if (!success)
                     {
                         // Release all previously acquired locks:
-                        IOUtils.CloseWhileHandlingException(locks);
+                        IOUtils.DisposeWhileHandlingException(locks);
                     }
                 }
             }
@@ -3151,11 +3151,11 @@ namespace Lucene.Net.Index
             {
                 if (successTop)
                 {
-                    IOUtils.Close(locks);
+                    IOUtils.Dispose(locks);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(locks);
+                    IOUtils.DisposeWhileHandlingException(locks);
                 }
             }
         }
@@ -5775,7 +5775,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    IOUtils.CloseWhileHandlingException(prior, cfsDir);
+                    IOUtils.DisposeWhileHandlingException(prior, cfsDir);
                     success = true;
                 }
                 finally

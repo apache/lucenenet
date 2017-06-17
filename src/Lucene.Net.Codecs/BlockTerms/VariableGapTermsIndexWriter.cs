@@ -196,7 +196,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(m_output);
+                    IOUtils.DisposeWhileHandlingException(m_output);
                 }
             }
         }

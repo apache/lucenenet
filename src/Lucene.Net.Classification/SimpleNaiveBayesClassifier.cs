@@ -125,7 +125,7 @@ namespace Lucene.Net.Classification
                 } 
                 finally 
                 {
-                    IOUtils.CloseWhileHandlingException(tokenStream);
+                    IOUtils.DisposeWhileHandlingException(tokenStream);
                 }
             }
             var ret = new string[result.Count];

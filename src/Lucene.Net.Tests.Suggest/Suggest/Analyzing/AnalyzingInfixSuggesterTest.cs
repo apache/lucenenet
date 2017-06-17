@@ -191,7 +191,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(ts);
+                    IOUtils.DisposeWhileHandlingException(ts);
                 }
             }
         }

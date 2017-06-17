@@ -114,7 +114,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                     try
                     {
                         dir.DeleteFile(segFileName);

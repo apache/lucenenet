@@ -165,7 +165,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 }
                 else if (taxoWriter != null && taxoWriter.TaxonomyEpoch != taxoEpoch)
                 {
-                    IOUtils.Close(newReader, tr);
+                    IOUtils.Dispose(newReader, tr);
                     throw new InvalidOperationException("DirectoryTaxonomyWriter.replaceTaxonomy was called, which is not allowed when using SearcherTaxonomyManager");
                 }
 

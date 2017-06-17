@@ -206,7 +206,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (disposing)
             {
-                IOUtils.Close(tvx, tvd, tvf, storeCFSReader);
+                IOUtils.Dispose(tvx, tvd, tvf, storeCFSReader);
             }
         }
 

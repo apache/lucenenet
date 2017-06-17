@@ -228,7 +228,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             // make an effort to close all streams we can but remember and re-throw
             // the first exception encountered in this process
-            IOUtils.Close(Tvx, Tvd, Tvf);
+            IOUtils.Dispose(Tvx, Tvd, Tvf);
             Tvx = Tvd = Tvf = null;
         }
 

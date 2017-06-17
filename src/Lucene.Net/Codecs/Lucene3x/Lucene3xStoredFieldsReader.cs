@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!closed)
                 {
-                    IOUtils.Close(fieldsStream, indexStream, storeCFSReader);
+                    IOUtils.Dispose(fieldsStream, indexStream, storeCFSReader);
                     closed = true;
                 }
             }

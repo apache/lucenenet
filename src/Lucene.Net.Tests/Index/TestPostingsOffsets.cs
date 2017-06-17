@@ -560,11 +560,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(riw, dir);
+                    IOUtils.Dispose(riw, dir);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(riw, dir);
+                    IOUtils.DisposeWhileHandlingException(riw, dir);
                 }
             }
         }

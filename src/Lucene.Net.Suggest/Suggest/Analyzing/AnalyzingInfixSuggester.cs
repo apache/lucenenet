@@ -236,11 +236,11 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             {
                 if (success)
                 {
-                    IOUtils.Close(r);
+                    IOUtils.Dispose(r);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(writer, r);
+                    IOUtils.DisposeWhileHandlingException(writer, r);
                     writer = null;
                 }
             }
@@ -499,7 +499,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
 
             // TODO: we could allow blended sort here, combining
@@ -674,7 +674,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
         }
 

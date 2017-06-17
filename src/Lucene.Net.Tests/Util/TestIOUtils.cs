@@ -55,7 +55,7 @@ namespace Lucene.Net.Util
             try
             {
                 TestException t = new TestException();
-                IOUtils.CloseWhileHandlingException(t, new BrokenIDisposable(1), new BrokenIDisposable(2));
+                IOUtils.DisposeWhileHandlingException(t, new BrokenIDisposable(1), new BrokenIDisposable(2));
             }
             catch (TestException e1)
             {
@@ -74,7 +74,7 @@ namespace Lucene.Net.Util
             // test without prior exception
             try
             {
-                IOUtils.CloseWhileHandlingException((TestException)null, new BrokenIDisposable(1), new BrokenIDisposable(2));
+                IOUtils.DisposeWhileHandlingException((TestException)null, new BrokenIDisposable(1), new BrokenIDisposable(2));
             }
 #pragma warning disable 168
             catch (TestException e1)

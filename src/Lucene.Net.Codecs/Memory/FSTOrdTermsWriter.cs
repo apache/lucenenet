@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(indexOut, blockOut);
+                    IOUtils.DisposeWhileHandlingException(indexOut, blockOut);
                 }
             }
         }
@@ -231,7 +231,7 @@ namespace Lucene.Net.Codecs.Memory
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(ioe, blockOut, indexOut, postingsWriter);
+                    IOUtils.DisposeWhileHandlingException(ioe, blockOut, indexOut, postingsWriter);
                     blockOut = null;
                 }
             }

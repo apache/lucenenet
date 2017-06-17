@@ -110,11 +110,11 @@ namespace Lucene.Net.Index
                 {
                     if (success)
                     {
-                        IOUtils.Close(dvConsumer);
+                        IOUtils.Dispose(dvConsumer);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(dvConsumer);
+                        IOUtils.DisposeWhileHandlingException(dvConsumer);
                     }
                 }
             }

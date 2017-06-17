@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this);
+                    IOUtils.DisposeWhileHandlingException(this);
                 }
             }
         }
@@ -224,11 +224,11 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     if (success)
                     {
-                        IOUtils.Close(Data, Meta);
+                        IOUtils.Dispose(Data, Meta);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(Data, Meta);
+                        IOUtils.DisposeWhileHandlingException(Data, Meta);
                     }
                 }
             }

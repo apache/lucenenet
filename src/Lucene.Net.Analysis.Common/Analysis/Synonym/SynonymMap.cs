@@ -396,7 +396,7 @@ namespace Lucene.Net.Analysis.Synonym
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                    IOUtils.DisposeWhileHandlingException(priorException, ts);
                 }
                 if (reuse.Length == 0)
                 {

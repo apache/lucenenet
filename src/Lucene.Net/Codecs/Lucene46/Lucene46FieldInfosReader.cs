@@ -122,7 +122,7 @@ namespace Lucene.Net.Codecs.Lucene46
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
             }
         }

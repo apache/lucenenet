@@ -417,7 +417,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(postingsWriter);
+                    IOUtils.DisposeWhileHandlingException(postingsWriter);
                 }
             }
         }
@@ -436,7 +436,7 @@ namespace Lucene.Net.Codecs.Lucene41
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(postingsReader);
+                    IOUtils.DisposeWhileHandlingException(postingsReader);
                 }
             }
         }

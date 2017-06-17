@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Suggest
                 if (outerInstance.line == null)
                 {
                     outerInstance.done = true;
-                    IOUtils.Close(outerInstance.@in);
+                    IOUtils.Dispose(outerInstance.@in);
                 }
                 else
                 {
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search.Suggest
                 else
                 {
                     outerInstance.done = true;
-                    IOUtils.Close(outerInstance.@in);
+                    IOUtils.Dispose(outerInstance.@in);
                     return null;
                 }
             }

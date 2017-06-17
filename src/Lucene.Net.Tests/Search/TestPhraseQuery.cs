@@ -680,7 +680,7 @@ namespace Lucene.Net.Search
                         }
                         finally
                         {
-                            IOUtils.CloseWhileHandlingException(priorException, ts);
+                            IOUtils.DisposeWhileHandlingException(priorException, ts);
                         }
                     }
                     else

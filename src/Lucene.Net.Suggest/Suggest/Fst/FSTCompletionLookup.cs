@@ -226,11 +226,11 @@ namespace Lucene.Net.Search.Suggest.Fst
             {
                 if (success)
                 {
-                    IOUtils.Close(reader, writer, sorter);
+                    IOUtils.Dispose(reader, writer, sorter);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(reader, writer, sorter);
+                    IOUtils.DisposeWhileHandlingException(reader, writer, sorter);
                 }
 
                 tempInput.Delete();

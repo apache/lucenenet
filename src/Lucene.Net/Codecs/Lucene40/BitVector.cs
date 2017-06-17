@@ -285,7 +285,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             finally
             {
-                IOUtils.Close(output);
+                IOUtils.Dispose(output);
             }
         }
 

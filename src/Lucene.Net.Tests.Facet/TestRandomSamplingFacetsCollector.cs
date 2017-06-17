@@ -66,7 +66,7 @@ namespace Lucene.Net.Facet
             // NRT open
             IndexSearcher searcher = NewSearcher(writer.Reader);
             var taxoReader = new DirectoryTaxonomyReader(taxoWriter);
-            IOUtils.Close(writer, taxoWriter);
+            IOUtils.Dispose(writer, taxoWriter);
 
             // Test empty results
             RandomSamplingFacetsCollector collectRandomZeroResults = new RandomSamplingFacetsCollector(numDocs / 10, random.NextLong());
@@ -146,7 +146,7 @@ namespace Lucene.Net.Facet
             Assert.True(sigma < 200);
             Assert.True(targetMu - 3 * sigma < mu && mu < targetMu + 3 * sigma);
 
-            IOUtils.Close(searcher.IndexReader, taxoReader, dir, taxoDir);
+            IOUtils.Dispose(searcher.IndexReader, taxoReader, dir, taxoDir);
         }
 
     }
