@@ -228,13 +228,26 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Disposes all resources used by this object.
         /// </summary>
-        public void Dispose() // LUCENENET TODO: API - implement dispose pattern
+        public void Dispose()
         {
-            for (int i = 1; i < skipStream.Length; i++)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes all resources used by this object. Subclasses may override
+        /// to dispose their own resources.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                if (skipStream[i] != null)
+                for (int i = 1; i < skipStream.Length; i++)
                 {
-                    skipStream[i].Dispose();
+                    if (skipStream[i] != null)
+                    {
+                        skipStream[i].Dispose();
+                    }
                 }
             }
         }
