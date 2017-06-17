@@ -159,14 +159,8 @@ namespace Lucene.Net.Search
         {
             lock (this)
             {
-                if (current != null)
-                {
-                    // make sure we can call this more than once
-                    // closeable javadoc says:
-                    // if this is already closed then invoking this method has no effect.
-                    SwapReference(null);
-                    AfterClose();
-                }
+                Dispose(true);
+                GC.SuppressFinalize(this);
             }
         }
 
@@ -179,8 +173,15 @@ namespace Lucene.Net.Search
         /// Called after <see cref="Dispose()"/>, so subclass can free any resources. </summary>
         /// <exception cref="System.IO.IOException"> if the after dispose operation in a sub-class throws an <see cref="System.IO.IOException"/>
         /// </exception>
-        protected virtual void AfterClose() // LUCENENET TODO: API: Rename AfterDispose() ? Or perhaps just use dispose pattern.
+        protected virtual void Dispose(bool disposing)
         {
+            if (disposing && current != null)
+            {
+                // make sure we can call this more than once
+                // closeable javadoc says:
+                // if this is already closed then invoking this method has no effect.
+                SwapReference(null);
+            }
         }
 
         private void DoMaybeRefresh()

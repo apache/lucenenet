@@ -431,7 +431,7 @@ namespace Lucene.Net.Search
         {
             // test that we can close SM twice (per IDisposable's contract).
             Directory dir = NewDirectory();
-            (new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null))).Dispose();
+            using (var iw = new IndexWriter(dir, new IndexWriterConfig(TEST_VERSION_CURRENT, null))) { }
             SearcherManager sm = new SearcherManager(dir, null);
             sm.Dispose();
             sm.Dispose();
