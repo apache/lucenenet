@@ -32,7 +32,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// A query that generates the union of documents produced by its subqueries, and that scores each document with the maximum
     /// score for that document as produced by any subquery, plus a tie breaking increment for any additional matching subqueries.
-    /// this is useful when searching for a word in multiple fields with different boost factors (so that the fields cannot be
+    /// This is useful when searching for a word in multiple fields with different boost factors (so that the fields cannot be
     /// combined equivalently into a single search field).  We want the primary score to be the one associated with the highest boost,
     /// not the sum of the field scores (as <see cref="BooleanQuery"/> would give).
     /// <para/>
@@ -44,6 +44,16 @@ namespace Lucene.Net.Search
     /// The tie breaker capability allows results that include the same term in multiple fields to be judged better than results that
     /// include this term in only the best of those multiple fields, without confusing this with the better case of two different terms
     /// in the multiple fields.
+    /// <para/>
+    /// Collection initializer note: To create and populate a <see cref="DisjunctionMaxQuery"/>
+    /// in a single statement, you can use the following example as a guide:
+    /// 
+    /// <code>
+    /// var disjunctionMaxQuery = new DisjunctionMaxQuery(0.1f) {
+    ///     new TermQuery(new Term("field1", "albino")), 
+    ///     new TermQuery(new Term("field2", "elephant"))
+    /// };
+    /// </code>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -91,9 +101,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Add a collection of disjuncts to this disjunction
-        /// via <see cref="T:ICollection{Query}"/> </summary>
+        /// via <see cref="T:IEnumerable{Query}"/> </summary>
         /// <param name="disjuncts"> A collection of queries to add as disjuncts. </param>
-        public virtual void Add(ICollection<Query> disjuncts) // LUCENENET TODO: API: change back to IEnumerable<Query>. Rename AddRange?
+        public virtual void Add(ICollection<Query> disjuncts)
         {
             this.disjuncts.AddRange(disjuncts);
         }
@@ -104,6 +114,7 @@ namespace Lucene.Net.Search
             return disjuncts.GetEnumerator();
         }
 
+        // LUCENENET specific
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
