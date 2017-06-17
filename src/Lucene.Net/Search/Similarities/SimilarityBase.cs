@@ -212,14 +212,14 @@ namespace Lucene.Net.Search.Similarities
                 for (int i = 0; i < subScorers.Length; i++)
                 {
                     BasicStats basicstats = (BasicStats)subStats[i];
-                    subScorers[i] = new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.m_field));
+                    subScorers[i] = new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.Field));
                 }
                 return new MultiSimilarity.MultiSimScorer(subScorers);
             }
             else
             {
                 BasicStats basicstats = (BasicStats)stats;
-                return new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.m_field));
+                return new BasicSimScorer(this, basicstats, context.AtomicReader.GetNormValues(basicstats.Field));
             }
         }
 

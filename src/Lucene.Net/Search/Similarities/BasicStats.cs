@@ -29,7 +29,7 @@ namespace Lucene.Net.Search.Similarities
 #endif
     public class BasicStats : Similarity.SimWeight
     {
-        protected internal readonly string m_field; // LUCENENET TODO: API This was internal in Lucene
+        private readonly string field;
 
         /// <summary>
         /// The number of documents. </summary>
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search.Similarities
         /// Constructor. Sets the query boost. </summary>
         public BasicStats(string field, float queryBoost)
         {
-            this.m_field = field;
+            this.field = field;
             this.m_queryBoost = queryBoost;
             this.m_totalBoost = queryBoost;
         }
@@ -150,9 +150,13 @@ namespace Lucene.Net.Search.Similarities
             }
         }
 
-        public virtual string Field // LUCENENET TODO: API - eliminate and use internal field instead
+        /// <summary>
+        /// The field.
+        /// </summary>
+        // LUCENENET specific
+        public string Field
         {
-            get { return m_field; }
+            get { return field; }
         }
 
         // -------------------------- Boost-related stuff --------------------------
