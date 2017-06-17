@@ -158,9 +158,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Gets an <see cref="ICollection{TKey}"/> object containing the keys of the <see cref="WeakIdentityMap{TKey, TValue}"/>.
+        /// Gets an <see cref="IEnumerable{TKey}"/> object containing the keys of the <see cref="WeakIdentityMap{TKey, TValue}"/>.
         /// </summary>
-        public IEnumerable<TKey> Keys // LUCENENET TODO: API - change to ICollection<T>
+        public IEnumerable<TKey> Keys
         {
             get
             {
@@ -197,9 +197,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Gets an <see cref="ICollection{TKey}"/> object containing the values of the <see cref="WeakIdentityMap{TKey, TValue}"/>.
+        /// Gets an <see cref="IEnumerable{TKey}"/> object containing the values of the <see cref="WeakIdentityMap{TKey, TValue}"/>.
         /// </summary>
-        public IEnumerable<TValue> Values // LUCENENET TODO: API - change to ICollection<T>
+        public IEnumerable<TValue> Values
         {
             get
             {
