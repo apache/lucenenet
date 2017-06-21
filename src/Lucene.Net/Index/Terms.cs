@@ -131,7 +131,7 @@ namespace Lucene.Net.Index
         /// measures, this measure does not take deleted documents
         /// into account.
         /// </summary>
-        public abstract long SumTotalTermFreq { get; } // LUCENENET TODO: API Make GetSumTotalTermFreq() (conversion)
+        public abstract long SumTotalTermFreq { get; } 
 
         /// <summary>
         /// Returns the sum of <see cref="TermsEnum.DocFreq"/> for
@@ -140,7 +140,7 @@ namespace Lucene.Net.Index
         /// measures, this measure does not take deleted documents
         /// into account.
         /// </summary>
-        public abstract long SumDocFreq { get; } // LUCENENET TODO: API Make GetSumDocFreq() (conversion)
+        public abstract long SumDocFreq { get; }
 
         /// <summary>
         /// Returns the number of documents that have at least one
