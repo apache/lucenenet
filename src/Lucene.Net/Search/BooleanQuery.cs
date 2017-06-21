@@ -39,6 +39,29 @@ namespace Lucene.Net.Search
     /// A <see cref="Query"/> that matches documents matching boolean combinations of other
     /// queries, e.g. <see cref="TermQuery"/>s, <see cref="PhraseQuery"/>s or other
     /// <see cref="BooleanQuery"/>s.
+    /// <para/>
+    /// Collection initializer note: To create and populate a <see cref="BooleanQuery"/>
+    /// in a single statement, you can use the following example as a guide:
+    /// 
+    /// <code>
+    /// var booleanQuery = new BooleanQuery() {
+    ///     { new WildcardQuery(new Term("field2", "foobar")), Occur.SHOULD },
+    ///     { new MultiPhraseQuery() {
+    ///         new Term("field", "microsoft"), 
+    ///         new Term("field", "office")
+    ///     }, Occur.SHOULD }
+    /// };
+    /// 
+    /// // or
+    /// 
+    /// var booleanQuery = new BooleanQuery() {
+    ///     new BooleanClause(new WildcardQuery(new Term("field2", "foobar")), Occur.SHOULD),
+    ///     new BooleanClause(new MultiPhraseQuery() {
+    ///         new Term("field", "microsoft"), 
+    ///         new Term("field", "office")
+    ///     }, Occur.SHOULD)
+    /// };
+    /// </code>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
