@@ -3,6 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -27,7 +28,7 @@ namespace Lucene.Net.Queries
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-    
+
     /// <summary>
     /// A query that executes high-frequency terms in a optional sub-query to prevent
     /// slow queries due to "common" terms like stopwords. This query
@@ -52,8 +53,18 @@ namespace Lucene.Net.Queries
     /// rewritten into a plain conjunction query ie. all high-frequency terms need to
     /// match in order to match a document.
     /// </para>
+    /// <para/>
+    /// Collection initializer note: To create and populate a <see cref="CommonTermsQuery"/>
+    /// in a single statement, you can use the following example as a guide:
+    /// 
+    /// <code>
+    /// var query = new CommonTermsQuery() {
+    ///     new Term("field", "microsoft"), 
+    ///     new Term("field", "office")
+    /// };
+    /// </code>
     /// </summary>
-    public class CommonTermsQuery : Query
+    public class CommonTermsQuery : Query, IEnumerable<Term> // LUCENENET specific - implemented IEnumerable<Term>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         /*
          * TODO maybe it would make sense to abstract this even further and allow to
@@ -475,6 +486,26 @@ namespace Lucene.Net.Queries
         protected virtual Query NewTermQuery(Term term, TermContext context)
         {
             return context == null ? new TermQuery(term) : new TermQuery(term, context);
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="m_terms"/> collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the <see cref="m_terms"/> collection.</returns>
+        // LUCENENET specific
+        public IEnumerator<Term> GetEnumerator()
+        {
+            return this.m_terms.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="m_terms"/> collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the <see cref="m_terms"/> collection.</returns>
+        // LUCENENET specific
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
