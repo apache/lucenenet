@@ -1,3 +1,5 @@
+using System;
+
 namespace Lucene.Net.Search
 {
     /*
@@ -186,6 +188,113 @@ namespace Lucene.Net.Search
         /// </summary>
         bool AcceptsDocsOutOfOrder { get; }
     }
-}
 
-// LUCENENET TODO: API: Create Collector.NewAnonymous() static delegate method to allow creation of collectors inline.
+    /// <summary>
+    /// LUCENENET specific class used to hold the 
+    /// <see cref="NewAnonymous(Action{Scorer}, Action{int}, Action{AtomicReaderContext}, Func{bool})"/> static method.
+    /// </summary>
+    public static class Collector
+    {
+        /// <summary>
+        /// Creates a new instance with the ability to specify the body of the <see cref="ICollector.SetScorer(Scorer)"/>
+        /// method through the <paramref name="setScorer"/> parameter, the body of the <see cref="ICollector.Collect(int)"/>
+        /// method through the <paramref name="collect"/> parameter, the body of the <see cref="ICollector.SetNextReader(AtomicReaderContext)"/>
+        /// method through the <paramref name="setNextReader"/> parameter, and the body of the <see cref="ICollector.AcceptsDocsOutOfOrder"/>
+        /// property through the <paramref name="acceptsDocsOutOfOrder"/> parameter.
+        /// Simple example:
+        /// <code>
+        ///     IndexSearcher searcher = new IndexSearcher(indexReader);
+        ///     OpenBitSet bits = new OpenBitSet(indexReader.MaxDoc);
+        ///     int docBase;
+        ///     searcher.Search(query, 
+        ///         Collector.NewAnonymous(setScorer: (scorer) =>
+        ///         {
+        ///             // ignore scorer
+        ///         }, collect: (doc) =>
+        ///         {
+        ///             bits.Set(doc + docBase);
+        ///         }, setNextReader: (context) =>
+        ///         {
+        ///             docBase = context.DocBase;
+        ///         }, acceptsDocsOutOfOrder: () =>
+        ///         {
+        ///             return true;
+        ///         })
+        ///     );
+        /// </code>
+        /// </summary>
+        /// <param name="setScorer">
+        /// A delegate method that represents (is called by) the <see cref="ICollector.SetScorer(Scorer)"/> 
+        /// method. It accepts a <see cref="Scorer"/> scorer and 
+        /// has no return value.
+        /// </param>
+        /// <param name="collect">
+        /// A delegate method that represents (is called by) the <see cref="ICollector.Collect(int)"/> 
+        /// method. It accepts an <see cref="int"/> doc and 
+        /// has no return value.
+        /// </param>
+        /// <param name="setNextReader">
+        /// A delegate method that represents (is called by) the <see cref="ICollector.SetNextReader(AtomicReaderContext)"/> 
+        /// method. It accepts a <see cref="AtomicReaderContext"/> context and 
+        /// has no return value.
+        /// </param>
+        /// <param name="acceptsDocsOutOfOrder">
+        /// A delegate method that represents (is called by) the <see cref="ICollector.AcceptsDocsOutOfOrder"/> 
+        /// property. It returns a <see cref="bool"/> value.
+        /// </param>
+        /// <returns> A new <see cref="AnonymousCollector"/> instance. </returns>
+        public static ICollector NewAnonymous(Action<Scorer> setScorer, Action<int> collect, Action<AtomicReaderContext> setNextReader, Func<bool> acceptsDocsOutOfOrder)
+        {
+            return new AnonymousCollector(setScorer, collect, setNextReader, acceptsDocsOutOfOrder);
+        }
+
+        // LUCENENET specific
+        private class AnonymousCollector : ICollector
+        {
+            private readonly Action<Scorer> setScorer;
+            private readonly Action<int> collect;
+            private readonly Action<AtomicReaderContext> setNextReader;
+            private readonly Func<bool> acceptsDocsOutOfOrder;
+
+            public AnonymousCollector(Action<Scorer> setScorer, Action<int> collect, Action<AtomicReaderContext> setNextReader, Func<bool> acceptsDocsOutOfOrder)
+            {
+                if (setScorer == null)
+                    throw new ArgumentNullException("setScorer");
+                if (collect == null)
+                    throw new ArgumentNullException("collect");
+                if (setNextReader == null)
+                    throw new ArgumentNullException("setNextReader");
+                if (acceptsDocsOutOfOrder == null)
+                    throw new ArgumentNullException("acceptsDocsOutOfOrder");
+
+                this.setScorer = setScorer;
+                this.collect = collect;
+                this.setNextReader = setNextReader;
+                this.acceptsDocsOutOfOrder = acceptsDocsOutOfOrder;
+            }
+
+            public bool AcceptsDocsOutOfOrder
+            {
+                get
+                {
+                    return this.acceptsDocsOutOfOrder();
+                }
+            }
+
+            public void Collect(int doc)
+            {
+                this.collect(doc);
+            }
+
+            public void SetNextReader(AtomicReaderContext context)
+            {
+                this.setNextReader(context);
+            }
+
+            public void SetScorer(Scorer scorer)
+            {
+                this.setScorer(scorer);
+            }
+        }
+    }
+}
