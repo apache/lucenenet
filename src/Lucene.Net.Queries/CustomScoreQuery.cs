@@ -33,7 +33,7 @@ namespace Lucene.Net.Queries
     ///    <item><description>(optional) the score of its <see cref="FunctionQuery"/> (or queries).</description></item>
     /// </list>
     /// Subclasses can modify the computation by overriding <see cref="GetCustomScoreProvider"/>.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class CustomScoreQuery : Query
