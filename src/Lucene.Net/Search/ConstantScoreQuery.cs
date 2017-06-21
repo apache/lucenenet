@@ -162,10 +162,10 @@ namespace Lucene.Net.Search
             public override float GetValueForNormalization()
             {
                 // we calculate sumOfSquaredWeights of the inner weight, but ignore it (just to initialize everything)
-                /*if (InnerWeight != null) // LUCENENET TODO: BUG This code was in the original
+                if (innerWeight != null)
                 {
-                    return innerWeight.GetValueForNormalization();
-                }*/
+                    innerWeight.GetValueForNormalization();
+                }
                 queryWeight = outerInstance.Boost;
                 return queryWeight * queryWeight;
             }
