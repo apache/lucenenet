@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public abstract class Filter // LUCENENET TODO: API - Make static NewAnonymous() factory method with delegate method for GetDocIdSet()
+    public abstract class Filter
     {
         /// <summary>
         /// Creates a <see cref="DocIdSet"/> enumerating the documents that should be
@@ -59,5 +59,50 @@ namespace Lucene.Net.Search
         ///         the filter doesn't accept any documents otherwise internal optimization might not apply
         ///         in the case an <i>empty</i> <see cref="DocIdSet"/> is returned. </returns>
         public abstract DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
+
+
+        /// <summary>
+        /// Creates a new instance with the ability to specify the body of the <see cref="GetDocIdSet(AtomicReaderContext, IBits)"/>
+        /// method through the <paramref name="getDocIdSet"/> parameter.
+        /// Simple example:
+        /// <code>
+        ///     var filter = Filter.NewAnonymous(getDocIdSet: (context, acceptDocs) =>
+        ///     {
+        ///         if (acceptDocs == null) acceptDocs = new Bits.MatchAllBits(5);
+        ///         OpenBitSet bitset = new OpenBitSet(5);
+        ///         if (acceptDocs.Get(1)) bitset.Set(1);
+        ///         if (acceptDocs.Get(3)) bitset.Set(3);
+        ///         return new DocIdBitSet(bitset);
+        ///     });
+        /// </code>
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        /// <param name="getDocIdSet">
+        /// A delegate method that represents (is called by) the <see cref="GetDocIdSet(AtomicReaderContext, IBits)"/>
+        /// method. It accepts a <see cref="AtomicReaderContext"/> context and a <see cref="IBits"/> acceptDocs and
+        /// returns the <see cref="DocIdSet"/> for this filter.
+        /// </param>
+        /// <returns></returns>
+        public static Filter NewAnonymous(Func<AtomicReaderContext, IBits, DocIdSet> getDocIdSet)
+        {
+            return new AnonymousFilter(getDocIdSet);
+        }
+
+        // LUCENENET specific
+        private class AnonymousFilter : Filter
+        {
+            private readonly Func<AtomicReaderContext, IBits, DocIdSet> getDocIdSet;
+
+            public AnonymousFilter(Func<AtomicReaderContext, IBits, DocIdSet> getDocIdSet)
+            {
+                this.getDocIdSet = getDocIdSet;
+            }
+
+            public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)
+            {
+                return this.getDocIdSet(context, acceptDocs);
+            }
+        }
     }
 }
