@@ -1,6 +1,7 @@
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -47,11 +48,25 @@ namespace Lucene.Net.Search
     /// A <see cref="PhraseQuery"/> is built by QueryParser for input like <c>"new york"</c>.
     ///
     /// <para/>This query may be combined with other terms or queries with a <see cref="BooleanQuery"/>.
+    /// <para/>
+    /// Collection initializer note: To create and populate a <see cref="PhraseQuery"/>
+    /// in a single statement, you can use the following example as a guide:
+    /// 
+    /// <code>
+    /// var phraseQuery = new PhraseQuery() {
+    ///     new Term("field", "microsoft"), 
+    ///     new Term("field", "office")
+    /// };
+    /// </code>
+    /// Note that as long as you specify all of the parameters, you can use either
+    /// <see cref="Add(Term)"/> or <see cref="Add(Term, int)"/>
+    /// as the method to use to initialize. If there are multiple parameters, each parameter set
+    /// must be surrounded by curly braces.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class PhraseQuery : Query
+    public class PhraseQuery : Query, IEnumerable<Term> // LUCENENET specific - implemented IEnumerable<Term>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
         private IList<Term> terms = new EquatableList<Term>(4);
@@ -522,6 +537,26 @@ namespace Lucene.Net.Search
                 ^ slop 
                 ^ terms.GetHashCode() 
                 ^ positions.GetHashCode();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="terms"/> collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the <see cref="terms"/> collection.</returns>
+        // LUCENENET specific
+        public IEnumerator<Term> GetEnumerator()
+        {
+            return this.terms.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="terms"/> collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the <see cref="terms"/> collection.</returns>
+        // LUCENENET specific
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
