@@ -42,6 +42,7 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TermState = Lucene.Net.Index.TermState;
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
+    using System.Collections;
 
     /// <summary>
     /// <see cref="MultiPhraseQuery"/> is a generalized version of <see cref="PhraseQuery"/>, with an added
@@ -51,11 +52,25 @@ namespace Lucene.Net.Search
     /// <see cref="Add(Term)"/> on the term "Microsoft", then find all terms that have "app" as
     /// prefix using <c>MultiFields.GetFields(IndexReader).GetTerms(string)</c>, and use <see cref="MultiPhraseQuery.Add(Term[])"/>
     /// to add them to the query.
+    /// <para/>
+    /// Collection initializer note: To create and populate a <see cref="MultiPhraseQuery"/>
+    /// in a single statement, you can use the following example as a guide:
+    /// 
+    /// <code>
+    /// var multiPhraseQuery = new MultiPhraseQuery() {
+    ///     new Term("field", "microsoft"), 
+    ///     new Term("field", "office")
+    /// };
+    /// </code>
+    /// Note that as long as you specify all of the parameters, you can use either
+    /// <see cref="Add(Term)"/>, <see cref="Add(Term[])"/>, or <see cref="Add(Term[], int)"/>
+    /// as the method to use to initialize. If there are multiple parameters, each parameter set
+    /// must be surrounded by curly braces.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class MultiPhraseQuery : Query
+    public class MultiPhraseQuery : Query, IEnumerable<Term[]> // LUCENENET specific - implemented IEnumerable<Term[]>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
         private List<Term[]> termArrays = new List<Term[]>();
@@ -502,6 +517,26 @@ namespace Lucene.Net.Search
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="termArrays"/> collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the <see cref="termArrays"/> collection.</returns>
+        // LUCENENET specific
+        public IEnumerator<Term[]> GetEnumerator()
+        {
+            return termArrays.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="termArrays"/>.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the <see cref="termArrays"/> collection.</returns>
+        // LUCENENET specific
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 
