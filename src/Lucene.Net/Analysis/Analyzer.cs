@@ -109,7 +109,7 @@ namespace Lucene.Net.Analysis
         /// LUCENENET specific
         /// </summary>
         /// <param name="createComponents">
-        /// An delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/> 
+        /// A delegate method that represents (is called by) the <see cref="CreateComponents(string, TextReader)"/> 
         /// method. It accepts a <see cref="string"/> fieldName and a <see cref="TextReader"/> reader and 
         /// returns the <see cref="TokenStreamComponents"/> for this analyzer.
         /// </param>
@@ -149,7 +149,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Creates a new instance with the ability to specify the body of the <see cref="CreateComponents(string, TextReader)"/>
-        /// method through the <paramref name="createComponents"/> parameter, the body of the <see cref="InitReader(string, TextReader)"/>
+        /// method through the <paramref name="createComponents"/> parameter and the body of the <see cref="InitReader(string, TextReader)"/>
         /// method through the <paramref name="initReader"/> parameter.
         /// Simple example: 
         /// <code>
