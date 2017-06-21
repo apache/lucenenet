@@ -251,9 +251,7 @@ namespace Lucene.Net.Util
         {
             sortInfo = new SortInfo(this) { TotalTime = Environment.TickCount };
 
-            // LUCENENET NOTE: Can't do this because another thread could recreate the file before we are done here.
-            // and cause this to bomb. We use the existence of the file as an indicator that we are done using it.
-            //output.Delete(); // LUCENENET TODO: BUG: Put this back in (we now have thread-safe file creation, so this should be like the original).
+            output.Delete();
 
             var merges = new List<FileInfo>();
             bool success2 = false;
