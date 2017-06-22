@@ -516,7 +516,7 @@ namespace Lucene.Net.Util
         /// </summary>
         public static void ReThrowUnchecked(Exception th)
         {
-            if (th != null) // LUCENENET TODO: BUG - In Lucene we throw a new exception type in some cases which may not be caught in a different layer
+            if (th != null)
             {
                 throw th;
             }
