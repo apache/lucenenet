@@ -421,7 +421,9 @@ endlocal
 	Ensure-Directory-Exists $dir
 
 	Write-Host "Generating build.bat file: $file"
-	Out-File -filePath $file -encoding UTF8 -inputObject $buildBat -Force
+	#Out-File -filePath $file -encoding UTF8 -inputObject $buildBat -Force
+	$Utf8EncodingNoBom = New-Object System.Text.UTF8Encoding $false
+	[System.IO.File]::WriteAllLines($file, $buildBat, $Utf8EncodingNoBom)
 }
 
 function Build-Assemblies([string[]]$projects) {
