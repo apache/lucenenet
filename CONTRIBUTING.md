@@ -54,7 +54,6 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 * [Lucene.Net.Replicator](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/replicator)
 * [Lucene.Net.Analysis.ICU](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/icu) (note that we will be putting this functionality into the Lucene.Net.ICU package)
 * [Lucene.Net.Analysis.Kuromoji](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/kuromoji)
-* [Lucene.Net.Analysis.SmartCn](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/smartcn)
 
 There are a few other specialized Analysis packages ([Morfologik](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/morfologik), [Phonetic](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/phonetic), [UIMA](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/uima)) that have dependencies that would also need to be ported if they don't exist in .NET yet.
 
