@@ -1,0 +1,11 @@
+{
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "icu.net": "54.1.1-alpha"
+  },
+  "frameworks": {
+    "net451": {}
+  }
+}
