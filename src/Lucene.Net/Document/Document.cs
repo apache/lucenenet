@@ -50,7 +50,8 @@ namespace Lucene.Net.Documents
         {
         }
 
-        public IEnumerator<IIndexableField> GetEnumerator()
+
+		public IEnumerator<IIndexableField> GetEnumerator()
         {
             return fields.GetEnumerator();
         }
@@ -278,9 +279,17 @@ namespace Lucene.Net.Documents
             return null;
         }
 
-        /// <summary>
-        /// Prints the fields of a document for human consumption. </summary>
-        public override string ToString()
+		/// <summary>
+		/// Remove all fields from a document
+		/// </summary>
+		public void Clear()
+		{
+			fields.Clear();
+		}
+
+		/// <summary>
+		/// Prints the fields of a document for human consumption. </summary>
+		public override string ToString()
         {
             var buffer = new StringBuilder();
             buffer.Append("Document<");

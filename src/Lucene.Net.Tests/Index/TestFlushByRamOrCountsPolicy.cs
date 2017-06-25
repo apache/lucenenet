@@ -80,7 +80,7 @@ namespace Lucene.Net.Index
 
             IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, analyzer).SetFlushPolicy(flushPolicy);
             int numDWPT = 1 + AtLeast(2);
-            DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numDWPT);
+            DocumentsWriterPerThreadPool threadPool = new DocumentsWriterPerThreadPool(numDWPT);
             iwc.SetIndexerThreadPool(threadPool);
             iwc.SetRAMBufferSizeMB(maxRamMB);
             iwc.SetMaxBufferedDocs(IndexWriterConfig.DISABLE_AUTO_FLUSH);
@@ -139,7 +139,7 @@ namespace Lucene.Net.Index
                 IndexWriterConfig iwc = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetFlushPolicy(flushPolicy);
 
                 int numDWPT = 1 + AtLeast(2);
-                DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numDWPT);
+                DocumentsWriterPerThreadPool threadPool = new DocumentsWriterPerThreadPool(numDWPT);
                 iwc.SetIndexerThreadPool(threadPool);
                 iwc.SetMaxBufferedDocs(2 + AtLeast(10));
                 iwc.SetRAMBufferSizeMB(IndexWriterConfig.DISABLE_AUTO_FLUSH);
@@ -189,7 +189,7 @@ namespace Lucene.Net.Index
             iwc.SetFlushPolicy(flushPolicy);
 
             int numDWPT = 1 + Random().Next(8);
-            DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numDWPT);
+            DocumentsWriterPerThreadPool threadPool = new DocumentsWriterPerThreadPool(numDWPT);
             iwc.SetIndexerThreadPool(threadPool);
 
             IndexWriter writer = new IndexWriter(dir, iwc);
@@ -257,7 +257,7 @@ namespace Lucene.Net.Index
                 FlushPolicy flushPolicy = new FlushByRamOrCountsPolicy();
                 iwc.SetFlushPolicy(flushPolicy);
 
-                DocumentsWriterPerThreadPool threadPool = new ThreadAffinityDocumentsWriterThreadPool(numThreads[i] == 1 ? 1 : 2);
+                DocumentsWriterPerThreadPool threadPool = new DocumentsWriterPerThreadPool(numThreads[i] == 1 ? 1 : 2);
                 iwc.SetIndexerThreadPool(threadPool);
                 // with such a small ram buffer we should be stalled quiet quickly
                 iwc.SetRAMBufferSizeMB(0.25);

@@ -81,7 +81,7 @@ namespace Lucene.Net.Index
             Assert.IsNull(conf.MergedSegmentWarmer);
             Assert.AreEqual(IndexWriterConfig.DEFAULT_READER_TERMS_INDEX_DIVISOR, conf.ReaderTermsIndexDivisor);
             Assert.AreEqual(typeof(TieredMergePolicy), conf.MergePolicy.GetType());
-            Assert.AreEqual(typeof(ThreadAffinityDocumentsWriterThreadPool), conf.IndexerThreadPool.GetType());
+            Assert.AreEqual(typeof(DocumentsWriterPerThreadPool), conf.IndexerThreadPool.GetType());
             Assert.AreEqual(typeof(FlushByRamOrCountsPolicy), conf.FlushPolicy.GetType());
             Assert.AreEqual(IndexWriterConfig.DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB, conf.RAMPerThreadHardLimitMB);
             Assert.AreEqual(Codec.Default, conf.Codec);

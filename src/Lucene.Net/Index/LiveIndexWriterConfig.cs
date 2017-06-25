@@ -169,7 +169,7 @@ namespace Lucene.Net.Index
             mergePolicy = new TieredMergePolicy();
             flushPolicy = new FlushByRamOrCountsPolicy();
             readerPooling = IndexWriterConfig.DEFAULT_READER_POOLING;
-            indexerThreadPool = new ThreadAffinityDocumentsWriterThreadPool(IndexWriterConfig.DEFAULT_MAX_THREAD_STATES);
+            indexerThreadPool = new DocumentsWriterPerThreadPool(IndexWriterConfig.DEFAULT_MAX_THREAD_STATES);
             perThreadHardLimitMB = IndexWriterConfig.DEFAULT_RAM_PER_THREAD_HARD_LIMIT_MB;
         }
 
@@ -588,7 +588,7 @@ namespace Lucene.Net.Index
             {
                 try
                 {
-                    return ((ThreadAffinityDocumentsWriterThreadPool)indexerThreadPool).MaxThreadStates;
+                    return indexerThreadPool.MaxThreadStates;
                 }
                 catch (System.InvalidCastException cce)
                 {

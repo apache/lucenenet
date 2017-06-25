@@ -386,7 +386,6 @@
     <Compile Include="Index\TermState.cs" />
     <Compile Include="Index\TermVectorsConsumer.cs" />
     <Compile Include="Index\TermVectorsConsumerPerField.cs" />
-    <Compile Include="Index\ThreadAffinityDocumentsWriterThreadPool.cs" />
     <Compile Include="Index\TieredMergePolicy.cs" />
     <Compile Include="Index\TrackingIndexWriter.cs" />
     <Compile Include="Index\TwoPhaseCommit.cs" />

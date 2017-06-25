@@ -548,8 +548,8 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                perThread.Unlock();
-            }
+					perThreadPool.Release(perThread);
+				}
 
             return PostUpdate(flushingDWPT, hasEvents);
         }
@@ -594,10 +594,10 @@ namespace Lucene.Net.Index
             }
             finally
             {
-                perThread.Unlock();
-            }
+				perThreadPool.Release(perThread);
+			}
 
-            return PostUpdate(flushingDWPT, hasEvents);
+			return PostUpdate(flushingDWPT, hasEvents);
         }
 
         private bool DoFlush(DocumentsWriterPerThread flushingDWPT)
