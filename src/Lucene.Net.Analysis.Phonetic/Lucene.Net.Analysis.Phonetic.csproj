@@ -1,0 +1,225 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DAFE3B64-616A-4A2F-90E5-1F135E8A9AF5}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Analysis.Phonetic</RootNamespace>
+    <AssemblyName>Lucene.Net.Analysis.Phonetic</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BeiderMorseFilter.cs" />
+    <Compile Include="BeiderMorseFilterFactory.cs" />
+    <Compile Include="DoubleMetaphoneFilter.cs" />
+    <Compile Include="DoubleMetaphoneFilterFactory.cs" />
+    <Compile Include="Language\AbstractCaverphone .cs" />
+    <Compile Include="Language\Bm\BeiderMorseEncoder.cs" />
+    <Compile Include="Language\Bm\Lang.cs" />
+    <Compile Include="Language\Bm\Languages.cs" />
+    <Compile Include="Language\Bm\NameType.cs" />
+    <Compile Include="Language\Bm\PhoneticEngine.cs" />
+    <Compile Include="Language\Bm\ResourceConstants.cs" />
+    <Compile Include="Language\Bm\Rule.cs" />
+    <Compile Include="Language\Bm\RuleType.cs" />
+    <Compile Include="Language\Caverphone1.cs" />
+    <Compile Include="Language\Caverphone2.cs" />
+    <Compile Include="Language\ColognePhonetic.cs" />
+    <Compile Include="Language\DaitchMokotoffSoundex.cs" />
+    <Compile Include="Language\DoubleMetaphone.cs" />
+    <Compile Include="Language\MatchRatingApproachEncoder.cs" />
+    <Compile Include="Language\Metaphone.cs" />
+    <Compile Include="Language\Nysiis.cs" />
+    <Compile Include="Language\RefinedSoundex.cs" />
+    <Compile Include="Language\Soundex.cs" />
+    <Compile Include="Language\SoundexUtils.cs" />
+    <Compile Include="Language\StringEncoder.cs" />
+    <Compile Include="PhoneticFilter.cs" />
+    <Compile Include="PhoneticFilterFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Language\Bm\ash_approx_any.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_common.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_cyrillic.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_english.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_french.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_german.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_hungarian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_polish.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_romanian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_russian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_approx_spanish.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_any.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_approx_common.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_common.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_cyrillic.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_english.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_french.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_german.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_hungarian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_polish.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_romanian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_russian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_exact_spanish.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_hebrew_common.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_languages.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_any.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_cyrillic.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_english.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_french.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_german.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_hungarian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_polish.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_romanian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_russian.txt" />
+    <EmbeddedResource Include="Language\Bm\ash_rules_spanish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_any.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_arabic.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_common.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_cyrillic.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_czech.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_dutch.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_english.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_french.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_german.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_greek.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_greeklatin.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_hungarian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_italian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_polish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_portuguese.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_romanian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_russian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_spanish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_approx_turkish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_any.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_approx_common.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_arabic.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_common.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_cyrillic.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_czech.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_dutch.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_english.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_french.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_german.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_greek.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_greeklatin.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_hungarian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_italian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_polish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_portuguese.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_romanian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_russian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_spanish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_exact_turkish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_hebrew_common.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_languages.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_any.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_arabic.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_cyrillic.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_czech.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_dutch.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_english.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_french.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_german.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_greek.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_greeklatin.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_hungarian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_italian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_polish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_portuguese.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_romanian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_russian.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_spanish.txt" />
+    <EmbeddedResource Include="Language\Bm\gen_rules_turkish.txt" />
+    <EmbeddedResource Include="Language\Bm\lang.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_approx_any.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_approx_common.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_approx_french.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_approx_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_approx_italian.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_approx_portuguese.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_approx_spanish.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_exact_any.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_exact_approx_common.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_exact_common.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_exact_french.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_exact_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_exact_italian.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_exact_portuguese.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_exact_spanish.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_hebrew_common.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_languages.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_rules_any.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_rules_french.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_rules_hebrew.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_rules_italian.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_rules_portuguese.txt" />
+    <EmbeddedResource Include="Language\Bm\sep_rules_spanish.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Language\dmrules.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

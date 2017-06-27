@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A2867797-0A5D-4878-8F59-58C399C9A4E4}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Analysis.Phonetic</RootNamespace>
+    <AssemblyName>Lucene.Net.Tests.Analysis.Phonetic</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DoubleMetaphoneFilterTest.cs" />
+    <Compile Include="Language\Bm\BeiderMorseEncoderTest.cs" />
+    <Compile Include="Language\Bm\CacheSubSequencePerformanceTest.cs" />
+    <Compile Include="Language\Bm\LanguageGuessingTest.cs" />
+    <Compile Include="Language\Bm\PhoneticEnginePerformanceTest.cs" />
+    <Compile Include="Language\Bm\PhoneticEngineRegressionTest.cs" />
+    <Compile Include="Language\Bm\PhoneticEngineTest.cs" />
+    <Compile Include="Language\Bm\RuleTest.cs" />
+    <Compile Include="Language\Caverphone1Test.cs" />
+    <Compile Include="Language\Caverphone2Test .cs" />
+    <Compile Include="Language\ColognePhoneticTest.cs" />
+    <Compile Include="Language\DaitchMokotoffSoundexTest.cs" />
+    <Compile Include="Language\DoubleMetaphone2Test.cs" />
+    <Compile Include="Language\DoubleMetaphoneTest.cs" />
+    <Compile Include="Language\MatchRatingApproachEncoderTest.cs" />
+    <Compile Include="Language\MetaphoneTest.cs" />
+    <Compile Include="Language\NysiisTest.cs" />
+    <Compile Include="Language\RefinedSoundexTest.cs" />
+    <Compile Include="Language\SoundexTest.cs" />
+    <Compile Include="Language\StringEncoderAbstractTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestBeiderMorseFilter.cs" />
+    <Compile Include="TestBeiderMorseFilterFactory.cs" />
+    <Compile Include="TestDoubleMetaphoneFilterFactory.cs" />
+    <Compile Include="TestPhoneticFilter.cs" />
+    <Compile Include="TestPhoneticFilterFactory.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Phonetic\Lucene.Net.Analysis.Phonetic.csproj">
+      <Project>{DAFE3B64-616A-4A2F-90E5-1F135E8A9AF5}</Project>
+      <Name>Lucene.Net.Analysis.Phonetic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
+      <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
+      <Name>Lucene.Net.TestFramework</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Lucene.Net.Tests.Analysis.Phonetic.project.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

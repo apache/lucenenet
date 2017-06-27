@@ -1,0 +1,200 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Format
+// "pattern" "replacement at start of word" "replacement before a vowel" "replacement in other cases"
+
+// Vowels
+
+"a" "0" "" ""
+"e" "0" "" ""
+"i" "0" "" ""
+"o" "0" "" ""
+"u" "0" "" ""
+
+// Consonants
+
+"b" "7" "7" "7"
+"d" "3" "3" "3"
+"f" "7" "7" "7"
+"g" "5" "5" "5"
+"h" "5" "5" ""
+"k" "5" "5" "5"
+"l" "8" "8" "8"
+"m" "6" "6" "6"
+"n" "6" "6" "6"
+"p" "7" "7" "7"
+"q" "5" "5" "5"
+"r" "9" "9" "9"
+"s" "4" "4" "4"
+"t" "3" "3" "3"
+"v" "7" "7" "7"
+"w" "7" "7" "7"
+"x" "5" "54" "54"
+"y" "1" "" ""
+"z" "4" "4" "4"
+
+// Romanian t-cedilla and t-comma should be equivalent
+"ţ" "3|4" "3|4" "3|4"
+"ț" "3|4" "3|4" "3|4"
+
+// Polish characters (e-ogonek and a-ogonek): default case branch either not coded or 6
+"ę" "" "" "|6"
+"ą" "" "" "|6"
+
+// Other terms
+
+"schtsch" "2" "4" "4"
+"schtsh" "2" "4" "4"
+"schtch" "2" "4" "4"
+"shtch" "2" "4" "4"
+"shtsh" "2" "4" "4"
+"stsch" "2" "4" "4"
+"ttsch" "4" "4" "4"
+"zhdzh" "2" "4" "4"
+"shch" "2" "4" "4"
+"scht" "2" "43" "43"
+"schd" "2" "43" "43"
+"stch" "2" "4" "4"
+"strz" "2" "4" "4"
+"strs" "2" "4" "4"
+"stsh" "2" "4" "4"
+"szcz" "2" "4" "4"
+"szcs" "2" "4" "4"
+"ttch" "4" "4" "4"
+"tsch" "4" "4" "4"
+"ttsz" "4" "4" "4"
+"zdzh" "2" "4" "4"
+"zsch" "4" "4" "4"
+"chs" "5" "54" "54"
+"csz" "4" "4" "4"
+"czs" "4" "4" "4"
+"drz" "4" "4" "4"
+"drs" "4" "4" "4"
+"dsh" "4" "4" "4"
+"dsz" "4" "4" "4"
+"dzh" "4" "4" "4"
+"dzs" "4" "4" "4"
+"sch" "4" "4" "4"
+"sht" "2" "43" "43"
+"szt" "2" "43" "43"
+"shd" "2" "43" "43"
+"szd" "2" "43" "43"
+"tch" "4" "4" "4"
+"trz" "4" "4" "4"
+"trs" "4" "4" "4"
+"tsh" "4" "4" "4"
+"tts" "4" "4" "4"
+"ttz" "4" "4" "4"
+"tzs" "4" "4" "4"
+"tsz" "4" "4" "4"
+"zdz" "2" "4" "4"
+"zhd" "2" "43" "43"
+"zsh" "4" "4" "4"
+"ai" "0" "1" ""
+"aj" "0" "1" ""
+"ay" "0" "1" ""
+"au" "0" "7" ""
+"cz" "4" "4" "4"
+"cs" "4" "4" "4"
+"ds" "4" "4" "4"
+"dz" "4" "4" "4"
+"dt" "3" "3" "3"
+"ei" "0" "1" ""
+"ej" "0" "1" ""
+"ey" "0" "1" ""
+"eu" "1" "1" ""
+"fb" "7" "7" "7"
+"ia" "1" "" ""
+"ie" "1" "" ""
+"io" "1" "" ""
+"iu" "1" "" ""
+"ks" "5" "54" "54"
+"kh" "5" "5" "5"
+"mn" "66" "66" "66"
+"nm" "66" "66" "66"
+"oi" "0" "1" ""
+"oj" "0" "1" ""
+"oy" "0" "1" ""
+"pf" "7" "7" "7"
+"ph" "7" "7" "7"
+"sh" "4" "4" "4"
+"sc" "2" "4" "4"
+"st" "2" "43" "43"
+"sd" "2" "43" "43"
+"sz" "4" "4" "4"
+"th" "3" "3" "3"
+"ts" "4" "4" "4"
+"tc" "4" "4" "4"
+"tz" "4" "4" "4"
+"ui" "0" "1" ""
+"uj" "0" "1" ""
+"uy" "0" "1" ""
+"ue" "0" "1" ""
+"zd" "2" "43" "43"
+"zh" "4" "4" "4"
+"zs" "4" "4" "4"
+
+// Branching cases
+
+"c" "4|5" "4|5" "4|5"
+"ch" "4|5" "4|5" "4|5"
+"ck" "5|45" "5|45" "5|45"
+"rs" "4|94" "4|94" "4|94"
+"rz" "4|94" "4|94" "4|94"
+"j" "1|4" "|4" "|4"
+
+
+// ASCII foldings
+
+ß=s
+à=a
+á=a
+â=a
+ã=a
+ä=a
+å=a
+æ=a
+ç=c
+è=e
+é=e
+ê=e
+ë=e
+ì=i
+í=i
+î=i
+ï=i
+ð=d
+ñ=n
+ò=o
+ó=o
+ô=o
+õ=o
+ö=o
+ø=o
+ù=u
+ú=u
+û=u
+ý=y
+ý=y
+þ=b
+ÿ=y
+ć=c
+ł=l
+ś=s
+ż=z
+ź=z
