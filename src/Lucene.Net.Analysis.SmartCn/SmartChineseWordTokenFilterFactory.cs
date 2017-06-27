@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.Util;
+﻿// lucene version compatibility level: 4.8.1
+using Lucene.Net.Analysis.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;

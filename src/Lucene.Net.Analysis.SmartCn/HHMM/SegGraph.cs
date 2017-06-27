@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿// lucene version compatibility level: 4.8.1
+using System.Collections.Generic;
 using System.Text;
 
 namespace Lucene.Net.Analysis.Cn.Smart.HHMM

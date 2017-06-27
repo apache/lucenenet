@@ -1,4 +1,5 @@
-﻿namespace Lucene.Net.Analysis.Cn.Smart
+﻿// lucene version compatibility level: 4.8.1
+namespace Lucene.Net.Analysis.Cn.Smart
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

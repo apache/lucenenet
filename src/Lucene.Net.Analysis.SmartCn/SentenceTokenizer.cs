@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis.TokenAttributes;
+﻿// lucene version compatibility level: 4.8.1
+using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.IO;
 using System.Text;

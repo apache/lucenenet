@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿// lucene version compatibility level: 4.8.1
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis.Cn.Smart.HHMM
 {
