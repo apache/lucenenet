@@ -280,7 +280,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Returns whitespace- and/or comma-separated set of values, or null if none are found </summary>
-        public virtual ICollection<string> GetSet(IDictionary<string, string> args, string name)
+        public virtual ISet<string> GetSet(IDictionary<string, string> args, string name)
         {
             string s;
             if (args.TryGetValue(name, out s))
