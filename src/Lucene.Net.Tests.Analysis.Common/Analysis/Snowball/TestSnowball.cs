@@ -1,6 +1,8 @@
 ﻿using Lucene.Net.Analysis.Core;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Attributes;
+using Lucene.Net.Tartarus.Snowball.Ext;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -85,6 +87,14 @@ namespace Lucene.Net.Analysis.Snowball
             AssertAnalyzesTo(a, "AĞACI", new string[] { "ağaci" });
         }
 
+        // LUCENENET-544 - This would throw IndexOutOfRangeException in Lucene.Net 3.0.3
+        [Test, LuceneNetSpecific]
+        public virtual void TestLUCENENET_544()
+        {
+            TurkishStemmer ts = new TurkishStemmer();
+            ts.SetCurrent("faydaland");
+            ts.Stem();
+        }
 
         [Test]
         public virtual void TestReusableTokenStream()
