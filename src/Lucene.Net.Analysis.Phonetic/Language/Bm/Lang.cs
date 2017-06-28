@@ -108,7 +108,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
         }
 
-        private static readonly IDictionary<NameType, Lang> Langs = new Dictionary<NameType, Lang>();
+        private static readonly IDictionary<NameType, Lang> langs = new Dictionary<NameType, Lang>();
 
         private static readonly string LANGUAGE_RULES_RN = "lang.txt";
 
@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         {
             foreach (NameType s in Enum.GetValues(typeof(NameType)))
             {
-                Langs[s] = LoadFromResource(LANGUAGE_RULES_RN, Languages.GetInstance(s));
+                langs[s] = LoadFromResource(LANGUAGE_RULES_RN, Languages.GetInstance(s));
             }
         }
 
@@ -128,7 +128,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         public static Lang GetInstance(NameType nameType)
         {
             Lang result;
-            Langs.TryGetValue(nameType, out result);
+            langs.TryGetValue(nameType, out result);
             return result;
         }
 

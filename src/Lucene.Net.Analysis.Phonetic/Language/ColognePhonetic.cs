@@ -181,39 +181,39 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         private static readonly char[] TDX = new char[] { 'T', 'D', 'X' };
 
         /// <summary>
-        /// This class is not thread-safe; the field <see cref="length"/> is mutable.
+        /// This class is not thread-safe; the field <see cref="m_length"/> is mutable.
         /// However, it is not shared between threads, as it is constructed on demand
         /// by the method <see cref="ColognePhonetic.GetColognePhonetic(string)"/>.
         /// </summary>
         private abstract class CologneBuffer
         {
 
-            protected readonly char[] data;
+            protected readonly char[] m_data;
 
-            protected int length = 0;
+            protected int m_length = 0;
 
             public CologneBuffer(char[] data)
             {
-                this.data = data;
-                this.length = data.Length;
+                this.m_data = data;
+                this.m_length = data.Length;
             }
 
             public CologneBuffer(int buffSize)
             {
-                this.data = new char[buffSize];
-                this.length = 0;
+                this.m_data = new char[buffSize];
+                this.m_length = 0;
             }
 
             protected abstract char[] CopyData(int start, int length);
 
             public virtual int Length
             {
-                get { return length; }
+                get { return m_length; }
             }
 
             public override string ToString()
             {
-                return new string(CopyData(0, length));
+                return new string(CopyData(0, m_length));
             }
         }
 
@@ -226,14 +226,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
             public void AddRight(char chr)
             {
-                data[length] = chr;
-                length++;
+                m_data[m_length] = chr;
+                m_length++;
             }
 
             protected override char[] CopyData(int start, int length)
             {
                 char[] newData = new char[length];
-                System.Array.Copy(data, start, newData, 0, length);
+                System.Array.Copy(m_data, start, newData, 0, length);
                 return newData;
             }
         }
@@ -247,31 +247,31 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
             public virtual void AddLeft(char ch)
             {
-                length++;
-                data[GetNextPos()] = ch;
+                m_length++;
+                m_data[GetNextPos()] = ch;
             }
 
             protected override char[] CopyData(int start, int length)
             {
                 char[] newData = new char[length];
-                System.Array.Copy(data, data.Length - this.length + start, newData, 0, length);
+                System.Array.Copy(m_data, m_data.Length - this.m_length + start, newData, 0, length);
                 return newData;
             }
 
             public virtual char GetNextChar()
             {
-                return data[GetNextPos()];
+                return m_data[GetNextPos()];
             }
 
             protected virtual int GetNextPos()
             {
-                return data.Length - length;
+                return m_data.Length - m_length;
             }
 
             public virtual char RemoveNext()
             {
                 char ch = GetNextChar();
-                length--;
+                m_length--;
                 return ch;
             }
         }

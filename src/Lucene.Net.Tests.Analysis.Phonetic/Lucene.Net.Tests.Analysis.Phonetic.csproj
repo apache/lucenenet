@@ -64,6 +64,8 @@
     <Compile Include="Language\SoundexTest.cs" />
     <Compile Include="Language\StringEncoderAbstractTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Support\TestApiConsistency.cs" />
+    <Compile Include="Support\TestExceptionSerialization.cs" />
     <Compile Include="TestBeiderMorseFilter.cs" />
     <Compile Include="TestBeiderMorseFilterFactory.cs" />
     <Compile Include="TestDoubleMetaphoneFilterFactory.cs" />
