@@ -70,8 +70,7 @@ namespace Lucene.Net.Analysis
         }
 
         /// <summary>
-        /// Calls {@link #MockAnalyzer(Random, CharacterRunAutomaton, boolean, CharacterRunAutomaton)
-        /// MockAnalyzer(random, runAutomaton, lowerCase, MockTokenFilter.EMPTY_STOPSET, false}).
+        /// Calls <c>MockAnalyzer(random, runAutomaton, lowerCase, MockTokenFilter.EMPTY_STOPSET, false)</c>.
         /// </summary>
         public MockAnalyzer(Random random, CharacterRunAutomaton runAutomaton, bool lowerCase)
             : this(random, runAutomaton, lowerCase, MockTokenFilter.EMPTY_STOPSET)
@@ -80,9 +79,8 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Create a Whitespace-lowercasing analyzer with no stopwords removal.
-        /// <p>
-        /// Calls {@link #MockAnalyzer(Random, CharacterRunAutomaton, boolean, CharacterRunAutomaton)
-        /// MockAnalyzer(random, MockTokenizer.WHITESPACE, true, MockTokenFilter.EMPTY_STOPSET, false}).
+        /// <para/>
+        /// Calls <c>MockAnalyzer(random, MockTokenizer.WHITESPACE, true, MockTokenFilter.EMPTY_STOPSET, false)</c>.
         /// </summary>
         public MockAnalyzer(Random random)
             : this(random, MockTokenizer.WHITESPACE, true)

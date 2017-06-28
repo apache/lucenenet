@@ -28,11 +28,11 @@ namespace Lucene.Net.Randomized
     /// </summary>
     /// <remarks>
     ///    <para>
-    ///     An instance of this class will be typically available from {@link RandomizedContext}.
+    ///     An instance of this class will be typically available from <see cref="RandomizedContext"/>.
     ///     No need to instantiate manually.
     ///     </para>
     /// </remarks>
-    /// <see cref="Lucene.Net.Randomized.RandomContext"/>
+    /// <see cref="Lucene.Net.Randomized.RandomizedContext"/>
     /// <see cref="Lucene.Net.Randomized.SingleThreadedRandom"/>
     public class Randomness : IDisposable
     {

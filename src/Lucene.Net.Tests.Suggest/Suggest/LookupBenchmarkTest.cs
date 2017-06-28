@@ -163,7 +163,7 @@ namespace Lucene.Net.Search.Suggest
         }
 
         /**
-         * Create {@link Lookup} instance and populate it. 
+         * Create <see cref="Lookup"/> instance and populate it. 
          */
         internal Lookup BuildLookup(Type cls, Input[] input)
         {

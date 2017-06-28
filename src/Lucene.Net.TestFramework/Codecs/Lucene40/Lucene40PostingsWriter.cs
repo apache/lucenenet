@@ -100,8 +100,8 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// Creates a <seealso cref="Lucene40PostingsWriter"/>, with the
-        ///  specified {@code skipInterval}.
+        /// Creates a <see cref="Lucene40PostingsWriter"/>, with the
+        /// specified <paramref name="skipInterval"/>.
         /// </summary>
         public Lucene40PostingsWriter(SegmentWriteState state, int skipInterval)
             : base()

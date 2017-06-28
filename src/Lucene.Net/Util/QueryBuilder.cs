@@ -123,7 +123,7 @@ namespace Lucene.Net.Util
         /// </summary>
         /// <param name="field"> Field name. </param>
         /// <param name="queryText"> Text to be passed to the analyzer. </param>
-        /// <param name="fraction"> of query terms {@code [0..1]} that should match </param>
+        /// <param name="fraction"> of query terms <c>[0..1]</c> that should match </param>
         /// <returns> <see cref="TermQuery"/> or <see cref="BooleanQuery"/>, based on the analysis
         ///         of <paramref name="queryText"/>. </returns>
         public virtual Query CreateMinShouldMatchQuery(string field, string queryText, float fraction)

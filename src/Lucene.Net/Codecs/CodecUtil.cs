@@ -167,7 +167,7 @@ namespace Lucene.Net.Codecs
         /// CodecFooter --&gt; Magic,AlgorithmID,Checksum
         /// <list type="bullet">
         ///    <item><description>Magic --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>). this
-        ///        identifies the start of the footer. It is always {@value #FOOTER_MAGIC}.</description></item>
+        ///        identifies the start of the footer. It is always <see cref="FOOTER_MAGIC"/>.</description></item>
         ///    <item><description>AlgorithmID --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>). this
         ///        indicates the checksum algorithm used. Currently this is always 0,
         ///        for zlib-crc32.</description></item>

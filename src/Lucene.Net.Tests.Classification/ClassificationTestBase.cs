@@ -31,7 +31,7 @@ namespace Lucene.Net.Classification
 {
 
     /**
-     * Base class for testing {@link Classifier}s
+     * Base class for testing <see cref="IClassifier{T}"/>s
      */
     public abstract class ClassificationTestBase<T> : Util.LuceneTestCase
     {

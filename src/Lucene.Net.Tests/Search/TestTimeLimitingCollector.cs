@@ -31,7 +31,7 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Tests the {@link TimeLimitingCollector}.  This test checks (1) search
+    /// Tests the <see cref="TimeLimitingCollector"/>.  This test checks (1) search
     /// correctness(regardless of timeout), (2) expected timeout behavior,
     /// and(3) a sanity test with multiple searching threads.
     /// </summary>

@@ -33,7 +33,7 @@ namespace Lucene.Net.Util
     /// If somebody still overrides the deprecated method in a non-final class,
     /// you must keep track, of this and maybe delegate to the old method in the subclass.
     /// The cost of reflection is minimized by the following usage of this class:</p>
-    /// <p>Define <strong>static final</strong> fields in the base class ({@code BaseClass}),
+    /// <p>Define <strong>static final</strong> fields in the base class (<c>BaseClass</c>),
     /// where the old and new method are declared:</p>
     /// <pre class="prettyprint">
     ///  static final VirtualMethod&lt;BaseClass&gt; newMethod =
@@ -42,7 +42,7 @@ namespace Lucene.Net.Util
     ///   new VirtualMethod&lt;BaseClass&gt;(BaseClass.class, "oldName", parameters...);
     /// </pre>
     /// <p>this enforces the singleton status of these objects, as the maintenance of the cache would be too costly else.
-    /// If you try to create a second instance of for the same method/{@code baseClass} combination, an exception is thrown.</p>
+    /// If you try to create a second instance of for the same method/<c>baseClass</c> combination, an exception is thrown.</p>
     /// <p>To detect if e.g. the old method was overridden by a more far subclass on the inheritance path to the current
     /// instance's class, use a <strong>non-static</strong> field:</p>
     /// <pre class="prettyprint">
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
     /// <p><seealso cref="GetImplementationDistance"/> returns the distance of the subclass that overrides this method.
     /// The one with the larger distance should be used preferable.
     /// this way also more complicated method rename scenarios can be handled
-    /// (think of 2.9 {@code TokenStream} deprecations).</p>
+    /// (think of 2.9 <see cref="Analysis.TokenStream"/> deprecations).</p>
     ///
     /// @lucene.internal
     /// </summary>
@@ -72,10 +72,10 @@ namespace Lucene.Net.Util
         private readonly WeakIdentityMap<Type, int> Cache = WeakIdentityMap<Type, int>.NewConcurrentHashMap(false);
 
         /// <summary>
-        /// Creates a new instance for the given {@code baseClass} and method declaration. </summary>
+        /// Creates a new instance for the given <c>baseClass</c> and method declaration. </summary>
         /// <exception cref="InvalidOperationException"> if you create a second instance of the same
-        ///  {@code baseClass} and method declaration combination. this enforces the singleton status. </exception>
-        /// <exception cref="ArgumentException"> if {@code baseClass} does not declare the given method. </exception>
+        /// <c>baseClass</c> and method declaration combination. this enforces the singleton status. </exception>
+        /// <exception cref="ArgumentException"> if <c>baseClass</c> does not declare the given method. </exception>
         public VirtualMethod(Type baseClass, string method, params Type[] parameters)
         {
             this.BaseClass = baseClass;
@@ -100,8 +100,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the distance from the {@code baseClass} in which this method is overridden/implemented
-        /// in the inheritance path between {@code baseClass} and the given subclass {@code subclazz}. </summary>
+        /// Returns the distance from the <c>baseClass</c> in which this method is overridden/implemented
+        /// in the inheritance path between <c>baseClass</c> and the given subclass <c>subclazz</c>. </summary>
         /// <returns> 0 iff not overridden, else the distance to the base class </returns>
         public int GetImplementationDistance(Type subclazz)
         {
@@ -116,10 +116,10 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns, if this method is overridden/implemented in the inheritance path between
-        /// {@code baseClass} and the given subclass {@code subclazz}.
-        /// <p>You can use this method to detect if a method that should normally be final was overridden
+        /// <c>baseClass</c> and the given subclass <paramref name="subclazz"/>.
+        /// <para/>You can use this method to detect if a method that should normally be final was overridden
         /// by the given instance's class. </summary>
-        /// <returns> {@code false} iff not overridden </returns>
+        /// <returns> <c>false</c> iff not overridden </returns>
         public bool IsOverriddenAsOf(Type subclazz)
         {
             return GetImplementationDistance(subclazz) > 0;
@@ -158,8 +158,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Utility method that compares the implementation/override distance of two methods. </summary>
         /// <returns> <ul>
-        ///  <li>&gt; 1, iff {@code m1} is overridden/implemented in a subclass of the class overriding/declaring {@code m2}
-        ///  <li>&lt; 1, iff {@code m2} is overridden in a subclass of the class overriding/declaring {@code m1}
+        ///  <li>&gt; 1, iff <paramref name="m1"/> is overridden/implemented in a subclass of the class overriding/declaring <paramref name="m2"/>
+        ///  <li>&lt; 1, iff <paramref name="m2"/> is overridden in a subclass of the class overriding/declaring <paramref name="m1"/>
         ///  <li>0, iff both methods are overridden in the same class (or are not overridden at all)
         /// </ul> </returns>
         public static int CompareImplementationDistance(Type clazz, VirtualMethod m1, VirtualMethod m2)

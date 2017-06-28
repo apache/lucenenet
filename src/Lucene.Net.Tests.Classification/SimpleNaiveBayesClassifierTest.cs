@@ -28,7 +28,7 @@ namespace Lucene.Net.Classification
      */
 
     /**
-     * Testcase for {@link SimpleNaiveBayesClassifier}
+     * Testcase for <see cref="SimpleNaiveBayesClassifier"/>
      */
     // TODO : eventually remove this if / when fallback methods exist for all un-supportable codec methods (see LUCENE-4872)
     [SuppressCodecs("Lucene3x")]

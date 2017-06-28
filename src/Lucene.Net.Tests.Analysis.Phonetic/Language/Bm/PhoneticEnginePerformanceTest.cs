@@ -21,7 +21,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
      */
 
     /**
-     * Tests performance for {@link PhoneticEngine}.
+     * Tests performance for <see cref="PhoneticEngine"/>.
      * <p>
      * See <a href="https://issues.apache.org/jira/browse/CODEC-174">[CODEC-174] Improve performance of Beider Morse
      * encoder</a>.

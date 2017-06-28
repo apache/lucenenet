@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Creates a <see cref="MultiLevelSkipListWriter"/>{@code }, where
+        /// Creates a <see cref="MultiLevelSkipListWriter"/>, where
         /// <see cref="skipInterval"/> and <see cref="skipMultiplier"/> are
         /// the same.
         /// </summary>

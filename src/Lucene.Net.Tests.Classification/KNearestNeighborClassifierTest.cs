@@ -24,7 +24,7 @@ using NUnit.Framework;
 namespace Lucene.Net.Classification
 {
     /**
-     * Testcase for {@link KNearestNeighborClassifier}
+     * Testcase for <see cref="KNearestNeighborClassifier"/>
      */
     public class KNearestNeighborClassifierTest : ClassificationTestBase<BytesRef>
     {

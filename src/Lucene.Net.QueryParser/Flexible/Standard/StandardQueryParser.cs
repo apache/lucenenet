@@ -445,7 +445,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
         }
 
         /// <summary>
-        /// Sets the {@link Resolution} used for each field
+        /// Sets the <see cref="DateTools.Resolution"/> used for each field
         /// </summary>
         /// <param name="dateRes">a collection that maps a field to its <see cref="DateTools.Resolution"/></param>
         [Obsolete("Use DateResolutionMap property instead.")]

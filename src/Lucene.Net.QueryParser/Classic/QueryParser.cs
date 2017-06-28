@@ -102,8 +102,8 @@ namespace Lucene.Net.QueryParsers.Classic
     {
         // NOTE: This was moved into the QueryParserBase class.
 
-        // * The default operator_Renamed for parsing queries. 
-        // * Use {@link QueryParser#setDefaultOperator} to change it.
+        // * The default operator for parsing queries. 
+        // * Use <see cref="QueryParser.DefaultOperator"/> to change it.
         // */
 
         //public enum Operator

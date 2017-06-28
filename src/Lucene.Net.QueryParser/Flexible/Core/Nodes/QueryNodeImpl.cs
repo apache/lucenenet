@@ -225,10 +225,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         /// <param name="fld">field name</param>
         /// <returns>true if fld is the default field</returns>
-        // TODO: remove this method, it's commonly used by {@link
-        // #toQueryString(org.apache.lucene.queryParser.core.parser.EscapeQuerySyntax)}
-        // to figure out what is the default field, however, {@link
-        // #toQueryString(org.apache.lucene.queryParser.core.parser.EscapeQuerySyntax)}
+        // TODO: remove this method, it's commonly used by 
+        // <see cref="ToQueryString(IEscapeQuerySyntax)"/>
+        // to figure out what is the default field, however, 
+        // <see cref="ToQueryString(IEscapeQuerySyntax)"/>
         // should receive the default field value directly by parameter
         protected virtual bool IsDefaultField(string fld)
         {

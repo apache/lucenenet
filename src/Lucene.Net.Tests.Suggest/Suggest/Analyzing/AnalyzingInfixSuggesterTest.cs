@@ -108,11 +108,13 @@ namespace Lucene.Net.Search.Suggest.Analyzing
             suggester.Dispose();
         }
 
-        /** Used to return highlighted result; see {@link
-         *  LookupResult#highlightKey} */
+        /// <summary>
+        /// Used to return highlighted result; see 
+        /// <see cref = "Lookup.LookupResult.HighlightKey" />
+        /// </summary>
         private sealed class LookupHighlightFragment
         {
-            /** Portion of text for this fragment. */
+            /// <summary>Portion of text for this fragment.</summary>
             public readonly string text;
 
             /** True if this text matched a part of the user's

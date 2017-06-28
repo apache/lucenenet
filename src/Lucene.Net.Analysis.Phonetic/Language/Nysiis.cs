@@ -222,7 +222,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         }
 
         /// <summary>
-        /// Create an instance of the {@link Nysiis} encoder with the specified strict mode:
+        /// Create an instance of the <see cref="Nysiis"/> encoder with the specified strict mode:
         /// <list type="bullet">
         ///     <item><term><c>true</c>:</term><description>encoded strings have a maximum length of 6</description></item>
         ///     <item><term><c>false</c>:</term><description>encoded strings may have arbitrary length</description></item>
@@ -237,14 +237,14 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         // LUCENENET specific - in .NET we don't need an object overload, since strings are sealed anyway.
         //    /**
         //     * Encodes an Object using the NYSIIS algorithm. This method is provided in order to satisfy the requirements of the
-        //     * Encoder interface, and will throw an {@link EncoderException} if the supplied object is not of type
-        //     * {@link String}.
+        //     * Encoder interface, and will throw an <see cref="EncoderException"/> if the supplied object is not of type
+        //     * <see cref="string"/>.
         //     *
         //     * @param obj
         //     *            Object to encode
-        //     * @return An object (or a {@link String}) containing the NYSIIS code which corresponds to the given String.
+        //     * @return An object (or a <see cref="string"/>) containing the NYSIIS code which corresponds to the given String.
         //     * @throws EncoderException
-        //     *            if the parameter supplied is not of a {@link String}
+        //     *            if the parameter supplied is not of a <see cref="string"/>
         //     * @throws IllegalArgumentException
         //     *            if a character is not mapped
         //     */

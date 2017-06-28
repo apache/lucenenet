@@ -199,17 +199,17 @@ namespace Lucene.Net.Util
 
         /**
          * Returns the next pseudorandom, Gaussian ("normally") distributed
-         * {@code double} value with mean {@code 0.0} and standard
-         * deviation {@code 1.0} from this random number generator's sequence.
-         * <p>
-         * The general contract of {@code nextGaussian} is that one
-         * {@code double} value, chosen from (approximately) the usual
-         * normal distribution with mean {@code 0.0} and standard deviation
-         * {@code 1.0}, is pseudorandomly generated and returned.
+         * <c>double</c> value with mean <c>0.0</c> and standard
+         * deviation <c>1.0</c> from this random number generator's sequence.
+         * <para/>
+         * The general contract of <c>nextGaussian</c> is that one
+         * <c>double</c> value, chosen from (approximately) the usual
+         * normal distribution with mean <c>0.0</c> and standard deviation
+         * <c>1.0</c>, is pseudorandomly generated and returned.
          *
-         * <p>The method {@code nextGaussian} is implemented by class
-         * {@code Random} as if by a threadsafe version of the following:
-         *  <pre> {@code
+         * <para/>The method <c>nextGaussian</c> is implemented by class
+         * <c>Random</c> as if by a threadsafe version of the following:
+         *  <code>
          * private double nextNextGaussian;
          * private boolean haveNextNextGaussian = false;
          *
@@ -229,17 +229,17 @@ namespace Lucene.Net.Util
          *     haveNextNextGaussian = true;
          *     return v1 * multiplier;
          *   }
-         * }}</pre>
+         * }}</code>
          * This uses the <i>polar method</i> of G. E. P. Box, M. E. Muller, and
          * G. Marsaglia, as described by Donald E. Knuth in <i>The Art of
          * Computer Programming</i>, Volume 3: <i>Seminumerical Algorithms</i>,
          * section 3.4.1, subsection C, algorithm P. Note that it generates two
-         * independent values at the cost of only one call to {@code StrictMath.log}
-         * and one call to {@code StrictMath.sqrt}.
+         * independent values at the cost of only one call to <c>StrictMath.log</c>
+         * and one call to <c>StrictMath.sqrt</c>.
          *
          * @return the next pseudorandom, Gaussian ("normally") distributed
-         *         {@code double} value with mean {@code 0.0} and
-         *         standard deviation {@code 1.0} from this random number
+         *         <c>double</c> value with mean <c>0.0</c> and
+         *         standard deviation <c>1.0</c> from this random number
          *         generator's sequence
          */
         public double randomGaussian()

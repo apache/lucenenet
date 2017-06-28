@@ -25,8 +25,8 @@ namespace Lucene.Net.Search.Highlight.Custom
 	 */
 
     /// <summary>
-    /// Tests the extensibility of {@link WeightedSpanTermExtractor} and
-    /// {@link QueryScorer} in a user defined package
+    /// Tests the extensibility of <see cref="WeightedSpanTermExtractor"/> and
+    /// <see cref="QueryScorer"/> in a user defined package
     /// </summary>
     public class HighlightCustomQueryTest : LuceneTestCase
     {
