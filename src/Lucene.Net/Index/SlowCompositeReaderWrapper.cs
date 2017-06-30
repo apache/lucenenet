@@ -27,17 +27,17 @@ namespace Lucene.Net.Index
     using OrdinalMap = Lucene.Net.Index.MultiDocValues.OrdinalMap;
 
     /// <summary>
-    /// this class forces a composite reader (eg a {@link
-    /// MultiReader} or <seealso cref="DirectoryReader"/>) to emulate an
-    /// atomic reader.  this requires implementing the postings
-    /// APIs on-the-fly, using the static methods in {@link
-    /// MultiFields}, <seealso cref="MultiDocValues"/>, by stepping through
+    /// This class forces a composite reader (eg a 
+    /// <see cref="MultiReader"/> or <see cref="DirectoryReader"/>) to emulate an
+    /// atomic reader.  This requires implementing the postings
+    /// APIs on-the-fly, using the static methods in 
+    /// <see cref="MultiFields"/>, <see cref="MultiDocValues"/>, by stepping through
     /// the sub-readers to merge fields/terms, appending docs, etc.
     ///
-    /// <p><b>NOTE</b>: this class almost always results in a
+    /// <para/><b>NOTE</b>: This class almost always results in a
     /// performance hit.  If this is important to your use case,
     /// you'll get better performance by gathering the sub readers using
-    /// <seealso cref="IndexReader#getContext()"/> to get the
+    /// <see cref="IndexReader.Context"/> to get the
     /// atomic leaves and then operate per-AtomicReader,
     /// instead of using this class.
     /// </summary>
@@ -51,8 +51,8 @@ namespace Lucene.Net.Index
         private readonly IBits liveDocs;
 
         /// <summary>
-        /// this method is sugar for getting an <seealso cref="AtomicReader"/> from
-        /// an <seealso cref="IndexReader"/> of any kind. If the reader is already atomic,
+        /// This method is sugar for getting an <see cref="AtomicReader"/> from
+        /// an <see cref="IndexReader"/> of any kind. If the reader is already atomic,
         /// it is returned unchanged, otherwise wrapped by this class.
         /// </summary>
         public static AtomicReader Wrap(IndexReader reader)

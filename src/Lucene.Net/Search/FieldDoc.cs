@@ -23,23 +23,23 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Expert: A ScoreDoc which also contains information about
+    /// Expert: A <see cref="ScoreDoc"/> which also contains information about
     /// how to sort the referenced document.  In addition to the
     /// document number and score, this object contains an array
     /// of values for the document from the field(s) used to sort.
     /// For example, if the sort criteria was to sort by fields
-    /// "a", "b" then "c", the <code>fields</code> object array
+    /// "a", "b" then "c", the <c>fields</c> object array
     /// will have three elements, corresponding respectively to
     /// the term values for the document in fields "a", "b" and "c".
     /// The class of each element in the array will be either
-    /// Integer, Float or String depending on the type of values
+    /// <see cref="int"/>, <see cref="float"/> or <see cref="string"/> depending on the type of values
     /// in the terms of each field.
     ///
-    /// <p>Created: Feb 11, 2004 1:23:38 PM
-    ///
+    /// <para/>Created: Feb 11, 2004 1:23:38 PM
+    /// <para/>
     /// @since   lucene 1.4 </summary>
-    /// <seealso cref= ScoreDoc </seealso>
-    /// <seealso cref= TopFieldDocs </seealso>
+    /// <seealso cref="ScoreDoc"/>
+    /// <seealso cref="TopFieldDocs"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -48,11 +48,11 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Expert: The values which are used to sort the referenced document.
         /// The order of these will match the original sort criteria given by a
-        /// Sort object.  Each Object will have been returned from
-        /// the <code>value</code> method corresponding
+        /// <see cref="Sort"/> object.  Each Object will have been returned from
+        /// the <see cref="FieldComparer.this[int]"/> method corresponding
         /// FieldComparer used to sort this field. </summary>
-        /// <seealso cref= Sort </seealso>
-        /// <seealso cref= IndexSearcher#search(Query,Filter,int,Sort) </seealso>
+        /// <seealso cref="Sort"/>
+        /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public object[] Fields
@@ -85,7 +85,9 @@ namespace Lucene.Net.Search
             this.fields = fields;
         }
 
-        // A convenience method for debugging.
+        /// <summary>
+        /// A convenience method for debugging.
+        /// </summary>
         public override string ToString()
         {
             // super.toString returns the doc and score information, so just add the

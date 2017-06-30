@@ -36,9 +36,32 @@ namespace Lucene.Net.Search
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// A Query that matches documents matching boolean combinations of other
-    /// queries, e.g. <seealso cref="TermQuery"/>s, <seealso cref="PhraseQuery"/>s or other
-    /// BooleanQuerys.
+    /// A <see cref="Query"/> that matches documents matching boolean combinations of other
+    /// queries, e.g. <see cref="TermQuery"/>s, <see cref="PhraseQuery"/>s or other
+    /// <see cref="BooleanQuery"/>s.
+    /// <para/>
+    /// Collection initializer note: To create and populate a <see cref="BooleanQuery"/>
+    /// in a single statement, you can use the following example as a guide:
+    /// 
+    /// <code>
+    /// var booleanQuery = new BooleanQuery() {
+    ///     { new WildcardQuery(new Term("field2", "foobar")), Occur.SHOULD },
+    ///     { new MultiPhraseQuery() {
+    ///         new Term("field", "microsoft"), 
+    ///         new Term("field", "office")
+    ///     }, Occur.SHOULD }
+    /// };
+    /// 
+    /// // or
+    /// 
+    /// var booleanQuery = new BooleanQuery() {
+    ///     new BooleanClause(new WildcardQuery(new Term("field2", "foobar")), Occur.SHOULD),
+    ///     new BooleanClause(new MultiPhraseQuery() {
+    ///         new Term("field", "microsoft"), 
+    ///         new Term("field", "office")
+    ///     }, Occur.SHOULD)
+    /// };
+    /// </code>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -48,9 +71,9 @@ namespace Lucene.Net.Search
         private static int maxClauseCount = 1024;
 
         /// <summary>
-        /// Thrown when an attempt is made to add more than {@link
-        /// #getMaxClauseCount()} clauses. this typically happens if
-        /// a PrefixQuery, FuzzyQuery, WildcardQuery, or TermRangeQuery
+        /// Thrown when an attempt is made to add more than 
+        /// <see cref="MaxClauseCount"/> clauses. This typically happens if
+        /// a <see cref="PrefixQuery"/>, <see cref="FuzzyQuery"/>, <see cref="WildcardQuery"/>, or <see cref="TermRangeQuery"/>
         /// is expanded to many terms during search.
         /// </summary>
         // LUCENENET: All exeption classes should be marked serializable
@@ -79,9 +102,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Return the maximum number of clauses permitted, 1024 by default.
-        /// Attempts to add more than the permitted number of clauses cause {@link
-        /// TooManyClauses} to be thrown. </summary>
-        /// <seealso cref= #setMaxClauseCount(int) </seealso>
+        /// Attempts to add more than the permitted number of clauses cause 
+        /// <see cref="TooManyClausesException"/> to be thrown. </summary>
         public static int MaxClauseCount
         {
             get
@@ -110,23 +132,23 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Constructs an empty boolean query.
-        ///
-        /// <seealso cref="Similarity#coord(int,int)"/> may be disabled in scoring, as
+        /// <para/>
+        /// <see cref="Similarity.Coord(int,int)"/> may be disabled in scoring, as
         /// appropriate. For example, this score factor does not make sense for most
-        /// automatically generated queries, like <seealso cref="WildcardQuery"/> and {@link
-        /// FuzzyQuery}.
+        /// automatically generated queries, like <see cref="WildcardQuery"/> and 
+        /// <see cref="FuzzyQuery"/>.
         /// </summary>
-        /// <param name="disableCoord"> disables <seealso cref="Similarity#coord(int,int)"/> in scoring. </param>
+        /// <param name="disableCoord"> Disables <see cref="Similarity.Coord(int,int)"/> in scoring. </param>
         public BooleanQuery(bool disableCoord)
         {
             this.disableCoord = disableCoord;
         }
 
         /// <summary>
-        /// Returns true iff <seealso cref="Similarity#coord(int,int)"/> is disabled in
+        /// Returns true if <see cref="Similarity.Coord(int,int)"/> is disabled in
         /// scoring for this query instance. </summary>
-        /// <seealso cref= #BooleanQuery(boolean) </seealso>
-        public virtual bool CoordDisabled // LUCENENET TODO: Change to CoordEnabled? Per MSDN, properties should be in the affirmative.
+        /// <seealso cref="BooleanQuery(bool)"/>
+        public virtual bool CoordDisabled // LUCENENET TODO: API Change to CoordEnabled? Per MSDN, properties should be in the affirmative.
         {
             get
             {
@@ -135,21 +157,21 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Specifies a minimum number of the optional BooleanClauses
+        /// Specifies a minimum number of the optional <see cref="BooleanClause"/>s
         /// which must be satisfied.
         ///
-        /// <p>
+        /// <para>
         /// By default no optional clauses are necessary for a match
         /// (unless there are no required clauses).  If this method is used,
         /// then the specified number of clauses is required.
-        /// </p>
-        /// <p>
+        /// </para>
+        /// <para>
         /// Use of this method is totally independent of specifying that
-        /// any specific clauses are required (or prohibited).  this number will
+        /// any specific clauses are required (or prohibited).  This number will
         /// only be compared against the number of matching optional clauses.
-        /// </p>
+        /// </para>
         /// </summary>
-        /// <param name="min"> the number of optional clauses that must match </param>
+        /// <param name="value"> The number of optional clauses that must match </param>
         public virtual int MinimumNumberShouldMatch
         {
             set
@@ -167,8 +189,8 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Adds a clause to a boolean query.
         /// </summary>
-        /// <exception cref="TooManyClausesException"> if the new number of clauses exceeds the maximum clause number </exception>
-        /// <seealso cref= #getMaxClauseCount() </seealso>
+        /// <exception cref="TooManyClausesException"> If the new number of clauses exceeds the maximum clause number </exception>
+        /// <seealso cref="MaxClauseCount"/>
         public virtual void Add(Query query, Occur occur)
         {
             Add(new BooleanClause(query, occur));
@@ -176,8 +198,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Adds a clause to a boolean query. </summary>
-        /// <exception cref="TooManyClausesException"> if the new number of clauses exceeds the maximum clause number </exception>
-        /// <seealso cref= #getMaxClauseCount() </seealso>
+        /// <exception cref="TooManyClausesException"> If the new number of clauses exceeds the maximum clause number </exception>
+        /// <seealso cref="MaxClauseCount"/>
         public virtual void Add(BooleanClause clause)
         {
             if (clauses.Count >= maxClauseCount)
@@ -203,9 +225,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns an iterator on the clauses in this query. It implements the <seealso cref="Iterable"/> interface to
+        /// Returns an iterator on the clauses in this query. It implements the <see cref="T:IEnumerable{BooleanClause}"/> interface to
         /// make it possible to do:
-        /// <pre class="prettyprint">for (BooleanClause clause : booleanQuery) {}</pre>
+        /// <code>foreach (BooleanClause clause in booleanQuery) {}</code>
         /// </summary>
         public IEnumerator<BooleanClause> GetEnumerator()
         {
@@ -218,9 +240,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Expert: the Weight for BooleanQuery, used to
+        /// Expert: the <see cref="Weight"/> for <see cref="BooleanQuery"/>, used to
         /// normalize, score and explain these queries.
-        ///
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -231,7 +253,7 @@ namespace Lucene.Net.Search
             private readonly BooleanQuery outerInstance;
 
             /// <summary>
-            /// The Similarity implementation. </summary>
+            /// The <see cref="Similarities.Similarity"/> implementation. </summary>
             protected Similarity m_similarity;
 
             protected List<Weight> m_weights;
@@ -678,7 +700,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true iff <code>o</code> is equal to this. </summary>
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (!(o is BooleanQuery))

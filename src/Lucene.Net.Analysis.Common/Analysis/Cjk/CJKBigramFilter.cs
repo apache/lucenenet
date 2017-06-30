@@ -116,7 +116,7 @@ namespace Lucene.Net.Analysis.Cjk
         private bool exhausted;
 
         /// <summary>
-        /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int)">
+        /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, CJKScript)">
         ///       CJKBigramFilter(@in, CJKScript.HAN | CJKScript.HIRAGANA | CJKScript.KATAKANA | CJKScript.HANGUL)</see>
         /// </summary>
         /// <param name="in">
@@ -127,7 +127,7 @@ namespace Lucene.Net.Analysis.Cjk
         }
 
         /// <summary>
-        /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, int, bool)">
+        /// Calls <see cref="CJKBigramFilter.CJKBigramFilter(TokenStream, CJKScript, bool)">
         ///       CJKBigramFilter(in, flags, false)</see>
         /// </summary>
         /// <param name="in">

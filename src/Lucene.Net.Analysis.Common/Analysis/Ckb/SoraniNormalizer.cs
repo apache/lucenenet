@@ -26,12 +26,12 @@ namespace Lucene.Net.Analysis.Ckb
     /// <para/>
     /// Normalization consists of:
     /// <list type="bullet">
-    ///   <item>Alternate forms of 'y' (0064, 0649) are converted to 06CC (FARSI YEH)</item>
-    ///   <item>Alternate form of 'k' (0643) is converted to 06A9 (KEHEH)</item>
-    ///   <item>Alternate forms of vowel 'e' (0647+200C, word-final 0647, 0629) are converted to 06D5 (AE)</item>
-    ///   <item>Alternate (joining) form of 'h' (06BE) is converted to 0647</item>
-    ///   <item>Alternate forms of 'rr' (0692, word-initial 0631) are converted to 0695 (REH WITH SMALL V BELOW)</item>
-    ///   <item>Harakat, tatweel, and formatting characters such as directional controls are removed.</item>
+    ///   <item><description>Alternate forms of 'y' (0064, 0649) are converted to 06CC (FARSI YEH)</description></item>
+    ///   <item><description>Alternate form of 'k' (0643) is converted to 06A9 (KEHEH)</description></item>
+    ///   <item><description>Alternate forms of vowel 'e' (0647+200C, word-final 0647, 0629) are converted to 06D5 (AE)</description></item>
+    ///   <item><description>Alternate (joining) form of 'h' (06BE) is converted to 0647</description></item>
+    ///   <item><description>Alternate forms of 'rr' (0692, word-initial 0631) are converted to 0695 (REH WITH SMALL V BELOW)</description></item>
+    ///   <item><description>Harakat, tatweel, and formatting characters such as directional controls are removed.</description></item>
     /// </list>
     /// </summary>
     public class SoraniNormalizer

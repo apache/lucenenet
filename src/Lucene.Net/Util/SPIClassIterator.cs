@@ -27,13 +27,12 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Helper class for loading SPI classes from classpath (META-INF files).
-    /// this is a light impl of <seealso cref="java.util.ServiceLoader"/> but is guaranteed to
+    /// This is a light impl of <c>java.util.ServiceLoader</c> but is guaranteed to
     /// be bug-free regarding classpath order and does not instantiate or initialize
     /// the classes found.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
-    ///
     public class SPIClassIterator<S> : IEnumerable<Type>
     {
         private static HashSet<Type> types;

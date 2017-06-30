@@ -35,11 +35,11 @@ using System.Text;
 namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
-    /// <tt>Automaton</tt> transition.
-    /// <p>
+    /// <see cref="Automaton"/> transition.
+    /// <para/>
     /// A transition, which belongs to a source state, consists of a Unicode
     /// codepoint interval and a destination state.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class Transition
@@ -55,8 +55,8 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Constructs a new singleton interval transition.
         /// </summary>
-        /// <param name="c"> transition codepoint </param>
-        /// <param name="to"> destination state </param>
+        /// <param name="c"> Transition codepoint. </param>
+        /// <param name="to"> Destination state. </param>
         public Transition(int c, State to)
         {
             Debug.Assert(c >= 0);
@@ -67,9 +67,9 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Constructs a new transition. Both end points are included in the interval.
         /// </summary>
-        /// <param name="min"> transition interval minimum </param>
-        /// <param name="max"> transition interval maximum </param>
-        /// <param name="to"> destination state </param>
+        /// <param name="min"> Transition interval minimum. </param>
+        /// <param name="max"> Transition interval maximum. </param>
+        /// <param name="to"> Destination state. </param>
         public Transition(int min, int max, State to)
         {
             Debug.Assert(min >= 0);
@@ -118,8 +118,8 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Checks for equality.
         /// </summary>
-        /// <param name="obj"> object to compare with </param>
-        /// <returns> true if <tt>obj</tt> is a transition with same character interval
+        /// <param name="obj"> Object to compare with. </param>
+        /// <returns> <c>true</c> if <paramref name="obj"/> is a transition with same character interval
         ///         and destination state as this transition. </returns>
         public override bool Equals(object obj)
         {
@@ -138,7 +138,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns hash code. The hash code is based on the character interval (not
         /// the destination state).
         /// </summary>
-        /// <returns> hash code </returns>
+        /// <returns> Hash code. </returns>
         public override int GetHashCode()
         {
             return min * 2 + max * 3;
@@ -147,7 +147,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Clones this transition.
         /// </summary>
-        /// <returns> clone with same character interval and destination state </returns>
+        /// <returns> Clone with same character interval and destination state. </returns>
         public virtual object Clone()
         {
             return (Transition)base.MemberwiseClone();
@@ -200,7 +200,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns a string describing this state. Normally invoked via
-        /// <seealso cref="Automaton#toString()"/>.
+        /// <seealso cref="Automaton.ToString()"/>.
         /// </summary>
         public override string ToString()
         {

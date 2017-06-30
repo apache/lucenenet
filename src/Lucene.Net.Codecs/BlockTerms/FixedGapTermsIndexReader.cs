@@ -28,12 +28,11 @@ namespace Lucene.Net.Codecs.BlockTerms
      */
 
     /// <summary>
-    /// TermsIndexReader for simple every Nth terms indexes
-    /// 
-    /// See FixedGapTermsIndexWriter
-    /// 
-    /// lucene.experimental
+    /// <see cref="TermsIndexReaderBase"/> for simple every Nth terms indexes.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
+    /// <seealso cref="FixedGapTermsIndexWriter"/>
     public class FixedGapTermsIndexReader : TermsIndexReaderBase
     {
         // NOTE: long is overkill here, since this number is 128
@@ -143,7 +142,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
                 if (indexDivisor > 0)
                 {
@@ -328,7 +327,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     int numIndexTerms)
                 {
                     this.termsStart = termsStart;
-                    termBytesStart = outerInstance.outerInstance.termBytes.Pointer;
+                    termBytesStart = outerInstance.outerInstance.termBytes.GetPointer();
 
                     IndexInput clone = (IndexInput)outerInstance.outerInstance.input.Clone();
                     clone.Seek(indexStart);
@@ -438,7 +437,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                     }
                 }
 
-                /// <summary>Returns approximate RAM bytes Used</summary>
+                /// <summary>Returns approximate RAM bytes used.</summary>
                 public long RamBytesUsed()
                 {
                     return ((termOffsets != null) ? termOffsets.RamBytesUsed() : 0) +

@@ -26,63 +26,64 @@ namespace Lucene.Net.Util.Packed
     /// <summary>
     /// Encode a non decreasing sequence of non negative whole numbers in the Elias-Fano encoding
     /// that was introduced in the 1970's by Peter Elias and Robert Fano.
-    /// <p>
+    /// <para/>
     /// The Elias-Fano encoding is a high bits / low bits representation of
-    /// a monotonically increasing sequence of <code>numValues > 0</code> natural numbers <code>x[i]</code>
-    /// <p>
-    /// <code>0 <= x[0] <= x[1] <= ... <= x[numValues-2] <= x[numValues-1] <= upperBound</code>
-    /// <p>
-    /// where <code>upperBound > 0</code> is an upper bound on the last value.
-    /// <br>
+    /// a monotonically increasing sequence of <c>numValues > 0</c> natural numbers <c>x[i]</c>
+    /// <para/>
+    /// <c>0 &lt;= x[0] &lt;= x[1] &lt;= ... &lt;= x[numValues-2] &lt;= x[numValues-1] &lt;= upperBound</c>
+    /// <para/>
+    /// where <c>upperBound > 0</c> is an upper bound on the last value.
+    /// <para/>
     /// The Elias-Fano encoding uses less than half a bit per encoded number more
     /// than the smallest representation
     /// that can encode any monotone sequence with the same bounds.
-    /// <p>
-    /// The lower <code>L</code> bits of each <code>x[i]</code> are stored explicitly and contiguously
-    /// in the lower-bits array, with <code>L</code> chosen as (<code>log()</code> base 2):
-    /// <p>
-    /// <code>L = max(0, floor(log(upperBound/numValues)))</code>
-    /// <p>
-    /// The upper bits are stored in the upper-bits array as a sequence of unary-coded gaps (<code>x[-1] = 0</code>):
-    /// <p>
-    /// <code>(x[i]/2**L) - (x[i-1]/2**L)</code>
-    /// <p>
-    /// The unary code encodes a natural number <code>n</code> by <code>n</code> 0 bits followed by a 1 bit:
-    /// <code>0...01</code>. <br>
-    /// In the upper bits the total the number of 1 bits is <code>numValues</code>
-    /// and the total number of 0 bits is:<p>
-    /// <code>floor(x[numValues-1]/2**L) <= upperBound/(2**max(0, floor(log(upperBound/numValues)))) <= 2*numValues</code>
-    /// <p>
+    /// <para/>
+    /// The lower <c>L</c> bits of each <c>x[i]</c> are stored explicitly and contiguously
+    /// in the lower-bits array, with <c>L</c> chosen as (<c>Log()</c> base 2):
+    /// <para/>
+    /// <c>L = max(0, floor(log(upperBound/numValues)))</c>
+    /// <para/>
+    /// The upper bits are stored in the upper-bits array as a sequence of unary-coded gaps (<c>x[-1] = 0</c>):
+    /// <para/>
+    /// <c>(x[i]/2**L) - (x[i-1]/2**L)</c>
+    /// <para/>
+    /// The unary code encodes a natural number <c>n</c> by <c>n</c> 0 bits followed by a 1 bit:
+    /// <c>0...01</c>. 
+    /// <para/>
+    /// In the upper bits the total the number of 1 bits is <c>numValues</c>
+    /// and the total number of 0 bits is:
+    /// <para/>
+    /// <c>floor(x[numValues-1]/2**L) &lt;= upperBound/(2**max(0, floor(log(upperBound/numValues)))) &lt;= 2*numValues</c>
+    /// <para/>
     /// The Elias-Fano encoding uses at most
-    /// <p>
-    /// <code>2 + ceil(log(upperBound/numValues))</code>
-    /// <p>
-    /// bits per encoded number. With <code>upperBound</code> in these bounds (<code>p</code> is an integer):
-    /// <p>
-    /// <code>2**p < x[numValues-1] <= upperBound <= 2**(p+1)</code>
-    /// <p>
+    /// <para/>
+    /// <c>2 + Ceil(Log(upperBound/numValues))</c>
+    /// <para/>
+    /// bits per encoded number. With <c>upperBound</c> in these bounds (<c>p</c> is an integer):
+    /// <para/>
+    /// <c>2**p &lt; x[numValues-1] &lt;= upperBound &lt;= 2**(p+1)</c>
+    /// <para/>
     /// the number of bits per encoded number is minimized.
-    /// <p>
-    /// In this implementation the values in the sequence can be given as <code>long</code>,
-    /// <code>numValues = 0</code> and <code>upperBound = 0</code> are allowed,
-    /// and each of the upper and lower bit arrays should fit in a <code>long[]</code>.
-    /// <br>
+    /// <para/>
+    /// In this implementation the values in the sequence can be given as <c>long</c>,
+    /// <c>numValues = 0</c> and <c>upperBound = 0</c> are allowed,
+    /// and each of the upper and lower bit arrays should fit in a <c>long[]</c>.
+    /// <para/>
     /// An index of positions of zero's in the upper bits is also built.
-    /// <p>
+    /// <para/>
     /// this implementation is based on this article:
-    /// <br>
+    /// <para/>
     /// Sebastiano Vigna, "Quasi Succinct Indices", June 19, 2012, sections 3, 4 and 9.
     /// Retrieved from http://arxiv.org/pdf/1206.4300 .
     ///
-    /// <p>The articles originally describing the Elias-Fano representation are:
-    /// <br>Peter Elias, "Efficient storage and retrieval by content and address of static files",
+    /// <para/>The articles originally describing the Elias-Fano representation are:
+    /// <para/>Peter Elias, "Efficient storage and retrieval by content and address of static files",
     /// J. Assoc. Comput. Mach., 21(2):246â€"260, 1974.
-    /// <br>Robert M. Fano, "On the number of bits required to implement an associative memory",
+    /// <para/>Robert M. Fano, "On the number of bits required to implement an associative memory",
     ///  Memorandum 61, Computer Structures Group, Project MAC, MIT, Cambridge, Mass., 1971.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
-
     public class EliasFanoEncoder
     {
         internal readonly long numValues;
@@ -93,7 +94,7 @@ namespace Lucene.Net.Util.Packed
         internal readonly long[] lowerLongs;
 
         /// <summary>
-        /// NOTE: This was LOG2_LONG_SIZE in Lucene
+        /// NOTE: This was LOG2_LONG_SIZE in Lucene.
         /// </summary>
         private static readonly int LOG2_INT64_SIZE = Number.NumberOfTrailingZeros(sizeof(long) * 8);
 
@@ -110,7 +111,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// upperZeroBitPositionIndex[i] (filled using packValue) will contain the bit position
-        ///  just after the zero bit ((i+1) * indexInterval) in the upper bits.
+        /// just after the zero bit ((i+1) * indexInterval) in the upper bits.
         /// </summary>
         internal readonly long[] upperZeroBitPositionIndex;
 
@@ -118,30 +119,31 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Construct an Elias-Fano encoder.
-        /// After construction, call <seealso cref="#encodeNext"/> <code>numValues</code> times to encode
-        /// a non decreasing sequence of non negative numbers. </summary>
+        /// After construction, call <see cref="EncodeNext(long)"/> <paramref name="numValues"/> times to encode
+        /// a non decreasing sequence of non negative numbers. 
+        /// </summary>
         /// <param name="numValues"> The number of values that is to be encoded. </param>
         /// <param name="upperBound">  At least the highest value that will be encoded.
         ///                For space efficiency this should not exceed the power of two that equals
         ///                or is the first higher than the actual maximum.
-        ///                <br>When <code>numValues >= (upperBound/3)</code>
-        ///                a <seealso cref="FixedBitSet"/> will take less space. </param>
+        ///                <para/>When <c>numValues >= (upperBound/3)</c>
+        ///                a <see cref="FixedBitSet"/> will take less space. </param>
         /// <param name="indexInterval"> The number of high zero bits for which a single index entry is built.
-        ///                The index will have at most <code>2 * numValues / indexInterval</code> entries
-        ///                and each index entry will use at most <code>ceil(log2(3 * numValues))</code> bits,
-        ///                see <seealso cref="EliasFanoEncoder"/>. </param>
-        /// <exception cref="IllegalArgumentException"> when:
-        ///         <ul>
-        ///         <li><code>numValues</code> is negative, or
-        ///         <li><code>numValues</code> is non negative and <code>upperBound</code> is negative, or
-        ///         <li>the low bits do not fit in a <code>long[]</code>:
-        ///             <code>(L * numValues / 64) > System.Int32.MaxValue</code>, or
-        ///         <li>the high bits do not fit in a <code>long[]</code>:
-        ///             <code>(2 * numValues / 64) > System.Int32.MaxValue</code>, or
-        ///         <li><code>indexInterval < 2</code>,
-        ///         <li>the index bits do not fit in a <code>long[]</code>:
-        ///             <code>(numValues / indexInterval * ceil(2log(3 * numValues)) / 64) > System.Int32.MaxValue</code>.
-        ///         </ul> </exception>
+        ///                The index will have at most <c>2 * numValues / indexInterval</c> entries
+        ///                and each index entry will use at most <c>Ceil(Log2(3 * numValues))</c> bits,
+        ///                see <see cref="EliasFanoEncoder"/>. </param>
+        /// <exception cref="ArgumentException"> when:
+        ///         <list type="bullet">
+        ///         <item><description><paramref name="numValues"/> is negative, or</description></item>
+        ///         <item><description><paramref name="numValues"/> is non negative and <paramref name="upperBound"/> is negative, or</description></item>
+        ///         <item><description>the low bits do not fit in a <c>long[]</c>:
+        ///             <c>(L * numValues / 64) > System.Int32.MaxValue</c>, or</description></item>
+        ///         <item><description>the high bits do not fit in a <c>long[]</c>:
+        ///             <c>(2 * numValues / 64) > System.Int32.MaxValue</c>, or</description></item>
+        ///         <item><description><c>indexInterval &lt; 2</c>,</description></item>
+        ///         <item><description>the index bits do not fit in a <c>long[]</c>:
+        ///             <c>(numValues / indexInterval * ceil(2log(3 * numValues)) / 64) > System.Int32.MaxValue</c>.</description></item>
+        ///         </list> </exception>
         public EliasFanoEncoder(long numValues, long upperBound, long indexInterval)
         {
             if (numValues < 0L)
@@ -204,7 +206,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Construct an Elias-Fano encoder using <seealso cref="#DEFAULT_INDEX_INTERVAL"/>.
+        /// Construct an Elias-Fano encoder using <see cref="DEFAULT_INDEX_INTERVAL"/>.
         /// </summary>
         public EliasFanoEncoder(long numValues, long upperBound)
             : this(numValues, upperBound, DEFAULT_INDEX_INTERVAL)
@@ -212,7 +214,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// NOTE: This was numLongsForBits() in Lucene
+        /// NOTE: This was numLongsForBits() in Lucene.
         /// </summary>
         private static long NumInt64sForBits(long numBits) // Note: int version in FixedBitSet.bits2words()
         {
@@ -221,14 +223,14 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Call at most <code>numValues</code> times to encode a non decreasing sequence of non negative numbers. </summary>
+        /// Call at most <see cref="numValues"/> times to encode a non decreasing sequence of non negative numbers. </summary>
         /// <param name="x"> The next number to be encoded. </param>
-        /// <exception cref="IllegalStateException"> when called more than <code>numValues</code> times. </exception>
-        /// <exception cref="IllegalArgumentException"> when:
-        ///         <ul>
-        ///         <li><code>x</code> is smaller than an earlier encoded value, or
-        ///         <li><code>x</code> is larger than <code>upperBound</code>.
-        ///         </ul> </exception>
+        /// <exception cref="InvalidOperationException"> when called more than <see cref="numValues"/> times. </exception>
+        /// <exception cref="ArgumentException"> when:
+        ///         <list type="bullet">
+        ///         <item><description><paramref name="x"/> is smaller than an earlier encoded value, or</description></item>
+        ///         <item><description><paramref name="x"/> is larger than <see cref="upperBound"/>.</description></item>
+        ///         </list> </exception>
         public virtual void EncodeNext(long x)
         {
             if (numEncoded >= numValues)
@@ -286,17 +288,18 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Provide an indication that it is better to use an <seealso cref="EliasFanoEncoder"/> than a <seealso cref="FixedBitSet"/>
-        ///  to encode document identifiers.
-        ///  this indication is not precise and may change in the future.
-        ///  <br>An EliasFanoEncoder is favoured when the size of the encoding by the EliasFanoEncoder
-        ///  (including some space for its index) is at most about 5/6 of the size of the FixedBitSet,
-        ///  this is the same as comparing estimates of the number of bits accessed by a pair of FixedBitSets and
-        ///  by a pair of non indexed EliasFanoDocIdSets when determining the intersections of the pairs.
-        ///  <br>A bit set is preferred when <code>upperbound <= 256</code>.
-        ///  <br>It is assumed that <seealso cref="#DEFAULT_INDEX_INTERVAL"/> is used. </summary>
-        ///  <param name="numValues"> The number of document identifiers that is to be encoded. Should be non negative. </param>
-        ///  <param name="upperBound"> The maximum possible value for a document identifier. Should be at least <code>numValues</code>. </param>
+        /// Provide an indication that it is better to use an <see cref="EliasFanoEncoder"/> than a <see cref="FixedBitSet"/>
+        /// to encode document identifiers.
+        /// This indication is not precise and may change in the future.
+        /// <para/>An <see cref="EliasFanoEncoder"/> is favored when the size of the encoding by the <see cref="EliasFanoEncoder"/>
+        /// (including some space for its index) is at most about 5/6 of the size of the <see cref="FixedBitSet"/>,
+        /// this is the same as comparing estimates of the number of bits accessed by a pair of <see cref="FixedBitSet"/>s and
+        /// by a pair of non indexed <see cref="EliasFanoDocIdSet"/>s when determining the intersections of the pairs.
+        /// <para/>A bit set is preferred when <c>upperbound &lt;= 256</c>.
+        /// <para/>It is assumed that <see cref="DEFAULT_INDEX_INTERVAL"/> is used. 
+        /// </summary>
+        /// <param name="numValues"> The number of document identifiers that is to be encoded. Should be non negative. </param>
+        /// <param name="upperBound"> The maximum possible value for a document identifier. Should be at least <paramref name="numValues"/>. </param>
         public static bool SufficientlySmallerThanBitSet(long numValues, long upperBound)
         {
             /* When (upperBound / 6) == numValues,
@@ -310,8 +313,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Returns an <seealso cref="EliasFanoDecoder"/> to access the encoded values.
-        /// Perform all calls to <seealso cref="#encodeNext"/> before calling <seealso cref="#getDecoder"/>.
+        /// Returns an <see cref="EliasFanoDecoder"/> to access the encoded values.
+        /// Perform all calls to <see cref="EncodeNext(long)"/> before calling <see cref="GetDecoder()"/>.
         /// </summary>
         public virtual EliasFanoDecoder GetDecoder()
         {

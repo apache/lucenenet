@@ -29,13 +29,13 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// Operations:
     /// 
     /// <list type="bullet">
-    ///     <item>create for a field name and an indexreader.</item>
+    ///     <item><description>create for a field name and an indexreader.</description></item>
     /// 
-    ///     <item>add a weighted Term - this should add a corresponding SpanTermQuery, or increase the weight of an existing one.</item>
+    ///     <item><description>add a weighted Term - this should add a corresponding SpanTermQuery, or increase the weight of an existing one.</description></item>
     /// 
-    ///     <item>add a weighted subquery SpanNearQuery</item>
+    ///     <item><description>add a weighted subquery SpanNearQuery</description></item>
     /// 
-    ///     <item>create a clause for SpanNearQuery from the things added above.</item>
+    ///     <item><description>create a clause for SpanNearQuery from the things added above.</description></item>
     /// </list>
     /// <para/>
     /// For this, create an array of SpanQuery's from the added ones.

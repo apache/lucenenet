@@ -37,9 +37,9 @@ namespace Lucene.Net.Analysis.Ar
     /// <para/>
     /// The analysis package contains three primary components:
     /// <list type="bullet">
-    ///     <item><see cref="ArabicNormalizationFilter"/>: Arabic orthographic normalization.</item>
-    ///     <item><see cref="ArabicStemFilter"/>: Arabic light stemming</item>
-    ///     <item>Arabic stop words file: a set of default Arabic stop words.</item>
+    ///     <item><description><see cref="ArabicNormalizationFilter"/>: Arabic orthographic normalization.</description></item>
+    ///     <item><description><see cref="ArabicStemFilter"/>: Arabic light stemming</description></item>
+    ///     <item><description>Arabic stop words file: a set of default Arabic stop words.</description></item>
     /// </list>
     /// </summary>
     public sealed class ArabicAnalyzer : StopwordAnalyzerBase
@@ -127,10 +127,10 @@ namespace Lucene.Net.Analysis.Ar
         }
 
         /// <summary>
-        /// Creates <see cref="Analyzer.TokenStreamComponents"/>
+        /// Creates <see cref="TokenStreamComponents"/>
         /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        /// <returns> <see cref="TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
         ///         <see cref="ArabicNormalizationFilter"/>, <see cref="SetKeywordMarkerFilter"/>

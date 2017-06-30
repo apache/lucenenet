@@ -86,14 +86,14 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Score a candidate doc for all slop-valid position-combinations (matches)
         /// encountered while traversing/hopping the PhrasePositions.
-        /// <br> The score contribution of a match depends on the distance:
-        /// <br> - highest score for distance=0 (exact match).
-        /// <br> - score gets lower as distance gets higher.
-        /// <br>Example: for query "a b"~2, a document "x a b a y" can be scored twice:
+        /// <para/> The score contribution of a match depends on the distance:
+        /// <para/> - highest score for distance=0 (exact match).
+        /// <para/> - score gets lower as distance gets higher.
+        /// <para/>Example: for query "a b"~2, a document "x a b a y" can be scored twice:
         /// once for "a b" (distance=0), and once for "b a" (distance=2).
-        /// <br>Possibly not all valid combinations are encountered, because for efficiency
-        /// we always propagate the least PhrasePosition. this allows to base on
-        /// PriorityQueue and move forward faster.
+        /// <para/>Possibly not all valid combinations are encountered, because for efficiency
+        /// we always propagate the least PhrasePosition. This allows to base on
+        /// <see cref="Util.PriorityQueue{T}"/> and move forward faster.
         /// As result, for example, document "a b c b a"
         /// would score differently for queries "a b c"~4 and "c b a"~4, although
         /// they really are equivalent.
@@ -148,7 +148,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// advance a PhrasePosition and update 'end', return false if exhausted </summary>
+        /// Advance a PhrasePosition and update 'end', return false if exhausted </summary>
         private bool AdvancePP(PhrasePositions pp)
         {
             if (!pp.NextPosition())
@@ -213,7 +213,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// compare two pps, but only by position and offset </summary>
+        /// Compare two pps, but only by position and offset </summary>
         private PhrasePositions Lesser(PhrasePositions pp, PhrasePositions pp2)
         {
             if (pp.position < pp2.position || (pp.position == pp2.position && pp.offset < pp2.offset))
@@ -224,7 +224,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// index of a pp2 colliding with pp, or -1 if none </summary>
+        /// Index of a pp2 colliding with pp, or -1 if none </summary>
         private int Collide(PhrasePositions pp)
         {
             int tpPos = TpPos(pp);
@@ -241,19 +241,20 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Initialize PhrasePositions in place.
+        /// Initialize <see cref="PhrasePositions"/> in place.
         /// A one time initialization for this scorer (on first doc matching all terms):
-        /// <ul>
-        ///  <li>Check if there are repetitions
-        ///  <li>If there are, find groups of repetitions.
-        /// </ul>
+        /// <list type="bullet">
+        ///     <item><description>Check if there are repetitions</description></item>
+        ///     <item><description>If there are, find groups of repetitions.</description></item>
+        /// </list>
         /// Examples:
-        /// <ol>
-        ///  <li>no repetitions: <b>"ho my"~2</b>
-        ///  <li>repetitions: <b>"ho my my"~2</b>
-        ///  <li>repetitions: <b>"my ho my"~2</b>
-        /// </ol> </summary>
-        /// <returns> false if PPs are exhausted (and so current doc will not be a match)  </returns>
+        /// <list type="number">
+        ///     <item><description>no repetitions: <b>"ho my"~2</b></description></item>
+        ///     <item><description>>repetitions: <b>"ho my my"~2</b></description></item>
+        ///     <item><description>repetitions: <b>"my ho my"~2</b></description></item>
+        /// </list> 
+        /// </summary>
+        /// <returns> <c>false</c> if PPs are exhausted (and so current doc will not be a match)  </returns>
         private bool InitPhrasePositions()
         {
             end = int.MinValue;
@@ -270,7 +271,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// no repeats: simplest case, and most common. It is important to keep this piece of the code simple and efficient </summary>
+        /// No repeats: simplest case, and most common. It is important to keep this piece of the code simple and efficient </summary>
         private void InitSimple()
         {
             //System.err.println("initSimple: doc: "+min.doc);
@@ -288,7 +289,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// with repeats: not so simple. </summary>
+        /// With repeats: not so simple. </summary>
         private bool InitComplex()
         {
             //System.err.println("initComplex: doc: "+min.doc);
@@ -302,7 +303,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// move all PPs to their first position </summary>
+        /// Move all PPs to their first position </summary>
         private void PlaceFirstPositions()
         {
             for (PhrasePositions pp = min, prev = null; prev != max; pp = (prev = pp).next) // iterate cyclic list: done once handled max
@@ -312,7 +313,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Fill the queue (all pps are already placed </summary>
+        /// Fill the queue (all pps are already placed) </summary>
         private void FillQueue()
         {
             pq.Clear();
@@ -329,12 +330,13 @@ namespace Lucene.Net.Search
         /// <summary>
         /// At initialization (each doc), each repetition group is sorted by (query) offset.
         /// this provides the start condition: no collisions.
-        /// <p>Case 1: no multi-term repeats<br>
+        /// <para/>Case 1: no multi-term repeats
+        /// <para/>
         /// It is sufficient to advance each pp in the group by one less than its group index.
         /// So lesser pp is not advanced, 2nd one advance once, 3rd one advanced twice, etc.
-        /// <p>Case 2: multi-term repeats<br>
+        /// <para/>Case 2: multi-term repeats
         /// </summary>
-        /// <returns> false if PPs are exhausted.  </returns>
+        /// <returns> <c>false</c> if PPs are exhausted.  </returns>
         private bool AdvanceRepeatGroups()
         {
             foreach (PhrasePositions[] rg in rptGroups)
@@ -382,15 +384,23 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// initialize with checking for repeats. Heavy work, but done only for the first candidate doc.<p>
-        /// If there are repetitions, check if multi-term postings (MTP) are involved.<p>
-        /// Without MTP, once PPs are placed in the first candidate doc, repeats (and groups) are visible.<br>
-        /// With MTP, a more complex check is needed, up-front, as there may be "hidden collisions".<br>
+        /// Initialize with checking for repeats. Heavy work, but done only for the first candidate doc.
+        /// <para/>
+        /// If there are repetitions, check if multi-term postings (MTP) are involved.
+        /// <para/>
+        /// Without MTP, once PPs are placed in the first candidate doc, repeats (and groups) are visible.
+        /// <para/>
+        /// With MTP, a more complex check is needed, up-front, as there may be "hidden collisions".
+        /// <para/>
         /// For example P1 has {A,B}, P1 has {B,C}, and the first doc is: "A C B". At start, P1 would point
-        /// to "A", p2 to "C", and it will not be identified that P1 and P2 are repetitions of each other.<p>
-        /// The more complex initialization has two parts:<br>
-        /// (1) identification of repetition groups.<br>
-        /// (2) advancing repeat groups at the start of the doc.<br>
+        /// to "A", p2 to "C", and it will not be identified that P1 and P2 are repetitions of each other.
+        /// <para/>
+        /// The more complex initialization has two parts:
+        /// <para/>
+        /// (1) identification of repetition groups.
+        /// <para/>
+        /// (2) advancing repeat groups at the start of the doc.
+        /// <para/>
         /// For (1), a possible solution is to just create a single repetition group,
         /// made of all repeating pps. But this would slow down the check for collisions,
         /// as all pps would need to be checked. Instead, we compute "connected regions"
@@ -421,7 +431,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// sort each repetition group by (query) offset.
+        /// Sort each repetition group by (query) offset.
         /// Done only once (at first doc) and allows to initialize faster for each doc.
         /// </summary>
         private void SortRptGroups(IList<IList<PhrasePositions>> rgs)
@@ -459,7 +469,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Detect repetition groups. Done once - for first doc </summary>
+        /// Detect repetition groups. Done once - for first doc. </summary>
         private IList<IList<PhrasePositions>> GatherRptGroups(LinkedHashMap<Term, int?> rptTerms)
         {
             PhrasePositions[] rpp = RepeatingPPs(rptTerms);
@@ -538,7 +548,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// find repeating terms and assign them ordinal values </summary>
+        /// Find repeating terms and assign them ordinal values </summary>
         private LinkedHashMap<Term, int?> RepeatingTerms()
         {
             LinkedHashMap<Term, int?> tord = new LinkedHashMap<Term, int?>();
@@ -561,7 +571,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// find repeating pps, and for each, if has multi-terms, update this.hasMultiTermRpts </summary>
+        /// Find repeating pps, and for each, if has multi-terms, update this.hasMultiTermRpts </summary>
         private PhrasePositions[] RepeatingPPs(HashMap<Term, int?> rptTerms)
         {
             List<PhrasePositions> rp = new List<PhrasePositions>();
@@ -599,7 +609,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// union (term group) bit-sets until they are disjoint (O(n^^2)), and each group have different terms </summary>
+        /// Union (term group) bit-sets until they are disjoint (O(n^^2)), and each group have different terms </summary>
         private void UnionTermGroups(IList<FixedBitSet> bb)
         {
             int incr;
@@ -624,7 +634,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// map each term to the single group that contains it </summary>
+        /// Map each term to the single group that contains it </summary>
         private IDictionary<Term, int> TermGroups(LinkedHashMap<Term, int?> tord, IList<FixedBitSet> bb)
         {
             Dictionary<Term, int> tg = new Dictionary<Term, int>();

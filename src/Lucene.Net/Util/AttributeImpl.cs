@@ -25,7 +25,7 @@ namespace Lucene.Net.Util
 
     /// <summary> Base class for Attributes that can be added to a
     /// <see cref="Lucene.Net.Util.AttributeSource" />.
-    /// <p/>
+    /// <para/>
     /// Attributes are used to add data in a dynamic, yet type-safe way to a source
     /// of usually streamed objects, e. g. a <see cref="Lucene.Net.Analysis.TokenStream" />.
     /// </summary>
@@ -37,14 +37,14 @@ namespace Lucene.Net.Util
         , ICloneable
 #endif
     {
-        /// <summary> Clears the values in this Attribute and resets it to its
-        /// default value. If this implementation implements more than one Attribute interface
+        /// <summary> Clears the values in this <see cref="Attribute"/> and resets it to its
+        /// default value. If this implementation implements more than one <see cref="Attribute"/> interface
         /// it clears all.
         /// </summary>
         public abstract void Clear();
 
         /// <summary>
-        /// This is equivalent to the anonymous class in the java version of ReflectAsString
+        /// This is equivalent to the anonymous class in the Java version of ReflectAsString
         /// </summary>
         private class StringBuilderAttributeReflector : IAttributeReflector
         {
@@ -77,6 +77,15 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// This method returns the current attribute values as a string in the following format
+        /// by calling the <see cref="ReflectWith(IAttributeReflector)"/> method:
+        /// <list type="bullet">
+        ///     <item><term>if <paramref name="prependAttClass"/>=true:</term> <description> <c>"AttributeClass.Key=value,AttributeClass.Key=value"</c> </description></item>
+        ///     <item><term>if <paramref name="prependAttClass"/>=false:</term> <description> <c>"key=value,key=value"</c> </description></item>
+        /// </list>
+        /// </summary>
+        /// <seealso cref="ReflectWith(IAttributeReflector)"/>
         public string ReflectAsString(bool prependAttClass)
         {
             StringBuilder buffer = new StringBuilder();
@@ -86,6 +95,30 @@ namespace Lucene.Net.Util
             return buffer.ToString();
         }
 
+        /// <summary>
+        /// This method is for introspection of attributes, it should simply
+        /// add the key/values this attribute holds to the given <see cref="IAttributeReflector"/>.
+        /// 
+        /// <para/>The default implementation calls <see cref="IAttributeReflector.Reflect(Type, string, object)"/> for all
+        /// non-static fields from the implementing class, using the field name as key
+        /// and the field value as value. The <see cref="IAttribute"/> class is also determined by Reflection.
+        /// Please note that the default implementation can only handle single-Attribute
+        /// implementations.
+        /// 
+        /// <para/>Custom implementations look like this (e.g. for a combined attribute implementation):
+        /// <code>
+        ///     public void ReflectWith(IAttributeReflector reflector) 
+        ///     {
+        ///         reflector.Reflect(typeof(ICharTermAttribute), "term", GetTerm());
+        ///         reflector.Reflect(typeof(IPositionIncrementAttribute), "positionIncrement", GetPositionIncrement());
+        ///     }
+        /// </code>
+        /// 
+        /// <para/>If you implement this method, make sure that for each invocation, the same set of <see cref="IAttribute"/>
+        /// interfaces and keys are passed to <see cref="IAttributeReflector.Reflect(Type, string, object)"/> in the same order, but possibly
+        /// different values. So don't automatically exclude e.g. <c>null</c> properties!
+        /// </summary>
+        /// <seealso cref="ReflectAsString(bool)"/>
         public virtual void ReflectWith(IAttributeReflector reflector) // LUCENENET NOTE: This method was abstract in Lucene
         {
             Type clazz = this.GetType();
@@ -127,8 +160,9 @@ namespace Lucene.Net.Util
         /// fields of this object and prints the values in the following syntax:
         ///
         /// <code>
-        /// public String toString() {
-        /// return "start=" + startOffset + ",end=" + endOffset;
+        /// public String ToString() 
+        /// {
+        ///     return "start=" + startOffset + ",end=" + endOffset;
         /// }
         /// </code>
         ///
@@ -163,9 +197,9 @@ namespace Lucene.Net.Util
             return buffer.ToString();
         }
 
-        /// <summary> Copies the values from this Attribute into the passed-in
-        /// target attribute. The target implementation must support all the
-        /// Attributes this implementation supports.
+        /// <summary> Copies the values from this <see cref="Attribute"/> into the passed-in
+        /// <paramref name="target"/> attribute. The <paramref name="target"/> implementation must support all the
+        /// <see cref="IAttribute"/>s this implementation supports.
         /// </summary>
         public abstract void CopyTo(IAttribute target);
 

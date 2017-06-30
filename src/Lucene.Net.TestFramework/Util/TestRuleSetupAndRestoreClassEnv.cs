@@ -284,7 +284,7 @@ namespace Lucene.Net.Util
             }
         }
 
-        internal class ThreadNameFixingPrintStreamInfoStream : PrintStreamInfoStream
+        internal class ThreadNameFixingPrintStreamInfoStream : TextWriterInfoStream
         {
             public ThreadNameFixingPrintStreamInfoStream(TextWriter @out)
                 : base(@out)

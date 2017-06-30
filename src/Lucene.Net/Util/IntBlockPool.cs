@@ -23,9 +23,10 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// A pool for int blocks similar to <seealso cref="ByteBlockPool"/>.
+    /// A pool for <see cref="int"/> blocks similar to <see cref="ByteBlockPool"/>.
     /// <para/>
     /// NOTE: This was IntBlockPool in Lucene
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class Int32BlockPool
@@ -46,7 +47,7 @@ namespace Lucene.Net.Util
         public static readonly int INT32_BLOCK_MASK = INT32_BLOCK_SIZE - 1;
 
         /// <summary>
-        /// Abstract class for allocating and freeing int
+        /// Abstract class for allocating and freeing <see cref="int"/>
         /// blocks.
         /// </summary>
         public abstract class Allocator
@@ -73,11 +74,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A simple <seealso cref="Allocator"/> that never recycles. </summary>
+        /// A simple <see cref="Allocator"/> that never recycles. </summary>
         public sealed class DirectAllocator : Allocator
         {
             /// <summary>
-            /// Creates a new <seealso cref="DirectAllocator"/> with a default block size
+            /// Creates a new <see cref="DirectAllocator"/> with a default block size
             /// </summary>
             public DirectAllocator()
                 : base(INT32_BLOCK_SIZE)
@@ -93,7 +94,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// array of buffers currently used in the pool. Buffers are allocated if needed don't modify this outside of this class </summary>
+        /// Array of buffers currently used in the pool. Buffers are allocated if needed don't modify this outside of this class. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[][] Buffers
@@ -104,7 +105,7 @@ namespace Lucene.Net.Util
         private int[][] buffers = new int[10][];
 
         /// <summary>
-        /// index into the buffers array pointing to the current buffer used as the head </summary>
+        /// Index into the buffers array pointing to the current buffer used as the head. </summary>
         private int bufferUpto = -1;
 
         /// <summary>
@@ -115,7 +116,7 @@ namespace Lucene.Net.Util
         public int Int32Upto { get; set; }
 
         /// <summary>
-        /// Current head buffer </summary>
+        /// Current head buffer. </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
         public int[] Buffer
@@ -126,7 +127,7 @@ namespace Lucene.Net.Util
         private int[] buffer;
 
         /// <summary>
-        /// Current head offset 
+        /// Current head offset. 
         /// <para/>
         /// NOTE: This was intOffset in Lucene
         /// </summary>
@@ -135,16 +136,16 @@ namespace Lucene.Net.Util
         private readonly Allocator allocator;
 
         /// <summary>
-        /// Creates a new <seealso cref="Int32BlockPool"/> with a default <seealso cref="Allocator"/>. </summary>
-        /// <seealso cref= Int32BlockPool#nextBuffer() </seealso>
+        /// Creates a new <see cref="Int32BlockPool"/> with a default <see cref="Allocator"/>. </summary>
+        /// <seealso cref="Int32BlockPool.NextBuffer()"/>
         public Int32BlockPool()
             : this(new DirectAllocator())
         {
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="Int32BlockPool"/> with the given <seealso cref="Allocator"/>. </summary>
-        /// <seealso cref= Int32BlockPool#nextBuffer() </seealso>
+        /// Creates a new <see cref="Int32BlockPool"/> with the given <see cref="Allocator"/>. </summary>
+        /// <seealso cref="Int32BlockPool.NextBuffer()"/>
         public Int32BlockPool(Allocator allocator)
         {
             // set defaults
@@ -156,7 +157,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Resets the pool to its initial state reusing the first buffer. Calling
-        /// <seealso cref="Int32BlockPool#nextBuffer()"/> is not needed after reset.
+        /// <see cref="Int32BlockPool.NextBuffer()"/> is not needed after reset.
         /// </summary>
         public void Reset()
         {
@@ -165,12 +166,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Expert: Resets the pool to its initial state reusing the first buffer. </summary>
-        /// <param name="zeroFillBuffers"> if <code>true</code> the buffers are filled with <tt>0</tt>.
-        ///        this should be set to <code>true</code> if this pool is used with
-        ///        <seealso cref="SliceWriter"/>. </param>
-        /// <param name="reuseFirst"> if <code>true</code> the first buffer will be reused and calling
-        ///        <seealso cref="Int32BlockPool#nextBuffer()"/> is not needed after reset iff the
-        ///        block pool was used before ie. <seealso cref="Int32BlockPool#nextBuffer()"/> was called before. </param>
+        /// <param name="zeroFillBuffers"> If <c>true</c> the buffers are filled with <c>0</c>.
+        ///        this should be set to <c>true</c> if this pool is used with
+        ///        <see cref="SliceWriter"/>. </param>
+        /// <param name="reuseFirst"> If <c>true</c> the first buffer will be reused and calling
+        ///        <see cref="Int32BlockPool.NextBuffer()"/> is not needed after reset if the
+        ///        block pool was used before ie. <see cref="Int32BlockPool.NextBuffer()"/> was called before. </param>
         public void Reset(bool zeroFillBuffers, bool reuseFirst)
         {
             if (bufferUpto != -1)
@@ -214,9 +215,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Advances the pool to its next buffer. this method should be called once
+        /// Advances the pool to its next buffer. This method should be called once
         /// after the constructor to initialize the pool. In contrast to the
-        /// constructor a <seealso cref="Int32BlockPool#reset()"/> call will advance the pool to
+        /// constructor a <see cref="Int32BlockPool.Reset()"/> call will advance the pool to
         /// its first buffer immediately.
         /// </summary>
         public void NextBuffer()
@@ -235,8 +236,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new int slice with the given starting size and returns the slices offset in the pool. </summary>
-        /// <seealso cref= SliceReader </seealso>
+        /// Creates a new <see cref="int"/> slice with the given starting size and returns the slices offset in the pool. </summary>
+        /// <seealso cref="SliceReader"/>
         private int NewSlice(int size)
         {
             if (Int32Upto > INT32_BLOCK_SIZE - size)
@@ -264,23 +265,23 @@ namespace Lucene.Net.Util
         // no need to make this public unless we support different sizes
         // TODO make the levels and the sizes configurable
         /// <summary>
-        /// An array holding the offset into the <seealso cref="Int32BlockPool#LEVEL_SIZE_ARRAY"/>
+        /// An array holding the offset into the <see cref="Int32BlockPool.LEVEL_SIZE_ARRAY"/>
         /// to quickly navigate to the next slice level.
         /// </summary>
         private static readonly int[] NEXT_LEVEL_ARRAY = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 9 };
 
         /// <summary>
-        /// An array holding the level sizes for int slices.
+        /// An array holding the level sizes for <see cref="int"/> slices.
         /// </summary>
         private static readonly int[] LEVEL_SIZE_ARRAY = new int[] { 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024 };
 
         /// <summary>
-        /// The first level size for new slices
+        /// The first level size for new slices.
         /// </summary>
         private static readonly int FIRST_LEVEL_SIZE = LEVEL_SIZE_ARRAY[0];
 
         /// <summary>
-        /// Allocates a new slice from the given offset
+        /// Allocates a new slice from the given offset.
         /// </summary>
         private int AllocSlice(int[] slice, int sliceOffset)
         {
@@ -307,10 +308,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A <seealso cref="SliceWriter"/> that allows to write multiple integer slices into a given <seealso cref="Int32BlockPool"/>.
+        /// A <see cref="SliceWriter"/> that allows to write multiple integer slices into a given <see cref="Int32BlockPool"/>.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        ///  <seealso cref= SliceReader
-        ///  @lucene.internal </seealso>
+        /// <seealso cref="SliceReader"/> 
         public class SliceWriter
         {
             private int offset;
@@ -349,8 +351,8 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// starts a new slice and returns the start offset. The returned value
-            /// should be used as the start offset to initialize a <seealso cref="SliceReader"/>.
+            /// Starts a new slice and returns the start offset. The returned value
+            /// should be used as the start offset to initialize a <see cref="SliceReader"/>.
             /// </summary>
             public virtual int StartNewSlice()
             {
@@ -359,7 +361,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Returns the offset of the currently written slice. The returned value
-            /// should be used as the end offset to initialize a <seealso cref="SliceReader"/> once
+            /// should be used as the end offset to initialize a <see cref="SliceReader"/> once
             /// this slice is fully written or to reset the this writer if another slice
             /// needs to be written.
             /// </summary>
@@ -373,7 +375,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A <seealso cref="SliceReader"/> that can read int slices written by a <seealso cref="SliceWriter"/>
+        /// A <see cref="SliceReader"/> that can read <see cref="int"/> slices written by a <see cref="SliceWriter"/>.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public sealed class SliceReader
@@ -388,7 +391,7 @@ namespace Lucene.Net.Util
             private int end;
 
             /// <summary>
-            /// Creates a new <seealso cref="SliceReader"/> on the given pool
+            /// Creates a new <see cref="SliceReader"/> on the given pool.
             /// </summary>
             public SliceReader(Int32BlockPool pool)
             {
@@ -396,7 +399,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Resets the reader to a slice give the slices absolute start and end offset in the pool
+            /// Resets the reader to a slice give the slices absolute start and end offset in the pool.
             /// </summary>
             public void Reset(int startOffset, int endOffset)
             {
@@ -422,8 +425,8 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Returns <code>true</code> iff the current slice is fully read. If this
-            /// method returns <code>true</code> <seealso cref="SliceReader#readInt()"/> should not
+            /// Returns <c>true</c> if the current slice is fully read. If this
+            /// method returns <c>true</c> <seealso cref="SliceReader.ReadInt32()"/> should not
             /// be called again on this slice.
             /// </summary>
             public bool IsEndOfSlice
@@ -436,11 +439,11 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Reads the next int from the current slice and returns it. 
+            /// Reads the next <see cref="int"/> from the current slice and returns it. 
             /// <para/>
             /// NOTE: This was readInt() in Lucene
             /// </summary>
-            /// <seealso cref= SliceReader#endOfSlice() </seealso>
+            /// <seealso cref="SliceReader.IsEndOfSlice"/>
             public int ReadInt32()
             {
                 Debug.Assert(!IsEndOfSlice);

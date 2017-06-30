@@ -21,20 +21,20 @@ namespace Lucene.Net.Codecs.BlockTerms
      * limitations under the License.
      */
 
+    // TODO
+    //   - allow for non-regular index intervals?  eg with a
+    //     long string of rare terms, you don't need such
+    //     frequent indexing
+
     /// <summary>
-    /// TODO
-    ///   - allow for non-regular index intervals?  eg with a
-    ///     long string of rare terms, you don't need such
-    ///     frequent indexing
-    /// 
-    /// {@link BlockTermsReader} interacts with an instance of this class
+    /// <see cref="BlockTermsReader"/> interacts with an instance of this class
     /// to manage its terms index.  The writer must accept
-    /// indexed terms (many pairs of BytesRef text + long
+    /// indexed terms (many pairs of <see cref="BytesRef"/> text + long
     /// fileOffset), and then this reader must be able to
     /// retrieve the nearest index term to a provided term
     /// text. 
-    ///
-    ///  @lucene.experimental */
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
     public abstract class TermsIndexReaderBase : IDisposable
     {
@@ -54,7 +54,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         public abstract int Divisor { get; }
 
         /// <summary>
-        /// Similar to TermsEnum, except, the only "metadata" it
+        /// Similar to <see cref="TermsEnum"/>, except, the only "metadata" it
         /// reports for a given indexed term is the long fileOffset
         /// into the main terms dictionary file.
         /// </summary>
@@ -63,29 +63,29 @@ namespace Lucene.Net.Codecs.BlockTerms
             /// <summary> 
             /// Seeks to "largest" indexed term that's less than or equal
             /// to term; returns file pointer index (into the main
-            /// terms index file) for that term 
+            /// terms index file) for that term.
             /// </summary>
             public abstract long Seek(BytesRef term);
 
-            /// <summary>Returns -1 at end</summary>
+            /// <summary>Returns -1 at end/</summary>
             public abstract long Next();
 
             public abstract BytesRef Term { get; }
 
             /// <summary></summary>
-            /// <remarks>Only implemented if {@link TermsIndexReaderBase.supportsOrd()} 
-            /// returns true</remarks>
+            /// <remarks>Only implemented if <see cref="TermsIndexReaderBase.SupportsOrd"/>
+            /// returns <c>true</c></remarks>
             /// <returns></returns>
             public abstract long Seek(long ord);
 
             /// <summary></summary>
-            /// <remarks>Only implemented if {@link TermsIndexReaderBase.supportsOrd()} 
-            /// returns true</remarks>
+            /// <remarks>Only implemented if <see cref="TermsIndexReaderBase.SupportsOrd"/> 
+            /// returns <c>true</c></remarks>
             /// <returns></returns>
             public abstract long Ord { get; }
         }
 
-        /// <summary>Returns approximate RAM bytes used</summary>
+        /// <summary>Returns approximate RAM bytes used.</summary>
         public abstract long RamBytesUsed();
     }
 }

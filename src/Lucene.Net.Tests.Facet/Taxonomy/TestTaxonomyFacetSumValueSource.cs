@@ -197,7 +197,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual("dim=b path=[] value=50.0 childCount=2\n  bar2 (30.0)\n  bar1 (20.0)\n", results[1].ToString());
             Assert.AreEqual("dim=c path=[] value=30.0 childCount=1\n  baz1 (30.0)\n", results[2].ToString());
 
-            IOUtils.Close(searcher.IndexReader, taxoReader, dir, taxoDir);
+            IOUtils.Dispose(searcher.IndexReader, taxoReader, dir, taxoDir);
         }
 
         [Test]
@@ -258,7 +258,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 // expected
             }
 
-            IOUtils.Close(searcher.IndexReader, taxoReader, dir, taxoDir);
+            IOUtils.Dispose(searcher.IndexReader, taxoReader, dir, taxoDir);
         }
 
         [Test]
@@ -297,7 +297,7 @@ namespace Lucene.Net.Facet.Taxonomy
             int expected = (int)(td.MaxScore * td.TotalHits);
             Assert.AreEqual(expected, (int)facets.GetSpecificValue("dim", "a"));
 
-            IOUtils.Close(iw, taxoWriter, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(iw, taxoWriter, taxoReader, taxoDir, r, indexDir);
         }
 
         [Test]
@@ -325,7 +325,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Facets facets = new TaxonomyFacetSumValueSource(taxoReader, config, sfc, new Int64FieldSource("price"));
             Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
 
-            IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
         [Test]
@@ -359,7 +359,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
 
-            IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
         private class ValueSourceAnonymousInnerClassHelper : ValueSource
@@ -451,7 +451,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             Assert.AreEqual("dim=a path=[] value=10.0 childCount=2\n  1 (6.0)\n  0 (4.0)\n", facets.GetTopChildren(10, "a").ToString());
 
-            IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
         [Test]
@@ -485,7 +485,7 @@ namespace Lucene.Net.Facet.Taxonomy
 
             Assert.AreEqual(r.MaxDoc, (int)facets1.GetTopChildren(10, "a").Value);
             Assert.AreEqual(r.MaxDoc, (double)facets2.GetTopChildren(10, "b").Value, 1E-10);
-            IOUtils.Close(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
+            IOUtils.Dispose(taxoWriter, iw, taxoReader, taxoDir, r, indexDir);
         }
 
         [Test]
@@ -600,7 +600,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 AssertFloatValuesEquals(expected, actual);
             }
 
-            IOUtils.Close(w, tw, searcher.IndexReader, tr, indexDir, taxoDir);
+            IOUtils.Dispose(w, tw, searcher.IndexReader, tr, indexDir, taxoDir);
         }
     }
 

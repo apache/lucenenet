@@ -30,10 +30,10 @@ namespace Lucene.Net.Index
     /// <para/>
     /// Segments are traditionally flushed by:
     /// <list type="bullet">
-    ///     <item>RAM consumption - configured via
-    ///         <see cref="LiveIndexWriterConfig.RAMBufferSizeMB"/></item>
-    ///     <item>Number of RAM resident documents - configured via
-    ///         <see cref="LiveIndexWriterConfig.MaxBufferedDocs"/></item>
+    ///     <item><description>RAM consumption - configured via
+    ///         <see cref="LiveIndexWriterConfig.RAMBufferSizeMB"/></description></item>
+    ///     <item><description>Number of RAM resident documents - configured via
+    ///         <see cref="LiveIndexWriterConfig.MaxBufferedDocs"/></description></item>
     /// </list>
     /// The policy also applies pending delete operations (by term and/or query),
     /// given the threshold set in

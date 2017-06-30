@@ -23,26 +23,25 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// <summary>
     /// Codec that reads the pre-flex-indexing postings
-    ///  format.  It does not provide a writer because newly
-    ///  written segments should use the Codec configured on IndexWriter.
-    /// </summary>
-    /// @deprecated (4.0) this is only used to read indexes created
-    /// before 4.0.
+    /// format.  It does not provide a writer because newly
+    /// written segments should use the <see cref="Codec"/> configured on <see cref="Index.IndexWriter"/>.
+    /// <para/>
     /// @lucene.experimental
-    [Obsolete("(4.0) this is only used to read indexes created")]
+    /// </summary>
+    [Obsolete("(4.0) this is only used to read indexes created before 4.0.")]
     [PostingsFormatName("Lucene3x")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     internal class Lucene3xPostingsFormat : PostingsFormat
     {
         /// <summary>
-        /// Extension of terms file </summary>
+        /// Extension of terms file. </summary>
         public const string TERMS_EXTENSION = "tis";
 
         /// <summary>
-        /// Extension of terms index file </summary>
+        /// Extension of terms index file. </summary>
         public const string TERMS_INDEX_EXTENSION = "tii";
 
         /// <summary>
-        /// Extension of freq postings file </summary>
+        /// Extension of freq postings file. </summary>
         public const string FREQ_EXTENSION = "frq";
 
         /// <summary>

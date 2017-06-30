@@ -24,7 +24,7 @@ namespace Lucene.Net.Analysis
     /// <summary>
     /// A <see cref="Tokenizer"/> is a <see cref="TokenStream"/> whose input is a <see cref="TextReader"/>.
     /// <para/>
-    /// This is an abstract class; subclasses must override <seealso cref="#IncrementToken()"/>
+    /// This is an abstract class; subclasses must override <see cref="TokenStream.IncrementToken()"/>
     /// <para/>
     /// NOTE: Subclasses overriding <see cref="TokenStream.IncrementToken()"/> must
     /// call <see cref="Util.AttributeSource.ClearAttributes()"/> before

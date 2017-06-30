@@ -24,32 +24,34 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Expert: Calculate query weights and build query scorers.
-    /// <p>
-    /// The purpose of <seealso cref="Weight"/> is to ensure searching does not modify a
-    /// <seealso cref="Query"/>, so that a <seealso cref="Query"/> instance can be reused. <br>
-    /// <seealso cref="IndexSearcher"/> dependent state of the query should reside in the
-    /// <seealso cref="Weight"/>. <br>
-    /// <seealso cref="AtomicReader"/> dependent state should reside in the <seealso cref="Scorer"/>.
-    /// <p>
-    /// Since <seealso cref="Weight"/> creates <seealso cref="Scorer"/> instances for a given
-    /// <seealso cref="AtomicReaderContext"/> (<seealso cref="#scorer(AtomicReaderContext, Bits)"/>)
+    /// <para/>
+    /// The purpose of <see cref="Weight"/> is to ensure searching does not modify a
+    /// <see cref="Search.Query"/>, so that a <see cref="Search.Query"/> instance can be reused.
+    /// <para/>
+    /// <see cref="IndexSearcher"/> dependent state of the query should reside in the
+    /// <see cref="Weight"/>.
+    /// <para/>
+    /// <see cref="Index.AtomicReader"/> dependent state should reside in the <see cref="Scorer"/>.
+    /// <para/>
+    /// Since <see cref="Weight"/> creates <see cref="Scorer"/> instances for a given
+    /// <see cref="AtomicReaderContext"/> (<see cref="GetScorer(AtomicReaderContext, IBits)"/>)
     /// callers must maintain the relationship between the searcher's top-level
-    /// <seealso cref="IndexReaderContext"/> and the context used to create a <seealso cref="Scorer"/>.
-    /// <p>
-    /// A <code>Weight</code> is used in the following way:
-    /// <ol>
-    /// <li>A <code>Weight</code> is constructed by a top-level query, given a
-    /// <code>IndexSearcher</code> (<seealso cref="Query#createWeight(IndexSearcher)"/>).
-    /// <li>The <seealso cref="#getValueForNormalization()"/> method is called on the
-    /// <code>Weight</code> to compute the query normalization factor
-    /// <seealso cref="Similarity#queryNorm(float)"/> of the query clauses contained in the
-    /// query.
-    /// <li>The query normalization factor is passed to <seealso cref="#normalize(float, float)"/>. At
-    /// this point the weighting is complete.
-    /// <li>A <code>Scorer</code> is constructed by
-    /// <seealso cref="#scorer(AtomicReaderContext, Bits)"/>.
-    /// </ol>
-    ///
+    /// <see cref="Index.IndexReaderContext"/> and the context used to create a <see cref="Scorer"/>.
+    /// <para/>
+    /// A <see cref="Weight"/> is used in the following way:
+    /// <list type="number">
+    ///     <item><description>A <see cref="Weight"/> is constructed by a top-level query, given a
+    ///         <see cref="IndexSearcher"/> (<see cref="Query.CreateWeight(IndexSearcher)"/>).</description></item>
+    ///     <item><description>The <see cref="GetValueForNormalization()"/> method is called on the
+    ///         <see cref="Weight"/> to compute the query normalization factor
+    ///         <see cref="Similarities.Similarity.QueryNorm(float)"/> of the query clauses contained in the
+    ///         query.</description></item>
+    ///     <item><description>The query normalization factor is passed to <see cref="Normalize(float, float)"/>. At
+    ///         this point the weighting is complete.</description></item>
+    ///     <item><description>A <see cref="Scorer"/> is constructed by
+    ///         <see cref="GetScorer(AtomicReaderContext, IBits)"/>.</description></item>
+    /// </list>
+    /// <para/>
     /// @since 2.9
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -60,10 +62,10 @@ namespace Lucene.Net.Search
         /// <summary>
         /// An explanation of the score computation for the named document.
         /// </summary>
-        /// <param name="context"> the readers context to create the <seealso cref="Explanation"/> for. </param>
-        /// <param name="doc"> the document's id relative to the given context's reader </param>
-        /// <returns> an Explanation for the score </returns>
-        /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
+        /// <param name="context"> The readers context to create the <see cref="Explanation"/> for. </param>
+        /// <param name="doc"> The document's id relative to the given context's reader </param>
+        /// <returns> An <see cref="Explanation"/> for the score </returns>
+        /// <exception cref="System.IO.IOException"> if an <see cref="System.IO.IOException"/> occurs </exception>
         public abstract Explanation Explain(AtomicReaderContext context, int doc);
 
         /// <summary>
@@ -79,53 +81,54 @@ namespace Lucene.Net.Search
         public abstract void Normalize(float norm, float topLevelBoost);
 
         /// <summary>
-        /// Returns a <seealso cref="Scorer"/> which scores documents in/out-of order according
-        /// to <code>scoreDocsInOrder</code>.
-        /// <p>
-        /// <b>NOTE:</b> even if <code>scoreDocsInOrder</code> is false, it is
-        /// recommended to check whether the returned <code>Scorer</code> indeed scores
-        /// documents out of order (i.e., call <seealso cref="#scoresDocsOutOfOrder()"/>), as
-        /// some <code>Scorer</code> implementations will always return documents
-        /// in-order.<br>
-        /// <b>NOTE:</b> null can be returned if no documents will be scored by this
+        /// Returns a <see cref="Scorer"/> which scores documents in/out-of order according
+        /// to <c>scoreDocsInOrder</c>.
+        /// <para/>
+        /// <b>NOTE:</b> even if <c>scoreDocsInOrder</c> is <c>false</c>, it is
+        /// recommended to check whether the returned <see cref="Scorer"/> indeed scores
+        /// documents out of order (i.e., call <see cref="ScoresDocsOutOfOrder"/>), as
+        /// some <see cref="Scorer"/> implementations will always return documents
+        /// in-order.
+        /// <para/>
+        /// <b>NOTE:</b> <c>null</c> can be returned if no documents will be scored by this
         /// query.
         /// </summary>
         /// <param name="context">
-        ///          the <seealso cref="AtomicReaderContext"/> for which to return the <seealso cref="Scorer"/>. </param>
+        ///          The <see cref="AtomicReaderContext"/> for which to return the <see cref="Scorer"/>. </param>
         /// <param name="acceptDocs">
-        ///          Bits that represent the allowable docs to match (typically deleted docs
+        ///          <see cref="IBits"/> that represent the allowable docs to match (typically deleted docs
         ///          but possibly filtering other documents)
         /// </param>
-        /// <returns> a <seealso cref="Scorer"/> which scores documents in/out-of order. </returns>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <returns> A <see cref="Scorer"/> which scores documents in/out-of order. </returns>
+        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
         public abstract Scorer GetScorer(AtomicReaderContext context, IBits acceptDocs);
 
         /// <summary>
-        /// Optional method, to return a <seealso cref="BulkScorer"/> to
-        /// score the query and send hits to a <seealso cref="ICollector"/>.
+        /// Optional method, to return a <see cref="BulkScorer"/> to
+        /// score the query and send hits to a <see cref="ICollector"/>.
         /// Only queries that have a different top-level approach
         /// need to override this; the default implementation
-        /// pulls a normal <seealso cref="Scorer"/> and iterates and
+        /// pulls a normal <see cref="Scorer"/> and iterates and
         /// collects the resulting hits.
         /// </summary>
         /// <param name="context">
-        ///          the <seealso cref="AtomicReaderContext"/> for which to return the <seealso cref="Scorer"/>. </param>
+        ///          The <see cref="AtomicReaderContext"/> for which to return the <see cref="Scorer"/>. </param>
         /// <param name="scoreDocsInOrder">
-        ///          specifies whether in-order scoring of documents is required. Note
-        ///          that if set to false (i.e., out-of-order scoring is required),
+        ///          Specifies whether in-order scoring of documents is required. Note
+        ///          that if set to <c>false</c> (i.e., out-of-order scoring is required),
         ///          this method can return whatever scoring mode it supports, as every
         ///          in-order scorer is also an out-of-order one. However, an
-        ///          out-of-order scorer may not support <seealso cref="Scorer#nextDoc()"/>
-        ///          and/or <seealso cref="Scorer#advance(int)"/>, therefore it is recommended to
+        ///          out-of-order scorer may not support <see cref="DocIdSetIterator.NextDoc()"/>
+        ///          and/or <see cref="DocIdSetIterator.Advance(int)"/>, therefore it is recommended to
         ///          request an in-order scorer if use of these
         ///          methods is required. </param>
         /// <param name="acceptDocs">
-        ///          Bits that represent the allowable docs to match (typically deleted docs
+        ///          <see cref="IBits"/> that represent the allowable docs to match (typically deleted docs
         ///          but possibly filtering other documents)
         /// </param>
-        /// <returns> a <seealso cref="BulkScorer"/> which scores documents and
+        /// <returns> A <see cref="BulkScorer"/> which scores documents and
         /// passes them to a collector. </returns>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
         public virtual BulkScorer GetBulkScorer(AtomicReaderContext context, bool scoreDocsInOrder, IBits acceptDocs)
         {
             Scorer scorer = GetScorer(context, acceptDocs);
@@ -141,7 +144,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Just wraps a Scorer and performs top scoring using it. </summary>
+        /// Just wraps a <see cref="Scorer"/> and performs top scoring using it. </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -204,15 +207,15 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true iff this implementation scores docs only out of order. this
-        /// method is used in conjunction with <seealso cref="ICollector"/>'s
-        /// <seealso cref="ICollector#acceptsDocsOutOfOrder() acceptsDocsOutOfOrder"/> and
-        /// <seealso cref="#bulkScorer(AtomicReaderContext, boolean, Bits)"/> to
-        /// create a matching <seealso cref="Scorer"/> instance for a given <seealso cref="ICollector"/>, or
+        /// Returns true if this implementation scores docs only out of order. This
+        /// method is used in conjunction with <see cref="ICollector"/>'s
+        /// <see cref="ICollector.AcceptsDocsOutOfOrder"/> and
+        /// <see cref="GetBulkScorer(AtomicReaderContext, bool, IBits)"/> to
+        /// create a matching <see cref="Scorer"/> instance for a given <see cref="ICollector"/>, or
         /// vice versa.
-        /// <p>
-        /// <b>NOTE:</b> the default implementation returns <code>false</code>, i.e.
-        /// the <code>Scorer</code> scores documents in-order.
+        /// <para/>
+        /// <b>NOTE:</b> the default implementation returns <c>false</c>, i.e.
+        /// the <see cref="Scorer"/> scores documents in-order.
         /// </summary>
         public virtual bool ScoresDocsOutOfOrder
         {

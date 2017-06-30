@@ -134,7 +134,7 @@ namespace Lucene.Net.Codecs.MockIntBlock
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(output);
+                        IOUtils.DisposeWhileHandlingException(output);
                     }
                 }
             }

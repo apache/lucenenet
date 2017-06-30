@@ -20,8 +20,8 @@ namespace Lucene.Net.Codecs.Pulsing
      */
 
     /// <summary>
-    /// Concrete pulsing implementation over {@link Lucene41PostingsFormat}.
-    /// 
+    /// Concrete pulsing implementation over <see cref="Lucene41PostingsFormat"/>.
+    /// <para/>
     /// @lucene.experimental 
     /// </summary>
     [PostingsFormatName("Pulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
@@ -33,13 +33,13 @@ namespace Lucene.Net.Codecs.Pulsing
         {
         }
 
-        /// <summary>Inlines docFreq=<code>freqCutoff</code> terms, otherwise uses the normal "Lucene41" format.</summary>
+        /// <summary>Inlines docFreq=<paramref name="freqCutoff"/> terms, otherwise uses the normal "Lucene41" format.</summary>
         public Pulsing41PostingsFormat(int freqCutoff) 
             : this(freqCutoff, BlockTreeTermsWriter.DEFAULT_MIN_BLOCK_SIZE, BlockTreeTermsWriter.DEFAULT_MAX_BLOCK_SIZE)
         {
         }
 
-        /// <summary>Inlines docFreq=<code>freqCutoff</code> terms, otherwise uses the normal "Lucene41" format.</summary>
+        /// <summary>Inlines docFreq=<paramref name="freqCutoff"/> terms, otherwise uses the normal "Lucene41" format.</summary>
         public Pulsing41PostingsFormat(int freqCutoff, int minBlockSize, int maxBlockSize) 
             : base(new Lucene41PostingsBaseFormat(), freqCutoff, minBlockSize, maxBlockSize)
         {

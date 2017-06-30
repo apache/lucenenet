@@ -27,12 +27,12 @@ namespace Lucene.Net.Analysis.NGram
     /// </para>
     /// <para>As of Lucene 4.4, this tokenizer
     /// <list type="bullet">
-    ///     <item>can handle <code>maxGram</code> larger than 1024 chars, but beware that this will result in increased memory usage</item>
-    ///     <item>doesn't trim the input,</item>
-    ///     <item>sets position increments equal to 1 instead of 1 for the first token and 0 for all other ones</item>
-    ///     <item>doesn't support backward n-grams anymore.</item>
-    ///     <item>supports <see cref="Util.CharTokenizer.IsTokenChar(int)"/> pre-tokenization,</item>
-    ///     <item>correctly handles supplementary characters.</item>
+    ///     <item><description>can handle <code>maxGram</code> larger than 1024 chars, but beware that this will result in increased memory usage</description></item>
+    ///     <item><description>doesn't trim the input,</description></item>
+    ///     <item><description>sets position increments equal to 1 instead of 1 for the first token and 0 for all other ones</description></item>
+    ///     <item><description>doesn't support backward n-grams anymore.</description></item>
+    ///     <item><description>supports <see cref="Util.CharTokenizer.IsTokenChar(int)"/> pre-tokenization,</description></item>
+    ///     <item><description>correctly handles supplementary characters.</description></item>
     /// </list>
     /// </para>
     /// <para>Although <b style="color:red">highly</b> discouraged, it is still possible

@@ -21,27 +21,25 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Provides support for converting byte sequences to Strings and back again.
-    /// The resulting Strings preserve the original byte sequences' sort order.
-    /// <p/>
-    /// The Strings are constructed using a Base 8000h encoding of the original
-    /// binary data - each char of an encoded String represents a 15-bit chunk
+    /// Provides support for converting byte sequences to <see cref="string"/>s and back again.
+    /// The resulting <see cref="string"/>s preserve the original byte sequences' sort order.
+    /// <para/>
+    /// The <see cref="string"/>s are constructed using a Base 8000h encoding of the original
+    /// binary data - each char of an encoded <see cref="string"/> represents a 15-bit chunk
     /// from the byte sequence.  Base 8000h was chosen because it allows for all
     /// lower 15 bits of char to be used without restriction; the surrogate range
     /// [U+D8000-U+DFFF] does not represent valid chars, and would require
     /// complicated handling to avoid them and allow use of char's high bit.
-    /// <p/>
+    /// <para/>
     /// Although unset bits are used as padding in the final char, the original
     /// byte sequence could contain trailing bytes with no set bits (null bytes):
     /// padding is indistinguishable from valid information.  To overcome this
     /// problem, a char is appended, indicating the number of encoded bytes in the
     /// final content char.
-    /// <p/>
-    ///
-    /// @lucene.experimental </summary>
-    /// @deprecated Implement <seealso cref="ITermToBytesRefAttribute"/> and store bytes directly
-    /// instead. this class will be removed in Lucene 5.0
-    [Obsolete("Implement ITermToBytesRefAttribute and store bytes directly")]
+    /// <para/>
+    /// @lucene.experimental 
+    /// </summary>
+    [Obsolete("Implement Analysis.TokenAttributes.ITermToBytesRefAttribute and store bytes directly instead. this class will be removed in Lucene 5.0")]
     public sealed class IndexableBinaryStringTools
     {
         private static readonly CodingCase[] CODING_CASES = new CodingCase[] {
@@ -63,12 +61,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the number of chars required to encode the given bytes.
+        /// Returns the number of chars required to encode the given <see cref="byte"/>s.
         /// </summary>
-        /// <param name="inputArray"> byte sequence to be encoded </param>
-        /// <param name="inputOffset"> initial offset into inputArray </param>
-        /// <param name="inputLength"> number of bytes in inputArray </param>
-        /// <returns> The number of chars required to encode the number of bytes. </returns>
+        /// <param name="inputArray"> Byte sequence to be encoded </param>
+        /// <param name="inputOffset"> Initial offset into <paramref name="inputArray"/> </param>
+        /// <param name="inputLength"> Number of bytes in <paramref name="inputArray"/> </param>
+        /// <returns> The number of chars required to encode the number of <see cref="byte"/>s. </returns>
         // LUCENENET specific overload for CLS compliance
         public static int GetEncodedLength(byte[] inputArray, int inputOffset, int inputLength)
         {
@@ -77,12 +75,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the number of chars required to encode the given sbytes.
+        /// Returns the number of chars required to encode the given <see cref="sbyte"/>s.
         /// </summary>
-        /// <param name="inputArray"> sbyte sequence to be encoded </param>
-        /// <param name="inputOffset"> initial offset into inputArray </param>
-        /// <param name="inputLength"> number of sbytes in inputArray </param>
-        /// <returns> The number of chars required to encode the number of sbytes. </returns>
+        /// <param name="inputArray"> <see cref="sbyte"/> sequence to be encoded </param>
+        /// <param name="inputOffset"> Initial offset into <paramref name="inputArray"/> </param>
+        /// <param name="inputLength"> Number of sbytes in <paramref name="inputArray"/> </param>
+        /// <returns> The number of chars required to encode the number of <see cref="sbyte"/>s. </returns>
         [CLSCompliant(false)]
         public static int GetEncodedLength(sbyte[] inputArray, int inputOffset, int inputLength)
         {
@@ -91,12 +89,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the number of bytes required to decode the given char sequence.
+        /// Returns the number of <see cref="byte"/>s required to decode the given char sequence.
         /// </summary>
-        /// <param name="encoded"> char sequence to be decoded </param>
-        /// <param name="offset"> initial offset </param>
-        /// <param name="length"> number of characters </param>
-        /// <returns> The number of bytes required to decode the given char sequence </returns>
+        /// <param name="encoded"> Char sequence to be decoded </param>
+        /// <param name="offset"> Initial offset </param>
+        /// <param name="length"> Number of characters </param>
+        /// <returns> The number of <see cref="byte"/>s required to decode the given char sequence </returns>
         public static int GetDecodedLength(char[] encoded, int offset, int length)
         {
             int numChars = length - 1;
@@ -114,16 +112,16 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Encodes the input sbyte sequence into the output char sequence.  Before
+        /// Encodes the input <see cref="byte"/> sequence into the output char sequence.  Before
         /// calling this method, ensure that the output array has sufficient
-        /// capacity by calling <seealso cref="#getEncodedLength(byte[], int, int)"/>.
+        /// capacity by calling <see cref="GetEncodedLength(byte[], int, int)"/>.
         /// </summary>
-        /// <param name="inputArray"> sbyte sequence to be encoded </param>
-        /// <param name="inputOffset"> initial offset into inputArray </param>
-        /// <param name="inputLength"> number of bytes in inputArray </param>
-        /// <param name="outputArray"> char sequence to store encoded result </param>
-        /// <param name="outputOffset"> initial offset into outputArray </param>
-        /// <param name="outputLength"> length of output, must be getEncodedLength </param>
+        /// <param name="inputArray"> <see cref="byte"/> sequence to be encoded </param>
+        /// <param name="inputOffset"> Initial offset into <paramref name="inputArray"/> </param>
+        /// <param name="inputLength"> Number of bytes in <paramref name="inputArray"/> </param>
+        /// <param name="outputArray"> <see cref="char"/> sequence to store encoded result </param>
+        /// <param name="outputOffset"> Initial offset into outputArray </param>
+        /// <param name="outputLength"> Length of output, must be GetEncodedLength(inputArray, inputOffset, inputLength) </param>
         // LUCENENET specific overload for CLS compliance
         public static void Encode(byte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
         {
@@ -131,16 +129,16 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Encodes the input sbyte sequence into the output char sequence.  Before
+        /// Encodes the input <see cref="sbyte"/> sequence into the output char sequence.  Before
         /// calling this method, ensure that the output array has sufficient
-        /// capacity by calling <seealso cref="#getEncodedLength(byte[], int, int)"/>.
+        /// capacity by calling <see cref="GetEncodedLength(sbyte[], int, int)"/>.
         /// </summary>
-        /// <param name="inputArray"> sbyte sequence to be encoded </param>
-        /// <param name="inputOffset"> initial offset into inputArray </param>
-        /// <param name="inputLength"> number of bytes in inputArray </param>
-        /// <param name="outputArray"> char sequence to store encoded result </param>
-        /// <param name="outputOffset"> initial offset into outputArray </param>
-        /// <param name="outputLength"> length of output, must be getEncodedLength </param>
+        /// <param name="inputArray"> <see cref="sbyte"/> sequence to be encoded </param>
+        /// <param name="inputOffset"> Initial offset into <paramref name="inputArray"/> </param>
+        /// <param name="inputLength"> Number of bytes in <paramref name="inputArray"/> </param>
+        /// <param name="outputArray"> <see cref="char"/> sequence to store encoded result </param>
+        /// <param name="outputOffset"> Initial offset into outputArray </param>
+        /// <param name="outputLength"> Length of output, must be getEncodedLength </param>
         [CLSCompliant(false)]
         public static void Encode(sbyte[] inputArray, int inputOffset, int inputLength, char[] outputArray, int outputOffset, int outputLength)
         {
@@ -192,17 +190,17 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Decodes the input char sequence into the output byte sequence. Before
+        /// Decodes the input <see cref="char"/> sequence into the output <see cref="byte"/> sequence. Before
         /// calling this method, ensure that the output array has sufficient capacity
-        /// by calling <seealso cref="#getDecodedLength(char[], int, int)"/>.
+        /// by calling <see cref="GetDecodedLength(char[], int, int)"/>.
         /// </summary>
-        /// <param name="inputArray"> char sequence to be decoded </param>
-        /// <param name="inputOffset"> initial offset into inputArray </param>
-        /// <param name="inputLength"> number of chars in inputArray </param>
-        /// <param name="outputArray"> byte sequence to store encoded result </param>
-        /// <param name="outputOffset"> initial offset into outputArray </param>
-        /// <param name="outputLength"> length of output, must be
-        ///        getDecodedLength(inputArray, inputOffset, inputLength) </param>
+        /// <param name="inputArray"> <see cref="char"/> sequence to be decoded </param>
+        /// <param name="inputOffset"> Initial offset into <paramref name="inputArray"/> </param>
+        /// <param name="inputLength"> Number of chars in <paramref name="inputArray"/> </param>
+        /// <param name="outputArray"> <see cref="byte"/> sequence to store encoded result </param>
+        /// <param name="outputOffset"> Initial offset into outputArray </param>
+        /// <param name="outputLength"> Length of output, must be
+        ///        GetDecodedLength(inputArray, inputOffset, inputLength) </param>
         // LUCENENET specific overload for CLS compliance
         public static void Decode(char[] inputArray, int inputOffset, int inputLength, byte[] outputArray, int outputOffset, int outputLength)
         {
@@ -212,15 +210,15 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Decodes the input char sequence into the output sbyte sequence. Before
         /// calling this method, ensure that the output array has sufficient capacity
-        /// by calling <seealso cref="#getDecodedLength(char[], int, int)"/>.
+        /// by calling <see cref="GetDecodedLength(char[], int, int)"/>.
         /// </summary>
-        /// <param name="inputArray"> char sequence to be decoded </param>
-        /// <param name="inputOffset"> initial offset into inputArray </param>
-        /// <param name="inputLength"> number of chars in inputArray </param>
-        /// <param name="outputArray"> byte sequence to store encoded result </param>
-        /// <param name="outputOffset"> initial offset into outputArray </param>
-        /// <param name="outputLength"> length of output, must be
-        ///        getDecodedLength(inputArray, inputOffset, inputLength) </param>
+        /// <param name="inputArray"> <see cref="char"/> sequence to be decoded </param>
+        /// <param name="inputOffset"> Initial offset into <paramref name="inputArray"/> </param>
+        /// <param name="inputLength"> Number of chars in <paramref name="inputArray"/> </param>
+        /// <param name="outputArray"> <see cref="byte"/> sequence to store encoded result </param>
+        /// <param name="outputOffset"> Initial offset into outputArray </param>
+        /// <param name="outputLength"> Length of output, must be
+        ///        GetDecodedLength(inputArray, inputOffset, inputLength) </param>
         [CLSCompliant(false)]
         public static void Decode(char[] inputArray, int inputOffset, int inputLength, sbyte[] outputArray, int outputOffset, int outputLength)
         {

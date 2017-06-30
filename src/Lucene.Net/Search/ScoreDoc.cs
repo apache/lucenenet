@@ -20,7 +20,7 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Holds one hit in <seealso cref="TopDocs"/>. </summary>
+    /// Holds one hit in <see cref="TopDocs"/>. </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -32,22 +32,22 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// A hit document's number. </summary>
-        /// <seealso cref= IndexSearcher#doc(int)  </seealso>
+        /// <seealso cref="IndexSearcher.Doc(int)"/>
         public int Doc { get; set; } // LUCENENET NOTE: For some reason, this was not readonly - should it be?
 
         /// <summary>
-        /// Only set by <seealso cref="TopDocs#merge"/> </summary>
+        /// Only set by <see cref="TopDocs.Merge(Sort, int, int, TopDocs[])"/> </summary>
         public int ShardIndex { get; set; } // LUCENENET NOTE: For some reason, this was not readonly - should it be?
 
         /// <summary>
-        /// Constructs a ScoreDoc. </summary>
+        /// Constructs a <see cref="ScoreDoc"/>. </summary>
         public ScoreDoc(int doc, float score)
             : this(doc, score, -1)
         {
         }
 
         /// <summary>
-        /// Constructs a ScoreDoc. </summary>
+        /// Constructs a <see cref="ScoreDoc"/>. </summary>
         public ScoreDoc(int doc, float score, int shardIndex)
         {
             this.Doc = doc;
@@ -55,7 +55,9 @@ namespace Lucene.Net.Search
             this.ShardIndex = shardIndex;
         }
 
-        // A convenience method for debugging.
+        /// <summary>
+        /// A convenience method for debugging.
+        /// </summary>
         public override string ToString()
         {
             return "doc=" + Doc + " score=" + Score + " shardIndex=" + ShardIndex;

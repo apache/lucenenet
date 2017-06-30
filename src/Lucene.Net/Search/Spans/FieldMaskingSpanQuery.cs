@@ -30,20 +30,20 @@ namespace Lucene.Net.Search.Spans
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// <p>Wrapper to allow <seealso cref="SpanQuery"/> objects participate in composite
+    /// <para>Wrapper to allow <see cref="SpanQuery"/> objects participate in composite
     /// single-field SpanQueries by 'lying' about their search field. That is,
-    /// the masked SpanQuery will function as normal,
-    /// but <seealso cref="SpanQuery#getField()"/> simply hands back the value supplied
-    /// in this class's constructor.</p>
+    /// the masked <see cref="SpanQuery"/> will function as normal,
+    /// but <see cref="SpanQuery.Field"/> simply hands back the value supplied
+    /// in this class's constructor.</para>
     ///
-    /// <p>this can be used to support Queries like <seealso cref="SpanNearQuery"/> or
-    /// <seealso cref="SpanOrQuery"/> across different fields, which is not ordinarily
-    /// permitted.</p>
+    /// <para>This can be used to support Queries like <see cref="SpanNearQuery"/> or
+    /// <see cref="SpanOrQuery"/> across different fields, which is not ordinarily
+    /// permitted.</para>
     ///
-    /// <p>this can be useful for denormalized relational data: for example, when
-    /// indexing a document with conceptually many 'children': </p>
+    /// <para>This can be useful for denormalized relational data: for example, when
+    /// indexing a document with conceptually many 'children': </para>
     ///
-    /// <pre>
+    /// <code>
     ///  teacherid: 1
     ///  studentfirstname: james
     ///  studentsurname: jones
@@ -53,24 +53,24 @@ namespace Lucene.Net.Search.Spans
     ///  studentsurname: smith
     ///  studentfirstname: sally
     ///  studentsurname: jones
-    /// </pre>
+    /// </code>
     ///
-    /// <p>a SpanNearQuery with a slop of 0 can be applied across two
-    /// <seealso cref="SpanTermQuery"/> objects as follows:
-    /// <pre class="prettyprint">
-    ///    SpanQuery q1  = new SpanTermQuery(new Term("studentfirstname", "james"));
-    ///    SpanQuery q2  = new SpanTermQuery(new Term("studentsurname", "jones"));
-    ///    SpanQuery q2m = new FieldMaskingSpanQuery(q2, "studentfirstname");
-    ///    Query q = new SpanNearQuery(new SpanQuery[]{q1, q2m}, -1, false);
-    /// </pre>
+    /// <para>A <see cref="SpanNearQuery"/> with a slop of 0 can be applied across two
+    /// <see cref="SpanTermQuery"/> objects as follows:
+    /// <code>
+    ///     SpanQuery q1  = new SpanTermQuery(new Term("studentfirstname", "james"));
+    ///     SpanQuery q2  = new SpanTermQuery(new Term("studentsurname", "jones"));
+    ///     SpanQuery q2m = new FieldMaskingSpanQuery(q2, "studentfirstname");
+    ///     Query q = new SpanNearQuery(new SpanQuery[] { q1, q2m }, -1, false);
+    /// </code>
     /// to search for 'studentfirstname:james studentsurname:jones' and find
     /// teacherid 1 without matching teacherid 2 (which has a 'james' in position 0
-    /// and 'jones' in position 1). </p>
+    /// and 'jones' in position 1). </para>
     ///
-    /// <p>Note: as <seealso cref="#getField()"/> returns the masked field, scoring will be
-    /// done using the Similarity and collection statistics of the field name supplied,
-    /// but with the term statistics of the real field. this may lead to exceptions,
-    /// poor performance, and unexpected scoring behaviour.</p>
+    /// <para>Note: as <see cref="Field"/> returns the masked field, scoring will be
+    /// done using the <see cref="Similarities.Similarity"/> and collection statistics of the field name supplied,
+    /// but with the term statistics of the real field. This may lead to exceptions,
+    /// poor performance, and unexpected scoring behavior.</para>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

@@ -28,8 +28,8 @@ namespace Lucene.Net.Analysis.Snowball
     /// Available stemmers are listed in Lucene.Net.Tartarus.Snowball.Ext.
     /// <para><b>NOTE</b>: <see cref="SnowballFilter"/> expects lowercased text.
     /// <list type="bullet">
-    ///     <item>For the Turkish language, see <see cref="Tr.TurkishLowerCaseFilter"/>.</item>
-    ///     <item>For other languages, see <see cref="Core.LowerCaseFilter"/>.</item>
+    ///     <item><description>For the Turkish language, see <see cref="Tr.TurkishLowerCaseFilter"/>.</description></item>
+    ///     <item><description>For other languages, see <see cref="Core.LowerCaseFilter"/>.</description></item>
     /// </list>
     /// </para>
     /// 

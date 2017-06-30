@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.DiskDV
      */
 
     /// <summary>
-    /// Norms format that keeps all norms on disk
+    /// Norms format that keeps all norms on disk.
     /// </summary>
     public sealed class DiskNormsFormat : NormsFormat
     {

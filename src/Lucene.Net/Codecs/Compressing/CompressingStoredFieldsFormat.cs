@@ -23,17 +23,18 @@ namespace Lucene.Net.Codecs.Compressing
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// A <seealso cref="StoredFieldsFormat"/> that is very similar to
-    /// <seealso cref="Lucene40StoredFieldsFormat"/> but compresses documents in chunks in
+    /// A <see cref="StoredFieldsFormat"/> that is very similar to
+    /// <see cref="Lucene40.Lucene40StoredFieldsFormat"/> but compresses documents in chunks in
     /// order to improve the compression ratio.
-    /// <p>
-    /// For a chunk size of <tt>chunkSize</tt> bytes, this <seealso cref="StoredFieldsFormat"/>
-    /// does not support documents larger than (<tt>2<sup>31</sup> - chunkSize</tt>)
+    /// <para/>
+    /// For a chunk size of <c>chunkSize</c> bytes, this <see cref="StoredFieldsFormat"/>
+    /// does not support documents larger than (<c>2<sup>31</sup> - chunkSize</c>)
     /// bytes. In case this is a problem, you should use another format, such as
-    /// <seealso cref="Lucene40StoredFieldsFormat"/>.
-    /// <p>
-    /// For optimal performance, you should use a <seealso cref="MergePolicy"/> that returns
+    /// <see cref="Lucene40.Lucene40StoredFieldsFormat"/>.
+    /// <para/>
+    /// For optimal performance, you should use a <see cref="Index.MergePolicy"/> that returns
     /// segments that have the biggest byte size first.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class CompressingStoredFieldsFormat : StoredFieldsFormat
@@ -44,47 +45,47 @@ namespace Lucene.Net.Codecs.Compressing
         private readonly int chunkSize;
 
         /// <summary>
-        /// Create a new <seealso cref="CompressingStoredFieldsFormat"/> with an empty segment
+        /// Create a new <see cref="CompressingStoredFieldsFormat"/> with an empty segment
         /// suffix.
         /// </summary>
-        /// <seealso cref= CompressingStoredFieldsFormat#CompressingStoredFieldsFormat(String, String, CompressionMode, int) </seealso>
+        /// <seealso cref="CompressingStoredFieldsFormat.CompressingStoredFieldsFormat(string, string, CompressionMode, int)"/>
         public CompressingStoredFieldsFormat(string formatName, CompressionMode compressionMode, int chunkSize)
             : this(formatName, "", compressionMode, chunkSize)
         {
         }
 
         /// <summary>
-        /// Create a new <seealso cref="CompressingStoredFieldsFormat"/>.
-        /// <p>
-        /// <code>formatName</code> is the name of the format. this name will be used
+        /// Create a new <see cref="CompressingStoredFieldsFormat"/>.
+        /// <para/>
+        /// <paramref name="formatName"/> is the name of the format. This name will be used
         /// in the file formats to perform
-        /// <seealso cref="CodecUtil#checkHeader(Lucene.Net.Store.DataInput, String, int, int) codec header checks"/>.
-        /// <p>
-        /// <code>segmentSuffix</code> is the segment suffix. this suffix is added to
+        /// codec header checks (<see cref="CodecUtil.CheckHeader(Lucene.Net.Store.DataInput, string, int, int)"/>).
+        /// <para/>
+        /// <paramref name="segmentSuffix"/> is the segment suffix. this suffix is added to
         /// the result file name only if it's not the empty string.
-        /// <p>
-        /// The <code>compressionMode</code> parameter allows you to choose between
+        /// <para/>
+        /// The <paramref name="compressionMode"/> parameter allows you to choose between
         /// compression algorithms that have various compression and decompression
         /// speeds so that you can pick the one that best fits your indexing and
         /// searching throughput. You should never instantiate two
-        /// <seealso cref="CompressingStoredFieldsFormat"/>s that have the same name but
-        /// different <seealso cref="compressionMode"/>s.
-        /// <p>
-        /// <code>chunkSize</code> is the minimum byte size of a chunk of documents.
-        /// A value of <code>1</code> can make sense if there is redundancy across
+        /// <see cref="CompressingStoredFieldsFormat"/>s that have the same name but
+        /// different <see cref="compressionMode"/>s.
+        /// <para/>
+        /// <paramref name="chunkSize"/> is the minimum byte size of a chunk of documents.
+        /// A value of <c>1</c> can make sense if there is redundancy across
         /// fields. In that case, both performance and compression ratio should be
-        /// better than with <seealso cref="Lucene40StoredFieldsFormat"/> with compressed
+        /// better than with <see cref="Lucene40.Lucene40StoredFieldsFormat"/> with compressed
         /// fields.
-        /// <p>
-        /// Higher values of <code>chunkSize</code> should improve the compression
+        /// <para/>
+        /// Higher values of <paramref name="chunkSize"/> should improve the compression
         /// ratio but will require more memory at indexing time and might make document
         /// loading a little slower (depending on the size of your OS cache compared
         /// to the size of your index).
         /// </summary>
-        /// <param name="formatName"> the name of the <seealso cref="StoredFieldsFormat"/> </param>
-        /// <param name="compressionMode"> the <seealso cref="compressionMode"/> to use </param>
-        /// <param name="chunkSize"> the minimum number of bytes of a single chunk of stored documents </param>
-        /// <seealso cref= compressionMode </seealso>
+        /// <param name="formatName"> The name of the <see cref="StoredFieldsFormat"/>. </param>
+        /// <param name="compressionMode"> The <see cref="CompressionMode"/> to use. </param>
+        /// <param name="chunkSize"> The minimum number of bytes of a single chunk of stored documents. </param>
+        /// <seealso cref="CompressionMode"/>
         public CompressingStoredFieldsFormat(string formatName, string segmentSuffix, CompressionMode compressionMode, int chunkSize)
         {
             this.formatName = formatName;

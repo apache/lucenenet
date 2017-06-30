@@ -36,8 +36,8 @@ namespace Lucene.Net.Analysis.Hi
     /// Leah S. Larkey, Margaret E. Connell, and Nasreen AbdulJaleel.
     /// http://maroo.cs.umass.edu/pub/web/getpdf.php?id=454:
     /// <list type="bullet">
-    ///     <item>Internal Zero-width joiner and Zero-width non-joiners are removed</item>
-    ///     <item>In addition to chandrabindu, NA+halant is normalized to anusvara</item>
+    ///     <item><description>Internal Zero-width joiner and Zero-width non-joiners are removed</description></item>
+    ///     <item><description>In addition to chandrabindu, NA+halant is normalized to anusvara</description></item>
     /// </list>
     /// </para>
     /// </summary>

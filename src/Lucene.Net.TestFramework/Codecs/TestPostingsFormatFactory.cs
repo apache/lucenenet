@@ -28,8 +28,9 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class TestPostingsFormatFactory : DefaultPostingsFormatFactory
     {
-        public TestPostingsFormatFactory()
+        protected override void Initialize()
         {
+            base.Initialize();
             base.ScanForPostingsFormats(this.GetType().GetTypeInfo().Assembly);
         }
     }

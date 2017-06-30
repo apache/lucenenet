@@ -21,11 +21,11 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A Scorer for queries with a required subscorer
-    /// and an excluding (prohibited) sub DocIdSetIterator.
-    /// <br>
-    /// this <code>Scorer</code> implements <seealso cref="Scorer#advance(int)"/>,
-    /// and it uses the skipTo() on the given scorers.
+    /// A <see cref="Scorer"/> for queries with a required subscorer
+    /// and an excluding (prohibited) sub <see cref="DocIdSetIterator"/>.
+    /// <para/>
+    /// This <see cref="Scorer"/> implements <see cref="DocIdSetIterator.Advance(int)"/>,
+    /// and it uses the SkipTo() on the given scorers.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -37,9 +37,9 @@ namespace Lucene.Net.Search
         private int doc = -1;
 
         /// <summary>
-        /// Construct a <code>ReqExclScorer</code>. </summary>
+        /// Construct a <see cref="ReqExclScorer"/>. </summary>
         /// <param name="reqScorer"> The scorer that must match, except where </param>
-        /// <param name="exclDisi"> indicates exclusion. </param>
+        /// <param name="exclDisi"> Indicates exclusion. </param>
         public ReqExclScorer(Scorer reqScorer, DocIdSetIterator exclDisi)
             : base(reqScorer.m_weight)
         {
@@ -68,15 +68,15 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Advance to non excluded doc.
-        /// <br>On entry:
-        /// <ul>
-        /// <li>reqScorer != null,
-        /// <li>exclScorer != null,
-        /// <li>reqScorer was advanced once via next() or skipTo()
-        ///      and reqScorer.doc() may still be excluded.
-        /// </ul>
+        /// <para/>On entry:
+        /// <list type="bullet">
+        /// <item><description>reqScorer != null,</description></item>
+        /// <item><description>exclScorer != null,</description></item>
+        /// <item><description>reqScorer was advanced once via Next() or SkipTo()
+        ///      and reqScorer.Doc may still be excluded.</description></item>
+        /// </list>
         /// Advances reqScorer a non excluded required doc, if any. </summary>
-        /// <returns> true iff there is a non excluded required doc. </returns>
+        /// <returns> <c>true</c> if there is a non excluded required doc. </returns>
         private int ToNonExcluded()
         {
             int exclDoc = exclDisi.DocID;
@@ -112,7 +112,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the score of the current document matching the query.
-        /// Initially invalid, until <seealso cref="#nextDoc()"/> is called the first time. </summary>
+        /// Initially invalid, until <see cref="NextDoc()"/> is called the first time. </summary>
         /// <returns> The score of the required scorer. </returns>
         public override float GetScore()
         {

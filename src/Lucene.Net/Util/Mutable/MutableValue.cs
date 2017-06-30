@@ -22,7 +22,7 @@ namespace Lucene.Net.Util.Mutable
 
     /// <summary>
     /// Base class for all mutable values.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public abstract class MutableValue : IComparable<MutableValue>, IComparable

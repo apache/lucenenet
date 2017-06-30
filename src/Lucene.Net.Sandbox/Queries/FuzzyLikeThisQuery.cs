@@ -265,7 +265,7 @@ namespace Lucene.Net.Sandbox.Queries
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
         }
 

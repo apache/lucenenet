@@ -42,27 +42,28 @@ namespace Lucene.Net.Codecs
     /// sorted docvalues.  Concrete implementations of this
     /// actually do "something" with the docvalues (write it into
     /// the index in a specific format).
-    /// <p>
+    /// <para/>
     /// The lifecycle is:
-    /// <ol>
-    ///   <li>DocValuesConsumer is created by
-    ///       <seealso cref="DocValuesFormat#fieldsConsumer(SegmentWriteState)"/> or
-    ///       <seealso cref="NormsFormat#normsConsumer(SegmentWriteState)"/>.
-    ///   <li><seealso cref="#addNumericField"/>, <seealso cref="#addBinaryField"/>,
-    ///       or <seealso cref="#addSortedField"/> are called for each Numeric,
+    /// <list type="number">
+    ///   <item><description>DocValuesConsumer is created by
+    ///       <see cref="DocValuesFormat.FieldsConsumer(Index.SegmentWriteState)"/> or
+    ///       <see cref="NormsFormat.NormsConsumer(Index.SegmentWriteState)"/>.</description></item>
+    ///   <item><description><see cref="AddNumericField(FieldInfo, IEnumerable{long?})"/>, 
+    ///       <see cref="AddBinaryField(FieldInfo, IEnumerable{BytesRef})"/>,
+    ///       or <see cref="AddSortedField(FieldInfo, IEnumerable{BytesRef}, IEnumerable{long?})"/> are called for each Numeric,
     ///       Binary, or Sorted docvalues field. The API is a "pull" rather
     ///       than "push", and the implementation is free to iterate over the
-    ///       values multiple times (<seealso cref="Iterable#iterator()"/>).
-    ///   <li>After all fields are added, the consumer is <seealso cref="#close"/>d.
-    /// </ol>
-    ///
+    ///       values multiple times (<see cref="IEnumerable{T}.GetEnumerator()"/>).</description></item>
+    ///   <item><description>After all fields are added, the consumer is <see cref="Dispose()"/>d.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class DocValuesConsumer : IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal DocValuesConsumer()
         {
@@ -70,44 +71,44 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Writes numeric docvalues for a field. </summary>
-        /// <param name="field"> field information </param>
-        /// <param name="values"> Iterable of numeric values (one for each document). {@code null} indicates
+        /// <param name="field"> Field information. </param>
+        /// <param name="values"> <see cref="IEnumerable{T}"/> of numeric values (one for each document). <c>null</c> indicates
         ///               a missing value. </param>
-        /// <exception cref="IOException"> if an I/O error occurred. </exception>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurred. </exception>
         public abstract void AddNumericField(FieldInfo field, IEnumerable<long?> values);
 
         /// <summary>
         /// Writes binary docvalues for a field. </summary>
-        /// <param name="field"> field information </param>
-        /// <param name="values"> Iterable of binary values (one for each document). {@code null} indicates
+        /// <param name="field"> Field information. </param>
+        /// <param name="values"> <see cref="IEnumerable{T}"/> of binary values (one for each document). <c>null</c> indicates
         ///               a missing value. </param>
-        /// <exception cref="IOException"> if an I/O error occurred. </exception>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurred. </exception>
         public abstract void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values);
 
         /// <summary>
         /// Writes pre-sorted binary docvalues for a field. </summary>
-        /// <param name="field"> field information </param>
-        /// <param name="values"> Iterable of binary values in sorted order (deduplicated). </param>
-        /// <param name="docToOrd"> Iterable of ordinals (one for each document). {@code -1} indicates
+        /// <param name="field"> Field information. </param>
+        /// <param name="values"> <see cref="IEnumerable{T}"/> of binary values in sorted order (deduplicated). </param>
+        /// <param name="docToOrd"> <see cref="IEnumerable{T}"/> of ordinals (one for each document). <c>-1</c> indicates
         ///                 a missing value. </param>
-        /// <exception cref="IOException"> if an I/O error occurred. </exception>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurred. </exception>
         public abstract void AddSortedField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrd);
 
         /// <summary>
         /// Writes pre-sorted set docvalues for a field </summary>
-        /// <param name="field"> field information </param>
-        /// <param name="values"> Iterable of binary values in sorted order (deduplicated). </param>
-        /// <param name="docToOrdCount"> Iterable of the number of values for each document. A zero ordinal
+        /// <param name="field"> Field information. </param>
+        /// <param name="values"> <see cref="IEnumerable{T}"/> of binary values in sorted order (deduplicated). </param>
+        /// <param name="docToOrdCount"> <see cref="IEnumerable{T}"/> of the number of values for each document. A zero ordinal
         ///                      count indicates a missing value. </param>
-        /// <param name="ords"> Iterable of ordinal occurrences (docToOrdCount*maxDoc total). </param>
-        /// <exception cref="IOException"> if an I/O error occurred. </exception>
+        /// <param name="ords"> <see cref="IEnumerable{T}"/> of ordinal occurrences (<paramref name="docToOrdCount"/>*maxDoc total). </param>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurred. </exception>
         public abstract void AddSortedSetField(FieldInfo field, IEnumerable<BytesRef> values, IEnumerable<long?> docToOrdCount, IEnumerable<long?> ords);
 
         /// <summary>
-        /// Merges the numeric docvalues from <code>toMerge</code>.
-        /// <p>
-        /// The default implementation calls <seealso cref="#addNumericField"/>, passing
-        /// an Iterable that merges and filters deleted documents on the fly.</p>
+        /// Merges the numeric docvalues from <paramref name="toMerge"/>.
+        /// <para>
+        /// The default implementation calls <see cref="AddNumericField(FieldInfo, IEnumerable{long?})"/>, passing
+        /// an <see cref="IEnumerable{T}"/> that merges and filters deleted documents on the fly.</para>
         /// </summary>
         public virtual void MergeNumericField(FieldInfo fieldInfo, MergeState mergeState, IList<NumericDocValues> toMerge, IList<IBits> docsWithField)
         {
@@ -166,10 +167,10 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Merges the binary docvalues from <code>toMerge</code>.
-        /// <p>
-        /// The default implementation calls <seealso cref="#addBinaryField"/>, passing
-        /// an Iterable that merges and filters deleted documents on the fly.
+        /// Merges the binary docvalues from <paramref name="toMerge"/>.
+        /// <para>
+        /// The default implementation calls <see cref="AddBinaryField(FieldInfo, IEnumerable{BytesRef})"/>, passing
+        /// an <see cref="IEnumerable{T}"/> that merges and filters deleted documents on the fly.</para>
         /// </summary>
         public virtual void MergeBinaryField(FieldInfo fieldInfo, MergeState mergeState, IList<BinaryDocValues> toMerge, IList<IBits> docsWithField)
         {
@@ -229,10 +230,10 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Merges the sorted docvalues from <code>toMerge</code>.
-        /// <p>
-        /// The default implementation calls <seealso cref="#addSortedField"/>, passing
-        /// an Iterable that merges ordinals and values and filters deleted documents.</p>
+        /// Merges the sorted docvalues from <paramref name="toMerge"/>.
+        /// <para>
+        /// The default implementation calls <see cref="AddSortedField(FieldInfo, IEnumerable{BytesRef}, IEnumerable{long?})"/>, passing
+        /// an <see cref="IEnumerable{T}"/> that merges ordinals and values and filters deleted documents.</para>
         /// </summary>
         public virtual void MergeSortedField(FieldInfo fieldInfo, MergeState mergeState, IList<SortedDocValues> toMerge)
         {
@@ -331,166 +332,11 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        /*
-        private class IterableAnonymousInnerClassHelper3 : IEnumerable<BytesRef>
-        {
-            private readonly DocValuesConsumer OuterInstance;
-
-            private SortedDocValues[] Dvs;
-            private OrdinalMap Map;
-
-            public IterableAnonymousInnerClassHelper3(DocValuesConsumer outerInstance, SortedDocValues[] dvs, OrdinalMap map)
-            {
-                this.OuterInstance = outerInstance;
-                this.Dvs = dvs;
-                this.Map = map;
-            }
-
-                // ord -> value
-            public virtual IEnumerator<BytesRef> GetEnumerator()
-            {
-              return new IteratorAnonymousInnerClassHelper3(this);
-            }
-
-            private class IteratorAnonymousInnerClassHelper3 : IEnumerator<BytesRef>
-            {
-                private readonly IterableAnonymousInnerClassHelper3 OuterInstance;
-
-                public IteratorAnonymousInnerClassHelper3(IterableAnonymousInnerClassHelper3 outerInstance)
-                {
-                    this.OuterInstance = outerInstance;
-                    scratch = new BytesRef();
-                }
-
-                internal readonly BytesRef scratch;
-                internal int currentOrd;
-
-                public virtual bool HasNext()
-                {
-                  return currentOrd < OuterInstance.Map.ValueCount;
-                }
-
-                public virtual BytesRef Next()
-                {
-                  if (!HasNext())
-                  {
-                    throw new Exception();
-                  }
-                  int segmentNumber = OuterInstance.Map.GetFirstSegmentNumber(currentOrd);
-                  int segmentOrd = (int)OuterInstance.Map.GetFirstSegmentOrd(currentOrd);
-                  OuterInstance.Dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
-                  currentOrd++;
-                  return scratch;
-                }
-
-                public virtual void Remove()
-                {
-                  throw new System.NotSupportedException();
-                }
-            }
-        }
-
-        private class IterableAnonymousInnerClassHelper4 : IEnumerable<Number>
-        {
-            private readonly DocValuesConsumer OuterInstance;
-
-            private AtomicReader[] Readers;
-            private SortedDocValues[] Dvs;
-            private OrdinalMap Map;
-
-            public IterableAnonymousInnerClassHelper4(DocValuesConsumer outerInstance, AtomicReader[] readers, SortedDocValues[] dvs, OrdinalMap map)
-            {
-                this.OuterInstance = outerInstance;
-                this.Readers = readers;
-                this.Dvs = dvs;
-                this.Map = map;
-            }
-
-            public virtual IEnumerator<Number> GetEnumerator()
-            {
-              return new IteratorAnonymousInnerClassHelper4(this);
-            }
-
-            private class IteratorAnonymousInnerClassHelper4 : IEnumerator<Number>
-            {
-                private readonly IterableAnonymousInnerClassHelper4 OuterInstance;
-
-                public IteratorAnonymousInnerClassHelper4(IterableAnonymousInnerClassHelper4 outerInstance)
-                {
-                    this.OuterInstance = outerInstance;
-                    readerUpto = -1;
-                }
-
-                internal int readerUpto;
-                internal int docIDUpto;
-                internal int nextValue;
-                internal AtomicReader currentReader;
-                internal Bits currentLiveDocs;
-                internal bool nextIsSet;
-
-                public virtual bool HasNext()
-                {
-                  return nextIsSet || SetNext();
-                }
-
-                public virtual void Remove()
-                {
-                  throw new System.NotSupportedException();
-                }
-
-                public virtual Number Next()
-                {
-                  if (!HasNext())
-                  {
-                    throw new NoSuchElementException();
-                  }
-                  Debug.Assert(nextIsSet);
-                  nextIsSet = false;
-                  // TODO make a mutable number
-                  return nextValue;
-                }
-
-                private bool SetNext()
-                {
-                  while (true)
-                  {
-                    if (readerUpto == OuterInstance.Readers.Length)
-                    {
-                      return false;
-                    }
-
-                    if (currentReader == null || docIDUpto == currentReader.MaxDoc)
-                    {
-                      readerUpto++;
-                      if (readerUpto < OuterInstance.Readers.Length)
-                      {
-                        currentReader = OuterInstance.Readers[readerUpto];
-                        currentLiveDocs = currentReader.LiveDocs;
-                      }
-                      docIDUpto = 0;
-                      continue;
-                    }
-
-                    if (currentLiveDocs == null || currentLiveDocs.get(docIDUpto))
-                    {
-                      nextIsSet = true;
-                      int segOrd = OuterInstance.Dvs[readerUpto].GetOrd(docIDUpto);
-                      nextValue = segOrd == -1 ? - 1 : (int) OuterInstance.Map.GetGlobalOrd(readerUpto, segOrd);
-                      docIDUpto++;
-                      return true;
-                    }
-
-                    docIDUpto++;
-                  }
-                }
-            }
-        }*/
-
         /// <summary>
-        /// Merges the sortedset docvalues from <code>toMerge</code>.
-        /// <p>
-        /// The default implementation calls <seealso cref="#addSortedSetField"/>, passing
-        /// an Iterable that merges ordinals and values and filters deleted documents .
+        /// Merges the sortedset docvalues from <paramref name="toMerge"/>.
+        /// <para>
+        /// The default implementation calls <see cref="AddSortedSetField(FieldInfo, IEnumerable{BytesRef}, IEnumerable{long?}, IEnumerable{long?})"/>, passing
+        /// an <see cref="IEnumerable{T}"/> that merges ordinals and values and filters deleted documents.</para>
         /// </summary>
         public virtual void MergeSortedSetField(FieldInfo fieldInfo, MergeState mergeState, IList<SortedSetDocValues> toMerge)
         {
@@ -659,283 +505,6 @@ namespace Lucene.Net.Codecs
             }
         }
 
-        /*
-        private class IterableAnonymousInnerClassHelper5 : IEnumerable<BytesRef>
-        {
-            private readonly DocValuesConsumer OuterInstance;
-
-            private SortedSetDocValues[] Dvs;
-            private OrdinalMap Map;
-
-            public IterableAnonymousInnerClassHelper5(DocValuesConsumer outerInstance, SortedSetDocValues[] dvs, OrdinalMap map)
-            {
-                this.OuterInstance = outerInstance;
-                this.Dvs = dvs;
-                this.Map = map;
-            }
-
-                // ord -> value
-            public virtual IEnumerator<BytesRef> GetEnumerator()
-            {
-              return new IteratorAnonymousInnerClassHelper5(this);
-            }
-
-            private class IteratorAnonymousInnerClassHelper5 : IEnumerator<BytesRef>
-            {
-                private readonly IterableAnonymousInnerClassHelper5 OuterInstance;
-
-                public IteratorAnonymousInnerClassHelper5(IterableAnonymousInnerClassHelper5 outerInstance)
-                {
-                    this.OuterInstance = outerInstance;
-                    scratch = new BytesRef();
-                }
-
-                internal readonly BytesRef scratch;
-                internal long currentOrd;
-
-                public virtual bool HasNext()
-                {
-                  return currentOrd < OuterInstance.Map.ValueCount;
-                }
-
-                public virtual BytesRef Next()
-                {
-                  if (!HasNext())
-                  {
-                    throw new Exception();
-                  }
-                  int segmentNumber = OuterInstance.Map.GetFirstSegmentNumber(currentOrd);
-                  long segmentOrd = OuterInstance.Map.GetFirstSegmentOrd(currentOrd);
-                  OuterInstance.Dvs[segmentNumber].LookupOrd(segmentOrd, scratch);
-                  currentOrd++;
-                  return scratch;
-                }
-
-                public virtual void Remove()
-                {
-                  throw new System.NotSupportedException();
-                }
-            }
-        }
-
-        private class IterableAnonymousInnerClassHelper6 : IEnumerable<Number>
-        {
-            private readonly DocValuesConsumer OuterInstance;
-
-            private AtomicReader[] Readers;
-            private SortedSetDocValues[] Dvs;
-
-            public IterableAnonymousInnerClassHelper6(DocValuesConsumer outerInstance, AtomicReader[] readers, SortedSetDocValues[] dvs)
-            {
-                this.OuterInstance = outerInstance;
-                this.Readers = readers;
-                this.Dvs = dvs;
-            }
-
-            public virtual IEnumerator<Number> GetEnumerator()
-            {
-              return new IteratorAnonymousInnerClassHelper6(this);
-            }
-
-            private class IteratorAnonymousInnerClassHelper6 : IEnumerator<Number>
-            {
-                private readonly IterableAnonymousInnerClassHelper6 OuterInstance;
-
-                public IteratorAnonymousInnerClassHelper6(IterableAnonymousInnerClassHelper6 outerInstance)
-                {
-                    this.OuterInstance = outerInstance;
-                    readerUpto = -1;
-                }
-
-                internal int readerUpto;
-                internal int docIDUpto;
-                internal int nextValue;
-                internal AtomicReader currentReader;
-                internal Bits currentLiveDocs;
-                internal bool nextIsSet;
-
-                public virtual bool HasNext()
-                {
-                  return nextIsSet || SetNext();
-                }
-
-                public virtual void Remove()
-                {
-                  throw new System.NotSupportedException();
-                }
-
-                public virtual Number Next()
-                {
-                  if (!HasNext())
-                  {
-                    throw new Exception();
-                  }
-                  Debug.Assert(nextIsSet);
-                  nextIsSet = false;
-                  // TODO make a mutable number
-                  return nextValue;
-                }
-
-                private bool SetNext()
-                {
-                  while (true)
-                  {
-                    if (readerUpto == OuterInstance.Readers.Length)
-                    {
-                      return false;
-                    }
-
-                    if (currentReader == null || docIDUpto == currentReader.MaxDoc)
-                    {
-                      readerUpto++;
-                      if (readerUpto < OuterInstance.Readers.Length)
-                      {
-                        currentReader = OuterInstance.Readers[readerUpto];
-                        currentLiveDocs = currentReader.LiveDocs;
-                      }
-                      docIDUpto = 0;
-                      continue;
-                    }
-
-                    if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
-                    {
-                      nextIsSet = true;
-                      SortedSetDocValues dv = OuterInstance.Dvs[readerUpto];
-                      dv.Document = docIDUpto;
-                      nextValue = 0;
-                      while (dv.NextOrd() != SortedSetDocValues.NO_MORE_ORDS)
-                      {
-                        nextValue++;
-                      }
-                      docIDUpto++;
-                      return true;
-                    }
-
-                    docIDUpto++;
-                  }
-                }
-            }
-        }
-
-        private class IterableAnonymousInnerClassHelper7 : IEnumerable<Number>
-        {
-            private readonly DocValuesConsumer OuterInstance;
-
-            private AtomicReader[] Readers;
-            private SortedSetDocValues[] Dvs;
-            private OrdinalMap Map;
-
-            public IterableAnonymousInnerClassHelper7(DocValuesConsumer outerInstance, AtomicReader[] readers, SortedSetDocValues[] dvs, OrdinalMap map)
-            {
-                this.OuterInstance = outerInstance;
-                this.Readers = readers;
-                this.Dvs = dvs;
-                this.Map = map;
-            }
-
-            public virtual IEnumerator<Number> GetEnumerator()
-            {
-              return new IteratorAnonymousInnerClassHelper7(this);
-            }
-
-            private class IteratorAnonymousInnerClassHelper7 : IEnumerator<Number>
-            {
-                private readonly IterableAnonymousInnerClassHelper7 OuterInstance;
-
-                public IteratorAnonymousInnerClassHelper7(IterableAnonymousInnerClassHelper7 outerInstance)
-                {
-                    this.OuterInstance = outerInstance;
-                    readerUpto = -1;
-                    ords = new long[8];
-                }
-
-                internal int readerUpto;
-                internal int docIDUpto;
-                internal long nextValue;
-                internal AtomicReader currentReader;
-                internal Bits currentLiveDocs;
-                internal bool nextIsSet;
-                internal long[] ords;
-                internal int ordUpto;
-                internal int ordLength;
-
-                public virtual bool HasNext()
-                {
-                  return nextIsSet || SetNext();
-                }
-
-                public virtual void Remove()
-                {
-                  throw new System.NotSupportedException();
-                }
-
-                public virtual Number Next()
-                {
-                  if (!HasNext())
-                  {
-                    throw new Exception();
-                  }
-                  Debug.Assert(nextIsSet);
-                  nextIsSet = false;
-                  // TODO make a mutable number
-                  return nextValue;
-                }
-
-                private bool SetNext()
-                {
-                  while (true)
-                  {
-                    if (readerUpto == OuterInstance.Readers.Length)
-                    {
-                      return false;
-                    }
-
-                    if (ordUpto < ordLength)
-                    {
-                      nextValue = ords[ordUpto];
-                      ordUpto++;
-                      nextIsSet = true;
-                      return true;
-                    }
-
-                    if (currentReader == null || docIDUpto == currentReader.MaxDoc)
-                    {
-                      readerUpto++;
-                      if (readerUpto < OuterInstance.Readers.Length)
-                      {
-                        currentReader = OuterInstance.Readers[readerUpto];
-                        currentLiveDocs = currentReader.LiveDocs;
-                      }
-                      docIDUpto = 0;
-                      continue;
-                    }
-
-                    if (currentLiveDocs == null || currentLiveDocs.Get(docIDUpto))
-                    {
-                      Debug.Assert(docIDUpto < currentReader.MaxDoc);
-                      SortedSetDocValues dv = OuterInstance.Dvs[readerUpto];
-                      dv.Document = docIDUpto;
-                      ordUpto = ordLength = 0;
-                      long ord;
-                      while ((ord = dv.NextOrd()) != SortedSetDocValues.NO_MORE_ORDS)
-                      {
-                        if (ordLength == ords.Length)
-                        {
-                          ords = ArrayUtil.Grow(ords, ordLength + 1);
-                        }
-                        ords[ordLength] = OuterInstance.Map.GetGlobalOrd(readerUpto, ord);
-                        ordLength++;
-                      }
-                      docIDUpto++;
-                      continue;
-                    }
-
-                    docIDUpto++;
-                  }
-                }
-            }
-        }*/
-
         // TODO: seek-by-ord to nextSetBit
         internal class BitsFilteredTermsEnum : FilteredTermsEnum
         {
@@ -954,12 +523,18 @@ namespace Lucene.Net.Codecs
             }
         }
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
     }
 }

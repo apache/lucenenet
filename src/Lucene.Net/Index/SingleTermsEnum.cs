@@ -23,11 +23,11 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// Subclass of FilteredTermsEnum for enumerating a single term.
+    /// Subclass of <see cref="FilteredTermsEnum"/> for enumerating a single term.
     /// <para/>
     /// For example, this can be used by <see cref="Search.MultiTermQuery"/>s
     /// that need only visit one term, but want to preserve
-    /// MultiTermQuery semantics such as <see cref="Search.MultiTermQuery.MultiTermRewriteMethod"/>.
+    /// <see cref="Search.MultiTermQuery"/> semantics such as <see cref="Search.MultiTermQuery.MultiTermRewriteMethod"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -37,8 +37,8 @@ namespace Lucene.Net.Index
         private readonly BytesRef singleRef;
 
         /// <summary>
-        /// Creates a new <code>SingleTermsEnum</code>.
-        /// <p>
+        /// Creates a new <see cref="SingleTermsEnum"/>.
+        /// <para/>
         /// After calling the constructor the enumeration is already pointing to the term,
         /// if it exists.
         /// </summary>

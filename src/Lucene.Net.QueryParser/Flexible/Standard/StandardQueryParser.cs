@@ -54,25 +54,25 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
     /// <para/>
     /// A Query is a series of clauses. A clause may be prefixed by:
     /// <list type="bullet">
-    ///     <item>
+    ///     <item><description>
     ///     a plus (<c>+</c>) or a minus (<c>-</c>) sign, indicating that
     ///     the clause is required or prohibited respectively; or
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///     a term followed by a colon, indicating the field to be searched. This
     ///     enables one to construct queries which search multiple fields.
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// 
     /// A clause may be either:
     /// <list type="bullet">
-    ///     <item>
+    ///     <item><description>
     ///     a term, indicating all the documents that contain this term; or
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///     a nested query, enclosed in parentheses. Note that this may be used with
     ///     a <c>+</c>/<c>-</c> prefix to require any of a set of terms.
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// 
     /// Thus, in BNF, the query grammar is:

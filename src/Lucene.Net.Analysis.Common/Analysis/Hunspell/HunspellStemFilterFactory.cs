@@ -98,8 +98,8 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(affix);
-                IOUtils.CloseWhileHandlingException(dictionaries);
+                IOUtils.DisposeWhileHandlingException(affix);
+                IOUtils.DisposeWhileHandlingException(dictionaries);
             }
         }
 

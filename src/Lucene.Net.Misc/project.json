@@ -15,7 +15,8 @@
     "compile": {
       "includeFiles": [ "../CommonAssemblyInfo.cs" ],
       "exclude": [ "Store/*" ]
-    }
+    },
+    "nowarn": [ "1591", "1573" ]
   },
   "dependencies": {
     "Lucene.Net.Analysis.Common": "4.8.0"

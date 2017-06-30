@@ -28,20 +28,18 @@ namespace Lucene.Net.Search.Spans
     using TermContext = Lucene.Net.Index.TermContext;
 
     /// <summary>
-    /// Wraps any <seealso cref="MultiTermQuery"/> as a <seealso cref="SpanQuery"/>,
-    /// so it can be nested within other SpanQuery classes.
-    /// <p>
-    /// The query is rewritten by default to a <seealso cref="SpanOrQuery"/> containing
+    /// Wraps any <see cref="MultiTermQuery"/> as a <see cref="SpanQuery"/>,
+    /// so it can be nested within other <see cref="SpanQuery"/> classes.
+    /// <para/>
+    /// The query is rewritten by default to a <see cref="SpanOrQuery"/> containing
     /// the expanded terms, but this can be customized.
-    /// <p>
+    /// <para/>
     /// Example:
-    /// <blockquote><pre class="prettyprint">
-    /// {@code
+    /// <code>
     /// WildcardQuery wildcard = new WildcardQuery(new Term("field", "bro?n"));
-    /// SpanQuery spanWildcard = new SpanMultiTermQueryWrapper<WildcardQuery>(wildcard);
+    /// SpanQuery spanWildcard = new SpanMultiTermQueryWrapper&lt;WildcardQuery&gt;(wildcard);
     /// // do something with spanWildcard, such as use it in a SpanFirstQuery
-    /// }
-    /// </pre></blockquote>
+    /// </code>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -51,14 +49,14 @@ namespace Lucene.Net.Search.Spans
         protected readonly Q m_query;
 
         /// <summary>
-        /// Create a new SpanMultiTermQueryWrapper.
+        /// Create a new <see cref="SpanMultiTermQueryWrapper{Q}"/>.
         /// </summary>
         /// <param name="query"> Query to wrap.
-        /// <p>
-        /// NOTE: this will call <seealso cref="MultiTermQuery#setRewriteMethod(MultiTermQuery.RewriteMethod)"/>
-        /// on the wrapped <code>query</code>, changing its rewrite method to a suitable one for spans.
+        /// <para/>
+        /// NOTE: This will set <see cref="MultiTermQuery.MultiTermRewriteMethod"/>
+        /// on the wrapped <paramref name="query"/>, changing its rewrite method to a suitable one for spans.
         /// Be sure to not change the rewrite method on the wrapped query afterwards! Doing so will
-        /// throw <seealso cref="UnsupportedOperationException"/> on rewriting this query! </param>
+        /// throw <see cref="NotSupportedException"/> on rewriting this query! </param>
         public SpanMultiTermQueryWrapper(Q query)
         {
             this.m_query = query;
@@ -76,7 +74,8 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Expert: returns the rewriteMethod
+        /// Expert: Gets or Sets the rewrite method. This only makes sense
+        /// to be a span rewrite method.
         /// </summary>
         public SpanRewriteMethod MultiTermRewriteMethod
         {
@@ -176,11 +175,11 @@ namespace Lucene.Net.Search.Spans
         // LUCENENET NOTE: Moved SpanRewriteMethod outside of this class
 
         /// <summary>
-        /// A rewrite method that first translates each term into a SpanTermQuery in a
-        /// <seealso cref="Occur#SHOULD"/> clause in a BooleanQuery, and keeps the
+        /// A rewrite method that first translates each term into a <see cref="SpanTermQuery"/> in a
+        /// <see cref="Occur.SHOULD"/> clause in a <see cref="BooleanQuery"/>, and keeps the
         /// scores as computed by the query.
         /// </summary>
-        /// <seealso cref= #setRewriteMethod </seealso>
+        /// <seealso cref="MultiTermRewriteMethod"/>
         public static readonly SpanRewriteMethod SCORING_SPAN_QUERY_REWRITE = new SpanRewriteMethodAnonymousInnerClassHelper();
 
 #if FEATURE_SERIALIZABLE
@@ -231,15 +230,15 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// A rewrite method that first translates each term into a SpanTermQuery in a
-        /// <seealso cref="Occur#SHOULD"/> clause in a BooleanQuery, and keeps the
+        /// A rewrite method that first translates each term into a <see cref="SpanTermQuery"/> in a
+        /// <see cref="Occur.SHOULD"/> clause in a <see cref="BooleanQuery"/>, and keeps the
         /// scores as computed by the query.
         ///
-        /// <p>
-        /// this rewrite method only uses the top scoring terms so it will not overflow
+        /// <para/>
+        /// This rewrite method only uses the top scoring terms so it will not overflow
         /// the boolean max clause count.
         /// </summary>
-        /// <seealso cref= #setRewriteMethod </seealso>
+        /// <seealso cref="MultiTermRewriteMethod"/>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -248,8 +247,8 @@ namespace Lucene.Net.Search.Spans
             private readonly TopTermsRewrite<SpanOrQuery> @delegate;
 
             /// <summary>
-            /// Create a TopTermsSpanBooleanQueryRewrite for
-            /// at most <code>size</code> terms.
+            /// Create a <see cref="TopTermsSpanBooleanQueryRewrite"/> for
+            /// at most <paramref name="size"/> terms.
             /// </summary>
             public TopTermsSpanBooleanQueryRewrite(int size)
             {
@@ -292,6 +291,7 @@ namespace Lucene.Net.Search.Spans
 
             /// <summary>
             /// return the maximum priority queue size.
+            /// <para/>
             /// NOTE: This was size() in Lucene.
             /// </summary>
             public int Count
@@ -344,14 +344,21 @@ namespace Lucene.Net.Search.Spans
     }
 
     /// <summary>
-    /// LUCENENET specific interface for referring to/identifying a SpanMultipTermQueryWrapper without
+    /// LUCENENET specific interface for referring to/identifying a <see cref="Search.Spans.SpanMultiTermQueryWrapper{Q}"/> without
     /// referring to its generic closing type.
     /// </summary>
     public interface ISpanMultiTermQueryWrapper
     {
+        /// <summary>
+        /// Expert: Gets or Sets the rewrite method. This only makes sense
+        /// to be a span rewrite method.
+        /// </summary>
         SpanRewriteMethod MultiTermRewriteMethod { get; }
         Spans GetSpans(AtomicReaderContext context, IBits acceptDocs, IDictionary<Term, TermContext> termContexts);
         string Field { get; }
+
+        /// <summary>
+        /// Returns the wrapped query </summary>
         Query WrappedQuery { get; }
         Query Rewrite(IndexReader reader);
     }

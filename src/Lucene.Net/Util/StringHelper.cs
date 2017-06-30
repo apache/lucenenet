@@ -23,7 +23,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Methods for manipulating strings.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public abstract class StringHelper
@@ -42,11 +42,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Compares two <seealso cref="BytesRef"/>, element by element, and returns the
+        /// Compares two <see cref="BytesRef"/>, element by element, and returns the
         /// number of elements common to both arrays.
         /// </summary>
-        /// <param name="left"> The first <seealso cref="BytesRef"/> to compare </param>
-        /// <param name="right"> The second <seealso cref="BytesRef"/> to compare </param>
+        /// <param name="left"> The first <see cref="BytesRef"/> to compare. </param>
+        /// <param name="right"> The second <see cref="BytesRef"/> to compare. </param>
         /// <returns> The number of common elements. </returns>
         public static int BytesDifference(BytesRef left, BytesRef right)
         {
@@ -69,8 +69,10 @@ namespace Lucene.Net.Util
         {
         }
 
-        /// <returns> a Comparer over versioned strings such as X.YY.Z
-        /// @lucene.internal </returns>
+        /// <summary> Returns a <see cref="T:IComparer{string}"/> over versioned strings such as X.YY.Z
+        /// <para/>
+        /// @lucene.internal
+        /// </summary>
         public static IComparer<string> VersionComparer
         {
             get
@@ -139,30 +141,30 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns <code>true</code> iff the ref starts with the given prefix.
-        /// Otherwise <code>false</code>.
+        /// Returns <c>true</c> if the <paramref name="ref"/> starts with the given <paramref name="prefix"/>.
+        /// Otherwise <c>false</c>.
         /// </summary>
         /// <param name="ref">
-        ///          the <seealso cref="BytesRef"/> to test </param>
+        ///          The <see cref="BytesRef"/> to test. </param>
         /// <param name="prefix">
-        ///          the expected prefix </param>
-        /// <returns> Returns <code>true</code> iff the ref starts with the given prefix.
-        ///         Otherwise <code>false</code>. </returns>
+        ///          The expected prefix </param>
+        /// <returns> Returns <c>true</c> if the <paramref name="ref"/> starts with the given <paramref name="prefix"/>.
+        ///         Otherwise <c>false</c>. </returns>
         public static bool StartsWith(BytesRef @ref, BytesRef prefix)
         {
             return SliceEquals(@ref, prefix, 0);
         }
 
         /// <summary>
-        /// Returns <code>true</code> iff the ref ends with the given suffix. Otherwise
-        /// <code>false</code>.
+        /// Returns <c>true</c> if the <paramref name="ref"/> ends with the given <paramref name="suffix"/>. Otherwise
+        /// <c>false</c>.
         /// </summary>
         /// <param name="ref">
-        ///          the <seealso cref="BytesRef"/> to test </param>
+        ///          The <see cref="BytesRef"/> to test. </param>
         /// <param name="suffix">
-        ///          the expected suffix </param>
-        /// <returns> Returns <code>true</code> iff the ref ends with the given suffix.
-        ///         Otherwise <code>false</code>. </returns>
+        ///          The expected suffix </param>
+        /// <returns> Returns <c>true</c> if the <paramref name="ref"/> ends with the given <paramref name="suffix"/>.
+        ///         Otherwise <c>false</c>. </returns>
         public static bool EndsWith(BytesRef @ref, BytesRef suffix)
         {
             return SliceEquals(@ref, suffix, @ref.Length - suffix.Length);
@@ -190,7 +192,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Pass this as the seed to <seealso cref="#murmurhash3_x86_32"/>. </summary>
+        /// Pass this as the seed to <see cref="Murmurhash3_x86_32(byte[], int, int, int)"/>. </summary>
 
         // Poached from Guava: set a different salt/seed
         // for each JVM instance, to frustrate hash key collision
@@ -238,7 +240,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the MurmurHash3_x86_32 hash.
-        /// Original source/tests at https://github.com/yonik/java_util/
+        /// Original source/tests at <a href="https://github.com/yonik/java_util/">https://github.com/yonik/java_util/</a>. 
         /// </summary>
         public static int Murmurhash3_x86_32(byte[] data, int offset, int len, int seed)
         {
@@ -296,6 +298,10 @@ namespace Lucene.Net.Util
             return h1;
         }
 
+        /// <summary>
+        /// Returns the MurmurHash3_x86_32 hash.
+        /// Original source/tests at <a href="https://github.com/yonik/java_util/">https://github.com/yonik/java_util/</a>. 
+        /// </summary>
         public static int Murmurhash3_x86_32(BytesRef bytes, int seed)
         {
             return Murmurhash3_x86_32(bytes.Bytes, bytes.Offset, bytes.Length, seed);

@@ -21,8 +21,6 @@ namespace Lucene.Net.Search.Payloads
 
     /// <summary>
     /// Calculates the minimum payload seen
-    ///
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

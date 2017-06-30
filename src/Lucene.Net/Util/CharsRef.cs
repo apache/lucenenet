@@ -24,9 +24,10 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Represents char[], as a slice (offset + Length) into an existing char[].
-    /// The <seealso cref="#chars"/> member should never be null; use
-    /// <seealso cref="#EMPTY_CHARS"/> if necessary.
+    /// Represents <see cref="T:char[]"/>, as a slice (offset + Length) into an existing <see cref="T:char[]"/>.
+    /// The <see cref="Chars"/> property should never be <c>null</c>; use
+    /// <see cref="EMPTY_CHARS"/> if necessary.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -39,7 +40,7 @@ namespace Lucene.Net.Util
         public static readonly char[] EMPTY_CHARS = new char[0];
 
         /// <summary>
-        /// The contents of the CharsRef. Should never be {@code null}.
+        /// The contents of the <see cref="CharsRef"/>. Should never be <c>null</c>.
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
@@ -66,7 +67,7 @@ namespace Lucene.Net.Util
         public int Length { get; set; }
 
         /// <summary>
-        /// Creates a new <seealso cref="CharsRef"/> initialized an empty array zero-Length
+        /// Creates a new <see cref="CharsRef"/> initialized an empty array zero-Length
         /// </summary>
         public CharsRef()
             : this(EMPTY_CHARS, 0, 0)
@@ -74,8 +75,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="CharsRef"/> initialized with an array of the given
-        /// capacity
+        /// Creates a new <see cref="CharsRef"/> initialized with an array of the given
+        /// <paramref name="capacity"/>.
         /// </summary>
         public CharsRef(int capacity)
         {
@@ -83,8 +84,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="CharsRef"/> initialized with the given array, offset and
-        /// Length
+        /// Creates a new <see cref="CharsRef"/> initialized with the given <paramref name="chars"/>, 
+        /// <paramref name="offset"/> and <paramref name="length"/>.
         /// </summary>
         public CharsRef(char[] chars, int offset, int length)
         {
@@ -95,8 +96,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="CharsRef"/> initialized with the given Strings character
-        /// array
+        /// Creates a new <see cref="CharsRef"/> initialized with the given <see cref="string"/> character
+        /// array.
         /// </summary>
         public CharsRef(string @string)
         {
@@ -110,7 +111,7 @@ namespace Lucene.Net.Util
         /// <b>not</b> copied and will be shared by both the returned object and this
         /// object.
         /// </summary>
-        /// <seealso cref= #deepCopyOf </seealso>
+        /// <seealso cref="DeepCopyOf(CharsRef)"/>
         public object Clone()
         {
             return new CharsRef(chars, Offset, Length);
@@ -165,7 +166,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Signed int order comparison </summary>
+        /// Signed <see cref="int"/> order comparison </summary>
         public int CompareTo(CharsRef other)
         {
             if (this == other)
@@ -199,10 +200,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copies the given <seealso cref="CharsRef"/> referenced content into this instance.
+        /// Copies the given <see cref="CharsRef"/> referenced content into this instance.
         /// </summary>
         /// <param name="other">
-        ///          the <seealso cref="CharsRef"/> to copy </param>
+        ///          The <see cref="CharsRef"/> to copy. </param>
         public void CopyChars(CharsRef other)
         {
             CopyChars(other.chars, other.Offset, other.Length);
@@ -210,8 +211,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Used to grow the reference array.
-        ///
+        /// <para/>
         /// In general this should not be used as it does not take the offset into account.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public void Grow(int newLength)
@@ -224,7 +226,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copies the given array into this CharsRef.
+        /// Copies the given array into this <see cref="CharsRef"/>.
         /// </summary>
         public void CopyChars(char[] otherChars, int otherOffset, int otherLength)
         {
@@ -238,7 +240,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Appends the given array to this CharsRef
+        /// Appends the given array to this <see cref="CharsRef"/>.
         /// </summary>
         public void Append(char[] otherChars, int otherOffset, int otherLength)
         {
@@ -373,10 +375,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new CharsRef that points to a copy of the chars from
-        /// <code>other</code>
-        /// <p>
-        /// The returned CharsRef will have a Length of other.Length
+        /// Creates a new <see cref="CharsRef"/> that points to a copy of the chars from
+        /// <paramref name="other"/>.
+        /// <para/>
+        /// The returned <see cref="CharsRef"/> will have a Length of <c>other.Length</c>
         /// and an offset of zero.
         /// </summary>
         public static CharsRef DeepCopyOf(CharsRef other)
@@ -388,7 +390,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Performs internal consistency checks.
-        /// Always returns true (or throws InvalidOperationException)
+        /// Always returns true (or throws <see cref="InvalidOperationException"/>)
         /// </summary>
         public bool IsValid()
         {

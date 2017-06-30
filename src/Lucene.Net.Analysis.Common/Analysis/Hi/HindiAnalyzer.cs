@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Hi
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating HindiAnalyzer:
     /// <list type="bullet">
-    ///     <item> As of 3.6, StandardTokenizer is used for tokenization</item>
+    ///     <item><description> As of 3.6, StandardTokenizer is used for tokenization</description></item>
     /// </list>
     /// </para>
     /// </summary>
@@ -115,10 +115,10 @@ namespace Lucene.Net.Analysis.Hi
 
         /// <summary>
         /// Creates
-        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// <see cref="TokenStreamComponents"/>
         /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        /// <returns> <see cref="TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="LowerCaseFilter"/>, <see cref="IndicNormalizationFilter"/>,
         ///         <see cref="HindiNormalizationFilter"/>, <see cref="SetKeywordMarkerFilter"/>

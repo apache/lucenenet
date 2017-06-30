@@ -28,8 +28,8 @@ namespace Lucene.Net.Codecs.Memory
 
     /// <summary>
     /// An FST implementation for 
-    /// <seealso cref="FSTTermsWriter"/>.
-    /// 
+    /// <see cref="FSTTermsWriter"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 
@@ -117,13 +117,12 @@ namespace Lucene.Net.Codecs.Memory
 
         /// <summary>
         /// The return value will be the smaller one, when these two are 
-        /// 'comparable', i.e. 
-        /// 1. every value in t1 is not larger than in t2, or
-        /// 2. every value in t1 is not smaller than t2.
+        /// 'comparable', i.e.
+        /// <list type="number">
+        ///     <item><description>every value in t1 is not larger than in t2, or</description></item>
+        ///     <item><description>every value in t1 is not smaller than t2.</description></item>
+        /// </list>
         /// </summary>
-        /// <param name="t1"></param>
-        /// <param name="t2"></param>
-        /// <returns></returns>
         public override TermData Common(TermData t1, TermData t2)
         {
             if (Equals(t1, NO_OUTPUT) || Equals(t2, NO_OUTPUT))
@@ -371,7 +370,7 @@ namespace Lucene.Net.Codecs.Memory
         }
 
         /// <summary>
-        /// NOTE: This was longsEqual() in Lucene
+        /// NOTE: This was longsEqual() in Lucene.
         /// </summary>
         private static bool Int64sEqual(TermData t1, TermData t2)
         {

@@ -23,7 +23,8 @@ namespace Lucene.Net.Search
     using IAttribute = Lucene.Net.Util.IAttribute;
 
     /// <summary>
-    /// Implementation class for <seealso cref="IBoostAttribute"/>.
+    /// Implementation class for <see cref="IBoostAttribute"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -31,10 +32,11 @@ namespace Lucene.Net.Search
 #endif
     public sealed class BoostAttribute : Attribute, IBoostAttribute
     {
-        /// <summary>
-        /// Sets the boost in this attribute </summary>
         private float boost = 1.0f;
 
+        /// <summary>
+        /// Gets or Sets the boost in this attribute. Default is <c>1.0f</c>.
+        /// </summary>
         public float Boost
         {
             get { return boost; }

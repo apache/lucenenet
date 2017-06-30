@@ -23,12 +23,12 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Implements the Lucene 4.0 index format, with configurable per-field postings formats.
-    /// <p>
+    /// <para/>
     /// If you want to reuse functionality of this codec in another codec, extend
-    /// <seealso cref="FilterCodec"/>.
+    /// <see cref="FilterCodec"/>.
+    /// <para/>
+    /// See <see cref="Lucene.Net.Codecs.Lucene40"/> package documentation for file format details.
     /// </summary>
-    /// <seealso cref= Lucene.Net.Codecs.Lucene40 package documentation for file format details. </seealso>
-    /// @deprecated Only for reading old 4.0 segments
     // NOTE: if we make largish changes in a minor release, easier to just make Lucene42Codec or whatever
     // if they are backwards compatible or smallish we can probably do the backwards in the postingsreader
     // (it writes a minor version, etc).
@@ -113,9 +113,9 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns the postings format that should be used for writing
-        ///  new segments of <code>field</code>.
-        ///
-        ///  The default implementation always returns "Lucene40"
+        /// new segments of <paramref name="field"/>.
+        /// <para/>
+        /// The default implementation always returns "Lucene40".
         /// </summary>
         public virtual PostingsFormat GetPostingsFormatForField(string field)
         {

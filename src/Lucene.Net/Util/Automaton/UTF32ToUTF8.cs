@@ -28,6 +28,7 @@ namespace Lucene.Net.Util.Automaton
 
     /// <summary>
     /// Converts UTF-32 automata to the equivalent UTF-8 representation.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class UTF32ToUTF8
@@ -301,11 +302,11 @@ namespace Lucene.Net.Util.Automaton
         private int utf8StateCount;
 
         /// <summary>
-        /// Converts an incoming utf32 automaton to an equivalent
-        ///  utf8 one.  The incoming automaton need not be
-        ///  deterministic.  Note that the returned automaton will
-        ///  not in general be deterministic, so you must
-        ///  determinize it if that's needed.
+        /// Converts an incoming utf32 <see cref="Automaton"/> to an equivalent
+        /// utf8 one.  The incoming automaton need not be
+        /// deterministic.  Note that the returned automaton will
+        /// not in general be deterministic, so you must
+        /// determinize it if that's needed.
         /// </summary>
         public Automaton Convert(Automaton utf32)
         {

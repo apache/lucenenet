@@ -45,12 +45,12 @@ namespace Lucene.Net.Search
     using UnicodeUtil = Lucene.Net.Util.UnicodeUtil;
 
     /// <summary>
-    /// Subclass of TermsEnum for enumerating all terms that are similar
+    /// Subclass of <see cref="TermsEnum"/> for enumerating all terms that are similar
     /// to the specified filter term.
     ///
-    /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
-    /// greater than all that precede it.</p>
+    /// <para>Term enumerations are always ordered by
+    /// <see cref="Comparer"/>.  Each term in the enumeration is
+    /// greater than all that precede it.</para>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -92,22 +92,23 @@ namespace Lucene.Net.Search
         private readonly bool transpositions;
 
         /// <summary>
-        /// Constructor for enumeration of all terms from specified <code>reader</code> which share a prefix of
-        /// length <code>prefixLength</code> with <code>term</code> and which have a fuzzy similarity &gt;
-        /// <code>minSimilarity</code>.
-        /// <p>
+        /// Constructor for enumeration of all terms from specified <c>reader</c> which share a prefix of
+        /// length <paramref name="prefixLength"/> with <paramref name="term"/> and which have a fuzzy similarity &gt;
+        /// <paramref name="minSimilarity"/>.
+        /// <para/>
         /// After calling the constructor the enumeration is already pointing to the first
         /// valid term if such a term exists.
         /// </summary>
         /// <param name="terms"> Delivers terms. </param>
-        /// <param name="atts"> <seealso cref="AttributeSource"/> created by the rewrite method of <seealso cref="MultiTermQuery"/>
+        /// <param name="atts"> <see cref="AttributeSource"/> created by the rewrite method of <see cref="MultiTermQuery"/>
         /// thats contains information about competitive boosts during rewrite. It is also used
         /// to cache DFAs between segment transitions. </param>
         /// <param name="term"> Pattern term. </param>
         /// <param name="minSimilarity"> Minimum required similarity for terms from the reader. Pass an integer value
         ///        representing edit distance. Passing a fraction is deprecated. </param>
         /// <param name="prefixLength"> Length of required common prefix. Default value is 0. </param>
-        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <param name="transpositions"> Transpositions </param>
+        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
         public FuzzyTermsEnum(Terms terms, AttributeSource atts, Term term, float minSimilarity, int prefixLength, bool transpositions)
         {
             InitializeInstanceFields();
@@ -167,8 +168,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// return an automata-based enum for matching up to editDistance from
-        /// lastTerm, if possible
+        /// Return an automata-based enum for matching up to <paramref name="editDistance"/> from
+        /// <paramref name="lastTerm"/>, if possible
         /// </summary>
         protected virtual TermsEnum GetAutomatonEnum(int editDistance, BytesRef lastTerm)
         {
@@ -186,7 +187,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// initialize levenshtein DFAs up to maxDistance, if possible </summary>
+        /// Initialize levenshtein DFAs up to maxDistance, if possible </summary>
         private IList<CompiledAutomaton> InitAutomata(int maxDistance)
         {
             IList<CompiledAutomaton> runAutomata = dfaAtt.Automata;
@@ -212,7 +213,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// swap in a new actual enum to proxy to </summary>
+        /// Swap in a new actual enum to proxy to </summary>
         protected virtual void SetEnum(TermsEnum actualEnum)
         {
             this.actualEnum = actualEnum;
@@ -220,7 +221,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// fired when the max non-competitive boost has changed. this is the hook to
+        /// Fired when the max non-competitive boost has changed. This is the hook to
         /// swap in a smarter actualEnum
         /// </summary>
         private void BottomChanged(BytesRef lastTerm, bool init)
@@ -361,9 +362,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Implement fuzzy enumeration with Terms.intersect.
-        /// <p>
-        /// this is the fastest method as opposed to LinearFuzzyTermsEnum:
+        /// Implement fuzzy enumeration with <see cref="Terms.Intersect(CompiledAutomaton, BytesRef)"/>.
+        /// <para/>
+        /// This is the fastest method as opposed to LinearFuzzyTermsEnum:
         /// as enumeration is logarithmic to the number of terms (instead of linear)
         /// and comparison is linear to length of the term (rather than quadratic)
         /// </summary>
@@ -400,7 +401,7 @@ namespace Lucene.Net.Search
             }
 
             /// <summary>
-            /// finds the smallest Lev(n) DFA that accepts the term. </summary>
+            /// Finds the smallest Lev(n) DFA that accepts the term. </summary>
             protected override AcceptStatus Accept(BytesRef term)
             {
                 //System.out.println("AFTE.accept term=" + term);
@@ -447,7 +448,7 @@ namespace Lucene.Net.Search
             }
 
             /// <summary>
-            /// returns true if term is within k edits of the query term </summary>
+            /// Returns <c>true</c> if <paramref name="term"/> is within <paramref name="k"/> edits of the query term </summary>
             internal bool Matches(BytesRef term, int k)
             {
                 return k == 0 ? term.Equals(termRef) : matchers[k].Run(term.Bytes, term.Offset, term.Length);
@@ -475,8 +476,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// reuses compiled automata across different segments,
+        /// Reuses compiled automata across different segments,
         /// because they are independent of the index
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public interface ILevenshteinAutomataAttribute : IAttribute
@@ -486,6 +488,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Stores compiled automata as a list (indexed by edit distance)
+        /// <para/>
         /// @lucene.internal
         /// </summary>
 #if FEATURE_SERIALIZABLE

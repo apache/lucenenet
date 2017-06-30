@@ -168,13 +168,13 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         */
 
         /// <summary>
-        /// The default number of values returned by the <see cref="MatchAlmost"/>
+        /// The default number of values returned by the <see cref="MatchAlmost(string, int)"/>
         /// method.
         /// </summary>
         private int defaultNumReturnValues = -1;
 
         /// <summary>
-        /// the number of differences allowed in a call to the <see cref="MatchAlmost"/>
+        /// the number of differences allowed in a call to the <see cref="MatchAlmost(string, int)"/>
         /// <c>key</c>.
         /// </summary>
         private int matchAlmostDiff;
@@ -680,7 +680,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// target key, where diff is equal to the last value set
         /// to the <see cref="MatchAlmostDiff"/> property.
         /// <para>
-        /// If the <see cref="MatchAlmost"/> method is called before the
+        /// If the <see cref="MatchAlmost(string, int)"/> method is called before the
         /// <see cref="MatchAlmostDiff"/> property has been called for the first time,
         /// then diff = 0.
         /// 
@@ -700,7 +700,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
         /// target key, where diff is equal to the last value set
         /// to the <see cref="MatchAlmostDiff"/> property.
         /// <para>
-        /// If the <see cref="MatchAlmost"/> method is called before the
+        /// If the <see cref="MatchAlmost(string, int)"/> method is called before the
         /// <see cref="MatchAlmostDiff"/> property has been called for the first time,
         /// then diff = 0.
         /// 
@@ -899,7 +899,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Sets the number of characters by which words can differ from target word
-        /// when calling the <see cref="MatchAlmost"/> method.
+        /// when calling the <see cref="MatchAlmost(string, int)"/> method.
         /// <para>
         /// Arguments less than 0 will set the char difference to 0, and arguments
         /// greater than 3 will set the char difference to 3.
@@ -931,7 +931,7 @@ namespace Lucene.Net.Search.Suggest.Jaspell
 
         /// <summary>
         /// Sets the default maximum number of values returned from the
-        /// <see cref="MatchPrefix"/> and <see cref="MatchAlmost"/> methods.
+        /// <see cref="MatchPrefix(string, int)"/> and <see cref="MatchAlmost(string, int)"/> methods.
         /// <para>
         /// The value should be set this to -1 to get an unlimited number of return
         /// values. note that the methods mentioned above provide overloaded versions

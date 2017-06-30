@@ -31,25 +31,27 @@ namespace Lucene.Net.Search.Spans
     using TermContext = Lucene.Net.Index.TermContext;
 
     /// <summary>
-    /// A Spans that is formed from the ordered subspans of a SpanNearQuery
+    /// A <see cref="Spans"/> that is formed from the ordered subspans of a <see cref="SpanNearQuery"/>
     /// where the subspans do not overlap and have a maximum slop between them.
-    /// <p>
-    /// The formed spans only contains minimum slop matches.<br>
+    /// <para/>
+    /// The formed spans only contains minimum slop matches.
+    /// <para/>
     /// The matching slop is computed from the distance(s) between
-    /// the non overlapping matching Spans.<br>
-    /// Successive matches are always formed from the successive Spans
-    /// of the SpanNearQuery.
-    /// <p>
+    /// the non overlapping matching <see cref="Spans"/>.
+    /// <para/>
+    /// Successive matches are always formed from the successive <see cref="Spans"/>
+    /// of the <see cref="SpanNearQuery"/>.
+    /// <para/>
     /// The formed spans may contain overlaps when the slop is at least 1.
     /// For example, when querying using
-    /// <pre>t1 t2 t3</pre>
+    /// <c>t1 t2 t3</c>
     /// with slop at least 1, the fragment:
-    /// <pre>t1 t2 t1 t3 t2 t3</pre>
+    /// <c>t1 t2 t1 t3 t2 t3</c>
     /// matches twice:
-    /// <pre>t1 t2 .. t3      </pre>
-    /// <pre>      t1 .. t2 t3</pre>
+    /// <c>t1 t2 .. t3      </c>
+    /// <c>      t1 .. t2 t3</c>
     ///
-    ///
+    /// <para/>
     /// Expert:
     /// Only public for subclassing.  Most implementations should not need this class
     /// </summary>
@@ -63,11 +65,11 @@ namespace Lucene.Net.Search.Spans
         private bool more = false;
 
         /// <summary>
-        /// The spans in the same order as the SpanNearQuery </summary>
+        /// The spans in the same order as the <see cref="SpanNearQuery"/> </summary>
         private readonly Spans[] subSpans;
 
         /// <summary>
-        /// Indicates that all subSpans have same doc() </summary>
+        /// Indicates that all subSpans have same <see cref="Doc"/> </summary>
         private bool inSameDoc = false;
 
         private int matchDoc = -1;
@@ -133,19 +135,22 @@ namespace Lucene.Net.Search.Spans
             query = spanNearQuery; // kept for toString() only.
         }
 
-        // inherit javadocs
+        /// <summary>
+        /// Returns the document number of the current match.  Initially invalid. </summary>
         public override int Doc
-        // inherit javadocs
         {
             get { return matchDoc; }
         }
 
+        /// <summary>
+        /// Returns the start position of the current match.  Initially invalid. </summary>
         public override int Start
-        // inherit javadocs
         {
             get { return matchStart; }
         }
 
+        /// <summary>
+        /// Returns the end position of the current match.  Initially invalid. </summary>
         public override int End
         {
             get { return matchEnd; }
@@ -184,7 +189,8 @@ namespace Lucene.Net.Search.Spans
             return minCost;
         }
 
-        // inherit javadocs
+        /// <summary>
+        /// Move to the next match, returning true iff any such exists. </summary>
         public override bool Next()
         {
             if (firstTime)
@@ -207,7 +213,28 @@ namespace Lucene.Net.Search.Spans
             return AdvanceAfterOrdered();
         }
 
-        // inherit javadocs
+        /// <summary>
+        /// Skips to the first match beyond the current, whose document number is
+        /// greater than or equal to <i>target</i>.
+        /// <para/>The behavior of this method is <b>undefined</b> when called with
+        /// <c> target &lt;= current</c>, or after the iterator has exhausted.
+        /// Both cases may result in unpredicted behavior.
+        /// <para/>Returns <c>true</c> if there is such
+        /// a match.  
+        /// <para/>Behaves as if written: 
+        /// <code>
+        ///     bool SkipTo(int target) 
+        ///     {
+        ///         do 
+        ///         {
+        ///             if (!Next())
+        ///                 return false;
+        ///         } while (target > Doc);
+        ///         return true;
+        ///     }
+        /// </code>
+        /// Most implementations are considerably more efficient than that.
+        /// </summary>
         public override bool SkipTo(int target)
         {
             if (firstTime)
@@ -243,9 +270,9 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Advances the subSpans to just after an ordered match with a minimum slop
-        /// that is smaller than the slop allowed by the SpanNearQuery. </summary>
-        /// <returns> true iff there is such a match. </returns>
+        /// Advances the <see cref="SubSpans"/> to just after an ordered match with a minimum slop
+        /// that is smaller than the slop allowed by the <see cref="SpanNearQuery"/>. </summary>
+        /// <returns> <c>true</c> if there is such a match. </returns>
         private bool AdvanceAfterOrdered()
         {
             while (more && (inSameDoc || ToSameDoc()))
@@ -259,7 +286,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Advance the subSpans to the same document </summary>
+        /// Advance the <see cref="SubSpans"/> to the same document </summary>
         private bool ToSameDoc()
         {
             sorter.Sort(0, subSpansByDoc.Length);
@@ -288,10 +315,10 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Check whether two Spans in the same document are ordered. </summary>
-        /// <returns> true iff spans1 starts before spans2
+        /// Check whether two <see cref="Spans"/> in the same document are ordered. </summary>
+        /// <returns> <c>true</c> if <paramref name="spans1"/> starts before <paramref name="spans2"/>
         ///              or the spans start at the same position,
-        ///              and spans1 ends before spans2. </returns>
+        ///              and <paramref name="spans1"/> ends before <paramref name="spans2"/>. </returns>
         internal static bool DocSpansOrdered(Spans spans1, Spans spans2)
         {
             Debug.Assert(spans1.Doc == spans2.Doc, "doc1 " + spans1.Doc + " != doc2 " + spans2.Doc);
@@ -302,7 +329,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Like <seealso cref="#docSpansOrdered(Spans,Spans)"/>, but use the spans
+        /// Like <see cref="DocSpansOrdered(Spans, Spans)"/>, but use the spans
         /// starts and ends as parameters.
         /// </summary>
         private static bool DocSpansOrdered(int start1, int end1, int start2, int end2)
@@ -311,7 +338,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Order the subSpans within the same document by advancing all later spans
+        /// Order the <see cref="SubSpans"/> within the same document by advancing all later spans
         /// after the previous one.
         /// </summary>
         private bool StretchToOrder()
@@ -338,9 +365,9 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// The subSpans are ordered in the same doc, so there is a possible match.
+        /// The <see cref="SubSpans"/> are ordered in the same doc, so there is a possible match.
         /// Compute the slop while making the match as short as possible by advancing
-        /// all subSpans except the last one in reverse order.
+        /// all <see cref="SubSpans"/> except the last one in reverse order.
         /// </summary>
         private bool ShrinkToAfterShortestMatch()
         {

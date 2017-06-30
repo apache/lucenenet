@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(priorException, stream);
+                IOUtils.DisposeWhileHandlingException(priorException, stream);
             }
 
             AssertAnalyzesTo(analyzer, testString, new string[] { "t" });
@@ -298,7 +298,7 @@ namespace Lucene.Net.Analysis
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(priorException, ts);
+                    IOUtils.DisposeWhileHandlingException(priorException, ts);
                 }
             }
         }

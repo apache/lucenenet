@@ -20,8 +20,8 @@ namespace Lucene.Net.Util.Mutable
      */
 
     /// <summary>
-    /// <seealso cref="MutableValue"/> implementation of type
-    /// <seealso cref="Date"/>.
+    /// <see cref="MutableValue"/> implementation of type
+    /// <see cref="DateTime"/>.
     /// </summary>
     public class MutableValueDate : MutableValueInt64
     {

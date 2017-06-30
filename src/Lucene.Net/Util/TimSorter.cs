@@ -21,20 +21,22 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// <seealso cref="Sorter"/> implementation based on the
+    /// <see cref="Sorter"/> implementation based on the
     /// <a href="http://svn.python.org/projects/python/trunk/Objects/listsort.txt">TimSort</a>
     /// algorithm.
-    /// <p>this implementation is especially good at sorting partially-sorted
+    /// <para/>This implementation is especially good at sorting partially-sorted
     /// arrays and sorts small arrays with binary sort.
-    /// <p><b>NOTE</b>:There are a few differences with the original implementation:<ul>
-    /// <li><a name="maxTempSlots"/>The extra amount of memory to perform merges is
-    /// configurable. this allows small merges to be very fast while large merges
-    /// will be performed in-place (slightly slower). You can make sure that the
-    /// fast merge routine will always be used by having <code>maxTempSlots</code>
-    /// equal to half of the length of the slice of data to sort.
-    /// <li>Only the fast merge routine can gallop (the one that doesn't run
-    /// in-place) and it only gallops on the longest slice.
-    /// </ul>
+    /// <para/><b>NOTE</b>:There are a few differences with the original implementation:
+    /// <list type="bullet">
+    ///     <item><description><a name="maxTempSlots"/>The extra amount of memory to perform merges is
+    ///         configurable. This allows small merges to be very fast while large merges
+    ///         will be performed in-place (slightly slower). You can make sure that the
+    ///         fast merge routine will always be used by having <c>maxTempSlots</c>
+    ///         equal to half of the length of the slice of data to sort.</description></item>
+    ///     <item><description>Only the fast merge routine can gallop (the one that doesn't run
+    ///         in-place) and it only gallops on the longest slice.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public abstract class TimSorter : Sorter
@@ -51,8 +53,8 @@ namespace Lucene.Net.Util
         internal int[] runEnds;
 
         /// <summary>
-        /// Create a new <seealso cref="TimSorter"/>. </summary>
-        /// <param name="maxTempSlots"> the <a href="#maxTempSlots">maximum amount of extra memory to run merges</a> </param>
+        /// Create a new <see cref="TimSorter"/>. </summary>
+        /// <param name="maxTempSlots"> The <a href="#maxTempSlots">maximum amount of extra memory to run merges</a> </param>
         protected TimSorter(int maxTempSlots)
             : base()
         {
@@ -61,7 +63,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Minimum run length for an array of length <code>length</code>. </summary>
+        /// Minimum run length for an array of length <paramref name="length"/>. </summary>
         internal static int MinRun(int length)
         {
             Debug.Assert(length >= MINRUN);
@@ -106,7 +108,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Compute the length of the next run, make the run sorted and return its
-        ///  length.
+        /// length.
         /// </summary>
         internal virtual int NextRun()
         {
@@ -227,6 +229,10 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// Sort the slice which starts at <paramref name="from"/> (inclusive) and ends at
+        /// <paramref name="to"/> (exclusive).
+        /// </summary>
         public override void Sort(int from, int to)
         {
             CheckRange(from, to);
@@ -448,23 +454,23 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copy data from slot <code>src</code> to slot <code>dest</code>. </summary>
+        /// Copy data from slot <paramref name="src"/> to slot <paramref name="dest"/>>. </summary>
         protected abstract void Copy(int src, int dest);
 
         /// <summary>
-        /// Save all elements between slots <code>i</code> and <code>i+len</code>
-        ///  into the temporary storage.
+        /// Save all elements between slots <paramref name="i"/> and <paramref name="i"/>+<paramref name="len"/>
+        /// into the temporary storage.
         /// </summary>
         protected abstract void Save(int i, int len);
 
         /// <summary>
-        /// Restore element <code>j</code> from the temporary storage into slot <code>i</code>. </summary>
+        /// Restore element <paramref name="j"/> from the temporary storage into slot <paramref name="i"/>. </summary>
         protected abstract void Restore(int i, int j);
 
         /// <summary>
-        /// Compare element <code>i</code> from the temporary storage with element
-        ///  <code>j</code> from the slice to sort, similarly to
-        ///  <seealso cref="#compare(int, int)"/>.
+        /// Compare element <paramref name="i"/> from the temporary storage with element
+        /// <paramref name="j"/> from the slice to sort, similarly to
+        /// <see cref="Sorter.Compare(int, int)"/>.
         /// </summary>
         protected abstract int CompareSaved(int i, int j);
     }

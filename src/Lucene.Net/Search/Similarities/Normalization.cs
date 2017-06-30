@@ -20,11 +20,12 @@ namespace Lucene.Net.Search.Similarities
      */
 
     /// <summary>
-    /// this class acts as the base class for the implementations of the term
+    /// This class acts as the base class for the implementations of the term
     /// frequency normalization methods in the DFR framework.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= DFRSimilarity
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="DFRSimilarity"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -45,10 +46,10 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Returns an explanation for the normalized term frequency.
-        /// <p>The default normalization methods use the field length of the document
+        /// <para>The default normalization methods use the field length of the document
         /// and the average field length to compute the normalized term frequency.
-        /// this method provides a generic explanation for such methods.
-        /// Subclasses that use other statistics must override this method.</p>
+        /// This method provides a generic explanation for such methods.
+        /// Subclasses that use other statistics must override this method.</para>
         /// </summary>
         public virtual Explanation Explain(BasicStats stats, float tf, float len)
         {

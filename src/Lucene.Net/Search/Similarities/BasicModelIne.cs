@@ -22,6 +22,7 @@ namespace Lucene.Net.Search.Similarities
     /// <summary>
     /// Tf-idf model of randomness, based on a mixture of Poisson and inverse
     /// document frequency.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE

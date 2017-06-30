@@ -41,11 +41,11 @@ namespace Lucene.Net.Codecs.SimpleText
     using UnicodeUtil = Util.UnicodeUtil;
 
     /// <summary>
-    /// reads plaintext stored fields
+    /// Reads plain text stored fields.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextStoredFieldsReader : StoredFieldsReader
     {
@@ -84,7 +84,7 @@ namespace Lucene.Net.Codecs.SimpleText
             ReadIndex(si.DocCount);
         }
 
-        /// <remarks>Used by clone</remarks>
+        /// <remarks>Used by clone.</remarks>
         internal SimpleTextStoredFieldsReader(long[] offsets, IndexInput input, FieldInfos fieldInfos)
         {
             _offsets = offsets;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         /// <remarks>
-        /// we don't actually write a .fdx-like index, instead we read the 
+        /// We don't actually write a .fdx-like index, instead we read the 
         /// stored fields file in entirety up-front and save the offsets 
         /// so we can seek to the documents later.
         /// </remarks>
@@ -235,7 +235,7 @@ namespace Lucene.Net.Codecs.SimpleText
 
             try
             {
-                IOUtils.Close(_input);
+                IOUtils.Dispose(_input);
             }
             finally
             {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Codecs.SimpleText
         }
 
         /// <summary>
-        /// NOTE: This was parseIntAt() in Lucene
+        /// NOTE: This was parseIntAt() in Lucene.
         /// </summary>
         private int ParseInt32At(int offset)
         {

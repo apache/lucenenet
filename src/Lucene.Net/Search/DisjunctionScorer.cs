@@ -22,7 +22,7 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Base class for Scorers that score disjunctions.
+    /// Base class for <see cref="Scorer"/>s that score disjunctions.
     /// Currently this just provides helper methods to manage the heap.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -107,7 +107,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Remove the root Scorer from subScorers and re-establish it as a heap
+        /// Remove the root <see cref="Scorer"/> from subScorers and re-establish it as a heap
         /// </summary>
         protected void HeapRemoveRoot()
         {
@@ -201,13 +201,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Called after next() or advance() land on a new document.
-        /// <p>
-        /// {@code subScorers[0]} will be positioned to the new docid,
-        /// which could be {@code NO_MORE_DOCS} (subclass must handle this).
-        /// <p>
-        /// implementations should assign {@code doc} appropriately, and do any
-        /// other work necessary to implement {@code score()} and {@code freq()}
+        /// Called after <see cref="NextDoc()"/> or <see cref="Advance(int)"/> land on a new document.
+        /// <para/>
+        /// <c>subScorers[0]</c> will be positioned to the new docid,
+        /// which could be <c>NO_MORE_DOCS</c> (subclass must handle this).
+        /// <para/>
+        /// Implementations should assign <c>doc</c> appropriately, and do any
+        /// other work necessary to implement <see cref="Scorer.GetScore()"/> and <see cref="Index.DocsEnum.Freq"/>
         /// </summary>
         // TODO: make this less horrible
         protected abstract void AfterNext();

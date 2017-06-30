@@ -28,11 +28,11 @@ namespace Lucene.Net.Codecs.BlockTerms
     /// <summary>
     /// Selects every Nth term as and index term, and hold term
     /// bytes (mostly) fully expanded in memory.  This terms index
-    /// supports seeking by ord.  See {@link
-    /// VariableGapTermsIndexWriter} for a more memory efficient
+    /// supports seeking by ord.  See 
+    /// <see cref="VariableGapTermsIndexWriter"/> for a more memory efficient
     /// terms index that does not support seeking by ord.
-    ///
-    /// @lucene.experimental */    
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
     public class FixedGapTermsIndexWriter : TermsIndexWriterBase
     {
@@ -69,7 +69,7 @@ namespace Lucene.Net.Codecs.BlockTerms
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(m_output);
+                    IOUtils.DisposeWhileHandlingException(m_output);
                 }
             }
         }
@@ -90,7 +90,7 @@ namespace Lucene.Net.Codecs.BlockTerms
         /// <summary>
         /// NOTE: if your codec does not sort in unicode code
         /// point order, you must override this method, to simply
-        /// return indexedTerm.Length.
+        /// return <c>indexedTerm.Length</c>.
         /// </summary>
         protected virtual int IndexedTermPrefixLength(BytesRef priorTerm, BytesRef indexedTerm)
         {
@@ -274,11 +274,11 @@ namespace Lucene.Net.Codecs.BlockTerms
                     {
                         if (success)
                         {
-                            IOUtils.Close(m_output);
+                            IOUtils.Dispose(m_output);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(m_output);
+                            IOUtils.DisposeWhileHandlingException(m_output);
                         }
                         m_output = null;
                     }

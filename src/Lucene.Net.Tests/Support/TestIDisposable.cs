@@ -21,29 +21,34 @@
 
 using Lucene.Net.Analysis.Core;
 using Lucene.Net.Attributes;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 
 #pragma warning disable 612, 618
 namespace Lucene.Net.Support
 {
+    [SuppressCodecs("Lucene3x")] // Suppress non-writable codecs
     [TestFixture]
-    public class TestIDisposable
+    public class TestIDisposable : LuceneTestCase
     {
         [Test, LuceneNetSpecific]
         public void TestReadersWriters()
         {
             BaseDirectory dir;
-            
-            using(dir = new RAMDirectory())
+
+            using (dir = new RAMDirectory())
             {
                 Document doc;
                 IndexWriter writer;
                 IndexReader reader;
-                IndexWriterConfig conf = new IndexWriterConfig(Util.LuceneVersion.LUCENE_CURRENT, new WhitespaceAnalyzer(Util.LuceneVersion.LUCENE_CURRENT));
+                IndexWriterConfig conf = new IndexWriterConfig(
+                    Util.LuceneVersion.LUCENE_CURRENT, 
+                    new WhitespaceAnalyzer(Util.LuceneVersion.LUCENE_CURRENT));
 
                 using (writer = new IndexWriter(dir, conf /*new WhitespaceAnalyzer(), true, IndexWriter.MaxFieldLength.UNLIMITED)*/))
                 {

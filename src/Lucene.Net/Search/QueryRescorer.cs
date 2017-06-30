@@ -24,9 +24,9 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// A <seealso cref="Rescorer"/> that uses a provided Query to assign
-    ///  scores to the first-pass hits.
-    ///
+    /// A <see cref="Rescorer"/> that uses a provided <see cref="Query"/> to assign
+    /// scores to the first-pass hits.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -38,7 +38,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sole constructor, passing the 2nd pass query to
-        ///  assign scores to the 1st pass hits.
+        /// assign scores to the 1st pass hits.
         /// </summary>
         public QueryRescorer(Query query)
         {
@@ -47,10 +47,10 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Implement this in a subclass to combine the first pass and
-        /// second pass scores.  If secondPassMatches is false then
+        /// second pass scores.  If <paramref name="secondPassMatches"/> is <c>false</c> then
         /// the second pass query failed to match a hit from the
         /// first pass query, and you should ignore the
-        /// secondPassScore.
+        /// <paramref name="secondPassScore"/>.
         /// </summary>
         protected abstract float Combine(float firstPassScore, bool secondPassMatches, float secondPassScore);
 
@@ -214,8 +214,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Sugar API, calling {#rescore} using a simple linear
-        ///  combination of firstPassScore + weight * secondPassScore
+        /// Sugar API, calling <see cref="QueryRescorer.Rescore(IndexSearcher, TopDocs, int)"/> using a simple linear
+        /// combination of firstPassScore + <paramref name="weight"/> * secondPassScore
         /// </summary>
         public static TopDocs Rescore(IndexSearcher searcher, TopDocs topDocs, Query query, double weight, int topN)
         {

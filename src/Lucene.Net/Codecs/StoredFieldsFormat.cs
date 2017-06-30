@@ -23,27 +23,27 @@ namespace Lucene.Net.Codecs
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Controls the format of stored fields
+    /// Controls the format of stored fields.
     /// </summary>
     public abstract class StoredFieldsFormat
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal StoredFieldsFormat()
         {
         }
 
         /// <summary>
-        /// Returns a <seealso cref="StoredFieldsReader"/> to load stored
-        ///  fields.
+        /// Returns a <see cref="StoredFieldsReader"/> to load stored
+        /// fields.
         /// </summary>
         public abstract StoredFieldsReader FieldsReader(Directory directory, SegmentInfo si, FieldInfos fn, IOContext context);
 
         /// <summary>
-        /// Returns a <seealso cref="StoredFieldsWriter"/> to write stored
-        ///  fields.
+        /// Returns a <see cref="StoredFieldsWriter"/> to write stored
+        /// fields.
         /// </summary>
         public abstract StoredFieldsWriter FieldsWriter(Directory directory, SegmentInfo si, IOContext context);
     }

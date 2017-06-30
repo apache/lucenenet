@@ -22,8 +22,8 @@ namespace Lucene.Net.Search
     using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
-    /// A DocIdSet contains a set of doc ids. Implementing classes must
-    /// only implement <seealso cref="#iterator"/> to provide access to the set.
+    /// A <see cref="DocIdSet"/> contains a set of doc ids. Implementing classes must
+    /// only implement <see cref="GetIterator()"/> to provide access to the set.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -31,8 +31,8 @@ namespace Lucene.Net.Search
     public abstract class DocIdSet
     {
         /// <summary>
-        /// Provides a <seealso cref="DocIdSetIterator"/> to access the set.
-        /// this implementation can return <code>null</code> if there
+        /// Provides a <see cref="DocIdSetIterator"/> to access the set.
+        /// This implementation can return <c>null</c> if there
         /// are no docs that match.
         /// </summary>
         public abstract DocIdSetIterator GetIterator();
@@ -45,35 +45,213 @@ namespace Lucene.Net.Search
         // (down-low filtering using e.g. FixedBitSet)
 
         /// <summary>
-        /// Optionally provides a <seealso cref="GetBits"/> interface for random access
+        /// Optionally provides a <see cref="IBits"/> interface for random access
         /// to matching documents. </summary>
-        /// <returns> {@code null}, if this {@code DocIdSet} does not support random access.
-        /// In contrast to <see cref="GetIterator()"/>, a return value of {@code null}
+        /// <returns> <c>null</c>, if this <see cref="DocIdSet"/> does not support random access.
+        /// In contrast to <see cref="GetIterator()"/>, a return value of <c>null</c>
         /// <b>does not</b> imply that no documents match the filter!
         /// The default implementation does not provide random access, so you
-        /// only need to implement this method if your DocIdSet can
+        /// only need to implement this method if your <see cref="DocIdSet"/> can
         /// guarantee random access to every docid in O(1) time without
-        /// external disk access (as <seealso cref="GetBits"/> interface cannot throw
-        /// <seealso cref="IOException"/>). this is generally true for bit sets
-        /// like <seealso cref="Lucene.Net.Util.FixedBitSet"/>, which return
-        /// itself if they are used as {@code DocIdSet}. </returns>
+        /// external disk access (as <see cref="IBits"/> interface cannot throw
+        /// <see cref="System.IO.IOException"/>). This is generally true for bit sets
+        /// like <see cref="Lucene.Net.Util.FixedBitSet"/>, which return
+        /// itself if they are used as <see cref="DocIdSet"/>. </returns>
         public virtual IBits Bits // LUCENENET NOTE: This isn't a great candidate for a property, but it makes more sense to call this Bits than Bits(). GetBits() was already taken in the same context.
         {
             get { return null; }
         }
 
         /// <summary>
-        /// this method is a hint for <seealso cref="CachingWrapperFilter"/>, if this <code>DocIdSet</code>
+        /// This method is a hint for <see cref="CachingWrapperFilter"/>, if this <see cref="DocIdSet"/>
         /// should be cached without copying it. The default is to return
-        /// <code>false</code>. If you have an own <code>DocIdSet</code> implementation
+        /// <c>false</c>. If you have an own <see cref="DocIdSet"/> implementation
         /// that does its iteration very effective and fast without doing disk I/O,
-        /// override this method and return <code>true</code>.
+        /// override this property and return <c>true</c>.
         /// </summary>
         public virtual bool IsCacheable
         {
             get
             {
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new instance with the ability to specify the body of the <see cref="GetIterator()"/>
+        /// method through the <paramref name="getIterator"/> parameter.
+        /// Simple example:
+        /// <code>
+        ///     var docIdSet = DocIdSet.NewAnonymous(getIterator: () =>
+        ///     {
+        ///         OpenBitSet bitset = new OpenBitSet(5);
+        ///         bitset.Set(0, 5);
+        ///         return new DocIdBitSet(bitset);
+        ///     });
+        /// </code>
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        /// <param name="getIterator">
+        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/> 
+        /// method. It returns the <see cref="DocIdSetIterator"/> for this <see cref="DocIdSet"/>.
+        /// </param>
+        /// <returns> A new <see cref="AnonymousDocIdSet"/> instance. </returns>
+        public static DocIdSet NewAnonymous(Func<DocIdSetIterator> getIterator)
+        {
+            return NewAnonymous(getIterator, null, null);
+        }
+
+        /// <summary>
+        /// Creates a new instance with the ability to specify the body of the <see cref="GetIterator()"/>
+        /// method through the <paramref name="getIterator"/> parameter and the body of the <see cref="Bits"/>
+        /// property through the <paramref name="bits"/> parameter.
+        /// Simple example:
+        /// <code>
+        ///     var docIdSet = DocIdSet.NewAnonymous(getIterator: () =>
+        ///     {
+        ///         OpenBitSet bitset = new OpenBitSet(5);
+        ///         bitset.Set(0, 5);
+        ///         return new DocIdBitSet(bitset);
+        ///     }, bits: () => 
+        ///     {
+        ///         return bits;
+        ///     });
+        /// </code>
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        /// <param name="getIterator">
+        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/> 
+        /// method. It returns the <see cref="DocIdSetIterator"/> for this <see cref="DocIdSet"/>.
+        /// </param>
+        /// <param name="bits">
+        /// A delegate method that represents (is called by) the <see cref="Bits"/>
+        /// property. It returns the <see cref="IBits"/> instance for this <see cref="DocIdSet"/>.
+        /// </param>
+        /// <returns> A new <see cref="AnonymousDocIdSet"/> instance. </returns>
+        public static DocIdSet NewAnonymous(Func<DocIdSetIterator> getIterator, Func<IBits> bits)
+        {
+            return NewAnonymous(getIterator, bits, null);
+        }
+
+        /// <summary>
+        /// Creates a new instance with the ability to specify the body of the <see cref="GetIterator()"/>
+        /// method through the <paramref name="getIterator"/> parameter and the body of the <see cref="Bits"/>
+        /// property through the <paramref name="bits"/> parameter.
+        /// Simple example:
+        /// <code>
+        ///     var docIdSet = DocIdSet.NewAnonymous(getIterator: () =>
+        ///     {
+        ///         OpenBitSet bitset = new OpenBitSet(5);
+        ///         bitset.Set(0, 5);
+        ///         return new DocIdBitSet(bitset);
+        ///     }, isCacheable: () =>
+        ///     {
+        ///         return true;
+        ///     });
+        /// </code>
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        /// <param name="getIterator">
+        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/> 
+        /// method. It returns the <see cref="DocIdSetIterator"/> for this <see cref="DocIdSet"/>.
+        /// </param>
+        /// <param name="isCacheable">
+        /// A delegate method that represents (is called by) the <see cref="IsCacheable"/>
+        /// property. It returns a <see cref="bool"/> value.
+        /// </param>
+        /// <returns> A new <see cref="AnonymousDocIdSet"/> instance. </returns>
+        public static DocIdSet NewAnonymous(Func<DocIdSetIterator> getIterator, Func<bool> isCacheable)
+        {
+            return NewAnonymous(getIterator, null, isCacheable);
+        }
+
+        /// <summary>
+        /// Creates a new instance with the ability to specify the body of the <see cref="GetIterator()"/>
+        /// method through the <paramref name="getIterator"/> parameter and the body of the <see cref="Bits"/>
+        /// property through the <paramref name="bits"/> parameter.
+        /// Simple example:
+        /// <code>
+        ///     var docIdSet = DocIdSet.NewAnonymous(getIterator: () =>
+        ///     {
+        ///         OpenBitSet bitset = new OpenBitSet(5);
+        ///         bitset.Set(0, 5);
+        ///         return new DocIdBitSet(bitset);
+        ///     }, bits: () => 
+        ///     {
+        ///         return bits;
+        ///     }, isCacheable: () =>
+        ///     {
+        ///         return true;
+        ///     });
+        /// </code>
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        /// <param name="getIterator">
+        /// A delegate method that represents (is called by) the <see cref="GetIterator()"/> 
+        /// method. It returns the <see cref="DocIdSetIterator"/> for this <see cref="DocIdSet"/>.
+        /// </param>
+        /// <param name="bits">
+        /// A delegate method that represents (is called by) the <see cref="Bits"/>
+        /// property. It returns the <see cref="IBits"/> instance for this <see cref="DocIdSet"/>.
+        /// </param>
+        /// <param name="isCacheable">
+        /// A delegate method that represents (is called by) the <see cref="IsCacheable"/>
+        /// property. It returns a <see cref="bool"/> value.
+        /// </param>
+        /// <returns> A new <see cref="AnonymousDocIdSet"/> instance. </returns>
+        public static DocIdSet NewAnonymous(Func<DocIdSetIterator> getIterator, Func<IBits> bits, Func<bool> isCacheable)
+        {
+            return new AnonymousDocIdSet(getIterator, bits, isCacheable);
+        }
+
+        // LUCENENET specific
+        private class AnonymousDocIdSet : DocIdSet
+        {
+            private readonly Func<DocIdSetIterator> getIterator;
+            private readonly Func<IBits> bits;
+            private readonly Func<bool> isCacheable;
+
+            public AnonymousDocIdSet(Func<DocIdSetIterator> getIterator, Func<IBits> bits, Func<bool> isCacheable)
+            {
+                if (getIterator == null)
+                    throw new ArgumentNullException("getIterator");
+
+                this.getIterator = getIterator;
+                this.bits = bits;
+                this.isCacheable = isCacheable;
+            }
+
+            public override DocIdSetIterator GetIterator()
+            {
+                return this.getIterator();
+            }
+
+            public override IBits Bits
+            {
+                get
+                {
+                    if (this.bits != null)
+                    {
+                        return this.bits();
+                    }
+                    return base.Bits;
+                }
+            }
+
+            public override bool IsCacheable
+            {
+                get
+                {
+                    if (this.isCacheable != null)
+                    {
+                        return this.isCacheable();
+                    }
+                    return base.IsCacheable;
+                }
             }
         }
     }

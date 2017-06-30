@@ -445,11 +445,10 @@
     <Compile Include="Search\FuzzyTermsEnum.cs" />
     <Compile Include="Search\HitQueue.cs" />
     <Compile Include="Search\IndexSearcher.cs" />
-    <Compile Include="Search\ITopTermsRewrite.cs" />
     <Compile Include="Search\LiveFieldValues.cs" />
     <Compile Include="Search\MatchAllDocsQuery.cs" />
-    <Compile Include="Search\IMaxNonCompetitiveBoostAttribute.cs" />
     <Compile Include="Search\MaxNonCompetitiveBoostAttribute.cs" />
+    <Compile Include="Search\MaxNonCompetitiveBoostAttributeImpl.cs" />
     <Compile Include="Search\MinShouldMatchSumScorer.cs" />
     <Compile Include="Search\MultiCollector.cs" />
     <Compile Include="Search\MultiPhraseQuery.cs" />
@@ -734,6 +733,7 @@
     <Compile Include="Util\ArrayUtil.cs" />
     <Compile Include="Util\Attribute.cs" />
     <Compile Include="Util\AttributeImpl.cs" />
+    <Compile Include="Util\AttributeReflector.cs" />
     <Compile Include="Util\AttributeSource.cs" />
     <Compile Include="Util\Automaton\Automaton.cs" />
     <Compile Include="Util\Automaton\AutomatonProvider.cs" />
@@ -794,7 +794,6 @@
     <Compile Include="Util\Fst\ReverseBytesReader.cs" />
     <Compile Include="Util\Fst\Util.cs" />
     <Compile Include="Util\GrowableByteArrayDataOutput.cs" />
-    <Compile Include="Util\IAttributeReflector.cs" />
     <Compile Include="Util\IndexableBinaryStringTools.cs" />
     <Compile Include="Util\InfoStream.cs" />
     <Compile Include="Util\InPlaceMergeSorter.cs" />

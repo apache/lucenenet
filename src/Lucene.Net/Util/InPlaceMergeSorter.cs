@@ -18,19 +18,24 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// <seealso cref="Sorter"/> implementation based on the merge-sort algorithm that merges
-    ///  in place (no extra memory will be allocated). Small arrays are sorted with
-    ///  insertion sort.
-    ///  @lucene.internal
+    /// <see cref="Sorter"/> implementation based on the merge-sort algorithm that merges
+    /// in place (no extra memory will be allocated). Small arrays are sorted with
+    /// insertion sort.
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
     public abstract class InPlaceMergeSorter : Sorter
     {
         /// <summary>
-        /// Create a new <seealso cref="InPlaceMergeSorter"/> </summary>
+        /// Create a new <see cref="InPlaceMergeSorter"/> </summary>
         public InPlaceMergeSorter()
         {
         }
 
+        /// <summary>
+        /// Sort the slice which starts at <paramref name="from"/> (inclusive) and ends at
+        /// <paramref name="to"/> (exclusive).
+        /// </summary>
         public override sealed void Sort(int from, int to)
         {
             CheckRange(from, to);

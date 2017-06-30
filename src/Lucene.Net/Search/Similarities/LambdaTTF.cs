@@ -20,7 +20,8 @@ namespace Lucene.Net.Search.Similarities
      */
 
     /// <summary>
-    /// Computes lambda as {@code totalTermFreq+1 / numberOfDocuments+1}.
+    /// Computes lambda as <c>totalTermFreq+1 / numberOfDocuments+1</c>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE

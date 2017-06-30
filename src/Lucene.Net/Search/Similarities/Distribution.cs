@@ -21,9 +21,11 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// The probabilistic distribution used to model term occurrence
-    /// in information-based models. </summary>
-    /// <seealso cref= IBSimilarity
-    /// @lucene.experimental </seealso>
+    /// in information-based models. 
+    /// <para/>
+    /// @lucene.experimental
+    /// </summary>
+    /// <seealso cref="IBSimilarity"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -43,7 +45,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Explains the score. Returns the name of the model only, since
-        /// both {@code tfn} and {@code lambda} are explained elsewhere.
+        /// both <c>tfn</c> and <c>lambda</c> are explained elsewhere.
         /// </summary>
         public virtual Explanation Explain(BasicStats stats, float tfn, float lambda)
         {

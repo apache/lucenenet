@@ -22,9 +22,9 @@ namespace Lucene.Net.Index
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// A per-document byte[] with presorted values.
-    /// <p>
-    /// Per-Document values in a SortedDocValues are deduplicated, dereferenced,
+    /// A per-document <see cref="T:byte[]"/> with presorted values.
+    /// <para/>
+    /// Per-Document values in a <see cref="SortedDocValues"/> are deduplicated, dereferenced,
     /// and sorted into a dictionary of unique values. A pointer to the
     /// dictionary value (ordinal) can be retrieved for each document. Ordinals
     /// are dense and in increasing sorted order.
@@ -52,14 +52,14 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Retrieves the value for the specified ordinal. </summary>
-        /// <param name="ord"> ordinal to lookup (must be &gt;= 0 and &lt <seealso cref="#getValueCount()"/>) </param>
+        /// <param name="ord"> ordinal to lookup (must be &gt;= 0 and &lt; <see cref="ValueCount"/>) </param>
         /// <param name="result"> will be populated with the ordinal's value </param>
-        /// <seealso cref= #getOrd(int)  </seealso>
+        /// <seealso cref="GetOrd(int)"/>
         public abstract void LookupOrd(int ord, BytesRef result);
 
         /// <summary>
         /// Returns the number of unique values. </summary>
-        /// <returns> number of unique values in this SortedDocValues. this is
+        /// <returns> Number of unique values in this <see cref="SortedDocValues"/>. This is
         ///         also equivalent to one plus the maximum ordinal. </returns>
         public abstract int ValueCount { get; }
 
@@ -79,12 +79,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// If {@code key} exists, returns its ordinal, else
-        ///  returns {@code -insertionPoint-1}, like {@code
-        ///  Arrays.binarySearch}.
+        /// If <paramref name="key"/> exists, returns its ordinal, else
+        /// returns <c>-insertionPoint-1</c>, like 
+        /// <see cref="Array.BinarySearch(Array, int, int, object)"/>
         /// </summary>
-        ///  <param name="key"> Key to look up
-        ///  </param>
+        /// <param name="key"> Key to look up</param>
         public virtual int LookupTerm(BytesRef key)
         {
             BytesRef spare = new BytesRef();
@@ -115,8 +114,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a <seealso cref="TermsEnum"/> over the values.
-        /// The enum supports <seealso cref="TermsEnum#ord()"/> and <seealso cref="TermsEnum#seekExact(long)"/>.
+        /// Returns a <see cref="TermsEnum"/> over the values.
+        /// The enum supports <see cref="TermsEnum.Ord"/> and <see cref="TermsEnum.SeekExact(long)"/>.
         /// </summary>
         public virtual TermsEnum GetTermsEnum()
         {

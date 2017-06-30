@@ -142,7 +142,7 @@ namespace Lucene.Net.Analysis.Util
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(ts);
+                    IOUtils.DisposeWhileHandlingException(ts);
                 }
             }
             // just for fun
@@ -205,7 +205,7 @@ namespace Lucene.Net.Analysis.Util
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(ts);
+                    IOUtils.DisposeWhileHandlingException(ts);
                 }
             }
             // just for fun

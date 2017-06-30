@@ -27,43 +27,45 @@ namespace Lucene.Net.Search
     internal sealed class HitQueue : PriorityQueue<ScoreDoc>
     {
         /// <summary>
-        /// Creates a new instance with <code>size</code> elements. If
-        /// <code>prePopulate</code> is set to true, the queue will pre-populate itself
-        /// with sentinel objects and set its <seealso cref="#size()"/> to <code>size</code>. In
-        /// that case, you should not rely on <seealso cref="#size()"/> to get the number of
-        /// actual elements that were added to the queue, but keep track yourself.<br>
-        /// <b>NOTE:</b> in case <code>prePopulate</code> is true, you should pop
+        /// Creates a new instance with <paramref name="size"/> elements. If
+        /// <paramref name="prePopulate"/> is set to <c>true</c>, the queue will pre-populate itself
+        /// with sentinel objects and set its <see cref="PriorityQueue{T}.Count"/> to <paramref name="size"/>. In
+        /// that case, you should not rely on <see cref="PriorityQueue{T}.Count"/> to get the number of
+        /// actual elements that were added to the queue, but keep track yourself.
+        /// <para/>
+        /// <b>NOTE:</b> in case <paramref name="prePopulate"/> is <c>true</c>, you should pop
         /// elements from the queue using the following code example:
         ///
-        /// <pre class="prettyprint">
+        /// <code>
         /// PriorityQueue&lt;ScoreDoc&gt; pq = new HitQueue(10, true); // pre-populate.
-        /// ScoreDoc top = pq.top();
+        /// ScoreDoc top = pq.Top;
         ///
         /// // Add/Update one element.
-        /// top.score = 1.0f;
-        /// top.doc = 0;
-        /// top = (ScoreDoc) pq.updateTop();
+        /// top.Score = 1.0f;
+        /// top.Soc = 0;
+        /// top = (ScoreDoc) pq.UpdateTop();
         /// int totalHits = 1;
         ///
         /// // Now pop only the elements that were *truly* inserted.
-        /// // First, pop all the sentinel elements (there are pq.size() - totalHits).
-        /// for (int i = pq.size() - totalHits; i &gt; 0; i--) pq.pop();
+        /// // First, pop all the sentinel elements (there are pq.Count - totalHits).
+        /// for (int i = pq.Count - totalHits; i &gt; 0; i--) pq.Pop();
         ///
         /// // Now pop the truly added elements.
         /// ScoreDoc[] results = new ScoreDoc[totalHits];
-        /// for (int i = totalHits - 1; i &gt;= 0; i--) {
-        ///   results[i] = (ScoreDoc) pq.pop();
+        /// for (int i = totalHits - 1; i &gt;= 0; i--) 
+        /// {
+        ///     results[i] = (ScoreDoc)pq.Pop();
         /// }
-        /// </pre>
+        /// </code>
         ///
-        /// <p><b>NOTE</b>: this class pre-allocate a full array of
-        /// length <code>size</code>.
+        /// <para/><b>NOTE</b>: this class pre-allocate a full array of
+        /// length <paramref name="size"/>.
         /// </summary>
         /// <param name="size">
-        ///          the requested size of this queue. </param>
+        ///          The requested size of this queue. </param>
         /// <param name="prePopulate">
-        ///          specifies whether to pre-populate the queue with sentinel values. </param>
-        /// <seealso cref= #getSentinelObject() </seealso>
+        ///          Specifies whether to pre-populate the queue with sentinel values. </param>
+        /// <seealso cref="GetSentinelObject()"/>
         internal HitQueue(int size, bool prePopulate)
             : base(size, prePopulate)
         {

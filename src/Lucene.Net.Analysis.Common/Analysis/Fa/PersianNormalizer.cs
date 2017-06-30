@@ -28,9 +28,9 @@ namespace Lucene.Net.Analysis.Fa
     /// <para>
     /// Normalization is defined as:
     /// <list type="bullet">
-    ///     <item>Normalization of various heh + hamza forms and heh goal to heh.</item>
-    ///     <item>Normalization of farsi yeh and yeh barree to arabic yeh</item>
-    ///     <item>Normalization of persian keheh to arabic kaf</item>
+    ///     <item><description>Normalization of various heh + hamza forms and heh goal to heh.</description></item>
+    ///     <item><description>Normalization of farsi yeh and yeh barree to arabic yeh</description></item>
+    ///     <item><description>Normalization of persian keheh to arabic kaf</description></item>
     /// </list>
     /// </para>
     /// </summary>

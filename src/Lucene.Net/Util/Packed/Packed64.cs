@@ -26,11 +26,11 @@ namespace Lucene.Net.Util.Packed
     /// <summary>
     /// Space optimized random access capable array of values with a fixed number of
     /// bits/value. Values are packed contiguously.
-    /// </p><p>
+    /// <para/>
     /// The implementation strives to perform af fast as possible under the
-    /// constraint of contiguous bits, by avoiding expensive operations. this comes
+    /// constraint of contiguous bits, by avoiding expensive operations. This comes
     /// at the cost of code clarity.
-    /// </p><p>
+    /// <para/>
     /// Technical details: this implementation is a refinement of a non-branching
     /// version. The non-branching get and set methods meant that 2 or 4 atomics in
     /// the underlying array were always accessed, even for the cases where only
@@ -40,7 +40,6 @@ namespace Lucene.Net.Util.Packed
     /// and masks, which also proved to be a bit slower than calculating the shifts
     /// and masks on the fly.
     /// See https://issues.apache.org/jira/browse/LUCENE-4062 for details.
-    ///
     /// </summary>
     public class Packed64 : PackedInt32s.MutableImpl
     {
@@ -54,20 +53,20 @@ namespace Lucene.Net.Util.Packed
         private readonly long[] blocks;
 
         /// <summary>
-        /// A right-aligned mask of width BitsPerValue used by <seealso cref="#get(int)"/>.
+        /// A right-aligned mask of width BitsPerValue used by <see cref="Get(int)"/>.
         /// </summary>
         private readonly long maskRight;
 
         /// <summary>
-        /// Optimization: Saves one lookup in <seealso cref="#get(int)"/>.
+        /// Optimization: Saves one lookup in <see cref="Get(int)"/>.
         /// </summary>
         private readonly int bpvMinusBlockSize;
 
         /// <summary>
         /// Creates an array with the internal structures adjusted for the given
         /// limits and initialized to 0. </summary>
-        /// <param name="valueCount">   the number of elements. </param>
-        /// <param name="bitsPerValue"> the number of bits available for any given value. </param>
+        /// <param name="valueCount">   The number of elements. </param>
+        /// <param name="bitsPerValue"> The number of bits available for any given value. </param>
         public Packed64(int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)
         {
@@ -89,11 +88,11 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Creates an array with content retrieved from the given DataInput. </summary>
-        /// <param name="in">       a DataInput, positioned at the start of Packed64-content. </param>
-        /// <param name="valueCount">  the number of elements. </param>
-        /// <param name="bitsPerValue"> the number of bits available for any given value. </param>
-        /// <exception cref="java.io.IOException"> if the values for the backing array could not
+        /// Creates an array with content retrieved from the given <see cref="DataInput"/>. </summary>
+        /// <param name="in">       A <see cref="DataInput"/>, positioned at the start of Packed64-content. </param>
+        /// <param name="valueCount">  The number of elements. </param>
+        /// <param name="bitsPerValue"> The number of bits available for any given value. </param>
+        /// <exception cref="System.IO.IOException"> If the values for the backing array could not
         ///                             be retrieved. </exception>
         public Packed64(int packedIntsVersion, DataInput @in, int valueCount, int bitsPerValue)
             : base(valueCount, bitsPerValue)
@@ -122,8 +121,8 @@ namespace Lucene.Net.Util.Packed
             bpvMinusBlockSize = bitsPerValue - BLOCK_SIZE;
         }
 
-        /// <param name="index"> the position of the value. </param>
-        /// <returns> the value at the given index. </returns>
+        /// <param name="index"> The position of the value. </param>
+        /// <returns> The value at the given index. </returns>
         public override long Get(int index)
         {
             // The abstract index in a bit stream

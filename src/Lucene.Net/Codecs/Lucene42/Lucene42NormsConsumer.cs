@@ -34,7 +34,7 @@ namespace Lucene.Net.Codecs.Lucene42
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
-    /// Writer for <seealso cref="Lucene42NormsFormat"/>
+    /// Writer for <see cref="Lucene42NormsFormat"/>.
     /// </summary>
     internal class Lucene42NormsConsumer : DocValuesConsumer
     {
@@ -70,7 +70,7 @@ namespace Lucene.Net.Codecs.Lucene42
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this);
+                    IOUtils.DisposeWhileHandlingException(this);
                 }
             }
         }
@@ -219,11 +219,11 @@ namespace Lucene.Net.Codecs.Lucene42
                 {
                     if (success)
                     {
-                        IOUtils.Close(data, meta);
+                        IOUtils.Dispose(data, meta);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(data, meta);
+                        IOUtils.DisposeWhileHandlingException(data, meta);
                     }
                     meta = data = null;
                 }

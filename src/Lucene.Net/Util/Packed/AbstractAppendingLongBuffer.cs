@@ -21,7 +21,7 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Common functionality shared by <seealso cref="AppendingDeltaPackedInt64Buffer"/> and <seealso cref="MonotonicAppendingInt64Buffer"/>. 
+    /// Common functionality shared by <see cref="AppendingDeltaPackedInt64Buffer"/> and <see cref="MonotonicAppendingInt64Buffer"/>. 
     /// <para/>
     /// NOTE: This was AbstractAppendingLongBuffer in Lucene
     /// </summary>
@@ -59,6 +59,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Get the number of values that have been added to the buffer.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public long Count
@@ -119,8 +120,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Bulk get: read at least one and at most <code>len</code> longs starting
-        /// from <code>index</code> into <code>arr[off:off+len]</code> and return
+        /// Bulk get: read at least one and at most <paramref name="len"/> <see cref="long"/>s starting
+        /// from <paramref name="index"/> into <c>arr[off:off+len]</c> and return
         /// the actual number of values that have been read.
         /// </summary>
         public int Get(long index, long[] arr, int off, int len)
@@ -238,7 +239,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Pack all pending values in this buffer. Subsequent calls to <seealso cref="#add(long)"/> will fail. </summary>
+        /// Pack all pending values in this buffer. Subsequent calls to <see cref="Add(long)"/> will fail. </summary>
         public virtual void Freeze()
         {
             if (pendingOff > 0)

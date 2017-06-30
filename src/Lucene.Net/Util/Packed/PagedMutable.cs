@@ -22,9 +22,10 @@ namespace Lucene.Net.Util.Packed
     using Mutable = Lucene.Net.Util.Packed.PackedInt32s.Mutable;
 
     /// <summary>
-    /// A <seealso cref="PagedMutable"/>. this class slices data into fixed-size blocks
+    /// A <see cref="PagedMutable"/>. This class slices data into fixed-size blocks
     /// which have the same number of bits per value. It can be a useful replacement
-    /// for <seealso cref="PackedInt32s.Mutable"/> to store more than 2B values.
+    /// for <see cref="PackedInt32s.Mutable"/> to store more than 2B values.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class PagedMutable : AbstractPagedMutable<PagedMutable>
@@ -32,12 +33,12 @@ namespace Lucene.Net.Util.Packed
         internal readonly PackedInt32s.Format format;
 
         /// <summary>
-        /// Create a new <seealso cref="PagedMutable"/> instance.
+        /// Create a new <see cref="PagedMutable"/> instance.
         /// </summary>
-        /// <param name="size"> the number of values to store. </param>
-        /// <param name="pageSize"> the number of values per page </param>
-        /// <param name="bitsPerValue"> the number of bits per value </param>
-        /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio </param>
+        /// <param name="size"> The number of values to store. </param>
+        /// <param name="pageSize"> The number of values per page. </param>
+        /// <param name="bitsPerValue"> The number of bits per value. </param>
+        /// <param name="acceptableOverheadRatio"> An acceptable overhead ratio. </param>
         public PagedMutable(long size, int pageSize, int bitsPerValue, float acceptableOverheadRatio)
             : this(size, pageSize, PackedInt32s.FastestFormatAndBits(pageSize, bitsPerValue, acceptableOverheadRatio))
         {

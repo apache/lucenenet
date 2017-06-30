@@ -109,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene40
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                 }
             }
         }

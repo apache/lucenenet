@@ -23,9 +23,9 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Represents hits returned by {@link
-    /// IndexSearcher#search(Query,Filter,int)} and {@link
-    /// IndexSearcher#search(Query,int)}.
+    /// Represents hits returned by 
+    /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> and 
+    /// <see cref="IndexSearcher.Search(Query,int)"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -48,7 +48,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the maximum score value encountered. Note that in case
-        /// scores are not tracked, this returns <seealso cref="Float#NaN"/>.
+        /// scores are not tracked, this returns <see cref="float.NaN"/>.
         /// </summary>
         public virtual float MaxScore
         {
@@ -63,7 +63,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Constructs a TopDocs with a default maxScore=Float.NaN. </summary>
+        /// Constructs a <see cref="TopDocs"/> with a default <c>maxScore=System.Single.NaN</c>. </summary>
         internal TopDocs(int totalHits, ScoreDoc[] scoreDocs)
             : this(totalHits, scoreDocs, float.NaN)
         {
@@ -250,16 +250,16 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a new TopDocs, containing topN results across
-        ///  the provided TopDocs, sorting by the specified {@link
-        ///  Sort}.  Each of the TopDocs must have been sorted by
-        ///  the same Sort, and sort field values must have been
-        ///  filled (ie, <code>fillFields=true</code> must be
-        ///  passed to {@link
-        ///  TopFieldCollector#create}.
+        /// Returns a new <see cref="TopDocs"/>, containing <paramref name="topN"/> results across
+        /// the provided <see cref="TopDocs"/>, sorting by the specified 
+        /// <see cref="Sort"/>.  Each of the <see cref="TopDocs"/> must have been sorted by
+        /// the same <see cref="Sort"/>, and sort field values must have been
+        /// filled (ie, <c>fillFields=true</c> must be
+        /// passed to
+        /// <see cref="TopFieldCollector.Create(Sort, int, bool, bool, bool, bool)"/>.
         ///
-        /// <p>Pass sort=null to merge sort by score descending.
-        ///
+        /// <para/>Pass <paramref name="sort"/>=null to merge sort by score descending.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static TopDocs Merge(Sort sort, int topN, TopDocs[] shardHits)
@@ -268,8 +268,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Same as <seealso cref="#merge(Sort, int, TopDocs[])"/> but also slices the result at the same time based
-        /// on the provided start and size. The return TopDocs will always have a scoreDocs with length of at most size.
+        /// Same as <see cref="Merge(Sort, int, TopDocs[])"/> but also slices the result at the same time based
+        /// on the provided start and size. The return <c>TopDocs</c> will always have a scoreDocs with length of 
+        /// at most <see cref="Util.PriorityQueue{T}.Count"/>.
         /// </summary>
         public static TopDocs Merge(Sort sort, int start, int size, TopDocs[] shardHits)
         {

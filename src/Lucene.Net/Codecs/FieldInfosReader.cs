@@ -22,22 +22,23 @@ namespace Lucene.Net.Codecs
     using IOContext = Lucene.Net.Store.IOContext;
 
     /// <summary>
-    /// Codec API for reading <seealso cref="FieldInfos"/>.
+    /// Codec API for reading <see cref="FieldInfos"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class FieldInfosReader
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal FieldInfosReader()
         {
         }
 
         /// <summary>
-        /// Read the <seealso cref="FieldInfos"/> previously written with {@link
-        ///  FieldInfosWriter}.
+        /// Read the <see cref="FieldInfos"/> previously written with 
+        /// <see cref="FieldInfosWriter"/>.
         /// </summary>
         public abstract FieldInfos Read(Directory directory, string segmentName, string segmentSuffix, IOContext iocontext);
     }

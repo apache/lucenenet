@@ -166,7 +166,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
 
-            IOUtils.Close(tw, iw, tr, taxoDir, indexDir);
+            IOUtils.Dispose(tw, iw, tr, taxoDir, indexDir);
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass

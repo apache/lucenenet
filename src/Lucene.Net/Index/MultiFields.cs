@@ -29,17 +29,17 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Exposes flex API, merged from flex API of sub-segments.
-    /// this is useful when you're interacting with an {@link
-    /// IndexReader} implementation that consists of sequential
-    /// sub-readers (eg <seealso cref="DirectoryReader"/> or {@link
-    /// MultiReader}).
+    /// This is useful when you're interacting with an 
+    /// <see cref="IndexReader"/> implementation that consists of sequential
+    /// sub-readers (eg <see cref="DirectoryReader"/> or 
+    /// <see cref="MultiReader"/>).
     ///
-    /// <p><b>NOTE</b>: for composite readers, you'll get better
+    /// <para/><b>NOTE</b>: for composite readers, you'll get better
     /// performance by gathering the sub readers using
-    /// <seealso cref="IndexReader#getContext()"/> to get the
+    /// <see cref="IndexReader.Context"/> to get the
     /// atomic leaves and then operate per-AtomicReader,
     /// instead of using this class.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -52,14 +52,14 @@ namespace Lucene.Net.Index
         private readonly IDictionary<string, Terms> terms = new ConcurrentDictionary<string, Terms>();
 
         /// <summary>
-        /// Returns a single <seealso cref="Fields"/> instance for this
-        ///  reader, merging fields/terms/docs/positions on the
-        ///  fly.  this method will return null if the reader
-        ///  has no postings.
+        /// Returns a single <see cref="Fields"/> instance for this
+        /// reader, merging fields/terms/docs/positions on the
+        /// fly.  This method will return <c>null</c> if the reader
+        /// has no postings.
         ///
-        ///  <p><b>NOTE</b>: this is a slow way to access postings.
-        ///  It's better to get the sub-readers and iterate through them
-        ///  yourself.
+        /// <para/><b>NOTE</b>: this is a slow way to access postings.
+        /// It's better to get the sub-readers and iterate through them
+        /// yourself.
         /// </summary>
         public static Fields GetFields(IndexReader reader)
         {
@@ -103,15 +103,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a single <seealso cref="IBits"/> instance for this
-        ///  reader, merging live Documents on the
-        ///  fly.  this method will return null if the reader
-        ///  has no deletions.
+        /// Returns a single <see cref="IBits"/> instance for this
+        /// reader, merging live Documents on the
+        /// fly.  This method will return <c>null</c> if the reader
+        /// has no deletions.
         ///
-        ///  <p><b>NOTE</b>: this is a very slow way to access live docs.
-        ///  For example, each Bits access will require a binary search.
-        ///  It's better to get the sub-readers and iterate through them
-        ///  yourself.
+        /// <para/><b>NOTE</b>: this is a very slow way to access live docs.
+        /// For example, each <see cref="IBits"/> access will require a binary search.
+        /// It's better to get the sub-readers and iterate through them
+        /// yourself.
         /// </summary>
         public static IBits GetLiveDocs(IndexReader reader)
         {
@@ -143,7 +143,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        ///  this method may return null if the field does not exist. </summary>
+        /// this method may return <c>null</c> if the field does not exist. </summary>
         public static Terms GetTerms(IndexReader r, string field)
         {
             Fields fields = GetFields(r);
@@ -158,9 +158,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <seealso cref="DocsEnum"/> for the specified field &
-        ///  term.  this will return null if the field or term does
-        ///  not exist.
+        /// Returns <see cref="DocsEnum"/> for the specified field &amp;
+        /// term.  This will return <c>null</c> if the field or term does
+        /// not exist.
         /// </summary>
         public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term)
         {
@@ -168,12 +168,12 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <seealso cref="DocsEnum"/> for the specified field &
-        ///  term, with control over whether freqs are required.
-        ///  Some codecs may be able to optimize their
-        ///  implementation when freqs are not required.  this will
-        ///  return null if the field or term does not exist.  See {@link
-        ///  TermsEnum#docs(Bits,DocsEnum,int)}.
+        /// Returns <see cref="DocsEnum"/> for the specified field &amp;
+        /// term, with control over whether freqs are required.
+        /// Some codecs may be able to optimize their
+        /// implementation when freqs are not required.  This will
+        /// return <c>null</c> if the field or term does not exist.  See
+        /// <see cref="TermsEnum.Docs(IBits, DocsEnum, DocsFlags)"/>.
         /// </summary>
         public static DocsEnum GetTermDocsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsFlags flags)
         {
@@ -192,23 +192,23 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns <seealso cref="DocsAndPositionsEnum"/> for the specified
-        ///  field & term.  this will return null if the field or
-        ///  term does not exist or positions were not indexed. </summary>
-        ///  <seealso cref= #getTermPositionsEnum(IndexReader, Bits, String, BytesRef, int)  </seealso>
+        /// Returns <see cref="DocsAndPositionsEnum"/> for the specified
+        /// field &amp; term.  This will return <c>null</c> if the field or
+        /// term does not exist or positions were not indexed. </summary>
+        /// <seealso cref="GetTermPositionsEnum(IndexReader, IBits, string, BytesRef, DocsAndPositionsFlags)"/>
         public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term)
         {
             return GetTermPositionsEnum(r, liveDocs, field, term, DocsAndPositionsFlags.OFFSETS | DocsAndPositionsFlags.PAYLOADS);
         }
 
         /// <summary>
-        /// Returns <seealso cref="DocsAndPositionsEnum"/> for the specified
-        ///  field & term, with control over whether offsets and payloads are
-        ///  required.  Some codecs may be able to optimize
-        ///  their implementation when offsets and/or payloads are not
-        ///  required. this will return null if the field or term does not
-        ///  exist or positions were not indexed. See {@link
-        ///  TermsEnum#docsAndPositions(Bits,DocsAndPositionsEnum,int)}.
+        /// Returns <see cref="DocsAndPositionsEnum"/> for the specified
+        /// field &amp; term, with control over whether offsets and payloads are
+        /// required.  Some codecs may be able to optimize
+        /// their implementation when offsets and/or payloads are not
+        /// required. This will return <c>null</c> if the field or term does not
+        /// exist or positions were not indexed. See 
+        /// <see cref="TermsEnum.DocsAndPositions(IBits, DocsAndPositionsEnum, DocsAndPositionsFlags)"/>.
         /// </summary>
         public static DocsAndPositionsEnum GetTermPositionsEnum(IndexReader r, IBits liveDocs, string field, BytesRef term, DocsAndPositionsFlags flags)
         {
@@ -227,7 +227,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: construct a new MultiFields instance directly.
+        /// Expert: construct a new <see cref="MultiFields"/> instance directly.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         // TODO: why is this public?
@@ -291,13 +292,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Call this to get the (merged) FieldInfos for a
-        ///  composite reader.
-        ///  <p>
-        ///  NOTE: the returned field numbers will likely not
-        ///  correspond to the actual field numbers in the underlying
-        ///  readers, and codec metadata (<seealso cref="FieldInfo#getAttribute(String)"/>
-        ///  will be unavailable.
+        /// Call this to get the (merged) <see cref="FieldInfos"/> for a
+        /// composite reader.
+        /// <para/>
+        /// NOTE: the returned field numbers will likely not
+        /// correspond to the actual field numbers in the underlying
+        /// readers, and codec metadata (<see cref="FieldInfo.GetAttribute(string)"/>)
+        /// will be unavailable.
         /// </summary>
         public static FieldInfos GetMergedFieldInfos(IndexReader reader)
         {
@@ -310,13 +311,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Call this to get the (merged) FieldInfos representing the
-        ///  set of indexed fields <b>only</b> for a composite reader.
-        ///  <p>
-        ///  NOTE: the returned field numbers will likely not
-        ///  correspond to the actual field numbers in the underlying
-        ///  readers, and codec metadata (<seealso cref="FieldInfo#getAttribute(String)"/>
-        ///  will be unavailable.
+        /// Call this to get the (merged) <see cref="FieldInfos"/> representing the
+        /// set of indexed fields <b>only</b> for a composite reader.
+        /// <para/>
+        /// NOTE: the returned field numbers will likely not
+        /// correspond to the actual field numbers in the underlying
+        /// readers, and codec metadata (<see cref="FieldInfo.GetAttribute(string)"/>)
+        /// will be unavailable.
         /// </summary>
         public static ICollection<string> GetIndexedFields(IndexReader reader)
         {

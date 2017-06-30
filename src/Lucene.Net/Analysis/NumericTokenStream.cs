@@ -287,7 +287,7 @@ namespace Lucene.Net.Analysis
         /// <para/>
         /// NOTE: This was setLongValue() in Lucene
         /// </summary>
-        /// <param name="value"> the value, for which this <see cref=""TokenStream/> should enumerate tokens. </param>
+        /// <param name="value"> the value, for which this <see cref="TokenStream"/> should enumerate tokens. </param>
         /// <returns> this instance, because of this you can use it the following way:
         /// <code>new Field(name, new NumericTokenStream(precisionStep).SetInt64Value(value))</code> </returns>
         public NumericTokenStream SetInt64Value(long value)

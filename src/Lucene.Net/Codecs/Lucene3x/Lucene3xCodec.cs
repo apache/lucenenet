@@ -28,7 +28,6 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// <summary>
     /// Supports the Lucene 3.x index format (readonly) </summary>
-    /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
     [CodecName("Lucene3x")] // LUCENENET specific - using CodecName attribute to ensure the default name passed from subclasses is the same as this class name
     public class Lucene3xCodec : Codec
@@ -51,7 +50,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         private readonly Lucene3xNormsFormat normsFormat = new Lucene3xNormsFormat();
 
         /// <summary>
-        /// Extension of compound file for doc store files </summary>
+        /// Extension of compound file for doc store files. </summary>
         internal const string COMPOUND_FILE_STORE_EXTENSION = "cfx";
 
         // TODO: this should really be a different impl
@@ -120,7 +119,7 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns file names for shared doc stores, if any, else
-        /// null.
+        /// <c>null</c>.
         /// </summary>
         public static ISet<string> GetDocStoreFiles(SegmentInfo info)
         {

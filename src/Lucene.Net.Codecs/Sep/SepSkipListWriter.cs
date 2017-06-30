@@ -22,16 +22,15 @@ namespace Lucene.Net.Codecs.Sep
      * limitations under the License.
      */
 
+    // TODO: -- skip data should somehow be more local to the particular stream 
+    // (doc, freq, pos, payload)
+
     /// <summary>
     /// Implements the skip list writer for the default posting list format
     /// that stores positions and payloads.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-    /// <remarks>
-    /// TODO: -- skip data should somehow be more local to the particular stream 
-    /// (doc, freq, pos, payload)
-    /// </remarks>
     internal class SepSkipListWriter : MultiLevelSkipListWriter
     {
         private readonly int[] _lastSkipDoc;
@@ -108,7 +107,7 @@ namespace Lucene.Net.Codecs.Sep
 
         /// <summary>
         /// Sets the values for the current skip data. 
-        /// Called @ every index interval (every 128th (by default) doc)
+        /// Called @ every index interval (every 128th (by default) doc).
         /// </summary>
         internal virtual void SetSkipData(int doc, bool storePayloads, int payloadLength)
         {
@@ -122,7 +121,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         /// <summary>
-        /// Called @ start of new term
+        /// Called @ start of new term.
         /// </summary>
         protected internal virtual void ResetSkip(Int32IndexOutput.Index topDocIndex, Int32IndexOutput.Index topFreqIndex,
             Int32IndexOutput.Index topPosIndex)

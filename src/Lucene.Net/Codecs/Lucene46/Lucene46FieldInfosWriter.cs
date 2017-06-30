@@ -32,9 +32,10 @@ namespace Lucene.Net.Codecs.Lucene46
 
     /// <summary>
     /// Lucene 4.6 FieldInfos writer.
+    /// <para/>
+    /// @lucene.experimental 
     /// </summary>
-    /// <seealso cref= Lucene46FieldInfosFormat
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="Lucene46FieldInfosFormat"/>
     internal sealed class Lucene46FieldInfosWriter : FieldInfosWriter
     {
         /// <summary>
@@ -109,7 +110,7 @@ namespace Lucene.Net.Codecs.Lucene46
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                 }
             }
         }

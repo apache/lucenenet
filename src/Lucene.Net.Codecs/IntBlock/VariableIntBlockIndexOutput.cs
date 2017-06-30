@@ -21,26 +21,24 @@ namespace Lucene.Net.Codecs.IntBlock
      * limitations under the License.
      */
 
-
-    // Naive int block API that writes vInts.  This is
-    // expected to give poor performance; it's really only for
-    // testing the pluggability.  One should typically use pfor instead. 
-
-
-
     // TODO: much of this can be shared code w/ the fixed case
 
     /// <summary>
     /// Abstract base class that writes variable-size blocks of ints
-    ///  to an IndexOutput.  While this is a simple approach, a
-    ///  more performant approach would directly create an impl
-    ///  of IntIndexOutput inside Directory.  Wrapping a generic
-    ///  IndexInput will likely cost performance.
+    /// to an <see cref="IndexOutput"/>.  While this is a simple approach, a
+    /// more performant approach would directly create an impl
+    /// of <see cref="Int32IndexOutput"/> inside <see cref="Directory"/>.  Wrapping a generic
+    /// <see cref="IndexOutput"/> will likely cost performance.
     /// <para/>
     /// NOTE: This was VariableIntBlockIndexOutput in Lucene
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
+    /// <remarks>
+    /// Naive int block API that writes vInts.  This is
+    /// expected to give poor performance; it's really only for
+    /// testing the pluggability.  One should typically use pfor instead. 
+    /// </remarks>
     public abstract class VariableInt32BlockIndexOutput : Int32IndexOutput
     {
         protected readonly IndexOutput m_output;
@@ -52,10 +50,10 @@ namespace Lucene.Net.Codecs.IntBlock
         // if its less than 128 we should set that as max and use byte?
 
         /// <summary>
-        /// NOTE: maxBlockSize must be the maximum block size 
-        ///  plus the max non-causal lookahead of your codec.  EG Simple9
-        ///  requires lookahead=1 because on seeing the Nth value
-        ///  it knows it must now encode the N-1 values before it. 
+        /// NOTE: <paramref name="maxBlockSize"/> must be the maximum block size 
+        /// plus the max non-causal lookahead of your codec.  EG Simple9
+        /// requires lookahead=1 because on seeing the Nth value
+        /// it knows it must now encode the N-1 values before it. 
         /// </summary>
         protected VariableInt32BlockIndexOutput(IndexOutput output, int maxBlockSize)
         {

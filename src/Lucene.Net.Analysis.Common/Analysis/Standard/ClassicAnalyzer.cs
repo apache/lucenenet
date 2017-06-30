@@ -30,12 +30,12 @@ namespace Lucene.Net.Analysis.Standard
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="ClassicAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.1, <see cref="StopFilter"/> correctly handles Unicode 4.0
-    ///         supplementary characters in stopwords</item>
-    ///     <item> As of 2.9, <see cref="StopFilter"/> preserves position
-    ///        increments</item>
-    ///     <item> As of 2.4, <see cref="Token"/>s incorrectly identified as acronyms
-    ///        are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</item>
+    ///     <item><description> As of 3.1, <see cref="StopFilter"/> correctly handles Unicode 4.0
+    ///         supplementary characters in stopwords</description></item>
+    ///     <item><description> As of 2.9, <see cref="StopFilter"/> preserves position
+    ///        increments</description></item>
+    ///     <item><description> As of 2.4, <see cref="Token"/>s incorrectly identified as acronyms
+    ///        are corrected (see <a href="https://issues.apache.org/jira/browse/LUCENE-1068">LUCENE-1068</a>)</description></item>
     /// </list>
     /// 
     /// <see cref="ClassicAnalyzer"/> was named <see cref="StandardAnalyzer"/> in Lucene versions prior to 3.1. 

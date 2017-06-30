@@ -30,11 +30,11 @@ namespace Lucene.Net.Support.IO
     /// <para/>
     /// A byte buffer can be created in either one of the following ways:
     /// <list type="bullet">
-    ///     <item><see cref="Allocate(int)"/> a new byte array and create a
-    ///     buffer based on it</item>
-    ///     <item><see cref="AllocateDirect(int)"/> a memory block and create a direct
-    ///     buffer based on it</item>
-    ///     <item><see cref="Wrap(byte[])"/> an existing byte array to create a new buffer</item>
+    ///     <item><description><see cref="Allocate(int)"/> a new byte array and create a
+    ///     buffer based on it</description></item>
+    ///     <item><description><see cref="AllocateDirect(int)"/> a memory block and create a direct
+    ///     buffer based on it</description></item>
+    ///     <item><description><see cref="Wrap(byte[])"/> an existing byte array to create a new buffer</description></item>
     /// </list>
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -194,7 +194,7 @@ namespace Lucene.Net.Support.IO
         /// <para/>
         /// The remaining bytes will be moved to the head of the
         /// buffer, starting from position zero. Then the position is set to
-        /// <see cref="Remaining"/>; the limit is set to capacity; the mark is
+        /// <see cref="Buffer.Remaining"/>; the limit is set to capacity; the mark is
         /// cleared.
         /// </summary>
         /// <returns>this buffer.</returns>
@@ -303,7 +303,7 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         /// <param name="dest">the destination byte array.</param>
         /// <returns>this buffer.</returns>
-        /// <exception cref="BufferUnderflowException">if <c>dest.Length</c> is greater than <see cref="Remaining"/>.</exception>
+        /// <exception cref="BufferUnderflowException">if <c>dest.Length</c> is greater than <see cref="Buffer.Remaining"/>.</exception>
         public virtual ByteBuffer Get(byte[] dest)
         {
             return Get(dest, 0, dest.Length);
@@ -324,7 +324,7 @@ namespace Lucene.Net.Support.IO
         /// </param>
         /// <returns>this buffer.</returns>
         /// <exception cref="IndexOutOfRangeException">if either <paramref name="off"/> or <paramref name="len"/> is invalid.</exception>
-        /// <exception cref="BufferUnderflowException">if <paramref name="len"/> is greater than <see cref="Remaining"/>.</exception>
+        /// <exception cref="BufferUnderflowException">if <paramref name="len"/> is greater than <see cref="Buffer.Remaining"/>.</exception>
         public virtual ByteBuffer Get(byte[] dest, int off, int len)
         {
             int length = dest.Length;
@@ -602,7 +602,7 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         /// <param name="src">the source byte array.</param>
         /// <returns>this buffer.</returns>
-        /// <exception cref="BufferOverflowException">if <see cref="Remaining"/> is less than <c>src.Length</c>.</exception>
+        /// <exception cref="BufferOverflowException">if <see cref="Buffer.Remaining"/> is less than <c>src.Length</c>.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public ByteBuffer Put(byte[] src)
         {
@@ -624,7 +624,7 @@ namespace Lucene.Net.Support.IO
         /// greater than <c>src.Length - off</c>.
         /// </param>
         /// <returns>this buffer.</returns>
-        /// <exception cref="BufferOverflowException">if <see cref="Remaining"/> is less than <paramref name="len"/>.</exception>
+        /// <exception cref="BufferOverflowException">if <see cref="Buffer.Remaining"/> is less than <paramref name="len"/>.</exception>
         /// <exception cref="IndexOutOfRangeException">if either <paramref name="off"/> or <paramref name="len"/> is invalid.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public virtual ByteBuffer Put(byte[] src, int off, int len)
@@ -653,7 +653,7 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         /// <param name="src">the source byte buffer.</param>
         /// <returns>this buffer.</returns>
-        /// <exception cref="BufferOverflowException">if <c>src.Remaining</c> is greater than this buffer's <see cref="Remaining"/>.</exception>
+        /// <exception cref="BufferOverflowException">if <c>src.Remaining</c> is greater than this buffer's <see cref="Buffer.Remaining"/>.</exception>
         /// <exception cref="ArgumentException">if <paramref name="src"/> is this buffer.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public virtual ByteBuffer Put(ByteBuffer src)
@@ -704,7 +704,7 @@ namespace Lucene.Net.Support.IO
         /// <param name="index">the index, must not be negative and equal or less than <c>limit - 2</c>.</param>
         /// <param name="value">the <see cref="char"/> to write.</param>
         /// <returns>this buffer.</returns>
-        /// <exception cref="IndexOutOfRangeException">if <paramref name=""index/> is invalid.</exception>
+        /// <exception cref="IndexOutOfRangeException">if <paramref name="index"/> is invalid.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public abstract ByteBuffer PutChar(int index, char value);
 
@@ -729,7 +729,7 @@ namespace Lucene.Net.Support.IO
         /// <param name="index">the index, must not be negative and equal or less than <c>limit - 8</c>.</param>
         /// <param name="value">the <see cref="double"/> to write.</param>
         /// <returns></returns>
-        /// <exception cref="IndexOutOfRangeException">if <paramref name=""index/> is invalid.</exception>
+        /// <exception cref="IndexOutOfRangeException">if <paramref name="index"/> is invalid.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public abstract ByteBuffer PutDouble(int index, double value);
 
@@ -758,7 +758,7 @@ namespace Lucene.Net.Support.IO
         /// <param name="index">the index, must not be negative and equal or less than <c>limit - 4</c>.</param>
         /// <param name="value">the <see cref="float"/> to write.</param>
         /// <returns></returns>
-        /// <exception cref="IndexOutOfRangeException">if <paramref name=""index/> is invalid.</exception>
+        /// <exception cref="IndexOutOfRangeException">if <paramref name="index"/> is invalid.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public abstract ByteBuffer PutSingle(int index, float value);
 
@@ -787,7 +787,7 @@ namespace Lucene.Net.Support.IO
         /// <param name="index">the index, must not be negative and equal or less than <c>limit - 4</c>.</param>
         /// <param name="value">the <see cref="int"/> to write.</param>
         /// <returns>this buffer.</returns>
-        /// <exception cref="IndexOutOfRangeException">if <paramref name=""index/> is invalid.</exception>
+        /// <exception cref="IndexOutOfRangeException">if <paramref name="index"/> is invalid.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public abstract ByteBuffer PutInt32(int index, int value);
 
@@ -816,7 +816,7 @@ namespace Lucene.Net.Support.IO
         /// <param name="index">the index, must not be negative and equal or less than <c>limit - 8</c>.</param>
         /// <param name="value">the <see cref="long"/> to write.</param>
         /// <returns>this buffer.</returns>
-        /// <exception cref="IndexOutOfRangeException">if <paramref name=""index/> is invalid.</exception>
+        /// <exception cref="IndexOutOfRangeException">if <paramref name="index"/> is invalid.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public abstract ByteBuffer PutInt64(int index, long value);
 
@@ -845,7 +845,7 @@ namespace Lucene.Net.Support.IO
         /// <param name="index">the index, must not be negative and equal or less than <c>limit - 2</c>.</param>
         /// <param name="value">the <see cref="short"/> to write.</param>
         /// <returns>this buffer.</returns>
-        /// <exception cref="IndexOutOfRangeException">if <paramref name=""index/> is invalid.</exception>
+        /// <exception cref="IndexOutOfRangeException">if <paramref name="index"/> is invalid.</exception>
         /// <exception cref="ReadOnlyBufferException">if no changes may be made to the contents of this buffer.</exception>
         public abstract ByteBuffer PutInt16(int index, short value);
 
@@ -853,7 +853,7 @@ namespace Lucene.Net.Support.IO
         /// Returns a sliced buffer that shares its content with this buffer.
         /// <para/>
         /// The sliced buffer's capacity will be this buffer's
-        /// <see cref="Remaining"/>, and it's zero position will correspond to
+        /// <see cref="Buffer.Remaining"/>, and it's zero position will correspond to
         /// this buffer's current position. The new buffer's position will be 0,
         /// limit will be its capacity, and its mark is cleared. The new buffer's
         /// read-only property and byte order are the same as this buffer's.

@@ -20,7 +20,7 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Non-specialized <seealso cref="BulkOperation"/> for <seealso cref="PackedInt32s.Format#PACKED"/>.
+    /// Non-specialized <see cref="BulkOperation"/> for <see cref="PackedInt32s.Format.PACKED"/>.
     /// </summary>
     internal class BulkOperationPacked : BulkOperation
     {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// NOTE: This was longBlockCount() in Lucene
+        /// NOTE: This was longBlockCount() in Lucene.
         /// </summary>
         public override int Int64BlockCount
         {
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// NOTE: This was longValueCount() in Lucene
+        /// NOTE: This was longValueCount() in Lucene.
         /// </summary>
         public override int Int64ValueCount
         {

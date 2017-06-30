@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Snowball
     /// <para><b>NOTE</b>: This class uses the same <see cref="LuceneVersion"/>
     /// dependent settings as <see cref="StandardAnalyzer"/>, with the following addition:
     /// <list type="bullet">
-    ///   <item> As of 3.1, uses <see cref="TurkishLowerCaseFilter"/> for Turkish language.</item>
+    ///   <item><description> As of 3.1, uses <see cref="TurkishLowerCaseFilter"/> for Turkish language.</description></item>
     /// </list>
     /// </para> </summary>
     /// @deprecated (3.1) Use the language-specific analyzer in modules/analysis instead. 

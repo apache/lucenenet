@@ -25,7 +25,8 @@
         "Analysis/Pt/portuguese.rslp",
         "Analysis/Compound/Hyphenation/hyphenation.dtd"
       ]
-    }
+    },
+    "nowarn": [ "1591", "1573" ]
   },
   "dependencies": {
     "Lucene.Net": "4.8.0"

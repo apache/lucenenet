@@ -27,9 +27,9 @@ namespace Lucene.Net.Codecs.BlockTerms
      */
 
     /// <summary>
-    /// See VariableGapTermsIndexWriter
-    /// 
-    /// lucene.experimental
+    /// See <see cref="VariableGapTermsIndexWriter"/>.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
     public class VariableGapTermsIndexReader : TermsIndexReaderBase
     {
@@ -258,7 +258,7 @@ namespace Lucene.Net.Codecs.BlockTerms
                 }
             }
 
-            /// <summary>Returns approximate RAM bytes used</summary>
+            /// <summary>Returns approximate RAM bytes used.</summary>
             public virtual long RamBytesUsed()
             {
                 return fst == null ? 0 : fst.GetSizeInBytes();

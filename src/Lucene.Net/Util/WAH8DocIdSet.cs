@@ -29,48 +29,48 @@ namespace Lucene.Net.Util
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
-    /// <seealso cref="DocIdSet"/> implementation based on word-aligned hybrid encoding on
+    /// <see cref="DocIdSet"/> implementation based on word-aligned hybrid encoding on
     /// words of 8 bits.
-    /// <p>this implementation doesn't support random-access but has a fast
-    /// <seealso cref="DocIdSetIterator"/> which can advance in logarithmic time thanks to
-    /// an index.</p>
-    /// <p>The compression scheme is simplistic and should work well with sparse and
+    /// <para>This implementation doesn't support random-access but has a fast
+    /// <see cref="DocIdSetIterator"/> which can advance in logarithmic time thanks to
+    /// an index.</para>
+    /// <para>The compression scheme is simplistic and should work well with sparse and
     /// very dense doc id sets while being only slightly larger than a
-    /// <seealso cref="FixedBitSet"/> for incompressible sets (overhead&lt;2% in the worst
-    /// case) in spite of the index.</p>
-    /// <p><b>Format</b>: The format is byte-aligned. An 8-bits word is either clean,
+    /// <see cref="FixedBitSet"/> for incompressible sets (overhead&lt;2% in the worst
+    /// case) in spite of the index.</para>
+    /// <para><b>Format</b>: The format is byte-aligned. An 8-bits word is either clean,
     /// meaning composed only of zeros or ones, or dirty, meaning that it contains
     /// between 1 and 7 bits set. The idea is to encode sequences of clean words
-    /// using run-length encoding and to leave sequences of dirty words as-is.</p>
-    /// <table>
-    ///   <tr><th>Token</th><th>Clean length+</th><th>Dirty length+</th><th>Dirty words</th></tr>
-    ///   <tr><td>1 byte</td><td>0-n bytes</td><td>0-n bytes</td><td>0-n bytes</td></tr>
-    /// </table>
-    /// <ul>
-    ///   <li><b>Token</b> encodes whether clean means full of zeros or ones in the
-    /// first bit, the number of clean words minus 2 on the next 3 bits and the
-    /// number of dirty words on the last 4 bits. The higher-order bit is a
-    /// continuation bit, meaning that the number is incomplete and needs additional
-    /// bytes to be read.</li>
-    ///   <li><b>Clean length+</b>: If clean length has its higher-order bit set,
-    /// you need to read a <seealso cref="DataInput#readVInt() vint"/>, shift it by 3 bits on
-    /// the left side and add it to the 3 bits which have been read in the token.</li>
-    ///   <li><b>Dirty length+</b> works the same way as <b>Clean length+</b> but
-    /// on 4 bits and for the length of dirty words.</li>
-    ///   <li><b>Dirty words</b> are the dirty words, there are <b>Dirty length</b>
-    /// of them.</li>
-    /// </ul>
-    /// <p>this format cannot encode sequences of less than 2 clean words and 0 dirty
+    /// using run-length encoding and to leave sequences of dirty words as-is.</para>
+    /// <list type="table">
+    ///     <listheader><term>Token</term><term>Clean length+</term><term>Dirty length+</term><term>Dirty words</term></listheader>
+    ///     <item><term>1 byte</term><term>0-n bytes</term><term>0-n bytes</term><term>0-n bytes</term></item>
+    /// </list>
+    /// <list type="bullet">
+    ///     <item><term><b>Token</b></term><description> encodes whether clean means full of zeros or ones in the
+    ///         first bit, the number of clean words minus 2 on the next 3 bits and the
+    ///         number of dirty words on the last 4 bits. The higher-order bit is a
+    ///         continuation bit, meaning that the number is incomplete and needs additional
+    ///         bytes to be read.</description></item>
+    ///     <item><term><b>Clean length+</b>:</term><description> If clean length has its higher-order bit set,
+    ///         you need to read a vint (<see cref="Store.DataInput.ReadVInt32()"/>), shift it by 3 bits on
+    ///         the left side and add it to the 3 bits which have been read in the token.</description></item>
+    ///     <item><term><b>Dirty length+</b></term><description> works the same way as <b>Clean length+</b> but
+    ///         on 4 bits and for the length of dirty words.</description></item>
+    ///     <item><term><b>Dirty words</b></term><description>are the dirty words, there are <b>Dirty length</b>
+    ///         of them.</description></item>
+    /// </list>
+    /// <para>This format cannot encode sequences of less than 2 clean words and 0 dirty
     /// word. The reason is that if you find a single clean word, you should rather
-    /// encode it as a dirty word. this takes the same space as starting a new
+    /// encode it as a dirty word. This takes the same space as starting a new
     /// sequence (since you need one byte for the token) but will be lighter to
     /// decode. There is however an exception for the first sequence. Since the first
     /// sequence may start directly with a dirty word, the clean length is encoded
-    /// directly, without subtracting 2.</p>
-    /// <p>There is an additional restriction on the format: the sequence of dirty
-    /// words is not allowed to contain two consecutive clean words. this restriction
+    /// directly, without subtracting 2.</para>
+    /// <para>There is an additional restriction on the format: the sequence of dirty
+    /// words is not allowed to contain two consecutive clean words. This restriction
     /// exists to make sure no space is wasted and to make sure iterators can read
-    /// the next doc ID by reading at most 2 dirty words.</p>
+    /// the next doc ID by reading at most 2 dirty words.</para>
     /// @lucene.experimental
     /// </summary>
     public sealed class WAH8DocIdSet : DocIdSet
@@ -110,14 +110,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Same as <seealso cref="#intersect(Collection, int)"/> with the default index interval. </summary>
+        /// Same as <see cref="Intersect(ICollection{WAH8DocIdSet}, int)"/> with the default index interval. </summary>
         public static WAH8DocIdSet Intersect(ICollection<WAH8DocIdSet> docIdSets)
         {
             return Intersect(docIdSets, DEFAULT_INDEX_INTERVAL);
         }
 
         /// <summary>
-        /// Compute the intersection of the provided sets. this method is much faster than
+        /// Compute the intersection of the provided sets. This method is much faster than
         /// computing the intersection manually since it operates directly at the byte level.
         /// </summary>
         public static WAH8DocIdSet Intersect(ICollection<WAH8DocIdSet> docIdSets, int indexInterval)
@@ -184,14 +184,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Same as <seealso cref="#union(Collection, int)"/> with the default index interval. </summary>
+        /// Same as <see cref="Union(ICollection{WAH8DocIdSet}, int)"/> with the default index interval. </summary>
         public static WAH8DocIdSet Union(ICollection<WAH8DocIdSet> docIdSets)
         {
             return Union(docIdSets, DEFAULT_INDEX_INTERVAL);
         }
 
         /// <summary>
-        /// Compute the union of the provided sets. this method is much faster than
+        /// Compute the union of the provided sets. This method is much faster than
         /// computing the union manually since it operates directly at the byte level.
         /// </summary>
         public static WAH8DocIdSet Union(ICollection<WAH8DocIdSet> docIdSets, int indexInterval)
@@ -292,12 +292,12 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Set the index interval. Smaller index intervals improve performance of
-            ///  <seealso cref="DocIdSetIterator#advance(int)"/> but make the <seealso cref="DocIdSet"/>
-            ///  larger. An index interval <code>i</code> makes the index add an overhead
-            ///  which is at most <code>4/i</code>, but likely much less.The default index
-            ///  interval is <code>8</code>, meaning the index has an overhead of at most
-            ///  50%. To disable indexing, you can pass <see cref="int.MaxValue"/> as an
-            ///  index interval.
+            /// <see cref="DocIdSetIterator.Advance(int)"/> but make the <see cref="DocIdSet"/>
+            /// larger. An index interval <c>i</c> makes the index add an overhead
+            /// which is at most <c>4/i</c>, but likely much less. The default index
+            /// interval is <c>8</c>, meaning the index has an overhead of at most
+            /// 50%. To disable indexing, you can pass <see cref="int.MaxValue"/> as an
+            /// index interval.
             /// </summary>
             public virtual object SetIndexInterval(int indexInterval)
             {
@@ -454,7 +454,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Build a new <seealso cref="WAH8DocIdSet"/>. </summary>
+            /// Build a new <see cref="WAH8DocIdSet"/>. </summary>
             public virtual WAH8DocIdSet Build()
             {
                 if (cardinality == 0)
@@ -509,7 +509,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A builder for <seealso cref="WAH8DocIdSet"/>s. </summary>
+        /// A builder for <see cref="WAH8DocIdSet"/>s. </summary>
         public sealed class Builder : WordBuilder
         {
             private int lastDocID;
@@ -554,7 +554,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Add the content of the provided <seealso cref="DocIdSetIterator"/>. </summary>
+            /// Add the content of the provided <see cref="DocIdSetIterator"/>. </summary>
             public Builder Add(DocIdSetIterator disi)
             {
                 for (int doc = disi.NextDoc(); doc != DocIdSetIterator.NO_MORE_DOCS; doc = disi.NextDoc())
@@ -893,7 +893,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return the number of documents in this <seealso cref="DocIdSet"/> in constant time. </summary>
+        /// Return the number of documents in this <see cref="DocIdSet"/> in constant time. </summary>
         public int Cardinality()
         {
             return cardinality;

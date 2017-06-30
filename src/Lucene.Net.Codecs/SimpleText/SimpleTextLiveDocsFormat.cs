@@ -40,11 +40,11 @@ namespace Lucene.Net.Codecs.SimpleText
     using UnicodeUtil = Util.UnicodeUtil;
 
     /// <summary>
-    /// reads/writes plaintext live docs
+    /// Reads/writes plain text live docs.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextLiveDocsFormat : LiveDocsFormat
     {
@@ -103,17 +103,17 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (success)
                 {
-                    IOUtils.Close(input);
+                    IOUtils.Dispose(input);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
             }
         }
 
         /// <summary>
-        /// NOTE: This was parseIntAt() in Lucene
+        /// NOTE: This was parseIntAt() in Lucene.
         /// </summary>
         private int ParseInt32At(BytesRef bytes, int offset, CharsRef scratch)
         {
@@ -154,11 +154,11 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (success)
                 {
-                    IOUtils.Close(output);
+                    IOUtils.Dispose(output);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                 }
             }
         }

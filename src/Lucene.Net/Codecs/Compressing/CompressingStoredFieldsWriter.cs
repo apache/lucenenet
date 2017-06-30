@@ -28,7 +28,8 @@ namespace Lucene.Net.Codecs.Compressing
      */
 
     /// <summary>
-    /// <seealso cref="StoredFieldsWriter"/> impl for <seealso cref="CompressingStoredFieldsFormat"/>.
+    /// <see cref="StoredFieldsWriter"/> impl for <see cref="CompressingStoredFieldsFormat"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class CompressingStoredFieldsWriter : StoredFieldsWriter
@@ -123,7 +124,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(indexStream);
+                    IOUtils.DisposeWhileHandlingException(indexStream);
                     Abort();
                 }
             }
@@ -135,7 +136,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 try
                 {
-                    IOUtils.Close(fieldsStream, indexWriter);
+                    IOUtils.Dispose(fieldsStream, indexWriter);
                 }
                 finally
                 {
@@ -167,7 +168,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// NOTE: This was saveInts() in Lucene
+        /// NOTE: This was saveInts() in Lucene.
         /// </summary>
         private static void SaveInt32s(int[] values, int length, DataOutput @out)
         {
@@ -420,7 +421,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void Abort()
         {
-            IOUtils.CloseWhileHandlingException(this);
+            IOUtils.DisposeWhileHandlingException(this);
             IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, segmentSuffix, Lucene40StoredFieldsWriter.FIELDS_INDEX_EXTENSION));
         }
 

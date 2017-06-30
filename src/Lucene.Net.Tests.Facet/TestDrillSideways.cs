@@ -246,7 +246,7 @@ namespace Lucene.Net.Facet
             Assert.AreEqual(0, r.Hits.TotalHits);
             Assert.Null(r.Facets.GetTopChildren(10, "Publish Date"));
             Assert.Null(r.Facets.GetTopChildren(10, "Author"));
-            IOUtils.Close(searcher.IndexReader, taxoReader, writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(searcher.IndexReader, taxoReader, writer, taxoWriter, dir, taxoDir);
         }
 
         [Test]
@@ -302,7 +302,7 @@ namespace Lucene.Net.Facet
             // published once:
             Assert.AreEqual("dim=Author path=[] value=2 childCount=2\n  Bob (1)\n  Lisa (1)\n", r.Facets.GetTopChildren(10, "Author").ToString());
 
-            IOUtils.Close(searcher.IndexReader, taxoReader, writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(searcher.IndexReader, taxoReader, writer, taxoWriter, dir, taxoDir);
         }
 
         [Test]
@@ -359,7 +359,7 @@ namespace Lucene.Net.Facet
             Assert.AreEqual("dim=dim path=[] value=6 childCount=4\n  a (3)\n  b (1)\n  c (1)\n  d (1)\n", r.Facets.GetTopChildren(10, "dim").ToString());
             Assert.AreEqual("dim=dim path=[a] value=3 childCount=3\n  x (1)\n  y (1)\n  z (1)\n", r.Facets.GetTopChildren(10, "dim", "a").ToString());
 
-            IOUtils.Close(searcher.IndexReader, taxoReader, writer, taxoWriter, dir, taxoDir);
+            IOUtils.Dispose(searcher.IndexReader, taxoReader, writer, taxoWriter, dir, taxoDir);
         }
 
         internal class Doc : IComparable<Doc>
@@ -802,7 +802,7 @@ namespace Lucene.Net.Facet
                 }
             }
 
-            IOUtils.Close(r, tr, w, tw, d, td);
+            IOUtils.Dispose(r, tr, w, tw, d, td);
         }
 
         private class FilterAnonymousInnerClassHelper : Filter
@@ -1318,7 +1318,7 @@ namespace Lucene.Net.Facet
             r = ds.Search(ddq, null, null, 10, new Sort(new SortField("foo", SortFieldType.INT32)), false, false); // this used to fail on IllegalArgEx
             Assert.AreEqual(0, r.Hits.TotalHits);
 
-            IOUtils.Close(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
+            IOUtils.Dispose(writer, taxoWriter, searcher.IndexReader, taxoReader, dir, taxoDir);
         }
     }
 

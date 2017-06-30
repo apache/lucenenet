@@ -43,12 +43,12 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Indicates whether or not this Explanation models a good match.
+        /// Indicates whether or not this <see cref="Explanation"/> models a good match.
         ///
-        /// <p>
+        /// <para>
         /// By default, an Explanation represents a "match" if the value is positive.
-        /// </p> </summary>
-        /// <seealso cref= #getValue </seealso>
+        /// </para> </summary>
+        /// <seealso cref="Value"/>
         public virtual bool IsMatch
         {
             get
@@ -58,7 +58,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// The value assigned to this explanation node. </summary>
+        /// Gets or Sets the value assigned to this explanation node. </summary>
         public virtual float Value
         {
             get
@@ -72,7 +72,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A description of this explanation node. </summary>
+        /// Gets or Sets the description of this explanation node. </summary>
         public virtual string Description
         {
             get
@@ -87,7 +87,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// A short one line summary which should contain all high level
-        /// information about this Explanation, without the "Details"
+        /// information about this <see cref="Explanation"/>, without the "Details"
         /// </summary>
         protected virtual string GetSummary()
         {

@@ -23,12 +23,12 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Throw this exception in <seealso cref="ICollector#collect(int)"/> to prematurely
-    ///  terminate collection of the current leaf.
-    ///  <p>Note: IndexSearcher swallows this exception and never re-throws it.
-    ///  As a consequence, you should not catch it when calling
-    ///  <seealso cref="IndexSearcher#search"/> as it is unnecessary and might hide misuse
-    ///  of this exception.
+    /// Throw this exception in <see cref="ICollector.Collect(int)"/> to prematurely
+    /// terminate collection of the current leaf.
+    /// <para/>Note: <see cref="IndexSearcher"/> swallows this exception and never re-throws it.
+    /// As a consequence, you should not catch it when calling any overload of
+    /// <see cref="IndexSearcher.Search(Weight, FieldDoc, int, Sort, bool, bool, bool)"/> as it is unnecessary and might hide misuse
+    /// of this exception.
     /// </summary>
     // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE

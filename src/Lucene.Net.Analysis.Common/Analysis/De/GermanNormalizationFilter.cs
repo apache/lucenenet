@@ -28,10 +28,10 @@ namespace Lucene.Net.Analysis.De
     /// It allows for the fact that ä, ö and ü are sometimes written as ae, oe and ue.
     /// <para>
     /// <list>
-    ///     <item> 'ß' is replaced by 'ss'</item>
-    ///     <item> 'ä', 'ö', 'ü' are replaced by 'a', 'o', 'u', respectively.</item>
-    ///     <item> 'ae' and 'oe' are replaced by 'a', and 'o', respectively.</item>
-    ///     <item> 'ue' is replaced by 'u', when not following a vowel or q.</item>
+    ///     <item><description> 'ß' is replaced by 'ss'</description></item>
+    ///     <item><description> 'ä', 'ö', 'ü' are replaced by 'a', 'o', 'u', respectively.</description></item>
+    ///     <item><description> 'ae' and 'oe' are replaced by 'a', and 'o', respectively.</description></item>
+    ///     <item><description> 'ue' is replaced by 'u', when not following a vowel or q.</description></item>
     /// </list>
     /// </para>
     /// <para>

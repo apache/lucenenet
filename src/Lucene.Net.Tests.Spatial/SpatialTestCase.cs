@@ -71,7 +71,7 @@ namespace Lucene.Net.Spatial
 
         public override void TearDown()
         {
-            IOUtils.Close(indexWriter, indexReader, directory);
+            IOUtils.Dispose(indexWriter, indexReader, directory);
             base.TearDown();
         }
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Spatial
         protected virtual void Commit()
         {
             indexWriter.Commit();
-            IOUtils.Close(indexReader);
+            IOUtils.Dispose(indexReader);
             indexReader = indexWriter.Reader;
             indexSearcher = NewSearcher(indexReader);
         }

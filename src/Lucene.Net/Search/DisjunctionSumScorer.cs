@@ -20,8 +20,8 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A Scorer for OR like queries, counterpart of <code>ConjunctionScorer</code>.
-    /// this Scorer implements <seealso cref="Scorer#advance(int)"/> and uses advance() on the given Scorers.
+    /// A <see cref="Scorer"/> for OR like queries, counterpart of <see cref="ConjunctionScorer"/>.
+    /// This <see cref="Scorer"/> implements <see cref="DocIdSetIterator.Advance(int)"/> and uses Advance() on the given <see cref="Scorer"/>s.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -36,7 +36,7 @@ namespace Lucene.Net.Search
         private readonly float[] coord;
 
         /// <summary>
-        /// Construct a <code>DisjunctionScorer</code>. </summary>
+        /// Construct a <see cref="DisjunctionScorer"/>. </summary>
         /// <param name="weight"> The weight to be used. </param>
         /// <param name="subScorers"> Array of at least two subscorers. </param>
         /// <param name="coord"> Table of coordination factors </param>
@@ -80,7 +80,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the score of the current document matching the query.
-        /// Initially invalid, until <seealso cref="#nextDoc()"/> is called the first time.
+        /// Initially invalid, until <see cref="DisjunctionScorer.NextDoc()"/> is called the first time.
         /// </summary>
         public override float GetScore()
         {

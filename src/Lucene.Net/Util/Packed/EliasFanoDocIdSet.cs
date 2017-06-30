@@ -22,6 +22,7 @@ namespace Lucene.Net.Util.Packed
 
     /// <summary>
     /// A DocIdSet in Elias-Fano encoding.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class EliasFanoDocIdSet : DocIdSet
@@ -38,11 +39,11 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Provide an indication that is better to use an <seealso cref="EliasFanoDocIdSet"/> than a <seealso cref="FixedBitSet"/>
-        ///  to encode document identifiers. </summary>
-        ///  <param name="numValues"> The number of document identifiers that is to be encoded. Should be non negative. </param>
-        ///  <param name="upperBound"> The maximum possible value for a document identifier. Should be at least <code>numValues</code>. </param>
-        ///  <returns> See <seealso cref="EliasFanoEncoder#sufficientlySmallerThanBitSet(long, long)"/> </returns>
+        /// Provide an indication that is better to use an <see cref="EliasFanoDocIdSet"/> than a <see cref="FixedBitSet"/>
+        /// to encode document identifiers. </summary>
+        /// <param name="numValues"> The number of document identifiers that is to be encoded. Should be non negative. </param>
+        /// <param name="upperBound"> The maximum possible value for a document identifier. Should be at least <paramref name="numValues"/>. </param>
+        /// <returns> See <see cref="EliasFanoEncoder.SufficientlySmallerThanBitSet(long, long)"/> </returns>
         public static bool SufficientlySmallerThanBitSet(long numValues, long upperBound)
         {
             return EliasFanoEncoder.SufficientlySmallerThanBitSet(numValues, upperBound);
@@ -50,8 +51,8 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Encode the document ids from a DocIdSetIterator. </summary>
-        ///  <param name="disi"> this DocIdSetIterator should provide document ids that are consistent
-        ///              with <code>numValues</code> and <code>upperBound</code> as provided to the constructor.   </param>
+        /// <param name="disi"> This DocIdSetIterator should provide document ids that are consistent
+        ///              with <c>numValues</c> and <c>upperBound</c> as provided to the constructor.   </param>
         public virtual void EncodeFromDisi(DocIdSetIterator disi)
         {
             while (efEncoder.numEncoded < efEncoder.numValues)
@@ -66,7 +67,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Provides a <seealso cref="DocIdSetIterator"/> to access encoded document ids.
+        /// Provides a <see cref="DocIdSetIterator"/> to access encoded document ids.
         /// </summary>
         public override DocIdSetIterator GetIterator()
         {
@@ -119,8 +120,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// this DocIdSet implementation is cacheable. </summary>
-        /// <returns> <code>true</code> </returns>
+        /// This DocIdSet implementation is cacheable. </summary>
+        /// <returns> <c>true</c> </returns>
         public override bool IsCacheable
         {
             get

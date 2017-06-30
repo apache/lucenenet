@@ -37,7 +37,7 @@ namespace Lucene.Net.Util.Packed
 
         // same as DataOutput.WriteVInt64 but accepts negative values
         /// <summary>
-        /// NOTE: This was writeVLong() in Lucene
+        /// NOTE: This was writeVLong() in Lucene.
         /// </summary>
         internal static void WriteVInt64(DataOutput @out, long i)
         {
@@ -59,7 +59,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Sole constructor. </summary>
-        /// <param name="blockSize"> the number of values of a single block, must be a multiple of <tt>64</tt> </param>
+        /// <param name="blockSize"> the number of values of a single block, must be a multiple of <c>64</c>. </param>
         public AbstractBlockPackedWriter(DataOutput @out, int blockSize)
         {
             PackedInt32s.CheckBlockSize(blockSize, MIN_BLOCK_SIZE, MAX_BLOCK_SIZE);
@@ -68,7 +68,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Reset this writer to wrap <code>out</code>. The block size remains unchanged. </summary>
+        /// Reset this writer to wrap <paramref name="out"/>. The block size remains unchanged. </summary>
         public virtual void Reset(DataOutput @out)
         {
             Debug.Assert(@out != null);
@@ -117,9 +117,9 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Flush all buffered data to disk. this instance is not usable anymore
-        ///  after this method has been called until <seealso cref="#reset(DataOutput)"/> has
-        ///  been called.
+        /// Flush all buffered data to disk. This instance is not usable anymore
+        /// after this method has been called until <see cref="Reset(DataOutput)"/> has
+        /// been called.
         /// </summary>
         public virtual void Finish()
         {

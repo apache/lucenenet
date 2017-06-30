@@ -23,7 +23,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains the ordinal of the field value from the default Lucene <see cref="FieldCache"/> using <see cref="IFieldCache.GetTermsIndex"/>
+    /// Obtains the ordinal of the field value from the default Lucene <see cref="FieldCache"/> using <see cref="IFieldCache.GetTermsIndex(AtomicReader, string, float)"/>
     /// and reverses the order.
     /// <para/>
     /// The native lucene index order is used to assign an ordinal value for each field value.

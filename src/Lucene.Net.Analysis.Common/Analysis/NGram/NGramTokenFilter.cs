@@ -27,12 +27,12 @@ namespace Lucene.Net.Analysis.NGram
     /// <para>You must specify the required <see cref="LuceneVersion"/> compatibility when
     /// creating a <see cref="NGramTokenFilter"/>. As of Lucene 4.4, this token filters:
     /// <list type="bullet">
-    ///     <item>handles supplementary characters correctly,</item>
-    ///     <item>emits all n-grams for the same token at the same position,</item>
-    ///     <item>does not modify offsets,</item>
-    ///     <item>sorts n-grams by their offset in the original token first, then
+    ///     <item><description>handles supplementary characters correctly,</description></item>
+    ///     <item><description>emits all n-grams for the same token at the same position,</description></item>
+    ///     <item><description>does not modify offsets,</description></item>
+    ///     <item><description>sorts n-grams by their offset in the original token first, then
     ///         increasing length (meaning that "abc" will give "a", "ab", "abc", "b", "bc",
-    ///         "c").</item>
+    ///         "c").</description></item>
     /// </list>
     /// </para>
     /// <para>You can make this filter use the old behavior by providing a version &lt;

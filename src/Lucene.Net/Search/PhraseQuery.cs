@@ -1,6 +1,7 @@
 using Lucene.Net.Index;
 using Lucene.Net.Support;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -43,15 +44,29 @@ namespace Lucene.Net.Search
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// A Query that matches documents containing a particular sequence of terms.
-    /// A PhraseQuery is built by QueryParser for input like <code>"new york"</code>.
+    /// A <see cref="Query"/> that matches documents containing a particular sequence of terms.
+    /// A <see cref="PhraseQuery"/> is built by QueryParser for input like <c>"new york"</c>.
     ///
-    /// <p>this query may be combined with other terms or queries with a <seealso cref="BooleanQuery"/>.
+    /// <para/>This query may be combined with other terms or queries with a <see cref="BooleanQuery"/>.
+    /// <para/>
+    /// Collection initializer note: To create and populate a <see cref="PhraseQuery"/>
+    /// in a single statement, you can use the following example as a guide:
+    /// 
+    /// <code>
+    /// var phraseQuery = new PhraseQuery() {
+    ///     new Term("field", "microsoft"), 
+    ///     new Term("field", "office")
+    /// };
+    /// </code>
+    /// Note that as long as you specify all of the parameters, you can use either
+    /// <see cref="Add(Term)"/> or <see cref="Add(Term, int)"/>
+    /// as the method to use to initialize. If there are multiple parameters, each parameter set
+    /// must be surrounded by curly braces.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class PhraseQuery : Query
+    public class PhraseQuery : Query, IEnumerable<Term> // LUCENENET specific - implemented IEnumerable<Term>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
         private IList<Term> terms = new EquatableList<Term>(4);
@@ -67,19 +82,19 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sets the number of other words permitted between words in query phrase.
-        ///  If zero, then this is an exact phrase search.  For larger values this works
-        ///  like a <code>WITHIN</code> or <code>NEAR</code> operator.
+        /// If zero, then this is an exact phrase search.  For larger values this works
+        /// like a <c>WITHIN</c> or <c>NEAR</c> operator.
         ///
-        ///  <p>The slop is in fact an edit-distance, where the units correspond to
-        ///  moves of terms in the query phrase out of position.  For example, to switch
-        ///  the order of two words requires two moves (the first move places the words
-        ///  atop one another), so to permit re-orderings of phrases, the slop must be
-        ///  at least two.
+        /// <para/>The slop is in fact an edit-distance, where the units correspond to
+        /// moves of terms in the query phrase out of position.  For example, to switch
+        /// the order of two words requires two moves (the first move places the words
+        /// atop one another), so to permit re-orderings of phrases, the slop must be
+        /// at least two.
         ///
-        ///  <p>More exact matches are scored higher than sloppier matches, thus search
-        ///  results are sorted by exactness.
+        /// <para/>More exact matches are scored higher than sloppier matches, thus search
+        /// results are sorted by exactness.
         ///
-        ///  <p>The slop is zero by default, requiring exact matches.
+        /// <para/>The slop is zero by default, requiring exact matches.
         /// </summary>
         public virtual int Slop
         {
@@ -117,7 +132,6 @@ namespace Lucene.Net.Search
         /// The relative position of the term within the phrase is specified explicitly.
         /// this allows e.g. phrases with more than one term at the same position
         /// or phrases with gaps (e.g. in connection with stopwords).
-        ///
         /// </summary>
         public virtual void Add(Term term, int position)
         {
@@ -438,7 +452,7 @@ namespace Lucene.Net.Search
             return new PhraseWeight(this, searcher);
         }
 
-        /// <seealso cref= Lucene.Net.Search.Query#extractTerms(Set) </seealso>
+        /// <seealso cref="Lucene.Net.Search.Query.ExtractTerms(ISet{Term})"/>
         public override void ExtractTerms(ISet<Term> queryTerms)
         {
             queryTerms.UnionWith(terms);
@@ -501,7 +515,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true iff <code>o</code> is equal to this. </summary>
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (!(o is PhraseQuery))
@@ -523,6 +537,26 @@ namespace Lucene.Net.Search
                 ^ slop 
                 ^ terms.GetHashCode() 
                 ^ positions.GetHashCode();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="terms"/> collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the <see cref="terms"/> collection.</returns>
+        // LUCENENET specific
+        public IEnumerator<Term> GetEnumerator()
+        {
+            return this.terms.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the <see cref="terms"/> collection.
+        /// </summary>
+        /// <returns>An enumerator that can be used to iterate through the <see cref="terms"/> collection.</returns>
+        // LUCENENET specific
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

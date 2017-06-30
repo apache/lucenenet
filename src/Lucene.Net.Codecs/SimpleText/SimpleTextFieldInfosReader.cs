@@ -35,11 +35,11 @@ namespace Lucene.Net.Codecs.SimpleText
     using StringHelper = Util.StringHelper;
 
     /// <summary>
-    /// reads plaintext field infos files
+    /// Reads plain text field infos files.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextFieldInfosReader : FieldInfosReader
     {
@@ -153,7 +153,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
             }
         }

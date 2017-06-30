@@ -20,28 +20,28 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// Utility class to buffer a list of signed longs in memory. this class only
-    /// supports appending and is optimized for non-negative numbers with a uniform distribution over a fixed (limited) range
+    /// Utility class to buffer a list of signed longs in memory. This class only
+    /// supports appending and is optimized for non-negative numbers with a uniform distribution over a fixed (limited) range.
     /// <para/>
     /// NOTE: This was AppendingPackedLongBuffer in Lucene
-    /// 
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class AppendingPackedInt64Buffer : AbstractAppendingInt64Buffer
     {
         /// <summary>
-        ///<seealso cref="AppendingPackedInt64Buffer"/> </summary>
-        /// <param name="initialPageCount">        the initial number of pages </param>
-        /// <param name="pageSize">                the size of a single page </param>
-        /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio per value </param>
+        /// Initialize a <see cref="AppendingPackedInt64Buffer"/>. </summary>
+        /// <param name="initialPageCount">        The initial number of pages. </param>
+        /// <param name="pageSize">                The size of a single page. </param>
+        /// <param name="acceptableOverheadRatio"> An acceptable overhead ratio per value. </param>
         public AppendingPackedInt64Buffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
         }
 
         /// <summary>
-        /// Create an <seealso cref="AppendingPackedInt64Buffer"/> with initialPageCount=16,
-        /// pageSize=1024 and acceptableOverheadRatio=<seealso cref="PackedInt32s#DEFAULT"/>
+        /// Create an <see cref="AppendingPackedInt64Buffer"/> with initialPageCount=16,
+        /// pageSize=1024 and acceptableOverheadRatio=<see cref="PackedInt32s.DEFAULT"/>.
         /// </summary>
         public AppendingPackedInt64Buffer()
             : this(16, 1024, PackedInt32s.DEFAULT)
@@ -49,8 +49,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Create an <seealso cref="AppendingPackedInt64Buffer"/> with initialPageCount=16,
-        /// pageSize=1024
+        /// Create an <see cref="AppendingPackedInt64Buffer"/> with initialPageCount=16,
+        /// pageSize=1024.
         /// </summary>
         public AppendingPackedInt64Buffer(float acceptableOverheadRatio)
             : this(16, 1024, acceptableOverheadRatio)

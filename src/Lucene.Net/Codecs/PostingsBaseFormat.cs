@@ -21,9 +21,9 @@ namespace Lucene.Net.Codecs
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
-    /// Provides a <seealso cref="PostingsReaderBase"/> and {@link
-    /// PostingsWriterBase}.
-    ///
+    /// Provides a <see cref="Codecs.PostingsReaderBase"/> and 
+    /// <see cref="Codecs.PostingsWriterBase"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 
@@ -37,7 +37,7 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// Unique name that's used to retrieve this codec when
-        ///  reading the index
+        /// reading the index.
         /// </summary>
         public string Name { get; private set; }
 
@@ -49,14 +49,14 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Creates the <seealso cref="PostingsReaderBase"/> for this
-        ///  format.
+        /// Creates the <see cref="Codecs.PostingsReaderBase"/> for this
+        /// format.
         /// </summary>
         public abstract PostingsReaderBase PostingsReaderBase(SegmentReadState state);
 
         /// <summary>
-        /// Creates the <seealso cref="PostingsWriterBase"/> for this
-        ///  format.
+        /// Creates the <see cref="Codecs.PostingsWriterBase"/> for this
+        /// format.
         /// </summary>
         public abstract PostingsWriterBase PostingsWriterBase(SegmentWriteState state);
     }

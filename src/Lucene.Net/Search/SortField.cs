@@ -29,10 +29,10 @@ namespace Lucene.Net.Search
     /// Stores information about how to sort documents by terms in an individual
     /// field.  Fields must be indexed in order to sort by them.
     ///
-    /// <p>Created: Feb 11, 2004 1:25:29 PM
-    ///
+    /// <para/>Created: Feb 11, 2004 1:25:29 PM
+    /// <para/>
     /// @since   lucene 1.4 </summary>
-    /// <seealso cref= Sort </seealso>
+    /// <seealso cref="Sort"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -84,9 +84,9 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Creates a sort by terms in the given field with the type of term
         /// values explicitly given. </summary>
-        /// <param name="field">  Name of field to sort by.  Can be <code>null</code> if
-        ///               <code>type</code> is SCORE or DOC. </param>
-        /// <param name="type">   Type of values in the terms. </param>
+        /// <param name="field"> Name of field to sort by. Can be <c>null</c> if
+        ///               <paramref name="type"/> is <see cref="SortFieldType.SCORE"/> or <see cref="SortFieldType.DOC"/>. </param>
+        /// <param name="type"> Type of values in the terms. </param>
         public SortField(string field, SortFieldType type)
         {
             InitFieldType(field, type);
@@ -95,10 +95,10 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Creates a sort, possibly in reverse, by terms in the given field with the
         /// type of term values explicitly given. </summary>
-        /// <param name="field">  Name of field to sort by.  Can be <code>null</code> if
-        ///               <code>type</code> is SCORE or DOC. </param>
+        /// <param name="field">  Name of field to sort by.  Can be <c>null</c> if
+        ///               <paramref name="type"/> is <see cref="SortFieldType.SCORE"/> or <see cref="SortFieldType.DOC"/>. </param>
         /// <param name="type">   Type of values in the terms. </param>
-        /// <param name="reverse"> True if natural order should be reversed. </param>
+        /// <param name="reverse"> <c>True</c> if natural order should be reversed. </param>
         public SortField(string field, SortFieldType type, bool reverse)
         {
             InitFieldType(field, type);
@@ -107,14 +107,14 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Creates a sort by terms in the given field, parsed
-        /// to numeric values using a custom <seealso cref="IFieldCache.Parser"/>. </summary>
-        /// <param name="field">  Name of field to sort by.  Must not be null. </param>
-        /// <param name="parser"> Instance of a <seealso cref="IFieldCache.Parser"/>,
+        /// to numeric values using a custom <see cref="FieldCache.IParser"/>. </summary>
+        /// <param name="field">  Name of field to sort by.  Must not be <c>null</c>. </param>
+        /// <param name="parser"> Instance of a <see cref="FieldCache.IParser"/>,
         ///  which must subclass one of the existing numeric
-        ///  parsers from <seealso cref="IFieldCache"/>. Sort type is inferred
+        ///  parsers from <see cref="IFieldCache"/>. Sort type is inferred
         ///  by testing which numeric parser the parser subclasses. </param>
-        /// <exception cref="IllegalArgumentException"> if the parser fails to
-        ///  subclass an existing numeric parser, or field is null </exception>
+        /// <exception cref="ArgumentException"> if the parser fails to
+        ///  subclass an existing numeric parser, or field is <c>null</c> </exception>
         public SortField(string field, FieldCache.IParser parser)
             : this(field, parser, false)
         {
@@ -122,15 +122,15 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Creates a sort, possibly in reverse, by terms in the given field, parsed
-        /// to numeric values using a custom <seealso cref="IFieldCache.Parser"/>. </summary>
-        /// <param name="field">  Name of field to sort by.  Must not be null. </param>
-        /// <param name="parser"> Instance of a <seealso cref="IFieldCache.Parser"/>,
+        /// to numeric values using a custom <see cref="FieldCache.IParser"/>. </summary>
+        /// <param name="field">  Name of field to sort by.  Must not be <c>null</c>. </param>
+        /// <param name="parser"> Instance of a <see cref="FieldCache.IParser"/>,
         ///  which must subclass one of the existing numeric
-        ///  parsers from <seealso cref="IFieldCache"/>. Sort type is inferred
+        ///  parsers from <see cref="IFieldCache"/>. Sort type is inferred
         ///  by testing which numeric parser the parser subclasses. </param>
-        /// <param name="reverse"> True if natural order should be reversed. </param>
-        /// <exception cref="IllegalArgumentException"> if the parser fails to
-        ///  subclass an existing numeric parser, or field is null </exception>
+        /// <param name="reverse"> <c>True</c> if natural order should be reversed. </param>
+        /// <exception cref="ArgumentException"> if the parser fails to
+        ///  subclass an existing numeric parser, or field is <c>null</c> </exception>
         public SortField(string field, FieldCache.IParser parser, bool reverse)
         {
             if (parser is FieldCache.IInt32Parser)
@@ -141,9 +141,9 @@ namespace Lucene.Net.Search
             {
                 InitFieldType(field, SortFieldType.SINGLE);
             }
+#pragma warning disable 612, 618
             else if (parser is FieldCache.IInt16Parser)
             {
-#pragma warning disable 612, 618
                 InitFieldType(field, SortFieldType.INT16);
             }
             else if (parser is FieldCache.IByteParser)
@@ -169,8 +169,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Pass this to <seealso cref="#setMissingValue"/> to have missing
-        ///  string values sort first.
+        /// Pass this to <see cref="MissingValue"/> to have missing
+        /// string values sort first.
         /// </summary>
         public static readonly object STRING_FIRST = new ObjectAnonymousInnerClassHelper();
 
@@ -190,8 +190,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Pass this to <seealso cref="#setMissingValue"/> to have missing
-        ///  string values sort last.
+        /// Pass this to <see cref="MissingValue"/> to have missing
+        /// string values sort last.
         /// </summary>
         public static readonly object STRING_LAST = new ObjectAnonymousInnerClassHelper2();
 
@@ -229,7 +229,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Creates a sort with a custom comparison function. </summary>
-        /// <param name="field"> Name of field to sort by; cannot be <code>null</code>. </param>
+        /// <param name="field"> Name of field to sort by; cannot be <c>null</c>. </param>
         /// <param name="comparer"> Returns a comparer for sorting hits. </param>
         public SortField(string field, FieldComparerSource comparer)
         {
@@ -239,9 +239,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Creates a sort, possibly in reverse, with a custom comparison function. </summary>
-        /// <param name="field"> Name of field to sort by; cannot be <code>null</code>. </param>
+        /// <param name="field"> Name of field to sort by; cannot be <c>null</c>. </param>
         /// <param name="comparer"> Returns a comparer for sorting hits. </param>
-        /// <param name="reverse"> True if natural order should be reversed. </param>
+        /// <param name="reverse"> <c>True</c> if natural order should be reversed. </param>
         public SortField(string field, FieldComparerSource comparer, bool reverse)
         {
             InitFieldType(field, SortFieldType.CUSTOM);
@@ -268,9 +268,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the name of the field.  Could return <code>null</code>
-        /// if the sort is by SCORE or DOC. </summary>
-        /// <returns> Name of field, possibly <code>null</code>. </returns>
+        /// Returns the name of the field.  Could return <c>null</c>
+        /// if the sort is by <see cref="SortFieldType.SCORE"/> or <see cref="SortFieldType.DOC"/>. </summary>
+        /// <returns> Name of field, possibly <c>null</c>. </returns>
         public virtual string Field
         {
             get
@@ -292,9 +292,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the instance of a <seealso cref="IFieldCache"/> parser that fits to the given sort type.
-        /// May return <code>null</code> if no parser was specified. Sorting is using the default parser then. </summary>
-        /// <returns> An instance of a <seealso cref="IFieldCache"/> parser, or <code>null</code>. </returns>
+        /// Returns the instance of a <see cref="IFieldCache"/> parser that fits to the given sort type.
+        /// May return <c>null</c> if no parser was specified. Sorting is using the default parser then. </summary>
+        /// <returns> An instance of a <see cref="IFieldCache"/> parser, or <c>null</c>. </returns>
         public virtual FieldCache.IParser Parser
         {
             get
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns whether the sort should be reversed. </summary>
-        /// <returns>  True if natural order should be reversed. </returns>
+        /// <returns> <c>True</c> if natural order should be reversed. </returns>
         public virtual bool IsReverse
         {
             get
@@ -315,8 +315,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the <seealso cref="FieldComparerSource"/> used for
-        /// custom sorting
+        /// Returns the <see cref="FieldComparerSource"/> used for
+        /// custom sorting.
         /// </summary>
         public virtual FieldComparerSource ComparerSource
         {
@@ -400,10 +400,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true if <code>o</code> is equal to this.  If a
-        ///  <seealso cref="FieldComparerSource"/> or {@link
-        ///  FieldCache.Parser} was provided, it must properly
-        ///  implement equals (unless a singleton is always used).
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this.  If a
+        /// <see cref="FieldComparerSource"/> or 
+        /// <see cref="FieldCache.IParser"/> was provided, it must properly
+        /// implement equals (unless a singleton is always used).
         /// </summary>
         public override bool Equals(object o)
         {
@@ -423,11 +423,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true if <code>o</code> is equal to this.  If a
-        ///  <seealso cref="FieldComparerSource"/> or {@link
-        ///  FieldCache.Parser} was provided, it must properly
-        ///  implement hashCode (unless a singleton is always
-        ///  used).
+        /// Returns a hash code value for this object.  If a
+        /// <see cref="FieldComparerSource"/> or
+        /// <see cref="FieldCache.IParser"/> was provided, it must properly
+        /// implement GetHashCode() (unless a singleton is always
+        /// used).
         /// </summary>
         public override int GetHashCode()
         {
@@ -458,17 +458,17 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the <seealso cref="FieldComparer"/> to use for
+        /// Returns the <see cref="FieldComparer"/> to use for
         /// sorting.
-        ///
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
-        /// <param name="numHits"> number of top hits the queue will store </param>
-        /// <param name="sortPos"> position of this SortField within {@link
-        ///   Sort}.  The comparer is primary if sortPos==0,
+        /// <param name="numHits"> Number of top hits the queue will store </param>
+        /// <param name="sortPos"> Position of this <see cref="SortField"/> within 
+        ///   <see cref="Sort"/>.  The comparer is primary if sortPos==0,
         ///   secondary if sortPos==1, etc.  Some comparers can
         ///   optimize themselves when they are the primary sort. </param>
-        /// <returns> <seealso cref="FieldComparer"/> to use when sorting </returns>
+        /// <returns> <see cref="FieldComparer"/> to use when sorting </returns>
         public virtual FieldComparer GetComparer(int numHits, int sortPos)
         {
             switch (type)
@@ -519,14 +519,15 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Rewrites this SortField, returning a new SortField if a change is made.
+        /// Rewrites this <see cref="SortField"/>, returning a new <see cref="SortField"/> if a change is made.
         /// Subclasses should override this define their rewriting behavior when this
-        /// SortField is of type <seealso cref="SortField.Type#REWRITEABLE"/>
+        /// SortField is of type <see cref="SortFieldType.REWRITEABLE"/>.
+        /// <para/>
+        /// @lucene.experimental
         /// </summary>
-        /// <param name="searcher"> IndexSearcher to use during rewriting </param>
-        /// <returns> New rewritten SortField, or {@code this} if nothing has changed. </returns>
-        /// <exception cref="IOException"> Can be thrown by the rewriting
-        /// @lucene.experimental </exception>
+        /// <param name="searcher"> <see cref="IndexSearcher"/> to use during rewriting </param>
+        /// <returns> New rewritten <see cref="SortField"/>, or <c>this</c> if nothing has changed. </returns>
+        /// <exception cref="System.IO.IOException"> Can be thrown by the rewriting </exception>
         public virtual SortField Rewrite(IndexSearcher searcher)
         {
             return this;
@@ -546,25 +547,25 @@ namespace Lucene.Net.Search
     public enum SortFieldType // LUCENENET NOTE: de-nested and renamed from Type to avoid naming collision with Type property and with System.Type
     {
         /// <summary>
-        /// Sort by document score (relevance).  Sort values are Float and higher
+        /// Sort by document score (relevance).  Sort values are <see cref="float"/> and higher
         /// values are at the front.
         /// </summary>
         SCORE,
 
         /// <summary>
-        /// Sort by document number (index order).  Sort values are Integer and lower
+        /// Sort by document number (index order).  Sort values are <see cref="int"/> and lower
         /// values are at the front.
         /// </summary>
         DOC,
 
         /// <summary>
-        /// Sort using term values as Strings.  Sort values are String and lower
+        /// Sort using term values as <see cref="string"/>s.  Sort values are <see cref="string"/>s and lower
         /// values are at the front.
         /// </summary>
         STRING,
 
         /// <summary>
-        /// Sort using term values as encoded Integers.  Sort values are Integer and
+        /// Sort using term values as encoded <see cref="int"/>s.  Sort values are <see cref="int"/> and
         /// lower values are at the front.
         /// <para/>
         /// NOTE: This was INT in Lucene
@@ -572,7 +573,7 @@ namespace Lucene.Net.Search
         INT32,
 
         /// <summary>
-        /// Sort using term values as encoded Floats.  Sort values are Float and
+        /// Sort using term values as encoded <see cref="float"/>s.  Sort values are <see cref="float"/> and
         /// lower values are at the front.
         /// <para/>
         /// NOTE: This was FLOAT in Lucene
@@ -580,7 +581,7 @@ namespace Lucene.Net.Search
         SINGLE,
 
         /// <summary>
-        /// Sort using term values as encoded Longs.  Sort values are Long and
+        /// Sort using term values as encoded <see cref="long"/>s.  Sort values are <see cref="long"/> and
         /// lower values are at the front.
         /// <para/>
         /// NOTE: This was LONG in Lucene
@@ -588,13 +589,13 @@ namespace Lucene.Net.Search
         INT64,
 
         /// <summary>
-        /// Sort using term values as encoded Doubles.  Sort values are Double and
+        /// Sort using term values as encoded <see cref="double"/>s.  Sort values are <see cref="double"/> and
         /// lower values are at the front.
         /// </summary>
         DOUBLE,
 
         /// <summary>
-        /// Sort using term values as encoded Shorts.  Sort values are Short and
+        /// Sort using term values as encoded <see cref="short"/>s.  Sort values are <see cref="short"/> and
         /// lower values are at the front.
         /// <para/>
         /// NOTE: This was SHORT in Lucene
@@ -603,32 +604,32 @@ namespace Lucene.Net.Search
         INT16,
 
         /// <summary>
-        /// Sort using a custom Comparer.  Sort values are any Comparable and
+        /// Sort using a custom <see cref="IComparer{T}"/>.  Sort values are any <see cref="IComparable{T}"/> and
         /// sorting is done according to natural order.
         /// </summary>
         CUSTOM,
 
         /// <summary>
-        /// Sort using term values as encoded Bytes.  Sort values are Byte and
+        /// Sort using term values as encoded <see cref="byte"/>s.  Sort values are <see cref="byte"/> and
         /// lower values are at the front.
         /// </summary>
         [System.Obsolete]
         BYTE,
 
         /// <summary>
-        /// Sort using term values as Strings, but comparing by
-        /// value (using String.compareTo) for all comparisons.
-        /// this is typically slower than <seealso cref="#STRING"/>, which
+        /// Sort using term values as <see cref="string"/>s, but comparing by
+        /// value (using <see cref="BytesRef.CompareTo(BytesRef)"/>) for all comparisons.
+        /// this is typically slower than <see cref="STRING"/>, which
         /// uses ordinals to do the sorting.
         /// </summary>
         STRING_VAL,
 
         /// <summary>
-        /// Sort use byte[] index values. </summary>
+        /// Sort use <see cref="T:byte[]"/> index values. </summary>
         BYTES,
 
         /// <summary>
-        /// Force rewriting of SortField using <seealso cref="SortField#rewrite(IndexSearcher)"/>
+        /// Force rewriting of <see cref="SortField"/> using <see cref="SortField.Rewrite(IndexSearcher)"/>
         /// before it can be used for sorting
         /// </summary>
         REWRITEABLE

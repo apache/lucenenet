@@ -18,11 +18,11 @@
      */
 
     /// <summary>
-    /// plaintext field infos format
+    /// Plain text field infos format.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextFieldInfosFormat : FieldInfosFormat
     {

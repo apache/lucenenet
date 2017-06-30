@@ -21,10 +21,8 @@ namespace Lucene.Net.Search.Payloads
 
     /// <summary>
     /// Returns the maximum payload score seen, else 1 if there are no payloads on the doc.
-    /// <p/>
+    /// <para/>
     /// Is thread safe and completely reusable.
-    ///
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

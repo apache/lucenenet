@@ -138,7 +138,7 @@ namespace Lucene.Net.Search
             }
             finally
             {
-                IOUtils.Close(r, dir);
+                IOUtils.Dispose(r, dir);
             }
         }
     }

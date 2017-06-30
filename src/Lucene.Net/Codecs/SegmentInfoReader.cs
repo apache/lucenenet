@@ -22,26 +22,27 @@ namespace Lucene.Net.Codecs
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Specifies an API for classes that can read <seealso cref="SegmentInfo"/> information.
+    /// Specifies an API for classes that can read <see cref="SegmentInfo"/> information.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-
     public abstract class SegmentInfoReader
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal SegmentInfoReader()
         {
         }
 
         /// <summary>
-        /// Read <seealso cref="SegmentInfo"/> data from a directory. </summary>
-        /// <param name="directory"> directory to read from </param>
-        /// <param name="segmentName"> name of the segment to read </param>
-        /// <returns> infos instance to be populated with data </returns>
-        /// <exception cref="IOException"> If an I/O error occurs </exception>
+        /// Read <see cref="SegmentInfo"/> data from a directory. </summary>
+        /// <param name="directory"> Directory to read from. </param>
+        /// <param name="segmentName"> Name of the segment to read. </param>
+        /// <param name="context"> IO context. </param>
+        /// <returns> Infos instance to be populated with data. </returns>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurs. </exception>
         public abstract SegmentInfo Read(Directory directory, string segmentName, IOContext context);
     }
 }

@@ -30,16 +30,16 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// <para>
     /// The construction step in the object finalizer works as follows:
     /// <list type="bullet">
-    /// <item>A set of input terms and their buckets is given.</item>
-    /// <item>All terms in the input are prefixed with a synthetic pseudo-character
+    /// <item><description>A set of input terms and their buckets is given.</description></item>
+    /// <item><description>All terms in the input are prefixed with a synthetic pseudo-character
     /// (code) of the weight bucket the term fell into. For example a term
     /// <c>abc</c> with a discretized weight equal '1' would become
-    /// <c>1abc</c>.</item>
-    /// <item>The terms are then sorted by their raw value of UTF-8 character values
-    /// (including the synthetic bucket code in front).</item>
-    /// <item>A finite state automaton (<see cref="FST"/>) is constructed from the input. The
+    /// <c>1abc</c>.</description></item>
+    /// <item><description>The terms are then sorted by their raw value of UTF-8 character values
+    /// (including the synthetic bucket code in front).</description></item>
+    /// <item><description>A finite state automaton (<see cref="FST"/>) is constructed from the input. The
     /// root node has arcs labeled with all possible weights. We cache all these
-    /// arcs, highest-weight first.</item>
+    /// arcs, highest-weight first.</description></item>
     /// </list>
     /// 
     /// </para>
@@ -47,21 +47,21 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// At runtime, in <see cref="FSTCompletion.DoLookup(string, int)"/>, 
     /// the automaton is utilized as follows:
     /// <list type="bullet">
-    /// <item>For each possible term weight encoded in the automaton (cached arcs from
+    /// <item><description>For each possible term weight encoded in the automaton (cached arcs from
     /// the root above), starting with the highest one, we descend along the path of
     /// the input key. If the key is not a prefix of a sequence in the automaton
-    /// (path ends prematurely), we exit immediately -- no completions.</item>
-    /// <item>Otherwise, we have found an internal automaton node that ends the key.
+    /// (path ends prematurely), we exit immediately -- no completions.</description></item>
+    /// <item><description>Otherwise, we have found an internal automaton node that ends the key.
     /// <b>The entire subautomaton (all paths) starting from this node form the key's
     /// completions.</b> We start the traversal of this subautomaton. Every time we
     /// reach a final state (arc), we add a single suggestion to the list of results
     /// (the weight of this suggestion is constant and equal to the root path we
     /// started from). The tricky part is that because automaton edges are sorted and
     /// we scan depth-first, we can terminate the entire procedure as soon as we
-    /// collect enough suggestions the user requested.</item>
-    /// <item>In case the number of suggestions collected in the step above is still
+    /// collect enough suggestions the user requested.</description></item>
+    /// <item><description>In case the number of suggestions collected in the step above is still
     /// insufficient, we proceed to the next (smaller) weight leaving the root node
-    /// and repeat the same algorithm again.</item>
+    /// and repeat the same algorithm again.</description></item>
     /// </list>
     /// 
     /// <h2>Runtime behavior and performance characteristic</h2>

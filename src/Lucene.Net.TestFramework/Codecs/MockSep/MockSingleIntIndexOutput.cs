@@ -51,7 +51,7 @@ namespace Lucene.Net.Codecs.MockSep
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(@out);
+                    IOUtils.DisposeWhileHandlingException(@out);
                 }
             }
         }

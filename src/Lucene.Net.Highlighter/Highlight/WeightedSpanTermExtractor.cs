@@ -502,7 +502,7 @@ namespace Lucene.Net.Search.Highlight
             }
             finally
             {
-                IOUtils.Close(internalReader);
+                IOUtils.Dispose(internalReader);
             }
 
             return terms;
@@ -545,7 +545,7 @@ namespace Lucene.Net.Search.Highlight
             }
             finally
             {
-                IOUtils.Close(internalReader);
+                IOUtils.Dispose(internalReader);
             }
 
             return terms;

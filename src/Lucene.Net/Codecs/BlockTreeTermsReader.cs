@@ -54,32 +54,32 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// A block-based terms index and dictionary that assigns
-    ///  terms to variable length blocks according to how they
-    ///  share prefixes.  The terms index is a prefix trie
-    ///  whose leaves are term blocks.  The advantage of this
-    ///  approach is that seekExact is often able to
-    ///  determine a term cannot exist without doing any IO, and
-    ///  intersection with Automata is very fast.  Note that this
-    ///  terms dictionary has it's own fixed terms index (ie, it
-    ///  does not support a pluggable terms index
-    ///  implementation).
+    /// terms to variable length blocks according to how they
+    /// share prefixes.  The terms index is a prefix trie
+    /// whose leaves are term blocks.  The advantage of this
+    /// approach is that SeekExact() is often able to
+    /// determine a term cannot exist without doing any IO, and
+    /// intersection with Automata is very fast.  Note that this
+    /// terms dictionary has it's own fixed terms index (ie, it
+    /// does not support a pluggable terms index
+    /// implementation).
     ///
-    ///  <p><b>NOTE</b>: this terms dictionary does not support
-    ///  index divisor when opening an IndexReader.  Instead, you
-    ///  can change the min/maxItemsPerBlock during indexing.</p>
+    /// <para><b>NOTE</b>: this terms dictionary does not support
+    /// index divisor when opening an IndexReader.  Instead, you
+    /// can change the min/maxItemsPerBlock during indexing.</para>
     ///
-    ///  <p>The data structure used by this implementation is very
-    ///  similar to a burst trie
-    ///  (http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.18.3499),
-    ///  but with added logic to break up too-large blocks of all
-    ///  terms sharing a given prefix into smaller ones.</p>
+    /// <para>The data structure used by this implementation is very
+    /// similar to a burst trie
+    /// (http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.18.3499),
+    /// but with added logic to break up too-large blocks of all
+    /// terms sharing a given prefix into smaller ones.</para>
     ///
-    ///  <p>Use <seealso cref="Lucene.Net.Index.CheckIndex"/> with the <code>-verbose</code>
-    ///  option to see summary statistics on the blocks in the
-    ///  dictionary.
+    /// <para>Use <see cref="Lucene.Net.Index.CheckIndex"/> with the <c>-verbose</c>
+    /// option to see summary statistics on the blocks in the
+    /// dictionary.</para>
     ///
-    ///  See <seealso cref="BlockTreeTermsWriter"/>.
-    ///
+    /// See <see cref="BlockTreeTermsWriter"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class BlockTreeTermsReader : FieldsProducer
@@ -212,7 +212,7 @@ namespace Lucene.Net.Codecs
                 if (!success)
                 {
                     // this.Dispose() will close in:
-                    IOUtils.CloseWhileHandlingException(indexIn, this);
+                    IOUtils.DisposeWhileHandlingException(indexIn, this);
                 }
             }
         }
@@ -242,7 +242,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Seek {@code input} to the directory offset. </summary>
+        /// Seek <paramref name="input"/> to the directory offset. </summary>
         protected internal virtual void SeekDir(IndexInput input, long dirOffset)
         {
             if (version >= BlockTreeTermsWriter.VERSION_CHECKSUM)
@@ -263,13 +263,16 @@ namespace Lucene.Net.Codecs
         //   return "0x" + Integer.toHexString(v);
         // }
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 try
                 {
-                    IOUtils.Close(@in, postingsReader);
+                    IOUtils.Dispose(@in, postingsReader);
                 }
                 finally
                 {
@@ -323,7 +326,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// BlockTree statistics for a single field
-        /// returned by <seealso cref="FieldReader#computeStats()"/>.
+        /// returned by <see cref="FieldReader.ComputeStats()"/>.
         /// </summary>
         public class Stats
         {
@@ -353,7 +356,7 @@ namespace Lucene.Net.Codecs
 
             /// <summary>
             /// The number of floor blocks (meta-blocks larger than the
-            ///  allowed {@code maxItemsPerBlock}) in the terms file.
+            ///  allowed <c>maxItemsPerBlock</c>) in the terms file.
             /// </summary>
             public int FloorBlockCount { get; set; }
 
@@ -403,14 +406,14 @@ namespace Lucene.Net.Codecs
 
             /// <summary>
             /// Total number of bytes used to store term stats (not
-            ///  including what the <seealso cref="PostingsBaseFormat"/>
-            ///  stores.
+            /// including what the <see cref="PostingsBaseFormat"/>
+            /// stores.
             /// </summary>
             public long TotalBlockStatsBytes { get; set; }
 
             /// <summary>
-            /// Total bytes stored by the <seealso cref="PostingsBaseFormat"/>,
-            ///  plus the other few vInts stored in the frame.
+            /// Total bytes stored by the <see cref="PostingsBaseFormat"/>,
+            /// plus the other few vInts stored in the frame.
             /// </summary>
             public long TotalBlockOtherBytes { get; set; }
 
@@ -538,7 +541,7 @@ namespace Lucene.Net.Codecs
         internal BytesRef NO_OUTPUT;
 
         /// <summary>
-        /// BlockTree's implementation of <seealso cref="GetTerms"/>. </summary>
+        /// BlockTree's implementation of <see cref="GetTerms(string)"/>. </summary>
         public sealed class FieldReader : Terms
         {
             private readonly BlockTreeTermsReader outerInstance;
@@ -2808,16 +2811,17 @@ namespace Lucene.Net.Codecs
                         LoadBlock();
                     }
 
-                    /* Does initial decode of next block of terms; this
-                       doesn't actually decode the docFreq, totalTermFreq,
-                       postings details (frq/prx offset, etc.) metadata;
-                       it just loads them as byte[] blobs which are then
-                       decoded on-demand if the metadata is ever requested
-                       for any term in this block.  this enables terms-only
-                       intensive consumes (eg certain MTQs, respelling) to
-                       not pay the price of decoding metadata they won't
-                       use. */
-
+                    /// <summary>
+                    /// Does initial decode of next block of terms; this
+                    /// doesn't actually decode the docFreq, totalTermFreq,
+                    /// postings details (frq/prx offset, etc.) metadata;
+                    /// it just loads them as byte[] blobs which are then
+                    /// decoded on-demand if the metadata is ever requested
+                    /// for any term in this block.  this enables terms-only
+                    /// intensive consumes (eg certain MTQs, respelling) to
+                    /// not pay the price of decoding metadata they won't
+                    /// use.
+                    /// </summary>
                     internal void LoadBlock()
                     {
                         // Clone the IndexInput lazily, so that consumers
@@ -3144,9 +3148,11 @@ namespace Lucene.Net.Codecs
                         return true;
                     }
 
-                    // Scans to sub-block that has this target fp; only
-                    // called by next(); NOTE: does not set
-                    // startBytePos/suffix as a side effect
+                    /// <summary>
+                    /// Scans to sub-block that has this target fp; only
+                    /// called by Next(); NOTE: does not set
+                    /// startBytePos/suffix as a side effect
+                    /// </summary>
                     public void ScanToSubBlock(long subFP)
                     {
                         Debug.Assert(!isLeafBlock);

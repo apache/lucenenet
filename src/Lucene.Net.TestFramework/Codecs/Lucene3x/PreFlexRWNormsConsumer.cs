@@ -73,7 +73,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                 }
             }
         }
@@ -95,7 +95,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-                IOUtils.Close(@out);
+                IOUtils.Dispose(@out);
         }
 
         public override void AddBinaryField(FieldInfo field, IEnumerable<BytesRef> values)

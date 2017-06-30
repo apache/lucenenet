@@ -39,30 +39,30 @@ namespace Lucene.Net.Analysis.Core
     /// All attributes are optional:
     /// </para>
     /// <list type="bullet">
-    ///     <item><c>ignoreCase</c> defaults to <c>false</c></item>
-    ///     <item><c>words</c> should be the name of a stopwords file to parse, if not 
+    ///     <item><description><c>ignoreCase</c> defaults to <c>false</c></description></item>
+    ///     <item><description><c>words</c> should be the name of a stopwords file to parse, if not 
     ///      specified the factory will use <see cref="StopAnalyzer.ENGLISH_STOP_WORDS_SET"/>
-    ///     </item>
-    ///     <item><c>format</c> defines how the <c>words</c> file will be parsed, 
+    ///     </description></item>
+    ///     <item><description><c>format</c> defines how the <c>words</c> file will be parsed, 
     ///      and defaults to <c>wordset</c>.  If <c>words</c> is not specified, 
     ///      then <c>format</c> must not be specified.
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// <para>
     /// The valid values for the <c>format</c> option are:
     /// </para>
     /// <list type="bullet">
-    ///  <item><c>wordset</c> - This is the default format, which supports one word per 
+    ///  <item><description><c>wordset</c> - This is the default format, which supports one word per 
     ///      line (including any intra-word whitespace) and allows whole line comments 
     ///      begining with the "#" character.  Blank lines are ignored.  See 
     ///      <see cref="WordlistLoader.GetLines"/> for details.
-    ///  </item>
-    ///  <item><c>snowball</c> - This format allows for multiple words specified on each 
+    ///  </description></item>
+    ///  <item><description><c>snowball</c> - This format allows for multiple words specified on each 
     ///      line, and trailing comments may be specified using the vertical line ("&#124;"). 
     ///      Blank lines are ignored.  See 
     ///      <see cref="WordlistLoader.GetSnowballWordSet(System.IO.TextReader, Net.Util.LuceneVersion)"/> 
     ///      for details.
-    ///  </item>
+    ///  </description></item>
     /// </list>
     /// </summary>
     public class StopFilterFactory : TokenFilterFactory, IResourceLoaderAware

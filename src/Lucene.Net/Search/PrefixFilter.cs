@@ -23,7 +23,7 @@ namespace Lucene.Net.Search
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
-    /// A Filter that restricts search results to values that have a matching prefix in a given
+    /// A <see cref="Filter"/> that restricts search results to values that have a matching prefix in a given
     /// field.
     /// </summary>
 #if FEATURE_SERIALIZABLE

@@ -30,20 +30,20 @@ namespace Lucene.Net.Search.Suggest
     /// <para>Format allowed: 1 entry per line:</para>
     /// <para>An entry can be: </para>
     /// <list type="number">
-    /// <item>suggestion</item>
-    /// <item>suggestion <see cref="fieldDelimiter"/> weight</item>
-    /// <item>suggestion <see cref="fieldDelimiter"/> weight <see cref="fieldDelimiter"/> payload</item>
+    /// <item><description>suggestion</description></item>
+    /// <item><description>suggestion <see cref="fieldDelimiter"/> weight</description></item>
+    /// <item><description>suggestion <see cref="fieldDelimiter"/> weight <see cref="fieldDelimiter"/> payload</description></item>
     /// </list>
     /// where the default <see cref="fieldDelimiter"/> is <see cref="DEFAULT_FIELD_DELIMITER"/> (a tab)
     /// <para>
     /// <b>NOTE:</b> 
     /// <list type="number">
-    /// <item>In order to have payload enabled, the first entry has to have a payload</item>
-    /// <item>If the weight for an entry is not specified then a value of 1 is used</item>
-    /// <item>A payload cannot be specified without having the weight specified for an entry</item>
-    /// <item>If the payload for an entry is not specified (assuming payload is enabled) 
-    ///  then an empty payload is returned</item>
-    /// <item>An entry cannot have more than two <see cref="fieldDelimiter"/>s</item>
+    /// <item><description>In order to have payload enabled, the first entry has to have a payload</description></item>
+    /// <item><description>If the weight for an entry is not specified then a value of 1 is used</description></item>
+    /// <item><description>A payload cannot be specified without having the weight specified for an entry</description></item>
+    /// <item><description>If the payload for an entry is not specified (assuming payload is enabled) 
+    ///  then an empty payload is returned</description></item>
+    /// <item><description>An entry cannot have more than two <see cref="fieldDelimiter"/>s</description></item>
     /// </list>
     /// </para>
     /// <c>Example:</c><para/>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Search.Suggest
                 if (outerInstance.line == null)
                 {
                     outerInstance.done = true;
-                    IOUtils.Close(outerInstance.@in);
+                    IOUtils.Dispose(outerInstance.@in);
                 }
                 else
                 {
@@ -225,7 +225,7 @@ namespace Lucene.Net.Search.Suggest
                 else
                 {
                     outerInstance.done = true;
-                    IOUtils.Close(outerInstance.@in);
+                    IOUtils.Dispose(outerInstance.@in);
                     return null;
                 }
             }

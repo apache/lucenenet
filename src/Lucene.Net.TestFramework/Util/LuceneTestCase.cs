@@ -621,7 +621,6 @@ namespace Lucene.Net.Util
             /* LUCENENET TODO: Not sure how to convert these
                 ParentChainCallRule.TeardownCalled = true;
                 */
-            //CleanupTemporaryFiles(); // LUCENENET TODO: Move this to OneTimeTearDown()? Calling it here deletes shared files too early.
         }
 
         // LUCENENET specific constants to scan the test framework for codecs/docvaluesformats/postingsformats only once
@@ -639,8 +638,6 @@ namespace Lucene.Net.Util
             DocValuesFormat.SetDocValuesFormatFactory(TEST_DOCVALUES_FORMAT_FACTORY);
             PostingsFormat.SetPostingsFormatFactory(TEST_POSTINGS_FORMAT_FACTORY);
 
-            // IMPORTANT: Call this line after calling Codec.SetCodecFactory() because both
-            // of them change Codec.Default
             ClassEnvRule.Before(this);
         }
 

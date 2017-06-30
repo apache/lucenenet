@@ -27,14 +27,14 @@ namespace Lucene.Net.Analysis
     /// <see cref="GetWrappedAnalyzer(string)"/> allows the <see cref="Analyzer"/>
     /// to wrap multiple <see cref="Analyzer"/>s which are selected on a per field basis.
     /// <para/>
-    /// <see cref="WrapComponents(string, Analyzer.TokenStreamComponents)"/> allows the
-    /// <see cref="Analyzer.TokenStreamComponents"/> of the wrapped <see cref="Analyzer"/> to then be wrapped
-    /// (such as adding a new <see cref="TokenFilter"/> to form new <see cref="Analyzer.TokenStreamComponents"/>).
+    /// <see cref="WrapComponents(string, TokenStreamComponents)"/> allows the
+    /// <see cref="TokenStreamComponents"/> of the wrapped <see cref="Analyzer"/> to then be wrapped
+    /// (such as adding a new <see cref="TokenFilter"/> to form new <see cref="TokenStreamComponents"/>).
     /// </summary>
     public abstract class AnalyzerWrapper : Analyzer
     {
         /// <summary>
-        /// Creates a new <see cref="AnalyzerWrapper"/>.  Since the <see cref="Analyzer.ReuseStrategy"/> of
+        /// Creates a new <see cref="AnalyzerWrapper"/>.  Since the <see cref="ReuseStrategy"/> of
         /// the wrapped <see cref="Analyzer"/>s are unknown, <see cref="Analyzer.PER_FIELD_REUSE_STRATEGY"/> is assumed.
         /// </summary>
         [Obsolete("Use AnalyzerWrapper(Analyzer.ReuseStrategy) and specify a valid Analyzer.ReuseStrategy, probably retrieved from the wrapped analyzer using Analyzer.Strategy.")]
@@ -66,7 +66,7 @@ namespace Lucene.Net.Analysis
         protected abstract Analyzer GetWrappedAnalyzer(string fieldName);
 
         /// <summary>
-        /// Wraps / alters the given <see cref="Analyzer.TokenStreamComponents"/>, taken from the wrapped
+        /// Wraps / alters the given <see cref="TokenStreamComponents"/>, taken from the wrapped
         /// <see cref="Analyzer"/>, to form new components. It is through this method that new
         /// <see cref="TokenFilter"/>s can be added by <see cref="AnalyzerWrapper"/>s. By default, the given
         /// components are returned.
@@ -74,8 +74,8 @@ namespace Lucene.Net.Analysis
         /// <param name="fieldName">
         ///          Name of the field which is to be analyzed </param>
         /// <param name="components">
-        ///          <see cref="Analyzer.TokenStreamComponents"/> taken from the wrapped <see cref="Analyzer"/> </param>
-        /// <returns> Wrapped / altered <see cref="Analyzer.TokenStreamComponents"/>. </returns>
+        ///          <see cref="TokenStreamComponents"/> taken from the wrapped <see cref="Analyzer"/> </param>
+        /// <returns> Wrapped / altered <see cref="TokenStreamComponents"/>. </returns>
         protected virtual TokenStreamComponents WrapComponents(string fieldName, TokenStreamComponents components)
         {
             return components;

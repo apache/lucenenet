@@ -21,8 +21,8 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// An ordinal based <seealso cref="TermState"/>
-    ///
+    /// An ordinal based <see cref="TermState"/>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Term ordinal, i.e. it's position in the full list of
-        ///  sorted terms.
+        /// sorted terms.
         /// </summary>
         public long Ord { get; set; }
 

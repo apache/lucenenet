@@ -28,13 +28,13 @@ namespace Lucene.Net.Index
     /// number of buffered delete terms.
     ///
     /// <list type="bullet">
-    ///     <item>
+    ///     <item><description>
     ///         <see cref="OnDelete(DocumentsWriterFlushControl, DocumentsWriterPerThreadPool.ThreadState)"/>
     ///         - applies pending delete operations based on the global number of buffered
     ///         delete terms iff <see cref="LiveIndexWriterConfig.MaxBufferedDeleteTerms"/> is
     ///         enabled
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         <see cref="OnInsert(DocumentsWriterFlushControl, DocumentsWriterPerThreadPool.ThreadState)"/>
     ///         - flushes either on the number of documents per
     ///         <see cref="DocumentsWriterPerThread"/> (
@@ -42,15 +42,15 @@ namespace Lucene.Net.Index
     ///         memory consumption in the current indexing session iff
     ///         <see cref="LiveIndexWriterConfig.MaxBufferedDocs"/> or
     ///         <see cref="LiveIndexWriterConfig.RAMBufferSizeMB"/> is enabled respectively
-    ///     </item>
-    ///     <item>
+    ///     </description></item>
+    ///     <item><description>
     ///         <see cref="FlushPolicy.OnUpdate(DocumentsWriterFlushControl, DocumentsWriterPerThreadPool.ThreadState)"/>
     ///         - calls
     ///         <see cref="OnInsert(DocumentsWriterFlushControl, DocumentsWriterPerThreadPool.ThreadState)"/>
     ///         and
     ///         <see cref="OnDelete(DocumentsWriterFlushControl, DocumentsWriterPerThreadPool.ThreadState)"/>
     ///         in order
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// All <see cref="IndexWriterConfig"/> settings are used to mark
     /// <see cref="DocumentsWriterPerThread"/> as flush pending during indexing with

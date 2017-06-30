@@ -34,8 +34,8 @@ namespace Lucene.Net.Analysis.Cn
     /// For example, if the Chinese text
     /// "C1C2C3C4" is to be indexed:
     /// <list type="bullet">
-    ///     <item>The tokens returned from ChineseTokenizer are C1, C2, C3, C4.</item>
-    ///     <item>The tokens returned from the CJKTokenizer are C1C2, C2C3, C3C4.</item>
+    ///     <item><description>The tokens returned from ChineseTokenizer are C1, C2, C3, C4.</description></item>
+    ///     <item><description>The tokens returned from the CJKTokenizer are C1C2, C2C3, C3C4.</description></item>
     /// </list>
     /// </para>
     /// <para>

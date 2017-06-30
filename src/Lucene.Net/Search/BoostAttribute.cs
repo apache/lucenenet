@@ -20,17 +20,21 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Add this <seealso cref="Attribute"/> to a <seealso cref="TermsEnum"/> returned by <seealso cref="MultiTermQuery#getTermsEnum(Terms,AttributeSource)"/>
-    /// and update the boost on each returned term. this enables to control the boost factor
-    /// for each matching term in <seealso cref="MultiTermQuery#SCORING_BOOLEAN_QUERY_REWRITE"/> or
-    /// <seealso cref="TopTermsRewrite"/> mode.
-    /// <seealso cref="FuzzyQuery"/> is using this to take the edit distance into account.
-    /// <p><b>Please note:</b> this attribute is intended to be added only by the TermsEnum
-    /// to itself in its constructor and consumed by the <seealso cref="MultiTermQuery.RewriteMethod"/>.
+    /// Add this <see cref="IAttribute"/> to a <see cref="Index.TermsEnum"/> returned by <see cref="MultiTermQuery.GetTermsEnum(Index.Terms, AttributeSource)"/>
+    /// and update the boost on each returned term. This enables to control the boost factor
+    /// for each matching term in <see cref="MultiTermQuery.SCORING_BOOLEAN_QUERY_REWRITE"/> or
+    /// <see cref="TopTermsRewrite{Q}"/> mode.
+    /// <see cref="FuzzyQuery"/> is using this to take the edit distance into account.
+    /// <para/><b>Please note:</b> this attribute is intended to be added only by the <see cref="Index.TermsEnum"/>
+    /// to itself in its constructor and consumed by the <see cref="MultiTermQuery.RewriteMethod"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public interface IBoostAttribute : IAttribute
     {
+        /// <summary>
+        /// Gets or Sets the boost in this attribute. Default is <c>1.0f</c>.
+        /// </summary>
         float Boost { get; set; }
     }
 }

@@ -26,10 +26,11 @@ namespace Lucene.Net.Codecs.Lucene46
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Lucene 4.0 implementation of <seealso cref="SegmentInfoWriter"/>.
+    /// Lucene 4.0 implementation of <see cref="SegmentInfoWriter"/>.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= Lucene46SegmentInfoFormat
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="Lucene46SegmentInfoFormat"/>
     public class Lucene46SegmentInfoWriter : SegmentInfoWriter
     {
         /// <summary>
@@ -65,7 +66,7 @@ namespace Lucene.Net.Codecs.Lucene46
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                     si.Dir.DeleteFile(fileName);
                 }
                 else

@@ -29,14 +29,14 @@ namespace Lucene.Net.Analysis.Standard
     /// <para/>
     /// Tokens produced are of the following types:
     /// <list type="bullet">
-    ///     <item>&lt;ALPHANUM&gt;: A sequence of alphabetic and numeric characters</item>
-    ///     <item>&lt;NUM&gt;: A number</item>
-    ///     <item>&lt;SOUTHEAST_ASIAN&gt;: A sequence of characters from South and Southeast
-    ///         Asian languages, including Thai, Lao, Myanmar, and Khmer</item>
-    ///     <item>&lt;IDEOGRAPHIC&gt;: A single CJKV ideographic character</item>
-    ///     <item>&lt;HIRAGANA&gt;: A single hiragana character</item>
-    ///     <item>&lt;KATAKANA&gt;: A sequence of katakana characters</item>
-    ///     <item>&lt;HANGUL&gt;: A sequence of Hangul characters</item>
+    ///     <item><description>&lt;ALPHANUM&gt;: A sequence of alphabetic and numeric characters</description></item>
+    ///     <item><description>&lt;NUM&gt;: A number</description></item>
+    ///     <item><description>&lt;SOUTHEAST_ASIAN&gt;: A sequence of characters from South and Southeast
+    ///         Asian languages, including Thai, Lao, Myanmar, and Khmer</description></item>
+    ///     <item><description>&lt;IDEOGRAPHIC&gt;: A single CJKV ideographic character</description></item>
+    ///     <item><description>&lt;HIRAGANA&gt;: A single hiragana character</description></item>
+    ///     <item><description>&lt;KATAKANA&gt;: A sequence of katakana characters</description></item>
+    ///     <item><description>&lt;HANGUL&gt;: A sequence of Hangul characters</description></item>
     /// </list>
     /// </summary>
     public sealed class StandardTokenizerImpl : IStandardTokenizerInterface

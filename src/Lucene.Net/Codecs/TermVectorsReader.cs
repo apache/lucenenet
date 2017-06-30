@@ -25,52 +25,59 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Codec API for reading term vectors:
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class TermVectorsReader : IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal TermVectorsReader()
         {
         }
 
         /// <summary>
-        /// Returns term vectors for this document, or null if
-        ///  term vectors were not indexed. If offsets are
-        ///  available they are in an <seealso cref="OffsetAttribute"/>
-        ///  available from the <seealso cref="DocsAndPositionsEnum"/>.
+        /// Returns term vectors for this document, or <c>null</c> if
+        /// term vectors were not indexed. If offsets are
+        /// available they are in an <see cref="OffsetAttribute"/>
+        /// available from the <see cref="DocsAndPositionsEnum"/>.
         /// </summary>
         public abstract Fields Get(int doc);
 
         /// <summary>
-        /// Returns approximate RAM bytes used </summary>
+        /// Returns approximate RAM bytes used. </summary>
         public abstract long RamBytesUsed();
 
         /// <summary>
         /// Checks consistency of this reader.
-        /// <p>
+        /// <para/>
         /// Note that this may be costly in terms of I/O, e.g.
         /// may involve computing a checksum value against large data files.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public abstract void CheckIntegrity();
 
         /// <summary>
         /// Create a clone that one caller at a time may use to
-        ///  read term vectors.
+        /// read term vectors.
         /// </summary>
         public abstract object Clone();
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
     }
 }

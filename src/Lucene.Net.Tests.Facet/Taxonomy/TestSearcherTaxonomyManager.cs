@@ -207,7 +207,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Console.WriteLine("TEST: now stop");
             }
 
-            IOUtils.Close(mgr, tw, w, taxoDir, dir);
+            IOUtils.Dispose(mgr, tw, w, taxoDir, dir);
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
@@ -314,7 +314,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 Console.WriteLine("TEST: now stop");
             }
 
-            IOUtils.Close(mgr, tw, w, taxoDir, indexDir);
+            IOUtils.Dispose(mgr, tw, w, taxoDir, indexDir);
         }
 
         [Test]
@@ -344,7 +344,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 // expected
             }
 
-            IOUtils.Close(mgr, tw, w, taxoDir, dir);
+            IOUtils.Dispose(mgr, tw, w, taxoDir, dir);
         }
 
         [Test]
@@ -390,7 +390,7 @@ namespace Lucene.Net.Facet.Taxonomy
                 mgr.Release(pair);
             }
 
-            IOUtils.Close(mgr, tw, w, taxoDir, indexDir);
+            IOUtils.Dispose(mgr, tw, w, taxoDir, indexDir);
         }
 
     }

@@ -31,35 +31,35 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Lucene 4.0 Live Documents Format.
-    /// <p>
-    /// <p>The .del file is optional, and only exists when a segment contains
-    /// deletions.</p>
-    /// <p>Although per-segment, this file is maintained exterior to compound segment
-    /// files.</p>
-    /// <p>Deletions (.del) --&gt; Format,Header,ByteCount,BitCount, Bits | DGaps (depending
-    /// on Format)</p>
-    /// <ul>
-    ///   <li>Format,ByteSize,BitCount --&gt; <seealso cref="DataOutput#writeInt Uint32"/></li>
-    ///   <li>Bits --&gt; &lt;<seealso cref="DataOutput#writeByte Byte"/>&gt; <sup>ByteCount</sup></li>
-    ///   <li>DGaps --&gt; &lt;DGap,NonOnesByte&gt; <sup>NonzeroBytesCount</sup></li>
-    ///   <li>DGap --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    ///   <li>NonOnesByte --&gt; <seealso cref="DataOutput#writeByte Byte"/></li>
-    ///   <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    /// </ul>
-    /// <p>Format is 1: indicates cleared DGaps.</p>
-    /// <p>ByteCount indicates the number of bytes in Bits. It is typically
-    /// (SegSize/8)+1.</p>
-    /// <p>BitCount indicates the number of bits that are currently set in Bits.</p>
-    /// <p>Bits contains one bit for each document indexed. When the bit corresponding
+    /// <para/>
+    /// <para>The .del file is optional, and only exists when a segment contains
+    /// deletions.</para>
+    /// <para>Although per-segment, this file is maintained exterior to compound segment
+    /// files.</para>
+    /// <para>Deletions (.del) --&gt; Format,Header,ByteCount,BitCount, Bits | DGaps (depending
+    /// on Format)</para>
+    /// <list type="bullet">
+    ///   <item><description>Format,ByteSize,BitCount --&gt; Uint32 (<see cref="Store.DataOutput.WriteInt32(int)"/>) </description></item>
+    ///   <item><description>Bits --&gt; &lt; Byte (<see cref="Store.DataOutput.WriteByte(byte)"/>) &gt; <sup>ByteCount</sup></description></item>
+    ///   <item><description>DGaps --&gt; &lt;DGap,NonOnesByte&gt; <sup>NonzeroBytesCount</sup></description></item>
+    ///   <item><description>DGap --&gt; VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </description></item>
+    ///   <item><description>NonOnesByte --&gt;  Byte(<see cref="Store.DataOutput.WriteByte(byte)"/>) </description></item>
+    ///   <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) </description></item>
+    /// </list>
+    /// <para>Format is 1: indicates cleared DGaps.</para>
+    /// <para>ByteCount indicates the number of bytes in Bits. It is typically
+    /// (SegSize/8)+1.</para>
+    /// <para>BitCount indicates the number of bits that are currently set in Bits.</para>
+    /// <para>Bits contains one bit for each document indexed. When the bit corresponding
     /// to a document number is cleared, that document is marked as deleted. Bit ordering
     /// is from least to most significant. Thus, if Bits contains two bytes, 0x00 and
-    /// 0x02, then document 9 is marked as alive (not deleted).</p>
-    /// <p>DGaps represents sparse bit-vectors more efficiently than Bits. It is made
+    /// 0x02, then document 9 is marked as alive (not deleted).</para>
+    /// <para>DGaps represents sparse bit-vectors more efficiently than Bits. It is made
     /// of DGaps on indexes of nonOnes bytes in Bits, and the nonOnes bytes themselves.
-    /// The number of nonOnes bytes in Bits (NonOnesBytesCount) is not stored.</p>
-    /// <p>For example, if there are 8000 bits and only bits 10,12,32 are cleared, DGaps
-    /// would be used:</p>
-    /// <p>(VInt) 1 , (byte) 20 , (VInt) 3 , (Byte) 1</p>
+    /// The number of nonOnes bytes in Bits (NonOnesBytesCount) is not stored.</para>
+    /// <para>For example, if there are 8000 bits and only bits 10,12,32 are cleared, DGaps
+    /// would be used:</para>
+    /// <para>(VInt) 1 , (byte) 20 , (VInt) 3 , (Byte) 1</para>
     /// </summary>
     public class Lucene40LiveDocsFormat : LiveDocsFormat
     {

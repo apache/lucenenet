@@ -23,12 +23,12 @@ namespace Lucene.Net.Util.Packed
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// Implements <seealso cref="PackedInt32s.Mutable"/>, but grows the
+    /// Implements <see cref="PackedInt32s.Mutable"/>, but grows the
     /// bit count of the underlying packed ints on-demand.
-    /// <p>Beware that this class will accept to set negative values but in order
+    /// <para/>Beware that this class will accept to set negative values but in order
     /// to do this, it will grow the number of bits per value to 64.
-    ///
-    /// <p>@lucene.internal</p>
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
     public class GrowableWriter : PackedInt32s.Mutable
     {

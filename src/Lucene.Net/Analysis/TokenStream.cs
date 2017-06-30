@@ -31,9 +31,9 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// this is an abstract class; concrete subclasses are:
     /// <list type="bullet">
-    ///     <item><see cref="Tokenizer"/>, a <see cref="TokenStream"/> whose input is a <see cref="System.IO.TextReader"/>; and</item>
-    ///     <item><see cref="TokenFilter"/>, a <see cref="TokenStream"/> whose input is another
-    ///         <see cref="TokenStream"/>.</item>
+    ///     <item><description><see cref="Tokenizer"/>, a <see cref="TokenStream"/> whose input is a <see cref="System.IO.TextReader"/>; and</description></item>
+    ///     <item><description><see cref="TokenFilter"/>, a <see cref="TokenStream"/> whose input is another
+    ///         <see cref="TokenStream"/>.</description></item>
     /// </list>
     /// A new <see cref="TokenStream"/> API has been introduced with Lucene 2.9. this API
     /// has moved from being <see cref="Token"/>-based to <see cref="Util.IAttribute"/>-based. While
@@ -49,17 +49,17 @@ namespace Lucene.Net.Analysis
     /// <para/>
     /// <b>The workflow of the new <see cref="TokenStream"/> API is as follows:</b>
     /// <list type="number">
-    ///     <item>Instantiation of <see cref="TokenStream"/>/<see cref="TokenFilter"/>s which add/get
-    ///         attributes to/from the <see cref="AttributeSource"/>.</item>
-    ///     <item>The consumer calls <see cref="TokenStream.Reset()"/>.</item>
-    ///     <item>The consumer retrieves attributes from the stream and stores local
-    ///         references to all attributes it wants to access.</item>
-    ///     <item>The consumer calls <see cref="IncrementToken()"/> until it returns false
-    ///         consuming the attributes after each call.</item>
-    ///     <item>The consumer calls <see cref="End()"/> so that any end-of-stream operations
-    ///         can be performed.</item>
-    ///     <item>The consumer calls <see cref="Dispose()"/> to release any resource when finished
-    ///         using the <see cref="TokenStream"/>.</item>
+    ///     <item><description>Instantiation of <see cref="TokenStream"/>/<see cref="TokenFilter"/>s which add/get
+    ///         attributes to/from the <see cref="AttributeSource"/>.</description></item>
+    ///     <item><description>The consumer calls <see cref="TokenStream.Reset()"/>.</description></item>
+    ///     <item><description>The consumer retrieves attributes from the stream and stores local
+    ///         references to all attributes it wants to access.</description></item>
+    ///     <item><description>The consumer calls <see cref="IncrementToken()"/> until it returns false
+    ///         consuming the attributes after each call.</description></item>
+    ///     <item><description>The consumer calls <see cref="End()"/> so that any end-of-stream operations
+    ///         can be performed.</description></item>
+    ///     <item><description>The consumer calls <see cref="Dispose()"/> to release any resource when finished
+    ///         using the <see cref="TokenStream"/>.</description></item>
     /// </list>
     /// To make sure that filters and consumers know which attributes are available,
     /// the attributes must be added during instantiation. Filters and consumers are

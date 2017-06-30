@@ -20,47 +20,46 @@ namespace Lucene.Net.Codecs.Sep
      * limitations under the License.
      */
 
+    // TODO: We may want tighter integration w/IndexOutput
+    // may give better performance
+
     /// <summary>
-    /// Defines basic API for writing ints to an IndexOutput.
-    /// IntBlockCodec interacts with this API. @see IntBlockReader.
-    /// 
+    /// Defines basic API for writing ints to an <see cref="IndexOutput"/>.
+    /// IntBlockCodec interacts with this API. See IntBlockReader.
+    /// <para/>
     /// NOTE: block sizes could be variable
     /// <para/>
     /// NOTE: This was IntIndexOutput in Lucene
-    /// 
+    /// <para/>
     /// @lucene.experimental 
     /// </summary>
-    /// <remarks>
-    /// TODO: We may want tighter integration w/IndexOutput
-    /// may give better performance
-    /// </remarks>
     public abstract class Int32IndexOutput : IDisposable
     {
         /// <summary>
-        /// Write an int to the primary file.  The value must be
+        /// Write an <see cref="int"/> to the primary file.  The value must be
         /// >= 0.  
         /// </summary>
         public abstract void Write(int v);
 
-        /// <summary>Records a single skip-point in the IndexOutput. </summary>
+        /// <summary>Records a single skip-point in the <see cref="IndexOutput"/>. </summary>
         public abstract class Index
         {
-            /// <summary>Internally records the current location </summary>
+            /// <summary>Internally records the current location. </summary>
             public abstract void Mark();
 
-            /// <summary>Copies index from other </summary>
+            /// <summary>Copies index from <paramref name="other"/>. </summary>
             public abstract void CopyFrom(Index other, bool copyLast);
 
             /// <summary>
             /// Writes "location" of current output pointer of primary
-            ///  output to different output (out) 
+            /// output to different output (out).
             /// </summary>
             public abstract void Write(DataOutput indexOut, bool absolute);
         }
 
         /// <summary>
         /// If you are indexing the primary output file, call
-        ///  this and interact with the returned IndexWriter. 
+        /// this and interact with the returned IndexWriter. 
         /// </summary>
         public abstract Index GetIndex();
 

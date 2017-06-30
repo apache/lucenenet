@@ -24,8 +24,8 @@ namespace Lucene.Net.Analysis.Cjk
     /// <summary>
     /// A <see cref="TokenFilter"/> that normalizes CJK width differences:
     /// <list type="bullet">
-    ///   <item>Folds fullwidth ASCII variants into the equivalent basic latin</item>
-    ///   <item>Folds halfwidth Katakana variants into the equivalent kana</item>
+    ///   <item><description>Folds fullwidth ASCII variants into the equivalent basic latin</description></item>
+    ///   <item><description>Folds halfwidth Katakana variants into the equivalent kana</description></item>
     /// </list>
     /// <para>
     /// NOTE: this filter can be viewed as a (practical) subset of NFKC/NFKD

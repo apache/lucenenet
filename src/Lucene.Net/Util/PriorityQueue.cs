@@ -23,16 +23,16 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// A PriorityQueue maintains a partial ordering of its elements such that the
-    /// element with least priority can always be found in constant time. It is represented as a
-    /// Min-Heap so that Add()'s and Pop()'s require log(size) time.
+    /// A <see cref="PriorityQueue{T}"/> maintains a partial ordering of its elements such that the
+    /// element with least priority can always be found in constant time. Put()'s and Pop()'s
+    /// require log(size) time.
     ///
-    /// <p><b>NOTE</b>: this class will pre-allocate a full array of
-    /// length <code>maxSize+1</code> if instantiated via the
-    /// <seealso cref="#PriorityQueue(int,boolean)"/> constructor with
-    /// <code>prepopulate</code> set to <code>true</code>. That maximum
+    /// <para/><b>NOTE</b>: this class will pre-allocate a full array of
+    /// length <c>maxSize+1</c> if instantiated via the
+    /// <see cref="PriorityQueue(int, bool)"/> constructor with
+    /// <c>prepopulate</c> set to <c>true</c>. That maximum
     /// size can grow as we insert elements over the time.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -102,48 +102,48 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Determines the ordering of objects in this priority queue.  Subclasses
-        ///  must define this one method. </summary>
-        ///  <returns> <code>true</code> iff parameter <tt>a</tt> is less than parameter <tt>b</tt>. </returns>
+        /// must define this one method. </summary>
+        /// <returns> <c>true</c> if parameter <paramref name="a"/> is less than parameter <paramref name="b"/>. </returns>
         protected internal abstract bool LessThan(T a, T b);
 
         /// <summary>
-        /// this method can be overridden by extending classes to return a sentinel
-        /// object which will be used by the <seealso cref="PriorityQueue#PriorityQueue(int,boolean)"/>
+        /// This method can be overridden by extending classes to return a sentinel
+        /// object which will be used by the <see cref="PriorityQueue(int, bool)"/>
         /// constructor to fill the queue, so that the code which uses that queue can always
         /// assume it's full and only change the top without attempting to insert any new
-        /// object.<br>
-        ///
+        /// object.
+        /// <para/>
         /// Those sentinel values should always compare worse than any non-sentinel
-        /// value (i.e., <seealso cref="#lessThan"/> should always favor the
-        /// non-sentinel values).<br>
-        ///
-        /// By default, this method returns false, which means the queue will not be
+        /// value (i.e., <see cref="LessThan(T, T)"/> should always favor the
+        /// non-sentinel values).
+        /// <para/>
+        /// By default, this method returns <c>false</c>, which means the queue will not be
         /// filled with sentinel values. Otherwise, the value returned will be used to
-        /// pre-populate the queue. Adds sentinel values to the queue.<br>
-        ///
+        /// pre-populate the queue. Adds sentinel values to the queue.
+        /// <para/>
         /// If this method is extended to return a non-null value, then the following
         /// usage pattern is recommended:
         ///
-        /// <pre class="prettyprint">
-        /// // extends getSentinelObject() to return a non-null value.
+        /// <code>
+        /// // extends GetSentinelObject() to return a non-null value.
         /// PriorityQueue&lt;MyObject&gt; pq = new MyQueue&lt;MyObject&gt;(numHits);
         /// // save the 'top' element, which is guaranteed to not be null.
-        /// MyObject pqTop = pq.top();
+        /// MyObject pqTop = pq.Top;
         /// &lt;...&gt;
         /// // now in order to add a new element, which is 'better' than top (after
         /// // you've verified it is better), it is as simple as:
-        /// pqTop.change().
-        /// pqTop = pq.updateTop();
-        /// </pre>
-        ///
-        /// <b>NOTE:</b> if this method returns a non-null value, it will be called by
-        /// the <seealso cref="PriorityQueue#PriorityQueue(int,boolean)"/> constructor
-        /// <seealso cref="#size()"/> times, relying on a new object to be returned and will not
-        /// check if it's null again. Therefore you should ensure any call to this
+        /// pqTop.Change().
+        /// pqTop = pq.UpdateTop();
+        /// </code>
+        /// <para/>
+        /// <b>NOTE:</b> if this method returns a non-<c>null</c> value, it will be called by
+        /// the <see cref="PriorityQueue(int, bool)"/> constructor
+        /// <see cref="Count"/> times, relying on a new object to be returned and will not
+        /// check if it's <c>null</c> again. Therefore you should ensure any call to this
         /// method creates a new instance and behaves consistently, e.g., it cannot
-        /// return null if it previously returned non-null.
+        /// return <c>null</c> if it previously returned non-<c>null</c>.
         /// </summary>
-        /// <returns> the sentinel object to use to pre-populate the queue, or null if
+        /// <returns> The sentinel object to use to pre-populate the queue, or <c>null</c> if
         ///         sentinel objects are not supported. </returns>
         protected virtual T GetSentinelObject()
         {
@@ -151,11 +151,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Adds an Object to a PriorityQueue in log(size) time. If one tries to add
-        /// more objects than maxSize from initialize and it is not possible to resize
-        /// the heap, an <seealso cref="IndexOutOfRangeException"/> is thrown.
+        /// Adds an Object to a <see cref="PriorityQueue{T}"/> in log(size) time. If one tries to add
+        /// more objects than <see cref="maxSize"/> from initialize and it is not possible to resize
+        /// the heap, an <see cref="IndexOutOfRangeException"/> is thrown.
         /// </summary>
-        /// <returns> the new 'top' element in the queue. </returns>
+        /// <returns> The new 'top' element in the queue. </returns>
         public T Add(T element)
         {
             size++;
@@ -165,14 +165,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Adds an Object to a PriorityQueue in log(size) time.
+        /// Adds an Object to a <see cref="PriorityQueue{T}"/> in log(size) time.
         /// It returns the object (if any) that was
-        /// dropped off the heap because it was full. this can be
+        /// dropped off the heap because it was full. This can be
         /// the given parameter (in case it is smaller than the
         /// full heap's minimum, and couldn't be added), or another
         /// object that was previously the smallest value in the
-        /// heap and now has been replaced by a larger one, or null
-        /// if the queue wasn't yet full with maxSize elements.
+        /// heap and now has been replaced by a larger one, or <c>null</c>
+        /// if the queue wasn't yet full with <see cref="maxSize"/> elements.
         /// </summary>
         public virtual T InsertWithOverflow(T element)
         {
@@ -195,8 +195,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the least element of the PriorityQueue in constant time.
-        /// Returns null if the queue is empty. </summary>
+        /// Returns the least element of the <see cref="PriorityQueue{T}"/> in constant time.
+        /// Returns <c>null</c> if the queue is empty. </summary>
         public T Top
         {
             get
@@ -209,8 +209,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Removes and returns the least element of the PriorityQueue in log(size)
-        ///  time.
+        /// Removes and returns the least element of the <see cref="PriorityQueue{T}"/> in log(size)
+        /// time.
         /// </summary>
         public T Pop()
         {
@@ -233,20 +233,20 @@ namespace Lucene.Net.Util
         /// Should be called when the Object at top changes values. Still log(n) worst
         /// case, but it's at least twice as fast to
         ///
-        /// <pre class="prettyprint">
-        /// pq.top().change();
-        /// pq.updateTop();
-        /// </pre>
+        /// <code>
+        /// pq.Top.Change();
+        /// pq.UpdateTop();
+        /// </code>
         ///
         /// instead of
         ///
-        /// <pre class="prettyprint">
-        /// o = pq.pop();
-        /// o.change();
-        /// pq.push(o);
-        /// </pre>
+        /// <code>
+        /// o = pq.Pop();
+        /// o.Change();
+        /// pq.Push(o);
+        /// </code>
         /// </summary>
-        /// <returns> the new 'top' element. </returns>
+        /// <returns> The new 'top' element. </returns>
         public T UpdateTop()
         {
             DownHeap();
@@ -254,7 +254,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the number of elements currently stored in the PriorityQueue.
+        /// Returns the number of elements currently stored in the <see cref="PriorityQueue{T}"/>.
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public int Count
@@ -263,7 +263,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Removes all entries from the PriorityQueue. </summary>
+        /// Removes all entries from the <see cref="PriorityQueue{T}"/>. </summary>
         public void Clear()
         {
             for (int i = 0; i <= size; i++)
@@ -312,7 +312,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this method returns the internal heap array as T[].
+        /// This method returns the internal heap array as T[].
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         [WritableArray]

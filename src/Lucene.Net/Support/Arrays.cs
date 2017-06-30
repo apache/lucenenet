@@ -107,7 +107,7 @@ namespace Lucene.Net.Support
         /// the same order. Also, two array references are considered equal if
         /// both are null.
         /// <para/>
-        /// Note that if the type of <paramref name="T"/> is a <see cref="IDictionary{TKey, TValue}"/>,
+        /// Note that if the type of <typeparam name="T"/> is a <see cref="IDictionary{TKey, TValue}"/>,
         /// <see cref="IList{T}"/>, or <see cref="ISet{T}"/>, its values and any nested collection values
         /// will be compared for equality as well.
         /// </returns>

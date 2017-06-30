@@ -25,29 +25,28 @@ namespace Lucene.Net.Codecs.Lucene41
     /// <summary>
     /// Implements the skip list reader for block postings format
     /// that stores positions and payloads.
-    ///
+    /// <para/>
     /// Although this skipper uses MultiLevelSkipListReader as an interface,
     /// its definition of skip position will be a little different.
-    ///
+    /// <para/>
     /// For example, when skipInterval = blockSize = 3, df = 2*skipInterval = 6,
-    ///
+    /// <para/>
     /// 0 1 2 3 4 5
     /// d d d d d d    (posting list)
     ///     ^     ^    (skip point in MultiLeveSkipWriter)
     ///       ^        (skip point in Lucene41SkipWriter)
-    ///
+    /// <para/>
     /// In this case, MultiLevelSkipListReader will use the last document as a skip point,
     /// while Lucene41SkipReader should assume no skip point will comes.
-    ///
+    /// <para/>
     /// If we use the interface directly in Lucene41SkipReader, it may silly try to read
     /// another skip data after the only skip point is loaded.
-    ///
+    /// <para/>
     /// To illustrate this, we can call skipTo(d[5]), since skip point d[3] has smaller docId,
     /// and numSkipped+blockSize== df, the MultiLevelSkipListReader will assume the skip list
     /// isn't exhausted yet, and try to load a non-existed skip point
-    ///
-    /// Therefore, we'll trim df before passing it to the interface. see trim(int)
-    ///
+    /// <para/>
+    /// Therefore, we'll trim df before passing it to the interface. see <see cref="Trim(int)"/>.
     /// </summary>
     internal sealed class Lucene41SkipReader : MultiLevelSkipListReader
     {
@@ -100,12 +99,11 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// Trim original docFreq to tell skipReader read proper number of skip points.
-        ///
+        /// <para/>
         /// Since our definition in Lucene41Skip* is a little different from MultiLevelSkip*
         /// this trimmed docFreq will prevent skipReader from:
         /// 1. silly reading a non-existed skip point after the last block boundary
         /// 2. moving into the vInt block
-        ///
         /// </summary>
         internal int Trim(int df)
         {
@@ -136,7 +134,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// Returns the doc pointer of the doc to which the last call of
-        /// <seealso cref="MultiLevelSkipListReader#skipTo(int)"/> has skipped.
+        /// <seealso cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
         public long DocPointer
         {

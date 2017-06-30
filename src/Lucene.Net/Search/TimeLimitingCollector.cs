@@ -28,10 +28,10 @@ namespace Lucene.Net.Search
     using Counter = Lucene.Net.Util.Counter;
 
     /// <summary>
-    /// The <seealso cref="TimeLimitingCollector"/> is used to timeout search requests that
+    /// The <see cref="TimeLimitingCollector"/> is used to timeout search requests that
     /// take longer than the maximum allowed search time limit. After this time is
     /// exceeded, the search thread is stopped by throwing a
-    /// <seealso cref="TimeExceededException"/>.
+    /// <see cref="TimeExceededException"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -116,11 +116,11 @@ namespace Lucene.Net.Search
         private int docBase;
 
         /// <summary>
-        /// Create a TimeLimitedCollector wrapper over another <seealso cref="ICollector"/> with a specified timeout. </summary>
-        /// <param name="collector"> the wrapped <seealso cref="ICollector"/> </param>
-        /// <param name="clock"> the timer clock </param>
-        /// <param name="ticksAllowed"> max time allowed for collecting
-        /// hits after which <seealso cref="TimeExceededException"/> is thrown </param>
+        /// Create a <see cref="TimeLimitingCollector"/> wrapper over another <see cref="ICollector"/> with a specified timeout. </summary>
+        /// <param name="collector"> The wrapped <see cref="ICollector"/> </param>
+        /// <param name="clock"> The timer clock </param>
+        /// <param name="ticksAllowed"> Max time allowed for collecting
+        /// hits after which <see cref="TimeExceededException"/> is thrown </param>
         public TimeLimitingCollector(ICollector collector, Counter clock, long ticksAllowed)
         {
             this.collector = collector;
@@ -133,18 +133,20 @@ namespace Lucene.Net.Search
         /// initialized once the first reader is passed to the collector.
         /// To include operations executed in prior to the actual document collection
         /// set the baseline through this method in your prelude.
-        /// <p>
+        /// <para>
         /// Example usage:
-        /// <pre class="prettyprint">
-        ///   Counter clock = ...;
-        ///   long baseline = clock.get();
-        ///   // ... prepare search
-        ///   TimeLimitingCollector collector = new TimeLimitingCollector(c, clock, numTicks);
-        ///   collector.setBaseline(baseline);
-        ///   indexSearcher.search(query, collector);
-        /// </pre>
-        /// </p> </summary>
-        /// <seealso cref= #setBaseline()  </seealso>
+        /// <code>
+        ///     // Counter is in the Lucene.Net.Util namespace
+        ///     Counter clock = Counter.NewCounter(true);
+        ///     long baseline = clock.Get();
+        ///     // ... prepare search
+        ///     TimeLimitingCollector collector = new TimeLimitingCollector(c, clock, numTicks);
+        ///     collector.SetBaseline(baseline);
+        ///     indexSearcher.Search(query, collector);
+        /// </code>
+        /// </para> 
+        /// </summary>
+        /// <seealso cref="SetBaseline()"/>
         public virtual void SetBaseline(long clockTime)
         {
             t0 = clockTime;
@@ -152,7 +154,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Syntactic sugar for <seealso cref="#setBaseline(long)"/> using <seealso cref="Counter#get()"/>
+        /// Syntactic sugar for <see cref="SetBaseline(long)"/> using <see cref="Counter.Get()"/>
         /// on the clock passed to the constructor.
         /// </summary>
         public virtual void SetBaseline()
@@ -162,11 +164,11 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Checks if this time limited collector is greedy in collecting the last hit.
-        /// A non greedy collector, upon a timeout, would throw a <seealso cref="TimeExceededException"/>
+        /// A non greedy collector, upon a timeout, would throw a <see cref="TimeExceededException"/>
         /// without allowing the wrapped collector to collect current doc. A greedy one would
         /// first allow the wrapped hit collector to collect current doc and only then
-        /// throw a <seealso cref="TimeExceededException"/>. </summary>
-        /// <seealso cref= #setGreedy(boolean) </seealso>
+        /// throw a <see cref="TimeExceededException"/>. 
+        /// </summary>
         public virtual bool IsGreedy
         {
             get
@@ -180,11 +182,11 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Calls <seealso cref="ICollector#collect(int)"/> on the decorated <seealso cref="ICollector"/>
+        /// Calls <see cref="ICollector.Collect(int)"/> on the decorated <see cref="ICollector"/>
         /// unless the allowed time has passed, in which case it throws an exception.
         /// </summary>
         /// <exception cref="TimeExceededException">
-        ///           if the time allowed has exceeded. </exception>
+        ///           If the time allowed has exceeded. </exception>
         public virtual void Collect(int doc)
         {
             long time = clock.Get();
@@ -223,26 +225,27 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// this is so the same timer can be used with a multi-phase search process such as grouping.
-        /// We don't want to create a new TimeLimitingCollector for each phase because that would
+        /// This is so the same timer can be used with a multi-phase search process such as grouping.
+        /// We don't want to create a new <see cref="TimeLimitingCollector"/> for each phase because that would
         /// reset the timer for each phase.  Once time is up subsequent phases need to timeout quickly.
         /// </summary>
-        /// <param name="collector"> The actual collector performing search functionality </param>
+        /// <param name="collector"> The actual collector performing search functionality. </param>
         public virtual void SetCollector(ICollector collector)
         {
             this.collector = collector;
         }
 
         /// <summary>
-        /// Returns the global TimerThreads <seealso cref="Counter"/>
-        /// <p>
-        /// Invoking this creates may create a new instance of <seealso cref="TimerThread"/> iff
-        /// the global <seealso cref="TimerThread"/> has never been accessed before. The thread
+        /// Returns the global <see cref="TimerThread"/>'s <see cref="Counter"/>
+        /// <para>
+        /// Invoking this creates may create a new instance of <see cref="TimerThread"/> iff
+        /// the global <see cref="TimerThread"/> has never been accessed before. The thread
         /// returned from this method is started on creation and will be alive unless
-        /// you stop the <seealso cref="TimerThread"/> via <seealso cref="TimerThread#stopTimer()"/>.
-        /// </p> </summary>
-        /// <returns> the global TimerThreads <seealso cref="Counter"/>
-        /// @lucene.experimental </returns>
+        /// you stop the <see cref="TimerThread"/> via <see cref="TimerThread.StopTimer()"/>.
+        /// </para> 
+        /// @lucene.experimental
+        /// </summary>
+        /// <returns> the global TimerThreads <seealso cref="Counter"/> </returns>
         public static Counter GlobalCounter
         {
             get
@@ -252,16 +255,16 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the global <seealso cref="TimerThread"/>.
-        /// <p>
-        /// Invoking this creates may create a new instance of <seealso cref="TimerThread"/> iff
-        /// the global <seealso cref="TimerThread"/> has never been accessed before. The thread
+        /// Returns the global <see cref="TimerThread"/>.
+        /// <para>
+        /// Invoking this creates may create a new instance of <see cref="TimerThread"/> iff
+        /// the global <see cref="TimerThread"/> has never been accessed before. The thread
         /// returned from this method is started on creation and will be alive unless
-        /// you stop the <seealso cref="TimerThread"/> via <seealso cref="TimerThread#stopTimer()"/>.
-        /// </p>
+        /// you stop the <see cref="TimerThread"/> via <see cref="TimerThread.StopTimer()"/>.
+        /// </para>
+        /// @lucene.experimental
         /// </summary>
-        /// <returns> the global <seealso cref="TimerThread"/>
-        /// @lucene.experimental </returns>
+        /// <returns> the global <see cref="TimerThread"/> </returns>
         public static TimerThread GlobalTimerThread
         {
             get
@@ -286,7 +289,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Thread used to timeout search requests.
-        /// Can be stopped completely with <seealso cref="TimerThread#stopTimer()"/>
+        /// Can be stopped completely with <see cref="TimerThread.StopTimer()"/>
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -368,7 +372,6 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Return the timer resolution. </summary>
-            /// <seealso cref= #setResolution(long) </seealso>
             public long Resolution
             {
                 get

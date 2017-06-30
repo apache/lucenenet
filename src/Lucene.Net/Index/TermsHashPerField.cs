@@ -121,7 +121,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Collapse the hash table & sort in-place. </summary>
+        /// Collapse the hash table &amp; sort in-place. </summary>
         public int[] SortPostings(IComparer<BytesRef> termComp)
         {
             return bytesHash.Sort(termComp);
@@ -152,9 +152,11 @@ namespace Lucene.Net.Index
             return doCall || doNextCall;
         }
 
-        // Secondary entry point (for 2nd & subsequent TermsHash),
-        // because token text has already been "interned" into
-        // textStart, so we hash by textStart
+        /// <summary>
+        /// Secondary entry point (for 2nd &amp; subsequent <see cref="TermsHash"/>),
+        /// because token text has already been "interned" into
+        /// <paramref name="textStart"/>, so we hash by <paramref name="textStart"/>
+        /// </summary>
         public void Add(int textStart)
         {
             int termID = bytesHash.AddByPoolOffset(textStart);

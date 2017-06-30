@@ -25,12 +25,12 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Represents <see cref="T:int[]"/>, as a slice (offset + length) into an
-    /// existing <see cref="T:int[]"/>.  The <see cref="Int32s"/> member should never be null; use
+    /// existing <see cref="T:int[]"/>.  The <see cref="Int32s"/> member should never be <c>null</c>; use
     /// <see cref="EMPTY_INT32S"/> if necessary.
     /// <para/>
     /// NOTE: This was IntsRef in Lucene
-    /// 
-    ///  @lucene.internal
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -38,14 +38,14 @@ namespace Lucene.Net.Util
     public sealed class Int32sRef : IComparable<Int32sRef>
     {
         /// <summary>
-        /// An empty integer array for convenience
+        /// An empty integer array for convenience.
         /// <para/>
         /// NOTE: This was EMPTY_INTS in Lucene
         /// </summary>
         public static readonly int[] EMPTY_INT32S = new int[0];
 
         /// <summary>
-        /// The contents of the IntsRef. Should never be {@code null}. 
+        /// The contents of the <see cref="Int32sRef"/>. Should never be <c>null</c>. 
         /// <para/>
         /// NOTE: This was ints (field) in Lucene
         /// </summary>
@@ -70,18 +70,18 @@ namespace Lucene.Net.Util
         public int Offset { get; set; }
 
         /// <summary>
-        /// Length of used ints. </summary>
+        /// Length of used <see cref="int"/>s. </summary>
         public int Length { get; set; }
 
         /// <summary>
-        /// Create a IntsRef with <see cref="EMPTY_INT32S"/> </summary>
+        /// Create a <see cref="Int32sRef"/> with <see cref="EMPTY_INT32S"/>. </summary>
         public Int32sRef()
         {
             ints = EMPTY_INT32S;
         }
 
         /// <summary>
-        /// Create a IntsRef pointing to a new array of size <code>capacity</code>.
+        /// Create a <see cref="Int32sRef"/> pointing to a new array of size <paramref name="capacity"/>.
         /// Offset and length will both be zero.
         /// </summary>
         public Int32sRef(int capacity)
@@ -90,8 +90,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this instance will directly reference ints w/o making a copy.
-        /// ints should not be null.
+        /// This instance will directly reference <paramref name="ints"/> w/o making a copy.
+        /// <paramref name="ints"/> should not be <c>null</c>.
         /// </summary>
         public Int32sRef(int[] ints, int offset, int length)
         {
@@ -102,11 +102,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns a shallow clone of this instance (the underlying ints are
+        /// Returns a shallow clone of this instance (the underlying <see cref="int"/>s are
         /// <b>not</b> copied and will be shared by both the returned object and this
         /// object.
         /// </summary>
-        /// <seealso cref= #deepCopyOf </seealso>
+        /// <seealso cref="DeepCopyOf(Int32sRef)"/>
         public object Clone()
         {
             return new Int32sRef(ints, Offset, Length);
@@ -163,7 +163,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Signed int order comparison </summary>
+        /// Signed <see cref="int"/> order comparison. </summary>
         public int CompareTo(Int32sRef other)
         {
             if (this == other)
@@ -212,8 +212,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Used to grow the reference array.
-        ///
+        /// <para/>
         /// In general this should not be used as it does not take the offset into account.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public void Grow(int newLength)
@@ -243,10 +244,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new IntsRef that points to a copy of the ints from
-        /// <code>other</code>
-        /// <p>
-        /// The returned IntsRef will have a length of other.length
+        /// Creates a new <see cref="Int32sRef"/> that points to a copy of the <see cref="int"/>s from
+        /// <paramref name="other"/>
+        /// <para/>
+        /// The returned <see cref="Int32sRef"/> will have a length of <c>other.Length</c>
         /// and an offset of zero.
         /// </summary>
         public static Int32sRef DeepCopyOf(Int32sRef other)
@@ -258,7 +259,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Performs internal consistency checks.
-        /// Always returns true (or throws InvalidOperationException)
+        /// Always returns true (or throws <see cref="InvalidOperationException"/>)
         /// </summary>
         public bool IsValid()
         {

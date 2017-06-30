@@ -22,8 +22,8 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// A <seealso cref="ICollector"/> implementation which wraps another
-    /// <seealso cref="ICollector"/> and makes sure only documents with
+    /// A <see cref="ICollector"/> implementation which wraps another
+    /// <see cref="ICollector"/> and makes sure only documents with
     /// scores &gt; 0 are collected.
     /// </summary>
 #if FEATURE_SERIALIZABLE

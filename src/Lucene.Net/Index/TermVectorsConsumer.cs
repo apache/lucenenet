@@ -71,7 +71,7 @@ namespace Lucene.Net.Index
                 }
                 finally
                 {
-                    IOUtils.Close(writer);
+                    IOUtils.Dispose(writer);
                     writer = null;
                     lastDocID = 0;
                     hasVectors = false;
@@ -88,7 +88,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Fills in no-term-vectors for all docs we haven't seen
-        ///  since the last doc that had term vectors.
+        /// since the last doc that had term vectors.
         /// </summary>
         internal void Fill(int docID)
         {

@@ -24,39 +24,41 @@ namespace Lucene.Net.Util.Packed
     using DataOutput = Lucene.Net.Store.DataOutput;
 
     /// <summary>
-    /// A writer for large monotonically increasing sequences of positive longs.
-    /// <p>
+    /// A writer for large monotonically increasing sequences of positive <see cref="long"/>s.
+    /// <para/>
     /// The sequence is divided into fixed-size blocks and for each block, values
-    /// are modeled after a linear function f: x &rarr; A &times; x + B. The block
+    /// are modeled after a linear function f: x &#8594; A &#215; x + B. The block
     /// encodes deltas from the expected values computed from this function using as
     /// few bits as possible. Each block has an overhead between 6 and 14 bytes.
-    /// <p>
+    /// <para/>
     /// Format:
-    /// <ul>
-    /// <li>&lt;BLock&gt;<sup>BlockCount</sup>
-    /// <li>BlockCount: &lceil; ValueCount / BlockSize &rceil;
-    /// <li>Block: &lt;Header, (Ints)&gt;
-    /// <li>Header: &lt;B, A, BitsPerValue&gt;
-    /// <li>B: the B from f: x &rarr; A &times; x + B using a
-    ///     <seealso cref="DataOutput#writeVLong(long) variable-length long"/>
-    /// <li>A: the A from f: x &rarr; A &times; x + B encoded using
-    ///     <seealso cref="Float#floatToIntBits(float)"/> on
-    ///     <seealso cref="DataOutput#writeInt(int) 4 bytes"/>
-    /// <li>BitsPerValue: a <seealso cref="DataOutput#writeVInt(int) variable-length int"/>
-    /// <li>Ints: if BitsPerValue is <tt>0</tt>, then there is nothing to read and
+    /// <list type="bullet">
+    /// <item><description>&lt;BLock&gt;<sup>BlockCount</sup></description></item>
+    /// <item><description>BlockCount: &#8968; ValueCount / BlockSize &#8969;</description></item>
+    /// <item><description>Block: &lt;Header, (Ints)&gt;</description></item>
+    /// <item><description>Header: &lt;B, A, BitsPerValue&gt;</description></item>
+    /// <item><description>B: the B from f: x &#8594; A &#215; x + B using a
+    ///     variable-length <see cref="long"/> (<see cref="DataOutput.WriteVInt64(long)"/>)</description></item>
+    /// <item><description>A: the A from f: x &#8594; A &#215; x + B encoded using
+    ///     <see cref="Support.Number.SingleToInt32Bits(float)"/> on
+    ///     4 bytes (<see cref="DataOutput.WriteVInt32(int)"/>)</description></item>
+    /// <item><description>BitsPerValue: a variable-length <see cref="int"/> (<see cref="DataOutput.WriteVInt32(int)"/>)</description></item>
+    /// <item><description>Ints: if BitsPerValue is <c>0</c>, then there is nothing to read and
     ///     all values perfectly match the result of the function. Otherwise, these
     ///     are the
     ///     <a href="https://developers.google.com/protocol-buffers/docs/encoding#types">zigzag-encoded</a>
-    ///     <seealso cref="PackedInt32s packed"/> deltas from the expected value (computed from
-    ///     the function) using exaclty BitsPerValue bits per value
-    /// </ul> </summary>
-    /// <seealso cref= MonotonicBlockPackedReader
-    /// @lucene.internal </seealso>
+    ///     packed (<see cref="PackedInt32s"/>) deltas from the expected value (computed from
+    ///     the function) using exaclty BitsPerValue bits per value</description></item>
+    /// </list> 
+    /// <para/>
+    /// @lucene.internal
+    /// </summary>
+    /// <seealso cref="MonotonicBlockPackedReader"/>
     public sealed class MonotonicBlockPackedWriter : AbstractBlockPackedWriter
     {
         /// <summary>
         /// Sole constructor. </summary>
-        /// <param name="blockSize"> the number of values of a single block, must be a power of 2 </param>
+        /// <param name="blockSize"> The number of values of a single block, must be a power of 2. </param>
         public MonotonicBlockPackedWriter(DataOutput @out, int blockSize)
             : base(@out, blockSize)
         {
@@ -79,7 +81,8 @@ namespace Lucene.Net.Util.Packed
             long maxZigZagDelta = 0;
             for (int i = 0; i < m_off; ++i)
             {
-                m_values[i] = ZigZagEncode(m_values[i] - min - (long)(avg * i));
+                // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                m_values[i] = ZigZagEncode(m_values[i] - min - (long)(float)(avg * i));
                 maxZigZagDelta = Math.Max(maxZigZagDelta, m_values[i]);
             }
 

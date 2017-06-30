@@ -18,11 +18,11 @@
      */
 
     /// <summary>
-    /// plain text segments file format.
+    /// Plain text segments file format.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextSegmentInfoFormat : SegmentInfoFormat
     {

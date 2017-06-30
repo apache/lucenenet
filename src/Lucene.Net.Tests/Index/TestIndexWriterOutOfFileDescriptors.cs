@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using MockDirectoryWrapper = Lucene.Net.Store.MockDirectoryWrapper;
-    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
+    using TextWriterInfoStream = Lucene.Net.Util.TextWriterInfoStream;
     using TestUtil = Lucene.Net.Util.TestUtil;
 
     [TestFixture]
@@ -69,7 +69,7 @@ namespace Lucene.Net.Index
                     {
                         // Do this ourselves instead of relying on LTC so
                         // we see incrementing messageID:
-                        iwc.SetInfoStream(new PrintStreamInfoStream(Console.Out));
+                        iwc.SetInfoStream(new TextWriterInfoStream(Console.Out));
                     }
                     var ms = iwc.MergeScheduler;
                     if (ms is IConcurrentMergeScheduler)

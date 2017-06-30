@@ -25,19 +25,19 @@ namespace Lucene.Net.Util
     /// Simple concurrent LRU cache, using a "double barrel"
     /// approach where two ConcurrentHashMaps record entries.
     ///
-    /// <p>At any given time, one hash is primary and the other
-    /// is secondary.  <seealso cref="#get"/> first checks primary, and if
+    /// <para>At any given time, one hash is primary and the other
+    /// is secondary.  <see cref="Get(TKey)"/> first checks primary, and if
     /// that's a miss, checks secondary.  If secondary has the
     /// entry, it's promoted to primary (<b>NOTE</b>: the key is
     /// cloned at this point).  Once primary is full, the
-    /// secondary is cleared and the two are swapped.</p>
+    /// secondary is cleared and the two are swapped.</para>
     ///
-    /// <p>this is not as space efficient as other possible
+    /// <para>This is not as space efficient as other possible
     /// concurrent approaches (see LUCENE-2075): to achieve
     /// perfect LRU(N) it requires 2*N storage.  But, this
     /// approach is relatively simple and seems in practice to
     /// not grow unbounded in size when under hideously high
-    /// load.</p>
+    /// load.</para>
     ///
     /// @lucene.internal
     /// </summary>

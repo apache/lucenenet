@@ -48,7 +48,8 @@ namespace Lucene.Net.Codecs.Compressing
     using StringHelper = Lucene.Net.Util.StringHelper;
 
     /// <summary>
-    /// <seealso cref="TermVectorsWriter"/> for <seealso cref="CompressingTermVectorsFormat"/>.
+    /// <see cref="TermVectorsWriter"/> for <see cref="CompressingTermVectorsFormat"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class CompressingTermVectorsWriter : TermVectorsWriter
@@ -84,7 +85,7 @@ namespace Lucene.Net.Codecs.Compressing
         private readonly int chunkSize;
 
         /// <summary>
-        /// a pending doc </summary>
+        /// A pending doc. </summary>
         private class DocData
         {
             private readonly CompressingTermVectorsWriter outerInstance;
@@ -152,7 +153,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// a pending field </summary>
+        /// A pending field. </summary>
         private class FieldData
         {
             private readonly CompressingTermVectorsWriter outerInstance;
@@ -283,7 +284,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(indexStream);
+                    IOUtils.DisposeWhileHandlingException(indexStream);
                     Abort();
                 }
             }
@@ -295,7 +296,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 try
                 {
-                    IOUtils.Close(vectorsStream, indexWriter);
+                    IOUtils.Dispose(vectorsStream, indexWriter);
                 }
                 finally
                 {
@@ -307,7 +308,7 @@ namespace Lucene.Net.Codecs.Compressing
 
         public override void Abort()
         {
-            IOUtils.CloseWhileHandlingException(this);
+            IOUtils.DisposeWhileHandlingException(this);
             IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_EXTENSION), IndexFileNames.SegmentFileName(segment, segmentSuffix, VECTORS_INDEX_EXTENSION));
         }
 
@@ -441,7 +442,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// Returns a sorted array containing unique field numbers </summary>
+        /// Returns a sorted array containing unique field numbers. </summary>
         private int[] FlushFieldNums()
         {
             SortedSet<int> fieldNums = new SortedSet<int>();

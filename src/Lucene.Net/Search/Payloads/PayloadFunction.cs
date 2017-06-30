@@ -22,13 +22,11 @@ namespace Lucene.Net.Search.Payloads
     /// <summary>
     /// An abstract class that defines a way for Payload*Query instances to transform
     /// the cumulative effects of payload scores for a document.
-    /// </summary>
-    /// <seealso cref= Lucene.Net.Search.Payloads.PayloadTermQuery for more information
-    ///
+    /// <para/>
     /// @lucene.experimental this class and its derivations are experimental and subject to
-    ///               change
-    ///
-    ///  </seealso>
+    /// change
+    /// </summary>
+    /// <seealso cref="Lucene.Net.Search.Payloads.PayloadTermQuery"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -45,7 +43,7 @@ namespace Lucene.Net.Search.Payloads
         /// <param name="currentPayloadScore"> The score for the current payload </param>
         /// <returns> The new current Score
         /// </returns>
-        /// <seealso cref= Lucene.Net.Search.Spans.Spans </seealso>
+        /// <seealso cref="Lucene.Net.Search.Spans.Spans"/>
         public abstract float CurrentScore(int docId, string field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore);
 
         /// <summary>

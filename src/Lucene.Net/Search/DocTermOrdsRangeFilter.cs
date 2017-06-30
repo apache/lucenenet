@@ -27,11 +27,11 @@ namespace Lucene.Net.Search
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
 
     /// <summary>
-    /// A range filter built on top of a cached multi-valued term field (in <seealso cref="IFieldCache"/>).
+    /// A range filter built on top of a cached multi-valued term field (in <see cref="IFieldCache"/>).
     ///
-    /// <p>Like <seealso cref="FieldCacheRangeFilter"/>, this is just a specialized range query versus
-    ///    using a TermRangeQuery with <seealso cref="DocTermOrdsRewriteMethod"/>: it will only do
-    ///    two ordinal to term lookups.</p>
+    /// <para>Like <see cref="FieldCacheRangeFilter"/>, this is just a specialized range query versus
+    ///    using a <see cref="TermRangeQuery"/> with <see cref="DocTermOrdsRewriteMethod"/>: it will only do
+    ///    two ordinal to term lookups.</para>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -54,13 +54,13 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// this method is implemented for each data type </summary>
+        /// This method is implemented for each data type </summary>
         public override abstract DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs);
 
         /// <summary>
-        /// Creates a BytesRef range filter using <seealso cref="IFieldCache#getTermsIndex"/>. this works with all
+        /// Creates a BytesRef range filter using <see cref="IFieldCache.GetTermsIndex(Index.AtomicReader, string, float)"/>. This works with all
         /// fields containing zero or one term in the field. The range can be half-open by setting one
-        /// of the values to <code>null</code>.
+        /// of the values to <c>null</c>.
         /// </summary>
         public static DocTermOrdsRangeFilter NewBytesRefRange(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
         {
@@ -232,14 +232,14 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
+        /// Returns <c>true</c> if the lower endpoint is inclusive </summary>
         public virtual bool IncludesLower
         {
             get { return includeLower; }
         }
 
         /// <summary>
-        /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
+        /// Returns <c>true</c> if the upper endpoint is inclusive </summary>
         public virtual bool IncludesUpper
         {
             get { return includeUpper; }

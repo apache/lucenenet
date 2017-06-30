@@ -26,7 +26,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
      */
 
     /// <summary>
-    /// Obtains <see cref="long"/> field values from <see cref="IFieldCache.GetInt64s"/> and makes those
+    /// Obtains <see cref="long"/> field values from <see cref="IFieldCache.GetInt64s(AtomicReader, string, FieldCache.IInt64Parser, bool)"/> and makes those
     /// values available as other numeric types, casting as needed.
     /// <para/>
     /// NOTE: This was LongFieldSource in Lucene

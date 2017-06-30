@@ -36,18 +36,18 @@ namespace Lucene.Net.Util
     using TokenStream = Lucene.Net.Analysis.TokenStream;
 
     /// <summary>
-    /// Creates queries from the <seealso cref="Analyzer"/> chain.
-    /// <p>
+    /// Creates queries from the <see cref="Analyzer"/> chain.
+    /// <para/>
     /// Example usage:
-    /// <pre class="prettyprint">
-    ///   QueryBuilder builder = new QueryBuilder(analyzer);
-    ///   Query a = builder.createBooleanQuery("body", "just a test");
-    ///   Query b = builder.createPhraseQuery("body", "another test");
-    ///   Query c = builder.createMinShouldMatchQuery("body", "another test", 0.5f);
-    /// </pre>
-    /// <p>
-    /// this can also be used as a subclass for query parsers to make it easier
-    /// to interact with the analysis chain. Factory methods such as {@code newTermQuery}
+    /// <code>
+    ///     QueryBuilder builder = new QueryBuilder(analyzer);
+    ///     Query a = builder.CreateBooleanQuery("body", "just a test");
+    ///     Query b = builder.CreatePhraseQuery("body", "another test");
+    ///     Query c = builder.CreateMinShouldMatchQuery("body", "another test", 0.5f);
+    /// </code>
+    /// <para/>
+    /// This can also be used as a subclass for query parsers to make it easier
+    /// to interact with the analysis chain. Factory methods such as <see cref="NewTermQuery(Term)"/>
     /// are provided so that the generated queries can be customized.
     /// </summary>
     public class QueryBuilder
@@ -56,7 +56,7 @@ namespace Lucene.Net.Util
         private bool enablePositionIncrements = true;
 
         /// <summary>
-        /// Creates a new QueryBuilder using the given analyzer. </summary>
+        /// Creates a new <see cref="QueryBuilder"/> using the given analyzer. </summary>
         public QueryBuilder(Analyzer analyzer)
         {
             this.analyzer = analyzer;
@@ -64,12 +64,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Creates a boolean query from the query text.
-        /// <p>
-        /// this is equivalent to {@code createBooleanQuery(field, queryText, Occur.SHOULD)} </summary>
-        /// <param name="field"> field name </param>
-        /// <param name="queryText"> text to be passed to the analyzer </param>
-        /// <returns> {@code TermQuery} or {@code BooleanQuery}, based on the analysis
-        ///         of {@code queryText} </returns>
+        /// <para/>
+        /// This is equivalent to <c>CreateBooleanQuery(field, queryText, Occur.SHOULD)</c> </summary>
+        /// <param name="field"> Field name. </param>
+        /// <param name="queryText"> Text to be passed to the analyzer. </param>
+        /// <returns> <see cref="TermQuery"/> or <see cref="BooleanQuery"/>, based on the analysis
+        ///         of <paramref name="queryText"/>. </returns>
         public virtual Query CreateBooleanQuery(string field, string queryText)
         {
             return CreateBooleanQuery(field, queryText, Occur.SHOULD);
@@ -77,12 +77,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Creates a boolean query from the query text.
-        /// <p> </summary>
-        /// <param name="field"> field name </param>
-        /// <param name="queryText"> text to be passed to the analyzer </param>
-        /// <param name="operator"> operator used for clauses between analyzer tokens. </param>
-        /// <returns> {@code TermQuery} or {@code BooleanQuery}, based on the analysis
-        ///         of {@code queryText} </returns>
+        /// </summary>
+        /// <param name="field"> Field name </param>
+        /// <param name="queryText"> Text to be passed to the analyzer. </param>
+        /// <param name="operator"> Operator used for clauses between analyzer tokens. </param>
+        /// <returns> <see cref="TermQuery"/> or <see cref="BooleanQuery"/>, based on the analysis
+        ///         of <paramref name="queryText"/>. </returns>
         public virtual Query CreateBooleanQuery(string field, string queryText, Occur @operator)
         {
             if (@operator != Occur.SHOULD && @operator != Occur.MUST)
@@ -94,12 +94,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Creates a phrase query from the query text.
-        /// <p>
-        /// this is equivalent to {@code createPhraseQuery(field, queryText, 0)} </summary>
-        /// <param name="field"> field name </param>
-        /// <param name="queryText"> text to be passed to the analyzer </param>
-        /// <returns> {@code TermQuery}, {@code BooleanQuery}, {@code PhraseQuery}, or
-        ///         {@code MultiPhraseQuery}, based on the analysis of {@code queryText} </returns>
+        /// <para/>
+        /// This is equivalent to <c>CreatePhraseQuery(field, queryText, 0)</c> </summary>
+        /// <param name="field"> Field name. </param>
+        /// <param name="queryText"> Text to be passed to the analyzer. </param>
+        /// <returns> <see cref="TermQuery"/>, <see cref="BooleanQuery"/>, <see cref="PhraseQuery"/>, or
+        ///         <see cref="MultiPhraseQuery"/>, based on the analysis of <paramref name="queryText"/>. </returns>
         public virtual Query CreatePhraseQuery(string field, string queryText)
         {
             return CreatePhraseQuery(field, queryText, 0);
@@ -107,12 +107,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Creates a phrase query from the query text.
-        /// <p> </summary>
-        /// <param name="field"> field name </param>
-        /// <param name="queryText"> text to be passed to the analyzer </param>
+        /// </summary>
+        /// <param name="field"> Field name. </param>
+        /// <param name="queryText"> Text to be passed to the analyzer. </param>
         /// <param name="phraseSlop"> number of other words permitted between words in query phrase </param>
-        /// <returns> {@code TermQuery}, {@code BooleanQuery}, {@code PhraseQuery}, or
-        ///         {@code MultiPhraseQuery}, based on the analysis of {@code queryText} </returns>
+        /// <returns> <see cref="TermQuery"/>, <see cref="BooleanQuery"/>, <see cref="PhraseQuery"/>, or
+        ///         <see cref="MultiPhraseQuery"/>, based on the analysis of <paramref name="queryText"/>. </returns>
         public virtual Query CreatePhraseQuery(string field, string queryText, int phraseSlop)
         {
             return CreateFieldQuery(analyzer, Occur.MUST, field, queryText, true, phraseSlop);
@@ -120,12 +120,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Creates a minimum-should-match query from the query text.
-        /// <p> </summary>
-        /// <param name="field"> field name </param>
-        /// <param name="queryText"> text to be passed to the analyzer </param>
+        /// </summary>
+        /// <param name="field"> Field name. </param>
+        /// <param name="queryText"> Text to be passed to the analyzer. </param>
         /// <param name="fraction"> of query terms {@code [0..1]} that should match </param>
-        /// <returns> {@code TermQuery} or {@code BooleanQuery}, based on the analysis
-        ///         of {@code queryText} </returns>
+        /// <returns> <see cref="TermQuery"/> or <see cref="BooleanQuery"/>, based on the analysis
+        ///         of <paramref name="queryText"/>. </returns>
         public virtual Query CreateMinShouldMatchQuery(string field, string queryText, float fraction)
         {
             if (float.IsNaN(fraction) || fraction < 0 || fraction > 1)
@@ -149,8 +149,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the analyzer. </summary>
-        /// <seealso cref= #setAnalyzer(Analyzer) </seealso>
+        /// Gets or Sets the analyzer. </summary>
         public virtual Analyzer Analyzer
         {
             get
@@ -164,8 +163,15 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns true if position increments are enabled. </summary>
-        /// <seealso cref= #setEnablePositionIncrements(boolean) </seealso>
+        /// Gets or Sets whether position increments are enabled.
+        /// <para/>
+        /// When <c>true</c>, result phrase and multi-phrase queries will
+        /// be aware of position increments.
+        /// Useful when e.g. a StopFilter increases the position increment of
+        /// the token that follows an omitted token.
+        /// <para/>
+        /// Default: true.
+        /// </summary>
         public virtual bool EnablePositionIncrements
         {
             get
@@ -180,16 +186,16 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Creates a query from the analysis chain.
-        /// <p>
+        /// <para/>
         /// Expert: this is more useful for subclasses such as queryparsers.
-        /// If using this class directly, just use <seealso cref="#createBooleanQuery(String, String)"/>
-        /// and <seealso cref="#createPhraseQuery(String, String)"/> </summary>
-        /// <param name="analyzer"> analyzer used for this query </param>
-        /// <param name="operator"> default boolean operator used for this query </param>
-        /// <param name="field"> field to create queries against </param>
-        /// <param name="queryText"> text to be passed to the analysis chain </param>
-        /// <param name="quoted"> true if phrases should be generated when terms occur at more than one position </param>
-        /// <param name="phraseSlop"> slop factor for phrase/multiphrase queries </param>
+        /// If using this class directly, just use <see cref="CreateBooleanQuery(string, string)"/>
+        /// and <see cref="CreatePhraseQuery(string, string)"/>. </summary>
+        /// <param name="analyzer"> Analyzer used for this query. </param>
+        /// <param name="operator"> Default boolean operator used for this query. </param>
+        /// <param name="field"> Field to create queries against. </param>
+        /// <param name="queryText"> Text to be passed to the analysis chain. </param>
+        /// <param name="quoted"> <c>true</c> if phrases should be generated when terms occur at more than one position. </param>
+        /// <param name="phraseSlop"> Slop factor for phrase/multiphrase queries. </param>
         protected Query CreateFieldQuery(Analyzer analyzer, Occur @operator, string field, string queryText, bool quoted, int phraseSlop)
         {
             Debug.Assert(@operator == Occur.SHOULD || @operator == Occur.MUST);
@@ -252,7 +258,7 @@ namespace Lucene.Net.Util
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(source);
+                IOUtils.DisposeWhileHandlingException(source);
             }
 
             // rewind the buffer stream
@@ -439,42 +445,46 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Builds a new BooleanQuery instance.
-        /// <p>
-        /// this is intended for subclasses that wish to customize the generated queries. </summary>
-        /// <param name="disableCoord"> disable coord </param>
-        /// <returns> new BooleanQuery instance </returns>
+        /// Builds a new <see cref="BooleanQuery"/> instance.
+        /// <para/>
+        /// This is intended for subclasses that wish to customize the generated queries. 
+        /// </summary>
+        /// <param name="disableCoord"> Disable coord. </param>
+        /// <returns> New <see cref="BooleanQuery"/> instance. </returns>
         protected virtual BooleanQuery NewBooleanQuery(bool disableCoord)
         {
             return new BooleanQuery(disableCoord);
         }
 
         /// <summary>
-        /// Builds a new TermQuery instance.
-        /// <p>
-        /// this is intended for subclasses that wish to customize the generated queries. </summary>
-        /// <param name="term"> term </param>
-        /// <returns> new TermQuery instance </returns>
+        /// Builds a new <see cref="TermQuery"/> instance.
+        /// <para/>
+        /// This is intended for subclasses that wish to customize the generated queries. 
+        /// </summary>
+        /// <param name="term"> Term. </param>
+        /// <returns> New <see cref="TermQuery"/> instance. </returns>
         protected virtual Query NewTermQuery(Term term)
         {
             return new TermQuery(term);
         }
 
         /// <summary>
-        /// Builds a new PhraseQuery instance.
-        /// <p>
-        /// this is intended for subclasses that wish to customize the generated queries. </summary>
-        /// <returns> new PhraseQuery instance </returns>
+        /// Builds a new <see cref="PhraseQuery"/> instance.
+        /// <para/>
+        /// This is intended for subclasses that wish to customize the generated queries. 
+        /// </summary>
+        /// <returns> New <see cref="PhraseQuery"/> instance. </returns>
         protected virtual PhraseQuery NewPhraseQuery()
         {
             return new PhraseQuery();
         }
 
         /// <summary>
-        /// Builds a new MultiPhraseQuery instance.
-        /// <p>
-        /// this is intended for subclasses that wish to customize the generated queries. </summary>
-        /// <returns> new MultiPhraseQuery instance </returns>
+        /// Builds a new <see cref="MultiPhraseQuery"/> instance.
+        /// <para/>
+        /// This is intended for subclasses that wish to customize the generated queries. 
+        /// </summary>
+        /// <returns> New <see cref="MultiPhraseQuery"/> instance. </returns>
         protected virtual MultiPhraseQuery NewMultiPhraseQuery()
         {
             return new MultiPhraseQuery();

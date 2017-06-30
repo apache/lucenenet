@@ -22,19 +22,19 @@ namespace Lucene.Net.Codecs
     /// <summary>
     /// Holder for per-term statistics.
     /// </summary>
-    /// <seealso cref= TermsEnum#docFreq </seealso>
-    /// <seealso cref= TermsEnum#totalTermFreq </seealso>
+    /// <seealso cref="Index.TermsEnum.DocFreq"/>
+    /// <seealso cref="Index.TermsEnum.TotalTermFreq"/>
     public class TermStats
     {
         /// <summary>
         /// How many documents have at least one occurrence of
-        ///  this term.
+        /// this term.
         /// </summary>
         public int DocFreq { get; private set; }
 
         /// <summary>
         /// Total number of times this term occurs across all
-        ///  documents in the field.
+        /// documents in the field.
         /// </summary>
         public long TotalTermFreq { get; private set; }
 

@@ -29,8 +29,9 @@ namespace Lucene.Net.Codecs
     /// </summary>
     public class TestCodecFactory : DefaultCodecFactory
     {
-        public TestCodecFactory()
+        protected override void Initialize()
         {
+            base.Initialize();
             base.ScanForCodecs(this.GetType().GetTypeInfo().Assembly);
         }
 

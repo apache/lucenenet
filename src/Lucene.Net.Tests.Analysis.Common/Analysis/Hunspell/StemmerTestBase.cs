@@ -65,8 +65,8 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(affixStream);
-                IOUtils.CloseWhileHandlingException(null, dictStreams);
+                IOUtils.DisposeWhileHandlingException(affixStream);
+                IOUtils.DisposeWhileHandlingException(null, dictStreams);
             }
         }
 

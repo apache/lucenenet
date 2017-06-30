@@ -26,9 +26,9 @@ namespace Lucene.Net.Search
     using MatchNoBits = Lucene.Net.Util.Bits.MatchNoBits;
 
     /// <summary>
-    /// A <seealso cref="Filter"/> that accepts all documents that have one or more values in a
-    /// given field. this <seealso cref="Filter"/> request <seealso cref="IBits"/> from the
-    /// <seealso cref="IFieldCache"/> and build the bits if not present.
+    /// A <see cref="Filter"/> that accepts all documents that have one or more values in a
+    /// given field. this <see cref="Filter"/> request <see cref="IBits"/> from the
+    /// <see cref="IFieldCache"/> and build the bits if not present.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -39,22 +39,22 @@ namespace Lucene.Net.Search
         private readonly bool negate;
 
         /// <summary>
-        /// Creates a new <seealso cref="FieldValueFilter"/>
+        /// Creates a new <see cref="FieldValueFilter"/>
         /// </summary>
         /// <param name="field">
-        ///          the field to filter </param>
+        ///          The field to filter </param>
         public FieldValueFilter(string field)
             : this(field, false)
         {
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="FieldValueFilter"/>
+        /// Creates a new <see cref="FieldValueFilter"/>
         /// </summary>
         /// <param name="field">
-        ///          the field to filter </param>
+        ///          The field to filter </param>
         /// <param name="negate">
-        ///          iff <code>true</code> all documents with no value in the given
+        ///          If <c>true</c> all documents with no value in the given
         ///          field are accepted.
         ///  </param>
         public FieldValueFilter(string field, bool negate)
@@ -65,15 +65,15 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the field this filter is applied on. </summary>
-        /// <returns> the field this filter is applied on. </returns>
+        /// <returns> The field this filter is applied on. </returns>
         public virtual string Field
         {
             get { return field; }
         }
 
         /// <summary>
-        /// Returns <code>true</code> iff this filter is negated, otherwise <code>false</code> </summary>
-        /// <returns> <code>true</code> iff this filter is negated, otherwise <code>false</code> </returns>
+        /// Returns <c>true</c> if this filter is negated, otherwise <c>false</c> </summary>
+        /// <returns> <c>true</c> if this filter is negated, otherwise <c>false</c> </returns>
         public virtual bool Negate
         {
             get { return negate; }

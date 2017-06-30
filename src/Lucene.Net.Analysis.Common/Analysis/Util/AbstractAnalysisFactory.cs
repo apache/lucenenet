@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Core;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -33,10 +34,10 @@ namespace Lucene.Net.Analysis.Util
     /// <para>
     /// The typical lifecycle for a factory consumer is:
     /// <list type="bullet">
-    ///     <item>Create factory via its constructor (or via XXXFactory.ForName)</item>
-    ///     <item>(Optional) If the factory uses resources such as files, 
-    ///         <see cref="IResourceLoaderAware.Inform(IResourceLoader)"/> is called to initialize those resources.</item>
-    ///     <item>Consumer calls create() to obtain instances.</item>
+    ///     <item><description>Create factory via its constructor (or via XXXFactory.ForName)</description></item>
+    ///     <item><description>(Optional) If the factory uses resources such as files, 
+    ///         <see cref="IResourceLoaderAware.Inform(IResourceLoader)"/> is called to initialize those resources.</description></item>
+    ///     <item><description>Consumer calls create() to obtain instances.</description></item>
     /// </list>
     /// </para>
     /// </summary>
@@ -279,7 +280,7 @@ namespace Lucene.Net.Analysis.Util
 
         /// <summary>
         /// Returns whitespace- and/or comma-separated set of values, or null if none are found </summary>
-        public virtual ICollection<string> GetSet(IDictionary<string, string> args, string name)
+        public virtual ISet<string> GetSet(IDictionary<string, string> args, string name)
         {
             string s;
             if (args.TryGetValue(name, out s))

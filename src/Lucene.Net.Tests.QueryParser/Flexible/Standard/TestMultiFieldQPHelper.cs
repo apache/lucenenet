@@ -412,7 +412,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
                 if ("f1".equals(fieldName))
                 {
                     // we don't use the reader, so close it:
-                    IOUtils.CloseWhileHandlingException(reader);
+                    IOUtils.DisposeWhileHandlingException(reader);
                     // return empty reader, so MockTokenizer returns no tokens:
                     return new StringReader("");
                 }

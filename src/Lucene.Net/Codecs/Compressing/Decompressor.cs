@@ -33,18 +33,18 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// Decompress bytes that were stored between offsets <code>offset</code> and
-        /// <code>offset+length</code> in the original stream from the compressed
-        /// stream <code>in</code> to <code>bytes</code>. After returning, the length
-        /// of <code>bytes</code> (<code>bytes.length</code>) must be equal to
-        /// <code>length</code>. Implementations of this method are free to resize
-        /// <code>bytes</code> depending on their needs.
+        /// Decompress bytes that were stored between offsets <paramref name="offset"/> and
+        /// <c>offset+length</c> in the original stream from the compressed
+        /// stream <paramref name="in"/> to <paramref name="bytes"/>. After returning, the length
+        /// of <paramref name="bytes"/> (<c>bytes.Length</c>) must be equal to
+        /// <paramref name="length"/>. Implementations of this method are free to resize
+        /// <paramref name="bytes"/> depending on their needs.
         /// </summary>
-        /// <param name="in"> the input that stores the compressed stream </param>
-        /// <param name="originalLength"> the length of the original data (before compression) </param>
-        /// <param name="offset"> bytes before this offset do not need to be decompressed </param>
-        /// <param name="length"> bytes after <code>offset+length</code> do not need to be decompressed </param>
-        /// <param name="bytes"> a <seealso cref="BytesRef"/> where to store the decompressed data </param>
+        /// <param name="in"> The input that stores the compressed stream. </param>
+        /// <param name="originalLength"> The length of the original data (before compression). </param>
+        /// <param name="offset"> Bytes before this offset do not need to be decompressed. </param>
+        /// <param name="length"> Bytes after <c>offset+length</c> do not need to be decompressed. </param>
+        /// <param name="bytes"> a <see cref="BytesRef"/> where to store the decompressed data. </param>
         public abstract void Decompress(DataInput @in, int originalLength, int offset, int length, BytesRef bytes);
 
         public abstract object Clone();

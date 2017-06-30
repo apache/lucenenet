@@ -41,7 +41,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(affixStream, dictStream);
+                IOUtils.DisposeWhileHandlingException(affixStream, dictStream);
             }
         }
 
@@ -140,7 +140,7 @@ namespace Lucene.Net.Analysis.Hunspell
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(affixStream, dictStream);
+                IOUtils.DisposeWhileHandlingException(affixStream, dictStream);
             }
             Analyzer a = new AnalyzerAnonymousInnerClassHelper3(this, d);
             CheckOneTerm(a, "NoChAnGy", "NoChAnGy");

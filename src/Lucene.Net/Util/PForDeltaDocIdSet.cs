@@ -27,12 +27,12 @@ namespace Lucene.Net.Util
     using PackedInt32s = Lucene.Net.Util.Packed.PackedInt32s;
 
     /// <summary>
-    /// <seealso cref="DocIdSet"/> implementation based on pfor-delta encoding.
-    /// <p>this implementation is inspired from LinkedIn's Kamikaze
+    /// <see cref="DocIdSet"/> implementation based on pfor-delta encoding.
+    /// <para>This implementation is inspired from LinkedIn's Kamikaze
     /// (http://data.linkedin.com/opensource/kamikaze) and Daniel Lemire's JavaFastPFOR
-    /// (https://github.com/lemire/JavaFastPFOR).</p>
-    /// <p>On the contrary to the original PFOR paper, exceptions are encoded with
-    /// FOR instead of Simple16.</p>
+    /// (https://github.com/lemire/JavaFastPFOR).</para>
+    /// <para>On the contrary to the original PFOR paper, exceptions are encoded with
+    /// FOR instead of Simple16.</para>
     /// </summary>
     public sealed class PForDeltaDocIdSet : DocIdSet
     {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// A builder for <seealso cref="PForDeltaDocIdSet"/>. </summary>
+        /// A builder for <see cref="PForDeltaDocIdSet"/>. </summary>
         public class Builder
         {
             internal readonly GrowableByteArrayDataOutput data;
@@ -98,7 +98,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Set the index interval. Every <code>indexInterval</code>-th block will
+            /// Set the index interval. Every <paramref name="indexInterval"/>-th block will
             /// be stored in the index. Set to <see cref="int.MaxValue"/> to disable indexing.
             /// </summary>
             public virtual Builder SetIndexInterval(int indexInterval)
@@ -131,7 +131,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Convenience method to add the content of a <seealso cref="DocIdSetIterator"/> to this builder. </summary>
+            /// Convenience method to add the content of a <see cref="DocIdSetIterator"/> to this builder. </summary>
             public virtual Builder Add(DocIdSetIterator it)
             {
                 for (int doc = it.NextDoc(); doc != DocIdSetIterator.NO_MORE_DOCS; doc = it.NextDoc())
@@ -313,7 +313,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Build the <seealso cref="PForDeltaDocIdSet"/> instance. </summary>
+            /// Build the <see cref="PForDeltaDocIdSet"/> instance. </summary>
             public virtual PForDeltaDocIdSet Build()
             {
                 Debug.Assert(bufferSize < BLOCK_SIZE);
@@ -599,7 +599,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return the number of documents in this <seealso cref="DocIdSet"/> in constant time. </summary>
+        /// Return the number of documents in this <see cref="DocIdSet"/> in constant time. </summary>
         public int Cardinality()
         {
             return cardinality;

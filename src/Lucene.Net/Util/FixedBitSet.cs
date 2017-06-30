@@ -25,18 +25,18 @@ namespace Lucene.Net.Util
     using DocIdSetIterator = Lucene.Net.Search.DocIdSetIterator;
 
     /// <summary>
-    /// BitSet of fixed length (numBits), backed by accessible (<seealso cref="#getBits"/>)
-    /// long[], accessed with an int index, implementing <seealso cref="GetBits"/> and
-    /// <seealso cref="DocIdSet"/>. If you need to manage more than 2.1B bits, use
-    /// <seealso cref="Int64BitSet"/>.
-    ///
+    /// BitSet of fixed length (numBits), backed by accessible (<see cref="GetBits()"/>)
+    /// long[], accessed with an int index, implementing <see cref="GetBits()"/> and
+    /// <see cref="DocIdSet"/>. If you need to manage more than 2.1B bits, use
+    /// <see cref="Int64BitSet"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class FixedBitSet : DocIdSet, IBits
     {
         /// <summary>
-        /// A <seealso cref="DocIdSetIterator"/> which iterates over set bits in a
-        /// <seealso cref="FixedBitSet"/>.
+        /// A <see cref="DocIdSetIterator"/> which iterates over set bits in a
+        /// <see cref="FixedBitSet"/>.
         /// </summary>
         public sealed class FixedBitSetIterator : DocIdSetIterator
         {
@@ -45,7 +45,7 @@ namespace Lucene.Net.Util
             internal int doc = -1;
 
             /// <summary>
-            /// Creates an iterator over the given <seealso cref="FixedBitSet"/>. </summary>
+            /// Creates an iterator over the given <see cref="FixedBitSet"/>. </summary>
             public FixedBitSetIterator(FixedBitSet bits)
                 : this(bits.bits, bits.numBits, bits.numWords)
             {
@@ -126,14 +126,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// If the given <seealso cref="FixedBitSet"/> is large enough to hold {@code numBits},
-        /// returns the given bits, otherwise returns a new <seealso cref="FixedBitSet"/> which
+        /// If the given <see cref="FixedBitSet"/> is large enough to hold <paramref name="numBits"/>,
+        /// returns the given bits, otherwise returns a new <see cref="FixedBitSet"/> which
         /// can hold the requested number of bits.
         ///
-        /// <p>
-        /// <b>NOTE:</b> the returned bitset reuses the underlying {@code long[]} of
-        /// the given {@code bits} if possible. Also, calling <seealso cref="#length()"/> on the
-        /// returned bits may return a value greater than {@code numBits}.
+        /// <para/>
+        /// <b>NOTE:</b> the returned bitset reuses the underlying <see cref="T:long[]"/> of
+        /// the given <paramref name="bits"/> if possible. Also, calling <see cref="Length"/> on the
+        /// returned bits may return a value greater than <paramref name="numBits"/>.
         /// </summary>
         public static FixedBitSet EnsureCapacity(FixedBitSet bits, int numBits)
         {
@@ -154,7 +154,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// returns the number of 64 bit words it would take to hold numBits </summary>
+        /// Returns the number of 64 bit words it would take to hold <paramref name="numBits"/> </summary>
         public static int Bits2words(int numBits)
         {
             int numLong = (int)((uint)numBits >> 6);
@@ -244,7 +244,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this DocIdSet implementation is cacheable. </summary>
+        /// This DocIdSet implementation is cacheable. </summary>
         public override bool IsCacheable
         {
             get
@@ -263,8 +263,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns number of set bits.  NOTE: this visits every
-        ///  long in the backing bits array, and the result is not
-        ///  internally cached!
+        /// <see cref="long"/> in the backing bits array, and the result is not
+        /// internally cached!
         /// </summary>
         public int Cardinality()
         {
@@ -324,7 +324,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the index of the first set bit starting at the index specified.
-        ///  -1 is returned if there are no more set bits.
+        /// -1 is returned if there are no more set bits.
         /// </summary>
         public int NextSetBit(int index)
         {
@@ -352,7 +352,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the index of the last set bit before or on the index specified.
-        ///  -1 is returned if there are no more set bits.
+        /// -1 is returned if there are no more set bits.
         /// </summary>
         public int PrevSetBit(int index)
         {
@@ -380,7 +380,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Does in-place OR of the bits provided by the
-        ///  iterator.
+        /// iterator.
         /// </summary>
         public void Or(DocIdSetIterator iter)
         {
@@ -455,7 +455,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Does in-place AND of the bits provided by the
-        ///  iterator.
+        /// iterator.
         /// </summary>
         public void And(DocIdSetIterator iter)
         {
@@ -496,7 +496,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// returns true if the sets have any elements in common </summary>
+        /// Returns true if the sets have any elements in common </summary>
         public bool Intersects(FixedBitSet other)
         {
             int pos = Math.Min(numWords, other.numWords);
@@ -533,7 +533,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Does in-place AND NOT of the bits provided by the
-        ///  iterator.
+        /// iterator.
         /// </summary>
         public void AndNot(DocIdSetIterator iter)
         {
@@ -587,8 +587,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Flips a range of bits
         /// </summary>
-        /// <param name="startIndex"> lower index </param>
-        /// <param name="endIndex"> one-past the last bit to flip </param>
+        /// <param name="startIndex"> Lower index </param>
+        /// <param name="endIndex"> One-past the last bit to flip </param>
         public void Flip(int startIndex, int endIndex)
         {
             Debug.Assert(startIndex >= 0 && startIndex < numBits);
@@ -633,8 +633,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sets a range of bits
         /// </summary>
-        /// <param name="startIndex"> lower index </param>
-        /// <param name="endIndex"> one-past the last bit to set </param>
+        /// <param name="startIndex"> Lower index </param>
+        /// <param name="endIndex"> One-past the last bit to set </param>
         public void Set(int startIndex, int endIndex)
         {
             Debug.Assert(startIndex >= 0 && startIndex < numBits);
@@ -665,8 +665,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Clears a range of bits.
         /// </summary>
-        /// <param name="startIndex"> lower index </param>
-        /// <param name="endIndex"> one-past the last bit to clear </param>
+        /// <param name="startIndex"> Lower index </param>
+        /// <param name="endIndex"> One-past the last bit to clear </param>
         public void Clear(int startIndex, int endIndex)
         {
             Debug.Assert(startIndex >= 0 && startIndex < numBits, "startIndex=" + startIndex + ", numBits=" + numBits);
@@ -707,7 +707,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// returns true if both sets have the same bits set </summary>
+        /// Returns <c>true</c> if both sets have the same bits set </summary>
         public override bool Equals(object o)
         {
             if (this == o)

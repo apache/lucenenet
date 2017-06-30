@@ -505,7 +505,7 @@ namespace Lucene.Net.Search
 
             TopDocs search = searcher.Search(query, 10);
             Assert.AreEqual(totalDocsWithZero, search.TotalHits);
-            IOUtils.Close(reader, writer, directory);
+            IOUtils.Dispose(reader, writer, directory);
         }
 
         private class FilterAnonymousInnerClassHelper3 : Filter
@@ -627,7 +627,7 @@ namespace Lucene.Net.Search
 
             TopDocs search = searcher.Search(query, 10);
             Assert.AreEqual(totalDocsWithZero, search.TotalHits);
-            IOUtils.Close(reader, writer, directory);
+            IOUtils.Dispose(reader, writer, directory);
         }
 
         private class FilterAnonymousInnerClassHelper4 : Filter

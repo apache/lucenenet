@@ -65,7 +65,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <param name="path"> the path of the directory </param>
         /// <param name="lockFactory"> the lock factory to use, or null for the default
-        /// (<seealso cref="NativeFSLockFactory"/>); </param>
+        /// (<see cref="NativeFSLockFactory"/>); </param>
         /// <exception cref="IOException"> if there is a low-level I/O error </exception>
         public MMapDirectory(DirectoryInfo path, LockFactory lockFactory)
             : this(path, lockFactory, DEFAULT_MAX_BUFF)
@@ -88,7 +88,7 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <param name="path"> the path of the directory </param>
         /// <param name="lockFactory"> the lock factory to use, or <c>null</c> for the default
-        /// (<seealso cref="NativeFSLockFactory"/>); </param>
+        /// (<see cref="NativeFSLockFactory"/>); </param>
         /// <param name="maxChunkSize"> maximum chunk size (default is 1 GiBytes for
         /// 64 bit runtimes and 256 MiBytes for 32 bit runtimes) used for memory mapping.
         /// <para/>
@@ -111,6 +111,59 @@ namespace Lucene.Net.Store
             }
             this.chunkSizePower = 31 - Number.NumberOfLeadingZeros(maxChunkSize);
             Debug.Assert(this.chunkSizePower >= 0 && this.chunkSizePower <= 30);
+        }
+
+        /// <summary>
+        /// Create a new <see cref="MMapDirectory"/> for the named location.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <param name="lockFactory"> the lock factory to use, or null for the default
+        /// (<see cref="NativeFSLockFactory"/>); </param>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        public MMapDirectory(string path, LockFactory lockFactory)
+            : this(path, lockFactory, DEFAULT_MAX_BUFF)
+        {
+        }
+
+        /// <summary>
+        /// Create a new <see cref="MMapDirectory"/> for the named location and <see cref="NativeFSLockFactory"/>.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        public MMapDirectory(string path)
+            : this(path, null)
+        {
+        }
+
+        /// <summary>
+        /// Create a new <see cref="MMapDirectory"/> for the named location, specifying the
+        /// maximum chunk size used for memory mapping.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <param name="lockFactory"> the lock factory to use, or <c>null</c> for the default
+        /// (<see cref="NativeFSLockFactory"/>); </param>
+        /// <param name="maxChunkSize"> maximum chunk size (default is 1 GiBytes for
+        /// 64 bit runtimes and 256 MiBytes for 32 bit runtimes) used for memory mapping.
+        /// <para/>
+        /// Especially on 32 bit platform, the address space can be very fragmented,
+        /// so large index files cannot be mapped. Using a lower chunk size makes
+        /// the directory implementation a little bit slower (as the correct chunk
+        /// may be resolved on lots of seeks) but the chance is higher that mmap
+        /// does not fail. On 64 bit platforms, this parameter should always
+        /// be <c>1 &lt;&lt; 30</c>, as the address space is big enough.
+        /// <para/>
+        /// <b>Please note:</b> The chunk size is always rounded down to a power of 2.
+        /// </param>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        public MMapDirectory(string path, LockFactory lockFactory, int maxChunkSize)
+            : this(new DirectoryInfo(path), lockFactory, maxChunkSize)
+        {
         }
 
         /// <summary>

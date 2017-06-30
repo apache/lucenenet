@@ -45,7 +45,7 @@ namespace Lucene.Net.Index
 
     using MockAnalyzer = Lucene.Net.Analysis.MockAnalyzer;
     using PhraseQuery = Lucene.Net.Search.PhraseQuery;
-    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
+    using TextWriterInfoStream = Lucene.Net.Util.TextWriterInfoStream;
     using Query = Lucene.Net.Search.Query;
     using ScoreDoc = Lucene.Net.Search.ScoreDoc;
     using Sort = Lucene.Net.Search.Sort;
@@ -821,7 +821,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private class PrintStreamInfoStreamAnonymousInnerClassHelper : PrintStreamInfoStream
+        private class PrintStreamInfoStreamAnonymousInnerClassHelper : TextWriterInfoStream
         {
             private readonly ThreadedIndexingAndSearchingTestCase outerInstance;
 

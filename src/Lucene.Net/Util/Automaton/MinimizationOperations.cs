@@ -35,7 +35,7 @@ namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
     /// Operations for minimizing automata.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     internal sealed class MinimizationOperations
@@ -48,7 +48,7 @@ namespace Lucene.Net.Util.Automaton
         /// Minimizes (and determinizes if not already deterministic) the given
         /// automaton.
         /// </summary>
-        /// <seealso cref= Automaton#setMinimization(int) </seealso>
+        /// <seealso cref="Automaton.SetMinimization(int)"/>
         public static void Minimize(Automaton a)
         {
             if (!a.IsSingleton)

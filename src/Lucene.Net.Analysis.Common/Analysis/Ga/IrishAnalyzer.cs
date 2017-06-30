@@ -124,11 +124,11 @@ namespace Lucene.Net.Analysis.Ga
 
         /// <summary>
         /// Creates a
-        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// <see cref="TokenStreamComponents"/>
         /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
-        ///         <see cref="Analyzer.TokenStreamComponents"/>
+        ///         <see cref="TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="IrishLowerCaseFilter"/>, <see cref="StopFilter"/>,
         ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is

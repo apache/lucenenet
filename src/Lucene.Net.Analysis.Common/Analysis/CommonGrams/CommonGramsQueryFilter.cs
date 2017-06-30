@@ -25,11 +25,11 @@ namespace Lucene.Net.Analysis.CommonGrams
     /// <para/>
     /// Example:
     /// <list type="bullet">
-    ///     <item>query input to CommonGramsFilter: "the rain in spain falls mainly"</item>
-    ///     <item>output of CommomGramsFilter/input to CommonGramsQueryFilter:
-    ///     |"the, "the-rain"|"rain" "rain-in"|"in, "in-spain"|"spain"|"falls"|"mainly"</item>
-    ///     <item>output of CommonGramsQueryFilter:"the-rain", "rain-in" ,"in-spain",
-    ///     "falls", "mainly"</item>
+    ///     <item><description>query input to CommonGramsFilter: "the rain in spain falls mainly"</description></item>
+    ///     <item><description>output of CommomGramsFilter/input to CommonGramsQueryFilter:
+    ///     |"the, "the-rain"|"rain" "rain-in"|"in, "in-spain"|"spain"|"falls"|"mainly"</description></item>
+    ///     <item><description>output of CommonGramsQueryFilter:"the-rain", "rain-in" ,"in-spain",
+    ///     "falls", "mainly"</description></item>
     /// </list>
     /// </summary>
     /// <remarks>
@@ -84,8 +84,8 @@ namespace Lucene.Net.Analysis.CommonGrams
         /// Output bigrams whenever possible to optimize queries. Only output unigrams
         /// when they are not a member of a bigram. Example:
         /// <list type="bullet">
-        ///     <item>input: "the rain in spain falls mainly"</item>
-        ///     <item>output:"the-rain", "rain-in" ,"in-spain", "falls", "mainly"</item>
+        ///     <item><description>input: "the rain in spain falls mainly"</description></item>
+        ///     <item><description>output:"the-rain", "rain-in" ,"in-spain", "falls", "mainly"</description></item>
         /// </list>
         /// </summary>
         public override bool IncrementToken()

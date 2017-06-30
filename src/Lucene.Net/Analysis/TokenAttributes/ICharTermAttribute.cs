@@ -201,7 +201,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         /// <summary>
         /// Appends the specified <see cref="StringBuilder"/> to this character sequence.
-        /// <p>The characters of the <see cref="StringBuilder"/> argument are appended, in order, increasing the length of
+        /// <para/>The characters of the <see cref="StringBuilder"/> argument are appended, in order, increasing the length of
         /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
         /// characters <c>"null"</c> are appended.
         /// </summary>
@@ -213,7 +213,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
         /// <summary>
         /// Appends the contents of the other <see cref="ICharTermAttribute"/> to this character sequence.
-        /// <p>The characters of the <see cref="ICharTermAttribute"/> argument are appended, in order, increasing the length of
+        /// <para/>The characters of the <see cref="ICharTermAttribute"/> argument are appended, in order, increasing the length of
         /// this sequence by the length of the argument. If argument is <c>null</c>, then the four
         /// characters <c>"null"</c> are appended.
         /// </summary>

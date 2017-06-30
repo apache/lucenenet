@@ -77,38 +77,38 @@ namespace Lucene.Net.Analysis
     /// for details.</para>
     /// <para>Typical Token reuse patterns:
     /// <list type="bullet">
-    ///     <item> Copying text from a string (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
+    ///     <item><description> Copying text from a string (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(string, startOffset, endOffset[, type]);
     ///     </code>
-    ///     </item>
-    ///     <item> Copying some text from a string (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
+    ///     </description></item>
+    ///     <item><description> Copying some text from a string (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(string, 0, string.Length, startOffset, endOffset[, type]);
     ///     </code>
-    ///     </item>
-    ///     <item> Copying text from char[] buffer (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
+    ///     </description></item>
+    ///     <item><description> Copying text from char[] buffer (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(buffer, 0, buffer.Length, startOffset, endOffset[, type]);
     ///     </code>
-    ///     </item>
-    ///     <item> Copying some text from a char[] buffer (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
+    ///     </description></item>
+    ///     <item><description> Copying some text from a char[] buffer (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(buffer, start, end - start, startOffset, endOffset[, type]);
     ///     </code>
-    ///     </item>
-    ///     <item> Copying from one one <see cref="Token"/> to another (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
+    ///     </description></item>
+    ///     <item><description> Copying from one one <see cref="Token"/> to another (type is reset to <see cref="TypeAttribute.DEFAULT_TYPE"/> if not specified):
     ///     <code>
     ///         return reusableToken.Reinit(source.Buffer, 0, source.Length, source.StartOffset, source.EndOffset[, source.Type]);
     ///     </code>
-    ///     </item>
+    ///     </description></item>
     /// </list>
     /// A few things to note:
     /// <list type="bullet">
-    ///     <item><see cref="Clear()"/> initializes all of the fields to default values. this was changed in contrast to Lucene 2.4, but should affect no one.</item>
-    ///     <item>Because <see cref="TokenStream"/>s can be chained, one cannot assume that the <see cref="Token"/>'s current type is correct.</item>
-    ///     <item>The startOffset and endOffset represent the start and offset in the source text, so be careful in adjusting them.</item>
-    ///     <item>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</item>
+    ///     <item><description><see cref="Clear()"/> initializes all of the fields to default values. this was changed in contrast to Lucene 2.4, but should affect no one.</description></item>
+    ///     <item><description>Because <see cref="TokenStream"/>s can be chained, one cannot assume that the <see cref="Token"/>'s current type is correct.</description></item>
+    ///     <item><description>The startOffset and endOffset represent the start and offset in the source text, so be careful in adjusting them.</description></item>
+    ///     <item><description>When caching a reusable token, clone it. When injecting a cached token into a stream that can be reset, clone it again.</description></item>
     /// </list>
     /// </para>
     /// <para>
@@ -477,7 +477,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="CopyBuffer(char[], int, int)"/>,
+        /// <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -496,7 +496,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="CopyBuffer(char[], int, int)"/>,
+        /// <see cref="ICharTermAttribute.CopyBuffer(char[], int, int)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -513,7 +513,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="Append(string)"/>,
+        /// <see cref="ICharTermAttribute.Append(string)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -530,7 +530,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="Append(string, int, int)"/>,
+        /// <see cref="ICharTermAttribute.Append(string, int, int)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -547,7 +547,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="Append(string)"/>,
+        /// <see cref="ICharTermAttribute.Append(string)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>
@@ -564,7 +564,7 @@ namespace Lucene.Net.Analysis
 
         /// <summary>
         /// Shorthand for calling <see cref="Clear"/>,
-        /// <see cref="Append(string, int, int)"/>,
+        /// <see cref="ICharTermAttribute.Append(string, int, int)"/>,
         /// <see cref="SetOffset"/>,
         /// <see cref="Type"/> (set) on <see cref="TypeAttribute.DEFAULT_TYPE"/> </summary>
         /// <returns> this <see cref="Token"/> instance  </returns>

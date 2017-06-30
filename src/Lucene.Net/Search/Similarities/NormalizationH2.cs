@@ -22,11 +22,11 @@ namespace Lucene.Net.Search.Similarities
     /// <summary>
     /// Normalization model in which the term frequency is inversely related to the
     /// length.
-    /// <p>While this model is parameterless in the
+    /// <para>While this model is parameterless in the
     /// <a href="http://citeseer.ist.psu.edu/viewdoc/summary?doi=10.1.1.101.742">
     /// original article</a>, the <a href="http://theses.gla.ac.uk/1570/">thesis</a>
     /// introduces the parameterized variant.
-    /// The default value for the {@code c} parameter is {@code 1}.</p>
+    /// The default value for the <c>c</c> parameter is <c>1</c>.</para>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -37,8 +37,8 @@ namespace Lucene.Net.Search.Similarities
         private readonly float c;
 
         /// <summary>
-        /// Creates NormalizationH2 with the supplied parameter <code>c</code>. </summary>
-        /// <param name="c"> hyper-parameter that controls the term frequency
+        /// Creates <see cref="NormalizationH2"/> with the supplied parameter <paramref name="c"/>. </summary>
+        /// <param name="c"> Hyper-parameter that controls the term frequency
         /// normalization with respect to the document length. </param>
         public NormalizationH2(float c)
         {
@@ -46,7 +46,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Calls <seealso cref="#NormalizationH2(float) NormalizationH2(1)"/>
+        /// Calls <see cref="T:NormalizationH2(1)"/>
         /// </summary>
         public NormalizationH2()
             : this(1)
@@ -64,8 +64,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns the <code>c</code> parameter. </summary>
-        /// <seealso cref= #NormalizationH2(float) </seealso>
+        /// Returns the <c>c</c> parameter. </summary>
+        /// <seealso cref="NormalizationH2(float)"/>
         public virtual float C
         {
             get

@@ -36,10 +36,11 @@ namespace Lucene.Net.Index
     using TermVectorsReader = Lucene.Net.Codecs.TermVectorsReader;
 
     /// <summary>
-    /// IndexReader implementation over a single segment.
-    /// <p>
+    /// <see cref="IndexReader"/> implementation over a single segment.
+    /// <para/>
     /// Instances pointing to the same segment (but with different deletes, etc)
     /// may share the same core data.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -94,9 +95,9 @@ namespace Lucene.Net.Index
         private readonly IList<long?> dvGens = new List<long?>();
 
         /// <summary>
-        /// Constructs a new SegmentReader with a new core. </summary>
+        /// Constructs a new <see cref="SegmentReader"/> with a new core. </summary>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
         // TODO: why is this public?
         public SegmentReader(SegmentCommitInfo si, int termInfosIndexDivisor, IOContext context)
         {
@@ -149,9 +150,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Create new SegmentReader sharing core from a previous
-        ///  SegmentReader and loading new live docs from a new
-        ///  deletes file.  Used by openIfChanged.
+        /// Create new <see cref="SegmentReader"/> sharing core from a previous
+        /// <see cref="SegmentReader"/> and loading new live docs from a new
+        /// deletes file. Used by <see cref="DirectoryReader.OpenIfChanged(DirectoryReader)"/>.
         /// </summary>
         internal SegmentReader(SegmentCommitInfo si, SegmentReader sr)
             : this(si, sr, si.Info.Codec.LiveDocsFormat.ReadLiveDocs(si.Info.Dir, si, IOContext.READ_ONCE), si.Info.DocCount - si.DelCount)
@@ -159,10 +160,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Create new SegmentReader sharing core from a previous
-        ///  SegmentReader and using the provided in-memory
-        ///  liveDocs.  Used by IndexWriter to provide a new NRT
-        ///  reader
+        /// Create new <see cref="SegmentReader"/> sharing core from a previous
+        /// <see cref="SegmentReader"/> and using the provided in-memory
+        /// liveDocs.  Used by <see cref="IndexWriter"/> to provide a new NRT
+        /// reader
         /// </summary>
         internal SegmentReader(SegmentCommitInfo si, SegmentReader sr, IBits liveDocs, int numDocs)
         {
@@ -231,8 +232,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Reads the most recent <seealso cref="FieldInfos"/> of the given segment info.
-        ///
+        /// Reads the most recent <see cref="Index.FieldInfos"/> of the given segment info.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         internal static FieldInfos ReadFieldInfos(SegmentCommitInfo info)
@@ -310,7 +311,7 @@ namespace Lucene.Net.Index
                 dvProducersByField.Clear();
                 try
                 {
-                    IOUtils.Close(docValuesLocal, docsWithFieldLocal);
+                    IOUtils.Dispose(docValuesLocal, docsWithFieldLocal);
                 }
                 finally
                 {
@@ -329,9 +330,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: retrieve thread-private {@link
-        ///  StoredFieldsReader}
-        ///  @lucene.internal
+        /// Expert: retrieve thread-private 
+        /// <see cref="StoredFieldsReader"/>
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
         public StoredFieldsReader FieldsReader
         {
@@ -376,9 +378,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: retrieve thread-private {@link
-        ///  TermVectorsReader}
-        ///  @lucene.internal
+        /// Expert: retrieve thread-private
+        /// <see cref="Codecs.TermVectorsReader"/>
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
         public TermVectorsReader TermVectorsReader
         {
@@ -427,7 +430,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the SegmentInfoPerCommit of the segment this reader is reading.
+        /// Return the <see cref="SegmentCommitInfo"/> of the segment this reader is reading.
         /// </summary>
         public SegmentCommitInfo SegmentInfo
         {
@@ -474,7 +477,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns term infos index divisor originally passed to
-        ///  <seealso cref="#SegmentReader(SegmentCommitInfo, int, IOContext)"/>.
+        /// <see cref="SegmentReader(SegmentCommitInfo, int, IOContext)"/>.
         /// </summary>
         public int TermInfosIndexDivisor
         {
@@ -661,41 +664,43 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Called when the shared core for this SegmentReader
-        /// is closed.
-        /// <p>
-        /// this listener is called only once all SegmentReaders
-        /// sharing the same core are closed.  At this point it
+        /// Called when the shared core for this <see cref="SegmentReader"/>
+        /// is disposed.
+        /// <para/>
+        /// This listener is called only once all <see cref="SegmentReader"/>s
+        /// sharing the same core are disposed.  At this point it
         /// is safe for apps to evict this reader from any caches
-        /// keyed on <seealso cref="#getCoreCacheKey"/>.  this is the same
-        /// interface that <seealso cref="IFieldCache"/> uses, internally,
-        /// to evict entries.</p>
-        ///
+        /// keyed on <see cref="CoreCacheKey"/>.  This is the same
+        /// interface that <see cref="Search.IFieldCache"/> uses, internally,
+        /// to evict entries.
+        /// <para/>
+        /// NOTE: This was CoreClosedListener in Lucene.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
-        public interface ICoreClosedListener
+        public interface ICoreDisposedListener 
         {
             /// <summary>
-            /// Invoked when the shared core of the original {@code
-            ///  SegmentReader} has closed.
+            /// Invoked when the shared core of the original 
+            /// <see cref="SegmentReader"/> has disposed.
             /// </summary>
-            void OnClose(object ownerCoreCacheKey);
+            void OnDispose(object ownerCoreCacheKey);
         }
 
         /// <summary>
-        /// Expert: adds a CoreClosedListener to this reader's shared core </summary>
-        public void AddCoreClosedListener(ICoreClosedListener listener)
+        /// Expert: adds a <see cref="ICoreDisposedListener"/> to this reader's shared core </summary>
+        public void AddCoreDisposedListener(ICoreDisposedListener listener)
         {
             EnsureOpen();
-            core.AddCoreClosedListener(listener);
+            core.AddCoreDisposedListener(listener);
         }
 
         /// <summary>
-        /// Expert: removes a CoreClosedListener from this reader's shared core </summary>
-        public void RemoveCoreClosedListener(ICoreClosedListener listener)
+        /// Expert: removes a <see cref="ICoreDisposedListener"/> from this reader's shared core </summary>
+        public void RemoveCoreDisposedListener(ICoreDisposedListener listener)
         {
             EnsureOpen();
-            core.RemoveCoreClosedListener(listener);
+            core.RemoveCoreDisposedListener(listener);
         }
 
         /// <summary>

@@ -58,7 +58,7 @@ namespace Lucene.Net.Support
         /// <see cref="EquatableSet{T}.EquatableSet(ICollection{T})"/> overload). 
         /// <para/>
         /// The internal <paramref name="collection"/> is used for
-        /// all operations except for <see cref="Equals()"/>, <see cref="GetHashCode()"/>,
+        /// all operations except for <see cref="Equals(object)"/>, <see cref="GetHashCode()"/>,
         /// and <see cref="ToString()"/>, which are all based on deep analysis
         /// of this collection and any nested collections.
         /// </summary>
@@ -85,7 +85,8 @@ namespace Lucene.Net.Support
         /// Initializes a new 
         /// instance of the <see cref="EquatableSet{T}"/>
         /// class that contains elements copied from the specified collection and has
-        /// sufficient capacity to accommodate the number of elements copied. 
+        /// sufficient capacity to accommodate the number of elements copied.
+        /// </summary>
         /// <param name="collection">The collection whose elements are copied to the new set.</param>
         public EquatableSet(ICollection<T> collection)
         {
@@ -380,7 +381,7 @@ namespace Lucene.Net.Support
         /// Therefore, <see cref="EquatableSet{T}"/> can equal any <see cref="ISet{T}"/>
         /// with the exact same values (in any order).
         /// </summary>
-        /// <param name="obj">The other object
+        /// <param name="other">The other object
         /// to compare against.</param>
         /// <returns><c>true</c> if the sequence in <paramref name="other"/>
         /// is the same as this one.</returns>
@@ -417,17 +418,17 @@ namespace Lucene.Net.Support
         /// Therefore, <see cref="EquatableSet{T}"/> can equal any <see cref="ISet{T}"/>
         /// with the exact same values (in any order).
         /// </summary>
-        /// <param name="obj">The other object
+        /// <param name="other">The other object
         /// to compare against.</param>
         /// <returns><c>true</c> if the sequence in <paramref name="other"/>
         /// is the same as this one.</returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object other)
         {
-            if (!(obj is ISet<T>))
+            if (!(other is ISet<T>))
             {
                 return false;
             }
-            return Equals(obj as ISet<T>);
+            return Equals(other as ISet<T>);
         }
 
         /// <summary>

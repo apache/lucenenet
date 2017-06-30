@@ -71,120 +71,121 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Block-based terms index and dictionary writer.
-    /// <p>
+    /// <para/>
     /// Writes terms dict and index, block-encoding (column
     /// stride) each term's metadata for each set of terms
     /// between two index terms.
-    /// <p>
+    /// <para/>
     /// Files:
-    /// <ul>
-    ///   <li><tt>.tim</tt>: <a href="#Termdictionary">Term Dictionary</a></li>
-    ///   <li><tt>.tip</tt>: <a href="#Termindex">Term Index</a></li>
-    /// </ul>
-    /// <p>
+    /// <list type="bullet">
+    ///     <item><term>.tim:</term> <description><a href="#Termdictionary">Term Dictionary</a></description></item>
+    ///     <item><term>.tip:</term> <description><a href="#Termindex">Term Index</a></description></item>
+    /// </list>
+    /// <para/>
     /// <a name="Termdictionary" id="Termdictionary"></a>
     /// <h3>Term Dictionary</h3>
     ///
-    /// <p>The .tim file contains the list of terms in each
+    /// <para>The .tim file contains the list of terms in each
     /// field along with per-term statistics (such as docfreq)
     /// and per-term metadata (typically pointers to the postings list
     /// for that term in the inverted index).
-    /// </p>
+    /// </para>
     ///
-    /// <p>The .tim is arranged in blocks: with blocks containing
+    /// <para>The .tim is arranged in blocks: with blocks containing
     /// a variable number of entries (by default 25-48), where
     /// each entry is either a term or a reference to a
-    /// sub-block.</p>
+    /// sub-block.</para>
     ///
-    /// <p>NOTE: The term dictionary can plug into different postings implementations:
+    /// <para>NOTE: The term dictionary can plug into different postings implementations:
     /// the postings writer/reader are actually responsible for encoding
-    /// and decoding the Postings Metadata and Term Metadata sections.</p>
+    /// and decoding the Postings Metadata and Term Metadata sections.</para>
     ///
-    /// <ul>
-    ///    <li>TermsDict (.tim) --&gt; Header, <i>PostingsHeader</i>, NodeBlock<sup>NumBlocks</sup>,
-    ///                               FieldSummary, DirOffset, Footer</li>
-    ///    <li>NodeBlock --&gt; (OuterNode | InnerNode)</li>
-    ///    <li>OuterNode --&gt; EntryCount, SuffixLength, Byte<sup>SuffixLength</sup>, StatsLength, &lt; TermStats &gt;<sup>EntryCount</sup>, MetaLength, &lt;<i>TermMetadata</i>&gt;<sup>EntryCount</sup></li>
-    ///    <li>InnerNode --&gt; EntryCount, SuffixLength[,Sub?], Byte<sup>SuffixLength</sup>, StatsLength, &lt; TermStats ? &gt;<sup>EntryCount</sup>, MetaLength, &lt;<i>TermMetadata ? </i>&gt;<sup>EntryCount</sup></li>
-    ///    <li>TermStats --&gt; DocFreq, TotalTermFreq </li>
-    ///    <li>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, RootCodeLength, Byte<sup>RootCodeLength</sup>,
-    ///                            SumTotalTermFreq?, SumDocFreq, DocCount&gt;<sup>NumFields</sup></li>
-    ///    <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    ///    <li>DirOffset --&gt; <seealso cref="DataOutput#writeLong Uint64"/></li>
-    ///    <li>EntryCount,SuffixLength,StatsLength,DocFreq,MetaLength,NumFields,
-    ///        FieldNumber,RootCodeLength,DocCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    ///    <li>TotalTermFreq,NumTerms,SumTotalTermFreq,SumDocFreq --&gt;
-    ///        <seealso cref="DataOutput#writeVLong VLong"/></li>
-    ///    <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
-    /// </ul>
-    /// <p>Notes:</p>
-    /// <ul>
-    ///    <li>Header is a <seealso cref="CodecUtil#writeHeader CodecHeader"/> storing the version information
-    ///        for the BlockTree implementation.</li>
-    ///    <li>DirOffset is a pointer to the FieldSummary section.</li>
-    ///    <li>DocFreq is the count of documents which contain the term.</li>
-    ///    <li>TotalTermFreq is the total number of occurrences of the term. this is encoded
-    ///        as the difference between the total number of occurrences and the DocFreq.</li>
-    ///    <li>FieldNumber is the fields number from <seealso cref="fieldInfos"/>. (.fnm)</li>
-    ///    <li>NumTerms is the number of unique terms for the field.</li>
-    ///    <li>RootCode points to the root block for the field.</li>
-    ///    <li>SumDocFreq is the total number of postings, the number of term-document pairs across
-    ///        the entire field.</li>
-    ///    <li>DocCount is the number of documents that have at least one posting for this field.</li>
-    ///    <li>PostingsHeader and TermMetadata are plugged into by the specific postings implementation:
+    /// <list type="bullet">
+    ///    <item><description>TermsDict (.tim) --&gt; Header, <i>PostingsHeader</i>, NodeBlock<sup>NumBlocks</sup>,
+    ///                               FieldSummary, DirOffset, Footer</description></item>
+    ///    <item><description>NodeBlock --&gt; (OuterNode | InnerNode)</description></item>
+    ///    <item><description>OuterNode --&gt; EntryCount, SuffixLength, Byte<sup>SuffixLength</sup>, StatsLength, &lt; TermStats &gt;<sup>EntryCount</sup>, MetaLength, &lt;<i>TermMetadata</i>&gt;<sup>EntryCount</sup></description></item>
+    ///    <item><description>InnerNode --&gt; EntryCount, SuffixLength[,Sub?], Byte<sup>SuffixLength</sup>, StatsLength, &lt; TermStats ? &gt;<sup>EntryCount</sup>, MetaLength, &lt;<i>TermMetadata ? </i>&gt;<sup>EntryCount</sup></description></item>
+    ///    <item><description>TermStats --&gt; DocFreq, TotalTermFreq </description></item>
+    ///    <item><description>FieldSummary --&gt; NumFields, &lt;FieldNumber, NumTerms, RootCodeLength, Byte<sup>RootCodeLength</sup>,
+    ///                            SumTotalTermFreq?, SumDocFreq, DocCount&gt;<sup>NumFields</sup></description></item>
+    ///    <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/></description></item>
+    ///    <item><description>DirOffset --&gt; Uint64 (<see cref="Store.DataOutput.WriteInt64(long)"/>)</description></item>
+    ///    <item><description>EntryCount,SuffixLength,StatsLength,DocFreq,MetaLength,NumFields,
+    ///        FieldNumber,RootCodeLength,DocCount --&gt; VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>_</description></item>
+    ///    <item><description>TotalTermFreq,NumTerms,SumTotalTermFreq,SumDocFreq --&gt;
+    ///        VLong (<see cref="Store.DataOutput.WriteVInt64(long)"/>)</description></item>
+    ///    <item><description>Footer --&gt; CodecFooter (<see cref="CodecUtil.WriteFooter(IndexOutput)"/>)</description></item>
+    /// </list>
+    /// <para>Notes:</para>
+    /// <list type="bullet">
+    ///    <item><description>Header is a CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) storing the version information
+    ///        for the BlockTree implementation.</description></item>
+    ///    <item><description>DirOffset is a pointer to the FieldSummary section.</description></item>
+    ///    <item><description>DocFreq is the count of documents which contain the term.</description></item>
+    ///    <item><description>TotalTermFreq is the total number of occurrences of the term. this is encoded
+    ///        as the difference between the total number of occurrences and the DocFreq.</description></item>
+    ///    <item><description>FieldNumber is the fields number from <see cref="fieldInfos"/>. (.fnm)</description></item>
+    ///    <item><description>NumTerms is the number of unique terms for the field.</description></item>
+    ///    <item><description>RootCode points to the root block for the field.</description></item>
+    ///    <item><description>SumDocFreq is the total number of postings, the number of term-document pairs across
+    ///        the entire field.</description></item>
+    ///    <item><description>DocCount is the number of documents that have at least one posting for this field.</description></item>
+    ///    <item><description>PostingsHeader and TermMetadata are plugged into by the specific postings implementation:
     ///        these contain arbitrary per-file data (such as parameters or versioning information)
-    ///        and per-term data (such as pointers to inverted files).</li>
-    ///    <li>For inner nodes of the tree, every entry will steal one bit to mark whether it points
-    ///        to child nodes(sub-block). If so, the corresponding TermStats and TermMetaData are omitted </li>
-    /// </ul>
+    ///        and per-term data (such as pointers to inverted files).</description></item>
+    ///    <item><description>For inner nodes of the tree, every entry will steal one bit to mark whether it points
+    ///        to child nodes(sub-block). If so, the corresponding <see cref="TermStats"/> and TermMetadata are omitted </description></item>
+    /// </list>
     /// <a name="Termindex" id="Termindex"></a>
     /// <h3>Term Index</h3>
-    /// <p>The .tip file contains an index into the term dictionary, so that it can be
+    /// <para>The .tip file contains an index into the term dictionary, so that it can be
     /// accessed randomly.  The index is also used to determine
-    /// when a given term cannot exist on disk (in the .tim file), saving a disk seek.</p>
-    /// <ul>
-    ///   <li>TermsIndex (.tip) --&gt; Header, FSTIndex<sup>NumFields</sup>
-    ///                                &lt;IndexStartFP&gt;<sup>NumFields</sup>, DirOffset, Footer</li>
-    ///   <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    ///   <li>DirOffset --&gt; <seealso cref="DataOutput#writeLong Uint64"/></li>
-    ///   <li>IndexStartFP --&gt; <seealso cref="DataOutput#writeVLong VLong"/></li>
+    /// when a given term cannot exist on disk (in the .tim file), saving a disk seek.</para>
+    /// <list type="bullet">
+    ///   <item><description>TermsIndex (.tip) --&gt; Header, FSTIndex<sup>NumFields</sup>
+    ///                                &lt;IndexStartFP&gt;<sup>NumFields</sup>, DirOffset, Footer</description></item>
+    ///   <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>)</description></item>
+    ///   <item><description>DirOffset --&gt; Uint64 (<see cref="Store.DataOutput.WriteInt64(long)"/></description>)</item>
+    ///   <item><description>IndexStartFP --&gt; VLong (<see cref="Store.DataOutput.WriteVInt64(long)"/></description>)</item>
     ///   <!-- TODO: better describe FST output here -->
-    ///   <li>FSTIndex --&gt; <seealso cref="FST FST&lt;byte[]&gt;"/></li>
-    ///   <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
-    /// </ul>
-    /// <p>Notes:</p>
-    /// <ul>
-    ///   <li>The .tip file contains a separate FST for each
+    ///   <item><description>FSTIndex --&gt; <see cref="T:FST{byte[]}"/></description></item>
+    ///   <item><description>Footer --&gt; CodecFooter (<see cref="CodecUtil.WriteFooter(IndexOutput)"/></description></item>
+    /// </list>
+    /// <para>Notes:</para>
+    /// <list type="bullet">
+    ///   <item><description>The .tip file contains a separate FST for each
     ///       field.  The FST maps a term prefix to the on-disk
     ///       block that holds all terms starting with that
     ///       prefix.  Each field's IndexStartFP points to its
-    ///       FST.</li>
-    ///   <li>DirOffset is a pointer to the start of the IndexStartFPs
-    ///       for all fields</li>
-    ///   <li>It's possible that an on-disk block would contain
+    ///       FST.</description></item>
+    ///   <item><description>DirOffset is a pointer to the start of the IndexStartFPs
+    ///       for all fields</description></item>
+    ///   <item><description>It's possible that an on-disk block would contain
     ///       too many terms (more than the allowed maximum
     ///       (default: 48)).  When this happens, the block is
     ///       sub-divided into new blocks (called "floor
     ///       blocks"), and then the output in the FST for the
     ///       block's prefix encodes the leading byte of each
-    ///       sub-block, and its file pointer.
-    /// </ul>
+    ///       sub-block, and its file pointer.</description></item>
+    /// </list>
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= BlockTreeTermsReader
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="BlockTreeTermsReader"/>
     public class BlockTreeTermsWriter : FieldsConsumer
     {
         /// <summary>
-        /// Suggested default value for the {@code
-        ///  minItemsInBlock} parameter to {@link
-        ///  #BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)}.
+        /// Suggested default value for the 
+        /// <c>minItemsInBlock</c> parameter to 
+        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int)"/>.
         /// </summary>
         public const int DEFAULT_MIN_BLOCK_SIZE = 25;
 
         /// <summary>
-        /// Suggested default value for the {@code
-        ///  maxItemsInBlock} parameter to {@link
-        ///  #BlockTreeTermsWriter(SegmentWriteState,PostingsWriterBase,int,int)}.
+        /// Suggested default value for the 
+        /// <c>maxItemsInBlock</c> parameter to 
+        /// <see cref="BlockTreeTermsWriter(SegmentWriteState, PostingsWriterBase, int, int)"/>.
         /// </summary>
         public const int DEFAULT_MAX_BLOCK_SIZE = 48;
 
@@ -197,7 +198,7 @@ namespace Lucene.Net.Codecs
         internal const int OUTPUT_FLAG_HAS_TERMS = 0x2;
 
         /// <summary>
-        /// Extension of terms file </summary>
+        /// Extension of terms file. </summary>
         internal const string TERMS_EXTENSION = "tim";
 
         internal const string TERMS_CODEC_NAME = "BLOCK_TREE_TERMS_DICT";
@@ -211,11 +212,11 @@ namespace Lucene.Net.Codecs
         public const int VERSION_APPEND_ONLY = 1;
 
         /// <summary>
-        /// Meta data as array </summary>
+        /// Meta data as array. </summary>
         public const int VERSION_META_ARRAY = 2;
 
         /// <summary>
-        /// checksums </summary>
+        /// Checksums. </summary>
         public const int VERSION_CHECKSUM = 3;
 
         /// <summary>
@@ -223,7 +224,7 @@ namespace Lucene.Net.Codecs
         public const int VERSION_CURRENT = VERSION_CHECKSUM;
 
         /// <summary>
-        /// Extension of terms index file </summary>
+        /// Extension of terms index file. </summary>
         internal const string TERMS_INDEX_EXTENSION = "tip";
 
         internal const string TERMS_INDEX_CODEC_NAME = "BLOCK_TREE_TERMS_INDEX";
@@ -272,9 +273,9 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Create a new writer.  The number of items (terms or
-        ///  sub-blocks) per block will aim to be between
-        ///  minItemsPerBlock and maxItemsPerBlock, though in some
-        ///  cases the blocks may be smaller than the min.
+        /// sub-blocks) per block will aim to be between
+        /// <paramref name="minItemsInBlock"/> and <paramref name="maxItemsInBlock"/>, though in some
+        /// cases the blocks may be smaller than the min.
         /// </summary>
         public BlockTreeTermsWriter(SegmentWriteState state, PostingsWriterBase postingsWriter, int minItemsInBlock, int maxItemsInBlock)
         {
@@ -325,7 +326,7 @@ namespace Lucene.Net.Codecs
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(@out, indexOut);
+                    IOUtils.DisposeWhileHandlingException(@out, indexOut);
                 }
             }
             this.indexOut = indexOut;
@@ -1197,6 +1198,9 @@ namespace Lucene.Net.Codecs
             internal readonly RAMOutputStream bytesWriter = new RAMOutputStream();
         }
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
@@ -1236,7 +1240,7 @@ namespace Lucene.Net.Codecs
                 }
                 finally
                 {
-                    IOUtils.CloseWhileHandlingException(ioe, @out, indexOut, postingsWriter);
+                    IOUtils.DisposeWhileHandlingException(ioe, @out, indexOut, postingsWriter);
                 }
             }
         }

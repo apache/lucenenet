@@ -29,8 +29,8 @@ namespace Lucene.Net.Codecs.Lucene3x
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
-    /// @lucene.experimental </summary>
-    /// @deprecated (4.0)
+    /// @lucene.experimental 
+    /// </summary>
     [Obsolete("(4.0)")]
     internal sealed class TermBuffer
     {

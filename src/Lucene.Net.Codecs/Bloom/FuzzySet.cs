@@ -26,20 +26,20 @@ namespace Lucene.Net.Codecs.Bloom
     /// <summary>
     /// A class used to represent a set of many, potentially large, values (e.g. many
     /// long strings such as URLs), using a significantly smaller amount of memory.
-    ///
+    /// <para/>
     /// The set is "lossy" in that it cannot definitively state that is does contain
     /// a value but it <em>can</em> definitively say if a value is <em>not</em> in
     /// the set. It can therefore be used as a Bloom Filter.
-    /// 
+    /// <para/>
     /// Another application of the set is that it can be used to perform fuzzy counting because
     /// it can estimate reasonably accurately how many unique values are contained in the set. 
-    ///
+    /// <para/>
     /// This class is NOT threadsafe.
-    ///
+    /// <para/>
     /// Internally a Bitset is used to record values and once a client has finished recording
-    /// a stream of values the {@link #downsize(float)} method can be used to create a suitably smaller set that
+    /// a stream of values the <see cref="Downsize(float)"/> method can be used to create a suitably smaller set that
     /// is sized appropriately for the number of values recorded and desired saturation levels. 
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class FuzzySet
@@ -62,7 +62,7 @@ namespace Lucene.Net.Codecs.Bloom
         }
 
         /// <remarks>
-        /// Result from {@link FuzzySet#contains(BytesRef)}:
+        /// Result from <see cref="FuzzySet.Contains(BytesRef)"/>:
         /// can never return definitively YES (always MAYBE), 
         /// but can sometimes definitely return NO.
         /// </remarks>
@@ -99,7 +99,7 @@ namespace Lucene.Net.Codecs.Bloom
         }
 
         /// <summary>
-        /// Rounds down required maxNumberOfBits to the nearest number that is made up
+        /// Rounds down required <paramref name="maxNumberOfBits"/> to the nearest number that is made up
         /// of all ones as a binary number.  
         /// Use this method where controlling memory use is paramount.
         /// </summary>
@@ -118,8 +118,8 @@ namespace Lucene.Net.Codecs.Bloom
         /// than deciding how much memory to throw at the problem.
         /// </summary>
         /// <param name="maxNumberOfValuesExpected"></param>
-        /// <param name="desiredSaturation">A number between 0 and 1 expressing the % of bits set once all values have been recorded</param>
-        /// <returns>The size of the set nearest to the required size</returns>
+        /// <param name="desiredSaturation">A number between 0 and 1 expressing the % of bits set once all values have been recorded.</param>
+        /// <returns>The size of the set nearest to the required size.</returns>
         public static int GetNearestSetSize(int maxNumberOfValuesExpected,
             float desiredSaturation)
         {
@@ -156,9 +156,10 @@ namespace Lucene.Net.Codecs.Bloom
 
         /// <summary>
         /// The main method required for a Bloom filter which, given a value determines set membership.
-        /// Unlike a conventional set, the fuzzy set returns NO or MAYBE rather than true or false.
+        /// Unlike a conventional set, the fuzzy set returns <see cref="ContainsResult.NO"/> or 
+        /// <see cref="ContainsResult.MAYBE"/> rather than <c>true</c> or <c>false</c>.
         /// </summary>
-        /// <returns>NO or MAYBE</returns>
+        /// <returns><see cref="ContainsResult.NO"/> or <see cref="ContainsResult.MAYBE"/></returns>
         public virtual ContainsResult Contains(BytesRef value)
         {
             var hash = _hashFunction.Hash(value);
@@ -170,23 +171,23 @@ namespace Lucene.Net.Codecs.Bloom
         }
 
         /// <summary>
-        ///  Serializes the data set to file using the following format:
-        ///  <ul>
-        ///   <li>FuzzySet --&gt;FuzzySetVersion,HashFunctionName,BloomSize,
-        ///  NumBitSetWords,BitSetWord<sup>NumBitSetWords</sup></li> 
-        ///  <li>HashFunctionName --&gt; {@link DataOutput#writeString(String) String} The
-        ///  name of a ServiceProvider registered {@link HashFunction}</li>
-        ///  <li>FuzzySetVersion --&gt; {@link DataOutput#writeInt Uint32} The version number of the {@link FuzzySet} class</li>
-        ///  <li>BloomSize --&gt; {@link DataOutput#writeInt Uint32} The modulo value used
-        ///  to project hashes into the field's Bitset</li>
-        ///  <li>NumBitSetWords --&gt; {@link DataOutput#writeInt Uint32} The number of
-        ///  longs (as returned from {@link FixedBitSet#getBits})</li>
-        ///  <li>BitSetWord --&gt; {@link DataOutput#writeLong Long} A long from the array
-        ///  returned by {@link FixedBitSet#getBits}</li>
-        ///  </ul>
-        ///  @param out Data output stream
-        ///  @ If there is a low-level I/O error
+        /// Serializes the data set to file using the following format:
+        /// <list type="bullet">
+        ///     <item><description>FuzzySet --&gt;FuzzySetVersion,HashFunctionName,BloomSize,
+        ///         NumBitSetWords,BitSetWord<sup>NumBitSetWords</sup></description></item> 
+        ///     <item><description>HashFunctionName --&gt; String (<see cref="DataOutput.WriteString(string)"/>) The
+        ///         name of a ServiceProvider registered <see cref="HashFunction"/></description></item>
+        ///     <item><description>FuzzySetVersion --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The version number of the {@link FuzzySet} class</description></item>
+        ///     <item><description>BloomSize --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The modulo value used
+        ///         to project hashes into the field's Bitset</description></item>
+        ///     <item><description>NumBitSetWords --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The number of
+        ///         longs (as returned from <see cref="FixedBitSet.GetBits()"/>)</description></item>
+        ///     <item><description>BitSetWord --&gt; Long (<see cref="DataOutput.WriteInt64(long)"/>) A long from the array
+        ///         returned by <see cref="FixedBitSet.GetBits()"/></description></item>
+        /// </list>
         /// </summary>
+        /// <param name="output">Data output stream.</param>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error.</exception>
         public virtual void Serialize(DataOutput output)
         {
             output.WriteInt32(VERSION_CURRENT);
@@ -232,7 +233,8 @@ namespace Lucene.Net.Codecs.Bloom
         /// Records a value in the set. The referenced bytes are hashed and then modulo n'd where n is the
         /// chosen size of the internal bitset.
         /// </summary>
-        /// <param name="value">The Key value to be hashed</param>
+        /// <param name="value">The Key value to be hashed.</param>
+        /// <exception cref="System.IO.IOException">If there is a low-level I/O error.</exception>
         public virtual void AddValue(BytesRef value)
         {
             var hash = _hashFunction.Hash(value);
@@ -249,7 +251,7 @@ namespace Lucene.Net.Codecs.Bloom
         /// A number between 0 and 1 describing the % of bits that would ideally be set in the result. 
         /// Lower values have better accuracy but require more space.
         /// </param>
-        /// <return>A smaller FuzzySet or null if the current set is already over-saturated</return>
+        /// <return>A smaller <see cref="FuzzySet"/> or <c>null</c> if the current set is already over-saturated.</return>
         public virtual FuzzySet Downsize(float targetMaxSaturation)
         {
             var numBitsSet = _filter.Cardinality();
@@ -295,7 +297,9 @@ namespace Lucene.Net.Codecs.Bloom
             return GetEstimatedNumberUniqueValuesAllowingForCollisions(_bloomSize, _filter.Cardinality());
         }
 
-        // Given a set size and a the number of set bits, produces an estimate of the number of unique values recorded
+        /// <summary>
+        /// Given a <paramref name="setSize"/> and a the number of set bits, produces an estimate of the number of unique values recorded.
+        /// </summary>
         public static int GetEstimatedNumberUniqueValuesAllowingForCollisions(
             int setSize, int numRecordedBits)
         {

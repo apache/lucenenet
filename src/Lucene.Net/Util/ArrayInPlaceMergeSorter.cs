@@ -20,7 +20,8 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// An <seealso cref="InPlaceMergeSorter"/> for object arrays.
+    /// An <see cref="InPlaceMergeSorter"/> for object arrays.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     internal sealed class ArrayInPlaceMergeSorter<T> : InPlaceMergeSorter
@@ -29,7 +30,7 @@ namespace Lucene.Net.Util
         private readonly IComparer<T> comparer;
 
         /// <summary>
-        /// Create a new <seealso cref="ArrayInPlaceMergeSorter"/>. </summary>
+        /// Create a new <see cref="ArrayInPlaceMergeSorter{T}"/>. </summary>
         public ArrayInPlaceMergeSorter(T[] arr, IComparer<T> comparer)
         {
             this.arr = arr;

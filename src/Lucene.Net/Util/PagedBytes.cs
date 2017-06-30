@@ -26,13 +26,12 @@ namespace Lucene.Net.Util
     using IndexInput = Lucene.Net.Store.IndexInput;
 
     /// <summary>
-    /// Represents a logical byte[] as a series of pages.  You
-    ///  can write-once into the logical byte[] (append only),
-    ///  using copy, and then retrieve slices (BytesRef) into it
-    ///  using fill.
-    ///
+    /// Represents a logical <see cref="T:byte[]"/> as a series of pages.  You
+    /// can write-once into the logical <see cref="T:byte[]"/> (append only),
+    /// using copy, and then retrieve slices (<see cref="BytesRef"/>) into it
+    /// using fill.
+    /// <para/>
     /// @lucene.internal
-    ///
     /// </summary>
     // TODO: refactor this, byteblockpool, fst.bytestore, and any
     // other "shift/mask big arrays". there are too many of these classes!
@@ -55,10 +54,10 @@ namespace Lucene.Net.Util
         private static readonly byte[] EMPTY_BYTES = new byte[0];
 
         /// <summary>
-        /// Provides methods to read BytesRefs from a frozen
-        ///  PagedBytes.
+        /// Provides methods to read <see cref="BytesRef"/>s from a frozen
+        /// <see cref="PagedBytes"/>.
         /// </summary>
-        /// <seealso cref= #freeze  </seealso>
+        /// <seealso cref="Freeze(bool)"/>
         public sealed class Reader
         {
             private readonly byte[][] blocks;
@@ -85,14 +84,13 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Gets a slice out of <seealso cref="PagedBytes"/> starting at <i>start</i> with a
-            /// given length. Iff the slice spans across a block border this method will
+            /// Gets a slice out of <see cref="PagedBytes"/> starting at <paramref name="start"/> with a
+            /// given length. If the slice spans across a block border this method will
             /// allocate sufficient resources and copy the paged data.
-            /// <p>
+            /// <para>
             /// Slices spanning more than two blocks are not supported.
-            /// </p>
+            /// </para>
             /// @lucene.internal
-            ///
             /// </summary>
             public void FillSlice(BytesRef b, long start, int length)
             {
@@ -122,14 +120,12 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Reads length as 1 or 2 byte vInt prefix, starting at <i>start</i>.
-            /// <p>
+            /// Reads length as 1 or 2 byte vInt prefix, starting at <paramref name="start"/>.
+            /// <para>
             /// <b>Note:</b> this method does not support slices spanning across block
             /// borders.
-            /// </p>
-            ///
+            /// </para>
             /// @lucene.internal
-            ///
             /// </summary>
             // TODO: this really needs to be refactored into fieldcacheimpl
             public void Fill(BytesRef b, long start)
@@ -152,7 +148,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Returns approximate RAM bytes used </summary>
+            /// Returns approximate RAM bytes used. </summary>
             public long RamBytesUsed()
             {
                 return ((blocks != null) ? (blockSize * blocks.Length) : 0);
@@ -161,7 +157,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// 1&lt;&lt;blockBits must be bigger than biggest single
-        ///  BytesRef slice that will be pulled
+        /// <see cref="BytesRef"/> slice that will be pulled.
         /// </summary>
         public PagedBytes(int blockBits)
         {
@@ -174,7 +170,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Read this many bytes from in </summary>
+        /// Read this many bytes from <paramref name="in"/>. </summary>
         public void Copy(IndexInput @in, long byteCount)
         {
             while (byteCount > 0)
@@ -207,9 +203,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copy BytesRef in, setting BytesRef out to the result.
-        /// Do not use this if you will use freeze(true).
-        /// this only supports bytes.length <= blockSize
+        /// Copy <see cref="BytesRef"/> in, setting <see cref="BytesRef"/> out to the result.
+        /// Do not use this if you will use <c>Freeze(true)</c>.
+        /// This only supports <c>bytes.Length &lt;= blockSize</c>/
         /// </summary>
         public void Copy(BytesRef bytes, BytesRef @out)
         {
@@ -238,7 +234,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Commits final byte[], trimming it if necessary and if trim=true </summary>
+        /// Commits final <see cref="T:byte[]"/>, trimming it if necessary and if <paramref name="trim"/>=true. </summary>
         public Reader Freeze(bool trim)
         {
             if (frozen)
@@ -266,18 +262,15 @@ namespace Lucene.Net.Util
             return new PagedBytes.Reader(this);
         }
 
-        public long Pointer
+        public long GetPointer()
         {
-            get
+            if (currentBlock == null)
             {
-                if (currentBlock == null)
-                {
-                    return 0;
-                }
-                else
-                {
-                    return (blocks.Count * ((long)blockSize)) + upto;
-                }
+                return 0;
+            }
+            else
+            {
+                return (blocks.Count * ((long)blockSize)) + upto;
             }
         }
 
@@ -290,7 +283,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Copy bytes in, writing the length as a 1 or 2 byte
-        ///  vInt prefix.
+        /// vInt prefix.
         /// </summary>
         // TODO: this really needs to be refactored into fieldcacheimpl
         public long CopyUsingLengthPrefix(BytesRef bytes)
@@ -315,7 +308,7 @@ namespace Lucene.Net.Util
                 upto = 0;
             }
 
-            long pointer = Pointer;
+            long pointer = GetPointer();
 
             if (bytes.Length < 128)
             {
@@ -349,22 +342,19 @@ namespace Lucene.Net.Util
             public override object Clone()
             {
                 PagedBytesDataInput clone = outerInstance.GetDataInput();
-                clone.SetPosition(Position);
+                clone.SetPosition(GetPosition());
                 return clone;
             }
 
             /// <summary>
             /// Returns the current byte position. </summary>
-            public long Position
+            public long GetPosition()
             {
-                get
-                {
-                    return (long)currentBlockIndex * outerInstance.blockSize + currentBlockUpto;
-                }
+                return (long)currentBlockIndex * outerInstance.blockSize + currentBlockUpto;
             }
 
             /// <summary>
-            /// Seek to a position previously obtained from <see cref="Position"/>.
+            /// Seek to a position previously obtained from <see cref="GetPosition()"/>.
             /// </summary>
             /// <param name="position"></param>
             public void SetPosition(long position)
@@ -484,18 +474,15 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Return the current byte position. </summary>
-            public long Position
+            public long GetPosition()
             {
-                get
-                {
-                    return outerInstance.Pointer;
-                }
+                return outerInstance.GetPointer();
             }
         }
 
         /// <summary>
-        /// Returns a DataInput to read values from this
-        ///  PagedBytes instance.
+        /// Returns a <see cref="DataInput"/> to read values from this
+        /// <see cref="PagedBytes"/> instance.
         /// </summary>
         public PagedBytesDataInput GetDataInput()
         {
@@ -507,10 +494,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns a DataOutput that you may use to write into
-        ///  this PagedBytes instance.  If you do this, you should
-        ///  not call the other writing methods (eg, copy);
-        ///  results are undefined.
+        /// Returns a <see cref="DataOutput"/> that you may use to write into
+        /// this <see cref="PagedBytes"/> instance.  If you do this, you should
+        /// not call the other writing methods (eg, copy);
+        /// results are undefined.
         /// </summary>
         public PagedBytesDataOutput GetDataOutput()
         {

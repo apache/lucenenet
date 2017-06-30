@@ -54,6 +54,32 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
+        /// Create a new <see cref="SimpleFSDirectory"/> for the named location.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <param name="lockFactory"> the lock factory to use, or null for the default
+        /// (<see cref="NativeFSLockFactory"/>); </param>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        public SimpleFSDirectory(string path, LockFactory lockFactory)
+            : this(new DirectoryInfo(path), lockFactory)
+        {
+        }
+
+        /// <summary>
+        /// Create a new <see cref="SimpleFSDirectory"/> for the named location and <see cref="NativeFSLockFactory"/>.
+        /// <para/>
+        /// LUCENENET specific overload for convenience using string instead of <see cref="DirectoryInfo"/>.
+        /// </summary>
+        /// <param name="path"> the path of the directory </param>
+        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        public SimpleFSDirectory(string path)
+            : this(path, null)
+        {
+        }
+
+        /// <summary>
         /// Creates an <see cref="IndexInput"/> for the file with the given name. </summary>
         public override IndexInput OpenInput(string name, IOContext context)
         {

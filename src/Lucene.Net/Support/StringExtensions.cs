@@ -36,12 +36,12 @@ namespace Lucene.Net.Support
         /// <summary>
         /// This method mimics the Java String.compareTo(String) method in that it
         /// <list type="number">
-        /// <item>Compares the strings using lexographic sorting rules</item>
-        /// <item>Performs a culture-insensitive comparison</item>
+        /// <item><description>Compares the strings using lexographic sorting rules</description></item>
+        /// <item><description>Performs a culture-insensitive comparison</description></item>
         /// </list>
         /// This method is a convenience to replace the .NET CompareTo method 
         /// on all strings, provided the logic does not expect specific values
-        /// but is simply comparing them with <code>></code> or <code><</code>.
+        /// but is simply comparing them with <c>&gt;</c> or <c>&lt;</c>.
         /// </summary>
         /// <param name="str"></param>
         /// <param name="value">The string to compare with.</param>

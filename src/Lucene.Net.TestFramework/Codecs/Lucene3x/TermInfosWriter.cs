@@ -108,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(Output);
+                    IOUtils.DisposeWhileHandlingException(Output);
 
                     try
                     {
@@ -149,7 +149,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(Output);
+                    IOUtils.DisposeWhileHandlingException(Output);
 
                     try
                     {

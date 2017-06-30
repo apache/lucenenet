@@ -31,9 +31,10 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
     /// <summary>
-    /// Rewrites MultiTermQueries into a filter, using DocTermOrds for term enumeration.
-    /// <p>
-    /// this can be used to perform these queries against an unindexed docvalues field.
+    /// Rewrites <see cref="MultiTermQuery"/>s into a filter, using DocTermOrds for term enumeration.
+    /// <para>
+    /// This can be used to perform these queries against an unindexed docvalues field.
+    /// </para>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -56,7 +57,7 @@ namespace Lucene.Net.Search
             protected readonly MultiTermQuery m_query;
 
             /// <summary>
-            /// Wrap a <seealso cref="MultiTermQuery"/> as a Filter.
+            /// Wrap a <see cref="MultiTermQuery"/> as a <see cref="Filter"/>.
             /// </summary>
             protected internal MultiTermQueryDocTermOrdsWrapperFilter(MultiTermQuery query)
             {
@@ -102,7 +103,7 @@ namespace Lucene.Net.Search
             }
 
             /// <summary>
-            /// Returns a DocIdSet with documents that should be permitted in search
+            /// Returns a <see cref="DocIdSet"/> with documents that should be permitted in search
             /// results.
             /// </summary>
             public override DocIdSet GetDocIdSet(AtomicReaderContext context, IBits acceptDocs)

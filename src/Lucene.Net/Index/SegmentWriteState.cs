@@ -28,6 +28,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Holder class for common parameters used during write.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -36,33 +37,33 @@ namespace Lucene.Net.Index
     public class SegmentWriteState
     {
         /// <summary>
-        /// <seealso cref="InfoStream"/> used for debugging messages. </summary>
+        /// <see cref="Util.InfoStream"/> used for debugging messages. </summary>
         public InfoStream InfoStream { get; private set; }
 
         /// <summary>
-        /// <seealso cref="Directory"/> where this segment will be written
-        ///  to.
+        /// <see cref="Store.Directory"/> where this segment will be written
+        /// to.
         /// </summary>
         public Directory Directory { get; private set; }
 
         /// <summary>
-        /// <seealso cref="SegmentInfo"/> describing this segment. </summary>
+        /// <see cref="Index.SegmentInfo"/> describing this segment. </summary>
         public SegmentInfo SegmentInfo { get; private set; }
 
         /// <summary>
-        /// <seealso cref="FieldInfos"/> describing all fields in this
-        ///  segment.
+        /// <see cref="Index.FieldInfos"/> describing all fields in this
+        /// segment.
         /// </summary>
         public FieldInfos FieldInfos { get; private set; }
 
         /// <summary>
         /// Number of deleted documents set while flushing the
-        ///  segment.
+        /// segment.
         /// </summary>
         public int DelCountOnFlush { get; set; }
 
         /// <summary>
-        /// Deletes and updates to apply while we are flushing the segment. A Term is
+        /// Deletes and updates to apply while we are flushing the segment. A <see cref="Term"/> is
         /// enrolled in here if it was deleted/updated at one point, and it's mapped to
         /// the docIDUpto, meaning any docID &lt; docIDUpto containing this term should
         /// be deleted/updated.
@@ -70,18 +71,18 @@ namespace Lucene.Net.Index
         public BufferedUpdates SegUpdates { get; private set; }
 
         /// <summary>
-        /// <seealso cref="IMutableBits"/> recording live documents; this is
-        ///  only set if there is one or more deleted documents.
+        /// <see cref="IMutableBits"/> recording live documents; this is
+        /// only set if there is one or more deleted documents.
         /// </summary>
         public IMutableBits LiveDocs { get; set; }
 
         /// <summary>
         /// Unique suffix for any postings files written for this
-        ///  segment.  <seealso cref="PerFieldPostingsFormat"/> sets this for
-        ///  each of the postings formats it wraps.  If you create
-        ///  a new <seealso cref="PostingsFormat"/> then any files you
-        ///  write/read must be derived using this suffix (use
-        ///  <seealso cref="IndexFileNames#segmentFileName(String,String,String)"/>).
+        /// segment.  <see cref="PerFieldPostingsFormat"/> sets this for
+        /// each of the postings formats it wraps.  If you create
+        /// a new <see cref="PostingsFormat"/> then any files you
+        /// write/read must be derived using this suffix (use
+        /// <see cref="IndexFileNames.SegmentFileName(string,string,string)"/>).
         /// </summary>
         public string SegmentSuffix { get; private set; }
 
@@ -95,8 +96,8 @@ namespace Lucene.Net.Index
         public int TermIndexInterval { get; set; } // TODO: this should be private to the codec, not settable here or in IWC
 
         /// <summary>
-        /// <seealso cref="IOContext"/> for all writes; you should pass this
-        ///  to <seealso cref="Directory#createOutput(String,IOContext)"/>.
+        /// <see cref="IOContext"/> for all writes; you should pass this
+        /// to <see cref="Directory.CreateOutput(string, IOContext)"/>.
         /// </summary>
         public IOContext Context { get; private set; }
 
@@ -110,8 +111,8 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Constructor which takes segment suffix.
         /// </summary>
-        /// <seealso cref= #SegmentWriteState(InfoStream, Directory, SegmentInfo, FieldInfos, int,
-        ///      BufferedUpdates, IOContext) </seealso>
+        /// <seealso cref="SegmentWriteState(InfoStream, Directory, SegmentInfo, FieldInfos, int,
+        ///      BufferedUpdates, IOContext)"/>
         public SegmentWriteState(InfoStream infoStream, Directory directory, SegmentInfo segmentInfo, FieldInfos fieldInfos, int termIndexInterval, BufferedUpdates segUpdates, IOContext context, string segmentSuffix)
         {
             this.InfoStream = infoStream;
@@ -125,7 +126,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Create a shallow copy of <seealso cref="SegmentWriteState"/> with a new segment suffix. </summary>
+        /// Create a shallow copy of <see cref="SegmentWriteState"/> with a new segment suffix. </summary>
         public SegmentWriteState(SegmentWriteState state, string segmentSuffix)
         {
             InfoStream = state.InfoStream;

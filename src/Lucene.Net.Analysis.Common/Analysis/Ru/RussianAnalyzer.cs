@@ -38,8 +38,8 @@ namespace Lucene.Net.Analysis.Ru
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="RussianAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.1, <see cref="StandardTokenizer"/> is used, Snowball stemming is done with
-    ///        <see cref="SnowballFilter"/>, and Snowball stopwords are used by default.</item>
+    ///     <item><description> As of 3.1, <see cref="StandardTokenizer"/> is used, Snowball stemming is done with
+    ///        <see cref="SnowballFilter"/>, and Snowball stopwords are used by default.</description></item>
     /// </list>
     /// </para>
     /// </summary>
@@ -142,10 +142,10 @@ namespace Lucene.Net.Analysis.Ru
 
         /// <summary>
         /// Creates
-        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// <see cref="TokenStreamComponents"/>
         /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        /// <returns> <see cref="TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>
         ///         , <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is

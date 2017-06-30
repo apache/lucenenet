@@ -31,19 +31,19 @@ namespace Lucene.Net.Search.Suggest
     /// </para>
     /// <b>NOTE:</b> 
     ///  <list type="bullet">
-    ///    <item>
+    ///    <item><description>
     ///      The term and (optionally) payload fields have to be
     ///      stored
-    ///    </item>
-    ///    <item>
+    ///    </description></item>
+    ///    <item><description>
     ///      The weight field can be stored or can be a <see cref="NumericDocValues"/>.
     ///      If the weight field is not defined, the value of the weight is <c>0</c>
-    ///    </item>
-    ///    <item>
+    ///    </description></item>
+    ///    <item><description>
     ///      if any of the term or (optionally) payload fields supplied
     ///      do not have a value for a document, then the document is 
     ///      skipped by the dictionary
-    ///    </item>
+    ///    </description></item>
     ///  </list>
     /// </summary>
     public class DocumentDictionary : IDictionary

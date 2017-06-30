@@ -27,9 +27,9 @@ namespace Lucene.Net.Search.Similarities
     /// models applied to Ad Hoc information retrieval. In Proceedings of the 24th
     /// annual international ACM SIGIR conference on Research and development in
     /// information retrieval (SIGIR '01). ACM, New York, NY, USA, 334-342.
-    /// <p>The model has a single parameter, &lambda;. According to said paper, the
+    /// <para>The model has a single parameter, &#955;. According to said paper, the
     /// optimal value depends on both the collection and the query. The optimal value
-    /// is around {@code 0.1} for title queries and {@code 0.7} for long queries.</p>
+    /// is around <c>0.1</c> for title queries and <c>0.7</c> for long queries.</para>
     ///
     /// @lucene.experimental
     /// </summary>
@@ -39,11 +39,11 @@ namespace Lucene.Net.Search.Similarities
     public class LMJelinekMercerSimilarity : LMSimilarity
     {
         /// <summary>
-        /// The &lambda; parameter. </summary>
+        /// The &#955; parameter. </summary>
         private readonly float lambda;
 
         /// <summary>
-        /// Instantiates with the specified collectionModel and &lambda; parameter. </summary>
+        /// Instantiates with the specified <paramref name="collectionModel"/> and &#955; parameter. </summary>
         public LMJelinekMercerSimilarity(ICollectionModel collectionModel, float lambda)
             : base(collectionModel)
         {
@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Instantiates with the specified &lambda; parameter. </summary>
+        /// Instantiates with the specified &#955; parameter. </summary>
         public LMJelinekMercerSimilarity(float lambda)
         {
             this.lambda = lambda;
@@ -73,7 +73,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns the &lambda; parameter. </summary>
+        /// Returns the &#955; parameter. </summary>
         public virtual float Lambda
         {
             get

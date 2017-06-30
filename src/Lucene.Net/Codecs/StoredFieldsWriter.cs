@@ -30,24 +30,24 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Codec API for writing stored fields:
-    /// <p>
-    /// <ol>
-    ///   <li>For every document, <seealso cref="#startDocument(int)"/> is called,
-    ///       informing the Codec how many fields will be written.
-    ///   <li><seealso cref="#writeField(FieldInfo, IndexableField)"/> is called for
-    ///       each field in the document.
-    ///   <li>After all documents have been written, <seealso cref="#finish(FieldInfos, int)"/>
-    ///       is called for verification/sanity-checks.
-    ///   <li>Finally the writer is closed (<seealso cref="#close()"/>)
-    /// </ol>
-    ///
+    /// <para/>
+    /// <list type="number">
+    ///   <item><description>For every document, <see cref="StartDocument(int)"/> is called,
+    ///       informing the Codec how many fields will be written.</description></item>
+    ///   <item><description><see cref="WriteField(FieldInfo, IIndexableField)"/> is called for
+    ///       each field in the document.</description></item>
+    ///   <item><description>After all documents have been written, <see cref="Finish(FieldInfos, int)"/>
+    ///       is called for verification/sanity-checks.</description></item>
+    ///   <item><description>Finally the writer is disposed (<see cref="Dispose(bool)"/>)</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class StoredFieldsWriter : IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal StoredFieldsWriter()
         {
@@ -55,10 +55,10 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called before writing the stored fields of the document.
-        ///  <seealso cref="#writeField(FieldInfo, IndexableField)"/> will be called
-        ///  <code>numStoredFields</code> times. Note that this is
-        ///  called even if the document has no stored fields, in
-        ///  this case <code>numStoredFields</code> will be zero.
+        /// <see cref="WriteField(FieldInfo, IIndexableField)"/> will be called
+        /// <paramref name="numStoredFields"/> times. Note that this is
+        /// called even if the document has no stored fields, in
+        /// this case <paramref name="numStoredFields"/> will be zero.
         /// </summary>
         public abstract void StartDocument(int numStoredFields);
 
@@ -74,28 +74,28 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Aborts writing entirely, implementation should remove
-        ///  any partially-written files, etc.
+        /// any partially-written files, etc.
         /// </summary>
         public abstract void Abort();
 
         /// <summary>
-        /// Called before <seealso cref="#close()"/>, passing in the number
-        ///  of documents that were written. Note that this is
-        ///  intentionally redundant (equivalent to the number of
-        ///  calls to <seealso cref="#startDocument(int)"/>, but a Codec should
-        ///  check that this is the case to detect the JRE bug described
-        ///  in LUCENE-1282.
+        /// Called before <see cref="Dispose()"/>, passing in the number
+        /// of documents that were written. Note that this is
+        /// intentionally redundant (equivalent to the number of
+        /// calls to <see cref="StartDocument(int)"/>, but a <see cref="Codec"/> should
+        /// check that this is the case to detect the bug described
+        /// in LUCENE-1282.
         /// </summary>
         public abstract void Finish(FieldInfos fis, int numDocs);
 
         /// <summary>
         /// Merges in the stored fields from the readers in
-        ///  <code>mergeState</code>. The default implementation skips
-        ///  over deleted documents, and uses <seealso cref="#startDocument(int)"/>,
-        ///  <seealso cref="#writeField(FieldInfo, IndexableField)"/>, and <seealso cref="#finish(FieldInfos, int)"/>,
-        ///  returning the number of documents that were written.
-        ///  Implementations can override this method for more sophisticated
-        ///  merging (bulk-byte copying, etc).
+        /// <paramref name="mergeState"/>. The default implementation skips
+        /// over deleted documents, and uses <see cref="StartDocument(int)"/>,
+        /// <see cref="WriteField(FieldInfo, IIndexableField)"/>, and <see cref="Finish(FieldInfos, int)"/>,
+        /// returning the number of documents that were written.
+        /// Implementations can override this method for more sophisticated
+        /// merging (bulk-byte copying, etc).
         /// </summary>
         public virtual int Merge(MergeState mergeState)
         {
@@ -128,7 +128,8 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// sugar method for startDocument() + writeField() for every stored field in the document </summary>
+        /// Sugar method for <see cref="StartDocument(int)"/> + <see cref="WriteField(FieldInfo, IIndexableField)"/> 
+        /// for every stored field in the document. </summary>
         protected void AddDocument<T1>(IEnumerable<T1> doc, FieldInfos fieldInfos) where T1 : Lucene.Net.Index.IIndexableField
         {
             int storedCount = 0;
@@ -153,12 +154,18 @@ namespace Lucene.Net.Codecs
             FinishDocument();
         }
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
     }
 }

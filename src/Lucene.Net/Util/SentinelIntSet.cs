@@ -23,23 +23,25 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// A native int hash-based set where one value is reserved to mean "EMPTY" internally. The space overhead is fairly low
-    /// as there is only one power-of-two sized int[] to hold the values.  The set is re-hashed when adding a value that
-    /// would make it >= 75% full.  Consider extending and over-riding <seealso cref="#hash(int)"/> if the values might be poor
+    /// A native <see cref="int"/> hash-based set where one value is reserved to mean "EMPTY" internally. The space overhead is fairly low
+    /// as there is only one power-of-two sized <see cref="T:int[]"/> to hold the values.  The set is re-hashed when adding a value that
+    /// would make it >= 75% full.  Consider extending and over-riding <see cref="Hash(int)"/> if the values might be poor
     /// hash keys; Lucene docids should be fine.
     /// The internal fields are exposed publicly to enable more efficient use at the expense of better O-O principles.
     /// <para/>
     /// To iterate over the integers held in this set, simply use code like this:
     /// <code>
     /// SentinelIntSet set = ...
-    /// for (int v : set.keys) {
-    ///   if (v == set.emptyVal)
-    ///     continue;
-    ///   //use v...
-    /// }</code>
+    /// foreach (int v in set.keys) 
+    /// {
+    ///     if (v == set.EmptyVal)
+    ///         continue;
+    ///     //use v...
+    /// }
+    /// </code>
     /// <para/>
     /// NOTE: This was SentinelIntSet in Lucene
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class SentinelInt32Set
@@ -61,13 +63,13 @@ namespace Lucene.Net.Util
         public int EmptyVal { get; private set; }
 
         /// <summary>
-        /// the count at which a rehash should be done </summary>
+        /// The count at which a rehash should be done. </summary>
         public int RehashCount { get; set; }
 
         ///
         /// <param name="size">  The minimum number of elements this set should be able to hold without rehashing
-        ///              (i.e. the slots are guaranteed not to change) </param>
-        /// <param name="emptyVal"> The integer value to use for EMPTY </param>
+        ///              (i.e. the slots are guaranteed not to change). </param>
+        /// <param name="emptyVal"> The integer value to use for EMPTY. </param>
         public SentinelInt32Set(int size, int emptyVal)
         {
             this.EmptyVal = emptyVal;
@@ -109,7 +111,7 @@ namespace Lucene.Net.Util
         //}
 
         /// <summary>
-        /// (internal) Returns the slot for this key </summary>
+        /// (internal) Returns the slot for this key. </summary>
         public virtual int GetSlot(int key)
         {
             Debug.Assert(key != EmptyVal);
@@ -129,7 +131,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// (internal) Returns the slot for this key, or -slot-1 if not found </summary>
+        /// (internal) Returns the slot for this key, or -slot-1 if not found. </summary>
         public virtual int Find(int key)
         {
             Debug.Assert(key != EmptyVal);
@@ -191,7 +193,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// (internal) Rehashes by doubling {@code int[] key} and filling with the old values. </summary>
+        /// (internal) Rehashes by doubling key (<see cref="T:int[]"/>) and filling with the old values. </summary>
         public virtual void Rehash()
         {
             int newSize = keys.Length << 1;

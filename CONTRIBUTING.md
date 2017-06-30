@@ -48,29 +48,14 @@ with minimal cleaning up. We are working on tools and code
 helpers to help with that, see for examples see our [Java style methods to avoid many search-replace in porting tests](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.TestFramework/JavaCompatibility), and a
 [R# plugin that will help making some stuff auto-port when pasting](https://resharper-plugins.jetbrains.com/packages/ReSharper.ExJava/).
 
-### Documentation Comments == up for grabs:
-
-1. Lucene.Net.Core (project)
-   1. Codecs (namespace)
-   2. Index (namespace) (Except for types starting with letter A-L and TieredMergePolicy)
-   3. Search (namespace)
-   4. Support (namespace)
-   5. Util (namespace) (Except for Util.Fst)
-2. Lucene.Net.Codecs (project)
-
-See [Documenting Lucene.Net](https://cwiki.apache.org/confluence/display/LUCENENET/Documenting+Lucene.Net) for instructions. 
-
-> While it is assumed that the documentation comments for the other projects are finished, they could probably all use a review. Also be sure to check the comments against [Lucene 4.8.0](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene) to ensure they are correct and complete!
-
 ### Code that is currently pending being ported from scratch (+ tests) == up for grabs:
 
 * [Lucene.Net.Demo](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/demo) (might be a good learning experience)
 * [Lucene.Net.Replicator](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/replicator)
 * [Lucene.Net.Analysis.ICU](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/icu) (note that we will be putting this functionality into the Lucene.Net.ICU package)
 * [Lucene.Net.Analysis.Kuromoji](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/kuromoji)
-* [Lucene.Net.Analysis.SmartCn](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/smartcn)
 
-There are a few other specialized Analysis packages ([Morfologik](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/morfologik), [Phonetic](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/phonetic), [UIMA](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/uima)) that have dependencies that would also need to be ported if they don't exist in .NET yet.
+There are a few other specialized packages ([Analysis.Morfologik](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/morfologik), [Analysis.UIMA](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/analysis/uima), [Benchmark](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene/benchmark)) that have dependencies that would also need to be ported if they don't exist in .NET yet.
 
 There are several command-line utilities for tasks such as maintaining indexes that just need to be put into a console application and "usage" documentation updated for them to be useful (which might be helpful for those who don't want to install Java to run such utilities from the Lucene project). See the [JIRA Issues](https://issues.apache.org/jira/issues/?jql=project%20%3D%20LUCENENET%20AND%20status%20%3D%20Open%20AND%20text%20~%20%22CLI%22) for the current list.
 
@@ -89,7 +74,7 @@ probably may also want to set a constant seed for working locally. See
 and
 <https://github.com/apache/lucenenet/blob/master/src/Lucene.Net.TestFramework/Util/LuceneTestCase.cs#L610>
 
-* Note that tests should be run both on .NET Framework and .NET Core. Currently, we have 2 different solutions (Lucene.Net.sln for .NET Framework and Lucene.Net.Portable.sln for .NET Core) that only run in Visual Studio 2015 and onwards. We are setup to use NUnit 3.x and you will need the appropriate [test adapter](https://marketplace.visualstudio.com/items?itemName=NUnitDevelopers.NUnit3TestAdapter) for Visual Studio to detect the tests. Tests can also be run from the command line using the [dotnet test]() command
+* Note that tests should be run both on .NET Framework and .NET Core. Currently, we have 2 different solutions (Lucene.Net.sln for .NET Framework and Lucene.Net.Portable.sln for .NET Core) that only run in Visual Studio 2015 and onwards. We are setup to use NUnit 3.x and you will need the appropriate [test adapter](https://marketplace.visualstudio.com/items?itemName=NUnitDevelopers.NUnit3TestAdapter) for Visual Studio to detect the tests. Tests can also be run from the command line using the [dotnet test](https://docs.microsoft.com/en-us/dotnet/core/tools/dotnet-test) command
 
 * Run, debug, iterate. When you think you fixed a bug or a test, please
 send a PR as fast as possible. There are multiple people working in this
@@ -102,7 +87,7 @@ you will receive notifications also via this list.
 
 ## Other types of help
 
-We will definitely need more help (like optimizing code, normalizing tabs/spaces, license headers, automating stuff, etc) but we are not there yet!
+We will definitely need more help (like optimizing code, normalizing tabs/spaces, writing tutorials, helping with API documentation, automating stuff, etc) but we are not there yet!
 
 Also, check out the [JIRA issue tracker](https://issues.apache.org/jira/browse/LUCENENET-586?jql=project%20%3D%20LUCENENET%20AND%20status%20%3D%20Open%20AND%20assignee%20in%20(EMPTY)) for any other issues that you might be interested in helping with. You can signup for a JIRA account [here](https://cwiki.apache.org/confluence/signup.action) (it just takes a minute).
 

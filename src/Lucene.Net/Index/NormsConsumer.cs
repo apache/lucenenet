@@ -29,8 +29,8 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Writes norms.  Each thread X field accumulates the norms
-    ///  for the doc/fields it saw, then the flush method below
-    ///  merges all of these together into a single _X.nrm file.
+    /// for the doc/fields it saw, then the flush method below
+    /// merges all of these together into a single _X.nrm file.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -78,11 +78,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(normsConsumer);
+                    IOUtils.Dispose(normsConsumer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(normsConsumer);
+                    IOUtils.DisposeWhileHandlingException(normsConsumer);
                 }
             }
         }

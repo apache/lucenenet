@@ -43,8 +43,9 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// <summary>
     /// Exposes flex API on a pre-flex index, as a codec.
-    /// @lucene.experimental </summary>
-    /// @deprecated (4.0)
+    /// <para/>
+    /// @lucene.experimental 
+    /// </summary>
     [Obsolete("(4.0)")]
     internal class Lucene3xFields : FieldsProducer
     {
@@ -198,7 +199,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (disposing)
             {
-                IOUtils.Close(Tis, TisNoIndex, /*cfsReader,*/ FreqStream, ProxStream); // LUCENENET NOTE: cfsReader not used
+                IOUtils.Dispose(Tis, TisNoIndex, /*cfsReader,*/ FreqStream, ProxStream); // LUCENENET NOTE: cfsReader not used
             }
         }
 

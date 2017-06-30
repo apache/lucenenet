@@ -29,11 +29,11 @@ namespace Lucene.Net.Codecs.Lucene40
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Lucene 4.0 implementation of <seealso cref="SegmentInfoReader"/>.
+    /// Lucene 4.0 implementation of <see cref="SegmentInfoReader"/>.
+    /// <para/>
+    /// @lucene.experimental 
     /// </summary>
-    /// <seealso cref= Lucene40SegmentInfoFormat
-    /// @lucene.experimental </seealso>
-    /// @deprecated Only for reading old 4.0-4.5 segments
+    /// <seealso cref="Lucene40SegmentInfoFormat"/>
     [Obsolete("Only for reading old 4.0-4.5 segments")]
     public class Lucene40SegmentInfoReader : SegmentInfoReader
     {
@@ -75,7 +75,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
                 else
                 {

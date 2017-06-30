@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
     using DocValuesProducer = Lucene.Net.Codecs.DocValuesProducer;
     using FieldsProducer = Lucene.Net.Codecs.FieldsProducer;
-    using ICoreClosedListener = Lucene.Net.Index.SegmentReader.ICoreClosedListener;
+    using ICoreDisposedListener = Lucene.Net.Index.SegmentReader.ICoreDisposedListener;
     using IOContext = Lucene.Net.Store.IOContext;
     using IOUtils = Lucene.Net.Util.IOUtils;
     using PostingsFormat = Lucene.Net.Codecs.PostingsFormat;
@@ -39,7 +39,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Holds core readers that are shared (unchanged) when
-    /// SegmentReader is cloned or reopened
+    /// <see cref="SegmentReader"/> is cloned or reopened
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -115,7 +115,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        private readonly ISet<ICoreClosedListener> coreClosedListeners = new ConcurrentHashSet<ICoreClosedListener>(new IdentityComparer<ICoreClosedListener>());
+        private readonly ISet<ICoreDisposedListener> coreClosedListeners = new ConcurrentHashSet<ICoreDisposedListener>(new IdentityComparer<ICoreDisposedListener>());
 
         internal SegmentCoreReaders(SegmentReader owner, Directory dir, SegmentCommitInfo si, IOContext context, int termsIndexDivisor)
         {
@@ -250,7 +250,7 @@ namespace Lucene.Net.Index
                 Exception th = null;
                 try
                 {
-                    IOUtils.Close(termVectorsLocal, fieldsReaderLocal, normsLocal, fields, termVectorsReaderOrig, fieldsReaderOrig, cfsReader, normsProducer);
+                    IOUtils.Dispose(termVectorsLocal, fieldsReaderLocal, normsLocal, fields, termVectorsReaderOrig, fieldsReaderOrig, cfsReader, normsProducer);
                 }
                 catch (Exception throwable)
                 {
@@ -267,13 +267,13 @@ namespace Lucene.Net.Index
         {
             lock (coreClosedListeners)
             {
-                foreach (ICoreClosedListener listener in coreClosedListeners)
+                foreach (ICoreDisposedListener listener in coreClosedListeners)
                 {
                     // SegmentReader uses our instance as its
                     // coreCacheKey:
                     try
                     {
-                        listener.OnClose(this);
+                        listener.OnDispose(this);
                     }
                     catch (Exception t)
                     {
@@ -292,12 +292,12 @@ namespace Lucene.Net.Index
             }
         }
 
-        internal void AddCoreClosedListener(ICoreClosedListener listener)
+        internal void AddCoreDisposedListener(ICoreDisposedListener listener)
         {
             coreClosedListeners.Add(listener);
         }
 
-        internal void RemoveCoreClosedListener(ICoreClosedListener listener)
+        internal void RemoveCoreDisposedListener(ICoreDisposedListener listener)
         {
             coreClosedListeners.Remove(listener);
         }

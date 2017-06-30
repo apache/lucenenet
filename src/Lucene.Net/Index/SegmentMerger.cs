@@ -36,11 +36,11 @@ namespace Lucene.Net.Index
     using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
 
     /// <summary>
-    /// The SegmentMerger class combines two or more Segments, represented by an
-    /// IndexReader, into a single Segment.  Call the merge method to combine the
+    /// The <see cref="SegmentMerger"/> class combines two or more Segments, represented by an
+    /// <see cref="IndexReader"/>, into a single Segment.  Call the merge method to combine the
     /// segments.
     /// </summary>
-    /// <seealso cref= #merge </seealso>
+    /// <seealso cref="Merge()"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -77,7 +77,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// True if any merging should happen </summary>
+        /// <c>True</c> if any merging should happen </summary>
         internal bool ShouldMerge
         {
             get { return mergeState.SegmentInfo.DocCount > 0; }
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
         /// Merges the readers into the directory passed to the constructor </summary>
         /// <returns> The number of documents that were merged </returns>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
         internal MergeState Merge()
         {
             if (!ShouldMerge)
@@ -264,11 +264,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(consumer);
+                    IOUtils.Dispose(consumer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(consumer);
+                    IOUtils.DisposeWhileHandlingException(consumer);
                 }
             }
         }
@@ -304,11 +304,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(consumer);
+                    IOUtils.Dispose(consumer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(consumer);
+                    IOUtils.DisposeWhileHandlingException(consumer);
                 }
             }
         }
@@ -381,7 +381,7 @@ namespace Lucene.Net.Index
         ///
         /// <returns> The number of documents in all of the readers </returns>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
-        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
         private int MergeFields()
         {
             StoredFieldsWriter fieldsWriter = codec.StoredFieldsFormat.FieldsWriter(directory, mergeState.SegmentInfo, context);
@@ -398,7 +398,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Merge the TermVectors from each of the segments into the new one. </summary>
-        /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
         private int MergeVectors()
         {
             TermVectorsWriter termVectorsWriter = codec.TermVectorsFormat.VectorsWriter(directory, mergeState.SegmentInfo, context);
@@ -471,11 +471,11 @@ namespace Lucene.Net.Index
             {
                 if (success)
                 {
-                    IOUtils.Close(consumer);
+                    IOUtils.Dispose(consumer);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(consumer);
+                    IOUtils.DisposeWhileHandlingException(consumer);
                 }
             }
         }

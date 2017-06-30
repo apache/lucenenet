@@ -49,8 +49,9 @@ namespace Lucene.Net.Codecs
 
         private class ScanningPostingsFormatFactory : DefaultPostingsFormatFactory
         {
-            public ScanningPostingsFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.ScanForPostingsFormats(this.GetType().GetTypeInfo().Assembly);
             }
         }
@@ -85,8 +86,9 @@ namespace Lucene.Net.Codecs
 
         private class ExplicitPostingsFormatFactory : DefaultPostingsFormatFactory
         {
-            public ExplicitPostingsFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutPostingsFormatType(typeof(PrivatePostingsFormat));
             }
         }
@@ -103,8 +105,9 @@ namespace Lucene.Net.Codecs
 
         private class InvalidNamePostingsFormatFactory : DefaultPostingsFormatFactory
         {
-            public InvalidNamePostingsFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutPostingsFormatType(typeof(InvalidNamedPostingsFormat));
             }
         }
@@ -112,13 +115,16 @@ namespace Lucene.Net.Codecs
         [Test]
         public void TestInvalidName()
         {
-            Assert.Throws<ArgumentException>(() => new InvalidNamePostingsFormatFactory());
+            var factory = new InvalidNamePostingsFormatFactory();
+
+            Assert.Throws<ArgumentException>(() => factory.GetPostingsFormat("SomeFormat"));
         }
 
         private class CustomNamePostingsFormatFactory : DefaultPostingsFormatFactory
         {
-            public CustomNamePostingsFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutPostingsFormatType(typeof(CustomNamedPostingsFormat));
             }
         }
@@ -157,8 +163,9 @@ namespace Lucene.Net.Codecs
 
         private class ReplacePostingsFormatFactory : DefaultPostingsFormatFactory
         {
-            public ReplacePostingsFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutPostingsFormatType(typeof(TestLucene40PostingsFormat));
             }
         }

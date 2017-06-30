@@ -31,10 +31,10 @@ namespace Lucene.Net.Util
     /// <summary>
     /// On-disk sorting of byte arrays. Each byte array (entry) is a composed of the following
     /// fields:
-    /// <ul>
-    ///   <li>(two bytes) length of the following byte array,
-    ///   <li>exactly the above count of bytes for the sequence to be sorted.
-    /// </ul>
+    /// <list type="bullet">
+    ///   <item><description>(two bytes) length of the following byte array,</description></item>
+    ///   <item><description>exactly the above count of bytes for the sequence to be sorted.</description></item>
+    /// </list>
     /// </summary>
     public sealed class OfflineSorter
     {
@@ -69,8 +69,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// A bit more descriptive unit for constructors.
         /// </summary>
-        /// <seealso cref= #automatic() </seealso>
-        /// <seealso cref= #megabytes(long) </seealso>
+        /// <seealso cref="Automatic()"/>
+        /// <seealso cref="Megabytes(long)"/>
         public sealed class BufferSize
         {
             internal readonly int bytes;
@@ -91,7 +91,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Creates a <seealso cref="BufferSize"/> in MB. The given
+            /// Creates a <see cref="BufferSize"/> in MB. The given
             /// values must be &gt; 0 and &lt; 2048.
             /// </summary>
             public static BufferSize Megabytes(long mb)
@@ -101,7 +101,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Approximately half of the currently available free heap, but no less
-            /// than <seealso cref="#ABSOLUTE_MIN_SORT_BUFFER_SIZE"/>. However if current heap allocation
+            /// than <see cref="ABSOLUTE_MIN_SORT_BUFFER_SIZE"/>. However if current heap allocation
             /// is insufficient or if there is a large portion of unallocated heap-space available
             /// for sorting consult with max allowed heap size.
             /// </summary>
@@ -141,47 +141,45 @@ namespace Lucene.Net.Util
         /// </summary>
         public class SortInfo
         {
-            internal virtual void InitializeInstanceFields()
-            {
-                BufferSize = outerInstance.ramBufferSize.bytes;
-            }
-
             private readonly OfflineSorter outerInstance;
 
             /// <summary>
-            /// number of temporary files created when merging partitions </summary>
+            /// Number of temporary files created when merging partitions </summary>
             public int TempMergeFiles { get; set; }
             /// <summary>
-            /// number of partition merges </summary>
+            /// Number of partition merges </summary>
             public int MergeRounds { get; set; }
             /// <summary>
-            /// number of lines of data read </summary>
+            /// Number of lines of data read </summary>
             public int Lines { get; set; }
             /// <summary>
-            /// time spent merging sorted partitions (in milliseconds) </summary>
+            /// Time spent merging sorted partitions (in milliseconds) </summary>
             public long MergeTime { get; set; }
             /// <summary>
-            /// time spent sorting data (in milliseconds) </summary>
+            /// Time spent sorting data (in milliseconds) </summary>
             public long SortTime { get; set; }
             /// <summary>
-            /// total time spent (in milliseconds) </summary>
+            /// Total time spent (in milliseconds) </summary>
             public long TotalTime { get; set; }
             /// <summary>
-            /// time spent in i/o read (in milliseconds) </summary>
+            /// Time spent in i/o read (in milliseconds) </summary>
             public long ReadTime { get; set; }
             /// <summary>
-            /// read buffer size (in bytes) </summary>
-            public long BufferSize { get; set; }
+            /// Read buffer size (in bytes) </summary>
+            public long BufferSize { get; private set; }
 
             /// <summary>
-            /// create a new SortInfo (with empty statistics) for debugging </summary>
+            /// Create a new <see cref="SortInfo"/> (with empty statistics) for debugging. </summary>
             public SortInfo(OfflineSorter outerInstance)
             {
                 this.outerInstance = outerInstance;
 
-                InitializeInstanceFields();
+                BufferSize = outerInstance.ramBufferSize.bytes;
             }
 
+            /// <summary>
+            /// Returns a string representation of this object.
+            /// </summary>
             public override string ToString()
             {
                 return string.Format(CultureInfo.InvariantCulture, 
@@ -207,8 +205,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Defaults constructor.
         /// </summary>
-        /// <seealso cref= #defaultTempDir() </seealso>
-        /// <seealso cref= BufferSize#automatic() </seealso>
+        /// <seealso cref="DefaultTempDir()"/>
+        /// <seealso cref="BufferSize.Automatic()"/>
         public OfflineSorter()
             : this(DEFAULT_COMPARER, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
         {
@@ -217,8 +215,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Defaults constructor with a custom comparer.
         /// </summary>
-        /// <seealso cref= #defaultTempDir() </seealso>
-        /// <seealso cref= BufferSize#automatic() </seealso>
+        /// <seealso cref="DefaultTempDir()"/>
+        /// <seealso cref="BufferSize.Automatic()"/>
         public OfflineSorter(IComparer<BytesRef> comparer)
             : this(comparer, BufferSize.Automatic(), DefaultTempDir(), MAX_TEMPFILES)
         {
@@ -253,9 +251,7 @@ namespace Lucene.Net.Util
         {
             sortInfo = new SortInfo(this) { TotalTime = Environment.TickCount };
 
-            // LUCENENET NOTE: Can't do this because another thread could recreate the file before we are done here.
-            // and cause this to bomb. We use the existence of the file as an indicator that we are done using it.
-            //output.Delete(); 
+            output.Delete();
 
             var merges = new List<FileInfo>();
             bool success2 = false;
@@ -298,11 +294,11 @@ namespace Lucene.Net.Util
                 {
                     if (success)
                     {
-                        IOUtils.Close(inputStream);
+                        IOUtils.Dispose(inputStream);
                     }
                     else
                     {
-                        IOUtils.CloseWhileHandlingException(inputStream);
+                        IOUtils.DisposeWhileHandlingException(inputStream);
                     }
                 }
 
@@ -345,7 +341,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the default temporary directory. By default, the System's temp folder. If not accessible
-        /// or not available, an IOException is thrown
+        /// or not available, an <see cref="IOException"/> is thrown.
         /// </summary>
         public static DirectoryInfo DefaultTempDir()
         {
@@ -394,7 +390,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Merge a list of sorted temporary files (partitions) into an output file </summary>
+        /// Merge a list of sorted temporary files (partitions) into an output file. </summary>
         internal void MergePartitions(IEnumerable<FileInfo> merges, FileInfo outputFile)
         {
             long start = Environment.TickCount;
@@ -444,11 +440,11 @@ namespace Lucene.Net.Util
                 // happening in closing streams.
                 try
                 {
-                    IOUtils.Close(streams);
+                    IOUtils.Dispose(streams);
                 }
                 finally
                 {
-                    IOUtils.Close(@out);
+                    IOUtils.Dispose(@out);
                 }
             }
         }
@@ -470,7 +466,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Read in a single partition of data </summary>
+        /// Read in a single partition of data. </summary>
         internal int ReadPartition(ByteSequencesReader reader)
         {
             long start = Environment.TickCount;
@@ -504,22 +500,22 @@ namespace Lucene.Net.Util
 
 
         /// <summary>
-        /// Utility class to emit length-prefixed byte[] entries to an output stream for sorting.
-        /// Complementary to <seealso cref="ByteSequencesReader"/>.
+        /// Utility class to emit length-prefixed <see cref="T:byte[]"/> entries to an output stream for sorting.
+        /// Complementary to <see cref="ByteSequencesReader"/>.
         /// </summary>
         public class ByteSequencesWriter : IDisposable
         {
             private readonly DataOutput os;
 
             /// <summary>
-            /// Constructs a ByteSequencesWriter to the provided File </summary>
+            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="FileInfo"/>. </summary>
             public ByteSequencesWriter(FileInfo file)
                 : this(NewBinaryWriterDataOutput(file))
             {
             }
 
             /// <summary>
-            /// Constructs a ByteSequencesWriter to the provided DataOutput </summary>
+            /// Constructs a <see cref="ByteSequencesWriter"/> to the provided <see cref="DataOutput"/>. </summary>
             public ByteSequencesWriter(DataOutput os)
             {
                 this.os = os;
@@ -544,8 +540,8 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Writes a BytesRef. </summary>
-            /// <seealso cref= #write(byte[], int, int) </seealso>
+            /// Writes a <see cref="BytesRef"/>. </summary>
+            /// <seealso cref="Write(byte[], int, int)"/>
             public virtual void Write(BytesRef @ref)
             {
                 Debug.Assert(@ref != null);
@@ -554,7 +550,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Writes a byte array. </summary>
-            /// <seealso cref= #write(byte[], int, int) </seealso>
+            /// <seealso cref="Write(byte[], int, int)"/>
             public virtual void Write(byte[] bytes)
             {
                 Write(bytes, 0, bytes.Length);
@@ -562,8 +558,8 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Writes a byte array.
-            /// <p>
-            /// The length is written as a <code>short</code>, followed
+            /// <para/>
+            /// The length is written as a <see cref="short"/>, followed
             /// by the bytes.
             /// </summary>
             public virtual void Write(byte[] bytes, int off, int len)
@@ -576,7 +572,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Closes the provided <seealso cref="DataOutput"/> if it is <seealso cref="IDisposable"/>.
+            /// Disposes the provided <see cref="DataOutput"/> if it is <see cref="IDisposable"/>.
             /// </summary>
             public void Dispose()
             {
@@ -589,34 +585,34 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Utility class to read length-prefixed byte[] entries from an input.
-        /// Complementary to <seealso cref="ByteSequencesWriter"/>.
+        /// Utility class to read length-prefixed <see cref="T:byte[]"/> entries from an input.
+        /// Complementary to <see cref="ByteSequencesWriter"/>.
         /// </summary>
         public class ByteSequencesReader : IDisposable
         {
             private readonly DataInput inputStream;
 
             /// <summary>
-            /// Constructs a ByteSequencesReader from the provided File </summary>
+            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="FileInfo"/>. </summary>
             public ByteSequencesReader(FileInfo file)
                 : this(new BinaryReaderDataInput(new BinaryReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))))
             {
             }
 
             /// <summary>
-            /// Constructs a ByteSequencesReader from the provided DataInput </summary>
+            /// Constructs a <see cref="ByteSequencesReader"/> from the provided <see cref="DataInput"/>. </summary>
             public ByteSequencesReader(DataInput inputStream)
             {
                 this.inputStream = inputStream;
             }
 
             /// <summary>
-            /// Reads the next entry into the provided <seealso cref="BytesRef"/>. The internal
+            /// Reads the next entry into the provided <see cref="BytesRef"/>. The internal
             /// storage is resized if needed.
             /// </summary>
-            /// <returns> Returns <code>false</code> if EOF occurred when trying to read
-            /// the header of the next sequence. Returns <code>true</code> otherwise. </returns>
-            /// <exception cref="EOFException"> if the file ends before the full sequence is read. </exception>
+            /// <returns> Returns <c>false</c> if EOF occurred when trying to read
+            /// the header of the next sequence. Returns <c>true</c> otherwise. </returns>
+            /// <exception cref="EndOfStreamException"> If the file ends before the full sequence is read. </exception>
             public virtual bool Read(BytesRef @ref)
             {
                 ushort length;
@@ -639,11 +635,10 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Reads the next entry and returns it if successful.
             /// </summary>
-            /// <seealso cref= #read(BytesRef)
-            /// </seealso>
-            /// <returns> Returns <code>null</code> if EOF occurred before the next entry
+            /// <seealso cref="Read(BytesRef)"/>
+            /// <returns> Returns <c>null</c> if EOF occurred before the next entry
             /// could be read. </returns>
-            /// <exception cref="EOFException"> if the file ends before the full sequence is read. </exception>
+            /// <exception cref="EndOfStreamException"> If the file ends before the full sequence is read. </exception>
             public virtual byte[] Read()
             {
                 ushort length;
@@ -663,7 +658,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Closes the provided <seealso cref="DataInput"/> if it is <seealso cref="IDisposable"/>.
+            /// Disposes the provided <see cref="DataInput"/> if it is <see cref="IDisposable"/>.
             /// </summary>
             public void Dispose()
             {

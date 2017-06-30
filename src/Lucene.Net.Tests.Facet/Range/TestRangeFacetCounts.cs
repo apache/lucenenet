@@ -280,7 +280,7 @@ namespace Lucene.Net.Facet.Range
             Assert.AreEqual(11, dsr.Hits.TotalHits);
             Assert.AreEqual("dim=dim path=[] value=11 childCount=2\n  b (8)\n  a (3)\n", dsr.Facets.GetTopChildren(10, "dim").ToString());
             Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n", dsr.Facets.GetTopChildren(10, "field").ToString());
-            IOUtils.Close(tw, tr, td, w, r, d);
+            IOUtils.Dispose(tw, tr, td, w, r, d);
         }
 
         private class DrillSidewaysAnonymousInnerClassHelper : DrillSideways
@@ -349,7 +349,7 @@ namespace Lucene.Net.Facet.Range
 
             Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n", facets.GetTopChildren(10, "field").ToString());
 
-            IOUtils.Close(w, r, d);
+            IOUtils.Dispose(w, r, d);
         }
 
         [Test]
@@ -377,7 +377,7 @@ namespace Lucene.Net.Facet.Range
 
             Assert.AreEqual("dim=field path=[] value=21 childCount=5\n  less than 10 (10)\n  less than or equal to 10 (11)\n  over 90 (9)\n  90 or above (10)\n  over 1000 (0)\n", facets.GetTopChildren(10, "field").ToString());
 
-            IOUtils.Close(w, r, d);
+            IOUtils.Dispose(w, r, d);
         }
 
         [Test]
@@ -570,7 +570,7 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            IOUtils.Close(w, r, dir);
+            IOUtils.Dispose(w, r, dir);
         }
 
         [Test]
@@ -775,7 +775,7 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            IOUtils.Close(w, r, dir);
+            IOUtils.Dispose(w, r, dir);
         }
 
         [Test]
@@ -962,7 +962,7 @@ namespace Lucene.Net.Facet.Range
                 }
             }
 
-            IOUtils.Close(w, r, dir);
+            IOUtils.Dispose(w, r, dir);
         }
 
         // LUCENE-5178
@@ -997,7 +997,7 @@ namespace Lucene.Net.Facet.Range
 
             Assert.AreEqual("dim=field path=[] value=16 childCount=5\n  less than 10 (8)\n  less than or equal to 10 (8)\n  over 90 (8)\n  90 or above (8)\n  over 1000 (0)\n", facets.GetTopChildren(10, "field").ToString());
 
-            IOUtils.Close(w, r, d);
+            IOUtils.Dispose(w, r, d);
         }
 
         [Test]
@@ -1062,7 +1062,7 @@ namespace Lucene.Net.Facet.Range
             Assert.AreEqual(1, dsr.Hits.TotalHits);
             Assert.AreEqual("dim=field path=[] value=3 childCount=6\n  < 1 (0)\n  < 2 (1)\n  < 5 (3)\n  < 10 (3)\n  < 20 (3)\n  < 50 (3)\n", dsr.Facets.GetTopChildren(10, "field").ToString());
 
-            IOUtils.Close(r, writer, dir);
+            IOUtils.Dispose(r, writer, dir);
         }
 
         private class ValueSourceAnonymousInnerClassHelper : ValueSource

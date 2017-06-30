@@ -21,6 +21,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Base class for sorting algorithms implementations.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public abstract class Sorter
@@ -34,19 +35,19 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Compare entries found in slots <code>i</code> and <code>j</code>.
-        ///  The contract for the returned value is the same as
-        ///  <seealso cref="Comparer#compare(Object, Object)"/>.
+        /// Compare entries found in slots <paramref name="i"/> and <paramref name="j"/>.
+        /// The contract for the returned value is the same as
+        /// <see cref="System.Collections.Generic.IComparer{T}.Compare(T, T)"/>.
         /// </summary>
         protected abstract int Compare(int i, int j);
 
         /// <summary>
-        /// Swap values at slots <code>i</code> and <code>j</code>. </summary>
+        /// Swap values at slots <paramref name="i"/> and <paramref name="j"/>. </summary>
         protected abstract void Swap(int i, int j);
 
         /// <summary>
-        /// Sort the slice which starts at <code>from</code> (inclusive) and ends at
-        ///  <code>to</code> (exclusive).
+        /// Sort the slice which starts at <paramref name="from"/> (inclusive) and ends at
+        /// <paramref name="to"/> (exclusive).
         /// </summary>
         public abstract void Sort(int from, int to);
 

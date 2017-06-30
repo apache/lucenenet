@@ -25,10 +25,10 @@ namespace Lucene.Net.Util.Fst
 
     /// <summary>
     /// An FST <see cref="Outputs{T}"/> implementation where each output
-    /// is a non-negative <see cref="long?"/> value.
+    /// is a non-negative <see cref="T:long?"/> value.
     /// <para/>
     /// NOTE: This was PositiveIntOutputs in Lucene
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class PositiveInt32Outputs : Outputs<long?>

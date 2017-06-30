@@ -30,19 +30,19 @@
 namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
-    /// Automaton provider for <code>RegExp.</code>
-    /// <seealso cref="RegExp#toAutomaton(AutomatonProvider)"/>
-    ///
+    /// Automaton provider for <see cref="RegExp"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
+    /// <seealso cref="RegExp.ToAutomaton(IAutomatonProvider)"/>
     public interface IAutomatonProvider
     {
         /// <summary>
         /// Returns automaton of the given name.
         /// </summary>
-        /// <param name="name"> automaton name </param>
-        /// <returns> automaton </returns>
-        /// <exception cref="IOException"> if errors occur </exception>
+        /// <param name="name"> Automaton name. </param>
+        /// <returns> Automaton. </returns>
+        /// <exception cref="System.IO.IOException"> If errors occur. </exception>
         Automaton GetAutomaton(string name);
     }
 }

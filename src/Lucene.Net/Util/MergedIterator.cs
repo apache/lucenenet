@@ -24,24 +24,25 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Provides a merged sorted view from several sorted iterators.
-    /// <p>
-    /// If built with <code>removeDuplicates</code> set to true and an element
+    /// <para/>
+    /// If built with <see cref="removeDuplicates"/> set to <c>true</c> and an element
     /// appears in multiple iterators then it is deduplicated, that is this iterator
     /// returns the sorted union of elements.
-    /// <p>
-    /// If built with <code>removeDuplicates</code> set to false then all elements
+    /// <para/>
+    /// If built with <see cref="removeDuplicates"/> set to <c>false</c> then all elements
     /// in all iterators are returned.
-    /// <p>
+    /// <para/>
     /// Caveats:
-    /// <ul>
-    ///   <li>The behavior is undefined if the iterators are not actually sorted.
-    ///   <li>Null elements are unsupported.
-    ///   <li>If removeDuplicates is set to true and if a single iterator contains
-    ///       duplicates then they will not be deduplicated.
-    ///   <li>When elements are deduplicated it is not defined which one is returned.
-    ///   <li>If removeDuplicates is set to false then the order in which duplicates
-    ///       are returned isn't defined.
-    /// </ul>
+    /// <list type="bullet">
+    ///   <item><description>The behavior is undefined if the iterators are not actually sorted.</description></item>
+    ///   <item><description>Null elements are unsupported.</description></item>
+    ///   <item><description>If <see cref="removeDuplicates"/> is set to <c>true</c> and if a single iterator contains
+    ///       duplicates then they will not be deduplicated.</description></item>
+    ///   <item><description>When elements are deduplicated it is not defined which one is returned.</description></item>
+    ///   <item><description>If <see cref="removeDuplicates"/> is set to <c>false</c> then the order in which duplicates
+    ///       are returned isn't defined.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class MergedIterator<T> : IEnumerator<T>
@@ -150,112 +151,6 @@ namespace Lucene.Net.Util
             }
             numTop = 0;
         }
-
-        /*private T Current;
-        private readonly TermMergeQueue<T> Queue;
-        private readonly SubIterator<T>[] Top;
-        private readonly bool RemoveDuplicates;
-        private int NumTop;
-
-        public MergedIterator(params IEnumerator<T>[] iterators) : this(true, iterators)
-        {
-        }
-
-        public MergedIterator(bool removeDuplicates, params IEnumerator<T>[] iterators)
-        {
-          this.RemoveDuplicates = removeDuplicates;
-          Queue = new TermMergeQueue<T>(iterators.Length);
-          Top = new SubIterator[iterators.Length];
-          int index = 0;
-          foreach (IEnumerator<T> iterator in iterators)
-          {
-            if (iterator.HasNext())
-            {
-              SubIterator<T> sub = new SubIterator<T>();
-              sub.Current = iterator.next();
-              sub.Iterator = iterator;
-              sub.Index = index++;
-              Queue.Add(sub);
-            }
-          }
-        }
-
-        public override bool HasNext()
-        {
-          if (Queue.Size() > 0)
-          {
-            return true;
-          }
-
-          for (int i = 0; i < NumTop; i++)
-          {
-            if (Top[i].Iterator.hasNext())
-            {
-              return true;
-            }
-          }
-          return false;
-        }
-
-        public override T Next()
-        {
-          // restore queue
-          PushTop();
-
-          // gather equal top elements
-          if (Queue.Size() > 0)
-          {
-            PullTop();
-          }
-          else
-          {
-            Current = default(T);
-          }
-          if (Current == null)
-          {
-            throw new NoSuchElementException();
-          }
-          return Current;
-        }
-
-        public override void Remove()
-        {
-          throw new System.NotSupportedException();
-        }
-
-        private void PullTop()
-        {
-          Debug.Assert(NumTop == 0);
-          Top[NumTop++] = Queue.Pop();
-          if (RemoveDuplicates)
-          {
-            // extract all subs from the queue that have the same top element
-            while (Queue.Size() != 0 && Queue.Top().Current.Equals(Top[0].Current))
-            {
-              Top[NumTop++] = Queue.Pop();
-            }
-          }
-          Current = Top[0].Current;
-        }
-
-        private void PushTop()
-        {
-          // call next() on each top, and put back into queue
-          for (int i = 0; i < NumTop; i++)
-          {
-            if (Top[i].Iterator.hasNext())
-            {
-              Top[i].Current = Top[i].Iterator.next();
-              Queue.Add(Top[i]);
-            }
-            else
-            {
-              // no more elements
-              Top[i].Current = default(T);
-            }
-          }
-          NumTop = 0;
-        }*/
 
         private class SubIterator<I>
             where I : IComparable<I>

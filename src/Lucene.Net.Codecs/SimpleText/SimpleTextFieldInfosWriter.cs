@@ -32,16 +32,16 @@ namespace Lucene.Net.Codecs.SimpleText
     using IOUtils = Util.IOUtils;
 
     /// <summary>
-    /// writes plaintext field infos files
+    /// Writes plain text field infos files.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextFieldInfosWriter : FieldInfosWriter
     {
         /// <summary>
-        /// Extension of field infos </summary>
+        /// Extension of field infos. </summary>
         internal const string FIELD_INFOS_EXTENSION = "inf";
 
         internal static readonly BytesRef NUMFIELDS = new BytesRef("number of fields ");
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.SimpleText
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                 }
             }
         }

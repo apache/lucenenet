@@ -21,8 +21,9 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Implements the Poisson approximation for the binomial model for DFR.
+    /// <para/>
     /// @lucene.experimental
-    /// <p>
+    /// <para/>
     /// WARNING: for terms that do not meet the expected random distribution
     /// (e.g. stopwords), this model may give poor performance, such as
     /// abnormally high scores for low tf values.
@@ -33,7 +34,7 @@ namespace Lucene.Net.Search.Similarities
     public class BasicModelP : BasicModel
     {
         /// <summary>
-        /// {@code log2(Math.E)}, precomputed. </summary>
+        /// <c>log2(Math.E)</c>, precomputed. </summary>
         protected internal static double LOG2_E = SimilarityBase.Log2(Math.E);
 
         /// <summary>

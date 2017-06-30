@@ -70,8 +70,7 @@ namespace Lucene.Net.Index
         /// <para>The writer locates all index commits present in the
         /// index directory and calls this method.  The policy may
         /// choose to delete some of the commit points, doing so by
-        /// calling method <seealso cref="IndexCommit#delete delete()"/>
-        /// of <seealso cref="IndexCommit"/>.</para>
+        /// calling method <see cref="IndexCommit.Delete()"/>.</para>
         ///
         /// <para><u>Note:</u> the last CommitPoint is the most recent one,
         /// i.e. the "front index state". Be careful not to delete it,

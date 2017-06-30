@@ -399,7 +399,7 @@ namespace Lucene.Net.Store
                 }
                 finally
                 {
-                    IOUtils.Close(@in, @out);
+                    IOUtils.Dispose(@in, @out);
                 }
 
                 // Lock order: uncacheLock -> this

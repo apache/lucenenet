@@ -113,6 +113,8 @@
     <EmbeddedResource Include="Index\unsupported.24.nocfs.zip" />
     <EmbeddedResource Include="Index\unsupported.29.cfs.zip" />
     <EmbeddedResource Include="Index\unsupported.29.nocfs.zip" />
+    <EmbeddedResource Include="Index\index.48.w-binary-doc-values.zip" />
+    <EmbeddedResource Include="Index\taxo.48.w-binary-doc-values.zip" />
     <None Include="Lucene.Net.snk" />
     <None Include="Lucene.Net.Tests.project.json" />
   </ItemGroup>

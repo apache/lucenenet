@@ -22,13 +22,14 @@ namespace Lucene.Net.Util.Packed
      */
 
     /// <summary>
-    /// A decoder for an <seealso cref="EliasFanoEncoder"/>.
+    /// A decoder for an <see cref="Packed.EliasFanoEncoder"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class EliasFanoDecoder
     {
         /// <summary>
-        /// NOTE: This was LOG2_LONG_SIZE in Lucene
+        /// NOTE: This was LOG2_LONG_SIZE in Lucene.
         /// </summary>
         private static readonly int LOG2_INT64_SIZE = Number.NumberOfTrailingZeros((sizeof(long) * 8));
 
@@ -43,7 +44,7 @@ namespace Lucene.Net.Util.Packed
         private readonly long indexMask;
 
         /// <summary>
-        /// Construct a decoder for a given <seealso cref="EliasFanoEncoder"/>.
+        /// Construct a decoder for a given <see cref="Packed.EliasFanoEncoder"/>.
         /// The decoding index is set to just before the first encoded value.
         /// </summary>
         public EliasFanoDecoder(EliasFanoEncoder efEncoder)
@@ -73,13 +74,13 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// The current decoding index.
-        /// The first value encoded by <seealso cref="EliasFanoEncoder#encodeNext"/> has index 0.
+        /// The first value encoded by <see cref="EliasFanoEncoder.EncodeNext(long)"/> has index 0.
         /// Only valid directly after
-        /// <seealso cref="#nextValue"/>, <seealso cref="#advanceToValue"/>,
-        /// <seealso cref="#previousValue"/>, or <seealso cref="#backToValue"/>
-        /// returned another value than <seealso cref="#NO_MORE_VALUES"/>,
-        /// or <seealso cref="#advanceToIndex"/> returned true. </summary>
-        /// <returns> The decoding index of the last decoded value, or as last set by <seealso cref="#advanceToIndex"/>. </returns>
+        /// <see cref="NextValue()"/>, <see cref="AdvanceToValue(long)"/>,
+        /// <see cref="PreviousValue()"/>, or <see cref="BackToValue(long)"/>
+        /// returned another value than <see cref="NO_MORE_VALUES"/>,
+        /// or <see cref="AdvanceToIndex(long)"/> returned <c>true</c>. </summary>
+        /// <returns> The decoding index of the last decoded value, or as last set by <see cref="AdvanceToIndex(long)"/>. </returns>
         public virtual long CurrentIndex()
         {
             if (efIndex < 0)
@@ -95,9 +96,10 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// The value at the current decoding index.
-        /// Only valid when <seealso cref="#currentIndex"/> would return a valid result.
-        /// <br>this is only intended for use after <seealso cref="#advanceToIndex"/> returned true. </summary>
-        /// <returns> The value encoded at <seealso cref="#currentIndex"/>. </returns>
+        /// Only valid when <see cref="CurrentIndex()"/> would return a valid result.
+        /// <para/>
+        /// This is only intended for use after <see cref="AdvanceToIndex(long)"/> returned <c>true</c>. </summary>
+        /// <returns> The value encoded at <see cref="CurrentIndex()"/>. </returns>
         public virtual long CurrentValue()
         {
             return CombineHighLowValues(CurrentHighValue(), CurrentLowValue());
@@ -110,7 +112,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// See also <seealso cref="EliasFanoEncoder#packValue"/> </summary>
+        /// See also <see cref="EliasFanoEncoder.PackValue(long, long[], int, long)"/> </summary>
         private static long UnPackValue(long[] longArray, int numBits, long packIndex, long bitsMask)
         {
             if (numBits == 0)
@@ -136,8 +138,8 @@ namespace Lucene.Net.Util.Packed
             return UnPackValue(efEncoder.lowerLongs, efEncoder.numLowBits, efIndex, efEncoder.lowerBitsMask);
         }
 
-        ///  <returns> The given highValue shifted left by the number of low bits from by the EliasFanoSequence,
-        ///           logically OR-ed with the given lowValue. </returns>
+        ///  <returns> The given <paramref name="highValue"/> shifted left by the number of low bits from by the EliasFanoSequence,
+        ///           logically OR-ed with the given <paramref name="lowValue"/>. </returns>
         private long CombineHighLowValues(long highValue, long lowValue)
         {
             return (highValue << efEncoder.numLowBits) | lowValue;
@@ -168,7 +170,7 @@ namespace Lucene.Net.Util.Packed
             setBitForIndex = -1;
         }
 
-        /// <returns> the number of bits in a long after (setBitForIndex modulo Long.SIZE) </returns>
+        /// <returns> The number of bits in a <see cref="long"/> after (<see cref="setBitForIndex"/> modulo <c>sizeof(long)</c>). </returns>
         private int CurrentRightShift
         {
             get
@@ -179,9 +181,9 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Increment efIndex and setBitForIndex and
-        /// shift curHighLong so that it does not contain the high bits before setBitForIndex. </summary>
-        /// <returns> true iff efIndex still smaller than numEncoded. </returns>
+        /// Increment <see cref="efIndex"/> and <see cref="setBitForIndex"/> and
+        /// shift <see cref="curHighLong"/> so that it does not contain the high bits before <see cref="setBitForIndex"/>. </summary>
+        /// <returns> <c>true</c> if <see cref="efIndex"/> still smaller than <see cref="numEncoded"/>. </returns>
         private bool ToAfterCurrentHighBit()
         {
             efIndex += 1;
@@ -197,9 +199,9 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// The current high long has been determined to not contain the set bit that is needed.
-        /// Increment setBitForIndex to the next high long and set curHighLong accordingly.
+        /// Increment <see cref="setBitForIndex"/> to the next high long and set <see cref="curHighLong"/> accordingly.
         /// <para/>
-        /// NOTE: this was toNextHighLong() in Lucene
+        /// NOTE: this was toNextHighLong() in Lucene.
         /// </summary>
         private void ToNextHighInt64()
         {
@@ -210,8 +212,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// setBitForIndex and efIndex have just been incremented, scan to the next high set bit
-        ///  by incrementing setBitForIndex, and by setting curHighLong accordingly.
+        /// <see cref="setBitForIndex"/> and <see cref="efIndex"/> have just been incremented, scan to the next high set bit
+        /// by incrementing <see cref="setBitForIndex"/>, and by setting <see cref="curHighLong"/> accordingly.
         /// </summary>
         private void ToNextHighValue()
         {
@@ -223,9 +225,9 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// setBitForIndex and efIndex have just been incremented, scan to the next high set bit
-        ///  by incrementing setBitForIndex, and by setting curHighLong accordingly. </summary>
-        ///  <returns> the next encoded high value. </returns>
+        /// <see cref="setBitForIndex"/> and <see cref="efIndex"/> have just been incremented, scan to the next high set bit
+        /// by incrementing <see cref="setBitForIndex"/>, and by setting <see cref="curHighLong"/> accordingly. </summary>
+        /// <returns> The next encoded high value. </returns>
         private long NextHighValue()
         {
             ToNextHighValue();
@@ -234,7 +236,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// If another value is available after the current decoding index, return this value and
-        /// and increase the decoding index by 1. Otherwise return <seealso cref="#NO_MORE_VALUES"/>.
+        /// and increase the decoding index by 1. Otherwise return <see cref="NO_MORE_VALUES"/>.
         /// </summary>
         public virtual long NextValue()
         {
@@ -247,11 +249,11 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Advance the decoding index to a given index.
-        /// and return <code>true</code> iff it is available.
-        /// <br>See also <seealso cref="#currentValue"/>.
-        /// <br>The current implementation does not use the index on the upper bit zero bit positions.
-        /// <br>Note: there is currently no implementation of <code>backToIndex</code>.
+        /// Advance the decoding index to a given <paramref name="index"/>.
+        /// and return <c>true</c> iff it is available.
+        /// <para/>See also <see cref="CurrentValue()"/>.
+        /// <para/>The current implementation does not use the index on the upper bit zero bit positions.
+        /// <para/>Note: there is currently no implementation of <c>BackToIndex()</c>.
         /// </summary>
         public virtual bool AdvanceToIndex(long index)
         {
@@ -289,9 +291,10 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Given a target value, advance the decoding index to the first bigger or equal value
-        /// and return it if it is available. Otherwise return <seealso cref="#NO_MORE_VALUES"/>.
-        /// <br>The current implementation uses the index on the upper zero bit positions.
+        /// Given a <paramref name="target"/> value, advance the decoding index to the first bigger or equal value
+        /// and return it if it is available. Otherwise return <see cref="NO_MORE_VALUES"/>.
+        /// <para/>
+        /// The current implementation uses the index on the upper zero bit positions.
         /// </summary>
         public virtual long AdvanceToValue(long target)
         {
@@ -425,7 +428,7 @@ namespace Lucene.Net.Util.Packed
             setBitForIndex = ((long)((ulong)efEncoder.lastEncoded >> efEncoder.numLowBits)) + numEncoded;
         }
 
-        /// <returns> the number of bits in a long before (setBitForIndex modulo Long.SIZE) </returns>
+        /// <returns> the number of bits in a long before (<see cref="setBitForIndex"/> modulo <c>sizeof(long)</c>) </returns>
         private int CurrentLeftShift
         {
             get
@@ -436,9 +439,9 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Decrement efindex and setBitForIndex and
-        /// shift curHighLong so that it does not contain the high bits after setBitForIndex. </summary>
-        /// <returns> true iff efindex still >= 0 </returns>
+        /// Decrement <see cref="efIndex"/> and <see cref="setBitForIndex"/> and
+        /// shift <see cref="curHighLong"/> so that it does not contain the high bits after <see cref="setBitForIndex"/>. </summary>
+        /// <returns> <c>true</c> if <see cref="efIndex"/> still >= 0. </returns>
         private bool ToBeforeCurrentHighBit()
         {
             efIndex -= 1;
@@ -454,9 +457,9 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// The current high long has been determined to not contain the set bit that is needed.
-        /// Decrement setBitForIndex to the previous high long and set curHighLong accordingly.
+        /// Decrement <see cref="setBitForIndex"/> to the previous high long and set <see cref="curHighLong"/> accordingly.
         /// <para/>
-        /// NOTE: this was toPreviousHighLong() in Lucene
+        /// NOTE: this was toPreviousHighLong() in Lucene.
         /// </summary>
         private void ToPreviousHighInt64()
         {
@@ -467,9 +470,9 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// setBitForIndex and efIndex have just been decremented, scan to the previous high set bit
-        ///  by decrementing setBitForIndex and by setting curHighLong accordingly. </summary>
-        ///  <returns> the previous encoded high value. </returns>
+        /// <see cref="setBitForIndex"/> and <see cref="efIndex"/> have just been decremented, scan to the previous high set bit
+        /// by decrementing <see cref="setBitForIndex"/> and by setting <see cref="curHighLong"/> accordingly. </summary>
+        /// <returns> The previous encoded high value. </returns>
         private long PreviousHighValue()
         {
             while (curHighLong == 0L)
@@ -482,7 +485,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// If another value is available before the current decoding index, return this value
-        /// and decrease the decoding index by 1. Otherwise return <seealso cref="#NO_MORE_VALUES"/>.
+        /// and decrease the decoding index by 1. Otherwise return <see cref="NO_MORE_VALUES"/>.
         /// </summary>
         public virtual long PreviousValue()
         {
@@ -495,11 +498,13 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// setBitForIndex and efIndex have just been decremented, scan backward to the high set bit
-        ///  of at most a given high value
-        ///  by decrementing setBitForIndex and by setting curHighLong accordingly.
-        /// <br>The current implementation does not use the index on the upper zero bit positions. </summary>
-        ///  <returns> the largest encoded high value that is at most the given one. </returns>
+        /// <see cref="setBitForIndex"/> and <see cref="efIndex"/> have just been decremented, scan backward to the high set bit
+        /// of at most a given high value
+        /// by decrementing <see cref="setBitForIndex"/> and by setting <see cref="curHighLong"/> accordingly.
+        /// <para/>
+        /// The current implementation does not use the index on the upper zero bit positions. 
+        /// </summary>
+        /// <returns> The largest encoded high value that is at most the given one. </returns>
         private long BackToHighValue(long highTarget)
         {
             /* CHECKME: Add using the index as in advanceToHighValue */
@@ -534,8 +539,9 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Given a target value, go back to the first smaller or equal value
-        /// and return it if it is available. Otherwise return <seealso cref="#NO_MORE_VALUES"/>.
-        /// <br>The current implementation does not use the index on the upper zero bit positions.
+        /// and return it if it is available. Otherwise return <see cref="NO_MORE_VALUES"/>.
+        /// <para/>
+        /// The current implementation does not use the index on the upper zero bit positions.
         /// </summary>
         public virtual long BackToValue(long target)
         {

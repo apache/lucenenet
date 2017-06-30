@@ -30,7 +30,6 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// A query that matches all documents.
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

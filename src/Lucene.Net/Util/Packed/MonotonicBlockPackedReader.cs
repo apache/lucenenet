@@ -24,7 +24,8 @@ namespace Lucene.Net.Util.Packed
 
     /// <summary>
     /// Provides random access to a stream written with
-    /// <seealso cref="MonotonicBlockPackedWriter"/>.
+    /// <see cref="MonotonicBlockPackedWriter"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class MonotonicBlockPackedReader : Int64Values
@@ -81,11 +82,13 @@ namespace Lucene.Net.Util.Packed
             Debug.Assert(index >= 0 && index < valueCount);
             int block = (int)((long)((ulong)index >> blockShift));
             int idx = (int)(index & blockMask);
-            return minValues[block] + (long)(idx * averages[block]) + BlockPackedReaderIterator.ZigZagDecode(subReaders[block].Get(idx));
+            // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+            return minValues[block] + (long)(float)(idx * averages[block]) + BlockPackedReaderIterator.ZigZagDecode(subReaders[block].Get(idx));
         }
 
         /// <summary>
         /// Returns the number of values.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public long Count
@@ -94,7 +97,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Returns the approximate RAM bytes used </summary>
+        /// Returns the approximate RAM bytes used. </summary>
         public long RamBytesUsed()
         {
             long sizeInBytes = 0;

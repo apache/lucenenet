@@ -27,15 +27,15 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Class that tracks changes to a delegated
-    ///  IndexWriter, used by {@link
-    ///  ControlledRealTimeReopenThread} to ensure specific
-    ///  changes are visible.   Create this class (passing your
-    ///  IndexWriter), and then pass this class to {@link
-    ///  ControlledRealTimeReopenThread}.
-    ///  Be sure to make all changes via the
-    ///  TrackingIndexWriter, otherwise {@link
-    ///  ControlledRealTimeReopenThread} won't know about the changes.
-    ///
+    /// <see cref="Index.IndexWriter"/>, used by 
+    /// <see cref="Search.ControlledRealTimeReopenThread{T}"/> to ensure specific
+    /// changes are visible.   Create this class (passing your
+    /// <see cref="Index.IndexWriter"/>), and then pass this class to
+    /// <see cref="Search.ControlledRealTimeReopenThread{T}"/>.
+    /// Be sure to make all changes via the
+    /// <see cref="TrackingIndexWriter"/>, otherwise
+    /// <see cref="Search.ControlledRealTimeReopenThread{T}"/> won't know about the changes.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -47,8 +47,8 @@ namespace Lucene.Net.Index
         private readonly AtomicInt64 indexingGen = new AtomicInt64(1);
 
         /// <summary>
-        /// Create a {@code TrackingIndexWriter} wrapping the
-        ///  provided <seealso cref="IndexWriter"/>.
+        /// Create a <see cref="TrackingIndexWriter"/> wrapping the
+        ///  provided <see cref="Index.IndexWriter"/>.
         /// </summary>
         public TrackingIndexWriter(IndexWriter writer)
         {
@@ -56,9 +56,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls {@link
-        ///  IndexWriter#updateDocument(Term,Iterable,Analyzer)}
-        ///  and returns the generation that reflects this change.
+        /// Calls 
+        /// <see cref="IndexWriter.UpdateDocument(Term, IEnumerable{IIndexableField}, Analyzer)"/>
+        /// and returns the generation that reflects this change.
         /// </summary>
         public virtual long UpdateDocument(Term t, IEnumerable<IIndexableField> d, Analyzer a)
         {
@@ -68,9 +68,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls {@link
-        ///  IndexWriter#updateDocument(Term,Iterable)} and
-        ///  returns the generation that reflects this change.
+        /// Calls 
+        /// <see cref="IndexWriter.UpdateDocument(Term, IEnumerable{IIndexableField})"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long UpdateDocument(Term t, IEnumerable<IIndexableField> d)
         {
@@ -80,9 +80,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls {@link
-        ///  IndexWriter#updateDocuments(Term,Iterable,Analyzer)}
-        ///  and returns the generation that reflects this change.
+        /// Calls 
+        /// <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analyzer)"/>
+        /// and returns the generation that reflects this change.
         /// </summary>
         public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer a)
         {
@@ -92,9 +92,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls {@link
-        ///  IndexWriter#updateDocuments(Term,Iterable)} and returns
-        ///  the generation that reflects this change.
+        /// Calls
+        /// <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}})"/> and returns
+        /// the generation that reflects this change.
         /// </summary>
         public virtual long UpdateDocuments(Term t, IEnumerable<IEnumerable<IIndexableField>> docs)
         {
@@ -104,8 +104,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#deleteDocuments(Term)"/> and
-        ///  returns the generation that reflects this change.
+        /// Calls <see cref="IndexWriter.DeleteDocuments(Term)"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long DeleteDocuments(Term t)
         {
@@ -115,8 +115,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#deleteDocuments(Term...)"/> and
-        ///  returns the generation that reflects this change.
+        /// Calls <see cref="IndexWriter.DeleteDocuments(Term[])"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long DeleteDocuments(params Term[] terms)
         {
@@ -126,8 +126,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#deleteDocuments(Query)"/> and
-        ///  returns the generation that reflects this change.
+        /// Calls <see cref="IndexWriter.DeleteDocuments(Query)"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long DeleteDocuments(Query q)
         {
@@ -137,8 +137,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#deleteDocuments(Query...)"/>
-        ///  and returns the generation that reflects this change.
+        /// Calls <see cref="IndexWriter.DeleteDocuments(Query[])"/>
+        /// and returns the generation that reflects this change.
         /// </summary>
         public virtual long DeleteDocuments(params Query[] queries)
         {
@@ -148,8 +148,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#deleteAll"/> and returns the
-        ///  generation that reflects this change.
+        /// Calls <see cref="IndexWriter.DeleteAll()"/> and returns the
+        /// generation that reflects this change.
         /// </summary>
         public virtual long DeleteAll()
         {
@@ -159,9 +159,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls {@link
-        ///  IndexWriter#addDocument(Iterable,Analyzer)} and
-        ///  returns the generation that reflects this change.
+        /// Calls 
+        /// <see cref="IndexWriter.AddDocument(IEnumerable{IIndexableField}, Analyzer)"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long AddDocument(IEnumerable<IIndexableField> d, Analyzer a)
         {
@@ -171,9 +171,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls {@link
-        ///  IndexWriter#addDocuments(Iterable,Analyzer)} and
-        ///  returns the generation that reflects this change.
+        /// Calls 
+        /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analyzer)"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs, Analyzer a)
         {
@@ -183,8 +183,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#addDocument(Iterable)"/>
-        ///  and returns the generation that reflects this change.
+        /// Calls <see cref="IndexWriter.AddDocument(IEnumerable{IIndexableField})"/>
+        /// and returns the generation that reflects this change.
         /// </summary>
         public virtual long AddDocument(IEnumerable<IIndexableField> d)
         {
@@ -194,8 +194,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#addDocuments(Iterable)"/> and
-        ///  returns the generation that reflects this change.
+        /// Calls <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}})"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long AddDocuments(IEnumerable<IEnumerable<IIndexableField>> docs)
         {
@@ -205,8 +205,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#addIndexes(Directory...)"/> and
-        ///  returns the generation that reflects this change.
+        /// Calls <see cref="IndexWriter.AddIndexes(Directory[])"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long AddIndexes(params Directory[] dirs)
         {
@@ -216,8 +216,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Calls <seealso cref="IndexWriter#addIndexes(IndexReader...)"/>
-        ///  and returns the generation that reflects this change.
+        /// Calls <see cref="IndexWriter.AddIndexes(IndexReader[])"/>
+        /// and returns the generation that reflects this change.
         /// </summary>
         public virtual long AddIndexes(params IndexReader[] readers)
         {
@@ -237,7 +237,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return the wrapped <seealso cref="IndexWriter"/>. </summary>
+        /// Return the wrapped <see cref="Index.IndexWriter"/>. </summary>
         public virtual IndexWriter IndexWriter
         {
             get
@@ -248,7 +248,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Return and increment current gen.
-        ///
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public virtual long GetAndIncrementGeneration()
@@ -257,9 +257,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Cals {@link
-        ///  IndexWriter#tryDeleteDocument(IndexReader,int)} and
-        ///  returns the generation that reflects this change.
+        /// Cals
+        /// <see cref="IndexWriter.TryDeleteDocument(IndexReader, int)"/> and
+        /// returns the generation that reflects this change.
         /// </summary>
         public virtual long TryDeleteDocument(IndexReader reader, int docID)
         {

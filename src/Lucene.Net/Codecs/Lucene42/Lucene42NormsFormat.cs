@@ -23,25 +23,25 @@ namespace Lucene.Net.Codecs.Lucene42
 
     /// <summary>
     /// Lucene 4.2 score normalization format.
-    /// <p>
-    /// NOTE: this uses the same format as <seealso cref="Lucene42DocValuesFormat"/>
+    /// <para/>
+    /// NOTE: this uses the same format as <see cref="Lucene42DocValuesFormat"/>
     /// Numeric DocValues, but with different file extensions, and passing
-    /// <seealso cref="PackedInt32s#FASTEST"/> for uncompressed encoding: trading off
+    /// <see cref="PackedInt32s.FASTEST"/> for uncompressed encoding: trading off
     /// space for performance.
-    /// <p>
+    /// <para/>
     /// Files:
-    /// <ul>
-    ///   <li><tt>.nvd</tt>: DocValues data</li>
-    ///   <li><tt>.nvm</tt>: DocValues metadata</li>
-    /// </ul> </summary>
-    /// <seealso cref= Lucene42DocValuesFormat </seealso>
+    /// <list type="bullet">
+    ///   <item><description><c>.nvd</c>: DocValues data</description></item>
+    ///   <item><description><c>.nvm</c>: DocValues metadata</description></item>
+    /// </list>
+    /// </summary>
+    /// <seealso cref="Lucene42DocValuesFormat"/>
     public class Lucene42NormsFormat : NormsFormat
     {
         internal readonly float acceptableOverheadRatio;
 
         /// <summary>
-        /// Calls {@link #Lucene42NormsFormat(float)
-        /// Lucene42DocValuesFormat(PackedInts.FASTEST)}
+        /// Calls <c>Lucene42DocValuesFormat(PackedInt32s.FASTEST)</c> (<see cref="Lucene42NormsFormat(float)"/>).
         /// </summary>
         public Lucene42NormsFormat()
             : this(PackedInt32s.FASTEST)
@@ -50,12 +50,13 @@ namespace Lucene.Net.Codecs.Lucene42
         }
 
         /// <summary>
-        /// Creates a new Lucene42DocValuesFormat with the specified
-        /// <code>acceptableOverheadRatio</code> for NumericDocValues. </summary>
-        /// <param name="acceptableOverheadRatio"> compression parameter for numerics.
-        ///        Currently this is only used when the number of unique values is small.
-        ///
-        /// @lucene.experimental </param>
+        /// Creates a new <see cref="Lucene42DocValuesFormat"/> with the specified
+        /// <paramref name="acceptableOverheadRatio"/> for <see cref="Index.NumericDocValues"/>. 
+        /// <para/>
+        /// @lucene.experimental
+        /// </summary>
+        /// <param name="acceptableOverheadRatio"> Compression parameter for numerics.
+        ///        Currently this is only used when the number of unique values is small.</param>
         public Lucene42NormsFormat(float acceptableOverheadRatio)
         {
             this.acceptableOverheadRatio = acceptableOverheadRatio;

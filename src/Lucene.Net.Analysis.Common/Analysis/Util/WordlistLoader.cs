@@ -64,7 +64,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
             return result;
         }
@@ -123,7 +123,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
             return result;
         }
@@ -134,9 +134,9 @@ namespace Lucene.Net.Analysis.Util
         /// <para>
         /// The snowball format is the following:
         /// <list type="bullet">
-        ///     <item>Lines may contain multiple words separated by whitespace.</item>
-        ///     <item>The comment character is the vertical line (&#124;).</item>
-        ///     <item>Lines may contain trailing comments.</item>
+        ///     <item><description>Lines may contain multiple words separated by whitespace.</description></item>
+        ///     <item><description>The comment character is the vertical line (&#124;).</description></item>
+        ///     <item><description>Lines may contain trailing comments.</description></item>
         /// </list>
         /// </para>
         /// </summary>
@@ -167,7 +167,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
             return result;
         }
@@ -177,9 +177,9 @@ namespace Lucene.Net.Analysis.Util
         /// <para>
         /// The snowball format is the following:
         /// <list type="bullet">
-        ///     <item>Lines may contain multiple words separated by whitespace.</item>
-        ///     <item>The comment character is the vertical line (&#124;).</item>
-        ///     <item>Lines may contain trailing comments.</item>
+        ///     <item><description>Lines may contain multiple words separated by whitespace.</description></item>
+        ///     <item><description>The comment character is the vertical line (&#124;).</description></item>
+        ///     <item><description>Lines may contain trailing comments.</description></item>
         /// </list>
         /// </para>
         /// </summary>
@@ -212,7 +212,7 @@ namespace Lucene.Net.Analysis.Util
             }
             finally
             {
-                IOUtils.Close(reader);
+                IOUtils.Dispose(reader);
             }
             return result;
         }

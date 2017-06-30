@@ -140,7 +140,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(FreqOut, proxOut);
+                    IOUtils.DisposeWhileHandlingException(FreqOut, proxOut);
                 }
             }
 

@@ -27,13 +27,13 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Estimates the size (memory representation) of Java objects.
+    /// Estimates the size (memory representation) of .NET objects.
+    /// <para/>
+    /// @lucene.internal
     /// </summary>
-    /// <seealso cref= #sizeOf(Object) </seealso>
-    /// <seealso cref= #shallowSizeOf(Object) </seealso>
-    /// <seealso cref= #shallowSizeOfInstance(Class)
-    ///
-    /// @lucene.internal </seealso>
+    /// <seealso cref="SizeOf(object)"/>
+    /// <seealso cref="ShallowSizeOf(object)"/>
+    /// <seealso cref="ShallowSizeOfInstance(Type)"/>
     public sealed class RamUsageEstimator
     {
         ///// <summary>
@@ -84,7 +84,7 @@ namespace Lucene.Net.Util
         public const int NUM_BYTES_DOUBLE = 8;
 
         /// <summary>
-        /// Number of bytes this jvm uses to represent an object reference.
+        /// Number of bytes this .NET runtime uses to represent an object reference.
         /// </summary>
         public static readonly int NUM_BYTES_OBJECT_REF;
 
@@ -99,7 +99,7 @@ namespace Lucene.Net.Util
         public static readonly int NUM_BYTES_ARRAY_HEADER;
 
         /// <summary>
-        /// A constant specifying the object alignment boundary inside the JVM. Objects will
+        /// A constant specifying the object alignment boundary inside the .NET runtime. Objects will
         /// always take a full multiple of this constant, possibly wasting some space.
         /// </summary>
         public static readonly int NUM_BYTES_OBJECT_ALIGNMENT;
@@ -234,14 +234,14 @@ namespace Lucene.Net.Util
             //JVM_INFO_STRING = "[JVM: " + Constants.JVM_NAME + ", " + Constants.JVM_VERSION + ", " + Constants.JVM_VENDOR + ", " + Constants.JAVA_VENDOR + ", " + Constants.JAVA_VERSION + "]";
         }
 
-        /// <summary>
-        /// A handle to <code>sun.misc.Unsafe</code>.
-        /// </summary>
+        ///// <summary>
+        ///// A handle to <code>sun.misc.Unsafe</code>.
+        ///// </summary>
         //private static readonly object TheUnsafe;
 
-        /// <summary>
-        /// A handle to <code>sun.misc.Unsafe#fieldOffset(Field)</code>.
-        /// </summary>
+        ///// <summary>
+        ///// A handle to <code>sun.misc.Unsafe#fieldOffset(Field)</code>.
+        ///// </summary>
         //private static readonly Method ObjectFieldOffsetMethod;
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace Lucene.Net.Util
         //}
 
         /// <summary>
-        /// Aligns an object size to be the next multiple of <seealso cref="#NUM_BYTES_OBJECT_ALIGNMENT"/>.
+        /// Aligns an object size to be the next multiple of <see cref="NUM_BYTES_OBJECT_ALIGNMENT"/>.
         /// </summary>
         public static long AlignObjectSize(long size)
         {
@@ -285,7 +285,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the size in bytes of the byte[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:byte[]"/> object. </summary>
         // LUCENENET specific overload for CLS compliance
         public static long SizeOf(byte[] arr)
         {
@@ -293,7 +293,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the size in bytes of the sbyte[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:sbyte[]"/> object. </summary>
         [CLSCompliant(false)]
         public static long SizeOf(sbyte[] arr)
         {
@@ -301,62 +301,86 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the size in bytes of the boolean[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:bool[]"/> object. </summary>
         public static long SizeOf(bool[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + arr.Length);
         }
 
         /// <summary>
-        /// Returns the size in bytes of the char[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:char[]"/> object. </summary>
         public static long SizeOf(char[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_CHAR * arr.Length);
         }
 
         /// <summary>
-        /// Returns the size in bytes of the short[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:short[]"/> object. </summary>
         public static long SizeOf(short[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT16 * arr.Length);
         }
 
         /// <summary>
-        /// Returns the size in bytes of the int[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:int[]"/> object. </summary>
         public static long SizeOf(int[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT32 * arr.Length);
         }
 
         /// <summary>
-        /// Returns the size in bytes of the float[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:float[]"/> object. </summary>
         public static long SizeOf(float[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_SINGLE * arr.Length);
         }
 
         /// <summary>
-        /// Returns the size in bytes of the long[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:long[]"/> object. </summary>
         public static long SizeOf(long[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT64 * arr.Length);
         }
 
         /// <summary>
-        /// Returns the size in bytes of the double[] object. </summary>
+        /// Returns the size in bytes of the <see cref="T:double[]"/> object. </summary>
         public static long SizeOf(double[] arr)
         {
             return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_DOUBLE * arr.Length);
         }
 
         /// <summary>
+        /// Returns the size in bytes of the <see cref="T:ulong[]"/> object. </summary>
+        [CLSCompliant(false)]
+        public static long SizeOf(ulong[] arr)
+        {
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT64 * arr.Length);
+        }
+
+        /// <summary>
+        /// Returns the size in bytes of the <see cref="T:uint[]"/> object. </summary>
+        [CLSCompliant(false)]
+        public static long SizeOf(uint[] arr)
+        {
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT32 * arr.Length);
+        }
+
+        /// <summary>
+        /// Returns the size in bytes of the <see cref="T:ushort[]"/> object. </summary>
+        [CLSCompliant(false)]
+        public static long SizeOf(ushort[] arr)
+        {
+            return AlignObjectSize((long)NUM_BYTES_ARRAY_HEADER + (long)NUM_BYTES_INT16 * arr.Length);
+        }
+
+        /// <summary>
         /// Estimates the RAM usage by the given object. It will
         /// walk the object tree and sum up all referenced objects.
         ///
-        /// <p><b>Resource Usage:</b> this method internally uses a set of
+        /// <para><b>Resource Usage:</b> this method internally uses a set of
         /// every object seen during traversals so it does allocate memory
         /// (it isn't side-effect free). After the method exits, this memory
-        /// should be GCed.</p>
+        /// should be GCed.</para>
         /// </summary>
         public static long SizeOf(object obj)
         {
@@ -367,8 +391,8 @@ namespace Lucene.Net.Util
         /// Estimates a "shallow" memory usage of the given object. For arrays, this will be the
         /// memory taken by array storage (no subreferences will be followed). For objects, this
         /// will be the memory taken by the fields.
-        ///
-        /// JVM object alignments are also applied.
+        /// <para/>
+        /// .NET object alignments are also applied.
         /// </summary>
         public static long ShallowSizeOf(object obj)
         {
@@ -389,11 +413,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the shallow instance size in bytes an instance of the given class would occupy.
-        /// this works with all conventional classes and primitive types, but not with arrays
+        /// This works with all conventional classes and primitive types, but not with arrays
         /// (the size then depends on the number of elements and varies from object to object).
         /// </summary>
-        /// <seealso cref= #shallowSizeOf(Object) </seealso>
-        /// <exception cref="IllegalArgumentException"> if {@code clazz} is an array class.  </exception>
+        /// <seealso cref="ShallowSizeOf(object)"/>
+        /// <exception cref="ArgumentException"> if <paramref name="clazz"/> is an array class. </exception>
         public static long ShallowSizeOfInstance(Type clazz)
         {
             if (clazz.IsArray)
@@ -428,7 +452,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return shallow size of any <code>array</code>.
+        /// Return shallow size of any <paramref name="array"/>.
         /// </summary>
         private static long ShallowSizeOfArray(Array array)
         {
@@ -597,11 +621,11 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this method returns the maximum representation size of an object. <code>sizeSoFar</code>
-        /// is the object's size measured so far. <code>f</code> is the field being probed.
+        /// This method returns the maximum representation size of an object. <paramref name="sizeSoFar"/>
+        /// is the object's size measured so far. <paramref name="f"/> is the field being probed.
         ///
-        /// <p>The returned offset will be the maximum of whatever was measured so far and
-        /// <code>f</code> field's offset and representation size (unaligned).
+        /// <para/>The returned offset will be the maximum of whatever was measured so far and
+        /// <paramref name="f"/> field's offset and representation size (unaligned).
         /// </summary>
         private static long AdjustForField(long sizeSoFar, FieldInfo f)
         {
@@ -629,7 +653,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns <code>size</code> in human-readable units (GB, MB, KB or bytes).
+        /// Returns <c>size</c> in human-readable units (GB, MB, KB or bytes).
         /// </summary>
         public static string HumanReadableUnits(long bytes)
         {
@@ -637,7 +661,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns <code>size</code> in human-readable units (GB, MB, KB or bytes).
+        /// Returns <c>size</c> in human-readable units (GB, MB, KB or bytes).
         /// </summary>
         public static string HumanReadableUnits(long bytes, IFormatProvider df)
         {
@@ -661,8 +685,8 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Return a human-readable size of a given object. </summary>
-        /// <seealso cref= #sizeOf(Object) </seealso>
-        /// <seealso cref= #humanReadableUnits(long) </seealso>
+        /// <seealso cref="SizeOf(object)"/>
+        /// <seealso cref="HumanReadableUnits(long)"/>
         public static string HumanSizeOf(object @object)
         {
             return HumanReadableUnits(SizeOf(@object));
@@ -670,10 +694,10 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// An identity hash set implemented using open addressing. No null keys are allowed.
-        ///
+        /// <para/>
         /// TODO: If this is useful outside this class, make it public - needs some work
         /// </summary>
-        public sealed class IdentityHashSet<KType> : IEnumerable<KType>
+        internal sealed class IdentityHashSet<KType> : IEnumerable<KType>
         {
             /// <summary>
             /// Default load factor.
@@ -714,8 +738,8 @@ namespace Lucene.Net.Util
             private int resizeThreshold;
 
             /// <summary>
-            /// Creates a hash set with the default capacity of 16.
-            /// load factor of {@value #DEFAULT_LOAD_FACTOR}. `
+            /// Creates a hash set with the default capacity of 16,
+            /// load factor of <see cref="DEFAULT_LOAD_FACTOR"/>. 
             /// </summary>
             public IdentityHashSet()
                 : this(16, DEFAULT_LOAD_FACTOR)
@@ -724,7 +748,7 @@ namespace Lucene.Net.Util
 
             /// <summary>
             /// Creates a hash set with the given capacity, load factor of
-            /// {@value #DEFAULT_LOAD_FACTOR}.
+            /// <see cref="DEFAULT_LOAD_FACTOR"/>.
             /// </summary>
             public IdentityHashSet(int initialCapacity)
                 : this(initialCapacity, DEFAULT_LOAD_FACTOR)
@@ -794,11 +818,12 @@ namespace Lucene.Net.Util
             /// <summary>
             /// Rehash via MurmurHash.
             ///
-            /// <p>The implementation is based on the
+            /// <para/>The implementation is based on the
             /// finalization step from Austin Appleby's
-            /// <code>MurmurHash3</code>.
+            /// <c>MurmurHash3</c>.
+            /// 
+            /// See <a target="_blank" href="http://sites.google.com/site/murmurhash/">http://sites.google.com/site/murmurhash/</a>.
             /// </summary>
-            /// <seealso cref= "http://sites.google.com/site/murmurhash/" </seealso>
             private static int Rehash(object o)
             {
                 int k = RuntimeHelpers.GetHashCode(o);
@@ -842,7 +867,7 @@ namespace Lucene.Net.Util
             }
 
             /// <summary>
-            /// Allocate internal buffers for a given capacity.
+            /// Allocate internal buffers for a given <paramref name="capacity"/>.
             /// </summary>
             /// <param name="capacity">
             ///          New capacity (must be a power of two). </param>
@@ -898,7 +923,7 @@ namespace Lucene.Net.Util
                 get { return Assigned; }
             }
 
-            //public bool Empty // LUCENENET NOTE: in .NET we can just use !Any() on IEnumerable<T>
+            //public bool IsEmpty // LUCENENET NOTE: in .NET we can just use !Any() on IEnumerable<T>
             //{
             //    get
             //    {

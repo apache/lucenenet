@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Holds common state used during segment merging.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -53,7 +53,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Returns the total number of documents, ignoring
-            ///  deletions.
+            /// deletions.
             /// </summary>
             public abstract int MaxDoc { get; }
 
@@ -69,15 +69,15 @@ namespace Lucene.Net.Index
             public abstract int NumDeletedDocs { get; }
 
             /// <summary>
-            /// Returns true if there are any deletions. </summary>
+            /// Returns <c>true</c> if there are any deletions. </summary>
             public virtual bool HasDeletions
             {
                 get { return NumDeletedDocs > 0; }
             }
 
             /// <summary>
-            /// Creates a <seealso cref="DocMap"/> instance appropriate for
-            ///  this reader.
+            /// Creates a <see cref="DocMap"/> instance appropriate for
+            /// this reader.
             /// </summary>
             public static DocMap Build(AtomicReader reader)
             {
@@ -171,11 +171,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// <seealso cref="SegmentInfo"/> of the newly merged segment. </summary>
+        /// <see cref="Index.SegmentInfo"/> of the newly merged segment. </summary>
         public SegmentInfo SegmentInfo { get; private set; }
 
         /// <summary>
-        /// <seealso cref="FieldInfos"/> of the newly merged segment. </summary>
+        /// <see cref="Index.FieldInfos"/> of the newly merged segment. </summary>
         public FieldInfos FieldInfos { get; set; }
 
         /// <summary>
@@ -195,20 +195,20 @@ namespace Lucene.Net.Index
         public int[] DocBase { get; set; }
 
         /// <summary>
-        /// Holds the CheckAbort instance, which is invoked
-        ///  periodically to see if the merge has been aborted.
+        /// Holds the <see cref="Index.CheckAbort"/> instance, which is invoked
+        /// periodically to see if the merge has been aborted.
         /// </summary>
         public CheckAbort CheckAbort { get; private set; }
 
         /// <summary>
-        /// InfoStream for debugging messages. </summary>
+        /// <see cref="Util.InfoStream"/> for debugging messages. </summary>
         public InfoStream InfoStream { get; private set; }
 
         // TODO: get rid of this? it tells you which segments are 'aligned' (e.g. for bulk merging)
         // but is this really so expensive to compute again in different components, versus once in SM?
 
         /// <summary>
-        /// <seealso cref="SegmentReader"/>s that have identical field
+        /// <see cref="SegmentReader"/>s that have identical field
         /// name/number mapping, so their stored fields and term
         /// vectors may be bulk merged.
         /// </summary>
@@ -217,7 +217,7 @@ namespace Lucene.Net.Index
         public SegmentReader[] MatchingSegmentReaders { get; set; }
 
         /// <summary>
-        /// How many <seealso cref="#matchingSegmentReaders"/> are set. </summary>
+        /// How many <see cref="MatchingSegmentReaders"/> are set. </summary>
         public int MatchedCount { get; set; }
 
         /// <summary>
@@ -241,7 +241,7 @@ namespace Lucene.Net.Index
         private readonly Directory dir;
 
         /// <summary>
-        /// Creates a #CheckAbort instance. </summary>
+        /// Creates a <see cref="CheckAbort"/> instance. </summary>
         public CheckAbort(MergePolicy.OneMerge merge, Directory dir)
         {
             this.merge = merge;
@@ -251,9 +251,9 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Records the fact that roughly units amount of work
         /// have been done since this method was last called.
-        /// When adding time-consuming code into SegmentMerger,
+        /// When adding time-consuming code into <see cref="SegmentMerger"/>,
         /// you should test different values for units to ensure
-        /// that the time in between calls to merge.checkAborted
+        /// that the time in between calls to merge.CheckAborted
         /// is up to ~ 1 second.
         /// </summary>
         public virtual void Work(double units)
@@ -267,7 +267,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// If you use this: IW.close(false) cannot abort your merge!
+        /// If you use this: IW.Dispose(false) cannot abort your merge!
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public static readonly CheckAbort NONE = new CheckAbortAnonymousInnerClassHelper();

@@ -35,14 +35,14 @@ namespace Lucene.Net.Search
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public abstract class TermCollectingRewrite<Q> : MultiTermQuery.RewriteMethod where Q : Query
+    public abstract class TermCollectingRewrite<Q> : MultiTermQuery.RewriteMethod where Q : Query // LUCENENET NOTE: Class was made public instaed of internal because it has public derived types
     {
         /// <summary>
-        /// Return a suitable top-level Query for holding all expanded terms. </summary>
+        /// Return a suitable top-level <see cref="Query"/> for holding all expanded terms. </summary>
         protected abstract Q GetTopLevelQuery();
 
         /// <summary>
-        /// Add a MultiTermQuery term to the top-level query </summary>
+        /// Add a <see cref="MultiTermQuery"/> term to the top-level query </summary>
         protected void AddClause(Q topLevel, Term term, int docCount, float boost)
         {
             AddClause(topLevel, term, docCount, boost, null);

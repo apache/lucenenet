@@ -21,7 +21,8 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// A <seealso cref="TimSorter"/> for object arrays.
+    /// A <see cref="TimSorter"/> for object arrays.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     internal sealed class ArrayTimSorter<T> : TimSorter
@@ -31,7 +32,7 @@ namespace Lucene.Net.Util
         private readonly T[] tmp;
 
         /// <summary>
-        /// Create a new <seealso cref="ArrayTimSorter"/>. </summary>
+        /// Create a new <see cref="ArrayTimSorter{T}"/>. </summary>
         public ArrayTimSorter(T[] arr, IComparer<T> comparer, int maxTempSlots)
             : base(maxTempSlots)
         {

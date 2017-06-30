@@ -48,12 +48,12 @@ namespace Lucene.Net.Util.Packed
         public abstract int ByteBlockCount { get; }
 
         /// <summary>
-        /// NOTE: This was longValueCount() in Lucene
+        /// NOTE: This was longValueCount() in Lucene.
         /// </summary>
         public abstract int Int64ValueCount { get; }
 
         /// <summary>
-        /// NOTE: This was longBlockCount() in Lucene
+        /// NOTE: This was longBlockCount() in Lucene.
         /// </summary>
         public abstract int Int64BlockCount { get; }
 
@@ -179,7 +179,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// NOTE: This was writeLong() in Lucene
+        /// NOTE: This was writeLong() in Lucene.
         /// </summary>
         protected virtual int WriteInt64(long block, byte[] blocks, int blocksOffset)
         {
@@ -199,14 +199,14 @@ namespace Lucene.Net.Util.Packed
         ///  - 50 bits per value -> b=25, v=4
         ///  - 63 bits per value -> b=63, v=8
         ///  - ...
-        ///
-        /// A bulk read consists in copying <code>iterations*v</code> values that are
-        /// contained in <code>iterations*b</code> blocks into a <code>long[]</code>
-        /// (higher values of <code>iterations</code> are likely to yield a better
+        /// <para/>
+        /// A bulk read consists in copying <c>iterations*v</c> values that are
+        /// contained in <c>iterations*b</c> blocks into a <c>long[]</c>
+        /// (higher values of <c>iterations</c> are likely to yield a better
         /// throughput) => this requires n * (b + 8v) bytes of memory.
-        ///
-        /// this method computes <code>iterations</code> as
-        /// <code>ramBudget / (b + 8v)</code> (since a long is 8 bytes).
+        /// <para/>
+        /// This method computes <c>iterations</c> as
+        /// <c>ramBudget / (b + 8v)</c> (since a long is 8 bytes).
         /// </summary>
         public int ComputeIterations(int valueCount, int ramBudget)
         {

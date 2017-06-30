@@ -21,10 +21,8 @@ namespace Lucene.Net.Search.Payloads
 
     /// <summary>
     /// Calculate the final score as the average score of all payloads seen.
-    /// <p/>
+    /// <para/>
     /// Is thread safe and completely reusable.
-    ///
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

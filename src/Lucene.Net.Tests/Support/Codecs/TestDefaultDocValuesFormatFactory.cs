@@ -46,8 +46,9 @@ namespace Lucene.Net.Codecs
 
         private class ScanningDocValuesFormatFactory : DefaultDocValuesFormatFactory
         {
-            public ScanningDocValuesFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.ScanForDocValuesFormats(this.GetType().GetTypeInfo().Assembly);
             }
         }
@@ -78,8 +79,9 @@ namespace Lucene.Net.Codecs
 
         private class ExplicitDocValuesFormatFactory : DefaultDocValuesFormatFactory
         {
-            public ExplicitDocValuesFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutDocValuesFormatType(typeof(PrivateDocValuesFormat));
             }
         }
@@ -96,8 +98,9 @@ namespace Lucene.Net.Codecs
 
         private class InvalidNameDocValuesFormatFactory : DefaultDocValuesFormatFactory
         {
-            public InvalidNameDocValuesFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutDocValuesFormatType(typeof(InvalidNamedDocValuesFormat));
             }
         }
@@ -105,13 +108,15 @@ namespace Lucene.Net.Codecs
         [Test]
         public void TestInvalidName()
         {
-            Assert.Throws<ArgumentException>(() => new InvalidNameDocValuesFormatFactory());
+            var factory = new InvalidNameDocValuesFormatFactory();
+            Assert.Throws<ArgumentException>(() => factory.GetDocValuesFormat("SomeFormat"));
         }
 
         private class CustomNameDocValuesFormatFactory : DefaultDocValuesFormatFactory
         {
-            public CustomNameDocValuesFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutDocValuesFormatType(typeof(CustomNamedDocValuesFormat));
             }
         }
@@ -150,8 +155,9 @@ namespace Lucene.Net.Codecs
 
         private class ReplaceDocValuesFormatFactory : DefaultDocValuesFormatFactory
         {
-            public ReplaceDocValuesFormatFactory()
+            protected override void Initialize()
             {
+                base.Initialize();
                 base.PutDocValuesFormatType(typeof(TestLucene40DocValuesFormat));
             }
         }

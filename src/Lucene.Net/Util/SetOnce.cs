@@ -96,6 +96,9 @@ namespace Lucene.Net.Util
 #endif
     public sealed class AlreadySetException : InvalidOperationException
     {
+        /// <summary>
+        /// Initializes a new instance of <see cref="AlreadySetException"/>.
+        /// </summary>
         public AlreadySetException()
             : base("The object cannot be set twice!")
         {

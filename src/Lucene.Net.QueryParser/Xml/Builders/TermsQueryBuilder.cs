@@ -67,7 +67,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(ts);
+                IOUtils.DisposeWhileHandlingException(ts);
             }
 
             bq.Boost = DOMUtils.GetAttribute(e, "boost", 1.0f);

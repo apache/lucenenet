@@ -21,12 +21,11 @@
     using SegmentWriteState = Index.SegmentWriteState;
 
     /// <summary>
-    /// plain-text norms format.
+    /// Plain-text norms format.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// 
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextNormsFormat : NormsFormat
     {
@@ -45,10 +44,9 @@
         /// <summary>
         /// Reads plain-text norms.
         /// <para>
-        /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-        /// 
-        /// @lucene.experimental
+        /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
         /// </para>
+        /// @lucene.experimental
         /// </summary>
         public class SimpleTextNormsProducer : SimpleTextDocValuesReader
         {
@@ -63,10 +61,9 @@
         /// <summary>
         /// Writes plain-text norms.
         /// <para>
-        /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-        /// 
-        /// @lucene.experimental
+        /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
         /// </para>
+        /// @lucene.experimental
         /// </summary>
         public class SimpleTextNormsConsumer : SimpleTextDocValuesWriter
         {
@@ -78,5 +75,4 @@
             }
         }
     }
-
 }

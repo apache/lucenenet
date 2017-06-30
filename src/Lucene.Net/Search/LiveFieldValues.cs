@@ -23,15 +23,15 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Tracks live field values across NRT reader reopens.
-    ///  this holds a map for all updated ids since
-    ///  the last reader reopen.  Once the NRT reader is reopened,
-    ///  it prunes the map.  this means you must reopen your NRT
-    ///  reader periodically otherwise the RAM consumption of
-    ///  this class will grow unbounded!
+    /// This holds a map for all updated ids since
+    /// the last reader reopen.  Once the NRT reader is reopened,
+    /// it prunes the map.  This means you must reopen your NRT
+    /// reader periodically otherwise the RAM consumption of
+    /// this class will grow unbounded!
     ///
-    ///  <p>NOTE: you must ensure the same id is never updated at
-    ///  the same time by two threads, because in this case you
-    ///  cannot in general know which thread "won".
+    /// <para/>NOTE: you must ensure the same id is never updated at
+    /// the same time by two threads, because in this case you
+    /// cannot in general know which thread "won".
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -79,8 +79,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Call this after you've successfully added a document
-        ///  to the index, to record what value you just set the
-        ///  field to.
+        /// to the index, to record what value you just set the
+        /// field to.
         /// </summary>
         public virtual void Add(string id, T value)
         {
@@ -89,7 +89,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Call this after you've successfully deleted a document
-        ///  from the index.
+        /// from the index.
         /// </summary>
         public virtual void Delete(string id)
         {
@@ -99,6 +99,7 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Returns the [approximate] number of id/value pairs
         /// buffered in RAM.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public virtual int Count
@@ -107,8 +108,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the current value for this id, or null if the
-        ///  id isn't in the index or was deleted.
+        /// Returns the current value for this id, or <c>null</c> if the
+        /// id isn't in the index or was deleted.
         /// </summary>
         public virtual T Get(string id)
         {
@@ -157,10 +158,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// this is called when the id/value was already flushed & opened
-        ///  in an NRT IndexSearcher.  You must implement this to
-        ///  go look up the value (eg, via doc values, field cache,
-        ///  stored fields, etc.).
+        /// This is called when the id/value was already flushed &amp; opened
+        /// in an NRT IndexSearcher.  You must implement this to
+        /// go look up the value (eg, via doc values, field cache,
+        /// stored fields, etc.).
         /// </summary>
         protected abstract T LookupFromSearcher(S s, string id);
     }

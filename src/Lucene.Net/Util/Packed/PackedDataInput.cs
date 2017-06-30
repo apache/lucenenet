@@ -23,11 +23,13 @@ namespace Lucene.Net.Util.Packed
     using DataInput = Lucene.Net.Store.DataInput;
 
     /// <summary>
-    /// A <seealso cref="DataInput"/> wrapper to read unaligned, variable-length packed
-    /// integers. this API is much slower than the <seealso cref="PackedInt32s"/> fixed-length
-    /// API but can be convenient to save space. </summary>
-    /// <seealso cref= PackedDataOutput
-    /// @lucene.internal </seealso>
+    /// A <see cref="DataInput"/> wrapper to read unaligned, variable-length packed
+    /// integers. This API is much slower than the <see cref="PackedInt32s"/> fixed-length
+    /// API but can be convenient to save space. 
+    /// <para/>
+    /// @lucene.internal
+    /// </summary>
+    /// <seealso cref="PackedDataOutput"/>
     public sealed class PackedDataInput
     {
         internal readonly DataInput @in;
@@ -35,7 +37,7 @@ namespace Lucene.Net.Util.Packed
         internal int remainingBits;
 
         /// <summary>
-        /// Create a new instance that wraps <code>in</code>.
+        /// Create a new instance that wraps <paramref name="in"/>.
         /// </summary>
         public PackedDataInput(DataInput @in)
         {
@@ -44,9 +46,9 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Read the next long using exactly <code>bitsPerValue</code> bits.
+        /// Read the next <see cref="long"/> using exactly <paramref name="bitsPerValue"/> bits.
         /// <para/>
-        /// NOTE: This was readLong() in Lucene
+        /// NOTE: This was readLong() in Lucene.
         /// </summary>
         public long ReadInt64(int bitsPerValue)
         {

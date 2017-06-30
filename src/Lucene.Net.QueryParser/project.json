@@ -14,7 +14,8 @@
   "buildOptions": {
     "compile": {
       "includeFiles": [ "../CommonAssemblyInfo.cs" ]
-    }
+    },
+    "nowarn": [ "1591", "1573" ]
   },
   "dependencies": {
     "Lucene.Net.Analysis.Common": "4.8.0",
@@ -27,6 +28,7 @@
       "buildOptions": {
         "debugType": "portable",
         "compile": {
+          "includeFiles": [ "../CommonAssemblyInfo.cs" ],
           "excludeFiles": [
             "Xml/QueryTemplateManager.cs"
           ]

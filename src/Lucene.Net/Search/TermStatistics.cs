@@ -24,6 +24,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Contains statistics for a specific term
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -35,6 +36,9 @@ namespace Lucene.Net.Search
         private readonly long docFreq;
         private readonly long totalTermFreq;
 
+        /// <summary>
+        /// Sole constructor.
+        /// </summary>
         public TermStatistics(BytesRef term, long docFreq, long totalTermFreq)
         {
             Debug.Assert(docFreq >= 0);
@@ -45,23 +49,23 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// returns the term text </summary>
+        /// Returns the term text </summary>
         public BytesRef Term
         {
             get { return term; }
         }
 
         /// <summary>
-        /// returns the number of documents this term occurs in </summary>
-        /// <seealso cref= TermsEnum#docFreq()  </seealso>
+        /// Returns the number of documents this term occurs in </summary>
+        /// <seealso cref="Index.TermsEnum.DocFreq"/>
         public long DocFreq
         {
             get { return docFreq; }
         }
 
         /// <summary>
-        /// returns the total number of occurrences of this term </summary>
-        /// <seealso cref= TermsEnum#totalTermFreq()  </seealso>
+        /// Returns the total number of occurrences of this term </summary>
+        /// <seealso cref="Index.TermsEnum.TotalTermFreq"/>
         public long TotalTermFreq
         {
             get { return totalTermFreq; }

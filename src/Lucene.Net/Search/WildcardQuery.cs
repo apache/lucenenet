@@ -29,19 +29,19 @@ namespace Lucene.Net.Search
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// Implements the wildcard search query. Supported wildcards are <code>*</code>, which
-    /// matches any character sequence (including the empty one), and <code>?</code>,
+    /// Implements the wildcard search query. Supported wildcards are <c>*</c>, which
+    /// matches any character sequence (including the empty one), and <c>?</c>,
     /// which matches any single character. '\' is the escape character.
-    /// <p>
+    /// <para/>
     /// Note this query can be slow, as it
     /// needs to iterate over many terms. In order to prevent extremely slow WildcardQueries,
-    /// a Wildcard term should not start with the wildcard <code>*</code>
+    /// a Wildcard term should not start with the wildcard <c>*</c>
     ///
-    /// <p>this query uses the {@link
-    /// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
+    /// <para/>This query uses the 
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
     /// rewrite method.
     /// </summary>
-    /// <seealso cref= AutomatonQuery </seealso>
+    /// <seealso cref="AutomatonQuery"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -60,7 +60,7 @@ namespace Lucene.Net.Search
         public const char WILDCARD_ESCAPE = '\\';
 
         /// <summary>
-        /// Constructs a query for terms matching <code>term</code>.
+        /// Constructs a query for terms matching <paramref name="term"/>.
         /// </summary>
         public WildcardQuery(Term term)
             : base(term, ToAutomaton(term))
@@ -69,6 +69,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Convert Lucene wildcard syntax into an automaton.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public static Automaton ToAutomaton(Term wildcardquery)

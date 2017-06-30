@@ -30,18 +30,18 @@ namespace Lucene.Net.Codecs
     /// Note, when extending this class, the name (<see cref="Name"/>) may
     /// written into the index in certain configurations. In order for the segment
     /// to be read, the name must resolve to your implementation via <see cref="ForName(string)"/>.
-    /// this method uses <see cref="IDocValuesFormatFactory.GetDocValuesFormat(string)"/> to resolve format names.
+    /// This method uses <see cref="IDocValuesFormatFactory.GetDocValuesFormat(string)"/> to resolve format names.
     /// <para/>
     /// To implement your own format:
     /// <list type="number">
-    ///     <item>Subclass this class.</item>
-    ///     <item>Subclass <see cref="DefaultDocValuesFormatFactory"/> and add the line
-    ///         <c>base.ScanForDocValuesFormats(typeof(YourDocValuesFormat).GetTypeInfo().Assembly)</c>
-    ///         to the constructor. If you have any format classes in your assembly 
+    ///     <item><description>Subclass this class.</description></item>
+    ///     <item><description>Subclass <see cref="DefaultDocValuesFormatFactory"/>, override the <see cref="DefaultDocValuesFormatFactory.Initialize()"/> method,
+    ///         and add the line <c>base.ScanForDocValuesFormats(typeof(YourDocValuesFormat).GetTypeInfo().Assembly)</c>. 
+    ///         If you have any format classes in your assembly 
     ///         that are not meant for reading, you can add the <see cref="ExcludeDocValuesFormatFromScanAttribute"/> 
-    ///         to them so they are ignored by the scan.</item>
-    ///     <item>Set the new <see cref="IDocValuesFormatFactory"/> by calling <see cref="SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>
-    ///         at application startup.</item>
+    ///         to them so they are ignored by the scan.</description></item>
+    ///     <item><description>Set the new <see cref="IDocValuesFormatFactory"/> by calling <see cref="SetDocValuesFormatFactory(IDocValuesFormatFactory)"/>
+    ///         at application startup.</description></item>
     /// </list>
     /// If your format has dependencies, you may also override <see cref="DefaultDocValuesFormatFactory.GetDocValuesFormat(Type)"/>
     /// to inject them via pure DI or a DI container. See <a href="http://blog.ploeh.dk/2014/05/19/di-friendly-framework/">DI-Friendly Framework</a>
@@ -123,8 +123,8 @@ namespace Lucene.Net.Codecs
         /// NOTE: by the time this call returns, it must hold open any files it will
         /// need to use; else, those files may be deleted. Additionally, required files
         /// may be deleted during the execution of this call before there is a chance
-        /// to open them. Under these circumstances an IOException should be thrown by
-        /// the implementation. IOExceptions are expected and will automatically cause
+        /// to open them. Under these circumstances an <see cref="System.IO.IOException"/> should be thrown by
+        /// the implementation. <see cref="System.IO.IOException"/>s are expected and will automatically cause
         /// a retry of the segment opening logic with the newly revised segments.
         /// </summary>
         public abstract DocValuesProducer FieldsProducer(SegmentReadState state);
@@ -147,14 +147,14 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// looks up a format by name </summary>
+        /// Looks up a format by name. </summary>
         public static DocValuesFormat ForName(string name)
         {
             return docValuesFormatFactory.GetDocValuesFormat(name);
         }
 
         /// <summary>
-        /// returns a list of all available format names </summary>
+        /// Returns a list of all available format names. </summary>
         public static ICollection<string> AvailableDocValuesFormats()
         {
             if (docValuesFormatFactory is IServiceListable)

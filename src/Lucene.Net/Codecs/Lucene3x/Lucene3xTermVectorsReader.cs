@@ -42,7 +42,6 @@ namespace Lucene.Net.Codecs.Lucene3x
     using Terms = Lucene.Net.Index.Terms;
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
-    /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
     internal class Lucene3xTermVectorsReader : TermVectorsReader
     {
@@ -67,15 +66,15 @@ namespace Lucene.Net.Codecs.Lucene3x
         public const sbyte STORE_OFFSET_WITH_TERMVECTOR = 0x2;
 
         /// <summary>
-        /// Extension of vectors fields file </summary>
+        /// Extension of vectors fields file. </summary>
         public const string VECTORS_FIELDS_EXTENSION = "tvf";
 
         /// <summary>
-        /// Extension of vectors documents file </summary>
+        /// Extension of vectors documents file. </summary>
         public const string VECTORS_DOCUMENTS_EXTENSION = "tvd";
 
         /// <summary>
-        /// Extension of vectors index file </summary>
+        /// Extension of vectors index file. </summary>
         public const string VECTORS_INDEX_EXTENSION = "tvx";
 
         private readonly FieldInfos fieldInfos;
@@ -207,11 +206,15 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (disposing)
             {
-                IOUtils.Close(tvx, tvd, tvf, storeCFSReader);
+                IOUtils.Dispose(tvx, tvd, tvf, storeCFSReader);
             }
         }
 
-        /// <summary>The number of documents in the reader. NOTE: This was size() in Lucene.</summary>
+        /// <summary>
+        /// The number of documents in the reader. 
+        /// <para/>
+        /// NOTE: This was size() in Lucene.
+        /// </summary>
         internal virtual int Count
         {
             get { return size; }

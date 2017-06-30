@@ -39,15 +39,19 @@ namespace Lucene.Net.Util
         // LUCENENET NOTE: IMPORTANT - this line must be placed before RUNTIME_VERSION so it can be parsed.
         private static Regex VERSION_PARSER = new Regex(@"(\d+\.\d+\.\d+\.\d+)", RegexOptions.Compiled);
 
-        /// <summary>
 #if NETSTANDARD
+        /// <summary>
         /// The value of the version parsed from <see cref="RuntimeInformation.FrameworkDescription"/>.
-#else
-        /// The value of <see cref="Environment.Version"/>.
-#endif
         /// <para/>
         /// NOTE: This was JAVA_VERSION in Lucene
         /// </summary>
+#else
+        /// <summary>
+        /// The value of <see cref="Environment.Version"/>.
+        /// <para/>
+        /// NOTE: This was JAVA_VERSION in Lucene
+        /// </summary>
+#endif
         public static readonly string RUNTIME_VERSION = GetEnvironmentVariable("RUNTIME_VERSION", "?");
 
 
@@ -173,10 +177,10 @@ namespace Lucene.Net.Util
         // We should never change index format with minor versions, so it should always be x.y or x.y.0.z for alpha/beta versions!
         /// <summary>
         /// this is the internal Lucene version, recorded into each segment.
-        /// NOTE: we track per-segment version as a String with the {@code "X.Y"} format
-        /// (no minor version), e.g. {@code "4.0", "3.1", "3.0"}.
-        /// <p>Alpha and Beta versions will have numbers like {@code "X.Y.0.Z"},
-        /// anything else is not allowed. this is done to prevent people from
+        /// NOTE: we track per-segment version as a <see cref="string"/> with the <c>"X.Y"</c> format
+        /// (no minor version), e.g. <c>"4.0", "3.1", "3.0"</c>.
+        /// <para/>Alpha and Beta versions will have numbers like <c>"X.Y.0.Z"</c>,
+        /// anything else is not allowed. This is done to prevent people from
         /// using indexes created with ALPHA/BETA versions with the released version.
         /// </summary>
         public static readonly string LUCENE_MAIN_VERSION = Ident("4.8");
@@ -186,7 +190,7 @@ namespace Lucene.Net.Util
         // it might make sense to change it when a major/minor/patch
         // port to Lucene is done).
         /// <summary>
-        /// this is the Lucene version for display purposes.
+        /// This is the Lucene version for display purposes.
         /// </summary>
         public static readonly string LUCENE_VERSION = "4.8.0";
 

@@ -28,18 +28,18 @@ namespace Lucene.Net.Util
     using DirectAllocator = Lucene.Net.Util.ByteBlockPool.DirectAllocator;
 
     /// <summary>
-    /// <seealso cref="BytesRefHash"/> is a special purpose hash-map like data-structure
-    /// optimized for <seealso cref="BytesRef"/> instances. BytesRefHash maintains mappings of
+    /// <see cref="BytesRefHash"/> is a special purpose hash-map like data-structure
+    /// optimized for <see cref="BytesRef"/> instances. <see cref="BytesRefHash"/> maintains mappings of
     /// byte arrays to ids (Map&lt;BytesRef,int&gt;) storing the hashed bytes
     /// efficiently in continuous storage. The mapping to the id is
-    /// encapsulated inside <seealso cref="BytesRefHash"/> and is guaranteed to be increased
-    /// for each added <seealso cref="BytesRef"/>.
+    /// encapsulated inside <see cref="BytesRefHash"/> and is guaranteed to be increased
+    /// for each added <see cref="BytesRef"/>.
     ///
-    /// <p>
-    /// Note: The maximum capacity <seealso cref="BytesRef"/> instance passed to
-    /// <seealso cref="#add(BytesRef)"/> must not be longer than <seealso cref="ByteBlockPool#BYTE_BLOCK_SIZE"/>-2.
+    /// <para>
+    /// Note: The maximum capacity <see cref="BytesRef"/> instance passed to
+    /// <see cref="Add(BytesRef)"/> must not be longer than <see cref="ByteBlockPool.BYTE_BLOCK_SIZE"/>-2.
     /// The internal storage is limited to 2GB total byte storage.
-    /// </p>
+    /// </para>
     ///
     /// @lucene.internal
     /// </summary>
@@ -64,8 +64,8 @@ namespace Lucene.Net.Util
         private Counter bytesUsed;
 
         /// <summary>
-        /// Creates a new <seealso cref="BytesRefHash"/> with a <seealso cref="ByteBlockPool"/> using a
-        /// <seealso cref="DirectAllocator"/>.
+        /// Creates a new <see cref="BytesRefHash"/> with a <see cref="ByteBlockPool"/> using a
+        /// <see cref="DirectAllocator"/>.
         /// </summary>
         public BytesRefHash()
             : this(new ByteBlockPool(new DirectAllocator()))
@@ -73,7 +73,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="BytesRefHash"/>
+        /// Creates a new <see cref="BytesRefHash"/>
         /// </summary>
         public BytesRefHash(ByteBlockPool pool)
             : this(pool, DEFAULT_CAPACITY, new DirectBytesStartArray(DEFAULT_CAPACITY))
@@ -81,7 +81,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="BytesRefHash"/>
+        /// Creates a new <see cref="BytesRefHash"/>
         /// </summary>
         public BytesRefHash(ByteBlockPool pool, int capacity, BytesStartArray bytesStartArray)
         {
@@ -98,28 +98,29 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>.
+        /// Returns the number of <see cref="BytesRef"/> values in this <see cref="BytesRefHash"/>.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
-        /// <returns> the number of <seealso cref="BytesRef"/> values in this <seealso cref="BytesRefHash"/>. </returns>
+        /// <returns> The number of <see cref="BytesRef"/> values in this <see cref="BytesRefHash"/>. </returns>
         public int Count
         {
             get { return count; }
         }
 
         /// <summary>
-        /// Populates and returns a <seealso cref="BytesRef"/> with the bytes for the given
+        /// Populates and returns a <see cref="BytesRef"/> with the bytes for the given
         /// bytesID.
-        /// <p>
+        /// <para/>
         /// Note: the given bytesID must be a positive integer less than the current
-        /// size (<seealso cref="Count"/>)
+        /// size (<see cref="Count"/>)
         /// </summary>
         /// <param name="bytesID">
-        ///          the id </param>
+        ///          The id </param>
         /// <param name="ref">
-        ///          the <seealso cref="BytesRef"/> to populate
+        ///          The <see cref="BytesRef"/> to populate
         /// </param>
-        /// <returns> the given BytesRef instance populated with the bytes for the given
+        /// <returns> The given <see cref="BytesRef"/> instance populated with the bytes for the given
         ///         bytesID </returns>
         public BytesRef Get(int bytesID, BytesRef @ref)
         {
@@ -131,11 +132,11 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the ids array in arbitrary order. Valid ids start at offset of 0
-        /// and end at a limit of <seealso cref="Count"/> - 1
-        /// <p>
-        /// Note: this is a destructive operation. <seealso cref="#clear()"/> must be called in
-        /// order to reuse this <seealso cref="BytesRefHash"/> instance.
-        /// </p>
+        /// and end at a limit of <see cref="Count"/> - 1
+        /// <para>
+        /// Note: this is a destructive operation. <see cref="Clear()"/> must be called in
+        /// order to reuse this <see cref="BytesRefHash"/> instance.
+        /// </para>
         /// </summary>
         public int[] Compact()
         {
@@ -161,13 +162,13 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the values array sorted by the referenced byte values.
-        /// <p>
-        /// Note: this is a destructive operation. <seealso cref="#clear()"/> must be called in
-        /// order to reuse this <seealso cref="BytesRefHash"/> instance.
-        /// </p>
+        /// <para>
+        /// Note: this is a destructive operation. <see cref="Clear()"/> must be called in
+        /// order to reuse this <see cref="BytesRefHash"/> instance.
+        /// </para>
         /// </summary>
         /// <param name="comp">
-        ///          the <seealso cref="Comparer"/> used for sorting </param>
+        ///          The <see cref="T:IComparer{BytesRef}"/> used for sorting </param>
         public int[] Sort(IComparer<BytesRef> comp)
         {
             int[] compact = Compact();
@@ -254,7 +255,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Clears the <seealso cref="BytesRef"/> which maps to the given <seealso cref="BytesRef"/>
+        /// Clears the <see cref="BytesRef"/> which maps to the given <see cref="BytesRef"/>
         /// </summary>
         public void Clear(bool resetPool)
         {
@@ -279,7 +280,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Closes the BytesRefHash and releases all internally used memory
+        /// Closes the <see cref="BytesRefHash"/> and releases all internally used memory
         /// </summary>
         public void Dispose()
         {
@@ -289,18 +290,18 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Adds a new <seealso cref="BytesRef"/>
+        /// Adds a new <see cref="BytesRef"/>
         /// </summary>
         /// <param name="bytes">
-        ///          the bytes to hash </param>
-        /// <returns> the id the given bytes are hashed if there was no mapping for the
-        ///         given bytes, otherwise <code>(-(id)-1)</code>. this guarantees
+        ///          The bytes to hash </param>
+        /// <returns> The id the given bytes are hashed if there was no mapping for the
+        ///         given bytes, otherwise <c>(-(id)-1)</c>. this guarantees
         ///         that the return value will always be &gt;= 0 if the given bytes
         ///         haven't been hashed before.
         /// </returns>
         /// <exception cref="MaxBytesLengthExceededException">
         ///           if the given bytes are > 2 +
-        ///           <seealso cref="ByteBlockPool#BYTE_BLOCK_SIZE"/> </exception>
+        ///           <see cref="ByteBlockPool.BYTE_BLOCK_SIZE"/> </exception>
         public int Add(BytesRef bytes)
         {
             Debug.Assert(bytesStart != null, "Bytesstart is null - not initialized");
@@ -365,12 +366,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns the id of the given <seealso cref="BytesRef"/>.
+        /// Returns the id of the given <see cref="BytesRef"/>.
         /// </summary>
         /// <param name="bytes">
-        ///          the bytes to look for
+        ///          The bytes to look for
         /// </param>
-        /// <returns> the id of the given bytes, or {@code -1} if there is no mapping for the
+        /// <returns> The id of the given bytes, or <c>-1</c> if there is no mapping for the
         ///         given bytes. </returns>
         public int Find(BytesRef bytes)
         {
@@ -402,12 +403,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Adds a "arbitrary" int offset instead of a BytesRef
-        ///  term.  this is used in the indexer to hold the hash for term
-        ///  vectors, because they do not redundantly store the byte[] term
-        ///  directly and instead reference the byte[] term
-        ///  already stored by the postings BytesRefHash.  See
-        ///  add(int textStart) in TermsHashPerField.
+        /// Adds a "arbitrary" int offset instead of a <see cref="BytesRef"/>
+        /// term.  This is used in the indexer to hold the hash for term
+        /// vectors, because they do not redundantly store the <see cref="T:byte[]"/> term
+        /// directly and instead reference the <see cref="T:byte[]"/> term
+        /// already stored by the postings <see cref="BytesRefHash"/>.  See
+        /// <see cref="Index.TermsHashPerField.Add(int)"/>.
         /// </summary>
         public int AddByPoolOffset(int offset)
         {
@@ -450,7 +451,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Called when hash is too small (> 50% occupied) or too large (< 20%
+        /// Called when hash is too small (&gt; 50% occupied) or too large (&lt; 20%
         /// occupied).
         /// </summary>
         private void Rehash(int newSize, bool hashOnData)
@@ -520,8 +521,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// reinitializes the <seealso cref="BytesRefHash"/> after a previous <seealso cref="#clear()"/>
-        /// call. If <seealso cref="#clear()"/> has not been called previously this method has no
+        /// Reinitializes the <see cref="BytesRefHash"/> after a previous <see cref="Clear()"/>
+        /// call. If <see cref="Clear()"/> has not been called previously this method has no
         /// effect.
         /// </summary>
         public void Reinit()
@@ -540,12 +541,12 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the bytesStart offset into the internally used
-        /// <seealso cref="ByteBlockPool"/> for the given bytesID
+        /// <see cref="ByteBlockPool"/> for the given <paramref name="bytesID"/>
         /// </summary>
         /// <param name="bytesID">
-        ///          the id to look up </param>
-        /// <returns> the bytesStart offset into the internally used
-        ///         <seealso cref="ByteBlockPool"/> for the given id </returns>
+        ///          The id to look up </param>
+        /// <returns> The bytesStart offset into the internally used
+        ///         <see cref="ByteBlockPool"/> for the given id </returns>
         public int ByteStart(int bytesID)
         {
             Debug.Assert(bytesStart != null, "bytesStart is null - not initialized");
@@ -554,8 +555,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Thrown if a <seealso cref="BytesRef"/> exceeds the <seealso cref="BytesRefHash"/> limit of
-        /// <seealso cref="ByteBlockPool#BYTE_BLOCK_SIZE"/>-2.
+        /// Thrown if a <see cref="BytesRef"/> exceeds the <see cref="BytesRefHash"/> limit of
+        /// <see cref="ByteBlockPool.BYTE_BLOCK_SIZE"/>-2.
         /// </summary>
         // LUCENENET: All exeption classes should be marked serializable
 #if FEATURE_SERIALIZABLE
@@ -586,37 +587,37 @@ namespace Lucene.Net.Util
         public abstract class BytesStartArray
         {
             /// <summary>
-            /// Initializes the BytesStartArray. this call will allocate memory
+            /// Initializes the <see cref="BytesStartArray"/>. This call will allocate memory.
             /// </summary>
-            /// <returns> the initialized bytes start array </returns>
+            /// <returns> The initialized bytes start array. </returns>
             public abstract int[] Init();
 
             /// <summary>
-            /// Grows the <seealso cref="BytesStartArray"/>
+            /// Grows the <see cref="BytesStartArray"/>.
             /// </summary>
-            /// <returns> the grown array </returns>
+            /// <returns> The grown array. </returns>
             public abstract int[] Grow();
 
             /// <summary>
-            /// clears the <seealso cref="BytesStartArray"/> and returns the cleared instance.
+            /// Clears the <see cref="BytesStartArray"/> and returns the cleared instance.
             /// </summary>
-            /// <returns> the cleared instance, this might be <code>null</code> </returns>
+            /// <returns> The cleared instance, this might be <c>null</c>. </returns>
             public abstract int[] Clear();
 
             /// <summary>
-            /// A <seealso cref="Counter"/> reference holding the number of bytes used by this
-            /// <seealso cref="BytesStartArray"/>. The <seealso cref="BytesRefHash"/> uses this reference to
-            /// track it memory usage
+            /// A <see cref="Counter"/> reference holding the number of bytes used by this
+            /// <see cref="BytesStartArray"/>. The <see cref="BytesRefHash"/> uses this reference to
+            /// track it memory usage.
             /// </summary>
-            /// <returns> a <seealso cref="AtomicInt64"/> reference holding the number of bytes used
-            ///         by this <seealso cref="BytesStartArray"/>. </returns>
+            /// <returns> a <see cref="AtomicInt64"/> reference holding the number of bytes used
+            ///         by this <see cref="BytesStartArray"/>. </returns>
             public abstract Counter BytesUsed();
         }
 
         /// <summary>
-        /// A simple <seealso cref="BytesStartArray"/> that tracks
-        ///  memory allocation using a private <seealso cref="Counter"/>
-        ///  instance.
+        /// A simple <see cref="BytesStartArray"/> that tracks
+        /// memory allocation using a private <see cref="Counter"/>
+        /// instance.
         /// </summary>
         public class DirectBytesStartArray : BytesStartArray
         {

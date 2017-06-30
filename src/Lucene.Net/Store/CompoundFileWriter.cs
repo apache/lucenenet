@@ -124,7 +124,7 @@ namespace Lucene.Net.Store
                     {
                         if (!success)
                         {
-                            IOUtils.CloseWhileHandlingException(dataOut);
+                            IOUtils.DisposeWhileHandlingException(dataOut);
                         }
                     }
                 }
@@ -186,7 +186,7 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(priorException, dataOut);
+                IOUtils.DisposeWhileHandlingException(priorException, dataOut);
             }
             try
             {
@@ -199,7 +199,7 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(priorException, entryTableOut);
+                IOUtils.DisposeWhileHandlingException(priorException, entryTableOut);
             }
         }
 
@@ -239,13 +239,13 @@ namespace Lucene.Net.Store
             {
                 if (success)
                 {
-                    IOUtils.Close(@is);
+                    IOUtils.Dispose(@is);
                     // copy successful - delete file
                     fileEntry.Dir.DeleteFile(fileEntry.File);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(@is);
+                    IOUtils.DisposeWhileHandlingException(@is);
                 }
             }
         }

@@ -38,21 +38,20 @@ namespace Lucene.Net.Codecs.Lucene3x
 
     /// <summary>
     /// Class responsible for access to stored document fields.
-    /// <p/>
+    /// <para/>
     /// It uses &lt;segment&gt;.fdt and &lt;segment&gt;.fdx; files.
     /// </summary>
-    /// @deprecated Only for reading existing 3.x indexes
     [Obsolete("Only for reading existing 3.x indexes")]
     internal sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, IDisposable
     {
         private const int FORMAT_SIZE = 4;
 
         /// <summary>
-        /// Extension of stored fields file </summary>
+        /// Extension of stored fields file. </summary>
         public const string FIELDS_EXTENSION = "fdt";
 
         /// <summary>
-        /// Extension of stored fields index file </summary>
+        /// Extension of stored fields index file. </summary>
         public const string FIELDS_INDEX_EXTENSION = "fdx";
 
         // Lucene 3.0: Removal of compressed fields
@@ -100,10 +99,10 @@ namespace Lucene.Net.Codecs.Lucene3x
 
         /// <summary>
         /// Returns a cloned FieldsReader that shares open
-        ///  IndexInputs with the original one.  It is the caller's
-        ///  job not to close the original FieldsReader until all
-        ///  clones are called (eg, currently SegmentReader manages
-        ///  this logic).
+        /// IndexInputs with the original one.  It is the caller's
+        /// job not to close the original FieldsReader until all
+        /// clones are called (eg, currently SegmentReader manages
+        /// this logic).
         /// </summary>
         public override object Clone()
         {
@@ -228,7 +227,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-        /// <exception cref="ObjectDisposedException"> if this FieldsReader is closed </exception>
+        /// <exception cref="ObjectDisposedException"> If this FieldsReader is disposed. </exception>
         private void EnsureOpen()
         {
             if (closed)
@@ -238,17 +237,17 @@ namespace Lucene.Net.Codecs.Lucene3x
         }
 
         /// <summary>
-        /// Closes the underlying <seealso cref="Lucene.Net.Store.IndexInput"/> streams.
-        /// this means that the Fields values will not be accessible.
+        /// Closes the underlying <see cref="Lucene.Net.Store.IndexInput"/> streams.
+        /// This means that the Fields values will not be accessible.
         /// </summary>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
                 if (!closed)
                 {
-                    IOUtils.Close(fieldsStream, indexStream, storeCFSReader);
+                    IOUtils.Dispose(fieldsStream, indexStream, storeCFSReader);
                     closed = true;
                 }
             }

@@ -98,8 +98,8 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
         /// reserved:
         /// </para>
         /// <list type="bullet">
-        ///     <item>0x0000 as string terminator</item>
-        ///     <item>0xFFFF to indicate that the branch starting at this node is compressed</item>
+        ///     <item><description>0x0000 as string terminator</description></item>
+        ///     <item><description>0xFFFF to indicate that the branch starting at this node is compressed</description></item>
         /// </list>
         /// <para>
         /// This shouldn't be a problem if we give the usual semantics to strings since

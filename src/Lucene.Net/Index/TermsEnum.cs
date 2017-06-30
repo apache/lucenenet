@@ -28,10 +28,10 @@ namespace Lucene.Net.Index
     /// <summary>
     /// Iterator to seek (<see cref="SeekCeil(BytesRef)"/>, 
     /// <see cref="SeekExact(BytesRef)"/>) or step through 
-    /// (<see cref="Next"/> terms to obtain frequency information 
+    /// (<see cref="Next()"/> terms to obtain frequency information 
     /// (<see cref="DocFreq"/>), <see cref="DocsEnum"/> or 
     /// <see cref="DocsAndPositionsEnum"/> for the current term 
-    /// (<see cref="Docs"/>).
+    /// (<see cref="Docs(IBits, DocsEnum)"/>).
     ///
     /// <para/>Term enumerations are always ordered by
     /// <see cref="Comparer"/>.  Each term in the enumeration is
@@ -40,7 +40,7 @@ namespace Lucene.Net.Index
     /// <para/>The <see cref="TermsEnum"/> is unpositioned when you first obtain it
     /// and you must first successfully call <see cref="Next"/> or one
     /// of the <c>Seek</c> methods.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -95,9 +95,9 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Attempts to seek to the exact term, returning
-        /// true if the term is found.  If this returns false, the
-        /// enum is unpositioned.  For some codecs, <see cref="SeekExact"/> may
-        /// be substantially faster than <see cref="SeekCeil"/>.
+        /// <c>true</c> if the term is found.  If this returns <c>false</c>, the
+        /// enum is unpositioned.  For some codecs, <see cref="SeekExact(BytesRef)"/> may
+        /// be substantially faster than <see cref="SeekCeil(BytesRef)"/>.
         /// </summary>
         public virtual bool SeekExact(BytesRef text)
         {
@@ -157,8 +157,8 @@ namespace Lucene.Net.Index
         public abstract BytesRef Term { get; }
 
         /// <summary>
-        /// Returns ordinal position for current term.  this is an
-        /// optional method (the codec may throw <see cref="NotSupportedException"/>.
+        /// Returns ordinal position for current term.  This is an
+        /// optional property (the codec may throw <see cref="NotSupportedException"/>.
         /// Do not call this when the enum is unpositioned.
         /// </summary>
         public abstract long Ord { get; } // LUCENENET NOTE: Although this isn't a great candidate for a property, did so to make API consistent
@@ -172,22 +172,22 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the total number of occurrences of this term
-        ///  across all documents (the sum of the freq() for each
-        ///  doc that has this term).  this will be -1 if the
-        ///  codec doesn't support this measure.  Note that, like
-        ///  other term measures, this measure does not take
-        ///  deleted documents into account.
+        /// across all documents (the sum of the Freq for each
+        /// doc that has this term).  This will be -1 if the
+        /// codec doesn't support this measure.  Note that, like
+        /// other term measures, this measure does not take
+        /// deleted documents into account.
         /// </summary>
         public abstract long TotalTermFreq { get; } // LUCENENET NOTE: Although this isn't a great candidate for a property, did so to make API consistent
 
         /// <summary>
         /// Get <see cref="DocsEnum"/> for the current term. Do not
         /// call this when the enum is unpositioned. This method
-        /// will not return null.
+        /// will not return <c>null</c>.
         /// </summary>
-        /// <param name="liveDocs"> unset bits are documents that should not
+        /// <param name="liveDocs"> Unset bits are documents that should not
         /// be returned </param>
-        /// <param name="reuse"> pass a prior <see cref="DocsEnum"/> for possible reuse  </param>
+        /// <param name="reuse"> Pass a prior <see cref="DocsEnum"/> for possible reuse </param>
         public DocsEnum Docs(IBits liveDocs, DocsEnum reuse)
         {
             return Docs(liveDocs, reuse, DocsFlags.FREQS);
@@ -197,26 +197,26 @@ namespace Lucene.Net.Index
         /// Get <see cref="DocsEnum"/> for the current term, with
         /// control over whether freqs are required. Do not
         /// call this when the enum is unpositioned. This method
-        /// will not return null.
+        /// will not return <c>null</c>.
         /// </summary>
-        /// <param name="liveDocs"> unset bits are documents that should not
+        /// <param name="liveDocs"> Unset bits are documents that should not
         /// be returned </param>
-        /// <param name="reuse"> pass a prior DocsEnum for possible reuse </param>
-        /// <param name="flags"> specifies which optional per-document values
+        /// <param name="reuse"> Pass a prior DocsEnum for possible reuse </param>
+        /// <param name="flags"> Specifies which optional per-document values
         ///        you require; <see cref="DocsFlags"/></param>
         /// <seealso cref="Docs(IBits, DocsEnum)"/>
         public abstract DocsEnum Docs(IBits liveDocs, DocsEnum reuse, DocsFlags flags);
 
         /// <summary>
-        /// Get <seealso cref="DocsAndPositionsEnum"/> for the current term.
-        ///  Do not call this when the enum is unpositioned.  this
-        ///  method will return null if positions were not
-        ///  indexed.
+        /// Get <see cref="DocsAndPositionsEnum"/> for the current term.
+        /// Do not call this when the enum is unpositioned.  This
+        /// method will return <c>null</c> if positions were not
+        /// indexed.
         /// </summary>
-        ///  <param name="liveDocs"> unset bits are documents that should not
-        ///  be returned </param>
-        ///  <param name="reuse"> pass a prior DocsAndPositionsEnum for possible reuse </param>
-        ///  <seealso cref= #docsAndPositions(Bits, DocsAndPositionsEnum, int)  </seealso>
+        /// <param name="liveDocs"> Unset bits are documents that should not
+        /// be returned </param>
+        /// <param name="reuse"> Pass a prior DocsAndPositionsEnum for possible reuse </param>
+        /// <seealso cref="DocsAndPositions(IBits, DocsAndPositionsEnum, DocsAndPositionsFlags)"/>
         public DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse)
         {
             return DocsAndPositions(liveDocs, reuse, DocsAndPositionsFlags.OFFSETS | DocsAndPositionsFlags.PAYLOADS);
@@ -228,20 +228,20 @@ namespace Lucene.Net.Index
         /// required.  Some codecs may be able to optimize their
         /// implementation when offsets and/or payloads are not required.
         /// Do not call this when the enum is unpositioned. This
-        /// will return null if positions were not indexed.
+        /// will return <c>null</c> if positions were not indexed.
         /// </summary>
-        /// <param name="liveDocs"> unset bits are documents that should not
+        /// <param name="liveDocs"> Unset bits are documents that should not
         /// be returned </param>
-        /// <param name="reuse"> pass a prior DocsAndPositionsEnum for possible reuse </param>
-        /// <param name="flags"> specifies which optional per-position values you
+        /// <param name="reuse"> Pass a prior DocsAndPositionsEnum for possible reuse </param>
+        /// <param name="flags"> Specifies which optional per-position values you
         ///         require; see <see cref="DocsAndPositionsFlags"/>. </param>
         public abstract DocsAndPositionsEnum DocsAndPositions(IBits liveDocs, DocsAndPositionsEnum reuse, DocsAndPositionsFlags flags);
 
         /// <summary>
-        /// Expert: Returns the TermsEnums internal state to position the <see cref="TermsEnum"/>
+        /// Expert: Returns the <see cref="TermsEnum"/>s internal state to position the <see cref="TermsEnum"/>
         /// without re-seeking the term dictionary.
         /// <para/>
-        /// NOTE: A seek by <see cref="GetTermState"/> might not capture the
+        /// NOTE: A seek by <see cref="GetTermState()"/> might not capture the
         /// <see cref="AttributeSource"/>'s state. Callers must maintain the
         /// <see cref="AttributeSource"/> states separately
         /// </summary>
@@ -272,7 +272,7 @@ namespace Lucene.Net.Index
         /// in <see cref="Lucene.Net.Search.MultiTermQuery"/>
         /// <para/><em>Please note:</em> this enum should be unmodifiable,
         /// but it is currently possible to add Attributes to it.
-        /// this should not be a problem, as the enum is always empty and
+        /// This should not be a problem, as the enum is always empty and
         /// the existence of unused Attributes does not matter.
         /// </summary>
         public static readonly TermsEnum EMPTY = new TermsEnumAnonymousInnerClassHelper();

@@ -248,7 +248,7 @@ namespace Lucene.Net.Search
 
             VerifyIndex(target);
 
-            IOUtils.Close(target, input[0], input[1]);
+            IOUtils.Dispose(target, input[0], input[1]);
         }
 
         [Test]
@@ -273,7 +273,7 @@ namespace Lucene.Net.Search
             writer.Dispose();
 
             VerifyIndex(target);
-            IOUtils.Close(target, input[0], input[1]);
+            IOUtils.Dispose(target, input[0], input[1]);
         }
     }
 }

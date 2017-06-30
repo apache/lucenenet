@@ -21,7 +21,7 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// Subreader slice from a parent composite reader.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -30,7 +30,7 @@ namespace Lucene.Net.Index
     public sealed class ReaderSlice
     {
         /// <summary>
-        /// Zero-length {@code ReaderSlice} array. </summary>
+        /// Zero-length <see cref="ReaderSlice"/> array. </summary>
         public static readonly ReaderSlice[] EMPTY_ARRAY = new ReaderSlice[0];
 
         /// <summary>

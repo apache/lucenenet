@@ -26,8 +26,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// Implements the skip list reader for the 4.0 posting list format
     /// that stores positions and payloads.
     /// </summary>
-    /// <seealso cref= Lucene40PostingsFormat </seealso>
-    /// @deprecated Only for reading old 4.0 segments
+    /// <seealso cref="Lucene40PostingsFormat"/>
     [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40SkipListReader : MultiLevelSkipListReader
     {
@@ -72,7 +71,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns the freq pointer of the doc to which the last call of
-        /// <seealso cref="MultiLevelSkipListReader#skipTo(int)"/> has skipped.
+        /// <see cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
         public virtual long FreqPointer
         {
@@ -84,7 +83,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns the prox pointer of the doc to which the last call of
-        /// <seealso cref="MultiLevelSkipListReader#skipTo(int)"/> has skipped.
+        /// <see cref="MultiLevelSkipListReader.SkipTo(int)"/> has skipped.
         /// </summary>
         public virtual long ProxPointer
         {
@@ -96,7 +95,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns the payload length of the payload stored just before
-        /// the doc to which the last call of <seealso cref="MultiLevelSkipListReader#skipTo(int)"/>
+        /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/>
         /// has skipped.
         /// </summary>
         public virtual int PayloadLength
@@ -109,7 +108,7 @@ namespace Lucene.Net.Codecs.Lucene40
 
         /// <summary>
         /// Returns the offset length (endOffset-startOffset) of the position stored just before
-        /// the doc to which the last call of <seealso cref="MultiLevelSkipListReader#skipTo(int)"/>
+        /// the doc to which the last call of <see cref="MultiLevelSkipListReader.SkipTo(int)"/>
         /// has skipped.
         /// </summary>
         public virtual int OffsetLength

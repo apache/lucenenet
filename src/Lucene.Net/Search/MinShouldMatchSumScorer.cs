@@ -26,12 +26,12 @@ namespace Lucene.Net.Search
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
     /// <summary>
-    /// A Scorer for OR like queries, counterpart of <code>ConjunctionScorer</code>.
-    /// this Scorer implements <seealso cref="Scorer#advance(int)"/> and uses advance() on the given Scorers.
-    ///
-    /// this implementation uses the minimumMatch constraint actively to efficiently
-    /// prune the number of candidates, it is hence a mixture between a pure DisjunctionScorer
-    /// and a ConjunctionScorer.
+    /// A <see cref="Scorer"/> for OR like queries, counterpart of <see cref="ConjunctionScorer"/>.
+    /// This <see cref="Scorer"/> implements <see cref="DocIdSetIterator.Advance(int)"/> and uses Advance() on the given <see cref="Scorer"/>s.
+    /// <para/>
+    /// This implementation uses the minimumMatch constraint actively to efficiently
+    /// prune the number of candidates, it is hence a mixture between a pure <see cref="DisjunctionScorer"/>
+    /// and a <see cref="ConjunctionScorer"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -59,8 +59,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// mmStack is supposed to contain the most costly subScorers that still did
-        ///  not run out of docs, sorted by increasing sparsity of docs returned by that subScorer.
-        ///  For now, the cost of subscorers is assumed to be inversely correlated with sparsity.
+        /// not run out of docs, sorted by increasing sparsity of docs returned by that subScorer.
+        /// For now, the cost of subscorers is assumed to be inversely correlated with sparsity.
         /// </summary>
         private readonly Scorer[] mmStack; // of size mm-1: 0..mm-2, always full
 
@@ -75,16 +75,16 @@ namespace Lucene.Net.Search
         private double score = float.NaN;
 
         /// <summary>
-        /// Construct a <code>MinShouldMatchSumScorer</code>.
+        /// Construct a <see cref="MinShouldMatchSumScorer"/>.
         /// </summary>
         /// <param name="weight"> The weight to be used. </param>
         /// <param name="subScorers"> A collection of at least two subscorers. </param>
         /// <param name="minimumNrMatchers"> The positive minimum number of subscorers that should
         /// match to match this query.
-        /// <br>When <code>minimumNrMatchers</code> is bigger than
-        /// the number of <code>subScorers</code>, no matches will be produced.
-        /// <br>When minimumNrMatchers equals the number of subScorers,
-        /// it is more efficient to use <code>ConjunctionScorer</code>. </param>
+        /// <para/>When <paramref name="minimumNrMatchers"/> is bigger than
+        /// the number of <paramref name="subScorers"/>, no matches will be produced.
+        /// <para/>When <paramref name="minimumNrMatchers"/> equals the number of <paramref name="subScorers"/>,
+        /// it is more efficient to use <see cref="ConjunctionScorer"/>. </param>
         public MinShouldMatchSumScorer(Weight weight, IList<Scorer> subScorers, int minimumNrMatchers)
             : base(weight)
         {
@@ -138,8 +138,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Construct a <code>DisjunctionScorer</code>, using one as the minimum number
-        /// of matching subscorers.
+        /// Construct a <see cref="DisjunctionScorer"/>, using one as the minimum number
+        /// of matching <paramref name="subScorers"/>.
         /// </summary>
         public MinShouldMatchSumScorer(Weight weight, IList<Scorer> subScorers)
             : this(weight, subScorers, 1)
@@ -272,7 +272,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the score of the current document matching the query. Initially
-        /// invalid, until <seealso cref="#nextDoc()"/> is called the first time.
+        /// invalid, until <see cref="NextDoc()"/> is called the first time.
         /// </summary>
         public override float GetScore()
         {
@@ -291,11 +291,12 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Advances to the first match beyond the current whose document number is
-        /// greater than or equal to a given target. <br>
-        /// The implementation uses the advance() method on the subscorers.
+        /// greater than or equal to a given target.
+        /// <para/>
+        /// The implementation uses the Advance() method on the subscorers.
         /// </summary>
-        /// <param name="target"> the target document number. </param>
-        /// <returns> the document whose number is greater than or equal to the given
+        /// <param name="target"> The target document number. </param>
+        /// <returns> The document whose number is greater than or equal to the given
         ///         target, or -1 if none exist. </returns>
         public override int Advance(int target)
         {
@@ -349,7 +350,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Organize subScorers into a min heap with scorers generating the earliest document on top.
+        /// Organize <see cref="subScorers"/> into a min heap with scorers generating the earliest document on top.
         /// </summary>
         protected void MinheapHeapify()
         {
@@ -360,7 +361,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// The subtree of subScorers at root is a min heap except possibly for its root element.
+        /// The subtree of <see cref="subScorers"/> at root is a min heap except possibly for its root element.
         /// Bubble the root down as required to make the subtree a heap.
         /// </summary>
         protected void MinheapSiftDown(int root)
@@ -433,7 +434,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Remove the root Scorer from subScorers and re-establish it as a heap
+        /// Remove the root <see cref="Scorer"/> from <see cref="subScorers"/> and re-establish it as a heap
         /// </summary>
         protected void MinheapRemoveRoot()
         {
@@ -452,7 +453,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Removes a given Scorer from the heap by placing end of heap at that
+        /// Removes a given <see cref="Scorer"/> from the heap by placing end of heap at that
         /// position and bubbling it either up or down
         /// </summary>
         protected bool MinheapRemove(Scorer scorer)

@@ -27,26 +27,26 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal NormsFormat()
         {
         }
 
         /// <summary>
-        /// Returns a <seealso cref="DocValuesConsumer"/> to write norms to the
-        ///  index.
+        /// Returns a <see cref="DocValuesConsumer"/> to write norms to the
+        /// index.
         /// </summary>
         public abstract DocValuesConsumer NormsConsumer(SegmentWriteState state);
 
         /// <summary>
-        /// Returns a <seealso cref="DocValuesProducer"/> to read norms from the index.
-        /// <p>
+        /// Returns a <see cref="DocValuesProducer"/> to read norms from the index.
+        /// <para/>
         /// NOTE: by the time this call returns, it must hold open any files it will
         /// need to use; else, those files may be deleted. Additionally, required files
         /// may be deleted during the execution of this call before there is a chance
-        /// to open them. Under these circumstances an IOException should be thrown by
-        /// the implementation. IOExceptions are expected and will automatically cause
+        /// to open them. Under these circumstances an <see cref="System.IO.IOException"/> should be thrown by
+        /// the implementation. <see cref="System.IO.IOException"/> are expected and will automatically cause
         /// a retry of the segment opening logic with the newly revised segments.
         /// </summary>
         public abstract DocValuesProducer NormsProducer(SegmentReadState state);

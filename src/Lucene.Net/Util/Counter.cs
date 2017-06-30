@@ -21,24 +21,24 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Simple counter class
-    ///
+    /// <para/>
     /// @lucene.internal
     /// @lucene.experimental
     /// </summary>
     public abstract class Counter
     {
         /// <summary>
-        /// Adds the given delta to the counters current value
+        /// Adds the given delta to the counters current value.
         /// </summary>
         /// <param name="delta">
-        ///          the delta to add </param>
-        /// <returns> the counters updated value </returns>
+        ///          The delta to add. </param>
+        /// <returns> The counters updated value. </returns>
         public abstract long AddAndGet(long delta);
 
         /// <summary>
-        /// Returns the counters current value
+        /// Returns the counters current value.
         /// </summary>
-        /// <returns> the counters current value </returns>
+        /// <returns> The counters current value. </returns>
         public abstract long Get();
 
         /// <summary>
@@ -53,9 +53,9 @@ namespace Lucene.Net.Util
         /// Returns a new counter.
         /// </summary>
         /// <param name="threadSafe">
-        ///          <code>true</code> if the returned counter can be used by multiple
+        ///          <c>true</c> if the returned counter can be used by multiple
         ///          threads concurrently. </param>
-        /// <returns> a new counter. </returns>
+        /// <returns> A new counter. </returns>
         public static Counter NewCounter(bool threadSafe)
         {
             return threadSafe ? (Counter)new AtomicCounter() : new SerialCounter();

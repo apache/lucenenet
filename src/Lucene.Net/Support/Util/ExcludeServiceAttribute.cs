@@ -17,6 +17,9 @@
      * limitations under the License.
      */
 
+    /// <summary>
+    /// Base class for <see cref="Attribute"/> types that exclude services from Reflection scanning.
+    /// </summary>
     public abstract class ExcludeServiceAttribute : System.Attribute
     {
     }

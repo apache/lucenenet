@@ -228,7 +228,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(r2);
+                    IOUtils.DisposeWhileHandlingException(r2);
                 }
             }
         }

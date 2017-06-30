@@ -22,8 +22,8 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Represents hits returned by {@link
-    /// IndexSearcher#search(Query,Filter,int,Sort)}.
+    /// Represents hits returned by 
+    /// <see cref="IndexSearcher.Search(Query, Filter, int, Sort)"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

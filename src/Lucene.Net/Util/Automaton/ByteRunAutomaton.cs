@@ -18,7 +18,7 @@ namespace Lucene.Net.Util.Automaton
      */
 
     /// <summary>
-    /// Automaton representation for matching UTF-8 byte[].
+    /// Automaton representation for matching UTF-8 <see cref="T:byte[]"/>.
     /// </summary>
     public class ByteRunAutomaton : RunAutomaton
     {
@@ -28,14 +28,14 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// expert: if utf8 is true, the input is already byte-based </summary>
+        /// Expert: if utf8 is true, the input is already byte-based </summary>
         public ByteRunAutomaton(Automaton a, bool utf8)
             : base(utf8 ? a : (new UTF32ToUTF8()).Convert(a), 256, true)
         {
         }
 
         /// <summary>
-        /// Returns true if the given byte array is accepted by this automaton
+        /// Returns <c>true</c> if the given byte array is accepted by this automaton.
         /// </summary>
         public virtual bool Run(byte[] s, int offset, int length)
         {

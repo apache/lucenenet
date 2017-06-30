@@ -28,16 +28,17 @@ namespace Lucene.Net.Search
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// A Query that matches documents within an range of terms.
+    /// A <see cref="Query"/> that matches documents within an range of terms.
     ///
-    /// <p>this query matches the documents looking for terms that fall into the
-    /// supplied range according to {@link
-    /// Byte#compareTo(Byte)}. It is not intended
-    /// for numerical ranges; use <seealso cref="NumericRangeQuery"/> instead.
+    /// <para/>This query matches the documents looking for terms that fall into the
+    /// supplied range according to 
+    /// <see cref="byte.CompareTo(byte)"/>. It is not intended
+    /// for numerical ranges; use <see cref="NumericRangeQuery"/> instead.
     ///
-    /// <p>this query uses the {@link
-    /// MultiTermQuery#CONSTANT_SCORE_AUTO_REWRITE_DEFAULT}
+    /// <para/>This query uses the
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
     /// rewrite method.
+    /// <para/>
     /// @since 2.9
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -51,25 +52,25 @@ namespace Lucene.Net.Search
         private bool includeUpper;
 
         /// <summary>
-        /// Constructs a query selecting all terms greater/equal than <code>lowerTerm</code>
-        /// but less/equal than <code>upperTerm</code>.
+        /// Constructs a query selecting all terms greater/equal than <paramref name="lowerTerm"/>
+        /// but less/equal than <paramref name="upperTerm"/>.
         ///
-        /// <p>
-        /// If an endpoint is null, it is said
+        /// <para/>
+        /// If an endpoint is <c>null</c>, it is said
         /// to be "open". Either or both endpoints may be open.  Open endpoints may not
         /// be exclusive (you can't select all but the first or last term without
         /// explicitly specifying the term to exclude.)
         /// </summary>
         /// <param name="field"> The field that holds both lower and upper terms. </param>
         /// <param name="lowerTerm">
-        ///          The term text at the lower end of the range </param>
+        ///          The term text at the lower end of the range. </param>
         /// <param name="upperTerm">
-        ///          The term text at the upper end of the range </param>
+        ///          The term text at the upper end of the range. </param>
         /// <param name="includeLower">
-        ///          If true, the <code>lowerTerm</code> is
+        ///          If true, the <paramref name="lowerTerm"/> is
         ///          included in the range. </param>
         /// <param name="includeUpper">
-        ///          If true, the <code>upperTerm</code> is
+        ///          If true, the <paramref name="upperTerm"/> is
         ///          included in the range. </param>
         public TermRangeQuery(string field, BytesRef lowerTerm, BytesRef upperTerm, bool includeLower, bool includeUpper)
             : base(field)
@@ -81,7 +82,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Factory that creates a new TermRangeQuery using Strings for term text.
+        /// Factory that creates a new <see cref="TermRangeQuery"/> using <see cref="string"/>s for term text.
         /// </summary>
         public static TermRangeQuery NewStringRange(string field, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper)
         {
@@ -111,14 +112,14 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
+        /// Returns <c>true</c> if the lower endpoint is inclusive </summary>
         public virtual bool IncludesLower
         {
             get { return includeLower; }
         }
 
         /// <summary>
-        /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
+        /// Returns <c>true</c> if the upper endpoint is inclusive </summary>
         public virtual bool IncludesUpper
         {
             get { return includeUpper; }

@@ -47,7 +47,7 @@
         /// Returns a new <see cref="Filter"/> accepting only documents
         /// in this range.  This filter is not general-purpose;
         /// you should either use it with <see cref="DrillSideways"/> by
-        /// adding it to <see cref="DrillDownQuery.Add"/>, or pass it to
+        /// adding it to <see cref="DrillDownQuery.Add(string, Filter)"/>, or pass it to
         /// <see cref="Search.FilteredQuery"/> using its 
         /// <see cref="Search.FilteredQuery.QUERY_FIRST_FILTER_STRATEGY"/>.
         /// If the <see cref="ValueSource"/> is static, e.g. an indexed numeric
@@ -63,7 +63,7 @@
         /// Returns a new <see cref="Filter"/> accepting only documents
         ///  in this range.  This filter is not general-purpose;
         ///  you should either use it with <see cref="DrillSideways"/> by
-        ///  adding it to <see cref="DrillDownQuery.Add"/>, or pass it to
+        ///  adding it to <see cref="DrillDownQuery.Add(string, Filter)"/>, or pass it to
         ///  <see cref="Search.FilteredQuery"/> using its 
         ///  <see cref="Search.FilteredQuery.QUERY_FIRST_FILTER_STRATEGY"/>.  If the
         ///  <see cref="ValueSource"/> is static, e.g. an indexed numeric

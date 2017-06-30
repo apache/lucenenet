@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
     /// <para><b>NOTE</b>: If you call
     /// <see cref="Thread.Interrupt()"/> on a thread that's within
     /// <see cref="IndexWriter"/>, <see cref="IndexWriter"/> will try to catch this (eg, if
-    /// it's in a Wait() or <see cref="Thread.Sleep()"/>), and will then throw
+    /// it's in a Wait() or <see cref="Thread.Sleep(int)"/>), and will then throw
     /// the unchecked exception <see cref="ThreadInterruptedException"/>
     /// and <b>clear</b> the interrupt status on the thread.</para>
     /// </summary>
@@ -427,7 +427,7 @@ namespace Lucene.Net.Index
             {
                 if (!success2)
                 {
-                    IOUtils.CloseWhileHandlingException(r);
+                    IOUtils.DisposeWhileHandlingException(r);
                 }
             }
             return r;
@@ -945,7 +945,7 @@ namespace Lucene.Net.Index
                     {
                         infoStream.Message("IW", "init: hit exception on init; releasing write lock");
                     }
-                    IOUtils.CloseWhileHandlingException(writeLock);
+                    IOUtils.DisposeWhileHandlingException(writeLock);
                     writeLock = null;
                 }
             }
@@ -1237,7 +1237,7 @@ namespace Lucene.Net.Index
                     finally
                     {
                         // shutdown policy, scheduler and all threads (this call is not interruptible):
-                        IOUtils.CloseWhileHandlingException(mergePolicy, mergeScheduler);
+                        IOUtils.DisposeWhileHandlingException(mergePolicy, mergeScheduler);
                     }
                 }
 
@@ -1975,7 +1975,7 @@ namespace Lucene.Net.Index
             {
                 lock (this)
                 {
-                    return segmentInfos.Files(directory, true);
+                    return segmentInfos.GetFiles(directory, true);
                 }
             }
         }
@@ -2593,7 +2593,7 @@ namespace Lucene.Net.Index
                     deleter.Refresh();
                     deleter.Dispose();
 
-                    IOUtils.Close(writeLock); // release write lock
+                    IOUtils.Dispose(writeLock); // release write lock
                     writeLock = null;
 
                     Debug.Assert(docWriter.perThreadPool.NumDeactivatedThreadStates() == docWriter.perThreadPool.MaxThreadStates, "" + docWriter.perThreadPool.NumDeactivatedThreadStates() + " " + docWriter.perThreadPool.MaxThreadStates);
@@ -2612,7 +2612,7 @@ namespace Lucene.Net.Index
                     // Must not hold IW's lock while closing
                     // mergePolicy/Scheduler: this can lead to deadlock,
                     // e.g. TestIW.testThreadInterruptDeadlock
-                    IOUtils.CloseWhileHandlingException(mergePolicy, mergeScheduler);
+                    IOUtils.DisposeWhileHandlingException(mergePolicy, mergeScheduler);
                 }
                 lock (this)
                 {
@@ -2634,7 +2634,7 @@ namespace Lucene.Net.Index
                         }
 
                         // close all the closeables we can (but important is readerPool and writeLock to prevent leaks)
-                        IOUtils.CloseWhileHandlingException(readerPool, deleter, writeLock);
+                        IOUtils.DisposeWhileHandlingException(readerPool, deleter, writeLock);
                         writeLock = null;
                     }
                     closed = true;
@@ -2962,7 +2962,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Acquires write locks on all the directories; be sure
-        /// to match with a call to <see cref="IOUtils.Close(IEnumerable{IDisposable})"/> in a
+        /// to match with a call to <see cref="IOUtils.Dispose(IEnumerable{IDisposable})"/> in a
         /// finally clause.
         /// </summary>
         private IEnumerable<Lock> AcquireWriteLocks(params Directory[] dirs)
@@ -2983,7 +2983,7 @@ namespace Lucene.Net.Index
                     if (!success)
                     {
                         // Release all previously acquired locks:
-                        IOUtils.CloseWhileHandlingException(locks);
+                        IOUtils.DisposeWhileHandlingException(locks);
                     }
                 }
             }
@@ -3096,7 +3096,7 @@ namespace Lucene.Net.Index
                     {
                         foreach (SegmentCommitInfo sipc in infos)
                         {
-                            foreach (string file in sipc.Files())
+                            foreach (string file in sipc.GetFiles())
                             {
                                 try
                                 {
@@ -3124,7 +3124,7 @@ namespace Lucene.Net.Index
                         {
                             foreach (SegmentCommitInfo sipc in infos)
                             {
-                                foreach (string file in sipc.Files())
+                                foreach (string file in sipc.GetFiles())
                                 {
                                     try
                                     {
@@ -3151,11 +3151,11 @@ namespace Lucene.Net.Index
             {
                 if (successTop)
                 {
-                    IOUtils.Close(locks);
+                    IOUtils.Dispose(locks);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(locks);
+                    IOUtils.DisposeWhileHandlingException(locks);
                 }
             }
         }
@@ -3267,7 +3267,7 @@ namespace Lucene.Net.Index
                 {
                     if (stopMerges)
                     {
-                        deleter.DeleteNewFiles(infoPerCommit.Files());
+                        deleter.DeleteNewFiles(infoPerCommit.GetFiles());
                         return;
                     }
                     EnsureOpen();
@@ -3277,7 +3277,7 @@ namespace Lucene.Net.Index
                 // Now create the compound file if needed
                 if (useCompoundFile)
                 {
-                    ICollection<string> filesToDelete = infoPerCommit.Files();
+                    ICollection<string> filesToDelete = infoPerCommit.GetFiles();
                     try
                     {
                         CreateCompoundFile(infoStream, directory, CheckAbort.NONE, info, context);
@@ -3393,7 +3393,7 @@ namespace Lucene.Net.Index
 
             // Build up new segment's file names.  Must do this
             // before writing SegmentInfo:
-            foreach (string file in info.Files())
+            foreach (string file in info.GetFiles())
             {
                 string newFileName;
                 if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
@@ -3438,7 +3438,7 @@ namespace Lucene.Net.Index
             try
             {
                 // Copy the segment's files
-                foreach (string file in info.Files())
+                foreach (string file in info.GetFiles())
                 {
                     string newFileName;
                     if (docStoreFiles3xOnly != null && docStoreFiles3xOnly.Contains(file))
@@ -3599,7 +3599,7 @@ namespace Lucene.Net.Index
                                 // we are trying to sync all referenced files, a
                                 // merge completes which would otherwise have
                                 // removed the files we are now syncing.
-                                filesToCommit = toCommit.Files(directory, false);
+                                filesToCommit = toCommit.GetFiles(directory, false);
                                 deleter.IncRef(filesToCommit);
                             }
                             success = true;
@@ -4388,7 +4388,7 @@ namespace Lucene.Net.Index
                     // doing this  makes  MockDirWrapper angry in
                     // TestNRTThreads (LUCENE-5434):
                     readerPool.Drop(merge.info);
-                    deleter.DeleteNewFiles(merge.info.Files());
+                    deleter.DeleteNewFiles(merge.info.GetFiles());
                     return false;
                 }
 
@@ -4455,7 +4455,7 @@ namespace Lucene.Net.Index
                 {
                     Debug.Assert(!segmentInfos.Contains(merge.info));
                     readerPool.Drop(merge.info);
-                    deleter.DeleteNewFiles(merge.info.Files());
+                    deleter.DeleteNewFiles(merge.info.GetFiles());
                 }
 
                 bool success_ = false;
@@ -5121,7 +5121,7 @@ namespace Lucene.Net.Index
                 {
                     success = false;
 
-                    ICollection<string> filesToRemove = merge.info.Files();
+                    ICollection<string> filesToRemove = merge.info.GetFiles();
 
                     try
                     {
@@ -5161,7 +5161,7 @@ namespace Lucene.Net.Index
                             {
                                 deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_EXTENSION));
                                 deleter.DeleteFile(Lucene.Net.Index.IndexFileNames.SegmentFileName(mergedName, "", Lucene.Net.Index.IndexFileNames.COMPOUND_FILE_ENTRIES_EXTENSION));
-                                deleter.DeleteNewFiles(merge.info.Files());
+                                deleter.DeleteNewFiles(merge.info.GetFiles());
                             }
                         }
                     }
@@ -5215,7 +5215,7 @@ namespace Lucene.Net.Index
                     {
                         lock (this)
                         {
-                            deleter.DeleteNewFiles(merge.info.Files());
+                            deleter.DeleteNewFiles(merge.info.GetFiles());
                         }
                     }
                 }
@@ -5409,7 +5409,7 @@ namespace Lucene.Net.Index
         // called only from assert
         private bool FilesExist(SegmentInfos toSync)
         {
-            ICollection<string> files = toSync.Files(directory, false);
+            ICollection<string> files = toSync.GetFiles(directory, false);
             foreach (string fileName in files)
             {
                 Debug.Assert(SlowFileExists(directory, fileName), "file " + fileName + " does not exist; files=" + Arrays.ToString(directory.ListAll()));
@@ -5529,7 +5529,7 @@ namespace Lucene.Net.Index
                     ICollection<string> filesToSync;
                     try
                     {
-                        filesToSync = toSync.Files(directory, false);
+                        filesToSync = toSync.GetFiles(directory, false);
                         directory.Sync(filesToSync);
                         success = true;
                     }
@@ -5775,7 +5775,7 @@ namespace Lucene.Net.Index
                 bool success = false;
                 try
                 {
-                    IOUtils.CloseWhileHandlingException(prior, cfsDir);
+                    IOUtils.DisposeWhileHandlingException(prior, cfsDir);
                     success = true;
                 }
                 finally

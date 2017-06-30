@@ -27,6 +27,10 @@ namespace Lucene.Net.Util
     /// </summary>
     public abstract class ServiceNameAttribute : System.Attribute
     {
+        /// <summary>
+        /// Sole constructor. Initializes the service name.
+        /// </summary>
+        /// <param name="name"></param>
         public ServiceNameAttribute(string name)
         {
             if (string.IsNullOrEmpty(name))
@@ -34,6 +38,9 @@ namespace Lucene.Net.Util
             this.Name = name;
         }
 
+        /// <summary>
+        /// Gets the service name.
+        /// </summary>
         public string Name { get; private set; }
     }
 }

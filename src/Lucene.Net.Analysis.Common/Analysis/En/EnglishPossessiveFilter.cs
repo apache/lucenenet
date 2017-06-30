@@ -26,9 +26,9 @@ namespace Lucene.Net.Analysis.En
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="EnglishPossessiveFilter"/>:
     /// <list type="bullet">
-    ///    <item> As of 3.6, U+2019 RIGHT SINGLE QUOTATION MARK and 
+    ///    <item><description> As of 3.6, U+2019 RIGHT SINGLE QUOTATION MARK and 
     ///         U+FF07 FULLWIDTH APOSTROPHE are also treated as
-    ///         quotation marks.</item>
+    ///         quotation marks.</description></item>
     /// </list>
     /// </para>
     /// </summary>

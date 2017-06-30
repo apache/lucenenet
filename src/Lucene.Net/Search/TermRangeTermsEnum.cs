@@ -25,11 +25,11 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
     /// <summary>
-    /// Subclass of FilteredTermEnum for enumerating all terms that match the
+    /// Subclass of <see cref="FilteredTermsEnum"/> for enumerating all terms that match the
     /// specified range parameters.
-    /// <p>Term enumerations are always ordered by
-    /// <seealso cref="#getComparer"/>.  Each term in the enumeration is
-    /// greater than all that precede it.</p>
+    /// <para>Term enumerations are always ordered by
+    /// <see cref="FilteredTermsEnum.Comparer"/>.  Each term in the enumeration is
+    /// greater than all that precede it.</para>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -43,10 +43,10 @@ namespace Lucene.Net.Search
         private readonly IComparer<BytesRef> termComp;
 
         /// <summary>
-        /// Enumerates all terms greater/equal than <code>lowerTerm</code>
-        /// but less/equal than <code>upperTerm</code>.
+        /// Enumerates all terms greater/equal than <paramref name="lowerTerm"/>
+        /// but less/equal than <paramref name="upperTerm"/>.
         ///
-        /// If an endpoint is null, it is said to be "open". Either or both
+        /// If an endpoint is <c>null</c>, it is said to be "open". Either or both
         /// endpoints may be open.  Open endpoints may not be exclusive
         /// (you can't select all but the first or last term without
         /// explicitly specifying the term to exclude.)
@@ -58,9 +58,9 @@ namespace Lucene.Net.Search
         /// <param name="upperTerm">
         ///          The term text at the upper end of the range </param>
         /// <param name="includeLower">
-        ///          If true, the <code>lowerTerm</code> is included in the range. </param>
+        ///          If true, the <paramref name="lowerTerm"/> is included in the range. </param>
         /// <param name="includeUpper">
-        ///          If true, the <code>upperTerm</code> is included in the range. </param>
+        ///          If true, the <paramref name="upperTerm"/> is included in the range. </param>
         public TermRangeTermsEnum(TermsEnum tenum, BytesRef lowerTerm, BytesRef upperTerm, bool includeLower, bool includeUpper)
             : base(tenum)
         {

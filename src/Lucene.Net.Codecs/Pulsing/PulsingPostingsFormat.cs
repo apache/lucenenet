@@ -25,6 +25,7 @@ namespace Lucene.Net.Codecs.Pulsing
     /// This postings format "inlines" the postings for terms that have
     /// low docFreq.  It wraps another postings format, which is used for
     /// writing the non-inlined terms.
+    /// <para/>
     /// @lucene.experimental 
     /// </summary>
     public abstract class PulsingPostingsFormat : PostingsFormat
@@ -40,7 +41,7 @@ namespace Lucene.Net.Codecs.Pulsing
         {
         }
 
-        /// <summary>Terms with freq less than or equal freqCutoff are inlined into terms dict.</summary>
+        /// <summary>Terms with freq less than or equal <paramref name="freqCutoff"/> are inlined into terms dict.</summary>
         public PulsingPostingsFormat(PostingsBaseFormat wrappedPostingsBaseFormat, int freqCutoff,
             int minBlockSize, int maxBlockSize) 
             : base()
@@ -83,7 +84,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsWriter, pulsingWriter);
+                    IOUtils.DisposeWhileHandlingException(docsWriter, pulsingWriter);
                 }
             }
         }
@@ -111,7 +112,7 @@ namespace Lucene.Net.Codecs.Pulsing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsReader, pulsingReader);
+                    IOUtils.DisposeWhileHandlingException(docsReader, pulsingReader);
                 }
             }
         }

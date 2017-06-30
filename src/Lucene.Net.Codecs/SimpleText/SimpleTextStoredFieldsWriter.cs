@@ -33,9 +33,9 @@ namespace Lucene.Net.Codecs.SimpleText
     /// <summary>
     /// Writes plain-text stored fields.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextStoredFieldsWriter : StoredFieldsWriter
     {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Codecs.SimpleText
 	        if (!disposing) return;
 	        try
 	        {
-	            IOUtils.Close(_output);
+	            IOUtils.Dispose(_output);
 	        }
 	        finally
 	        {

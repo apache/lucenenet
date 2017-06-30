@@ -24,7 +24,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
 
     /// <summary>
     /// Obtains <see cref="short"/> field values from the <see cref="FieldCache"/>
-    /// using <see cref="IFieldCache.GetInt16s"/>
+    /// using <see cref="IFieldCache.GetInt16s(AtomicReader, string, FieldCache.IInt16Parser, bool)"/>
     /// and makes those values available as other numeric types, casting as needed.
     /// <para/>
     /// NOTE: This was ShortFieldSource in Lucene

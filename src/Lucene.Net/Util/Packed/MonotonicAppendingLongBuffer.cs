@@ -26,8 +26,8 @@ namespace Lucene.Net.Util.Packed
     /// case where the sequence is monotonic, although it can encode any sequence of
     /// arbitrary longs. It only supports appending.
     /// <para/>
-    /// NOTE: This was MonotonicAppendingLongBuffer in Lucene
-    /// 
+    /// NOTE: This was MonotonicAppendingLongBuffer in Lucene.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class MonotonicAppendingInt64Buffer : AbstractAppendingInt64Buffer
@@ -45,9 +45,9 @@ namespace Lucene.Net.Util.Packed
         internal float[] averages;
         internal long[] minValues;
 
-        /// <param name="initialPageCount">        the initial number of pages </param>
-        /// <param name="pageSize">                the size of a single page </param>
-        /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio per value </param>
+        /// <param name="initialPageCount">        The initial number of pages. </param>
+        /// <param name="pageSize">                The size of a single page. </param>
+        /// <param name="acceptableOverheadRatio"> An acceptable overhead ratio per value. </param>
         public MonotonicAppendingInt64Buffer(int initialPageCount, int pageSize, float acceptableOverheadRatio)
             : base(initialPageCount, pageSize, acceptableOverheadRatio)
         {
@@ -56,8 +56,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Create an <seealso cref="MonotonicAppendingInt64Buffer"/> with initialPageCount=16,
-        /// pageSize=1024 and acceptableOverheadRatio=<seealso cref="PackedInt32s#DEFAULT"/>
+        /// Create an <see cref="MonotonicAppendingInt64Buffer"/> with initialPageCount=16,
+        /// pageSize=1024 and acceptableOverheadRatio=<see cref="PackedInt32s.DEFAULT"/>.
         /// </summary>
         public MonotonicAppendingInt64Buffer()
             : this(16, 1024, PackedInt32s.DEFAULT)
@@ -65,8 +65,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Create an <seealso cref="AppendingDeltaPackedInt64Buffer"/> with initialPageCount=16,
-        /// pageSize=1024
+        /// Create an <see cref="AppendingDeltaPackedInt64Buffer"/> with initialPageCount=16,
+        /// pageSize=1024.
         /// </summary>
         public MonotonicAppendingInt64Buffer(float acceptableOverheadRatio)
             : this(16, 1024, acceptableOverheadRatio)
@@ -81,7 +81,8 @@ namespace Lucene.Net.Util.Packed
             }
             else
             {
-                long @base = minValues[block] + (long)(averages[block] * (long)element);
+                // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                long @base = minValues[block] + (long)(float)(averages[block] * (long)element);
                 if (values[block] == null)
                 {
                     return @base;
@@ -108,7 +109,8 @@ namespace Lucene.Net.Util.Packed
                     int toFill = Math.Min(len, pending.Length - element);
                     for (int r = 0; r < toFill; r++, off++, element++)
                     {
-                        arr[off] = minValues[block] + (long)(averages[block] * (long)element);
+                        // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                        arr[off] = minValues[block] + (long)(float)(averages[block] * (long)element);
                     }
                     return toFill;
                 }
@@ -118,7 +120,8 @@ namespace Lucene.Net.Util.Packed
                     int read = values[block].Get(element, arr, off, len);
                     for (int r = 0; r < read; r++, off++, element++)
                     {
-                        arr[off] = minValues[block] + (long)(averages[block] * (long)element) + ZigZagDecode(arr[off]);
+                        // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                        arr[off] = minValues[block] + (long)(float)(averages[block] * (long)element) + ZigZagDecode(arr[off]);
                     }
                     return read;
                 }
@@ -140,7 +143,8 @@ namespace Lucene.Net.Util.Packed
 
             for (int i = 0; i < pendingOff; ++i)
             {
-                pending[i] = ZigZagEncode(pending[i] - minValues[valuesOff] - (long)(averages[valuesOff] * (long)i));
+                // LUCENENET NOTE: IMPORTANT: The cast to float is critical here for it to work in x86
+                pending[i] = ZigZagEncode(pending[i] - minValues[valuesOff] - (long)(float)(averages[valuesOff] * (long)i));
             }
             long maxDelta = 0;
             for (int i = 0; i < pendingOff; ++i)

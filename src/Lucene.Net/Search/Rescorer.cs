@@ -20,18 +20,18 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// Re-scores the topN results (<seealso cref="TopDocs"/>) from an original
-    /// query.  See <seealso cref="QueryRescorer"/> for an actual
+    /// Re-scores the topN results (<see cref="TopDocs"/>) from an original
+    /// query.  See <see cref="QueryRescorer"/> for an actual
     /// implementation.  Typically, you run a low-cost
     /// first-pass query across the entire index, collecting the
     /// top few hundred hits perhaps, and then use this class to
     /// mix in a more costly second pass scoring.
     ///
-    /// <p>See {@link
-    /// QueryRescorer#rescore(IndexSearcher,TopDocs,Query,double,int)}
+    /// <para/>See 
+    /// <see cref="QueryRescorer.Rescore(IndexSearcher, TopDocs, Query, double, int)"/>
     /// for a simple static method to call to rescore using a 2nd
-    /// pass <seealso cref="Query"/>.
-    ///
+    /// pass <see cref="Query"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -40,9 +40,9 @@ namespace Lucene.Net.Search
     public abstract class Rescorer
     {
         /// <summary>
-        /// Rescore an initial first-pass <seealso cref="TopDocs"/>.
+        /// Rescore an initial first-pass <see cref="TopDocs"/>.
         /// </summary>
-        /// <param name="searcher"> <seealso cref="IndexSearcher"/> used to produce the
+        /// <param name="searcher"> <see cref="IndexSearcher"/> used to produce the
         ///   first pass topDocs </param>
         /// <param name="firstPassTopDocs"> Hits from the first pass
         ///   search.  It's very important that these hits were

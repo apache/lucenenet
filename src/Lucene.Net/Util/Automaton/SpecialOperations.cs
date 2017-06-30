@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Automaton
 
     /// <summary>
     /// Special automata operations.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     internal sealed class SpecialOperations
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Finds the largest entry whose value is less than or equal to c, or 0 if
+        /// Finds the largest entry whose value is less than or equal to <paramref name="c"/>, or 0 if
         /// there is no such entry.
         /// </summary>
         internal static int FindIndex(int c, int[] points)
@@ -76,7 +76,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns true if the language of this automaton is finite.
+        /// Returns <c>true</c> if the language of this automaton is finite.
         /// </summary>
         public static bool IsFinite(Automaton a)
         {
@@ -88,7 +88,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Checks whether there is a loop containing s. (this is sufficient since
+        /// Checks whether there is a loop containing <paramref name="s"/>. (This is sufficient since
         /// there are never transitions to dead states.)
         /// </summary>
         // TODO: not great that this is recursive... in theory a
@@ -112,7 +112,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns the longest string that is a prefix of all accepted strings and
         /// visits each state at most once.
         /// </summary>
-        /// <returns> common prefix </returns>
+        /// <returns> Common prefix. </returns>
         public static string GetCommonPrefix(Automaton a)
         {
             if (a.IsSingleton)
@@ -182,7 +182,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns the longest string that is a suffix of all accepted strings and
         /// visits each state at most once.
         /// </summary>
-        /// <returns> common suffix </returns>
+        /// <returns> Common suffix. </returns>
         public static string GetCommonSuffix(Automaton a)
         {
             if (a.IsSingleton) // if singleton, the suffix is the string itself.
@@ -281,8 +281,8 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns the set of accepted strings, assuming that at most
-        /// <code>limit</code> strings are accepted. If more than <code>limit</code>
-        /// strings are accepted, the first limit strings found are returned. If <code>limit</code>&lt;0, then
+        /// <paramref name="limit"/> strings are accepted. If more than <paramref name="limit"/>
+        /// strings are accepted, the first limit strings found are returned. If <paramref name="limit"/>&lt;0, then
         /// the limit is infinite.
         /// </summary>
         public static ISet<Int32sRef> GetFiniteStrings(Automaton a, int limit)
@@ -304,8 +304,8 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns the strings that can be produced from the given state, or
-        /// false if more than <code>limit</code> strings are found.
-        /// <code>limit</code>&lt;0 means "infinite".
+        /// <c>false</c> if more than <paramref name="limit"/> strings are found.
+        /// <paramref name="limit"/>&lt;0 means "infinite".
         /// </summary>
         private static bool GetFiniteStrings(State s, HashSet<State> pathstates, HashSet<Int32sRef> strings, Int32sRef path, int limit)
         {

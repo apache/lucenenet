@@ -155,35 +155,35 @@ namespace Lucene.Net.Search.Highlight
         /// <para/>
         /// In my tests the speeds to recreate 1000 token streams using this method are:
         /// <list type="bullet">
-        ///     <item>
+        ///     <item><description>
         ///     with TermVector offset only data stored - 420  milliseconds 
-        ///     </item>
-        ///     <item>
+        ///     </description></item>
+        ///     <item><description>
         ///     with TermVector offset AND position data stored - 271 milliseconds
         ///     (nb timings for TermVector with position data are based on a tokenizer with contiguous
         ///     positions - no overlaps or gaps)
-        ///     </item>
-        ///     <item>
+        ///     </description></item>
+        ///     <item><description>
         ///     The cost of not using TermPositionVector to store
         ///     pre-parsed content and using an analyzer to re-parse the original content:
         ///     - reanalyzing the original content - 980 milliseconds
-        ///     </item>
+        ///     </description></item>
         /// </list>
         /// 
         /// The re-analyze timings will typically vary depending on -
         /// <list type="number">
-        ///     <item>
+        ///     <item><description>
         ///     The complexity of the analyzer code (timings above were using a
         ///     stemmer/lowercaser/stopword combo)
-        ///     </item>
-        ///     <item>
+        ///     </description></item>
+        ///     <item><description>
         ///     The  number of other fields (Lucene reads ALL fields off the disk 
         ///     when accessing just one document field - can cost dear!)
-        ///     </item>
-        ///     <item>
+        ///     </description></item>
+        ///     <item><description>
         ///     Use of compression on field storage - could be faster due to compression (less disk IO)
         ///     or slower (more CPU burn) depending on the content.
-        ///     </item>
+        ///     </description></item>
         /// </list>
         /// </summary>
         /// <param name="tpv"></param>

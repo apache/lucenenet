@@ -22,17 +22,16 @@ namespace Lucene.Net.Codecs.Sep
      * limitations under the License.
      */
 
+    // TODO: -- should we switch "hasProx" higher up?  and
+    // create two separate docs readers, one that also reads
+    // prox and one that doesn't?
+
     /// <summary>
     /// Concrete class that reads the current doc/freq/skip
     /// postings format.    
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-    /// <remarks>
-    /// TODO: -- should we switch "hasProx" higher up?  and
-    /// create two separate docs readers, one that also reads
-    /// prox and one that doesn't?
-    /// </remarks>
     public class SepPostingsReader : PostingsReaderBase
     {
         private readonly Int32IndexInput freqIn;
@@ -99,7 +98,7 @@ namespace Lucene.Net.Codecs.Sep
         {
             if (disposing)
             {
-                IOUtils.Close(freqIn, docIn, skipIn, posIn, payloadIn);
+                IOUtils.Dispose(freqIn, docIn, skipIn, posIn, payloadIn);
             }
         }
 

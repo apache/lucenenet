@@ -34,9 +34,9 @@ namespace Lucene.Net.Index
     /// <para/>
     /// To prevent OOM Errors and ensure <see cref="IndexWriter"/>'s stability this class blocks
     /// incoming threads from indexing once 2 x number of available
-    /// <see cref="ThreadState"/>s in <see cref="DocumentsWriterPerThreadPool"/> is exceeded.
+    /// <see cref="DocumentsWriterPerThreadPool.ThreadState"/> is exceeded.
     /// Once flushing catches up and the number of flushing DWPT is equal or lower
-    /// than the number of active <see cref="ThreadState"/>s threads are released and can
+    /// than the number of active <see cref="DocumentsWriterPerThreadPool.ThreadState"/>s threads are released and can
     /// continue indexing.
     /// </summary>
 #if FEATURE_SERIALIZABLE

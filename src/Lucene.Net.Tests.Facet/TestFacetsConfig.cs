@@ -79,7 +79,7 @@ namespace Lucene.Net.Facet
             // these two addDocument() used to fail
             indexWriter.AddDocument(doc);
             indexWriter.AddDocument(doc);
-            IOUtils.Close(indexWriter, taxoWriter);
+            IOUtils.Dispose(indexWriter, taxoWriter);
 
             DirectoryReader indexReader = DirectoryReader.Open(indexDir);
             DirectoryTaxonomyReader taxoReader = new DirectoryTaxonomyReader(taxoDir);
@@ -91,9 +91,9 @@ namespace Lucene.Net.Facet
             FacetResult res = facets.GetTopChildren(10, "a");
             Assert.AreEqual(1, res.LabelValues.Length);
             Assert.AreEqual(2, res.LabelValues[0].Value);
-            IOUtils.Close(indexReader, taxoReader);
+            IOUtils.Dispose(indexReader, taxoReader);
 
-            IOUtils.Close(indexDir, taxoDir);
+            IOUtils.Dispose(indexDir, taxoDir);
         }
 
         /// <summary>

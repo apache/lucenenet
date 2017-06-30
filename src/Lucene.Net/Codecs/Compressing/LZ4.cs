@@ -27,7 +27,7 @@ namespace Lucene.Net.Codecs.Compressing
 
     /// <summary>
     /// LZ4 compression and decompression routines.
-    ///
+    /// <para/>
     /// http://code.google.com/p/lz4/
     /// http://fastcompression.blogspot.fr/p/lz4.html
     /// </summary>
@@ -56,7 +56,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// NOTE: This was readInt() in Lucene
+        /// NOTE: This was readInt() in Lucene.
         /// </summary>
         private static int ReadInt32(byte[] buf, int i)
         {
@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// NOTE: This was readIntEquals() in Lucene
+        /// NOTE: This was readIntEquals() in Lucene.
         /// </summary>
         private static bool ReadInt32Equals(byte[] buf, int i, int j)
         {
@@ -94,8 +94,8 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// Decompress at least <code>decompressedLen</code> bytes into
-        /// <code>dest[dOff:]</code>. Please note that <code>dest</code> must be large
+        /// Decompress at least <paramref name="decompressedLen"/> bytes into
+        /// <c>dest[dOff]</c>. Please note that <paramref name="dest"/> must be large
         /// enough to be able to hold <b>all</b> decompressed data (meaning that you
         /// need to know the total decompressed length).
         /// </summary>
@@ -241,8 +241,8 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// Compress <code>bytes[off:off+len]</code> into <code>out</code> using
-        /// at most 16KB of memory. <code>ht</code> shouldn't be shared across threads
+        /// Compress <c>bytes[off:off+len]</c> into <paramref name="out"/> using
+        /// at most 16KB of memory. <paramref name="ht"/> shouldn't be shared across threads
         /// but can safely be reused.
         /// </summary>
         public static void Compress(byte[] bytes, int off, int len, DataOutput @out, HashTable ht)
@@ -475,12 +475,12 @@ namespace Lucene.Net.Codecs.Compressing
         }
 
         /// <summary>
-        /// Compress <code>bytes[off:off+len]</code> into <code>out</code>. Compared to
-        /// <seealso cref="LZ4#compress(byte[], int, int, DataOutput, HashTable)"/>, this method
+        /// Compress <c>bytes[off:off+len]</c> into <paramref name="out"/>. Compared to
+        /// <see cref="LZ4.Compress(byte[], int, int, DataOutput, HashTable)"/>, this method
         /// is slower and uses more memory (~ 256KB per thread) but should provide
         /// better compression ratios (especially on large inputs) because it chooses
         /// the best match among up to 256 candidates and then performs trade-offs to
-        /// fix overlapping matches. <code>ht</code> shouldn't be shared across threads
+        /// fix overlapping matches. <paramref name="ht"/> shouldn't be shared across threads
         /// but can safely be reused.
         /// </summary>
         public static void CompressHC(byte[] src, int srcOff, int srcLen, DataOutput @out, HCHashTable ht)

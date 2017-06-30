@@ -83,7 +83,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 try
                 {
-                    IOUtils.Close(FieldsStream, IndexStream);
+                    IOUtils.Dispose(FieldsStream, IndexStream);
                 }
                 finally
                 {

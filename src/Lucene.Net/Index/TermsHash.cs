@@ -26,13 +26,13 @@ namespace Lucene.Net.Index
     using Int32BlockPool = Lucene.Net.Util.Int32BlockPool;
 
     /// <summary>
-    /// this class implements <seealso cref="InvertedDocConsumer"/>, which
-    ///  is passed each token produced by the analyzer on each
-    ///  field.  It stores these tokens in a hash table, and
-    ///  allocates separate byte streams per token.  Consumers of
-    ///  this class, eg <seealso cref="FreqProxTermsWriter"/> and {@link
-    ///  TermVectorsConsumer}, write their own byte streams
-    ///  under each term.
+    /// This class implements <see cref="InvertedDocConsumer"/>, which
+    /// is passed each token produced by the analyzer on each
+    /// field.  It stores these tokens in a hash table, and
+    /// allocates separate byte streams per token.  Consumers of
+    /// this class, eg <see cref="FreqProxTermsWriter"/> and 
+    /// <see cref="TermVectorsConsumer"/>, write their own byte streams
+    /// under each term.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

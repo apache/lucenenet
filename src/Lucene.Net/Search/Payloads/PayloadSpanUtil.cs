@@ -33,11 +33,10 @@ namespace Lucene.Net.Search.Payloads
 
     /// <summary>
     /// Experimental class to get set of payloads for most standard Lucene queries.
-    /// Operates like Highlighter - IndexReader should only contain doc of interest,
+    /// Operates like Highlighter - <see cref="Index.IndexReader"/> should only contain doc of interest,
     /// best to use MemoryIndex.
-    ///
+    /// <para/>
     /// @lucene.experimental
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -49,7 +48,7 @@ namespace Lucene.Net.Search.Payloads
         /// <param name="context">
         ///          that contains doc with payloads to extract
         /// </param>
-        /// <seealso cref= IndexReader#getContext() </seealso>
+        /// <seealso cref="Index.IndexReader.Context"/>
         public PayloadSpanUtil(IndexReaderContext context)
         {
             this.context = context;
@@ -60,7 +59,7 @@ namespace Lucene.Net.Search.Payloads
         /// </summary>
         /// <param name="query"> rewritten query </param>
         /// <returns> payloads Collection </returns>
-        /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+        /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
         public virtual ICollection<byte[]> GetPayloadsForQuery(Query query)
         {
             var payloads = new List<byte[]>();

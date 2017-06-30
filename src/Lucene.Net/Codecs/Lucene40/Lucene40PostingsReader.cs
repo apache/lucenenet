@@ -42,8 +42,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// Concrete class that reads the 4.0 frq/prox
     /// postings format.
     /// </summary>
-    ///  <seealso cref= Lucene40PostingsFormat </seealso>
-    ///  @deprecated Only for reading old 4.0 segments
+    /// <seealso cref="Lucene40PostingsFormat"/>
     [Obsolete("Only for reading old 4.0 segments")]
     public class Lucene40PostingsReader : PostingsReaderBase
     {
@@ -105,7 +104,7 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(freqIn, proxIn);
+                    IOUtils.DisposeWhileHandlingException(freqIn, proxIn);
                 }
             }
         }
@@ -958,8 +957,8 @@ namespace Lucene.Net.Codecs.Lucene40
             }
 
             /// <summary>
-            /// Returns the payload at this position, or null if no
-            ///  payload was indexed.
+            /// Returns the payload at this position, or <c>null</c> if no
+            /// payload was indexed.
             /// </summary>
             public override BytesRef GetPayload()
             {
@@ -1263,8 +1262,8 @@ namespace Lucene.Net.Codecs.Lucene40
             }
 
             /// <summary>
-            /// Returns the payload at this position, or null if no
-            ///  payload was indexed.
+            /// Returns the payload at this position, or <c>null</c> if no
+            /// payload was indexed.
             /// </summary>
             public override BytesRef GetPayload()
             {

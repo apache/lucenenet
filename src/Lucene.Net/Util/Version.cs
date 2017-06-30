@@ -25,10 +25,10 @@ namespace Lucene.Net.Util
     /// Use by certain classes to match version compatibility
     /// across releases of Lucene.
     ///
-    /// <p><b>WARNING</b>: When changing the version parameter
+    /// <para><b>WARNING</b>: When changing the version parameter
     /// that you supply to components in Lucene, do not simply
     /// change the version at search-time, but instead also adjust
-    /// your indexing code to match, and re-index.</p>
+    /// your indexing code to match, and re-index.</para>
     /// </summary>
     public enum LuceneVersion
     {
@@ -124,16 +124,16 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Match settings and bugs in Lucene's 4.8 release.
-        ///  <p>
-        ///  Use this to get the latest &amp; greatest settings, bug
-        ///  fixes, etc, for Lucene.
+        /// <para/>
+        /// Use this to get the latest &amp; greatest settings, bug
+        /// fixes, etc, for Lucene.
         /// </summary>
         LUCENE_48,
 
         /* Add new constants for later versions **here** to respect order! */
 
         /// <summary>
-        /// <p><b>WARNING</b>: if you use this setting, and then
+        /// <para/><b>WARNING</b>: if you use this setting, and then
         /// upgrade to a newer release of Lucene, sizable changes
         /// may happen.  If backwards compatibility is important
         /// then you should instead explicitly specify an actual

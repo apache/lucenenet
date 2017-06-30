@@ -20,12 +20,12 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// this class is used to score a range of documents at
-    ///  once, and is returned by <seealso cref="Weight#bulkScorer"/>.  Only
-    ///  queries that have a more optimized means of scoring
-    ///  across a range of documents need to override this.
-    ///  Otherwise, a default implementation is wrapped around
-    ///  the <seealso cref="Scorer"/> returned by <seealso cref="Weight#scorer"/>.
+    /// This class is used to score a range of documents at
+    /// once, and is returned by <see cref="Weight.GetBulkScorer(Index.AtomicReaderContext, bool, Util.IBits)"/>.  Only
+    /// queries that have a more optimized means of scoring
+    /// across a range of documents need to override this.
+    /// Otherwise, a default implementation is wrapped around
+    /// the <see cref="Scorer"/> returned by <see cref="Weight.GetScorer(Index.AtomicReaderContext, Util.IBits)"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -45,7 +45,7 @@ namespace Lucene.Net.Search
         /// </summary>
         /// <param name="collector"> The collector to which all matching documents are passed. </param>
         /// <param name="max"> Score up to, but not including, this doc </param>
-        /// <returns> true if more matching documents may remain. </returns>
+        /// <returns> <c>true</c> if more matching documents may remain. </returns>
         public abstract bool Score(ICollector collector, int max);
     }
 }

@@ -30,10 +30,10 @@ namespace Lucene.Net.Support.IO
     /// <para/>
     /// A long buffer can be created in either of the following ways:
     /// <list type="bullet">
-    ///     <item><see cref="Allocate(int)"/> a new long array and create a buffer
-    ///     based on it</item>
-    ///     <item><see cref="Wrap(long[])"/> an existing long array to create a new
-    ///     buffer</item>
+    ///     <item><description><see cref="Allocate(int)"/> a new long array and create a buffer
+    ///     based on it</description></item>
+    ///     <item><description><see cref="Wrap(long[])"/> an existing long array to create a new
+    ///     buffer</description></item>
     /// </list>
     /// </summary>
 #if FEATURE_SERIALIZABLE

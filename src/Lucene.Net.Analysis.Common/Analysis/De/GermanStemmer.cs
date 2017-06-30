@@ -176,12 +176,12 @@ namespace Lucene.Net.Analysis.De
         /// Do some substitutions for the term to reduce overstemming:
         /// 
         /// <list type="bullet">
-        /// <item>Substitute Umlauts with their corresponding vowel: äöü -> aou,
-        ///   "ß" is substituted by "ss"</item>
-        /// <item>Substitute a second char of a pair of equal characters with
-        ///   an asterisk: ?? -> ?*</item>
-        /// <item>Substitute some common character combinations with a token:
-        ///   sch/ch/ei/ie/ig/st -> $/§/%/&amp;/#/!</item>
+        /// <item><description>Substitute Umlauts with their corresponding vowel: äöü -> aou,
+        ///   "ß" is substituted by "ss"</description></item>
+        /// <item><description>Substitute a second char of a pair of equal characters with
+        ///   an asterisk: ?? -> ?*</description></item>
+        /// <item><description>Substitute some common character combinations with a token:
+        ///   sch/ch/ei/ie/ig/st -> $/§/%/&amp;/#/!</description></item>
         /// </list>
         /// </summary>
         private void Substitute(StringBuilder buffer)

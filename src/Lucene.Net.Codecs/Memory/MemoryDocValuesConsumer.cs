@@ -43,7 +43,7 @@ namespace Lucene.Net.Codecs.Memory
     using Util = Util.Fst.Util;
 
     /// <summary>
-    /// Writer for <seealso cref="MemoryDocValuesFormat"/>
+    /// Writer for <see cref="MemoryDocValuesFormat"/>.
     /// </summary>
     internal class MemoryDocValuesConsumer : DocValuesConsumer
     {
@@ -72,7 +72,7 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this);
+                    IOUtils.DisposeWhileHandlingException(this);
                 }
             }
         }
@@ -253,11 +253,11 @@ namespace Lucene.Net.Codecs.Memory
             {
                 if (success)
                 {
-                    IOUtils.Close(data, meta);
+                    IOUtils.Dispose(data, meta);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data, meta);
+                    IOUtils.DisposeWhileHandlingException(data, meta);
                 }
                 data = meta = null;
             }

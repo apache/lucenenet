@@ -30,21 +30,21 @@ namespace Lucene.Net.Index
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
-    /// A <seealso cref="SnapshotDeletionPolicy"/> which adds a persistence layer so that
+    /// A <see cref="SnapshotDeletionPolicy"/> which adds a persistence layer so that
     /// snapshots can be maintained across the life of an application. The snapshots
-    /// are persisted in a <seealso cref="Directory"/> and are committed as soon as
-    /// <seealso cref="#snapshot()"/> or <seealso cref="#release(IndexCommit)"/> is called.
-    /// <p>
-    /// <b>NOTE:</b> Sharing <seealso cref="PersistentSnapshotDeletionPolicy"/>s that write to
-    /// the same directory across <seealso cref="IndexWriter"/>s will corrupt snapshots. You
-    /// should make sure every <seealso cref="IndexWriter"/> has its own
-    /// <seealso cref="PersistentSnapshotDeletionPolicy"/> and that they all write to a
-    /// different <seealso cref="Directory"/>.  It is OK to use the same
-    /// Directory that holds the index.
+    /// are persisted in a <see cref="Directory"/> and are committed as soon as
+    /// <see cref="Snapshot()"/> or <see cref="Release(IndexCommit)"/> is called.
+    /// <para/>
+    /// <b>NOTE:</b> Sharing <see cref="PersistentSnapshotDeletionPolicy"/>s that write to
+    /// the same directory across <see cref="IndexWriter"/>s will corrupt snapshots. You
+    /// should make sure every <see cref="IndexWriter"/> has its own
+    /// <see cref="PersistentSnapshotDeletionPolicy"/> and that they all write to a
+    /// different <see cref="Directory"/>.  It is OK to use the same
+    /// <see cref="Directory"/> that holds the index.
     ///
-    /// <p> this class adds a <seealso cref="#release(long)"/> method to
-    /// release commits from a previous snapshot's <seealso cref="IndexCommit#getGeneration"/>.
-    ///
+    /// <para/> This class adds a <see cref="Release(long)"/> method to
+    /// release commits from a previous snapshot's <see cref="IndexCommit.Generation"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -66,17 +66,17 @@ namespace Lucene.Net.Index
         private readonly Directory dir;
 
         /// <summary>
-        /// <seealso cref="PersistentSnapshotDeletionPolicy"/> wraps another
-        /// <seealso cref="IndexDeletionPolicy"/> to enable flexible
-        /// snapshotting, passing <seealso cref="OpenMode#CREATE_OR_APPEND"/>
+        /// <see cref="PersistentSnapshotDeletionPolicy"/> wraps another
+        /// <see cref="IndexDeletionPolicy"/> to enable flexible
+        /// snapshotting, passing <see cref="OpenMode.CREATE_OR_APPEND"/>
         /// by default.
         /// </summary>
         /// <param name="primary">
-        ///          the <seealso cref="IndexDeletionPolicy"/> that is used on non-snapshotted
+        ///          the <see cref="IndexDeletionPolicy"/> that is used on non-snapshotted
         ///          commits. Snapshotted commits, by definition, are not deleted until
-        ///          explicitly released via <seealso cref="#release"/>. </param>
+        ///          explicitly released via <see cref="Release(IndexCommit)"/>. </param>
         /// <param name="dir">
-        ///          the <seealso cref="Directory"/> which will be used to persist the snapshots
+        ///          the <see cref="Directory"/> which will be used to persist the snapshots
         ///          information. </param>
         public PersistentSnapshotDeletionPolicy(IndexDeletionPolicy primary, Directory dir)
             : this(primary, dir, OpenMode.CREATE_OR_APPEND)
@@ -84,15 +84,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// <seealso cref="PersistentSnapshotDeletionPolicy"/> wraps another
-        /// <seealso cref="IndexDeletionPolicy"/> to enable flexible snapshotting.
+        /// <see cref="PersistentSnapshotDeletionPolicy"/> wraps another
+        /// <see cref="IndexDeletionPolicy"/> to enable flexible snapshotting.
         /// </summary>
         /// <param name="primary">
-        ///          the <seealso cref="IndexDeletionPolicy"/> that is used on non-snapshotted
+        ///          the <see cref="IndexDeletionPolicy"/> that is used on non-snapshotted
         ///          commits. Snapshotted commits, by definition, are not deleted until
-        ///          explicitly released via <seealso cref="#release"/>. </param>
+        ///          explicitly released via <see cref="Release(IndexCommit)"/>. </param>
         /// <param name="dir">
-        ///          the <seealso cref="Directory"/> which will be used to persist the snapshots
+        ///          the <see cref="Directory"/> which will be used to persist the snapshots
         ///          information. </param>
         /// <param name="mode">
         ///          specifies whether a new index should be created, deleting all
@@ -120,7 +120,7 @@ namespace Lucene.Net.Index
         /// Snapshots the last commit. Once this method returns, the
         /// snapshot information is persisted in the directory.
         /// </summary>
-        /// <seealso cref= SnapshotDeletionPolicy#snapshot </seealso>
+        /// <seealso cref="SnapshotDeletionPolicy.Snapshot()"/>
         public override IndexCommit Snapshot()
         {
             lock (this)
@@ -156,7 +156,7 @@ namespace Lucene.Net.Index
         /// Deletes a snapshotted commit. Once this method returns, the snapshot
         /// information is persisted in the directory.
         /// </summary>
-        /// <seealso cref= SnapshotDeletionPolicy#release </seealso>
+        /// <seealso cref="SnapshotDeletionPolicy.Release(IndexCommit)"/>
         public override void Release(IndexCommit commit)
         {
             lock (this)
@@ -191,8 +191,8 @@ namespace Lucene.Net.Index
         /// Deletes a snapshotted commit by generation. Once this method returns, the snapshot
         /// information is persisted in the directory.
         /// </summary>
-        /// <seealso cref= IndexCommit#getGeneration </seealso>
-        /// <seealso cref= SnapshotDeletionPolicy#release </seealso>
+        /// <seealso cref="IndexCommit.Generation"/>
+        /// <seealso cref="SnapshotDeletionPolicy.Release(IndexCommit)"/>
         public virtual void Release(long gen)
         {
             lock (this)
@@ -224,7 +224,7 @@ namespace Lucene.Net.Index
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(@out);
+                        IOUtils.DisposeWhileHandlingException(@out);
                         try
                         {
                             dir.DeleteFile(fileName);
@@ -238,7 +238,7 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        IOUtils.Close(@out);
+                        IOUtils.Dispose(@out);
                     }
                 }
 
@@ -279,7 +279,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns the file name the snapshots are currently
-        ///  saved to, or null if no snapshots have been saved.
+        /// saved to, or <c>null</c> if no snapshots have been saved.
         /// </summary>
         public virtual string LastSaveFile
         {
@@ -297,7 +297,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Reads the snapshots information from the given <seealso cref="Directory"/>. this
+        /// Reads the snapshots information from the given <see cref="Directory"/>. This
         /// method can be used if the snapshots information is needed, however you
         /// cannot instantiate the deletion policy (because e.g., some other process
         /// keeps a lock on the snapshots directory).

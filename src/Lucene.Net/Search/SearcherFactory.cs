@@ -22,25 +22,26 @@ namespace Lucene.Net.Search
     using IndexReader = Lucene.Net.Index.IndexReader;
 
     /// <summary>
-    /// Factory class used by <seealso cref="SearcherManager"/> to
-    /// create new IndexSearchers. The default implementation just creates
-    /// an IndexSearcher with no custom behavior:
+    /// Factory class used by <see cref="SearcherManager"/> to
+    /// create new <see cref="IndexSearcher"/>s. The default implementation just creates
+    /// an <see cref="IndexSearcher"/> with no custom behavior:
     ///
-    /// <pre class="prettyprint">
-    ///   public IndexSearcher newSearcher(IndexReader r) throws IOException {
-    ///     return new IndexSearcher(r);
-    ///   }
-    /// </pre>
+    /// <code>
+    ///     public IndexSearcher NewSearcher(IndexReader r)
+    ///     {
+    ///         return new IndexSearcher(r);
+    ///     }
+    /// </code>
     ///
     /// You can pass your own factory instead if you want custom behavior, such as:
-    /// <ul>
-    ///   <li>Setting a custom scoring model: <seealso cref="IndexSearcher#setSimilarity(Similarity)"/>
-    ///   <li>Parallel per-segment search: <seealso cref="IndexSearcher#IndexSearcher(IndexReader, ExecutorService)"/>
-    ///   <li>Return custom subclasses of IndexSearcher (for example that implement distributed scoring)
-    ///   <li>Run queries to warm your IndexSearcher before it is used. Note: when using near-realtime search
-    ///       you may want to also <seealso cref="IndexWriterConfig#setMergedSegmentWarmer(IndexWriter.IndexReaderWarmer)"/> to warm
-    ///       newly merged segments in the background, outside of the reopen path.
-    /// </ul>
+    /// <list type="bullet">
+    ///   <item><description>Setting a custom scoring model: <see cref="IndexSearcher.Similarity"/></description></item>
+    ///   <item><description>Parallel per-segment search: <see cref="IndexSearcher.IndexSearcher(IndexReader, System.Threading.Tasks.TaskScheduler)"/></description></item>
+    ///   <item><description>Return custom subclasses of <see cref="IndexSearcher"/> (for example that implement distributed scoring)</description></item>
+    ///   <item><description>Run queries to warm your <see cref="IndexSearcher"/> before it is used. Note: when using near-realtime search
+    ///       you may want to also set <see cref="Index.LiveIndexWriterConfig.MergedSegmentWarmer"/> to warm
+    ///       newly merged segments in the background, outside of the reopen path.</description></item>
+    /// </list>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -49,7 +50,7 @@ namespace Lucene.Net.Search
     public class SearcherFactory
     {
         /// <summary>
-        /// Returns a new IndexSearcher over the given reader.
+        /// Returns a new <see cref="IndexSearcher"/> over the given reader.
         /// </summary>
         public virtual IndexSearcher NewSearcher(IndexReader reader)
         {

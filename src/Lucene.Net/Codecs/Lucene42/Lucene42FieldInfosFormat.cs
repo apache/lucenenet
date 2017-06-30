@@ -19,67 +19,64 @@ namespace Lucene.Net.Codecs.Lucene42
      * limitations under the License.
      */
 
-    // javadoc
-    // javadoc
-
     /// <summary>
     /// Lucene 4.2 Field Infos format.
-    /// <p>
-    /// <p>Field names are stored in the field info file, with suffix <tt>.fnm</tt>.</p>
-    /// <p>FieldInfos (.fnm) --&gt; Header,FieldsCount, &lt;FieldName,FieldNumber,
-    /// FieldBits,DocValuesBits,Attributes&gt; <sup>FieldsCount</sup></p>
-    /// <p>Data types:
-    /// <ul>
-    ///   <li>Header --&gt; <seealso cref="CodecUtil#checkHeader CodecHeader"/></li>
-    ///   <li>FieldsCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    ///   <li>FieldName --&gt; <seealso cref="DataOutput#writeString String"/></li>
-    ///   <li>FieldBits, DocValuesBits --&gt; <seealso cref="DataOutput#writeByte Byte"/></li>
-    ///   <li>FieldNumber --&gt; <seealso cref="DataOutput#writeInt VInt"/></li>
-    ///   <li>Attributes --&gt; <seealso cref="DataOutput#writeStringStringMap Map&lt;String,String&gt;"/></li>
-    /// </ul>
-    /// </p>
+    /// <para/>
+    /// <para>Field names are stored in the field info file, with suffix <c>.fnm</c>.</para>
+    /// <para>FieldInfos (.fnm) --&gt; Header,FieldsCount, &lt;FieldName,FieldNumber,
+    /// FieldBits,DocValuesBits,Attributes&gt; <sup>FieldsCount</sup></para>
+    /// <para>Data types:
+    /// <list type="bullet">
+    ///   <item><description>Header --&gt; CodecHeader <see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/></description></item>
+    ///   <item><description>FieldsCount --&gt; VInt <see cref="Store.DataOutput.WriteVInt32(int)"/></description></item>
+    ///   <item><description>FieldName --&gt; String <see cref="Store.DataOutput.WriteString(string)"/></description></item>
+    ///   <item><description>FieldBits, DocValuesBits --&gt; Byte <see cref="Store.DataOutput.WriteByte(byte)"/></description></item>
+    ///   <item><description>FieldNumber --&gt; VInt <see cref="Store.DataOutput.WriteInt32(int)"/></description></item>
+    ///   <item><description>Attributes --&gt; IDictionary&lt;String,String&gt; <see cref="Store.DataOutput.WriteStringStringMap(System.Collections.Generic.IDictionary{string, string})"/></description></item>
+    /// </list>
+    /// </para>
     /// Field Descriptions:
-    /// <ul>
-    ///   <li>FieldsCount: the number of fields in this file.</li>
-    ///   <li>FieldName: name of the field as a UTF-8 String.</li>
-    ///   <li>FieldNumber: the field's number. Note that unlike previous versions of
+    /// <list type="bullet">
+    ///   <item><description>FieldsCount: the number of fields in this file.</description></item>
+    ///   <item><description>FieldName: name of the field as a UTF-8 String.</description></item>
+    ///   <item><description>FieldNumber: the field's number. Note that unlike previous versions of
     ///       Lucene, the fields are not numbered implicitly by their order in the
-    ///       file, instead explicitly.</li>
-    ///   <li>FieldBits: a byte containing field options.
-    ///       <ul>
-    ///         <li>The low-order bit is one for indexed fields, and zero for non-indexed
-    ///             fields.</li>
-    ///         <li>The second lowest-order bit is one for fields that have term vectors
-    ///             stored, and zero for fields without term vectors.</li>
-    ///         <li>If the third lowest order-bit is set (0x4), offsets are stored into
-    ///             the postings list in addition to positions.</li>
-    ///         <li>Fourth bit is unused.</li>
-    ///         <li>If the fifth lowest-order bit is set (0x10), norms are omitted for the
-    ///             indexed field.</li>
-    ///         <li>If the sixth lowest-order bit is set (0x20), payloads are stored for the
-    ///             indexed field.</li>
-    ///         <li>If the seventh lowest-order bit is set (0x40), term frequencies and
-    ///             positions omitted for the indexed field.</li>
-    ///         <li>If the eighth lowest-order bit is set (0x80), positions are omitted for the
-    ///             indexed field.</li>
-    ///       </ul>
-    ///    </li>
-    ///    <li>DocValuesBits: a byte containing per-document value types. The type
+    ///       file, instead explicitly.</description></item>
+    ///   <item><description>FieldBits: a byte containing field options.
+    ///       <list type="bullet">
+    ///         <item><description>The low-order bit is one for indexed fields, and zero for non-indexed
+    ///             fields.</description></item>
+    ///         <item><description>The second lowest-order bit is one for fields that have term vectors
+    ///             stored, and zero for fields without term vectors.</description></item>
+    ///         <item><description>If the third lowest order-bit is set (0x4), offsets are stored into
+    ///             the postings list in addition to positions.</description></item>
+    ///         <item><description>Fourth bit is unused.</description></item>
+    ///         <item><description>If the fifth lowest-order bit is set (0x10), norms are omitted for the
+    ///             indexed field.</description></item>
+    ///         <item><description>If the sixth lowest-order bit is set (0x20), payloads are stored for the
+    ///             indexed field.</description></item>
+    ///         <item><description>If the seventh lowest-order bit is set (0x40), term frequencies and
+    ///             positions omitted for the indexed field.</description></item>
+    ///         <item><description>If the eighth lowest-order bit is set (0x80), positions are omitted for the
+    ///             indexed field.</description></item>
+    ///       </list>
+    ///    </description></item>
+    ///    <item><description>DocValuesBits: a byte containing per-document value types. The type
     ///        recorded as two four-bit integers, with the high-order bits representing
-    ///        <code>norms</code> options, and the low-order bits representing
-    ///        {@code DocValues} options. Each four-bit integer can be decoded as such:
-    ///        <ul>
-    ///          <li>0: no DocValues for this field.</li>
-    ///          <li>1: NumericDocValues. (<seealso cref="DocValuesType#NUMERIC"/>)</li>
-    ///          <li>2: BinaryDocValues. ({@code DocValuesType#BINARY})</li>
-    ///          <li>3: SortedDocValues. ({@code DocValuesType#SORTED})</li>
-    ///        </ul>
-    ///    </li>
-    ///    <li>Attributes: a key-value map of codec-private attributes.</li>
-    /// </ul>
-    ///
-    /// @lucene.experimental </summary>
-    /// @deprecated Only for reading old 4.2-4.5 segments
+    ///        <c>norms</c> options, and the low-order bits representing
+    ///        <see cref="Index.DocValues"/> options. Each four-bit integer can be decoded as such:
+    ///        <list type="bullet">
+    ///          <item><description>0: no DocValues for this field.</description></item>
+    ///          <item><description>1: NumericDocValues. (<see cref="Index.DocValuesType.NUMERIC"/>)</description></item>
+    ///          <item><description>2: BinaryDocValues. (<see cref="Index.DocValuesType.BINARY"/>)</description></item>
+    ///          <item><description>3: SortedDocValues. (<see cref="Index.DocValuesType.SORTED"/>)</description></item>
+    ///        </list>
+    ///    </description></item>
+    ///    <item><description>Attributes: a key-value map of codec-private attributes.</description></item>
+    /// </list>
+    /// <para/>
+    /// @lucene.experimental
+    /// </summary>
     [Obsolete("Only for reading old 4.2-4.5 segments")]
     public class Lucene42FieldInfosFormat : FieldInfosFormat
     {
@@ -108,7 +105,7 @@ namespace Lucene.Net.Codecs.Lucene42
         }
 
         /// <summary>
-        /// Extension of field infos </summary>
+        /// Extension of field infos. </summary>
         internal const string EXTENSION = "fnm";
 
         // Codec header

@@ -38,7 +38,7 @@ namespace Lucene.Net.Index
         private readonly bool applyAllDeletes;
 
         /// <summary>
-        /// called only from static open() methods </summary>
+        /// called only from static <c>Open()</c> methods </summary>
         internal StandardDirectoryReader(Directory directory, AtomicReader[] readers, IndexWriter writer, SegmentInfos sis, int termInfosIndexDivisor, bool applyAllDeletes)
             : base(directory, readers)
         {
@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// called from DirectoryReader.open(...) methods </summary>
+        /// called from <c>DirectoryReader.Open(...)</c> methods </summary>
         internal static DirectoryReader Open(Directory directory, IndexCommit commit, int termInfosIndexDivisor)
         {
             return (DirectoryReader)new FindSegmentsFileAnonymousInnerClassHelper(directory, termInfosIndexDivisor).Run(commit);
@@ -87,7 +87,7 @@ namespace Lucene.Net.Index
                     {
                         if (!success)
                         {
-                            IOUtils.CloseWhileHandlingException(prior, readers);
+                            IOUtils.DisposeWhileHandlingException(prior, readers);
                         }
                     }
                 }
@@ -171,7 +171,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// this constructor is only used for <seealso cref="#doOpenIfChanged(SegmentInfos)"/> </summary>
+        /// This constructor is only used for <see cref="DoOpenIfChanged(SegmentInfos)"/> </summary>
         private static DirectoryReader Open(Directory directory, SegmentInfos infos, IList<AtomicReader> oldReaders, int termInfosIndexDivisor)
         {
             // we put the old SegmentReaders in a map, that allows us
@@ -525,7 +525,7 @@ namespace Lucene.Net.Index
                 segmentsFileName = infos.GetSegmentsFileName();
                 this.dir = dir;
                 userData = infos.UserData;
-                files = infos.Files(dir, true);
+                files = infos.GetFiles(dir, true);
                 generation = infos.Generation;
                 segmentCount = infos.Count;
             }

@@ -22,22 +22,23 @@ namespace Lucene.Net.Codecs
     using IOContext = Lucene.Net.Store.IOContext;
 
     /// <summary>
-    /// Codec API for writing <seealso cref="FieldInfos"/>.
+    /// Codec API for writing <see cref="FieldInfos"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class FieldInfosWriter
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal FieldInfosWriter()
         {
         }
 
         /// <summary>
-        /// Writes the provided <seealso cref="FieldInfos"/> to the
-        ///  directory.
+        /// Writes the provided <see cref="FieldInfos"/> to the
+        /// directory.
         /// </summary>
         public abstract void Write(Directory directory, string segmentName, string segmentSuffix, FieldInfos infos, IOContext context);
     }

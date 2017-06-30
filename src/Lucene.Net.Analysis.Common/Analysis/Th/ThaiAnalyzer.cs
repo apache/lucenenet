@@ -30,7 +30,7 @@ namespace Lucene.Net.Analysis.Th
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="ThaiAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.6, a set of Thai stopwords is used by default</item>
+    ///     <item><description> As of 3.6, a set of Thai stopwords is used by default</description></item>
     /// </list>
     /// </para>
     /// </summary>
@@ -104,10 +104,10 @@ namespace Lucene.Net.Analysis.Th
 
         /// <summary>
         /// Creates
-        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// <see cref="TokenStreamComponents"/>
         /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        /// <returns> <see cref="TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="ThaiWordFilter"/>, and
         ///         <see cref="StopFilter"/> </returns>

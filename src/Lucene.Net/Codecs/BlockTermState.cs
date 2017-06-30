@@ -24,32 +24,32 @@ namespace Lucene.Net.Codecs
     using TermState = Lucene.Net.Index.TermState;
 
     /// <summary>
-    /// Holds all state required for <seealso cref="PostingsReaderBase"/>
-    /// to produce a <seealso cref="DocsEnum"/> without re-seeking the
+    /// Holds all state required for <see cref="PostingsReaderBase"/>
+    /// to produce a <see cref="DocsEnum"/> without re-seeking the
     /// terms dict.
     /// </summary>
     public class BlockTermState : OrdTermState
     {
         /// <summary>
-        /// how many docs have this term </summary>
+        /// How many docs have this term? </summary>
         public int DocFreq { get; set; }
 
         /// <summary>
-        /// total number of occurrences of this term </summary>
+        /// Total number of occurrences of this term. </summary>
         public long TotalTermFreq { get; set; }
 
         /// <summary>
-        /// the term's ord in the current block </summary>
+        /// The term's ord in the current block. </summary>
         public int TermBlockOrd { get; set; }
 
         /// <summary>
-        /// fp into the terms dict primary file (_X.tim) that holds this term </summary>
+        /// File pointer into the terms dict primary file (_X.tim) that holds this term. </summary>
         // TODO: update BTR to nuke this
         public long BlockFilePointer { get; set; }
 
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal BlockTermState()
         {

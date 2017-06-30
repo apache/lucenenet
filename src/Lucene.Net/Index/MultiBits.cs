@@ -24,11 +24,11 @@ namespace Lucene.Net.Index
     using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
-    /// Concatenates multiple Bits together, on every lookup.
+    /// Concatenates multiple <see cref="IBits"/> together, on every lookup.
     ///
-    /// <p><b>NOTE</b>: this is very costly, as every lookup must
+    /// <para/><b>NOTE</b>: this is very costly, as every lookup must
     /// do a binary search to locate the right sub-reader.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -99,7 +99,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Represents a sub-Bits from
-        /// <seealso cref="MultiBits#getMatchingSub(Lucene.Net.Index.ReaderSlice) getMatchingSub()"/>.
+        /// <see cref="MultiBits.GetMatchingSub(Lucene.Net.Index.ReaderSlice)"/>.
         /// </summary>
         public sealed class SubResult
         {
@@ -108,11 +108,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns a sub-Bits matching the provided <code>slice</code>
-        /// <p>
-        /// Because <code>null</code> usually has a special meaning for
-        /// Bits (e.g. no deleted documents), you must check
-        /// <seealso cref="SubResult#matches"/> instead to ensure the sub was
+        /// Returns a sub-Bits matching the provided <paramref name="slice"/>
+        /// <para/>
+        /// Because <c>null</c> usually has a special meaning for
+        /// <see cref="IBits"/> (e.g. no deleted documents), you must check
+        /// <see cref="SubResult.Matches"/> instead to ensure the sub was
         /// actually found.
         /// </summary>
         public SubResult GetMatchingSub(ReaderSlice slice)

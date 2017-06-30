@@ -24,18 +24,18 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Methods for manipulating arrays.
-    ///
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class ArrayUtil
     {
         /// <summary>
         /// Maximum length for an array; we set this to "a
-        ///  bit" below <see cref="int.MaxValue"/> because the exact max
-        ///  allowed byte[] is JVM dependent, so we want to avoid
-        ///  a case where a large value worked during indexing on
-        ///  one JVM but failed later at search time with a
-        ///  different JVM.
+        /// bit" below <see cref="int.MaxValue"/> because the exact max
+        /// allowed byte[] is JVM dependent, so we want to avoid
+        /// a case where a large value worked during indexing on
+        /// one JVM but failed later at search time with a
+        /// different JVM.
         /// </summary>
         public static readonly int MAX_ARRAY_LENGTH = int.MaxValue - 256;
 
@@ -51,47 +51,47 @@ namespace Lucene.Net.Util
          */
 
         /// <summary>
-        /// Parses the string argument as if it was an int value and returns the
-        /// result. Throws NumberFormatException if the string does not represent an
+        /// Parses the string argument as if it was an <see cref="int"/> value and returns the
+        /// result. Throws <see cref="FormatException"/> if the string does not represent an
         /// int quantity.
         /// <para/>
         /// NOTE: This was parseInt() in Lucene
         /// </summary>
-        /// <param name="chars"> a string representation of an int quantity. </param>
-        /// <returns> int the value represented by the argument </returns>
-        /// <exception cref="NumberFormatException"> if the argument could not be parsed as an int quantity. </exception>
+        /// <param name="chars"> A string representation of an int quantity. </param>
+        /// <returns> The value represented by the argument </returns>
+        /// <exception cref="FormatException"> If the argument could not be parsed as an int quantity. </exception>
         public static int ParseInt32(char[] chars)
         {
             return ParseInt32(chars, 0, chars.Length, 10);
         }
 
         /// <summary>
-        /// Parses a char array into an int. 
+        /// Parses a char array into an <see cref="int"/>. 
         /// <para/>
         /// NOTE: This was parseInt() in Lucene
         /// </summary>
-        /// <param name="chars"> the character array </param>
+        /// <param name="chars"> The character array </param>
         /// <param name="offset"> The offset into the array </param>
         /// <param name="len"> The length </param>
-        /// <returns> the int </returns>
-        /// <exception cref="NumberFormatException"> if it can't parse </exception>
+        /// <returns> the <see cref="int"/> </returns>
+        /// <exception cref="FormatException"> If it can't parse </exception>
         public static int ParseInt32(char[] chars, int offset, int len)
         {
             return ParseInt32(chars, offset, len, 10);
         }
 
         /// <summary>
-        /// Parses the string argument as if it was an int value and returns the
-        /// result. Throws NumberFormatException if the string does not represent an
-        /// int quantity. The second argument specifies the radix to use when parsing
+        /// Parses the string argument as if it was an <see cref="int"/> value and returns the
+        /// result. Throws <see cref="FormatException"/> if the string does not represent an
+        /// <see cref="int"/> quantity. The second argument specifies the radix to use when parsing
         /// the value.
         /// <para/>
         /// NOTE: This was parseInt() in Lucene
         /// </summary>
-        /// <param name="chars"> a string representation of an int quantity. </param>
-        /// <param name="radix"> the base to use for conversion. </param>
-        /// <returns> int the value represented by the argument </returns>
-        /// <exception cref="NumberFormatException"> if the argument could not be parsed as an int quantity. </exception>
+        /// <param name="chars"> A string representation of an int quantity. </param>
+        /// <param name="radix"> The base to use for conversion. </param>
+        /// <returns> The value represented by the argument </returns>
+        /// <exception cref="FormatException"> If the argument could not be parsed as an int quantity. </exception>
         public static int ParseInt32(char[] chars, int offset, int len, int radix)
         {
             int minRadix = 2, maxRadix = 36;
@@ -158,23 +158,22 @@ namespace Lucene.Net.Util
         */
 
         /// <summary>
-        /// Returns an array size >= minTargetSize, generally
-        ///  over-allocating exponentially to achieve amortized
-        ///  linear-time cost as the array grows.
-        ///
-        ///  NOTE: this was originally borrowed from Python 2.4.2
-        ///  listobject.c sources (attribution in LICENSE.txt), but
-        ///  has now been substantially changed based on
-        ///  discussions from java-dev thread with subject "Dynamic
-        ///  array reallocation algorithms", started on Jan 12
-        ///  2010.
+        /// Returns an array size &gt;= <paramref name="minTargetSize"/>, generally
+        /// over-allocating exponentially to achieve amortized
+        /// linear-time cost as the array grows.
+        /// <para/>
+        /// NOTE: this was originally borrowed from Python 2.4.2
+        /// listobject.c sources (attribution in LICENSE.txt), but
+        /// has now been substantially changed based on
+        /// discussions from java-dev thread with subject "Dynamic
+        /// array reallocation algorithms", started on Jan 12
+        /// 2010.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
         /// <param name="minTargetSize"> Minimum required value to be returned. </param>
         /// <param name="bytesPerElement"> Bytes used by each element of
-        /// the array.  See constants in <seealso cref="RamUsageEstimator"/>.
-        ///
-        /// @lucene.internal </param>
-
+        /// the array.  See constants in <see cref="RamUsageEstimator"/>. </param>
         public static int Oversize(int minTargetSize, int bytesPerElement)
         {
             if (minTargetSize < 0)
@@ -661,9 +660,9 @@ namespace Lucene.Net.Util
         /// <param name="right">       The right array to compare </param>
         /// <param name="offsetRight"> the offset into the right array.  Must be positive </param>
         /// <param name="length">      The length of the section of the array to compare </param>
-        /// <returns> true if the two arrays, starting at their respective offsets, are equal
+        /// <returns> <c>true</c> if the two arrays, starting at their respective offsets, are equal
         /// </returns>
-        /// <seealso cref= java.util.Arrays#equals(char[], char[]) </seealso>
+        /// <seealso cref="Support.Arrays.Equals{T}(T[], T[])"/>
         public static bool Equals(char[] left, int offsetLeft, char[] right, int offsetRight, int length)
         {
             if ((offsetLeft + length <= left.Length) && (offsetRight + length <= right.Length))
@@ -689,9 +688,9 @@ namespace Lucene.Net.Util
         /// <param name="right">       The right array to compare </param>
         /// <param name="offsetRight"> the offset into the right array.  Must be positive </param>
         /// <param name="length">      The length of the section of the array to compare </param>
-        /// <returns> true if the two arrays, starting at their respective offsets, are equal
+        /// <returns> <c>true</c> if the two arrays, starting at their respective offsets, are equal
         /// </returns>
-        /// <seealso cref= java.util.Arrays#equals(byte[], byte[]) </seealso>
+        /// <seealso cref="Support.Arrays.Equals{T}(T[], T[])"/>
         public static bool Equals(byte[] left, int offsetLeft, byte[] right, int offsetRight, int length)
         {
             if ((offsetLeft + length <= left.Length) && (offsetRight + length <= right.Length))
@@ -746,9 +745,9 @@ namespace Lucene.Net.Util
         /// <param name="right">       The right array to compare </param>
         /// <param name="offsetRight"> the offset into the right array.  Must be positive </param>
         /// <param name="length">      The length of the section of the array to compare </param>
-        /// <returns> true if the two arrays, starting at their respective offsets, are equal
+        /// <returns> <c>true</c> if the two arrays, starting at their respective offsets, are equal
         /// </returns>
-        /// <seealso cref= java.util.Arrays#equals(char[], char[]) </seealso>
+        /// <seealso cref="Support.Arrays.Equals{T}(T[], T[])"/>
         public static bool Equals(int[] left, int offsetLeft, int[] right, int offsetRight, int length)
         {
             if ((offsetLeft + length <= left.Length) && (offsetRight + length <= right.Length))
@@ -809,18 +808,18 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Get the natural <seealso cref="Comparer"/> for the provided object class.
+        /// Get the natural <see cref="IComparer{T}"/> for the provided object class.
         /// <para/>
         /// The comparer returned depends on the <typeparam name="T"/> argument:
         /// <list type="number">
-        ///     <item>If the type is <see cref="string"/>, the comparer returned uses
+        ///     <item><description>If the type is <see cref="string"/>, the comparer returned uses
         ///         the <see cref="string.CompareOrdinal(string, string)"/> to make the comparison
         ///         to ensure that the current culture doesn't affect the results. This is the
-        ///         default string comparison used in Java, and what Lucene's design depends on.</item>
-        ///     <item>If the type implements <see cref="IComparable{T}"/>, the comparer uses
+        ///         default string comparison used in Java, and what Lucene's design depends on.</description></item>
+        ///     <item><description>If the type implements <see cref="IComparable{T}"/>, the comparer uses
         ///         <see cref="IComparable{T}.CompareTo(T)"/> for the comparison. This allows
-        ///         the use of types with custom comparison schemes.</item>
-        ///     <item>If neither of the above conditions are true, will default to <see cref="Comparer{T}.Default"/>.</item>
+        ///         the use of types with custom comparison schemes.</description></item>
+        ///     <item><description>If neither of the above conditions are true, will default to <see cref="Comparer{T}.Default"/>.</description></item>
         /// </list>
         /// <para/>
         /// NOTE: This was naturalComparer() in Lucene
@@ -849,7 +848,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Swap values stored in slots <code>i</code> and <code>j</code> </summary>
+        /// Swap values stored in slots <paramref name="i"/> and <paramref name="j"/> </summary>
         public static void Swap<T>(T[] arr, int i, int j)
         {
             T tmp = arr[i];
@@ -860,10 +859,10 @@ namespace Lucene.Net.Util
         // intro-sorts
 
         /// <summary>
-        /// Sorts the given array slice using the <seealso cref="Comparer"/>. this method uses the intro sort
+        /// Sorts the given array slice using the <see cref="IComparer{T}"/>. This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays. </summary>
-        /// <param name="fromIndex"> start index (inclusive) </param>
-        /// <param name="toIndex"> end index (exclusive) </param>
+        /// <param name="fromIndex"> Start index (inclusive) </param>
+        /// <param name="toIndex"> End index (exclusive) </param>
         public static void IntroSort<T>(T[] a, int fromIndex, int toIndex, IComparer<T> comp)
         {
             if (toIndex - fromIndex <= 1)
@@ -874,7 +873,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given array using the <seealso cref="Comparer"/>. this method uses the intro sort
+        /// Sorts the given array using the <see cref="IComparer{T}"/>. This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays.
         /// </summary>
         public static void IntroSort<T>(T[] a, IComparer<T> comp)
@@ -883,10 +882,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given array slice in natural order. this method uses the intro sort
+        /// Sorts the given array slice in natural order. This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays. </summary>
-        /// <param name="fromIndex"> start index (inclusive) </param>
-        /// <param name="toIndex"> end index (exclusive) </param>
+        /// <param name="fromIndex"> Start index (inclusive) </param>
+        /// <param name="toIndex"> End index (exclusive) </param>
         public static void IntroSort<T>(T[] a, int fromIndex, int toIndex) //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             if (toIndex - fromIndex <= 1)
@@ -897,7 +896,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given array in natural order. this method uses the intro sort
+        /// Sorts the given array in natural order. This method uses the intro sort
         /// algorithm, but falls back to insertion sort for small arrays.
         /// </summary>
         public static void IntroSort<T>(T[] a) //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
@@ -908,10 +907,10 @@ namespace Lucene.Net.Util
         // tim sorts:
 
         /// <summary>
-        /// Sorts the given array slice using the <seealso cref="Comparer"/>. this method uses the Tim sort
+        /// Sorts the given array slice using the <see cref="IComparer{T}"/>. This method uses the Tim sort
         /// algorithm, but falls back to binary sort for small arrays. </summary>
-        /// <param name="fromIndex"> start index (inclusive) </param>
-        /// <param name="toIndex"> end index (exclusive) </param>
+        /// <param name="fromIndex"> Start index (inclusive) </param>
+        /// <param name="toIndex"> End index (exclusive) </param>
         public static void TimSort<T>(T[] a, int fromIndex, int toIndex, IComparer<T> comp)
         {
             if (toIndex - fromIndex <= 1)
@@ -922,7 +921,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Sorts the given array using the <seealso cref="Comparer"/>. this method uses the Tim sort
+        /// Sorts the given array using the <see cref="IComparer{T}"/>. this method uses the Tim sort
         /// algorithm, but falls back to binary sort for small arrays.
         /// </summary>
         public static void TimSort<T>(T[] a, IComparer<T> comp)
@@ -933,8 +932,8 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Sorts the given array slice in natural order. this method uses the Tim sort
         /// algorithm, but falls back to binary sort for small arrays. </summary>
-        /// <param name="fromIndex"> start index (inclusive) </param>
-        /// <param name="toIndex"> end index (exclusive) </param>
+        /// <param name="fromIndex"> Start index (inclusive) </param>
+        /// <param name="toIndex"> End index (exclusive) </param>
         public static void TimSort<T>(T[] a, int fromIndex, int toIndex) //where T : IComparable<T> // LUCENENET specific: removing constraint because in .NET, it is not needed
         {
             if (toIndex - fromIndex <= 1)

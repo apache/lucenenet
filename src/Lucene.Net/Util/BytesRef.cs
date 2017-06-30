@@ -25,14 +25,14 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Represents byte[], as a slice (offset + length) into an
-    ///  existing byte[].  The <seealso cref="#bytes"/> member should never be null;
-    ///  use <seealso cref="#EMPTY_BYTES"/> if necessary.
+    /// Represents <see cref="T:byte[]"/>, as a slice (offset + length) into an
+    /// existing <see cref="T:byte[]"/>.  The <see cref="Bytes"/> property should never be <c>null</c>;
+    /// use <see cref="EMPTY_BYTES"/> if necessary.
     ///
-    /// <p><b>Important note:</b> Unless otherwise noted, Lucene uses this class to
+    /// <para/><b>Important note:</b> Unless otherwise noted, Lucene uses this class to
     /// represent terms that are encoded as <b>UTF8</b> bytes in the index. To
-    /// convert them to a Java <seealso cref="String"/> (which is UTF16), use <seealso cref="#utf8ToString"/>.
-    /// Using code like {@code new String(bytes, offset, length)} to do this
+    /// convert them to a .NET <see cref="string"/> (which is UTF16), use <see cref="Utf8ToString()"/>.
+    /// Using code like <c>new String(bytes, offset, length)</c> to do this
     /// is <b>wrong</b>, as it does not respect the correct character set
     /// and may return wrong results (depending on the platform's defaults)!
     /// </summary>
@@ -46,7 +46,7 @@ namespace Lucene.Net.Util
         public static readonly byte[] EMPTY_BYTES = new byte[0];
 
         /// <summary>
-        /// The contents of the BytesRef. Should never be {@code null}.
+        /// The contents of the BytesRef. Should never be <c>null</c>.
         /// </summary>
         [WritableArray]
         [SuppressMessage("Microsoft.Performance", "CA1819", Justification = "Lucene's design requires some writable array properties")]
@@ -68,15 +68,15 @@ namespace Lucene.Net.Util
         public int Length { get; set; }
 
         /// <summary>
-        /// Create a BytesRef with <seealso cref="#EMPTY_BYTES"/> </summary>
+        /// Create a <see cref="BytesRef"/> with <see cref="EMPTY_BYTES"/> </summary>
         public BytesRef()
             : this(EMPTY_BYTES)
         {
         }
 
         /// <summary>
-        /// this instance will directly reference bytes w/o making a copy.
-        /// bytes should not be null.
+        /// This instance will directly reference <paramref name="bytes"/> w/o making a copy.
+        /// <paramref name="bytes"/> should not be <c>null</c>.
         /// </summary>
         public BytesRef(byte[] bytes, int offset, int length)
         {
@@ -87,8 +87,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this instance will directly reference bytes w/o making a copy.
-        /// bytes should not be null
+        /// This instance will directly reference <paramref name="bytes"/> w/o making a copy.
+        /// <paramref name="bytes"/> should not be <c>null</c>.
         /// </summary>
         public BytesRef(byte[] bytes)
             : this(bytes, 0, bytes.Length)
@@ -96,7 +96,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Create a BytesRef pointing to a new array of size <code>capacity</code>.
+        /// Create a <see cref="BytesRef"/> pointing to a new array of size <paramref name="capacity"/>.
         /// Offset and length will both be zero.
         /// </summary>
         public BytesRef(int capacity)
@@ -105,10 +105,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Initialize the byte[] from the UTF8 bytes
-        /// for the provided String.
+        /// Initialize the <see cref="T:byte[]"/> from the UTF8 bytes
+        /// for the provided <see cref="ICharSequence"/>.
         /// </summary>
-        /// <param name="text"> this must be well-formed
+        /// <param name="text"> This must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
         public BytesRef(ICharSequence text)
             : this()
@@ -117,10 +117,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Initialize the byte[] from the UTF8 bytes
-        /// for the provided String.
+        /// Initialize the <see cref="T:byte[]"/> from the UTF8 bytes
+        /// for the provided <see cref="string"/>.
         /// </summary>
-        /// <param name="text"> this must be well-formed
+        /// <param name="text"> This must be well-formed
         /// unicode text, with no unpaired surrogates. </param>
         public BytesRef(string text)
             : this()
@@ -129,7 +129,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copies the UTF8 bytes for this string.
+        /// Copies the UTF8 bytes for this <see cref="ICharSequence"/>.
         /// </summary>
         /// <param name="text"> Must be well-formed unicode text, with no
         /// unpaired surrogates or invalid UTF16 code units. </param>
@@ -140,7 +140,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copies the UTF8 bytes for this string.
+        /// Copies the UTF8 bytes for this <see cref="string"/>.
         /// </summary>
         /// <param name="text"> Must be well-formed unicode text, with no
         /// unpaired surrogates or invalid UTF16 code units. </param>
@@ -151,11 +151,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Expert: compares the bytes against another BytesRef,
-        /// returning true if the bytes are equal.
+        /// Expert: Compares the bytes against another <see cref="BytesRef"/>,
+        /// returning <c>true</c> if the bytes are equal.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="other"> Another BytesRef, should not be null.
-        /// @lucene.internal </param>
+        /// <param name="other"> Another <see cref="BytesRef"/>, should not be <c>null</c>. </param>
         public bool BytesEquals(BytesRef other)
         {
             Debug.Assert(other != null);
@@ -184,18 +185,18 @@ namespace Lucene.Net.Util
         /// <b>not</b> copied and will be shared by both the returned object and this
         /// object.
         /// </summary>
-        /// <seealso cref= #deepCopyOf </seealso>
+        /// <seealso cref="DeepCopyOf(BytesRef)"/>
         public object Clone()
         {
             return new BytesRef(bytes, Offset, Length);
         }
 
         /// <summary>
-        /// Calculates the hash code as required by TermsHash during indexing.
-        ///  <p> this is currently implemented as MurmurHash3 (32
-        ///  bit), using the seed from {@link
-        ///  StringHelper#GOOD_FAST_HASH_SEED}, but is subject to
-        ///  change from release to release.
+        /// Calculates the hash code as required by <see cref="Index.TermsHash"/> during indexing.
+        /// <para/> This is currently implemented as MurmurHash3 (32
+        /// bit), using the seed from 
+        /// <see cref="StringHelper.GOOD_FAST_HASH_SEED"/>, but is subject to
+        /// change from release to release.
         /// </summary>
         public override int GetHashCode()
         {
@@ -217,7 +218,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Interprets stored bytes as UTF8 bytes, returning the
-        ///  resulting string
+        /// resulting <see cref="string"/>.
         /// </summary>
         public string Utf8ToString()
         {
@@ -246,8 +247,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copies the bytes from the given <seealso cref="BytesRef"/>
-        /// <p>
+        /// Copies the bytes from the given <see cref="BytesRef"/>
+        /// <para/>
         /// NOTE: if this would exceed the array size, this method creates a
         /// new reference array.
         /// </summary>
@@ -263,8 +264,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Appends the bytes from the given <seealso cref="BytesRef"/>
-        /// <p>
+        /// Appends the bytes from the given <see cref="BytesRef"/>
+        /// <para/>
         /// NOTE: if this would exceed the array size, this method creates a
         /// new reference array.
         /// </summary>
@@ -284,8 +285,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Used to grow the reference array.
-        ///
+        /// <para/>
         /// In general this should not be used as it does not take the offset into account.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public void Grow(int newLength)
@@ -338,13 +340,13 @@ namespace Lucene.Net.Util
 
         // LUCENENET NOTE: De-nested Utf8SortedAsUtf16Comparer class to prevent naming conflict
 
-        
+
 
         /// <summary>
-        /// Creates a new BytesRef that points to a copy of the bytes from
-        /// <code>other</code>
-        /// <p>
-        /// The returned BytesRef will have a length of other.length
+        /// Creates a new <see cref="BytesRef"/> that points to a copy of the bytes from
+        /// <paramref name="other"/>.
+        /// <para/>
+        /// The returned <see cref="BytesRef"/> will have a length of <c>other.Length</c>
         /// and an offset of zero.
         /// </summary>
         public static BytesRef DeepCopyOf(BytesRef other)
@@ -356,7 +358,7 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Performs internal consistency checks.
-        /// Always returns true (or throws InvalidOperationException)
+        /// Always returns true (or throws <see cref="InvalidOperationException"/>)
         /// </summary>
         public bool IsValid()
         {

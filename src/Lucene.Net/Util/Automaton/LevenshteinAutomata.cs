@@ -24,10 +24,10 @@ namespace Lucene.Net.Util.Automaton
 
     /// <summary>
     /// Class to construct DFAs that match a word within some edit distance.
-    /// <p>
+    /// <para/>
     /// Implements the algorithm described in:
     /// Schulz and Mihov: Fast String Correction with Levenshtein Automata
-    /// <p>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class LevenshteinAutomata
@@ -51,7 +51,7 @@ namespace Lucene.Net.Util.Automaton
         internal ParametricDescription[] descriptions;
 
         /// <summary>
-        /// Create a new LevenshteinAutomata for some input String.
+        /// Create a new <see cref="LevenshteinAutomata"/> for some <paramref name="input"/> string.
         /// Optionally count transpositions as a primitive edit.
         /// </summary>
         public LevenshteinAutomata(string input, bool withTranspositions)
@@ -61,7 +61,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Expert: specify a custom maximum possible symbol
-        /// (alphaMax); default is Character.MAX_CODE_POINT.
+        /// (alphaMax); default is <see cref="Character.MAX_CODE_POINT"/>.
         /// </summary>
         public LevenshteinAutomata(int[] word, int alphaMax, bool withTranspositions)
         {
@@ -130,15 +130,15 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Compute a DFA that accepts all strings within an edit distance of <code>n</code>.
-        /// <p>
+        /// Compute a DFA that accepts all strings within an edit distance of <paramref name="n"/>.
+        /// <para>
         /// All automata have the following properties:
-        /// <ul>
-        /// <li>They are deterministic (DFA).
-        /// <li>There are no transitions to dead states.
-        /// <li>They are not minimal (some transitions could be combined).
-        /// </ul>
-        /// </p>
+        /// <list type="bullet">
+        ///     <item><description>They are deterministic (DFA).</description></item>
+        ///     <item><description>There are no transitions to dead states.</description></item>
+        ///     <item><description>They are not minimal (some transitions could be combined).</description></item>
+        /// </list>
+        /// </para>
         /// </summary>
         public virtual Automaton ToAutomaton(int n)
         {
@@ -211,8 +211,8 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Get the characteristic vector <code>X(x, V)</code>
-        /// where V is <code>substring(pos, end)</code>
+        /// Get the characteristic vector <c>X(x, V)</c>
+        /// where V is <c>Substring(pos, end - pos)</c>.
         /// </summary>
         internal virtual int GetVector(int x, int pos, int end)
         {
@@ -229,16 +229,16 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// A ParametricDescription describes the structure of a Levenshtein DFA for some degree n.
-        /// <p>
+        /// A <see cref="ParametricDescription"/> describes the structure of a Levenshtein DFA for some degree <c>n</c>.
+        /// <para/>
         /// There are four components of a parametric description, all parameterized on the length
-        /// of the word <code>w</code>:
-        /// <ol>
-        /// <li>The number of states: <seealso cref="#size()"/>
-        /// <li>The set of final states: <seealso cref="#isAccept(int)"/>
-        /// <li>The transition function: <seealso cref="#transition(int, int, int)"/>
-        /// <li>Minimal boundary function: <seealso cref="#getPosition(int)"/>
-        /// </ol>
+        /// of the word <c>w</c>:
+        /// <list type="number">
+        ///     <item><description>The number of states: <see cref="Count"/></description></item>
+        ///     <item><description>The set of final states: <see cref="IsAccept(int)"/></description></item>
+        ///     <item><description>The transition function: <see cref="Transition(int, int, int)"/></description></item>
+        ///     <item><description>Minimal boundary function: <see cref="GetPosition(int)"/></description></item>
+        /// </list>
         /// </summary>
         internal abstract class ParametricDescription
         {
@@ -255,6 +255,7 @@ namespace Lucene.Net.Util.Automaton
 
             /// <summary>
             /// Return the number of states needed to compute a Levenshtein DFA.
+            /// <para/>
             /// NOTE: This was size() in Lucene.
             /// </summary>
             internal virtual int Count
@@ -263,7 +264,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             /// <summary>
-            /// Returns true if the <code>state</code> in any Levenshtein DFA is an accept state (final state).
+            /// Returns <c>true</c> if the <c>state</c> in any Levenshtein DFA is an accept state (final state).
             /// </summary>
             internal virtual bool IsAccept(int absState)
             {
@@ -275,7 +276,7 @@ namespace Lucene.Net.Util.Automaton
             }
 
             /// <summary>
-            /// Returns the position in the input word for a given <code>state</code>.
+            /// Returns the position in the input word for a given <c>state</c>.
             /// this is the minimal boundary for the state.
             /// </summary>
             internal virtual int GetPosition(int absState)
@@ -284,8 +285,8 @@ namespace Lucene.Net.Util.Automaton
             }
 
             /// <summary>
-            /// Returns the state number for a transition from the given <code>state</code>,
-            /// assuming <code>position</code> and characteristic vector <code>vector</code>
+            /// Returns the state number for a transition from the given <paramref name="state"/>,
+            /// assuming <paramref name="position"/> and characteristic vector <paramref name="vector"/>.
             /// </summary>
             internal abstract int Transition(int state, int position, int vector);
 

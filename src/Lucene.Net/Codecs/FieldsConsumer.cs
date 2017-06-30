@@ -32,30 +32,30 @@ namespace Lucene.Net.Codecs
     /// payloads postings.  Concrete implementations of this
     /// actually do "something" with the postings (write it into
     /// the index in a specific format).
-    /// <p>
+    /// <para/>
     /// The lifecycle is:
-    /// <ol>
-    ///   <li>FieldsConsumer is created by
-    ///       <seealso cref="PostingsFormat#fieldsConsumer(SegmentWriteState)"/>.
-    ///   <li>For each field, <seealso cref="#addField(FieldInfo)"/> is called,
-    ///       returning a <seealso cref="TermsConsumer"/> for the field.
-    ///   <li>After all fields are added, the consumer is <seealso cref="#close"/>d.
-    /// </ol>
-    ///
+    /// <list type="number">
+    ///   <item><description>FieldsConsumer is created by
+    ///       <see cref="PostingsFormat.FieldsConsumer(Index.SegmentWriteState)"/>.</description></item>
+    ///   <item><description>For each field, <see cref="AddField(FieldInfo)"/> is called,
+    ///       returning a <see cref="TermsConsumer"/> for the field.</description></item>
+    ///   <item><description>After all fields are added, the consumer is <see cref="Dispose()"/>d.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class FieldsConsumer : IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal FieldsConsumer()
         {
         }
 
         /// <summary>
-        /// Add a new field </summary>
+        /// Add a new field. </summary>
         public abstract TermsConsumer AddField(FieldInfo field);
 
         /// <summary>
@@ -68,15 +68,16 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Called when we are done adding everything. </summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
 
         /// <summary>
-        /// Called during merging to merge all <seealso cref="Fields"/> from
-        ///  sub-readers.  this must recurse to merge all postings
-        ///  (terms, docs, positions, etc.).  A {@link
-        ///  PostingsFormat} can override this default
-        ///  implementation to do its own merging.
+        /// Called during merging to merge all <see cref="Fields"/> from
+        /// sub-readers.  this must recurse to merge all postings
+        /// (terms, docs, positions, etc.).  A 
+        /// <see cref="PostingsFormat"/> can override this default
+        /// implementation to do its own merging.
         /// </summary>
         public virtual void Merge(MergeState mergeState, Fields fields)
         {

@@ -39,35 +39,35 @@ namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
     /// Finite-state automaton with regular expression operations.
-    /// <p>
+    /// <para/>
     /// Class invariants:
-    /// <ul>
-    /// <li>An automaton is either represented explicitly (with <seealso cref="State"/> and
-    /// <seealso cref="Transition"/> objects) or with a singleton string (see
-    /// <seealso cref="Singleton"/> and <seealso cref="ExpandSingleton()"/>) in case the automaton
-    /// is known to accept exactly one string. (Implicitly, all states and
-    /// transitions of an automaton are reachable from its initial state.)
-    /// <li>Automata are always reduced (see <seealso cref="#reduce()"/>) and have no
-    /// transitions to dead states (see <seealso cref="#removeDeadTransitions()"/>).
-    /// <li>If an automaton is nondeterministic, then <seealso cref="#isDeterministic()"/>
-    /// returns false (but the converse is not required).
-    /// <li>Automata provided as input to operations are generally assumed to be
-    /// disjoint.
-    /// </ul>
-    /// <p>
+    /// <list type="bullet">
+    ///     <item><description>An automaton is either represented explicitly (with <see cref="State"/> and
+    ///         <see cref="Transition"/> objects) or with a singleton string (see
+    ///         <see cref="Singleton"/> and <see cref="ExpandSingleton()"/>) in case the automaton
+    ///         is known to accept exactly one string. (Implicitly, all states and
+    ///         transitions of an automaton are reachable from its initial state.)</description></item>
+    ///     <item><description>Automata are always reduced (see <see cref="Reduce()"/>) and have no
+    ///         transitions to dead states (see <see cref="RemoveDeadTransitions()"/>).</description></item>
+    ///     <item><description>If an automaton is nondeterministic, then <see cref="IsDeterministic"/>
+    ///         returns <c>false</c> (but the converse is not required).</description></item>
+    ///     <item><description>Automata provided as input to operations are generally assumed to be
+    ///         disjoint.</description></item>
+    /// </list>
+    /// <para/>
     /// If the states or transitions are manipulated manually, the
-    /// <seealso cref="#restoreInvariant()"/> and <seealso cref="#setDeterministic(boolean)"/> methods
+    /// <see cref="RestoreInvariant()"/> method and <see cref="IsDeterministic"/> setter
     /// should be used afterwards to restore representation invariants that are
     /// assumed by the built-in automata operations.
     ///
-    /// <p>
-    /// <p>
+    /// <para/>
+    /// <para>
     /// Note: this class has internal mutable state and is not thread safe. It is
     /// the caller's responsibility to ensure any necessary synchronization if you
     /// wish to use the same Automaton from multiple threads. In general it is instead
-    /// recommended to use a <seealso cref="RunAutomaton"/> for multithreaded matching: it is immutable,
+    /// recommended to use a <see cref="RunAutomaton"/> for multithreaded matching: it is immutable,
     /// thread safe, and much faster.
-    /// </p>
+    /// </para>
     /// @lucene.experimental
     /// </summary>
     public class Automaton
@@ -76,11 +76,11 @@ namespace Lucene.Net.Util.Automaton
         /// Minimize using Hopcroft's O(n log n) algorithm. this is regarded as one of
         /// the most generally efficient algorithms that exist.
         /// </summary>
-        /// <seealso cref= #setMinimization(int) </seealso>
+        /// <seealso cref="SetMinimization(int)"/>
         public const int MINIMIZE_HOPCROFT = 2;
 
         /// <summary>
-        /// Selects minimization algorithm (default: <code>MINIMIZE_HOPCROFT</code>). </summary>
+        /// Selects minimization algorithm (default: <c>MINIMIZE_HOPCROFT</c>). </summary>
         internal static int minimization = MINIMIZE_HOPCROFT;
 
         /// <summary>
@@ -88,19 +88,18 @@ namespace Lucene.Net.Util.Automaton
         internal State initial;
 
         /// <summary>
-        /// If true, then this automaton is definitely deterministic (i.e., there are
+        /// If <c>true</c>, then this automaton is definitely deterministic (i.e., there are
         /// no choices for any run, but a run may crash).
         /// </summary>
         internal bool deterministic;
 
         /// <summary>
         /// Extra data associated with this automaton. </summary>
-        
         internal object info;
 
-        /// <summary>
-        /// Hash code. Recomputed by <seealso cref="MinimizationOperations#minimize(Automaton)"/>
-        /// </summary>
+        ///// <summary>
+        ///// Hash code. Recomputed by <see cref="MinimizationOperations#minimize(Automaton)"/>
+        ///// </summary>
         //int hash_code;
 
         /// <summary>
@@ -113,17 +112,17 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Selects whether operations may modify the input automata (default:
-        /// <code>false</code>).
+        /// <c>false</c>).
         /// </summary>
         internal static bool allow_mutation = false;
 
         /// <summary>
         /// Constructs a new automaton that accepts the empty language. Using this
-        /// constructor, automata can be constructed manually from <seealso cref="State"/> and
-        /// <seealso cref="Transition"/> objects.
+        /// constructor, automata can be constructed manually from <see cref="State"/> and
+        /// <see cref="Transition"/> objects.
         /// </summary>
-        /// <seealso cref= State </seealso>
-        /// <seealso cref= Transition </seealso>
+        /// <seealso cref="State"/>
+        /// <seealso cref="Transition"/>
         public Automaton(State initial)
         {
             this.initial = initial;
@@ -137,7 +136,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Selects minimization algorithm (default: <code>MINIMIZE_HOPCROFT</code>).
+        /// Selects minimization algorithm (default: <c>MINIMIZE_HOPCROFT</c>).
         /// </summary>
         /// <param name="algorithm"> minimization algorithm </param>
         public static void SetMinimization(int algorithm)
@@ -147,11 +146,11 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Sets or resets minimize always flag. If this flag is set, then
-        /// <seealso cref="MinimizationOperations#minimize(Automaton)"/> will automatically be
+        /// <see cref="MinimizationOperations.Minimize(Automaton)"/> will automatically be
         /// invoked after all operations that otherwise may produce non-minimal
         /// automata. By default, the flag is not set.
         /// </summary>
-        /// <param name="flag"> if true, the flag is set </param>
+        /// <param name="flag"> if <c>true</c>, the flag is set </param>
         public static void SetMinimizeAlways(bool flag)
         {
             minimize_always = flag;
@@ -163,7 +162,7 @@ namespace Lucene.Net.Util.Automaton
         /// always leave input automata languages unmodified. By default, the flag is
         /// not set.
         /// </summary>
-        /// <param name="flag"> if true, the flag is set </param>
+        /// <param name="flag"> if <c>true</c>, the flag is set </param>
         /// <returns> previous value of the flag </returns>
         public static bool SetAllowMutate(bool flag)
         {
@@ -208,7 +207,7 @@ namespace Lucene.Net.Util.Automaton
         /// exactly one string <i>may</i> be represented in singleton mode. In that
         /// case, this method may be used to obtain the string.
         /// </summary>
-        /// <returns> string, null if this automaton is not in singleton mode. </returns>
+        /// <returns> String, <c>null</c> if this automaton is not in singleton mode. </returns>
         public virtual string Singleton
         {
             get
@@ -217,10 +216,10 @@ namespace Lucene.Net.Util.Automaton
             }
         }
 
-        /// <summary>
-        /// Sets initial state.
-        /// </summary>
-        /// <param name="s"> state </param>
+        ///// <summary>
+        ///// Sets initial state.
+        ///// </summary>
+        ///// <param name="s"> state </param>
         /*
         public void setInitialState(State s) {
           initial = s;
@@ -241,7 +240,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns deterministic flag for this automaton.
         /// </summary>
-        /// <returns> true if the automaton is definitely deterministic, false if the
+        /// <returns> <c>true</c> if the automaton is definitely deterministic, <c>false</c> if the
         ///         automaton may be nondeterministic </returns>
         public virtual bool IsDeterministic
         {
@@ -258,7 +257,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Associates extra information with this automaton.
         /// </summary>
-        /// <param name="info"> extra information </param>
+        /// <param name="value"> extra information </param>
         public virtual object Info
         {
             set
@@ -352,7 +351,7 @@ namespace Lucene.Net.Util.Automaton
         /// <summary>
         /// Returns the set of reachable accept states.
         /// </summary>
-        /// <returns> set of <seealso cref="State"/> objects </returns>
+        /// <returns> Set of <see cref="State"/> objects. </returns>
         public virtual ISet<State> GetAcceptStates()
         {
             ExpandSingleton();
@@ -413,11 +412,11 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Restores representation invariant. this method must be invoked before any
+        /// Restores representation invariant. This method must be invoked before any
         /// built-in automata operation is performed if automaton states or transitions
         /// are manipulated manually.
         /// </summary>
-        /// <seealso cref= #setDeterministic(boolean) </seealso>
+        /// <seealso cref="IsDeterministic"/>
         public virtual void RestoreInvariant()
         {
             RemoveDeadTransitions();
@@ -473,7 +472,7 @@ namespace Lucene.Net.Util.Automaton
         /// Returns the set of live states. A state is "live" if an accept state is
         /// reachable from it.
         /// </summary>
-        /// <returns> set of <seealso cref="State"/> objects </returns>
+        /// <returns> Set of <see cref="State"/> objects. </returns>
         private State[] GetLiveStates()
         {
             State[] states = GetNumberedStates();
@@ -517,7 +516,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Removes transitions to dead states and calls <seealso cref="#reduce()"/>.
+        /// Removes transitions to dead states and calls <see cref="Reduce()"/>.
         /// (A state is "dead" if no accept state is
         /// reachable from it.)
         /// </summary>
@@ -620,7 +619,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns the number of transitions in this automaton. this number is counted
+        /// Returns the number of transitions in this automaton. This number is counted
         /// as the total number of edges, where one edge may be a character interval.
         /// </summary>
         public virtual int GetNumberOfTransitions()
@@ -693,9 +692,9 @@ namespace Lucene.Net.Util.Automaton
             //throw new System.NotSupportedException();
         }
 
-        /// <summary>
-        /// Must be invoked when the stored hash code may no longer be valid.
-        /// </summary>
+        ///// <summary>
+        ///// Must be invoked when the stored hash code may no longer be valid.
+        ///// </summary>
         /*
         void clearHashCode() {
           hash_code = 0;
@@ -780,7 +779,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// Returns a clone of this automaton unless <code>allow_mutation</code> is
+        /// Returns a clone of this automaton unless <see cref="allow_mutation"/> is
         /// set, expands if singleton.
         /// </summary>
         internal virtual Automaton CloneExpandedIfRequired()
@@ -830,7 +829,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns a clone of this automaton, or this automaton itself if
-        /// <code>allow_mutation</code> flag is set.
+        /// <see cref="allow_mutation"/> flag is set.
         /// </summary>
         internal virtual Automaton CloneIfRequired()
         {
@@ -845,7 +844,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#concatenate(Automaton, Automaton)"/>.
+        /// See <see cref="BasicOperations.Concatenate(Automaton, Automaton)"/>.
         /// </summary>
         public virtual Automaton Concatenate(Automaton a)
         {
@@ -853,7 +852,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#concatenate(List)"/>.
+        /// See <see cref="BasicOperations.Concatenate(IList{Automaton})"/>.
         /// </summary>
         public static Automaton Concatenate(IList<Automaton> l)
         {
@@ -861,7 +860,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#optional(Automaton)"/>.
+        /// See <see cref="BasicOperations.Optional(Automaton)"/>.
         /// </summary>
         public virtual Automaton Optional()
         {
@@ -869,7 +868,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#repeat(Automaton)"/>.
+        /// See <see cref="BasicOperations.Repeat(Automaton)"/>.
         /// </summary>
         public virtual Automaton Repeat()
         {
@@ -877,7 +876,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#repeat(Automaton, int)"/>.
+        /// See <see cref="BasicOperations.Repeat(Automaton, int)"/>.
         /// </summary>
         public virtual Automaton Repeat(int min)
         {
@@ -885,7 +884,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#repeat(Automaton, int, int)"/>.
+        /// See <see cref="BasicOperations.Repeat(Automaton, int, int)"/>.
         /// </summary>
         public virtual Automaton Repeat(int min, int max)
         {
@@ -893,7 +892,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#complement(Automaton)"/>.
+        /// See <see cref="BasicOperations.Complement(Automaton)"/>.
         /// </summary>
         public virtual Automaton Complement()
         {
@@ -901,7 +900,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#minus(Automaton, Automaton)"/>.
+        /// See <see cref="BasicOperations.Minus(Automaton, Automaton)"/>.
         /// </summary>
         public virtual Automaton Minus(Automaton a)
         {
@@ -909,7 +908,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#intersection(Automaton, Automaton)"/>.
+        /// See <see cref="BasicOperations.Intersection(Automaton, Automaton)"/>.
         /// </summary>
         public virtual Automaton Intersection(Automaton a)
         {
@@ -917,7 +916,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#subsetOf(Automaton, Automaton)"/>.
+        /// See <see cref="BasicOperations.SubsetOf(Automaton, Automaton)"/>.
         /// </summary>
         public virtual bool SubsetOf(Automaton a)
         {
@@ -925,7 +924,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#union(Automaton, Automaton)"/>.
+        /// See <see cref="BasicOperations.Union(Automaton, Automaton)"/>.
         /// </summary>
         public virtual Automaton Union(Automaton a)
         {
@@ -933,7 +932,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#union(Collection)"/>.
+        /// See <see cref="BasicOperations.Union(ICollection{Automaton})"/>.
         /// </summary>
         public static Automaton Union(ICollection<Automaton> l)
         {
@@ -941,7 +940,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#determinize(Automaton)"/>.
+        /// See <see cref="BasicOperations.Determinize(Automaton)"/>.
         /// </summary>
         public virtual void Determinize()
         {
@@ -949,7 +948,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="BasicOperations#isEmptyString(Automaton)"/>.
+        /// See <see cref="BasicOperations.IsEmptyString(Automaton)"/>.
         /// </summary>
         public virtual bool IsEmptyString
         {
@@ -960,7 +959,7 @@ namespace Lucene.Net.Util.Automaton
         }
 
         /// <summary>
-        /// See <seealso cref="MinimizationOperations#minimize(Automaton)"/>. Returns the
+        /// See <see cref="MinimizationOperations.Minimize(Automaton)"/>. Returns the
         /// automaton being given as argument.
         /// </summary>
         public static Automaton Minimize(Automaton a)

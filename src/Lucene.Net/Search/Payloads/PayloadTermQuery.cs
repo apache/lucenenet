@@ -32,18 +32,17 @@ namespace Lucene.Net.Search.Payloads
     using TermSpans = Lucene.Net.Search.Spans.TermSpans;
 
     /// <summary>
-    /// this class is very similar to
-    /// <seealso cref="Lucene.Net.Search.Spans.SpanTermQuery"/> except that it factors
+    /// This class is very similar to
+    /// <see cref="Lucene.Net.Search.Spans.SpanTermQuery"/> except that it factors
     /// in the value of the payload located at each of the positions where the
-    /// <seealso cref="Lucene.Net.Index.Term"/> occurs.
-    /// <p/>
+    /// <see cref="Lucene.Net.Index.Term"/> occurs.
+    /// <para/>
     /// NOTE: In order to take advantage of this with the default scoring implementation
-    /// (<seealso cref="DefaultSimilarity"/>), you must override <seealso cref="DefaultSimilarity#scorePayload(int, int, int, BytesRef)"/>,
+    /// (<see cref="Similarities.DefaultSimilarity"/>), you must override <see cref="Similarities.DefaultSimilarity.ScorePayload(int, int, int, BytesRef)"/>,
     /// which returns 1 by default.
-    /// <p/>
-    /// Payload scores are aggregated using a pluggable <seealso cref="PayloadFunction"/>. </summary>
-    /// <seealso cref= Lucene.Net.Search.Similarities.Similarity.SimScorer#computePayloadFactor(int, int, int, BytesRef)
-    ///  </seealso>
+    /// <para/>
+    /// Payload scores are aggregated using a pluggable <see cref="PayloadFunction"/>. </summary>
+    /// <seealso cref="Lucene.Net.Search.Similarities.Similarity.SimScorer.ComputePayloadFactor(int, int, int, BytesRef)"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -154,22 +153,22 @@ namespace Lucene.Net.Search.Payloads
                 }
 
                 ///
-                /// <returns> <seealso cref="#getSpanScore()"/> * <seealso cref="#getPayloadScore()"/> </returns>
-                /// <exception cref="IOException"> if there is a low-level I/O error </exception>
+                /// <returns> <see cref="GetSpanScore()"/> * <see cref="GetPayloadScore()"/> </returns>
+                /// <exception cref="System.IO.IOException"> if there is a low-level I/O error </exception>
                 public override float GetScore()
                 {
                     return outerInstance.outerInstance.includeSpanScore ? GetSpanScore() * GetPayloadScore() : GetPayloadScore();
                 }
 
                 /// <summary>
-                /// Returns the SpanScorer score only.
-                /// <p/>
+                /// Returns the <see cref="SpanScorer"/> score only.
+                /// <para/>
                 /// Should not be overridden without good cause!
                 /// </summary>
                 /// <returns> the score for just the Span part w/o the payload </returns>
-                /// <exception cref="IOException"> if there is a low-level I/O error
+                /// <exception cref="System.IO.IOException"> if there is a low-level I/O error
                 /// </exception>
-                /// <seealso cref= #score() </seealso>
+                /// <seealso cref="GetScore()"/>
                 protected internal virtual float GetSpanScore()
                 {
                     return base.GetScore();
@@ -179,7 +178,7 @@ namespace Lucene.Net.Search.Payloads
                 /// The score for the payload
                 /// </summary>
                 /// <returns> The score, as calculated by
-                ///         <seealso cref="PayloadFunction#docScore(int, String, int, float)"/> </returns>
+                ///         <see cref="PayloadFunction.DocScore(int, string, int, float)"/> </returns>
                 protected internal virtual float GetPayloadScore()
                 {
                     return outerInstance.outerInstance.m_function.DocScore(m_doc, outerInstance.outerInstance.Term.Field, m_payloadsSeen, m_payloadScore);

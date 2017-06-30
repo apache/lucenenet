@@ -33,7 +33,7 @@ namespace Lucene.Net.Analysis.Reverse
     /// compatibility when creating <see cref="ReverseStringFilter"/>, or when using any of
     /// its static methods:
     /// <list type="bullet">
-    ///     <item> As of 3.1, supplementary characters are handled correctly</item>
+    ///     <item><description> As of 3.1, supplementary characters are handled correctly</description></item>
     /// </list>
     /// </para>
     /// </summary>

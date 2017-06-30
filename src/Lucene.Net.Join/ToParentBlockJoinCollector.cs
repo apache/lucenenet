@@ -33,8 +33,10 @@ namespace Lucene.Net.Join
     /// BlockJoinQuery clauses, sorted by the
     /// specified parent <see cref="Sort"/>.  Note that this cannot perform
     /// arbitrary joins; rather, it requires that all joined
-    /// documents are indexed as a doc block (using <see cref="IndexWriter.AddDocuments"/>
-    /// or <see cref="IndexWriter.UpdateDocuments"/>. Ie, the join is computed
+    /// documents are indexed as a doc block (using 
+    /// <see cref="IndexWriter.AddDocuments(IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>
+    /// or <see cref="IndexWriter.UpdateDocuments(Term, IEnumerable{IEnumerable{IIndexableField}}, Analysis.Analyzer)"/>. 
+    /// Ie, the join is computed
     /// at index time.
     /// 
     /// <para>The parent <see cref="Sort"/> must only use

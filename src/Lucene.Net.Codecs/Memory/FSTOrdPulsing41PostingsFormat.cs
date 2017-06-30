@@ -26,7 +26,8 @@
 
     /// <summary>
     /// FSTOrd + Pulsing41
-    ///  @lucene.experimental 
+    /// <para/>
+    /// @lucene.experimental 
     /// </summary>
     [PostingsFormatName("FSTOrdPulsing41")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class FSTOrdPulsing41PostingsFormat : PostingsFormat
@@ -64,7 +65,7 @@
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsWriter, pulsingWriter);
+                    IOUtils.DisposeWhileHandlingException(docsWriter, pulsingWriter);
                 }
             }
         }
@@ -86,7 +87,7 @@
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docsReader, pulsingReader);
+                    IOUtils.DisposeWhileHandlingException(docsReader, pulsingReader);
                 }
             }
         }

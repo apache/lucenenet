@@ -17,7 +17,6 @@ namespace Lucene.Net.Codecs.Lucene40
      * limitations under the License.
      */
 
-    // javadocs
     using Directory = Lucene.Net.Store.Directory;
     using FieldInfos = Lucene.Net.Index.FieldInfos;
     using IOContext = Lucene.Net.Store.IOContext;
@@ -25,53 +24,54 @@ namespace Lucene.Net.Codecs.Lucene40
 
     /// <summary>
     /// Lucene 4.0 Stored Fields Format.
-    /// <p>Stored fields are represented by two files:</p>
-    /// <ol>
-    /// <li><a name="field_index" id="field_index"></a>
-    /// <p>The field index, or <tt>.fdx</tt> file.</p>
-    /// <p>this is used to find the location within the field data file of the fields
-    /// of a particular document. Because it contains fixed-length data, this file may
-    /// be easily randomly accessed. The position of document <i>n</i> 's field data is
-    /// the <seealso cref="DataOutput#writeLong Uint64"/> at <i>n*8</i> in this file.</p>
-    /// <p>this contains, for each document, a pointer to its field data, as
-    /// follows:</p>
-    /// <ul>
-    /// <li>FieldIndex (.fdx) --&gt; &lt;Header&gt;, &lt;FieldValuesPosition&gt; <sup>SegSize</sup></li>
-    /// <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    /// <li>FieldValuesPosition --&gt; <seealso cref="DataOutput#writeLong Uint64"/></li>
-    /// </ul>
-    /// </li>
-    /// <li>
-    /// <p><a name="field_data" id="field_data"></a>The field data, or <tt>.fdt</tt> file.</p>
-    /// <p>this contains the stored fields of each document, as follows:</p>
-    /// <ul>
-    /// <li>FieldData (.fdt) --&gt; &lt;Header&gt;, &lt;DocFieldData&gt; <sup>SegSize</sup></li>
-    /// <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    /// <li>DocFieldData --&gt; FieldCount, &lt;FieldNum, Bits, Value&gt;
-    /// <sup>FieldCount</sup></li>
-    /// <li>FieldCount --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    /// <li>FieldNum --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    /// <li>Bits --&gt; <seealso cref="DataOutput#writeByte Byte"/></li>
-    /// <ul>
-    /// <li>low order bit reserved.</li>
-    /// <li>second bit is one for fields containing binary data</li>
-    /// <li>third bit reserved.</li>
-    /// <li>4th to 6th bit (mask: 0x7&lt;&lt;3) define the type of a numeric field:
-    /// <ul>
-    /// <li>all bits in mask are cleared if no numeric field at all</li>
-    /// <li>1&lt;&lt;3: Value is Int</li>
-    /// <li>2&lt;&lt;3: Value is Long</li>
-    /// <li>3&lt;&lt;3: Value is Int as Float (as of <seealso cref="Float#intBitsToFloat(int)"/></li>
-    /// <li>4&lt;&lt;3: Value is Long as Double (as of <seealso cref="Double#longBitsToDouble(long)"/></li>
-    /// </ul>
-    /// </li>
-    /// </ul>
-    /// <li>Value --&gt; String | BinaryValue | Int | Long (depending on Bits)</li>
-    /// <li>BinaryValue --&gt; ValueSize, &lt;<seealso cref="DataOutput#writeByte Byte"/>&gt;^ValueSize</li>
-    /// <li>ValueSize --&gt; <seealso cref="DataOutput#writeVInt VInt"/></li>
-    /// </li>
-    /// </ul>
-    /// </ol>
+    /// <para>Stored fields are represented by two files:</para>
+    /// <list type="number">
+    ///     <item><description><a name="field_index" id="field_index"></a>
+    ///         <para>The field index, or <c>.fdx</c> file.</para>
+    ///         <para>This is used to find the location within the field data file of the fields
+    ///         of a particular document. Because it contains fixed-length data, this file may
+    ///         be easily randomly accessed. The position of document <i>n</i> 's field data is
+    ///         the Uint64 (<see cref="Store.DataOutput.WriteInt64(long)"/>) at <i>n*8</i> in this file.</para>
+    ///         <para>This contains, for each document, a pointer to its field data, as
+    ///         follows:</para>
+    ///         <list type="bullet">
+    ///             <item><description>FieldIndex (.fdx) --&gt; &lt;Header&gt;, &lt;FieldValuesPosition&gt; <sup>SegSize</sup></description></item>
+    ///             <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) </description></item>
+    ///             <item><description>FieldValuesPosition --&gt; Uint64 (<see cref="Store.DataOutput.WriteInt64(long)"/>) </description></item>
+    ///         </list>
+    ///     </description></item>
+    ///     <item><description>
+    ///         <para><a name="field_data" id="field_data"></a>The field data, or <c>.fdt</c> file.</para>
+    ///         <para>This contains the stored fields of each document, as follows:</para>
+    ///         <list type="bullet">
+    ///             <item><description>FieldData (.fdt) --&gt; &lt;Header&gt;, &lt;DocFieldData&gt; <sup>SegSize</sup></description></item>
+    ///             <item><description>Header --&gt; CodecHeader (<see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/>) </description></item>
+    ///             <item><description>DocFieldData --&gt; FieldCount, &lt;FieldNum, Bits, Value&gt;
+    ///                 <sup>FieldCount</sup></description></item>
+    ///             <item><description>FieldCount --&gt; VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </description></item>
+    ///             <item><description>FieldNum --&gt; VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </description></item>
+    ///             <item><description>Bits --&gt; Byte (<see cref="Store.DataOutput.WriteByte(byte)"/>)
+    ///                 <list type="bullet">
+    ///                     <item><description>low order bit reserved.</description></item>
+    ///                     <item><description>second bit is one for fields containing binary data</description></item>
+    ///                     <item><description>third bit reserved.</description></item>
+    ///                     <item><description>4th to 6th bit (mask: 0x7&lt;&lt;3) define the type of a numeric field:
+    ///                         <list type="bullet">
+    ///                             <item><description>all bits in mask are cleared if no numeric field at all</description></item>
+    ///                             <item><description>1&lt;&lt;3: Value is Int</description></item>
+    ///                             <item><description>2&lt;&lt;3: Value is Long</description></item>
+    ///                             <item><description>3&lt;&lt;3: Value is Int as Float (as of <see cref="Support.Number.Int32BitsToSingle(int)"/></description></item>
+    ///                             <item><description>4&lt;&lt;3: Value is Long as Double (as of <see cref="System.BitConverter.Int64BitsToDouble(long)"/></description></item>
+    ///                         </list>
+    ///                     </description></item>
+    ///                 </list>
+    ///             </description></item>
+    ///             <item><description>Value --&gt; String | BinaryValue | Int | Long (depending on Bits)</description></item>
+    ///             <item><description>BinaryValue --&gt; ValueSize, &lt; Byte (<see cref="Store.DataOutput.WriteByte(byte)"/>) &gt;^ValueSize</description></item>
+    ///             <item><description>ValueSize --&gt; VInt (<see cref="Store.DataOutput.WriteVInt32(int)"/>) </description></item>
+    ///         </list>
+    ///     </description></item>
+    /// </list>
     /// @lucene.experimental
     /// </summary>
     public class Lucene40StoredFieldsFormat : StoredFieldsFormat

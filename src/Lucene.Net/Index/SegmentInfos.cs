@@ -44,68 +44,68 @@ namespace Lucene.Net.Index
     /// <summary>
     /// A collection of segmentInfo objects with methods for operating on
     /// those segments in relation to the file system.
-    /// <p>
+    /// <para>
     /// The active segments in the index are stored in the segment info file,
-    /// <tt>segments_N</tt>. There may be one or more <tt>segments_N</tt> files in the
+    /// <c>segments_N</c>. There may be one or more <c>segments_N</c> files in the
     /// index; however, the one with the largest generation is the active one (when
     /// older segments_N files are present it's because they temporarily cannot be
     /// deleted, or, a writer is in the process of committing, or a custom
-    /// <seealso cref="Lucene.Net.Index.IndexDeletionPolicy IndexDeletionPolicy"/>
-    /// is in use). this file lists each segment by name and has details about the
+    /// <see cref="Lucene.Net.Index.IndexDeletionPolicy"/>
+    /// is in use). This file lists each segment by name and has details about the
     /// codec and generation of deletes.
-    /// </p>
-    /// <p>There is also a file <tt>segments.gen</tt>. this file contains
-    /// the current generation (the <tt>_N</tt> in <tt>segments_N</tt>) of the index.
-    /// this is used only as a fallback in case the current generation cannot be
+    /// </para>
+    /// <para>There is also a file <c>segments.gen</c>. this file contains
+    /// the current generation (the <c>_N</c> in <c>segments_N</c>) of the index.
+    /// This is used only as a fallback in case the current generation cannot be
     /// accurately determined by directory listing alone (as is the case for some NFS
-    /// clients with time-based directory cache expiration). this file simply contains
-    /// an <seealso cref="DataOutput#writeInt Int32"/> version header
-    /// (<seealso cref="#FORMAT_SEGMENTS_GEN_CURRENT"/>), followed by the
-    /// generation recorded as <seealso cref="DataOutput#writeLong Int64"/>, written twice.</p>
-    /// <p>
+    /// clients with time-based directory cache expiration). This file simply contains
+    /// an <see cref="Store.DataOutput.WriteInt32(int)"/> version header
+    /// (<see cref="FORMAT_SEGMENTS_GEN_CURRENT"/>), followed by the
+    /// generation recorded as <see cref="Store.DataOutput.WriteInt64(long)"/>, written twice.</para>
+    /// <para>
     /// Files:
-    /// <ul>
-    ///   <li><tt>segments.gen</tt>: GenHeader, Generation, Generation, Footer
-    ///   <li><tt>segments_N</tt>: Header, Version, NameCounter, SegCount,
+    /// <list type="bullet">
+    ///   <item><description><c>segments.gen</c>: GenHeader, Generation, Generation, Footer</description></item>
+    ///   <item><description><c>segments_N</c>: Header, Version, NameCounter, SegCount,
     ///    &lt;SegName, SegCodec, DelGen, DeletionCount, FieldInfosGen, UpdatesFiles&gt;<sup>SegCount</sup>,
-    ///    CommitUserData, Footer
-    /// </ul>
-    /// </p>
+    ///    CommitUserData, Footer</description></item>
+    /// </list>
+    /// </para>
     /// Data types:
-    /// <p>
-    /// <ul>
-    ///   <li>Header --&gt; <seealso cref="CodecUtil#writeHeader CodecHeader"/></li>
-    ///   <li>GenHeader, NameCounter, SegCount, DeletionCount --&gt; <seealso cref="DataOutput#writeInt Int32"/></li>
-    ///   <li>Generation, Version, DelGen, Checksum, FieldInfosGen --&gt; <seealso cref="DataOutput#writeLong Int64"/></li>
-    ///   <li>SegName, SegCodec --&gt; <seealso cref="DataOutput#writeString String"/></li>
-    ///   <li>CommitUserData --&gt; <seealso cref="DataOutput#writeStringStringMap Map&lt;String,String&gt;"/></li>
-    ///   <li>UpdatesFiles --&gt; <seealso cref="DataOutput#writeStringSet(Set) Set&lt;String&gt;"/></li>
-    ///   <li>Footer --&gt; <seealso cref="CodecUtil#writeFooter CodecFooter"/></li>
-    /// </ul>
-    /// </p>
+    /// <para>
+    /// <list type="bullet">
+    ///   <item><description>Header --&gt; <see cref="CodecUtil.WriteHeader(Store.DataOutput, string, int)"/></description></item>
+    ///   <item><description>GenHeader, NameCounter, SegCount, DeletionCount --&gt; <see cref="Store.DataOutput.WriteInt32(int)"/></description></item>
+    ///   <item><description>Generation, Version, DelGen, Checksum, FieldInfosGen --&gt; <see cref="Store.DataOutput.WriteInt64(long)"/></description></item>
+    ///   <item><description>SegName, SegCodec --&gt; <see cref="Store.DataOutput.WriteString(string)"/></description></item>
+    ///   <item><description>CommitUserData --&gt; <see cref="Store.DataOutput.WriteStringStringMap(IDictionary{string, string})"/></description></item>
+    ///   <item><description>UpdatesFiles --&gt; <see cref="Store.DataOutput.WriteStringSet(ISet{string})"/></description></item>
+    ///   <item><description>Footer --&gt; <see cref="CodecUtil.WriteFooter(IndexOutput)"/></description></item>
+    /// </list>
+    /// </para>
     /// Field Descriptions:
-    /// <p>
-    /// <ul>
-    ///   <li>Version counts how often the index has been changed by adding or deleting
-    ///       documents.</li>
-    ///   <li>NameCounter is used to generate names for new segment files.</li>
-    ///   <li>SegName is the name of the segment, and is used as the file name prefix for
-    ///       all of the files that compose the segment's index.</li>
-    ///   <li>DelGen is the generation count of the deletes file. If this is -1,
+    /// <para>
+    /// <list type="bullet">
+    ///   <item><description>Version counts how often the index has been changed by adding or deleting
+    ///       documents.</description></item>
+    ///   <item><description>NameCounter is used to generate names for new segment files.</description></item>
+    ///   <item><description>SegName is the name of the segment, and is used as the file name prefix for
+    ///       all of the files that compose the segment's index.</description></item>
+    ///   <item><description>DelGen is the generation count of the deletes file. If this is -1,
     ///       there are no deletes. Anything above zero means there are deletes
-    ///       stored by <seealso cref="LiveDocsFormat"/>.</li>
-    ///   <li>DeletionCount records the number of deleted documents in this segment.</li>
-    ///   <li>SegCodec is the <seealso cref="Codec#getName() name"/> of the Codec that encoded
-    ///       this segment.</li>
-    ///   <li>CommitUserData stores an optional user-supplied opaque
-    ///       Map&lt;String,String&gt; that was passed to
-    ///       <seealso cref="IndexWriter#setCommitData(java.util.Map)"/>.</li>
-    ///   <li>FieldInfosGen is the generation count of the fieldInfos file. If this is -1,
+    ///       stored by <see cref="Codecs.LiveDocsFormat"/>.</description></item>
+    ///   <item><description>DeletionCount records the number of deleted documents in this segment.</description></item>
+    ///   <item><description>SegCodec is the <see cref="Codec.Name"/> of the <see cref="Codec"/> that encoded
+    ///       this segment.</description></item>
+    ///   <item><description>CommitUserData stores an optional user-supplied opaque
+    ///       <see cref="T:IDictionary{string, string}"/> that was passed to
+    ///       <see cref="IndexWriter.SetCommitData(IDictionary{string, string})"/>.</description></item>
+    ///   <item><description>FieldInfosGen is the generation count of the fieldInfos file. If this is -1,
     ///       there are no updates to the fieldInfos in that segment. Anything above zero
-    ///       means there are updates to fieldInfos stored by <seealso cref="FieldInfosFormat"/>.</li>
-    ///   <li>UpdatesFiles stores the list of files that were updated in that segment.</li>
-    /// </ul>
-    /// </p>
+    ///       means there are updates to fieldInfos stored by <see cref="Codecs.FieldInfosFormat"/>.</description></item>
+    ///   <item><description>UpdatesFiles stores the list of files that were updated in that segment.</description></item>
+    /// </list>
+    /// </para>
     ///
     /// @lucene.experimental
     /// </summary>
@@ -149,30 +149,31 @@ namespace Lucene.Net.Index
         // there was an IOException that had interrupted a commit
 
         /// <summary>
-        /// Opaque Map&lt;String, String&gt; that user can specify during IndexWriter.commit </summary>
+        /// Opaque <see cref="T:IDictionary{string, string}"/> that user can specify during <see cref="IndexWriter.Commit()"/> </summary>
         private IDictionary<string, string> userData = Collections.EmptyMap<string, string>();
 
         private List<SegmentCommitInfo> segments = new List<SegmentCommitInfo>();
 
         /// <summary>
-        /// If non-null, information about loading segments_N files </summary>
-        /// will be printed here.  <seealso cref= #setInfoStream. </seealso>
+        /// If non-null, information about loading segments_N files 
+        /// will be printed here.</summary> 
+        /// <seealso cref="InfoStream"/>
         private static TextWriter infoStream = null;
 
         /// <summary>
         /// Sole constructor. Typically you call this and then
-        ///  use {@link #read(Directory) or
-        ///  #read(Directory,String)} to populate each {@link
-        ///  SegmentCommitInfo}.  Alternatively, you can add/remove your
-        ///  own <seealso cref="SegmentCommitInfo"/>s.
+        /// use <see cref="Read(Directory)"/> or
+        /// <see cref="Read(Directory, string)"/> to populate each
+        /// <see cref="SegmentCommitInfo"/>.  Alternatively, you can add/remove your
+        /// own <see cref="SegmentCommitInfo"/>s.
         /// </summary>
         public SegmentInfos()
         {
         }
 
         /// <summary>
-        /// Returns <seealso cref="SegmentCommitInfo"/> at the provided
-        ///  index.
+        /// Returns <see cref="SegmentCommitInfo"/> at the provided
+        /// index.
         /// </summary>
         public SegmentCommitInfo Info(int i)
         {
@@ -183,7 +184,7 @@ namespace Lucene.Net.Index
         /// Get the generation of the most recent commit to the
         /// list of index files (N in the segments_N file).
         /// </summary>
-        /// <param name="files"> -- array of file names to check </param>
+        /// <param name="files"> array of file names to check </param>
         public static long GetLastCommitGeneration(string[] files)
         {
             if (files == null)
@@ -209,7 +210,7 @@ namespace Lucene.Net.Index
         /// Get the generation of the most recent commit to the
         /// index in this directory (N in the segments_N file).
         /// </summary>
-        /// <param name="directory"> -- directory to search for the latest segments_N file </param>
+        /// <param name="directory"> directory to search for the latest segments_N file </param>
         public static long GetLastCommitGeneration(Directory directory)
         {
             try
@@ -226,7 +227,7 @@ namespace Lucene.Net.Index
         /// Get the filename of the segments_N file for the most
         /// recent commit in the list of index files.
         /// </summary>
-        /// <param name="files"> -- array of file names to check </param>
+        /// <param name="files"> array of file names to check </param>
 
         public static string GetLastCommitSegmentsFileName(string[] files)
         {
@@ -237,7 +238,7 @@ namespace Lucene.Net.Index
         /// Get the filename of the segments_N file for the most
         /// recent commit to the index in this Directory.
         /// </summary>
-        /// <param name="directory"> -- directory to search for the latest segments_N file </param>
+        /// <param name="directory"> directory to search for the latest segments_N file </param>
         public static string GetLastCommitSegmentsFileName(Directory directory)
         {
             return IndexFileNames.FileNameFromGeneration(IndexFileNames.SEGMENTS, "", GetLastCommitGeneration(directory));
@@ -272,14 +273,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// A utility for writing the <seealso cref="IndexFileNames#SEGMENTS_GEN"/> file to a
-        /// <seealso cref="Directory"/>.
-        ///
-        /// <p>
+        /// A utility for writing the <see cref="IndexFileNames.SEGMENTS_GEN"/> file to a
+        /// <see cref="Directory"/>.
+        /// <para/>
         /// <b>NOTE:</b> this is an internal utility which is kept public so that it's
         /// accessible by code from other packages. You should avoid calling this
         /// method unless you're absolutely sure what you're doing!
-        ///
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public static void WriteSegmentsGen(Directory dir, long generation)
@@ -335,11 +335,11 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Read a particular segmentFileName.  Note that this may
-        /// throw an IOException if a commit is in process.
+        /// Read a particular <paramref name="segmentFileName"/>.  Note that this may
+        /// throw an <see cref="IOException"/> if a commit is in process.
         /// </summary>
-        /// <param name="directory"> -- directory containing the segments file </param>
-        /// <param name="segmentFileName"> -- segment file to load </param>
+        /// <param name="directory"> directory containing the segments file </param>
+        /// <param name="segmentFileName"> segment file to load </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
         public void Read(Directory directory, string segmentFileName)
@@ -447,7 +447,7 @@ namespace Lucene.Net.Index
                     // Clear any segment infos we had loaded so we
                     // have a clean slate on retry:
                     this.Clear();
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
                 else
                 {
@@ -457,8 +457,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Find the latest commit ({@code segments_N file}) and
-        ///  load all <seealso cref="SegmentCommitInfo"/>s.
+        /// Find the latest commit (<c>segments_N file</c>) and
+        /// load all <see cref="SegmentCommitInfo"/>s.
         /// </summary>
         public void Read(Directory directory)
         {
@@ -584,7 +584,7 @@ namespace Lucene.Net.Index
                 {
                     // We hit an exception above; try to close the file
                     // but suppress any exception:
-                    IOUtils.CloseWhileHandlingException(segnOutput);
+                    IOUtils.DisposeWhileHandlingException(segnOutput);
 
                     foreach (string fileName in upgradedSIFiles)
                     {
@@ -634,7 +634,7 @@ namespace Lucene.Net.Index
             {
                 if (@in != null)
                 {
-                    IOUtils.CloseWhileHandlingException(@in);
+                    IOUtils.DisposeWhileHandlingException(@in);
                 }
             }
             return false;
@@ -678,7 +678,7 @@ namespace Lucene.Net.Index
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(output);
+                    IOUtils.DisposeWhileHandlingException(output);
                     try
                     {
                         si.Dir.DeleteFile(fileName);
@@ -695,9 +695,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns a copy of this instance, also copying each
-        /// SegmentInfo.
+        /// <see cref="SegmentInfo"/>.
         /// </summary>
-
         public object Clone()
         {
             var sis = (SegmentInfos)base.MemberwiseClone();
@@ -721,7 +720,7 @@ namespace Lucene.Net.Index
 
 
         /// <summary>
-        /// Counts how often the index has been changed.
+        /// Version number when this <see cref="SegmentInfos"/> was generated.
         /// </summary>
         public long Version { get; internal set; }
 
@@ -765,19 +764,21 @@ namespace Lucene.Net.Index
             }
         }
 
-        /* Advanced configuration of retry logic in loading
-           segments_N file */
+        /// <summary>
+        /// Advanced configuration of retry logic in loading
+        /// segments_N file
+        /// </summary>
         private static int defaultGenLookaheadCount = 10;
 
         /// <summary>
         /// Gets or Sets the <see cref="defaultGenLookaheadCount"/>.
-        /// 
+        /// <para/>
         /// Advanced: set how many times to try incrementing the
         /// gen when loading the segments file.  this only runs if
         /// the primary (listing directory) and secondary (opening
         /// segments.gen file) methods fail to find the segments
         /// file.
-        ///
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public static int DefaultGenLookaheadCount // LUCENENET specific: corrected spelling issue with the getter
@@ -793,8 +794,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Prints the given message to the infoStream. Note, this method does not
-        /// check for null infoStream. It assumes this check has been performed by the
+        /// Prints the given message to the <see cref="InfoStream"/>. Note, this method does not
+        /// check for <c>null</c> <see cref="InfoStream"/>. It assumes this check has been performed by the
         /// caller, which is recommended to avoid the (usually) expensive message
         /// creation.
         /// </summary>
@@ -805,7 +806,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Utility class for executing code that needs to do
-        /// something with the current segments file.  this is
+        /// something with the current segments file.  This is
         /// necessary with lock-less commits because from the time
         /// you locate the current segments file name, until you
         /// actually open it, read its contents, or check modified
@@ -824,8 +825,8 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Locate the most recent {@code segments} file and
-            ///  run <seealso cref="#doBody"/> on it.
+            /// Locate the most recent <c>segments</c> file and
+            /// run <see cref="DoBody(string)"/> on it.
             /// </summary>
             public virtual object Run()
             {
@@ -833,7 +834,7 @@ namespace Lucene.Net.Index
             }
 
             /// <summary>
-            /// Run <seealso cref="#doBody"/> on the provided commit. </summary>
+            /// Run <see cref="DoBody(string)"/> on the provided commit. </summary>
             public virtual object Run(IndexCommit commit)
             {
                 if (commit != null)
@@ -1097,7 +1098,7 @@ namespace Lucene.Net.Index
 
             /// <summary>
             /// Subclass must implement this.  The assumption is an
-            /// IOException will be thrown if something goes wrong
+            /// <see cref="IOException"/> will be thrown if something goes wrong
             /// during the processing that could have been caused by
             /// a writer committing.
             /// </summary>
@@ -1117,7 +1118,7 @@ namespace Lucene.Net.Index
             {
                 // Suppress so we keep throwing the original exception
                 // in our caller
-                IOUtils.CloseWhileHandlingException(pendingSegnOutput);
+                IOUtils.DisposeWhileHandlingException(pendingSegnOutput);
                 pendingSegnOutput = null;
 
                 // Must carefully compute fileName from "generation"
@@ -1130,16 +1131,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Call this to start a commit.  this writes the new
-        ///  segments file, but writes an invalid checksum at the
-        ///  end, so that it is not visible to readers.  Once this
-        ///  is called you must call <seealso cref="#finishCommit"/> to complete
-        ///  the commit or <seealso cref="#rollbackCommit"/> to abort it.
-        ///  <p>
-        ///  Note: <seealso cref="#changed()"/> should be called prior to this
-        ///  method if changes have been made to this <seealso cref="SegmentInfos"/> instance
-        ///  </p>
-        ///
+        /// Call this to start a commit.  This writes the new
+        /// segments file, but writes an invalid checksum at the
+        /// end, so that it is not visible to readers.  Once this
+        /// is called you must call <see cref="FinishCommit(Directory)"/> to complete
+        /// the commit or <see cref="RollbackCommit(Directory)"/> to abort it.
+        /// <para>
+        /// Note: <see cref="Changed()"/> should be called prior to this
+        /// method if changes have been made to this <see cref="SegmentInfos"/> instance
+        /// </para>
         /// </summary>
         internal void PrepareCommit(Directory dir)
         {
@@ -1151,13 +1151,13 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns all file names referenced by SegmentInfo
-        ///  instances matching the provided Directory (ie files
-        ///  associated with any "external" segments are skipped).
-        ///  The returned collection is recomputed on each
-        ///  invocation.
+        /// Returns all file names referenced by <see cref="SegmentInfo"/>
+        /// instances matching the provided <see cref="Directory"/> (ie files
+        /// associated with any "external" segments are skipped).
+        /// The returned collection is recomputed on each
+        /// invocation.
         /// </summary>
-        public ICollection<string> Files(Directory dir, bool includeSegmentsFile)
+        public ICollection<string> GetFiles(Directory dir, bool includeSegmentsFile)
         {
             var files = new HashSet<string>();
             if (includeSegmentsFile)
@@ -1175,7 +1175,7 @@ namespace Lucene.Net.Index
                 Debug.Assert(info.Info.Dir == dir);
                 if (info.Info.Dir == dir)
                 {
-                    files.UnionWith(info.Files());
+                    files.UnionWith(info.GetFiles());
                 }
             }
 
@@ -1261,13 +1261,12 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Writes & syncs to the Directory dir, taking care to
-        ///  remove the segments file on exception
-        ///  <p>
-        ///  Note: <seealso cref="#changed()"/> should be called prior to this
-        ///  method if changes have been made to this <seealso cref="SegmentInfos"/> instance
-        ///  </p>
-        ///
+        /// Writes &amp; syncs to the Directory dir, taking care to
+        /// remove the segments file on exception
+        /// <para>
+        /// Note: <see cref="Changed()"/> should be called prior to this
+        /// method if changes have been made to this <see cref="SegmentInfos"/> instance
+        /// </para>
         /// </summary>
         internal void Commit(Directory dir)
         {
@@ -1295,16 +1294,16 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return {@code userData} saved with this commit.
+        /// Gets <see cref="userData"/> saved with this commit.
         /// </summary>
-        /// <seealso cref= IndexWriter#commit() </seealso>
+        /// <seealso cref="IndexWriter.Commit()"/>
         public IDictionary<string, string> UserData
         {
             get
             {
                 return userData;
             }
-            set
+            internal set
             {
                 if (value == null)
                 {
@@ -1319,8 +1318,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Replaces all segments in this instance, but keeps
-        ///  generation, version, counter so that future commits
-        ///  remain write once.
+        /// generation, version, counter so that future commits
+        /// remain write once.
         /// </summary>
         internal void Replace(SegmentInfos other)
         {
@@ -1330,7 +1329,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns sum of all segment's docCounts.  Note that
-        ///  this does not include deletions
+        /// this does not include deletions
         /// </summary>
         public int TotalDocCount
         {
@@ -1339,7 +1338,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Call this before committing if changes have been made to the
-        ///  segments.
+        /// segments.
         /// </summary>
         public void Changed()
         {
@@ -1347,7 +1346,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// applies all changes caused by committing a merge to this SegmentInfos </summary>
+        /// applies all changes caused by committing a merge to this <see cref="SegmentInfos"/> </summary>
         internal void ApplyMergeChanges(MergePolicy.OneMerge merge, bool dropSegment)
         {
             var mergedAway = new HashSet<SegmentCommitInfo>(merge.Segments);
@@ -1404,6 +1403,9 @@ namespace Lucene.Net.Index
             this.AddAll(infos);
         }
 
+        /// <summary>
+        /// Returns an <b>unmodifiable</b> <see cref="T:IEnumerator{SegmentCommitInfo}"/> of contained segments in order.
+        /// </summary>
         public IEnumerator<SegmentCommitInfo> GetEnumerator()
         {
             return AsList().GetEnumerator();
@@ -1415,14 +1417,15 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns all contained segments as an <b>unmodifiable</b> <seealso cref="List"/> view. </summary>
+        /// Returns all contained segments as an <b>unmodifiable</b> <see cref="T:IList{SegmentCommitInfo}"/> view. </summary>
         public IList<SegmentCommitInfo> AsList()
         {
             return Collections.UnmodifiableList<SegmentCommitInfo>(segments);
         }
 
         /// <summary>
-        /// Returns number of <seealso cref="SegmentCommitInfo"/>s. 
+        /// Returns number of <see cref="SegmentCommitInfo"/>s.
+        /// <para/>
         /// NOTE: This was size() in Lucene.
         /// </summary>
         public int Count
@@ -1431,14 +1434,14 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Appends the provided <seealso cref="SegmentCommitInfo"/>. </summary>
+        /// Appends the provided <see cref="SegmentCommitInfo"/>. </summary>
         public void Add(SegmentCommitInfo si)
         {
             segments.Add(si);
         }
 
         /// <summary>
-        /// Appends the provided <seealso cref="SegmentCommitInfo"/>s. </summary>
+        /// Appends the provided <see cref="SegmentCommitInfo"/>s. </summary>
         public void AddAll(IEnumerable<SegmentCommitInfo> sis)
         {
             foreach (var si in sis)
@@ -1448,16 +1451,16 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Clear all <seealso cref="SegmentCommitInfo"/>s. </summary>
+        /// Clear all <see cref="SegmentCommitInfo"/>s. </summary>
         public void Clear()
         {
             segments.Clear();
         }
 
         /// <summary>
-        /// Remove the provided <seealso cref="SegmentCommitInfo"/>.
+        /// Remove the provided <see cref="SegmentCommitInfo"/>.
         ///
-        /// <p><b>WARNING</b>: O(N) cost
+        /// <para/><b>WARNING</b>: O(N) cost
         /// </summary>
         public void Remove(SegmentCommitInfo si)
         {
@@ -1465,10 +1468,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Remove the <seealso cref="SegmentCommitInfo"/> at the
+        /// Remove the <see cref="SegmentCommitInfo"/> at the
         /// provided index.
         ///
-        /// <p><b>WARNING</b>: O(N) cost
+        /// <para/><b>WARNING</b>: O(N) cost
         /// </summary>
         internal void Remove(int index)
         {
@@ -1476,10 +1479,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Return true if the provided {@link
-        ///  SegmentCommitInfo} is contained.
+        /// Return true if the provided 
+        /// <see cref="SegmentCommitInfo"/> is contained.
         ///
-        /// <p><b>WARNING</b>: O(N) cost
+        /// <para/><b>WARNING</b>: O(N) cost
         /// </summary>
         internal bool Contains(SegmentCommitInfo si)
         {
@@ -1487,10 +1490,10 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns index of the provided {@link
-        ///  SegmentCommitInfo}.
+        /// Returns index of the provided
+        /// <see cref="SegmentCommitInfo"/>.
         ///
-        /// <p><b>WARNING</b>: O(N) cost
+        /// <para/><b>WARNING</b>: O(N) cost
         /// </summary>
         internal int IndexOf(SegmentCommitInfo si)
         {

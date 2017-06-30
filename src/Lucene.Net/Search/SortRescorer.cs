@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
 
     /// <summary>
-    /// A <seealso cref="Rescorer"/> that re-sorts according to a provided
+    /// A <see cref="Rescorer"/> that re-sorts according to a provided
     /// Sort.
     /// </summary>
 #if FEATURE_SERIALIZABLE

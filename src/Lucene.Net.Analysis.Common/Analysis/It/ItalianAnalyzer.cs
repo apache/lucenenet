@@ -34,9 +34,9 @@ namespace Lucene.Net.Analysis.It
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="ItalianAnalyzer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.6, <see cref="ItalianLightStemFilter"/> is used for less aggressive stemming.</item>
-    ///     <item> As of 3.2, <see cref="ElisionFilter"/> with a set of Italian 
-    ///        contractions is used by default.</item>
+    ///     <item><description> As of 3.6, <see cref="ItalianLightStemFilter"/> is used for less aggressive stemming.</description></item>
+    ///     <item><description> As of 3.2, <see cref="ElisionFilter"/> with a set of Italian 
+    ///        contractions is used by default.</description></item>
     /// </list>
     /// </para>
     /// </summary>
@@ -128,11 +128,11 @@ namespace Lucene.Net.Analysis.It
 
         /// <summary>
         /// Creates a
-        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// <see cref="TokenStreamComponents"/>
         /// which tokenizes all the text in the provided <see cref="TextReader"/>.
         /// </summary>
         /// <returns> A
-        ///         <see cref="Analyzer.TokenStreamComponents"/>
+        ///         <see cref="TokenStreamComponents"/>
         ///         built from an <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="ElisionFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
         ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is

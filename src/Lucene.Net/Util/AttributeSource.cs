@@ -27,11 +27,11 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// An AttributeSource contains a list of different <seealso cref="Attribute"/>s,
+    /// An <see cref="AttributeSource"/> contains a list of different <see cref="Attribute"/>s,
     /// and methods to add and get them. There can only be a single instance
-    /// of an attribute in the same AttributeSource instance. this is ensured
-    /// by passing in the actual type of the Attribute (Class&lt;Attribute&gt;) to
-    /// the <seealso cref="#addAttribute(Class)"/>, which then checks if an instance of
+    /// of an attribute in the same <see cref="AttributeSource"/> instance. This is ensured
+    /// by passing in the actual type of the <see cref="IAttribute"/> to
+    /// the <see cref="AddAttribute{T}"/>, which then checks if an instance of
     /// that type is already present. If yes, it returns the instance, otherwise
     /// it creates a new instance and returns it.
     /// </summary>
@@ -41,18 +41,18 @@ namespace Lucene.Net.Util
     public class AttributeSource
     {
         /// <summary>
-        /// An AttributeFactory creates instances of <seealso cref="Attribute"/>s.
+        /// An <see cref="AttributeFactory"/> creates instances of <see cref="Attribute"/>s.
         /// </summary>
         public abstract class AttributeFactory
         {
             /// <summary>
-            /// returns an <seealso cref="Attribute"/> for the supplied <seealso cref="Attribute"/> interface class.
+            /// returns an <see cref="Attribute"/> for the supplied <see cref="IAttribute"/> interface.
             /// </summary>
             public abstract Attribute CreateAttributeInstance<T>() where T : IAttribute;
 
             /// <summary>
-            /// this is the default factory that creates <seealso cref="Attribute"/>s using the
-            /// class name of the supplied <seealso cref="Attribute"/> interface class by appending <code>Impl</code> to it.
+            /// This is the default factory that creates <see cref="Attribute"/>s using the
+            /// <see cref="Type"/> of the supplied <see cref="IAttribute"/> interface by removing the <code>I</code> from the prefix.
             /// </summary>
             public static readonly AttributeFactory DEFAULT_ATTRIBUTE_FACTORY = new DefaultAttributeFactory();
 
@@ -101,9 +101,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this class holds the state of an AttributeSource. </summary>
-        /// <seealso cref= #captureState </seealso>
-        /// <seealso cref= #restoreState </seealso>
+        /// This class holds the state of an <see cref="AttributeSource"/>. </summary>
+        /// <seealso cref="CaptureState()"/>
+        /// <seealso cref="RestoreState(State)"/>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -136,7 +136,7 @@ namespace Lucene.Net.Util
         private readonly AttributeFactory factory;
 
         /// <summary>
-        /// An AttributeSource using the default attribute factory <seealso cref="AttributeSource.AttributeFactory#DEFAULT_ATTRIBUTE_FACTORY"/>.
+        /// An <see cref="AttributeSource"/> using the default attribute factory <see cref="AttributeSource.AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY"/>.
         /// </summary>
         public AttributeSource()
             : this(AttributeFactory.DEFAULT_ATTRIBUTE_FACTORY)
@@ -144,7 +144,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// An AttributeSource that uses the same attributes as the supplied one.
+        /// An <see cref="AttributeSource"/> that uses the same attributes as the supplied one.
         /// </summary>
         public AttributeSource(AttributeSource input)
         {
@@ -159,7 +159,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// An AttributeSource using the supplied <seealso cref="AttributeFactory"/> for creating new <seealso cref="Attribute"/> instances.
+        /// An <see cref="AttributeSource"/> using the supplied <see cref="AttributeFactory"/> for creating new <see cref="IAttribute"/> instances.
         /// </summary>
         public AttributeSource(AttributeFactory factory)
         {
@@ -170,7 +170,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// returns the used AttributeFactory.
+        /// Returns the used <see cref="AttributeFactory"/>.
         /// </summary>
         public AttributeFactory GetAttributeFactory()
         {
@@ -187,9 +187,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns a new iterator that iterates all unique Attribute implementations.
-        /// this iterator may contain less entries that <seealso cref="#getAttributeClassesIterator"/>,
-        /// if one instance implements more than one Attribute interface.
+        /// Returns a new iterator that iterates all unique <see cref="IAttribute"/> implementations.
+        /// This iterator may contain less entries than <see cref="GetAttributeClassesEnumerator()"/>,
+        /// if one instance implements more than one <see cref="IAttribute"/> interface.
         /// </summary>
         public IEnumerator<Attribute> GetAttributeImplsEnumerator()
         {
@@ -260,7 +260,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// a cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
+        /// A cache that stores all interfaces for known implementation classes for performance (slow reflection) </summary>
         private static readonly WeakIdentityMap<Type, LinkedList<WeakReference>> knownImplClasses =
             WeakIdentityMap<Type, LinkedList<WeakReference>>.NewConcurrentHashMap(false);
 
@@ -294,13 +294,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// <b>Expert:</b> Adds a custom Attribute instance with one or more Attribute interfaces.
-        /// <p><font color="red"><b>Please note:</b> It is not guaranteed, that <code>att</code> is added to
-        /// the <code>AttributeSource</code>, because the provided attributes may already exist.
-        /// You should always retrieve the wanted attributes using <seealso cref="#getAttribute"/> after adding
-        /// with this method and cast to your class.
-        /// The recommended way to use custom implementations is using an <seealso cref="AttributeFactory"/>.
-        /// </font></p>
+        /// <b>Expert:</b> Adds a custom <see cref="Attribute"/> instance with one or more <see cref="IAttribute"/> interfaces.
+        /// <para><font color="red"><b>Please note:</b> It is not guaranteed, that <paramref name="att"/> is added to
+        /// the <see cref="AttributeSource"/>, because the provided attributes may already exist.
+        /// You should always retrieve the wanted attributes using <see cref="GetAttribute{T}"/> after adding
+        /// with this method and cast to your <see cref="Type"/>.
+        /// The recommended way to use custom implementations is using an <see cref="AttributeFactory"/>.
+        /// </font></para>
         /// </summary>
         public void AddAttributeImpl(Attribute att)
         {
@@ -331,6 +331,12 @@ namespace Lucene.Net.Util
             }
         }
 
+        /// <summary>
+        /// The caller must pass in an interface type that extends <see cref="IAttribute"/>.
+        /// This method first checks if an instance of the corresponding class is 
+        /// already in this <see cref="AttributeSource"/> and returns it. Otherwise a
+        /// new instance is created, added to this <see cref="AttributeSource"/> and returned. 
+        /// </summary>
         public T AddAttribute<T>()
             where T : IAttribute
         {
@@ -360,15 +366,15 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns true, iff this AttributeSource has any attributes </summary>
+        /// Returns <c>true</c>, if this <see cref="AttributeSource"/> has any attributes </summary>
         public bool HasAttributes
         {
             get { return this.attributes.Count > 0; }
         }
 
         /// <summary>
-        /// The caller must pass in a Class&lt;? extends Attribute&gt; value.
-        /// Returns true, iff this AttributeSource contains the passed-in Attribute.
+        /// The caller must pass in an interface type that extends <see cref="IAttribute"/>.
+        /// Returns <c>true</c>, if this <see cref="AttributeSource"/> contains the corrsponding <see cref="Attribute"/>.
         /// </summary>
         public bool HasAttribute<T>() where T : IAttribute
         {
@@ -377,15 +383,15 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// The caller must pass in a Class&lt;? extends Attribute&gt; value.
-        /// Returns the instance of the passed in Attribute contained in this AttributeSource
+        /// The caller must pass in an interface type that extends <see cref="IAttribute"/>.
+        /// Returns the instance of the corresponding <see cref="Attribute"/> contained in this <see cref="AttributeSource"/>
         /// </summary>
-        /// <exception cref="IllegalArgumentException"> if this AttributeSource does not contain the
-        ///         Attribute. It is recommended to always use <seealso cref="#addAttribute"/> even in consumers
-        ///         of TokenStreams, because you cannot know if a specific TokenStream really uses
-        ///         a specific Attribute. <seealso cref="#addAttribute"/> will automatically make the attribute
+        /// <exception cref="ArgumentException"> if this <see cref="AttributeSource"/> does not contain the
+        ///         <see cref="Attribute"/>. It is recommended to always use <see cref="AddAttribute{T}()"/> even in consumers
+        ///         of <see cref="Analysis.TokenStream"/>s, because you cannot know if a specific <see cref="Analysis.TokenStream"/> really uses
+        ///         a specific <see cref="Attribute"/>. <see cref="AddAttribute{T}()"/> will automatically make the attribute
         ///         available. If you want to only use the attribute, if it is available (to optimize
-        ///         consuming), use <seealso cref="#HasAttribute"/>. </exception>
+        ///         consuming), use <see cref="HasAttribute{T}()"/>. </exception>
         public virtual T GetAttribute<T>() where T : IAttribute
         {
             var attClass = typeof(T);
@@ -417,8 +423,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Resets all Attributes in this AttributeSource by calling
-        /// <seealso cref="Attribute#clear()"/> on each Attribute implementation.
+        /// Resets all <see cref="Attribute"/>s in this <see cref="AttributeSource"/> by calling
+        /// <see cref="Attribute.Clear()"/> on each <see cref="IAttribute"/> implementation.
         /// </summary>
         public void ClearAttributes()
         {
@@ -429,8 +435,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Captures the state of all Attributes. The return value can be passed to
-        /// <seealso cref="#restoreState"/> to restore the state of this or another AttributeSource.
+        /// Captures the state of all <see cref="Attribute"/>s. The return value can be passed to
+        /// <see cref="RestoreState(State)"/> to restore the state of this or another <see cref="AttributeSource"/>.
         /// </summary>
         public virtual State CaptureState()
         {
@@ -443,15 +449,15 @@ namespace Lucene.Net.Util
         /// that this state contains into the attributes implementations of the targetStream.
         /// The targetStream must contain a corresponding instance for each argument
         /// contained in this state (e.g. it is not possible to restore the state of
-        /// an AttributeSource containing a TermAttribute into a AttributeSource using
-        /// a Token instance as implementation).
-        /// <p>
+        /// an <see cref="AttributeSource"/> containing a <see cref="Analysis.TokenAttributes.ICharTermAttribute"/> into a <see cref="AttributeSource"/> using
+        /// a <see cref="Analysis.Token"/> instance as implementation).
+        /// <para/>
         /// Note that this method does not affect attributes of the targetStream
         /// that are not contained in this state. In other words, if for example
-        /// the targetStream contains an OffsetAttribute, but this state doesn't, then
-        /// the value of the OffsetAttribute remains unchanged. It might be desirable to
+        /// the targetStream contains an <see cref="Analysis.TokenAttributes.IOffsetAttribute"/>, but this state doesn't, then
+        /// the value of the <see cref="Analysis.TokenAttributes.IOffsetAttribute"/> remains unchanged. It might be desirable to
         /// reset its value to the default, in which case the caller should first
-        /// call <seealso cref="TokenStream#ClearAttributes()"/> on the targetStream.
+        /// call <see cref="AttributeSource.ClearAttributes()"/> (<c>TokenStream.ClearAttributes()</c> on the targetStream.
         /// </summary>
         public void RestoreState(State state)
         {
@@ -530,15 +536,15 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this method returns the current attribute values as a string in the following format
-        /// by calling the <seealso cref="#reflectWith(AttributeReflector)"/> method:
+        /// This method returns the current attribute values as a string in the following format
+        /// by calling the <see cref="ReflectWith(IAttributeReflector)"/> method:
         ///
-        /// <ul>
-        /// <li><em>iff {@code prependAttClass=true}:</em> {@code "AttributeClass#key=value,AttributeClass#key=value"}
-        /// <li><em>iff {@code prependAttClass=false}:</em> {@code "key=value,key=value"}
-        /// </ul>
+        /// <list type="bullet">
+        ///     <item><term>if <paramref name="prependAttClass"/>=true:</term> <description> <c>"AttributeClass.Key=value,AttributeClass.Key=value"</c> </description></item>
+        ///     <item><term>if <paramref name="prependAttClass"/>=false:</term> <description> <c>"key=value,key=value"</c> </description></item>
+        /// </list>
         /// </summary>
-        /// <seealso cref= #reflectWith(AttributeReflector) </seealso>
+        /// <seealso cref="ReflectWith(IAttributeReflector)"/>
         public string ReflectAsString(bool prependAttClass)
         {
             StringBuilder buffer = new StringBuilder();
@@ -581,13 +587,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// this method is for introspection of attributes, it should simply
-        /// add the key/values this AttributeSource holds to the given <seealso cref="AttributeReflector"/>.
+        /// This method is for introspection of attributes, it should simply
+        /// add the key/values this <see cref="AttributeSource"/> holds to the given <see cref="IAttributeReflector"/>.
         ///
-        /// <p>this method iterates over all Attribute implementations and calls the
-        /// corresponding <seealso cref="Attribute#reflectWith"/> method.</p>
+        /// <para>This method iterates over all <see cref="IAttribute"/> implementations and calls the
+        /// corresponding <see cref="Attribute.ReflectWith(IAttributeReflector)"/> method.</para>
         /// </summary>
-        /// <seealso cref= Attribute#reflectWith </seealso>
+        /// <seealso cref="Attribute.ReflectWith(IAttributeReflector)"/>
         public void ReflectWith(IAttributeReflector reflector)
         {
             for (State state = GetCurrentState(); state != null; state = state.next)
@@ -597,10 +603,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Performs a clone of all <seealso cref="Attribute"/> instances returned in a new
-        /// {@code AttributeSource} instance. this method can be used to e.g. create another TokenStream
-        /// with exactly the same attributes (using <seealso cref="#AttributeSource(AttributeSource)"/>).
-        /// You can also use it as a (non-performant) replacement for <seealso cref="#captureState"/>, if you need to look
+        /// Performs a clone of all <see cref="Attribute"/> instances returned in a new
+        /// <see cref="AttributeSource"/> instance. This method can be used to e.g. create another <see cref="Analysis.TokenStream"/>
+        /// with exactly the same attributes (using <see cref="AttributeSource(AttributeSource)"/>).
+        /// You can also use it as a (non-performant) replacement for <see cref="CaptureState()"/>, if you need to look
         /// into / modify the captured state.
         /// </summary>
         public AttributeSource CloneAttributes()
@@ -632,12 +638,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Copies the contents of this {@code AttributeSource} to the given target {@code AttributeSource}.
-        /// The given instance has to provide all <seealso cref="Attribute"/>s this instance contains.
-        /// The actual attribute implementations must be identical in both {@code AttributeSource} instances;
-        /// ideally both AttributeSource instances should use the same <seealso cref="AttributeFactory"/>.
-        /// You can use this method as a replacement for <seealso cref="#restoreState"/>, if you use
-        /// <seealso cref="#cloneAttributes"/> instead of <seealso cref="#captureState"/>.
+        /// Copies the contents of this <see cref="AttributeSource"/> to the given target <see cref="AttributeSource"/>.
+        /// The given instance has to provide all <see cref="IAttribute"/>s this instance contains.
+        /// The actual attribute implementations must be identical in both <see cref="AttributeSource"/> instances;
+        /// ideally both <see cref="AttributeSource"/> instances should use the same <see cref="AttributeFactory"/>.
+        /// You can use this method as a replacement for <see cref="RestoreState(State)"/>, if you use
+        /// <see cref="CloneAttributes()"/> instead of <see cref="CaptureState()"/>.
         /// </summary>
         public void CopyTo(AttributeSource target)
         {
@@ -655,7 +661,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Returns a string consisting of the class's simple name, the hex representation of the identity hash code,
         /// and the current reflection of all attributes. </summary>
-        /// <seealso cref= #reflectAsString(boolean) </seealso>
+        /// <seealso cref="ReflectAsString(bool)"/>
         public override string ToString()
         {
             return this.GetType().Name + '@' + RuntimeHelpers.GetHashCode(this).ToString("x") + " " + ReflectAsString(false);

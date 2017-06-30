@@ -32,11 +32,10 @@ namespace Lucene.Net.Codecs.Lucene3x
     using Term = Lucene.Net.Index.Term;
 
     /// <summary>
-    /// this stores a monotonically increasing set of <Term, TermInfo> pairs in an
-    /// index segment. Pairs are accessed either by Term or by ordinal position the
-    /// set. The Terms and TermInfo are actually serialized and stored into a byte
-    /// array and pointers to the position of each are stored in a int array. </summary>
-    /// @deprecated Only for reading existing 3.x indexes
+    /// This stores a monotonically increasing set of <c>Term, TermInfo</c> pairs in an
+    /// index segment. Pairs are accessed either by <see cref="Term"/> or by ordinal position the
+    /// set. The <see cref="Index.Terms"/> and <see cref="TermInfo"/> are actually serialized and stored into a byte
+    /// array and pointers to the position of each are stored in a <see cref="int"/> array. </summary>
     [Obsolete("Only for reading existing 3.x indexes")]
     internal class TermInfosReaderIndex
     {
@@ -54,14 +53,14 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Loads the segment information at segment load time.
         /// </summary>
         /// <param name="indexEnum">
-        ///          the term enum. </param>
+        ///          The term enum. </param>
         /// <param name="indexDivisor">
-        ///          the index divisor. </param>
+        ///          The index divisor. </param>
         /// <param name="tiiFileLength">
-        ///          the size of the tii file, used to approximate the size of the
+        ///          The size of the tii file, used to approximate the size of the
         ///          buffer. </param>
         /// <param name="totalIndexInterval">
-        ///          the total index interval. </param>
+        ///          The total index interval. </param>
         public TermInfosReaderIndex(SegmentTermEnum indexEnum, int indexDivisor, long tiiFileLength, int totalIndexInterval)
         {
             this.totalIndexInterval = totalIndexInterval;
@@ -88,7 +87,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                     fieldCounter++;
                 }
                 TermInfo termInfo = indexEnum.TermInfo();
-                indexToTerms.Set(i, dataOutput.Position);
+                indexToTerms.Set(i, dataOutput.GetPosition());
                 dataOutput.WriteVInt32(fieldCounter);
                 dataOutput.WriteString(term.Text());
                 dataOutput.WriteVInt32(termInfo.DocFreq);
@@ -161,8 +160,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Binary search for the given term.
         /// </summary>
         /// <param name="term">
-        ///          the term to locate. </param>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        ///          The term to locate. </param>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         internal virtual int GetIndexOffset(Term term)
         {
             int lo = 0;
@@ -193,9 +192,9 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Gets the term at the given position.  For testing.
         /// </summary>
         /// <param name="termIndex">
-        ///          the position to read the term from the index. </param>
-        /// <returns> the term. </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        ///          The position to read the term from the index. </param>
+        /// <returns> The term. </returns>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         internal virtual Term GetTerm(int termIndex)
         {
             PagedBytesDataInput input = (PagedBytesDataInput)dataInput.Clone();
@@ -221,11 +220,11 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// term index. ie It returns negative N when term is less than index term;
         /// </summary>
         /// <param name="term">
-        ///          the given term. </param>
+        ///          The given term. </param>
         /// <param name="termIndex">
-        ///          the index of the of term to compare. </param>
+        ///          The index of the of term to compare. </param>
         /// <returns> int. </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         internal virtual int CompareTo(Term term, int termIndex)
         {
             return CompareTo(term, termIndex, (PagedBytesDataInput)dataInput.Clone(), new BytesRef());
@@ -236,13 +235,13 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// compare. If equal compare terms.
         /// </summary>
         /// <param name="term">
-        ///          the term to compare. </param>
+        ///          The term to compare. </param>
         /// <param name="termIndex">
-        ///          the position of the term in the input to compare </param>
+        ///          The position of the term in the input to compare </param>
         /// <param name="input">
-        ///          the input buffer. </param>
+        ///          The input buffer. </param>
         /// <returns> int. </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         private int CompareTo(Term term, int termIndex, PagedBytesDataInput input, BytesRef reuse)
         {
             // if term field does not equal mid's field index, then compare fields
@@ -262,13 +261,13 @@ namespace Lucene.Net.Codecs.Lucene3x
         /// Compares the fields before checking the text of the terms.
         /// </summary>
         /// <param name="term">
-        ///          the given term. </param>
+        ///          The given term. </param>
         /// <param name="termIndex">
-        ///          the term that exists in the data block. </param>
+        ///          The term that exists in the data block. </param>
         /// <param name="input">
-        ///          the data block. </param>
+        ///          The data block. </param>
         /// <returns> int. </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error. </exception>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         private int CompareField(Term term, int termIndex, PagedBytesDataInput input)
         {
             input.SetPosition(indexToDataOffset.Get(termIndex));

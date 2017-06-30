@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     using FieldType = FieldType;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
     using MockTokenizer = Lucene.Net.Analysis.MockTokenizer;
-    using PrintStreamInfoStream = Lucene.Net.Util.PrintStreamInfoStream;
+    using TextWriterInfoStream = Lucene.Net.Util.TextWriterInfoStream;
     using TextField = TextField;
     using TokenFilter = Lucene.Net.Analysis.TokenFilter;
     using Tokenizer = Lucene.Net.Analysis.Tokenizer;
@@ -93,7 +93,7 @@ namespace Lucene.Net.Index
             IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
             ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
             StreamWriter infoPrintStream = new StreamWriter(infoBytes, Encoding.UTF8);
-            PrintStreamInfoStream printStreamInfoStream = new PrintStreamInfoStream(infoPrintStream);
+            TextWriterInfoStream printStreamInfoStream = new TextWriterInfoStream(infoPrintStream);
             c.SetInfoStream(printStreamInfoStream);
             writer = new IndexWriter(dir, c);
             Document doc = new Document();
@@ -122,7 +122,7 @@ namespace Lucene.Net.Index
             IndexWriterConfig c = new IndexWriterConfig(TEST_VERSION_CURRENT, new ThrowingAnalyzer());
             ByteArrayOutputStream infoBytes = new ByteArrayOutputStream();
             StreamWriter infoPrintStream = new StreamWriter(infoBytes, Encoding.UTF8);
-            PrintStreamInfoStream printStreamInfoStream = new PrintStreamInfoStream(infoPrintStream);
+            TextWriterInfoStream printStreamInfoStream = new TextWriterInfoStream(infoPrintStream);
             c.SetInfoStream(printStreamInfoStream);
             writer = new IndexWriter(dir, c);
             Document doc = new Document();

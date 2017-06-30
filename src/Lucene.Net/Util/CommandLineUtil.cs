@@ -25,7 +25,6 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Class containing some useful methods used by command line tools
-    ///
     /// </summary>
     public sealed class CommandLineUtil
     {
@@ -34,10 +33,10 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a specific FSDirectory instance starting from its class name </summary>
-        /// <param name="clazzName"> The name of the FSDirectory class to load </param>
-        /// <param name="file"> The file to be used as parameter constructor </param>
-        /// <returns> the new FSDirectory instance </returns>
+        /// Creates a specific <see cref="FSDirectory"/> instance starting from its class name. </summary>
+        /// <param name="clazzName"> The name of the <see cref="FSDirectory"/> class to load. </param>
+        /// <param name="dir"> The <see cref="DirectoryInfo"/> to be used as parameter constructor. </param>
+        /// <returns> The new <see cref="FSDirectory"/> instance </returns>
         public static FSDirectory NewFSDirectory(string clazzName, DirectoryInfo dir)
         {
             try
@@ -64,20 +63,20 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Loads a specific Directory implementation </summary>
-        /// <param name="clazzName"> The name of the Directory class to load </param>
-        /// <returns> The Directory class loaded </returns>
-        /// <exception cref="ClassNotFoundException"> If the specified class cannot be found. </exception>
+        /// Loads a specific <see cref="Directory"/> implementation. </summary>
+        /// <param name="clazzName"> The name of the <see cref="Directory"/> class to load. </param>
+        /// <returns> The <see cref="Directory"/> class loaded. </returns>
+        /// <exception cref="System.TypeLoadException"> If the specified class cannot be found. </exception>
         public static Type LoadDirectoryClass(string clazzName)
         {
             return Type.GetType(AdjustDirectoryClassName(clazzName));
         }
 
         /// <summary>
-        /// Loads a specific FSDirectory implementation </summary>
-        /// <param name="clazzName"> The name of the FSDirectory class to load </param>
-        /// <returns> The FSDirectory class loaded </returns>
-        /// <exception cref="ClassNotFoundException"> If the specified class cannot be found. </exception>
+        /// Loads a specific <see cref="FSDirectory"/> implementation. </summary>
+        /// <param name="clazzName"> The name of the <see cref="FSDirectory"/> class to load. </param>
+        /// <returns> The <see cref="FSDirectory"/> class loaded. </returns>
+        /// <exception cref="System.TypeLoadException"> If the specified class cannot be found. </exception>
         public static Type LoadFSDirectoryClass(string clazzName)
         {
             return Type.GetType(AdjustDirectoryClassName(clazzName));
@@ -98,14 +97,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new specific FSDirectory instance </summary>
+        /// Creates a new specific <see cref="FSDirectory"/> instance. </summary>
         /// <param name="clazz"> The class of the object to be created </param>
-        /// <param name="file"> The file to be used as parameter constructor </param>
-        /// <returns> The new FSDirectory instance </returns>
-        /// <exception cref="NoSuchMethodException"> If the Directory does not have a constructor that takes <code>File</code>. </exception>
-        /// <exception cref="InstantiationException"> If the class is abstract or an interface. </exception>
-        /// <exception cref="IllegalAccessException"> If the constructor does not have public visibility. </exception>
-        /// <exception cref="InvocationTargetException"> If the constructor throws an exception </exception>
+        /// <param name="dir"> The <see cref="DirectoryInfo"/> to be used as parameter constructor </param>
+        /// <returns> The new <see cref="FSDirectory"/> instance. </returns>
+        /// <exception cref="MissingMethodException"> If the <see cref="Directory"/> does not have a constructor that takes <see cref="DirectoryInfo"/>. </exception>
+        /// <exception cref="MemberAccessException"> If the class is abstract or an interface. </exception>
+        /// <exception cref="TypeLoadException"> If the constructor does not have public visibility. </exception>
+        /// <exception cref="System.Reflection.TargetInvocationException"> If the constructor throws an exception </exception>
         public static FSDirectory NewFSDirectory(Type clazz, DirectoryInfo dir)
         {
             // Assuming every FSDirectory has a ctor(File):

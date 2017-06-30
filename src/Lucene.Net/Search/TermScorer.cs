@@ -24,7 +24,7 @@ namespace Lucene.Net.Search
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
     /// <summary>
-    /// Expert: A <code>Scorer</code> for documents matching a <code>Term</code>.
+    /// Expert: A <see cref="Scorer"/> for documents matching a <see cref="Index.Term"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -35,14 +35,14 @@ namespace Lucene.Net.Search
         private readonly Similarity.SimScorer docScorer;
 
         /// <summary>
-        /// Construct a <code>TermScorer</code>.
+        /// Construct a <see cref="TermScorer"/>.
         /// </summary>
         /// <param name="weight">
-        ///          The weight of the <code>Term</code> in the query. </param>
+        ///          The weight of the <see cref="Index.Term"/> in the query. </param>
         /// <param name="td">
-        ///          An iterator over the documents matching the <code>Term</code>. </param>
+        ///          An iterator over the documents matching the <see cref="Index.Term"/>. </param>
         /// <param name="docScorer">
-        ///          The </code>Similarity.SimScorer</code> implementation
+        ///          The <see cref="Similarity.SimScorer"/> implementation
         ///          to be used for score computations. </param>
         internal TermScorer(Weight weight, DocsEnum td, Similarity.SimScorer docScorer)
             : base(weight)
@@ -62,9 +62,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Advances to the next document matching the query. <br>
+        /// Advances to the next document matching the query.
         /// </summary>
-        /// <returns> the document matching the query or NO_MORE_DOCS if there are no more documents. </returns>
+        /// <returns> The document matching the query or <see cref="DocIdSetIterator.NO_MORE_DOCS"/> if there are no more documents. </returns>
         public override int NextDoc()
         {
             return docsEnum.NextDoc();
@@ -78,12 +78,13 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Advances to the first match beyond the current whose document number is
-        /// greater than or equal to a given target. <br>
-        /// The implementation uses <seealso cref="docsEnum#advance(int)"/>.
+        /// greater than or equal to a given target.
+        /// <para/>
+        /// The implementation uses <see cref="DocIdSetIterator.Advance(int)"/>.
         /// </summary>
         /// <param name="target">
         ///          The target document number. </param>
-        /// <returns> the matching document or NO_MORE_DOCS if none exist. </returns>
+        /// <returns> The matching document or <see cref="DocIdSetIterator.NO_MORE_DOCS"/> if none exist. </returns>
         public override int Advance(int target)
         {
             return docsEnum.Advance(target);
@@ -95,7 +96,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a string representation of this <code>TermScorer</code>. </summary>
+        /// Returns a string representation of this <see cref="TermScorer"/>. </summary>
         public override string ToString()
         {
             return "scorer(" + m_weight + ")";

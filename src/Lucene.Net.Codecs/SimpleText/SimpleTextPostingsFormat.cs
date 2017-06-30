@@ -23,14 +23,13 @@
 
     /// <summary>
     /// For debugging, curiosity, transparency only!!  Do not
-    ///  use this codec in production.
+    /// use this codec in production.
     /// 
-    ///  <para>This codec stores all postings data in a single
-    ///  human-readable text file (_N.pst).  You can view this in
-    ///  any text editor, and even edit it to alter your index.
-    /// 
-    ///  @lucene.experimental 
+    /// <para>This codec stores all postings data in a single
+    /// human-readable text file (_N.pst).  You can view this in
+    /// any text editor, and even edit it to alter your index.
     /// </para>
+    /// @lucene.experimental 
     /// </summary>
     [PostingsFormatName("SimpleText")] // LUCENENET specific - using PostingsFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public sealed class SimpleTextPostingsFormat : PostingsFormat
@@ -51,7 +50,7 @@
         }
 
         /// <summary>
-        /// Extension of freq postings file </summary>
+        /// Extension of freq postings file. </summary>
         internal const string POSTINGS_EXTENSION = "pst";
 
         internal static string GetPostingsFileName(string segment, string segmentSuffix)

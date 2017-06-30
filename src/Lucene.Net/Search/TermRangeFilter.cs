@@ -22,16 +22,17 @@ namespace Lucene.Net.Search
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /// <summary>
-    /// A Filter that restricts search results to a range of term
+    /// A <see cref="Filter"/> that restricts search results to a range of term
     /// values in a given field.
     ///
-    /// <p>this filter matches the documents looking for terms that fall into the
-    /// supplied range according to {@link
-    /// Byte#compareTo(Byte)},  It is not intended
-    /// for numerical ranges; use <seealso cref="NumericRangeFilter"/> instead.
+    /// <para/>This filter matches the documents looking for terms that fall into the
+    /// supplied range according to 
+    /// <see cref="byte.CompareTo(byte)"/>,  It is not intended
+    /// for numerical ranges; use <see cref="NumericRangeFilter"/> instead.
     ///
-    /// <p>If you construct a large number of range filters with different ranges but on the
-    /// same field, <seealso cref="FieldCacheRangeFilter"/> may have significantly better performance.
+    /// <para/>If you construct a large number of range filters with different ranges but on the
+    /// same field, <see cref="FieldCacheRangeFilter"/> may have significantly better performance.
+    /// <para/>
     /// @since 2.9
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -44,8 +45,8 @@ namespace Lucene.Net.Search
         /// <param name="upperTerm"> The upper bound on this range </param>
         /// <param name="includeLower"> Does this range include the lower bound? </param>
         /// <param name="includeUpper"> Does this range include the upper bound? </param>
-        /// <exception cref="IllegalArgumentException"> if both terms are null or if
-        ///  lowerTerm is null and includeLower is true (similar for upperTerm
+        /// <exception cref="ArgumentException"> if both terms are <c>null</c> or if
+        ///  lowerTerm is <c>null</c> and includeLower is <c>true</c> (similar for upperTerm
         ///  and includeUpper) </exception>
         public TermRangeFilter(string fieldName, BytesRef lowerTerm, BytesRef upperTerm, bool includeLower, bool includeUpper)
             : base(new TermRangeQuery(fieldName, lowerTerm, upperTerm, includeLower, includeUpper))
@@ -53,7 +54,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Factory that creates a new TermRangeFilter using Strings for term text.
+        /// Factory that creates a new <see cref="TermRangeFilter"/> using <see cref="string"/>s for term text.
         /// </summary>
         public static TermRangeFilter NewStringRange(string field, string lowerTerm, string upperTerm, bool includeLower, bool includeUpper)
         {
@@ -63,8 +64,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Constructs a filter for field <code>fieldName</code> matching
-        /// less than or equal to <code>upperTerm</code>.
+        /// Constructs a filter for field <paramref name="fieldName"/> matching
+        /// less than or equal to <paramref name="upperTerm"/>.
         /// </summary>
         public static TermRangeFilter Less(string fieldName, BytesRef upperTerm)
         {
@@ -72,8 +73,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Constructs a filter for field <code>fieldName</code> matching
-        /// greater than or equal to <code>lowerTerm</code>.
+        /// Constructs a filter for field <paramref name="fieldName"/> matching
+        /// greater than or equal to <paramref name="lowerTerm"/>.
         /// </summary>
         public static TermRangeFilter More(string fieldName, BytesRef lowerTerm)
         {
@@ -101,14 +102,14 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns <code>true</code> if the lower endpoint is inclusive </summary>
+        /// Returns <c>true</c> if the lower endpoint is inclusive </summary>
         public virtual bool IncludesLower
         {
             get { return m_query.IncludesLower; }
         }
 
         /// <summary>
-        /// Returns <code>true</code> if the upper endpoint is inclusive </summary>
+        /// Returns <c>true</c> if the upper endpoint is inclusive </summary>
         public virtual bool IncludesUpper
         {
             get { return m_query.IncludesUpper; }

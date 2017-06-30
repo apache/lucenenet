@@ -52,7 +52,7 @@ namespace Lucene.Net.Queries
         /// Subclasses can override this method to modify the custom score.  
         /// <para/>
         /// If your custom scoring is different than the default herein you 
-        /// should override at least one of the two <see cref="CustomScore"/> methods.
+        /// should override at least one of the two <see cref="CustomScore(int, float, float)"/> methods.
         /// If the number of <see cref="Function.FunctionQuery"/>s is always &lt; 2 it is 
         /// sufficient to override the other 
         /// <see cref="CustomScore(int, float, float)"/> 
@@ -86,7 +86,7 @@ namespace Lucene.Net.Queries
         /// Subclasses can override this method to modify the custom score.
         /// <para/>
         /// If your custom scoring is different than the default herein you 
-        /// should override at least one of the two <see cref="CustomScore"/> methods.
+        /// should override at least one of the two <see cref="CustomScore(int, float, float)"/> methods.
         /// If the number of <see cref="Function.FunctionQuery"/>s is always &lt; 2 it is 
         /// sufficient to override this <see cref="CustomScore(int, float, float)"/> method, which is simpler. 
         /// <para/>

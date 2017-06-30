@@ -102,7 +102,7 @@ namespace Lucene.Net.Search.Spell
                     else
                     {
                         done = true;
-                        IOUtils.Close(outerInstance.@in);
+                        IOUtils.Dispose(outerInstance.@in);
                         result = null;
                     }
                     success = true;
@@ -111,7 +111,7 @@ namespace Lucene.Net.Search.Spell
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(outerInstance.@in);
+                        IOUtils.DisposeWhileHandlingException(outerInstance.@in);
                     }
                 }
                 return result;

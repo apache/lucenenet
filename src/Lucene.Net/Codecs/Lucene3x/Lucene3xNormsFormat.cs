@@ -23,10 +23,10 @@ namespace Lucene.Net.Codecs.Lucene3x
     using SegmentWriteState = Lucene.Net.Index.SegmentWriteState;
 
     /// <summary>
-    /// Lucene3x ReadOnly NormsFormat implementation </summary>
-    /// @deprecated (4.0) this is only used to read indexes created
-    /// before 4.0.
+    /// Lucene3x ReadOnly <see cref="NormsFormat"/> implementation.
+    /// <para/>
     /// @lucene.experimental
+    /// </summary>
     [Obsolete("(4.0) this is only used to read indexes created before 4.0.")]
     internal class Lucene3xNormsFormat : NormsFormat
     {

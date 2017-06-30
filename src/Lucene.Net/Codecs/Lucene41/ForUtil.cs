@@ -23,16 +23,6 @@ namespace Lucene.Net.Codecs.Lucene41
      * limitations under the License.
      */
 
-    /*
-	using DataInput = Lucene.Net.Store.DataInput;
-	using DataOutput = Lucene.Net.Store.DataOutput;
-	using IndexInput = Lucene.Net.Store.IndexInput;
-	using IndexOutput = Lucene.Net.Store.IndexOutput;
-	using Decoder = Lucene.Net.Util.Packed.PackedInts.Decoder;
-	using FormatAndBits = Lucene.Net.Util.Packed.PackedInts.FormatAndBits;
-	using PackedInts = Lucene.Net.Util.Packed.PackedInts;
-    */
-
     /// <summary>
     /// Encode all values in normal area with fixed bit width,
     /// which is determined by the max value in this block.
@@ -46,15 +36,15 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// Upper limit of the number of bytes that might be required to stored
-        /// <code>BLOCK_SIZE</code> encoded values.
+        /// <see cref="Lucene41PostingsFormat.BLOCK_SIZE"/> encoded values.
         /// </summary>
         public static readonly int MAX_ENCODED_SIZE = Lucene41PostingsFormat.BLOCK_SIZE * 4;
 
         /// <summary>
         /// Upper limit of the number of values that might be decoded in a single call to
-        /// <seealso cref="#readBlock(IndexInput, byte[], int[])"/>. Although values after
-        /// <code>BLOCK_SIZE</code> are garbage, it is necessary to allocate value buffers
-        /// whose size is >= MAX_DATA_SIZE to avoid <seealso cref="ArrayIndexOutOfBoundsException"/>s.
+        /// <see cref="ReadBlock(IndexInput, byte[], int[])"/>. Although values after
+        /// <see cref="Lucene41PostingsFormat.BLOCK_SIZE"/> are garbage, it is necessary to allocate value buffers
+        /// whose size is &gt;= MAX_DATA_SIZE to avoid <see cref="IndexOutOfRangeException"/>s.
         /// </summary>
         public static readonly int MAX_DATA_SIZE;
 
@@ -63,7 +53,7 @@ namespace Lucene.Net.Codecs.Lucene41
             int maxDataSize = 0;
             for (int version = PackedInt32s.VERSION_START; version <= PackedInt32s.VERSION_CURRENT; version++)
             {
-                foreach (PackedInt32s.Format format in PackedInt32s.Format.Values()/* Enum.GetValues(typeof(PackedInts.Format))*/)
+                foreach (PackedInt32s.Format format in PackedInt32s.Format.Values/* Enum.GetValues(typeof(PackedInts.Format))*/)
                 {
                     for (int bpv = 1; bpv <= 32; ++bpv)
                     {
@@ -81,8 +71,8 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// Compute the number of iterations required to decode <code>BLOCK_SIZE</code>
-        /// values with the provided <seealso cref="Decoder"/>.
+        /// Compute the number of iterations required to decode <see cref="Lucene41PostingsFormat.BLOCK_SIZE"/>
+        /// values with the provided <see cref="PackedInt32s.IDecoder"/>.
         /// </summary>
         private static int ComputeIterations(PackedInt32s.IDecoder decoder)
         {
@@ -91,7 +81,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// Compute the number of bytes required to encode a block of values that require
-        /// <code>bitsPerValue</code> bits per value with format <code>format</code>.
+        /// <paramref name="bitsPerValue"/> bits per value with format <paramref name="format"/>.
         /// </summary>
         private static int EncodedSize(PackedInt32s.Format format, int packedIntsVersion, int bitsPerValue)
         {
@@ -106,7 +96,7 @@ namespace Lucene.Net.Codecs.Lucene41
         private readonly int[] iterations;
 
         /// <summary>
-        /// Create a new <seealso cref="ForUtil"/> instance and save state into <code>out</code>.
+        /// Create a new <see cref="ForUtil"/> instance and save state into <paramref name="out"/>.
         /// </summary>
         internal ForUtil(float acceptableOverheadRatio, DataOutput @out)
         {
@@ -131,7 +121,7 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// Restore a <seealso cref="ForUtil"/> from a <seealso cref="DataInput"/>.
+        /// Restore a <see cref="ForUtil"/> from a <see cref="DataInput"/>.
         /// </summary>
         internal ForUtil(DataInput @in)
         {
@@ -158,12 +148,12 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// Write a block of data (<code>For</code> format).
+        /// Write a block of data (<c>For</c> format).
         /// </summary>
-        /// <param name="data">     the data to write </param>
-        /// <param name="encoded">  a buffer to use to encode data </param>
-        /// <param name="out">      the destination output </param>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <param name="data">     The data to write. </param>
+        /// <param name="encoded">  A buffer to use to encode data. </param>
+        /// <param name="out">      The destination output. </param>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         internal void WriteBlock(int[] data, byte[] encoded, IndexOutput @out)
         {
             if (IsAllEqual(data))
@@ -188,12 +178,12 @@ namespace Lucene.Net.Codecs.Lucene41
         }
 
         /// <summary>
-        /// Read the next block of data (<code>For</code> format).
+        /// Read the next block of data (<c>For</c> format).
         /// </summary>
-        /// <param name="in">        the input to use to read data </param>
-        /// <param name="encoded">   a buffer that can be used to store encoded data </param>
-        /// <param name="decoded">   where to write decoded data </param>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <param name="in">        The input to use to read data. </param>
+        /// <param name="encoded">   A buffer that can be used to store encoded data. </param>
+        /// <param name="decoded">   Where to write decoded data. </param>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         internal void ReadBlock(IndexInput @in, byte[] encoded, int[] decoded)
         {
             int numBits = @in.ReadByte();
@@ -219,8 +209,8 @@ namespace Lucene.Net.Codecs.Lucene41
         /// <summary>
         /// Skip the next block of data.
         /// </summary>
-        /// <param name="in">      the input where to read data </param>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
+        /// <param name="in">      The input where to read data. </param>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         internal void SkipBlock(IndexInput @in)
         {
             int numBits = @in.ReadByte();
@@ -249,7 +239,7 @@ namespace Lucene.Net.Codecs.Lucene41
 
         /// <summary>
         /// Compute the number of bits required to serialize any of the longs in
-        /// <code>data</code>.
+        /// <paramref name="data"/>.
         /// </summary>
         private static int BitsRequired(int[] data)
         {

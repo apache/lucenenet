@@ -26,19 +26,19 @@ namespace Lucene.Net.Index
     using IBits = Lucene.Net.Util.IBits;
 
     /// <summary>
-    /// An <seealso cref="AtomicReader"/> which reads multiple, parallel indexes.  Each index
+    /// An <see cref="AtomicReader"/> which reads multiple, parallel indexes.  Each index
     /// added must have the same number of documents, but typically each contains
     /// different fields. Deletions are taken from the first reader.
     /// Each document contains the union of the fields of all documents
     /// with the same document number.  When searching, matches for a
     /// query term are from the first index added that has the field.
     ///
-    /// <p>this is useful, e.g., with collections that have large fields which
+    /// <para/>This is useful, e.g., with collections that have large fields which
     /// change rarely and small fields that change more frequently.  The smaller
     /// fields may be re-indexed in a new index and both indexes may be searched
     /// together.
     ///
-    /// <p><strong>Warning:</strong> It is up to you to make sure all indexes
+    /// <para/><strong>Warning:</strong> It is up to you to make sure all indexes
     /// are created and modified the same way. For example, if you add
     /// documents to one index, you need to add the same documents in the
     /// same order to the other indexes. <em>Failure to do so will result in
@@ -67,8 +67,8 @@ namespace Lucene.Net.Index
         private readonly IDictionary<string, AtomicReader> tvFieldToReader = new SortedDictionary<string, AtomicReader>(StringComparer.Ordinal);
 
         /// <summary>
-        /// Create a ParallelAtomicReader based on the provided
-        ///  readers; auto-closes the given readers on <seealso cref="#close()"/>.
+        /// Create a <see cref="ParallelAtomicReader"/> based on the provided
+        /// readers; auto-disposes the given <paramref name="readers"/> on <see cref="IndexReader.Dispose()"/>.
         /// </summary>
         public ParallelAtomicReader(params AtomicReader[] readers)
             : this(true, readers)
@@ -76,8 +76,8 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Create a ParallelAtomicReader based on the provided
-        ///  readers.
+        /// Create a <see cref="ParallelAtomicReader"/> based on the provided
+        /// <paramref name="readers"/>.
         /// </summary>
         public ParallelAtomicReader(bool closeSubReaders, params AtomicReader[] readers)
             : this(closeSubReaders, readers, readers)
@@ -85,9 +85,9 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Expert: create a ParallelAtomicReader based on the provided
-        ///  readers and storedFieldReaders; when a document is
-        ///  loaded, only storedFieldsReaders will be used.
+        /// Expert: create a <see cref="ParallelAtomicReader"/> based on the provided
+        /// <paramref name="readers"/> and <paramref name="storedFieldsReaders"/>; when a document is
+        /// loaded, only <paramref name="storedFieldsReaders"/> will be used.
         /// </summary>
         public ParallelAtomicReader(bool closeSubReaders, AtomicReader[] readers, AtomicReader[] storedFieldsReaders)
         {
@@ -229,11 +229,12 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// {@inheritDoc}
-        /// <p>
+        /// Get the <see cref="Index.FieldInfos"/> describing all fields in
+        /// this reader.
+        /// <para/>
         /// NOTE: the returned field numbers will likely not
         /// correspond to the actual field numbers in the underlying
-        /// readers, and codec metadata (<seealso cref="FieldInfo#getAttribute(String)"/>
+        /// readers, and codec metadata (<see cref="FieldInfo.GetAttribute(string)"/>
         /// will be unavailable.
         /// </summary>
         public override FieldInfos FieldInfos

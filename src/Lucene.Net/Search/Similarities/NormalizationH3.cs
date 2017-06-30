@@ -21,6 +21,7 @@ namespace Lucene.Net.Search.Similarities
 
     /// <summary>
     /// Dirichlet Priors normalization
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -31,7 +32,7 @@ namespace Lucene.Net.Search.Similarities
         private readonly float mu;
 
         /// <summary>
-        /// Calls <seealso cref="#NormalizationH3(float) NormalizationH3(800)"/>
+        /// Calls <see cref="T:NormalizationH3(800)"/>
         /// </summary>
         public NormalizationH3()
             : this(800F)
@@ -39,8 +40,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Creates NormalizationH3 with the supplied parameter <code>&mu;</code>. </summary>
-        /// <param name="mu"> smoothing parameter <code>&mu;</code> </param>
+        /// Creates <see cref="NormalizationH3"/> with the supplied parameter <c>&#956;</c>. </summary>
+        /// <param name="mu"> smoothing parameter <c>&#956;</c> </param>
         public NormalizationH3(float mu)
         {
             this.mu = mu;
@@ -57,8 +58,8 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Returns the parameter <code>&mu;</code> </summary>
-        /// <seealso cref= #NormalizationH3(float) </seealso>
+        /// Returns the parameter <c>&#956;</c> </summary>
+        /// <seealso cref="NormalizationH3(float)"/>
         public virtual float Mu
         {
             get

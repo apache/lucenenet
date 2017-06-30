@@ -20,13 +20,13 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// <p>Expert: <seealso cref="IndexWriter"/> uses an instance
-    ///  implementing this interface to execute the merges
-    ///  selected by a <seealso cref="MergePolicy"/>.  The default
-    ///  MergeScheduler is <seealso cref="ConcurrentMergeScheduler"/>.</p>
-    ///  <p>Implementers of sub-classes should make sure that <seealso cref="#clone()"/>
-    ///  returns an independent instance able to work with any <seealso cref="IndexWriter"/>
-    ///  instance.</p>
+    /// <para>Expert: <see cref="IndexWriter"/> uses an instance
+    /// implementing this interface to execute the merges
+    /// selected by a <see cref="MergePolicy"/>.  The default
+    /// MergeScheduler is <see cref="ConcurrentMergeScheduler"/>.</para>
+    /// <para>Implementers of sub-classes should make sure that <see cref="Clone()"/>
+    /// returns an independent instance able to work with any <see cref="IndexWriter"/>
+    /// instance.</para>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected MergeScheduler()
         {
@@ -50,6 +50,8 @@ namespace Lucene.Net.Index
         ///  </param>
         public abstract void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
 
+        /// <summary>
+        /// Dispose this MergeScheduler. </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -57,7 +59,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Close this MergeScheduler. </summary>
+        /// Dispose this MergeScheduler. </summary>
         protected abstract void Dispose(bool disposing);
 
         public virtual IMergeScheduler Clone()

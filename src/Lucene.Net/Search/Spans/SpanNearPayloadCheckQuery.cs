@@ -28,8 +28,6 @@ namespace Lucene.Net.Search.Spans
     /// <summary>
     /// Only return those matches that have a specific payload at
     /// the given position.
-    /// <p/>
-    ///
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

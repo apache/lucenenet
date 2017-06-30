@@ -55,7 +55,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(TermsOut);
+                    IOUtils.DisposeWhileHandlingException(TermsOut);
                 }
             }
 
@@ -77,7 +77,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(TermsOut, FreqOut);
+                    IOUtils.DisposeWhileHandlingException(TermsOut, FreqOut);
                 }
             }
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Codecs.Lucene3x
         {
             if (disposing)
             {
-                IOUtils.Close(TermsOut, FreqOut, ProxOut);
+                IOUtils.Dispose(TermsOut, FreqOut, ProxOut);
             }
         }
 

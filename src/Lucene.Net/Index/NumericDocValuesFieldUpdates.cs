@@ -30,9 +30,9 @@ namespace Lucene.Net.Index
     using PagedMutable = Lucene.Net.Util.Packed.PagedMutable;
 
     /// <summary>
-    /// A <seealso cref="DocValuesFieldUpdates"/> which holds updates of documents, of a single
-    /// <seealso cref="NumericDocValuesField"/>.
-    ///
+    /// A <see cref="DocValuesFieldUpdates"/> which holds updates of documents, of a single
+    /// <see cref="NumericDocValuesField"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE

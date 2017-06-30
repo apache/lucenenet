@@ -24,7 +24,7 @@ namespace Lucene.Net.Queries.Function.ValueSources
     
     /// <summary>
     /// Obtains <see cref="int"/> field values from the <see cref="Search.FieldCache"/>
-    /// using <see cref="IFieldCache.GetInt32s"/>
+    /// using <see cref="IFieldCache.GetInt32s(AtomicReader, string, FieldCache.IInt32Parser, bool)"/>
     /// and makes those values available as other numeric types, casting as needed. *
     /// </summary>
     [Obsolete]

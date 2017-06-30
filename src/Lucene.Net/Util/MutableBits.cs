@@ -18,13 +18,13 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// Extension of Bits for live documents.
+    /// Extension of <see cref="IBits"/> for live documents.
     /// </summary>
     public interface IMutableBits : IBits
     {
         /// <summary>
-        /// Sets the bit specified by <code>index</code> to false. </summary>
-        /// <param name="index"> index, should be non-negative and &lt; <seealso cref="#length()"/>.
+        /// Sets the bit specified by <paramref name="index"/> to <c>false</c>. </summary>
+        /// <param name="index"> index, should be non-negative and &lt; <see cref="IBits.Length"/>.
         ///        The result of passing negative or out of bounds values is undefined
         ///        by this interface, <b>just don't do it!</b> </param>
         void Clear(int index);

@@ -218,7 +218,7 @@ namespace Lucene.Net.Search.Suggest
             }
             finally
             {
-                IOUtils.Close(input);
+                IOUtils.Dispose(input);
             }
         }
 
@@ -235,7 +235,7 @@ namespace Lucene.Net.Search.Suggest
             }
             finally
             {
-                IOUtils.Close(output);
+                IOUtils.Dispose(output);
             }
         }
 

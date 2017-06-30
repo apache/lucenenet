@@ -32,11 +32,11 @@ namespace Lucene.Net.Spatial.Vector
     /// 
     /// <h4>Characteristics:</h4>
     /// <list type="bullet">
-    ///     <item>Only indexes points; just one per field value.</item>
-    ///     <item>Can query by a rectangle or circle.</item>
-    ///     <item><see cref="SpatialOperation.Intersects"/> and <see cref="SpatialOperation.IsWithin"/> is supported.</item>
-    ///     <item>Uses the FieldCache for <see cref="SpatialStrategy.MakeDistanceValueSource(IPoint)"/> and for
-    ///     searching with a Circle.</item>
+    ///     <item><description>Only indexes points; just one per field value.</description></item>
+    ///     <item><description>Can query by a rectangle or circle.</description></item>
+    ///     <item><description><see cref="SpatialOperation.Intersects"/> and <see cref="SpatialOperation.IsWithin"/> is supported.</description></item>
+    ///     <item><description>Uses the FieldCache for <see cref="SpatialStrategy.MakeDistanceValueSource(IPoint)"/> and for
+    ///     searching with a Circle.</description></item>
     /// </list>
     /// 
     /// <h4>Implementation:</h4>

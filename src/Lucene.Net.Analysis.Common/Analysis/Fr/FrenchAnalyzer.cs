@@ -40,12 +40,12 @@ namespace Lucene.Net.Analysis.Fr
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating FrenchAnalyzer:
     /// <list type="bullet">
-    ///   <item> As of 3.6, <see cref="FrenchLightStemFilter"/> is used for less aggressive stemming.</item>
-    ///   <item> As of 3.1, Snowball stemming is done with <see cref="SnowballFilter"/>, 
+    ///   <item><description> As of 3.6, <see cref="FrenchLightStemFilter"/> is used for less aggressive stemming.</description></item>
+    ///   <item><description> As of 3.1, Snowball stemming is done with <see cref="SnowballFilter"/>, 
     ///        <see cref="LowerCaseFilter"/> is used prior to <see cref="StopFilter"/>, and <see cref="ElisionFilter"/> and 
-    ///        Snowball stopwords are used by default.</item>
-    ///   <item> As of 2.9, <see cref="StopFilter"/> preserves position
-    ///        increments</item>
+    ///        Snowball stopwords are used by default.</description></item>
+    ///   <item><description> As of 2.9, <see cref="StopFilter"/> preserves position
+    ///        increments</description></item>
     /// </list>
     /// 
     /// </para>
@@ -176,10 +176,10 @@ namespace Lucene.Net.Analysis.Fr
 
         /// <summary>
         /// Creates
-        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// <see cref="TokenStreamComponents"/>
         /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        /// <returns> <see cref="TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="ElisionFilter"/>,
         ///         <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,

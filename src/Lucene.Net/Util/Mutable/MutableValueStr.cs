@@ -18,8 +18,8 @@ namespace Lucene.Net.Util.Mutable
      */
 
     /// <summary>
-    /// <seealso cref="MutableValue"/> implementation of type
-    /// <seealso cref="String"/>.
+    /// <see cref="MutableValue"/> implementation of type
+    /// <see cref="string"/>.
     /// </summary>
     public class MutableValueStr : MutableValue
     {

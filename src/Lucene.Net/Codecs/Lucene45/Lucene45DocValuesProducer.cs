@@ -49,7 +49,7 @@ namespace Lucene.Net.Codecs.Lucene45
     using TermsEnum = Lucene.Net.Index.TermsEnum;
 
     /// <summary>
-    /// reader for <seealso cref="Lucene45DocValuesFormat"/> </summary>
+    /// Reader for <see cref="Lucene45DocValuesFormat"/>. </summary>
     public class Lucene45DocValuesProducer : DocValuesProducer, IDisposable
     {
         private readonly IDictionary<int, NumericEntry> numerics;
@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Lucene45
         private readonly IDictionary<int, MonotonicBlockPackedReader> ordIndexInstances = new Dictionary<int, MonotonicBlockPackedReader>();
 
         /// <summary>
-        /// expert: instantiates a new reader </summary>
+        /// Expert: instantiates a new reader. </summary>
         protected internal Lucene45DocValuesProducer(SegmentReadState state, string dataCodec, string dataExtension, string metaCodec, string metaExtension)
         {
             string metaName = IndexFileNames.SegmentFileName(state.SegmentInfo.Name, state.SegmentSuffix, metaExtension);
@@ -103,11 +103,11 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 if (success)
                 {
-                    IOUtils.Close(@in);
+                    IOUtils.Dispose(@in);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(@in);
+                    IOUtils.DisposeWhileHandlingException(@in);
                 }
             }
 
@@ -128,7 +128,7 @@ namespace Lucene.Net.Codecs.Lucene45
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this.data);
+                    IOUtils.DisposeWhileHandlingException(this.data);
                 }
             }
 
@@ -502,8 +502,9 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// returns an address instance for variable-length binary values.
-        ///  @lucene.internal
+        /// Returns an address instance for variable-length binary values.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
         protected internal virtual MonotonicBlockPackedReader GetAddressInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
         {
@@ -511,7 +512,7 @@ namespace Lucene.Net.Codecs.Lucene45
             lock (addressInstances)
             {
                 MonotonicBlockPackedReader addrInstance;
-                if (!addressInstances.TryGetValue(field.Number, out addrInstance))
+                if (!addressInstances.TryGetValue(field.Number, out addrInstance) || addrInstance == null)
                 {
                     data.Seek(bytes.AddressesOffset);
                     addrInstance = new MonotonicBlockPackedReader(data, bytes.PackedInt32sVersion, bytes.BlockSize, bytes.Count, false);
@@ -572,7 +573,8 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// returns an address instance for prefix-compressed binary values.
+        /// Returns an address instance for prefix-compressed binary values.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         protected internal virtual MonotonicBlockPackedReader GetIntervalInstance(IndexInput data, FieldInfo field, BinaryEntry bytes)
@@ -684,7 +686,8 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// returns an address instance for sortedset ordinal lists
+        /// Returns an address instance for sortedset ordinal lists.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         protected internal virtual MonotonicBlockPackedReader GetOrdIndexInstance(IndexInput data, FieldInfo field, NumericEntry entry)
@@ -895,7 +898,7 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// metadata entry for a numeric docvalues field </summary>
+        /// Metadata entry for a numeric docvalues field. </summary>
         protected internal class NumericEntry
         {
             internal NumericEntry()
@@ -903,28 +906,28 @@ namespace Lucene.Net.Codecs.Lucene45
             }
 
             /// <summary>
-            /// offset to the bitset representing docsWithField, or -1 if no documents have missing values </summary>
+            /// Offset to the bitset representing docsWithField, or -1 if no documents have missing values. </summary>
             internal long missingOffset;
 
             /// <summary>
-            /// offset to the actual numeric values </summary>
+            /// Offset to the actual numeric values. </summary>
             public long Offset { get; set; }
 
             internal int format;
 
             /// <summary>
-            /// packed ints version used to encode these numerics 
+            /// Packed <see cref="int"/>s version used to encode these numerics. 
             /// <para/>
             /// NOTE: This was packedIntsVersion (field) in Lucene
             /// </summary>
             public int PackedInt32sVersion { get; set; }
 
             /// <summary>
-            /// count of values written </summary>
+            /// Count of values written. </summary>
             public long Count { get; set; }
 
             /// <summary>
-            /// packed ints blocksize </summary>
+            /// Packed <see cref="int"/>s blocksize. </summary>
             public int BlockSize { get; set; }
 
             internal long minValue;
@@ -933,7 +936,7 @@ namespace Lucene.Net.Codecs.Lucene45
         }
 
         /// <summary>
-        /// metadata entry for a binary docvalues field </summary>
+        /// Metadata entry for a binary docvalues field. </summary>
         protected internal class BinaryEntry
         {
             internal BinaryEntry()
@@ -941,44 +944,44 @@ namespace Lucene.Net.Codecs.Lucene45
             }
 
             /// <summary>
-            /// offset to the bitset representing docsWithField, or -1 if no documents have missing values </summary>
+            /// Offset to the bitset representing docsWithField, or -1 if no documents have missing values. </summary>
             internal long missingOffset;
 
             /// <summary>
-            /// offset to the actual binary values </summary>
+            /// Offset to the actual binary values. </summary>
             internal long offset;
 
             internal int format;
 
             /// <summary>
-            /// count of values written </summary>
+            /// Count of values written. </summary>
             public long Count { get; set; }
 
             internal int minLength;
             internal int maxLength;
 
             /// <summary>
-            /// offset to the addressing data that maps a value to its slice of the byte[] </summary>
+            /// Offset to the addressing data that maps a value to its slice of the <see cref="T:byte[]"/>. </summary>
             public long AddressesOffset { get; set; }
 
             /// <summary>
-            /// interval of shared prefix chunks (when using prefix-compressed binary) </summary>
+            /// Interval of shared prefix chunks (when using prefix-compressed binary). </summary>
             public long AddressInterval { get; set; }
 
             /// <summary>
-            /// packed ints version used to encode addressing information 
+            /// Packed ints version used to encode addressing information.
             /// <para/>
-            /// NOTE: This was packedIntsVersion (field) in Lucene
+            /// NOTE: This was packedIntsVersion (field) in Lucene.
             /// </summary>
             public int PackedInt32sVersion { get; set; }
 
             /// <summary>
-            /// packed ints blocksize </summary>
+            /// Packed ints blocksize. </summary>
             public int BlockSize { get; set; }
         }
 
         /// <summary>
-        /// metadata entry for a sorted-set docvalues field </summary>
+        /// Metadata entry for a sorted-set docvalues field. </summary>
         protected internal class SortedSetEntry
         {
             internal SortedSetEntry()
@@ -990,7 +993,7 @@ namespace Lucene.Net.Codecs.Lucene45
 
         // internally we compose complex dv (sorted/sortedset) from other ones
         /// <summary>
-        /// NOTE: This was LongBinaryDocValues in Lucene
+        /// NOTE: This was LongBinaryDocValues in Lucene.
         /// </summary>
         internal abstract class Int64BinaryDocValues : BinaryDocValues
         {

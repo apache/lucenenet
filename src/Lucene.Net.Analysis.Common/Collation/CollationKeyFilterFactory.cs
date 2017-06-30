@@ -34,26 +34,26 @@ namespace Lucene.Net.Collation
     /// <para>
     /// This factory can be created in two ways: 
     /// <list type="bullet">
-    ///  <item>Based upon a system collator associated with a <see cref="System.Globalization.CultureInfo"/>.</item>
-    ///  <item>Based upon a tailored ruleset.</item>
+    ///  <item><description>Based upon a system collator associated with a <see cref="System.Globalization.CultureInfo"/>.</description></item>
+    ///  <item><description>Based upon a tailored ruleset.</description></item>
     /// </list>
     /// </para>
     /// <para>
     /// Using a System collator:
     /// <list type="bullet">
-    ///  <item>language: ISO-639 language code (mandatory)</item>
-    ///  <item>country: ISO-3166 country code (optional)</item>
-    ///  <item>variant: vendor or browser-specific code (optional)</item>
-    ///  <item>strength: 'primary','secondary','tertiary', or 'identical' (optional)</item>
-    ///  <item>decomposition: 'no','canonical', or 'full' (optional)</item>
+    ///  <item><description>language: ISO-639 language code (mandatory)</description></item>
+    ///  <item><description>country: ISO-3166 country code (optional)</description></item>
+    ///  <item><description>variant: vendor or browser-specific code (optional)</description></item>
+    ///  <item><description>strength: 'primary','secondary','tertiary', or 'identical' (optional)</description></item>
+    ///  <item><description>decomposition: 'no','canonical', or 'full' (optional)</description></item>
     /// </list>
     /// </para>
     /// <para>
     /// Using a Tailored ruleset:
     /// <list type="bullet">
-    ///  <item>custom: UTF-8 text file containing rules supported by RuleBasedCollator (mandatory)</item>
-    ///  <item>strength: 'primary','secondary','tertiary', or 'identical' (optional)</item>
-    ///  <item>decomposition: 'no','canonical', or 'full' (optional)</item>
+    ///  <item><description>custom: UTF-8 text file containing rules supported by RuleBasedCollator (mandatory)</description></item>
+    ///  <item><description>strength: 'primary','secondary','tertiary', or 'identical' (optional)</description></item>
+    ///  <item><description>decomposition: 'no','canonical', or 'full' (optional)</description></item>
     /// </list>
     /// 
     /// <code>

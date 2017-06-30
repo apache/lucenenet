@@ -1,7 +1,6 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System;
-using System.Linq;
 using System.Text;
 
 namespace Lucene.Net.Search.Spans
@@ -26,14 +25,12 @@ namespace Lucene.Net.Search.Spans
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    ///   Only return those matches that have a specific payload at
-    ///  the given position.
-    /// <p/>
-    /// Do not use this with an SpanQuery that contains a <seealso cref="Lucene.Net.Search.Spans.SpanNearQuery"/>.  Instead, use
-    /// <seealso cref="SpanNearPayloadCheckQuery"/> since it properly handles the fact that payloads
-    /// aren't ordered by <seealso cref="Lucene.Net.Search.Spans.SpanNearQuery"/>.
-    ///
-    ///
+    /// Only return those matches that have a specific payload at
+    /// the given position.
+    /// <para/>
+    /// Do not use this with a <see cref="SpanQuery"/> that contains a <see cref="Lucene.Net.Search.Spans.SpanNearQuery"/>.  Instead, use
+    /// <see cref="SpanNearPayloadCheckQuery"/> since it properly handles the fact that payloads
+    /// aren't ordered by <see cref="Lucene.Net.Search.Spans.SpanNearQuery"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -44,7 +41,7 @@ namespace Lucene.Net.Search.Spans
 
         ///
         /// <param name="match"> The underlying <see cref="SpanQuery"/> to check </param>
-        /// <param name="payloadToMatch"> The <see cref="T:ICollection<byte[]>"/> of payloads to match. 
+        /// <param name="payloadToMatch"> The <see cref="T:ICollection{byte[]}"/> of payloads to match. 
         /// IMPORTANT: If the type provided does not implement <see cref="IList{T}"/> (including arrays), 
         /// <see cref="ISet{T}"/>, or <see cref="IDictionary{TKey, TValue}"/>, it should provide an 
         /// <see cref="object.Equals(object)"/> and <see cref="object.GetHashCode()"/> implementation 

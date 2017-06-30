@@ -25,53 +25,66 @@ namespace Lucene.Net.Search.Similarities
     /// Probabilistic models of information retrieval based on measuring the
     /// divergence from randomness. ACM Trans. Inf. Syst. 20, 4 (October 2002),
     /// 357-389.
-    /// <p>The DFR scoring formula is composed of three separate components: the
+    /// <para>The DFR scoring formula is composed of three separate components: the
     /// <em>basic model</em>, the <em>aftereffect</em> and an additional
     /// <em>normalization</em> component, represented by the classes
-    /// {@code BasicModel}, {@code AfterEffect} and {@code Normalization},
+    /// <see cref="Similarities.BasicModel"/>, <see cref="Similarities.AfterEffect"/> and <see cref="Similarities.Normalization"/>,
     /// respectively. The names of these classes were chosen to match the names of
-    /// their counterparts in the Terrier IR engine.</p>
-    /// <p>To construct a DFRSimilarity, you must specify the implementations for
+    /// their counterparts in the Terrier IR engine.</para>
+    /// <para>To construct a <see cref="DFRSimilarity"/>, you must specify the implementations for
     /// all three components of DFR:
-    /// <ol>
-    ///    <li><seealso cref="BasicModel"/>: Basic model of information content:
-    ///        <ul>
-    ///           <li><seealso cref="BasicModelBE"/>: Limiting form of Bose-Einstein
-    ///           <li><seealso cref="BasicModelG"/>: Geometric approximation of Bose-Einstein
-    ///           <li><seealso cref="BasicModelP"/>: Poisson approximation of the Binomial
-    ///           <li><seealso cref="BasicModelD"/>: Divergence approximation of the Binomial
-    ///           <li><seealso cref="BasicModelIn"/>: Inverse document frequency
-    ///           <li><seealso cref="BasicModelIne"/>: Inverse expected document
-    ///               frequency [mixture of Poisson and IDF]
-    ///           <li><seealso cref="BasicModelIF"/>: Inverse term frequency
-    ///               [approximation of I(ne)]
-    ///        </ul>
-    ///    <li><seealso cref="AfterEffect"/>: First normalization of information
-    ///        gain:
-    ///        <ul>
-    ///           <li><seealso cref="AfterEffectL"/>: Laplace's law of succession
-    ///           <li><seealso cref="AfterEffectB"/>: Ratio of two Bernoulli processes
-    ///           <li><seealso cref="NoAfterEffect"/>: no first normalization
-    ///        </ul>
-    ///    <li><seealso cref="Normalization"/>: Second (length) normalization:
-    ///        <ul>
-    ///           <li><seealso cref="NormalizationH1"/>: Uniform distribution of term
-    ///               frequency
-    ///           <li><seealso cref="NormalizationH2"/>: term frequency density inversely
-    ///               related to length
-    ///           <li><seealso cref="NormalizationH3"/>: term frequency normalization
-    ///               provided by Dirichlet prior
-    ///           <li><seealso cref="NormalizationZ"/>: term frequency normalization provided
-    ///                by a Zipfian relation
-    ///           <li><seealso cref="NoNormalization"/>: no second normalization
-    ///        </ul>
-    /// </ol>
-    /// <p>Note that <em>qtf</em>, the multiplicity of term-occurrence in the query,
-    /// is not handled by this implementation.</p> </summary>
-    /// <seealso cref= BasicModel </seealso>
-    /// <seealso cref= AfterEffect </seealso>
-    /// <seealso cref= Normalization
-    /// @lucene.experimental </seealso>
+    /// <list type="table">
+    ///     <listheader>
+    ///         <term>Component</term>
+    ///         <term>Implementations</term>
+    ///     </listheader>
+    ///     <item>
+    ///         <term><see cref="Similarities.BasicModel"/>: Basic model of information content:</term>
+    ///         <term>
+    ///             <list type="bullet">
+    ///                 <item><description><see cref="BasicModelBE"/>: Limiting form of Bose-Einstein</description></item>
+    ///                 <item><description><see cref="BasicModelG"/>: Geometric approximation of Bose-Einstein</description></item>
+    ///                 <item><description><see cref="BasicModelP"/>: Poisson approximation of the Binomial</description></item>
+    ///                 <item><description><see cref="BasicModelD"/>: Divergence approximation of the Binomial</description></item>
+    ///                 <item><description><see cref="BasicModelIn"/>: Inverse document frequency</description></item>
+    ///                 <item><description><see cref="BasicModelIne"/>: Inverse expected document frequency [mixture of Poisson and IDF]</description></item>
+    ///                 <item><description><see cref="BasicModelIF"/>: Inverse term frequency [approximation of I(ne)]</description></item>
+    ///             </list>
+    ///         </term>
+    ///     </item>
+    ///     <item>
+    ///         <term><see cref="Similarities.AfterEffect"/>: First normalization of information gain:</term>
+    ///         <term>
+    ///             <list type="bullet">
+    ///                 <item><description><see cref="AfterEffectL"/>: Laplace's law of succession</description></item>
+    ///                 <item><description><see cref="AfterEffectB"/>: Ratio of two Bernoulli processes</description></item>
+    ///                 <item><description><see cref="AfterEffect.NoAfterEffect"/>: no first normalization</description></item>
+    ///             </list>
+    ///         </term>
+    ///     </item>
+    ///     <item>
+    ///         <term><see cref="Similarities.Normalization"/>: Second (length) normalization:</term>
+    ///         <term>
+    ///             <list type="bullet">
+    ///                 <item><description><see cref="NormalizationH1"/>: Uniform distribution of term frequency</description></item>
+    ///                 <item><description><see cref="NormalizationH2"/>: term frequency density inversely related to length</description></item>
+    ///                 <item><description><see cref="NormalizationH3"/>: term frequency normalization provided by Dirichlet prior</description></item>
+    ///                 <item><description><see cref="NormalizationZ"/>: term frequency normalization provided by a Zipfian relation</description></item>
+    ///                 <item><description><see cref="Normalization.NoNormalization"/>: no second normalization</description></item>
+    ///             </list>
+    ///         </term>
+    ///     </item>
+    /// </list>
+    /// 
+    /// </para>
+    /// <para>Note that <em>qtf</em>, the multiplicity of term-occurrence in the query,
+    /// is not handled by this implementation.
+    /// </para> 
+    /// @lucene.experimental
+    /// </summary>
+    /// <seealso cref="Similarities.BasicModel"/>
+    /// <seealso cref="Similarities.AfterEffect"/>
+    /// <seealso cref="Similarities.Normalization"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -91,10 +104,10 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Creates DFRSimilarity from the three components.
-        /// <p>
-        /// Note that <code>null</code> values are not allowed:
+        /// <para/>
+        /// Note that <c>null</c> values are not allowed:
         /// if you want no normalization or after-effect, instead pass
-        /// <seealso cref="NoNormalization"/> or <seealso cref="NoAfterEffect"/> respectively. </summary>
+        /// <see cref="Normalization.NoNormalization"/> or <see cref="AfterEffect.NoAfterEffect"/> respectively. </summary>
         /// <param name="basicModel"> Basic model of information content </param>
         /// <param name="afterEffect"> First normalization of information gain </param>
         /// <param name="normalization"> Second (length) normalization </param>

@@ -42,29 +42,29 @@ namespace Lucene.Net.Store
     /// <para/>
     /// Files:
     /// <list type="bullet">
-    ///     <item><c>.cfs</c>: An optional "virtual" file consisting of all the other
-    ///         index files for systems that frequently run out of file handles.</item>
-    ///     <item><c>.cfe</c>: The "virtual" compound file's entry table holding all
-    ///         entries in the corresponding .cfs file.</item>
+    ///     <item><description><c>.cfs</c>: An optional "virtual" file consisting of all the other
+    ///         index files for systems that frequently run out of file handles.</description></item>
+    ///     <item><description><c>.cfe</c>: The "virtual" compound file's entry table holding all
+    ///         entries in the corresponding .cfs file.</description></item>
     /// </list>
     /// <para>Description:</para>
     /// <list type="bullet">
-    ///     <item>Compound (.cfs) --&gt; Header, FileData <sup>FileCount</sup></item>
-    ///     <item>Compound Entry Table (.cfe) --&gt; Header, FileCount, &lt;FileName,
-    ///         DataOffset, DataLength&gt; <sup>FileCount</sup>, Footer</item>
-    ///     <item>Header --&gt; <see cref="CodecUtil.WriteHeader"/></item>
-    ///     <item>FileCount --&gt; <see cref="DataOutput.WriteVInt32"/></item>
-    ///     <item>DataOffset,DataLength --&gt; <see cref="DataOutput.WriteInt64"/></item>
-    ///     <item>FileName --&gt; <see cref="DataOutput.WriteString"/></item>
-    ///     <item>FileData --&gt; raw file data</item>
-    ///     <item>Footer --&gt; <see cref="CodecUtil.WriteFooter"/></item>
+    ///     <item><description>Compound (.cfs) --&gt; Header, FileData <sup>FileCount</sup></description></item>
+    ///     <item><description>Compound Entry Table (.cfe) --&gt; Header, FileCount, &lt;FileName,
+    ///         DataOffset, DataLength&gt; <sup>FileCount</sup>, Footer</description></item>
+    ///     <item><description>Header --&gt; <see cref="CodecUtil.WriteHeader"/></description></item>
+    ///     <item><description>FileCount --&gt; <see cref="DataOutput.WriteVInt32"/></description></item>
+    ///     <item><description>DataOffset,DataLength --&gt; <see cref="DataOutput.WriteInt64"/></description></item>
+    ///     <item><description>FileName --&gt; <see cref="DataOutput.WriteString"/></description></item>
+    ///     <item><description>FileData --&gt; raw file data</description></item>
+    ///     <item><description>Footer --&gt; <see cref="CodecUtil.WriteFooter"/></description></item>
     /// </list>
     /// <para>Notes:</para>
     /// <list type="bullet">
-    ///   <item>FileCount indicates how many files are contained in this compound file.
-    ///         The entry table that follows has that many entries.</item>
-    ///   <item>Each directory entry contains a long pointer to the start of this file's data
-    ///         section, the files length, and a <see cref="string"/> with that file's name.</item>
+    ///   <item><description>FileCount indicates how many files are contained in this compound file.
+    ///         The entry table that follows has that many entries.</description></item>
+    ///   <item><description>Each directory entry contains a long pointer to the start of this file's data
+    ///         section, the files length, and a <see cref="string"/> with that file's name.</description></item>
     /// </list>
     /// <para/>
     /// @lucene.experimental
@@ -111,7 +111,7 @@ namespace Lucene.Net.Store
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(handle);
+                        IOUtils.DisposeWhileHandlingException(handle);
                     }
                 }
                 this.IsOpen = true;
@@ -204,7 +204,7 @@ namespace Lucene.Net.Store
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(priorE, stream, entriesStream);
+                IOUtils.DisposeWhileHandlingException(priorE, stream, entriesStream);
             }
             // this is needed until Java 7's real try-with-resources:
             throw new InvalidOperationException("impossible to get here");
@@ -311,7 +311,7 @@ namespace Lucene.Net.Store
                     }
                     else
                     {
-                        IOUtils.Close(handle);
+                        IOUtils.Dispose(handle);
                     }
                 }
             }

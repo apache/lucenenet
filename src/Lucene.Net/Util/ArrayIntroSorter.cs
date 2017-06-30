@@ -20,7 +20,8 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// An <seealso cref="IntroSorter"/> for object arrays.
+    /// An <see cref="IntroSorter"/> for object arrays.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     internal sealed class ArrayIntroSorter<T> : IntroSorter
@@ -30,7 +31,7 @@ namespace Lucene.Net.Util
         private T pivot;
 
         /// <summary>
-        /// Create a new <seealso cref="ArrayInPlaceMergeSorter"/>. </summary>
+        /// Create a new <see cref="ArrayIntroSorter{T}"/>. </summary>
         public ArrayIntroSorter(T[] arr, IComparer<T> comparer)
         {
             this.arr = arr;

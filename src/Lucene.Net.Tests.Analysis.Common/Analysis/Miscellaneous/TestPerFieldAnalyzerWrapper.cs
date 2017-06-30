@@ -49,7 +49,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(tokenStream);
+                IOUtils.DisposeWhileHandlingException(tokenStream);
             }
 
             tokenStream = analyzer.GetTokenStream("special", text);
@@ -65,7 +65,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             }
             finally
             {
-                IOUtils.CloseWhileHandlingException(tokenStream);
+                IOUtils.DisposeWhileHandlingException(tokenStream);
             }
         }
 

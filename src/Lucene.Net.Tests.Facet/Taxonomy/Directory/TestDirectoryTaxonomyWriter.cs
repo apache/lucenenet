@@ -342,7 +342,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
 
-            IOUtils.Close(dtr, dir);
+            IOUtils.Dispose(dtr, dir);
         }
 
         private class ThreadAnonymousInnerClassHelper : ThreadClass
@@ -541,7 +541,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             // when too large components were allowed to be added, this resulted in a new added category
             Assert.AreEqual(ordinal, taxoWriter.AddCategory(cp));
 
-            IOUtils.Close(indexWriter, taxoWriter);
+            IOUtils.Dispose(indexWriter, taxoWriter);
 
             DirectoryReader indexReader = DirectoryReader.Open(indexDir);
             var taxoReader = new DirectoryTaxonomyReader(taxoDir);
@@ -550,7 +550,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             ddq.Add("dim", bigs);
             Assert.AreEqual(1, searcher.Search(ddq, 10).TotalHits);
 
-            IOUtils.Close(indexReader, taxoReader, indexDir, taxoDir);
+            IOUtils.Dispose(indexReader, taxoReader, indexDir, taxoDir);
         }
 
         [Test]

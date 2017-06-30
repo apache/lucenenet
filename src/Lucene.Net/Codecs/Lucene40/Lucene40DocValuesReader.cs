@@ -42,9 +42,10 @@ namespace Lucene.Net.Codecs.Lucene40
     using SortedSetDocValues = Lucene.Net.Index.SortedSetDocValues;
 
     /// <summary>
-    /// Reads the 4.0 format of norms/docvalues
-    /// @lucene.experimental </summary>
-    /// @deprecated Only for reading old 4.0 and 4.1 segments
+    /// Reads the 4.0 format of norms/docvalues.
+    /// <para/>
+    /// @lucene.experimental 
+    /// </summary>
     [Obsolete("Only for reading old 4.0 and 4.1 segments")]
     internal sealed class Lucene40DocValuesReader : DocValuesProducer
     {
@@ -125,11 +126,11 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         if (success)
                         {
-                            IOUtils.Close(input);
+                            IOUtils.Dispose(input);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(input);
+                            IOUtils.DisposeWhileHandlingException(input);
                         }
                     }
                     numericInstances[field.Number] = instance;
@@ -139,7 +140,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// NOTE: This was loadVarIntsField() in Lucene
+        /// NOTE: This was loadVarIntsField() in Lucene.
         /// </summary>
         private NumericDocValues LoadVarInt32sField(FieldInfo field, IndexInput input)
         {
@@ -243,7 +244,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// NOTE: This was loadShortField() in Lucene
+        /// NOTE: This was loadShortField() in Lucene.
         /// </summary>
         private NumericDocValues LoadInt16Field(FieldInfo field, IndexInput input)
         {
@@ -279,7 +280,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// NOTE: This was loadIntField() in Lucene
+        /// NOTE: This was loadIntField() in Lucene.
         /// </summary>
         private NumericDocValues LoadInt32Field(FieldInfo field, IndexInput input)
         {
@@ -315,7 +316,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// NOTE: This was loadLongField() in Lucene
+        /// NOTE: This was loadLongField() in Lucene.
         /// </summary>
         private NumericDocValues LoadInt64Field(FieldInfo field, IndexInput input)
         {
@@ -351,7 +352,7 @@ namespace Lucene.Net.Codecs.Lucene40
         }
 
         /// <summary>
-        /// NOTE: This was loadFloatField() in Lucene
+        /// NOTE: This was loadFloatField() in Lucene.
         /// </summary>
         private NumericDocValues LoadSingleField(FieldInfo field, IndexInput input)
         {
@@ -475,11 +476,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(input);
+                    IOUtils.Dispose(input);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
             }
         }
@@ -529,11 +530,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(data, index);
+                    IOUtils.Dispose(data, index);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data, index);
+                    IOUtils.DisposeWhileHandlingException(data, index);
                 }
             }
         }
@@ -587,11 +588,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(data, index);
+                    IOUtils.Dispose(data, index);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data, index);
+                    IOUtils.DisposeWhileHandlingException(data, index);
                 }
             }
         }
@@ -645,11 +646,11 @@ namespace Lucene.Net.Codecs.Lucene40
             {
                 if (success)
                 {
-                    IOUtils.Close(data, index);
+                    IOUtils.Dispose(data, index);
                 }
                 else
                 {
-                    IOUtils.CloseWhileHandlingException(data, index);
+                    IOUtils.DisposeWhileHandlingException(data, index);
                 }
             }
         }
@@ -725,11 +726,11 @@ namespace Lucene.Net.Codecs.Lucene40
                     {
                         if (success)
                         {
-                            IOUtils.Close(data, index);
+                            IOUtils.Dispose(data, index);
                         }
                         else
                         {
-                            IOUtils.CloseWhileHandlingException(data, index);
+                            IOUtils.DisposeWhileHandlingException(data, index);
                         }
                     }
                     sortedInstances[field.Number] = instance;

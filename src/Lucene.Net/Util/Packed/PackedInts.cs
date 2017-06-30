@@ -34,8 +34,8 @@ namespace Lucene.Net.Util.Packed
     /// values are stored as packed ints, with each value
     /// consuming a fixed number of bits.
     /// <para/>
-    /// NOTE: This was PackedInts in Lucene
-    ///
+    /// NOTE: This was PackedInts in Lucene.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public class PackedInt32s
@@ -85,147 +85,6 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-        /// <summary>
-        /// A format to write packed ints.
-        ///
-        /// @lucene.internal
-        /// </summary>
-        //public enum Format
-        //{
-        /// <summary>
-        /// Compact format, all bits are written contiguously.
-        /// </summary>
-
-        /// <summary>
-        /// A format that may insert padding bits to improve encoding and decoding
-        /// speed. Since this format doesn't support all possible bits per value, you
-        /// should never use it directly, but rather use
-        /// <seealso cref="PackedInt32s#fastestFormatAndBits(int, int, float)"/> to find the
-        /// format that best suits your needs.
-        /// </summary>
-
-        /// <summary>
-        /// Get a format according to its ID.
-        /// </summary>
-        //	{
-        //	  for (Format format : Format.values())
-        //	  {
-        //		if (format.getId() == id)
-        //		{
-        //		  return format;
-        //		}
-        //	  }
-        //	  throw new IllegalArgumentException("Unknown format id: " + id);
-        //	}
-
-        //	{
-        //	  this.id = id;
-        //	}
-
-        /// <summary>
-        /// Returns the ID of the format.
-        /// </summary>
-
-        /// <summary>
-        /// Computes how many byte blocks are needed to store <code>values</code>
-        /// values of size <code>bitsPerValue</code>.
-        /// </summary>
-
-        /// <summary>
-        /// Computes how many long blocks are needed to store <code>values</code>
-        /// values of size <code>bitsPerValue</code>.
-        /// </summary>
-
-        /// <summary>
-        /// Tests whether the provided number of bits per value is supported by the
-        /// format.
-        /// </summary>
-
-        /// <summary>
-        /// Returns the overhead per value, in bits.
-        /// </summary>
-
-        /// <summary>
-        /// Returns the overhead ratio (<code>overhead per value / bits per value</code>).
-        /// </summary>
-        //}
-        /*	public static partial class EnumExtensionMethods
-            {
-                internal PACKED(this Format instance, 0)
-                {
-                  public long outerInstance.ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
-                  {
-                    if (packedIntsVersion < VERSION_BYTE_ALIGNED)
-                    {
-                      return 8L * (long) Math.Ceiling((double) valueCount * bitsPerValue / 64);
-                    }
-                    else
-                    {
-                      return (long) Math.Ceiling((double) valueCount * bitsPerValue / 8);
-                    }
-                  }
-                },
-                outerInstance.PACKED_SINGLE_BLOCK(this Format instance, 1)
-                {
-                  public int outerInstance.LongCount(int packedIntsVersion, int valueCount, int bitsPerValue)
-                  {
-                    int valuesPerBlock = 64 / bitsPerValue;
-                    return (int) Math.Ceiling((double) valueCount / valuesPerBlock);
-                  }
-
-                  public bool outerInstance.IsSupported(int bitsPerValue)
-                  {
-                    return Packed64SingleBlock.IsSupported(bitsPerValue);
-                  }
-
-                  public float outerInstance.OverheadPerValue(int bitsPerValue)
-                  {
-                    Debug.Assert(outerInstance.IsSupported(bitsPerValue));
-                    int valuesPerBlock = 64 / bitsPerValue;
-                    int overhead = 64 % bitsPerValue;
-                    return (float) overhead / valuesPerBlock;
-                  }
-                }
-                public static int outerInstance.Id //Tangible note: extension parameterthis Format instance
-                {
-                  return outerInstance.Id_Renamed;
-                }
-                public static long outerInstance.ByteCount(this Format instance, int packedIntsVersion, int valueCount, int bitsPerValue)
-                {
-                  Debug.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, bitsPerValue);
-                  // assume long-aligned
-                  return 8L * outerInstance.LongCount(packedIntsVersion, valueCount, bitsPerValue);
-                }
-                public static int outerInstance.LongCount(this Format instance, int packedIntsVersion, int valueCount, int bitsPerValue)
-                {
-                  Debug.Assert(bitsPerValue >= 0 && bitsPerValue <= 64, bitsPerValue);
-                  long byteCount = outerInstance.ByteCount(packedIntsVersion, valueCount, bitsPerValue);
-                  Debug.Assert(byteCount < 8L * int.MaxValue);
-                  if ((byteCount % 8) == 0)
-                  {
-                    return (int)(byteCount / 8);
-                  }
-                  else
-                  {
-                    return (int)(byteCount / 8 + 1);
-                  }
-                }
-                public static bool outerInstance.IsSupported(this Format instance, int bitsPerValue)
-                {
-                  return bitsPerValue >= 1 && bitsPerValue <= 64;
-                }
-                public static float outerInstance.OverheadPerValue(this Format instance, int bitsPerValue)
-                {
-                  Debug.Assert(outerInstance.IsSupported(bitsPerValue));
-                  return 0f;
-                }
-                public static final float outerInstance.OverheadRatio(this Format instance, int bitsPerValue)
-                {
-                  Debug.Assert(outerInstance.IsSupported(bitsPerValue));
-                  return outerInstance.OverheadPerValue(bitsPerValue) / bitsPerValue;
-                }
-            }*/
-
         private sealed class PackedFormat : Format
         {
             public PackedFormat()
@@ -233,6 +92,10 @@ namespace Lucene.Net.Util.Packed
             {
             }
 
+            /// <summary>
+            /// Computes how many <see cref="byte"/> blocks are needed to store <paramref name="valueCount"/>
+            /// values of size <paramref name="bitsPerValue"/>.
+            /// </summary>
             public override long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
                 if (packedIntsVersion < VERSION_BYTE_ALIGNED)
@@ -251,7 +114,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             /// <summary>
-            /// NOTE: This was longCount() in Lucene
+            /// Computes how many <see cref="long"/> blocks are needed to store <paramref name="valueCount"/>
+            /// values of size <paramref name="bitsPerValue"/>.
+            /// <para/>
+            /// NOTE: This was longCount() in Lucene.
             /// </summary>
             public override int Int64Count(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
@@ -259,11 +125,18 @@ namespace Lucene.Net.Util.Packed
                 return (int)Math.Ceiling((double)valueCount / valuesPerBlock);
             }
 
+            /// <summary>
+            /// Tests whether the provided number of bits per value is supported by the
+            /// format.
+            /// </summary>
             public override bool IsSupported(int bitsPerValue)
             {
                 return Packed64SingleBlock.IsSupported(bitsPerValue);
             }
 
+            /// <summary>
+            /// Returns the overhead per value, in bits.
+            /// </summary>
             public override float OverheadPerValue(int bitsPerValue)
             {
                 int valuesPerBlock = 64 / bitsPerValue;
@@ -273,22 +146,40 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
+        /// <summary>
+        /// A format to write packed <see cref="int"/>s.
+        /// <para/>
+        /// @lucene.internal
+        /// </summary>
         public class Format
         {
+            /// <summary>
+            /// Compact format, all bits are written contiguously.
+            /// </summary>
             public static readonly Format PACKED = new PackedFormat();
 
+            /// <summary>
+            /// A format that may insert padding bits to improve encoding and decoding
+            /// speed. Since this format doesn't support all possible bits per value, you
+            /// should never use it directly, but rather use
+            /// <see cref="PackedInt32s.FastestFormatAndBits(int, int, float)"/> to find the
+            /// format that best suits your needs.
+            /// </summary>
             public static readonly Format PACKED_SINGLE_BLOCK = new PackedSingleBlockFormat();
 
             private static readonly Format[] values = new Format[] { PACKED, PACKED_SINGLE_BLOCK };
 
-            public static IEnumerable<Format> Values()
+            public static IEnumerable<Format> Values
             {
-                return values;
+                get { return values; }
             }
 
+            /// <summary>
+            /// Get a format according to its ID.
+            /// </summary>
             public static Format ById(int id)
             {
-                foreach (Format format in Values())
+                foreach (Format format in Values)
                 {
                     if (format.Id == id)
                     {
@@ -305,11 +196,18 @@ namespace Lucene.Net.Util.Packed
 
             private int id; // LUCENENET specific - made private, since it is already exposed through public property
 
+            /// <summary>
+            /// Returns the ID of the format.
+            /// </summary>
             public int Id
             {
                 get { return id; }
             }
 
+            /// <summary>
+            /// Computes how many <see cref="byte"/> blocks are needed to store <paramref name="valueCount"/>
+            /// values of size <paramref name="bitsPerValue"/>.
+            /// </summary>
             public virtual long ByteCount(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
                 // assume long-aligned
@@ -317,7 +215,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             /// <summary>
-            /// NOTE: This was longCount() in Lucene
+            /// Computes how many <see cref="long"/> blocks are needed to store <paramref name="valueCount"/>
+            /// values of size <paramref name="bitsPerValue"/>.
+            /// <para/>
+            /// NOTE: This was longCount() in Lucene.
             /// </summary>
             public virtual int Int64Count(int packedIntsVersion, int valueCount, int bitsPerValue)
             {
@@ -333,17 +234,27 @@ namespace Lucene.Net.Util.Packed
                 }
             }
 
+            /// <summary>
+            /// Tests whether the provided number of bits per value is supported by the
+            /// format.
+            /// </summary>
             public virtual bool IsSupported(int bitsPerValue)
             {
                 return bitsPerValue >= 1 && bitsPerValue <= 64;
             }
 
+            /// <summary>
+            /// Returns the overhead per value, in bits.
+            /// </summary>
             public virtual float OverheadPerValue(int bitsPerValue)
             {
                 Debug.Assert(IsSupported(bitsPerValue));
                 return 0f;
             }
 
+            /// <summary>
+            /// Returns the overhead ratio (<c>overhead per value / bits per value</c>).
+            /// </summary>
             public virtual float OverheadRatio(int bitsPerValue)
             {
                 Debug.Assert(IsSupported(bitsPerValue));
@@ -372,17 +283,17 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Try to find the <seealso cref="Format"/> and number of bits per value that would
+        /// Try to find the <see cref="Format"/> and number of bits per value that would
         /// restore from disk the fastest reader whose overhead is less than
-        /// <code>acceptableOverheadRatio</code>.
-        /// </p><p>
-        /// The <code>acceptableOverheadRatio</code> parameter makes sense for
-        /// random-access <seealso cref="Reader"/>s. In case you only plan to perform
+        /// <paramref name="acceptableOverheadRatio"/>.
+        /// <para/>
+        /// The <paramref name="acceptableOverheadRatio"/> parameter makes sense for
+        /// random-access <see cref="Reader"/>s. In case you only plan to perform
         /// sequential access on this stream later on, you should probably use
-        /// <seealso cref="PackedInt32s#COMPACT"/>.
-        /// </p><p>
+        /// <see cref="PackedInt32s.COMPACT"/>.
+        /// <para/>
         /// If you don't know how many values you are going to write, use
-        /// <code>valueCount = -1</code>.
+        /// <c><paramref name="valueCount"/> = -1</c>.
         /// </summary>
         public static FormatAndBits FastestFormatAndBits(int valueCount, int bitsPerValue, float acceptableOverheadRatio)
         {
@@ -455,79 +366,79 @@ namespace Lucene.Net.Util.Packed
         public interface IDecoder
         {
             /// <summary>
-            /// The minimum number of long blocks to encode in a single iteration, when
+            /// The minimum number of <see cref="long"/> blocks to encode in a single iteration, when
             /// using long encoding.
             /// <para/>
-            /// NOTE: This was longBlockCount() in Lucene
+            /// NOTE: This was longBlockCount() in Lucene.
             /// </summary>
             int Int64BlockCount { get; }
 
             /// <summary>
-            /// The number of values that can be stored in <seealso cref="#longBlockCount()"/> long
+            /// The number of values that can be stored in <see cref="Int64BlockCount"/> <see cref="long"/>
             /// blocks.
             /// <para/>
-            /// NOTE: This was longValueCount() in Lucene
+            /// NOTE: This was longValueCount() in Lucene.
             /// </summary>
             int Int64ValueCount { get; }
 
             /// <summary>
-            /// The minimum number of byte blocks to encode in a single iteration, when
+            /// The minimum number of <see cref="byte"/> blocks to encode in a single iteration, when
             /// using byte encoding.
             /// </summary>
             int ByteBlockCount { get; }
 
             /// <summary>
-            /// The number of values that can be stored in <seealso cref="#byteBlockCount()"/> byte
+            /// The number of values that can be stored in <see cref="ByteBlockCount"/> <see cref="byte"/>
             /// blocks.
             /// </summary>
             int ByteValueCount { get; }
 
             /// <summary>
-            /// Read <code>iterations * blockCount()</code> blocks from <code>blocks</code>,
-            /// decode them and write <code>iterations * valueCount()</code> values into
-            /// <code>values</code>.
+            /// Read <c>iterations * BlockCount</c> blocks from <paramref name="blocks"/>,
+            /// decode them and write <c>iterations * ValueCount</c> values into
+            /// <paramref name="values"/>.
             /// </summary>
-            /// <param name="blocks">       the long blocks that hold packed integer values </param>
-            /// <param name="blocksOffset"> the offset where to start reading blocks </param>
-            /// <param name="values">       the values buffer </param>
-            /// <param name="valuesOffset"> the offset where to start writing values </param>
-            /// <param name="iterations">   controls how much data to decode </param>
+            /// <param name="blocks">       The long blocks that hold packed integer values. </param>
+            /// <param name="blocksOffset"> The offset where to start reading blocks. </param>
+            /// <param name="values">       The values buffer. </param>
+            /// <param name="valuesOffset"> The offset where to start writing values. </param>
+            /// <param name="iterations">   Controls how much data to decode. </param>
             void Decode(long[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
 
             /// <summary>
-            /// Read <code>8 * iterations * blockCount()</code> blocks from <code>blocks</code>,
-            /// decode them and write <code>iterations * valueCount()</code> values into
-            /// <code>values</code>.
+            /// Read <c>8 * iterations * BlockCount</c> blocks from <paramref name="blocks"/>,
+            /// decode them and write <c>iterations * ValueCount</c> values into
+            /// <paramref name="values"/>.
             /// </summary>
-            /// <param name="blocks">       the long blocks that hold packed integer values </param>
-            /// <param name="blocksOffset"> the offset where to start reading blocks </param>
-            /// <param name="values">       the values buffer </param>
-            /// <param name="valuesOffset"> the offset where to start writing values </param>
-            /// <param name="iterations">   controls how much data to decode </param>
+            /// <param name="blocks">       The long blocks that hold packed integer values. </param>
+            /// <param name="blocksOffset"> The offset where to start reading blocks. </param>
+            /// <param name="values">       The values buffer. </param>
+            /// <param name="valuesOffset"> The offset where to start writing values. </param>
+            /// <param name="iterations">   Controls how much data to decode. </param>
             void Decode(byte[] blocks, int blocksOffset, long[] values, int valuesOffset, int iterations);
 
             /// <summary>
-            /// Read <code>iterations * blockCount()</code> blocks from <code>blocks</code>,
-            /// decode them and write <code>iterations * valueCount()</code> values into
-            /// <code>values</code>.
+            /// Read <c>iterations * BlockCount</c> blocks from <paramref name="blocks"/>,
+            /// decode them and write <c>iterations * ValueCount</c> values into
+            /// <paramref name="values"/>.
             /// </summary>
-            /// <param name="blocks">       the long blocks that hold packed integer values </param>
-            /// <param name="blocksOffset"> the offset where to start reading blocks </param>
-            /// <param name="values">       the values buffer </param>
-            /// <param name="valuesOffset"> the offset where to start writing values </param>
-            /// <param name="iterations">   controls how much data to decode </param>
+            /// <param name="blocks">       The long blocks that hold packed integer values. </param>
+            /// <param name="blocksOffset"> The offset where to start reading blocks. </param>
+            /// <param name="values">       The values buffer. </param>
+            /// <param name="valuesOffset"> The offset where to start writing values. </param>
+            /// <param name="iterations">   Controls how much data to decode. </param>
             void Decode(long[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
 
             /// <summary>
-            /// Read <code>8 * iterations * blockCount()</code> blocks from <code>blocks</code>,
-            /// decode them and write <code>iterations * valueCount()</code> values into
-            /// <code>values</code>.
+            /// Read <c>8 * iterations * BlockCount</c> blocks from <paramref name="blocks"/>,
+            /// decode them and write <c>iterations * ValueCount</c> values into
+            /// <paramref name="values"/>.
             /// </summary>
-            /// <param name="blocks">       the long blocks that hold packed integer values </param>
-            /// <param name="blocksOffset"> the offset where to start reading blocks </param>
-            /// <param name="values">       the values buffer </param>
-            /// <param name="valuesOffset"> the offset where to start writing values </param>
-            /// <param name="iterations">   controls how much data to decode </param>
+            /// <param name="blocks">       The long blocks that hold packed integer values. </param>
+            /// <param name="blocksOffset"> The offset where to start reading blocks. </param>
+            /// <param name="values">       The values buffer. </param>
+            /// <param name="valuesOffset"> The offset where to start writing values. </param>
+            /// <param name="iterations">   Controls how much data to decode. </param>
             void Decode(byte[] blocks, int blocksOffset, int[] values, int valuesOffset, int iterations);
         }
 
@@ -545,7 +456,7 @@ namespace Lucene.Net.Util.Packed
             int Int64BlockCount { get; }
 
             /// <summary>
-            /// The number of values that can be stored in <seealso cref="#longBlockCount()"/> long
+            /// The number of values that can be stored in <see cref="Int64BlockCount"/> long
             /// blocks.
             /// <para/>
             /// NOTE: This was longValueCount() in Lucene
@@ -559,69 +470,70 @@ namespace Lucene.Net.Util.Packed
             int ByteBlockCount { get; }
 
             /// <summary>
-            /// The number of values that can be stored in <seealso cref="#byteBlockCount()"/> byte
+            /// The number of values that can be stored in <see cref="ByteBlockCount"/> byte
             /// blocks.
             /// </summary>
             int ByteValueCount { get; }
 
             /// <summary>
-            /// Read <code>iterations * valueCount()</code> values from <code>values</code>,
-            /// encode them and write <code>iterations * blockCount()</code> blocks into
-            /// <code>blocks</code>.
+            /// Read <c>iterations * ValueCount</c> values from <paramref name="values"/>,
+            /// encode them and write <c>iterations * BlockCount</c> blocks into
+            /// <paramref name="blocks"/>.
             /// </summary>
-            /// <param name="blocks">       the long blocks that hold packed integer values </param>
-            /// <param name="blocksOffset"> the offset where to start writing blocks </param>
-            /// <param name="values">       the values buffer </param>
-            /// <param name="valuesOffset"> the offset where to start reading values </param>
-            /// <param name="iterations">   controls how much data to encode </param>
+            /// <param name="blocks">       The long blocks that hold packed integer values. </param>
+            /// <param name="blocksOffset"> The offset where to start writing blocks. </param>
+            /// <param name="values">       The values buffer. </param>
+            /// <param name="valuesOffset"> The offset where to start reading values. </param>
+            /// <param name="iterations">   Controls how much data to encode. </param>
             void Encode(long[] values, int valuesOffset, long[] blocks, int blocksOffset, int iterations);
 
             /// <summary>
-            /// Read <code>iterations * valueCount()</code> values from <code>values</code>,
-            /// encode them and write <code>8 * iterations * blockCount()</code> blocks into
-            /// <code>blocks</code>.
+            /// Read <c>iterations * ValueCount</c> values from <paramref name="values"/>,
+            /// encode them and write <c>8 * iterations * BlockCount</c> blocks into
+            /// <paramref name="blocks"/>.
             /// </summary>
-            /// <param name="blocks">       the long blocks that hold packed integer values </param>
-            /// <param name="blocksOffset"> the offset where to start writing blocks </param>
-            /// <param name="values">       the values buffer </param>
-            /// <param name="valuesOffset"> the offset where to start reading values </param>
-            /// <param name="iterations">   controls how much data to encode </param>
+            /// <param name="blocks">       The long blocks that hold packed integer values. </param>
+            /// <param name="blocksOffset"> The offset where to start writing blocks. </param>
+            /// <param name="values">       The values buffer. </param>
+            /// <param name="valuesOffset"> The offset where to start reading values. </param>
+            /// <param name="iterations">   Controls how much data to encode. </param>
             void Encode(long[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
 
             /// <summary>
-            /// Read <code>iterations * valueCount()</code> values from <code>values</code>,
-            /// encode them and write <code>iterations * blockCount()</code> blocks into
-            /// <code>blocks</code>.
+            /// Read <c>iterations * ValueCount</c> values from <paramref name="values"/>,
+            /// encode them and write <c>iterations * BlockCount</c> blocks into
+            /// <paramref name="blocks"/>.
             /// </summary>
-            /// <param name="blocks">       the long blocks that hold packed integer values </param>
-            /// <param name="blocksOffset"> the offset where to start writing blocks </param>
-            /// <param name="values">       the values buffer </param>
-            /// <param name="valuesOffset"> the offset where to start reading values </param>
-            /// <param name="iterations">   controls how much data to encode </param>
+            /// <param name="blocks">       The long blocks that hold packed integer values. </param>
+            /// <param name="blocksOffset"> The offset where to start writing blocks. </param>
+            /// <param name="values">       The values buffer. </param>
+            /// <param name="valuesOffset"> The offset where to start reading values. </param>
+            /// <param name="iterations">   Controls how much data to encode. </param>
             void Encode(int[] values, int valuesOffset, long[] blocks, int blocksOffset, int iterations);
 
             /// <summary>
-            /// Read <code>iterations * valueCount()</code> values from <code>values</code>,
-            /// encode them and write <code>8 * iterations * blockCount()</code> blocks into
-            /// <code>blocks</code>.
+            /// Read <c>iterations * ValueCount</c> values from <paramref name="values"/>,
+            /// encode them and write <c>8 * iterations * BlockCount</c> blocks into
+            /// <paramref name="blocks"/>.
             /// </summary>
-            /// <param name="blocks">       the long blocks that hold packed integer values </param>
-            /// <param name="blocksOffset"> the offset where to start writing blocks </param>
-            /// <param name="values">       the values buffer </param>
-            /// <param name="valuesOffset"> the offset where to start reading values </param>
-            /// <param name="iterations">   controls how much data to encode </param>
+            /// <param name="blocks">       The long blocks that hold packed integer values. </param>
+            /// <param name="blocksOffset"> The offset where to start writing blocks. </param>
+            /// <param name="values">       The values buffer. </param>
+            /// <param name="valuesOffset"> The offset where to start reading values. </param>
+            /// <param name="iterations">   Controls how much data to encode. </param>
             void Encode(int[] values, int valuesOffset, byte[] blocks, int blocksOffset, int iterations);
         }
 
         /// <summary>
         /// A read-only random access array of positive integers.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public abstract class Reader : NumericDocValues
         {
             /// <summary>
-            /// Bulk get: read at least one and at most <code>len</code> longs starting
-            /// from <code>index</code> into <code>arr[off:off+len]</code> and return
+            /// Bulk get: read at least one and at most <paramref name="len"/> longs starting
+            /// from <paramref name="index"/> into <c>arr[off:off+len]</c> and return
             /// the actual number of values that have been read.
             /// </summary>
             public virtual int Get(int index, long[] arr, int off, int len)
@@ -638,14 +550,15 @@ namespace Lucene.Net.Util.Packed
                 return gets;
             }
 
-            /// <returns> the number of bits used to store any given value.
+            /// <returns> The number of bits used to store any given value.
             ///         Note: this does not imply that memory usage is
-            ///         {@code bitsPerValue * #values} as implementations are free to
+            ///         <c>bitsPerValue * #values</c> as implementations are free to
             ///         use non-space-optimal packing of bits. </returns>
             public abstract int BitsPerValue { get; }
 
             /// <summary>
-            /// the number of values. 
+            /// The number of values.
+            /// <para/>
             /// NOTE: This was size() in Lucene.
             /// </summary>
             public abstract int Count { get; }
@@ -657,12 +570,12 @@ namespace Lucene.Net.Util.Packed
 
             /// <summary>
             /// Expert: if the bit-width of this reader matches one of
-            /// java's native types, returns the underlying array
+            /// .NET's native types, returns the underlying array
             /// (ie, byte[], short[], int[], long[]); else, returns
-            /// null.  Note that when accessing the array you must
+            /// <c>null</c>.  Note that when accessing the array you must
             /// upgrade the type (bitwise AND with all ones), to
             /// interpret the full value as unsigned.  Ie,
-            /// bytes[idx]&0xFF, shorts[idx]&0xFFFF, etc.
+            /// bytes[idx]&amp;0xFF, shorts[idx]&amp;0xFFFF, etc.
             /// </summary>
             public virtual object GetArray()
             {
@@ -671,10 +584,10 @@ namespace Lucene.Net.Util.Packed
             }
 
             /// <summary>
-            /// Returns true if this implementation is backed by a
-            /// native java array.
+            /// Returns <c>true</c> if this implementation is backed by a
+            /// native .NET array.
             /// </summary>
-            /// <seealso cref= #getArray </seealso>
+            /// <seealso cref="GetArray"/>
             public virtual bool HasArray
             {
                 get { return false; }
@@ -682,32 +595,33 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Run-once iterator interface, to decode previously saved PackedInts.
+        /// Run-once iterator interface, to decode previously saved <see cref="PackedInt32s"/>.
         /// </summary>
         public interface IReaderIterator
         {
             /// <summary>
-            /// Returns next value </summary>
+            /// Returns next value. </summary>
             long Next();
 
             /// <summary>
-            /// Returns at least 1 and at most <code>count</code> next values,
-            /// the returned ref MUST NOT be modified
+            /// Returns at least 1 and at most <paramref name="count"/> next values,
+            /// the returned ref MUST NOT be modified.
             /// </summary>
             Int64sRef Next(int count);
 
             /// <summary>
-            /// Returns number of bits per value </summary>
+            /// Returns number of bits per value. </summary>
             int BitsPerValue { get; }
 
             /// <summary>
             /// Returns number of values.
+            /// <para/>
             /// NOTE: This was size() in Lucene.
             /// </summary>
             int Count { get; }
 
             /// <summary>
-            /// Returns the current position </summary>
+            /// Returns the current position. </summary>
             int Ord { get; }
         }
 
@@ -755,20 +669,21 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// A packed integer array that can be modified.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public abstract class Mutable : Reader
         {
             /// <summary>
             /// Set the value at the given index in the array. </summary>
-            /// <param name="index"> where the value should be positioned. </param>
-            /// <param name="value"> a value conforming to the constraints set by the array. </param>
+            /// <param name="index"> Where the value should be positioned. </param>
+            /// <param name="value"> A value conforming to the constraints set by the array. </param>
             public abstract void Set(int index, long value);
 
             /// <summary>
-            /// Bulk set: set at least one and at most <code>len</code> longs starting
-            /// at <code>off</code> in <code>arr</code> into this mutable, starting at
-            /// <code>index</code>. Returns the actual number of values that have been
+            /// Bulk set: set at least one and at most <paramref name="len"/> longs starting
+            /// at <paramref name="off"/> in <paramref name="arr"/> into this mutable, starting at
+            /// <paramref name="index"/>. Returns the actual number of values that have been
             /// set.
             /// </summary>
             public virtual int Set(int index, long[] arr, int off, int len)
@@ -786,8 +701,8 @@ namespace Lucene.Net.Util.Packed
             }
 
             /// <summary>
-            /// Fill the mutable from <code>fromIndex</code> (inclusive) to
-            /// <code>toIndex</code> (exclusive) with <code>val</code>.
+            /// Fill the mutable from <paramref name="fromIndex"/> (inclusive) to
+            /// <paramref name="toIndex"/> (exclusive) with <paramref name="val"/>.
             /// </summary>
             public virtual void Fill(int fromIndex, int toIndex, long val)
             {
@@ -808,7 +723,7 @@ namespace Lucene.Net.Util.Packed
             }
 
             /// <summary>
-            /// Save this mutable into <code>out</code>. Instantiating a reader from
+            /// Save this mutable into <paramref name="out"/>. Instantiating a reader from
             /// the generated data will return a reader with the same number of bits
             /// per value.
             /// </summary>
@@ -835,7 +750,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// A simple base for Readers that keeps track of valueCount and bitsPerValue.
+        /// A simple base for <see cref="Reader"/>s that keeps track of valueCount and bitsPerValue.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         internal abstract class ReaderImpl : Reader
@@ -893,7 +809,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// A <seealso cref="Reader"/> which has all its values equal to 0 (bitsPerValue = 0). </summary>
+        /// A <see cref="Reader"/> which has all its values equal to 0 (bitsPerValue = 0). </summary>
         public sealed class NullReader : Reader
         {
             private readonly int valueCount;
@@ -940,6 +856,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// A write-once Writer.
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public abstract class Writer
@@ -993,12 +910,12 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Get a <seealso cref="IDecoder"/>.
+        /// Get a <see cref="IDecoder"/>.
         /// </summary>
-        /// <param name="format">         the format used to store packed ints </param>
-        /// <param name="version">        the compatibility version </param>
-        /// <param name="bitsPerValue">   the number of bits per value </param>
-        /// <returns> a decoder </returns>
+        /// <param name="format">         The format used to store packed <see cref="int"/>s. </param>
+        /// <param name="version">        The compatibility version. </param>
+        /// <param name="bitsPerValue">   The number of bits per value. </param>
+        /// <returns> A decoder. </returns>
         public static IDecoder GetDecoder(Format format, int version, int bitsPerValue)
         {
             CheckVersion(version);
@@ -1006,12 +923,12 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Get an <seealso cref="IEncoder"/>.
+        /// Get an <see cref="IEncoder"/>.
         /// </summary>
-        /// <param name="format">         the format used to store packed ints </param>
-        /// <param name="version">        the compatibility version </param>
-        /// <param name="bitsPerValue">   the number of bits per value </param>
-        /// <returns> an encoder </returns>
+        /// <param name="format">         The format used to store packed <see cref="int"/>s. </param>
+        /// <param name="version">        The compatibility version. </param>
+        /// <param name="bitsPerValue">   The number of bits per value. </param>
+        /// <returns> An encoder. </returns>
         public static IEncoder GetEncoder(Format format, int version, int bitsPerValue)
         {
             CheckVersion(version);
@@ -1019,20 +936,21 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Expert: Restore a <seealso cref="Reader"/> from a stream without reading metadata at
-        /// the beginning of the stream. this method is useful to restore data from
+        /// Expert: Restore a <see cref="Reader"/> from a stream without reading metadata at
+        /// the beginning of the stream. This method is useful to restore data from
         /// streams which have been created using
-        /// <seealso cref="PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <see cref="PackedInt32s.GetWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="in">           the stream to read data from, positioned at the beginning of the packed values </param>
-        /// <param name="format">       the format used to serialize </param>
-        /// <param name="version">      the version used to serialize the data </param>
-        /// <param name="valueCount">   how many values the stream holds </param>
-        /// <param name="bitsPerValue"> the number of bits per value </param>
-        /// <returns>             a Reader </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        /// <seealso cref= PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)
-        /// @lucene.internal </seealso>
+        /// <param name="in">           The stream to read data from, positioned at the beginning of the packed values. </param>
+        /// <param name="format">       The format used to serialize. </param>
+        /// <param name="version">      The version used to serialize the data. </param>
+        /// <param name="valueCount">   How many values the stream holds. </param>
+        /// <param name="bitsPerValue"> The number of bits per value. </param>
+        /// <returns>             A <see cref="Reader"/>. </returns>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <seealso cref="PackedInt32s.GetWriterNoHeader(DataOutput, Format, int, int, int)"/>
         public static Reader GetReaderNoHeader(DataInput @in, Format format, int version, int valueCount, int bitsPerValue)
         {
             CheckVersion(version);
@@ -1080,28 +998,30 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Expert: Restore a <seealso cref="Reader"/> from a stream without reading metadata at
+        /// Expert: Restore a <see cref="Reader"/> from a stream without reading metadata at
         /// the beginning of the stream. this method is useful to restore data when
-        /// metadata has been previously read using <seealso cref="#readHeader(DataInput)"/>.
+        /// metadata has been previously read using <see cref="ReadHeader(DataInput)"/>.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="in">           the stream to read data from, positioned at the beginning of the packed values </param>
-        /// <param name="header">       metadata result from <code>readHeader()</code> </param>
-        /// <returns>             a Reader </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        /// <seealso cref= #readHeader(DataInput)
-        /// @lucene.internal </seealso>
+        /// <param name="in">           The stream to read data from, positioned at the beginning of the packed values. </param>
+        /// <param name="header">       Metadata result from <see cref="ReadHeader(DataInput)"/>. </param>
+        /// <returns>             A <see cref="Reader"/>. </returns>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <seealso cref="ReadHeader(DataInput)"/>
         public static Reader GetReaderNoHeader(DataInput @in, Header header)
         {
             return GetReaderNoHeader(@in, header.format, header.version, header.valueCount, header.bitsPerValue);
         }
 
         /// <summary>
-        /// Restore a <seealso cref="Reader"/> from a stream.
+        /// Restore a <see cref="Reader"/> from a stream.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="in">           the stream to read data from </param>
-        /// <returns>             a Reader </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error
-        /// @lucene.internal </exception>
+        /// <param name="in">           The stream to read data from. </param>
+        /// <returns>             A <see cref="Reader"/>. </returns>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error </exception>
         public static Reader GetReader(DataInput @in)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
@@ -1114,20 +1034,21 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Expert: Restore a <seealso cref="IReaderIterator"/> from a stream without reading
-        /// metadata at the beginning of the stream. this method is useful to restore
+        /// Expert: Restore a <see cref="IReaderIterator"/> from a stream without reading
+        /// metadata at the beginning of the stream. This method is useful to restore
         /// data from streams which have been created using
-        /// <seealso cref="PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <see cref="PackedInt32s.GetWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="in">           the stream to read data from, positioned at the beginning of the packed values </param>
-        /// <param name="format">       the format used to serialize </param>
-        /// <param name="version">      the version used to serialize the data </param>
-        /// <param name="valueCount">   how many values the stream holds </param>
-        /// <param name="bitsPerValue"> the number of bits per value </param>
-        /// <param name="mem">          how much memory the iterator is allowed to use to read-ahead (likely to speed up iteration) </param>
-        /// <returns>             a ReaderIterator </returns>
-        /// <seealso cref= PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)
-        /// @lucene.internal </seealso>
+        /// <param name="in">           The stream to read data from, positioned at the beginning of the packed values. </param>
+        /// <param name="format">       The format used to serialize. </param>
+        /// <param name="version">      The version used to serialize the data. </param>
+        /// <param name="valueCount">   How many values the stream holds. </param>
+        /// <param name="bitsPerValue"> the number of bits per value. </param>
+        /// <param name="mem">          How much memory the iterator is allowed to use to read-ahead (likely to speed up iteration). </param>
+        /// <returns>             A <see cref="IReaderIterator"/>. </returns>
+        /// <seealso cref="PackedInt32s.GetWriterNoHeader(DataOutput, Format, int, int, int)"/>
         public static IReaderIterator GetReaderIteratorNoHeader(DataInput @in, Format format, int version, int valueCount, int bitsPerValue, int mem)
         {
             CheckVersion(version);
@@ -1135,12 +1056,14 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Retrieve PackedInts as a <seealso cref="IReaderIterator"/> </summary>
-        /// <param name="in"> positioned at the beginning of a stored packed int structure. </param>
-        /// <param name="mem"> how much memory the iterator is allowed to use to read-ahead (likely to speed up iteration) </param>
-        /// <returns> an iterator to access the values </returns>
-        /// <exception cref="IOException"> if the structure could not be retrieved.
-        /// @lucene.internal </exception>
+        /// Retrieve <see cref="PackedInt32s"/> as a <see cref="IReaderIterator"/>. 
+        /// <para/>
+        /// @lucene.internal
+        /// </summary>
+        /// <param name="in"> Positioned at the beginning of a stored packed int structure. </param>
+        /// <param name="mem"> How much memory the iterator is allowed to use to read-ahead (likely to speed up iteration). </param>
+        /// <returns> An iterator to access the values. </returns>
+        /// <exception cref="System.IO.IOException"> If the structure could not be retrieved. </exception>
         public static IReaderIterator GetReaderIterator(DataInput @in, int mem)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
@@ -1152,21 +1075,22 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Expert: Construct a direct <seealso cref="Reader"/> from a stream without reading
-        /// metadata at the beginning of the stream. this method is useful to restore
+        /// Expert: Construct a direct <see cref="Reader"/> from a stream without reading
+        /// metadata at the beginning of the stream. This method is useful to restore
         /// data from streams which have been created using
-        /// <seealso cref="PackedInt32s#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
-        /// </p><p>
+        /// <see cref="PackedInt32s.GetWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <para/>
         /// The returned reader will have very little memory overhead, but every call
-        /// to <seealso cref="Reader#get(int)"/> is likely to perform a disk seek.
+        /// to <see cref="NumericDocValues.Get(int)"/> is likely to perform a disk seek.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="in">           the stream to read data from </param>
-        /// <param name="format">       the format used to serialize </param>
-        /// <param name="version">      the version used to serialize the data </param>
-        /// <param name="valueCount">   how many values the stream holds </param>
-        /// <param name="bitsPerValue"> the number of bits per value </param>
-        /// <returns> a direct Reader
-        /// @lucene.internal </returns>
+        /// <param name="in">           The stream to read data from. </param>
+        /// <param name="format">       The format used to serialize. </param>
+        /// <param name="version">      The version used to serialize the data. </param>
+        /// <param name="valueCount">   How many values the stream holds. </param>
+        /// <param name="bitsPerValue"> The number of bits per value. </param>
+        /// <returns> A direct <see cref="Reader"/>. </returns>
         public static Reader GetDirectReaderNoHeader(IndexInput @in, Format format, int version, int valueCount, int bitsPerValue)
         {
             CheckVersion(version);
@@ -1233,34 +1157,36 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Expert: Construct a direct <seealso cref="Reader"/> from an <seealso cref="IndexInput"/>
+        /// Expert: Construct a direct <see cref="Reader"/> from an <see cref="IndexInput"/>
         /// without reading metadata at the beginning of the stream. this method is
         /// useful to restore data when metadata has been previously read using
-        /// <seealso cref="#readHeader(DataInput)"/>.
+        /// <see cref="ReadHeader(DataInput)"/>.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="in">           the stream to read data from, positioned at the beginning of the packed values </param>
-        /// <param name="header">       metadata result from <code>readHeader()</code> </param>
-        /// <returns>             a Reader </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        /// <seealso cref= #readHeader(DataInput)
-        /// @lucene.internal </seealso>
+        /// <param name="in">           The stream to read data from, positioned at the beginning of the packed values. </param>
+        /// <param name="header">       Metadata result from <see cref="ReadHeader(DataInput)"/>. </param>
+        /// <returns>             A <see cref="Reader"/>. </returns>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <seealso cref="ReadHeader(DataInput)"/>
         public static Reader GetDirectReaderNoHeader(IndexInput @in, Header header)
         {
             return GetDirectReaderNoHeader(@in, header.format, header.version, header.valueCount, header.bitsPerValue);
         }
 
         /// <summary>
-        /// Construct a direct <seealso cref="Reader"/> from an <seealso cref="IndexInput"/>. this method
+        /// Construct a direct <see cref="Reader"/> from an <see cref="IndexInput"/>. this method
         /// is useful to restore data from streams which have been created using
-        /// <seealso cref="PackedInt32s#getWriter(DataOutput, int, int, float)"/>.
-        /// </p><p>
+        /// <see cref="PackedInt32s.GetWriter(DataOutput, int, int, float)"/>.
+        /// <para/>
         /// The returned reader will have very little memory overhead, but every call
-        /// to <seealso cref="Reader#get(int)"/> is likely to perform a disk seek.
+        /// to <see cref="NumericDocValues.Get(int)"/> is likely to perform a disk seek.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="in">           the stream to read data from </param>
-        /// <returns> a direct Reader </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error
-        /// @lucene.internal </exception>
+        /// <param name="in">           The stream to read data from. </param>
+        /// <returns> A direct <see cref="Reader"/>. </returns>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         public static Reader GetDirectReader(IndexInput @in)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
@@ -1273,22 +1199,23 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Create a packed integer array with the given amount of values initialized
-        /// to 0. the valueCount and the bitsPerValue cannot be changed after creation.
+        /// to 0. The <paramref name="valueCount"/> and the <paramref name="bitsPerValue"/> cannot be changed after creation.
         /// All Mutables known by this factory are kept fully in RAM.
-        /// </p><p>
-        /// Positive values of <code>acceptableOverheadRatio</code> will trade space
+        /// <para/>
+        /// Positive values of <paramref name="acceptableOverheadRatio"/> will trade space
         /// for speed by selecting a faster but potentially less memory-efficient
-        /// implementation. An <code>acceptableOverheadRatio</code> of
-        /// <seealso cref="PackedInt32s#COMPACT"/> will make sure that the most memory-efficient
-        /// implementation is selected whereas <seealso cref="PackedInt32s#FASTEST"/> will make sure
+        /// implementation. An <paramref name="acceptableOverheadRatio"/> of
+        /// <see cref="PackedInt32s.COMPACT"/> will make sure that the most memory-efficient
+        /// implementation is selected whereas <see cref="PackedInt32s.FASTEST"/> will make sure
         /// that the fastest implementation is selected.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="valueCount">   the number of elements </param>
-        /// <param name="bitsPerValue"> the number of bits available for any given value </param>
-        /// <param name="acceptableOverheadRatio"> an acceptable overhead
-        ///        ratio per value </param>
-        /// <returns> a mutable packed integer array
-        /// @lucene.internal </returns>
+        /// <param name="valueCount">   The number of elements. </param>
+        /// <param name="bitsPerValue"> The number of bits available for any given value. </param>
+        /// <param name="acceptableOverheadRatio"> An acceptable overhead
+        ///        ratio per value. </param>
+        /// <returns> A mutable packed integer array. </returns>
         public static Mutable GetMutable(int valueCount, int bitsPerValue, float acceptableOverheadRatio)
         {
             FormatAndBits formatAndBits = FastestFormatAndBits(valueCount, bitsPerValue, acceptableOverheadRatio);
@@ -1296,9 +1223,10 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Same as <seealso cref="#getMutable(int, int, float)"/> with a pre-computed number
-        ///  of bits per value and format.
-        ///  @lucene.internal
+        /// Same as <see cref="GetMutable(int, int, float)"/> with a pre-computed number
+        /// of bits per value and format.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
         public static Mutable GetMutable(int valueCount, int bitsPerValue, PackedInt32s.Format format)
         {
@@ -1349,45 +1277,46 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Expert: Create a packed integer array writer for the given output, format,
         /// value count, and number of bits per value.
-        /// </p><p>
+        /// <para/>
         /// The resulting stream will be long-aligned. this means that depending on
         /// the format which is used, up to 63 bits will be wasted. An easy way to
-        /// make sure that no space is lost is to always use a <code>valueCount</code>
+        /// make sure that no space is lost is to always use a <paramref name="valueCount"/>
         /// that is a multiple of 64.
-        /// </p><p>
-        /// this method does not write any metadata to the stream, meaning that it is
+        /// <para/>
+        /// This method does not write any metadata to the stream, meaning that it is
         /// your responsibility to store it somewhere else in order to be able to
         /// recover data from the stream later on:
-        /// <ul>
-        ///   <li><code>format</code> (using <seealso cref="Format#getId()"/>),</li>
-        ///   <li><code>valueCount</code>,</li>
-        ///   <li><code>bitsPerValue</code>,</li>
-        ///   <li><seealso cref="#VERSION_CURRENT"/>.</li>
-        /// </ul>
-        /// </p><p>
+        /// <list type="bullet">
+        ///   <item><description><paramref name="format"/> (using <see cref="Format.Id"/>),</description></item>
+        ///   <item><description><paramref name="valueCount"/>,</description></item>
+        ///   <item><description><paramref name="bitsPerValue"/>,</description></item>
+        ///   <item><description><see cref="VERSION_CURRENT"/>.</description></item>
+        /// </list>
+        /// <para/>
         /// It is possible to start writing values without knowing how many of them you
-        /// are actually going to write. To do this, just pass <code>-1</code> as
-        /// <code>valueCount</code>. On the other hand, for any positive value of
-        /// <code>valueCount</code>, the returned writer will make sure that you don't
+        /// are actually going to write. To do this, just pass <c>-1</c> as
+        /// <paramref name="valueCount"/>. On the other hand, for any positive value of
+        /// <paramref name="valueCount"/>, the returned writer will make sure that you don't
         /// write more values than expected and pad the end of stream with zeros in
-        /// case you have written less than <code>valueCount</code> when calling
-        /// <seealso cref="Writer#finish()"/>.
-        /// </p><p>
-        /// The <code>mem</code> parameter lets you control how much memory can be used
+        /// case you have written less than <paramref name="valueCount"/> when calling
+        /// <see cref="Writer.Finish()"/>.
+        /// <para/>
+        /// The <paramref name="mem"/> parameter lets you control how much memory can be used
         /// to buffer changes in memory before flushing to disk. High values of
-        /// <code>mem</code> are likely to improve throughput. On the other hand, if
-        /// speed is not that important to you, a value of <code>0</code> will use as
+        /// <paramref name="mem"/> are likely to improve throughput. On the other hand, if
+        /// speed is not that important to you, a value of <c>0</c> will use as
         /// little memory as possible and should already offer reasonable throughput.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="out">          the data output </param>
-        /// <param name="format">       the format to use to serialize the values </param>
-        /// <param name="valueCount">   the number of values </param>
-        /// <param name="bitsPerValue"> the number of bits per value </param>
-        /// <param name="mem">          how much memory (in bytes) can be used to speed up serialization </param>
-        /// <returns>             a Writer </returns>
-        /// <seealso cref= PackedInt32s#getReaderIteratorNoHeader(DataInput, Format, int, int, int, int) </seealso>
-        /// <seealso cref= PackedInts#getReaderNoHeader(DataInput, Format, int, int, int)
-        /// @lucene.internal </seealso>
+        /// <param name="out">          The data output. </param>
+        /// <param name="format">       The format to use to serialize the values. </param>
+        /// <param name="valueCount">   The number of values. </param>
+        /// <param name="bitsPerValue"> The number of bits per value. </param>
+        /// <param name="mem">          How much memory (in bytes) can be used to speed up serialization. </param>
+        /// <returns>             A <see cref="Writer"/>. </returns>
+        /// <seealso cref="PackedInt32s.GetReaderIteratorNoHeader(DataInput, Format, int, int, int, int)"/>
+        /// <seealso cref="PackedInt32s.GetReaderNoHeader(DataInput, Format, int, int, int)"/>
         public static Writer GetWriterNoHeader(DataOutput @out, Format format, int valueCount, int bitsPerValue, int mem)
         {
             return new PackedWriter(format, @out, valueCount, bitsPerValue, mem);
@@ -1396,35 +1325,36 @@ namespace Lucene.Net.Util.Packed
         /// <summary>
         /// Create a packed integer array writer for the given output, format, value
         /// count, and number of bits per value.
-        /// </p><p>
+        /// <para/>
         /// The resulting stream will be long-aligned. this means that depending on
         /// the format which is used under the hoods, up to 63 bits will be wasted.
         /// An easy way to make sure that no space is lost is to always use a
-        /// <code>valueCount</code> that is a multiple of 64.
-        /// </p><p>
-        /// this method writes metadata to the stream, so that the resulting stream is
-        /// sufficient to restore a <seealso cref="Reader"/> from it. You don't need to track
-        /// <code>valueCount</code> or <code>bitsPerValue</code> by yourself. In case
+        /// <paramref name="valueCount"/> that is a multiple of 64.
+        /// <para/>
+        /// This method writes metadata to the stream, so that the resulting stream is
+        /// sufficient to restore a <see cref="Reader"/> from it. You don't need to track
+        /// <paramref name="valueCount"/> or <paramref name="bitsPerValue"/> by yourself. In case
         /// this is a problem, you should probably look at
-        /// <seealso cref="#getWriterNoHeader(DataOutput, Format, int, int, int)"/>.
-        /// </p><p>
-        /// The <code>acceptableOverheadRatio</code> parameter controls how
+        /// <see cref="GetWriterNoHeader(DataOutput, Format, int, int, int)"/>.
+        /// <para/>
+        /// The <paramref name="acceptableOverheadRatio"/> parameter controls how
         /// readers that will be restored from this stream trade space
         /// for speed by selecting a faster but potentially less memory-efficient
-        /// implementation. An <code>acceptableOverheadRatio</code> of
-        /// <seealso cref="PackedInt32s#COMPACT"/> will make sure that the most memory-efficient
-        /// implementation is selected whereas <seealso cref="PackedInt32s#FASTEST"/> will make sure
+        /// implementation. An <paramref name="acceptableOverheadRatio"/> of
+        /// <see cref="PackedInt32s.COMPACT"/> will make sure that the most memory-efficient
+        /// implementation is selected whereas <see cref="PackedInt32s.FASTEST"/> will make sure
         /// that the fastest implementation is selected. In case you are only interested
         /// in reading this stream sequentially later on, you should probably use
-        /// <seealso cref="PackedInt32s#COMPACT"/>.
+        /// <see cref="PackedInt32s.COMPACT"/>.
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
-        /// <param name="out">          the data output </param>
-        /// <param name="valueCount">   the number of values </param>
-        /// <param name="bitsPerValue"> the number of bits per value </param>
-        /// <param name="acceptableOverheadRatio"> an acceptable overhead ratio per value </param>
-        /// <returns>             a Writer </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error
-        /// @lucene.internal </exception>
+        /// <param name="out">          The data output. </param>
+        /// <param name="valueCount">   The number of values. </param>
+        /// <param name="bitsPerValue"> The number of bits per value. </param>
+        /// <param name="acceptableOverheadRatio"> An acceptable overhead ratio per value. </param>
+        /// <returns>             A <see cref="Writer"/>. </returns>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
         public static Writer GetWriter(DataOutput @out, int valueCount, int bitsPerValue, float acceptableOverheadRatio)
         {
             Debug.Assert(valueCount >= 0);
@@ -1437,10 +1367,12 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Returns how many bits are required to hold values up
-        ///  to and including maxValue </summary>
-        /// <param name="maxValue"> the maximum value that should be representable. </param>
-        /// <returns> the amount of bits needed to represent values from 0 to maxValue.
-        /// @lucene.internal </returns>
+        /// to and including <paramref name="maxValue"/>. 
+        /// <para/>
+        /// @lucene.internal
+        /// </summary>
+        /// <param name="maxValue"> The maximum value that should be representable. </param>
+        /// <returns> The amount of bits needed to represent values from 0 to <paramref name="maxValue"/>. </returns>
         public static int BitsRequired(long maxValue)
         {
             if (maxValue < 0)
@@ -1452,18 +1384,20 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Calculates the maximum unsigned long that can be expressed with the given
-        /// number of bits. </summary>
-        /// <param name="bitsPerValue"> the number of bits available for any given value. </param>
-        /// <returns> the maximum value for the given bits.
-        /// @lucene.internal </returns>
+        /// number of bits. 
+        /// <para/>
+        /// @lucene.internal
+        /// </summary>
+        /// <param name="bitsPerValue"> The number of bits available for any given value. </param>
+        /// <returns> The maximum value for the given bits. </returns>
         public static long MaxValue(int bitsPerValue)
         {
             return bitsPerValue == 64 ? long.MaxValue : ~(~0L << bitsPerValue);
         }
 
         /// <summary>
-        /// Copy <code>src[srcPos:srcPos+len]</code> into
-        /// <code>dest[destPos:destPos+len]</code> using at most <code>mem</code>
+        /// Copy <c>src[srcPos:srcPos+len]</c> into
+        /// <c>dest[destPos:destPos+len]</c> using at most <paramref name="mem"/>
         /// bytes.
         /// </summary>
         public static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, int mem)
@@ -1487,7 +1421,7 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Same as <seealso cref="#copy(Reader, int, Mutable, int, int, int)"/> but using a pre-allocated buffer. </summary>
+        /// Same as <see cref="Copy(Reader, int, Mutable, int, int, int)"/> but using a pre-allocated buffer. </summary>
         internal static void Copy(Reader src, int srcPos, Mutable dest, int destPos, int len, long[] buf)
         {
             Debug.Assert(buf.Length > 0);
@@ -1518,15 +1452,15 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Expert: reads only the metadata from a stream. this is useful to later
+        /// Expert: reads only the metadata from a stream. This is useful to later
         /// restore a stream or open a direct reader via
-        /// <seealso cref="#getReaderNoHeader(DataInput, Header)"/>
-        /// or <seealso cref="#getDirectReaderNoHeader(IndexInput, Header)"/>. </summary>
-        /// <param name="in"> the stream to read data </param>
-        /// <returns>   packed integer metadata. </returns>
-        /// <exception cref="IOException"> If there is a low-level I/O error </exception>
-        /// <seealso cref= #getReaderNoHeader(DataInput, Header) </seealso>
-        /// <seealso cref= #getDirectReaderNoHeader(IndexInput, Header) </seealso>
+        /// <see cref="GetReaderNoHeader(DataInput, Header)"/>
+        /// or <see cref="GetDirectReaderNoHeader(IndexInput, Header)"/>. </summary>
+        /// <param name="in"> The stream to read data. </param>
+        /// <returns>   Packed integer metadata. </returns>
+        /// <exception cref="System.IO.IOException"> If there is a low-level I/O error. </exception>
+        /// <seealso cref="GetReaderNoHeader(DataInput, Header)"/>
+        /// <seealso cref="GetDirectReaderNoHeader(IndexInput, Header)"/>
         public static Header ReadHeader(DataInput @in)
         {
             int version = CodecUtil.CheckHeader(@in, CODEC_NAME, VERSION_START, VERSION_CURRENT);
@@ -1557,7 +1491,7 @@ namespace Lucene.Net.Util.Packed
 
         /// <summary>
         /// Check that the block size is a power of 2, in the right bounds, and return
-        ///  its log in base 2.
+        /// its log in base 2.
         /// </summary>
         internal static int CheckBlockSize(int blockSize, int minBlockSize, int maxBlockSize)
         {
@@ -1573,8 +1507,8 @@ namespace Lucene.Net.Util.Packed
         }
 
         /// <summary>
-        /// Return the number of blocks required to store <code>size</code> values on
-        ///  <code>blockSize</code>.
+        /// Return the number of blocks required to store <paramref name="size"/> values on
+        /// <paramref name="blockSize"/>.
         /// </summary>
         internal static int NumBlocks(long size, int blockSize)
         {

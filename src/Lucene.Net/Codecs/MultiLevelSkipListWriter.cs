@@ -24,9 +24,9 @@ namespace Lucene.Net.Codecs
     using RAMOutputStream = Lucene.Net.Store.RAMOutputStream;
 
     /// <summary>
-    /// this abstract class writes skip lists with multiple levels.
+    /// This abstract class writes skip lists with multiple levels.
     ///
-    /// <pre>
+    /// <code>
     ///
     /// Example for skipInterval = 3:
     ///                                                     c            (skip level 2)
@@ -47,30 +47,30 @@ namespace Lucene.Net.Codecs
     ///
     /// While this class takes care of writing the different skip levels,
     /// subclasses must define the actual format of the skip data.
-    /// </pre>
+    /// </code>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-
     public abstract class MultiLevelSkipListWriter
     {
         /// <summary>
-        /// number of levels in this skip list </summary>
+        /// Number of levels in this skip list. </summary>
         protected internal int m_numberOfSkipLevels;
 
         /// <summary>
-        /// the skip interval in the list with level = 0 </summary>
+        /// The skip interval in the list with level = 0. </summary>
         private int skipInterval;
 
         /// <summary>
-        /// skipInterval used for level &gt; 0 </summary>
+        /// SkipInterval used for level &gt; 0. </summary>
         private int skipMultiplier;
 
         /// <summary>
-        /// for every skip level a different buffer is used </summary>
+        /// For every skip level a different buffer is used. </summary>
         private RAMOutputStream[] skipBuffer;
 
         /// <summary>
-        /// Creates a {@code MultiLevelSkipListWriter}. </summary>
+        /// Creates a <see cref="MultiLevelSkipListWriter"/>. </summary>
         protected MultiLevelSkipListWriter(int skipInterval, int skipMultiplier, int maxSkipLevels, int df)
         {
             this.skipInterval = skipInterval;
@@ -94,9 +94,9 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Creates a {@code MultiLevelSkipListWriter}, where
-        ///  {@code skipInterval} and {@code skipMultiplier} are
-        ///  the same.
+        /// Creates a <see cref="MultiLevelSkipListWriter"/>{@code }, where
+        /// <see cref="skipInterval"/> and <see cref="skipMultiplier"/> are
+        /// the same.
         /// </summary>
         protected MultiLevelSkipListWriter(int skipInterval, int maxSkipLevels, int df)
             : this(skipInterval, skipInterval, maxSkipLevels, df)
@@ -115,7 +115,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Creates new buffers or empties the existing ones </summary>
+        /// Creates new buffers or empties the existing ones. </summary>
         public virtual void ResetSkip()
         {
             if (skipBuffer == null)
@@ -134,16 +134,16 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Subclasses must implement the actual skip data encoding in this method.
         /// </summary>
-        /// <param name="level"> the level skip data shall be writing for </param>
-        /// <param name="skipBuffer"> the skip buffer to write to </param>
+        /// <param name="level"> The level skip data shall be writing for. </param>
+        /// <param name="skipBuffer"> The skip buffer to write to. </param>
         protected abstract void WriteSkipData(int level, IndexOutput skipBuffer);
 
         /// <summary>
         /// Writes the current skip data to the buffers. The current document frequency determines
         /// the max level is skip data is to be written to.
         /// </summary>
-        /// <param name="df"> the current document frequency </param>
-        /// <exception cref="IOException"> If an I/O error occurs </exception>
+        /// <param name="df"> The current document frequency. </param>
+        /// <exception cref="System.IO.IOException"> If an I/O error occurs. </exception>
         public virtual void BufferSkip(int df)
         {
             Debug.Assert(df % skipInterval == 0);
@@ -179,8 +179,8 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Writes the buffered skip lists to the given output.
         /// </summary>
-        /// <param name="output"> the IndexOutput the skip lists shall be written to </param>
-        /// <returns> the pointer the skip list starts </returns>
+        /// <param name="output"> The <see cref="IndexOutput"/> the skip lists shall be written to. </param>
+        /// <returns> The pointer the skip list starts. </returns>
         public virtual long WriteSkip(IndexOutput output)
         {
             long skipPointer = output.GetFilePointer();

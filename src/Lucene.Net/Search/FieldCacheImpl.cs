@@ -51,7 +51,7 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Expert: The default cache implementation, storing all values in memory.
     /// A WeakHashMap is used for storage.
-    ///
+    /// <para/>
     /// @since   lucene 1.4
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -139,12 +139,12 @@ namespace Lucene.Net.Search
         }
 
         // per-segment fieldcaches don't purge until the shared core closes.
-        internal readonly SegmentReader.ICoreClosedListener purgeCore;
+        internal readonly SegmentReader.ICoreDisposedListener purgeCore;
 
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.ICoreClosedListener
+        private class CoreClosedListenerAnonymousInnerClassHelper : SegmentReader.ICoreDisposedListener
         {
             private FieldCacheImpl outerInstance;
 
@@ -153,7 +153,7 @@ namespace Lucene.Net.Search
                 this.outerInstance = outerInstance;
             }
 
-            public void OnClose(object ownerCoreCacheKey)
+            public void OnDispose(object ownerCoreCacheKey)
             {
                 outerInstance.PurgeByCacheKey(ownerCoreCacheKey);
             }
@@ -185,7 +185,7 @@ namespace Lucene.Net.Search
         {
             if (reader is SegmentReader)
             {
-                ((SegmentReader)reader).AddCoreClosedListener(purgeCore);
+                ((SegmentReader)reader).AddCoreDisposedListener(purgeCore);
             }
             else
             {
@@ -234,7 +234,7 @@ namespace Lucene.Net.Search
 
             /// <summary>
             /// Sets the key to the value for the provided reader;
-            ///  if the key is already set then this doesn't change it.
+            /// if the key is already set then this doesn't change it.
             /// </summary>
             public virtual void Put(AtomicReader reader, CacheKey key, object value)
             {
@@ -363,7 +363,7 @@ namespace Lucene.Net.Search
             }
 
             /// <summary>
-            /// Two of these are equal iff they reference the same field and type. </summary>
+            /// Two of these are equal if they reference the same field and type. </summary>
             public override bool Equals(object o)
             {
                 if (o is CacheKey)
@@ -492,13 +492,26 @@ namespace Lucene.Net.Search
             caches[typeof(DocsWithFieldCache)].Put(reader, new CacheKey(field, null), bits);
         }
 
-        // inherit javadocs
+        /// <summary>
+        /// Checks the internal cache for an appropriate entry, and if none is
+        /// found, reads the terms in <paramref name="field"/> as a single <see cref="byte"/> and returns an array
+        /// of size <c>reader.MaxDoc</c> of the value each document
+        /// has in the given field. </summary>
+        /// <param name="reader">  Used to get field values. </param>
+        /// <param name="field">   Which field contains the single <see cref="byte"/> values. </param>
+        /// <param name="setDocsWithField">  If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will
+        ///        also be computed and stored in the <see cref="IFieldCache"/>. </param>
+        /// <returns> The values in the given field for each document. </returns>
+        /// <exception cref="IOException">  If any error occurs. </exception>
+        [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
         public virtual FieldCache.Bytes GetBytes(AtomicReader reader, string field, bool setDocsWithField)
         {
             return GetBytes(reader, field, null, setDocsWithField);
         }
 
+#pragma warning disable 612, 618
         public virtual FieldCache.Bytes GetBytes(AtomicReader reader, string field, FieldCache.IByteParser parser, bool setDocsWithField)
+#pragma warning restore 612, 618
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
@@ -579,13 +592,17 @@ namespace Lucene.Net.Search
             {
                 int maxDoc = reader.MaxDoc;
                 sbyte[] values;
+#pragma warning disable 612, 618
                 FieldCache.IByteParser parser = (FieldCache.IByteParser)key.custom;
+#pragma warning restore 612, 618
                 if (parser == null)
                 {
                     // Confusing: must delegate to wrapper (vs simply
                     // setting parser = DEFAULT_INT16_PARSER) so cache
                     // key includes DEFAULT_INT16_PARSER:
+#pragma warning disable 612, 618
                     return wrapper.GetBytes(reader, key.field, FieldCache.DEFAULT_BYTE_PARSER, setDocsWithField);
+#pragma warning restore 612, 618
                 }
 
                 values = new sbyte[maxDoc];
@@ -608,9 +625,11 @@ namespace Lucene.Net.Search
             private class UninvertAnonymousInnerClassHelper : Uninvert
             {
                 private readonly sbyte[] values;
+#pragma warning disable 612, 618
                 private readonly FieldCache.IByteParser parser;
 
                 public UninvertAnonymousInnerClassHelper(sbyte[] values, FieldCache.IByteParser parser)
+#pragma warning restore 612, 618
                 {
                     this.values = values;
                     this.parser = parser;
@@ -635,20 +654,45 @@ namespace Lucene.Net.Search
             }
         }
 
-        // inherit javadocs
         /// <summary>
+        /// Checks the internal cache for an appropriate entry, and if none is
+        /// found, reads the terms in <paramref name="field"/> as <see cref="short"/>s and returns an array
+        /// of size <c>reader.MaxDoc</c> of the value each document
+        /// has in the given field. 
+        /// <para/>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
+        /// <param name="reader">  Used to get field values. </param>
+        /// <param name="field">   Which field contains the <see cref="short"/>s. </param>
+        /// <param name="setDocsWithField">  If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will
+        ///        also be computed and stored in the <see cref="IFieldCache"/>. </param>
+        /// <returns> The values in the given field for each document. </returns>
+        /// <exception cref="IOException">  If any error occurs. </exception>
+        [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
         public virtual FieldCache.Int16s GetInt16s(AtomicReader reader, string field, bool setDocsWithField)
         {
             return GetInt16s(reader, field, null, setDocsWithField);
         }
 
-        // inherit javadocs
         /// <summary>
+        /// Checks the internal cache for an appropriate entry, and if none is found,
+        /// reads the terms in <paramref name="field"/> as shorts and returns an array of
+        /// size <c>reader.MaxDoc</c> of the value each document has in the
+        /// given field. 
+        /// <para/>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
+        /// <param name="reader">  Used to get field values. </param>
+        /// <param name="field">   Which field contains the <see cref="short"/>s. </param>
+        /// <param name="parser">  Computes <see cref="short"/> for string values. </param>
+        /// <param name="setDocsWithField">  If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will
+        ///        also be computed and stored in the <see cref="IFieldCache"/>. </param>
+        /// <returns> The values in the given field for each document. </returns>
+        /// <exception cref="IOException">  If any error occurs. </exception>
+        [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
+#pragma warning disable 612, 618
         public virtual FieldCache.Int16s GetInt16s(AtomicReader reader, string field, FieldCache.IInt16Parser parser, bool setDocsWithField)
+#pragma warning restore 612, 618
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
             if (valuesIn != null)
@@ -735,6 +779,7 @@ namespace Lucene.Net.Search
             {
                 int maxDoc = reader.MaxDoc;
                 short[] values;
+#pragma warning disable 612, 618
                 FieldCache.IInt16Parser parser = (FieldCache.IInt16Parser)key.custom;
                 if (parser == null)
                 {
@@ -743,6 +788,7 @@ namespace Lucene.Net.Search
                     // key includes DEFAULT_INT16_PARSER:
                     return wrapper.GetInt16s(reader, key.field, FieldCache.DEFAULT_INT16_PARSER, setDocsWithField);
                 }
+#pragma warning restore 612, 618
 
                 values = new short[maxDoc];
                 Uninvert u = new UninvertAnonymousInnerClassHelper(this, values, parser);
@@ -764,9 +810,11 @@ namespace Lucene.Net.Search
                 private readonly Int16Cache outerInstance;
 
                 private short[] values;
+#pragma warning disable 612, 618
                 private FieldCache.IInt16Parser parser;
 
                 public UninvertAnonymousInnerClassHelper(Int16Cache outerInstance, short[] values, FieldCache.IInt16Parser parser)
+#pragma warning restore 612, 618
                 {
                     this.outerInstance = outerInstance;
                     this.values = values;
@@ -792,18 +840,43 @@ namespace Lucene.Net.Search
             }
         }
 
-        // inherit javadocs
         /// <summary>
+        /// Returns an <see cref="FieldCache.Int32s"/> over the values found in documents in the given
+        /// field.
+        /// <para/>
         /// NOTE: this was getInts() in Lucene
         /// </summary>
+        /// <seealso cref="GetInt32s(AtomicReader, string, FieldCache.IInt32Parser, bool)"/>
         public virtual FieldCache.Int32s GetInt32s(AtomicReader reader, string field, bool setDocsWithField)
         {
             return GetInt32s(reader, field, null, setDocsWithField);
         }
 
         /// <summary>
+        /// Returns an <see cref="FieldCache.Int32s"/> over the values found in documents in the given
+        /// field. If the field was indexed as <see cref="Documents.NumericDocValuesField"/>, it simply
+        /// uses <see cref="AtomicReader.GetNumericDocValues(string)"/> to read the values.
+        /// Otherwise, it checks the internal cache for an appropriate entry, and if
+        /// none is found, reads the terms in <paramref name="field"/> as <see cref="int"/>s and returns
+        /// an array of size <c>reader.MaxDoc</c> of the value each document
+        /// has in the given field.
+        /// <para/>
         /// NOTE: this was getInts() in Lucene
         /// </summary>
+        /// <param name="reader">
+        ///          Used to get field values. </param>
+        /// <param name="field">
+        ///          Which field contains the <see cref="int"/>s. </param>
+        /// <param name="parser">
+        ///          Computes <see cref="int"/> for string values. May be <c>null</c> if the
+        ///          requested field was indexed as <see cref="Documents.NumericDocValuesField"/> or
+        ///          <see cref="Documents.Int32Field"/>. </param>
+        /// <param name="setDocsWithField">
+        ///          If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will also be computed and
+        ///          stored in the <see cref="IFieldCache"/>. </param>
+        /// <returns> The values in the given field for each document. </returns>
+        /// <exception cref="IOException">
+        ///           If any error occurs. </exception>
         public virtual FieldCache.Int32s GetInt32s(AtomicReader reader, string field, FieldCache.IInt32Parser parser, bool setDocsWithField)
         {
             NumericDocValues valuesIn = reader.GetNumericDocValues(field);
@@ -936,7 +1009,9 @@ namespace Lucene.Net.Search
                     // DEFAULT_INT32_PARSER/NUMERIC_UTILS_INT32_PARSER:
                     try
                     {
+#pragma warning disable 612, 618
                         return wrapper.GetInt32s(reader, key.field, FieldCache.DEFAULT_INT32_PARSER, setDocsWithField);
+#pragma warning restore 612, 618
                     }
                     catch (System.FormatException)
                     {
@@ -1222,7 +1297,9 @@ namespace Lucene.Net.Search
                     // DEFAULT_SINGLE_PARSER/NUMERIC_UTILS_SINGLE_PARSER:
                     try
                     {
+#pragma warning disable 612, 618
                         return wrapper.GetSingles(reader, key.field, FieldCache.DEFAULT_SINGLE_PARSER, setDocsWithField);
+#pragma warning restore 612, 618
                     }
                     catch (System.FormatException)
                     {
@@ -1405,7 +1482,9 @@ namespace Lucene.Net.Search
                     // DEFAULT_INT64_PARSER/NUMERIC_UTILS_INT64_PARSER:
                     try
                     {
+#pragma warning disable 612, 618
                         return wrapper.GetInt64s(reader, key.field, FieldCache.DEFAULT_INT64_PARSER, setDocsWithField);
+#pragma warning restore 612, 618
                     }
                     catch (System.FormatException)
                     {
@@ -1590,7 +1669,9 @@ namespace Lucene.Net.Search
                     // DEFAULT_DOUBLE_PARSER/NUMERIC_UTILS_DOUBLE_PARSER:
                     try
                     {
+#pragma warning disable 612, 618
                         return wrapper.GetDoubles(reader, key.field, FieldCache.DEFAULT_DOUBLE_PARSER, setDocsWithField);
+#pragma warning restore 612, 618
                     }
                     catch (System.FormatException)
                     {

@@ -26,11 +26,11 @@ namespace Lucene.Net.Analysis.Ar
     /// <para/>
     /// Normalization is defined as:
     /// <list type="bullet">
-    ///     <item> Normalization of hamza with alef seat to a bare alef.</item>
-    ///     <item> Normalization of teh marbuta to heh</item>
-    ///     <item> Normalization of dotless yeh (alef maksura) to yeh.</item>
-    ///     <item> Removal of Arabic diacritics (the harakat)</item>
-    ///     <item> Removal of tatweel (stretching character).</item>
+    ///     <item><description> Normalization of hamza with alef seat to a bare alef.</description></item>
+    ///     <item><description> Normalization of teh marbuta to heh</description></item>
+    ///     <item><description> Normalization of dotless yeh (alef maksura) to yeh.</description></item>
+    ///     <item><description> Removal of Arabic diacritics (the harakat)</description></item>
+    ///     <item><description> Removal of tatweel (stretching character).</description></item>
     /// </list>
     /// </summary>
     public class ArabicNormalizer

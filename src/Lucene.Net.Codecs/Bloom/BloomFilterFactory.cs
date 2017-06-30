@@ -20,27 +20,25 @@ namespace Lucene.Net.Codecs.Bloom
      */
 
     /// <summary>
-    /// Class used to create index-time {@link FuzzySet} appropriately configured for
+    /// Class used to create index-time <see cref="FuzzySet"/> appropriately configured for
     /// each field. Also called to right-size bitsets for serialization.
-    ///
-    ///  @lucene.experimental
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
     public abstract class BloomFilterFactory
     {
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="state">The content to be indexed</param>
-        /// <param name="info">The field requiring a BloomFilter</param>
-        /// <returns>An appropriately sized set or null if no BloomFiltering required</returns>
+
+        /// <param name="state">The content to be indexed.</param>
+        /// <param name="info">The field requiring a BloomFilter.</param>
+        /// <returns>An appropriately sized set or <c>null</c> if no BloomFiltering required.</returns>
         public abstract FuzzySet GetSetForField(SegmentWriteState state, FieldInfo info);
 
         /// <summary>
-        /// Called when downsizing bitsets for serialization
+        /// Called when downsizing bitsets for serialization.
         /// </summary>
-        /// <param name="fieldInfo">The field with sparse set bits</param>
-        /// <param name="initialSet">The bits accumulated</param>
-        /// <returns> null or a hopefully more densely packed, smaller bitset</returns>
+        /// <param name="fieldInfo">The field with sparse set bits.</param>
+        /// <param name="initialSet">The bits accumulated.</param>
+        /// <returns> <c>null</c> or a hopefully more densely packed, smaller bitset.</returns>
         public virtual FuzzySet Downsize(FieldInfo fieldInfo, FuzzySet initialSet)
         {
             // Aim for a bitset size that would have 10% of bits set (so 90% of searches
@@ -50,11 +48,11 @@ namespace Lucene.Net.Codecs.Bloom
         }
 
         /// <summary>
-        /// Used to determine if the given filter has reached saturation and should be retired i.e. not saved any more
+        /// Used to determine if the given filter has reached saturation and should be retired i.e. not saved any more.
         /// </summary>
-        /// <param name="bloomFilter">The bloomFilter being tested</param>
-        /// <param name="fieldInfo">The field with which this filter is associated</param>
-        /// <returns>true if the set has reached saturation and should be retired</returns>
+        /// <param name="bloomFilter">The bloomFilter being tested.</param>
+        /// <param name="fieldInfo">The field with which this filter is associated.</param>
+        /// <returns>true if the set has reached saturation and should be retired.</returns>
         public abstract bool IsSaturated(FuzzySet bloomFilter, FieldInfo fieldInfo);
     }
 }

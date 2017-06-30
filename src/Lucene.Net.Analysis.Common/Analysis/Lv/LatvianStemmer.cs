@@ -25,11 +25,11 @@ namespace Lucene.Net.Analysis.Lv
     /// This is a light version of the algorithm in Karlis Kreslin's PhD thesis
     /// <c>A stemming algorithm for Latvian</c> with the following modifications:
     /// <list type="bullet">
-    ///   <item>Only explicitly stems noun and adjective morphology</item>
-    ///   <item>Stricter length/vowel checks for the resulting stems (verb etc suffix stripping is removed)</item>
-    ///   <item>Removes only the primary inflectional suffixes: case and number for nouns ; 
-    ///       case, number, gender, and definitiveness for adjectives.</item>
-    ///   <item>Palatalization is only handled when a declension II,V,VI noun suffix is removed.</item>
+    ///   <item><description>Only explicitly stems noun and adjective morphology</description></item>
+    ///   <item><description>Stricter length/vowel checks for the resulting stems (verb etc suffix stripping is removed)</description></item>
+    ///   <item><description>Removes only the primary inflectional suffixes: case and number for nouns ; 
+    ///       case, number, gender, and definitiveness for adjectives.</description></item>
+    ///   <item><description>Palatalization is only handled when a declension II,V,VI noun suffix is removed.</description></item>
     /// </list>
     /// </para>
     /// </summary>
@@ -94,10 +94,10 @@ namespace Lucene.Net.Analysis.Lv
         /// <summary>
         /// Most cases are handled except for the ambiguous ones:
         /// <list type="bullet">
-        ///     <item> s -> š</item>
-        ///     <item> t -> š</item>
-        ///     <item> d -> ž</item>
-        ///     <item> z -> ž</item>
+        ///     <item><description> s -> š</description></item>
+        ///     <item><description> t -> š</description></item>
+        ///     <item><description> d -> ž</description></item>
+        ///     <item><description> z -> ž</description></item>
         /// </list>
         /// </summary>
         private int Unpalatalize(char[] s, int len)

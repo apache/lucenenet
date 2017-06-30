@@ -35,18 +35,18 @@ namespace Lucene.Net.Search.Payloads
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// this class is very similar to
-    /// <seealso cref="Lucene.Net.Search.Spans.SpanNearQuery"/> except that it factors
+    /// This class is very similar to
+    /// <see cref="Lucene.Net.Search.Spans.SpanNearQuery"/> except that it factors
     /// in the value of the payloads located at each of the positions where the
-    /// <seealso cref="Lucene.Net.Search.Spans.TermSpans"/> occurs.
-    /// <p/>
+    /// <see cref="Lucene.Net.Search.Spans.TermSpans"/> occurs.
+    /// <para/>
     /// NOTE: In order to take advantage of this with the default scoring implementation
-    /// (<seealso cref="DefaultSimilarity"/>), you must override <seealso cref="DefaultSimilarity#scorePayload(int, int, int, BytesRef)"/>,
+    /// (<see cref="Similarities.DefaultSimilarity"/>), you must override <see cref="Similarities.DefaultSimilarity.ScorePayload(int, int, int, BytesRef)"/>,
     /// which returns 1 by default.
-    /// <p/>
-    /// Payload scores are aggregated using a pluggable <seealso cref="PayloadFunction"/>.
+    /// <para/>
+    /// Payload scores are aggregated using a pluggable <see cref="PayloadFunction"/>.
     /// </summary>
-    /// <seealso cref= Lucene.Net.Search.Similarities.Similarity.SimScorer#computePayloadFactor(int, int, int, BytesRef) </seealso>
+    /// <seealso cref="Lucene.Net.Search.Similarities.Similarity.SimScorer.ComputePayloadFactor(int, int, int, BytesRef)"/>
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
@@ -262,14 +262,14 @@ namespace Lucene.Net.Search.Payloads
             internal BytesRef scratch = new BytesRef();
 
             /// <summary>
-            /// By default, uses the <seealso cref="PayloadFunction"/> to score the payloads, but
+            /// By default, uses the <see cref="PayloadFunction"/> to score the payloads, but
             /// can be overridden to do other things.
             /// </summary>
             /// <param name="payLoads"> The payloads </param>
             /// <param name="start"> The start position of the span being scored </param>
             /// <param name="end"> The end position of the span being scored
             /// </param>
-            /// <seealso cref= spans </seealso>
+            /// <seealso cref="Spans.Spans"/>
             protected virtual void ProcessPayloads(ICollection<byte[]> payLoads, int start, int end)
             {
                 foreach (var thePayload in payLoads)

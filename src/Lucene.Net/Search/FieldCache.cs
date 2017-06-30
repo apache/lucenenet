@@ -37,104 +37,102 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Expert: Maintains caches of term values.
     ///
-    /// <p>Created: May 19, 2004 11:13:14 AM
-    ///
+    /// <para/>Created: May 19, 2004 11:13:14 AM
+    /// <para/>
+    /// @lucene.internal
+    /// <para/>
     /// @since   lucene 1.4 </summary>
-    /// <seealso cref=Lucene.Net.Util.FieldCacheSanityChecker</seealso>
+    /// <seealso cref="Lucene.Net.Util.FieldCacheSanityChecker"/>
     public interface IFieldCache
     {
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is found,
-        ///  reads the terms in <code>field</code> and returns a bit set at the size of
-        ///  <code>reader.maxDoc()</code>, with turned on bits for each docid that
-        ///  does have a value for this field.
+        /// reads the terms in <paramref name="field"/> and returns a bit set at the size of
+        /// <c>reader.MaxDoc</c>, with turned on bits for each docid that
+        /// does have a value for this field.
         /// </summary>
         IBits GetDocsWithField(AtomicReader reader, string field);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is
-        /// found, reads the terms in <code>field</code> as a single byte and returns an array
-        /// of size <code>reader.maxDoc()</code> of the value each document
+        /// found, reads the terms in <paramref name="field"/> as a single <see cref="byte"/> and returns an array
+        /// of size <c>reader.MaxDoc</c> of the value each document
         /// has in the given field. </summary>
         /// <param name="reader">  Used to get field values. </param>
-        /// <param name="field">   Which field contains the single byte values. </param>
-        /// <param name="setDocsWithField">  If true then <seealso cref="#getDocsWithField"/> will
-        ///        also be computed and stored in the FieldCache. </param>
+        /// <param name="field">   Which field contains the single <see cref="byte"/> values. </param>
+        /// <param name="setDocsWithField">  If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will
+        ///        also be computed and stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
-        /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
-        [Obsolete("(4.4) Index as a numeric field using IntField and then use GetInt32s(AtomicReader, string, bool) instead.")]
+        [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
         FieldCache.Bytes GetBytes(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is found,
-        /// reads the terms in <code>field</code> as bytes and returns an array of
-        /// size <code>reader.maxDoc()</code> of the value each document has in the
+        /// reads the terms in <paramref name="field"/> as bytes and returns an array of
+        /// size <c>reader.MaxDoc</c> of the value each document has in the
         /// given field. </summary>
         /// <param name="reader">  Used to get field values. </param>
-        /// <param name="field">   Which field contains the bytes. </param>
-        /// <param name="parser">  Computes byte for string values. </param>
-        /// <param name="setDocsWithField">  If true then <seealso cref="#getDocsWithField"/> will
-        ///        also be computed and stored in the FieldCache. </param>
+        /// <param name="field">   Which field contains the <see cref="byte"/>s. </param>
+        /// <param name="parser">  Computes <see cref="byte"/> for string values. </param>
+        /// <param name="setDocsWithField">  If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will
+        ///        also be computed and stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
-        /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
-        [Obsolete("(4.4) Index as a numeric field using IntField and then use GetInt32s(AtomicReader, string, bool) instead.")]
+        [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
         FieldCache.Bytes GetBytes(AtomicReader reader, string field, FieldCache.IByteParser parser, bool setDocsWithField);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is
-        /// found, reads the terms in <code>field</code> as shorts and returns an array
-        /// of size <code>reader.maxDoc()</code> of the value each document
+        /// found, reads the terms in <paramref name="field"/> as <see cref="short"/>s and returns an array
+        /// of size <c>reader.MaxDoc</c> of the value each document
         /// has in the given field. 
         /// <para/>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
         /// <param name="reader">  Used to get field values. </param>
-        /// <param name="field">   Which field contains the shorts. </param>
-        /// <param name="setDocsWithField">  If true then <seealso cref="#getDocsWithField"/> will
-        ///        also be computed and stored in the FieldCache. </param>
+        /// <param name="field">   Which field contains the <see cref="short"/>s. </param>
+        /// <param name="setDocsWithField">  If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will
+        ///        also be computed and stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
-        /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
         [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
         FieldCache.Int16s GetInt16s(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is found,
-        /// reads the terms in <code>field</code> as shorts and returns an array of
-        /// size <code>reader.maxDoc()</code> of the value each document has in the
+        /// reads the terms in <paramref name="field"/> as shorts and returns an array of
+        /// size <c>reader.MaxDoc</c> of the value each document has in the
         /// given field. 
         /// <para/>
         /// NOTE: this was getShorts() in Lucene
         /// </summary>
         /// <param name="reader">  Used to get field values. </param>
-        /// <param name="field">   Which field contains the shorts. </param>
-        /// <param name="parser">  Computes short for string values. </param>
-        /// <param name="setDocsWithField">  If true then <seealso cref="#getDocsWithField"/> will
-        ///        also be computed and stored in the FieldCache. </param>
+        /// <param name="field">   Which field contains the <see cref="short"/>s. </param>
+        /// <param name="parser">  Computes <see cref="short"/> for string values. </param>
+        /// <param name="setDocsWithField">  If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will
+        ///        also be computed and stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
-        /// @deprecated (4.4) Index as a numeric field using <seealso cref="IntField"/> and then use <seealso cref="#getInts(AtomicReader, String, boolean)"/> instead.
         [Obsolete("(4.4) Index as a numeric field using Int32Field and then use GetInt32s(AtomicReader, string, bool) instead.")]
         FieldCache.Int16s GetInt16s(AtomicReader reader, string field, FieldCache.IInt16Parser parser, bool setDocsWithField);
 
         /// <summary>
-        /// Returns an <seealso cref="FieldCache.Int32s"/> over the values found in documents in the given
+        /// Returns an <see cref="FieldCache.Int32s"/> over the values found in documents in the given
         /// field.
         /// <para/>
         /// NOTE: this was getInts() in Lucene
         /// </summary>
-        /// <seealso cref= #getInts(AtomicReader, String, IntParser, boolean) </seealso>
+        /// <seealso cref="GetInt32s(AtomicReader, string, FieldCache.IInt32Parser, bool)"/>
         FieldCache.Int32s GetInt32s(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
-        /// Returns an <seealso cref="FieldCache.Int32s"/> over the values found in documents in the given
-        /// field. If the field was indexed as <seealso cref="NumericDocValuesField"/>, it simply
-        /// uses <seealso cref="AtomicReader#getNumericDocValues(String)"/> to read the values.
+        /// Returns an <see cref="FieldCache.Int32s"/> over the values found in documents in the given
+        /// field. If the field was indexed as <see cref="Documents.NumericDocValuesField"/>, it simply
+        /// uses <see cref="AtomicReader.GetNumericDocValues(string)"/> to read the values.
         /// Otherwise, it checks the internal cache for an appropriate entry, and if
-        /// none is found, reads the terms in <code>field</code> as ints and returns
-        /// an array of size <code>reader.maxDoc()</code> of the value each document
+        /// none is found, reads the terms in <paramref name="field"/> as <see cref="int"/>s and returns
+        /// an array of size <c>reader.MaxDoc</c> of the value each document
         /// has in the given field.
         /// <para/>
         /// NOTE: this was getInts() in Lucene
@@ -142,35 +140,35 @@ namespace Lucene.Net.Search
         /// <param name="reader">
         ///          Used to get field values. </param>
         /// <param name="field">
-        ///          Which field contains the longs. </param>
+        ///          Which field contains the <see cref="int"/>s. </param>
         /// <param name="parser">
-        ///          Computes int for string values. May be {@code null} if the
-        ///          requested field was indexed as <seealso cref="NumericDocValuesField"/> or
-        ///          <seealso cref="IntField"/>. </param>
+        ///          Computes <see cref="int"/> for string values. May be <c>null</c> if the
+        ///          requested field was indexed as <see cref="Documents.NumericDocValuesField"/> or
+        ///          <see cref="Documents.Int32Field"/>. </param>
         /// <param name="setDocsWithField">
-        ///          If true then <seealso cref="#getDocsWithField"/> will also be computed and
-        ///          stored in the FieldCache. </param>
+        ///          If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will also be computed and
+        ///          stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
         FieldCache.Int32s GetInt32s(AtomicReader reader, string field, FieldCache.IInt32Parser parser, bool setDocsWithField);
 
         /// <summary>
-        /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
+        /// Returns a <see cref="FieldCache.Singles"/> over the values found in documents in the given
         /// field.
         /// <para/>
         /// NOTE: this was getFloats() in Lucene
         /// </summary>
-        /// <seealso cref= #getFloats(AtomicReader, String, FloatParser, boolean) </seealso>
+        /// <seealso cref="GetSingles(AtomicReader, string, FieldCache.ISingleParser, bool)"/>
         FieldCache.Singles GetSingles(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
-        /// Returns a <seealso cref="Floats"/> over the values found in documents in the given
-        /// field. If the field was indexed as <seealso cref="NumericDocValuesField"/>, it simply
-        /// uses <seealso cref="AtomicReader#getNumericDocValues(String)"/> to read the values.
+        /// Returns a <see cref="FieldCache.Singles"/> over the values found in documents in the given
+        /// field. If the field was indexed as <see cref="Documents.NumericDocValuesField"/>, it simply
+        /// uses <see cref="AtomicReader.GetNumericDocValues(string)"/> to read the values.
         /// Otherwise, it checks the internal cache for an appropriate entry, and if
-        /// none is found, reads the terms in <code>field</code> as floats and returns
-        /// an array of size <code>reader.maxDoc()</code> of the value each document
+        /// none is found, reads the terms in <paramref name="field"/> as <see cref="float"/>s and returns
+        /// an array of size <c>reader.MaxDoc</c> of the value each document
         /// has in the given field.
         /// <para/>
         /// NOTE: this was getFloats() in Lucene
@@ -178,35 +176,35 @@ namespace Lucene.Net.Search
         /// <param name="reader">
         ///          Used to get field values. </param>
         /// <param name="field">
-        ///          Which field contains the floats. </param>
+        ///          Which field contains the <see cref="float"/>s. </param>
         /// <param name="parser">
-        ///          Computes float for string values. May be {@code null} if the
-        ///          requested field was indexed as <seealso cref="NumericDocValuesField"/> or
-        ///          <seealso cref="FloatField"/>. </param>
+        ///          Computes <see cref="float"/> for string values. May be <c>null</c> if the
+        ///          requested field was indexed as <see cref="Documents.NumericDocValuesField"/> or
+        ///          <see cref="Documents.SingleField"/>. </param>
         /// <param name="setDocsWithField">
-        ///          If true then <seealso cref="#getDocsWithField"/> will also be computed and
-        ///          stored in the FieldCache. </param>
+        ///          If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will also be computed and
+        ///          stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
         FieldCache.Singles GetSingles(AtomicReader reader, string field, FieldCache.ISingleParser parser, bool setDocsWithField);
 
         /// <summary>
-        /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
+        /// Returns a <see cref="FieldCache.Int64s"/> over the values found in documents in the given
         /// field.
         /// <para/>
         /// NOTE: this was getLongs() in Lucene
         /// </summary>
-        /// <seealso cref= #getLongs(AtomicReader, String, LongParser, boolean) </seealso>
+        /// <seealso cref="GetInt64s(AtomicReader, string, FieldCache.IInt64Parser, bool)"/>
         FieldCache.Int64s GetInt64s(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
-        /// Returns a <seealso cref="Longs"/> over the values found in documents in the given
-        /// field. If the field was indexed as <seealso cref="NumericDocValuesField"/>, it simply
-        /// uses <seealso cref="AtomicReader#getNumericDocValues(String)"/> to read the values.
+        /// Returns a <see cref="FieldCache.Int64s"/> over the values found in documents in the given
+        /// field. If the field was indexed as <see cref="Documents.NumericDocValuesField"/>, it simply
+        /// uses <see cref="AtomicReader.GetNumericDocValues(string)"/> to read the values.
         /// Otherwise, it checks the internal cache for an appropriate entry, and if
-        /// none is found, reads the terms in <code>field</code> as longs and returns
-        /// an array of size <code>reader.maxDoc()</code> of the value each document
+        /// none is found, reads the terms in <paramref name="field"/> as <see cref="long"/>s and returns
+        /// an array of size <c>reader.MaxDoc</c> of the value each document
         /// has in the given field.
         /// <para/>
         /// NOTE: this was getLongs() in Lucene
@@ -214,46 +212,46 @@ namespace Lucene.Net.Search
         /// <param name="reader">
         ///          Used to get field values. </param>
         /// <param name="field">
-        ///          Which field contains the longs. </param>
+        ///          Which field contains the <see cref="long"/>s. </param>
         /// <param name="parser">
-        ///          Computes long for string values. May be {@code null} if the
-        ///          requested field was indexed as <seealso cref="NumericDocValuesField"/> or
-        ///          <seealso cref="LongField"/>. </param>
+        ///          Computes <see cref="long"/> for string values. May be <c>null</c> if the
+        ///          requested field was indexed as <see cref="Documents.NumericDocValuesField"/> or
+        ///          <see cref="Documents.Int64Field"/>. </param>
         /// <param name="setDocsWithField">
-        ///          If true then <seealso cref="#getDocsWithField"/> will also be computed and
-        ///          stored in the FieldCache. </param>
+        ///          If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will also be computed and
+        ///          stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
         FieldCache.Int64s GetInt64s(AtomicReader reader, string field, FieldCache.IInt64Parser parser, bool setDocsWithField);
 
         /// <summary>
-        /// Returns a <seealso cref="Doubles"/> over the values found in documents in the given
+        /// Returns a <see cref="FieldCache.Doubles"/> over the values found in documents in the given
         /// field.
         /// </summary>
-        /// <seealso cref= #getDoubles(AtomicReader, String, DoubleParser, boolean) </seealso>
+        /// <seealso cref="GetDoubles(AtomicReader, string, FieldCache.IDoubleParser, bool)"/>
         FieldCache.Doubles GetDoubles(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
-        /// Returns a <seealso cref="Doubles"/> over the values found in documents in the given
-        /// field. If the field was indexed as <seealso cref="NumericDocValuesField"/>, it simply
-        /// uses <seealso cref="AtomicReader#getNumericDocValues(String)"/> to read the values.
+        /// Returns a <see cref="FieldCache.Doubles"/> over the values found in documents in the given
+        /// field. If the field was indexed as <see cref="Documents.NumericDocValuesField"/>, it simply
+        /// uses <see cref="AtomicReader.GetNumericDocValues(string)"/> to read the values.
         /// Otherwise, it checks the internal cache for an appropriate entry, and if
-        /// none is found, reads the terms in <code>field</code> as doubles and returns
-        /// an array of size <code>reader.maxDoc()</code> of the value each document
+        /// none is found, reads the terms in <paramref name="field"/> as <see cref="double"/>s and returns
+        /// an array of size <c>reader.MaxDoc</c> of the value each document
         /// has in the given field.
         /// </summary>
         /// <param name="reader">
         ///          Used to get field values. </param>
         /// <param name="field">
-        ///          Which field contains the longs. </param>
+        ///          Which field contains the <see cref="double"/>s. </param>
         /// <param name="parser">
-        ///          Computes double for string values. May be {@code null} if the
-        ///          requested field was indexed as <seealso cref="NumericDocValuesField"/> or
-        ///          <seealso cref="DoubleField"/>. </param>
+        ///          Computes <see cref="double"/> for string values. May be <c>null</c> if the
+        ///          requested field was indexed as <see cref="Documents.NumericDocValuesField"/> or
+        ///          <see cref="Documents.DoubleField"/>. </param>
         /// <param name="setDocsWithField">
-        ///          If true then <seealso cref="#getDocsWithField"/> will also be computed and
-        ///          stored in the FieldCache. </param>
+        ///          If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will also be computed and
+        ///          stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">
         ///           If any error occurs. </exception>
@@ -261,32 +259,32 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none
-        /// is found, reads the term values in <code>field</code>
-        /// and returns a <seealso cref="BinaryDocValues"/> instance, providing a
-        /// method to retrieve the term (as a BytesRef) per document. </summary>
+        /// is found, reads the term values in <paramref name="field"/>
+        /// and returns a <see cref="BinaryDocValues"/> instance, providing a
+        /// method to retrieve the term (as a <see cref="BytesRef"/>) per document. </summary>
         /// <param name="reader">  Used to get field values. </param>
         /// <param name="field">   Which field contains the strings. </param>
-        /// <param name="setDocsWithField">  If true then <seealso cref="#getDocsWithField"/> will
-        ///        also be computed and stored in the FieldCache. </param>
+        /// <param name="setDocsWithField">  If true then <see cref="GetDocsWithField(AtomicReader, string)"/> will
+        ///        also be computed and stored in the <see cref="IFieldCache"/>. </param>
         /// <returns> The values in the given field for each document. </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         BinaryDocValues GetTerms(AtomicReader reader, string field, bool setDocsWithField);
 
         /// <summary>
-        /// Expert: just like <seealso cref="#getTerms(AtomicReader,String,boolean)"/>,
-        ///  but you can specify whether more RAM should be consumed in exchange for
-        ///  faster lookups (default is "true").  Note that the
-        ///  first call for a given reader and field "wins",
-        ///  subsequent calls will share the same cache entry.
+        /// Expert: just like <see cref="GetTerms(AtomicReader, string, bool)"/>,
+        /// but you can specify whether more RAM should be consumed in exchange for
+        /// faster lookups (default is "true").  Note that the
+        /// first call for a given reader and field "wins",
+        /// subsequent calls will share the same cache entry.
         /// </summary>
         BinaryDocValues GetTerms(AtomicReader reader, string field, bool setDocsWithField, float acceptableOverheadRatio);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none
-        /// is found, reads the term values in <code>field</code>
-        /// and returns a <seealso cref="SortedDocValues"/> instance,
+        /// is found, reads the term values in <paramref name="field"/>
+        /// and returns a <see cref="SortedDocValues"/> instance,
         /// providing methods to retrieve sort ordinals and terms
-        /// (as a ByteRef) per document. </summary>
+        /// (as a <see cref="BytesRef"/>) per document. </summary>
         /// <param name="reader">  Used to get field values. </param>
         /// <param name="field">   Which field contains the strings. </param>
         /// <returns> The values in the given field for each document. </returns>
@@ -294,61 +292,57 @@ namespace Lucene.Net.Search
         SortedDocValues GetTermsIndex(AtomicReader reader, string field);
 
         /// <summary>
-        /// Expert: just like {@link
-        ///  #getTermsIndex(AtomicReader,String)}, but you can specify
-        ///  whether more RAM should be consumed in exchange for
-        ///  faster lookups (default is "true").  Note that the
-        ///  first call for a given reader and field "wins",
-        ///  subsequent calls will share the same cache entry.
+        /// Expert: just like 
+        /// <see cref="GetTermsIndex(AtomicReader, string)"/>, but you can specify
+        /// whether more RAM should be consumed in exchange for
+        /// faster lookups (default is "true").  Note that the
+        /// first call for a given reader and field "wins",
+        /// subsequent calls will share the same cache entry.
         /// </summary>
         SortedDocValues GetTermsIndex(AtomicReader reader, string field, float acceptableOverheadRatio);
 
         /// <summary>
         /// Checks the internal cache for an appropriate entry, and if none is found, reads the term values
-        /// in <code>field</code> and returns a <seealso cref="DocTermOrds"/> instance, providing a method to retrieve
+        /// in <paramref name="field"/> and returns a <see cref="SortedSetDocValues"/> instance, providing a method to retrieve
         /// the terms (as ords) per document.
         /// </summary>
-        /// <param name="reader">  Used to build a <seealso cref="DocTermOrds"/> instance </param>
+        /// <param name="reader">  Used to build a <see cref="SortedSetDocValues"/> instance </param>
         /// <param name="field">   Which field contains the strings. </param>
-        /// <returns> a <seealso cref="DocTermOrds"/> instance </returns>
+        /// <returns> a <see cref="SortedSetDocValues"/> instance </returns>
         /// <exception cref="IOException">  If any error occurs. </exception>
         SortedSetDocValues GetDocTermOrds(AtomicReader reader, string field);
 
-        /// <summary>
-        /// EXPERT: A unique Identifier/Description for each item in the FieldCache.
-        /// Can be useful for logging/debugging.
-        /// @lucene.experimental
-        /// </summary>
+        // LUCENENET specific CacheEntry moved to FieldCache static class
 
         /// <summary>
-        /// EXPERT: Generates an array of CacheEntry objects representing all items
-        /// currently in the FieldCache.
-        /// <p>
-        /// NOTE: These CacheEntry objects maintain a strong reference to the
-        /// Cached Values.  Maintaining references to a CacheEntry the AtomicIndexReader
+        /// EXPERT: Generates an array of <see cref="FieldCache.CacheEntry"/> objects representing all items
+        /// currently in the <see cref="IFieldCache"/>.
+        /// <para>
+        /// NOTE: These <see cref="FieldCache.CacheEntry"/> objects maintain a strong reference to the
+        /// Cached Values.  Maintaining references to a <see cref="FieldCache.CacheEntry"/> the <see cref="AtomicReader"/>
         /// associated with it has garbage collected will prevent the Value itself
-        /// from being garbage collected when the Cache drops the WeakReference.
-        /// </p>
+        /// from being garbage collected when the Cache drops the <see cref="WeakReference"/>.
+        /// </para>
         /// @lucene.experimental
         /// </summary>
         FieldCache.CacheEntry[] GetCacheEntries();
 
         /// <summary>
-        /// <p>
+        /// <para>
         /// EXPERT: Instructs the FieldCache to forcibly expunge all entries
-        /// from the underlying caches.  this is intended only to be used for
+        /// from the underlying caches.  This is intended only to be used for
         /// test methods as a way to ensure a known base state of the Cache
-        /// (with out needing to rely on GC to free WeakReferences).
+        /// (with out needing to rely on GC to free <see cref="WeakReference"/>s).
         /// It should not be relied on for "Cache maintenance" in general
         /// application code.
-        /// </p>
+        /// </para>
         /// @lucene.experimental
         /// </summary>
         void PurgeAllCaches();
 
         /// <summary>
         /// Expert: drops all cache entries associated with this
-        /// reader <seealso cref="IndexReader#getCoreCacheKey"/>.  NOTE: this cache key must
+        /// reader <see cref="Index.IndexReader.CoreCacheKey"/>.  NOTE: this cache key must
         /// precisely match the reader that the cache entry is
         /// keyed on. If you pass a top-level reader, it usually
         /// will have no effect as Lucene now caches at the segment
@@ -357,32 +351,40 @@ namespace Lucene.Net.Search
         void PurgeByCacheKey(object coreCacheKey);
 
         /// <summary>
-        /// If non-null, FieldCacheImpl will warn whenever
+        /// If non-null, <see cref="FieldCacheImpl"/> will warn whenever
         /// entries are created that are not sane according to
-        /// <seealso cref="Lucene.Net.Util.FieldCacheSanityChecker"/>.
+        /// <see cref="Lucene.Net.Util.FieldCacheSanityChecker"/>.
         /// </summary>
         TextWriter InfoStream { set; get; }
     }
 
-    // LUCENENET TODO: Copy documentation from Lucene
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
     public static class FieldCache 
     {
+        /// <summary>
+        /// Field values as 8-bit signed bytes
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
         public abstract class Bytes
         {
+            /// <summary>
+            /// Return a single Byte representation of this field's value.
+            /// </summary>
             public abstract byte Get(int docID);
 
+            /// <summary>
+            /// Zero value for every document
+            /// </summary>
             public static readonly Bytes EMPTY = new EmptyBytes();
 
 #if FEATURE_SERIALIZABLE
             [Serializable]
 #endif
-            public sealed class EmptyBytes : Bytes
+            private sealed class EmptyBytes : Bytes
             {
                 public override byte Get(int docID)
                 {
@@ -392,6 +394,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// Field values as 16-bit signed shorts
+        /// <para/>
         /// NOTE: This was Shorts in Lucene
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -399,17 +403,20 @@ namespace Lucene.Net.Search
 #endif
         public abstract class Int16s
         {
+            /// <summary>
+            /// Return a <see cref="short"/> representation of this field's value.
+            /// </summary>
             public abstract short Get(int docID);
 
+            /// <summary>
+            /// Zero value for every document
+            /// </summary>
             public static readonly Int16s EMPTY = new EmptyInt16s();
 
-            /// <summary>
-            /// NOTE: This was EmptyShorts in Lucene
-            /// </summary>
 #if FEATURE_SERIALIZABLE
             [Serializable]
 #endif
-            public sealed class EmptyInt16s : Int16s
+            private sealed class EmptyInt16s : Int16s
             {
                 public override short Get(int docID)
                 {
@@ -419,6 +426,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// Field values as 32-bit signed integers
+        /// <para/>
         /// NOTE: This was Ints in Lucene
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -426,17 +435,20 @@ namespace Lucene.Net.Search
 #endif
         public abstract class Int32s
         {
+            /// <summary>
+            /// Return an <see cref="int"/> representation of this field's value.
+            /// </summary>
             public abstract int Get(int docID);
 
+            /// <summary>
+            /// Zero value for every document
+            /// </summary>
             public static readonly Int32s EMPTY = new EmptyInt32s();
 
-            /// <summary>
-            /// NOTE: This was EmptyInts in Lucene
-            /// </summary>
 #if FEATURE_SERIALIZABLE
             [Serializable]
 #endif
-            public sealed class EmptyInt32s : Int32s
+            private sealed class EmptyInt32s : Int32s
             {
                 public override int Get(int docID)
                 {
@@ -446,6 +458,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// Field values as 64-bit signed long integers
+        /// <para/>
         /// NOTE: This was Longs in Lucene
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -453,17 +467,20 @@ namespace Lucene.Net.Search
 #endif
         public abstract class Int64s
         {
+            /// <summary>
+            /// Return an <see cref="long"/> representation of this field's value.
+            /// </summary>
             public abstract long Get(int docID);
 
+            /// <summary>
+            /// Zero value for every document
+            /// </summary>
             public static readonly Int64s EMPTY = new EmptyInt64s();
 
-            /// <summary>
-            /// NOTE: This was EmptyLongs in Lucene
-            /// </summary>
 #if FEATURE_SERIALIZABLE
             [Serializable]
 #endif
-            public sealed class EmptyInt64s : Int64s
+            private sealed class EmptyInt64s : Int64s
             {
                 public override long Get(int docID)
                 {
@@ -473,6 +490,8 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// Field values as 32-bit floats
+        /// <para/>
         /// NOTE: This was Floats in Lucene
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -480,17 +499,20 @@ namespace Lucene.Net.Search
 #endif
         public abstract class Singles
         {
+            /// <summary>
+            /// Return an <see cref="float"/> representation of this field's value.
+            /// </summary>
             public abstract float Get(int docID);
 
+            /// <summary>
+            /// Zero value for every document
+            /// </summary>
             public static readonly Singles EMPTY = new EmptySingles();
 
-            /// <summary>
-            /// NOTE: This was EmptySingles in Lucene
-            /// </summary>
 #if FEATURE_SERIALIZABLE
             [Serializable]
 #endif
-            public sealed class EmptySingles : Singles
+            private sealed class EmptySingles : Singles
             {
                 public override float Get(int docID)
                 {
@@ -499,19 +521,29 @@ namespace Lucene.Net.Search
             }
         }
 
+        /// <summary>
+        /// Field values as 64-bit doubles
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
         public abstract class Doubles
         {
+            /// <summary>
+            /// Return a <see cref="double"/> representation of this field's value.
+            /// </summary>
+            /// <param name="docID"></param>
             public abstract double Get(int docID);
 
+            /// <summary>
+            /// Zero value for every document
+            /// </summary>
             public static readonly Doubles EMPTY = new EmptyDoubles();
 
 #if FEATURE_SERIALIZABLE
             [Serializable]
 #endif
-            public sealed class EmptyDoubles : Doubles
+            private sealed class EmptyDoubles : Doubles
             {
                 public override double Get(int docID)
                 {
@@ -520,6 +552,9 @@ namespace Lucene.Net.Search
             }
         }
 
+        /// <summary>
+        /// Placeholder indicating creation of this cache is currently in-progress.
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -528,73 +563,129 @@ namespace Lucene.Net.Search
             internal object Value { get; set; }
         }
 
+        /// <summary>
+        /// Marker interface as super-interface to all parsers. It
+        /// is used to specify a custom parser to
+        /// <see cref="SortField.SortField(string, IParser)"/>.
+        /// </summary>
         public interface IParser
         {
+            /// <summary>
+            /// Pulls a <see cref="Index.TermsEnum"/> from the given <see cref="Index.Terms"/>. This method allows certain parsers
+            /// to filter the actual <see cref="Index.TermsEnum"/> before the field cache is filled.
+            /// </summary>
+            /// <param name="terms">The <see cref="Index.Terms"/> instance to create the <see cref="Index.TermsEnum"/> from.</param>
+            /// <returns>A possibly filtered <see cref="Index.TermsEnum"/> instance, this method must not return <c>null</c>.</returns>
+            /// <exception cref="System.IO.IOException">If an <see cref="IOException"/> occurs</exception>
             TermsEnum TermsEnum(Terms terms);
         }
 
+        /// <summary>
+        /// Interface to parse bytes from document fields.
+        /// </summary>
+        /// <seealso cref="IFieldCache.GetBytes(AtomicReader, string, IByteParser, bool)"/>
+        [Obsolete]
         public interface IByteParser : IParser
         {
+            /// <summary>
+            /// Return a single Byte representation of this field's value.
+            /// </summary>
             byte ParseByte(BytesRef term);
         }
 
         /// <summary>
+        /// Interface to parse <see cref="short"/>s from document fields.
+        /// <para/>
         /// NOTE: This was ShortParser in Lucene
         /// </summary>
+        /// <seealso cref="IFieldCache.GetInt16s(AtomicReader, string, IInt16Parser, bool)"/>
+        [Obsolete]
         public interface IInt16Parser : IParser
         {
             /// <summary>
+            /// Return a <see cref="short"/> representation of this field's value.
+            /// <para/>
             /// NOTE: This was parseShort() in Lucene
             /// </summary>
             short ParseInt16(BytesRef term);
         }
 
         /// <summary>
+        /// Interface to parse <see cref="int"/>s from document fields.
+        /// <para/>
         /// NOTE: This was IntParser in Lucene
         /// </summary>
+        /// <seealso cref="IFieldCache.GetInt32s(AtomicReader, string, IInt32Parser, bool)"/>
         public interface IInt32Parser : IParser
         {
             /// <summary>
+            /// Return an <see cref="int"/> representation of this field's value.
+            /// <para/>
             /// NOTE: This was parseInt() in Lucene
             /// </summary>
             int ParseInt32(BytesRef term);
         }
 
         /// <summary>
+        /// Interface to parse <see cref="float"/>s from document fields.
+        /// <para/>
         /// NOTE: This was FloatParser in Lucene
         /// </summary>
         public interface ISingleParser : IParser
         {
             /// <summary>
+            /// Return an <see cref="float"/> representation of this field's value.
+            /// <para/>
             /// NOTE: This was parseFloat() in Lucene
             /// </summary>
             float ParseSingle(BytesRef term);
         }
 
         /// <summary>
+        /// Interface to parse <see cref="long"/> from document fields.
+        /// <para/>
         /// NOTE: This was LongParser in Lucene
         /// </summary>
+        /// <seealso cref="IFieldCache.GetInt64s(AtomicReader, string, IInt64Parser, bool)"/>
         public interface IInt64Parser : IParser
         {
             /// <summary>
+            /// Return a <see cref="long"/> representation of this field's value.
+            /// <para/>
             /// NOTE: This was parseLong() in Lucene
             /// </summary>
             long ParseInt64(BytesRef term);
         }
 
+        /// <summary>
+        /// Interface to parse <see cref="double"/>s from document fields.
+        /// </summary>
+        /// <seealso cref="IFieldCache.GetDoubles(AtomicReader, string, IDoubleParser, bool)"/>
         public interface IDoubleParser : IParser
         {
+            /// <summary>
+            /// Return an <see cref="double"/> representation of this field's value.
+            /// </summary>
             double ParseDouble(BytesRef term);
         }
 
+        /// <summary>
+        /// Expert: The cache used internally by sorting and range query classes.
+        /// </summary>
         public static IFieldCache DEFAULT = new FieldCacheImpl();
 
-        public static readonly IByteParser DEFAULT_BYTE_PARSER = new AnonymousByteParser();
+        /// <summary>
+        /// The default parser for byte values, which are encoded by <see cref="sbyte.ToString(string, IFormatProvider)"/>
+        /// using <see cref="CultureInfo.InvariantCulture"/>.
+        /// </summary>
+        [Obsolete]
+        public static readonly IByteParser DEFAULT_BYTE_PARSER = new ByteParser();
 
+        [Obsolete]
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousByteParser : IByteParser
+        private sealed class ByteParser : IByteParser
         {
             public byte ParseByte(BytesRef term)
             {
@@ -617,14 +708,19 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// The default parser for <see cref="short"/> values, which are encoded by <see cref="short.ToString(string, IFormatProvider)"/>
+        /// using <see cref="CultureInfo.InvariantCulture"/>.
+        /// <para/>
         /// NOTE: This was DEFAULT_SHORT_PARSER in Lucene
         /// </summary>
-        public static readonly IInt16Parser DEFAULT_INT16_PARSER = new AnonymousInt16Parser();
+        [Obsolete]
+        public static readonly IInt16Parser DEFAULT_INT16_PARSER = new Int16Parser();
 
+        [Obsolete]
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousInt16Parser : IInt16Parser
+        private sealed class Int16Parser : IInt16Parser
         {
             /// <summary>
             /// NOTE: This was parseShort() in Lucene
@@ -650,14 +746,19 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// The default parser for <see cref="int"/> values, which are encoded by <see cref="int.ToString(string, IFormatProvider)"/>
+        /// using <see cref="CultureInfo.InvariantCulture"/>.
+        /// <para/>
         /// NOTE: This was DEFAULT_INT_PARSER in Lucene
         /// </summary>
-        public static readonly IInt32Parser DEFAULT_INT32_PARSER = new AnonymousInt32Parser();
+        [Obsolete]
+        public static readonly IInt32Parser DEFAULT_INT32_PARSER = new Int32Parser();
 
+        [Obsolete]
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousInt32Parser : IInt32Parser
+        private sealed class Int32Parser : IInt32Parser
         {
             /// <summary>
             /// NOTE: This was parseInt() in Lucene
@@ -683,14 +784,19 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// The default parser for <see cref="float"/> values, which are encoded by <see cref="float.ToString(string, IFormatProvider)"/>
+        /// using <see cref="CultureInfo.InvariantCulture"/>.
+        /// <para/>
         /// NOTE: This was DEFAULT_FLOAT_PARSER in Lucene
         /// </summary>
-        public static readonly ISingleParser DEFAULT_SINGLE_PARSER = new AnonymousSingleParser();
+        [Obsolete]
+        public static readonly ISingleParser DEFAULT_SINGLE_PARSER = new SingleParser();
 
+        [Obsolete]
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousSingleParser : ISingleParser
+        private sealed class SingleParser : ISingleParser
         {
             /// <summary>
             /// NOTE: This was parseFloat() in Lucene
@@ -723,14 +829,19 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// The default parser for <see cref="long"/> values, which are encoded by <see cref="long.ToString(string, IFormatProvider)"/>
+        /// using <see cref="CultureInfo.InvariantCulture"/>.
+        /// <para/>
         /// NOTE: This was DEFAULT_LONG_PARSER in Lucene
         /// </summary>
-        public static readonly IInt64Parser DEFAULT_INT64_PARSER = new AnonymousInt64Parser();
+        [Obsolete]
+        public static readonly IInt64Parser DEFAULT_INT64_PARSER = new Int64Parser();
 
+        [Obsolete]
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousInt64Parser : IInt64Parser
+        private sealed class Int64Parser : IInt64Parser
         {
             /// <summary>
             /// NOTE: This was parseLong() in Lucene
@@ -755,12 +866,18 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IDoubleParser DEFAULT_DOUBLE_PARSER = new AnonymousDoubleParser();
+        /// <summary>
+        /// The default parser for <see cref="double"/> values, which are encoded by <see cref="double.ToString(string, IFormatProvider)"/>
+        /// using <see cref="CultureInfo.InvariantCulture"/>.
+        /// </summary>
+        [Obsolete]
+        public static readonly IDoubleParser DEFAULT_DOUBLE_PARSER = new DoubleParser();
 
+        [Obsolete]
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousDoubleParser : IDoubleParser
+        private sealed class DoubleParser : IDoubleParser
         {
             public double ParseDouble(BytesRef term)
             {
@@ -794,14 +911,17 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// A parser instance for <see cref="int"/> values encoded by <see cref="NumericUtils"/>, e.g. when indexed
+        /// via <see cref="Documents.Int32Field"/>/<see cref="Analysis.NumericTokenStream"/>.
+        /// <para/>
         /// NOTE: This was NUMERIC_UTILS_INT_PARSER in Lucene
         /// </summary>
-        public static readonly IInt32Parser NUMERIC_UTILS_INT32_PARSER = new AnonymousNumericUtilsInt32Parser();
+        public static readonly IInt32Parser NUMERIC_UTILS_INT32_PARSER = new NumericUtilsInt32Parser();
 
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousNumericUtilsInt32Parser : IInt32Parser
+        private sealed class NumericUtilsInt32Parser : IInt32Parser
         {
             /// <summary>
             /// NOTE: This was parseInt() in Lucene
@@ -823,14 +943,17 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// A parser instance for <see cref="float"/> values encoded with <see cref="NumericUtils"/>, e.g. when indexed
+        /// via <see cref="Documents.SingleField"/>/<see cref="Analysis.NumericTokenStream"/>.
+        /// <para/>
         /// NOTE: This was NUMERIC_UTILS_FLOAT_PARSER in Lucene
         /// </summary>
-        public static readonly ISingleParser NUMERIC_UTILS_SINGLE_PARSER = new AnonymousNumericUtilsSingleParser();
+        public static readonly ISingleParser NUMERIC_UTILS_SINGLE_PARSER = new NumericUtilsSingleParser();
 
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousNumericUtilsSingleParser : ISingleParser
+        private sealed class NumericUtilsSingleParser : ISingleParser
         {
             /// <summary>
             /// NOTE: This was parseFloat() in Lucene
@@ -852,14 +975,17 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
+        /// A parser instance for <see cref="long"/> values encoded by <see cref="NumericUtils"/>, e.g. when indexed
+        /// via <see cref="Documents.Int64Field"/>/<see cref="Analysis.NumericTokenStream"/>.
+        /// <para/>
         /// NOTE: This was NUMERIC_UTILS_LONG_PARSER in Lucene
         /// </summary>
-        public static readonly IInt64Parser NUMERIC_UTILS_INT64_PARSER = new AnonymousNumericUtilsInt64Parser();
+        public static readonly IInt64Parser NUMERIC_UTILS_INT64_PARSER = new NumericUtilsInt64Parser();
 
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousNumericUtilsInt64Parser : IInt64Parser
+        private sealed class NumericUtilsInt64Parser : IInt64Parser
         {
             /// <summary>
             /// NOTE: This was parseLong() in Lucene
@@ -880,12 +1006,16 @@ namespace Lucene.Net.Search
             }
         }
 
-        public static readonly IDoubleParser NUMERIC_UTILS_DOUBLE_PARSER = new AnonymousNumericUtilsDoubleParser();
+        /// <summary>
+        /// A parser instance for <see cref="double"/> values encoded with <see cref="NumericUtils"/>, e.g. when indexed
+        /// via <see cref="Documents.DoubleField"/>/<see cref="Analysis.NumericTokenStream"/>.
+        /// </summary>
+        public static readonly IDoubleParser NUMERIC_UTILS_DOUBLE_PARSER = new NumericUtilsDoubleParser();
 
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
-        private sealed class AnonymousNumericUtilsDoubleParser : IDoubleParser
+        private sealed class NumericUtilsDoubleParser : IDoubleParser
         {
             public double ParseDouble(BytesRef term)
             {
@@ -904,6 +1034,12 @@ namespace Lucene.Net.Search
         }
 
         // .NET Port: skipping down to about line 681 of java version. The actual interface methods of FieldCache are in IFieldCache below.
+        /// <summary>
+        /// EXPERT: A unique Identifier/Description for each item in the <see cref="IFieldCache"/>. 
+        /// Can be useful for logging/debugging.
+        /// <para/>
+        /// @lucene.experimental
+        /// </summary>
 #if FEATURE_SERIALIZABLE
         [Serializable]
 #endif
@@ -953,12 +1089,20 @@ namespace Lucene.Net.Search
                 get { return value; }
             }
 
+            /// <summary>
+            /// Computes (and stores) the estimated size of the cache <see cref="Value"/>
+            /// </summary>
+            /// <seealso cref="EstimatedSize"/>
             public void EstimateSize()
             {
                 long bytesUsed = RamUsageEstimator.SizeOf(Value);
                 size = RamUsageEstimator.HumanReadableUnits(bytesUsed);
             }
 
+            /// <summary>
+            /// The most recently estimated size of the value, <c>null</c> unless 
+            /// <see cref="EstimateSize()"/> has been called.
+            /// </summary>
             public string EstimatedSize
             {
                 get { return size; }
@@ -983,542 +1127,4 @@ namespace Lucene.Net.Search
             }
         }
     }
-    
-//  // LUCENENET NOTE: refactoring because of enum nonsense
-//  public static readonly FieldCache DEFAULT = new FieldCacheImpl();
-
-//  private class FieldCache_ByteParserAnonymousInnerClassHelper : FieldCache_ByteParser
-//  {
-//      public FieldCache_ByteParserAnonymousInnerClassHelper()
-//      {
-//      }
-
-//      public virtual sbyte ParseByte(BytesRef term)
-//      {
-//      // TODO: would be far better to directly parse from
-//      // UTF8 bytes... but really users should use
-//      // IntField, instead, which already decodes
-//      // directly from byte[]
-//      return (sbyte)Convert.ToByte(term.Utf8ToString());
-//      }
-//    public override string ToString()
-//    {
-//      return typeof(FieldCache).Name + ".DEFAULT_BYTE_PARSER";
-//    }
-//    public virtual TermsEnum TermsEnum(Terms terms)
-//    {
-//      return terms.Iterator(null);
-//    }
-//  }
-
-//  private class FieldCache_ShortParserAnonymousInnerClassHelper : FieldCache_ShortParser
-//  {
-//      public FieldCache_ShortParserAnonymousInnerClassHelper()
-//      {
-//      }
-
-//      public virtual short ParseShort(BytesRef term)
-//      {
-//      // TODO: would be far better to directly parse from
-//      // UTF8 bytes... but really users should use
-//      // IntField, instead, which already decodes
-//      // directly from byte[]
-//      return Convert.ToInt16(term.Utf8ToString());
-//      }
-//    public override string ToString()
-//    {
-//      return typeof(FieldCache).Name + ".DEFAULT_SHORT_PARSER";
-//    }
-
-//    public virtual TermsEnum TermsEnum(Terms terms)
-//    {
-//      return terms.Iterator(null);
-//    }
-//  }
-
-//  private class FieldCache_IntParserAnonymousInnerClassHelper : FieldCache_IntParser
-//  {
-//      public FieldCache_IntParserAnonymousInnerClassHelper()
-//      {
-//      }
-
-//      public virtual int ParseInt(BytesRef term)
-//      {
-//      // TODO: would be far better to directly parse from
-//      // UTF8 bytes... but really users should use
-//      // IntField, instead, which already decodes
-//      // directly from byte[]
-//      return Convert.ToInt32(term.Utf8ToString());
-//      }
-
-//    public virtual TermsEnum TermsEnum(Terms terms)
-//    {
-//      return terms.Iterator(null);
-//    }
-
-//    public override string ToString()
-//    {
-//      return typeof(FieldCache).Name + ".DEFAULT_INT_PARSER";
-//    }
-//  }
-
-//  private class FieldCache_FloatParserAnonymousInnerClassHelper : FieldCache_FloatParser
-//  {
-//      public FieldCache_FloatParserAnonymousInnerClassHelper()
-//      {
-//      }
-
-//      public virtual float ParseFloat(BytesRef term)
-//      {
-//      // TODO: would be far better to directly parse from
-//      // UTF8 bytes... but really users should use
-//      // FloatField, instead, which already decodes
-//      // directly from byte[]
-//      return Convert.ToSingle(term.Utf8ToString());
-//      }
-
-//    public virtual TermsEnum TermsEnum(Terms terms)
-//    {
-//      return terms.Iterator(null);
-//    }
-
-//    public override string ToString()
-//    {
-//      return typeof(FieldCache).Name + ".DEFAULT_FLOAT_PARSER";
-//    }
-//  }
-
-//  private class FieldCache_LongParserAnonymousInnerClassHelper : FieldCache_LongParser
-//  {
-//      public FieldCache_LongParserAnonymousInnerClassHelper()
-//      {
-//      }
-
-//      public virtual long ParseLong(BytesRef term)
-//      {
-//      // TODO: would be far better to directly parse from
-//      // UTF8 bytes... but really users should use
-//      // LongField, instead, which already decodes
-//      // directly from byte[]
-//      return Convert.ToInt64(term.Utf8ToString());
-//      }
-
-//    public virtual TermsEnum TermsEnum(Terms terms)
-//    {
-//      return terms.Iterator(null);
-//    }
-
-//    public override string ToString()
-//    {
-//      return typeof(FieldCache).Name + ".DEFAULT_LONG_PARSER";
-//    }
-//  }
-
-//  private class FieldCache_DoubleParserAnonymousInnerClassHelper : FieldCache_DoubleParser
-//  {
-//      public FieldCache_DoubleParserAnonymousInnerClassHelper()
-//      {
-//      }
-
-//      public virtual double ParseDouble(BytesRef term)
-//      {
-//      // TODO: would be far better to directly parse from
-//      // UTF8 bytes... but really users should use
-//      // DoubleField, instead, which already decodes
-//      // directly from byte[]
-//      return Convert.ToDouble(term.Utf8ToString());
-//      }
-
-//    public virtual TermsEnum TermsEnum(Terms terms)
-//    {
-//      return terms.Iterator(null);
-//    }
-
-//    public override string ToString()
-//    {
-//      return typeof(FieldCache).Name + ".DEFAULT_DOUBLE_PARSER";
-//    }
-//  }
-
-//  private class FieldCache_IntParserAnonymousInnerClassHelper2 : FieldCache_IntParser
-//  {
-//      public FieldCache_IntParserAnonymousInnerClassHelper2()
-//      {
-//      }
-
-//      public override int ParseInt(BytesRef term)
-//      {
-//        return NumericUtils.PrefixCodedToInt(term);
-//      }
-
-//      public override TermsEnum TermsEnum(Terms terms)
-//      {
-//        return NumericUtils.FilterPrefixCodedInts(terms.Iterator(null));
-//      }
-
-//      public override string ToString()
-//      {
-//        return typeof(FieldCache).Name + ".NUMERIC_UTILS_INT_PARSER";
-//      }
-//  }
-
-//  private class FieldCache_FloatParserAnonymousInnerClassHelper2 : FieldCache_FloatParser
-//  {
-//      public FieldCache_FloatParserAnonymousInnerClassHelper2()
-//      {
-//      }
-
-//      public override float ParseFloat(BytesRef term)
-//      {
-//        return NumericUtils.SortableIntToFloat(NumericUtils.PrefixCodedToInt(term));
-//      }
-//      public override string ToString()
-//      {
-//        return typeof(FieldCache).Name + ".NUMERIC_UTILS_FLOAT_PARSER";
-//      }
-
-//      public override TermsEnum TermsEnum(Terms terms)
-//      {
-//        return NumericUtils.FilterPrefixCodedInts(terms.Iterator(null));
-//      }
-//  }
-
-//  private class FieldCache_LongParserAnonymousInnerClassHelper2 : FieldCache_LongParser
-//  {
-//      public FieldCache_LongParserAnonymousInnerClassHelper2()
-//      {
-//      }
-
-//      public override long ParseLong(BytesRef term)
-//      {
-//        return NumericUtils.PrefixCodedToLong(term);
-//      }
-//      public override string ToString()
-//      {
-//        return typeof(FieldCache).Name + ".NUMERIC_UTILS_LONG_PARSER";
-//      }
-
-//      public override TermsEnum TermsEnum(Terms terms)
-//      {
-//        return NumericUtils.FilterPrefixCodedLongs(terms.Iterator(null));
-//      }
-//  }
-
-//  private class FieldCache_DoubleParserAnonymousInnerClassHelper2 : FieldCache_DoubleParser
-//  {
-//      public FieldCache_DoubleParserAnonymousInnerClassHelper2()
-//      {
-//      }
-
-//      public override double ParseDouble(BytesRef term)
-//      {
-//        return NumericUtils.SortableLongToDouble(NumericUtils.PrefixCodedToLong(term));
-//      }
-//      public override string ToString()
-//      {
-//        return typeof(FieldCache).Name + ".NUMERIC_UTILS_DOUBLE_PARSER";
-//      }
-
-//      public override TermsEnum TermsEnum(Terms terms)
-//      {
-//        return NumericUtils.FilterPrefixCodedLongs(terms.Iterator(null));
-//      }
-//  }
-//}
-
-//  public abstract class FieldCache_Bytes
-//  {
-//    /// <summary>
-//    /// Return a single Byte representation of this field's value. </summary>
-//    public abstract sbyte Get(int docID);
-
-//    /// <summary>
-//    /// Zero value for every document </summary>
-//    public static readonly FieldCache_Bytes EMPTY = new FieldCache_BytesAnonymousInnerClassHelper();
-
-//    private class FieldCache_BytesAnonymousInnerClassHelper : FieldCache_Bytes
-//    {
-//        public FieldCache_BytesAnonymousInnerClassHelper()
-//        {
-//        }
-
-//      public override sbyte Get(int docID)
-//      {
-//        return 0;
-//      }
-//    }
-//  }
-
-//  public abstract class FieldCache_Shorts
-//  {
-//    /// <summary>
-//    /// Return a short representation of this field's value. </summary>
-//    public abstract short Get(int docID);
-
-//    /// <summary>
-//    /// Zero value for every document </summary>
-//    public static readonly FieldCache_Shorts EMPTY = new FieldCache_ShortsAnonymousInnerClassHelper();
-
-//    private class FieldCache_ShortsAnonymousInnerClassHelper : FieldCache_Shorts
-//    {
-//        public FieldCache_ShortsAnonymousInnerClassHelper()
-//        {
-//        }
-
-//      public override short Get(int docID)
-//      {
-//        return 0;
-//      }
-//    }
-//  }
-
-//  public abstract class FieldCache_Ints
-//  {
-//    /// <summary>
-//    /// Return an integer representation of this field's value. </summary>
-//    public abstract int Get(int docID);
-
-//    /// <summary>
-//    /// Zero value for every document </summary>
-//    public static readonly FieldCache_Ints EMPTY = new FieldCache_IntsAnonymousInnerClassHelper();
-
-//    private class FieldCache_IntsAnonymousInnerClassHelper : FieldCache_Ints
-//    {
-//        public FieldCache_IntsAnonymousInnerClassHelper()
-//        {
-//        }
-
-//      public override int Get(int docID)
-//      {
-//        return 0;
-//      }
-//    }
-//  }
-
-//  public abstract class FieldCache_Longs
-//  {
-//    /// <summary>
-//    /// Return an long representation of this field's value. </summary>
-//    public abstract long Get(int docID);
-
-//    /// <summary>
-//    /// Zero value for every document </summary>
-//    public static readonly FieldCache_Longs EMPTY = new FieldCache_LongsAnonymousInnerClassHelper();
-
-//    private class FieldCache_LongsAnonymousInnerClassHelper : FieldCache_Longs
-//    {
-//        public FieldCache_LongsAnonymousInnerClassHelper()
-//        {
-//        }
-
-//      public override long Get(int docID)
-//      {
-//        return 0;
-//      }
-//    }
-//  }
-
-//  public abstract class FieldCache_Floats
-//  {
-//    /// <summary>
-//    /// Return an float representation of this field's value. </summary>
-//    public abstract float Get(int docID);
-
-//    /// <summary>
-//    /// Zero value for every document </summary>
-//    public static readonly FieldCache_Floats EMPTY = new FieldCache_FloatsAnonymousInnerClassHelper();
-
-//    private class FieldCache_FloatsAnonymousInnerClassHelper : FieldCache_Floats
-//    {
-//        public FieldCache_FloatsAnonymousInnerClassHelper()
-//        {
-//        }
-
-//      public override float Get(int docID)
-//      {
-//        return 0;
-//      }
-//    }
-//  }
-
-//  public abstract class FieldCache_Doubles
-//  {
-//    /// <summary>
-//    /// Return an double representation of this field's value. </summary>
-//    public abstract double Get(int docID);
-
-//    /// <summary>
-//    /// Zero value for every document </summary>
-//    public static readonly FieldCache_Doubles EMPTY = new FieldCache_DoublesAnonymousInnerClassHelper();
-
-//    private class FieldCache_DoublesAnonymousInnerClassHelper : FieldCache_Doubles
-//    {
-//        public FieldCache_DoublesAnonymousInnerClassHelper()
-//        {
-//        }
-
-//      public override double Get(int docID)
-//      {
-//        return 0;
-//      }
-//    }
-//  }
-
-//  public sealed class FieldCache_CreationPlaceholder
-//  {
-//    internal object Value;
-//  }
-
-//  public interface FieldCache_Parser
-//  {
-//    /// <summary>
-//    /// Pulls a <seealso cref="TermsEnum"/> from the given <seealso cref="Terms"/>. this method allows certain parsers
-//    /// to filter the actual TermsEnum before the field cache is filled.
-//    /// </summary>
-//    /// <param name="terms"> the <seealso cref="Terms"/> instance to create the <seealso cref="TermsEnum"/> from. </param>
-//    /// <returns> a possibly filtered <seealso cref="TermsEnum"/> instance, this method must not return <code>null</code>. </returns>
-//    /// <exception cref="IOException"> if an <seealso cref="IOException"/> occurs </exception>
-//    TermsEnum TermsEnum(Terms terms);
-//  }
-
-//  [Obsolete]
-//  public interface FieldCache_ByteParser : FieldCache_Parser
-//  {
-//    /// <summary>
-//    /// Return a single Byte representation of this field's value. </summary>
-//    sbyte ParseByte(BytesRef term);
-//  }
-
-//  [Obsolete]
-//  public interface FieldCache_ShortParser : FieldCache_Parser
-//  {
-//    /// <summary>
-//    /// Return a short representation of this field's value. </summary>
-//    short ParseShort(BytesRef term);
-//  }
-
-//  public interface FieldCache_IntParser : FieldCache_Parser
-//  {
-//    /// <summary>
-//    /// Return an integer representation of this field's value. </summary>
-//    int ParseInt(BytesRef term);
-//  }
-
-//  public interface FieldCache_FloatParser : FieldCache_Parser
-//  {
-//    /// <summary>
-//    /// Return an float representation of this field's value. </summary>
-//    float ParseFloat(BytesRef term);
-//  }
-
-//  public interface FieldCache_LongParser : FieldCache_Parser
-//  {
-//    /// <summary>
-//    /// Return an long representation of this field's value. </summary>
-//    long ParseLong(BytesRef term);
-//  }
-
-//  public interface FieldCache_DoubleParser : FieldCache_Parser
-//  {
-//    /// <summary>
-//    /// Return an double representation of this field's value. </summary>
-//    double ParseDouble(BytesRef term);
-//  }
-
-//  public sealed class FieldCache_CacheEntry
-//  {
-//    private readonly object readerKey;
-//    private readonly string fieldName;
-//    private readonly Type cacheType;
-//    private readonly object custom;
-//    private readonly object value;
-//    private string Size;
-
-//    public FieldCache_CacheEntry(object readerKey, string fieldName, Type cacheType, object custom, object value)
-//    {
-//      this.readerKey = readerKey;
-//      this.fieldName = fieldName;
-//      this.cacheType = cacheType;
-//      this.custom = custom;
-//      this.value = value;
-//    }
-
-//    public object ReaderKey
-//    {
-//        get
-//        {
-//          return readerKey;
-//        }
-//    }
-
-//    public string FieldName
-//    {
-//        get
-//        {
-//          return fieldName;
-//        }
-//    }
-
-//    public Type CacheType
-//    {
-//        get
-//        {
-//          return cacheType;
-//        }
-//    }
-
-//    public object Custom
-//    {
-//        get
-//        {
-//          return custom;
-//        }
-//    }
-
-//    public object Value
-//    {
-//        get
-//        {
-//          return value;
-//        }
-//    }
-
-//    /// <summary>
-//    /// Computes (and stores) the estimated size of the cache Value </summary>
-//    /// <seealso cref= #getEstimatedSize </seealso>
-//    public void EstimateSize()
-//    {
-//      long bytesUsed = RamUsageEstimator.SizeOf(Value);
-//      Size = RamUsageEstimator.HumanReadableUnits(bytesUsed);
-//    }
-
-//    /// <summary>
-//    /// The most recently estimated size of the value, null unless
-//    /// estimateSize has been called.
-//    /// </summary>
-//    public string EstimatedSize
-//    {
-//        get
-//        {
-//          return Size;
-//        }
-//    }
-
-//    public override string ToString()
-//    {
-//      StringBuilder b = new StringBuilder();
-//      b.Append("'").Append(ReaderKey).Append("'=>");
-//      b.Append("'").Append(FieldName).Append("',");
-//      b.Append(CacheType).Append(",").Append(Custom);
-//      b.Append("=>").Append(Value.GetType().Name).Append("#");
-//      b.Append(System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(Value));
-
-//      string s = EstimatedSize;
-//      if (null != s)
-//      {
-//        b.Append(" (size =~ ").Append(s).Append(')');
-//      }
-
-//      return b.ToString();
-//    }
 }

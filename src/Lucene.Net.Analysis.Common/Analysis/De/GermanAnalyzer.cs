@@ -45,11 +45,11 @@ namespace Lucene.Net.Analysis.De
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating GermanAnalyzer:
     /// <list>
-    ///   <item> As of 3.6, GermanLightStemFilter is used for less aggressive stemming.</item>
-    ///   <item> As of 3.1, Snowball stemming is done with SnowballFilter, and 
-    ///        Snowball stopwords are used by default.</item>
-    ///   <item> As of 2.9, StopFilter preserves position
-    ///        increments</item>
+    ///   <item><description> As of 3.6, GermanLightStemFilter is used for less aggressive stemming.</description></item>
+    ///   <item><description> As of 3.1, Snowball stemming is done with SnowballFilter, and 
+    ///        Snowball stopwords are used by default.</description></item>
+    ///   <item><description> As of 2.9, StopFilter preserves position
+    ///        increments</description></item>
     /// </list>
     /// 
     /// </para>
@@ -165,10 +165,10 @@ namespace Lucene.Net.Analysis.De
 
         /// <summary>
         /// Creates
-        /// <see cref="Analyzer.TokenStreamComponents"/>
+        /// <see cref="TokenStreamComponents"/>
         /// used to tokenize all the text in the provided <see cref="TextReader"/>.
         /// </summary>
-        /// <returns> <see cref="Analyzer.TokenStreamComponents"/>
+        /// <returns> <see cref="TokenStreamComponents"/>
         ///         built from a <see cref="StandardTokenizer"/> filtered with
         ///         <see cref="StandardFilter"/>, <see cref="LowerCaseFilter"/>, <see cref="StopFilter"/>,
         ///         <see cref="SetKeywordMarkerFilter"/> if a stem exclusion set is

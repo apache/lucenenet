@@ -26,14 +26,15 @@ namespace Lucene.Net.Codecs
     using SegmentCommitInfo = Lucene.Net.Index.SegmentCommitInfo;
 
     /// <summary>
-    /// Format for live/deleted documents
+    /// Format for live/deleted documents.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class LiveDocsFormat
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal LiveDocsFormat()
         {
@@ -52,14 +53,14 @@ namespace Lucene.Net.Codecs
         public abstract IBits ReadLiveDocs(Directory dir, SegmentCommitInfo info, IOContext context);
 
         /// <summary>
-        /// Persist live docs bits.  Use {@link
-        ///  SegmentCommitInfo#getNextDelGen} to determine the
-        ///  generation of the deletes file you should write to.
+        /// Persist live docs bits.  Use 
+        /// <see cref="SegmentCommitInfo.NextDelGen"/> to determine the
+        /// generation of the deletes file you should write to.
         /// </summary>
         public abstract void WriteLiveDocs(IMutableBits bits, Directory dir, SegmentCommitInfo info, int newDelCount, IOContext context);
 
         /// <summary>
-        /// Records all files in use by this <seealso cref="SegmentCommitInfo"/> into the files argument. </summary>
+        /// Records all files in use by this <see cref="SegmentCommitInfo"/> into the files argument. </summary>
         public abstract void Files(SegmentCommitInfo info, ICollection<string> files);
     }
 }

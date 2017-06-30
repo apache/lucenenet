@@ -237,13 +237,13 @@ namespace Lucene.Net.Search.Suggest
             {
                 if (success)
                 {
-                    IOUtils.Close(writer);
+                    IOUtils.Dispose(writer);
                 }
                 else
                 {
                     try
                     {
-                        IOUtils.CloseWhileHandlingException(writer);
+                        IOUtils.DisposeWhileHandlingException(writer);
                     }
                     finally
                     {
@@ -255,7 +255,7 @@ namespace Lucene.Net.Search.Suggest
 
         private void Dispose()
         {
-            IOUtils.Close(reader);
+            IOUtils.Dispose(reader);
             if (tempInput != null)
             {
                 tempInput.Delete();

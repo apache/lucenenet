@@ -21,14 +21,15 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A <seealso cref="scorer"/> which wraps another scorer and caches the score of the
-    /// current document. Successive calls to <seealso cref="#score()"/> will return the same
-    /// result and will not invoke the wrapped Scorer's score() method, unless the
-    /// current document has changed.<br>
-    /// this class might be useful due to the changes done to the <seealso cref="ICollector"/>
+    /// A <see cref="Scorer"/> which wraps another scorer and caches the score of the
+    /// current document. Successive calls to <see cref="GetScore()"/> will return the same
+    /// result and will not invoke the wrapped Scorer's GetScore() method, unless the
+    /// current document has changed.
+    /// <para/>
+    /// This class might be useful due to the changes done to the <see cref="ICollector"/>
     /// interface, in which the score is not computed for a document by default, only
     /// if the collector requests it. Some collectors may need to use the score in
-    /// several places, however all they have in hand is a <seealso cref="scorer"/> object, and
+    /// several places, however all they have in hand is a <see cref="Scorer"/> object, and
     /// might end up computing the score of a document more than once.
     /// </summary>
 #if FEATURE_SERIALIZABLE

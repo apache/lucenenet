@@ -31,7 +31,7 @@ namespace Lucene.Net.Index
     using IOUtils = Lucene.Net.Util.IOUtils;
 
     /// <summary>
-    /// Manages the <seealso cref="DocValuesProducer"/> held by <seealso cref="SegmentReader"/> and
+    /// Manages the <see cref="DocValuesProducer"/> held by <see cref="SegmentReader"/> and
     /// keeps track of their reference counting.
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -82,7 +82,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns the <seealso cref="DocValuesProducer"/> for the given generation. </summary>
+        /// Returns the <see cref="DocValuesProducer"/> for the given generation. </summary>
         internal DocValuesProducer GetDocValuesProducer(long? gen, SegmentCommitInfo si, IOContext context, Directory dir, DocValuesFormat dvFormat, IList<FieldInfo> infos, int termsIndexDivisor)
         {
             lock (this)
@@ -103,7 +103,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Decrement the reference count of the given <seealso cref="DocValuesProducer"/>
+        /// Decrement the reference count of the given <see cref="DocValuesProducer"/>
         /// generations.
         /// </summary>
         internal void DecRef(IList<long?> dvProducersGens)

@@ -22,15 +22,15 @@ namespace Lucene.Net.Codecs.BlockTerms
      */
 
     /// <summary>
-    ///  Base class for terms index implementations to plug
-    /// into {@link BlockTermsWriter}.
-    /// 
-    /// @see TermsIndexReaderBase
+    /// Base class for terms index implementations to plug
+    /// into <see cref="BlockTermsWriter"/>.
+    /// <para/>
     /// @lucene.experimental 
     /// </summary>
+    /// <seealso cref="TermsIndexReaderBase"/>
     public abstract class TermsIndexWriterBase : IDisposable
     {
-        /// <summary>Terms index API for a single field</summary>
+        /// <summary>Terms index API for a single field.</summary>
         public abstract class FieldWriter
         {
             public abstract bool CheckIndexTerm(BytesRef text, TermStats stats);

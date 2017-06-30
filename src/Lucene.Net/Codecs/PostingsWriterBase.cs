@@ -24,16 +24,17 @@ namespace Lucene.Net.Codecs
     using IndexOutput = Lucene.Net.Store.IndexOutput;
 
     /// <summary>
-    /// Extension of <seealso cref="PostingsConsumer"/> to support pluggable term dictionaries.
-    /// <p>
-    /// this class contains additional hooks to interact with the provided
-    /// term dictionaries such as <seealso cref="BlockTreeTermsWriter"/>. If you want
+    /// Extension of <see cref="PostingsConsumer"/> to support pluggable term dictionaries.
+    /// <para/>
+    /// This class contains additional hooks to interact with the provided
+    /// term dictionaries such as <see cref="BlockTreeTermsWriter"/>. If you want
     /// to re-use an existing implementation and are only interested in
     /// customizing the format of the postings list, extend this class
     /// instead.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
-    /// <seealso cref= PostingsReaderBase
-    /// @lucene.experimental </seealso>
+    /// <seealso cref="PostingsReaderBase"/>
     // TODO: find a better name; this defines the API that the
     // terms dict impls use to talk to a postings impl.
     // TermsDict + PostingsReader/WriterBase == PostingsConsumer/Producer
@@ -41,7 +42,7 @@ namespace Lucene.Net.Codecs
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal PostingsWriterBase()
         {
@@ -49,58 +50,64 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called once after startup, before any terms have been
-        ///  added.  Implementations typically write a header to
-        ///  the provided {@code termsOut}.
+        /// added.  Implementations typically write a header to
+        /// the provided <paramref name="termsOut"/>.
         /// </summary>
         public abstract void Init(IndexOutput termsOut);
 
         /// <summary>
-        /// Return a newly created empty TermState </summary>
+        /// Return a newly created empty <see cref="Index.TermState"/> </summary>
         public abstract BlockTermState NewTermState();
 
         /// <summary>
-        /// Start a new term.  Note that a matching call to {@link
-        ///  #finishTerm(BlockTermState)} is done, only if the term has at least one
-        ///  document.
+        /// Start a new term.  Note that a matching call to 
+        /// <see cref="FinishTerm(BlockTermState)"/> is done, only if the term has at least one
+        /// document.
         /// </summary>
         public abstract void StartTerm();
 
         /// <summary>
-        /// Finishes the current term.  The provided {@link
-        ///  BlockTermState} contains the term's summary statistics,
-        ///  and will holds metadata from PBF when returned
+        /// Finishes the current term.  The provided 
+        /// <see cref="BlockTermState"/> contains the term's summary statistics,
+        /// and will holds metadata from PBF when returned.
         /// </summary>
         public abstract void FinishTerm(BlockTermState state);
 
         /// <summary>
-        /// Encode metadata as long[] and byte[]. {@code absolute} controls whether
+        /// Encode metadata as <see cref="T:long[]"/> and <see cref="T:byte[]"/>. <paramref name="absolute"/> controls whether
         /// current term is delta encoded according to latest term.
-        /// Usually elements in {@code longs} are file pointers, so each one always
-        /// increases when a new term is consumed. {@code out} is used to write generic
+        /// Usually elements in <paramref name="longs"/> are file pointers, so each one always
+        /// increases when a new term is consumed. <paramref name="out"/> is used to write generic
         /// bytes, which are not monotonic.
-        ///
-        /// NOTE: sometimes long[] might contain "don't care" values that are unused, e.g.
+        /// <para/>
+        /// NOTE: sometimes <see cref="T:long[]"/> might contain "don't care" values that are unused, e.g.
         /// the pointer to postings list may not be defined for some terms but is defined
-        /// for others, if it is designed to inline  some postings data in term dictionary.
+        /// for others, if it is designed to inline some postings data in term dictionary.
         /// In this case, the postings writer should always use the last value, so that each
-        /// element in metadata long[] remains monotonic.
+        /// element in metadata <see cref="T:long[]"/> remains monotonic.
         /// </summary>
         public abstract void EncodeTerm(long[] longs, DataOutput @out, FieldInfo fieldInfo, BlockTermState state, bool absolute);
 
         /// <summary>
         /// Sets the current field for writing, and returns the
-        /// fixed length of long[] metadata (which is fixed per
+        /// fixed length of <see cref="T:long[]"/> metadata (which is fixed per
         /// field), called when the writing switches to another field.
         /// </summary>
         // TODO: better name?
         public abstract int SetField(FieldInfo fieldInfo);
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Implementations must override and should dispose all resources used by this instance.
+        /// </summary>
         protected abstract void Dispose(bool disposing);
     }
 }

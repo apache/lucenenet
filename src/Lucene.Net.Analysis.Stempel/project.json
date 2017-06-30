@@ -20,7 +20,8 @@
         "Pl/stemmer_20000.tbl",
         "Pl/stopwords.txt"
       ]
-    }
+    },
+    "nowarn": [ "1591", "1573" ]
   },
   "dependencies": {
     "Lucene.Net.Analysis.Common": "4.8.0"

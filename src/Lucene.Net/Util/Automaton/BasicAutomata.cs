@@ -36,7 +36,7 @@ namespace Lucene.Net.Util.Automaton
 {
     /// <summary>
     /// Construction of basic automata.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     internal sealed class BasicAutomata
@@ -127,7 +127,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Constructs sub-automaton corresponding to decimal numbers of length
-        /// x.substring(n).length().
+        /// <c>x.Substring(n).Length</c>.
         /// </summary>
         private static State AnyOfRightLength(string x, int n)
         {
@@ -145,7 +145,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Constructs sub-automaton corresponding to decimal numbers of value at least
-        /// x.substring(n) and length x.substring(n).length().
+        /// <c>x.Substring(n)</c> and length <c>x.Substring(n).Length</c>.
         /// </summary>
         private static State AtLeast(string x, int n, ICollection<State> initials, bool zeros)
         {
@@ -172,7 +172,7 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Constructs sub-automaton corresponding to decimal numbers of value at most
-        /// x.substring(n) and length x.substring(n).length().
+        /// <c>x.Substring(n)</c> and length <c>x.Substring(n).Length</c>.
         /// </summary>
         private static State AtMost(string x, int n)
         {
@@ -195,8 +195,8 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Constructs sub-automaton corresponding to decimal numbers of value between
-        /// x.substring(n) and y.substring(n) and of length x.substring(n).length()
-        /// (which must be equal to y.substring(n).length()).
+        /// <c>x.Substring(n)</c> and <c>y.Substring(n)</c> and of length <c>x.Substring(n).Length</c>
+        /// (which must be equal to <c>y.Substring(n).Length</c>).
         /// </summary>
         private static State Between(string x, string y, int n, ICollection<State> initials, bool zeros)
         {
@@ -234,15 +234,15 @@ namespace Lucene.Net.Util.Automaton
         /// Returns a new automaton that accepts strings representing decimal
         /// non-negative integers in the given interval.
         /// </summary>
-        /// <param name="min"> minimal value of interval </param>
-        /// <param name="max"> maximal value of interval (both end points are included in the
-        ///          interval) </param>
-        /// <param name="digits"> if >0, use fixed number of digits (strings must be prefixed
+        /// <param name="min"> Minimal value of interval. </param>
+        /// <param name="max"> Maximal value of interval (both end points are included in the
+        ///          interval). </param>
+        /// <param name="digits"> If &gt; 0, use fixed number of digits (strings must be prefixed
         ///          by 0's to obtain the right length) - otherwise, the number of
-        ///          digits is not fixed </param>
-        /// <exception cref="IllegalArgumentException"> if min>max or if numbers in the
+        ///          digits is not fixed. </param>
+        /// <exception cref="ArgumentException"> If min &gt; max or if numbers in the
         ///              interval cannot be expressed with the given fixed number of
-        ///              digits </exception>
+        ///              digits. </exception>
         public static Automaton MakeInterval(int min, int max, int digits)
         {
             Automaton a = new Automaton();
@@ -329,14 +329,14 @@ namespace Lucene.Net.Util.Automaton
 
         /// <summary>
         /// Returns a new (deterministic and minimal) automaton that accepts the union
-        /// of the given collection of <seealso cref="BytesRef"/>s representing UTF-8 encoded
+        /// of the given collection of <see cref="BytesRef"/>s representing UTF-8 encoded
         /// strings.
         /// </summary>
         /// <param name="utf8Strings">
         ///          The input strings, UTF-8 encoded. The collection must be in sorted
         ///          order.
         /// </param>
-        /// <returns> An <seealso cref="Automaton"/> accepting all input strings. The resulting
+        /// <returns> An <see cref="Automaton"/> accepting all input strings. The resulting
         ///         automaton is codepoint based (full unicode codepoints on
         ///         transitions). </returns>
         public static Automaton MakeStringUnion(ICollection<BytesRef> utf8Strings)

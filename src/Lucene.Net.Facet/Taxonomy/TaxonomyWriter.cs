@@ -76,7 +76,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// parent is as trivial as dropping the last component of the path.
         /// <see cref="GetParent"/> is functionally equivalent to calling <see cref="TaxonomyReader.GetPath"/> on the
         /// given ordinal, dropping the last component of the path, and then calling
-        /// <see cref="TaxonomyReader.GetOrdinal"/> to get an ordinal back.
+        /// <see cref="TaxonomyReader.GetOrdinal(FacetLabel)"/> to get an ordinal back.
         /// </para>
         /// <para>
         /// If the given ordinal is the <see cref="TaxonomyReader.ROOT_ORDINAL"/>, an 

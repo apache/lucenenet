@@ -99,7 +99,7 @@ namespace Lucene.Net.Util.Fst
 
         /// <summary>
         /// Instantiates an FST/FSA builder without any pruning. A shortcut
-        /// to <see cref="Builder.Builder(FST.INPUT_TYPE, int, int, bool, bool, int, Outputs{T}, FreezeTail{T}, bool, float, bool, int)"/>
+        /// to <see cref="Builder{T}.Builder(FST.INPUT_TYPE, int, int, bool, bool, int, Outputs{T}, FreezeTail{T}, bool, float, bool, int)"/>
         /// with pruning options turned off.
         /// </summary>
         public Builder(FST.INPUT_TYPE inputType, Outputs<T> outputs)

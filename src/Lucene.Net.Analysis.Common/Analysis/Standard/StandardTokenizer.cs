@@ -41,12 +41,12 @@ namespace Lucene.Net.Analysis.Standard
     /// <para>You must specify the required <see cref="LuceneVersion"/>
     /// compatibility when creating <see cref="StandardTokenizer"/>:
     /// <list type="bullet">
-    ///     <item> As of 3.4, Hiragana and Han characters are no longer wrongly split
+    ///     <item><description> As of 3.4, Hiragana and Han characters are no longer wrongly split
     ///         from their combining characters. If you use a previous version number,
-    ///         you get the exact broken behavior for backwards compatibility.</item>
-    ///     <item> As of 3.1, StandardTokenizer implements Unicode text segmentation.
+    ///         you get the exact broken behavior for backwards compatibility.</description></item>
+    ///     <item><description> As of 3.1, StandardTokenizer implements Unicode text segmentation.
     ///         If you use a previous version number, you get the exact behavior of
-    ///         <see cref="ClassicTokenizer"/> for backwards compatibility.</item>
+    ///         <see cref="ClassicTokenizer"/> for backwards compatibility.</description></item>
     /// </list>
     /// </para>
     /// </summary>

@@ -174,7 +174,7 @@ namespace Lucene.Net.Store
                 {
                     if (!success)
                     {
-                        IOUtils.CloseWhileHandlingException(channel);
+                        IOUtils.DisposeWhileHandlingException(channel);
                         channel = null;
                     }
                 }
@@ -198,7 +198,7 @@ namespace Lucene.Net.Store
                         }
                         finally
                         {
-                            IOUtils.CloseWhileHandlingException(channel);
+                            IOUtils.DisposeWhileHandlingException(channel);
                             channel = null;
                         }
 

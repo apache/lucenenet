@@ -25,7 +25,7 @@ namespace Lucene.Net.Codecs.Sep
     /// <summary>
     /// Writes frq to .frq, docs to .doc, pos to .pos, payloads
     /// to .pyl, skip data to .skp
-    /// 
+    /// <para/>
     /// @lucene.experimental 
     /// </summary>
     public sealed class SepPostingsWriter : PostingsWriterBase
@@ -59,7 +59,7 @@ namespace Lucene.Net.Codecs.Sep
 
         /// <summary>
         /// Expert: The fraction of TermDocs entries stored in skip tables,
-        /// used to accelerate <seealso cref="DocsEnum#advance(int)"/>.  Larger values result in
+        /// used to accelerate <see cref="Lucene.Net.Search.DocIdSetIterator.Advance(int)"/>.  Larger values result in
         /// smaller indexes, greater acceleration, but fewer accelerable cases, while
         /// smaller values result in bigger indexes, less acceleration and more
         /// accelerable cases. More detailed experiments would be useful here. 
@@ -68,7 +68,7 @@ namespace Lucene.Net.Codecs.Sep
         private static readonly int DEFAULT_SKIP_INTERVAL = 16;
 
         /// <summary>
-        /// Expert: minimum docFreq to write any skip data at all
+        /// Expert: minimum docFreq to write any skip data at all.
         /// </summary>
         private readonly int skipMinimum;
 
@@ -152,7 +152,7 @@ namespace Lucene.Net.Codecs.Sep
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(docOut, skipOut, freqOut, posOut, payloadOut);
+                    IOUtils.DisposeWhileHandlingException(docOut, skipOut, freqOut, posOut, payloadOut);
                 }
             }
         }
@@ -225,8 +225,8 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         /// <summary>
-        /// Adds a new doc in this term.  If this returns null
-        ///  then we just skip consuming positions/payloads. 
+        /// Adds a new doc in this term.  If this returns <c>null</c>
+        /// then we just skip consuming positions/payloads. 
         /// </summary>
         public override void StartDoc(int docID, int termDocFreq)
         {
@@ -257,7 +257,7 @@ namespace Lucene.Net.Codecs.Sep
         }
 
         /// <summary>
-        /// Add a new position &amp; payload </summary>
+        /// Add a new position &amp; payload. </summary>
         public override void AddPosition(int position, BytesRef payload, int startOffset, int endOffset)
         {
             Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
@@ -295,7 +295,7 @@ namespace Lucene.Net.Codecs.Sep
             lastPosition = position;
         }
 
-        /// <summary>Called when we are done adding positions & payloads </summary>
+        /// <summary>Called when we are done adding positions &amp; payloads. </summary>
         public override void FinishDoc()
         {
             lastPosition = 0;
@@ -310,7 +310,7 @@ namespace Lucene.Net.Codecs.Sep
             public long SkipFP { get; set; }
         }
 
-        /// <summary>Called when we are done adding docs to this term </summary>
+        /// <summary>Called when we are done adding docs to this term. </summary>
         public override void FinishTerm(BlockTermState state)
         {
             SepTermState state_ = (SepTermState)state;
@@ -408,7 +408,7 @@ namespace Lucene.Net.Codecs.Sep
         {
             if (disposing)
             {
-                IOUtils.Close(docOut, skipOut, freqOut, posOut, payloadOut);
+                IOUtils.Dispose(docOut, skipOut, freqOut, posOut, payloadOut);
             }
         }
     }

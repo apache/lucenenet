@@ -19,30 +19,32 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// A codec that forwards all its method calls to another codec.
-    /// <p>
+    /// <para/>
     /// Extend this class when you need to reuse the functionality of an existing
     /// codec. For example, if you want to build a codec that redefines Lucene46's
-    /// <seealso cref="LiveDocsFormat"/>:
-    /// <pre class="prettyprint">
-    ///   public final class CustomCodec extends FilterCodec {
+    /// <see cref="Codecs.LiveDocsFormat"/>:
+    /// <code>
+    ///     public sealed class CustomCodec : FilterCodec 
+    ///     {
+    ///         public CustomCodec()
+    ///             : base("CustomCodec", new Lucene46Codec())
+    ///         {
+    ///         }
     ///
-    ///     public CustomCodec() {
-    ///       super("CustomCodec", new Lucene46Codec());
+    ///         public override LiveDocsFormat LiveDocsFormat 
+    ///         {
+    ///             get { return new CustomLiveDocsFormat(); }
+    ///         }
     ///     }
+    /// </code>
     ///
-    ///     public LiveDocsFormat liveDocsFormat() {
-    ///       return new CustomLiveDocsFormat();
-    ///     }
-    ///
-    ///   }
-    /// </pre>
-    ///
-    /// <p><em>Please note:</em> Don't call <seealso cref="Codec#forName"/> from
-    /// the no-arg constructor of your own codec. When the SPI framework
-    /// loads your own Codec as SPI component, SPI has not yet fully initialized!
-    /// If you want to extend another Codec, instantiate it directly by calling
+    /// <para/>
+    /// <em>Please note:</em> Don't call <see cref="Codec.ForName(string)"/> from
+    /// the no-arg constructor of your own codec. When the <see cref="DefaultCodecFactory"/>
+    /// loads your own <see cref="Codec"/>, the <see cref="DefaultCodecFactory"/> has not yet fully initialized!
+    /// If you want to extend another <see cref="Codec"/>, instantiate it directly by calling
     /// its constructor.
-    ///
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class FilterCodec : Codec

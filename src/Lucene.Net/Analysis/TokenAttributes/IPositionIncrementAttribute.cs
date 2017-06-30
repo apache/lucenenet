@@ -29,19 +29,19 @@ namespace Lucene.Net.Analysis.TokenAttributes
     /// <para/>Some common uses for this are:
     /// 
     /// <list type="bullet">
-    /// <item>Set it to zero to put multiple terms in the same position.  this is
+    /// <item><description>Set it to zero to put multiple terms in the same position.  this is
     /// useful if, e.g., a word has multiple stems.  Searches for phrases
     /// including either stem will match.  In this case, all but the first stem's
     /// increment should be set to zero: the increment of the first instance
     /// should be one.  Repeating a token with an increment of zero can also be
-    /// used to boost the scores of matches on that token.</item>
+    /// used to boost the scores of matches on that token.</description></item>
     ///
-    /// <item>Set it to values greater than one to inhibit exact phrase matches.
+    /// <item><description>Set it to values greater than one to inhibit exact phrase matches.
     /// If, for example, one does not want phrases to match across removed stop
     /// words, then one could build a stop word filter that removes stop words and
     /// also sets the increment to the number of stop words removed before each
     /// non-stop word.  Then exact phrase queries will only match when the terms
-    /// occur with no intervening stop words.</item>
+    /// occur with no intervening stop words.</description></item>
     /// </list>
     /// </summary>
     /// <seealso cref="Lucene.Net.Index.DocsAndPositionsEnum"/>

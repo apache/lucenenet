@@ -22,8 +22,8 @@ namespace Lucene.Net.Util
      */
 
     /// <summary>
-    /// An <seealso cref="Iterator"/> implementation that filters elements with a boolean predicate. </summary>
-    /// <seealso cref= #predicateFunction </seealso>
+    /// An <see cref="IEnumerator{T}"/> implementation that filters elements with a boolean predicate. </summary>
+    /// <seealso cref="PredicateFunction(T)"/>
     public abstract class FilterIterator<T> : IEnumerator<T>
     {
         private readonly IEnumerator<T> iter;
@@ -32,7 +32,7 @@ namespace Lucene.Net.Util
         private T current = default(T);
 
         /// <summary>
-        /// returns true, if this element should be returned by <seealso cref="#next()"/>. </summary>
+        /// Returns <c>true</c>, if this element should be set to <see cref="Current"/> by <see cref="SetNext()"/>. </summary>
         protected abstract bool PredicateFunction(T @object);
 
         public FilterIterator(IEnumerator<T> baseIterator)

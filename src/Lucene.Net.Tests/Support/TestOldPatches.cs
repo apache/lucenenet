@@ -29,12 +29,15 @@ using Lucene.Net.Store;
 using Lucene.Net.Test;
 using NUnit.Framework;
 using Version = Lucene.Net.Util.LuceneVersion;
+using Lucene.Net.Codecs;
+using Lucene.Net.Util;
 
 #pragma warning disable 612, 618
 namespace Lucene.Net.Support
 {
+    [SuppressCodecs("Lucene3x")] // Suppress non-writable codecs
     [TestFixture]
-    public class TestOldPatches
+    public class TestOldPatches : LuceneTestCase
     {
         ////-------------------------------------------
         //[Test]

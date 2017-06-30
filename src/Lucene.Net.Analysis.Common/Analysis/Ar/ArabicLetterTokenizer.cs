@@ -34,9 +34,9 @@ namespace Lucene.Net.Analysis.Ar
     /// You must specify the required <see cref="LuceneVersion"/> compatibility when creating
     /// <see cref="ArabicLetterTokenizer"/>:
     /// <list type="bullet">
-    /// <item>As of 3.1, <see cref="Util.CharTokenizer"/> uses an int based API to normalize and
+    /// <item><description>As of 3.1, <see cref="Util.CharTokenizer"/> uses an int based API to normalize and
     /// detect token characters. See <see cref="IsTokenChar(int)"/> and
-    /// <see cref="Util.CharTokenizer.Normalize(int)"/> for details.</item>
+    /// <see cref="Util.CharTokenizer.Normalize(int)"/> for details.</description></item>
     /// </list>
     /// </para>
     /// </summary>

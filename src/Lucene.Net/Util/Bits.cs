@@ -19,17 +19,18 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// Interface for Bitset-like structures.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public interface IBits
     {
         /// <summary>
-        /// Returns the value of the bit with the specified <code>index</code>.
+        /// Returns the value of the bit with the specified <paramref name="index"/>.
         /// </summary>
-        /// <param name="index"> index, should be non-negative and &lt; <seealso cref="#length()"/>.
+        /// <param name="index"> Index, should be non-negative and &lt; <see cref="Length"/>.
         ///        The result of passing negative or out of bounds values is undefined
         ///        by this interface, <b>just don't do it!</b> </param>
-        /// <returns> <code>true</code> if the bit is set, <code>false</code> otherwise. </returns>
+        /// <returns> <c>true</c> if the bit is set, <c>false</c> otherwise. </returns>
         bool Get(int index);
 
         /// <summary>

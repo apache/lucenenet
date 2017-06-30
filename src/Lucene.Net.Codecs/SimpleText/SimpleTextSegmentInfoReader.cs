@@ -33,11 +33,11 @@ namespace Lucene.Net.Codecs.SimpleText
     using StringHelper = Util.StringHelper;
 
     /// <summary>
-    /// reads plaintext segments files
+    /// Reads plaintext segments files.
     /// <para>
-    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></B>
-    /// @lucene.experimental
+    /// <b><font color="red">FOR RECREATIONAL USE ONLY</font></b>
     /// </para>
+    /// @lucene.experimental
     /// </summary>
     public class SimpleTextSegmentInfoReader : SegmentInfoReader
     {
@@ -104,7 +104,7 @@ namespace Lucene.Net.Codecs.SimpleText
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(input);
+                    IOUtils.DisposeWhileHandlingException(input);
                 }
                 else
                 {

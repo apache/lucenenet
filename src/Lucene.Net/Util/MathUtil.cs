@@ -31,8 +31,8 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Returns {@code x <= 0 ? 0 : Math.floor(Math.log(x) / Math.log(base))} </summary>
-        /// <param name="base"> must be {@code > 1} </param>
+        /// Returns <c>x &lt;= 0 ? 0 : Math.Floor(Math.Log(x) / Math.Log(base))</c>. </summary>
+        /// <param name="base"> Must be <c>&gt; 1</c>.</param>
         public static int Log(long x, int @base)
         {
             if (@base <= 1)
@@ -49,7 +49,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Calculates logarithm in a given base with doubles.
+        /// Calculates logarithm in a given <paramref name="base"/> with doubles.
         /// </summary>
         public static double Log(double @base, double x)
         {
@@ -57,13 +57,13 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Return the greatest common divisor of <code>a</code> and <code>b</code>,
-        ///  consistently with <seealso cref="BigInteger#gcd(BigInteger)"/>.
-        ///  <p><b>NOTE</b>: A greatest common divisor must be positive, but
-        ///  <code>2^64</code> cannot be expressed as a long although it
-        ///  is the GCD of <seealso cref="Long#MIN_VALUE"/> and <code>0</code> and the GCD of
-        ///  <seealso cref="Long#MIN_VALUE"/> and <seealso cref="Long#MIN_VALUE"/>. So in these 2 cases,
-        ///  and only them, this method will return <seealso cref="Long#MIN_VALUE"/>.
+        /// Return the greatest common divisor of <paramref name="a"/> and <paramref name="b"/>,
+        /// consistently with <c>System.Numerics.BigInteger.GreatestCommonDivisor(System.Numerics.BigInteger, System.Numerics.BigInteger)</c>.
+        /// <para/><b>NOTE</b>: A greatest common divisor must be positive, but
+        /// <c>2^64</c> cannot be expressed as a <see cref="long"/> although it
+        /// is the GCD of <see cref="long.MinValue"/> and <c>0</c> and the GCD of
+        /// <see cref="long.MinValue"/> and <see cref="long.MinValue"/>. So in these 2 cases,
+        /// and only them, this method will return <see cref="long.MinValue"/>.
         /// </summary>
         // see http://en.wikipedia.org/wiki/Binary_GCD_algorithm#Iterative_version_in_C.2B.2B_using_ctz_.28count_trailing_zeros.29
         public static long Gcd(long a, long b)
@@ -104,14 +104,14 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Calculates inverse hyperbolic sine of a {@code double} value.
-        /// <p>
+        /// Calculates inverse hyperbolic sine of a <see cref="double"/> value.
+        /// <para/>
         /// Special cases:
-        /// <ul>
-        ///    <li>If the argument is NaN, then the result is NaN.
-        ///    <li>If the argument is zero, then the result is a zero with the same sign as the argument.
-        ///    <li>If the argument is infinite, then the result is infinity with the same sign as the argument.
-        /// </ul>
+        /// <list type="bullet">
+        ///    <item><description>If the argument is NaN, then the result is NaN.</description></item>
+        ///    <item><description>If the argument is zero, then the result is a zero with the same sign as the argument.</description></item>
+        ///    <item><description>If the argument is infinite, then the result is infinity with the same sign as the argument.</description></item>
+        /// </list>
         /// </summary>
         public static double Asinh(double a)
         {
@@ -131,15 +131,15 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Calculates inverse hyperbolic cosine of a {@code double} value.
-        /// <p>
+        /// Calculates inverse hyperbolic cosine of a <see cref="double"/> value.
+        /// <para/>
         /// Special cases:
-        /// <ul>
-        ///    <li>If the argument is NaN, then the result is NaN.
-        ///    <li>If the argument is +1, then the result is a zero.
-        ///    <li>If the argument is positive infinity, then the result is positive infinity.
-        ///    <li>If the argument is less than 1, then the result is NaN.
-        /// </ul>
+        /// <list type="bullet">
+        ///    <item><description>If the argument is NaN, then the result is NaN.</description></item>
+        ///    <item><description>If the argument is +1, then the result is a zero.</description></item>
+        ///    <item><description>If the argument is positive infinity, then the result is positive infinity.</description></item>
+        ///    <item><description>If the argument is less than 1, then the result is NaN.</description></item>
+        /// </list>
         /// </summary>
         public static double Acosh(double a)
         {
@@ -147,16 +147,16 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Calculates inverse hyperbolic tangent of a {@code double} value.
-        /// <p>
+        /// Calculates inverse hyperbolic tangent of a <see cref="double"/> value.
+        /// <para/>
         /// Special cases:
-        /// <ul>
-        ///    <li>If the argument is NaN, then the result is NaN.
-        ///    <li>If the argument is zero, then the result is a zero with the same sign as the argument.
-        ///    <li>If the argument is +1, then the result is positive infinity.
-        ///    <li>If the argument is -1, then the result is negative infinity.
-        ///    <li>If the argument's absolute value is greater than 1, then the result is NaN.
-        /// </ul>
+        /// <list type="bullet">
+        ///    <item><description>If the argument is NaN, then the result is NaN.</description></item>
+        ///    <item><description>If the argument is zero, then the result is a zero with the same sign as the argument.</description></item>
+        ///    <item><description>If the argument is +1, then the result is positive infinity.</description></item>
+        ///    <item><description>If the argument is -1, then the result is negative infinity.</description></item>
+        ///    <item><description>If the argument's absolute value is greater than 1, then the result is NaN.</description></item>
+        /// </list>
         /// </summary>
         public static double Atanh(double a)
         {

@@ -33,9 +33,9 @@ namespace Lucene.Net.Analysis.Cjk
     /// </para>
     /// Additionally, the following is applied to Latin text (such as English):
     /// <list type="bullet">
-    ///     <item>Text is converted to lowercase.</item>
-    ///     <item>Numeric digits, '+', '#', and '_' are tokenized as letters.</item>
-    ///     <item>Full-width forms are converted to half-width forms.</item>
+    ///     <item><description>Text is converted to lowercase.</description></item>
+    ///     <item><description>Numeric digits, '+', '#', and '_' are tokenized as letters.</description></item>
+    ///     <item><description>Full-width forms are converted to half-width forms.</description></item>
     /// </list>
     /// For more info on Asian language (Chinese, Japanese, and Korean) text segmentation:
     /// please search  <a

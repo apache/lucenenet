@@ -3961,13 +3961,13 @@ namespace Lucene.Net.Support.C5
         /// <summary>
         /// A default generic equality comparer for type T. The procedure is as follows:
         /// <list>
-        /// <item>If the actual generic argument T implements the generic interface
+        /// <item><description>If the actual generic argument T implements the generic interface
         /// <see cref="T:C5.ISequenced`1"/> for some value W of its generic parameter T,
-        /// the equalityComparer will be <see cref="T:C5.SequencedCollectionEqualityComparer`2"/></item>
-        /// <item>If the actual generic argument T implements 
+        /// the equalityComparer will be <see cref="T:C5.SequencedCollectionEqualityComparer`2"/></description></item>
+        /// <item><description>If the actual generic argument T implements 
         /// <see cref="T:C5.ICollection`1"/> for some value W of its generic parameter T,
-        /// the equalityComparer will be <see cref="T:C5.UnsequencedCollectionEqualityComparer`2"/></item>
-        /// <item>Otherwise the SCG.EqualityComparer&lt;T&gt;.Default is returned</item>
+        /// the equalityComparer will be <see cref="T:C5.UnsequencedCollectionEqualityComparer`2"/></description></item>
+        /// <item><description>Otherwise the SCG.EqualityComparer&lt;T&gt;.Default is returned</description></item>
         /// </list>   
         /// </summary>
         /// <value>The comparer</value>
@@ -5311,9 +5311,9 @@ namespace Lucene.Net.Support.C5
         /// whose only sign changes when going through items in increasing order
         /// can be 
         /// <list>
-        /// <item>from positive to zero</item>
-        /// <item>from positive to negative</item>
-        /// <item>from zero to negative</item>
+        /// <item><description>from positive to zero</description></item>
+        /// <item><description>from positive to negative</description></item>
+        /// <item><description>from zero to negative</description></item>
         /// </list>
         /// The "cut" function is supplied as the <code>CompareTo</code> method 
         /// of an object <code>c</code> implementing 
@@ -6030,10 +6030,10 @@ namespace Lucene.Net.Support.C5
     /// 
     /// <para>The methods are grouped according to
     /// <list>
-    /// <item>Extrema: report or report and delete an extremal item. This is reminiscent of simplified priority queues.</item>
-    /// <item>Nearest neighbor: report predecessor or successor in the collection of an item. Cut belongs to this group.</item>
-    /// <item>Range: report a view of a range of elements or remove all elements in a range.</item>
-    /// <item>AddSorted: add a collection of items known to be sorted in the same order (should be faster) (to be removed?)</item>
+    /// <item><description>Extrema: report or report and delete an extremal item. This is reminiscent of simplified priority queues.</description></item>
+    /// <item><description>Nearest neighbor: report predecessor or successor in the collection of an item. Cut belongs to this group.</description></item>
+    /// <item><description>Range: report a view of a range of elements or remove all elements in a range.</description></item>
+    /// <item><description>AddSorted: add a collection of items known to be sorted in the same order (should be faster) (to be removed?)</description></item>
     /// </list>
     /// </para>
     /// 
@@ -6175,9 +6175,9 @@ namespace Lucene.Net.Support.C5
         /// whose only sign changes when going through items in increasing order
         /// can be 
         /// <list>
-        /// <item>from positive to zero</item>
-        /// <item>from positive to negative</item>
-        /// <item>from zero to negative</item>
+        /// <item><description>from positive to zero</description></item>
+        /// <item><description>from positive to negative</description></item>
+        /// <item><description>from zero to negative</description></item>
         /// </list>
         /// The "cut" function is supplied as the <code>CompareTo</code> method 
         /// of an object <code>c</code> implementing 

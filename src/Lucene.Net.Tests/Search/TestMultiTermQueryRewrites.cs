@@ -167,7 +167,7 @@ namespace Lucene.Net.Search
             CheckDuplicateTerms(new MultiTermQuery.TopTermsBoostOnlyBooleanQueryRewrite(1024));
 
             // Test auto rewrite (but only boolean mode), so we set the limits to large values to always get a BQ
-            MultiTermQuery.ConstantScoreAutoRewrite rewrite = new MultiTermQuery.ConstantScoreAutoRewrite();
+            ConstantScoreAutoRewrite rewrite = new ConstantScoreAutoRewrite();
             rewrite.TermCountCutoff = int.MaxValue;
             rewrite.DocCountPercent = 100.0;
             CheckDuplicateTerms(rewrite);

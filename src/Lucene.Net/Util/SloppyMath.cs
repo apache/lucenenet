@@ -60,16 +60,17 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the trigonometric cosine of an angle.
-        /// <p>
+        /// <para/>
         /// Error is around 1E-15.
-        /// <p>
+        /// <para/>
         /// Special cases:
-        /// <ul>
-        ///  <li>If the argument is {@code NaN} or an infinity, then the result is {@code NaN}.
-        /// </ul> </summary>
-        /// <param name="a"> an angle, in radians. </param>
-        /// <returns> the cosine of the argument. </returns>
-        /// <seealso cref= Math#cos(double) </seealso>
+        /// <list type="bullet">
+        ///     <item><description>If the argument is <see cref="double.NaN"/> or an infinity, then the result is <see cref="double.NaN"/>.</description></item>
+        /// </list> 
+        /// </summary>
+        /// <param name="a"> An angle, in radians. </param>
+        /// <returns> The cosine of the argument. </returns>
+        /// <seealso cref="Math.Cos(double)"/>
         public static double Cos(double a)
         {
             if (a < 0.0)
@@ -93,17 +94,18 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Returns the arc sine of a value.
-        /// <p>
+        /// <para/>
         /// The returned angle is in the range <i>-pi</i>/2 through <i>pi</i>/2.
         /// Error is around 1E-7.
-        /// <p>
+        /// <para/>
         /// Special cases:
-        /// <ul>
-        ///  <li>If the argument is {@code NaN} or its absolute value is greater than 1, then the result is {@code NaN}.
-        /// </ul> </summary>
+        /// <list type="bullet">
+        ///     <item><description>If the argument is <see cref="double.NaN"/> or its absolute value is greater than 1, then the result is <see cref="double.NaN"/>.</description></item>
+        /// </list> 
+        /// </summary>
         /// <param name="a"> the value whose arc sine is to be returned. </param>
         /// <returns> arc sine of the argument </returns>
-        /// <seealso cref= Math#asin(double) </seealso>
+        /// <seealso cref="Math.Asin(double)"/>
         // because asin(-x) = -asin(x), asin(x) only needs to be computed on [0,1].
         // ---> we only have to compute asin(x) on [0,1].
         // For values not close to +-1, we use look-up tables;

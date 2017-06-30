@@ -110,7 +110,8 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Returns the intermediate "sloppy freq" adjusted for edit distance
-        ///  @lucene.internal
+        /// <para/>
+        /// @lucene.internal
         /// </summary>
         // only public so .payloads can see it.
         public virtual float SloppyFreq

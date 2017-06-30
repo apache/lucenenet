@@ -20,28 +20,29 @@ namespace Lucene.Net.Codecs
     using FieldInfos = Lucene.Net.Index.FieldInfos; // javadocs
 
     /// <summary>
-    /// Encodes/decodes <seealso cref="FieldInfos"/>
+    /// Encodes/decodes <see cref="FieldInfos"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class FieldInfosFormat
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal FieldInfosFormat()
         {
         }
 
         /// <summary>
-        /// Returns a <seealso cref="FieldInfosReader"/> to read field infos
-        ///  from the index
+        /// Returns a <see cref="Codecs.FieldInfosReader"/> to read field infos
+        /// from the index.
         /// </summary>
         public abstract FieldInfosReader FieldInfosReader { get; }
 
         /// <summary>
-        /// Returns a <seealso cref="FieldInfosWriter"/> to write field infos
-        ///  to the index
+        /// Returns a <see cref="Codecs.FieldInfosWriter"/> to write field infos
+        /// to the index.
         /// </summary>
         public abstract FieldInfosWriter FieldInfosWriter { get; }
     }

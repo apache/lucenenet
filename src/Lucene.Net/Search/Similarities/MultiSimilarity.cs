@@ -27,6 +27,7 @@ namespace Lucene.Net.Search.Similarities
     /// Implements the CombSUM method for combining evidence from multiple
     /// similarity values described in: Joseph A. Shaw, Edward A. Fox.
     /// In Text REtrieval Conference (1993), pp. 243-252
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -39,8 +40,8 @@ namespace Lucene.Net.Search.Similarities
         protected internal readonly Similarity[] m_sims;
 
         /// <summary>
-        /// Creates a MultiSimilarity which will sum the scores
-        /// of the provided <code>sims</code>.
+        /// Creates a <see cref="MultiSimilarity"/> which will sum the scores
+        /// of the provided <paramref name="sims"/>.
         /// </summary>
         public MultiSimilarity(Similarity[] sims)
         {

@@ -27,7 +27,8 @@ namespace Lucene.Net.Codecs.Compressing
     using SegmentInfo = Lucene.Net.Index.SegmentInfo;
 
     /// <summary>
-    /// Random-access reader for <seealso cref="CompressingStoredFieldsIndexWriter"/>.
+    /// Random-access reader for <see cref="CompressingStoredFieldsIndexWriter"/>.
+    /// <para/>
     /// @lucene.internal
     /// </summary>
     public sealed class CompressingStoredFieldsIndexReader

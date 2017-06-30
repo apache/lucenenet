@@ -24,10 +24,10 @@ namespace Lucene.Net.Index
     using Directory = Lucene.Net.Store.Directory;
 
     /// <summary>
-    /// Embeds a [read-only] SegmentInfo and adds per-commit
-    ///  fields.
-    ///
-    ///  @lucene.experimental
+    /// Embeds a [read-only] <see cref="SegmentInfo"/> and adds per-commit
+    /// fields.
+    /// <para/>
+    /// @lucene.experimental
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -35,7 +35,7 @@ namespace Lucene.Net.Index
     public class SegmentCommitInfo
     {
         /// <summary>
-        /// The <seealso cref="SegmentInfo"/> that we wrap. </summary>
+        /// The <see cref="SegmentInfo"/> that we wrap. </summary>
         public SegmentInfo Info { get; private set; }
 
         // How many deleted docs in the segment:
@@ -65,13 +65,13 @@ namespace Lucene.Net.Index
         /// Sole constructor.
         /// </summary>
         /// <param name="info">
-        ///          <seealso cref="SegmentInfo"/> that we wrap </param>
+        ///          <see cref="SegmentInfo"/> that we wrap </param>
         /// <param name="delCount">
         ///          number of deleted documents in this segment </param>
         /// <param name="delGen">
         ///          deletion generation number (used to name deletion files) </param>
         /// <param name="fieldInfosGen">
-        ///          FieldInfos generation number (used to name field-infos files)
+        ///          <see cref="FieldInfos"/> generation number (used to name field-infos files)
         ///  </param>
         public SegmentCommitInfo(SegmentInfo info, int delCount, long delGen, long fieldInfosGen)
         {
@@ -127,8 +127,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Called if there was an exception while writing
-        ///  deletes, so that we don't try to write to the same
-        ///  file more than once.
+        /// deletes, so that we don't try to write to the same
+        /// file more than once.
         /// </summary>
         internal virtual void AdvanceNextWriteDelGen()
         {
@@ -136,7 +136,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Called when we succeed in writing a new FieldInfos generation. </summary>
+        /// Called when we succeed in writing a new <see cref="FieldInfos"/> generation. </summary>
         internal virtual void AdvanceFieldInfosGen()
         {
             fieldInfosGen = nextWriteFieldInfosGen;
@@ -146,7 +146,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Called if there was an exception while writing a new generation of
-        /// FieldInfos, so that we don't try to write to the same file more than once.
+        /// <see cref="FieldInfos"/>, so that we don't try to write to the same file more than once.
         /// </summary>
         internal virtual void AdvanceNextWriteFieldInfosGen()
         {
@@ -155,8 +155,8 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns total size in bytes of all files for this
-        ///  segment.
-        /// <p><b>NOTE:</b> this value is not correct for 3.0 segments
+        /// segment.
+        /// <para/><b>NOTE:</b> this value is not correct for 3.0 segments
         /// that have shared docstores. To get the correct value, upgrade!
         /// </summary>
         public virtual long GetSizeInBytes()
@@ -164,7 +164,7 @@ namespace Lucene.Net.Index
             if (sizeInBytes == -1)
             {
                 long sum = 0;
-                foreach (string fileName in Files())
+                foreach (string fileName in GetFiles())
                 {
                     sum += Info.Dir.FileLength(fileName);
                 }
@@ -176,7 +176,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Returns all files in use by this segment. </summary>
-        public virtual ICollection<string> Files()
+        public virtual ICollection<string> GetFiles()
         {
             // Start from the wrapped info's files:
             ISet<string> files = new HashSet<string>(Info.GetFiles());
@@ -215,7 +215,7 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if there are any deletions for the
+        /// Returns <c>true</c> if there are any deletions for the
         /// segment at this commit.
         /// </summary>
         public virtual bool HasDeletions
@@ -224,14 +224,14 @@ namespace Lucene.Net.Index
         }
 
         /// <summary>
-        /// Returns true if there are any field updates for the segment in this commit. </summary>
+        /// Returns <c>true</c> if there are any field updates for the segment in this commit. </summary>
         public virtual bool HasFieldUpdates
         {
             get { return fieldInfosGen != -1; }
         }
 
         /// <summary>
-        /// Returns the next available generation number of the FieldInfos files. </summary>
+        /// Returns the next available generation number of the <see cref="FieldInfos"/> files. </summary>
         public virtual long NextFieldInfosGen
         {
             get

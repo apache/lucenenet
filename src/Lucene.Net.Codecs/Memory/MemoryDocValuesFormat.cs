@@ -21,7 +21,7 @@ namespace Lucene.Net.Codecs.Memory
      */
 
     /// <summary>
-    /// In-memory docvalues format </summary>
+    /// In-memory docvalues format. </summary>
     [DocValuesFormatName("Memory")] // LUCENENET specific - using DocValuesFormatName attribute to ensure the default name passed from subclasses is the same as this class name
     public class MemoryDocValuesFormat : DocValuesFormat
     {
@@ -31,8 +31,8 @@ namespace Lucene.Net.Codecs.Memory
         internal readonly float acceptableOverheadRatio;
 
         /// <summary>
-        /// Calls {@link #MemoryDocValuesFormat(float) 
-        /// MemoryDocValuesFormat(PackedInts.DEFAULT)} 
+        /// Calls <c>MemoryDocValuesFormat(PackedInts.DEFAULT)</c> 
+        /// (<see cref="MemoryDocValuesFormat(float)"/>)
         /// </summary>
         public MemoryDocValuesFormat() 
             : this(PackedInt32s.DEFAULT)
@@ -40,12 +40,13 @@ namespace Lucene.Net.Codecs.Memory
         }
 
         /// <summary>
-        /// Creates a new MemoryDocValuesFormat with the specified
-        /// <code>acceptableOverheadRatio</code> for NumericDocValues. </summary>
-        /// <param name="acceptableOverheadRatio"> compression parameter for numerics. 
-        ///        Currently this is only used when the number of unique values is small.
-        ///        
-        /// @lucene.experimental </param>
+        /// Creates a new <see cref="MemoryDocValuesFormat"/> with the specified
+        /// <paramref name="acceptableOverheadRatio"/> for <see cref="NumericDocValues"/>. 
+        /// <para/>
+        /// @lucene.experimental
+        /// </summary>
+        /// <param name="acceptableOverheadRatio"> Compression parameter for numerics. 
+        ///        Currently this is only used when the number of unique values is small. </param>
         public MemoryDocValuesFormat(float acceptableOverheadRatio) 
             : base()
         {

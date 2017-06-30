@@ -38,8 +38,8 @@ namespace Lucene.Net.Search
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// A Query that matches documents containing a term.
-    ///  this may be combined with other terms with a <seealso cref="BooleanQuery"/>.
+    /// A <see cref="Query"/> that matches documents containing a term.
+    /// this may be combined with other terms with a <see cref="BooleanQuery"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -107,8 +107,8 @@ namespace Lucene.Net.Search
             }
 
             /// <summary>
-            /// Returns a <seealso cref="TermsEnum"/> positioned at this weights Term or null if
-            /// the term does not exist in the given context
+            /// Returns a <see cref="TermsEnum"/> positioned at this weights <see cref="Index.Term"/> or <c>null</c> if
+            /// the term does not exist in the given context.
             /// </summary>
             private TermsEnum GetTermsEnum(AtomicReaderContext context)
             {
@@ -155,16 +155,16 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Constructs a query for the term <code>t</code>. </summary>
+        /// Constructs a query for the term <paramref name="t"/>. </summary>
         public TermQuery(Term t)
             : this(t, -1)
         {
         }
 
         /// <summary>
-        /// Expert: constructs a TermQuery that will use the
-        ///  provided docFreq instead of looking up the docFreq
-        ///  against the searcher.
+        /// Expert: constructs a <see cref="TermQuery"/> that will use the
+        /// provided <paramref name="docFreq"/> instead of looking up the docFreq
+        /// against the searcher.
         /// </summary>
         public TermQuery(Term t, int docFreq)
         {
@@ -174,9 +174,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Expert: constructs a TermQuery that will use the
-        ///  provided docFreq instead of looking up the docFreq
-        ///  against the searcher.
+        /// Expert: constructs a <see cref="TermQuery"/> that will use the
+        /// provided docFreq instead of looking up the docFreq
+        /// against the searcher.
         /// </summary>
         public TermQuery(Term t, TermContext states)
         {
@@ -241,7 +241,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns true iff <code>o</code> is equal to this. </summary>
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (!(o is TermQuery))

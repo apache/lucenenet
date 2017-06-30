@@ -34,29 +34,29 @@ namespace Lucene.Net.Codecs
 
     /// <summary>
     /// Abstract API that consumes terms for an individual field.
-    /// <p>
+    /// <para/>
     /// The lifecycle is:
-    /// <ol>
-    ///   <li>TermsConsumer is returned for each field
-    ///       by <seealso cref="FieldsConsumer#addField(FieldInfo)"/>.
-    ///   <li>TermsConsumer returns a <seealso cref="PostingsConsumer"/> for
-    ///       each term in <seealso cref="#startTerm(BytesRef)"/>.
-    ///   <li>When the producer (e.g. IndexWriter)
+    /// <list type="number">
+    ///   <item><description>TermsConsumer is returned for each field
+    ///       by <see cref="FieldsConsumer.AddField(FieldInfo)"/>.</description></item>
+    ///   <item><description>TermsConsumer returns a <see cref="PostingsConsumer"/> for
+    ///       each term in <see cref="StartTerm(BytesRef)"/>.</description></item>
+    ///   <item><description>When the producer (e.g. IndexWriter)
     ///       is done adding documents for the term, it calls
-    ///       <seealso cref="#finishTerm(BytesRef, TermStats)"/>, passing in
-    ///       the accumulated term statistics.
-    ///   <li>Producer calls <seealso cref="#finish(long, long, int)"/> with
+    ///       <see cref="FinishTerm(BytesRef, TermStats)"/>, passing in
+    ///       the accumulated term statistics.</description></item>
+    ///   <item><description>Producer calls <see cref="Finish(long, long, int)"/> with
     ///       the accumulated collection statistics when it is finished
-    ///       adding terms to the field.
-    /// </ol>
-    ///
+    ///       adding terms to the field.</description></item>
+    /// </list>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public abstract class TermsConsumer
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
-        ///  constructors, typically implicit.)
+        /// constructors, typically implicit.)
         /// </summary>
         protected internal TermsConsumer()
         {
@@ -64,28 +64,28 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Starts a new term in this field; this may be called
-        ///  with no corresponding call to finish if the term had
-        ///  no docs.
+        /// with no corresponding call to finish if the term had
+        /// no docs.
         /// </summary>
         public abstract PostingsConsumer StartTerm(BytesRef text);
 
         /// <summary>
-        /// Finishes the current term; numDocs must be > 0.
-        ///  <code>stats.totalTermFreq</code> will be -1 when term
-        ///  frequencies are omitted for the field.
+        /// Finishes the current term; numDocs must be &gt; 0.
+        /// <c>stats.TotalTermFreq</c> will be -1 when term
+        /// frequencies are omitted for the field.
         /// </summary>
         public abstract void FinishTerm(BytesRef text, TermStats stats);
 
         /// <summary>
         /// Called when we are done adding terms to this field.
-        ///  <code>sumTotalTermFreq</code> will be -1 when term
-        ///  frequencies are omitted for the field.
+        /// <paramref name="sumTotalTermFreq"/> will be -1 when term
+        /// frequencies are omitted for the field.
         /// </summary>
         public abstract void Finish(long sumTotalTermFreq, long sumDocFreq, int docCount);
 
         /// <summary>
-        /// Return the BytesRef Comparer used to sort terms
-        ///  before feeding to this API.
+        /// Gets the <see cref="T:IComparer{BytesRef}"/> used to sort terms
+        /// before feeding to this API.
         /// </summary>
         public abstract IComparer<BytesRef> Comparer { get; }
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs
         private MappingMultiDocsAndPositionsEnum postingsEnum;
 
         /// <summary>
-        /// Default merge impl </summary>
+        /// Default merge impl. </summary>
         public virtual void Merge(MergeState mergeState, IndexOptions indexOptions, TermsEnum termsEnum)
         {
             BytesRef term;

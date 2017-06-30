@@ -30,8 +30,8 @@ namespace Lucene.Net.Search.Spans
     using ToStringUtils = Lucene.Net.Util.ToStringUtils;
 
     /// <summary>
-    /// Removes matches which overlap with another SpanQuery or
-    /// within a x tokens before or y tokens after another SpanQuery.
+    /// Removes matches which overlap with another <see cref="SpanQuery"/> or
+    /// within a x tokens before or y tokens after another <see cref="SpanQuery"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -44,8 +44,8 @@ namespace Lucene.Net.Search.Spans
         private readonly int post;
 
         /// <summary>
-        /// Construct a SpanNotQuery matching spans from <code>include</code> which
-        /// have no overlap with spans from <code>exclude</code>.
+        /// Construct a <see cref="SpanNotQuery"/> matching spans from <paramref name="include"/> which
+        /// have no overlap with spans from <paramref name="exclude"/>.
         /// </summary>
         public SpanNotQuery(SpanQuery include, SpanQuery exclude)
             : this(include, exclude, 0, 0)
@@ -53,9 +53,9 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Construct a SpanNotQuery matching spans from <code>include</code> which
-        /// have no overlap with spans from <code>exclude</code> within
-        /// <code>dist</code> tokens of <code>include</code>.
+        /// Construct a <see cref="SpanNotQuery"/> matching spans from <paramref name="include"/> which
+        /// have no overlap with spans from <paramref name="exclude"/> within
+        /// <paramref name="dist"/> tokens of <paramref name="include"/>.
         /// </summary>
         public SpanNotQuery(SpanQuery include, SpanQuery exclude, int dist)
             : this(include, exclude, dist, dist)
@@ -63,9 +63,9 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Construct a SpanNotQuery matching spans from <code>include</code> which
-        /// have no overlap with spans from <code>exclude</code> within
-        /// <code>pre</code> tokens before or <code>post</code> tokens of <code>include</code>.
+        /// Construct a <see cref="SpanNotQuery"/> matching spans from <paramref name="include"/> which
+        /// have no overlap with spans from <paramref name="exclude"/> within
+        /// <paramref name="pre"/> tokens before or <paramref name="post"/> tokens of <paramref name="include"/>.
         /// </summary>
         public SpanNotQuery(SpanQuery include, SpanQuery exclude, int pre, int post)
         {
@@ -81,7 +81,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Return the SpanQuery whose matches are filtered. </summary>
+        /// Return the <see cref="SpanQuery"/> whose matches are filtered. </summary>
         public virtual SpanQuery Include
         {
             get
@@ -91,7 +91,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Return the SpanQuery whose matches must not overlap those returned. </summary>
+        /// Return the <see cref="SpanQuery"/> whose matches must not overlap those returned. </summary>
         public virtual SpanQuery Exclude
         {
             get
@@ -306,7 +306,7 @@ namespace Lucene.Net.Search.Spans
         }
 
         /// <summary>
-        /// Returns true iff <code>o</code> is equal to this. </summary>
+        /// Returns <c>true</c> if <paramref name="o"/> is equal to this. </summary>
         public override bool Equals(object o)
         {
             if (!base.Equals(o))

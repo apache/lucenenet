@@ -25,20 +25,20 @@ namespace Lucene.Net.Codecs
     using MathUtil = Lucene.Net.Util.MathUtil;
 
     /// <summary>
-    /// this abstract class reads skip lists with multiple levels.
-    ///
-    /// See <seealso cref="MultiLevelSkipListWriter"/> for the information about the encoding
+    /// This abstract class reads skip lists with multiple levels.
+    /// <para/>
+    /// See <see cref="MultiLevelSkipListWriter"/> for the information about the encoding
     /// of the multi level skip lists.
-    ///
-    /// Subclasses must implement the abstract method <seealso cref="#readSkipData(int, IndexInput)"/>
+    /// <para/>
+    /// Subclasses must implement the abstract method <see cref="ReadSkipData(int, IndexInput)"/>
     /// which defines the actual format of the skip data.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-
     public abstract class MultiLevelSkipListReader : IDisposable
     {
         /// <summary>
-        /// the maximum number of skip levels possible for this index </summary>
+        /// The maximum number of skip levels possible for this index. </summary>
         protected internal int m_maxNumberOfSkipLevels;
 
         // number of levels in this skip list
@@ -57,7 +57,7 @@ namespace Lucene.Net.Codecs
         private bool haveSkipped;
 
         /// <summary>
-        /// skipStream for each level. </summary>
+        /// SkipStream for each level. </summary>
         private IndexInput[] skipStream;
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Lucene.Net.Codecs
         private long[] skipPointer;
 
         /// <summary>
-        ///  skipInterval of each level. </summary>
+        /// SkipInterval of each level. </summary>
         private int[] skipInterval;
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// childPointer of last read skip entry with docId &lt;=
-        ///  target.
+        /// target.
         /// </summary>
         private long lastChildPointer;
 
@@ -94,7 +94,7 @@ namespace Lucene.Net.Codecs
         private readonly int skipMultiplier;
 
         /// <summary>
-        /// Creates a {@code MultiLevelSkipListReader}. </summary>
+        /// Creates a <see cref="MultiLevelSkipListReader"/>. </summary>
         protected MultiLevelSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval, int skipMultiplier)
         {
             this.skipStream = new IndexInput[maxSkipLevels];
@@ -116,9 +116,9 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Creates a {@code MultiLevelSkipListReader}, where
-        ///  {@code skipInterval} and {@code skipMultiplier} are
-        ///  the same.
+        /// Creates a <see cref="MultiLevelSkipListReader"/>, where
+        /// <see cref="skipInterval"/> and <see cref="skipMultiplier"/> are
+        /// the same.
         /// </summary>
         protected internal MultiLevelSkipListReader(IndexInput skipStream, int maxSkipLevels, int skipInterval)
             : this(skipStream, maxSkipLevels, skipInterval, skipInterval)
@@ -126,8 +126,8 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Returns the id of the doc to which the last call of <seealso cref="#skipTo(int)"/>
-        ///  has skipped.
+        /// Returns the id of the doc to which the last call of <see cref="SkipTo(int)"/>
+        /// has skipped.
         /// </summary>
         public virtual int Doc
         {
@@ -139,7 +139,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Skips entries to the first beyond the current whose document number is
-        ///  greater than or equal to <i>target</i>. Returns the current doc count.
+        /// greater than or equal to <paramref name="target"/>. Returns the current doc count.
         /// </summary>
         public virtual int SkipTo(int target)
         {
@@ -213,7 +213,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Seeks the skip entry on the given level </summary>
+        /// Seeks the skip entry on the given level. </summary>
         protected virtual void SeekChild(int level)
         {
             skipStream[level].Seek(lastChildPointer);
@@ -225,13 +225,29 @@ namespace Lucene.Net.Codecs
             }
         }
 
+        /// <summary>
+        /// Disposes all resources used by this object.
+        /// </summary>
         public void Dispose()
         {
-            for (int i = 1; i < skipStream.Length; i++)
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        /// <summary>
+        /// Disposes all resources used by this object. Subclasses may override
+        /// to dispose their own resources.
+        /// </summary>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                if (skipStream[i] != null)
+                for (int i = 1; i < skipStream.Length; i++)
                 {
-                    skipStream[i].Dispose();
+                    if (skipStream[i] != null)
+                    {
+                        skipStream[i].Dispose();
+                    }
                 }
             }
         }
@@ -255,7 +271,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// Loads the skip levels </summary>
+        /// Loads the skip levels. </summary>
         private void LoadSkipLevels()
         {
             if (docCount <= skipInterval[0])
@@ -310,12 +326,12 @@ namespace Lucene.Net.Codecs
         /// <summary>
         /// Subclasses must implement the actual skip data encoding in this method.
         /// </summary>
-        /// <param name="level"> the level skip data shall be read from </param>
-        /// <param name="skipStream"> the skip stream to read from </param>
+        /// <param name="level"> The level skip data shall be read from. </param>
+        /// <param name="skipStream"> The skip stream to read from. </param>
         protected abstract int ReadSkipData(int level, IndexInput skipStream);
 
         /// <summary>
-        /// Copies the values of the last read skip entry on this <paramref name="level"/> </summary>
+        /// Copies the values of the last read skip entry on this <paramref name="level"/>. </summary>
         protected virtual void SetLastSkipData(int level)
         {
             lastDoc = m_skipDoc[level];
@@ -323,7 +339,7 @@ namespace Lucene.Net.Codecs
         }
 
         /// <summary>
-        /// used to buffer the top skip levels </summary>
+        /// Used to buffer the top skip levels. </summary>
         private sealed class SkipBuffer : IndexInput
         {
             private byte[] data;

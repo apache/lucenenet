@@ -25,20 +25,21 @@ namespace Lucene.Net.Search
     /// <summary>
     /// Expert: Common scoring functionality for different types of queries.
     ///
-    /// <p>
-    /// A <code>Scorer</code> iterates over documents matching a
+    /// <para>
+    /// A <see cref="Scorer"/> iterates over documents matching a
     /// query in increasing order of doc Id.
-    /// </p>
-    /// <p>
-    /// Document scores are computed using a given <code>Similarity</code>
+    /// </para>
+    /// <para>
+    /// Document scores are computed using a given <see cref="Similarities.Similarity"/>
     /// implementation.
-    /// </p>
+    /// </para>
     ///
-    /// <p><b>NOTE</b>: The values Float.Nan,
-    /// Float.NEGATIVE_INFINITY and Float.POSITIVE_INFINITY are
-    /// not valid scores.  Certain collectors (eg {@link
-    /// TopScoreDocCollector}) will not properly collect hits
+    /// <para><b>NOTE</b>: The values <see cref="float.NaN"/>,
+    /// <see cref="float.NegativeInfinity"/> and <see cref="float.PositiveInfinity"/> are
+    /// not valid scores.  Certain collectors (eg 
+    /// <see cref="TopScoreDocCollector"/>) will not properly collect hits
     /// with these scores.
+    /// </para>
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -46,13 +47,13 @@ namespace Lucene.Net.Search
     public abstract class Scorer : DocsEnum
     {
         /// <summary>
-        /// the Scorer's parent Weight. in some cases this may be null </summary>
+        /// The <see cref="Scorer"/>'s parent <see cref="Weight"/>. In some cases this may be <c>null</c>. </summary>
         // TODO can we clean this up?
         protected internal readonly Weight m_weight;
 
         /// <summary>
-        /// Constructs a Scorer </summary>
-        /// <param name="weight"> The scorers <code>Weight</code>. </param>
+        /// Constructs a <see cref="Scorer"/> </summary>
+        /// <param name="weight"> The scorers <see cref="Weight"/>. </param>
         protected Scorer(Weight weight)
         {
             this.m_weight = weight;
@@ -60,14 +61,15 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns the score of the current document matching the query.
-        /// Initially invalid, until <seealso cref="#nextDoc()"/> or <seealso cref="#advance(int)"/>
+        /// Initially invalid, until <see cref="DocIdSetIterator.NextDoc()"/> or <see cref="DocIdSetIterator.Advance(int)"/>
         /// is called the first time, or when called from within
-        /// <seealso cref="ICollector#collect"/>.
+        /// <see cref="ICollector.Collect(int)"/>.
         /// </summary>
         public abstract float GetScore();
 
         /// <summary>
-        /// returns parent Weight
+        /// returns parent <see cref="Weight"/>
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public virtual Weight Weight
@@ -80,6 +82,7 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Returns child sub-scorers
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
         public virtual ICollection<ChildScorer> GetChildren()
@@ -88,8 +91,9 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// A child Scorer and its relationship to its parent.
-        /// the meaning of the relationship depends upon the parent query.
+        /// A child <see cref="Scorer"/> and its relationship to its parent.
+        /// The meaning of the relationship depends upon the parent query.
+        /// <para/>
         /// @lucene.experimental
         /// </summary>
 #if FEATURE_SERIALIZABLE
@@ -98,7 +102,7 @@ namespace Lucene.Net.Search
         public class ChildScorer
         {
             /// <summary>
-            /// Child Scorer. (note this is typically a direct child, and may
+            /// Child <see cref="Scorer"/>. (note this is typically a direct child, and may
             /// itself also have children).
             /// </summary>
             public Scorer Child { get; private set; }
@@ -109,10 +113,10 @@ namespace Lucene.Net.Search
             public string Relationship { get; private set; }
 
             /// <summary>
-            /// Creates a new ChildScorer node with the specified relationship.
-            /// <p>
+            /// Creates a new <see cref="ChildScorer"/> node with the specified relationship.
+            /// <para/>
             /// The relationship can be any be any string that makes sense to
-            /// the parent Scorer.
+            /// the parent <see cref="Scorer"/>.
             /// </summary>
             public ChildScorer(Scorer child, string relationship)
             {

@@ -101,7 +101,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
             finally
             {
-                IOUtils.Close(ltw, ltr, dir);
+                IOUtils.Dispose(ltw, ltr, dir);
             }
         }
 
@@ -193,7 +193,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
             }
             finally
             {
-                IOUtils.Close(tr as DirectoryTaxonomyReader, tw, dir);
+                IOUtils.Dispose(tr as DirectoryTaxonomyReader, tw, dir);
             }
         }
 

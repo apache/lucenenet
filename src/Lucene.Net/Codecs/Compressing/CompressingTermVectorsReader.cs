@@ -29,7 +29,8 @@ namespace Lucene.Net.Codecs.Compressing
      */
 
     /// <summary>
-    /// <seealso cref="TermVectorsReader"/> for <seealso cref="CompressingTermVectorsFormat"/>.
+    /// <see cref="TermVectorsReader"/> for <see cref="CompressingTermVectorsFormat"/>.
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public sealed class CompressingTermVectorsReader : TermVectorsReader, IDisposable
@@ -118,7 +119,7 @@ namespace Lucene.Net.Codecs.Compressing
             {
                 if (!success)
                 {
-                    IOUtils.CloseWhileHandlingException(this, indexStream);
+                    IOUtils.DisposeWhileHandlingException(this, indexStream);
                 }
             }
         }
@@ -174,7 +175,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
-        /// <exception cref="ObjectDisposedException"> if this TermVectorsReader is closed </exception>
+        /// <exception cref="ObjectDisposedException"> if this <see cref="TermVectorsReader"/> is disposed. </exception>
         private void EnsureOpen()
         {
             if (closed)
@@ -187,7 +188,7 @@ namespace Lucene.Net.Codecs.Compressing
         {
             if (!closed)
             {
-                IOUtils.Close(vectorsStream);
+                IOUtils.Dispose(vectorsStream);
                 closed = true;
             }
         }

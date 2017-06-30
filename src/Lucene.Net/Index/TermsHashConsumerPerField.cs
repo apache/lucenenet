@@ -21,10 +21,10 @@ namespace Lucene.Net.Index
      */
 
     /// <summary>
-    /// Implement this class to plug into the TermsHash
-    ///  processor, which inverts & stores Tokens into a hash
-    ///  table and provides an API for writing bytes into
-    ///  multiple streams for each unique Token.
+    /// Implement this class to plug into the <see cref="TermsHash"/>
+    /// processor, which inverts &amp; stores <see cref="Analysis.Token"/>s into a hash
+    /// table and provides an API for writing bytes into
+    /// multiple streams for each unique <see cref="Analysis.Token"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]

@@ -75,9 +75,9 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Go to next location of this term current document, and set
-        /// <code>position</code> as <code>location - offset</code>, so that a
-        /// matching exact phrase is easily identified when all PhrasePositions
-        /// have exactly the same <code>position</code>.
+        /// <c>position</c> as <c>location - offset</c>, so that a
+        /// matching exact phrase is easily identified when all <see cref="PhrasePositions"/>
+        /// have exactly the same <c>position</c>.
         /// </summary>
         internal bool NextPosition()
         {
@@ -93,7 +93,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// for debug purposes </summary>
+        /// For debug purposes </summary>
         public override string ToString()
         {
             string s = "d:" + doc + " o:" + offset + " p:" + position + " c:" + count;

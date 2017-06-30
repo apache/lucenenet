@@ -22,15 +22,16 @@ namespace Lucene.Net.Search
      */
 
     /// <summary>
-    /// A base class for all collectors that return a <seealso cref="TopDocs"/> output. this
+    /// A base class for all collectors that return a <see cref="TopDocs"/> output. This
     /// collector allows easy extension by providing a single constructor which
-    /// accepts a <seealso cref="PriorityQueue"/> as well as protected members for that
-    /// priority queue and a counter of the number of total hits.<br>
+    /// accepts a <see cref="Util.PriorityQueue{T}"/> as well as protected members for that
+    /// priority queue and a counter of the number of total hits.
+    /// <para/>
     /// Extending classes can override any of the methods to provide their own
     /// implementation, as well as avoid the use of the priority queue entirely by
-    /// passing null to <seealso cref="#TopDocsCollector(PriorityQueue)"/>. In that case
+    /// passing null to <see cref="TopDocsCollector(Util.PriorityQueue{T})"/>. In that case
     /// however, you might want to consider overriding all methods, in order to avoid
-    /// a NullPointerException.
+    /// a <see cref="NullReferenceException"/>.
     /// </summary>
 #if FEATURE_SERIALIZABLE
     [Serializable]
@@ -38,15 +39,15 @@ namespace Lucene.Net.Search
     public abstract class TopDocsCollector<T> : ICollector, ITopDocsCollector where T : ScoreDoc
     {
         /// <summary>
-        /// this is used in case topDocs() is called with illegal parameters, or there
-        ///  simply aren't (enough) results.
+        /// This is used in case <see cref="GetTopDocs()"/> is called with illegal parameters, or there
+        /// simply aren't (enough) results.
         /// </summary>
         protected static readonly TopDocs EMPTY_TOPDOCS = new TopDocs(0, new ScoreDoc[0], float.NaN);
 
         /// <summary>
         /// The priority queue which holds the top documents. Note that different
-        /// implementations of PriorityQueue give different meaning to 'top documents'.
-        /// HitQueue for example aggregates the top scoring documents, while other PQ
+        /// implementations of <see cref="PriorityQueue{T}"/> give different meaning to 'top documents'.
+        /// <see cref="HitQueue"/> for example aggregates the top scoring documents, while other priority queue
         /// implementations may hold documents sorted by other criteria.
         /// </summary>
         protected PriorityQueue<T> m_pq;
@@ -55,14 +56,17 @@ namespace Lucene.Net.Search
         /// The total number of documents that the collector encountered. </summary>
         protected int m_totalHits;
 
+        /// <summary>
+        /// Sole constructor.
+        /// </summary>
         protected TopDocsCollector(PriorityQueue<T> pq)
         {
             this.m_pq = pq;
         }
 
         /// <summary>
-        /// Populates the results array with the ScoreDoc instances. this can be
-        /// overridden in case a different ScoreDoc type should be returned.
+        /// Populates the results array with the <see cref="ScoreDoc"/> instances. This can be
+        /// overridden in case a different <see cref="ScoreDoc"/> type should be returned.
         /// </summary>
         protected virtual void PopulateResults(ScoreDoc[] results, int howMany)
         {
@@ -73,10 +77,10 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns a <seealso cref="TopDocs"/> instance containing the given results. If
-        /// <code>results</code> is null it means there are no results to return,
-        /// either because there were 0 calls to collect() or because the arguments to
-        /// topDocs were invalid.
+        /// Returns a <see cref="TopDocs"/> instance containing the given results. If
+        /// <paramref name="results"/> is <c>null</c> it means there are no results to return,
+        /// either because there were 0 calls to <see cref="Collect(int)"/> or because the arguments to
+        /// <see cref="TopDocs"/> were invalid.
         /// </summary>
         protected virtual TopDocs NewTopDocs(ScoreDoc[] results, int start)
         {
@@ -98,7 +102,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// The number of valid PQ entries 
+        /// The number of valid priority queue entries 
         /// </summary>
         protected virtual int TopDocsCount
         {
@@ -122,44 +126,48 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Returns the documents in the rage [start .. pq.size()) that were collected
-        /// by this collector. Note that if start >= pq.size(), an empty TopDocs is
-        /// returned.<br>
-        /// this method is convenient to call if the application always asks for the
-        /// last results, starting from the last 'page'.<br>
+        /// Returns the documents in the rage [<paramref name="start"/> .. pq.Count) that were collected
+        /// by this collector. Note that if <paramref name="start"/> &gt;= pq.Count, an empty <see cref="TopDocs"/> is
+        /// returned.
+        /// <para/>
+        /// This method is convenient to call if the application always asks for the
+        /// last results, starting from the last 'page'.
+        /// <para/>
         /// <b>NOTE:</b> you cannot call this method more than once for each search
         /// execution. If you need to call it more than once, passing each time a
-        /// different <code>start</code>, you should call <seealso cref="#topDocs()"/> and work
-        /// with the returned <seealso cref="TopDocs"/> object, which will contain all the
+        /// different <paramref name="start"/>, you should call <see cref="GetTopDocs()"/> and work
+        /// with the returned <see cref="TopDocs"/> object, which will contain all the
         /// results this search execution collected.
         /// </summary>
         public virtual TopDocs GetTopDocs(int start)
         {
             // In case pq was populated with sentinel values, there might be less
-            // results than pq.size(). Therefore return all results until either
-            // pq.size() or totalHits.
+            // results than pq.Count. Therefore return all results until either
+            // pq.Count or totalHits.
             return GetTopDocs(start, TopDocsCount);
         }
 
         /// <summary>
-        /// Returns the documents in the rage [start .. start+howMany) that were
-        /// collected by this collector. Note that if start >= pq.size(), an empty
-        /// TopDocs is returned, and if pq.size() - start &lt; howMany, then only the
-        /// available documents in [start .. pq.size()) are returned.<br>
-        /// this method is useful to call in case pagination of search results is
+        /// Returns the documents in the rage [<paramref name="start"/> .. <paramref name="start"/>+<paramref name="howMany"/>) that were
+        /// collected by this collector. Note that if <paramref name="start"/> >= pq.Count, an empty
+        /// <see cref="TopDocs"/> is returned, and if pq.Count - <paramref name="start"/> &lt; <paramref name="howMany"/>, then only the
+        /// available documents in [<paramref name="start"/> .. pq.Count) are returned.
+        /// <para/>
+        /// This method is useful to call in case pagination of search results is
         /// allowed by the search application, as well as it attempts to optimize the
-        /// memory used by allocating only as much as requested by howMany.<br>
+        /// memory used by allocating only as much as requested by <paramref name="howMany"/>.
+        /// <para/>
         /// <b>NOTE:</b> you cannot call this method more than once for each search
         /// execution. If you need to call it more than once, passing each time a
-        /// different range, you should call <seealso cref="#topDocs()"/> and work with the
-        /// returned <seealso cref="TopDocs"/> object, which will contain all the results this
+        /// different range, you should call <see cref="GetTopDocs()"/> and work with the
+        /// returned <see cref="TopDocs"/> object, which will contain all the results this
         /// search execution collected.
         /// </summary>
         public virtual TopDocs GetTopDocs(int start, int howMany)
         {
             // In case pq was populated with sentinel values, there might be less
-            // results than pq.size(). Therefore return all results until either
-            // pq.size() or totalHits.
+            // results than pq.Count. Therefore return all results until either
+            // pq.Count or totalHits.
             int size = TopDocsCount;
 
             // Don't bother to throw an exception, just return an empty TopDocs in case
@@ -197,7 +205,7 @@ namespace Lucene.Net.Search
         /// Called before successive calls to <see cref="Collect(int)"/>. Implementations
         /// that need the score of the current document (passed-in to
         /// <see cref="Collect(int)"/>), should save the passed-in <see cref="Scorer"/> and call
-        /// scorer.Score() when needed.
+        /// <see cref="Scorer.GetScore()"/> when needed.
         /// </summary>
         public abstract void SetScorer(Scorer scorer);
 
@@ -219,11 +227,11 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Called before collecting from each <see cref="AtomicReaderContext"/>. All doc ids in
         /// <see cref="Collect(int)"/> will correspond to <see cref="Index.IndexReaderContext.Reader"/>.
-        ///
-        /// Add <see cref="AtomicReaderContext#docBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
+        /// <para/>
+        /// Add <see cref="AtomicReaderContext.DocBase"/> to the current <see cref="Index.IndexReaderContext.Reader"/>'s
         /// internal document id to re-base ids in <see cref="Collect(int)"/>.
         /// </summary>
-        /// <param name="context">next atomic reader context </param>
+        /// <param name="context">Next atomic reader context </param>
         public abstract void SetNextReader(AtomicReaderContext context);
 
         /// <summary>
@@ -252,9 +260,46 @@ namespace Lucene.Net.Search
     public interface ITopDocsCollector : ICollector
     {
         // From TopDocsCollector<T>
+        /// <summary>
+        /// The total number of documents that matched this query. </summary>
         int TotalHits { get; }
+
+        /// <summary>
+        /// Returns the top docs that were collected by this collector. </summary>
         TopDocs GetTopDocs();
+
+        /// <summary>
+        /// Returns the documents in the rage [<paramref name="start"/> .. pq.Count) that were collected
+        /// by this collector. Note that if <paramref name="start"/> &gt;= pq.Count, an empty <see cref="TopDocs"/> is
+        /// returned.
+        /// <para/>
+        /// This method is convenient to call if the application always asks for the
+        /// last results, starting from the last 'page'.
+        /// <para/>
+        /// <b>NOTE:</b> you cannot call this method more than once for each search
+        /// execution. If you need to call it more than once, passing each time a
+        /// different <paramref name="start"/>, you should call <see cref="GetTopDocs()"/> and work
+        /// with the returned <see cref="TopDocs"/> object, which will contain all the
+        /// results this search execution collected.
+        /// </summary>
         TopDocs GetTopDocs(int start);
+
+        /// <summary>
+        /// Returns the documents in the rage [<paramref name="start"/> .. <paramref name="start"/>+<paramref name="howMany"/>) that were
+        /// collected by this collector. Note that if <paramref name="start"/> >= pq.Count, an empty
+        /// <see cref="TopDocs"/> is returned, and if pq.Count - <paramref name="start"/> &lt; <paramref name="howMany"/>, then only the
+        /// available documents in [<paramref name="start"/> .. pq.Count) are returned.
+        /// <para/>
+        /// This method is useful to call in case pagination of search results is
+        /// allowed by the search application, as well as it attempts to optimize the
+        /// memory used by allocating only as much as requested by <paramref name="howMany"/>.
+        /// <para/>
+        /// <b>NOTE:</b> you cannot call this method more than once for each search
+        /// execution. If you need to call it more than once, passing each time a
+        /// different range, you should call <see cref="GetTopDocs()"/> and work with the
+        /// returned <see cref="TopDocs"/> object, which will contain all the results this
+        /// search execution collected.
+        /// </summary>
         TopDocs GetTopDocs(int start, int howMany);
     }
 }

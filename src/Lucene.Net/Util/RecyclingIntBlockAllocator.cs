@@ -23,11 +23,11 @@ namespace Lucene.Net.Util
     using Allocator = Lucene.Net.Util.Int32BlockPool.Allocator;
 
     /// <summary>
-    /// A <seealso cref="Allocator"/> implementation that recycles unused int
+    /// A <see cref="Allocator"/> implementation that recycles unused <see cref="int"/>
     /// blocks in a buffer and reuses them in subsequent calls to
-    /// <seealso cref="#getIntBlock()"/>.
+    /// <see cref="GetInt32Block()"/>.
     /// <para>
-    /// Note: this class is not thread-safe
+    /// Note: this class is not thread-safe.
     /// </para>
     /// <para>
     /// NOTE: This was RecyclingIntBlockAllocator in Lucene
@@ -43,14 +43,14 @@ namespace Lucene.Net.Util
         public const int DEFAULT_BUFFERED_BLOCKS = 64;
 
         /// <summary>
-        /// Creates a new <seealso cref="RecyclingInt32BlockAllocator"/>
+        /// Creates a new <see cref="RecyclingInt32BlockAllocator"/>.
         /// </summary>
         /// <param name="blockSize">
-        ///          the block size in bytes </param>
+        ///          The block size in bytes. </param>
         /// <param name="maxBufferedBlocks">
-        ///          maximum number of buffered int block </param>
+        ///          Maximum number of buffered int block. </param>
         /// <param name="bytesUsed">
-        ///          <seealso cref="Counter"/> reference counting internally allocated bytes </param>
+        ///          <see cref="Counter"/> reference counting internally allocated bytes. </param>
         public RecyclingInt32BlockAllocator(int blockSize, int maxBufferedBlocks, Counter bytesUsed)
             : base(blockSize)
         {
@@ -60,12 +60,12 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Creates a new <seealso cref="RecyclingInt32BlockAllocator"/>.
+        /// Creates a new <see cref="RecyclingInt32BlockAllocator"/>.
         /// </summary>
         /// <param name="blockSize">
-        ///          the size of each block returned by this allocator </param>
+        ///          The size of each block returned by this allocator. </param>
         /// <param name="maxBufferedBlocks">
-        ///          maximum number of buffered int blocks </param>
+        ///          Maximum number of buffered int blocks. </param>
         public RecyclingInt32BlockAllocator(int blockSize, int maxBufferedBlocks)
             : this(blockSize, maxBufferedBlocks, Counter.NewCounter(false))
         {
@@ -75,7 +75,6 @@ namespace Lucene.Net.Util
         /// Creates a new <see cref="RecyclingInt32BlockAllocator"/> with a block size of
         /// <see cref="Int32BlockPool.INT32_BLOCK_SIZE"/>, upper buffered docs limit of
         /// <see cref="DEFAULT_BUFFERED_BLOCKS"/>.
-        ///
         /// </summary>
         public RecyclingInt32BlockAllocator()
             : this(Int32BlockPool.INT32_BLOCK_SIZE, 64, Counter.NewCounter(false))
@@ -124,19 +123,19 @@ namespace Lucene.Net.Util
             Debug.Assert(bytesUsed.Get() >= 0);
         }
 
-        /// <returns> the number of currently buffered blocks </returns>
+        /// <returns> The number of currently buffered blocks. </returns>
         public int NumBufferedBlocks
         {
             get { return freeBlocks; }
         }
 
-        /// <returns> the number of bytes currently allocated by this <seealso cref="Allocator"/> </returns>
+        /// <returns> The number of bytes currently allocated by this <see cref="Allocator"/>. </returns>
         public long BytesUsed 
         {
             get { return bytesUsed.Get(); }
         }
 
-        /// <returns> the maximum number of buffered byte blocks </returns>
+        /// <returns> The maximum number of buffered byte blocks. </returns>
         public int MaxBufferedBlocks
         {
             get { return maxBufferedBlocks; }
@@ -146,8 +145,8 @@ namespace Lucene.Net.Util
         /// Removes the given number of int blocks from the buffer if possible.
         /// </summary>
         /// <param name="num">
-        ///          the number of int blocks to remove </param>
-        /// <returns> the number of actually removed buffers </returns>
+        ///          The number of int blocks to remove. </param>
+        /// <returns> The number of actually removed buffers. </returns>
         public int FreeBlocks(int num)
         {
             Debug.Assert(num >= 0, "free blocks must be >= 0 but was: " + num);
