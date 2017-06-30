@@ -1,0 +1,6 @@
+- name: Getting Started
+  href: index.md
+  topicHref: index.md
+- name: "Search"
+  href: search/toc.yml
+  topicHref: search/index.md

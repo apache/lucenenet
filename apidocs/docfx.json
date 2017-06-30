@@ -29,8 +29,8 @@
       },
       {
         "files": [
-          "articles/**.md",
-          "articles/**/toc.yml",
+          "docs/**.md",
+          "docs/**/toc.yml",
           "toc.yml",
           "*.md"
         ],
@@ -63,7 +63,7 @@
       }
     ],
 	"globalMetadata": {
-      "_appTitle": "Lucene.Net API docs",
+      "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",
       "_enableSearch": false,
       "_disableContribution": false
     },

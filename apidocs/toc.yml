@@ -1,6 +1,9 @@
+- name: Lucene.NET Docs
+  href: docs/
+  homepage: docs/index.md
 - name: Lucene.NET API Docs
   href: api/
-  homepage: api/Lucene.Net.yml
+  homepage: api/index.md
 - name: Lucene.NET homepage
   href: https://lucenenet.apache.org/
 - name: Lucene.NET GitHub

@@ -1,13 +1,13 @@
-<p>Apache Lucene is a high-performance, full-featured text search engine library.
-Here's a simple example how to use Lucene for indexing and searching (using JUnit
-to check if the results are what we expect):</p>
+<!-- TODO: Create the packages table of contents ... manually? Post processor?  -->
 
-<!-- code comes from org.apache.lucene.TestDemo: -->
-<!-- ======================================================== -->
-<!-- = Java Sourcecode to HTML automatically converted code = -->
-<!-- =   Java2Html Converter 5.0 [2006-03-04] by Markus Gebhard  markus@jave.de   = -->
-<!-- =     Further information: http://www.java2html.de     = -->
-<pre class="prettyprint">
+
+Apache Lucene is a high-performance, full-featured text search engine library.
+Here's a simple example how to use Lucene for indexing and searching (using JUnit
+to check if the results are what we expect):
+
+
+<!-- TODO: Convert this to .NET  -->
+```csharp
     Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
 
     // Store the index in memory:
@@ -21,7 +21,7 @@ to check if the results are what we expect):</p>
     doc.add(new Field("fieldname", text, TextField.TYPE_STORED));
     iwriter.addDocument(doc);
     iwriter.close();
-    
+
     // Now search the index:
     DirectoryReader ireader = DirectoryReader.open(directory);
     IndexSearcher isearcher = new IndexSearcher(ireader);
@@ -32,17 +32,16 @@ to check if the results are what we expect):</p>
     assertEquals(1, hits.length);
     // Iterate through the results:
     for (int i = 0; i < hits.length; i++) {
-      Document hitDoc = isearcher.doc(hits[i].doc);
-      assertEquals("This is the text to be indexed.", hitDoc.get("fieldname"));
+        Document hitDoc = isearcher.doc(hits[i].doc);
+        assertEquals("This is the text to be indexed.", hitDoc.get("fieldname"));
     }
     ireader.close();
-    directory.close();</pre>
-<!-- =       END of automatically generated HTML code       = -->
-<!-- ======================================================== -->
+    directory.close();
+```
 
+The Lucene API is divided into several packages:
 
-
-<p>The Lucene API is divided into several packages:</p>
+<!-- TODO: Fix links  -->
 
 <ul>
 <li>
@@ -129,6 +128,9 @@ index for all the files contained in a directory.</li>
 &nbsp;<a href="../demo/src-html/org/apache/lucene/demo/SearchFiles.html">SearchFiles.java</a> prompts for
 queries and searches an index.</li>
 </ul>
+
+<!-- TODO: Fix this  -->
+
 To demonstrate these, try something like:
 <blockquote><tt>> <b>java -cp lucene-core.jar:lucene-demo.jar:lucene-analyzers-common.jar org.apache.lucene.demo.IndexFiles -index index -docs rec.food.recipes/soups</b></tt>
 <br><tt>adding rec.food.recipes/soups/abalone-chowder</tt>

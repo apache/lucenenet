@@ -39,7 +39,7 @@ $FileExists = Test-Path $DocFxExe
 If ($FileExists -eq $False) {
 	Write-Host "Retrieving docfx..."
 	$DocFxZip = "$ToolsFolder\docfx.zip"
-	$SourceDocFx = "https://github.com/dotnet/docfx/releases/download/v2.17.4/docfx.zip"
+	$SourceDocFx = "https://github.com/dotnet/docfx/releases/download/v2.17.7/docfx.zip"
 	Invoke-WebRequest $SourceDocFx -OutFile $DocFxZip
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
@@ -49,9 +49,16 @@ If ($FileExists -eq $False) {
 if ($Clean -eq 1) {
 	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
 	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -recurse -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md" -recurse -force -ErrorAction SilentlyContinue
+	##Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyContinue
 }
+
+# NOTE: There's a ton of Lucene docs that we want to copy and re-format. I'm not sure if we can really automate this 
+# in a great way since the docs seem to be in many places, for example:
+# Home page - 	https://github.com/apache/lucene-solr/blob/branch_4x/lucene/site/xsl/index.xsl
+# Wiki docs - 	https://wiki.apache.org/lucene-java/FrontPage?action=show&redirect=FrontPageEN - not sure where the source is for this
+# Html pages - 	Example: https://github.com/apache/lucene-solr/blob/releases/lucene-solr/4.8.0/lucene/highlighter/src/java/org/apache/lucene/search/highlight/package.html - these seem to be throughout the source
+#				For these ones, could we go fetch them and download all *.html files from Git?
 
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
 
