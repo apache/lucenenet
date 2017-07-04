@@ -69,7 +69,7 @@ namespace Lucene.Net.Facet.Taxonomy
     /// 
     /// @lucene.experimental
     /// </summary>
-    public abstract class TaxonomyReader
+    public abstract class TaxonomyReader : IDisposable
     {
         /// <summary>
         /// An iterator over a category's children.
@@ -169,7 +169,14 @@ namespace Lucene.Net.Facet.Taxonomy
             }
         }
 
-        public virtual void Dispose(bool disposing)
+        // LUCENENET specific - implementing proper dispose pattern
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -315,5 +322,7 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             return false;
         }
+
+        
     }
 }

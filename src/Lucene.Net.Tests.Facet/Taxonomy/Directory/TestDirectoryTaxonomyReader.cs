@@ -178,14 +178,14 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                     tw.Dispose();
                     if (closeReader)
                     {
-                        tr.Dispose(true);
+                        tr.Dispose();
                         tr = new DirectoryTaxonomyReader(dir);
                     }
                     else
                     {
                         var newtr = TaxonomyReader.OpenIfChanged(tr);
                         Assert.NotNull(newtr);
-                        tr.Dispose(true);
+                        tr.Dispose();
                         tr = newtr;
                     }
                     Assert.AreEqual(baseNumCategories + 1 + k, tr.Count, "Wrong #categories in taxonomy (i=" + i + ", k=" + k + ")");

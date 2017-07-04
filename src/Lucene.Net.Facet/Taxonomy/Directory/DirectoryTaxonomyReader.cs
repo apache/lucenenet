@@ -45,7 +45,7 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
     /// 
     /// @lucene.experimental
     /// </summary>
-    public class DirectoryTaxonomyReader : TaxonomyReader, IDisposable
+    public class DirectoryTaxonomyReader : TaxonomyReader
     {
         /// <summary>
         /// LUCENENET specific class to make an <see cref="int"/> type into a reference type.
@@ -435,11 +435,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                 }
             }
             return sb.ToString();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
         }
     }
 }

@@ -123,12 +123,10 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
 
         private void validate(Directory dest, Directory src, IOrdinalMap ordMap)
         {
-            var destTr = new DirectoryTaxonomyReader(dest);
-            try
+            using (var destTr = new DirectoryTaxonomyReader(dest))
             {
                 int destSize = destTr.Count;
-                var srcTR = new DirectoryTaxonomyReader(src);
-                try
+                using (var srcTR = new DirectoryTaxonomyReader(src))
                 {
                     var map = ordMap.GetMap();
 
@@ -146,14 +144,6 @@ namespace Lucene.Net.Facet.Taxonomy.Directory
                         Assert.AreEqual(destOrdinal, map[j]);
                     }
                 }
-                finally
-                {
-                    ((TaxonomyReader)srcTR).Dispose(true);
-                }
-            }
-            finally
-            {
-                ((TaxonomyReader)destTr).Dispose(true);
             }
         }
 
