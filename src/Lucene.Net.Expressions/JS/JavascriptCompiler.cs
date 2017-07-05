@@ -117,6 +117,8 @@ namespace Lucene.Net.Expressions.JS
         /// <param name="sourceText">The expression to compile</param>
         /// <returns>A new compiled expression</returns>
         /// <exception cref="ParseException">on failure to compile</exception>
+        // LUCENENET TODO: ParseException not being thrown here - need to check
+        // where this is thrown in Java and throw the equivalent in .NET
         public static Expression Compile(string sourceText)
         {
             return new JavascriptCompiler(sourceText).CompileExpression();
