@@ -1,6 +1,8 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
+using System.Globalization;
+using System.IO;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Analysis.En
@@ -813,55 +815,71 @@ namespace Lucene.Net.Analysis.En
             return dirty;
         }
 
-        /* Test program for demonstrating the Stemmer.  It reads a file and
-         * stems each word, writing the result to standard out.
-         * Usage: Stemmer file-name
-        public static void main(String[] args) {
-          PorterStemmer s = new PorterStemmer();
+        //// using Lucene.Net.Analysis.En.PorterStemmer
+        //// using System;
+        //// using System.Globalization;
+        //// using System.IO;
+        ///// <summary>
+        ///// Test program for demonstrating the Stemmer.  It reads a file and
+        ///// stems each word, writing the result to standard out.
+        ///// </summary>
+        ///// <param name="args">Usage: Stemmer file-name</param>
+        //public static void Main(string[] args)
+        //{
+        //    PorterStemmer s = new PorterStemmer();
 
-          for (int i = 0; i < args.length; i++) {
-            try {
-              InputStream in = new FileInputStream(args[i]);
-              byte[] buffer = new byte[1024];
-              int bufferLen, offset, ch;
+        //    for (int i = 0; i < args.Length; i++)
+        //    {
+        //        try
+        //        {
+        //            using (Stream input = new FileStream(args[i], FileMode.Open, FileAccess.Read))
+        //            {
+        //                byte[] buffer = new byte[1024];
+        //                int bufferLen, offset, ch;
 
-              bufferLen = in.read(buffer);
-              offset = 0;
-              s.reset();
+        //                bufferLen = input.Read(buffer, 0, buffer.Length);
+        //                offset = 0;
+        //                s.Reset();
 
-              while(true) {
-                if (offset < bufferLen)
-                  ch = buffer[offset++];
-                else {
-                  bufferLen = in.read(buffer);
-                  offset = 0;
-                  if (bufferLen < 0)
-                    ch = -1;
-                  else
-                    ch = buffer[offset++];
-                }
+        //                while (true)
+        //                {
+        //                    if (offset < bufferLen)
+        //                        ch = buffer[offset++];
+        //                    else
+        //                    {
+        //                        bufferLen = input.Read(buffer, 0, buffer.Length);
+        //                        offset = 0;
+        //                        if (bufferLen < 0)
+        //                            ch = -1;
+        //                        else
+        //                            ch = buffer[offset++];
+        //                    }
 
-                if (Character.isLetter((char) ch)) {
-                  s.add(Character.toLowerCase((char) ch));
-                }
-                else {
-                   s.stem();
-                   System.out.print(s.toString());
-                   s.reset();
-                   if (ch < 0)
-                     break;
-                   else {
-                     System.out.print((char) ch);
-                   }
-                 }
-              }
-
-              in.close();
-            }
-            catch (IOException e) {
-              System.out.println("error reading " + args[i]);
-            }
-          }
-        }*/
+        //                    if (char.IsLetter((char)ch))
+        //                    {
+        //                        s.Add(char.ToLowerInvariant((char)ch));
+        //                    }
+        //                    else
+        //                    {
+        //                        s.Stem();
+        //                        Console.WriteLine(s.ToString());
+        //                        s.Reset();
+        //                        if (ch < 0)
+        //                            break;
+        //                        else
+        //                        {
+        //                            Console.Write((char)ch);
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //        catch (IOException e)
+        //        {
+        //            Console.WriteLine("error reading " + args[i]);
+        //            Console.WriteLine(e.ToString());
+        //        }
+        //    }
+        //}
     }
 }
