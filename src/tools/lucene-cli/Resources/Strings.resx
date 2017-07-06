@@ -1,0 +1,420 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnalysisCommandDescription" xml:space="preserve">
+    <value>Utilities to manage specialized analyzers.</value>
+  </data>
+  <data name="AnalysisStempelCompileStemsCommandDescription" xml:space="preserve">
+    <value>Compiles a stemmer table for the Egothor stemmer.</value>
+  </data>
+  <data name="AnalysisStempelCompileStemsCommandStemmerTableFilesDescription" xml:space="preserve">
+    <value>The path to a file containing a stemmer table. Multiple values are allowed.</value>
+  </data>
+  <data name="AnalysisStempelCompileStemsCommandStemmerTableFilesEncodingDescription" xml:space="preserve">
+    <value>The encoding to use for the stemmer table files.</value>
+  </data>
+  <data name="AnalysisStempelCompileStemsCommandStemmingAlgorithmDescription" xml:space="preserve">
+    <value>The name of the desired stemming algorithm to use.</value>
+  </data>
+  <data name="AnalysisStempelPatchStemsCommandDescription" xml:space="preserve">
+    <value>Generates patch commands from an already prepared stemmer table.</value>
+  </data>
+  <data name="AnalysisStempelPatchStemsCommandStemmerTableFilesDescription" xml:space="preserve">
+    <value>The path to a file containing a stemmer table. Multiple values are allowed.</value>
+  </data>
+  <data name="AnalysisStempelPatchStemsCommandStemmerTableFilesEncodingDescription" xml:space="preserve">
+    <value>The encoding to use for the stemmer table files.</value>
+  </data>
+  <data name="CrossCheckTermVectorsDescription" xml:space="preserve">
+    <value>Cross check term vectors.</value>
+  </data>
+  <data name="DemoAssociationsFacetsCommandDescription" xml:space="preserve">
+    <value>Shows example usage of category associations.</value>
+  </data>
+  <data name="DemoCommandDescription" xml:space="preserve">
+    <value>Demos for various Lucene.Net functionality including C# code samples.</value>
+  </data>
+  <data name="DemoDistanceFacetsCommandDescription" xml:space="preserve">
+    <value>Shows simple usage of dynamic range faceting, using the expressions module to calculate distance.</value>
+  </data>
+  <data name="DemoExpressionAggregationFacetsCommandDescription" xml:space="preserve">
+    <value>Shows facets aggregation by an expression.</value>
+  </data>
+  <data name="DemoIndexFilesCommandDescription" xml:space="preserve">
+    <value>Index all text files under a directory.</value>
+  </data>
+  <data name="DemoIndexFilesCommandExtendedHelpText" xml:space="preserve">
+    <value>This demo can be used to learn how to build a Lucene.Net index. After the index is built, you can run the search-files demo to run queries against it.</value>
+  </data>
+  <data name="DemoIndexFilesCommandSourceDirectoryDescription" xml:space="preserve">
+    <value>The source directory containing files to index. This operation is recursive.</value>
+  </data>
+  <data name="DemoIndexFilesCommandUpdateDescription" xml:space="preserve">
+    <value>Adds new documents to an existing index. If not supplied, any existing index in the &lt;INDEX_DIRECTORY&gt; will be overwritten.</value>
+  </data>
+  <data name="DemoMultiCategoryListsFacetsCommandDescription" xml:space="preserve">
+    <value>Demonstrates indexing categories into different indexed fields.</value>
+  </data>
+  <data name="DemoRangeFacetsCommandDescription" xml:space="preserve">
+    <value>Shows simple usage of dynamic range faceting.</value>
+  </data>
+  <data name="DemoSearchFilesCommandDescription" xml:space="preserve">
+    <value>Simple command-line based search demo. Run index-files demo first.</value>
+  </data>
+  <data name="DemoSearchFilesCommandExtendedHelpText" xml:space="preserve">
+    <value>Run the index-files demo first to create an index to run this command against. You can either use a file containing many queries, a single query on the command line, or omit both options to run queries interactively.</value>
+  </data>
+  <data name="DemoSearchFilesCommandFieldDescription" xml:space="preserve">
+    <value>The index field to use in the search.</value>
+  </data>
+  <data name="DemoSearchFilesCommandPageSizeDescription" xml:space="preserve">
+    <value>Hits per page to display.</value>
+  </data>
+  <data name="DemoSearchFilesCommandQueriesFileDescription" xml:space="preserve">
+    <value>A file containing the queries to perform.</value>
+  </data>
+  <data name="DemoSearchFilesCommandQueryDescription" xml:space="preserve">
+    <value>A query to perform.</value>
+  </data>
+  <data name="DemoSearchFilesCommandRawDescription" xml:space="preserve">
+    <value>Output raw format.</value>
+  </data>
+  <data name="DemoSearchFilesCommandRepeatDescription" xml:space="preserve">
+    <value>Repeat the search and time as a benchmark.</value>
+  </data>
+  <data name="DemoSimpleFacetsCommandDescription" xml:space="preserve">
+    <value>Shows simple usage of faceted indexing and search.</value>
+  </data>
+  <data name="DemoSimpleSortedSetFacetsCommandDescription" xml:space="preserve">
+    <value>Shows simple usage of faceted indexing and search using SortedSetDocValuesFacetField and SortedSetDocValuesFacetCounts.</value>
+  </data>
+  <data name="DirectoryTypeOptionDescription" xml:space="preserve">
+    <value>The FSDirectory implementation to use. Defaults to the optimal FSDirectory for your OS platform.</value>
+  </data>
+  <data name="ExportingSourceCodeCompleteMessage" xml:space="preserve">
+    <value>Source code exported to '{0}'.</value>
+  </data>
+  <data name="ExportingSourceCodeMessage" xml:space="preserve">
+    <value>Exporting source code...</value>
+  </data>
+  <data name="GeneralExceptionMessage" xml:space="preserve">
+    <value>An error occurred:</value>
+  </data>
+  <data name="HelpCommandsMessage" xml:space="preserve">
+    <value>Specify --help for a list of available options and commands.</value>
+  </data>
+  <data name="IndexCheckCommandDescription" xml:space="preserve">
+    <value>Checks an index for problematic segments.</value>
+  </data>
+  <data name="IndexCheckCommandSegmentsDescription" xml:space="preserve">
+    <value>Only check the specified segment(s). This can be specified multiple times, to check more than one segment, eg --segment _2 --segment _a.</value>
+  </data>
+  <data name="IndexCommandDescription" xml:space="preserve">
+    <value>Utilities to analyze or maintain an index.</value>
+  </data>
+  <data name="IndexCopySegmentsCommandDescription" xml:space="preserve">
+    <value>Copies segments from one index to another index.</value>
+  </data>
+  <data name="IndexCopySegmentsCommandExtendedHelpText" xml:space="preserve">
+    <value>This tool does file-level copying of segments files. This means it's unable to split apart a single segment into multiple segments. For example if your index is a single segment, this tool won't help. Also, it does basic file-level copying (using a simple FileStream) so it will not work with non FSDirectory Directory implementations.</value>
+  </data>
+  <data name="IndexCopySegmentsCommandInputDirectoryDescription" xml:space="preserve">
+    <value>The directory of the index to copy.</value>
+  </data>
+  <data name="IndexCopySegmentsCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>The directory of the destination index.</value>
+  </data>
+  <data name="IndexCopySegmentsCommandSegmentsDescription" xml:space="preserve">
+    <value>The segments to copy, separated by a space.</value>
+  </data>
+  <data name="IndexDeleteSegmentsCommandDescription" xml:space="preserve">
+    <value>Deletes segments from an index.</value>
+  </data>
+  <data name="IndexDeleteSegmentsCommandExtendedHelpText" xml:space="preserve">
+    <value>You can easily accidentally remove segments from your index so be careful! Always make a backup of your index first.</value>
+  </data>
+  <data name="IndexDeleteSegmentsCommandSegmentsDescription" xml:space="preserve">
+    <value>The segments to delete, separated by a space.</value>
+  </data>
+  <data name="IndexDirectoryArgumentDescription" xml:space="preserve">
+    <value>The directory of the index.</value>
+  </data>
+  <data name="IndexDirectoryOptionalArgumentDescription" xml:space="preserve">
+    <value>If omitted, it defaults to the current working directory.</value>
+  </data>
+  <data name="IndexExtractCfsCommandCFSFileNameDescription" xml:space="preserve">
+    <value>The .cfs file containing words to parse.</value>
+  </data>
+  <data name="IndexExtractCfsCommandDescription" xml:space="preserve">
+    <value>Lists sub-files from a .cfs compound file.</value>
+  </data>
+  <data name="IndexExtractCfsCommandExtendedHelpText" xml:space="preserve">
+    <value>The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc.</value>
+  </data>
+  <data name="IndexFixCommandDescription" xml:space="preserve">
+    <value>Fixes an index with problematic segments.</value>
+  </data>
+  <data name="IndexListCfsCommandCFSFileNameDescription" xml:space="preserve">
+    <value>The .cfs file containing words to parse.</value>
+  </data>
+  <data name="IndexListCfsCommandDescription" xml:space="preserve">
+    <value>Extracts sub-files out of a .cfs compound file.</value>
+  </data>
+  <data name="IndexListCfsCommandExtendedHelpText" xml:space="preserve">
+    <value>The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc.</value>
+  </data>
+  <data name="IndexListHighFreqTermsCommandDescription" xml:space="preserve">
+    <value>Extracts the top n most frequent terms by document frequency.</value>
+  </data>
+  <data name="IndexListHighFreqTermsCommandExtendedHelpText" xml:space="preserve">
+    <value>Extracts the top n most frequent terms (by document frequency) from an index and reports thier document frequency.</value>
+  </data>
+  <data name="IndexListHighFreqTermsCommandFieldDescription" xml:space="preserve">
+    <value>The field to consider. If omitted, considers all fields.</value>
+  </data>
+  <data name="IndexListHighFreqTermsCommandNumberOfTermsDescription" xml:space="preserve">
+    <value>The number of terms to consider. If omitted, defaults to 100.</value>
+  </data>
+  <data name="IndexListHighFreqTermsCommandTotalTermFrequencyDescription" xml:space="preserve">
+    <value>Specifies that both the document frequency &amp; term frequency are reported, ordered by descending total term frequency.</value>
+  </data>
+  <data name="IndexListSegmentsCommandDescription" xml:space="preserve">
+    <value>Lists segments in an index.</value>
+  </data>
+  <data name="IndexListTaxonomyStatsDescription" xml:space="preserve">
+    <value>Displays the taxonomy statistical information for a taxonomy index.</value>
+  </data>
+  <data name="IndexListTaxonomyStatsShowTreeDescription" xml:space="preserve">
+    <value>Recursively lists all descendent nodes.</value>
+  </data>
+  <data name="IndexListTermInfoCommandDescription" xml:space="preserve">
+    <value>Gets document frequency and total number of occurrences of a term.</value>
+  </data>
+  <data name="IndexListTermInfoCommandExtendedHelpText" xml:space="preserve">
+    <value>Gets document frequency and total number of occurrences (sum of the term frequency for each document) of a term.</value>
+  </data>
+  <data name="IndexListTermInfoCommandFieldDescription" xml:space="preserve">
+    <value>The field to consider.</value>
+  </data>
+  <data name="IndexListTermInfoCommandIndexDirectoryDescription" xml:space="preserve">
+    <value>The directory of the index.</value>
+  </data>
+  <data name="IndexListTermInfoCommandTermDescription" xml:space="preserve">
+    <value>The term to consider.</value>
+  </data>
+  <data name="IndexMergeCommandDescription" xml:space="preserve">
+    <value>Merges multiple indexes into a single index.</value>
+  </data>
+  <data name="IndexMergeCommandInputDirectoryDescription" xml:space="preserve">
+    <value>Two or more source index directories separated by a space.</value>
+  </data>
+  <data name="IndexMergeCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Output directory to merge the indexes into.</value>
+  </data>
+  <data name="IndexSplitCommandDescription" xml:space="preserve">
+    <value>Splits an index into multiple parts.</value>
+  </data>
+  <data name="IndexSplitCommandInputDirectoryDescription" xml:space="preserve">
+    <value>Path to input index. Multiple values can be provided separated by a space.</value>
+  </data>
+  <data name="IndexSplitCommandNumberOfPartsDescription" xml:space="preserve">
+    <value>The number of parts to produce.</value>
+  </data>
+  <data name="IndexSplitCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Path to output directory to contain partial indexes.</value>
+  </data>
+  <data name="IndexSplitCommandSequentialDescription" xml:space="preserve">
+    <value>Sequential docid-range split.</value>
+  </data>
+  <data name="IndexUpgradeCommandDeleteDescription" xml:space="preserve">
+    <value>Deletes prior commits.</value>
+  </data>
+  <data name="IndexUpgradeCommandDescription" xml:space="preserve">
+    <value>Upgrades all segments of an index from previous Lucene.Net versions to the current segment file format.</value>
+  </data>
+  <data name="IndexUpgradeCommandExtendedHelpText" xml:space="preserve">
+    <value>This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit. Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. WARNING: This tool may reorder document IDs! Also, ensure you are using the correct version of this utility to match your application's version of Lucene.Net.</value>
+  </data>
+  <data name="LockCommandDescription" xml:space="preserve">
+    <value>Utilities for verifying concurrent locking integrity.</value>
+  </data>
+  <data name="LockStressTestCommandCountDescription" xml:space="preserve">
+    <value>Number of locking tries.</value>
+  </data>
+  <data name="LockStressTestCommandDescription" xml:space="preserve">
+    <value>Simple standalone tool that forever acquires &amp; releases a lock using a specific LockFactory.</value>
+  </data>
+  <data name="LockStressTestCommandExtendedHelpText" xml:space="preserve">
+    <value>You should run multiple instances of this process, each with its own unique ID, and each pointing to the same lock directory, to verify that locking is working correctly. Make sure you are first running LockVerifyServer.</value>
+  </data>
+  <data name="LockStressTestCommandIDDescription" xml:space="preserve">
+    <value>int value from 0 .. 255 (should be unique for test process).</value>
+  </data>
+  <data name="LockStressTestCommandLockFactoryNameDescription" xml:space="preserve">
+    <value>Path to the lock directory (only set for Simple/NativeFSLockFactory).</value>
+  </data>
+  <data name="LockStressTestCommandLockFactoryTypeNameDescription" xml:space="preserve">
+    <value>Primary LockFactory class that we will use.</value>
+  </data>
+  <data name="LockStressTestCommandSleepTimeMSDescription" xml:space="preserve">
+    <value>Milliseconds to pause betweeen each lock obtain/release.</value>
+  </data>
+  <data name="LockStressTestCommandVerfierPortDescription" xml:space="preserve">
+    <value>Port that LockVerifyServer is listening on.</value>
+  </data>
+  <data name="LockStressTestCommandVerifierHostDescription" xml:space="preserve">
+    <value>Hostname that LockVerifyServer is listening on.</value>
+  </data>
+  <data name="LockVerifyServerCommandDescription" xml:space="preserve">
+    <value>Simple standalone server that must be running when you use VerifyingLockFactory. This server verifies at most one process holds the lock at a time.</value>
+  </data>
+  <data name="LockVerifyServerCommandIPHostnameDescription" xml:space="preserve">
+    <value>Hostname or IP address that LockVerifyServer will listen on.</value>
+  </data>
+  <data name="LockVerifyServerCommandMaxClientsDescription" xml:space="preserve">
+    <value>The maximum number of concurrent clients.</value>
+  </data>
+  <data name="NotEnoughArguments" xml:space="preserve">
+    <value>{0} arguments are required.</value>
+  </data>
+  <data name="OutputSourceCodeDescription" xml:space="preserve">
+    <value>Output the source code of the demo to the specified directory.</value>
+  </data>
+  <data name="OutputSourceCodeMessage" xml:space="preserve">
+    <value>Run 'demo {0} --view-source-code' to see the C# code or 'demo {0} --output-source-code &lt;DIRECTORY&gt;' to export the code to a local directory.</value>
+  </data>
+  <data name="RootCommandDescription" xml:space="preserve">
+    <value>Utilities and demos for Lucene.Net.</value>
+  </data>
+  <data name="SegmentsArgumentDescription" xml:space="preserve">
+    <value>One or more segments, separated by a space.</value>
+  </data>
+  <data name="SegmentsOptionDescription" xml:space="preserve">
+    <value>An index segment.</value>
+  </data>
+  <data name="SegmentsOptionMultipleDescription" xml:space="preserve">
+    <value>Multiple segments are allowed.</value>
+  </data>
+  <data name="VerboseOptionDescription" xml:space="preserve">
+    <value>Verbose output.</value>
+  </data>
+  <data name="ViewSourceCodeDescription" xml:space="preserve">
+    <value>View the source code of the demo.</value>
+  </data>
+</root>
