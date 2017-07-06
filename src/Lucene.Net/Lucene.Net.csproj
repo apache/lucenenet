@@ -679,7 +679,7 @@
     <Compile Include="Support\LinkedHashMap.cs" />
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\LurchTable.cs" />
-    <Compile Include="Support\MathExtension.cs" />
+    <Compile Include="Support\MathExtensions.cs" />
     <Compile Include="Support\IO\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\NumberFormat.cs" />
     <Compile Include="Support\PriorityQueue.cs" />
