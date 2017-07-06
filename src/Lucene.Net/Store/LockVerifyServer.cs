@@ -1,5 +1,6 @@
 using Lucene.Net.Support.Threading;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -41,23 +42,25 @@ namespace Lucene.Net.Store
         {
             if (args.Length != 2)
             {
-                // LUCENENET TODO: Usage depends on making this into a console application executable.
-                Console.WriteLine("Usage: java Lucene.Net.Store.LockVerifyServer bindToIp clients\n");
-                Environment.FailFast("1");
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException();
+                //Console.WriteLine("Usage: java Lucene.Net.Store.LockVerifyServer bindToIp clients\n");
+                //Environment.FailFast("1");
             }
 
             int arg = 0;
-            IPHostEntry ipHostInfo = Dns.GetHostEntryAsync(args[arg++]).Result;
-            IPAddress ipAddress = ipHostInfo.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 0);
-            int maxClients = Convert.ToInt32(args[arg++]);
+            string hostname = args[arg++];
+            int maxClients = Convert.ToInt32(args[arg++], CultureInfo.InvariantCulture);
+
+            IPAddress ipAddress = IPAddress.Parse(hostname);
 
             using (Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp))
             {
                 s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
                 s.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 30000);// SoTimeout = 30000; // initially 30 secs to give clients enough time to startup
 
-                s.Bind(localEndPoint);
+                s.Bind(new IPEndPoint(ipAddress, 0));
+                s.Listen(maxClients);
                 Console.WriteLine("Listening on " + ((IPEndPoint)s.LocalEndPoint).Port.ToString() + "...");
 
                 // we set the port as a sysprop, so the ANT task can read it. For that to work, this server must run in-process:

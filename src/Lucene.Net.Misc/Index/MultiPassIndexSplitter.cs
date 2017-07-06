@@ -123,12 +123,14 @@ namespace Lucene.Net.Index
         {
             if (args.Length < 5)
             {
-                Console.Error.WriteLine("Usage: MultiPassIndexSplitter -out <outputDir> -num <numParts> [-seq] <inputIndex1> [<inputIndex2 ...]");
-                Console.Error.WriteLine("\tinputIndex\tpath to input index, multiple values are ok");
-                Console.Error.WriteLine("\t-out ouputDir\tpath to output directory to contain partial indexes");
-                Console.Error.WriteLine("\t-num numParts\tnumber of parts to produce");
-                Console.Error.WriteLine("\t-seq\tsequential docid-range split (default is round-robin)");
-                Environment.Exit(-1);
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException();
+                //Console.Error.WriteLine("Usage: MultiPassIndexSplitter -out <outputDir> -num <numParts> [-seq] <inputIndex1> [<inputIndex2 ...]");
+                //Console.Error.WriteLine("\tinputIndex\tpath to input index, multiple values are ok");
+                //Console.Error.WriteLine("\t-out ouputDir\tpath to output directory to contain partial indexes");
+                //Console.Error.WriteLine("\t-num numParts\tnumber of parts to produce");
+                //Console.Error.WriteLine("\t-seq\tsequential docid-range split (default is round-robin)");
+                //Environment.Exit(-1);
             }
             List<IndexReader> indexes = new List<IndexReader>();
             string outDir = null;

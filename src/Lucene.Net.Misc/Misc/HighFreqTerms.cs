@@ -48,8 +48,10 @@ namespace Lucene.Net.Misc
 
             if (args.Length == 0 || args.Length > 4)
             {
-                Usage();
-                Environment.Exit(1);
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException();
+                //Usage();
+                //Environment.Exit(1);
             }
 
             Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[0]));
@@ -86,11 +88,11 @@ namespace Lucene.Net.Misc
             }
         }
 
-        private static void Usage()
-        {
-            // LUCENENET TODO: Usage depends on packaging this into an assembly executable.
-            Console.WriteLine("\n\n" + "java org.apache.lucene.misc.HighFreqTerms <index dir> [-t] [number_terms] [field]\n\t -t: order by totalTermFreq\n\n");
-        }
+        // LUCENENET specific - our wrapper console shows the correct usage
+        //private static void Usage()
+        //{
+        //    Console.WriteLine("\n\n" + "java org.apache.lucene.misc.HighFreqTerms <index dir> [-t] [number_terms] [field]\n\t -t: order by totalTermFreq\n\n");
+        //}
 
         /// <summary>
         /// Returns <see cref="T:TermStats[]"/> ordered by the specified comparer

@@ -66,8 +66,10 @@ namespace Lucene.Net.Index
 
             if (filename == null)
             {
-                Console.WriteLine("Usage: org.apache.lucene.index.CompoundFileExtractor [-extract] [-dir-impl X] <cfsfile>");
-                return;
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException("ERROR: CFS-FILE is required");
+                //Console.WriteLine("Usage: org.apache.lucene.index.CompoundFileExtractor [-extract] [-dir-impl X] <cfsfile>");
+                //return;
             }
 
             Store.Directory dir = null;
@@ -129,7 +131,7 @@ namespace Lucene.Net.Index
             catch (IOException ioe)
             {
                 Console.WriteLine(ioe.ToString());
-                Console.Write(ioe.StackTrace);
+                //Console.Write(ioe.StackTrace);
             }
             finally
             {
@@ -147,7 +149,7 @@ namespace Lucene.Net.Index
                 catch (IOException ioe)
                 {
                     Console.WriteLine(ioe.ToString());
-                    Console.Write(ioe.StackTrace);
+                    //Console.Write(ioe.StackTrace);
                 }
             }
         }

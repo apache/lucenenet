@@ -55,16 +55,18 @@ namespace Lucene.Net.Index
     {
         private static void PrintUsage()
         {
-            Console.Error.WriteLine("Upgrades an index so all segments created with a previous Lucene version are rewritten.");
-            Console.Error.WriteLine("Usage:");
-            Console.Error.WriteLine("  java " + typeof(IndexUpgrader).Name + " [-delete-prior-commits] [-verbose] [-dir-impl X] indexDir");
-            Console.Error.WriteLine("this tool keeps only the last commit in an index; for this");
-            Console.Error.WriteLine("reason, if the incoming index has more than one commit, the tool");
-            Console.Error.WriteLine("refuses to run by default. Specify -delete-prior-commits to override");
-            Console.Error.WriteLine("this, allowing the tool to delete all but the last commit.");
-            Console.Error.WriteLine("Specify a " + typeof(FSDirectory).Name + " implementation through the -dir-impl option to force its use. If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.");
-            Console.Error.WriteLine("WARNING: this tool may reorder document IDs!");
-            Environment.FailFast("1");
+            // LUCENENET specific - our wrapper console shows the correct usage
+            throw new ArgumentException();
+            //Console.Error.WriteLine("Upgrades an index so all segments created with a previous Lucene version are rewritten.");
+            //Console.Error.WriteLine("Usage:");
+            //Console.Error.WriteLine("  java " + typeof(IndexUpgrader).Name + " [-delete-prior-commits] [-verbose] [-dir-impl X] indexDir");
+            //Console.Error.WriteLine("this tool keeps only the last commit in an index; for this");
+            //Console.Error.WriteLine("reason, if the incoming index has more than one commit, the tool");
+            //Console.Error.WriteLine("refuses to run by default. Specify -delete-prior-commits to override");
+            //Console.Error.WriteLine("this, allowing the tool to delete all but the last commit.");
+            //Console.Error.WriteLine("Specify a " + typeof(FSDirectory).Name + " implementation through the -dir-impl option to force its use. If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.");
+            //Console.Error.WriteLine("WARNING: this tool may reorder document IDs!");
+            //Environment.FailFast("1");
         }
 
         /// <summary>
@@ -98,8 +100,9 @@ namespace Lucene.Net.Index
                 {
                     if (i == args.Length - 1)
                     {
-                        Console.WriteLine("ERROR: missing value for -dir-impl option");
-                        Environment.FailFast("1");
+                        throw new ArgumentException("ERROR: missing value for -dir option");
+                        //Console.WriteLine("ERROR: missing value for -dir-impl option");
+                        //Environment.FailFast("1");
                     }
                     i++;
                     dirImpl = args[i];
