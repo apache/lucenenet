@@ -1,6 +1,8 @@
 # Apache Lucene.Net
 
-Apache Lucene.Net is a .NET full-text search engine, a C# port of the popular Apache Lucene project.  Apache Lucene.Net is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
+## Full-text search for .NET
+
+Apache Lucene.Net is a .NET full-text search engine framework, a C# port of the popular Apache Lucene project.  Apache Lucene.Net is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.
 
 The Apache Lucene.Net web site is at:
   http://lucenenet.apache.org
@@ -9,7 +11,7 @@ The Apache Lucene.Net web site is at:
 
 ### Lucene.Net 4.8.0
 
-- .NET Standard 1.5
+- .NET Standard 1.5 (includes .NET Core 1.0 and higher)
 - .NET Framework 4.5.1
 
 ### Lucene.Net 3.0.3
@@ -31,22 +33,51 @@ Working toward Lucene.Net 4.8.0 (currently in BETA)
 PM> Install-Package Lucene.Net
 ```
 
-As of 4.8.0, Lucene.Net is now divided into several NuGet sub-packages. See the [complete list of Lucene.Net sub-packages on NuGet.org](https://www.nuget.org/packages?q=lucene.net)
+Or, to install the BETA of 4.8.0, run
+
+```
+PM> Install-Package Lucene.Net -Pre
+```
+
+As of 4.8.0, Lucene.Net is now divided into several specialized sub-packages, all available on NuGet.
+<!--- TO BE ADDED WHEN RELEASED - [Lucene.Net.Analysis.Phonetic](https://www.nuget.org/packages/Lucene.Net.Analysis.Phonetic/) - Analyzer for indexing phonetic signatures (for sounds-alike search) ) 
+- [Lucene.Net.Analysis.SmartCn](https://www.nuget.org/packages/Lucene.Net.Analysis.SmartCn/) - Analyzer for indexing Chinese)-->
+- [Lucene.Net.Analysis.Common](https://www.nuget.org/packages/Lucene.Net.Analysis.Common/) - Analyzers for indexing content in different languages and domains
+- [Lucene.Net.Analysis.Stempel](https://www.nuget.org/packages/Lucene.Net.Analysis.Stempel/) - Analyzer for indexing Polish
+- [Lucene.Net.Classification](https://www.nuget.org/packages/Lucene.Net.Classification/) - Classification module for Lucene
+- [Lucene.Net.Codecs](https://www.nuget.org/packages/Lucene.Net.Codecs/) - Lucene codecs and postings formats
+- [Lucene.Net.Expressions](https://www.nuget.org/packages/Lucene.Net.Expressions/) - Dynamically computed values to sort/facet/search on based on a pluggable grammar
+- [Lucene.Net.Facet](https://www.nuget.org/packages/Lucene.Net.Facet/) - Faceted indexing and search capabilities
+- [Lucene.Net.Grouping](https://www.nuget.org/packages/Lucene.Net.Grouping/) - Collectors for grouping search results
+- [Lucene.Net.Highlighter](https://www.nuget.org/packages/Lucene.Net.Highlighter/) - Highlights search keywords in results
+- [Lucene.Net.ICU](https://www.nuget.org/packages/Lucene.Net.ICU/) - Specialized international support for languages that don't space words
+- [Lucene.Net.Join](https://www.nuget.org/packages/Lucene.Net.Join/) - Index-time and Query-time joins for normalized content
+- [Lucene.Net.Memory](https://www.nuget.org/packages/Lucene.Net.Memory/) - Single-document in-memory index implementation
+- [Lucene.Net.Misc](https://www.nuget.org/packages/Lucene.Net.Misc/) - Index tools and other miscellaneous code
+- [Lucene.Net.Queries](https://www.nuget.org/packages/Lucene.Net.Queries/) - Filters and Queries that add to core Lucene
+- [Lucene.Net.QueryParser](https://www.nuget.org/packages/Lucene.Net.QueryParser/) - Text to Query parsers and parsing framework
+- [Lucene.Net.Sandbox](https://www.nuget.org/packages/Lucene.Net.Sandbox/) - Various third party contributions and new ideas
+- [Lucene.Net.Spatial](https://www.nuget.org/packages/Lucene.Net.Spatial/) - Geospatial search
+- [Lucene.Net.Suggest](https://www.nuget.org/packages/Lucene.Net.Suggest/) - Auto-suggest and Spellchecking support
 
 ## Documentation
 
 [Lucene.Net WIKI](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.Net)
 
-We don't yet have API documentation for Lucene.Net 4.8.0, but the API is similar to [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/).
+We don't yet have API documentation for Lucene.Net 4.8.0, but the API is similar to [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/). NOTE: We are working on this, but could use more help since it is a massive project. See #206.
 
 ### Legacy Versions
 
 - [Lucene.Net 3.0.3 API Documentation](http://incubator.apache.org/lucene.net/docs/3.0.3/Index.html)
 - [Lucene.Net 2.9.4 API Documentation](http://incubator.apache.org/lucene.net/docs/2.9.4/Index.html)
 
+## Demos
+
+There are several demos implemented as simple console applications that can be copied and pasted into Visual Studio or compiled on the command line in the [Lucene.Net.Demo project](https://github.com/apache/lucenenet/tree/master/src/Lucene.Net.Demo).
+
 ## How to Contribute
 
-Lucene is a very large project (over 350,000 executable lines of code) and we welcome any and all help to maintain such an effort.
+Lucene.Net is a very large project (over 400,000 executable lines of code and nearly 1,000,000 lines of text total) and we welcome any and all help to maintain such an effort.
 
 ### Join Mailing Lists
 

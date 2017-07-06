@@ -91,7 +91,9 @@ namespace Egothor.Stemmer
                 return;
             }
 
-            args[0] = args[0].ToUpperInvariant();
+            // LUCENENET NOTE: This line does nothing in .NET
+            // and also does nothing in Java...what?
+            //args[0].ToUpperInvariant();
 
             // Reads the first char of the first arg
             backward = args[0][0] == '-';
