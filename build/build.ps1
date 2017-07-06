@@ -132,7 +132,7 @@ task Compile -depends Clean, Init -description "This task compiles the solution"
 task Pack -depends Compile -description "This task creates the NuGet packages" {
 	try {
 		pushd $base_directory
-		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") }
+		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") -and !$_.Directory.Name.Contains(".Demo") }
 		popd
 
 		Pack-Assemblies $packages
