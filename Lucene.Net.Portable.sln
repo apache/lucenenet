@@ -93,6 +93,10 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Analysis.Phoneti
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Analysis.Phonetic", "src\Lucene.Net.Tests.Analysis.Phonetic\Lucene.Net.Tests.Analysis.Phonetic.xproj", "{1FE12EF7-4C89-4D49-BDD1-E49DC285F21B}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Demo", "src\Lucene.Net.Demo\Lucene.Net.Demo.xproj", "{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Demo", "src\Lucene.Net.Tests.Demo\Lucene.Net.Tests.Demo.xproj", "{93DF8BAA-9CAA-4142-8E96-55481188C012}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -429,6 +433,22 @@ Global
 		{1FE12EF7-4C89-4D49-BDD1-E49DC285F21B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1FE12EF7-4C89-4D49-BDD1-E49DC285F21B}.Release|x86.ActiveCfg = Release|Any CPU
 		{1FE12EF7-4C89-4D49-BDD1-E49DC285F21B}.Release|x86.Build.0 = Release|Any CPU
+		{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}.Debug|x86.Build.0 = Debug|Any CPU
+		{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}.Release|x86.ActiveCfg = Release|Any CPU
+		{4BCD7980-0CF4-4DA0-B069-F555A41CB44D}.Release|x86.Build.0 = Release|Any CPU
+		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Debug|x86.Build.0 = Debug|Any CPU
+		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Release|x86.ActiveCfg = Release|Any CPU
+		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
