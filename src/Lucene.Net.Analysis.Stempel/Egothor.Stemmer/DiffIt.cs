@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Support;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -80,14 +81,6 @@ namespace Egothor.Stemmer
             }
 
             return result;
-            //try
-            //{
-            //    return int.parseInt(s.substring(i, i + 1));
-            //}
-            //catch (Exception /*x*/)
-            //{
-            //    return 1;
-            //}
         }
 
         /// <summary>
@@ -101,56 +94,71 @@ namespace Egothor.Stemmer
         /// <param name="args">the path to a file containing a stemmer table</param>
         public static void Main(string[] args)
         {
-
-
             int ins = Get(0, args[0]);
             int del = Get(1, args[0]);
             int rep = Get(2, args[0]);
             int nop = Get(3, args[0]);
 
+            string charset = null;
+            var stemmerTables = new List<string>();
+            try
+            {
+                charset = System.Environment.GetEnvironmentVariable("egothor.stemmer.charset");
+            }
+            catch
+            {
+            }
+            finally
+            {
+                if (string.IsNullOrEmpty(charset))
+                {
+                    charset = "UTF-8";
+                }
+            }
+
+            // LUCENENET specific
+            // command line argument overrides environment variable or default, if supplied
             for (int i = 1; i < args.Length; i++)
             {
-                TextReader @in;
+                if ("-e".Equals(args[i]) || "--encoding".Equals(args[i]))
+                {
+                    charset = args[i];
+                }
+                else
+                {
+                    stemmerTables.Add(args[i]);
+                }
+            }
+
+            foreach (var stemmerTable in stemmerTables)
+            {
                 // System.out.println("[" + args[i] + "]");
                 Diff diff = new Diff(ins, del, rep, nop);
 
-                string charset = null;
-                try
+                using (TextReader input = new StreamReader(new FileStream(stemmerTable, FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset)))
                 {
-                    charset = System.Environment.GetEnvironmentVariable("egothor.stemmer.charset");
-                }
-                catch
-                {
-                }
-                finally
-                {
-                    if (string.IsNullOrEmpty(charset))
+                    string line;
+                    while ((line = input.ReadLine()) != null)
                     {
-                        charset = "UTF-8";
-                    }
-                }
-
-                @in = new StreamReader(new FileStream(args[i], FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset));
-                for (string line = @in.ReadLine(); line != null; line = @in.ReadLine())
-                {
-                    try
-                    {
-                        line = line.ToLowerInvariant();
-                        StringTokenizer st = new StringTokenizer(line);
-                        string stem = st.NextToken();
-                        Console.WriteLine(stem + " -a");
-                        while (st.HasMoreTokens())
+                        try
                         {
-                            String token = st.NextToken();
-                            if (token.Equals(stem) == false)
+                            line = line.ToLowerInvariant();
+                            StringTokenizer st = new StringTokenizer(line);
+                            string stem = st.NextToken();
+                            Console.WriteLine(stem + " -a");
+                            while (st.HasMoreTokens())
                             {
-                                Console.WriteLine(stem + " " + diff.Exec(token, stem));
+                                string token = st.NextToken();
+                                if (token.Equals(stem) == false)
+                                {
+                                    Console.WriteLine(stem + " " + diff.Exec(token, stem));
+                                }
                             }
                         }
-                    }
-                    catch (InvalidOperationException /*x*/)
-                    {
-                        // no base token (stem) on a line
+                        catch (InvalidOperationException /*x*/)
+                        {
+                            // no base token (stem) on a line
+                        }
                     }
                 }
             }

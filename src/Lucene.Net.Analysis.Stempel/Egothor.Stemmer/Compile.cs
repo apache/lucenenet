@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -90,8 +91,9 @@ namespace Egothor.Stemmer
                 return;
             }
 
-            args[0].ToUpperInvariant();
+            args[0] = args[0].ToUpperInvariant();
 
+            // Reads the first char of the first arg
             backward = args[0][0] == '-';
             int qq = (backward) ? 1 : 0;
             bool storeorig = false;
@@ -109,6 +111,7 @@ namespace Egothor.Stemmer
             }
 
             string charset = null;
+            var stemmerTables = new List<string>();
             try
             {
                 charset = System.Environment.GetEnvironmentVariable("egothor.stemmer.charset");
@@ -124,15 +127,28 @@ namespace Egothor.Stemmer
                 }
             }
 
+            // LUCENENET specific
+            // command line argument overrides environment variable or default, if supplied
+            for (int i = 1; i < args.Length; i++)
+            {
+                if ("-e".Equals(args[i]) || "--encoding".Equals(args[i]))
+                {
+                    charset = args[i];
+                }
+                else
+                {
+                    stemmerTables.Add(args[i]);
+                }
+            }
+
             char[] optimizer = new char[args[0].Length - qq];
             for (int i = 0; i < optimizer.Length; i++)
             {
                 optimizer[i] = args[0][qq + i];
             }
 
-            for (int i = 1; i < args.Length; i++)
+            foreach (var stemmerTable in stemmerTables)
             {
-                TextReader @in;
                 // System.out.println("[" + args[i] + "]");
                 Diff diff = new Diff();
                 //int stems = 0; // not used
@@ -141,11 +157,12 @@ namespace Egothor.Stemmer
 
                 AllocTrie();
 
-                Console.WriteLine(args[i]);
-                using (@in = new StreamReader(
-                    new FileStream(args[i], FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset)))
+                Console.WriteLine(stemmerTable);
+                using (TextReader input = new StreamReader(
+                    new FileStream(stemmerTable, FileMode.Open, FileAccess.Read), Encoding.GetEncoding(charset)))
                 {
-                    for (string line = @in.ReadLine(); line != null; line = @in.ReadLine())
+                    string line;
+                    while ((line = input.ReadLine()) != null)
                     {
                         try
                         {
@@ -212,7 +229,7 @@ namespace Egothor.Stemmer
                 }
 
                 using (DataOutputStream os = new DataOutputStream(
-                    new FileStream(args[i] + ".out", FileMode.OpenOrCreate, FileAccess.Write)))
+                    new FileStream(stemmerTable + ".out", FileMode.OpenOrCreate, FileAccess.Write)))
                 {
                     os.WriteUTF(args[0]);
                     trie.Store(os);
