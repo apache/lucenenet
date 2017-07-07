@@ -1,9 +1,12 @@
+- name: Lucene.NET WIKI
+  href: wiki/
+  topicHref: wiki/index.md
 - name: Lucene.NET Docs
   href: docs/
-  homepage: docs/index.md
+  topicHref: docs/index.md
 - name: Lucene.NET API Docs
   href: api/
-  homepage: api/index.md
+  topicHref: api/index.md
 - name: Lucene.NET homepage
   href: https://lucenenet.apache.org/
 - name: Lucene.NET GitHub

@@ -1,4 +1,9 @@
-<!-- TODO: Create the packages table of contents ... manually? Post processor?  -->
+Apache Lucene.NET&trade; 4.8.0 API Docs
+===============
+
+---------------
+
+<!-- LUCENENET TODO: Create the packages table of contents ... manually? Post processor?  -->
 
 
 Apache Lucene is a high-performance, full-featured text search engine library.
@@ -6,7 +11,7 @@ Here's a simple example how to use Lucene for indexing and searching (using JUni
 to check if the results are what we expect):
 
 
-<!-- TODO: Convert this to .NET  -->
+<!-- LUCENENET TODO: Convert this to .NET  -->
 ```csharp
     Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_CURRENT);
 
@@ -41,7 +46,7 @@ to check if the results are what we expect):
 
 The Lucene API is divided into several packages:
 
-<!-- TODO: Fix links  -->
+<!-- LUCENENET TODO: Fix links  -->
 
 <ul>
 <li>
@@ -129,7 +134,7 @@ index for all the files contained in a directory.</li>
 queries and searches an index.</li>
 </ul>
 
-<!-- TODO: Fix this  -->
+<!-- LUCENENET TODO: Fix this  -->
 
 To demonstrate these, try something like:
 <blockquote><tt>> <b>java -cp lucene-core.jar:lucene-demo.jar:lucene-analyzers-common.jar org.apache.lucene.demo.IndexFiles -index index -docs rec.food.recipes/soups</b></tt>

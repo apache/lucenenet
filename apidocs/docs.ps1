@@ -23,7 +23,11 @@ param (
 	$ServeDocs = 0,
 	[Parameter(Mandatory=$false)]
 	[int]
-	$Clean = 1
+	$Clean = 1,
+	# LogLevel can be: Diagnostic, Verbose, Info, Warning, Error
+	[Parameter(Mandatory=$false)]
+	[string]
+	$LogLevel = 'Info'
 )
 
 $PSScriptFilePath = (Get-Item $MyInvocation.MyCommand.Path).FullName
@@ -39,7 +43,7 @@ $FileExists = Test-Path $DocFxExe
 If ($FileExists -eq $False) {
 	Write-Host "Retrieving docfx..."
 	$DocFxZip = "$ToolsFolder\docfx.zip"
-	$SourceDocFx = "https://github.com/dotnet/docfx/releases/download/v2.17.7/docfx.zip"
+	$SourceDocFx = "https://github.com/dotnet/docfx/releases/download/v2.19.2/docfx.zip"
 	Invoke-WebRequest $SourceDocFx -OutFile $DocFxZip
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
@@ -47,10 +51,12 @@ If ($FileExists -eq $False) {
 
 # delete anything that already exists
 if ($Clean -eq 1) {
-	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md" -recurse -force -ErrorAction SilentlyContinue
-	##Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyContinue
+	Write-Host "Cleaning..."
+	Remove-Item (Join-Path -Path $ApiDocsFolder "_site\*") -recurse
+	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse
+	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force 
+	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md" -recurse -force
+	# Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyContinue
 }
 
 # NOTE: There's a ton of Lucene docs that we want to copy and re-format. I'm not sure if we can really automate this 
@@ -63,16 +69,16 @@ if ($Clean -eq 1) {
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
 
 Write-Host "Building metadata..."
-& $DocFxExe metadata $DocFxJson
+& $DocFxExe metadata $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel
 if($?) { 
 	if ($ServeDocs -eq 0){
 		# build the output		
 		Write-Host "Building docs..."
-		& $DocFxExe build $DocFxJson	
+		& $DocFxExe build $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel
 	}
 	else {
 		# build + serve (for testing)
 		Write-Host "starting website..."
-		& $DocFxExe $DocFxJson --serve
+		& $DocFxExe $DocFxJson --serve -l "obj\docfx.log" --loglevel $LogLevel
 	}
 }

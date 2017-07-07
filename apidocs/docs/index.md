@@ -1,7 +1,6 @@
-Apache Lucene.NET 4.8.0 Documentation
+Apache Lucene.NET&trade; 4.8.0 Documentation
 ===============
 
-Apache Lucene.NET&trade; 4.8.0 Documentation
 ---------------
 
 Lucene is a Java full-text search engine. Lucene.NET is not a complete application, but rather a code library and API that can easily be used to add search capabilities to applications.

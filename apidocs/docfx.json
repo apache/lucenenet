@@ -36,7 +36,7 @@
         }
       ],
       "dest": "api",
-      "filter": "docfx.filter.yml"
+      "filter": "filterConfig.yml"
     }
   ],
   "build": {
@@ -51,6 +51,8 @@
         "files": [
           "docs/**.md",
           "docs/**/toc.yml",
+          "wiki/**.md",
+          "wiki/**/toc.yml",
           "toc.yml",
           "*.md"
         ],
@@ -70,11 +72,16 @@
           "_site/**"
         ]
       }
-    ],
+    ],   
+    "globalMetadata": {
+      "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",
+      "_enableSearch": false,
+      "_disableContribution": false
+    },
     "overwrite": [
       {
         "files": [
-          "apidoc/**.md"
+          "apispec/**.md"
         ],
         "exclude": [
           "obj/**",
@@ -82,11 +89,6 @@
         ]
       }
     ],
-    "globalMetadata": {
-      "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",
-      "_enableSearch": false,
-      "_disableContribution": false
-    },
     "dest": "_site",
     "globalMetadataFiles": [],
     "fileMetadataFiles": [],
