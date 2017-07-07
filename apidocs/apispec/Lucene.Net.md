@@ -1,5 +1,5 @@
 ---
-uid: Lucene.Net.Index
+uid: Lucene.Net
 summary: *content
 ---
 
