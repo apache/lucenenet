@@ -23,8 +23,8 @@ a:focus {
   color: #143653;
   text-decoration: none;
 }
-.navbar-header .navbar-brand {
-    background: url(https://raw.githubusercontent.com/apache/lucenenet/master/branding/logo/lucene-net-icon-64x64.png) left center no-repeat;
-    background-size: 40px auto;
+.navbar-header .navbar-brand img {    
     width:50px;
+    margin-top:4px;
+    margin-right:10px;
 }

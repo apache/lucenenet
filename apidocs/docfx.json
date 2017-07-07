@@ -42,10 +42,7 @@
   "build": {
     "content": [
       {
-        "files": [
-          "api/**.yml",
-          "api/index.md"
-        ]
+        "files": ["api/**.yml", "api/index.md"]        
       },
       {
         "files": [
@@ -55,28 +52,24 @@
           "wiki/**/toc.yml",
           "toc.yml",
           "*.md"
-        ],
-        "exclude": [
-          "obj/**",
-          "_site/**"
         ]
       }
     ],
     "resource": [
       {
         "files": [
-          "images/**"
+          "logo/favicon.ico",
+          "logo/lucene-net-icon-64x64.png"
         ],
-        "exclude": [
-          "obj/**",
-          "_site/**"
-        ]
+        "cwd": "../branding"
       }
     ],   
     "globalMetadata": {
-      "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",
-      "_enableSearch": false,
-      "_disableContribution": false
+      "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",      
+      "_disableContribution": false,
+      "_appFaviconPath": "logo/favicon.ico",
+      "_appLogoPath": "logo/lucene-net-icon-64x64.png",
+      "_appFooter": "Copyright © 2017 Licensed to the Apache Software Foundation (ASF)"
     },
     "overwrite": [
       {

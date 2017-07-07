@@ -52,11 +52,10 @@ If ($FileExists -eq $False) {
 # delete anything that already exists
 if ($Clean -eq 1) {
 	Write-Host "Cleaning..."
-	Remove-Item (Join-Path -Path $ApiDocsFolder "_site\*") -recurse
-	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse
-	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force 
-	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md" -recurse -force
-	# Remove-Item (Join-Path -Path $ApiDocsFolder "api") -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "_site\*") -recurse -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md" -recurse -force -ErrorAction SilentlyContinue
 }
 
 # NOTE: There's a ton of Lucene docs that we want to copy and re-format. I'm not sure if we can really automate this 
