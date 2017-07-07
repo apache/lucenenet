@@ -34,7 +34,7 @@ namespace LuceneDocsPlugins
 
     public sealed class LuceneTokenRendererPart : DfmCustomizedRendererPartBase<IMarkdownRenderer, LuceneNoteBlockToken, MarkdownBlockContext>
     {
-        public override string Name => "LabelRendererPart";
+        public override string Name => "LuceneTokenRendererPart";
 
         public override bool Match(IMarkdownRenderer renderer, LuceneNoteBlockToken token, MarkdownBlockContext context) => true;
 
