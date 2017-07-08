@@ -58,7 +58,7 @@ namespace Lucene.Net.Cli
                 this.PageSizeOption = this.Option(
                     "-p|--page-size <NUMBER>",
                     FromResource("PageSizeDescription"),
-                    CommandOptionType.NoValue);
+                    CommandOptionType.SingleValue);
 
 
                 this.OnExecute(() => new DemoSearchFilesCommand().Run(this));
@@ -118,7 +118,6 @@ namespace Lucene.Net.Cli
             if (input.RawOption.HasValue())
             {
                 args.Add("--raw");
-                args.Add(input.RawOption.Value());
             }
 
             if (input.PageSizeOption.HasValue())

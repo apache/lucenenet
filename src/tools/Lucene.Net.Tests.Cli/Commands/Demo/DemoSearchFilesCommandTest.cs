@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Cli.Commands
+namespace Lucene.Net.Cli.Commands.Demo
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -21,17 +21,23 @@ namespace Lucene.Net.Cli.Commands
      * limitations under the License.
      */
 
-    public class IndexListTermInfoCommandTest : CommandTestCase
+    public class DemoSearchFilesCommandTest : CommandTestCase
     {
         protected override ConfigurationBase CreateConfiguration(MockConsoleApp app)
         {
-            return new IndexListTermInfoCommand.Configuration(new CommandLineOptions()) { Main = (args) => app.Main(args) };
+            return new DemoSearchFilesCommand.Configuration(new CommandLineOptions()) { Main = (args) => app.Main(args) };
         }
 
         protected override IList<Arg[]> GetOptionalArgs()
         {
-            // NOTE: We must order this in the sequence of the expected output.
-            return new List<Arg[]>();
+            return new List<Arg[]>()
+            {
+                new Arg[] { new Arg(inputPattern: "-f fieldName|--field fieldName", output: new string[] { "--field", "fieldName" }) },
+                new Arg[] { new Arg(inputPattern: "-r 10|--repeat 10", output: new string[] { "--repeat", "10" }) },
+                new Arg[] { new Arg(inputPattern: @"-qf C:\lucene-temp2\queries.txt|--queries-file C:\lucene-temp2\queries.txt", output: new string[] { "--queries-file", @"C:\lucene-temp2\queries.txt" }) },
+                new Arg[] { new Arg(inputPattern: "--raw", output: new string[] { "--raw" }) },
+                new Arg[] { new Arg(inputPattern: "-p 15|--page-size 15", output: new string[] { "--page-size", "15" }) },
+            };
         }
 
         protected override IList<Arg[]> GetRequiredArgs()
@@ -40,21 +46,19 @@ namespace Lucene.Net.Cli.Commands
             return new List<Arg[]>()
             {
                 new Arg[] { new Arg(inputPattern: @"C:\lucene-temp", output: new string[] { @"C:\lucene-temp" }) },
-                new Arg[] { new Arg(inputPattern: "fieldName", output: new string[] { "fieldName" }) },
-                new Arg[] { new Arg(inputPattern: "termName", output: new string[] { "termName" }) },
             };
         }
 
         [Test]
         public virtual void TestNotEnoughArguments()
         {
-            AssertConsoleOutput("", FromResource("NotEnoughArguments", 3));
+            AssertConsoleOutput("", FromResource("NotEnoughArguments", 1));
         }
 
         [Test]
         public virtual void TestTooManyArguments()
         {
-            Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two three four", ""));
+            Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two", ""));
         }
     }
 }

@@ -49,9 +49,8 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
-        public void TestNotEnoughArguments()
+        public virtual void TestNotEnoughArguments()
         {
-            Assert.NotNull(FromResource("NotEnoughArguments"));
             AssertConsoleOutput("one", FromResource("NotEnoughArguments", 2));
         }
     }

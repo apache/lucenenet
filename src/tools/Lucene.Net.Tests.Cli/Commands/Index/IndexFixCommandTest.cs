@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Cli.CommandLine;
 using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Cli.Commands
 {
@@ -33,13 +34,12 @@ namespace Lucene.Net.Cli.Commands
             // NOTE: We must order this in the sequence of the expected output.
             return new List<Arg[]>()
             {
-                new Arg[] { new Arg(inputPattern: "-c|--cross-check-term-vectors", output: new string[] { "-crossCheckTermVectors" }) },
-                new Arg[] { new Arg(inputPattern: "--verbose", output: new string[] { "-verbose" }) },
                 new Arg[] {
-                    new Arg(inputPattern: "-s _seg1|--segment _seg1", output: new string[] { "-segment", "_seg1" }),
-                    new Arg(inputPattern: "-s _seg1 -s _seg2|--segment _seg1 --segment _seg2", output: new string[] { "-segment", "_seg1", "-segment", "_seg2" }),
-                    new Arg(inputPattern: "-s _seg1 -s _seg2 -s _seg3|--segment _seg1 --segment _seg2 --segment _seg3", output: new string[] { "-segment", "_seg1", "-segment", "_seg2", "-segment", "_seg3" })
+                    new Arg(inputPattern: "", output: new string[] { "-fix" }),
+                    new Arg(inputPattern: "--dry-run", output: new string[0]),
                 },
+                new Arg[] { new Arg(inputPattern: "-c|--cross-check-term-vectors", output: new string[] { "-crossCheckTermVectors" }) },
+                new Arg[] { new Arg(inputPattern: "-v|--verbose", output: new string[] { "-verbose" }) },
                 new Arg[] { new Arg(inputPattern: "-dir SimpleFSDirectory|--directory-type SimpleFSDirectory", output: new string[] { "-dir-impl", "SimpleFSDirectory" }) },
             };
         }
@@ -49,20 +49,48 @@ namespace Lucene.Net.Cli.Commands
             // NOTE: We must order this in the sequence of the expected output.
             return new List<Arg[]>()
             {
-                new Arg[] { new Arg(inputPattern: @"C:\lucene-temp", output: new string[] { @"C:\lucene-temp" }) },
-                new Arg[] { new Arg(inputPattern: "", output: new string[] { "-fix" }) },
+                new Arg[] { new Arg(inputPattern: @"C:\lucene-temp", output: new string[] { @"C:\lucene-temp" }) }
             };
         }
 
         [Test]
-        public void TestNoArguments()
+        public override void TestAllValidCombinations()
+        {
+            var requiredArgs = GetRequiredArgs().ExpandArgs().RequiredParameters();
+            var optionalArgs = GetOptionalArgs().ExpandArgs().OptionalParameters();
+
+            foreach (var requiredArg in requiredArgs)
+            {
+                AssertCommandTranslation(
+                    string.Join(" ", requiredArg.Select(x => x.InputPattern).ToArray()),
+                    requiredArg.SelectMany(x => x.Output)
+                    // Special case - the -fix option must be specified when --dry-run is not
+                    .Concat(new string[] { "-fix" }).ToArray());
+            }
+
+            foreach (var requiredArg in requiredArgs)
+            {
+                foreach (var optionalArg in optionalArgs)
+                {
+                    string command = string.Join(" ", requiredArg.Select(x => x.InputPattern).Union(optionalArg.Select(x => x.InputPattern).ToArray()));
+                    string[] expected = requiredArg.SelectMany(x => x.Output)
+                        // Special case - the -fix option must be specified when --dry-run is not
+                        .Concat(command.Contains("--dry-run") ? new string[0] : new string[] { "-fix" })
+                        .Union(optionalArg.SelectMany(x => x.Output)).ToArray();
+                    AssertCommandTranslation(command, expected);
+                }
+            }
+        }
+
+        [Test]
+        public virtual void TestNoArguments()
         {
             System.IO.Directory.SetCurrentDirectory(@"C:\");
             AssertCommandTranslation("", new string[] { @"C:\", "-fix" });
         }
 
         [Test]
-        public void TestTooManyArguments()
+        public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two", ""));
         }

@@ -35,7 +35,7 @@ namespace Lucene.Net.Cli.Commands
             return new List<Arg[]>()
             {
                 new Arg[] { new Arg(inputPattern: "-c|--cross-check-term-vectors", output: new string[] { "-crossCheckTermVectors" }) },
-                new Arg[] { new Arg(inputPattern: "--verbose", output: new string[] { "-verbose" }) },
+                new Arg[] { new Arg(inputPattern: "-v|--verbose", output: new string[] { "-verbose" }) },
                 new Arg[] {
                     new Arg(inputPattern: "-s _seg1|--segment _seg1", output: new string[] { "-segment", "_seg1" }),
                     new Arg(inputPattern: "-s _seg1 -s _seg2|--segment _seg1 --segment _seg2", output: new string[] { "-segment", "_seg1", "-segment", "_seg2" }),
@@ -53,57 +53,14 @@ namespace Lucene.Net.Cli.Commands
             };
         }
 
-        
-
-
-
-        //[Test]
-        //public void TestAllOptionsShort()
-        //{
-        //    AssertCommandTranslation(
-        //        @"C:\lucene-temp -v -c -dir SimpleFSDirectory -s _seg1 -s _seg2 -s _seg3",
-        //        new string[] {
-        //            @"C:\lucene-temp", "-crossCheckTermVectors", "-verbose",
-        //            "-segment", "_seg1", "-segment", "_seg2", "-segment", "_seg3",
-        //            "-dir-impl", "SimpleFSDirectory"
-        //        });
-
-        //    //var output = new MockConsoleApp();
-        //    //var cmd = new IndexCheckCommand.Configuration(new CommandLineOptions()) { Main = (args) => output.Main(args) };
-
-        //    //string input = @"C:\lucene-temp -v -c -dir SimpleFSDirectory -s _seg1 -s _seg2 -s _seg3";
-        //    //cmd.Execute(input.ToArgs());
-
-        //    //Assert.AreEqual(@"C:\lucene-temp", output.Args[0]);
-        //    //Assert.True(output.Args.Contains("-crossCheckTermVectors"));
-        //    //Assert.True(output.Args.Contains("-verbose"));
-        //    //Assert.AreEqual("SimpleFSDirectory", output.Args.OptionValue("-dir-impl"));
-        //    //Assert.True(new HashSet<string>(output.Args.OptionValues("-segment")).SetEquals(new HashSet<string>(new string[] { "_seg1", "_seg2", "_seg3" })));
-        //    //Assert.False(output.Args.Contains("-fix"));
-        //}
-
-        //[Test]
-        //public void TestAllOptionsLong()
-        //{
-        //    AssertCommandTranslation(
-        //        @"C:\lucene-temp --verbose --cross-check-term-vectors --directory-type SimpleFSDirectory --segment _seg1 --segment _seg2 --segment _seg3",
-        //        new string[] {
-        //            @"C:\lucene-temp", "-crossCheckTermVectors", "-verbose",
-        //            "-segment", "_seg1", "-segment", "_seg2", "-segment", "_seg3",
-        //            "-dir-impl", "SimpleFSDirectory"
-        //        });
-        //}
-
         /// <summary>
         /// Ensures the current working directory is used when index directory is not supplied. 
         /// </summary>
         [Test]
-        public void TestNoArguments()
+        public virtual void TestNoArguments()
         {
             System.IO.Directory.SetCurrentDirectory(@"C:\");
             AssertCommandTranslation("", new string[] { @"C:\" });
         }
-
-        
     }
 }

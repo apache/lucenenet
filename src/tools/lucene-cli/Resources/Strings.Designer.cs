@@ -240,7 +240,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Run the index-files demo first to create an index to run this command against. You can either use a file containing many queries, a single query on the command line, or omit both options to run queries interactively..
+        ///    Looks up a localized string similar to Run the index-files demo first to create an index to run this command against. You can either use a file containing many queries (each on a single line), a single query on the command line, or omit both options to run queries interactively..
         /// </summary>
         public static string DemoSearchFilesCommandExtendedHelpText {
             get {
@@ -249,7 +249,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The index field to use in the search..
+        ///    Looks up a localized string similar to The index field to use in the search. If not supplied, defaults to &quot;contents&quot;..
         /// </summary>
         public static string DemoSearchFilesCommandFieldDescription {
             get {
@@ -483,7 +483,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The .cfs file containing words to parse..
+        ///    Looks up a localized string similar to The .cfs compound file containing words to parse..
         /// </summary>
         public static string IndexExtractCfsCommandCFSFileNameDescription {
             get {
@@ -510,7 +510,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Fixes an index with problematic segments..
+        ///    Looks up a localized string similar to Fixes an index by removing problematic segments..
         /// </summary>
         public static string IndexFixCommandDescription {
             get {
@@ -519,7 +519,25 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The .cfs file containing words to parse..
+        ///    Looks up a localized string similar to Doesn&apos;t change the index, but reports any actions that would be taken if this option were not supplied..
+        /// </summary>
+        public static string IndexFixCommandDryRunDescription {
+            get {
+                return ResourceManager.GetString("IndexFixCommandDryRunDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to WARNING: This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!.
+        /// </summary>
+        public static string IndexFixCommandExtendedHelpText {
+            get {
+                return ResourceManager.GetString("IndexFixCommandExtendedHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to The .cfs compound file containing words to parse..
         /// </summary>
         public static string IndexListCfsCommandCFSFileNameDescription {
             get {
@@ -602,18 +620,18 @@ namespace Lucene.Net.Cli.Resources {
         /// <summary>
         ///    Looks up a localized string similar to Displays the taxonomy statistical information for a taxonomy index..
         /// </summary>
-        public static string IndexListTaxonomyStatsDescription {
+        public static string IndexListTaxonomyStatsCommandDescription {
             get {
-                return ResourceManager.GetString("IndexListTaxonomyStatsDescription", resourceCulture);
+                return ResourceManager.GetString("IndexListTaxonomyStatsCommandDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///    Looks up a localized string similar to Recursively lists all descendent nodes..
         /// </summary>
-        public static string IndexListTaxonomyStatsShowTreeDescription {
+        public static string IndexListTaxonomyStatsCommandShowTreeDescription {
             get {
-                return ResourceManager.GetString("IndexListTaxonomyStatsShowTreeDescription", resourceCulture);
+                return ResourceManager.GetString("IndexListTaxonomyStatsCommandShowTreeDescription", resourceCulture);
             }
         }
         

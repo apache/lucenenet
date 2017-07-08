@@ -1,5 +1,5 @@
-﻿using Lucene.Net.Index;
-using System;
+﻿using Lucene.Net.Cli.CommandLine;
+using Lucene.Net.Index;
 
 namespace Lucene.Net.Cli
 {
@@ -30,21 +30,36 @@ namespace Lucene.Net.Cli
 
                 this.Name = "fix";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Arguments.Add(new IndexDirectoryArgument());
                 this.Options.Add(new VerboseOption());
                 this.Options.Add(new CrossCheckTermVectorsOption());
                 this.Options.Add(new DirectoryTypeOption());
-                this.Options.Add(new SegmentOption(allowMultiple: true) { Description = FromResource("SegmentsDescpription") });
+                // LUCENENET NOTE: This is effectively the same thing as running
+                // the check command, but using fix doesn't allow the option of
+                // specifying individual segments, so it is better to have an option here.
+                DryRunOption = this.Option("--dry-run",
+                    FromResource("DryRunDescription"),
+                    CommandOptionType.NoValue);
 
-                this.OnExecute(() => new IndexCheckCommand(fix: true).Run(this));
+                this.OnExecute(() => new IndexFixCommand().Run(this));
             }
+
+            public CommandOption DryRunOption { get; private set; }
         }
 
         public int Run(ConfigurationBase cmd)
         {
-            // We call IndexCheckCommand - nothing to do here.
-            throw new NotSupportedException();
+            var input = cmd as Configuration;
+
+            bool fix = true;
+            if (input.DryRunOption.HasValue())
+            {
+                fix = false;
+            }
+
+            return new IndexCheckCommand(fix).Run(cmd);
         }
     }
 }

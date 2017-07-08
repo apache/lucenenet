@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 
-namespace Lucene.Net.Cli.Commands
+namespace Lucene.Net.Cli.Commands.Demo
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -21,17 +21,19 @@ namespace Lucene.Net.Cli.Commands
      * limitations under the License.
      */
 
-    public class IndexListTermInfoCommandTest : CommandTestCase
+    public class DemoIndexFilesCommandTest : CommandTestCase
     {
         protected override ConfigurationBase CreateConfiguration(MockConsoleApp app)
         {
-            return new IndexListTermInfoCommand.Configuration(new CommandLineOptions()) { Main = (args) => app.Main(args) };
+            return new DemoIndexFilesCommand.Configuration(new CommandLineOptions()) { Main = (args) => app.Main(args) };
         }
 
         protected override IList<Arg[]> GetOptionalArgs()
         {
-            // NOTE: We must order this in the sequence of the expected output.
-            return new List<Arg[]>();
+            return new List<Arg[]>()
+            {
+                new Arg[] { new Arg(inputPattern: "-u|--update", output: new string[] { "--update" }) },
+            };
         }
 
         protected override IList<Arg[]> GetRequiredArgs()
@@ -40,21 +42,20 @@ namespace Lucene.Net.Cli.Commands
             return new List<Arg[]>()
             {
                 new Arg[] { new Arg(inputPattern: @"C:\lucene-temp", output: new string[] { @"C:\lucene-temp" }) },
-                new Arg[] { new Arg(inputPattern: "fieldName", output: new string[] { "fieldName" }) },
-                new Arg[] { new Arg(inputPattern: "termName", output: new string[] { "termName" }) },
+                new Arg[] { new Arg(inputPattern: @"C:\lucene-temp2", output: new string[] { @"C:\lucene-temp2" }) },
             };
         }
 
         [Test]
         public virtual void TestNotEnoughArguments()
         {
-            AssertConsoleOutput("", FromResource("NotEnoughArguments", 3));
+            AssertConsoleOutput("one", FromResource("NotEnoughArguments", 2));
         }
 
         [Test]
         public virtual void TestTooManyArguments()
         {
-            Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two three four", ""));
+            Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two three", ""));
         }
     }
 }

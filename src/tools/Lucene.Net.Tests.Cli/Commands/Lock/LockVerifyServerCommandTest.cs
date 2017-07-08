@@ -44,14 +44,13 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
-        public void TestNotEnoughArguments()
+        public virtual void TestNotEnoughArguments()
         {
-            Assert.NotNull(FromResource("NotEnoughArguments"));
             AssertConsoleOutput("one", FromResource("NotEnoughArguments", 2));
         }
 
         [Test]
-        public void TestTooManyArguments()
+        public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two three", ""));
         }

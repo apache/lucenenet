@@ -46,6 +46,9 @@ namespace Lucene.Net.Cli.Commands
             var cmd = CreateConfiguration(output);
             cmd.Execute(command.ToArgs());
 
+            Assert.False(output.CallCount < 1, "Main() method not called");
+            Assert.False(output.CallCount > 1, "Main() method called more than once");
+
             Assert.AreEqual(expectedResult.Length, output.Args.Length);
             for (int i = 0; i < output.Args.Length; i++)
             {
@@ -66,12 +69,12 @@ namespace Lucene.Net.Cli.Commands
             Assert.True(consoleText.Contains(expectedConsoleText), "Expected output was {0}, actual console output was {1}", expectedConsoleText, consoleText);
         }
 
-        protected virtual string FromResource(string resourceName)
+        public static string FromResource(string resourceName)
         {
             return Resources.Strings.ResourceManager.GetString(resourceName);
         }
 
-        protected virtual string FromResource(string resourceName, params object[] args)
+        public static string FromResource(string resourceName, params object[] args)
         {
             return string.Format(Resources.Strings.ResourceManager.GetString(resourceName), args);
         }
@@ -106,14 +109,49 @@ namespace Lucene.Net.Cli.Commands
             AssertConsoleOutput("?", "Version");
         }
 
+        [Test]
+        public virtual void TestCommandHasDescription()
+        {
+            var output = new MockConsoleApp();
+            var cmd = CreateConfiguration(output);
+            Assert.IsNotNull(cmd.Description);
+            Assert.IsNotEmpty(cmd.Description);
+        }
+
+        [Test]
+        public virtual void TestAllArgumentsHaveDescription()
+        {
+            var output = new MockConsoleApp();
+            var cmd = CreateConfiguration(output);
+            foreach (var arg in cmd.Arguments)
+            {
+                Assert.IsNotNull(arg.Description);
+                Assert.IsNotEmpty(arg.Description);
+            }
+        }
+
+        [Test]
+        public virtual void TestAllOptionsHaveDescription()
+        {
+            var output = new MockConsoleApp();
+            var cmd = CreateConfiguration(output);
+            foreach (var option in cmd.Options)
+            {
+                Assert.IsNotNull(option.Description);
+                Assert.IsNotEmpty(option.Description);
+            }
+        }
+
         public class MockConsoleApp
         {
             public void Main(string[] args)
             {
                 this.Args = args;
+                this.CallCount++;
             }
 
             public string[] Args { get; private set; }
+            public int CallCount { get; private set; }
         }
 
         public class Arg
@@ -126,45 +164,6 @@ namespace Lucene.Net.Cli.Commands
 
             public string InputPattern { get; private set; }
             public string[] Output { get; private set; }
-        }
-    }
-
-    public static class ListExtensions
-    {
-        // Breaks out any options based on logical OR | symbol
-        public static IList<CommandTestCase.Arg[]> ExpandArgs(this IList<CommandTestCase.Arg[]> args)
-        {
-            var result = new List<CommandTestCase.Arg[]>();
-            foreach (var arg in args)
-            {
-                result.Add(ExpandArgs(arg));
-            }
-
-            return result;
-        }
-
-        public static CommandTestCase.Arg[] ExpandArgs(this CommandTestCase.Arg[] args)
-        {
-            var result = new List<CommandTestCase.Arg>();
-            if (args != null)
-            {
-                foreach (var arg in args)
-                {
-                    if (arg.InputPattern.Contains("|"))
-                    {
-                        var options = arg.InputPattern.Split('|');
-                        foreach (var option in options)
-                        {
-                            result.Add(new CommandTestCase.Arg(option, (string[])arg.Output.Clone()));
-                        }
-                    }
-                    else
-                    {
-                        result.Add(arg);
-                    }
-                }
-            }
-            return result.ToArray();
         }
     }
 }

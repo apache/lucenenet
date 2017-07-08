@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Lucene.Net.Cli.Commands;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Lucene.Net.Cli
@@ -20,7 +21,7 @@ namespace Lucene.Net.Cli
      * limitations under the License.
      */
 
-    public static class Extensions
+    public static class EnumerableExtensions
     {
         public static IEnumerable<IEnumerable<T>> OptionalParameters<T>(this IEnumerable<IEnumerable<T>> input)
         {
@@ -53,6 +54,37 @@ namespace Lucene.Net.Cli
                 {
                     foreach (var r in rest)
                         yield return r.Prepend(p);
+                }
+            }
+        }
+
+        // Breaks out any options based on logical OR | symbol
+        public static IEnumerable<IEnumerable<CommandTestCase.Arg>> ExpandArgs(this IEnumerable<IEnumerable<CommandTestCase.Arg>> args)
+        {
+            foreach (var arg in args)
+            {
+                yield return ExpandArgs(arg);
+            }
+        }
+
+        public static IEnumerable<CommandTestCase.Arg> ExpandArgs(this IEnumerable<CommandTestCase.Arg> args)
+        {
+            if (args != null)
+            {
+                foreach (var arg in args)
+                {
+                    if (arg.InputPattern.Contains("|"))
+                    {
+                        var options = arg.InputPattern.Split('|');
+                        foreach (var option in options)
+                        {
+                            yield return new CommandTestCase.Arg(option, (string[])arg.Output.Clone());
+                        }
+                    }
+                    else
+                    {
+                        yield return arg;
+                    }
                 }
             }
         }

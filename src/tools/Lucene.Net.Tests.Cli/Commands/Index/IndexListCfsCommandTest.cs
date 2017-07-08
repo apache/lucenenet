@@ -23,7 +23,7 @@ namespace Lucene.Net.Cli.Commands
 
     public class IndexListCfsCommandTest : CommandTestCase
     {
-        
+
         protected override ConfigurationBase CreateConfiguration(MockConsoleApp app)
         {
             return new IndexListCfsCommand.Configuration(new CommandLineOptions()) { Main = (args) => app.Main(args) };
@@ -48,22 +48,15 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
-        public void TestNotEnoughArguments()
+        public virtual void TestNotEnoughArguments()
         {
-            Assert.NotNull(FromResource("NotEnoughArguments"));
             AssertConsoleOutput("", FromResource("NotEnoughArguments", 1));
         }
 
         [Test]
-        public void TestTooManyArguments()
+        public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two", ""));
-        }
-
-        [Test]
-        public override void TestHelp()
-        {
-            base.TestHelp();
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
-        public void TestTooManyArguments()
+        public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one", ""));
         }

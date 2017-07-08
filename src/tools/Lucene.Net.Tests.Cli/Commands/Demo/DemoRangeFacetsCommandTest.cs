@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
+﻿using System.Collections.Generic;
 
-namespace Lucene.Net.Cli
+namespace Lucene.Net.Cli.Commands.Demo
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,11 +19,22 @@ namespace Lucene.Net.Cli
      * limitations under the License.
      */
 
-    public static class StringExtensions
+    public class DemoRangeFacetsCommandTest : CommandTestCase
     {
-        public static string[] ToArgs(this string input)
+        protected override ConfigurationBase CreateConfiguration(MockConsoleApp app)
         {
-            return Regex.Replace(input.Trim(), @"\s+", " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).ToArray();
+            return new DemoRangeFacetsCommand.Configuration(new CommandLineOptions()) { Main = (args) => app.Main(args) };
+        }
+
+        protected override IList<Arg[]> GetOptionalArgs()
+        {
+            return new List<Arg[]>();
+        }
+
+        protected override IList<Arg[]> GetRequiredArgs()
+        {
+            // NOTE: We must order this in the sequence of the expected output.
+            return new List<Arg[]>();
         }
     }
 }

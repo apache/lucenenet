@@ -48,14 +48,14 @@ namespace Lucene.Net.Cli.Commands
         /// Ensures the current working directory is used when index directory is not supplied. 
         /// </summary>
         [Test]
-        public void TestNoArguments()
+        public virtual void TestNoArguments()
         {
             System.IO.Directory.SetCurrentDirectory(@"C:\");
             AssertCommandTranslation("", new string[] { @"C:\", "-l" });
         }
 
         [Test]
-        public void TestTooManyArguments()
+        public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two", ""));
         }

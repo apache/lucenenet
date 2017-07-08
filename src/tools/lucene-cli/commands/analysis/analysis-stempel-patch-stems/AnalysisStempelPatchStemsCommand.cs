@@ -41,7 +41,7 @@ namespace Lucene.Net.Cli
                     FromResource("StemmerTableFilesEncodingDescription"),
                     CommandOptionType.SingleValue);
 
-                this.OnExecute(() => new IndexListHighFreqTermsCommand().Run(this));
+                this.OnExecute(() => new AnalysisStempelPatchStemsCommand().Run(this));
             }
 
             public virtual CommandArgument StemmerTableFiles { get; private set; }
@@ -60,7 +60,8 @@ namespace Lucene.Net.Cli
 
             if (input.StemmerTableFilesEncoding.HasValue())
             {
-                args.AddRange(input.StemmerTableFilesEncoding.Values);
+                args.Add("--encoding");
+                args.Add(input.StemmerTableFilesEncoding.Value());
             }
 
             cmd.Main(args.ToArray());

@@ -178,10 +178,10 @@
     <value>Simple command-line based search demo. Run index-files demo first.</value>
   </data>
   <data name="DemoSearchFilesCommandExtendedHelpText" xml:space="preserve">
-    <value>Run the index-files demo first to create an index to run this command against. You can either use a file containing many queries, a single query on the command line, or omit both options to run queries interactively.</value>
+    <value>Run the index-files demo first to create an index to run this command against. You can either use a file containing many queries (each on a single line), a single query on the command line, or omit both options to run queries interactively.</value>
   </data>
   <data name="DemoSearchFilesCommandFieldDescription" xml:space="preserve">
-    <value>The index field to use in the search.</value>
+    <value>The index field to use in the search. If not supplied, defaults to "contents".</value>
   </data>
   <data name="DemoSearchFilesCommandPageSizeDescription" xml:space="preserve">
     <value>Hits per page to display.</value>
@@ -259,7 +259,7 @@
     <value>If omitted, it defaults to the current working directory.</value>
   </data>
   <data name="IndexExtractCfsCommandCFSFileNameDescription" xml:space="preserve">
-    <value>The .cfs file containing words to parse.</value>
+    <value>The .cfs compound file containing words to parse.</value>
   </data>
   <data name="IndexExtractCfsCommandDescription" xml:space="preserve">
     <value>Lists sub-files from a .cfs compound file.</value>
@@ -268,10 +268,16 @@
     <value>The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc.</value>
   </data>
   <data name="IndexFixCommandDescription" xml:space="preserve">
-    <value>Fixes an index with problematic segments.</value>
+    <value>Fixes an index by removing problematic segments.</value>
+  </data>
+  <data name="IndexFixCommandDryRunDescription" xml:space="preserve">
+    <value>Doesn't change the index, but reports any actions that would be taken if this option were not supplied.</value>
+  </data>
+  <data name="IndexFixCommandExtendedHelpText" xml:space="preserve">
+    <value>WARNING: This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!</value>
   </data>
   <data name="IndexListCfsCommandCFSFileNameDescription" xml:space="preserve">
-    <value>The .cfs file containing words to parse.</value>
+    <value>The .cfs compound file containing words to parse.</value>
   </data>
   <data name="IndexListCfsCommandDescription" xml:space="preserve">
     <value>Extracts sub-files out of a .cfs compound file.</value>
@@ -297,10 +303,10 @@
   <data name="IndexListSegmentsCommandDescription" xml:space="preserve">
     <value>Lists segments in an index.</value>
   </data>
-  <data name="IndexListTaxonomyStatsDescription" xml:space="preserve">
+  <data name="IndexListTaxonomyStatsCommandDescription" xml:space="preserve">
     <value>Displays the taxonomy statistical information for a taxonomy index.</value>
   </data>
-  <data name="IndexListTaxonomyStatsShowTreeDescription" xml:space="preserve">
+  <data name="IndexListTaxonomyStatsCommandShowTreeDescription" xml:space="preserve">
     <value>Recursively lists all descendent nodes.</value>
   </data>
   <data name="IndexListTermInfoCommandDescription" xml:space="preserve">

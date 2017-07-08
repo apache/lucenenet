@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyTitle("lucene-cli")]
 [assembly: AssemblyDescription(
-    "Lucene.Net maintenance utilities and demos.")]
+    "Lucene.Net maintenance utilities and demos. Run 'dotnet lucene-cli.dll' to see usage information.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Cli")]
 

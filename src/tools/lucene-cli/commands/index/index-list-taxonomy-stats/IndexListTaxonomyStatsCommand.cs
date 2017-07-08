@@ -33,7 +33,7 @@ namespace Lucene.Net.Cli
                 this.Description = FromResource("Description");
 
                 this.Arguments.Add(new IndexDirectoryArgument());
-                this.ShowTreeOption = this.Option("-tree|--show-tree", FromResource("ShowTreeOption"), CommandOptionType.NoValue);
+                this.ShowTreeOption = this.Option("-tree|--show-tree", FromResource("ShowTreeDescription"), CommandOptionType.NoValue);
 
                 this.OnExecute(() => new IndexListTaxonomyStatsCommand().Run(this));
             }

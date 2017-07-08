@@ -40,9 +40,15 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
-        public void TestTooManyArguments()
+        public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one", ""));
+        }
+
+        [Test]
+        public override void TestCommandHasDescription()
+        {
+            // No need to do this, it is not displayed anyway
         }
     }
 }
