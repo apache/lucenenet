@@ -46,16 +46,24 @@ namespace Lucene.Net.Misc
                 { OpenMode = OpenMode.CREATE }))
                 {
                     Directory[] indexes = new Directory[args.Length - 1];
-                    for (int i = 1; i < args.Length; i++)
+                    try
                     {
-                        indexes[i - 1] = FSDirectory.Open(new System.IO.DirectoryInfo(args[i]));
+                        for (int i = 1; i < args.Length; i++)
+                        {
+                            indexes[i - 1] = FSDirectory.Open(new System.IO.DirectoryInfo(args[i]));
+                        }
+
+                        Console.WriteLine("Merging...");
+                        writer.AddIndexes(indexes);
+
+                        Console.WriteLine("Full merge...");
+                        writer.ForceMerge(1);
                     }
-
-                    Console.WriteLine("Merging...");
-                    writer.AddIndexes(indexes);
-
-                    Console.WriteLine("Full merge...");
-                    writer.ForceMerge(1);
+                    finally
+                    {
+                        // LUCENENET specific - dispose directories
+                        IOUtils.Dispose(indexes);
+                    }
                 }
                 Console.WriteLine("Done.");
             }
