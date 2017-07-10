@@ -60,10 +60,16 @@ namespace Lucene.Net.Cli
 
             var input = cmd as Configuration;
 
+            args.Add("-num");
+
             if (input.NumberOfParts != null && input.NumberOfParts.HasValue())
             {
-                args.Add("-num");
                 args.Add(input.NumberOfParts.Value());
+            }
+            else
+            {
+                // Default to 2 parts
+                args.Add("2");
             }
 
             if (input.Sequential != null && input.Sequential.HasValue())

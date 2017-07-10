@@ -30,6 +30,7 @@ namespace Lucene.Net.Cli
 
                 this.Name = "extract-cfs";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Argument("<CFS_FILE_NAME>", FromResource("CFSFileNameDescription"));
                 this.Options.Add(new DirectoryTypeOption());

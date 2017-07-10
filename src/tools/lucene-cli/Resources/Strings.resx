@@ -127,7 +127,7 @@
     <value>The path to a file containing a stemmer table. Multiple values are allowed.</value>
   </data>
   <data name="AnalysisStempelCompileStemsCommandStemmerTableFilesEncodingDescription" xml:space="preserve">
-    <value>The encoding to use for the stemmer table files.</value>
+    <value>The encoding to use for the stemmer table files. If not supplied, defaults to UTF-8.</value>
   </data>
   <data name="AnalysisStempelCompileStemsCommandStemmingAlgorithmDescription" xml:space="preserve">
     <value>The name of the desired stemming algorithm to use.</value>
@@ -139,7 +139,7 @@
     <value>The path to a file containing a stemmer table. Multiple values are allowed.</value>
   </data>
   <data name="AnalysisStempelPatchStemsCommandStemmerTableFilesEncodingDescription" xml:space="preserve">
-    <value>The encoding to use for the stemmer table files.</value>
+    <value>The encoding to use for the stemmer table files. If not supplied, defaults to UTF-8.</value>
   </data>
   <data name="CrossCheckTermVectorsDescription" xml:space="preserve">
     <value>Cross check term vectors.</value>
@@ -222,6 +222,11 @@
   <data name="IndexCheckCommandDescription" xml:space="preserve">
     <value>Checks an index for problematic segments.</value>
   </data>
+  <data name="IndexCheckCommandExtendedHelpText" xml:space="preserve">
+    <value>Basic tool to check the health of an index. 
+
+As this tool checks every byte in the index, on a large index it can take quite a long time to run.</value>
+  </data>
   <data name="IndexCheckCommandSegmentsDescription" xml:space="preserve">
     <value>Only check the specified segment(s). This can be specified multiple times, to check more than one segment, eg --segment _2 --segment _a.</value>
   </data>
@@ -262,10 +267,12 @@
     <value>The .cfs compound file containing words to parse.</value>
   </data>
   <data name="IndexExtractCfsCommandDescription" xml:space="preserve">
-    <value>Lists sub-files from a .cfs compound file.</value>
+    <value>Extracts sub-files from a .cfs compound file.</value>
   </data>
   <data name="IndexExtractCfsCommandExtendedHelpText" xml:space="preserve">
-    <value>The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc.</value>
+    <value>Extracts `.cfs` compound files (that were created using the CompoundFileDirectory from Lucene.Net.Misc) to the current working directory.
+
+In order to make the extracted version of the index work, you have to copy the segments file from the compound index into the directory where the extracted files are stored.</value>
   </data>
   <data name="IndexFixCommandDescription" xml:space="preserve">
     <value>Fixes an index by removing problematic segments.</value>
@@ -274,22 +281,26 @@
     <value>Doesn't change the index, but reports any actions that would be taken if this option were not supplied.</value>
   </data>
   <data name="IndexFixCommandExtendedHelpText" xml:space="preserve">
-    <value>WARNING: This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!</value>
+    <value>Basic tool to check and fix the health of an index and write a new segments file that removes reference to problematic segments.
+
+As this tool checks every byte in the index, on a large index it can take quite a long time to run. 
+
+WARNING: This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!</value>
   </data>
   <data name="IndexListCfsCommandCFSFileNameDescription" xml:space="preserve">
     <value>The .cfs compound file containing words to parse.</value>
   </data>
   <data name="IndexListCfsCommandDescription" xml:space="preserve">
-    <value>Extracts sub-files out of a .cfs compound file.</value>
+    <value>Lists sub-files out of a .cfs compound file.</value>
   </data>
   <data name="IndexListCfsCommandExtendedHelpText" xml:space="preserve">
-    <value>The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc.</value>
+    <value>Prints the filename and size of each file within a given `.cfs` compound file. The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc.</value>
   </data>
   <data name="IndexListHighFreqTermsCommandDescription" xml:space="preserve">
-    <value>Extracts the top n most frequent terms by document frequency.</value>
+    <value>Lists the top N most frequent terms by document frequency.</value>
   </data>
   <data name="IndexListHighFreqTermsCommandExtendedHelpText" xml:space="preserve">
-    <value>Extracts the top n most frequent terms (by document frequency) from an index and reports thier document frequency.</value>
+    <value>Extracts the top N most frequent terms (by document frequency) from an index and reports thier document frequency.</value>
   </data>
   <data name="IndexListHighFreqTermsCommandFieldDescription" xml:space="preserve">
     <value>The field to consider. If omitted, considers all fields.</value>
@@ -303,11 +314,17 @@
   <data name="IndexListSegmentsCommandDescription" xml:space="preserve">
     <value>Lists segments in an index.</value>
   </data>
+  <data name="IndexListSegmentsExtendedHelpText" xml:space="preserve">
+    <value>After running this command to view segments, use copy-segments to copy segments from one index directory to another or delete-segments to remove segments from an index.</value>
+  </data>
   <data name="IndexListTaxonomyStatsCommandDescription" xml:space="preserve">
     <value>Displays the taxonomy statistical information for a taxonomy index.</value>
   </data>
+  <data name="IndexListTaxonomyStatsCommandExtendedHelpText" xml:space="preserve">
+    <value>Prints how many ords are under each dimension.</value>
+  </data>
   <data name="IndexListTaxonomyStatsCommandShowTreeDescription" xml:space="preserve">
-    <value>Recursively lists all descendent nodes.</value>
+    <value>Recursively lists all descendant nodes.</value>
   </data>
   <data name="IndexListTermInfoCommandDescription" xml:space="preserve">
     <value>Gets document frequency and total number of occurrences of a term.</value>
@@ -331,22 +348,31 @@
     <value>Two or more source index directories separated by a space.</value>
   </data>
   <data name="IndexMergeCommandOutputDirectoryDescription" xml:space="preserve">
-    <value>Output directory to merge the indexes into.</value>
+    <value>The output directory to merge the input indexes into.</value>
   </data>
   <data name="IndexSplitCommandDescription" xml:space="preserve">
     <value>Splits an index into multiple parts.</value>
   </data>
+  <data name="IndexSplitCommandExtendedHelpText" xml:space="preserve">
+    <value>Splits the input index into multiple equal parts. The method employed here uses IndexWriter.AddIndexes(IndexReader[]) where the input data comes from the input index with artificially applied deletes to the document ids that fall outside the selected partition.
+
+Deletes are only applied to a buffered list of deleted documents and don't affect the source index. This tool works also with read-only indexes.
+
+The disadvantage of this tool is that source index needs to be read as many times as there are parts to be created. The multiple passes may be slow.
+
+NOTE: This tool is unaware of documents added automatically via IndexWriter.AddDocuments(IEnumerable&lt;IEnumerable&lt;IIndexableField&gt;&gt;, Analyzer) or IndexWriter.UpdateDocuments(Term, IEnumerable&lt;IEnumerable&lt;IIndexableField&gt;&gt;, Analyzer), which means it can easily break up such document groups.</value>
+  </data>
   <data name="IndexSplitCommandInputDirectoryDescription" xml:space="preserve">
-    <value>Path to input index. Multiple values can be provided separated by a space.</value>
+    <value>The path of the source index, which can have deletions and can have multiple segments (or multiple readers). Multiple values can be supplied separated by a space.</value>
   </data>
   <data name="IndexSplitCommandNumberOfPartsDescription" xml:space="preserve">
-    <value>The number of parts to produce.</value>
+    <value>The number of parts (output indices) to produce. If omitted, defaults to 2.</value>
   </data>
   <data name="IndexSplitCommandOutputDirectoryDescription" xml:space="preserve">
     <value>Path to output directory to contain partial indexes.</value>
   </data>
   <data name="IndexSplitCommandSequentialDescription" xml:space="preserve">
-    <value>Sequential docid-range split.</value>
+    <value>Sequential doc-id range split (default is round-robin).</value>
   </data>
   <data name="IndexUpgradeCommandDeleteDescription" xml:space="preserve">
     <value>Deletes prior commits.</value>
@@ -355,46 +381,50 @@
     <value>Upgrades all segments of an index from previous Lucene.Net versions to the current segment file format.</value>
   </data>
   <data name="IndexUpgradeCommandExtendedHelpText" xml:space="preserve">
-    <value>This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit. Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. WARNING: This tool may reorder document IDs! Also, ensure you are using the correct version of this utility to match your application's version of Lucene.Net.</value>
+    <value>This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit. 
+
+Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. 
+
+WARNING: This tool may reorder document IDs! Be sure to make a backup of your index before you use this. Also, ensure you are using the correct version of this utility to match your application's version of Lucene.Net. This operation cannot be reversed.</value>
   </data>
   <data name="LockCommandDescription" xml:space="preserve">
     <value>Utilities for verifying concurrent locking integrity.</value>
   </data>
-  <data name="LockStressTestCommandCountDescription" xml:space="preserve">
-    <value>Number of locking tries.</value>
-  </data>
   <data name="LockStressTestCommandDescription" xml:space="preserve">
-    <value>Simple standalone tool that forever acquires &amp; releases a lock using a specific LockFactory.</value>
+    <value>Simple tool that forever acquires and releases a lock using a specific LockFactory.</value>
   </data>
   <data name="LockStressTestCommandExtendedHelpText" xml:space="preserve">
-    <value>You should run multiple instances of this process, each with its own unique ID, and each pointing to the same lock directory, to verify that locking is working correctly. Make sure you are first running LockVerifyServer.</value>
+    <value>You should run multiple instances of this process, each with its own unique ID, and each pointing to the same lock directory, to verify that locking is working correctly. Make sure you are first running verify-server.</value>
   </data>
   <data name="LockStressTestCommandIDDescription" xml:space="preserve">
-    <value>int value from 0 .. 255 (should be unique for test process).</value>
+    <value>An integer from 0 - 255 (should be unique for test process).</value>
   </data>
-  <data name="LockStressTestCommandLockFactoryNameDescription" xml:space="preserve">
-    <value>Path to the lock directory (only set for Simple/NativeFSLockFactory).</value>
+  <data name="LockStressTestCommandLockDirectoryDescription" xml:space="preserve">
+    <value>The path to the lock directory (only utilized if LOCK_FACTORY_TYPE is set to SimpleFSLockFactory or NativeFSLockFactory).</value>
   </data>
-  <data name="LockStressTestCommandLockFactoryTypeNameDescription" xml:space="preserve">
-    <value>Primary LockFactory class that we will use.</value>
+  <data name="LockStressTestCommandLockFactoryTypeDescription" xml:space="preserve">
+    <value>The primary LockFactory implementation that we will use.</value>
   </data>
   <data name="LockStressTestCommandSleepTimeMSDescription" xml:space="preserve">
-    <value>Milliseconds to pause betweeen each lock obtain/release.</value>
+    <value>Milliseconds to pause between each lock obtain/release.</value>
+  </data>
+  <data name="LockStressTestCommandTriesDescription" xml:space="preserve">
+    <value>Number of locking tries.</value>
   </data>
   <data name="LockStressTestCommandVerfierPortDescription" xml:space="preserve">
-    <value>Port that LockVerifyServer is listening on.</value>
+    <value>Port that verify-server is listening on.</value>
   </data>
   <data name="LockStressTestCommandVerifierHostDescription" xml:space="preserve">
-    <value>Hostname that LockVerifyServer is listening on.</value>
+    <value>Hostname or IP address that verify-server is listening on.</value>
   </data>
   <data name="LockVerifyServerCommandDescription" xml:space="preserve">
-    <value>Simple standalone server that must be running when you use VerifyingLockFactory. This server verifies at most one process holds the lock at a time.</value>
+    <value>Simple server that must be running when you use VerifyingLockFactory (or stress-test). This server verifies at most one process holds the lock at a time.</value>
   </data>
   <data name="LockVerifyServerCommandIPHostnameDescription" xml:space="preserve">
-    <value>Hostname or IP address that LockVerifyServer will listen on.</value>
+    <value>Hostname or IP address that verify-server will listen on.</value>
   </data>
   <data name="LockVerifyServerCommandMaxClientsDescription" xml:space="preserve">
-    <value>The maximum number of concurrent clients.</value>
+    <value>The maximum number of connected clients.</value>
   </data>
   <data name="NotEnoughArguments" xml:space="preserve">
     <value>{0} arguments are required.</value>

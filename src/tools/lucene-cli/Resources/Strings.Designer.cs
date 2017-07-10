@@ -87,7 +87,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The encoding to use for the stemmer table files..
+        ///    Looks up a localized string similar to The encoding to use for the stemmer table files. If not supplied, defaults to UTF-8..
         /// </summary>
         public static string AnalysisStempelCompileStemsCommandStemmerTableFilesEncodingDescription {
             get {
@@ -123,7 +123,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The encoding to use for the stemmer table files..
+        ///    Looks up a localized string similar to The encoding to use for the stemmer table files. If not supplied, defaults to UTF-8..
         /// </summary>
         public static string AnalysisStempelPatchStemsCommandStemmerTableFilesEncodingDescription {
             get {
@@ -375,6 +375,17 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
+        ///    Looks up a localized string similar to Basic tool to check the health of an index. 
+        ///
+        ///As this tool checks every byte in the index, on a large index it can take quite a long time to run..
+        /// </summary>
+        public static string IndexCheckCommandExtendedHelpText {
+            get {
+                return ResourceManager.GetString("IndexCheckCommandExtendedHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Looks up a localized string similar to Only check the specified segment(s). This can be specified multiple times, to check more than one segment, eg --segment _2 --segment _a..
         /// </summary>
         public static string IndexCheckCommandSegmentsDescription {
@@ -492,7 +503,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Lists sub-files from a .cfs compound file..
+        ///    Looks up a localized string similar to Extracts sub-files from a .cfs compound file..
         /// </summary>
         public static string IndexExtractCfsCommandDescription {
             get {
@@ -501,7 +512,9 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc..
+        ///    Looks up a localized string similar to Extracts `.cfs` compound files (that were created using the CompoundFileDirectory from Lucene.Net.Misc) to the current working directory.
+        ///
+        ///In order to make the extracted version of the index work, you have to copy the segments file from the compound index into the directory where the extracted files are stored..
         /// </summary>
         public static string IndexExtractCfsCommandExtendedHelpText {
             get {
@@ -528,7 +541,11 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to WARNING: This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. You have been warned!.
+        ///    Looks up a localized string similar to  Basic tool to check and fix the health of an index and write a new segments file that removes reference to problematic segments.
+        ///
+        ///As this tool checks every byte in the index, on a large index it can take quite a long time to run. 
+        ///
+        ///WARNING: This command should only be used on an emergency basis as it will cause documents (perhaps many) to be permanently removed from the index. Always make a backup copy of your index before running this! Do not run this tool on an index that is actively being written to. [rest of string was truncated]&quot;;.
         /// </summary>
         public static string IndexFixCommandExtendedHelpText {
             get {
@@ -546,7 +563,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Extracts sub-files out of a .cfs compound file..
+        ///    Looks up a localized string similar to Lists sub-files out of a .cfs compound file..
         /// </summary>
         public static string IndexListCfsCommandDescription {
             get {
@@ -555,7 +572,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc..
+        ///    Looks up a localized string similar to Prints the filename and size of each file within a given `.cfs` compound file. The .cfs compound file format is created using the CompoundFileDirectory from Lucene.Net.Misc..
         /// </summary>
         public static string IndexListCfsCommandExtendedHelpText {
             get {
@@ -564,7 +581,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Extracts the top n most frequent terms by document frequency..
+        ///    Looks up a localized string similar to Lists the top N most frequent terms by document frequency..
         /// </summary>
         public static string IndexListHighFreqTermsCommandDescription {
             get {
@@ -573,7 +590,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Extracts the top n most frequent terms (by document frequency) from an index and reports thier document frequency..
+        ///    Looks up a localized string similar to Extracts the top N most frequent terms (by document frequency) from an index and reports thier document frequency..
         /// </summary>
         public static string IndexListHighFreqTermsCommandExtendedHelpText {
             get {
@@ -618,6 +635,15 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
+        ///    Looks up a localized string similar to After running this command to view segments, use copy-segments to copy segments from one index directory to another or delete-segments to remove segments from an index..
+        /// </summary>
+        public static string IndexListSegmentsExtendedHelpText {
+            get {
+                return ResourceManager.GetString("IndexListSegmentsExtendedHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Looks up a localized string similar to Displays the taxonomy statistical information for a taxonomy index..
         /// </summary>
         public static string IndexListTaxonomyStatsCommandDescription {
@@ -627,7 +653,16 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Recursively lists all descendent nodes..
+        ///    Looks up a localized string similar to Prints how many ords are under each dimension..
+        /// </summary>
+        public static string IndexListTaxonomyStatsCommandExtendedHelpText {
+            get {
+                return ResourceManager.GetString("IndexListTaxonomyStatsCommandExtendedHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Recursively lists all descendant nodes..
         /// </summary>
         public static string IndexListTaxonomyStatsCommandShowTreeDescription {
             get {
@@ -699,7 +734,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Output directory to merge the indexes into..
+        ///    Looks up a localized string similar to The output directory to merge the input indexes into..
         /// </summary>
         public static string IndexMergeCommandOutputDirectoryDescription {
             get {
@@ -717,7 +752,20 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Path to input index. Multiple values can be provided separated by a space..
+        ///    Looks up a localized string similar to  Splits the input index into multiple equal parts. The method employed here uses IndexWriter.AddIndexes(IndexReader[]) where the input data comes from the input index with artificially applied deletes to the document ids that fall outside the selected partition.
+        ///
+        ///Deletes are only applied to a buffered list of deleted documents and don&apos;t affect the source index. This tool works also with read-only indexes.
+        ///
+        ///The disadvantage of this tool is that source index needs to be read as many times as there are part [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string IndexSplitCommandExtendedHelpText {
+            get {
+                return ResourceManager.GetString("IndexSplitCommandExtendedHelpText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to The path of the source index, which can have deletions and can have multiple segments (or multiple readers). Multiple values can be supplied separated by a space..
         /// </summary>
         public static string IndexSplitCommandInputDirectoryDescription {
             get {
@@ -726,7 +774,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The number of parts to produce..
+        ///    Looks up a localized string similar to The number of parts (output indices) to produce. If omitted, defaults to 2..
         /// </summary>
         public static string IndexSplitCommandNumberOfPartsDescription {
             get {
@@ -744,7 +792,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Sequential docid-range split..
+        ///    Looks up a localized string similar to Sequential doc-id range split (default is round-robin)..
         /// </summary>
         public static string IndexSplitCommandSequentialDescription {
             get {
@@ -771,7 +819,11 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to  This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit. Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. WARNING: This tool may reorder document IDs! Also, ensure you are using the correct vers [rest of string was truncated]&quot;;.
+        ///    Looks up a localized string similar to  This tool keeps only the last commit in an index; for this reason, if the incoming index has more than one commit, the tool refuses to run by default. Specify --delete-prior-commits to override this, allowing the tool to delete all but the last commit. 
+        ///
+        ///Specify an FSDirectory implementation through the --directory-type option to force its use. If not qualified by an AssemblyName, the Lucene.Net.dll assembly will be used. 
+        ///
+        ///WARNING: This tool may reorder document IDs! Be sure to make a backup of your in [rest of string was truncated]&quot;;.
         /// </summary>
         public static string IndexUpgradeCommandExtendedHelpText {
             get {
@@ -789,16 +841,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Number of locking tries..
-        /// </summary>
-        public static string LockStressTestCommandCountDescription {
-            get {
-                return ResourceManager.GetString("LockStressTestCommandCountDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///    Looks up a localized string similar to Simple standalone tool that forever acquires &amp; releases a lock using a specific LockFactory..
+        ///    Looks up a localized string similar to Simple tool that forever acquires and releases a lock using a specific LockFactory..
         /// </summary>
         public static string LockStressTestCommandDescription {
             get {
@@ -807,7 +850,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to You should run multiple instances of this process, each with its own unique ID, and each pointing to the same lock directory, to verify that locking is working correctly. Make sure you are first running LockVerifyServer..
+        ///    Looks up a localized string similar to You should run multiple instances of this process, each with its own unique ID, and each pointing to the same lock directory, to verify that locking is working correctly. Make sure you are first running verify-server..
         /// </summary>
         public static string LockStressTestCommandExtendedHelpText {
             get {
@@ -816,7 +859,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to int value from 0 .. 255 (should be unique for test process)..
+        ///    Looks up a localized string similar to An integer from 0 - 255 (should be unique for test process)..
         /// </summary>
         public static string LockStressTestCommandIDDescription {
             get {
@@ -825,25 +868,25 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Path to the lock directory (only set for Simple/NativeFSLockFactory)..
+        ///    Looks up a localized string similar to The path to the lock directory (only utilized if LOCK_FACTORY_TYPE is set to SimpleFSLockFactory or NativeFSLockFactory)..
         /// </summary>
-        public static string LockStressTestCommandLockFactoryNameDescription {
+        public static string LockStressTestCommandLockDirectoryDescription {
             get {
-                return ResourceManager.GetString("LockStressTestCommandLockFactoryNameDescription", resourceCulture);
+                return ResourceManager.GetString("LockStressTestCommandLockDirectoryDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Primary LockFactory class that we will use..
+        ///    Looks up a localized string similar to The primary LockFactory implementation that we will use..
         /// </summary>
-        public static string LockStressTestCommandLockFactoryTypeNameDescription {
+        public static string LockStressTestCommandLockFactoryTypeDescription {
             get {
-                return ResourceManager.GetString("LockStressTestCommandLockFactoryTypeNameDescription", resourceCulture);
+                return ResourceManager.GetString("LockStressTestCommandLockFactoryTypeDescription", resourceCulture);
             }
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Milliseconds to pause betweeen each lock obtain/release..
+        ///    Looks up a localized string similar to Milliseconds to pause between each lock obtain/release..
         /// </summary>
         public static string LockStressTestCommandSleepTimeMSDescription {
             get {
@@ -852,7 +895,16 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Port that LockVerifyServer is listening on..
+        ///    Looks up a localized string similar to Number of locking tries..
+        /// </summary>
+        public static string LockStressTestCommandTriesDescription {
+            get {
+                return ResourceManager.GetString("LockStressTestCommandTriesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Port that verify-server is listening on..
         /// </summary>
         public static string LockStressTestCommandVerfierPortDescription {
             get {
@@ -861,7 +913,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Hostname that LockVerifyServer is listening on..
+        ///    Looks up a localized string similar to Hostname or IP address that verify-server is listening on..
         /// </summary>
         public static string LockStressTestCommandVerifierHostDescription {
             get {
@@ -870,7 +922,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Simple standalone server that must be running when you use VerifyingLockFactory. This server verifies at most one process holds the lock at a time..
+        ///    Looks up a localized string similar to Simple server that must be running when you use VerifyingLockFactory (or stress-test). This server verifies at most one process holds the lock at a time..
         /// </summary>
         public static string LockVerifyServerCommandDescription {
             get {
@@ -879,7 +931,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to Hostname or IP address that LockVerifyServer will listen on..
+        ///    Looks up a localized string similar to Hostname or IP address that verify-server will listen on..
         /// </summary>
         public static string LockVerifyServerCommandIPHostnameDescription {
             get {
@@ -888,7 +940,7 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
-        ///    Looks up a localized string similar to The maximum number of concurrent clients..
+        ///    Looks up a localized string similar to The maximum number of connected clients..
         /// </summary>
         public static string LockVerifyServerCommandMaxClientsDescription {
             get {

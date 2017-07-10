@@ -38,7 +38,7 @@ namespace Lucene.Net.Cli
                     FromResource("TotalTermFrequencyDescription"),
                     CommandOptionType.NoValue);
                 this.NumberOfTermsOption = this.Option(
-                    "-n|--number-of-terms <NUMBER_OF_TERMS>",
+                    "-n|--number-of-terms <NUMBER>",
                     FromResource("NumberOfTermsDescription"),
                     CommandOptionType.SingleValue);
                 this.FieldOption = this.Option(

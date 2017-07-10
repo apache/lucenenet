@@ -37,6 +37,7 @@ namespace Lucene.Net.Cli
 
                 this.Name = "check";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Arguments.Add(new IndexDirectoryArgument());
                 this.Options.Add(new VerboseOption());

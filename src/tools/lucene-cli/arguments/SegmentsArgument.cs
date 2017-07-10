@@ -23,7 +23,7 @@ namespace Lucene.Net.Cli
     {
         public SegmentsArgument()
         {
-            Name = "<SEGMENT>[ [<SEGMENT_2] ...[<SEGMENT_N>]]";
+            Name = "<SEGMENT>[ <SEGMENT_2>...]";
             Description = Resources.Strings.SegmentsArgumentDescription;
             MultipleValues = true;
         }

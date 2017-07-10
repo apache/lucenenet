@@ -31,6 +31,7 @@ namespace Lucene.Net.Cli
 
                 this.Name = "list-taxonomy-stats";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Arguments.Add(new IndexDirectoryArgument());
                 this.ShowTreeOption = this.Option("-tree|--show-tree", FromResource("ShowTreeDescription"), CommandOptionType.NoValue);

@@ -29,16 +29,15 @@ namespace Lucene.Net.Cli
 
                 this.Name = "stress-test";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Argument("<ID>", FromResource("IDDescription"));
                 this.Argument("<VERIFIER_HOST>", FromResource("VerifierHostDescription"));
                 this.Argument("<VERIFIER_PORT>", FromResource("VerfierPortDescription"));
-                this.Argument("<LOCK_FACTORY_TYPENAME>", FromResource("LockFactoryTypeNameDescription"));
-                this.Argument("<LOCK_DIRECTORY_NAME>", FromResource("LockFactoryNameDescription"));
+                this.Argument("<LOCK_FACTORY_TYPE>", FromResource("LockFactoryTypeDescription"));
+                this.Argument("<LOCK_DIRECTORY>", FromResource("LockDirectoryDescription"));
                 this.Argument("<SLEEP_TIME_MS>", FromResource("SleepTimeMSDescription"));
-                this.Argument("<COUNT>", FromResource("CountDescription"));
-
-                this.ExtendedHelpText = FromResource("ExtendedHelpText");
+                this.Argument("<TRIES>", FromResource("TriesDescription"));
 
                 this.OnExecute(() => new LockStressTestCommand().Run(this));
             }

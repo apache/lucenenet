@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Lucene.Net.Cli.Commands
 {
@@ -50,6 +51,39 @@ namespace Lucene.Net.Cli.Commands
                 },
                 new Arg[] { new Arg(inputPattern: "", output: new string[] { "-out", @"C:\lucene-temp" }) },
             };
+        }
+
+        [Test]
+        public override void TestAllValidCombinations()
+        {
+            var requiredArgs = GetRequiredArgs().ExpandArgs().RequiredParameters();
+            var optionalArgs = GetOptionalArgs().ExpandArgs().OptionalParameters();
+
+            foreach (var requiredArg in requiredArgs)
+            {
+                AssertCommandTranslation(
+                    string.Join(" ", requiredArg.Select(x => x.InputPattern).ToArray()),
+                    requiredArg.SelectMany(x => x.Output)
+                    // Special case: the -num option must be specified when -n is not
+                    // because in MultiPassIndexSplitter it is not optional, so we are patching
+                    // it in our command to make 2 the default.
+                    .Concat(new string[] { "-num", "2" }).ToArray());
+            }
+
+            foreach (var requiredArg in requiredArgs)
+            {
+                foreach (var optionalArg in optionalArgs)
+                {
+                    string command = string.Join(" ", requiredArg.Select(x => x.InputPattern).Union(optionalArg.Select(x => x.InputPattern).ToArray()));
+                    string[] expected = requiredArg.SelectMany(x => x.Output)
+                        // Special case: the -num option must be specified when -n is not
+                        // because in MultiPassIndexSplitter it is not optional, so we are patching
+                        // it in our command to make 2 the default.
+                        .Concat(command.Contains("-n") ? new string[0] : new string[] { "-num", "2" })
+                        .Union(optionalArg.SelectMany(x => x.Output)).ToArray();
+                    AssertCommandTranslation(command, expected);
+                }
+            }
         }
 
         [Test]

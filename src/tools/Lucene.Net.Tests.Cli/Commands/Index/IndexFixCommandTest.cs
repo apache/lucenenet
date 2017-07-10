@@ -64,7 +64,7 @@ namespace Lucene.Net.Cli.Commands
                 AssertCommandTranslation(
                     string.Join(" ", requiredArg.Select(x => x.InputPattern).ToArray()),
                     requiredArg.SelectMany(x => x.Output)
-                    // Special case - the -fix option must be specified when --dry-run is not
+                    // Special case: the -fix option must be specified when --dry-run is not
                     .Concat(new string[] { "-fix" }).ToArray());
             }
 
@@ -74,7 +74,7 @@ namespace Lucene.Net.Cli.Commands
                 {
                     string command = string.Join(" ", requiredArg.Select(x => x.InputPattern).Union(optionalArg.Select(x => x.InputPattern).ToArray()));
                     string[] expected = requiredArg.SelectMany(x => x.Output)
-                        // Special case - the -fix option must be specified when --dry-run is not
+                        // Special case: the -fix option must be specified when --dry-run is not
                         .Concat(command.Contains("--dry-run") ? new string[0] : new string[] { "-fix" })
                         .Union(optionalArg.SelectMany(x => x.Output)).ToArray();
                     AssertCommandTranslation(command, expected);

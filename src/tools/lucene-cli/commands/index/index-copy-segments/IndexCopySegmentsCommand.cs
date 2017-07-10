@@ -29,12 +29,11 @@ namespace Lucene.Net.Cli
 
                 this.Name = "copy-segments";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Argument("<INPUT_DIRECTORY>", FromResource("InputDirectoryDescription"));
                 this.Argument("<OUTPUT_DIRECTORY>", FromResource("OutputDirectoryDescription"));
                 this.Arguments.Add(new SegmentsArgument() { Description = FromResource("SegmentsDescription") });
-
-                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.OnExecute(() => new IndexCopySegmentsCommand().Run(this));
             }

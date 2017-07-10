@@ -29,6 +29,7 @@ namespace Lucene.Net.Cli
 
                 this.Name = "list-term-info";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Arguments.Add(new IndexDirectoryArgument(required: true) { Description = FromResource("IndexDirectoryDescription") });
                 this.Argument("<FIELD>", FromResource("FieldDescription"));

@@ -30,6 +30,7 @@ namespace Lucene.Net.Cli
 
                 this.Name = "list-segments";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Arguments.Add(new IndexDirectoryArgument());
 
