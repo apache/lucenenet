@@ -31,6 +31,7 @@ namespace Lucene.Net.Cli
 
                 this.Name = "upgrade";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Arguments.Add(new IndexDirectoryArgument());
                 this.DeletePriorCommitsOption = this.Option("-d|--delete-prior-commits",
@@ -39,8 +40,6 @@ namespace Lucene.Net.Cli
                 this.Options.Add(new VerboseOption());
                 this.Options.Add(new DirectoryTypeOption());
                 
-                this.ExtendedHelpText = FromResource("ExtendedHelpText");
-
                 this.OnExecute(() => new IndexUpgradeCommand().Run(this));
             }
 

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Util;
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,18 +24,8 @@ namespace Lucene.Net.Cli.Commands
      */
 
     // LUCENENET TODO: Move to TestFramework ?
-    public abstract class CommandTestCase
+    public abstract class CommandTestCase : LuceneTestCase
     {
-        [SetUp]
-        protected virtual void SetUp()
-        {
-        }
-
-        [TearDown]
-        protected virtual void TearDown()
-        {
-        }
-
         protected abstract ConfigurationBase CreateConfiguration(MockConsoleApp app);
 
         protected abstract IList<Arg[]> GetRequiredArgs();
@@ -140,6 +131,18 @@ namespace Lucene.Net.Cli.Commands
                 Assert.IsNotNull(option.Description);
                 Assert.IsNotEmpty(option.Description);
             }
+        }
+
+        /// <summary>
+        /// Runs a command against the current command configuration
+        /// </summary>
+        /// <param name="command">A command as a string that will be parsed.</param>
+        /// <returns>A MockConsoleApp that can be used to inspect the number of calls and arguments that will be passed to the Lucene CLI tool.</returns>
+        public virtual MockConsoleApp RunCommand(string command)
+        {
+            var output = new MockConsoleApp();
+            var cmd = CreateConfiguration(output).Execute(command.ToArgs());
+            return output;
         }
 
         public class MockConsoleApp

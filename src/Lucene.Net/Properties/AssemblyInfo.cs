@@ -63,6 +63,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.ICU")] // For Analysis.Util.TestSegmentingTokenizerBase
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc")]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.QueryParser")]
+[assembly: InternalsVisibleTo("Lucene.Net.Tests.Cli")] // For lucene-cli
 
 // NOTE: Version information is in CommonAssemblyInfo.cs
 

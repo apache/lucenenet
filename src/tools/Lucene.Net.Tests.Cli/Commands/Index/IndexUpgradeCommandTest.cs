@@ -1,4 +1,6 @@
 ﻿using Lucene.Net.Cli.CommandLine;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
 using NUnit.Framework;
 using System.Collections.Generic;
 
@@ -62,6 +64,81 @@ namespace Lucene.Net.Cli.Commands
         public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two", ""));
+        }
+
+        /// <summary>
+        /// Integration test to ensure --verbose argument is passed through and parsed correctly by IndexUpgrader
+        /// </summary>
+        [Test]
+        public virtual void TestPassingVerboseArgument()
+        {
+            MockConsoleApp output;
+            IndexUpgrader upgrader;
+
+            output = RunCommand(@"C:\test-index");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.AreSame(Util.InfoStream.Default, upgrader.iwc.InfoStream);
+
+            output = RunCommand(@"C:\test-index -v");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.AreNotSame(Util.InfoStream.Default, upgrader.iwc.InfoStream);
+
+            output = RunCommand(@"C:\test-index --verbose");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.AreNotSame(Util.InfoStream.Default, upgrader.iwc.InfoStream);
+        }
+
+        /// <summary>
+        /// Integration test to ensure --delete-prior-commits argument is passed through and parsed correctly by IndexUpgrader
+        /// </summary>
+        [Test]
+        public virtual void TestPassingDeletePriorCommitsArgument()
+        {
+            MockConsoleApp output;
+            IndexUpgrader upgrader;
+
+            output = RunCommand(@"C:\test-index");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.IsFalse(upgrader.deletePriorCommits);
+
+            output = RunCommand(@"C:\test-index -d");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.IsTrue(upgrader.deletePriorCommits);
+
+            output = RunCommand(@"C:\test-index --delete-prior-commits");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.IsTrue(upgrader.deletePriorCommits);
+        }
+
+        /// <summary>
+        /// Integration test to ensure --directory-type argument is passed through and parsed correctly by IndexUpgrader
+        /// </summary>
+        [Test]
+        public virtual void TestPassingDirectoryTypeArgument()
+        {
+            MockConsoleApp output;
+            IndexUpgrader upgrader;
+            var tempDir = CreateTempDir("index-upgrader");
+
+            output = RunCommand(@"C:\test-index");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.AreEqual(FSDirectory.Open(tempDir).GetType(), upgrader.dir.GetType());
+
+            output = RunCommand(@"C:\test-index -dir SimpleFSDirectory");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.AreEqual(typeof(SimpleFSDirectory), upgrader.dir.GetType());
+
+            output = RunCommand(@"C:\test-index --directory-type SimpleFSDirectory");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.AreEqual(typeof(SimpleFSDirectory), upgrader.dir.GetType());
+
+            output = RunCommand(@"C:\test-index -dir MMapDirectory");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.AreEqual(typeof(MMapDirectory), upgrader.dir.GetType());
+
+            output = RunCommand(@"C:\test-index --directory-type MMapDirectory");
+            upgrader = IndexUpgrader.ParseArgs(output.Args);
+            Assert.AreEqual(typeof(MMapDirectory), upgrader.dir.GetType());
         }
     }
 }
