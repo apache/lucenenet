@@ -32,31 +32,33 @@ namespace Lucene.Net.Misc
         {
             if (args.Length < 3)
             {
-                Console.Error.WriteLine("Usage: IndexMergeTool <mergedIndex> <index1> <index2> [index3] ...");
-                Environment.Exit(1);
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException();
+                //Console.Error.WriteLine("Usage: IndexMergeTool <mergedIndex> <index1> <index2> [index3] ...");
+                //Environment.Exit(1);
             }
-            FSDirectory mergedIndex = FSDirectory.Open(new System.IO.DirectoryInfo(args[0]));
-
-            using (IndexWriter writer = new IndexWriter(mergedIndex, 
-#pragma warning disable 612, 618                
+            using (FSDirectory mergedIndex = FSDirectory.Open(new System.IO.DirectoryInfo(args[0])))
+            {
+                using (IndexWriter writer = new IndexWriter(mergedIndex,
+#pragma warning disable 612, 618
                 new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, null)
 #pragma warning restore 612, 618
                 { OpenMode = OpenMode.CREATE }))
-            {
-
-                Directory[] indexes = new Directory[args.Length - 1];
-                for (int i = 1; i < args.Length; i++)
                 {
-                    indexes[i - 1] = FSDirectory.Open(new System.IO.DirectoryInfo(args[i]));
+                    Directory[] indexes = new Directory[args.Length - 1];
+                    for (int i = 1; i < args.Length; i++)
+                    {
+                        indexes[i - 1] = FSDirectory.Open(new System.IO.DirectoryInfo(args[i]));
+                    }
+
+                    Console.WriteLine("Merging...");
+                    writer.AddIndexes(indexes);
+
+                    Console.WriteLine("Full merge...");
+                    writer.ForceMerge(1);
                 }
-
-                Console.WriteLine("Merging...");
-                writer.AddIndexes(indexes);
-
-                Console.WriteLine("Full merge...");
-                writer.ForceMerge(1);
+                Console.WriteLine("Done.");
             }
-            Console.WriteLine("Done.");
         }
     }
 }
