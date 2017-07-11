@@ -27,13 +27,14 @@ Working toward Lucene.Net 4.8.0 (currently in BETA)
 
 ## Download
 
-[![NuGet version](https://badge.fury.io/nu/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/)
+[![NuGet version](https://img.shields.io/nuget/v/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/)
 
 ```
 PM> Install-Package Lucene.Net
 ```
 
-Or, to install the BETA of 4.8.0, run
+[![NuGet version](https://img.shields.io/nuget/vpre/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/)
+
 
 ```
 PM> Install-Package Lucene.Net -Pre
@@ -64,7 +65,9 @@ As of 4.8.0, Lucene.Net is now divided into several specialized sub-packages, al
 
 [Lucene.Net WIKI](https://cwiki.apache.org/confluence/display/LUCENENET/Lucene.Net)
 
-We don't yet have API documentation for Lucene.Net 4.8.0, but the API is similar to [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/). NOTE: We are working on this, but could use more help since it is a massive project. See #206.
+We don't yet have API documentation for Lucene.Net 4.8.0, but the API is similar to [Lucene 4.8.0](https://lucene.apache.org/core/4_8_0/). 
+
+> NOTE: We are working on this, but could use more help since it is a massive project. See [#206](https://github.com/apache/lucenenet/pull/206).
 
 ### Legacy Versions
 
@@ -81,7 +84,7 @@ Lucene.Net is a very large project (over 400,000 executable lines of code and ne
 
 ### Join Mailing Lists
 
-[How to Join/Unsubscribe to/from mailing lists](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists)
+[How to Join Mailing Lists](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists)
 
 ### Ask a Question
 
