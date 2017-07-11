@@ -54,7 +54,6 @@ namespace Lucene.Net.Cli.SourceCode
     public class ConsolePager : IDisposable
     {
         private readonly MultipleFileLineEnumerator enumerator;
-        private readonly IEnumerable<string> files;
 
         public ConsolePager(IEnumerable<string> files)
         {

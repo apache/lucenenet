@@ -61,7 +61,7 @@ namespace Lucene.Net.Cli
                 {
                     return invoke();
                 }
-                catch (ArgumentException e)
+                catch (ArgumentException)
                 {
                     // Rather than writing to console, the
                     // utilities are now throwing ArgumentException
