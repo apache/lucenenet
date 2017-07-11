@@ -87,12 +87,14 @@ namespace Lucene.Net.Search
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
+#if !NETSTANDARD
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Search.Highlight.DefaultEncoder))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
             base.TestForMethodsThatReturnWritableArray(typeFromTargetAssembly);
         }
+#endif
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Search.Highlight.DefaultEncoder))]

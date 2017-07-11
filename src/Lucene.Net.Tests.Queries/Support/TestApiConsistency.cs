@@ -87,12 +87,14 @@ namespace Lucene.Net.Tests.Queries
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
+#if !NETSTANDARD
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Queries.BooleanFilter))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
             base.TestForMethodsThatReturnWritableArray(typeFromTargetAssembly);
         }
+#endif
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Queries.BooleanFilter))]

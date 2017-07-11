@@ -72,7 +72,6 @@
         "compile": {
           "exclude": [ "Util/JunitCompat" ],
           "excludeFiles": [
-            "Support/TestApiConsistency.cs",
             "Support/TestCase.cs",
             "Util/TestMaxFailuresRule.cs"
           ]

@@ -102,12 +102,7 @@
     "netcoreapp1.0": {
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "NETSTANDARD" ],
-        "compile": {
-          "excludeFiles": [
-            "Support/TestApiConsistency.cs"
-          ]
-        }
+        "define": [ "NETSTANDARD" ]
       },
       "imports": "dnxcore50"
     },

@@ -87,12 +87,14 @@ namespace Lucene.Net.Codecs.Tests
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
+#if !NETSTANDARD
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
             base.TestForMethodsThatReturnWritableArray(typeFromTargetAssembly);
         }
+#endif
 
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Codecs.BlockTerms.BlockTermsReader))]

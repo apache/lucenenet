@@ -36,12 +36,7 @@
       "imports": [ "dnxcore50", "portable-net403+sl5+win8+wp8+wpa81" ],
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "NETSTANDARD" ],
-        "compile": {
-          "excludeFiles": [
-            "Support/TestApiConsistency.cs"
-          ]
-        }
+        "define": [ "NETSTANDARD" ]
       }
     },
     "net451": {

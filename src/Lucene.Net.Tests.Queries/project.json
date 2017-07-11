@@ -18,11 +18,7 @@
       "imports": "dnxcore50",
       "buildOptions": {
         "debugType": "portable",
-        "compile": {
-          "excludeFiles": [
-            "Support/TestApiConsistency.cs"
-          ]
-        }
+        "define": [ "NETSTANDARD" ]
       }
     },
     "net451": {
