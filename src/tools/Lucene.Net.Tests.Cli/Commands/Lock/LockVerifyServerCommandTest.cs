@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Cli.CommandLine;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Cli.CommandLine;
 using NUnit.Framework;
 using System.Collections.Generic;
 
@@ -44,12 +45,14 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestNotEnoughArguments()
         {
             AssertConsoleOutput("one", FromResource("NotEnoughArguments", 2));
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two three", ""));

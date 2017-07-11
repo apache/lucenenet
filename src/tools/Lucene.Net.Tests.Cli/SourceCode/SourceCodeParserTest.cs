@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System.IO;
 using System.Reflection;
@@ -25,6 +26,7 @@ namespace Lucene.Net.Cli.SourceCode
     public class SourceCodeParserTest
     {
         [Test]
+        [LuceneNetSpecific]
         public void TestSourceCodeSectionParser()
         {
             var parser = new SourceCodeSectionParser();

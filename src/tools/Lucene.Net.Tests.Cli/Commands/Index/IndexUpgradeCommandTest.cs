@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Cli.CommandLine;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Cli.CommandLine;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
 using NUnit.Framework;
@@ -54,6 +55,7 @@ namespace Lucene.Net.Cli.Commands
         /// Ensures the current working directory is used when index directory is not supplied. 
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestNoArguments()
         {
             System.IO.Directory.SetCurrentDirectory(@"C:\");
@@ -61,6 +63,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two", ""));
@@ -70,6 +73,7 @@ namespace Lucene.Net.Cli.Commands
         /// Integration test to ensure --verbose argument is passed through and parsed correctly by IndexUpgrader
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestPassingVerboseArgument()
         {
             MockConsoleApp output;
@@ -92,6 +96,7 @@ namespace Lucene.Net.Cli.Commands
         /// Integration test to ensure --delete-prior-commits argument is passed through and parsed correctly by IndexUpgrader
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestPassingDeletePriorCommitsArgument()
         {
             MockConsoleApp output;
@@ -114,6 +119,7 @@ namespace Lucene.Net.Cli.Commands
         /// Integration test to ensure --directory-type argument is passed through and parsed correctly by IndexUpgrader
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestPassingDirectoryTypeArgument()
         {
             MockConsoleApp output;

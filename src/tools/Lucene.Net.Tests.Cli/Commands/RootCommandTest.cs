@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Cli.CommandLine;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Cli.CommandLine;
 using NUnit.Framework;
 using System.Collections.Generic;
 
@@ -40,12 +41,14 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one", ""));
         }
 
         [Test]
+        [LuceneNetSpecific]
         public override void TestCommandHasDescription()
         {
             // No need to do this, it is not displayed anyway

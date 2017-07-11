@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Attributes;
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -54,6 +55,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public override void TestAllValidCombinations()
         {
             var requiredArgs = GetRequiredArgs().ExpandArgs().RequiredParameters();
@@ -87,6 +89,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestNotEnoughArguments()
         {
             AssertConsoleOutput("", FromResource("NotEnoughArguments", 2));

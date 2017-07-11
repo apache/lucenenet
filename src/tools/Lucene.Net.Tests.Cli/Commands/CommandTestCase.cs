@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.IO;
@@ -71,6 +72,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestAllValidCombinations()
         {
             var requiredArgs = GetRequiredArgs().ExpandArgs().RequiredParameters();
@@ -95,12 +97,14 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestHelp()
         {
             AssertConsoleOutput("?", "Version");
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestCommandHasDescription()
         {
             var output = new MockConsoleApp();
@@ -110,6 +114,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestAllArgumentsHaveDescription()
         {
             var output = new MockConsoleApp();
@@ -122,6 +127,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestAllOptionsHaveDescription()
         {
             var output = new MockConsoleApp();

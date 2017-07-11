@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Cli.CommandLine;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Cli.CommandLine;
 using NUnit.Framework;
 using System.Collections.Generic;
 
@@ -48,6 +49,7 @@ namespace Lucene.Net.Cli.Commands
         /// Ensures the current working directory is used when index directory is not supplied. 
         /// </summary>
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestNoArguments()
         {
             System.IO.Directory.SetCurrentDirectory(@"C:\");
@@ -55,6 +57,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two", ""));

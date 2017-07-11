@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Cli.CommandLine;
+﻿using Lucene.Net.Attributes;
+using Lucene.Net.Cli.CommandLine;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,6 +55,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public override void TestAllValidCombinations()
         {
             var requiredArgs = GetRequiredArgs().ExpandArgs().RequiredParameters();
@@ -83,6 +85,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestNoArguments()
         {
             System.IO.Directory.SetCurrentDirectory(@"C:\");
@@ -90,6 +93,7 @@ namespace Lucene.Net.Cli.Commands
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestTooManyArguments()
         {
             Assert.Throws<CommandParsingException>(() => AssertConsoleOutput("one two", ""));

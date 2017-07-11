@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Attributes;
+using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Cli.Commands.Analysis
@@ -48,6 +49,7 @@ namespace Lucene.Net.Cli.Commands.Analysis
         }
 
         [Test]
+        [LuceneNetSpecific]
         public virtual void TestNotEnoughArguments()
         {
             AssertConsoleOutput("", FromResource("NotEnoughArguments", 1));
