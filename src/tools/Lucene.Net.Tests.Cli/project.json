@@ -1,6 +1,21 @@
 {
   "version": "4.8.0",
   "title": "Lucene.Net.Tests.Cli",
+  "buildOptions": {
+    "compile": {
+      "includeFiles": [
+        "../../CommonAssemblyInfo.cs"
+      ],
+      "excludeFiles": [
+        "SourceCode/TestInputForParser.cs"
+      ]
+    },
+    "embed": {
+      "includeFiles": [
+        "SourceCode/TestInputForParser.cs"
+      ]
+    }
+  },
   "dependencies": {
     "dotnet-test-nunit-teamcity": "3.4.0-beta-3",
     "lucene-cli": "4.8.0",
@@ -14,17 +29,7 @@
       "imports": "dnxcore50",
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "NETSTANDARD" ],
-        "compile": {
-          "excludeFiles": [
-            "SourceCode/TestInputForParser.cs"
-          ]
-        },
-        "embed": {
-          "includeFiles": [
-            "SourceCode/TestInputForParser.cs"
-          ]
-        }
+        "define": [ "NETSTANDARD" ]
       }
     }
   },
