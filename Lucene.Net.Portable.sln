@@ -97,6 +97,12 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Demo", "src\Luce
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Demo", "src\Lucene.Net.Tests.Demo\Lucene.Net.Tests.Demo.xproj", "{93DF8BAA-9CAA-4142-8E96-55481188C012}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{C8F207AE-DB35-4B14-966C-C1FADCC28DAE}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "lucene-cli", "src\tools\lucene-cli\lucene-cli.xproj", "{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Cli", "src\tools\Lucene.Net.Tests.Cli\Lucene.Net.Tests.Cli.xproj", "{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -449,8 +455,28 @@ Global
 		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Release|Any CPU.Build.0 = Release|Any CPU
 		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Release|x86.ActiveCfg = Release|Any CPU
 		{93DF8BAA-9CAA-4142-8E96-55481188C012}.Release|x86.Build.0 = Release|Any CPU
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}.Debug|x86.Build.0 = Debug|Any CPU
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}.Release|x86.ActiveCfg = Release|Any CPU
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B}.Release|x86.Build.0 = Release|Any CPU
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}.Debug|x86.Build.0 = Debug|Any CPU
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}.Release|x86.ActiveCfg = Release|Any CPU
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B} = {C8F207AE-DB35-4B14-966C-C1FADCC28DAE}
+		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF} = {C8F207AE-DB35-4B14-966C-C1FADCC28DAE}
 	EndGlobalSection
 EndGlobal

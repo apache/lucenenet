@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
         /// Add the -extract flag to extract files to the current working directory.
         /// In order to make the extracted version of the index work, you have to copy
         /// the segments file from the compound index into the directory where the extracted files are stored. </summary>
-        /// <param name="args"> Usage: org.apache.lucene.index.IndexReader [-extract] &lt;cfsfile&gt; </param>
+        ///// <param name="args"> Usage: org.apache.lucene.index.IndexReader [-extract] &lt;cfsfile&gt; </param>
         public static void Main(string[] args)
         {
             string filename = null;
@@ -51,8 +51,10 @@ namespace Lucene.Net.Index
                 {
                     if (j == args.Length - 1)
                     {
-                        Console.WriteLine("ERROR: missing value for -dir-impl option");
-                        Environment.Exit(1);
+                        // LUCENENET specific - our wrapper console shows the correct usage
+                        throw new ArgumentException("ERROR: missing value for --directory-type option");
+                        //Console.WriteLine("ERROR: missing value for -dir-impl option");
+                        //Environment.Exit(1);
                     }
                     j++;
                     dirImpl = args[j];
