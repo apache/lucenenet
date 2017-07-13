@@ -113,7 +113,7 @@ task Restore -description "This task restores the dependencies" {
 task Compile -depends Clean, Init -description "This task compiles the solution" {
 	try {
 		pushd $base_directory
-		$projects = Get-ChildItem -Path "project.json" -Recurse
+		$projects = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Cli") -and !$_.Directory.Name.Contains("lucene-cli") }
 		popd
 
 		Backup-Files $projects
