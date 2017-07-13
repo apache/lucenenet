@@ -1345,7 +1345,6 @@ namespace Lucene.Net.Store
             private IndexInputSlicer DelegateHandle;
 
             public IndexInputSlicerAnonymousInnerClassHelper(MockDirectoryWrapper outerInstance, string name, IndexInputSlicer delegateHandle)
-                : base(outerInstance)
             {
                 this.OuterInstance = outerInstance;
                 this.Name = name;

@@ -442,7 +442,6 @@ namespace Lucene.Net.Store
             private FileEntry entry;
 
             public IndexInputSlicerAnonymousInnerClassHelper(CompoundFileDirectory outerInstance, FileEntry entry)
-                : base(outerInstance)
             {
                 this.outerInstance = outerInstance;
                 this.entry = entry;

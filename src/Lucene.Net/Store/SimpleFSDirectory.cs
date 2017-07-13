@@ -94,7 +94,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             var file = new FileInfo(Path.Combine(Directory.FullName, name));
             var descriptor = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            return new IndexInputSlicerAnonymousInnerClassHelper(this, context, file, descriptor);
+            return new IndexInputSlicerAnonymousInnerClassHelper(context, file, descriptor);
         }
 
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
@@ -103,8 +103,7 @@ namespace Lucene.Net.Store
             private readonly FileInfo file;
             private readonly FileStream descriptor;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(SimpleFSDirectory outerInstance, IOContext context, FileInfo file, FileStream descriptor)
-                : base(outerInstance)
+            public IndexInputSlicerAnonymousInnerClassHelper(IOContext context, FileInfo file, FileStream descriptor)
             {
                 this.context = context;
                 this.file = file;
