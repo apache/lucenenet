@@ -37,8 +37,8 @@ namespace Lucene.Net.Search
     /// constant-score rewrite method based on term and
     /// document counts from the query.  If both the number of
     /// terms and documents is small enough, then 
-    /// <see cref="CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE"/> is used.
-    /// Otherwise, <see cref="CONSTANT_SCORE_FILTER_REWRITE"/> is
+    /// <see cref="MultiTermQuery.CONSTANT_SCORE_BOOLEAN_QUERY_REWRITE"/> is used.
+    /// Otherwise, <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/> is
     /// used.
     /// </summary>
     // LUCENENET specific: made this class public. In Lucene there was a derived class 
