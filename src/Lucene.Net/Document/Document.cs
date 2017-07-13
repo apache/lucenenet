@@ -192,7 +192,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Returns an array of <see cref="IIndexableField"/>s with the given name.
-        /// this method returns an empty array when there are no
+        /// This method returns an empty array when there are no
         /// matching fields. It never returns <c>null</c>.
         /// </summary>
         /// <param name="name"> the name of the field </param>
