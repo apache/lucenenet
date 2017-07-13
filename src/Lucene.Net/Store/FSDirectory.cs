@@ -362,10 +362,12 @@ namespace Lucene.Net.Store
             ISet<string> toSync = new HashSet<string>(names);
             toSync.IntersectWith(m_staleFiles);
 
-            foreach (var name in toSync)
-            {
-                Fsync(name);
-            }
+            // LUCENENET specific: Fsync breaks concurrency here.
+            // Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
+            //foreach (var name in toSync)
+            //{
+            //    Fsync(name);
+            //}
 
             // fsync the directory itsself, but only if there was any file fsynced before
             // (otherwise it can happen that the directory does not yet exist)!
@@ -485,6 +487,14 @@ namespace Lucene.Net.Store
                 file.Write(b, offset, size);
 
                 //Debug.Assert(size == 0);
+            }
+
+            // LUCENENET specific - file.Flush(flushToDisk: true) required in .NET for concurrency
+            // Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
+            public override void Flush()
+            {
+                base.Flush();
+                file.Flush(flushToDisk: true);
             }
 
             protected override void Dispose(bool disposing)
