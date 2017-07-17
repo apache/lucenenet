@@ -24,7 +24,7 @@
     "Lucene.Net.Expressions": "4.8.0",
     "Lucene.Net.Facet": "4.8.0",
     "Lucene.Net.Misc": "4.8.0",
-    "Lucene.Net.Tests.QueryParser": "4.8.0",
+    "Lucene.Net.QueryParser": "4.8.0",
     "Microsoft.NETCore.App": {
       "type": "platform",
       "version": "1.0.1"
