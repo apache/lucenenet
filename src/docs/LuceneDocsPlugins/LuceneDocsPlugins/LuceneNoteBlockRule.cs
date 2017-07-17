@@ -3,6 +3,9 @@ using Microsoft.DocAsCode.MarkdownLite;
 
 namespace LuceneDocsPlugins
 {
+    /// <summary>
+    /// The regex rule to parse out the custom Lucene tokens
+    /// </summary>
     public class LuceneNoteBlockRule : IMarkdownRule
     {       
         public virtual Regex LabelRegex { get; } = new Regex("^@lucene\\.(?<notetype>(experimental|internal))$");

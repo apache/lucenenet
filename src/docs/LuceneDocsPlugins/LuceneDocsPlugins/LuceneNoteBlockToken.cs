@@ -2,6 +2,9 @@ using Microsoft.DocAsCode.MarkdownLite;
 
 namespace LuceneDocsPlugins
 {
+    /// <summary>
+    /// A custom token class representing our custom Lucene tokens
+    /// </summary>
     public class LuceneNoteBlockToken : IMarkdownToken
     {
         public LuceneNoteBlockToken(IMarkdownRule rule, IMarkdownContext context, string label, SourceInfo sourceInfo)

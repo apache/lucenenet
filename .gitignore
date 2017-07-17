@@ -52,7 +52,7 @@ release/
 [Tt]est[Rr]esult.xml
 apidocs/_site/*
 apidocs/api/*.yml
-apidocs/tools/docfx.zip
-apidocs/tools/docfx/*
+apidocs/tools/*
 apidocs/api/.manifest
 /apidocs/docfx.log
+/apidocs/lucenetemplate/plugins/*

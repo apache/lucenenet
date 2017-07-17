@@ -23,8 +23,9 @@
             "Lucene.Net.Spatial/Lucene.Net.Spatial.csproj",
             "Lucene.Net.Highlighter/Lucene.Net.Highlighter.csproj",
             "Lucene.Net.ICU/Lucene.Net.ICU.csproj",
-            "Lucene.Net.Analysis.SmartCn/Lucene.Net.Analysis.SmartCn.csproj",
-            "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj"
+            "Lucene.Net.Analysis.SmartCn/project.json",
+            "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj",
+            "tools/lucene-cli/project.json"
           ],
           "exclude": [
             "**/obj/**",
@@ -35,8 +36,7 @@
           "cwd": "../src"
         }
       ],
-      "dest": "api",
-      "filter": "filterConfig.yml"
+      "dest": "api"
     }
   ],
   "build": {

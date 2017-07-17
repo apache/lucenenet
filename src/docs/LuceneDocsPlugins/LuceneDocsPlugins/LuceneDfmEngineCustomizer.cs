@@ -12,6 +12,9 @@ using Microsoft.DocAsCode.MarkdownLite.Matchers;
 
 namespace LuceneDocsPlugins
 {
+    /// <summary>
+    /// Exports our custom markdown parser via MEF to DocFx
+    /// </summary>
     [Export(typeof(IDfmEngineCustomizer))]
     public class LuceneDfmEngineCustomizer : IDfmEngineCustomizer
     {

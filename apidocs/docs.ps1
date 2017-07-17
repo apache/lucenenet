@@ -36,18 +36,43 @@ $ApiDocsFolder = Join-Path -Path $RepoRoot -ChildPath "apidocs";
 $ToolsFolder = Join-Path -Path $ApiDocsFolder -ChildPath "tools";
 #ensure the /build/tools folder
 New-Item $ToolsFolder -type directory -force
+New-Item "$ToolsFolder\tmp" -type directory -force
 
 # Go get docfx.exe if we don't have it
+New-Item "$ToolsFolder\docfx" -type directory -force
 $DocFxExe = "$ToolsFolder\docfx\docfx.exe"
-$FileExists = Test-Path $DocFxExe 
-If ($FileExists -eq $False) {
+if (-not (test-path $DocFxExe))
+{
 	Write-Host "Retrieving docfx..."
-	$DocFxZip = "$ToolsFolder\docfx.zip"
-	$SourceDocFx = "https://github.com/dotnet/docfx/releases/download/v2.19.2/docfx.zip"
-	Invoke-WebRequest $SourceDocFx -OutFile $DocFxZip
+	$DocFxZip = "$ToolsFolder\tmp\docfx.zip"
+	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.20/docfx.zip" -OutFile $DocFxZip
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }
+
+# ensure we have NuGet
+New-Item "$ToolsFolder\nuget" -type directory -force
+$nuget = "$ToolsFolder\nuget\nuget.exe"
+if (-not (test-path $nuget))
+{
+  Write-Host "Download NuGet..."
+  Invoke-WebRequest "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile $nuget  
+}
+
+# ensure we have vswhere
+New-Item "$ToolsFolder\vswhere" -type directory -force
+ $vswhere = "$ToolsFolder\vswhere\vswhere.exe"
+if (-not (test-path $vswhere))
+{
+   Write-Host "Download VsWhere..."
+   $path = "$ToolsFolder\tmp"
+   &$nuget install vswhere -OutputDirectory $path -Verbosity quiet
+   $dir = ls "$path\vswhere.*" | sort -property Name -descending | select -first 1
+   $file = ls -path "$dir" -name vswhere.exe -recurse
+   mv "$dir\$file" $vswhere   
+ }
+
+ Remove-Item  -Recurse -Force "$ToolsFolder\tmp"
 
 # delete anything that already exists
 if ($Clean -eq 1) {
@@ -56,6 +81,21 @@ if ($Clean -eq 1) {
 	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
 	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
 	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md" -recurse -force -ErrorAction SilentlyContinue
+}
+
+# Build our custom docfx tools
+
+$msbuild = &$vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
+if ($msbuild) {
+  $msbuild = join-path $msbuild 'MSBuild\15.0\Bin\MSBuild.exe'
+  if (-not (test-path $msbuild)) {
+	throw "MSBuild not found!"
+  }
+  $sln = (Join-Path -Path $RepoRoot "src\docs\LuceneDocsPlugins\LuceneDocsPlugins.sln")
+  & $nuget restore $sln
+  $PluginsFolder = (Join-Path -Path $ApiDocsFolder "lucenetemplate\plugins")
+  New-Item PluginsFolder -type directory -force
+  & $msbuild $sln "/p:OutDir=$PluginsFolder"
 }
 
 # NOTE: There's a ton of Lucene docs that we want to copy and re-format. I'm not sure if we can really automate this 
