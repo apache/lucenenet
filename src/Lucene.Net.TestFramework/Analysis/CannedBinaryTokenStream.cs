@@ -61,9 +61,8 @@ namespace Lucene.Net.Analysis
         private readonly IOffsetAttribute OffsetAtt;// = addAttribute(typeof(OffsetAttribute));
 
         /// <summary>
-        /// An attribute extending {@link
-        ///  TermToBytesRefAttribute} but exposing {@link
-        ///  #setBytesRef} method.
+        /// An attribute extending <see cref="ITermToBytesRefAttribute"/>
+        /// but exposing <see cref="BytesRef"/> property.
         /// </summary>
         public interface IBinaryTermAttribute : ITermToBytesRefAttribute
         {

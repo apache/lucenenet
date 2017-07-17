@@ -177,7 +177,7 @@ namespace Lucene.Net.Codecs.Bloom
         ///         NumBitSetWords,BitSetWord<sup>NumBitSetWords</sup></description></item> 
         ///     <item><description>HashFunctionName --&gt; String (<see cref="DataOutput.WriteString(string)"/>) The
         ///         name of a ServiceProvider registered <see cref="HashFunction"/></description></item>
-        ///     <item><description>FuzzySetVersion --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The version number of the {@link FuzzySet} class</description></item>
+        ///     <item><description>FuzzySetVersion --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The version number of the <see cref="FuzzySet"/> class</description></item>
         ///     <item><description>BloomSize --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The modulo value used
         ///         to project hashes into the field's Bitset</description></item>
         ///     <item><description>NumBitSetWords --&gt; Uint32 (<see cref="DataOutput.WriteInt32(int)"/>) The number of

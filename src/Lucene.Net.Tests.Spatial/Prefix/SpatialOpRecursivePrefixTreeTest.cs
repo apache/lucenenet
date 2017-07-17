@@ -120,7 +120,7 @@ namespace Lucene.Net.Spatial.Prefix
             doTest(SpatialOperation.IsDisjointTo);
         }
 
-        /** See LUCENE-5062, {@link ContainsPrefixTreeFilter#multiOverlappingIndexedShapes}. */
+        /** See LUCENE-5062, <see cref="ContainsPrefixTreeFilter.m_multiOverlappingIndexedShapes"/>. */
         [Test, Repeat(ITERATIONS)]
         public virtual void TestContainsPairOverlap()
         {

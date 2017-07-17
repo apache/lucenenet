@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "Lucene.Net.Memory": "4.8.0",
-    "Lucene.Net.Analysis.Common": "4.8.0",
     "Lucene.Net.Queries": "4.8.0"
   },
   "frameworks": {

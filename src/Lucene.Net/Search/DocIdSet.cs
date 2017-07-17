@@ -137,8 +137,8 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Creates a new instance with the ability to specify the body of the <see cref="GetIterator()"/>
-        /// method through the <paramref name="getIterator"/> parameter and the body of the <see cref="Bits"/>
-        /// property through the <paramref name="bits"/> parameter.
+        /// method through the <paramref name="getIterator"/> parameter and the body of the <see cref="IsCacheable"/>
+        /// property through the <paramref name="isCacheable"/> parameter.
         /// Simple example:
         /// <code>
         ///     var docIdSet = DocIdSet.NewAnonymous(getIterator: () =>

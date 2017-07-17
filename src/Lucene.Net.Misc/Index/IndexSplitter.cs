@@ -34,7 +34,7 @@ namespace Lucene.Net.Index
     /// into multiple segments.  For example if your index is a
     /// single segment, this tool won't help.  Also, it does basic
     /// file-level copying (using simple
-    /// FileInfo) so it will not work with non
+    /// Stream) so it will not work with non
     /// FSDirectory Directory impls.</para>
     /// 
     /// @lucene.experimental You can easily
@@ -53,10 +53,12 @@ namespace Lucene.Net.Index
         {
             if (args.Length < 2)
             {
-                Console.Error.WriteLine("Usage: IndexSplitter <srcDir> -l (list the segments and their sizes)");
-                Console.Error.WriteLine("IndexSplitter <srcDir> <destDir> <segments>+");
-                Console.Error.WriteLine("IndexSplitter <srcDir> -d (delete the following segments)");
-                return;
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException();
+                //Console.Error.WriteLine("Usage: IndexSplitter <srcDir> -l (list the segments and their sizes)");
+                //Console.Error.WriteLine("IndexSplitter <srcDir> <destDir> <segments>+");
+                //Console.Error.WriteLine("IndexSplitter <srcDir> -d (delete the following segments)");
+                //return;
             }
             DirectoryInfo srcDir = new DirectoryInfo(args[0]);
             IndexSplitter @is = new IndexSplitter(srcDir);

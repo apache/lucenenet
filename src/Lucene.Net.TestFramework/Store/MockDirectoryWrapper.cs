@@ -1345,7 +1345,6 @@ namespace Lucene.Net.Store
             private IndexInputSlicer DelegateHandle;
 
             public IndexInputSlicerAnonymousInnerClassHelper(MockDirectoryWrapper outerInstance, string name, IndexInputSlicer delegateHandle)
-                : base(outerInstance)
             {
                 this.OuterInstance = outerInstance;
                 this.Name = name;
@@ -1446,8 +1445,8 @@ namespace Lucene.Net.Store
         }
 
         /// <summary>
-        /// Use this when throwing fake {@codeSystem.IO.IOException},
-        ///  e.g. from <seealso cref="MockDirectoryWrapper.Failure"/>.
+        /// Use this when throwing fake <see cref="System.IO.IOException"/>,
+        /// e.g. from <see cref="MockDirectoryWrapper.Failure"/>.
         /// </summary>
         public class FakeIOException : System.IO.IOException
         {

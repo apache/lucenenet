@@ -21,9 +21,9 @@ namespace Lucene.Net.Codecs.Bloom
      */
 
     /// <summary>
-    /// A class used for testing {@link BloomFilteringPostingsFormat} with a concrete
+    /// A class used for testing <see cref="BloomFilteringPostingsFormat"/> with a concrete
     /// delegate (Lucene41). Creates a Bloom filter on ALL fields and with tiny
-    /// amounts of memory reserved for the filter.DO NOT USE IN A PRODUCTION
+    /// amounts of memory reserved for the filter. DO NOT USE IN A PRODUCTION
     /// APPLICATION This is not a realistic application of Bloom Filters as they
     /// ordinarily are larger and operate on only primary key type fields.
     /// </summary>

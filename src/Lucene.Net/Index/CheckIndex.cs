@@ -1,10 +1,13 @@
+using Lucene.Net.Store;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Threading;
 
 namespace Lucene.Net.Index
 {
@@ -480,8 +483,8 @@ namespace Lucene.Net.Index
             }
             set
             {
-                infoStream = value == null 
-                    ? null 
+                infoStream = value == null
+                    ? null
                     : (value is SafeTextWriterWrapper ? value : new SafeTextWriterWrapper(value));
             }
         }
@@ -2399,183 +2402,194 @@ namespace Lucene.Net.Index
             return assertsOn;
         }
 
-        // LUCENENET TODO: This seems too useful not to port over...but I suppose there is a Java version that could be used on the command line.
-
-        /*
-        /// Command-line interface to check and fix an index.
-        ///
-        ///  <p>
-        ///  Run it like this:
-        ///  <pre>
-        ///  java -ea:org.apache.lucene... Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-verbose] [-segment X] [-segment Y]
-        ///  </pre>
-        ///  <ul>
-        ///  <li><code>-fix</code>: actually write a new segments_N file, removing any problematic segments
-        ///
-        ///  <li><code>-segment X</code>: only check the specified
-        ///  segment(s).  this can be specified multiple times,
-        ///  to check more than one segment, eg <code>-segment _2
-        ///  -segment _a</code>.  You can't use this with the -fix
-        ///  option.
-        ///  </ul>
-        ///
-        ///  <p><b>WARNING</b>: <code>-fix</code> should only be used on an emergency basis as it will cause
-        ///                     documents (perhaps many) to be permanently removed from the index.  Always make
-        ///                     a backup copy of your index before running this!  Do not run this tool on an index
-        ///                     that is actively being written to.  You have been warned!
-        ///
-        ///  <p>                Run without -fix, this tool will open the index, report version information
-        ///                     and report any exceptions it hits and what action it would take if -fix were
-        ///                     specified.  With -fix, this tool will remove any segments that have issues and
-        ///                     write a new segments_N file.  this means all documents contained in the affected
-        ///                     segments will be removed.
-        ///
-        ///  <p>
-        ///                     this tool exits with exit code 1 if the index cannot be opened or has any
-        ///                     corruption, else 0.
-        */
-        /*[STAThread]
+        ///// Command-line interface to check and fix an index.
+        /////
+        /////  <p>
+        /////  Run it like this:
+        /////  <pre>
+        /////  java -ea:org.apache.lucene... Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-verbose] [-segment X] [-segment Y]
+        /////  </pre>
+        /////  <ul>
+        /////  <li><code>-fix</code>: actually write a new segments_N file, removing any problematic segments
+        /////
+        /////  <li><code>-segment X</code>: only check the specified
+        /////  segment(s).  this can be specified multiple times,
+        /////  to check more than one segment, eg <code>-segment _2
+        /////  -segment _a</code>.  You can't use this with the -fix
+        /////  option.
+        /////  </ul>
+        /////
+        /////  <p><b>WARNING</b>: <code>-fix</code> should only be used on an emergency basis as it will cause
+        /////                     documents (perhaps many) to be permanently removed from the index.  Always make
+        /////                     a backup copy of your index before running this!  Do not run this tool on an index
+        /////                     that is actively being written to.  You have been warned!
+        /////
+        /////  <p>                Run without -fix, this tool will open the index, report version information
+        /////                     and report any exceptions it hits and what action it would take if -fix were
+        /////                     specified.  With -fix, this tool will remove any segments that have issues and
+        /////                     write a new segments_N file.  this means all documents contained in the affected
+        /////                     segments will be removed.
+        /////
+        /////  <p>
+        /////                     this tool exits with exit code 1 if the index cannot be opened or has any
+        /////                     corruption, else 0.
+        [STAThread]
         public static void Main(string[] args)
         {
-          bool doFix = false;
-          bool doCrossCheckTermVectors = false;
-          bool verbose = false;
-          IList<string> onlySegments = new List<string>();
-          string indexPath = null;
-          string dirImpl = null;
-          int i = 0;
-          while (i < args.Length)
-          {
-            string arg = args[i];
-            if ("-fix".Equals(arg, StringComparison.Ordinal))
+            bool doFix = false;
+            bool doCrossCheckTermVectors = false;
+            bool verbose = false;
+            IList<string> onlySegments = new List<string>();
+            string indexPath = null;
+            string dirImpl = null;
+            int i = 0;
+            while (i < args.Length)
             {
-              doFix = true;
+                string arg = args[i];
+                if ("-fix".Equals(arg, StringComparison.Ordinal))
+                {
+                    doFix = true;
+                }
+                else if ("-crossCheckTermVectors".Equals(arg, StringComparison.Ordinal))
+                {
+                    doCrossCheckTermVectors = true;
+                }
+                else if (arg.Equals("-verbose", StringComparison.Ordinal))
+                {
+                    verbose = true;
+                }
+                else if (arg.Equals("-segment", StringComparison.Ordinal))
+                {
+                    if (i == args.Length - 1)
+                    {
+                        // LUCENENET specific - we only output from our CLI wrapper
+                        throw new ArgumentException("ERROR: missing name for -segment option");
+                        //Console.WriteLine("ERROR: missing name for -segment option");
+                        //Environment.Exit(1);
+                    }
+                    i++;
+                    onlySegments.Add(args[i]);
+                }
+                else if ("-dir-impl".Equals(arg, StringComparison.Ordinal))
+                {
+                    if (i == args.Length - 1)
+                    {
+                        // LUCENENET specific - we only output from our CLI wrapper
+                        throw new ArgumentException("ERROR: missing value for -dir-impl option");
+                        //Console.WriteLine("ERROR: missing value for -dir-impl option");
+                        //Environment.Exit(1);
+                    }
+                    i++;
+                    dirImpl = args[i];
+                }
+                else
+                {
+                    if (indexPath != null)
+                    {
+                        // LUCENENET specific - we only output from our CLI wrapper
+                        throw new ArgumentException("ERROR: unexpected extra argument '" + args[i] + "'");
+                        //Console.WriteLine("ERROR: unexpected extra argument '" + args[i] + "'");
+                        //Environment.Exit(1);
+                    }
+                    indexPath = args[i];
+                }
+                i++;
             }
-            else if ("-crossCheckTermVectors".Equals(arg, StringComparison.Ordinal))
+
+            if (indexPath == null)
             {
-              doCrossCheckTermVectors = true;
+                // LUCENENET specific - we only output from our CLI wrapper
+                throw new ArgumentException("\nERROR: index path not specified");
+                //Console.WriteLine("\nERROR: index path not specified");
+                //Console.WriteLine("\nUsage: java Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-crossCheckTermVectors] [-segment X] [-segment Y] [-dir-impl X]\n" + "\n" + "  -fix: actually write a new segments_N file, removing any problematic segments\n" + "  -crossCheckTermVectors: verifies that term vectors match postings; this IS VERY SLOW!\n" + "  -codec X: when fixing, codec to write the new segments_N file with\n" + "  -verbose: print additional details\n" + "  -segment X: only check the specified segments.  this can be specified multiple\n" + "              times, to check more than one segment, eg '-segment _2 -segment _a'.\n" + "              You can't use this with the -fix option\n" + "  -dir-impl X: use a specific " + typeof(FSDirectory).Name + " implementation. " + "If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.\n" + "\n" + "**WARNING**: -fix should only be used on an emergency basis as it will cause\n" + "documents (perhaps many) to be permanently removed from the index.  Always make\n" + "a backup copy of your index before running this!  Do not run this tool on an index\n" + "that is actively being written to.  You have been warned!\n" + "\n" + "Run without -fix, this tool will open the index, report version information\n" + "and report any exceptions it hits and what action it would take if -fix were\n" + "specified.  With -fix, this tool will remove any segments that have issues and\n" + "write a new segments_N file.  this means all documents contained in the affected\n" + "segments will be removed.\n" + "\n" + "this tool exits with exit code 1 if the index cannot be opened or has any\n" + "corruption, else 0.\n");
+                //Environment.Exit(1);
             }
-            else if (arg.Equals("-verbose", StringComparison.Ordinal))
+
+            // LUCENENET specific - doesn't apply
+            //if (!AssertsOn())
+            //{
+            //    Console.WriteLine("\nNOTE: testing will be more thorough if you run java with '-ea:org.apache.lucene...', so assertions are enabled");
+            //}
+
+            if (onlySegments.Count == 0)
             {
-              verbose = true;
+                onlySegments = null;
             }
-            else if (arg.Equals("-segment", StringComparison.Ordinal))
+            else if (doFix)
             {
-              if (i == args.Length - 1)
-              {
-                Console.WriteLine("ERROR: missing name for -segment option");
+                // LUCENENET specific - we only output from our CLI wrapper
+                throw new ArgumentException("ERROR: cannot specify both -fix and -segment");
+                //Console.WriteLine("ERROR: cannot specify both -fix and -segment");
+                //Environment.Exit(1);
+            }
+
+            Console.WriteLine("\nOpening index @ " + indexPath + "\n");
+            Directory dir = null;
+            try
+            {
+                if (dirImpl == null)
+                {
+                    dir = FSDirectory.Open(new DirectoryInfo(indexPath));
+                }
+                else
+                {
+                    dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(indexPath));
+                }
+            }
+            catch (Exception t)
+            {
+                // LUCENENET specific - we only output from our CLI wrapper
+                throw new ArgumentException("ERROR: could not open directory \"" + indexPath + "\"; exiting\n" + t.ToString());
+                //Console.WriteLine("ERROR: could not open directory \"" + indexPath + "\"; exiting");
+                //Console.Out.WriteLine(t.StackTrace);
+                //Environment.Exit(1);
+            }
+
+            CheckIndex checker = new CheckIndex(dir);
+            checker.CrossCheckTermVectors = doCrossCheckTermVectors;
+            checker.InfoStream = Console.Out;
+            checker.InfoStreamIsVerbose = verbose;
+
+            Status result = checker.DoCheckIndex(onlySegments);
+            if (result.MissingSegments)
+            {
                 Environment.Exit(1);
-              }
-              i++;
-              onlySegments.Add(args[i]);
             }
-            else if ("-dir-impl".Equals(arg, StringComparison.Ordinal))
+
+            if (!result.Clean)
             {
-              if (i == args.Length - 1)
-              {
-                Console.WriteLine("ERROR: missing value for -dir-impl option");
-                Environment.Exit(1);
-              }
-              i++;
-              dirImpl = args[i];
+                if (!doFix)
+                {
+                    Console.WriteLine("WARNING: would write new segments file, and " + result.TotLoseDocCount + " documents would be lost, if index fix were specified\n");
+                    //Console.WriteLine("WARNING: would write new segments file, and " + result.TotLoseDocCount + " documents would be lost, if -fix were specified\n");
+                }
+                else
+                {
+                    Console.WriteLine("WARNING: " + result.TotLoseDocCount + " documents will be lost\n");
+                    Console.WriteLine("NOTE: will write new segments file in 5 seconds; this will remove " + result.TotLoseDocCount + " docs from the index. this IS YOUR LAST CHANCE TO CTRL+C!");
+                    for (int s = 0; s < 5; s++)
+                    {
+                        Thread.Sleep(1000);
+                        Console.WriteLine("  " + (5 - s) + "...");
+                    }
+                    Console.WriteLine("Writing...");
+                    checker.FixIndex(result);
+                    Console.WriteLine("OK");
+                    Console.WriteLine("Wrote new segments file \"" + result.NewSegments.GetSegmentsFileName() + "\"");
+                }
+            }
+            Console.WriteLine();
+
+            int exitCode;
+            if (result.Clean == true)
+            {
+                exitCode = 0;
             }
             else
             {
-              if (indexPath != null)
-              {
-                Console.WriteLine("ERROR: unexpected extra argument '" + args[i] + "'");
-                Environment.Exit(1);
-              }
-              indexPath = args[i];
+                exitCode = 1;
             }
-            i++;
-          }
-
-          if (indexPath == null)
-          {
-            Console.WriteLine("\nERROR: index path not specified");
-            Console.WriteLine("\nUsage: java Lucene.Net.Index.CheckIndex pathToIndex [-fix] [-crossCheckTermVectors] [-segment X] [-segment Y] [-dir-impl X]\n" + "\n" + "  -fix: actually write a new segments_N file, removing any problematic segments\n" + "  -crossCheckTermVectors: verifies that term vectors match postings; this IS VERY SLOW!\n" + "  -codec X: when fixing, codec to write the new segments_N file with\n" + "  -verbose: print additional details\n" + "  -segment X: only check the specified segments.  this can be specified multiple\n" + "              times, to check more than one segment, eg '-segment _2 -segment _a'.\n" + "              You can't use this with the -fix option\n" + "  -dir-impl X: use a specific " + typeof(FSDirectory).Name + " implementation. " + "If no package is specified the " + typeof(FSDirectory).Namespace + " package will be used.\n" + "\n" + "**WARNING**: -fix should only be used on an emergency basis as it will cause\n" + "documents (perhaps many) to be permanently removed from the index.  Always make\n" + "a backup copy of your index before running this!  Do not run this tool on an index\n" + "that is actively being written to.  You have been warned!\n" + "\n" + "Run without -fix, this tool will open the index, report version information\n" + "and report any exceptions it hits and what action it would take if -fix were\n" + "specified.  With -fix, this tool will remove any segments that have issues and\n" + "write a new segments_N file.  this means all documents contained in the affected\n" + "segments will be removed.\n" + "\n" + "this tool exits with exit code 1 if the index cannot be opened or has any\n" + "corruption, else 0.\n");
-            Environment.Exit(1);
-          }
-
-          if (!AssertsOn())
-          {
-            Console.WriteLine("\nNOTE: testing will be more thorough if you run java with '-ea:org.apache.lucene...', so assertions are enabled");
-          }
-
-          if (onlySegments.Count == 0)
-          {
-            onlySegments = null;
-          }
-          else if (doFix)
-          {
-            Console.WriteLine("ERROR: cannot specify both -fix and -segment");
-            Environment.Exit(1);
-          }
-
-          Console.WriteLine("\nOpening index @ " + indexPath + "\n");
-          Directory dir = null;
-          try
-          {
-            if (dirImpl == null)
-            {
-              dir = FSDirectory.Open(new DirectoryInfo(indexPath));
-            }
-            else
-            {
-              dir = CommandLineUtil.NewFSDirectory(dirImpl, new DirectoryInfo(indexPath));
-            }
-          }
-          catch (Exception t)
-          {
-            Console.WriteLine("ERROR: could not open directory \"" + indexPath + "\"; exiting");
-            Console.Out.WriteLine(t.StackTrace);
-            Environment.Exit(1);
-          }
-
-          CheckIndex checker = new CheckIndex(dir);
-          checker.CrossCheckTermVectors = doCrossCheckTermVectors;
-          checker.SetInfoStream(new StreamWriter(Console.OpenStandardOutput()), verbose);
-
-          Status result = checker.DoCheckIndex(onlySegments);
-          if (result.MissingSegments)
-          {
-            Environment.Exit(1);
-          }
-
-          if (!result.Clean)
-          {
-            if (!doFix)
-            {
-              Console.WriteLine("WARNING: would write new segments file, and " + result.TotLoseDocCount + " documents would be lost, if -fix were specified\n");
-            }
-            else
-            {
-              Console.WriteLine("WARNING: " + result.TotLoseDocCount + " documents will be lost\n");
-              Console.WriteLine("NOTE: will write new segments file in 5 seconds; this will remove " + result.TotLoseDocCount + " docs from the index. this IS YOUR LAST CHANCE TO CTRL+C!");
-              for (int s = 0;s < 5;s++)
-              {
-                Thread.Sleep(1000);
-                Console.WriteLine("  " + (5 - s) + "...");
-              }
-              Console.WriteLine("Writing...");
-              checker.FixIndex(result);
-              Console.WriteLine("OK");
-              Console.WriteLine("Wrote new segments file \"" + result.NewSegments.SegmentsFileName + "\"");
-            }
-          }
-          Console.WriteLine("");
-
-          int exitCode;
-          if (result.Clean == true)
-          {
-            exitCode = 0;
-          }
-          else
-          {
-            exitCode = 1;
-          }
-          Environment.Exit(exitCode);
-        }*/
+            Environment.Exit(exitCode);
+        }
     }
 }

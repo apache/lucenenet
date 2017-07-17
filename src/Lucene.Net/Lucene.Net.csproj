@@ -394,6 +394,7 @@
     <Compile Include="Index\TwoStoredFieldsConsumers.cs" />
     <Compile Include="Index\UpgradeIndexMergePolicy.cs" />
     <Compile Include="LucenePackage.cs" />
+    <Compile Include="Support\Document\DocumentExtensions.cs" />
     <Compile Include="Support\IO\Compression\LZOCompressor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AutomatonQuery.cs" />
@@ -652,6 +653,8 @@
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
     <Compile Include="Support\RectangularArrays.cs" />
+    <Compile Include="Support\Search\ReferenceContext.cs" />
+    <Compile Include="Support\Search\ReferenceManagerExtensions.cs" />
     <Compile Include="Support\Threading\ICompletionService.cs" />
     <Compile Include="Support\IO\IDataInput.cs" />
     <Compile Include="Support\IO\IDataOutput.cs" />
@@ -679,7 +682,7 @@
     <Compile Include="Support\LinkedHashMap.cs" />
     <Compile Include="Support\ListExtensions.cs" />
     <Compile Include="Support\LurchTable.cs" />
-    <Compile Include="Support\MathExtension.cs" />
+    <Compile Include="Support\MathExtensions.cs" />
     <Compile Include="Support\IO\MemoryMappedFileByteBuffer.cs" />
     <Compile Include="Support\NumberFormat.cs" />
     <Compile Include="Support\PriorityQueue.cs" />

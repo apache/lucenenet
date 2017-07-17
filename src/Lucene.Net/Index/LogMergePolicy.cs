@@ -257,10 +257,10 @@ namespace Lucene.Net.Index
         /// <summary>
         /// Returns the merges necessary to merge the index, taking the max merge
         /// size or max merge docs into consideration. this method attempts to respect
-        /// the {@code maxNumSegments} parameter, however it might be, due to size
+        /// the <paramref name="maxNumSegments"/> parameter, however it might be, due to size
         /// constraints, that more than that number of segments will remain in the
-        /// index. Also, this method does not guarantee that exactly {@code
-        /// maxNumSegments} will remain, but &lt;= that number.
+        /// index. Also, this method does not guarantee that exactly
+        /// <paramref name="maxNumSegments"/> will remain, but &lt;= that number.
         /// </summary>
         private MergeSpecification FindForcedMergesSizeLimit(SegmentInfos infos, int maxNumSegments, int last)
         {

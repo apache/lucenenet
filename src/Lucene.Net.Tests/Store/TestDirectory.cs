@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 
 namespace Lucene.Net.Store
@@ -474,6 +475,49 @@ namespace Lucene.Net.Store
                 foreach (var thread in threads)
                 {
                     thread.Join();
+                }
+            }
+        }
+
+        [Test]
+        [LuceneNetSpecific]
+        public void TestLUCENENET521()
+        {
+            var newDirectoryInfo = CreateTempDir("LUCENENET521");
+            using (var zipFileStream = this.GetType().GetTypeInfo().Assembly.FindAndGetManifestResourceStream(this.GetType(), "LUCENENET521.zip"))
+            {
+                TestUtil.Unzip(zipFileStream, newDirectoryInfo);
+            }
+
+            var newDirectory = new MMapDirectory(newDirectoryInfo);
+            var conf = new Index.IndexWriterConfig(LuceneVersion.LUCENE_30, new Analysis.Standard.StandardAnalyzer(LuceneVersion.LUCENE_30));
+            var indexWriter = new Index.IndexWriter(newDirectory, conf);
+            indexWriter.Dispose();
+
+            var sharedReader = Index.IndexReader.Open(newDirectory /*, true*/);
+            const int times = 10;
+            const int concurrentTaskCount = 10;
+            var task = new System.Threading.Tasks.Task[concurrentTaskCount];
+            for (int i = 0; i < concurrentTaskCount; i++)
+            {
+                task[i] = new System.Threading.Tasks.Task(() => Search(sharedReader, times));
+                task[i].Start();
+            }
+
+            System.Threading.Tasks.Task.WaitAll(task);
+            return;
+        }
+
+        private static void Search(Index.IndexReader r, int times)
+        {
+            var searcher = new Search.IndexSearcher(r);
+            var docs = new System.Collections.Generic.List<Documents.Document>(10000);
+            for (int i = 0; i < times; i++)
+            {
+                var q = new Search.TermQuery(new Index.Term("title", "volume"));
+                foreach (var scoreDoc in searcher.Search(q, 100).ScoreDocs)
+                {
+                    docs.Add(searcher.Doc(scoreDoc.Doc));
                 }
             }
         }

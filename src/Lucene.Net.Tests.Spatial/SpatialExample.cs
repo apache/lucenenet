@@ -56,15 +56,15 @@ namespace Lucene.Net.Spatial
         }
 
         /**
-         * The Spatial4j {@link SpatialContext} is a sort of global-ish singleton
+         * The Spatial4j <see cref="SpatialContext"/> is a sort of global-ish singleton
          * needed by Lucene spatial.  It's a facade to the rest of Spatial4j, acting
-         * as a factory for {@link Shape}s and provides access to reading and writing
+         * as a factory for <see cref="IShape"/>s and provides access to reading and writing
          * them from Strings.
          */
         private SpatialContext ctx;//"ctx" is the conventional variable name
 
         /**
-         * The Lucene spatial {@link SpatialStrategy} encapsulates an approach to
+         * The Lucene spatial <see cref="SpatialStrategy"/> encapsulates an approach to
          * indexing and searching shapes, and providing distance values for them.
          * It's a simple API to unify different approaches. You might use more than
          * one strategy for a shape as each strategy has its strengths and weaknesses.

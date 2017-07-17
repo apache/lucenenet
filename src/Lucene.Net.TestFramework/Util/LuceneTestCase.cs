@@ -419,10 +419,10 @@ namespace Lucene.Net.Util
         // -----------------------------------------------------------------
 
         /// <summary>
-        /// When {@code true}, Codecs for old Lucene version will support writing
-        /// indexes in that format. Defaults to {@code false}, can be disabled by
+        /// When <c>true</c>, Codecs for old Lucene version will support writing
+        /// indexes in that format. Defaults to <c>false</c>, can be disabled by
         /// specific tests on demand.
-        ///
+        /// <para/>
         /// @lucene.internal
         /// </summary>
         public static bool OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
@@ -582,7 +582,7 @@ namespace Lucene.Net.Util
         // -----------------------------------------------------------------
 
         /// <summary>
-        /// For subclasses to override. Overrides must call {@code super.setUp()}.
+        /// For subclasses to override. Overrides must call <c>base.SetUp()</c>.
         /// </summary>
         [SetUp]
         public virtual void SetUp()
@@ -613,7 +613,7 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// For subclasses to override. Overrides must call {@code super.tearDown()}.
+        /// For subclasses to override. Overrides must call <c>base.TearDown()</c>.
         /// </summary>
         [TearDown]
         public virtual void TearDown()
@@ -1798,9 +1798,9 @@ namespace Lucene.Net.Util
         }
 
         /// <summary>
-        /// Gets a resource from the classpath as <seealso cref="File"/>. this method should only
+        /// Gets a resource from the classpath as <see cref="Stream"/>. This method should only
         /// be used, if a real file is needed. To get a stream, code should prefer
-        /// <seealso cref="Class#getResourceAsStream"/> using {@code this.getClass()}.
+        /// <see cref="Type.getResourceAsStream"/> using <c>this.GetType()</c>.
         /// </summary>
         protected Stream GetDataFile(string name)
         {

@@ -28,7 +28,7 @@ using NUnit.Framework;
 namespace Lucene.Net.Classification
 {
     /**
-     * Testcase for {@link org.apache.lucene.classification.utils.DatasetSplitter}
+     * Testcase for <see cref="DatasetSplitter"/>
      */
     public class DataSplitterTest : Util.LuceneTestCase
     {

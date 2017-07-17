@@ -123,92 +123,112 @@ namespace Lucene.Net.Index
         {
             if (args.Length < 5)
             {
-                Console.Error.WriteLine("Usage: MultiPassIndexSplitter -out <outputDir> -num <numParts> [-seq] <inputIndex1> [<inputIndex2 ...]");
-                Console.Error.WriteLine("\tinputIndex\tpath to input index, multiple values are ok");
-                Console.Error.WriteLine("\t-out ouputDir\tpath to output directory to contain partial indexes");
-                Console.Error.WriteLine("\t-num numParts\tnumber of parts to produce");
-                Console.Error.WriteLine("\t-seq\tsequential docid-range split (default is round-robin)");
-                Environment.Exit(-1);
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException();
+                //Console.Error.WriteLine("Usage: MultiPassIndexSplitter -out <outputDir> -num <numParts> [-seq] <inputIndex1> [<inputIndex2 ...]");
+                //Console.Error.WriteLine("\tinputIndex\tpath to input index, multiple values are ok");
+                //Console.Error.WriteLine("\t-out ouputDir\tpath to output directory to contain partial indexes");
+                //Console.Error.WriteLine("\t-num numParts\tnumber of parts to produce");
+                //Console.Error.WriteLine("\t-seq\tsequential docid-range split (default is round-robin)");
+                //Environment.Exit(-1);
             }
             List<IndexReader> indexes = new List<IndexReader>();
-            string outDir = null;
-            int numParts = -1;
-            bool seq = false;
-            for (int i = 0; i < args.Length; i++)
+            try
             {
-                if (args[i].Equals("-out"))
+                string outDir = null;
+                int numParts = -1;
+                bool seq = false;
+                for (int i = 0; i < args.Length; i++)
                 {
-                    outDir = args[++i];
-                }
-                else if (args[i].Equals("-num"))
-                {
-                    numParts = Convert.ToInt32(args[++i]);
-                }
-                else if (args[i].Equals("-seq"))
-                {
-                    seq = true;
-                }
-                else
-                {
-                    DirectoryInfo file = new DirectoryInfo(args[i]);
-                    if (!file.Exists)
+                    if (args[i].Equals("-out"))
                     {
-                        Console.Error.WriteLine("Invalid input path - skipping: " + file);
-                        continue;
+                        outDir = args[++i];
                     }
-                    Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[i]));
-                    try
+                    else if (args[i].Equals("-num"))
                     {
-                        if (!DirectoryReader.IndexExists(dir))
+                        numParts = Convert.ToInt32(args[++i]);
+                    }
+                    else if (args[i].Equals("-seq"))
+                    {
+                        seq = true;
+                    }
+                    else
+                    {
+                        DirectoryInfo file = new DirectoryInfo(args[i]);
+                        if (!file.Exists)
                         {
-                            Console.Error.WriteLine("Invalid input index - skipping: " + file);
+                            Console.Error.WriteLine("Invalid input path - skipping: " + file);
                             continue;
                         }
+                        using (Store.Directory dir = FSDirectory.Open(new DirectoryInfo(args[i])))
+                        {
+                            try
+                            {
+                                if (!DirectoryReader.IndexExists(dir))
+                                {
+                                    Console.Error.WriteLine("Invalid input index - skipping: " + file);
+                                    continue;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                Console.Error.WriteLine("Invalid input index - skipping: " + file);
+                                continue;
+                            }
+                            indexes.Add(DirectoryReader.Open(dir));
+                        }
                     }
-                    catch (Exception)
+                }
+                if (outDir == null)
+                {
+                    throw new Exception("Required argument missing: -out outputDir");
+                }
+                if (numParts < 2)
+                {
+                    throw new Exception("Invalid value of required argument: -num numParts");
+                }
+                if (indexes.Count == 0)
+                {
+                    throw new Exception("No input indexes to process");
+                }
+                DirectoryInfo @out = new DirectoryInfo(outDir);
+                @out.Create();
+                if (!new DirectoryInfo(outDir).Exists)
+                {
+                    throw new Exception("Can't create output directory: " + @out);
+                }
+                Store.Directory[] dirs = new Store.Directory[numParts];
+                try
+                {
+                    for (int i = 0; i < numParts; i++)
                     {
-                        Console.Error.WriteLine("Invalid input index - skipping: " + file);
-                        continue;
+                        dirs[i] = FSDirectory.Open(new DirectoryInfo(Path.Combine(@out.FullName, "part-" + i)));
                     }
-                    indexes.Add(DirectoryReader.Open(dir));
+                    MultiPassIndexSplitter splitter = new MultiPassIndexSplitter();
+                    IndexReader input;
+                    if (indexes.Count == 1)
+                    {
+                        input = indexes[0];
+                    }
+                    else
+                    {
+                        input = new MultiReader(indexes.ToArray());
+                    }
+#pragma warning disable 612, 618
+                    splitter.Split(LuceneVersion.LUCENE_CURRENT, input, dirs, seq);
+#pragma warning restore 612, 618
+                }
+                finally
+                {
+                    // LUCENENET specific - properly dispose directories to prevent resource leaks
+                    IOUtils.Dispose(dirs);
                 }
             }
-            if (outDir == null)
+            finally
             {
-                throw new Exception("Required argument missing: -out outputDir");
+                // LUCENENET specific - properly dispose index readers to prevent resource leaks
+                IOUtils.Dispose(indexes);
             }
-            if (numParts < 2)
-            {
-                throw new Exception("Invalid value of required argument: -num numParts");
-            }
-            if (indexes.Count == 0)
-            {
-                throw new Exception("No input indexes to process");
-            }
-            DirectoryInfo @out = new DirectoryInfo(outDir);
-            @out.Create();
-            if (!new DirectoryInfo(outDir).Exists)
-            {
-                throw new Exception("Can't create output directory: " + @out);
-            }
-            Store.Directory[] dirs = new Store.Directory[numParts];
-            for (int i = 0; i < numParts; i++)
-            {
-                dirs[i] = FSDirectory.Open(new DirectoryInfo(Path.Combine(@out.FullName, "part-" + i)));
-            }
-            MultiPassIndexSplitter splitter = new MultiPassIndexSplitter();
-            IndexReader input;
-            if (indexes.Count == 1)
-            {
-                input = indexes[0];
-            }
-            else
-            {
-                input = new MultiReader(indexes.ToArray());
-            }
-#pragma warning disable 612, 618
-            splitter.Split(LuceneVersion.LUCENE_CURRENT, input, dirs, seq);
-#pragma warning restore 612, 618
         }
 
         /// <summary>

@@ -51,8 +51,7 @@
         "define": [ "NETSTANDARD" ],
         "compile": {
           "excludeFiles": [
-            "Xml/TestQueryTemplateManager.cs",
-            "Support/TestApiConsistency.cs"
+            "Xml/TestQueryTemplateManager.cs"
           ]
         }
       }

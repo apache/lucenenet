@@ -19,7 +19,6 @@
  *
 */
 
-#if !NETSTANDARD
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -94,7 +93,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestProtectedFieldNames(Type typeFromTargetAssembly)
         {
-            var names = GetInvalidProtectedFields(typeFromTargetAssembly.Assembly);
+            var names = GetInvalidProtectedFields(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -117,7 +116,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestPrivateFieldNames(Type typeFromTargetAssembly, string exceptionRegex)
         {
-            var names = GetInvalidPrivateFields(typeFromTargetAssembly.Assembly, exceptionRegex);
+            var names = GetInvalidPrivateFields(typeFromTargetAssembly.GetTypeInfo().Assembly, exceptionRegex);
 
             //if (VERBOSE)
             //{
@@ -134,7 +133,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestPublicFields(Type typeFromTargetAssembly)
         {
-            var names = GetInvalidPublicFields(typeFromTargetAssembly.Assembly);
+            var names = GetInvalidPublicFields(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -151,7 +150,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestMethodParameterNames(Type typeFromTargetAssembly)
         {
-            var names = GetInvalidMethodParameterNames(typeFromTargetAssembly.Assembly);
+            var names = GetInvalidMethodParameterNames(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -168,7 +167,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestInterfaceNames(Type typeFromTargetAssembly)
         {
-            var names = GetInvalidInterfaceNames(typeFromTargetAssembly.Assembly);
+            var names = GetInvalidInterfaceNames(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -185,7 +184,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestClassNames(Type typeFromTargetAssembly)
         {
-            var names = GetInvalidClassNames(typeFromTargetAssembly.Assembly);
+            var names = GetInvalidClassNames(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -203,7 +202,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestForPropertiesWithNoGetter(Type typeFromTargetAssembly)
         {
-            var names = GetPropertiesWithNoGetter(typeFromTargetAssembly.Assembly);
+            var names = GetPropertiesWithNoGetter(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -221,7 +220,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestForPropertiesThatReturnArray(Type typeFromTargetAssembly)
         {
-            var names = GetPropertiesThatReturnArray(typeFromTargetAssembly.Assembly);
+            var names = GetPropertiesThatReturnArray(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -238,10 +237,11 @@ namespace Lucene.Net.Support
                 "the consumer if the array is not cloned using arr.ToArray().");
         }
 
+#if !NETSTANDARD
         //[Test, LuceneNetSpecific]
         public virtual void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
-            var names = GetMethodsThatReturnWritableArray(typeFromTargetAssembly.Assembly);
+            var names = GetMethodsThatReturnWritableArray(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -255,14 +255,15 @@ namespace Lucene.Net.Support
                 "An array should be cloned before returning using arr.ToArray() or if it is intended to be writable, " +
                 "decorate with the WritableArray attribute and consider making it a property for clarity.");
         }
+#endif
 
         //[Test, LuceneNetSpecific]
         public virtual void TestForPublicMembersContainingComparer(Type typeFromTargetAssembly)
         {
             var names = new List<string>();
 
-            names.AddRange(GetProtectedFieldsContainingComparer(typeFromTargetAssembly.Assembly));
-            names.AddRange(GetMembersContainingComparer(typeFromTargetAssembly.Assembly));
+            names.AddRange(GetProtectedFieldsContainingComparer(typeFromTargetAssembly.GetTypeInfo().Assembly));
+            names.AddRange(GetMembersContainingComparer(typeFromTargetAssembly.GetTypeInfo().Assembly));
 
             //if (VERBOSE)
             //{
@@ -279,7 +280,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestForPublicMembersNamedSize(Type typeFromTargetAssembly)
         {
-            var names = GetMembersNamedSize(typeFromTargetAssembly.Assembly);
+            var names = GetMembersNamedSize(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -299,7 +300,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestForPublicMembersContainingNonNetNumeric(Type typeFromTargetAssembly)
         {
-            var names = GetMembersContainingNonNetNumeric(typeFromTargetAssembly.Assembly);
+            var names = GetMembersContainingNonNetNumeric(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -317,7 +318,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestForTypesContainingNonNetNumeric(Type typeFromTargetAssembly)
         {
-            var names = GetTypesContainingNonNetNumeric(typeFromTargetAssembly.Assembly);
+            var names = GetTypesContainingNonNetNumeric(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -336,7 +337,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestForPublicMembersWithNullableEnum(Type typeFromTargetAssembly)
         {
-            var names = GetPublicNullableEnumMembers(typeFromTargetAssembly.Assembly);
+            var names = GetPublicNullableEnumMembers(typeFromTargetAssembly.GetTypeInfo().Assembly);
 
             //if (VERBOSE)
             //{
@@ -361,7 +362,7 @@ namespace Lucene.Net.Support
         //[Test, LuceneNetSpecific]
         public virtual void TestForMembersAcceptingOrReturningIEnumerable(Type typeFromTargetAssembly, string exceptionRegex)
         {
-            var names = GetMembersAcceptingOrReturningType(typeof(IEnumerable<>), typeFromTargetAssembly.Assembly, false, exceptionRegex);
+            var names = GetMembersAcceptingOrReturningType(typeof(IEnumerable<>), typeFromTargetAssembly.GetTypeInfo().Assembly, false, exceptionRegex);
 
             //if (VERBOSE)
             //{
@@ -384,8 +385,8 @@ namespace Lucene.Net.Support
         public virtual void TestForMembersAcceptingOrReturningListOrDictionary(Type typeFromTargetAssembly, string exceptionRegex)
         {
             var names = new List<string>();
-            names.AddRange(GetMembersAcceptingOrReturningType(typeof(List<>), typeFromTargetAssembly.Assembly, true, exceptionRegex));
-            names.AddRange(GetMembersAcceptingOrReturningType(typeof(Dictionary<,>), typeFromTargetAssembly.Assembly, true, exceptionRegex));
+            names.AddRange(GetMembersAcceptingOrReturningType(typeof(List<>), typeFromTargetAssembly.GetTypeInfo().Assembly, true, exceptionRegex));
+            names.AddRange(GetMembersAcceptingOrReturningType(typeof(Dictionary<,>), typeFromTargetAssembly.GetTypeInfo().Assembly, true, exceptionRegex));
 
             //if (VERBOSE)
             //{
@@ -403,7 +404,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -421,7 +422,7 @@ namespace Lucene.Net.Support
                         continue;
                     }
 
-                    if ((field.IsPrivate || field.IsAssembly) && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if ((field.IsPrivate || field.IsAssembly) && !PrivateFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.GetTypeInfo().UnderlyingSystemType))
                     {
                         var name = string.Concat(c.FullName, ".", field.Name);
                         //bool hasExceptions = !string.IsNullOrWhiteSpace(exceptionRegex);
@@ -444,7 +445,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -467,7 +468,7 @@ namespace Lucene.Net.Support
                         continue;
                     }
 
-                    if ((field.IsFamily || field.IsFamilyOrAssembly) && !ProtectedFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if ((field.IsFamily || field.IsFamilyOrAssembly) && !ProtectedFieldName.IsMatch(field.Name) && field.DeclaringType.Equals(c.GetTypeInfo().UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
                     }
@@ -486,7 +487,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -514,7 +515,7 @@ namespace Lucene.Net.Support
                         continue;
                     }
 
-                    if (field.IsPublic && field.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if (field.IsPublic && field.DeclaringType.Equals(c.GetTypeInfo().UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
                     }
@@ -528,7 +529,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -545,7 +546,7 @@ namespace Lucene.Net.Support
 
                     foreach (var parameter in parameters)
                     {
-                        if (!MethodParameterName.IsMatch(parameter.Name) && method.DeclaringType.Equals(c.UnderlyingSystemType))
+                        if (!MethodParameterName.IsMatch(parameter.Name) && method.DeclaringType.Equals(c.GetTypeInfo().UnderlyingSystemType))
                         {
                             result.Add(string.Concat(c.FullName, ".", method.Name, " -parameter- ", parameter.Name));
                         }
@@ -560,7 +561,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var interfaces = assembly.GetTypes().Where(t => t.IsInterface);
+            var interfaces = assembly.GetTypes().Where(t => t.GetTypeInfo().IsInterface);
 
             foreach (var i in interfaces)
             {
@@ -577,7 +578,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -586,7 +587,7 @@ namespace Lucene.Net.Support
                     continue;
                 }
 
-                if (System.Attribute.IsDefined(c, typeof(ExceptionToClassNameConventionAttribute)))
+                if (c.GetTypeInfo().IsDefined(typeof(ExceptionToClassNameConventionAttribute)))
                 {
                     continue;
                 }
@@ -604,7 +605,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -612,7 +613,7 @@ namespace Lucene.Net.Support
 
                 foreach (var property in properties)
                 {
-                    if (property.GetSetMethod(true) != null && property.GetGetMethod(true) == null && property.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if (property.GetSetMethod(true) != null && property.GetGetMethod(true) == null && property.DeclaringType.Equals(c.GetTypeInfo().UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", property.Name));
                     }
@@ -626,7 +627,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -638,14 +639,14 @@ namespace Lucene.Net.Support
                     // properties that were intended to expose arrays, as per MSDN this
                     // is not a .NET best practice. However, Lucene's design requires that
                     // this be done.
-                    if (System.Attribute.IsDefined(property, typeof(WritableArrayAttribute)))
+                    if (property.IsDefined(typeof(WritableArrayAttribute)))
                     {
                         continue;
                     }
 
                     var getMethod = property.GetGetMethod();
                     
-                    if (getMethod != null && getMethod.ReturnParameter != null && getMethod.ReturnParameter.ParameterType.IsArray && property.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if (getMethod != null && getMethod.ReturnParameter != null && getMethod.ReturnParameter.ParameterType.IsArray && property.DeclaringType.Equals(c.GetTypeInfo().UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", property.Name));
                     }
@@ -660,7 +661,7 @@ namespace Lucene.Net.Support
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -678,7 +679,7 @@ namespace Lucene.Net.Support
                         continue;
                     }
 
-                    if ((field.IsFamily || field.IsFamilyOrAssembly) && ContainsComparer.IsMatch(field.Name) && field.DeclaringType.Equals(c.UnderlyingSystemType))
+                    if ((field.IsFamily || field.IsFamilyOrAssembly) && ContainsComparer.IsMatch(field.Name) && field.DeclaringType.Equals(c.GetTypeInfo().UnderlyingSystemType))
                     {
                         result.Add(string.Concat(c.FullName, ".", field.Name));
                     }
@@ -696,7 +697,7 @@ namespace Lucene.Net.Support
 
             foreach (var t in types)
             {
-                if (ContainsComparer.IsMatch(t.Name) && t.IsVisible)
+                if (ContainsComparer.IsMatch(t.Name) && t.GetTypeInfo().IsVisible)
                 {
                     result.Add(t.FullName);
                 }
@@ -705,7 +706,7 @@ namespace Lucene.Net.Support
 
                 foreach (var member in members)
                 {
-                    if (ContainsComparer.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    if (ContainsComparer.IsMatch(member.Name) && member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                     {
                         if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
@@ -738,7 +739,7 @@ namespace Lucene.Net.Support
 
                 foreach (var member in members)
                 {
-                    if ("Size".Equals(member.Name, StringComparison.OrdinalIgnoreCase) && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    if ("Size".Equals(member.Name, StringComparison.OrdinalIgnoreCase) && member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                     {
                         if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
@@ -779,12 +780,12 @@ namespace Lucene.Net.Support
                 foreach (var member in members)
                 {
                     // Ignore properties, methods, and events with IgnoreNetNumericConventionAttribute
-                    if (System.Attribute.IsDefined(member, typeof(ExceptionToNetNumericConventionAttribute)))
+                    if (member.IsDefined(typeof(ExceptionToNetNumericConventionAttribute)))
                     {
                         continue;
                     }
 
-                    if (ContainsNonNetNumeric.IsMatch(member.Name) && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    if (ContainsNonNetNumeric.IsMatch(member.Name) && member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                     {
                         if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
@@ -822,11 +823,12 @@ namespace Lucene.Net.Support
             return result.ToArray();
         }
 
+#if !NETSTANDARD
         private static IEnumerable<string> GetMethodsThatReturnWritableArray(Assembly assembly)
         {
             var result = new List<string>();
 
-            var classes = assembly.GetTypes().Where(t => t.IsClass);
+            var classes = assembly.GetTypes().Where(t => t.GetTypeInfo().IsClass);
 
             foreach (var c in classes)
             {
@@ -843,7 +845,7 @@ namespace Lucene.Net.Support
                     // properties that were intended to expose arrays, as per MSDN this
                     // is not a .NET best practice. However, Lucene's design requires that
                     // this be done.
-                    if (System.Attribute.IsDefined(method, typeof(WritableArrayAttribute)))
+                    if (method.IsDefined(typeof(WritableArrayAttribute)))
                     {
                         continue;
                     }
@@ -856,8 +858,9 @@ namespace Lucene.Net.Support
 
                     if (method != null && method.ReturnParameter != null 
                         && method.ReturnParameter.ParameterType.IsArray 
-                        && method.DeclaringType.Equals(c.UnderlyingSystemType))
+                        && method.DeclaringType.Equals(c.GetTypeInfo().UnderlyingSystemType))
                     {
+
                         var methodBody = method.GetMethodBody();
                         if (methodBody != null)
                         {
@@ -874,6 +877,7 @@ namespace Lucene.Net.Support
 
             return result.ToArray();
         }
+#endif
 
         private static IEnumerable<string> GetPublicNullableEnumMembers(Assembly assembly)
         {
@@ -893,12 +897,12 @@ namespace Lucene.Net.Support
                     }
 
                     // Ignore properties, methods, and events with IgnoreNetNumericConventionAttribute
-                    if (System.Attribute.IsDefined(member, typeof(ExceptionToNullableEnumConvention)))
+                    if (member.IsDefined(typeof(ExceptionToNullableEnumConvention)))
                     {
                         continue;
                     }
 
-                    if (member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    if (member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                     {
                         if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
@@ -908,7 +912,7 @@ namespace Lucene.Net.Support
                             {
                                 if (method.ReturnParameter != null
                                     && Nullable.GetUnderlyingType(method.ReturnParameter.ParameterType) != null
-                                    && method.ReturnParameter.ParameterType.GetGenericArguments()[0].IsEnum)
+                                    && method.ReturnParameter.ParameterType.GetGenericArguments()[0].GetTypeInfo().IsEnum)
                                 {
                                     result.Add(string.Concat(t.FullName, ".", member.Name, "()"));
                                 }
@@ -918,8 +922,8 @@ namespace Lucene.Net.Support
                                 foreach (var parameter in parameters)
                                 {
                                     if (Nullable.GetUnderlyingType(parameter.ParameterType) != null
-                                        && parameter.ParameterType.GetGenericArguments()[0].IsEnum
-                                        && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                                        && parameter.ParameterType.GetGenericArguments()[0].GetTypeInfo().IsEnum
+                                        && member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                                     {
                                         result.Add(string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name));
                                     }
@@ -937,8 +941,8 @@ namespace Lucene.Net.Support
                                 foreach (var parameter in parameters)
                                 {
                                     if (Nullable.GetUnderlyingType(parameter.ParameterType) != null
-                                        && parameter.ParameterType.GetGenericArguments()[0].IsEnum
-                                        && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                                        && parameter.ParameterType.GetGenericArguments()[0].GetTypeInfo().IsEnum
+                                        && member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                                     {
                                         result.Add(string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name));
                                     }
@@ -947,14 +951,14 @@ namespace Lucene.Net.Support
                         }
                         else if (member.MemberType == MemberTypes.Property 
                             && Nullable.GetUnderlyingType(((PropertyInfo)member).PropertyType) != null 
-                            && ((PropertyInfo)member).PropertyType.GetGenericArguments()[0].IsEnum 
+                            && ((PropertyInfo)member).PropertyType.GetGenericArguments()[0].GetTypeInfo().IsEnum 
                             && IsNonPrivateProperty((PropertyInfo)member))
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name));
                         }
                         else if (member.MemberType == MemberTypes.Field 
                             && Nullable.GetUnderlyingType(((FieldInfo)member).FieldType) != null 
-                            && ((FieldInfo)member).FieldType.GetGenericArguments()[0].IsEnum 
+                            && ((FieldInfo)member).FieldType.GetGenericArguments()[0].GetTypeInfo().IsEnum 
                             && (((FieldInfo)member).IsFamily || ((FieldInfo)member).IsFamilyOrAssembly))
                         {
                             result.Add(string.Concat(t.FullName, ".", member.Name, " (field)"));
@@ -1004,7 +1008,7 @@ namespace Lucene.Net.Support
                         continue;
                     }
 
-                    if (member.DeclaringType.Equals(t.UnderlyingSystemType))
+                    if (member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                     {
                         if (member.MemberType == MemberTypes.Method && !(member.Name.StartsWith("get_", StringComparison.Ordinal) || member.Name.StartsWith("set_", StringComparison.Ordinal)))
                         {
@@ -1014,7 +1018,7 @@ namespace Lucene.Net.Support
                             {
 
                                 if (method.ReturnParameter != null
-                                    && method.ReturnParameter.ParameterType.IsGenericType
+                                    && method.ReturnParameter.ParameterType.GetTypeInfo().IsGenericType
                                     && method.ReturnParameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor))
                                 {
                                     var name = string.Concat(t.FullName, ".", member.Name, "()");
@@ -1029,9 +1033,9 @@ namespace Lucene.Net.Support
 
                                 foreach (var parameter in parameters)
                                 {
-                                    if (parameter.ParameterType.IsGenericType
+                                    if (parameter.ParameterType.GetTypeInfo().IsGenericType
                                         && parameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
-                                        && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                                        && member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                                     {
                                         var name = string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name);
 
@@ -1053,9 +1057,9 @@ namespace Lucene.Net.Support
 
                                 foreach (var parameter in parameters)
                                 {
-                                    if (parameter.ParameterType.IsGenericType
+                                    if (parameter.ParameterType.GetTypeInfo().IsGenericType
                                         && parameter.ParameterType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
-                                        && member.DeclaringType.Equals(t.UnderlyingSystemType))
+                                        && member.DeclaringType.Equals(t.GetTypeInfo().UnderlyingSystemType))
                                     {
                                         var name = string.Concat(t.FullName, ".", member.Name, "()", " -parameter- ", parameter.Name);
 
@@ -1068,7 +1072,7 @@ namespace Lucene.Net.Support
                             }
                         }
                         else if (member.MemberType == MemberTypes.Property
-                            && ((PropertyInfo)member).PropertyType.IsGenericType
+                            && ((PropertyInfo)member).PropertyType.GetTypeInfo().IsGenericType
                             && ((PropertyInfo)member).PropertyType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
                             && (!publiclyVisibleOnly || IsNonPrivateProperty((PropertyInfo)member)))
                         {
@@ -1094,4 +1098,3 @@ namespace Lucene.Net.Support
         }
     }
 }
-#endif

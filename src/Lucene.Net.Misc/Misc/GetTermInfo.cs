@@ -42,8 +42,10 @@ namespace Lucene.Net.Misc
             }
             else
             {
-                Usage();
-                Environment.Exit(1);
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException();
+                //Usage();
+                //Environment.Exit(1);
             }
 
             TermInfo(dir, new Term(field, inputStr));
@@ -55,10 +57,11 @@ namespace Lucene.Net.Misc
             Console.WriteLine("{0}:{1} \t totalTF = {2:#,##0} \t doc freq = {3:#,##0} \n", term.Field, term.Text(), reader.TotalTermFreq(term), reader.DocFreq(term));
         }
 
-        private static void Usage()
-        {
-            // LUCENENET TODO: Usage info is dependant on packaging this into a standalone console application
-            Console.WriteLine("\n\nusage:\n\t" + "java " + typeof(GetTermInfo).FullName + " <index dir> field term \n\n");
-        }
+        // LUCENENET specific - our wrapper console shows the correct usage
+        //private static void Usage()
+        //{
+        //    // LUCENENET TODO: Usage info is dependant on packaging this into a standalone console application
+        //    Console.WriteLine("\n\nusage:\n\t" + "java " + typeof(GetTermInfo).FullName + " <index dir> field term \n\n");
+        //}
     }
 }

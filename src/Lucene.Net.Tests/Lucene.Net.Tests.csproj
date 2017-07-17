@@ -117,6 +117,7 @@
     <EmbeddedResource Include="Index\taxo.48.w-binary-doc-values.zip" />
     <None Include="Lucene.Net.snk" />
     <None Include="Lucene.Net.Tests.project.json" />
+    <EmbeddedResource Include="Store\LUCENENET521.zip" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">

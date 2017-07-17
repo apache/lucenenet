@@ -101,7 +101,7 @@ namespace Lucene.Net.Facet.Taxonomy
             reader = null;
             dir.Dispose();
             dir = null;
-            taxoReader.Dispose(true);
+            taxoReader.Dispose();
             taxoReader = null;
             taxoDir.Dispose();
             taxoDir = null;

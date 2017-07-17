@@ -34,12 +34,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
      */
 
     /// <summary>
-    /// This test case tests {@link PrecedenceQueryParser}.
+    /// This test case tests <see cref="PrecedenceQueryParser"/>.
     /// <para/>
-    /// It contains all tests from {@link QueryParserTestBase}
+    /// It contains all tests from <see cref="Util.QueryParserTestBase"/>
     /// with some adjusted to fit the precedence requirement, plus some precedence test cases.
     /// </summary>
-    /// <seealso cref="QueryParserTestBase"/>
+    /// <see cref="Util.QueryParserTestBase"/>
     //TODO: refactor this to actually extend that class, overriding the tests
     //that it adjusts to fit the precedence requirement, adding its extra tests.
     public class TestPrecedenceQueryParser : LuceneTestCase

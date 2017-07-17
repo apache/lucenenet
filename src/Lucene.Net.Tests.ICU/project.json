@@ -54,9 +54,6 @@
             "../Lucene.Net.Tests.Highlighter/PostingsHighlight/TestPostingsHighlighterRanking.cs",
             "../Lucene.Net.Tests.Highlighter/PostingsHighlight/TestWholeBreakIterator.cs",
             "../Lucene.Net.Tests.Highlighter/VectorHighlight/BreakIteratorBoundaryScannerTest.cs"
-          ],
-          "excludeFiles": [
-            "Support/TestApiConsistency.cs"
           ]
         }
       },

@@ -101,15 +101,19 @@ task Init -depends InstallSDK -description "This task makes sure the build envir
 }
 
 task Restore -description "This task restores the dependencies" {
-	Exec {
-		& dotnet.exe restore $base_directory
+	pushd $base_directory
+		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Cli") -and !$_.Directory.Name.Contains("lucene-cli") }
+	popd
+
+	foreach ($package in $packages) {
+		Exec { & dotnet.exe restore $package }
 	}
 }
 
 task Compile -depends Clean, Init -description "This task compiles the solution" {
 	try {
 		pushd $base_directory
-		$projects = Get-ChildItem -Path "project.json" -Recurse
+		$projects = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Cli") -and !$_.Directory.Name.Contains("lucene-cli") }
 		popd
 
 		Backup-Files $projects
@@ -132,7 +136,12 @@ task Compile -depends Clean, Init -description "This task compiles the solution"
 task Pack -depends Compile -description "This task creates the NuGet packages" {
 	try {
 		pushd $base_directory
-		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Test") }
+		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { 
+			!$_.Directory.Name.Contains(".Test") -and 
+			!$_.Directory.Name.Contains(".Demo") -and 
+			!$_.Directory.Name.Contains(".Cli") -and 
+			!$_.Directory.Name.Contains("lucene-cli")
+		}
 		popd
 
 		Pack-Assemblies $packages

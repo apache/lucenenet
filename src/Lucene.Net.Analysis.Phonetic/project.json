@@ -12,7 +12,7 @@
     "tags": [ "lucene.net", "core", "text", "search", "information", "retrieval", "lucene", "apache", "analysis", "index", "query", "soundex", "double", "metaphone", "sounds", "like", "beider", "morse", "cologne", "caverphone", "nysiis", "match", "rating" ]
   },
   "buildOptions": {
-  "compile": {
+    "compile": {
       "includeFiles": [ "../CommonAssemblyInfo.cs" ]
     },
     "embed": {

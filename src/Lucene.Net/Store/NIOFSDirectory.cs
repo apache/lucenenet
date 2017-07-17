@@ -116,7 +116,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             var path = new FileInfo(Path.Combine(Directory.FullName, name));
             var fc = new FileStream(path.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
-            return new IndexInputSlicerAnonymousInnerClassHelper(this, context, path, fc);
+            return new IndexInputSlicerAnonymousInnerClassHelper(context, path, fc);
         }
 
 #if FEATURE_SERIALIZABLE
@@ -128,8 +128,7 @@ namespace Lucene.Net.Store
             private readonly FileInfo path;
             private readonly FileStream descriptor;
 
-            public IndexInputSlicerAnonymousInnerClassHelper(NIOFSDirectory outerInstance, IOContext context, FileInfo path, FileStream descriptor)
-                : base(outerInstance)
+            public IndexInputSlicerAnonymousInnerClassHelper(IOContext context, FileInfo path, FileStream descriptor)
             {
                 this.context = context;
                 this.path = path;

@@ -174,21 +174,7 @@ namespace Lucene.Net.Store
         // indeed "release all resources".
         public static readonly bool UNMAP_SUPPORTED = true;
 
-        //static MMapDirectory()
-        //{
-        //    bool v;
-        //    try
-        //    {
-        //        Type.GetType("sun.misc.Cleaner");
-        //        Type.GetType("java.nio.DirectByteBuffer").GetMethod("cleaner");
-        //        v = true;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        v = false;
-        //    }
-        //    UNMAP_SUPPORTED = v;
-        //}
+        // LUCENENET specific: No need for static constructor, since unmap is always supported
 
         /// <summary>
         /// This property enables the workaround for unmapping the buffers
@@ -235,7 +221,7 @@ namespace Lucene.Net.Store
             EnsureOpen();
             var file = new FileInfo(Path.Combine(Directory.FullName, name));
 
-            var c = new FileStream(file.FullName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+            var c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
             return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", c);
         }
@@ -254,7 +240,6 @@ namespace Lucene.Net.Store
             private MMapIndexInput full;
 
             public IndexInputSlicerAnonymousInnerClassHelper(MMapDirectory outerInstance, MMapIndexInput full)
-                : base(outerInstance)
             {
                 this.outerInstance = outerInstance;
                 this.full = full;
@@ -317,52 +302,14 @@ namespace Lucene.Net.Store
             /// </summary>
             protected override void FreeBuffer(ByteBuffer buffer)
             {
-                // .NET port: this should free the memory mapped view accessor
+                // LUCENENET specific: this should free the memory mapped view accessor
                 var mmfbb = buffer as MemoryMappedFileByteBuffer;
 
                 if (mmfbb != null)
                     mmfbb.Dispose();
 
-                //if (UseUnmapHack)
-                //{
-                //    try
-                //    {
-                //        AccessController.doPrivileged(new PrivilegedExceptionActionAnonymousInnerClassHelper(this, buffer));
-                //    }
-                //    catch (PrivilegedActionException e)
-                //    {
-                //        System.IO.IOException ioe = new System.IO.IOException("unable to unmap the mapped buffer");
-                //        ioe.initCause(e.InnerException);
-                //        throw ioe;
-                //    }
-                //}
+                // LUCENENET specific: no need for UnmapHack
             }
-
-
-            //private class PrivilegedExceptionActionAnonymousInnerClassHelper : PrivilegedExceptionAction<Void>
-            //{
-            //    private readonly MMapIndexInput OuterInstance;
-
-            //    private ByteBuffer Buffer;
-
-            //    public PrivilegedExceptionActionAnonymousInnerClassHelper(MMapIndexInput outerInstance, ByteBuffer buffer)
-            //    {
-            //        this.OuterInstance = outerInstance;
-            //        this.Buffer = buffer;
-            //    }
-
-            //    public override void Run()
-            //    {
-            //        Method getCleanerMethod = Buffer.GetType().GetMethod("cleaner");
-            //        getCleanerMethod.Accessible = true;
-            //        object cleaner = getCleanerMethod.invoke(Buffer);
-            //        if (cleaner != null)
-            //        {
-            //            cleaner.GetType().GetMethod("clean").invoke(cleaner);
-            //        }
-            //        //return null;
-            //    }
-            //}
         }
 
         /// <summary>
@@ -372,6 +319,13 @@ namespace Lucene.Net.Store
             if (Number.URShift(length, chunkSizePower) >= int.MaxValue)
                 throw new ArgumentException("RandomAccessFile too big for chunk size: " + fc.ToString());
 
+            // LUCENENET specific: Return empty buffer if length is 0, rather than attempting to create a MemoryMappedFile.
+            // Part of a solution provided by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
+            if (length == 0)
+            {
+                return new[] { ByteBuffer.Allocate(0).AsReadOnlyBuffer() };
+            }
+
             long chunkSize = 1L << chunkSizePower;
 
             // we always allocate one more buffer, the last one may be a 0 byte one
@@ -379,21 +333,18 @@ namespace Lucene.Net.Store
 
             ByteBuffer[] buffers = new ByteBuffer[nrBuffers];
 
-            /*
-             public static MemoryMappedFile CreateFromFile(FileStream fileStream, String mapName, Int64 capacity,
-                                                        MemoryMappedFileAccess access, MemoryMappedFileSecurity memoryMappedFileSecurity,
-                                                        HandleInheritability inheritability, bool leaveOpen)
-             */
-
-            long fileCapacity = length == 0 ? ushort.MaxValue : length;
-
             if (input.memoryMappedFile == null)
             {
-#if NETSTANDARD
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, fileCapacity, MemoryMappedFileAccess.ReadWrite, HandleInheritability.Inheritable, false);
-#else
-                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(fc, null, fileCapacity, MemoryMappedFileAccess.ReadWrite, null, HandleInheritability.Inheritable, false);
+                input.memoryMappedFile = MemoryMappedFile.CreateFromFile(
+                    fileStream: fc, 
+                    mapName: null, 
+                    capacity: length, 
+                    access: MemoryMappedFileAccess.Read,
+#if !NETSTANDARD
+                    memoryMappedFileSecurity: null,
 #endif
+                    inheritability: HandleInheritability.Inheritable, 
+                    leaveOpen: false);
             }
 
             long bufferStart = 0L;
@@ -401,16 +352,21 @@ namespace Lucene.Net.Store
             {
                 int bufSize = (int)((length > (bufferStart + chunkSize)) ? chunkSize : (length - bufferStart));
 
-                // LUCENENET: We get a file access exception if we create a 0 byte file at the end of the range.
-                // We can fix this by moving back 1 byte if the bufSize is 0.
+                // LUCENENET: We get an UnauthorizedAccessException if we create a 0 byte file at the end of the range.
+                // See: https://stackoverflow.com/a/5501331
+                // We can fix this by moving back 1 byte on the offset if the bufSize is 0.
                 int adjust = 0;
                 if (bufSize == 0 && bufNr == (nrBuffers - 1) && (offset + bufferStart) > 0)
                 {
                     adjust = 1;
                 }
 
-                //buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor((offset + bufferStart) - adjust, bufSize, MemoryMappedFileAccess.Read), -1, 0, bufSize, bufSize);
-                buffers[bufNr] = new MemoryMappedFileByteBuffer(input.memoryMappedFile.CreateViewAccessor((offset + bufferStart) - adjust, bufSize, MemoryMappedFileAccess.Read), bufSize);
+                buffers[bufNr] = new MemoryMappedFileByteBuffer(
+                    input.memoryMappedFile.CreateViewAccessor(
+                        offset: (offset + bufferStart) - adjust, 
+                        size: bufSize, 
+                        access: MemoryMappedFileAccess.Read), 
+                    bufSize);
                 bufferStart += bufSize;
             }
 

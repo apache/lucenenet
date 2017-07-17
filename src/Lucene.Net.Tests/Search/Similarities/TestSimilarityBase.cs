@@ -37,30 +37,30 @@ namespace Lucene.Net.Search.Similarities
     using TextField = TextField;
 
     /// <summary>
-    /// Tests the <seealso cref="SimilarityBase"/>-based Similarities. Contains unit tests and
+    /// Tests the <see cref="SimilarityBase"/>-based Similarities. Contains unit tests and
     /// integration tests for all Similarities and correctness tests for a select
     /// few.
-    /// <p>this class maintains a list of
-    /// {@code SimilarityBase} subclasses. Each test case performs its test on all
+    /// <para>this class maintains a list of
+    /// <see cref="SimilarityBase"/> subclasses. Each test case performs its test on all
     /// items in the list. If a test case fails, the name of the Similarity that
-    /// caused the failure is returned as part of the assertion error message.</p>
-    /// <p>Unit testing is performed by constructing statistics manually and calling
-    /// the <seealso cref="SimilarityBase#score(BasicStats, float, float)"/> method of the
+    /// caused the failure is returned as part of the assertion error message.</para>
+    /// <para>Unit testing is performed by constructing statistics manually and calling
+    /// the <see cref="SimilarityBase.Score(BasicStats, float, float)"/> method of the
     /// Similarities. The statistics represent corner cases of corpus distributions.
-    /// </p>
-    /// <p>For the integration tests, a small (8-document) collection is indexed. The
+    /// </para>
+    /// <para>For the integration tests, a small (8-document) collection is indexed. The
     /// tests verify that for a specific query, all relevant documents are returned
     /// in the correct order. The collection consists of two poems of English poet
-    /// <a href="http://en.wikipedia.org/wiki/William_blake">William Blake</a>.</p>
-    /// <p>Note: the list of Similarities is maintained by hand. If a new Similarity
-    /// is added to the {@code Lucene.Net.Search.Similarities} package, the
-    /// list should be updated accordingly.</p>
-    /// <p>
+    /// <a href="http://en.wikipedia.org/wiki/William_blake">William Blake</a>.</para>
+    /// <para>Note: the list of Similarities is maintained by hand. If a new Similarity
+    /// is added to the <see cref="Lucene.Net.Search.Similarities"/> package, the
+    /// list should be updated accordingly.</para>
+    /// <para>
     /// In the correctness tests, the score is verified against the result of manual
     /// computation. Since it would be impossible to test all Similarities
     /// (e.g. all possible DFR combinations, all parameter values for LM), only
     /// the best performing setups in the original papers are verified.
-    /// </p>
+    /// </para>
     /// </summary>
     [TestFixture]
     public class TestSimilarityBase : LuceneTestCase
@@ -233,7 +233,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code numberOfDocuments = numberOfFieldTokens}.
+        /// <c>numberOfDocuments = numberOfFieldTokens</c>.
         /// </summary>
         [Test]
         public virtual void TestSparseDocuments()
@@ -247,7 +247,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code numberOfDocuments > numberOfFieldTokens}.
+        /// <c>numberOfDocuments > numberOfFieldTokens</c>.
         /// </summary>
         [Test]
         public virtual void TestVerySparseDocuments()
@@ -261,7 +261,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code NumberOfDocuments = 1}.
+        /// <c>NumberOfDocuments = 1</c>.
         /// </summary>
         [Test]
         public virtual void TestOneDocument()
@@ -277,7 +277,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code docFreq = numberOfDocuments}.
+        /// <c>docFreq = numberOfDocuments</c>.
         /// </summary>
         [Test]
         public virtual void TestAllDocumentsRelevant()
@@ -291,7 +291,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code docFreq > numberOfDocuments / 2}.
+        /// <c>docFreq > numberOfDocuments / 2</c>.
         /// </summary>
         [Test]
         public virtual void TestMostDocumentsRelevant()
@@ -305,7 +305,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code docFreq = 1}.
+        /// <c>docFreq = 1</c>.
         /// </summary>
         [Test]
         public virtual void TestOnlyOneRelevantDocument()
@@ -318,7 +318,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code totalTermFreq = numberOfFieldTokens}.
+        /// <c>totalTermFreq = numberOfFieldTokens</c>.
         /// </summary>
         [Test]
         public virtual void TestAllTermsRelevant()
@@ -332,7 +332,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code totalTermFreq > numberOfDocuments}.
+        /// <c>totalTermFreq > numberOfDocuments</c>.
         /// </summary>
         [Test]
         public virtual void TestMoreTermsThanDocuments()
@@ -344,7 +344,7 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Tests correct behavior when
-        /// {@code totalTermFreq = numberOfDocuments}.
+        /// <c>totalTermFreq = numberOfDocuments</c>.
         /// </summary>
         [Test]
         public virtual void TestNumberOfTermsAsDocuments()
@@ -355,7 +355,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Tests correct behavior when {@code totalTermFreq = 1}.
+        /// Tests correct behavior when <c>totalTermFreq = 1</c>.
         /// </summary>
         [Test]
         public virtual void TestOneTerm()
@@ -367,7 +367,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Tests correct behavior when {@code totalTermFreq = freq}.
+        /// Tests correct behavior when <c>totalTermFreq = freq</c>.
         /// </summary>
         [Test]
         public virtual void TestOneRelevantDocument()
@@ -379,7 +379,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Tests correct behavior when {@code numberOfFieldTokens = freq}.
+        /// Tests correct behavior when <c>numberOfFieldTokens = freq</c>.
         /// </summary>
         [Test]
         public virtual void TestAllTermsRelevantOnlyOneDocument()
@@ -425,7 +425,7 @@ namespace Lucene.Net.Search.Similarities
         }
 
         /// <summary>
-        /// Tests correct behavior when {@code avgFieldLength = docLen}.
+        /// Tests correct behavior when <c>avgFieldLength = docLen</c>.
         /// </summary>
         [Test]
         public virtual void TestDocumentLengthAverage()
@@ -570,9 +570,9 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// The generic test core called by all correctness test methods. It calls the
-        /// <seealso cref="SimilarityBase#score(BasicStats, float, float)"/> method of all
-        /// Similarities in <seealso cref="#sims"/> and compares the score against the manually
-        /// computed {@code gold}.
+        /// <see cref="SimilarityBase.Score(BasicStats, float, float)"/> method of all
+        /// Similarities in <see cref="Sims"/> and compares the score against the manually
+        /// computed <c>gold</c>.
         /// </summary>
         private void CorrectnessTestCore(SimilarityBase sim, float gold)
         {

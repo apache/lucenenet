@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "lucene-cli": {
+      "commandName": "Project"
+    }
+  }
+}

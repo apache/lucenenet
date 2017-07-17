@@ -21,11 +21,11 @@ namespace Lucene.Net.Codecs.MockSep
      */
 
     /// <summary>
-    /// Reads IndexInputs written with {@link
-    /// MockSingleIntIndexOutput}.  NOTE: this class is just for
+    /// Reads IndexInputs written with 
+    /// <see cref="MockSingleIntIndexOutput"/>.  NOTE: this class is just for
     /// demonstration purposes(it is a very slow way to read a
     /// block of ints).
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
     public class MockSingleIntIndexInput : Int32IndexInput

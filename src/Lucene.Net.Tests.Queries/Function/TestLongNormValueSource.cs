@@ -169,13 +169,13 @@ namespace Lucene.Net.Tests.Queries.Function
 
         /// <summary>
         /// Implemented as
-        ///  <code>state.getBoost()*lengthNorm(numTerms)</code>, where
-        ///  <code>numTerms</code> is <seealso cref="FieldInvertState#getLength()"/> if {@link
-        ///  #setDiscountOverlaps} is false, else it's {@link
-        ///  org.apache.lucene.index.FieldInvertState#getLength()} - {@link
-        ///  org.apache.lucene.index.FieldInvertState#getNumOverlap()}.
-        /// 
-        ///  @lucene.experimental 
+        /// <c>state.Boost*LengthNorm(numTerms)</c>, where
+        /// <c>numTerms</c> is <see cref="FieldInvertState.Length"/> if 
+        /// <see cref="DiscountOverlaps"/># is false, else it's 
+        /// <see cref="FieldInvertState.Length"/> - 
+        /// <see cref="FieldInvertState.NumOverlap"/>.
+        /// <para/>
+        /// @lucene.experimental 
         /// </summary>
         public override float LengthNorm(FieldInvertState state)
         {

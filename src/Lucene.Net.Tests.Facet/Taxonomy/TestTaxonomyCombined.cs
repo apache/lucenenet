@@ -314,7 +314,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(0, tr.GetPath(0).Length);
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.ParallelTaxonomyArrays.Parents[0]);
             Assert.AreEqual(0, tr.GetOrdinal(new FacetLabel()));
-            tr.Dispose(true);
+            tr.Dispose();
             indexDir.Dispose();
         }
 
@@ -336,7 +336,7 @@ namespace Lucene.Net.Facet.Taxonomy
             Assert.AreEqual(TaxonomyReader.INVALID_ORDINAL, tr.ParallelTaxonomyArrays.Parents[0]);
             Assert.AreEqual(0, tr.GetOrdinal(new FacetLabel()));
             tw.Dispose();
-            tr.Dispose(true);
+            tr.Dispose();
             indexDir.Dispose();
         }
 

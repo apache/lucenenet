@@ -270,7 +270,7 @@ namespace Lucene.Net.Facet
         /// Result of a drill sideways search, including the
         /// <see cref="Facet.Facets"/> and <see cref="TopDocs"/>. 
         /// </summary>
-        public class DrillSidewaysResult
+        public class DrillSidewaysResult // LUCENENET TODO: API De-nest this class
         {
             /// <summary>
             /// Combined drill down &amp; sideways results.

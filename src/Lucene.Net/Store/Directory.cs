@@ -263,7 +263,6 @@ namespace Lucene.Net.Store
             private IOContext context;
 
             public IndexInputSlicerAnonymousInnerClassHelper(Directory outerInstance, string name, IOContext context)
-                : base(outerInstance)
             {
                 this.outerInstance = outerInstance;
                 this.name = name;
@@ -311,13 +310,6 @@ namespace Lucene.Net.Store
 #endif
         public abstract class IndexInputSlicer : IDisposable
         {
-            private readonly Directory outerInstance;
-
-            public IndexInputSlicer(Directory outerInstance)
-            {
-                this.outerInstance = outerInstance;
-            }
-
             /// <summary>
             /// Returns an <see cref="IndexInput"/> slice starting at the given offset with the given length.
             /// </summary>

@@ -986,19 +986,19 @@ namespace Lucene.Net.Util
 
         // some BitSet compatability methods
 
-        //** see {@link intersect} */
+        /// <summary>see <see cref="Intersect(OpenBitSet)"/></summary>
         public virtual void And(OpenBitSet other)
         {
             Intersect(other);
         }
 
-        //** see {@link union} */
+        /// <summary>see <see cref="Union(OpenBitSet)"/></summary>
         public virtual void Or(OpenBitSet other)
         {
             Union(other);
         }
 
-        //** see {@link andNot} */
+        /// <summary>see <see cref="AndNot(OpenBitSet)"/></summary>
         public virtual void AndNot(OpenBitSet other)
         {
             Remove(other);

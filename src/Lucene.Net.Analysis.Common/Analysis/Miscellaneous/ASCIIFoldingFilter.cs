@@ -155,14 +155,16 @@ namespace Lucene.Net.Analysis.Miscellaneous
 
         /// <summary>
         /// Converts characters above ASCII to their ASCII equivalents.  For example,
-        /// accents are removed from accented characters. </summary>
+        /// accents are removed from accented characters. 
+        /// <para/>
+        /// @lucene.internal
+        /// </summary>
         /// <param name="input">     The characters to fold </param>
         /// <param name="inputPos">  Index of the first character to fold </param>
-        /// <param name="output">    The result of the folding. Should be of size >= {@code length * 4}. </param>
+        /// <param name="output">    The result of the folding. Should be of size >= <c>length * 4</c>. </param>
         /// <param name="outputPos"> Index of output where to put the result of the folding </param>
         /// <param name="length">    The number of characters to fold </param>
-        /// <returns> length of output
-        /// @lucene.internal </returns>
+        /// <returns> length of output </returns>
         public static int FoldToASCII(char[] input, int inputPos, char[] output, int outputPos, int length)
         {
             int end = inputPos + length;

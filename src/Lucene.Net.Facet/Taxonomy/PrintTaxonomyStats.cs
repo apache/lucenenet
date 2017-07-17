@@ -59,14 +59,18 @@ namespace Lucene.Net.Facet.Taxonomy
             }
             if (args.Length != (printTree ? 2 : 1))
             {
-                // LUCENENET TODO: Usage depends on wrapping this into a console application assembly.
-                Console.WriteLine("\nUsage: java -classpath ... org.apache.lucene.facet.util.PrintTaxonomyStats [-printTree] /path/to/taxononmy/index\n");
-                return 1;
+                // LUCENENET specific - our wrapper console shows the correct usage
+                throw new ArgumentException();
+                //Console.WriteLine("\nUsage: java -classpath ... org.apache.lucene.facet.util.PrintTaxonomyStats [-printTree] /path/to/taxononmy/index\n");
+                //return 1;
             }
-            Store.Directory dir = FSDirectory.Open(new DirectoryInfo(path));
-            var r = new DirectoryTaxonomyReader(dir);
-            PrintStats(r, System.Console.Out, printTree);
-            r.Dispose();
+            using (Store.Directory dir = FSDirectory.Open(new DirectoryInfo(path)))
+            {
+                using (var r = new DirectoryTaxonomyReader(dir))
+                {
+                    PrintStats(r, System.Console.Out, printTree);
+                }
+            }
   
             return 0;
         }

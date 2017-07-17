@@ -35,7 +35,7 @@ namespace Lucene.Net.Search.PostingsHighlight
 	 */
 
     /// <summary>
-    /// Some tests that override {@link PostingsHighlighter#getIndexAnalyzer} to
+    /// Some tests that override <see cref="PostingsHighlighter.GetIndexAnalyzer(string)"/> to
     /// highlight wilcard, fuzzy, etc queries.
     /// </summary>
     [SuppressCodecs("MockFixedIntBlock", "MockVariableIntBlock", "MockSep", "MockRandom", "Lucene3x")]

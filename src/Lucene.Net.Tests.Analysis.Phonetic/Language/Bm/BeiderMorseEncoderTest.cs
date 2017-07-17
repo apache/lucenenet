@@ -207,7 +207,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
         }
 
         /**
-         * (Un)luckily, the worse performing test because of the data in {@link #TEST_CHARS}
+         * (Un)luckily, the worse performing test because of the data in <see cref="TEST_CHARS"/>
          *
          * @throws EncoderException
          */

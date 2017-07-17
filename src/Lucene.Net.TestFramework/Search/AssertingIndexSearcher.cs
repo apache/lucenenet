@@ -30,7 +30,7 @@ namespace Lucene.Net.Search
 
     /// <summary>
     /// Helper class that adds some extra checks to ensure correct
-    /// usage of {@code IndexSearcher} and {@code Weight}.
+    /// usage of <see cref="IndexSearcher"/> and <see cref="Weight"/>.
     /// </summary>
     public class AssertingIndexSearcher : IndexSearcher
     {
@@ -61,7 +61,7 @@ namespace Lucene.Net.Search
         }
 
         /// <summary>
-        /// Ensures, that the returned {@code Weight} is not normalized again, which may produce wrong scores. </summary>
+        /// Ensures, that the returned <see cref="Weight"/> is not normalized again, which may produce wrong scores. </summary>
         public override Weight CreateNormalizedWeight(Query query)
         {
             Weight w = base.CreateNormalizedWeight(query);

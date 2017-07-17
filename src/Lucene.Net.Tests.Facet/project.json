@@ -1,6 +1,6 @@
 ﻿{
   "version": "4.8.0",
-  "title": "Lucene.Net.Tests.Classification",
+  "title": "Lucene.Net.Tests.Facet",
   "buildOptions": {
     "compile": {
       "includeFiles": [ "../CommonAssemblyInfo.cs" ]
@@ -19,12 +19,7 @@
       "imports": "dnxcore50",
       "buildOptions": {
         "debugType": "portable",
-        "define": [ "NETSTANDARD" ],
-        "compile": {
-          "excludeFiles": [
-            "Support/TestApiConsistency.cs"
-          ]
-        }
+        "define": [ "NETSTANDARD" ]
       }
     },
     "net451": {

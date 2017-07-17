@@ -194,7 +194,7 @@ namespace Lucene.Net.Util
 
         // Supposed to be >= sin(77.2deg), as fdlibm code is supposed to work with values > 0.975,
         // but seems to work well enough as long as value >= sin(25deg).
-        private static readonly double ASIN_MAX_VALUE_FOR_TABS = Math.Sin(MathExtension.ToRadians(73.0));
+        private static readonly double ASIN_MAX_VALUE_FOR_TABS = Math.Sin(73.0.ToRadians());
 
         private static readonly int ASIN_TABS_SIZE = (1 << 13) + 1;
         private static readonly double ASIN_DELTA = ASIN_MAX_VALUE_FOR_TABS / (ASIN_TABS_SIZE - 1);
