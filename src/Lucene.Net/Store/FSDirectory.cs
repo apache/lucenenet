@@ -499,14 +499,6 @@ namespace Lucene.Net.Store
                 //Debug.Assert(size == 0);
             }
 
-            // LUCENENET specific - file.Flush(flushToDisk: true) required in .NET for concurrency
-            // Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
-            public override void Flush()
-            {
-                base.Flush();
-                file.Flush(flushToDisk: true);
-            }
-
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -519,6 +511,9 @@ namespace Lucene.Net.Store
                         try
                         {
                             base.Dispose(disposing);
+                            // LUCENENET specific - file.Flush(flushToDisk: true) required in .NET for concurrency
+                            // Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
+                            file.Flush(flushToDisk: true);
                         }
                         catch (IOException ioe)
                         {
