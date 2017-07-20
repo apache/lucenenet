@@ -5225,8 +5225,8 @@ namespace Lucene.Net.Index
                 // lost...
 
                 if (infoStream.IsEnabled("IW"))
-                {// LUCENENET TODO: String formatting
-                    infoStream.Message("IW", string.Format(CultureInfo.InvariantCulture, "merged segment size=%.3f MB vs estimate=%.3f MB", merge.info.GetSizeInBytes() / 1024.0 / 1024.0, merge.EstimatedMergeBytes / 1024 / 1024.0));
+                {
+                    infoStream.Message("IW", string.Format(CultureInfo.InvariantCulture, "merged segment size={0:n3} MB vs estimate={1:n3} MB", merge.info.GetSizeInBytes() / 1024.0 / 1024.0, merge.EstimatedMergeBytes / 1024 / 1024.0));
                 }
 
                 IndexReaderWarmer mergedSegmentWarmer = config.MergedSegmentWarmer;
