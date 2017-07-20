@@ -818,8 +818,6 @@ namespace Lucene.Net.Util.Automaton
             // like SortedMap<Integer,Integer>
             SortedInt32Set statesSet = new SortedInt32Set(5);
 
-            // LUCENENET TODO: THIS IS INFINITE LOOPING
-
             // LUCENENET NOTE: The problem here is almost certainly 
             // due to the conversion to FrozenIntSet along with its
             // differing equality checking.
