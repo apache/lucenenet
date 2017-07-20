@@ -124,16 +124,16 @@ namespace Lucene.Net.Store
                 socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, 1);
                 socket.Connect(verifierHost, verifierPort);
 
-                using (Stream @out = new NetworkStream(socket), @in = new NetworkStream(socket))
+                using (Stream stream = new NetworkStream(socket))
                 {
-                    BinaryReader intReader = new BinaryReader(@in);
-                    BinaryWriter intWriter = new BinaryWriter(@out);
+                    BinaryReader intReader = new BinaryReader(stream);
+                    BinaryWriter intWriter = new BinaryWriter(stream);
 
                     intWriter.Write(myID);
-                    @out.Flush();
+                    stream.Flush();
 
                     lockFactory.LockPrefix = "test";
-                    LockFactory verifyLF = new VerifyingLockFactory(lockFactory, @in, @out);
+                    LockFactory verifyLF = new VerifyingLockFactory(lockFactory, stream);
                     Lock l = verifyLF.MakeLock("test.lock");
                     Random rnd = new Random();
 
