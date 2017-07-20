@@ -20,7 +20,7 @@ Hostname or IP address that [verify-server](verify-server.md) will listen on.
 
 `MAX_CLIENTS`
 
-The maximum number of connected clients.
+The maximum number of threads that are observing the lock from within the verify-server process. When using [stress-test](stress-test.md), each thread will be used by a single connected client and the server won't start running until this number of clients is reached.
 
 ### Options
 
@@ -30,6 +30,6 @@ Prints out a short help for the command.
 
 ### Example
 
-Run the server on IP `127.0.0.4` with a maximum of 100 connected clients allowed:
+Run the server on IP `127.0.0.4` with a 10 connected clients:
 
-<code>dotnet lucene-cli.dll lock verify-server 127.0.0.4 100</code>
+<code>dotnet lucene-cli.dll lock verify-server 127.0.0.4 10</code>
