@@ -38,7 +38,6 @@ Note that even though we are currently a port of Lucene 4.8.0, we recommend port
 
 ### Pending being ported from scratch (code + tests)
 
-* [Lucene.Net.Analysis.ICU](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.1/lucene/analysis/icu) - See [JIRA issue 566](https://issues.apache.org/jira/browse/LUCENENET-566)
 * [Lucene.Net.Analysis.Kuromoji](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.1/lucene/analysis/kuromoji) - See [JIRA issue 567](https://issues.apache.org/jira/browse/LUCENENET-567)
 
 ### Pending being ported from scratch (code + tests), but have additional dependencies that also either need to be sourced from the .NET ecosystem or ported.
@@ -74,6 +73,7 @@ and <https://github.com/apache/lucenenet/blob/master/src/Lucene.Net.TestFramewor
 
 * Making demos and tutorials, blogging about Lucene.Net, etc. (and providing feedback on how we can make the API better!). If you write a helpful Lucene.Net post on your blog, be sure to let us know so we can link to it.
 * Helping out with documentation. We are still trying to make the API docs easily navigable (see #206), and there are many files that are not formatted correctly (links not appearing, tables not very readable, etc). Also, we need help getting all of the Java-related documentation converted to use .NET methodologies.
+* Fixing TODOs. There are several TODOs throughout the code that need to be reviewed and action taken, if necessary. Search for `LUCENENET TODO|LUCENE TO-DO` using the regular expression option in Visual Studio to find them. Do note there are a lot of TODOs left over from Java Lucene that are safe to ignore.
 * Reviewing code. Pick a random section, review line by line, comparing the code against the [original Lucene 4.8.0 code](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.0/lucene). Many of the bugs have been found this way, as the tests are not showing them. Let us know if you find anything suspicious on the [dev mailing list](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) or submit a pull request.
 * Optimizing code. During porting we have ended up with some code that is less than optimal. We could use a hand getting everything up to speed (pun intended).
 * Helping update the API, or at least just providing feedback on what is important. There are several things on our radar, like integrating something like [Lucene.Net.Linq](https://github.com/themotleyfool/Lucene.Net.Linq) directly into our project, [converting the remaining public-facing iterator classes into `IEnumerator<T>`](https://issues.apache.org/jira/projects/LUCENENET/issues/LUCENENET-469?filter=allopenissues) so they can be used with foreach loops, adding extension methods to remove the need for casting, etc.
