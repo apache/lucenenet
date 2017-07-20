@@ -89,16 +89,12 @@ namespace Lucene.Net.Store
 
         // LUCENENET: NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
         // IW.Unlock and IW.IsLocked works correctly
-        internal readonly ConcurrentDictionary<string, NativeFSLock> _locks = new ConcurrentDictionary<string, NativeFSLock>(); 
+        internal static readonly ConcurrentDictionary<string, Lazy<NativeFSLock>> _locks = new ConcurrentDictionary<string, Lazy<NativeFSLock>>();
 
         public override Lock MakeLock(string lockName)
         {
-            if (m_lockPrefix != null)
-            {
-                lockName = m_lockPrefix + "-" + lockName;
-            }
-
-            return _locks.GetOrAdd(lockName, (s) => new NativeFSLock(this, m_lockDir, s));
+            var path = new DirectoryInfo(System.IO.Path.Combine(m_lockDir.FullName, lockName));
+            return _locks.GetOrAdd(path.FullName, s => new Lazy<NativeFSLock>(() => new NativeFSLock(this, m_lockDir, s))).Value;
         }
 
         public override void ClearLock(string lockName)
@@ -191,16 +187,8 @@ namespace Lucene.Net.Store
                 {
                     if (channel != null)
                     {
-                        try
-                        {
-                            NativeFSLock _;
-                            outerInstance._locks.TryRemove(path.FullName, out _);
-                        }
-                        finally
-                        {
-                            IOUtils.DisposeWhileHandlingException(channel);
-                            channel = null;
-                        }
+                        IOUtils.DisposeWhileHandlingException(channel);
+                        channel = null;
 
                         bool tmpBool;
                         if (File.Exists(path.FullName))
