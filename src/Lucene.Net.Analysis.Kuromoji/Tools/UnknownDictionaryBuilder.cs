@@ -115,14 +115,14 @@ namespace Lucene.Net.Analysis.Ja.Util
 
                         if (!values[0].Contains(".."))
                         {
-                            int cp = Convert.ToInt32(values[0]);
+                            int cp = Convert.ToInt32(values[0], 16);
                             dictionary.PutCharacterCategory(cp, values[1]);
                         }
                         else
                         {
                             string[] codePoints = Regex.Split(values[0], "\\.\\.");
-                            int cpFrom = Convert.ToInt32(codePoints[0]);
-                            int cpTo = Convert.ToInt32(codePoints[1]);
+                            int cpFrom = Convert.ToInt32(codePoints[0], 16);
+                            int cpTo = Convert.ToInt32(codePoints[1], 16);
 
                             for (int i = cpFrom; i <= cpTo; i++)
                             {
