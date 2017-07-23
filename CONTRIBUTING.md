@@ -36,11 +36,7 @@ helpers to help with that, see for examples see our [Java style methods to avoid
 
 Note that even though we are currently a port of Lucene 4.8.0, we recommend porting over new work from 4.8.1. We hope to begin the work of upgrading to 4.8.1 soon (let us know if interested). There are only about 100 files that changed between 4.8.0 and 4.8.1.
 
-### Pending being ported from scratch (code + tests)
-
-* [Lucene.Net.Analysis.Kuromoji](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.1/lucene/analysis/kuromoji) - See [JIRA issue 567](https://issues.apache.org/jira/browse/LUCENENET-567)
-
-### Pending being ported from scratch (code + tests), but have additional dependencies that also either need to be sourced from the .NET ecosystem or ported.
+### Pending being ported from scratch (code + tests) plus have additional dependencies that either need to be sourced from the .NET ecosystem or ported.
 
 * [Lucene.Net.Benchmark](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.1/lucene/benchmark) - See [JIRA issue 564](https://issues.apache.org/jira/browse/LUCENENET-564)
 * [Lucene.Net.Analysis.Morfologik](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.1/lucene/analysis/morfologik) - See [JIRA issue 568](https://issues.apache.org/jira/browse/LUCENENET-568)
