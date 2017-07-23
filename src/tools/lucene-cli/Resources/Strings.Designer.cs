@@ -69,6 +69,60 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
+        ///    Looks up a localized string similar to Builds a custom dictionary that can be used by the JapaneseAnalyzer or JapaneseTokenizer..
+        /// </summary>
+        public static string AnalysisKuromojiBuildDictionaryCommandDescription {
+            get {
+                return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to The dictionary format. Valid values are IPADIC and UNIDIC. If an invalid value is passed, IPADIC is assumed..
+        /// </summary>
+        public static string AnalysisKuromojiBuildDictionaryCommandFormatDescription {
+            get {
+                return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandFormatDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to The directory where the dictionary input files are located..
+        /// </summary>
+        public static string AnalysisKuromojiBuildDictionaryCommandInputDirectoryDescription {
+            get {
+                return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandInputDirectoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to The file encoding used by the input files. If not supplied, the default value is `UTF-8`..
+        /// </summary>
+        public static string AnalysisKuromojiBuildDictionaryCommandInputDirectoryEncodingDescription {
+            get {
+                return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandInputDirectoryEncodingDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Normalize the entries using normalization form KC..
+        /// </summary>
+        public static string AnalysisKuromojiBuildDictionaryCommandNormalizeDescription {
+            get {
+                return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandNormalizeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to The directory to put the dictionary output..
+        /// </summary>
+        public static string AnalysisKuromojiBuildDictionaryCommandOutputDirectoryDescription {
+            get {
+                return ResourceManager.GetString("AnalysisKuromojiBuildDictionaryCommandOutputDirectoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Looks up a localized string similar to Compiles a stemmer table for the Egothor stemmer..
         /// </summary>
         public static string AnalysisStempelCompileStemsCommandDescription {

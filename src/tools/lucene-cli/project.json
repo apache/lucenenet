@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "4.8.0",
   "entryPoint": "Program",
   "buildOptions": {
@@ -19,6 +19,7 @@
   "dependencies": {
     "Lucene.Net": "4.8.0",
     "Lucene.Net.Analysis.Common": "4.8.0",
+    "Lucene.Net.Analysis.Kuromoji": "4.8.0",
     "Lucene.Net.Analysis.Stempel": "4.8.0",
     "Lucene.Net.Demo": "4.8.0",
     "Lucene.Net.Expressions": "4.8.0",

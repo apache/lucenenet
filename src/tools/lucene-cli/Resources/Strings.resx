@@ -120,6 +120,24 @@
   <data name="AnalysisCommandDescription" xml:space="preserve">
     <value>Utilities to manage specialized analyzers.</value>
   </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandDescription" xml:space="preserve">
+    <value>Builds a custom dictionary that can be used by the JapaneseAnalyzer or JapaneseTokenizer.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandFormatDescription" xml:space="preserve">
+    <value>The dictionary format. Valid values are IPADIC and UNIDIC. If an invalid value is passed, IPADIC is assumed.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandInputDirectoryDescription" xml:space="preserve">
+    <value>The directory where the dictionary input files are located.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandInputDirectoryEncodingDescription" xml:space="preserve">
+    <value>The file encoding used by the input files. If not supplied, the default value is `UTF-8`.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandNormalizeDescription" xml:space="preserve">
+    <value>Normalize the entries using normalization form KC.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>The directory to put the dictionary output.</value>
+  </data>
   <data name="AnalysisStempelCompileStemsCommandDescription" xml:space="preserve">
     <value>Compiles a stemmer table for the Egothor stemmer.</value>
   </data>
