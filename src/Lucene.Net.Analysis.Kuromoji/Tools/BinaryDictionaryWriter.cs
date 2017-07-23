@@ -263,7 +263,12 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         protected string GetBaseFileName(string baseDir)
         {
-            return baseDir + System.IO.Path.DirectorySeparatorChar + m_implClazz.FullName.Replace('.', System.IO.Path.DirectorySeparatorChar);
+            // LUCENENET specific: we don't need to do a "classpath" output directory, since we
+            // are changing the implementation to read files dynamically instead of making the
+            // user recompile with the new files.
+            return System.IO.Path.Combine(baseDir, m_implClazz.Name);
+
+            //return baseDir + System.IO.Path.DirectorySeparatorChar + m_implClazz.FullName.Replace('.', System.IO.Path.DirectorySeparatorChar);
         }
 
         /// <summary>
@@ -354,14 +359,16 @@ namespace Lucene.Net.Analysis.Ja.Util
                 DataOutput @out = new OutputStreamDataOutput(os);
                 CodecUtil.WriteHeader(@out, BinaryDictionary.DICT_HEADER, BinaryDictionary.VERSION);
                 @out.WriteVInt32(m_buffer.Position);
-                var writer = new BinaryWriter(os);
 
                 //WritableByteChannel channel = Channels.newChannel(os);
                 // Write Buffer
                 m_buffer.Flip();  // set position to 0, set limit to current position
                 //channel.write(buffer);
 
-                writer.Write(m_buffer.Array, m_buffer.Position, m_buffer.Limit);
+                while (m_buffer.HasRemaining)
+                {
+                    @out.WriteByte(m_buffer.Get());
+                }
 
                 Debug.Assert(m_buffer.Remaining == 0L);
             }

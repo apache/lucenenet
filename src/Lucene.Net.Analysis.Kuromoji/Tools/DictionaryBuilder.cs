@@ -27,6 +27,15 @@ namespace Lucene.Net.Analysis.Ja.Util
         {
         }
 
+        static DictionaryBuilder()
+        {
+#if NETSTANDARD
+            // Support for EUC-JP encoding. See: https://docs.microsoft.com/en-us/dotnet/api/system.text.codepagesencodingprovider?view=netcore-2.0
+            var encodingProvider = System.Text.CodePagesEncodingProvider.Instance;
+            System.Text.Encoding.RegisterProvider(encodingProvider);
+#endif
+        }
+
         public static void Build(DictionaryFormat format,
             string inputDirname,
             string outputDirname,

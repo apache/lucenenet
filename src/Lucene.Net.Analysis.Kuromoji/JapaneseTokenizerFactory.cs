@@ -72,6 +72,15 @@ namespace Lucene.Net.Analysis.Ja
             }
         }
 
+        static JapaneseTokenizerFactory()
+        {
+#if NETSTANDARD
+            // Support for EUC-JP encoding. See: https://docs.microsoft.com/en-us/dotnet/api/system.text.codepagesencodingprovider?view=netcore-2.0
+            var encodingProvider = System.Text.CodePagesEncodingProvider.Instance;
+            System.Text.Encoding.RegisterProvider(encodingProvider);
+#endif
+        }
+
         public virtual void Inform(IResourceLoader loader)
         {
             if (userDictionaryPath != null)

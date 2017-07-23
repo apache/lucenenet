@@ -31,6 +31,7 @@ namespace Lucene.Net.Cli
 
                 this.Name = "kuromoji-build-dictionary";
                 this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
                 this.Format = this.Argument(
                     "<FORMAT>",
@@ -76,7 +77,7 @@ namespace Lucene.Net.Cli
             }
             else
             {
-                args.Add("utf-8");
+                args.Add("euc-jp");
             }
 
             if (input.Normalize.HasValue())

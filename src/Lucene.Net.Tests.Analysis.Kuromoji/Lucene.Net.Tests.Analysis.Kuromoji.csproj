@@ -60,6 +60,7 @@
     <Compile Include="TestJapaneseTokenizer.cs" />
     <Compile Include="TestJapaneseTokenizerFactory.cs" />
     <Compile Include="TestSearchMode.cs" />
+    <Compile Include="Tools\TestBuildDictionary.cs" />
     <Compile Include="Tools\UnknownDictionaryTest.cs" />
     <Compile Include="Util\TestToStringUtil.cs" />
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -87,6 +88,7 @@
   <ItemGroup>
     <EmbeddedResource Include="bocchan.utf-8" />
     <None Include="Lucene.Net.Tests.Analysis.Kuromoji.project.json" />
+    <EmbeddedResource Include="Tools\custom-dictionary-input.zip" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

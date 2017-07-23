@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Security;
 
 namespace Lucene.Net.Analysis.Ja.Dict
 {
@@ -45,6 +46,50 @@ namespace Lucene.Net.Analysis.Ja.Dict
         private readonly string[] posDict;
         private readonly string[] inflTypeDict;
         private readonly string[] inflFormDict;
+
+        // LUCENENET specific - variable to hold the name of the data directory (or empty string to load embedded resources)
+        private static readonly string DATA_DIR;
+        // LUCENENET specific - name of the subdirectory inside of the directory where the Kuromoji dictionary files reside.
+        private static readonly string DATA_SUBDIR = "kuromoji-data";
+
+        static BinaryDictionary()
+        {
+            string currentPath = GetSystemProperty("kuromoji.data.dir",
+#if NETSTANDARD
+                System.AppContext.BaseDirectory
+#else
+                AppDomain.CurrentDomain.BaseDirectory
+#endif
+                );
+
+            // If a matching directory path is found, set our DATA_DIR static
+            // variable. If it is null or empty after this process, we need to
+            // load the embedded files.
+            string candidatePath = System.IO.Path.Combine(currentPath, DATA_SUBDIR);
+            if (System.IO.Directory.Exists(candidatePath))
+            {
+                DATA_DIR = candidatePath;
+                return;
+            }
+
+            while (new DirectoryInfo(currentPath).Parent != null)
+            {
+                try
+                {
+                    candidatePath = System.IO.Path.Combine(new DirectoryInfo(currentPath).Parent.FullName, DATA_SUBDIR);
+                    if (System.IO.Directory.Exists(candidatePath))
+                    {
+                        DATA_DIR = candidatePath;
+                        return;
+                    }
+                    currentPath = new DirectoryInfo(currentPath).Parent.FullName;
+                }
+                catch (SecurityException)
+                {
+                    // ignore security errors
+                }
+            }
+        }
 
         protected BinaryDictionary()
         {
@@ -135,10 +180,46 @@ namespace Lucene.Net.Analysis.Ja.Dict
         // util, reused by ConnectionCosts and CharacterDefinition
         public static Stream GetTypeResource(Type clazz, string suffix)
         {
-            Stream @is = clazz.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(clazz, clazz.Name + suffix);
-            if (@is == null)
-                throw new FileNotFoundException("Not in assembly: " + clazz.FullName + suffix);
-            return @is;
+            string fileName = clazz.Name + suffix;
+
+            // LUCENENET specific: Rather than forcing the end user to recompile if they want to use a custom dictionary,
+            // we load the data from the kuromoji-data directory (which can be set via the kuromoji.data.dir environment variable).
+            if (string.IsNullOrEmpty(DATA_DIR))
+            {
+                Stream @is = clazz.GetTypeInfo().Assembly.FindAndGetManifestResourceStream(clazz, fileName);
+                if (@is == null)
+                    throw new FileNotFoundException("Not in assembly: " + clazz.FullName + suffix);
+                return @is;
+            }
+
+            // We have a data directory, so first check if the file exists
+            string path = System.IO.Path.Combine(DATA_DIR, fileName);
+            if (!System.IO.File.Exists(path))
+            {
+                throw new FileNotFoundException(string.Format("Expected file '{0}' not found. " +
+                    "If the '{1}' directory exists, this file is required. " +
+                    "Either remove the '{3}' directory or generate the required dictionary files using the lucene-cli tool.",
+                    fileName, DATA_DIR, DATA_SUBDIR));
+            }
+
+            // The file exists - open a stream.
+            return new FileStream(path, FileMode.Open, FileAccess.Read);
+        }
+
+        // LUCENENET specific helper to load environment variables and ignore security exceptions
+        private static string GetSystemProperty(string property, string defaultValue)
+        {
+            string setting;
+            try
+            {
+                setting = Environment.GetEnvironmentVariable(property);
+            }
+            catch (SecurityException)
+            {
+                setting = null;
+            }
+
+            return (setting == null) ? defaultValue : setting;
         }
 
         public virtual void LookupWordIds(int sourceId, Int32sRef @ref)

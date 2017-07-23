@@ -66,7 +66,7 @@ namespace Lucene.Net.Cli.Commands
                     
                     .Concat(new string[] {
                         // Special case: the encoding must always be supplied
-                        "utf-8",
+                        "euc-jp",
                         // Special case: normalize must always be supplied
                         "false"
                     }).ToArray());
@@ -79,7 +79,7 @@ namespace Lucene.Net.Cli.Commands
                     string command = string.Join(" ", requiredArg.Select(x => x.InputPattern).Union(optionalArg.Select(x => x.InputPattern).ToArray()));
                     string[] expected = requiredArg.SelectMany(x => x.Output)
                         // Special case: the encoding must always be supplied
-                        .Concat(Regex.IsMatch(command, "-e|--encoding") ? new string[] { "UTF-16" } : new string[] { "utf-8" })
+                        .Concat(Regex.IsMatch(command, "-e|--encoding") ? new string[] { "UTF-16" } : new string[] { "euc-jp" })
                         // Special case: the encoding must always be supplied
                         .Concat(Regex.IsMatch(command, "-n|--normalize") ? new string[] { "true" } : new string[] { "false" }).ToArray();
                     AssertCommandTranslation(command, expected);

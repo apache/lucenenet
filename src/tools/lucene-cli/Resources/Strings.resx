@@ -121,7 +121,24 @@
     <value>Utilities to manage specialized analyzers.</value>
   </data>
   <data name="AnalysisKuromojiBuildDictionaryCommandDescription" xml:space="preserve">
-    <value>Builds a custom dictionary that can be used by the JapaneseAnalyzer or JapaneseTokenizer.</value>
+    <value>Generates a set of custom dictionary files for the Lucene.Net.Analysis.Kuromoji library.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandExtendedHelpText" xml:space="preserve">
+    <value>Generates the following set of binary files:
+
+- CharacterDefinition.dat
+- ConnectionCosts.dat
+- TokenInfoDictionary$buffer.dat
+- TokenInfoDictionary$fst.dat
+- TokenInfoDictionary$posDict.dat
+- TokenInfoDictionary$targetMap.dat
+- UnknownDictionary$buffer.dat
+- UnknownDictionary$posDict.dat
+- UnknownDictionary$targetMap.dat
+
+If these files are placed into a subdirectory of your application named 'kuromoji-data', they will be used automatically by Lucene.Net.Analysis.Kuromoji features such as the JapaneseAnalyzer or JapaneseTokenizer. To use an alternate directory location, put the path in an environment variable named 'kuromoji.data.dir'. The files must be placed in a subdirectory of this location named 'kuromoji-data'.
+
+See this blog post (http://mentaldetritus.blogspot.com/2013/03/compiling-custom-dictionary-for.html) for information about the dictionary format. A sample is available at (https://sourceforge.net/projects/mecab/files/mecab-ipadic/2.7.0-20070801/). The Kuromoji project documentation (https://github.com/atilika/kuromoji) may also be helpful.</value>
   </data>
   <data name="AnalysisKuromojiBuildDictionaryCommandFormatDescription" xml:space="preserve">
     <value>The dictionary format. Valid values are IPADIC and UNIDIC. If an invalid value is passed, IPADIC is assumed.</value>
@@ -130,7 +147,7 @@
     <value>The directory where the dictionary input files are located.</value>
   </data>
   <data name="AnalysisKuromojiBuildDictionaryCommandInputDirectoryEncodingDescription" xml:space="preserve">
-    <value>The file encoding used by the input files. If not supplied, the default value is `UTF-8`.</value>
+    <value>The file encoding used by the input files. If not supplied, the default value is EUC-JP.</value>
   </data>
   <data name="AnalysisKuromojiBuildDictionaryCommandNormalizeDescription" xml:space="preserve">
     <value>Normalize the entries using normalization form KC.</value>

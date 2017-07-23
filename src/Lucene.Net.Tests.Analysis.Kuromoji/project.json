@@ -9,7 +9,8 @@
       "includeFiles": [
         "bocchan.utf-8",
         "search-segmentation-tests.txt",
-        "userdict.txt"
+        "userdict.txt",
+        "Tools/custom-dictionary-input.zip"
       ]
     }
   },

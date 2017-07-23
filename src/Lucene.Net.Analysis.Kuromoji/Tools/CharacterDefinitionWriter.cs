@@ -68,8 +68,13 @@ namespace Lucene.Net.Analysis.Ja.Util
 
         public void Write(string baseDir)
         {
-            string filename = baseDir + System.IO.Path.DirectorySeparatorChar +
-                typeof(CharacterDefinition).FullName.Replace('.', System.IO.Path.DirectorySeparatorChar) + CharacterDefinition.FILENAME_SUFFIX;
+            //string filename = baseDir + System.IO.Path.DirectorySeparatorChar +
+            //    typeof(CharacterDefinition).FullName.Replace('.', System.IO.Path.DirectorySeparatorChar) + CharacterDefinition.FILENAME_SUFFIX;
+
+            // LUCENENET specific: we don't need to do a "classpath" output directory, since we
+            // are changing the implementation to read files dynamically instead of making the
+            // user recompile with the new files.
+            string filename = System.IO.Path.Combine(baseDir, typeof(CharacterDefinition).Name + CharacterDefinition.FILENAME_SUFFIX);
             //new File(filename).getParentFile().mkdirs();
             System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(baseDir));
             using (Stream os = new FileStream(filename, FileMode.Create, FileAccess.Write))
