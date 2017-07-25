@@ -520,6 +520,7 @@
     <Compile Include="Support\IO\TestByteBuffer.cs" />
     <Compile Include="Support\IO\TestHeapByteBuffer.cs" />
     <Compile Include="Support\IO\TestReadOnlyHeapByteBuffer.cs" />
+    <Compile Include="Support\IO\TestStreamTokenizer.cs" />
     <Compile Include="Support\SmallObject.cs" />
     <Compile Include="Support\TestPriorityQueue.cs" />
     <Compile Include="Support\Threading\TestCloseableThreadLocal.cs" />
