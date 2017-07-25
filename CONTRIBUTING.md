@@ -38,7 +38,6 @@ Note that even though we are currently a port of Lucene 4.8.0, we recommend port
 
 ### Pending being ported from scratch (code + tests) plus have additional dependencies that either need to be sourced from the .NET ecosystem or ported.
 
-* [Lucene.Net.Benchmark](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.1/lucene/benchmark) - See [JIRA issue 564](https://issues.apache.org/jira/browse/LUCENENET-564)
 * [Lucene.Net.Analysis.Morfologik](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.1/lucene/analysis/morfologik) - See [JIRA issue 568](https://issues.apache.org/jira/browse/LUCENENET-568)
 * [Lucene.Net.Analysis.UIMA](https://github.com/apache/lucene-solr/tree/releases/lucene-solr/4.8.1/lucene/analysis/uima) - See [JIRA issue 570](https://issues.apache.org/jira/browse/LUCENENET-570)
 
