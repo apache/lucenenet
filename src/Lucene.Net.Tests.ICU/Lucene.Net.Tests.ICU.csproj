@@ -74,6 +74,18 @@
     <Compile Include="..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestSegmentingTokenizerBase.cs">
       <Link>Analysis\Util\TestSegmentingTokenizerBase.cs</Link>
     </Compile>
+    <Compile Include="..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationDocValuesField.cs">
+      <Link>Collation\TestICUCollationDocValuesField.cs</Link>
+    </Compile>
+    <Compile Include="..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationKeyAnalyzer.cs">
+      <Link>Collation\TestICUCollationKeyAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationKeyFilter.cs">
+      <Link>Collation\TestICUCollationKeyFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationKeyFilterFactory.cs">
+      <Link>Collation\TestICUCollationKeyFilterFactory.cs</Link>
+    </Compile>
     <Compile Include="..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestMultiTermHighlighting.cs">
       <Link>Search\PostingsHighlight\TestMultiTermHighlighting.cs</Link>
     </Compile>
