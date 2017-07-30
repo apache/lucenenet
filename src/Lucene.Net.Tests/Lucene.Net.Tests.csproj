@@ -118,6 +118,7 @@
     <None Include="Lucene.Net.snk" />
     <None Include="Lucene.Net.Tests.project.json" />
     <EmbeddedResource Include="Store\LUCENENET521.zip" />
+    <EmbeddedResource Include="Support\hyts_PropertiesTest.properties" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
@@ -522,6 +523,7 @@
     <Compile Include="Support\IO\TestReadOnlyHeapByteBuffer.cs" />
     <Compile Include="Support\IO\TestStreamTokenizer.cs" />
     <Compile Include="Support\SmallObject.cs" />
+    <Compile Include="Support\TestDictionaryExtensions.cs" />
     <Compile Include="Support\TestPriorityQueue.cs" />
     <Compile Include="Support\Threading\TestCloseableThreadLocal.cs" />
     <Compile Include="Support\TestCollections.cs" />
