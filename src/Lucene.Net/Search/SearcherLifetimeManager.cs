@@ -145,7 +145,7 @@ namespace Lucene.Net.Search
         // TODO: we could get by w/ just a "set"; need to have
         // Tracker hash by its version and have compareTo(Long)
         // compare to its version
-        private readonly ConcurrentDictionary<long, SearcherTracker> _searchers = new ConcurrentDictionary<long, SearcherTracker>();
+        private readonly ConcurrentDictionary<long, Lazy<SearcherTracker>> _searchers = new ConcurrentDictionary<long, Lazy<SearcherTracker>>();
 
         private void EnsureOpen()
         {
@@ -177,7 +177,7 @@ namespace Lucene.Net.Search
             // bug isolation if we assign our own private ID:
             var version = ((DirectoryReader)searcher.IndexReader).Version;
             var factoryMethodCalled = false;
-            var tracker = _searchers.GetOrAdd(version, l => { factoryMethodCalled = true; return new SearcherTracker(searcher); });
+				var tracker = _searchers.GetOrAdd(version, l => new Lazy<SearcherTracker>(() => { factoryMethodCalled = true; return new SearcherTracker(searcher); })).Value;
             if (!factoryMethodCalled && tracker.Searcher != searcher)
             {
                 throw new ArgumentException("the provided searcher has the same underlying reader version yet the searcher instance differs from before (new=" + searcher + " vs old=" + tracker.Searcher);
@@ -203,10 +203,10 @@ namespace Lucene.Net.Search
         public virtual IndexSearcher Acquire(long version)
         {
             EnsureOpen();
-            SearcherTracker tracker;
-            if (_searchers.TryGetValue(version, out tracker) && tracker != null && tracker.Searcher.IndexReader.TryIncRef())
+            Lazy<SearcherTracker> tracker;
+            if (_searchers.TryGetValue(version, out tracker) && tracker.IsValueCreated && tracker.Value.Searcher.IndexReader.TryIncRef())
             {
-                return tracker.Searcher;
+                return tracker.Value.Searcher;
             }
 
             return null;
@@ -279,7 +279,7 @@ namespace Lucene.Net.Search
                 // (not thread-safe since the values can change while
                 // ArrayList is init'ing itself); must instead iterate
                 // ourselves:
-                var trackers = _searchers.Values.ToList();
+                var trackers = _searchers.Values.Select(item => item.Value).ToList();
                 trackers.Sort();
                 var lastRecordTimeSec = 0.0;
                 double now = Time.NanoTime() / NANOS_PER_SEC;
@@ -301,7 +301,7 @@ namespace Lucene.Net.Search
                     if (pruner.DoPrune(ageSec, tracker.Searcher))
                     {
                         //System.out.println("PRUNE version=" + tracker.version + " age=" + ageSec + " ms=" + System.currentTimeMillis());
-                        SearcherTracker _;
+                        Lazy<SearcherTracker> _;
                         _searchers.TryRemove(tracker.Version, out _);
                         tracker.Dispose();
                     }
@@ -326,13 +326,13 @@ namespace Lucene.Net.Search
             lock (this)
             {
                 _closed = true;
-                IList<SearcherTracker> toClose = new List<SearcherTracker>(_searchers.Values);
+                IList<SearcherTracker> toClose = new List<SearcherTracker>(_searchers.Values.Select(item => item.Value));
 
                 // Remove up front in case exc below, so we don't
                 // over-decRef on double-close:
                 foreach (var tracker in toClose)
                 {
-                    SearcherTracker _;
+                    Lazy<SearcherTracker> _;
                     _searchers.TryRemove(tracker.Version, out _);
                 }
 
