@@ -1,3 +1,5 @@
+﻿// LUCENENET TODO: API: Replace all references to Environment.GetEnvironmentVariable() with this (safer) class.
+
 /*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -157,7 +159,7 @@ namespace Lucene.Net.Support
                 : conversionFunction(setting);
         }
 
-        private static bool ignoreSecurityExceptions = GetPropertyAsBoolean("lucene.ignoreSecurityExceptions", false);
+        internal static bool ignoreSecurityExceptions = GetPropertyAsBoolean("lucene.ignoreSecurityExceptions", true);
 
         /// <summary>
         /// Creates, modifies, or deletes an environment variable stored in the current process.
