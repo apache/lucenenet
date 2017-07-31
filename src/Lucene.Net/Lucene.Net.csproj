@@ -656,6 +656,7 @@
     <Compile Include="Support\RectangularArrays.cs" />
     <Compile Include="Support\Search\ReferenceContext.cs" />
     <Compile Include="Support\Search\ReferenceManagerExtensions.cs" />
+    <Compile Include="Support\SystemConsole.cs" />
     <Compile Include="Support\SystemProperties.cs" />
     <Compile Include="Support\Threading\ICompletionService.cs" />
     <Compile Include="Support\IO\IDataInput.cs" />
