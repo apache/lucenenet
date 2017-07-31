@@ -1,0 +1,15 @@
+﻿{
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "icu.net": "54.1.1-alpha",
+    "Sax.Net": "2.0.2",
+    "SharpZipLib": "0.86.0",
+    "Spatial4n.Core": "0.4.1-beta00003",
+    "TagSoup.Net": "1.2.1.1"
+  },
+  "frameworks": {
+    "net451": {}
+  }
+}

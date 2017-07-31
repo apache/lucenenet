@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{EDC77CB4-597F-4818-8C83-3C006D12C384}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Benchmarks</RootNamespace>
+    <AssemblyName>Lucene.Net.Benchmark</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ByTask\Benchmark.cs" />
+    <Compile Include="ByTask\Feeds\AbstractQueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\ContentItemsSource.cs" />
+    <Compile Include="ByTask\Feeds\ContentSource.cs" />
+    <Compile Include="ByTask\Feeds\DemoHTMLParser.cs" />
+    <Compile Include="ByTask\Feeds\DirContentSource.cs" />
+    <Compile Include="ByTask\Feeds\DocData.cs" />
+    <Compile Include="ByTask\Feeds\DocMaker.cs" />
+    <Compile Include="ByTask\Feeds\EnwikiContentSource.cs" />
+    <Compile Include="ByTask\Feeds\EnwikiQueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\FacetSource.cs" />
+    <Compile Include="ByTask\Feeds\FileBasedQueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\GeonamesLineParser.cs" />
+    <Compile Include="ByTask\Feeds\HTMLParser.cs" />
+    <Compile Include="ByTask\Feeds\LineDocSource.cs" />
+    <Compile Include="ByTask\Feeds\LongToEnglishContentSource.cs" />
+    <Compile Include="ByTask\Feeds\LongToEnglishQueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\NoMoreDataException.cs" />
+    <Compile Include="ByTask\Feeds\QueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\RandomFacetSource.cs" />
+    <Compile Include="ByTask\Feeds\ReutersContentSource.cs" />
+    <Compile Include="ByTask\Feeds\ReutersQueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\SimpleQueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\SimpleSloppyPhraseQueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\SingleDocSource.cs" />
+    <Compile Include="ByTask\Feeds\SortableSingleDocSource.cs" />
+    <Compile Include="ByTask\Feeds\SpatialDocMaker.cs" />
+    <Compile Include="ByTask\Feeds\SpatialFileQueryMaker.cs" />
+    <Compile Include="ByTask\Feeds\TrecContentSource.cs" />
+    <Compile Include="ByTask\Feeds\TrecDocParser.cs" />
+    <Compile Include="ByTask\Feeds\TrecFBISParser.cs" />
+    <Compile Include="ByTask\Feeds\TrecFR94Parser.cs" />
+    <Compile Include="ByTask\Feeds\TrecFTParser.cs" />
+    <Compile Include="ByTask\Feeds\TrecGov2Parser.cs" />
+    <Compile Include="ByTask\Feeds\TrecLATimesParser.cs" />
+    <Compile Include="ByTask\Feeds\TrecParserByPath.cs" />
+    <Compile Include="ByTask\PerfRunData.cs" />
+    <Compile Include="ByTask\Programmatic\Sample.cs" />
+    <Compile Include="ByTask\Stats\Points.cs" />
+    <Compile Include="ByTask\Stats\Report.cs" />
+    <Compile Include="ByTask\Stats\TaskStats.cs" />
+    <Compile Include="ByTask\Tasks\AddDocTask.cs" />
+    <Compile Include="ByTask\Tasks\AddFacetedDocTask.cs" />
+    <Compile Include="ByTask\Tasks\AddIndexesTask.cs" />
+    <Compile Include="ByTask\Tasks\AnalyzerFactoryTask.cs" />
+    <Compile Include="ByTask\Tasks\BenchmarkHighlighter.cs" />
+    <Compile Include="ByTask\Tasks\ClearStatsTask.cs" />
+    <Compile Include="ByTask\Tasks\CloseIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\CloseReaderTask.cs" />
+    <Compile Include="ByTask\Tasks\CloseTaxonomyIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\CloseTaxonomyReaderTask.cs" />
+    <Compile Include="ByTask\Tasks\CommitIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\CommitTaxonomyIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\ConsumeContentSourceTask.cs" />
+    <Compile Include="ByTask\Tasks\CreateIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\CreateTaxonomyIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\ForceMergeTask.cs" />
+    <Compile Include="ByTask\Tasks\NearRealtimeReaderTask.cs" />
+    <Compile Include="ByTask\Tasks\NewAnalyzerTask.cs" />
+    <Compile Include="ByTask\Tasks\NewCollationAnalyzerTask.cs" />
+    <Compile Include="ByTask\Tasks\NewLocaleTask.cs" />
+    <Compile Include="ByTask\Tasks\NewRoundTask.cs" />
+    <Compile Include="ByTask\Tasks\OpenIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\OpenReaderTask.cs" />
+    <Compile Include="ByTask\Tasks\OpenTaxonomyIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\OpenTaxonomyReaderTask.cs" />
+    <Compile Include="ByTask\Tasks\PerfTask.cs" />
+    <Compile Include="ByTask\Tasks\PrintReaderTask.cs" />
+    <Compile Include="ByTask\Tasks\ReadTask.cs" />
+    <Compile Include="ByTask\Tasks\ReadTokensTask.cs" />
+    <Compile Include="ByTask\Tasks\ReopenReaderTask.cs" />
+    <Compile Include="ByTask\Tasks\RepAllTask.cs" />
+    <Compile Include="ByTask\Tasks\ReportTask.cs" />
+    <Compile Include="ByTask\Tasks\RepSelectByPrefTask.cs" />
+    <Compile Include="ByTask\Tasks\RepSumByNameRoundTask.cs" />
+    <Compile Include="ByTask\Tasks\RepSumByNameTask.cs" />
+    <Compile Include="ByTask\Tasks\RepSumByPrefRoundTask.cs" />
+    <Compile Include="ByTask\Tasks\RepSumByPrefTask.cs" />
+    <Compile Include="ByTask\Tasks\ResetInputsTask.cs" />
+    <Compile Include="ByTask\Tasks\ResetSystemEraseTask.cs" />
+    <Compile Include="ByTask\Tasks\ResetSystemSoftTask.cs" />
+    <Compile Include="ByTask\Tasks\RollbackIndexTask.cs" />
+    <Compile Include="ByTask\Tasks\SearchTask.cs" />
+    <Compile Include="ByTask\Tasks\SearchTravRetHighlightTask.cs" />
+    <Compile Include="ByTask\Tasks\SearchTravRetLoadFieldSelectorTask.cs" />
+    <Compile Include="ByTask\Tasks\SearchTravRetTask.cs" />
+    <Compile Include="ByTask\Tasks\SearchTravRetVectorHighlightTask.cs" />
+    <Compile Include="ByTask\Tasks\SearchTravTask.cs" />
+    <Compile Include="ByTask\Tasks\SearchWithCollectorTask.cs" />
+    <Compile Include="ByTask\Tasks\SearchWithSortTask.cs" />
+    <Compile Include="ByTask\Tasks\SetPropTask.cs" />
+    <Compile Include="ByTask\Tasks\TaskSequence.cs" />
+    <Compile Include="ByTask\Tasks\UpdateDocTask.cs" />
+    <Compile Include="ByTask\Tasks\WaitForMergesTask.cs" />
+    <Compile Include="ByTask\Tasks\WaitTask.cs" />
+    <Compile Include="ByTask\Tasks\WarmTask.cs" />
+    <Compile Include="ByTask\Tasks\WriteEnwikiLineDocTask.cs" />
+    <Compile Include="ByTask\Tasks\WriteLineDocTask.cs" />
+    <Compile Include="ByTask\Utils\Algorithm.cs" />
+    <Compile Include="ByTask\Utils\AnalyzerFactory.cs" />
+    <Compile Include="ByTask\Utils\Config.cs" />
+    <Compile Include="ByTask\Utils\FileUtils.cs" />
+    <Compile Include="ByTask\Utils\Format.cs" />
+    <Compile Include="ByTask\Utils\StreamUtils.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Quality\Judge.cs" />
+    <Compile Include="Quality\QualityBenchmark.cs" />
+    <Compile Include="Quality\QualityQuery.cs" />
+    <Compile Include="Quality\QualityQueryParser.cs" />
+    <Compile Include="Quality\QualityStats.cs" />
+    <Compile Include="Quality\Trec\QueryDriver.cs" />
+    <Compile Include="Quality\Trec\Trec1MQReader.cs" />
+    <Compile Include="Quality\Trec\TrecJudge.cs" />
+    <Compile Include="Quality\Trec\TrecTopicsReader.cs" />
+    <Compile Include="Quality\Utils\DocNameExtractor.cs" />
+    <Compile Include="Quality\Utils\QualityQueriesFinder.cs" />
+    <Compile Include="Quality\Utils\SimpleQQParser.cs" />
+    <Compile Include="Quality\Utils\SubmissionReport.cs" />
+    <Compile Include="Utils\ExtractReuters.cs" />
+    <Compile Include="Utils\ExtractWikipedia.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
+      <Project>{48F7884A-9454-4E88-8413-9D35992CB440}</Project>
+      <Name>Lucene.Net.Facet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj">
+      <Project>{E9E769EA-8504-44BC-8DC9-CCF958765F8F}</Project>
+      <Name>Lucene.Net.Highlighter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj">
+      <Project>{349cb7c9-7534-4e1d-9b0a-5521441af0ae}</Project>
+      <Name>Lucene.Net.ICU</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
+      <Project>{69D7956C-C2CC-4708-B399-A188FEC384C4}</Project>
+      <Name>Lucene.Net.Queries</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj">
+      <Project>{949BA34B-6AE6-4CE3-B578-61E13E4D76BF}</Project>
+      <Name>Lucene.Net.QueryParser</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj">
+      <Project>{35C347F4-24B2-4BE5-8117-A0E3001551CE}</Project>
+      <Name>Lucene.Net.Spatial</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Lucene.Net.Benchmark.project.json" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

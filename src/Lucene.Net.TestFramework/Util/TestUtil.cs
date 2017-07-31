@@ -148,17 +148,35 @@ namespace Lucene.Net.Util
             {
                 foreach (var entry in zip.Entries)
                 {
+                    // Ignore internal folders - these are tacked onto the FullName anyway
+                    if (entry.FullName.EndsWith("/", StringComparison.Ordinal) || entry.FullName.EndsWith("\\", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
                     using (Stream input = entry.Open())
                     {
-                        FileInfo targetFile = new FileInfo(Path.Combine(destDir.FullName, entry.FullName));
+                        FileInfo targetFile = new FileInfo(CorrectPath(Path.Combine(destDir.FullName, entry.FullName)));
+                        if (!targetFile.Directory.Exists)
+                        {
+                            targetFile.Directory.Create();
+                        }
 
-                        using (Stream output = new FileStream(targetFile.FullName, FileMode.OpenOrCreate, FileAccess.Write))
+                        using (Stream output = new FileStream(targetFile.FullName, FileMode.Create, FileAccess.Write))
                         {
                             input.CopyTo(output);
                         }
                     }
                 }
             }
+        }
+
+        private static string CorrectPath(string input)
+        {
+            if (Path.DirectorySeparatorChar.Equals('/'))
+            {
+                return input.Replace('\\', '/');
+            }
+            return input.Replace('/', '\\');
         }
 
         public static void SyncConcurrentMerges(IndexWriter writer)
