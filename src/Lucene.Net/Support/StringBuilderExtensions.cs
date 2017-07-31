@@ -169,5 +169,52 @@ namespace Lucene.Net.Support
             text.Append(Character.ToChars(codePoint));
             return text;
         }
+
+        /// <summary>
+        /// Searches for the first index of the specified character. The search for
+        /// the character starts at the beginning and moves towards the end.
+        /// </summary>
+        /// <param name="text">This <see cref="StringBuilder"/>.</param>
+        /// <param name="value">The string to find.</param>
+        /// <returns>The index of the specified character, or -1 if the character isn't found.</returns>
+        public static int IndexOf(this StringBuilder text, string value)
+        {
+            return IndexOf(text, value, 0);
+        }
+
+        /// <summary>
+        /// Searches for the index of the specified character. The search for the
+        /// character starts at the specified offset and moves towards the end.
+        /// </summary>
+        /// <param name="text">This <see cref="StringBuilder"/>.</param>
+        /// <param name="value">The string to find.</param>
+        /// <param name="startIndex">The starting offset.</param>
+        /// <returns>The index of the specified character, or -1 if the character isn't found.</returns>
+        public static int IndexOf(this StringBuilder text, string value, int startIndex)
+        {
+            if (text == null)
+                throw new ArgumentNullException("text");
+            if (value == null)
+                throw new ArgumentNullException("value");
+
+            int index;
+            int length = value.Length;
+            int maxSearchLength = (text.Length - length) + 1;
+
+            for (int i = startIndex; i < maxSearchLength; ++i)
+            {
+                if (text[i] == value[0])
+                {
+                    index = 1;
+                    while ((index < length) && (text[i + index] == value[index]))
+                        ++index;
+
+                    if (index == length)
+                        return i;
+                }
+            }
+
+            return -1;
+        }
     }
 }
