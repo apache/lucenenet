@@ -26,7 +26,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
      * limitations under the License.
      */
 
-    [Ignore("LUCENENET TODO: Never finishes")]
     public class EnwikiContentSourceTest : LuceneTestCase
     {
         /** An EnwikiContentSource which works on a String and not files. */

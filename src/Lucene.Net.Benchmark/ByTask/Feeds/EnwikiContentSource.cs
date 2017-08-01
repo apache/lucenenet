@@ -68,7 +68,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 if (t == null)
                 {
                     threadDone = false;
-                    t = new ThreadClass(/*this*/);
+                    t = new ThreadClass(Run);
                     t.SetDaemon(true);
                     t.Start();
                 }
@@ -165,7 +165,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     case BODY:
                         body = contents.ToString();
                         //workaround that startswith doesn't have an ignore case option, get at least 20 chars.
-                        string startsWith = body.Substring(0, Math.Min(10, contents.Length)).ToLowerInvariant();
+                        string startsWith = body.Substring(0, Math.Min(10, contents.Length) - 0).ToLowerInvariant();
                         if (startsWith.StartsWith("#redirect", StringComparison.Ordinal))
                         {
                             body = null;
@@ -195,7 +195,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
                 try
                 {
-                    Sax.Net.IXmlReader reader = XmlReaderFactory.Current.CreateXmlReader(); //XMLReaderFactory.createXMLReader();
+                    Sax.Net.IXmlReader reader = new TagSoup.Net.XmlReaderFactory().CreateXmlReader(); //XMLReaderFactory.createXMLReader();
                     reader.ContentHandler = this;
                     reader.ErrorHandler = this;
                     while (!stopped)
