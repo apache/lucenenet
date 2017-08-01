@@ -159,6 +159,7 @@
     <Compile Include="Quality\Utils\QualityQueriesFinder.cs" />
     <Compile Include="Quality\Utils\SimpleQQParser.cs" />
     <Compile Include="Quality\Utils\SubmissionReport.cs" />
+    <Compile Include="Support\EnglishNumberFormatExtensions.cs" />
     <Compile Include="Utils\ExtractReuters.cs" />
     <Compile Include="Utils\ExtractWikipedia.cs" />
     <Compile Include="..\CommonAssemblyInfo.cs">

@@ -4,6 +4,7 @@ using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 
@@ -48,9 +49,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         {
             lock (this)
             {
-                // LUCENENET TODO: Rules based number formatter (from ICU)
                 //return parser.Parse("" + rnbf.format(GetNextCounter()) + "");
-                return m_parser.Parse(GetNextCounter().ToString());
+                return m_parser.Parse(GetNextCounter().ToWords());
             }
         }
 

@@ -68,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quality\TestQualityRun.cs" />
     <Compile Include="Support\TestApiConsistency.cs" />
+    <Compile Include="Support\TestEnglishNumberFormatExtensions.cs" />
     <Compile Include="Support\TestExceptionSerialization.cs" />
   </ItemGroup>
   <ItemGroup>

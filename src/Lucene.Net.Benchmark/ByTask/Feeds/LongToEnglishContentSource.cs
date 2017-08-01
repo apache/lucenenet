@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Globalization;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
@@ -55,8 +56,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     }
                 }
 
-                // LUCENENET TODO: Rules based number formatting...(from ICU)
-                docData.Body = curCounter.ToString(); //rnbf.format(curCounter);
+                docData.Body = curCounter.ToWords(); //rnbf.format(curCounter);
                 docData.Name = "doc_" + curCounter.ToString(CultureInfo.InvariantCulture);
                 docData.Title = "title_" + curCounter.ToString(CultureInfo.InvariantCulture);
                 docData.SetDate(new DateTime());
