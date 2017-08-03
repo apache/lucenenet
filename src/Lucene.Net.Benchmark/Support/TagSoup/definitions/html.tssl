@@ -1,0 +1,2762 @@
+<!--
+// This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+//
+// TagSoup is licensed under the Apache License,
+// Version 2.0.  You may obtain a copy of this license at
+// http://www.apache.org/licenses/LICENSE-2.0 .  You may also have
+// additional legal rights not granted by this license.
+//
+// TagSoup is distributed in the hope that it will be useful, but
+// unless required by applicable law or agreed to in writing, TagSoup
+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+// OF ANY KIND, either express or implied; not even the implied warranty
+// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+-->
+
+<schema xmlns='http://www.ccil.org/~cowan/XML/tagsoup/tssl'
+		ns='http://www.w3.org/1999/xhtml' name='html'
+		prefix='html' version='1.0'>
+
+  <entity name='Aacgr' codepoint='0386'/>
+  <entity name='aacgr' codepoint='03AC'/>
+  <entity name='Aacute' codepoint='00C1'/>
+  <entity name='aacute' codepoint='00E1'/>
+  <entity name='Abreve' codepoint='0102'/>
+  <entity name='abreve' codepoint='0103'/>
+  <entity name='ac' codepoint='223E'/>
+  <entity name='acd' codepoint='223F'/>
+  <entity name='Acirc' codepoint='00C2'/>
+  <entity name='acirc' codepoint='00E2'/>
+  <entity name='acute' codepoint='00B4'/>
+  <entity name='Acy' codepoint='0410'/>
+  <entity name='acy' codepoint='0430'/>
+  <entity name='AElig' codepoint='00C6'/>
+  <entity name='aelig' codepoint='00E6'/>
+  <entity name='af' codepoint='2061'/>
+  <entity name='Afr' codepoint='1D504'/>
+  <entity name='afr' codepoint='1D51E'/>
+  <entity name='Agr' codepoint='0391'/>
+  <entity name='agr' codepoint='03B1'/>
+  <entity name='Agrave' codepoint='00C0'/>
+  <entity name='agrave' codepoint='00E0'/>
+  <entity name='alefsym' codepoint='2135'/>
+  <entity name='aleph' codepoint='2135'/>
+  <entity name='Alpha' codepoint='0391'/>
+  <entity name='alpha' codepoint='03B1'/>
+  <entity name='Amacr' codepoint='0100'/>
+  <entity name='amacr' codepoint='0101'/>
+  <entity name='amalg' codepoint='2A3F'/>
+  <entity name='amp' codepoint='0026'/>
+  <entity name='and' codepoint='2227'/>
+  <entity name='And' codepoint='2A53'/>
+  <entity name='andand' codepoint='2A55'/>
+  <entity name='andd' codepoint='2A5C'/>
+  <entity name='andslope' codepoint='2A58'/>
+  <entity name='andv' codepoint='2A5A'/>
+  <entity name='ang' codepoint='2220'/>
+  <entity name='ange' codepoint='29A4'/>
+  <entity name='angle' codepoint='2220'/>
+  <entity name='angmsd' codepoint='2221'/>
+  <entity name='angmsdaa' codepoint='29A8'/>
+  <entity name='angmsdab' codepoint='29A9'/>
+  <entity name='angmsdac' codepoint='29AA'/>
+  <entity name='angmsdad' codepoint='29AB'/>
+  <entity name='angmsdae' codepoint='29AC'/>
+  <entity name='angmsdaf' codepoint='29AD'/>
+  <entity name='angmsdag' codepoint='29AE'/>
+  <entity name='angmsdah' codepoint='29AF'/>
+  <entity name='angrt' codepoint='221F'/>
+  <entity name='angrtvb' codepoint='22BE'/>
+  <entity name='angrtvbd' codepoint='299D'/>
+  <entity name='angsph' codepoint='2222'/>
+  <entity name='angst' codepoint='212B'/>
+  <entity name='angzarr' codepoint='237C'/>
+  <entity name='Aogon' codepoint='0104'/>
+  <entity name='aogon' codepoint='0105'/>
+  <entity name='Aopf' codepoint='1D538'/>
+  <entity name='aopf' codepoint='1D552'/>
+  <entity name='ap' codepoint='2248'/>
+  <entity name='apacir' codepoint='2A6F'/>
+  <entity name='ape' codepoint='224A'/>
+  <entity name='apE' codepoint='2A70'/>
+  <entity name='apid' codepoint='224B'/>
+  <entity name='apos' codepoint='0027'/>
+  <entity name='ApplyFunction' codepoint='2061'/>
+  <entity name='approx' codepoint='2248'/>
+  <entity name='approxeq' codepoint='224A'/>
+  <entity name='Aring' codepoint='00C5'/>
+  <entity name='aring' codepoint='00E5'/>
+  <entity name='Ascr' codepoint='1D49C'/>
+  <entity name='ascr' codepoint='1D4B6'/>
+  <entity name='Assign' codepoint='2254'/>
+  <entity name='ast' codepoint='002A'/>
+  <entity name='asymp' codepoint='2248'/>
+  <entity name='asympeq' codepoint='224D'/>
+  <entity name='Atilde' codepoint='00C3'/>
+  <entity name='atilde' codepoint='00E3'/>
+  <entity name='Auml' codepoint='00C4'/>
+  <entity name='auml' codepoint='00E4'/>
+  <entity name='awconint' codepoint='2233'/>
+  <entity name='awint' codepoint='2A11'/>
+  <entity name='b.alpha' codepoint='1D6C2'/>
+  <entity name='b.beta' codepoint='1D6C3'/>
+  <entity name='b.chi' codepoint='1D6D8'/>
+  <entity name='b.Delta' codepoint='1D6AB'/>
+  <entity name='b.delta' codepoint='1D6C5'/>
+  <entity name='b.epsi' codepoint='1D6C6'/>
+  <entity name='b.epsiv' codepoint='1D6DC'/>
+  <entity name='b.eta' codepoint='1D6C8'/>
+  <entity name='b.Gamma' codepoint='1D6AA'/>
+  <entity name='b.gamma' codepoint='1D6C4'/>
+  <entity name='b.Gammad' codepoint='1D7CA'/>
+  <entity name='b.gammad' codepoint='1D7CB'/>
+  <entity name='b.iota' codepoint='1D6CA'/>
+  <entity name='b.kappa' codepoint='1D6CB'/>
+  <entity name='b.kappav' codepoint='1D6DE'/>
+  <entity name='b.Lambda' codepoint='1D6B2'/>
+  <entity name='b.lambda' codepoint='1D6CC'/>
+  <entity name='b.mu' codepoint='1D6CD'/>
+  <entity name='b.nu' codepoint='1D6CE'/>
+  <entity name='b.Omega' codepoint='1D6C0'/>
+  <entity name='b.omega' codepoint='1D6DA'/>
+  <entity name='b.Phi' codepoint='1D6BD'/>
+  <entity name='b.phi' codepoint='1D6D7'/>
+  <entity name='b.phiv' codepoint='1D6DF'/>
+  <entity name='b.Pi' codepoint='1D6B7'/>
+  <entity name='b.pi' codepoint='1D6D1'/>
+  <entity name='b.piv' codepoint='1D6E1'/>
+  <entity name='b.Psi' codepoint='1D6BF'/>
+  <entity name='b.psi' codepoint='1D6D9'/>
+  <entity name='b.rho' codepoint='1D6D2'/>
+  <entity name='b.rhov' codepoint='1D6E0'/>
+  <entity name='b.Sigma' codepoint='1D6BA'/>
+  <entity name='b.sigma' codepoint='1D6D4'/>
+  <entity name='b.sigmav' codepoint='1D6D3'/>
+  <entity name='b.tau' codepoint='1D6D5'/>
+  <entity name='b.Theta' codepoint='1D6AF'/>
+  <entity name='b.thetas' codepoint='1D6C9'/>
+  <entity name='b.thetav' codepoint='1D6DD'/>
+  <entity name='b.Upsi' codepoint='1D6BC'/>
+  <entity name='b.upsi' codepoint='1D6D6'/>
+  <entity name='b.Xi' codepoint='1D6B5'/>
+  <entity name='b.xi' codepoint='1D6CF'/>
+  <entity name='b.zeta' codepoint='1D6C7'/>
+  <entity name='backcong' codepoint='224C'/>
+  <entity name='backepsilon' codepoint='03F6'/>
+  <entity name='backprime' codepoint='2035'/>
+  <entity name='backsim' codepoint='223D'/>
+  <entity name='backsimeq' codepoint='22CD'/>
+  <entity name='Backslash' codepoint='2216'/>
+  <entity name='Barv' codepoint='2AE7'/>
+  <entity name='barvee' codepoint='22BD'/>
+  <entity name='barwed' codepoint='2305'/>
+  <entity name='Barwed' codepoint='2306'/>
+  <entity name='barwedge' codepoint='2305'/>
+  <entity name='bbrk' codepoint='23B5'/>
+  <entity name='bbrktbrk' codepoint='23B6'/>
+  <entity name='bcong' codepoint='224C'/>
+  <entity name='Bcy' codepoint='0411'/>
+  <entity name='bcy' codepoint='0431'/>
+  <entity name='bdquo' codepoint='201E'/>
+  <entity name='becaus' codepoint='2235'/>
+  <entity name='because' codepoint='2235'/>
+  <entity name='bemptyv' codepoint='29B0'/>
+  <entity name='bepsi' codepoint='03F6'/>
+  <entity name='bernou' codepoint='212C'/>
+  <entity name='Bernoullis' codepoint='212C'/>
+  <entity name='Beta' codepoint='0392'/>
+  <entity name='beta' codepoint='03B2'/>
+  <entity name='beth' codepoint='2136'/>
+  <entity name='between' codepoint='226C'/>
+  <entity name='Bfr' codepoint='1D505'/>
+  <entity name='bfr' codepoint='1D51F'/>
+  <entity name='Bgr' codepoint='0392'/>
+  <entity name='bgr' codepoint='03B2'/>
+  <entity name='bigcap' codepoint='22C2'/>
+  <entity name='bigcirc' codepoint='25EF'/>
+  <entity name='bigcup' codepoint='22C3'/>
+  <entity name='bigodot' codepoint='2A00'/>
+  <entity name='bigoplus' codepoint='2A01'/>
+  <entity name='bigotimes' codepoint='2A02'/>
+  <entity name='bigsqcup' codepoint='2A06'/>
+  <entity name='bigstar' codepoint='2605'/>
+  <entity name='bigtriangledown' codepoint='25BD'/>
+  <entity name='bigtriangleup' codepoint='25B3'/>
+  <entity name='biguplus' codepoint='2A04'/>
+  <entity name='bigvee' codepoint='22C1'/>
+  <entity name='bigwedge' codepoint='22C0'/>
+  <entity name='bkarow' codepoint='290D'/>
+  <entity name='blacklozenge' codepoint='29EB'/>
+  <entity name='blacksquare' codepoint='25AA'/>
+  <entity name='blacktriangle' codepoint='25B4'/>
+  <entity name='blacktriangledown' codepoint='25BE'/>
+  <entity name='blacktriangleleft' codepoint='25C2'/>
+  <entity name='blacktriangleright' codepoint='25B8'/>
+  <entity name='blank' codepoint='2423'/>
+  <entity name='blk12' codepoint='2592'/>
+  <entity name='blk14' codepoint='2591'/>
+  <entity name='blk34' codepoint='2593'/>
+  <entity name='block' codepoint='2588'/>
+  <entity name='bnot' codepoint='2310'/>
+  <entity name='bNot' codepoint='2AED'/>
+  <entity name='Bopf' codepoint='1D539'/>
+  <entity name='bopf' codepoint='1D553'/>
+  <entity name='bot' codepoint='22A5'/>
+  <entity name='bottom' codepoint='22A5'/>
+  <entity name='bowtie' codepoint='22C8'/>
+  <entity name='boxbox' codepoint='29C9'/>
+  <entity name='boxdl' codepoint='2510'/>
+  <entity name='boxdL' codepoint='2555'/>
+  <entity name='boxDl' codepoint='2556'/>
+  <entity name='boxDL' codepoint='2557'/>
+  <entity name='boxdr' codepoint='250C'/>
+  <entity name='boxdR' codepoint='2552'/>
+  <entity name='boxDr' codepoint='2553'/>
+  <entity name='boxDR' codepoint='2554'/>
+  <entity name='boxh' codepoint='2500'/>
+  <entity name='boxH' codepoint='2550'/>
+  <entity name='boxhd' codepoint='252C'/>
+  <entity name='boxHd' codepoint='2564'/>
+  <entity name='boxhD' codepoint='2565'/>
+  <entity name='boxHD' codepoint='2566'/>
+  <entity name='boxhu' codepoint='2534'/>
+  <entity name='boxHu' codepoint='2567'/>
+  <entity name='boxhU' codepoint='2568'/>
+  <entity name='boxHU' codepoint='2569'/>
+  <entity name='boxminus' codepoint='229F'/>
+  <entity name='boxplus' codepoint='229E'/>
+  <entity name='boxtimes' codepoint='22A0'/>
+  <entity name='boxul' codepoint='2518'/>
+  <entity name='boxuL' codepoint='255B'/>
+  <entity name='boxUl' codepoint='255C'/>
+  <entity name='boxUL' codepoint='255D'/>
+  <entity name='boxur' codepoint='2514'/>
+  <entity name='boxuR' codepoint='2558'/>
+  <entity name='boxUr' codepoint='2559'/>
+  <entity name='boxUR' codepoint='255A'/>
+  <entity name='boxv' codepoint='2502'/>
+  <entity name='boxV' codepoint='2551'/>
+  <entity name='boxvh' codepoint='253C'/>
+  <entity name='boxvH' codepoint='256A'/>
+  <entity name='boxVh' codepoint='256B'/>
+  <entity name='boxVH' codepoint='256C'/>
+  <entity name='boxvl' codepoint='2524'/>
+  <entity name='boxvL' codepoint='2561'/>
+  <entity name='boxVl' codepoint='2562'/>
+  <entity name='boxVL' codepoint='2563'/>
+  <entity name='boxvr' codepoint='251C'/>
+  <entity name='boxvR' codepoint='255E'/>
+  <entity name='boxVr' codepoint='255F'/>
+  <entity name='boxVR' codepoint='2560'/>
+  <entity name='bprime' codepoint='2035'/>
+  <entity name='breve' codepoint='02D8'/>
+  <entity name='brvbar' codepoint='00A6'/>
+  <entity name='Bscr' codepoint='212C'/>
+  <entity name='bscr' codepoint='1D4B7'/>
+  <entity name='bsemi' codepoint='204F'/>
+  <entity name='bsim' codepoint='223D'/>
+  <entity name='bsime' codepoint='22CD'/>
+  <entity name='bsol' codepoint='005C'/>
+  <entity name='bsolb' codepoint='29C5'/>
+  <entity name='bull' codepoint='2022'/>
+  <entity name='bullet' codepoint='2022'/>
+  <entity name='bump' codepoint='224E'/>
+  <entity name='bumpe' codepoint='224F'/>
+  <entity name='bumpE' codepoint='2AAE'/>
+  <entity name='Bumpeq' codepoint='224E'/>
+  <entity name='bumpeq' codepoint='224F'/>
+  <entity name='Cacute' codepoint='0106'/>
+  <entity name='cacute' codepoint='0107'/>
+  <entity name='cap' codepoint='2229'/>
+  <entity name='Cap' codepoint='22D2'/>
+  <entity name='capand' codepoint='2A44'/>
+  <entity name='capbrcup' codepoint='2A49'/>
+  <entity name='capcap' codepoint='2A4B'/>
+  <entity name='capcup' codepoint='2A47'/>
+  <entity name='capdot' codepoint='2A40'/>
+  <entity name='CapitalDifferentialD' codepoint='2145'/>
+  <entity name='caret' codepoint='2041'/>
+  <entity name='caron' codepoint='02C7'/>
+  <entity name='Cayleys' codepoint='212D'/>
+  <entity name='ccaps' codepoint='2A4D'/>
+  <entity name='Ccaron' codepoint='010C'/>
+  <entity name='ccaron' codepoint='010D'/>
+  <entity name='Ccedil' codepoint='00C7'/>
+  <entity name='ccedil' codepoint='00E7'/>
+  <entity name='Ccirc' codepoint='0108'/>
+  <entity name='ccirc' codepoint='0109'/>
+  <entity name='Cconint' codepoint='2230'/>
+  <entity name='ccups' codepoint='2A4C'/>
+  <entity name='ccupssm' codepoint='2A50'/>
+  <entity name='Cdot' codepoint='010A'/>
+  <entity name='cdot' codepoint='010B'/>
+  <entity name='cedil' codepoint='00B8'/>
+  <entity name='Cedilla' codepoint='00B8'/>
+  <entity name='cemptyv' codepoint='29B2'/>
+  <entity name='cent' codepoint='00A2'/>
+  <entity name='centerdot' codepoint='00B7'/>
+  <entity name='Cfr' codepoint='212D'/>
+  <entity name='cfr' codepoint='1D520'/>
+  <entity name='CHcy' codepoint='0427'/>
+  <entity name='chcy' codepoint='0447'/>
+  <entity name='check' codepoint='2713'/>
+  <entity name='checkmark' codepoint='2713'/>
+  <entity name='Chi' codepoint='03A7'/>
+  <entity name='chi' codepoint='03C7'/>
+  <entity name='cir' codepoint='25CB'/>
+  <entity name='circ' codepoint='02C6'/>
+  <entity name='circeq' codepoint='2257'/>
+  <entity name='circlearrowleft' codepoint='21BA'/>
+  <entity name='circlearrowright' codepoint='21BB'/>
+  <entity name='circledast' codepoint='229B'/>
+  <entity name='circledcirc' codepoint='229A'/>
+  <entity name='circleddash' codepoint='229D'/>
+  <entity name='CircleDot' codepoint='2299'/>
+  <entity name='circledR' codepoint='00AE'/>
+  <entity name='circledS' codepoint='24C8'/>
+  <entity name='CircleMinus' codepoint='2296'/>
+  <entity name='CirclePlus' codepoint='2295'/>
+  <entity name='CircleTimes' codepoint='2297'/>
+  <entity name='cire' codepoint='2257'/>
+  <entity name='cirE' codepoint='29C3'/>
+  <entity name='cirfnint' codepoint='2A10'/>
+  <entity name='cirmid' codepoint='2AEF'/>
+  <entity name='cirscir' codepoint='29C2'/>
+  <entity name='ClockwiseContourIntegral' codepoint='2232'/>
+  <entity name='CloseCurlyDoubleQuote' codepoint='201D'/>
+  <entity name='CloseCurlyQuote' codepoint='2019'/>
+  <entity name='clubs' codepoint='2663'/>
+  <entity name='clubsuit' codepoint='2663'/>
+  <entity name='colon' codepoint='003A'/>
+  <entity name='Colon' codepoint='2237'/>
+  <entity name='colone' codepoint='2254'/>
+  <entity name='Colone' codepoint='2A74'/>
+  <entity name='coloneq' codepoint='2254'/>
+  <entity name='comma' codepoint='002C'/>
+  <entity name='commat' codepoint='0040'/>
+  <entity name='comp' codepoint='2201'/>
+  <entity name='compfn' codepoint='2218'/>
+  <entity name='complement' codepoint='2201'/>
+  <entity name='complexes' codepoint='2102'/>
+  <entity name='cong' codepoint='2245'/>
+  <entity name='congdot' codepoint='2A6D'/>
+  <entity name='Congruent' codepoint='2261'/>
+  <entity name='conint' codepoint='222E'/>
+  <entity name='Conint' codepoint='222F'/>
+  <entity name='ContourIntegral' codepoint='222E'/>
+  <entity name='Copf' codepoint='2102'/>
+  <entity name='copf' codepoint='1D554'/>
+  <entity name='coprod' codepoint='2210'/>
+  <entity name='Coproduct' codepoint='2210'/>
+  <entity name='copy' codepoint='00A9'/>
+  <entity name='copysr' codepoint='2117'/>
+  <entity name='CounterClockwiseContourIntegral' codepoint='2233'/>
+  <entity name='crarr' codepoint='21B5'/>
+  <entity name='cross' codepoint='2717'/>
+  <entity name='Cross' codepoint='2A2F'/>
+  <entity name='Cscr' codepoint='1D49E'/>
+  <entity name='cscr' codepoint='1D4B8'/>
+  <entity name='csub' codepoint='2ACF'/>
+  <entity name='csube' codepoint='2AD1'/>
+  <entity name='csup' codepoint='2AD0'/>
+  <entity name='csupe' codepoint='2AD2'/>
+  <entity name='ctdot' codepoint='22EF'/>
+  <entity name='cudarrl' codepoint='2938'/>
+  <entity name='cudarrr' codepoint='2935'/>
+  <entity name='cuepr' codepoint='22DE'/>
+  <entity name='cuesc' codepoint='22DF'/>
+  <entity name='cularr' codepoint='21B6'/>
+  <entity name='cularrp' codepoint='293D'/>
+  <entity name='cup' codepoint='222A'/>
+  <entity name='Cup' codepoint='22D3'/>
+  <entity name='cupbrcap' codepoint='2A48'/>
+  <entity name='CupCap' codepoint='224D'/>
+  <entity name='cupcap' codepoint='2A46'/>
+  <entity name='cupcup' codepoint='2A4A'/>
+  <entity name='cupdot' codepoint='228D'/>
+  <entity name='cupor' codepoint='2A45'/>
+  <entity name='curarr' codepoint='21B7'/>
+  <entity name='curarrm' codepoint='293C'/>
+  <entity name='curlyeqprec' codepoint='22DE'/>
+  <entity name='curlyeqsucc' codepoint='22DF'/>
+  <entity name='curlyvee' codepoint='22CE'/>
+  <entity name='curlywedge' codepoint='22CF'/>
+  <entity name='curren' codepoint='00A4'/>
+  <entity name='curvearrowleft' codepoint='21B6'/>
+  <entity name='curvearrowright' codepoint='21B7'/>
+  <entity name='cuvee' codepoint='22CE'/>
+  <entity name='cuwed' codepoint='22CF'/>
+  <entity name='cwconint' codepoint='2232'/>
+  <entity name='cwint' codepoint='2231'/>
+  <entity name='cylcty' codepoint='232D'/>
+  <entity name='dagger' codepoint='2020'/>
+  <entity name='Dagger' codepoint='2021'/>
+  <entity name='daleth' codepoint='2138'/>
+  <entity name='darr' codepoint='2193'/>
+  <entity name='Darr' codepoint='21A1'/>
+  <entity name='dArr' codepoint='21D3'/>
+  <entity name='dash' codepoint='2010'/>
+  <entity name='dashv' codepoint='22A3'/>
+  <entity name='Dashv' codepoint='2AE4'/>
+  <entity name='dbkarow' codepoint='290F'/>
+  <entity name='dblac' codepoint='02DD'/>
+  <entity name='Dcaron' codepoint='010E'/>
+  <entity name='dcaron' codepoint='010F'/>
+  <entity name='Dcy' codepoint='0414'/>
+  <entity name='dcy' codepoint='0434'/>
+  <entity name='DD' codepoint='2145'/>
+  <entity name='dd' codepoint='2146'/>
+  <entity name='ddagger' codepoint='2021'/>
+  <entity name='ddarr' codepoint='21CA'/>
+  <entity name='DDotrahd' codepoint='2911'/>
+  <entity name='ddotseq' codepoint='2A77'/>
+  <entity name='deg' codepoint='00B0'/>
+  <entity name='Del' codepoint='2207'/>
+  <entity name='Delta' codepoint='0394'/>
+  <entity name='delta' codepoint='03B4'/>
+  <entity name='demptyv' codepoint='29B1'/>
+  <entity name='dfisht' codepoint='297F'/>
+  <entity name='Dfr' codepoint='1D507'/>
+  <entity name='dfr' codepoint='1D521'/>
+  <entity name='Dgr' codepoint='0394'/>
+  <entity name='dgr' codepoint='03B4'/>
+  <entity name='dHar' codepoint='2965'/>
+  <entity name='dharl' codepoint='21C3'/>
+  <entity name='dharr' codepoint='21C2'/>
+  <entity name='DiacriticalAcute' codepoint='00B4'/>
+  <entity name='DiacriticalDot' codepoint='02D9'/>
+  <entity name='DiacriticalDoubleAcute' codepoint='02DD'/>
+  <entity name='DiacriticalGrave' codepoint='0060'/>
+  <entity name='DiacriticalTilde' codepoint='02DC'/>
+  <entity name='diam' codepoint='22C4'/>
+  <entity name='diamond' codepoint='22C4'/>
+  <entity name='diamondsuit' codepoint='2666'/>
+  <entity name='diams' codepoint='2666'/>
+  <entity name='die' codepoint='00A8'/>
+  <entity name='DifferentialD' codepoint='2146'/>
+  <entity name='digamma' codepoint='03DD'/>
+  <entity name='disin' codepoint='22F2'/>
+  <entity name='div' codepoint='00F7'/>
+  <entity name='divide' codepoint='00F7'/>
+  <entity name='divideontimes' codepoint='22C7'/>
+  <entity name='divonx' codepoint='22C7'/>
+  <entity name='DJcy' codepoint='0402'/>
+  <entity name='djcy' codepoint='0452'/>
+  <entity name='dlcorn' codepoint='231E'/>
+  <entity name='dlcrop' codepoint='230D'/>
+  <entity name='dollar' codepoint='0024'/>
+  <entity name='Dopf' codepoint='1D53B'/>
+  <entity name='dopf' codepoint='1D555'/>
+  <entity name='Dot' codepoint='00A8'/>
+  <entity name='dot' codepoint='02D9'/>
+  <entity name='doteq' codepoint='2250'/>
+  <entity name='doteqdot' codepoint='2251'/>
+  <entity name='DotEqual' codepoint='2250'/>
+  <entity name='dotminus' codepoint='2238'/>
+  <entity name='dotplus' codepoint='2214'/>
+  <entity name='dotsquare' codepoint='22A1'/>
+  <entity name='doublebarwedge' codepoint='2306'/>
+  <entity name='DoubleContourIntegral' codepoint='222F'/>
+  <entity name='DoubleDot' codepoint='00A8'/>
+  <entity name='DoubleDownArrow' codepoint='21D3'/>
+  <entity name='DoubleLeftArrow' codepoint='21D0'/>
+  <entity name='DoubleLeftRightArrow' codepoint='21D4'/>
+  <entity name='DoubleLeftTee' codepoint='2AE4'/>
+  <entity name='DoubleLongLeftArrow' codepoint='27F8'/>
+  <entity name='DoubleLongLeftRightArrow' codepoint='27FA'/>
+  <entity name='DoubleLongRightArrow' codepoint='27F9'/>
+  <entity name='DoubleRightArrow' codepoint='21D2'/>
+  <entity name='DoubleRightTee' codepoint='22A8'/>
+  <entity name='DoubleUpArrow' codepoint='21D1'/>
+  <entity name='DoubleUpDownArrow' codepoint='21D5'/>
+  <entity name='DoubleVerticalBar' codepoint='2225'/>
+  <entity name='downarrow' codepoint='2193'/>
+  <entity name='Downarrow' codepoint='21D3'/>
+  <entity name='DownArrowBar' codepoint='2913'/>
+  <entity name='DownArrowUpArrow' codepoint='21F5'/>
+  <entity name='downdownarrows' codepoint='21CA'/>
+  <entity name='downharpoonleft' codepoint='21C3'/>
+  <entity name='downharpoonright' codepoint='21C2'/>
+  <entity name='DownLeftRightVector' codepoint='2950'/>
+  <entity name='DownLeftTeeVector' codepoint='295E'/>
+  <entity name='DownLeftVector' codepoint='21BD'/>
+  <entity name='DownLeftVectorBar' codepoint='2956'/>
+  <entity name='DownRightTeeVector' codepoint='295F'/>
+  <entity name='DownRightVector' codepoint='21C1'/>
+  <entity name='DownRightVectorBar' codepoint='2957'/>
+  <entity name='DownTee' codepoint='22A4'/>
+  <entity name='DownTeeArrow' codepoint='21A7'/>
+  <entity name='drbkarow' codepoint='2910'/>
+  <entity name='drcorn' codepoint='231F'/>
+  <entity name='drcrop' codepoint='230C'/>
+  <entity name='Dscr' codepoint='1D49F'/>
+  <entity name='dscr' codepoint='1D4B9'/>
+  <entity name='DScy' codepoint='0405'/>
+  <entity name='dscy' codepoint='0455'/>
+  <entity name='dsol' codepoint='29F6'/>
+  <entity name='Dstrok' codepoint='0110'/>
+  <entity name='dstrok' codepoint='0111'/>
+  <entity name='dtdot' codepoint='22F1'/>
+  <entity name='dtri' codepoint='25BF'/>
+  <entity name='dtrif' codepoint='25BE'/>
+  <entity name='duarr' codepoint='21F5'/>
+  <entity name='duhar' codepoint='296F'/>
+  <entity name='dwangle' codepoint='29A6'/>
+  <entity name='DZcy' codepoint='040F'/>
+  <entity name='dzcy' codepoint='045F'/>
+  <entity name='dzigrarr' codepoint='27FF'/>
+  <entity name='Eacgr' codepoint='0388'/>
+  <entity name='eacgr' codepoint='03AD'/>
+  <entity name='Eacute' codepoint='00C9'/>
+  <entity name='eacute' codepoint='00E9'/>
+  <entity name='easter' codepoint='2A6E'/>
+  <entity name='Ecaron' codepoint='011A'/>
+  <entity name='ecaron' codepoint='011B'/>
+  <entity name='ecir' codepoint='2256'/>
+  <entity name='Ecirc' codepoint='00CA'/>
+  <entity name='ecirc' codepoint='00EA'/>
+  <entity name='ecolon' codepoint='2255'/>
+  <entity name='Ecy' codepoint='042D'/>
+  <entity name='ecy' codepoint='044D'/>
+  <entity name='eDDot' codepoint='2A77'/>
+  <entity name='Edot' codepoint='0116'/>
+  <entity name='edot' codepoint='0117'/>
+  <entity name='eDot' codepoint='2251'/>
+  <entity name='ee' codepoint='2147'/>
+  <entity name='EEacgr' codepoint='0389'/>
+  <entity name='eeacgr' codepoint='03AE'/>
+  <entity name='EEgr' codepoint='0397'/>
+  <entity name='eegr' codepoint='03B7'/>
+  <entity name='efDot' codepoint='2252'/>
+  <entity name='Efr' codepoint='1D508'/>
+  <entity name='efr' codepoint='1D522'/>
+  <entity name='eg' codepoint='2A9A'/>
+  <entity name='Egr' codepoint='0395'/>
+  <entity name='egr' codepoint='03B5'/>
+  <entity name='Egrave' codepoint='00C8'/>
+  <entity name='egrave' codepoint='00E8'/>
+  <entity name='egs' codepoint='2A96'/>
+  <entity name='egsdot' codepoint='2A98'/>
+  <entity name='el' codepoint='2A99'/>
+  <entity name='Element' codepoint='2208'/>
+  <entity name='elinters' codepoint='23E7'/>
+  <entity name='ell' codepoint='2113'/>
+  <entity name='els' codepoint='2A95'/>
+  <entity name='elsdot' codepoint='2A97'/>
+  <entity name='Emacr' codepoint='0112'/>
+  <entity name='emacr' codepoint='0113'/>
+  <entity name='empty' codepoint='2205'/>
+  <entity name='emptyset' codepoint='2205'/>
+  <entity name='EmptySmallSquare' codepoint='25FB'/>
+  <entity name='emptyv' codepoint='2205'/>
+  <entity name='EmptyVerySmallSquare' codepoint='25AB'/>
+  <entity name='emsp' codepoint='2003'/>
+  <entity name='emsp13' codepoint='2004'/>
+  <entity name='emsp14' codepoint='2005'/>
+  <entity name='ENG' codepoint='014A'/>
+  <entity name='eng' codepoint='014B'/>
+  <entity name='ensp' codepoint='2002'/>
+  <entity name='Eogon' codepoint='0118'/>
+  <entity name='eogon' codepoint='0119'/>
+  <entity name='Eopf' codepoint='1D53C'/>
+  <entity name='eopf' codepoint='1D556'/>
+  <entity name='epar' codepoint='22D5'/>
+  <entity name='eparsl' codepoint='29E3'/>
+  <entity name='eplus' codepoint='2A71'/>
+  <entity name='epsi' codepoint='03F5'/>
+  <entity name='Epsilon' codepoint='0395'/>
+  <entity name='epsilon' codepoint='03B5'/>
+  <entity name='epsiv' codepoint='03B5'/>
+  <entity name='eqcirc' codepoint='2256'/>
+  <entity name='eqcolon' codepoint='2255'/>
+  <entity name='eqsim' codepoint='2242'/>
+  <entity name='eqslantgtr' codepoint='2A96'/>
+  <entity name='eqslantless' codepoint='2A95'/>
+  <entity name='Equal' codepoint='2A75'/>
+  <entity name='equals' codepoint='003D'/>
+  <entity name='EqualTilde' codepoint='2242'/>
+  <entity name='equest' codepoint='225F'/>
+  <entity name='Equilibrium' codepoint='21CC'/>
+  <entity name='equiv' codepoint='2261'/>
+  <entity name='equivDD' codepoint='2A78'/>
+  <entity name='eqvparsl' codepoint='29E5'/>
+  <entity name='erarr' codepoint='2971'/>
+  <entity name='erDot' codepoint='2253'/>
+  <entity name='escr' codepoint='212F'/>
+  <entity name='Escr' codepoint='2130'/>
+  <entity name='esdot' codepoint='2250'/>
+  <entity name='esim' codepoint='2242'/>
+  <entity name='Esim' codepoint='2A73'/>
+  <entity name='Eta' codepoint='0397'/>
+  <entity name='eta' codepoint='03B7'/>
+  <entity name='ETH' codepoint='00D0'/>
+  <entity name='eth' codepoint='00F0'/>
+  <entity name='Euml' codepoint='00CB'/>
+  <entity name='euml' codepoint='00EB'/>
+  <entity name='euro' codepoint='20AC'/>
+  <entity name='excl' codepoint='0021'/>
+  <entity name='exist' codepoint='2203'/>
+  <entity name='Exists' codepoint='2203'/>
+  <entity name='expectation' codepoint='2130'/>
+  <entity name='exponentiale' codepoint='2147'/>
+  <entity name='fallingdotseq' codepoint='2252'/>
+  <entity name='Fcy' codepoint='0424'/>
+  <entity name='fcy' codepoint='0444'/>
+  <entity name='female' codepoint='2640'/>
+  <entity name='ffilig' codepoint='FB03'/>
+  <entity name='fflig' codepoint='FB00'/>
+  <entity name='ffllig' codepoint='FB04'/>
+  <entity name='Ffr' codepoint='1D509'/>
+  <entity name='ffr' codepoint='1D523'/>
+  <entity name='filig' codepoint='FB01'/>
+  <entity name='FilledSmallSquare' codepoint='25FC'/>
+  <entity name='FilledVerySmallSquare' codepoint='25AA'/>
+  <entity name='flat' codepoint='266D'/>
+  <entity name='fllig' codepoint='FB02'/>
+  <entity name='fltns' codepoint='25B1'/>
+  <entity name='fnof' codepoint='0192'/>
+  <entity name='Fopf' codepoint='1D53D'/>
+  <entity name='fopf' codepoint='1D557'/>
+  <entity name='forall' codepoint='2200'/>
+  <entity name='fork' codepoint='22D4'/>
+  <entity name='forkv' codepoint='2AD9'/>
+  <entity name='Fouriertrf' codepoint='2131'/>
+  <entity name='fpartint' codepoint='2A0D'/>
+  <entity name='frac12' codepoint='00BD'/>
+  <entity name='frac13' codepoint='2153'/>
+  <entity name='frac14' codepoint='00BC'/>
+  <entity name='frac15' codepoint='2155'/>
+  <entity name='frac16' codepoint='2159'/>
+  <entity name='frac18' codepoint='215B'/>
+  <entity name='frac23' codepoint='2154'/>
+  <entity name='frac25' codepoint='2156'/>
+  <entity name='frac34' codepoint='00BE'/>
+  <entity name='frac35' codepoint='2157'/>
+  <entity name='frac38' codepoint='215C'/>
+  <entity name='frac45' codepoint='2158'/>
+  <entity name='frac56' codepoint='215A'/>
+  <entity name='frac58' codepoint='215D'/>
+  <entity name='frac78' codepoint='215E'/>
+  <entity name='frasl' codepoint='2044'/>
+  <entity name='frown' codepoint='2322'/>
+  <entity name='Fscr' codepoint='2131'/>
+  <entity name='fscr' codepoint='1D4BB'/>
+  <entity name='gacute' codepoint='01F5'/>
+  <entity name='Gamma' codepoint='0393'/>
+  <entity name='gamma' codepoint='03B3'/>
+  <entity name='Gammad' codepoint='03DC'/>
+  <entity name='gammad' codepoint='03DD'/>
+  <entity name='gap' codepoint='2A86'/>
+  <entity name='Gbreve' codepoint='011E'/>
+  <entity name='gbreve' codepoint='011F'/>
+  <entity name='Gcedil' codepoint='0122'/>
+  <entity name='Gcirc' codepoint='011C'/>
+  <entity name='gcirc' codepoint='011D'/>
+  <entity name='Gcy' codepoint='0413'/>
+  <entity name='gcy' codepoint='0433'/>
+  <entity name='Gdot' codepoint='0120'/>
+  <entity name='gdot' codepoint='0121'/>
+  <entity name='ge' codepoint='2265'/>
+  <entity name='gE' codepoint='2267'/>
+  <entity name='gel' codepoint='22DB'/>
+  <entity name='gEl' codepoint='2A8C'/>
+  <entity name='geq' codepoint='2265'/>
+  <entity name='geqq' codepoint='2267'/>
+  <entity name='geqslant' codepoint='2A7E'/>
+  <entity name='ges' codepoint='2A7E'/>
+  <entity name='gescc' codepoint='2AA9'/>
+  <entity name='gesdot' codepoint='2A80'/>
+  <entity name='gesdoto' codepoint='2A82'/>
+  <entity name='gesdotol' codepoint='2A84'/>
+  <entity name='gesles' codepoint='2A94'/>
+  <entity name='Gfr' codepoint='1D50A'/>
+  <entity name='gfr' codepoint='1D524'/>
+  <entity name='gg' codepoint='226B'/>
+  <entity name='Gg' codepoint='22D9'/>
+  <entity name='ggg' codepoint='22D9'/>
+  <entity name='Ggr' codepoint='0393'/>
+  <entity name='ggr' codepoint='03B3'/>
+  <entity name='gimel' codepoint='2137'/>
+  <entity name='GJcy' codepoint='0403'/>
+  <entity name='gjcy' codepoint='0453'/>
+  <entity name='gl' codepoint='2277'/>
+  <entity name='gla' codepoint='2AA5'/>
+  <entity name='glE' codepoint='2A92'/>
+  <entity name='glj' codepoint='2AA4'/>
+  <entity name='gnap' codepoint='2A8A'/>
+  <entity name='gnapprox' codepoint='2A8A'/>
+  <entity name='gnE' codepoint='2269'/>
+  <entity name='gne' codepoint='2A88'/>
+  <entity name='gneq' codepoint='2A88'/>
+  <entity name='gneqq' codepoint='2269'/>
+  <entity name='gnsim' codepoint='22E7'/>
+  <entity name='Gopf' codepoint='1D53E'/>
+  <entity name='gopf' codepoint='1D558'/>
+  <entity name='grave' codepoint='0060'/>
+  <entity name='GreaterEqual' codepoint='2265'/>
+  <entity name='GreaterEqualLess' codepoint='22DB'/>
+  <entity name='GreaterFullEqual' codepoint='2267'/>
+  <entity name='GreaterGreater' codepoint='2AA2'/>
+  <entity name='GreaterLess' codepoint='2277'/>
+  <entity name='GreaterSlantEqual' codepoint='2A7E'/>
+  <entity name='GreaterTilde' codepoint='2273'/>
+  <entity name='gscr' codepoint='210A'/>
+  <entity name='Gscr' codepoint='1D4A2'/>
+  <entity name='gsim' codepoint='2273'/>
+  <entity name='gsime' codepoint='2A8E'/>
+  <entity name='gsiml' codepoint='2A90'/>
+  <entity name='gt' codepoint='003E'/>
+  <entity name='Gt' codepoint='226B'/>
+  <entity name='gtcc' codepoint='2AA7'/>
+  <entity name='gtcir' codepoint='2A7A'/>
+  <entity name='gtdot' codepoint='22D7'/>
+  <entity name='gtlPar' codepoint='2995'/>
+  <entity name='gtquest' codepoint='2A7C'/>
+  <entity name='gtrapprox' codepoint='2A86'/>
+  <entity name='gtrarr' codepoint='2978'/>
+  <entity name='gtrdot' codepoint='22D7'/>
+  <entity name='gtreqless' codepoint='22DB'/>
+  <entity name='gtreqqless' codepoint='2A8C'/>
+  <entity name='gtrless' codepoint='2277'/>
+  <entity name='gtrsim' codepoint='2273'/>
+  <entity name='Hacek' codepoint='02C7'/>
+  <entity name='hairsp' codepoint='200A'/>
+  <entity name='half' codepoint='00BD'/>
+  <entity name='hamilt' codepoint='210B'/>
+  <entity name='HARDcy' codepoint='042A'/>
+  <entity name='hardcy' codepoint='044A'/>
+  <entity name='harr' codepoint='2194'/>
+  <entity name='hArr' codepoint='21D4'/>
+  <entity name='harrcir' codepoint='2948'/>
+  <entity name='harrw' codepoint='21AD'/>
+  <entity name='Hat' codepoint='005E'/>
+  <entity name='hbar' codepoint='210F'/>
+  <entity name='Hcirc' codepoint='0124'/>
+  <entity name='hcirc' codepoint='0125'/>
+  <entity name='hearts' codepoint='2665'/>
+  <entity name='heartsuit' codepoint='2665'/>
+  <entity name='hellip' codepoint='2026'/>
+  <entity name='hercon' codepoint='22B9'/>
+  <entity name='Hfr' codepoint='210C'/>
+  <entity name='hfr' codepoint='1D525'/>
+  <entity name='HilbertSpace' codepoint='210B'/>
+  <entity name='hksearow' codepoint='2925'/>
+  <entity name='hkswarow' codepoint='2926'/>
+  <entity name='hoarr' codepoint='21FF'/>
+  <entity name='homtht' codepoint='223B'/>
+  <entity name='hookleftarrow' codepoint='21A9'/>
+  <entity name='hookrightarrow' codepoint='21AA'/>
+  <entity name='Hopf' codepoint='210D'/>
+  <entity name='hopf' codepoint='1D559'/>
+  <entity name='horbar' codepoint='2015'/>
+  <entity name='HorizontalLine' codepoint='2500'/>
+  <entity name='Hscr' codepoint='210B'/>
+  <entity name='hscr' codepoint='1D4BD'/>
+  <entity name='hslash' codepoint='210F'/>
+  <entity name='Hstrok' codepoint='0126'/>
+  <entity name='hstrok' codepoint='0127'/>
+  <entity name='HumpDownHump' codepoint='224E'/>
+  <entity name='HumpEqual' codepoint='224F'/>
+  <entity name='hybull' codepoint='2043'/>
+  <entity name='hyphen' codepoint='2010'/>
+  <entity name='Iacgr' codepoint='038A'/>
+  <entity name='iacgr' codepoint='03AF'/>
+  <entity name='Iacute' codepoint='00CD'/>
+  <entity name='iacute' codepoint='00ED'/>
+  <entity name='ic' codepoint='2063'/>
+  <entity name='Icirc' codepoint='00CE'/>
+  <entity name='icirc' codepoint='00EE'/>
+  <entity name='Icy' codepoint='0418'/>
+  <entity name='icy' codepoint='0438'/>
+  <entity name='idiagr' codepoint='0390'/>
+  <entity name='Idigr' codepoint='03AA'/>
+  <entity name='idigr' codepoint='03CA'/>
+  <entity name='Idot' codepoint='0130'/>
+  <entity name='IEcy' codepoint='0415'/>
+  <entity name='iecy' codepoint='0435'/>
+  <entity name='iexcl' codepoint='00A1'/>
+  <entity name='iff' codepoint='21D4'/>
+  <entity name='Ifr' codepoint='2111'/>
+  <entity name='ifr' codepoint='1D526'/>
+  <entity name='Igr' codepoint='0399'/>
+  <entity name='igr' codepoint='03B9'/>
+  <entity name='Igrave' codepoint='00CC'/>
+  <entity name='igrave' codepoint='00EC'/>
+  <entity name='ii' codepoint='2148'/>
+  <entity name='iiiint' codepoint='2A0C'/>
+  <entity name='iiint' codepoint='222D'/>
+  <entity name='iinfin' codepoint='29DC'/>
+  <entity name='iiota' codepoint='2129'/>
+  <entity name='IJlig' codepoint='0132'/>
+  <entity name='ijlig' codepoint='0133'/>
+  <entity name='Im' codepoint='2111'/>
+  <entity name='Imacr' codepoint='012A'/>
+  <entity name='imacr' codepoint='012B'/>
+  <entity name='image' codepoint='2111'/>
+  <entity name='ImaginaryI' codepoint='2148'/>
+  <entity name='imagline' codepoint='2110'/>
+  <entity name='imagpart' codepoint='2111'/>
+  <entity name='imath' codepoint='0131'/>
+  <entity name='imof' codepoint='22B7'/>
+  <entity name='imped' codepoint='01B5'/>
+  <entity name='Implies' codepoint='21D2'/>
+  <entity name='in' codepoint='2208'/>
+  <entity name='incare' codepoint='2105'/>
+  <entity name='infin' codepoint='221E'/>
+  <entity name='infintie' codepoint='29DD'/>
+  <entity name='inodot' codepoint='0131'/>
+  <entity name='int' codepoint='222B'/>
+  <entity name='Int' codepoint='222C'/>
+  <entity name='intcal' codepoint='22BA'/>
+  <entity name='integers' codepoint='2124'/>
+  <entity name='Integral' codepoint='222B'/>
+  <entity name='intercal' codepoint='22BA'/>
+  <entity name='Intersection' codepoint='22C2'/>
+  <entity name='intlarhk' codepoint='2A17'/>
+  <entity name='intprod' codepoint='2A3C'/>
+  <entity name='InvisibleComma' codepoint='2063'/>
+  <entity name='InvisibleTimes' codepoint='2062'/>
+  <entity name='IOcy' codepoint='0401'/>
+  <entity name='iocy' codepoint='0451'/>
+  <entity name='Iogon' codepoint='012E'/>
+  <entity name='iogon' codepoint='012F'/>
+  <entity name='Iopf' codepoint='1D540'/>
+  <entity name='iopf' codepoint='1D55A'/>
+  <entity name='Iota' codepoint='0399'/>
+  <entity name='iota' codepoint='03B9'/>
+  <entity name='iprod' codepoint='2A3C'/>
+  <entity name='iquest' codepoint='00BF'/>
+  <entity name='Iscr' codepoint='2110'/>
+  <entity name='iscr' codepoint='1D4BE'/>
+  <entity name='isin' codepoint='2208'/>
+  <entity name='isindot' codepoint='22F5'/>
+  <entity name='isinE' codepoint='22F9'/>
+  <entity name='isins' codepoint='22F4'/>
+  <entity name='isinsv' codepoint='22F3'/>
+  <entity name='isinv' codepoint='2208'/>
+  <entity name='it' codepoint='2062'/>
+  <entity name='Itilde' codepoint='0128'/>
+  <entity name='itilde' codepoint='0129'/>
+  <entity name='Iukcy' codepoint='0406'/>
+  <entity name='iukcy' codepoint='0456'/>
+  <entity name='Iuml' codepoint='00CF'/>
+  <entity name='iuml' codepoint='00EF'/>
+  <entity name='Jcirc' codepoint='0134'/>
+  <entity name='jcirc' codepoint='0135'/>
+  <entity name='Jcy' codepoint='0419'/>
+  <entity name='jcy' codepoint='0439'/>
+  <entity name='Jfr' codepoint='1D50D'/>
+  <entity name='jfr' codepoint='1D527'/>
+  <entity name='jmath' codepoint='0237'/>
+  <entity name='Jopf' codepoint='1D541'/>
+  <entity name='jopf' codepoint='1D55B'/>
+  <entity name='Jscr' codepoint='1D4A5'/>
+  <entity name='jscr' codepoint='1D4BF'/>
+  <entity name='Jsercy' codepoint='0408'/>
+  <entity name='jsercy' codepoint='0458'/>
+  <entity name='Jukcy' codepoint='0404'/>
+  <entity name='jukcy' codepoint='0454'/>
+  <entity name='Kappa' codepoint='039A'/>
+  <entity name='kappa' codepoint='03BA'/>
+  <entity name='kappav' codepoint='03F0'/>
+  <entity name='Kcedil' codepoint='0136'/>
+  <entity name='kcedil' codepoint='0137'/>
+  <entity name='Kcy' codepoint='041A'/>
+  <entity name='kcy' codepoint='043A'/>
+  <entity name='Kfr' codepoint='1D50E'/>
+  <entity name='kfr' codepoint='1D528'/>
+  <entity name='Kgr' codepoint='039A'/>
+  <entity name='kgr' codepoint='03BA'/>
+  <entity name='kgreen' codepoint='0138'/>
+  <entity name='KHcy' codepoint='0425'/>
+  <entity name='khcy' codepoint='0445'/>
+  <entity name='KHgr' codepoint='03A7'/>
+  <entity name='khgr' codepoint='03C7'/>
+  <entity name='KJcy' codepoint='040C'/>
+  <entity name='kjcy' codepoint='045C'/>
+  <entity name='Kopf' codepoint='1D542'/>
+  <entity name='kopf' codepoint='1D55C'/>
+  <entity name='Kscr' codepoint='1D4A6'/>
+  <entity name='kscr' codepoint='1D4C0'/>
+  <entity name='lAarr' codepoint='21DA'/>
+  <entity name='Lacute' codepoint='0139'/>
+  <entity name='lacute' codepoint='013A'/>
+  <entity name='laemptyv' codepoint='29B4'/>
+  <entity name='lagran' codepoint='2112'/>
+  <entity name='Lambda' codepoint='039B'/>
+  <entity name='lambda' codepoint='03BB'/>
+  <entity name='lang' codepoint='2329'/>
+  <entity name='Lang' codepoint='27EA'/>
+  <entity name='langd' codepoint='2991'/>
+  <entity name='langle' codepoint='2329'/>
+  <entity name='lap' codepoint='2A85'/>
+  <entity name='Laplacetrf' codepoint='2112'/>
+  <entity name='laquo' codepoint='00AB'/>
+  <entity name='larr' codepoint='2190'/>
+  <entity name='Larr' codepoint='219E'/>
+  <entity name='lArr' codepoint='21D0'/>
+  <entity name='larrb' codepoint='21E4'/>
+  <entity name='larrbfs' codepoint='291F'/>
+  <entity name='larrfs' codepoint='291D'/>
+  <entity name='larrhk' codepoint='21A9'/>
+  <entity name='larrlp' codepoint='21AB'/>
+  <entity name='larrpl' codepoint='2939'/>
+  <entity name='larrsim' codepoint='2973'/>
+  <entity name='larrtl' codepoint='21A2'/>
+  <entity name='lat' codepoint='2AAB'/>
+  <entity name='latail' codepoint='2919'/>
+  <entity name='lAtail' codepoint='291B'/>
+  <entity name='late' codepoint='2AAD'/>
+  <entity name='lbarr' codepoint='290C'/>
+  <entity name='lBarr' codepoint='290E'/>
+  <entity name='lbbrk' codepoint='2997'/>
+  <entity name='lbrace' codepoint='007B'/>
+  <entity name='lbrack' codepoint='005B'/>
+  <entity name='lbrke' codepoint='298B'/>
+  <entity name='lbrksld' codepoint='298F'/>
+  <entity name='lbrkslu' codepoint='298D'/>
+  <entity name='Lcaron' codepoint='013D'/>
+  <entity name='lcaron' codepoint='013E'/>
+  <entity name='Lcedil' codepoint='013B'/>
+  <entity name='lcedil' codepoint='013C'/>
+  <entity name='lceil' codepoint='2308'/>
+  <entity name='lcub' codepoint='007B'/>
+  <entity name='Lcy' codepoint='041B'/>
+  <entity name='lcy' codepoint='043B'/>
+  <entity name='ldca' codepoint='2936'/>
+  <entity name='ldquo' codepoint='201C'/>
+  <entity name='ldquor' codepoint='201E'/>
+  <entity name='ldrdhar' codepoint='2967'/>
+  <entity name='ldrushar' codepoint='294B'/>
+  <entity name='ldsh' codepoint='21B2'/>
+  <entity name='le' codepoint='2264'/>
+  <entity name='lE' codepoint='2266'/>
+  <entity name='LeftAngleBracket' codepoint='2329'/>
+  <entity name='leftarrow' codepoint='2190'/>
+  <entity name='Leftarrow' codepoint='21D0'/>
+  <entity name='LeftArrowBar' codepoint='21E4'/>
+  <entity name='LeftArrowRightArrow' codepoint='21C6'/>
+  <entity name='leftarrowtail' codepoint='21A2'/>
+  <entity name='LeftCeiling' codepoint='2308'/>
+  <entity name='LeftDoubleBracket' codepoint='27E6'/>
+  <entity name='LeftDownTeeVector' codepoint='2961'/>
+  <entity name='LeftDownVector' codepoint='21C3'/>
+  <entity name='LeftDownVectorBar' codepoint='2959'/>
+  <entity name='LeftFloor' codepoint='230A'/>
+  <entity name='leftharpoondown' codepoint='21BD'/>
+  <entity name='leftharpoonup' codepoint='21BC'/>
+  <entity name='leftleftarrows' codepoint='21C7'/>
+  <entity name='leftrightarrow' codepoint='2194'/>
+  <entity name='Leftrightarrow' codepoint='21D4'/>
+  <entity name='leftrightarrows' codepoint='21C6'/>
+  <entity name='leftrightharpoons' codepoint='21CB'/>
+  <entity name='leftrightsquigarrow' codepoint='21AD'/>
+  <entity name='LeftRightVector' codepoint='294E'/>
+  <entity name='LeftTee' codepoint='22A3'/>
+  <entity name='LeftTeeArrow' codepoint='21A4'/>
+  <entity name='LeftTeeVector' codepoint='295A'/>
+  <entity name='leftthreetimes' codepoint='22CB'/>
+  <entity name='LeftTriangle' codepoint='22B2'/>
+  <entity name='LeftTriangleBar' codepoint='29CF'/>
+  <entity name='LeftTriangleEqual' codepoint='22B4'/>
+  <entity name='LeftUpDownVector' codepoint='2951'/>
+  <entity name='LeftUpTeeVector' codepoint='2960'/>
+  <entity name='LeftUpVector' codepoint='21BF'/>
+  <entity name='LeftUpVectorBar' codepoint='2958'/>
+  <entity name='LeftVector' codepoint='21BC'/>
+  <entity name='LeftVectorBar' codepoint='2952'/>
+  <entity name='leg' codepoint='22DA'/>
+  <entity name='lEg' codepoint='2A8B'/>
+  <entity name='leq' codepoint='2264'/>
+  <entity name='leqq' codepoint='2266'/>
+  <entity name='leqslant' codepoint='2A7D'/>
+  <entity name='les' codepoint='2A7D'/>
+  <entity name='lescc' codepoint='2AA8'/>
+  <entity name='lesdot' codepoint='2A7F'/>
+  <entity name='lesdoto' codepoint='2A81'/>
+  <entity name='lesdotor' codepoint='2A83'/>
+  <entity name='lesges' codepoint='2A93'/>
+  <entity name='lessapprox' codepoint='2A85'/>
+  <entity name='lessdot' codepoint='22D6'/>
+  <entity name='lesseqgtr' codepoint='22DA'/>
+  <entity name='lesseqqgtr' codepoint='2A8B'/>
+  <entity name='LessEqualGreater' codepoint='22DA'/>
+  <entity name='LessFullEqual' codepoint='2266'/>
+  <entity name='LessGreater' codepoint='2276'/>
+  <entity name='lessgtr' codepoint='2276'/>
+  <entity name='LessLess' codepoint='2AA1'/>
+  <entity name='lesssim' codepoint='2272'/>
+  <entity name='LessSlantEqual' codepoint='2A7D'/>
+  <entity name='LessTilde' codepoint='2272'/>
+  <entity name='lfisht' codepoint='297C'/>
+  <entity name='lfloor' codepoint='230A'/>
+  <entity name='Lfr' codepoint='1D50F'/>
+  <entity name='lfr' codepoint='1D529'/>
+  <entity name='lg' codepoint='2276'/>
+  <entity name='lgE' codepoint='2A91'/>
+  <entity name='Lgr' codepoint='039B'/>
+  <entity name='lgr' codepoint='03BB'/>
+  <entity name='lHar' codepoint='2962'/>
+  <entity name='lhard' codepoint='21BD'/>
+  <entity name='lharu' codepoint='21BC'/>
+  <entity name='lharul' codepoint='296A'/>
+  <entity name='lhblk' codepoint='2584'/>
+  <entity name='LJcy' codepoint='0409'/>
+  <entity name='ljcy' codepoint='0459'/>
+  <entity name='ll' codepoint='226A'/>
+  <entity name='Ll' codepoint='22D8'/>
+  <entity name='llarr' codepoint='21C7'/>
+  <entity name='llcorner' codepoint='231E'/>
+  <entity name='Lleftarrow' codepoint='21DA'/>
+  <entity name='llhard' codepoint='296B'/>
+  <entity name='lltri' codepoint='25FA'/>
+  <entity name='Lmidot' codepoint='013F'/>
+  <entity name='lmidot' codepoint='0140'/>
+  <entity name='lmoust' codepoint='23B0'/>
+  <entity name='lmoustache' codepoint='23B0'/>
+  <entity name='lnap' codepoint='2A89'/>
+  <entity name='lnapprox' codepoint='2A89'/>
+  <entity name='lnE' codepoint='2268'/>
+  <entity name='lne' codepoint='2A87'/>
+  <entity name='lneq' codepoint='2A87'/>
+  <entity name='lneqq' codepoint='2268'/>
+  <entity name='lnsim' codepoint='22E6'/>
+  <entity name='loang' codepoint='27EC'/>
+  <entity name='loarr' codepoint='21FD'/>
+  <entity name='lobrk' codepoint='27E6'/>
+  <entity name='longleftarrow' codepoint='27F5'/>
+  <entity name='Longleftarrow' codepoint='27F8'/>
+  <entity name='longleftrightarrow' codepoint='27F7'/>
+  <entity name='Longleftrightarrow' codepoint='27FA'/>
+  <entity name='longmapsto' codepoint='27FC'/>
+  <entity name='longrightarrow' codepoint='27F6'/>
+  <entity name='Longrightarrow' codepoint='27F9'/>
+  <entity name='looparrowleft' codepoint='21AB'/>
+  <entity name='looparrowright' codepoint='21AC'/>
+  <entity name='lopar' codepoint='2985'/>
+  <entity name='Lopf' codepoint='1D543'/>
+  <entity name='lopf' codepoint='1D55D'/>
+  <entity name='loplus' codepoint='2A2D'/>
+  <entity name='lotimes' codepoint='2A34'/>
+  <entity name='lowast' codepoint='2217'/>
+  <entity name='lowbar' codepoint='005F'/>
+  <entity name='LowerLeftArrow' codepoint='2199'/>
+  <entity name='LowerRightArrow' codepoint='2198'/>
+  <entity name='loz' codepoint='25CA'/>
+  <entity name='lozenge' codepoint='25CA'/>
+  <entity name='lozf' codepoint='29EB'/>
+  <entity name='lpar' codepoint='0028'/>
+  <entity name='lparlt' codepoint='2993'/>
+  <entity name='lrarr' codepoint='21C6'/>
+  <entity name='lrcorner' codepoint='231F'/>
+  <entity name='lrhar' codepoint='21CB'/>
+  <entity name='lrhard' codepoint='296D'/>
+  <entity name='lrm' codepoint='200E'/>
+  <entity name='lrtri' codepoint='22BF'/>
+  <entity name='lsaquo' codepoint='2039'/>
+  <entity name='Lscr' codepoint='2112'/>
+  <entity name='lscr' codepoint='1D4C1'/>
+  <entity name='lsh' codepoint='21B0'/>
+  <entity name='lsim' codepoint='2272'/>
+  <entity name='lsime' codepoint='2A8D'/>
+  <entity name='lsimg' codepoint='2A8F'/>
+  <entity name='lsqb' codepoint='005B'/>
+  <entity name='lsquo' codepoint='2018'/>
+  <entity name='lsquor' codepoint='201A'/>
+  <entity name='Lstrok' codepoint='0141'/>
+  <entity name='lstrok' codepoint='0142'/>
+  <entity name='lt' codepoint='003C'/>
+  <entity name='Lt' codepoint='226A'/>
+  <entity name='ltcc' codepoint='2AA6'/>
+  <entity name='ltcir' codepoint='2A79'/>
+  <entity name='ltdot' codepoint='22D6'/>
+  <entity name='lthree' codepoint='22CB'/>
+  <entity name='ltimes' codepoint='22C9'/>
+  <entity name='ltlarr' codepoint='2976'/>
+  <entity name='ltquest' codepoint='2A7B'/>
+  <entity name='ltri' codepoint='25C3'/>
+  <entity name='ltrie' codepoint='22B4'/>
+  <entity name='ltrif' codepoint='25C2'/>
+  <entity name='ltrPar' codepoint='2996'/>
+  <entity name='lurdshar' codepoint='294A'/>
+  <entity name='luruhar' codepoint='2966'/>
+  <entity name='macr' codepoint='00AF'/>
+  <entity name='male' codepoint='2642'/>
+  <entity name='malt' codepoint='2720'/>
+  <entity name='maltese' codepoint='2720'/>
+  <entity name='map' codepoint='21A6'/>
+  <entity name='Map' codepoint='2905'/>
+  <entity name='mapsto' codepoint='21A6'/>
+  <entity name='mapstodown' codepoint='21A7'/>
+  <entity name='mapstoleft' codepoint='21A4'/>
+  <entity name='mapstoup' codepoint='21A5'/>
+  <entity name='marker' codepoint='25AE'/>
+  <entity name='mcomma' codepoint='2A29'/>
+  <entity name='Mcy' codepoint='041C'/>
+  <entity name='mcy' codepoint='043C'/>
+  <entity name='mdash' codepoint='2014'/>
+  <entity name='mDDot' codepoint='223A'/>
+  <entity name='measuredangle' codepoint='2221'/>
+  <entity name='MediumSpace' codepoint='205F'/>
+  <entity name='Mellintrf' codepoint='2133'/>
+  <entity name='Mfr' codepoint='1D510'/>
+  <entity name='mfr' codepoint='1D52A'/>
+  <entity name='Mgr' codepoint='039C'/>
+  <entity name='mgr' codepoint='03BC'/>
+  <entity name='mho' codepoint='2127'/>
+  <entity name='micro' codepoint='00B5'/>
+  <entity name='mid' codepoint='2223'/>
+  <entity name='midast' codepoint='002A'/>
+  <entity name='midcir' codepoint='2AF0'/>
+  <entity name='middot' codepoint='00B7'/>
+  <entity name='minus' codepoint='2212'/>
+  <entity name='minusb' codepoint='229F'/>
+  <entity name='minusd' codepoint='2238'/>
+  <entity name='minusdu' codepoint='2A2A'/>
+  <entity name='MinusPlus' codepoint='2213'/>
+  <entity name='mlcp' codepoint='2ADB'/>
+  <entity name='mldr' codepoint='2026'/>
+  <entity name='mnplus' codepoint='2213'/>
+  <entity name='models' codepoint='22A7'/>
+  <entity name='Mopf' codepoint='1D544'/>
+  <entity name='mopf' codepoint='1D55E'/>
+  <entity name='mp' codepoint='2213'/>
+  <entity name='Mscr' codepoint='2133'/>
+  <entity name='mscr' codepoint='1D4C2'/>
+  <entity name='mstpos' codepoint='223E'/>
+  <entity name='Mu' codepoint='039C'/>
+  <entity name='mu' codepoint='03BC'/>
+  <entity name='multimap' codepoint='22B8'/>
+  <entity name='mumap' codepoint='22B8'/>
+  <entity name='nabla' codepoint='2207'/>
+  <entity name='Nacute' codepoint='0143'/>
+  <entity name='nacute' codepoint='0144'/>
+  <entity name='nap' codepoint='2249'/>
+  <entity name='napos' codepoint='0149'/>
+  <entity name='napprox' codepoint='2249'/>
+  <entity name='natur' codepoint='266E'/>
+  <entity name='natural' codepoint='266E'/>
+  <entity name='naturals' codepoint='2115'/>
+  <entity name='nbsp' codepoint='00A0'/>
+  <entity name='ncap' codepoint='2A43'/>
+  <entity name='Ncaron' codepoint='0147'/>
+  <entity name='ncaron' codepoint='0148'/>
+  <entity name='Ncedil' codepoint='0145'/>
+  <entity name='ncedil' codepoint='0146'/>
+  <entity name='ncong' codepoint='2247'/>
+  <entity name='ncup' codepoint='2A42'/>
+  <entity name='Ncy' codepoint='041D'/>
+  <entity name='ncy' codepoint='043D'/>
+  <entity name='ndash' codepoint='2013'/>
+  <entity name='ne' codepoint='2260'/>
+  <entity name='nearhk' codepoint='2924'/>
+  <entity name='nearr' codepoint='2197'/>
+  <entity name='neArr' codepoint='21D7'/>
+  <entity name='nearrow' codepoint='2197'/>
+  <entity name='NegativeMediumSpace' codepoint='200B'/>
+  <entity name='NegativeThickSpace' codepoint='200B'/>
+  <entity name='NegativeThinSpace' codepoint='200B'/>
+  <entity name='NegativeVeryThinSpace' codepoint='200B'/>
+  <entity name='nequiv' codepoint='2262'/>
+  <entity name='nesear' codepoint='2928'/>
+  <entity name='NestedGreaterGreater' codepoint='226B'/>
+  <entity name='NestedLessLess' codepoint='226A'/>
+  <entity name='NewLine' codepoint='000A'/>
+  <entity name='nexist' codepoint='2204'/>
+  <entity name='nexists' codepoint='2204'/>
+  <entity name='Nfr' codepoint='1D511'/>
+  <entity name='nfr' codepoint='1D52B'/>
+  <entity name='nge' codepoint='2271'/>
+  <entity name='ngeq' codepoint='2271'/>
+  <entity name='Ngr' codepoint='039D'/>
+  <entity name='ngr' codepoint='03BD'/>
+  <entity name='ngsim' codepoint='2275'/>
+  <entity name='ngt' codepoint='226F'/>
+  <entity name='ngtr' codepoint='226F'/>
+  <entity name='nharr' codepoint='21AE'/>
+  <entity name='nhArr' codepoint='21CE'/>
+  <entity name='nhpar' codepoint='2AF2'/>
+  <entity name='ni' codepoint='220B'/>
+  <entity name='nis' codepoint='22FC'/>
+  <entity name='nisd' codepoint='22FA'/>
+  <entity name='niv' codepoint='220B'/>
+  <entity name='NJcy' codepoint='040A'/>
+  <entity name='njcy' codepoint='045A'/>
+  <entity name='nlarr' codepoint='219A'/>
+  <entity name='nlArr' codepoint='21CD'/>
+  <entity name='nldr' codepoint='2025'/>
+  <entity name='nle' codepoint='2270'/>
+  <entity name='nleftarrow' codepoint='219A'/>
+  <entity name='nLeftarrow' codepoint='21CD'/>
+  <entity name='nleftrightarrow' codepoint='21AE'/>
+  <entity name='nLeftrightarrow' codepoint='21CE'/>
+  <entity name='nleq' codepoint='2270'/>
+  <entity name='nless' codepoint='226E'/>
+  <entity name='nlsim' codepoint='2274'/>
+  <entity name='nlt' codepoint='226E'/>
+  <entity name='nltri' codepoint='22EA'/>
+  <entity name='nltrie' codepoint='22EC'/>
+  <entity name='nmid' codepoint='2224'/>
+  <entity name='NoBreak' codepoint='2060'/>
+  <entity name='NonBreakingSpace' codepoint='00A0'/>
+  <entity name='Nopf' codepoint='2115'/>
+  <entity name='nopf' codepoint='1D55F'/>
+  <entity name='not' codepoint='00AC'/>
+  <entity name='Not' codepoint='2AEC'/>
+  <entity name='NotCongruent' codepoint='2262'/>
+  <entity name='NotCupCap' codepoint='226D'/>
+  <entity name='NotDoubleVerticalBar' codepoint='2226'/>
+  <entity name='NotElement' codepoint='2209'/>
+  <entity name='NotEqual' codepoint='2260'/>
+  <entity name='NotExists' codepoint='2204'/>
+  <entity name='NotGreater' codepoint='226F'/>
+  <entity name='NotGreaterEqual' codepoint='2271'/>
+  <entity name='NotGreaterLess' codepoint='2279'/>
+  <entity name='NotGreaterTilde' codepoint='2275'/>
+  <entity name='notin' codepoint='2209'/>
+  <entity name='notinva' codepoint='2209'/>
+  <entity name='notinvb' codepoint='22F7'/>
+  <entity name='notinvc' codepoint='22F6'/>
+  <entity name='NotLeftTriangle' codepoint='22EA'/>
+  <entity name='NotLeftTriangleEqual' codepoint='22EC'/>
+  <entity name='NotLess' codepoint='226E'/>
+  <entity name='NotLessEqual' codepoint='2270'/>
+  <entity name='NotLessGreater' codepoint='2278'/>
+  <entity name='NotLessTilde' codepoint='2274'/>
+  <entity name='notni' codepoint='220C'/>
+  <entity name='notniva' codepoint='220C'/>
+  <entity name='notnivb' codepoint='22FE'/>
+  <entity name='notnivc' codepoint='22FD'/>
+  <entity name='NotPrecedes' codepoint='2280'/>
+  <entity name='NotPrecedesSlantEqual' codepoint='22E0'/>
+  <entity name='NotReverseElement' codepoint='220C'/>
+  <entity name='NotRightTriangle' codepoint='22EB'/>
+  <entity name='NotRightTriangleEqual' codepoint='22ED'/>
+  <entity name='NotSquareSubsetEqual' codepoint='22E2'/>
+  <entity name='NotSquareSupersetEqual' codepoint='22E3'/>
+  <entity name='NotSubsetEqual' codepoint='2288'/>
+  <entity name='NotSucceeds' codepoint='2281'/>
+  <entity name='NotSucceedsSlantEqual' codepoint='22E1'/>
+  <entity name='NotSupersetEqual' codepoint='2289'/>
+  <entity name='NotTilde' codepoint='2241'/>
+  <entity name='NotTildeEqual' codepoint='2244'/>
+  <entity name='NotTildeFullEqual' codepoint='2247'/>
+  <entity name='NotTildeTilde' codepoint='2249'/>
+  <entity name='NotVerticalBar' codepoint='2224'/>
+  <entity name='npar' codepoint='2226'/>
+  <entity name='nparallel' codepoint='2226'/>
+  <entity name='npolint' codepoint='2A14'/>
+  <entity name='npr' codepoint='2280'/>
+  <entity name='nprcue' codepoint='22E0'/>
+  <entity name='nprec' codepoint='2280'/>
+  <entity name='nrarr' codepoint='219B'/>
+  <entity name='nrArr' codepoint='21CF'/>
+  <entity name='nrightarrow' codepoint='219B'/>
+  <entity name='nRightarrow' codepoint='21CF'/>
+  <entity name='nrtri' codepoint='22EB'/>
+  <entity name='nrtrie' codepoint='22ED'/>
+  <entity name='nsc' codepoint='2281'/>
+  <entity name='nsccue' codepoint='22E1'/>
+  <entity name='Nscr' codepoint='1D4A9'/>
+  <entity name='nscr' codepoint='1D4C3'/>
+  <entity name='nshortmid' codepoint='2224'/>
+  <entity name='nshortparallel' codepoint='2226'/>
+  <entity name='nsim' codepoint='2241'/>
+  <entity name='nsime' codepoint='2244'/>
+  <entity name='nsimeq' codepoint='2244'/>
+  <entity name='nsmid' codepoint='2224'/>
+  <entity name='nspar' codepoint='2226'/>
+  <entity name='nsqsube' codepoint='22E2'/>
+  <entity name='nsqsupe' codepoint='22E3'/>
+  <entity name='nsub' codepoint='2284'/>
+  <entity name='nsube' codepoint='2288'/>
+  <entity name='nsubseteq' codepoint='2288'/>
+  <entity name='nsucc' codepoint='2281'/>
+  <entity name='nsup' codepoint='2285'/>
+  <entity name='nsupe' codepoint='2289'/>
+  <entity name='nsupseteq' codepoint='2289'/>
+  <entity name='ntgl' codepoint='2279'/>
+  <entity name='Ntilde' codepoint='00D1'/>
+  <entity name='ntilde' codepoint='00F1'/>
+  <entity name='ntlg' codepoint='2278'/>
+  <entity name='ntriangleleft' codepoint='22EA'/>
+  <entity name='ntrianglelefteq' codepoint='22EC'/>
+  <entity name='ntriangleright' codepoint='22EB'/>
+  <entity name='ntrianglerighteq' codepoint='22ED'/>
+  <entity name='Nu' codepoint='039D'/>
+  <entity name='nu' codepoint='03BD'/>
+  <entity name='num' codepoint='0023'/>
+  <entity name='numero' codepoint='2116'/>
+  <entity name='numsp' codepoint='2007'/>
+  <entity name='nvdash' codepoint='22AC'/>
+  <entity name='nvDash' codepoint='22AD'/>
+  <entity name='nVdash' codepoint='22AE'/>
+  <entity name='nVDash' codepoint='22AF'/>
+  <entity name='nvHarr' codepoint='2904'/>
+  <entity name='nvinfin' codepoint='29DE'/>
+  <entity name='nvlArr' codepoint='2902'/>
+  <entity name='nvrArr' codepoint='2903'/>
+  <entity name='nwarhk' codepoint='2923'/>
+  <entity name='nwarr' codepoint='2196'/>
+  <entity name='nwArr' codepoint='21D6'/>
+  <entity name='nwarrow' codepoint='2196'/>
+  <entity name='nwnear' codepoint='2927'/>
+  <entity name='Oacgr' codepoint='038C'/>
+  <entity name='oacgr' codepoint='03CC'/>
+  <entity name='Oacute' codepoint='00D3'/>
+  <entity name='oacute' codepoint='00F3'/>
+  <entity name='oast' codepoint='229B'/>
+  <entity name='ocir' codepoint='229A'/>
+  <entity name='Ocirc' codepoint='00D4'/>
+  <entity name='ocirc' codepoint='00F4'/>
+  <entity name='Ocy' codepoint='041E'/>
+  <entity name='ocy' codepoint='043E'/>
+  <entity name='odash' codepoint='229D'/>
+  <entity name='Odblac' codepoint='0150'/>
+  <entity name='odblac' codepoint='0151'/>
+  <entity name='odiv' codepoint='2A38'/>
+  <entity name='odot' codepoint='2299'/>
+  <entity name='odsold' codepoint='29BC'/>
+  <entity name='OElig' codepoint='0152'/>
+  <entity name='oelig' codepoint='0153'/>
+  <entity name='ofcir' codepoint='29BF'/>
+  <entity name='Ofr' codepoint='1D512'/>
+  <entity name='ofr' codepoint='1D52C'/>
+  <entity name='ogon' codepoint='02DB'/>
+  <entity name='Ogr' codepoint='039F'/>
+  <entity name='ogr' codepoint='03BF'/>
+  <entity name='Ograve' codepoint='00D2'/>
+  <entity name='ograve' codepoint='00F2'/>
+  <entity name='ogt' codepoint='29C1'/>
+  <entity name='OHacgr' codepoint='038F'/>
+  <entity name='ohacgr' codepoint='03CE'/>
+  <entity name='ohbar' codepoint='29B5'/>
+  <entity name='OHgr' codepoint='03A9'/>
+  <entity name='ohgr' codepoint='03C9'/>
+  <entity name='ohm' codepoint='2126'/>
+  <entity name='oint' codepoint='222E'/>
+  <entity name='olarr' codepoint='21BA'/>
+  <entity name='olcir' codepoint='29BE'/>
+  <entity name='olcross' codepoint='29BB'/>
+  <entity name='oline' codepoint='203E'/>
+  <entity name='olt' codepoint='29C0'/>
+  <entity name='Omacr' codepoint='014C'/>
+  <entity name='omacr' codepoint='014D'/>
+  <entity name='Omega' codepoint='03A9'/>
+  <entity name='omega' codepoint='03C9'/>
+  <entity name='Omicron' codepoint='039F'/>
+  <entity name='omicron' codepoint='03BF'/>
+  <entity name='omid' codepoint='29B6'/>
+  <entity name='ominus' codepoint='2296'/>
+  <entity name='Oopf' codepoint='1D546'/>
+  <entity name='oopf' codepoint='1D560'/>
+  <entity name='opar' codepoint='29B7'/>
+  <entity name='OpenCurlyDoubleQuote' codepoint='201C'/>
+  <entity name='OpenCurlyQuote' codepoint='2018'/>
+  <entity name='operp' codepoint='29B9'/>
+  <entity name='oplus' codepoint='2295'/>
+  <entity name='or' codepoint='2228'/>
+  <entity name='Or' codepoint='2A54'/>
+  <entity name='orarr' codepoint='21BB'/>
+  <entity name='ord' codepoint='2A5D'/>
+  <entity name='order' codepoint='2134'/>
+  <entity name='orderof' codepoint='2134'/>
+  <entity name='ordf' codepoint='00AA'/>
+  <entity name='ordm' codepoint='00BA'/>
+  <entity name='origof' codepoint='22B6'/>
+  <entity name='oror' codepoint='2A56'/>
+  <entity name='orslope' codepoint='2A57'/>
+  <entity name='orv' codepoint='2A5B'/>
+  <entity name='oS' codepoint='24C8'/>
+  <entity name='oscr' codepoint='2134'/>
+  <entity name='Oscr' codepoint='1D4AA'/>
+  <entity name='Oslash' codepoint='00D8'/>
+  <entity name='oslash' codepoint='00F8'/>
+  <entity name='osol' codepoint='2298'/>
+  <entity name='Otilde' codepoint='00D5'/>
+  <entity name='otilde' codepoint='00F5'/>
+  <entity name='otimes' codepoint='2297'/>
+  <entity name='Otimes' codepoint='2A37'/>
+  <entity name='otimesas' codepoint='2A36'/>
+  <entity name='Ouml' codepoint='00D6'/>
+  <entity name='ouml' codepoint='00F6'/>
+  <entity name='ovbar' codepoint='233D'/>
+  <entity name='OverBar' codepoint='00AF'/>
+  <entity name='OverBrace' codepoint='FE37'/>
+  <entity name='OverBracket' codepoint='23B4'/>
+  <entity name='OverParenthesis' codepoint='FE35'/>
+  <entity name='par' codepoint='2225'/>
+  <entity name='para' codepoint='00B6'/>
+  <entity name='parallel' codepoint='2225'/>
+  <entity name='parsim' codepoint='2AF3'/>
+  <entity name='parsl' codepoint='2AFD'/>
+  <entity name='part' codepoint='2202'/>
+  <entity name='PartialD' codepoint='2202'/>
+  <entity name='Pcy' codepoint='041F'/>
+  <entity name='pcy' codepoint='043F'/>
+  <entity name='percnt' codepoint='0025'/>
+  <entity name='period' codepoint='002E'/>
+  <entity name='permil' codepoint='2030'/>
+  <entity name='perp' codepoint='22A5'/>
+  <entity name='pertenk' codepoint='2031'/>
+  <entity name='Pfr' codepoint='1D513'/>
+  <entity name='pfr' codepoint='1D52D'/>
+  <entity name='Pgr' codepoint='03A0'/>
+  <entity name='pgr' codepoint='03C0'/>
+  <entity name='PHgr' codepoint='03A6'/>
+  <entity name='phgr' codepoint='03C6'/>
+  <entity name='Phi' codepoint='03A6'/>
+  <entity name='phi' codepoint='03D5'/>
+  <entity name='phiv' codepoint='03C6'/>
+  <entity name='phmmat' codepoint='2133'/>
+  <entity name='phone' codepoint='260E'/>
+  <entity name='Pi' codepoint='03A0'/>
+  <entity name='pi' codepoint='03C0'/>
+  <entity name='pitchfork' codepoint='22D4'/>
+  <entity name='piv' codepoint='03D6'/>
+  <entity name='planck' codepoint='210F'/>
+  <entity name='planckh' codepoint='210E'/>
+  <entity name='plankv' codepoint='210F'/>
+  <entity name='plus' codepoint='002B'/>
+  <entity name='plusacir' codepoint='2A23'/>
+  <entity name='plusb' codepoint='229E'/>
+  <entity name='pluscir' codepoint='2A22'/>
+  <entity name='plusdo' codepoint='2214'/>
+  <entity name='plusdu' codepoint='2A25'/>
+  <entity name='pluse' codepoint='2A72'/>
+  <entity name='PlusMinus' codepoint='00B1'/>
+  <entity name='plusmn' codepoint='00B1'/>
+  <entity name='plussim' codepoint='2A26'/>
+  <entity name='plustwo' codepoint='2A27'/>
+  <entity name='pm' codepoint='00B1'/>
+  <entity name='Poincareplane' codepoint='210C'/>
+  <entity name='pointint' codepoint='2A15'/>
+  <entity name='Popf' codepoint='2119'/>
+  <entity name='popf' codepoint='1D561'/>
+  <entity name='pound' codepoint='00A3'/>
+  <entity name='pr' codepoint='227A'/>
+  <entity name='Pr' codepoint='2ABB'/>
+  <entity name='prap' codepoint='2AB7'/>
+  <entity name='prcue' codepoint='227C'/>
+  <entity name='pre' codepoint='2AAF'/>
+  <entity name='prE' codepoint='2AB3'/>
+  <entity name='prec' codepoint='227A'/>
+  <entity name='precapprox' codepoint='2AB7'/>
+  <entity name='preccurlyeq' codepoint='227C'/>
+  <entity name='Precedes' codepoint='227A'/>
+  <entity name='PrecedesEqual' codepoint='2AAF'/>
+  <entity name='PrecedesSlantEqual' codepoint='227C'/>
+  <entity name='PrecedesTilde' codepoint='227E'/>
+  <entity name='preceq' codepoint='2AAF'/>
+  <entity name='precnapprox' codepoint='2AB9'/>
+  <entity name='precneqq' codepoint='2AB5'/>
+  <entity name='precnsim' codepoint='22E8'/>
+  <entity name='precsim' codepoint='227E'/>
+  <entity name='prime' codepoint='2032'/>
+  <entity name='Prime' codepoint='2033'/>
+  <entity name='primes' codepoint='2119'/>
+  <entity name='prnap' codepoint='2AB9'/>
+  <entity name='prnE' codepoint='2AB5'/>
+  <entity name='prnsim' codepoint='22E8'/>
+  <entity name='prod' codepoint='220F'/>
+  <entity name='Product' codepoint='220F'/>
+  <entity name='profalar' codepoint='232E'/>
+  <entity name='profline' codepoint='2312'/>
+  <entity name='profsurf' codepoint='2313'/>
+  <entity name='prop' codepoint='221D'/>
+  <entity name='Proportion' codepoint='2237'/>
+  <entity name='Proportional' codepoint='221D'/>
+  <entity name='propto' codepoint='221D'/>
+  <entity name='prsim' codepoint='227E'/>
+  <entity name='prurel' codepoint='22B0'/>
+  <entity name='Pscr' codepoint='1D4AB'/>
+  <entity name='pscr' codepoint='1D4C5'/>
+  <entity name='PSgr' codepoint='03A8'/>
+  <entity name='psgr' codepoint='03C8'/>
+  <entity name='Psi' codepoint='03A8'/>
+  <entity name='psi' codepoint='03C8'/>
+  <entity name='puncsp' codepoint='2008'/>
+  <entity name='Qfr' codepoint='1D514'/>
+  <entity name='qfr' codepoint='1D52E'/>
+  <entity name='qint' codepoint='2A0C'/>
+  <entity name='Qopf' codepoint='211A'/>
+  <entity name='qopf' codepoint='1D562'/>
+  <entity name='qprime' codepoint='2057'/>
+  <entity name='Qscr' codepoint='1D4AC'/>
+  <entity name='qscr' codepoint='1D4C6'/>
+  <entity name='quaternions' codepoint='210D'/>
+  <entity name='quatint' codepoint='2A16'/>
+  <entity name='quest' codepoint='003F'/>
+  <entity name='questeq' codepoint='225F'/>
+  <entity name='quot' codepoint='0022'/>
+  <entity name='rAarr' codepoint='21DB'/>
+  <entity name='race' codepoint='29DA'/>
+  <entity name='Racute' codepoint='0154'/>
+  <entity name='racute' codepoint='0155'/>
+  <entity name='radic' codepoint='221A'/>
+  <entity name='raemptyv' codepoint='29B3'/>
+  <entity name='rang' codepoint='232A'/>
+  <entity name='Rang' codepoint='27EB'/>
+  <entity name='rangd' codepoint='2992'/>
+  <entity name='range' codepoint='29A5'/>
+  <entity name='rangle' codepoint='232A'/>
+  <entity name='raquo' codepoint='00BB'/>
+  <entity name='rarr' codepoint='2192'/>
+  <entity name='Rarr' codepoint='21A0'/>
+  <entity name='rArr' codepoint='21D2'/>
+  <entity name='rarrap' codepoint='2975'/>
+  <entity name='rarrb' codepoint='21E5'/>
+  <entity name='rarrbfs' codepoint='2920'/>
+  <entity name='rarrc' codepoint='2933'/>
+  <entity name='rarrfs' codepoint='291E'/>
+  <entity name='rarrhk' codepoint='21AA'/>
+  <entity name='rarrlp' codepoint='21AC'/>
+  <entity name='rarrpl' codepoint='2945'/>
+  <entity name='rarrsim' codepoint='2974'/>
+  <entity name='rarrtl' codepoint='21A3'/>
+  <entity name='Rarrtl' codepoint='2916'/>
+  <entity name='rarrw' codepoint='219D'/>
+  <entity name='ratail' codepoint='291A'/>
+  <entity name='rAtail' codepoint='291C'/>
+  <entity name='ratio' codepoint='2236'/>
+  <entity name='rationals' codepoint='211A'/>
+  <entity name='rbarr' codepoint='290D'/>
+  <entity name='rBarr' codepoint='290F'/>
+  <entity name='RBarr' codepoint='2910'/>
+  <entity name='rbbrk' codepoint='2998'/>
+  <entity name='rbrace' codepoint='007D'/>
+  <entity name='rbrack' codepoint='005D'/>
+  <entity name='rbrke' codepoint='298C'/>
+  <entity name='rbrksld' codepoint='298E'/>
+  <entity name='rbrkslu' codepoint='2990'/>
+  <entity name='Rcaron' codepoint='0158'/>
+  <entity name='rcaron' codepoint='0159'/>
+  <entity name='Rcedil' codepoint='0156'/>
+  <entity name='rcedil' codepoint='0157'/>
+  <entity name='rceil' codepoint='2309'/>
+  <entity name='rcub' codepoint='007D'/>
+  <entity name='Rcy' codepoint='0420'/>
+  <entity name='rcy' codepoint='0440'/>
+  <entity name='rdca' codepoint='2937'/>
+  <entity name='rdldhar' codepoint='2969'/>
+  <entity name='rdquo' codepoint='201D'/>
+  <entity name='rdquor' codepoint='201D'/>
+  <entity name='rdsh' codepoint='21B3'/>
+  <entity name='Re' codepoint='211C'/>
+  <entity name='real' codepoint='211C'/>
+  <entity name='realine' codepoint='211B'/>
+  <entity name='realpart' codepoint='211C'/>
+  <entity name='reals' codepoint='211D'/>
+  <entity name='rect' codepoint='25AD'/>
+  <entity name='reg' codepoint='00AE'/>
+  <entity name='ReverseElement' codepoint='220B'/>
+  <entity name='ReverseEquilibrium' codepoint='21CB'/>
+  <entity name='ReverseUpEquilibrium' codepoint='296F'/>
+  <entity name='rfisht' codepoint='297D'/>
+  <entity name='rfloor' codepoint='230B'/>
+  <entity name='Rfr' codepoint='211C'/>
+  <entity name='rfr' codepoint='1D52F'/>
+  <entity name='Rgr' codepoint='03A1'/>
+  <entity name='rgr' codepoint='03C1'/>
+  <entity name='rHar' codepoint='2964'/>
+  <entity name='rhard' codepoint='21C1'/>
+  <entity name='rharu' codepoint='21C0'/>
+  <entity name='rharul' codepoint='296C'/>
+  <entity name='Rho' codepoint='03A1'/>
+  <entity name='rho' codepoint='03C1'/>
+  <entity name='rhov' codepoint='03F1'/>
+  <entity name='RightAngleBracket' codepoint='232A'/>
+  <entity name='rightarrow' codepoint='2192'/>
+  <entity name='Rightarrow' codepoint='21D2'/>
+  <entity name='RightArrowBar' codepoint='21E5'/>
+  <entity name='RightArrowLeftArrow' codepoint='21C4'/>
+  <entity name='rightarrowtail' codepoint='21A3'/>
+  <entity name='RightCeiling' codepoint='2309'/>
+  <entity name='RightDoubleBracket' codepoint='27E7'/>
+  <entity name='RightDownTeeVector' codepoint='295D'/>
+  <entity name='RightDownVector' codepoint='21C2'/>
+  <entity name='RightDownVectorBar' codepoint='2955'/>
+  <entity name='RightFloor' codepoint='230B'/>
+  <entity name='rightharpoondown' codepoint='21C1'/>
+  <entity name='rightharpoonup' codepoint='21C0'/>
+  <entity name='rightleftarrows' codepoint='21C4'/>
+  <entity name='rightleftharpoons' codepoint='21CC'/>
+  <entity name='rightrightarrows' codepoint='21C9'/>
+  <entity name='rightsquigarrow' codepoint='219D'/>
+  <entity name='RightTee' codepoint='22A2'/>
+  <entity name='RightTeeArrow' codepoint='21A6'/>
+  <entity name='RightTeeVector' codepoint='295B'/>
+  <entity name='rightthreetimes' codepoint='22CC'/>
+  <entity name='RightTriangle' codepoint='22B3'/>
+  <entity name='RightTriangleBar' codepoint='29D0'/>
+  <entity name='RightTriangleEqual' codepoint='22B5'/>
+  <entity name='RightUpDownVector' codepoint='294F'/>
+  <entity name='RightUpTeeVector' codepoint='295C'/>
+  <entity name='RightUpVector' codepoint='21BE'/>
+  <entity name='RightUpVectorBar' codepoint='2954'/>
+  <entity name='RightVector' codepoint='21C0'/>
+  <entity name='RightVectorBar' codepoint='2953'/>
+  <entity name='ring' codepoint='02DA'/>
+  <entity name='risingdotseq' codepoint='2253'/>
+  <entity name='rlarr' codepoint='21C4'/>
+  <entity name='rlhar' codepoint='21CC'/>
+  <entity name='rlm' codepoint='200F'/>
+  <entity name='rmoust' codepoint='23B1'/>
+  <entity name='rmoustache' codepoint='23B1'/>
+  <entity name='rnmid' codepoint='2AEE'/>
+  <entity name='roang' codepoint='27ED'/>
+  <entity name='roarr' codepoint='21FE'/>
+  <entity name='robrk' codepoint='27E7'/>
+  <entity name='ropar' codepoint='2986'/>
+  <entity name='Ropf' codepoint='211D'/>
+  <entity name='ropf' codepoint='1D563'/>
+  <entity name='roplus' codepoint='2A2E'/>
+  <entity name='rotimes' codepoint='2A35'/>
+  <entity name='RoundImplies' codepoint='2970'/>
+  <entity name='rpar' codepoint='0029'/>
+  <entity name='rpargt' codepoint='2994'/>
+  <entity name='rppolint' codepoint='2A12'/>
+  <entity name='rrarr' codepoint='21C9'/>
+  <entity name='Rrightarrow' codepoint='21DB'/>
+  <entity name='rsaquo' codepoint='203A'/>
+  <entity name='Rscr' codepoint='211B'/>
+  <entity name='rscr' codepoint='1D4C7'/>
+  <entity name='rsh' codepoint='21B1'/>
+  <entity name='rsqb' codepoint='005D'/>
+  <entity name='rsquo' codepoint='2019'/>
+  <entity name='rsquor' codepoint='2019'/>
+  <entity name='rthree' codepoint='22CC'/>
+  <entity name='rtimes' codepoint='22CA'/>
+  <entity name='rtri' codepoint='25B9'/>
+  <entity name='rtrie' codepoint='22B5'/>
+  <entity name='rtrif' codepoint='25B8'/>
+  <entity name='rtriltri' codepoint='29CE'/>
+  <entity name='RuleDelayed' codepoint='29F4'/>
+  <entity name='ruluhar' codepoint='2968'/>
+  <entity name='rx' codepoint='211E'/>
+  <entity name='Sacute' codepoint='015A'/>
+  <entity name='sacute' codepoint='015B'/>
+  <entity name='sbquo' codepoint='201A'/>
+  <entity name='sc' codepoint='227B'/>
+  <entity name='Sc' codepoint='2ABC'/>
+  <entity name='scap' codepoint='2AB8'/>
+  <entity name='Scaron' codepoint='0160'/>
+  <entity name='scaron' codepoint='0161'/>
+  <entity name='sccue' codepoint='227D'/>
+  <entity name='sce' codepoint='2AB0'/>
+  <entity name='scE' codepoint='2AB4'/>
+  <entity name='Scedil' codepoint='015E'/>
+  <entity name='scedil' codepoint='015F'/>
+  <entity name='Scirc' codepoint='015C'/>
+  <entity name='scirc' codepoint='015D'/>
+  <entity name='scnap' codepoint='2ABA'/>
+  <entity name='scnE' codepoint='2AB6'/>
+  <entity name='scnsim' codepoint='22E9'/>
+  <entity name='scpolint' codepoint='2A13'/>
+  <entity name='scsim' codepoint='227F'/>
+  <entity name='Scy' codepoint='0421'/>
+  <entity name='scy' codepoint='0441'/>
+  <entity name='sdot' codepoint='22C5'/>
+  <entity name='sdotb' codepoint='22A1'/>
+  <entity name='sdote' codepoint='2A66'/>
+  <entity name='searhk' codepoint='2925'/>
+  <entity name='searr' codepoint='2198'/>
+  <entity name='seArr' codepoint='21D8'/>
+  <entity name='searrow' codepoint='2198'/>
+  <entity name='sect' codepoint='00A7'/>
+  <entity name='semi' codepoint='003B'/>
+  <entity name='seswar' codepoint='2929'/>
+  <entity name='setminus' codepoint='2216'/>
+  <entity name='setmn' codepoint='2216'/>
+  <entity name='sext' codepoint='2736'/>
+  <entity name='sfgr' codepoint='03C2'/>
+  <entity name='Sfr' codepoint='1D516'/>
+  <entity name='sfr' codepoint='1D530'/>
+  <entity name='sfrown' codepoint='2322'/>
+  <entity name='Sgr' codepoint='03A3'/>
+  <entity name='sgr' codepoint='03C3'/>
+  <entity name='sharp' codepoint='266F'/>
+  <entity name='SHCHcy' codepoint='0429'/>
+  <entity name='shchcy' codepoint='0449'/>
+  <entity name='SHcy' codepoint='0428'/>
+  <entity name='shcy' codepoint='0448'/>
+  <entity name='ShortDownArrow' codepoint='2193'/>
+  <entity name='ShortLeftArrow' codepoint='2190'/>
+  <entity name='shortmid' codepoint='2223'/>
+  <entity name='shortparallel' codepoint='2225'/>
+  <entity name='ShortRightArrow' codepoint='2192'/>
+  <entity name='ShortUpArrow' codepoint='2191'/>
+  <entity name='shy' codepoint='00AD'/>
+  <entity name='Sigma' codepoint='03A3'/>
+  <entity name='sigma' codepoint='03C3'/>
+  <entity name='sigmaf' codepoint='03C2'/>
+  <entity name='sigmav' codepoint='03C2'/>
+  <entity name='sim' codepoint='223C'/>
+  <entity name='simdot' codepoint='2A6A'/>
+  <entity name='sime' codepoint='2243'/>
+  <entity name='simeq' codepoint='2243'/>
+  <entity name='simg' codepoint='2A9E'/>
+  <entity name='simgE' codepoint='2AA0'/>
+  <entity name='siml' codepoint='2A9D'/>
+  <entity name='simlE' codepoint='2A9F'/>
+  <entity name='simne' codepoint='2246'/>
+  <entity name='simplus' codepoint='2A24'/>
+  <entity name='simrarr' codepoint='2972'/>
+  <entity name='slarr' codepoint='2190'/>
+  <entity name='SmallCircle' codepoint='2218'/>
+  <entity name='smallsetminus' codepoint='2216'/>
+  <entity name='smashp' codepoint='2A33'/>
+  <entity name='smeparsl' codepoint='29E4'/>
+  <entity name='smid' codepoint='2223'/>
+  <entity name='smile' codepoint='2323'/>
+  <entity name='smt' codepoint='2AAA'/>
+  <entity name='smte' codepoint='2AAC'/>
+  <entity name='SOFTcy' codepoint='042C'/>
+  <entity name='softcy' codepoint='044C'/>
+  <entity name='sol' codepoint='002F'/>
+  <entity name='solb' codepoint='29C4'/>
+  <entity name='solbar' codepoint='233F'/>
+  <entity name='Sopf' codepoint='1D54A'/>
+  <entity name='sopf' codepoint='1D564'/>
+  <entity name='spades' codepoint='2660'/>
+  <entity name='spadesuit' codepoint='2660'/>
+  <entity name='spar' codepoint='2225'/>
+  <entity name='sqcap' codepoint='2293'/>
+  <entity name='sqcup' codepoint='2294'/>
+  <entity name='Sqrt' codepoint='221A'/>
+  <entity name='sqsub' codepoint='228F'/>
+  <entity name='sqsube' codepoint='2291'/>
+  <entity name='sqsubset' codepoint='228F'/>
+  <entity name='sqsubseteq' codepoint='2291'/>
+  <entity name='sqsup' codepoint='2290'/>
+  <entity name='sqsupe' codepoint='2292'/>
+  <entity name='sqsupset' codepoint='2290'/>
+  <entity name='sqsupseteq' codepoint='2292'/>
+  <entity name='squ' codepoint='25A1'/>
+  <entity name='square' codepoint='25A1'/>
+  <entity name='SquareIntersection' codepoint='2293'/>
+  <entity name='SquareSubset' codepoint='228F'/>
+  <entity name='SquareSubsetEqual' codepoint='2291'/>
+  <entity name='SquareSuperset' codepoint='2290'/>
+  <entity name='SquareSupersetEqual' codepoint='2292'/>
+  <entity name='SquareUnion' codepoint='2294'/>
+  <entity name='squarf' codepoint='25AA'/>
+  <entity name='squf' codepoint='25AA'/>
+  <entity name='srarr' codepoint='2192'/>
+  <entity name='Sscr' codepoint='1D4AE'/>
+  <entity name='sscr' codepoint='1D4C8'/>
+  <entity name='ssetmn' codepoint='2216'/>
+  <entity name='ssmile' codepoint='2323'/>
+  <entity name='sstarf' codepoint='22C6'/>
+  <entity name='Star' codepoint='22C6'/>
+  <entity name='star' codepoint='2606'/>
+  <entity name='starf' codepoint='2605'/>
+  <entity name='straightepsilon' codepoint='03F5'/>
+  <entity name='straightphi' codepoint='03D5'/>
+  <entity name='strns' codepoint='00AF'/>
+  <entity name='sub' codepoint='2282'/>
+  <entity name='Sub' codepoint='22D0'/>
+  <entity name='subdot' codepoint='2ABD'/>
+  <entity name='sube' codepoint='2286'/>
+  <entity name='subE' codepoint='2AC5'/>
+  <entity name='subedot' codepoint='2AC3'/>
+  <entity name='submult' codepoint='2AC1'/>
+  <entity name='subne' codepoint='228A'/>
+  <entity name='subnE' codepoint='2ACB'/>
+  <entity name='subplus' codepoint='2ABF'/>
+  <entity name='subrarr' codepoint='2979'/>
+  <entity name='subset' codepoint='2282'/>
+  <entity name='Subset' codepoint='22D0'/>
+  <entity name='subseteq' codepoint='2286'/>
+  <entity name='subseteqq' codepoint='2AC5'/>
+  <entity name='SubsetEqual' codepoint='2286'/>
+  <entity name='subsetneq' codepoint='228A'/>
+  <entity name='subsetneqq' codepoint='2ACB'/>
+  <entity name='subsim' codepoint='2AC7'/>
+  <entity name='subsub' codepoint='2AD5'/>
+  <entity name='subsup' codepoint='2AD3'/>
+  <entity name='succ' codepoint='227B'/>
+  <entity name='succapprox' codepoint='2AB8'/>
+  <entity name='succcurlyeq' codepoint='227D'/>
+  <entity name='Succeeds' codepoint='227B'/>
+  <entity name='SucceedsEqual' codepoint='2AB0'/>
+  <entity name='SucceedsSlantEqual' codepoint='227D'/>
+  <entity name='SucceedsTilde' codepoint='227F'/>
+  <entity name='succeq' codepoint='2AB0'/>
+  <entity name='succnapprox' codepoint='2ABA'/>
+  <entity name='succneqq' codepoint='2AB6'/>
+  <entity name='succnsim' codepoint='22E9'/>
+  <entity name='succsim' codepoint='227F'/>
+  <entity name='SuchThat' codepoint='220B'/>
+  <entity name='sum' codepoint='2211'/>
+  <entity name='sung' codepoint='266A'/>
+  <entity name='sup' codepoint='2283'/>
+  <entity name='Sup' codepoint='22D1'/>
+  <entity name='sup1' codepoint='00B9'/>
+  <entity name='sup2' codepoint='00B2'/>
+  <entity name='sup3' codepoint='00B3'/>
+  <entity name='supdot' codepoint='2ABE'/>
+  <entity name='supdsub' codepoint='2AD8'/>
+  <entity name='supe' codepoint='2287'/>
+  <entity name='supE' codepoint='2AC6'/>
+  <entity name='supedot' codepoint='2AC4'/>
+  <entity name='Superset' codepoint='2283'/>
+  <entity name='SupersetEqual' codepoint='2287'/>
+  <entity name='suphsub' codepoint='2AD7'/>
+  <entity name='suplarr' codepoint='297B'/>
+  <entity name='supmult' codepoint='2AC2'/>
+  <entity name='supne' codepoint='228B'/>
+  <entity name='supnE' codepoint='2ACC'/>
+  <entity name='supplus' codepoint='2AC0'/>
+  <entity name='supset' codepoint='2283'/>
+  <entity name='Supset' codepoint='22D1'/>
+  <entity name='supseteq' codepoint='2287'/>
+  <entity name='supseteqq' codepoint='2AC6'/>
+  <entity name='supsetneq' codepoint='228B'/>
+  <entity name='supsetneqq' codepoint='2ACC'/>
+  <entity name='supsim' codepoint='2AC8'/>
+  <entity name='supsub' codepoint='2AD4'/>
+  <entity name='supsup' codepoint='2AD6'/>
+  <entity name='swarhk' codepoint='2926'/>
+  <entity name='swarr' codepoint='2199'/>
+  <entity name='swArr' codepoint='21D9'/>
+  <entity name='swarrow' codepoint='2199'/>
+  <entity name='swnwar' codepoint='292A'/>
+  <entity name='szlig' codepoint='00DF'/>
+  <entity name='Tab' codepoint='0009'/>
+  <entity name='target' codepoint='2316'/>
+  <entity name='Tau' codepoint='03A4'/>
+  <entity name='tau' codepoint='03C4'/>
+  <entity name='tbrk' codepoint='23B4'/>
+  <entity name='Tcaron' codepoint='0164'/>
+  <entity name='tcaron' codepoint='0165'/>
+  <entity name='Tcedil' codepoint='0162'/>
+  <entity name='tcedil' codepoint='0163'/>
+  <entity name='Tcy' codepoint='0422'/>
+  <entity name='tcy' codepoint='0442'/>
+  <entity name='telrec' codepoint='2315'/>
+  <entity name='Tfr' codepoint='1D517'/>
+  <entity name='tfr' codepoint='1D531'/>
+  <entity name='Tgr' codepoint='03A4'/>
+  <entity name='tgr' codepoint='03C4'/>
+  <entity name='there4' codepoint='2234'/>
+  <entity name='therefore' codepoint='2234'/>
+  <entity name='Theta' codepoint='0398'/>
+  <entity name='theta' codepoint='03B8'/>
+  <entity name='thetasym' codepoint='03D1'/>
+  <entity name='thetav' codepoint='03D1'/>
+  <entity name='THgr' codepoint='0398'/>
+  <entity name='thgr' codepoint='03B8'/>
+  <entity name='thickapprox' codepoint='2248'/>
+  <entity name='thicksim' codepoint='223C'/>
+  <entity name='thinsp' codepoint='2009'/>
+  <entity name='ThinSpace' codepoint='2009'/>
+  <entity name='thkap' codepoint='2248'/>
+  <entity name='thksim' codepoint='223C'/>
+  <entity name='THORN' codepoint='00DE'/>
+  <entity name='thorn' codepoint='00FE'/>
+  <entity name='tilde' codepoint='02DC'/>
+  <entity name='Tilde' codepoint='223C'/>
+  <entity name='TildeEqual' codepoint='2243'/>
+  <entity name='TildeFullEqual' codepoint='2245'/>
+  <entity name='TildeTilde' codepoint='2248'/>
+  <entity name='times' codepoint='00D7'/>
+  <entity name='timesb' codepoint='22A0'/>
+  <entity name='timesbar' codepoint='2A31'/>
+  <entity name='timesd' codepoint='2A30'/>
+  <entity name='tint' codepoint='222D'/>
+  <entity name='toea' codepoint='2928'/>
+  <entity name='top' codepoint='22A4'/>
+  <entity name='topbot' codepoint='2336'/>
+  <entity name='topcir' codepoint='2AF1'/>
+  <entity name='Topf' codepoint='1D54B'/>
+  <entity name='topf' codepoint='1D565'/>
+  <entity name='topfork' codepoint='2ADA'/>
+  <entity name='tosa' codepoint='2929'/>
+  <entity name='tprime' codepoint='2034'/>
+  <entity name='trade' codepoint='2122'/>
+  <entity name='triangle' codepoint='25B5'/>
+  <entity name='triangledown' codepoint='25BF'/>
+  <entity name='triangleleft' codepoint='25C3'/>
+  <entity name='trianglelefteq' codepoint='22B4'/>
+  <entity name='triangleq' codepoint='225C'/>
+  <entity name='triangleright' codepoint='25B9'/>
+  <entity name='trianglerighteq' codepoint='22B5'/>
+  <entity name='tridot' codepoint='25EC'/>
+  <entity name='trie' codepoint='225C'/>
+  <entity name='triminus' codepoint='2A3A'/>
+  <entity name='triplus' codepoint='2A39'/>
+  <entity name='trisb' codepoint='29CD'/>
+  <entity name='tritime' codepoint='2A3B'/>
+  <entity name='trpezium' codepoint='23E2'/>
+  <entity name='Tscr' codepoint='1D4AF'/>
+  <entity name='tscr' codepoint='1D4C9'/>
+  <entity name='TScy' codepoint='0426'/>
+  <entity name='tscy' codepoint='0446'/>
+  <entity name='TSHcy' codepoint='040B'/>
+  <entity name='tshcy' codepoint='045B'/>
+  <entity name='Tstrok' codepoint='0166'/>
+  <entity name='tstrok' codepoint='0167'/>
+  <entity name='twixt' codepoint='226C'/>
+  <entity name='twoheadleftarrow' codepoint='219E'/>
+  <entity name='twoheadrightarrow' codepoint='21A0'/>
+  <entity name='Uacgr' codepoint='038E'/>
+  <entity name='uacgr' codepoint='03CD'/>
+  <entity name='Uacute' codepoint='00DA'/>
+  <entity name='uacute' codepoint='00FA'/>
+  <entity name='uarr' codepoint='2191'/>
+  <entity name='Uarr' codepoint='219F'/>
+  <entity name='uArr' codepoint='21D1'/>
+  <entity name='Uarrocir' codepoint='2949'/>
+  <entity name='Ubrcy' codepoint='040E'/>
+  <entity name='ubrcy' codepoint='045E'/>
+  <entity name='Ubreve' codepoint='016C'/>
+  <entity name='ubreve' codepoint='016D'/>
+  <entity name='Ucirc' codepoint='00DB'/>
+  <entity name='ucirc' codepoint='00FB'/>
+  <entity name='Ucy' codepoint='0423'/>
+  <entity name='ucy' codepoint='0443'/>
+  <entity name='udarr' codepoint='21C5'/>
+  <entity name='Udblac' codepoint='0170'/>
+  <entity name='udblac' codepoint='0171'/>
+  <entity name='udhar' codepoint='296E'/>
+  <entity name='udiagr' codepoint='03B0'/>
+  <entity name='Udigr' codepoint='03AB'/>
+  <entity name='udigr' codepoint='03CB'/>
+  <entity name='ufisht' codepoint='297E'/>
+  <entity name='Ufr' codepoint='1D518'/>
+  <entity name='ufr' codepoint='1D532'/>
+  <entity name='Ugr' codepoint='03A5'/>
+  <entity name='ugr' codepoint='03C5'/>
+  <entity name='Ugrave' codepoint='00D9'/>
+  <entity name='ugrave' codepoint='00F9'/>
+  <entity name='uHar' codepoint='2963'/>
+  <entity name='uharl' codepoint='21BF'/>
+  <entity name='uharr' codepoint='21BE'/>
+  <entity name='uhblk' codepoint='2580'/>
+  <entity name='ulcorn' codepoint='231C'/>
+  <entity name='ulcorner' codepoint='231C'/>
+  <entity name='ulcrop' codepoint='230F'/>
+  <entity name='ultri' codepoint='25F8'/>
+  <entity name='Umacr' codepoint='016A'/>
+  <entity name='umacr' codepoint='016B'/>
+  <entity name='uml' codepoint='00A8'/>
+  <entity name='UnderBrace' codepoint='FE38'/>
+  <entity name='UnderBracket' codepoint='23B5'/>
+  <entity name='UnderParenthesis' codepoint='FE36'/>
+  <entity name='Union' codepoint='22C3'/>
+  <entity name='UnionPlus' codepoint='228E'/>
+  <entity name='Uogon' codepoint='0172'/>
+  <entity name='uogon' codepoint='0173'/>
+  <entity name='Uopf' codepoint='1D54C'/>
+  <entity name='uopf' codepoint='1D566'/>
+  <entity name='uparrow' codepoint='2191'/>
+  <entity name='Uparrow' codepoint='21D1'/>
+  <entity name='UpArrowBar' codepoint='2912'/>
+  <entity name='UpArrowDownArrow' codepoint='21C5'/>
+  <entity name='updownarrow' codepoint='2195'/>
+  <entity name='Updownarrow' codepoint='21D5'/>
+  <entity name='UpEquilibrium' codepoint='296E'/>
+  <entity name='upharpoonleft' codepoint='21BF'/>
+  <entity name='upharpoonright' codepoint='21BE'/>
+  <entity name='uplus' codepoint='228E'/>
+  <entity name='UpperLeftArrow' codepoint='2196'/>
+  <entity name='UpperRightArrow' codepoint='2197'/>
+  <entity name='upsi' codepoint='03C5'/>
+  <entity name='Upsi' codepoint='03D2'/>
+  <entity name='upsih' codepoint='03D2'/>
+  <entity name='Upsilon' codepoint='03A5'/>
+  <entity name='upsilon' codepoint='03C5'/>
+  <entity name='UpTee' codepoint='22A5'/>
+  <entity name='UpTeeArrow' codepoint='21A5'/>
+  <entity name='upuparrows' codepoint='21C8'/>
+  <entity name='urcorn' codepoint='231D'/>
+  <entity name='urcorner' codepoint='231D'/>
+  <entity name='urcrop' codepoint='230E'/>
+  <entity name='Uring' codepoint='016E'/>
+  <entity name='uring' codepoint='016F'/>
+  <entity name='urtri' codepoint='25F9'/>
+  <entity name='Uscr' codepoint='1D4B0'/>
+  <entity name='uscr' codepoint='1D4CA'/>
+  <entity name='utdot' codepoint='22F0'/>
+  <entity name='Utilde' codepoint='0168'/>
+  <entity name='utilde' codepoint='0169'/>
+  <entity name='utri' codepoint='25B5'/>
+  <entity name='utrif' codepoint='25B4'/>
+  <entity name='uuarr' codepoint='21C8'/>
+  <entity name='Uuml' codepoint='00DC'/>
+  <entity name='uuml' codepoint='00FC'/>
+  <entity name='uwangle' codepoint='29A7'/>
+  <entity name='vangrt' codepoint='299C'/>
+  <entity name='varepsilon' codepoint='03B5'/>
+  <entity name='varkappa' codepoint='03F0'/>
+  <entity name='varnothing' codepoint='2205'/>
+  <entity name='varphi' codepoint='03C6'/>
+  <entity name='varpi' codepoint='03D6'/>
+  <entity name='varpropto' codepoint='221D'/>
+  <entity name='varr' codepoint='2195'/>
+  <entity name='vArr' codepoint='21D5'/>
+  <entity name='varrho' codepoint='03F1'/>
+  <entity name='varsigma' codepoint='03C2'/>
+  <entity name='vartheta' codepoint='03D1'/>
+  <entity name='vartriangleleft' codepoint='22B2'/>
+  <entity name='vartriangleright' codepoint='22B3'/>
+  <entity name='vBar' codepoint='2AE8'/>
+  <entity name='Vbar' codepoint='2AEB'/>
+  <entity name='vBarv' codepoint='2AE9'/>
+  <entity name='Vcy' codepoint='0412'/>
+  <entity name='vcy' codepoint='0432'/>
+  <entity name='vdash' codepoint='22A2'/>
+  <entity name='vDash' codepoint='22A8'/>
+  <entity name='Vdash' codepoint='22A9'/>
+  <entity name='VDash' codepoint='22AB'/>
+  <entity name='Vdashl' codepoint='2AE6'/>
+  <entity name='vee' codepoint='2228'/>
+  <entity name='Vee' codepoint='22C1'/>
+  <entity name='veebar' codepoint='22BB'/>
+  <entity name='veeeq' codepoint='225A'/>
+  <entity name='vellip' codepoint='22EE'/>
+  <entity name='verbar' codepoint='007C'/>
+  <entity name='Verbar' codepoint='2016'/>
+  <entity name='vert' codepoint='007C'/>
+  <entity name='Vert' codepoint='2016'/>
+  <entity name='VerticalBar' codepoint='2223'/>
+  <entity name='VerticalLine' codepoint='007C'/>
+  <entity name='VerticalSeparator' codepoint='2758'/>
+  <entity name='VerticalTilde' codepoint='2240'/>
+  <entity name='VeryThinSpace' codepoint='200A'/>
+  <entity name='Vfr' codepoint='1D519'/>
+  <entity name='vfr' codepoint='1D533'/>
+  <entity name='vltri' codepoint='22B2'/>
+  <entity name='Vopf' codepoint='1D54D'/>
+  <entity name='vopf' codepoint='1D567'/>
+  <entity name='vprop' codepoint='221D'/>
+  <entity name='vrtri' codepoint='22B3'/>
+  <entity name='Vscr' codepoint='1D4B1'/>
+  <entity name='vscr' codepoint='1D4CB'/>
+  <entity name='Vvdash' codepoint='22AA'/>
+  <entity name='vzigzag' codepoint='299A'/>
+  <entity name='Wcirc' codepoint='0174'/>
+  <entity name='wcirc' codepoint='0175'/>
+  <entity name='wedbar' codepoint='2A5F'/>
+  <entity name='wedge' codepoint='2227'/>
+  <entity name='Wedge' codepoint='22C0'/>
+  <entity name='wedgeq' codepoint='2259'/>
+  <entity name='weierp' codepoint='2118'/>
+  <entity name='Wfr' codepoint='1D51A'/>
+  <entity name='wfr' codepoint='1D534'/>
+  <entity name='Wopf' codepoint='1D54E'/>
+  <entity name='wopf' codepoint='1D568'/>
+  <entity name='wp' codepoint='2118'/>
+  <entity name='wr' codepoint='2240'/>
+  <entity name='wreath' codepoint='2240'/>
+  <entity name='Wscr' codepoint='1D4B2'/>
+  <entity name='wscr' codepoint='1D4CC'/>
+  <entity name='xcap' codepoint='22C2'/>
+  <entity name='xcirc' codepoint='25EF'/>
+  <entity name='xcup' codepoint='22C3'/>
+  <entity name='xdtri' codepoint='25BD'/>
+  <entity name='Xfr' codepoint='1D51B'/>
+  <entity name='xfr' codepoint='1D535'/>
+  <entity name='Xgr' codepoint='039E'/>
+  <entity name='xgr' codepoint='03BE'/>
+  <entity name='xharr' codepoint='27F7'/>
+  <entity name='xhArr' codepoint='27FA'/>
+  <entity name='Xi' codepoint='039E'/>
+  <entity name='xi' codepoint='03BE'/>
+  <entity name='xlarr' codepoint='27F5'/>
+  <entity name='xlArr' codepoint='27F8'/>
+  <entity name='xmap' codepoint='27FC'/>
+  <entity name='xnis' codepoint='22FB'/>
+  <entity name='xodot' codepoint='2A00'/>
+  <entity name='Xopf' codepoint='1D54F'/>
+  <entity name='xopf' codepoint='1D569'/>
+  <entity name='xoplus' codepoint='2A01'/>
+  <entity name='xotime' codepoint='2A02'/>
+  <entity name='xrarr' codepoint='27F6'/>
+  <entity name='xrArr' codepoint='27F9'/>
+  <entity name='Xscr' codepoint='1D4B3'/>
+  <entity name='xscr' codepoint='1D4CD'/>
+  <entity name='xsqcup' codepoint='2A06'/>
+  <entity name='xuplus' codepoint='2A04'/>
+  <entity name='xutri' codepoint='25B3'/>
+  <entity name='xvee' codepoint='22C1'/>
+  <entity name='xwedge' codepoint='22C0'/>
+  <entity name='Yacute' codepoint='00DD'/>
+  <entity name='yacute' codepoint='00FD'/>
+  <entity name='YAcy' codepoint='042F'/>
+  <entity name='yacy' codepoint='044F'/>
+  <entity name='Ycirc' codepoint='0176'/>
+  <entity name='ycirc' codepoint='0177'/>
+  <entity name='Ycy' codepoint='042B'/>
+  <entity name='ycy' codepoint='044B'/>
+  <entity name='yen' codepoint='00A5'/>
+  <entity name='Yfr' codepoint='1D51C'/>
+  <entity name='yfr' codepoint='1D536'/>
+  <entity name='YIcy' codepoint='0407'/>
+  <entity name='yicy' codepoint='0457'/>
+  <entity name='Yopf' codepoint='1D550'/>
+  <entity name='yopf' codepoint='1D56A'/>
+  <entity name='Yscr' codepoint='1D4B4'/>
+  <entity name='yscr' codepoint='1D4CE'/>
+  <entity name='YUcy' codepoint='042E'/>
+  <entity name='yucy' codepoint='044E'/>
+  <entity name='yuml' codepoint='00FF'/>
+  <entity name='Yuml' codepoint='0178'/>
+  <entity name='Zacute' codepoint='0179'/>
+  <entity name='zacute' codepoint='017A'/>
+  <entity name='Zcaron' codepoint='017D'/>
+  <entity name='zcaron' codepoint='017E'/>
+  <entity name='Zcy' codepoint='0417'/>
+  <entity name='zcy' codepoint='0437'/>
+  <entity name='Zdot' codepoint='017B'/>
+  <entity name='zdot' codepoint='017C'/>
+  <entity name='zeetrf' codepoint='2128'/>
+  <entity name='ZeroWidthSpace' codepoint='200B'/>
+  <entity name='Zeta' codepoint='0396'/>
+  <entity name='zeta' codepoint='03B6'/>
+  <entity name='Zfr' codepoint='2128'/>
+  <entity name='zfr' codepoint='1D537'/>
+  <entity name='Zgr' codepoint='0396'/>
+  <entity name='zgr' codepoint='03B6'/>
+  <entity name='ZHcy' codepoint='0416'/>
+  <entity name='zhcy' codepoint='0436'/>
+  <entity name='zigrarr' codepoint='21DD'/>
+  <entity name='Zopf' codepoint='2124'/>
+  <entity name='zopf' codepoint='1D56B'/>
+  <entity name='Zscr' codepoint='1D4B5'/>
+  <entity name='zscr' codepoint='1D4CF'/>
+  <entity name='zwj' codepoint='200D'/>
+  <entity name='zwnj' codepoint='200C'/>
+
+  <group id='M_AREA'/>
+  <group id='M_BLOCK'/>
+  <group id='M_BLOCKINLINE'/>
+  <group id='M_BODY'/>
+  <group id='M_CELL'/>
+  <group id='M_COL'/>
+  <group id='M_DEF'/>
+  <group id='M_FORM'/>
+  <group id='M_FRAME'/>
+  <group id='M_HEAD'/>
+  <group id='M_HTML'/>
+  <group id='M_INLINE'/>
+  <group id='M_LEGEND'/>
+  <group id='M_LI'/>
+  <group id='M_NOLINK'/>
+  <group id='M_OPTION'/>
+  <group id='M_OPTIONS'/>
+  <group id='M_P'/>
+  <group id='M_PARAM'/>
+  <group id='M_TABLE'/>
+  <group id='M_TABULAR'/>
+  <group id='M_TR'/>
+  <element name='html' type='element'>
+    <isRoot/>
+    <contains group='M_HTML'/>
+    <element name='body' type='mixed' text-parent='true'>
+      <memberOf group='M_HTML'/>
+      <memberOf group='M_BODY'/>
+      <contains group='M_INLINE'/>
+      <contains group='M_BLOCK'/>
+      <element name='a' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <contains group='M_NOLINK'/>
+        <attribute name='hreflang' type='NMTOKEN' />
+        <attribute name='shape' default='rect'/>
+        <attribute name='tabindex' type='NMTOKEN' />
+      </element>
+      <element name='abbr' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='acronym' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='address' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_P'/>
+      </element>
+      <element name='applet' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_PARAM'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='b' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='basefont' type='empty'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+      </element>
+      <element name='bdo' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='big' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='blink' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='blockquote' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+      </element>
+      <element name='br' type='empty'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <attribute name='clear' default='none'/>
+      </element>
+      <element name='canvas' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='center' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+      </element>
+      <element name='cite' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='code' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='comment' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='del' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_BLOCKINLINE'/>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+      </element>
+      <element name='dfn' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='dir' type='element'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_LI'/>
+        <attribute name='compact' type='BOOLEAN' />
+      </element>
+      <element name='div' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='dl' type='element'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_DEF'/>
+        <attribute name='compact' type='BOOLEAN' />
+        <element name='dd' type='mixed'>
+          <memberOf group='M_DEF'/>
+          <contains group='M_INLINE'/>
+          <contains group='M_BLOCK'/>
+        </element>
+        <element name='dt' type='mixed'>
+          <memberOf group='M_DEF'/>
+          <contains group='M_INLINE'/>
+        </element>
+      </element>
+      <element name='em' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='font' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='form' closeMode='unclosable' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <memberOf group='M_FORM'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_NOLINK'/>
+        <contains group='M_BLOCK'/>
+        <contains group='M_TR'/>
+        <contains group='M_CELL'/>
+        <attribute name='enctype' default='application/x-www-form-urlencoded'/>
+        <attribute name='method' default='get'/>
+        <element name='button' type='mixed'>
+          <memberOf group='M_INLINE'/>
+          <memberOf group='M_NOLINK'/>
+          <contains group='M_INLINE'/>
+          <contains group='M_BLOCK'/>
+          <attribute name='disabled' type='BOOLEAN' />
+          <attribute name='tabindex' type='NMTOKEN' />
+          <attribute name='type' default='submit'/>
+        </element>
+        <element name='fieldset' type='mixed'>
+          <memberOf group='M_BLOCK'/>
+          <contains group='M_LEGEND'/>
+          <contains group='M_INLINE'/>
+          <contains group='M_BLOCK'/>
+          <element name='legend' type='mixed'>
+            <memberOf group='M_LEGEND'/>
+            <contains group='M_INLINE'/>
+            <attribute name='align' type='NMTOKEN' />
+          </element>
+        </element>
+        <element name='input' type='empty'>
+          <memberOf group='M_INLINE'/>
+          <memberOf group='M_NOLINK'/>
+          <attribute name='align' type='NMTOKEN' />
+          <attribute name='checked' type='BOOLEAN' />
+          <attribute name='disabled' type='BOOLEAN' />
+          <attribute name='ismap' type='BOOLEAN' />
+          <attribute name='maxlength' type='NMTOKEN' />
+          <attribute name='readonly' type='BOOLEAN' />
+          <attribute name='tabindex' type='NMTOKEN' />
+          <attribute name='type' default='text'/>
+        </element>
+        <element name='label' type='mixed'>
+          <memberOf group='M_INLINE'/>
+          <memberOf group='M_NOLINK'/>
+          <contains group='M_INLINE'/>
+          <attribute name='for' type='IDREF' />
+        </element>
+        <element name='select' type='element'>
+          <memberOf group='M_INLINE'/>
+          <contains group='M_OPTIONS'/>
+          <attribute name='disabled' type='BOOLEAN' />
+          <attribute name='multiple' type='BOOLEAN' />
+          <attribute name='size' type='NMTOKEN' />
+          <attribute name='tabindex' type='NMTOKEN' />
+          <element name='optgroup' type='element'>
+            <memberOf group='M_OPTIONS'/>
+            <contains group='M_OPTIONS'/>
+            <attribute name='disabled' type='BOOLEAN' />
+          </element>
+          <element name='option' type='string'>
+            <memberOf group='M_OPTION'/>
+            <memberOf group='M_OPTIONS'/>
+            <attribute name='disabled' type='BOOLEAN' />
+            <attribute name='selected' type='BOOLEAN' />
+          </element>
+        </element>
+        <element name='textarea' type='string'>
+          <memberOf group='M_INLINE'/>
+          <attribute name='cols' type='NMTOKEN' />
+          <attribute name='disabled' type='BOOLEAN' />
+          <attribute name='readonly' type='BOOLEAN' />
+          <attribute name='rows' type='NMTOKEN' />
+          <attribute name='tabindex' type='NMTOKEN' />
+        </element>
+      </element>
+      <element name='h1' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='h2' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='h3' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='h4' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='h5' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='h6' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='hr' type='empty'>
+        <memberOf group='M_BLOCK'/>
+        <attribute name='align' type='NMTOKEN' />
+        <attribute name='noshade' type='BOOLEAN' />
+      </element>
+      <element name='i' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='iframe' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+        <attribute name='align' type='NMTOKEN' />
+        <attribute name='frameborder' default='1'/>
+        <attribute name='scrolling' default='auto'/>
+      </element>
+      <element name='img' type='empty'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <attribute name='align' type='NMTOKEN' />
+        <attribute name='ismap' type='BOOLEAN' />
+      </element>
+      <element name='ins' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+      </element>
+      <element name='kbd' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='map' type='element'>
+        <memberOf group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+        <contains group='M_AREA'/>
+        <element name='area' type='empty'>
+          <memberOf group='M_AREA'/>
+          <attribute name='nohref' type='BOOLEAN' />
+          <attribute name='shape' default='rect'/>
+          <attribute name='tabindex' type='NMTOKEN' />
+        </element>
+      </element>
+      <element name='menu' type='element'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_LI'/>
+        <attribute name='compact' type='BOOLEAN' />
+      </element>
+      <element name='marquee' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='width' type='NMTOKEN' />
+      </element>
+      <element name='nobr' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='wbr' type='empty'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+      </element>
+      <element name='noscript' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+      </element>
+      <element name='object' type='mixed'>
+        <memberOf group='M_HEAD'/>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_PARAM'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_BLOCK'/>
+        <attribute name='align' type='NMTOKEN' />
+        <attribute name='declare' type='BOOLEAN' />
+        <attribute name='tabindex' type='NMTOKEN' />
+        <element name='param' type='empty'>
+          <memberOf group='M_PARAM'/>
+          <attribute name='valuetype' default='data'/>
+        </element>
+      </element>
+      <element name='ol' type='element'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_LI'/>
+        <attribute name='compact' type='BOOLEAN' />
+        <attribute name='start' type='NMTOKEN' />
+      </element>
+      <element name='p' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <memberOf group='M_P'/>
+        <contains group='M_INLINE'/>
+        <contains group='M_TABLE'/>
+        <attribute name='align' type='NMTOKEN' />
+      </element>
+      <element name='pre' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='width' type='NMTOKEN' />
+      </element>
+      <element name='listing' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='xmp' type='mixed'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_INLINE'/>
+        <attribute name='width' type='NMTOKEN' />
+      </element>
+      <element name='q' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='ruby' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='rbc' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='rtc' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='rb' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='rt' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+	<attribute name='rbspan' default='1'/>
+      </element>
+      <element name='rp' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='s' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='samp' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='small' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='span' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='strike' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='strong' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='sub' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='sup' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='table' closeMode='unclosable' type='element'>
+        <memberOf group='M_BLOCK'/>
+        <memberOf group='M_TABLE'/>
+        <contains group='M_FORM'/>
+        <contains group='M_TABULAR'/>
+        <attribute name='align' type='NMTOKEN' />
+        <attribute name='frame' type='NMTOKEN' />
+        <attribute name='rules' type='NMTOKEN' />
+        <element name='caption' type='mixed'>
+          <memberOf group='M_TABULAR'/>
+          <contains group='M_INLINE'/>
+          <attribute name='align' type='NMTOKEN' />
+        </element>
+        <element name='col' type='empty'>
+          <memberOf group='M_COL'/>
+          <memberOf group='M_TABULAR'/>
+          <attribute name='align' type='NMTOKEN' />
+          <attribute name='span' default='1'/>
+          <attribute name='valign' type='NMTOKEN' />
+        </element>
+        <element name='colgroup' type='element'>
+          <memberOf group='M_TABULAR'/>
+          <contains group='M_COL'/>
+          <attribute name='align' type='NMTOKEN' />
+          <attribute name='span' default='1'/>
+          <attribute name='valign' type='NMTOKEN' />
+        </element>
+        <element name='tbody' type='element'>
+          <memberOf group='M_TABULAR'/>
+          <contains group='M_TR'/>
+          <attribute name='align' type='NMTOKEN' />
+          <attribute name='valign' type='NMTOKEN' />
+          <element name='tr' type='element'>
+            <memberOf group='M_TR'/>
+            <memberOf group='M_TABULAR'/>
+            <contains group='M_FORM'/>
+            <contains group='M_CELL'/>
+            <attribute name='align' type='NMTOKEN' />
+            <attribute name='valign' type='NMTOKEN' />
+            <element name='td' type='mixed'>
+              <memberOf group='M_CELL'/>
+              <contains group='M_INLINE'/>
+              <contains group='M_BLOCK'/>
+              <attribute name='align' type='NMTOKEN' />
+              <attribute name='colspan' default='1'/>
+              <attribute name='headers' type='IDREFS' />
+              <attribute name='nowrap' type='BOOLEAN' />
+              <attribute name='rowspan' default='1'/>
+              <attribute name='scope' type='NMTOKEN' />
+              <attribute name='valign' type='NMTOKEN' />
+            </element>
+            <element name='th' type='mixed'>
+              <memberOf group='M_CELL'/>
+              <contains group='M_INLINE'/>
+              <contains group='M_BLOCK'/>
+              <attribute name='align' type='NMTOKEN' />
+              <attribute name='colspan' default='1'/>
+              <attribute name='headers' type='IDREFS' />
+              <attribute name='nowrap' type='BOOLEAN' />
+              <attribute name='rowspan' default='1'/>
+              <attribute name='scope' type='NMTOKEN' />
+              <attribute name='valign' type='NMTOKEN' />
+            </element>
+          </element>
+        </element>
+        <element name='tfoot' type='element'>
+          <memberOf group='M_TABULAR'/>
+          <contains group='M_TR'/>
+          <contains group='M_FORM'/>
+          <contains group='M_CELL'/>
+          <attribute name='align' type='NMTOKEN' />
+          <attribute name='valign' type='NMTOKEN' />
+        </element>
+        <element name='thead' type='element'>
+          <memberOf group='M_TABULAR'/>
+          <contains group='M_TR'/>
+          <contains group='M_FORM'/>
+          <contains group='M_CELL'/>
+          <attribute name='align' type='NMTOKEN' />
+          <attribute name='valign' type='NMTOKEN' />
+        </element>
+      </element>
+      <element name='tt' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='u' closeMode='restartable' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+      <element name='ul' type='element'>
+        <memberOf group='M_BLOCK'/>
+        <contains group='M_LI'/>
+        <attribute name='compact' type='BOOLEAN' />
+        <attribute name='type' type='NMTOKEN' />
+        <element name='li' type='mixed'>
+          <memberOf group='M_LI'/>
+          <contains group='M_INLINE'/>
+          <contains group='M_BLOCK'/>
+          <attribute name='value' type='NMTOKEN' />
+        </element>
+      </element>
+      <element name='var' type='mixed'>
+        <memberOf group='M_INLINE'/>
+        <memberOf group='M_NOLINK'/>
+        <contains group='M_INLINE'/>
+      </element>
+    </element>
+    <element name='frameset' type='element'>
+      <memberOf group='M_FRAME'/>
+      <memberOf group='M_HTML'/>
+      <contains group='M_FRAME'/>
+      <element name='frame' type='empty'>
+        <memberOf group='M_FRAME'/>
+        <attribute name='frameborder' default='1'/>
+        <attribute name='noresize' type='BOOLEAN' />
+        <attribute name='scrolling' default='auto'/>
+      </element>
+    </element>
+    <element name='head' type='element'>
+      <memberOf group='M_HTML'/>
+      <contains group='M_HEAD'/>
+      <element name='base' type='empty'>
+        <memberOf group='M_HEAD'/>
+      </element>
+      <element name='isindex' type='empty'>
+        <memberOf group='M_HEAD'/>
+      </element>
+      <element name='link' type='empty'>
+        <memberOf group='M_HEAD'/>
+        <memberOf group='M_INLINE'/>
+        <attribute name='hreflang' type='NMTOKEN' />
+      </element>
+      <element name='meta' type='empty'>
+        <memberOf group='M_HEAD'/>
+        <attribute name='http-equiv' type='NMTOKEN' />
+        <attribute name='name' type='NMTOKEN' />
+      </element>
+      <element name='style' type='cdata'>
+        <memberOf group='M_HEAD'/>
+        <memberOf group='M_INLINE'/>
+      </element>
+      <element name='title' type='string'>
+        <memberOf group='M_HEAD'/>
+      </element>
+      <element name='bgsound' type='empty'>
+        <memberOf group='M_HEAD'/>
+      </element>
+    </element>
+    <element name='noframes' type='element'>
+      <memberOf group='M_BLOCK'/>
+      <memberOf group='M_HTML'/>
+      <memberOf group='M_FRAME'/>
+      <contains group='M_BODY'/>
+      <contains group='M_BLOCK'/>
+      <contains group='M_INLINE'/>
+    </element>
+    <element name='script' type='cdata'>
+      <memberOfAny/>
+      <attribute name='defer' type='BOOLEAN' />
+    </element>
+  </element>
+  <attribute name='class' type='NMTOKEN' />
+  <attribute name='dir' type='NMTOKEN' />
+  <attribute name='id' type='ID' />
+  <attribute name='lang' type='NMTOKEN' />
+</schema>

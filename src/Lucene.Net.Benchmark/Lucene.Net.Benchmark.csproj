@@ -160,6 +160,49 @@
     <Compile Include="Quality\Utils\SimpleQQParser.cs" />
     <Compile Include="Quality\Utils\SubmissionReport.cs" />
     <Compile Include="Support\EnglishNumberFormatExtensions.cs" />
+    <Compile Include="Support\Sax\Attributes.cs" />
+    <Compile Include="Support\Sax\ContentHandler.cs" />
+    <Compile Include="Support\Sax\DTDHandler.cs" />
+    <Compile Include="Support\Sax\EntityResolver.cs" />
+    <Compile Include="Support\Sax\ErrorHandler.cs" />
+    <Compile Include="Support\Sax\Ext\Attributes2.cs" />
+    <Compile Include="Support\Sax\Ext\Attributes2Impl.cs" />
+    <Compile Include="Support\Sax\Ext\DeclHandler.cs" />
+    <Compile Include="Support\Sax\Ext\DefaultHandler2.cs" />
+    <Compile Include="Support\Sax\Ext\EntityResolver2.cs" />
+    <Compile Include="Support\Sax\Ext\Locator2.cs" />
+    <Compile Include="Support\Sax\Ext\LexicalHandler.cs" />
+    <Compile Include="Support\Sax\Ext\Locator2Impl.cs" />
+    <Compile Include="Support\Sax\Helpers\AttributesImpl.cs" />
+    <Compile Include="Support\Sax\Helpers\DefaultHandler.cs" />
+    <Compile Include="Support\Sax\Helpers\LocatorImpl.cs" />
+    <Compile Include="Support\Sax\Helpers\NamespaceSupport.cs" />
+    <Compile Include="Support\Sax\Helpers\XMLFilterImpl.cs" />
+    <Compile Include="Support\Sax\InputSource.cs" />
+    <Compile Include="Support\Sax\XMLReader.cs" />
+    <Compile Include="Support\Sax\Locator.cs" />
+    <Compile Include="Support\Sax\SAXException.cs" />
+    <Compile Include="Support\Sax\SAXNotRecognizedException.cs" />
+    <Compile Include="Support\Sax\SAXNotSupportedException.cs" />
+    <Compile Include="Support\Sax\SAXParseException.cs" />
+    <Compile Include="Support\Sax\XMLFilter.cs" />
+    <Compile Include="Support\StringExtensions.cs" />
+    <Compile Include="Support\TagSoup\AutoDetector.cs" />
+    <Compile Include="Support\TagSoup\Element.cs" />
+    <Compile Include="Support\TagSoup\ElementType.cs" />
+    <Compile Include="Support\TagSoup\HTMLScanner.cs" />
+    <Compile Include="Support\TagSoup\HTMLSchema.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>HTMLSchema.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Support\TagSoup\Parser.cs" />
+    <Compile Include="Support\TagSoup\PYXScanner.cs" />
+    <Compile Include="Support\TagSoup\PYXWriter.cs" />
+    <Compile Include="Support\TagSoup\ScanHandler.cs" />
+    <Compile Include="Support\TagSoup\Scanner.cs" />
+    <Compile Include="Support\TagSoup\Schema.cs" />
+    <Compile Include="Support\TagSoup\XMLReader.cs" />
     <Compile Include="Utils\ExtractReuters.cs" />
     <Compile Include="Utils\ExtractWikipedia.cs" />
     <Compile Include="..\CommonAssemblyInfo.cs">
@@ -202,8 +245,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Lucene.Net.Benchmark.project.json" />
+    <None Include="Support\TagSoup\definitions\html.tssl" />
+    <None Include="Support\TagSoup\stml\stml.rnc" />
+    <None Include="Support\TagSoup\tssl\tssl.rnc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Support\TagSoup\definitions\html.stml" />
+    <Content Include="Support\TagSoup\HTMLSchema.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>HTMLSchema.Generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="Support\TagSoup\stml\stml.xslt" />
+    <Content Include="Support\TagSoup\tssl\tssl-models.xslt" />
+    <Content Include="Support\TagSoup\tssl\tssl-validate.xslt" />
+    <Content Include="Support\TagSoup\tssl\tssl.xslt" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

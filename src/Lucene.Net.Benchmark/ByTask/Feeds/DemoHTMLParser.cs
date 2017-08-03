@@ -1,8 +1,8 @@
 ﻿// LUCENENET TODO: Use HTML Agility pack instead of SAX ?
 
 using Lucene.Net.Support;
-using Sax.Net;
-using Sax.Net.Helpers;
+using Sax;
+using Sax.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,9 +64,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             public Parser(InputSource source)
             {
-                TagSoup.Net.Parser parser = new TagSoup.Net.Parser();
+                TagSoup.Parser parser = new TagSoup.Parser();
 
-                parser.SetFeature(TagSoup.Net.Parser.NAMESPACES_FEATURE, true);
+                parser.SetFeature(TagSoup.Parser.NAMESPACES_FEATURE, true);
 
                 StringBuilder title = new StringBuilder(), body = new StringBuilder();
                 DefaultHandler handler = new DefaultHandlerAnonymousHelper(this, title, body);

@@ -1,0 +1,75 @@
+# This file is part of TagSoup and is Copyright 2002-2008 by John Cowan.
+#
+# TagSoup is licensed under the Apache License,
+# Version 2.0.  You may obtain a copy of this license at
+# http://www.apache.org/licenses/LICENSE-2.0 .  You may also have
+# additional legal rights not granted by this license.
+#
+# TagSoup is distributed in the hope that it will be useful, but
+# unless required by applicable law or agreed to in writing, TagSoup
+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
+# OF ANY KIND, either express or implied; not even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+default namespace = "http://www.ccil.org/~cowan/XML/tagsoup/tssl"
+
+start = schema
+
+## A TSSL schema has a namespace, which is applied to the elements by default,
+## and a name, which is used solely for documentation.  It contains entity
+## definitions, a root element, and attributes to be applied to all elements.
+schema = element schema {
+		attribute ns {xsd:anyURI},
+		attribute prefix {xsd:NCName},
+		attribute name {xsd:NCName},
+		attribute version {"1.0"},
+		entity*,
+		group+,
+		\element,
+		\attribute*
+		}
+
+## An entity has a name and a Unicode codepoint in hex.
+entity = element entity {
+		attribute name {xsd:NCName},
+		attribute codepoint {xsd:string}
+		}
+
+## A group is a named group of elements.  Every element belongs to one
+## or more groups and has a content model consisting of one or more groups.
+group = element group {
+	attribute id {xsd:ID}
+	}
+
+## An element has a name and a namespace (currently ignored).
+## It can have any of several types of content and can be restartable
+## or not.  The element is also a member of one or more model groups
+## (with arbitrary names), and can contain as children zero or more
+## model groups.  Elements also have attributes and "natural" children.
+\element = element element {
+		attribute ns {xsd:anyURI}?,
+		attribute name {xsd:NCName},
+		attribute type {type},
+		attribute closeMode { "unclosable" | "restartable" }?,
+		attribute text-parent { "true" | "false" }?,
+		(element memberOf { attribute group {xsd:IDREF}}+ |
+		 element isRoot { empty} |
+		 element memberOfAny { empty }),
+		element contains { attribute group {xsd:IDREF}}*,
+		\attribute*,
+		\element*
+		}
+
+## Here are the attribute types:
+
+type = "element" | "any" | "empty" | "mixed" | "string" | "cdata"
+
+## An attribute has a name and a namespace (currently not supported).
+## It also has an optional type and an optional default value.
+\attribute = element attribute {
+	attribute ns {xsd:anyURI}?,
+	attribute name {xsd:NCName},
+	attribute type {"ID" | "IDREF" | "IDREFS" | "NMTOKEN" | "BOOLEAN"}?,
+	attribute default {xsd:string}?
+	}
+

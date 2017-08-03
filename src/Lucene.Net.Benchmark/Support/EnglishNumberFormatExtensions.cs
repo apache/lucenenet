@@ -10,12 +10,12 @@ namespace Lucene.Net.Support
     /// </summary>
     public static class EnglishNumberFormatExtensions
     {
-        private const long Quadrillion = Trillion * 1000;
-        private const long Trillion = Billion * 1000;
-        private const long Billion = Million * 1000;
-        private const long Million = Thousand * 1000;
-        private const long Thousand = Hundred * 10;
-        private const long Hundred = 100;
+        private const long QUADRILLION = TRILLION * 1000;
+        private const long TRILLION = BILLION * 1000;
+        private const long BILLION = MILLION * 1000;
+        private const long MILLION = THOUSAND * 1000;
+        private const long THOUSAND = HUNDRED * 10;
+        private const long HUNDRED = 100;
 
         /// <summary>
         /// Returns the spelled-out English words for the provided <paramref name="value"/>.
@@ -44,60 +44,60 @@ namespace Lucene.Net.Support
 
             long unit = 0;
 
-            if (value >= Quadrillion)
+            if (value >= QUADRILLION)
             {
-                unit = (value / Quadrillion);
-                value -= unit * Quadrillion;
+                unit = (value / QUADRILLION);
+                value -= unit * QUADRILLION;
 
                 ToWords(unit, builder);
                 builder.Append(" quadrillion");
                 if (value > 0) builder.Append(" ");
             }
 
-            if (value >= Trillion)
+            if (value >= TRILLION)
             {
-                unit = (value / Trillion);
-                value -= unit * Trillion;
+                unit = (value / TRILLION);
+                value -= unit * TRILLION;
 
                 ToWords(unit, builder);
                 builder.Append(" trillion");
                 if (value > 0) builder.Append(" ");
             }
 
-            if (value >= Billion)
+            if (value >= BILLION)
             {
-                unit = (value / Billion);
-                value -= unit * Billion;
+                unit = (value / BILLION);
+                value -= unit * BILLION;
 
                 ToWords(unit, builder);
                 builder.Append(" billion");
                 if (value > 0) builder.Append(" ");
             }
 
-            if (value >= Million)
+            if (value >= MILLION)
             {
-                unit = (value / Million);
-                value -= unit * Million;
+                unit = (value / MILLION);
+                value -= unit * MILLION;
 
                 ToWords(unit, builder);
                 builder.Append(" million");
                 if (value > 0) builder.Append(" ");
             }
 
-            if (value >= Thousand)
+            if (value >= THOUSAND)
             {
-                unit = (value / Thousand);
-                value -= unit * Thousand;
+                unit = (value / THOUSAND);
+                value -= unit * THOUSAND;
 
                 ToWords(unit, builder);
                 builder.Append(" thousand");
                 if (value > 0) builder.Append(" ");
             }
 
-            if (value >= Hundred)
+            if (value >= HUNDRED)
             {
-                unit = (value / Hundred);
-                value -= unit * Hundred;
+                unit = (value / HUNDRED);
+                value -= unit * HUNDRED;
 
                 ToWords(unit, builder);
                 builder.Append(" hundred");

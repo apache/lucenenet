@@ -3,8 +3,8 @@
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
-using Sax.Net;
-using Sax.Net.Helpers;
+using Sax;
+using Sax.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -195,9 +195,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
                 try
                 {
-                    Sax.Net.IXmlReader reader = new TagSoup.Net.XmlReaderFactory().CreateXmlReader(); //XMLReaderFactory.createXMLReader();
+                    Sax.IXMLReader reader = new TagSoup.Parser(); //XMLReaderFactory.createXMLReader();
                     reader.ContentHandler = this;
                     reader.ErrorHandler = this;
+
                     while (!stopped)
                     {
                         Stream localFileIS = outerInstance.@is;
@@ -293,7 +294,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     }
                 }
             }
-
         }
 
         private static readonly IDictionary<string, int?> ELEMENTS = new Dictionary<string, int?>();
@@ -350,6 +350,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     parser.Stop();
                     if (@is != null)
                     {
+                        Thread.Sleep(1); // LUCENENET: Allow parser to stop before Dispose() is called
                         @is.Dispose();
                         @is = null;
                     }
