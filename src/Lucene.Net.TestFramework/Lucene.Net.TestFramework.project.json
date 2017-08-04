@@ -3,7 +3,7 @@
     "win": {}
   },
   "dependencies": {
-    "icu.net": "54.1.1-alpha",
+    "icu-dotnet": "2.2.0-netcore0078",
     "NUnit": "3.5.0"
   },
   "frameworks": {
