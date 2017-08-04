@@ -11,6 +11,7 @@
 // OF ANY KIND, either express or implied; not even the implied warranty
 // of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
+using Lucene.Net.Support;
 using Sax.Helpers;
 using System;
 using System.Text;
@@ -143,7 +144,7 @@ namespace TagSoup
             {
                 return "http://www.w3.org/XML/1998/namespace";
             }
-            return string.Intern("urn:x-prefix:" + prefix);
+            return "urn:x-prefix:" + prefix.Intern();
         }
 
         /// <summary>
@@ -158,7 +159,7 @@ namespace TagSoup
             {
                 return name;
             }
-            return string.Intern(name.Substring(colon + 1));
+            return name.Substring(colon + 1).Intern();
         }
 
         /// <summary>
@@ -193,7 +194,7 @@ namespace TagSoup
             int i = atts.GetIndex(name);
             if (i == -1)
             {
-                name = string.Intern(name);
+                name = name.Intern();
                 if (type == null)
                 {
                     type = "CDATA";

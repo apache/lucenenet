@@ -542,7 +542,7 @@ namespace TagSoup
         /// <returns></returns>
         private Stream GetInputStream(string publicid, string systemid)
         {
-            var basis = new Uri("file://" + Environment.CurrentDirectory + Path.DirectorySeparatorChar);
+            var basis = new Uri("file://" + Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
             var url = new Uri(basis, systemid);
             return new FileStream(url.LocalPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }

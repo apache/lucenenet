@@ -32,7 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE;FEATURE_CONCURRENTMERGESCHEDULER;FEATURE_THREAD_PRIORITY</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -18,35 +18,36 @@
     "nowarn": [ "1591", "1573" ]
   },
   "dependencies": {
-	"icu.net": "54.1.1-alpha",
+    "icu.net": "54.1.1-alpha",
     "Lucene.Net": "4.8.0",
     "Lucene.Net.Analysis.Common": "4.8.0",
-	"Lucene.Net.Facet": "4.8.0",
-	"Lucene.Net.Highlighter": "4.8.0",
-	"Lucene.Net.ICU": "4.8.0",
-	"Lucene.Net.Queries": "4.8.0",
-	"Lucene.Net.QueryParser": "4.8.0",
-	"Lucene.Net.Spatial": "4.8.0",
-	"Sax.Net": "2.0.2",
-	"SharpZipLib": "0.86.0",
-    "Spatial4n.Core": "0.4.1-beta00003",
-	"TagSoup.Net": "1.2.1.1"
+    "Lucene.Net.Facet": "4.8.0",
+    "Lucene.Net.Highlighter": "4.8.0",
+    "Lucene.Net.ICU": "4.8.0",
+    "Lucene.Net.Queries": "4.8.0",
+    "Lucene.Net.QueryParser": "4.8.0",
+    "Lucene.Net.Spatial": "4.8.0",
+    "Spatial4n.Core": "0.4.1-beta00003"
   },
   "frameworks": {
     "netstandard1.5": {
-      "imports": "dnxcore50",
+      "imports": [ "dnxcore50", "portable-net403+sl5+win8+wp8+wpa81" ],
       "buildOptions": {
         "debugType": "portable",
         "define": [ "NETSTANDARD" ]
       },
       "dependencies": {
-        "NETStandard.Library": "1.6.0"
+        "NETStandard.Library": "1.6.0",
+        "SharpZipLib.NETStandard": "0.86.0.1"
       }
     },
     "net451": {
       "buildOptions": {
         "debugType": "full",
         "define": [ "FEATURE_SERIALIZABLE" ]
+      },
+      "dependencies": {
+        "SharpZipLib": "0.86.0"
       }
     }
   }

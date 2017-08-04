@@ -73,7 +73,7 @@ namespace TagSoup
 
         public void EOF(char[] buff, int offset, int length)
         {
-            theWriter.Close();
+            theWriter.Dispose();
         }
 
         public void ETag(char[] buff, int offset, int length)
@@ -177,7 +177,7 @@ namespace TagSoup
 
         public void EndDocument()
         {
-            theWriter.Close();
+            theWriter.Dispose();
         }
 
         public void EndElement(string uri, string localname, string qname)

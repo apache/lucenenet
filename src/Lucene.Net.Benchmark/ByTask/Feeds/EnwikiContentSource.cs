@@ -77,14 +77,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 {
                     while (tuple == null && nmde == null && !threadDone && !stopped)
                     {
-                        try
-                        {
+                        //try
+                        //{
                             Monitor.Wait(this);
-                        }
-                        catch (ThreadInterruptedException ie)
-                        {
-                            throw new ThreadInterruptedException(ie.ToString(), ie);
-                        }
+                        //}
+                        //catch (ThreadInterruptedException ie)
+                        //{
+                        //    throw new ThreadInterruptedException(ie.ToString(), ie);
+                        //}
                     }
                     if (tuple != null)
                     {
@@ -148,14 +148,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                             {
                                 while (tuple != null && !stopped)
                                 {
-                                    try
-                                    {
+                                    //try
+                                    //{
                                         Monitor.Wait(this); //wait();
-                                    }
-                                    catch (ThreadInterruptedException ie)
-                                    {
-                                        throw new ThreadInterruptedException(ie.ToString(), ie);
-                                    }
+                                    //}
+                                    //catch (ThreadInterruptedException ie)
+                                    //{
+                                    //    throw new ThreadInterruptedException(ie.ToString(), ie);
+                                    //}
                                 }
                                 tuple = tmpTuple;
                                 Monitor.Pulse(this); //notify();

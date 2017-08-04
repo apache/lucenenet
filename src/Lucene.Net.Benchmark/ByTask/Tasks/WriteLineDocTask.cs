@@ -127,7 +127,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             else
             {
                 checkSufficientFields = true;
-                HashSet<string> sf = new HashSet<string>(suff.Split(new char[] { ',' }).TrimEnd());
+                HashSet<string> sf = new HashSet<string>(suff.Split(',').TrimEnd());
                 for (int i = 0; i < fieldsToWrite.Length; i++)
                 {
                     if (sf.Contains(fieldsToWrite[i]))

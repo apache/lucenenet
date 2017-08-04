@@ -218,7 +218,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                             bgTasks = new List<RunBackgroundTask>();
                         }
                         RunBackgroundTask bgTask = new RunBackgroundTask(task, letChildReport);
+#if FEATURE_THREAD_PRIORITY
                         bgTask.Priority = (task.BackgroundDeltaPriority + Thread.CurrentThread.Priority);
+#endif
                         bgTask.Start();
                         bgTasks.Add(bgTask);
                     }

@@ -397,7 +397,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         private Type LoadType(string assemblyName, string typeName)
         {
-            return Assembly.Load(assemblyName).DefinedTypes.FirstOrDefault(t => t.Name == typeName);
+            return Assembly.Load(new AssemblyName(assemblyName)).GetTypes().FirstOrDefault(t => t.Name == typeName);
         }
 
         public override string ToString()

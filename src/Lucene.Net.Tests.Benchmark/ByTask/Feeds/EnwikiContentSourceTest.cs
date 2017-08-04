@@ -131,7 +131,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             Dictionary<string, string> props = new Dictionary<string, string>();
             props["print.props"] = "false";
-            props["content.source.forever"] = forever.ToString(CultureInfo.InvariantCulture);
+            props["content.source.forever"] = forever.ToString();
             Config config = new Config(props);
 
             EnwikiContentSource source = new StringableEnwikiSource(docs);

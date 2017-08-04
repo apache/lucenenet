@@ -103,11 +103,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             props["directory"] = "RAMDirectory";
             if (setNormsProp)
             {
-                props["doc.tokenized.norms"] = normsPropVal.ToString(CultureInfo.InvariantCulture);
+                props["doc.tokenized.norms"] = normsPropVal.ToString();
             }
             if (setBodyNormsProp)
             {
-                props["doc.body.tokenized.norms"] = bodyNormsVal.ToString(CultureInfo.InvariantCulture);
+                props["doc.body.tokenized.norms"] = bodyNormsVal.ToString();
             }
 
             // Create PerfRunData

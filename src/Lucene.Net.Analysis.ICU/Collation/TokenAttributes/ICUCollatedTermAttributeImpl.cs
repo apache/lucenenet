@@ -1,4 +1,7 @@
 ﻿using Icu.Collation;
+#if NETSTANDARD
+using Icu.ObjectModel; // For SortKey
+#endif
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;

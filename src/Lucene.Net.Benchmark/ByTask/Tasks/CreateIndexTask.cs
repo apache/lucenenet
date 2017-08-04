@@ -110,6 +110,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
             string mergeScheduler = config.Get("merge.scheduler",
                                                      "Lucene.Net.Index.ConcurrentMergeScheduler, Lucene.Net");
+#if !FEATURE_CONCURRENTMERGESCHEDULER
+            // LUCENENET specific - hack to get our TaskMergeScheduler
+            // when a ConcurrentMergeScheduler is requested.
+            if (mergeScheduler.Contains(".ConcurrentMergeScheduler,"))
+            {
+                mergeScheduler = "Lucene.Net.Index.TaskMergeScheduler, Lucene.Net";
+            }
+#endif
             Type mergeSchedulerType = Type.GetType(mergeScheduler);
             if (mergeSchedulerType == null)
             {
@@ -132,9 +140,15 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
                 if (mergeScheduler.Equals("Lucene.Net.Index.ConcurrentMergeScheduler"))
                 {
+#if FEATURE_CONCURRENTMERGESCHEDULER
                     ConcurrentMergeScheduler cms = (ConcurrentMergeScheduler)iwConf.MergeScheduler;
                     int maxThreadCount = config.Get("concurrent.merge.scheduler.max.thread.count", ConcurrentMergeScheduler.DEFAULT_MAX_THREAD_COUNT);
                     int maxMergeCount = config.Get("concurrent.merge.scheduler.max.merge.count", ConcurrentMergeScheduler.DEFAULT_MAX_MERGE_COUNT);
+#else
+                    TaskMergeScheduler cms = (TaskMergeScheduler)iwConf.MergeScheduler;
+                    int maxThreadCount = config.Get("concurrent.merge.scheduler.max.thread.count", 1);
+                    int maxMergeCount = config.Get("concurrent.merge.scheduler.max.merge.count", 2);
+#endif
                     cms.SetMaxMergesAndThreads(maxMergeCount, maxThreadCount);
                 }
             }
