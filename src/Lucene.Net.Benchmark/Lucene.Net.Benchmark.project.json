@@ -3,7 +3,7 @@
     "win": {}
   },
   "dependencies": {
-    "icu-dotnet": "2.2.0-netcore0078",
+    "icu.net": "54.1.1-alpha",
     "SharpZipLib": "0.86.0",
     "Spatial4n.Core": "0.4.1-beta00003"
   },

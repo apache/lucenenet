@@ -4,7 +4,7 @@
   },
   "dependencies": {
     "NUnit": "3.5.0",
-    "icu-dotnet": "2.2.0-netcore0078"
+    "icu.net": "54.1.1-alpha"
   },
   "frameworks": {
     "net451": {}
