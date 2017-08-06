@@ -207,6 +207,177 @@ namespace Lucene.Net.Cli.Resources {
         }
         
         /// <summary>
+        ///    Looks up a localized string similar to Utilities for benchmarking Lucene.Net..
+        /// </summary>
+        public static string BenchmarkCommandDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Splits Reuters SGML documents into simple text files containing: Title, Date, Dateline, Body..
+        /// </summary>
+        public static string BenchmarkExtractReutersCommandDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkExtractReutersCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Path to Reuters SGML files..
+        /// </summary>
+        public static string BenchmarkExtractReutersCommandInputDirectoryDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkExtractReutersCommandInputDirectoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Path to a directory where the output files will be written..
+        /// </summary>
+        public static string BenchmarkExtractReutersCommandOutputDirectoryDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkExtractReutersCommandOutputDirectoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Extracts a downloaded Wikipedia dump into separate files for indexing..
+        /// </summary>
+        public static string BenchmarkExtractWikipediaCommandDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkExtractWikipediaCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Tells the extractor to skip WIKI docs that contain only images..
+        /// </summary>
+        public static string BenchmarkExtractWikipediaCommandDiscardImageOnlyDocsDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkExtractWikipediaCommandDiscardImageOnlyDocsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Input path to a Wikipedia XML file..
+        /// </summary>
+        public static string BenchmarkExtractWikipediaCommandInputWikipediaFileDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkExtractWikipediaCommandInputWikipediaFileDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Path to a directory where the output files will be written..
+        /// </summary>
+        public static string BenchmarkExtractWikipediaCommandOutputDirectoryDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkExtractWikipediaCommandOutputDirectoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Suggests quality queries based on index contents. Used for making quality test benchmarks..
+        /// </summary>
+        public static string BenchmarkFindQualityQueriesCommandDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkFindQualityQueriesCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to An algorithm file specifying the parameters of the benchmark to run..
+        /// </summary>
+        public static string BenchmarkRunCommandAlgorithmFileDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunCommandAlgorithmFileDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Runs a benchmark based on an algorithm file..
+        /// </summary>
+        public static string BenchmarkRunCommandDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Runs a TREC evaluation..
+        /// </summary>
+        public static string BenchmarkRunTrecEvalCommandDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunTrecEvalCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Output submission file for TREC evaluation..
+        /// </summary>
+        public static string BenchmarkRunTrecEvalCommandOutputSubmissionFileDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunTrecEvalCommandOutputSubmissionFileDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Use description field in query..
+        /// </summary>
+        public static string BenchmarkRunTrecEvalCommandQueryOnDescriptionDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunTrecEvalCommandQueryOnDescriptionDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Use narrative field in query..
+        /// </summary>
+        public static string BenchmarkRunTrecEvalCommandQueryOnNarrativeDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunTrecEvalCommandQueryOnNarrativeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Use title field in query. This flag will automatically be on if no other field is specified..
+        /// </summary>
+        public static string BenchmarkRunTrecEvalCommandQueryOnTitleDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunTrecEvalCommandQueryOnTitleDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Input file conataining relevance judgements..
+        /// </summary>
+        public static string BenchmarkRunTrecEvalCommandQueryRelevanceFileDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunTrecEvalCommandQueryRelevanceFileDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Input file containing queries..
+        /// </summary>
+        public static string BenchmarkRunTrecEvalCommandTopicsFileDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkRunTrecEvalCommandTopicsFileDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    Looks up a localized string similar to Sample of a performance test written programatically instead of using an algorithm file..
+        /// </summary>
+        public static string BenchmarkSampleCommandDescription {
+            get {
+                return ResourceManager.GetString("BenchmarkSampleCommandDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///    Looks up a localized string similar to Cross check term vectors..
         /// </summary>
         public static string CrossCheckTermVectorsDescription {

@@ -1,4 +1,7 @@
-﻿namespace Lucene.Net.Cli
+﻿using Lucene.Net.Benchmarks.ByTask.Programmatic;
+using System.Collections.Generic;
+
+namespace Lucene.Net.Cli
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,28 +20,34 @@
      * limitations under the License.
      */
 
-    public class RootCommand : ICommand
+    public class BenchmarkSampleCommand : ICommand
     {
-        public class Configuration : ConfigurationBase
+        public class Configuration : DemoConfiguration
         {
             public Configuration(CommandLineOptions options)
             {
-                this.Description = FromResource("RootCommandDescription");
+                this.Main = (args) => Sample.Main(args);
 
-                this.Commands.Add(new AnalysisCommand.Configuration(options));
-                this.Commands.Add(new BenchmarkCommand.Configuration(options));
-                this.Commands.Add(new IndexCommand.Configuration(options));
-                this.Commands.Add(new LockCommand.Configuration(options));
-                this.Commands.Add(new DemoCommand.Configuration(options));
+                this.Name = "sample";
+                this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
-                this.OnExecute(() => new RootCommand().Run(this));
+                this.OnExecute(() => new BenchmarkSampleCommand().Run(this));
+            }
+
+            public override IEnumerable<string> SourceCodeFiles
+            {
+                get
+                {
+                    return new string[] { "Sample.cs" };
+                }
             }
         }
 
         public int Run(ConfigurationBase cmd)
         {
-            cmd.ShowHelp();
-            return 1;
+            cmd.Main(new string[0]);
+            return 0;
         }
     }
 }

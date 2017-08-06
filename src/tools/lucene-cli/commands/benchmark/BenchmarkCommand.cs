@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Cli
+﻿using Lucene.Net.Benchmarks.ByTask;
+
+namespace Lucene.Net.Cli
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,21 +19,26 @@
      * limitations under the License.
      */
 
-    public class RootCommand : ICommand
+    public class BenchmarkCommand : ICommand
     {
         public class Configuration : ConfigurationBase
         {
             public Configuration(CommandLineOptions options)
             {
-                this.Description = FromResource("RootCommandDescription");
+                this.Main = (args) => Benchmark.Main(args);
 
-                this.Commands.Add(new AnalysisCommand.Configuration(options));
-                this.Commands.Add(new BenchmarkCommand.Configuration(options));
-                this.Commands.Add(new IndexCommand.Configuration(options));
-                this.Commands.Add(new LockCommand.Configuration(options));
-                this.Commands.Add(new DemoCommand.Configuration(options));
+                this.Name = "benchmark";
+                this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
-                this.OnExecute(() => new RootCommand().Run(this));
+                this.Commands.Add(new BenchmarkExtractReutersCommand.Configuration(options));
+                this.Commands.Add(new BenchmarkExtractWikipediaCommand.Configuration(options));
+                this.Commands.Add(new BenchmarkFindQualityQueriesCommand.Configuration(options));
+                this.Commands.Add(new BenchmarkRunCommand.Configuration(options));
+                this.Commands.Add(new BenchmarkRunTrecEvalCommand.Configuration(options));
+                this.Commands.Add(new BenchmarkSampleCommand.Configuration(options));
+
+                this.OnExecute(() => new BenchmarkCommand().Run(this));
             }
         }
 

@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Cli
+﻿using Lucene.Net.Benchmarks.Utils;
+
+namespace Lucene.Net.Cli
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,28 +19,34 @@
      * limitations under the License.
      */
 
-    public class RootCommand : ICommand
+    public class BenchmarkExtractReutersCommand : ICommand
     {
         public class Configuration : ConfigurationBase
         {
             public Configuration(CommandLineOptions options)
             {
-                this.Description = FromResource("RootCommandDescription");
+                this.Main = (args) => ExtractReuters.Main(args);
 
-                this.Commands.Add(new AnalysisCommand.Configuration(options));
-                this.Commands.Add(new BenchmarkCommand.Configuration(options));
-                this.Commands.Add(new IndexCommand.Configuration(options));
-                this.Commands.Add(new LockCommand.Configuration(options));
-                this.Commands.Add(new DemoCommand.Configuration(options));
+                this.Name = "extract-reuters";
+                this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
 
-                this.OnExecute(() => new RootCommand().Run(this));
+                this.Argument("<INPUT_DIRECTORY>", FromResource("InputDirectoryDescription"));
+                this.Argument("<OUTPUT_DIRECTORY>", FromResource("OutputDirectoryDescription"));
+
+                this.OnExecute(() => new BenchmarkExtractReutersCommand().Run(this));
             }
         }
 
         public int Run(ConfigurationBase cmd)
         {
-            cmd.ShowHelp();
-            return 1;
+            if (!cmd.ValidateArguments(2))
+            {
+                return 1;
+            }
+
+            cmd.Main(cmd.GetNonNullArguments());
+            return 0;
         }
     }
 }

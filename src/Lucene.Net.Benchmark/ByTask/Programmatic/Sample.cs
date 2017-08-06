@@ -72,7 +72,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Programmatic
             var p = new Dictionary<string, string>();
             p["task.max.depth.log"] = "3";
             p["max.buffered"] = "buf:10:10:100:100:10:10:100:100";
-            p["doc.maker"] = "Lucene.Net.Benchmarks.ByTask.Feeds.ReutersContentSource, Lucene.Net.Benchmark";
+            //p["doc.maker"] = "Lucene.Net.Benchmarks.ByTask.Feeds.ReutersContentSource, Lucene.Net.Benchmark";
             p["log.step"] = "2000";
             p["doc.delete.step"] = "8";
             p["analyzer"] = "Lucene.Net.Analysis.Standard.StandardAnalyzer, Lucene.Net.Analysis.Common";

@@ -1,4 +1,6 @@
-﻿namespace Lucene.Net.Cli
+﻿using Lucene.Net.Benchmarks.ByTask;
+
+namespace Lucene.Net.Cli
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -17,28 +19,32 @@
      * limitations under the License.
      */
 
-    public class RootCommand : ICommand
+    public class BenchmarkRunCommand : ICommand
     {
         public class Configuration : ConfigurationBase
         {
             public Configuration(CommandLineOptions options)
             {
-                this.Description = FromResource("RootCommandDescription");
+                this.Main = (args) => Benchmark.Main(args);
 
-                this.Commands.Add(new AnalysisCommand.Configuration(options));
-                this.Commands.Add(new BenchmarkCommand.Configuration(options));
-                this.Commands.Add(new IndexCommand.Configuration(options));
-                this.Commands.Add(new LockCommand.Configuration(options));
-                this.Commands.Add(new DemoCommand.Configuration(options));
+                this.Name = "run";
+                this.Description = FromResource("Description");
+                this.ExtendedHelpText = FromResource("ExtendedHelpText");
+                this.Argument("<ALGORITHM_FILE>", FromResource("AlgorithmFileDescription"));
 
-                this.OnExecute(() => new RootCommand().Run(this));
+                this.OnExecute(() => new BenchmarkRunCommand().Run(this));
             }
         }
 
         public int Run(ConfigurationBase cmd)
         {
-            cmd.ShowHelp();
-            return 1;
+            if (!cmd.ValidateArguments(1))
+            {
+                return 1;
+            }
+
+            cmd.Main(cmd.GetNonNullArguments());
+            return 0;
         }
     }
 }

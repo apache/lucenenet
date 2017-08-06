@@ -176,6 +176,63 @@ See this blog post (http://mentaldetritus.blogspot.com/2013/03/compiling-custom-
   <data name="AnalysisStempelPatchStemsCommandStemmerTableFilesEncodingDescription" xml:space="preserve">
     <value>The encoding to use for the stemmer table files. If not supplied, defaults to UTF-8.</value>
   </data>
+  <data name="BenchmarkCommandDescription" xml:space="preserve">
+    <value>Utilities for benchmarking Lucene.Net.</value>
+  </data>
+  <data name="BenchmarkExtractReutersCommandDescription" xml:space="preserve">
+    <value>Splits Reuters SGML documents into simple text files containing: Title, Date, Dateline, Body.</value>
+  </data>
+  <data name="BenchmarkExtractReutersCommandInputDirectoryDescription" xml:space="preserve">
+    <value>Path to Reuters SGML files.</value>
+  </data>
+  <data name="BenchmarkExtractReutersCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Path to a directory where the output files will be written.</value>
+  </data>
+  <data name="BenchmarkExtractWikipediaCommandDescription" xml:space="preserve">
+    <value>Extracts a downloaded Wikipedia dump into separate files for indexing.</value>
+  </data>
+  <data name="BenchmarkExtractWikipediaCommandDiscardImageOnlyDocsDescription" xml:space="preserve">
+    <value>Tells the extractor to skip WIKI docs that contain only images.</value>
+  </data>
+  <data name="BenchmarkExtractWikipediaCommandInputWikipediaFileDescription" xml:space="preserve">
+    <value>Input path to a Wikipedia XML file.</value>
+  </data>
+  <data name="BenchmarkExtractWikipediaCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Path to a directory where the output files will be written.</value>
+  </data>
+  <data name="BenchmarkFindQualityQueriesCommandDescription" xml:space="preserve">
+    <value>Suggests quality queries based on index contents. Used for making quality test benchmarks.</value>
+  </data>
+  <data name="BenchmarkRunCommandAlgorithmFileDescription" xml:space="preserve">
+    <value>An algorithm file specifying the parameters of the benchmark to run.</value>
+  </data>
+  <data name="BenchmarkRunCommandDescription" xml:space="preserve">
+    <value>Runs a benchmark based on an algorithm file.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandDescription" xml:space="preserve">
+    <value>Runs a TREC evaluation.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandOutputSubmissionFileDescription" xml:space="preserve">
+    <value>Output submission file for TREC evaluation.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandQueryOnDescriptionDescription" xml:space="preserve">
+    <value>Use description field in query.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandQueryOnNarrativeDescription" xml:space="preserve">
+    <value>Use narrative field in query.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandQueryOnTitleDescription" xml:space="preserve">
+    <value>Use title field in query. This flag will automatically be on if no other field is specified.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandQueryRelevanceFileDescription" xml:space="preserve">
+    <value>Input file conataining relevance judgements.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandTopicsFileDescription" xml:space="preserve">
+    <value>Input file containing queries.</value>
+  </data>
+  <data name="BenchmarkSampleCommandDescription" xml:space="preserve">
+    <value>Sample of a performance test written programatically instead of using an algorithm file.</value>
+  </data>
   <data name="CrossCheckTermVectorsDescription" xml:space="preserve">
     <value>Cross check term vectors.</value>
   </data>
