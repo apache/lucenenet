@@ -1,5 +1,3 @@
-//STATUS: DRAFT - 4.8.0
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,15 +58,11 @@ namespace Lucene.Net.Replicator
         int CompareTo(string version);
 
         /// <summary>
-        /// Returns an {@link IndexInput} for the given fileName and source. It is the
-        /// caller's respnsibility to close the {@link IndexInput} when it has been
+        /// Returns a <see cref="Stream"/> for the given fileName and source. It is the
+        /// caller's respnsibility to close the <see cref="Stream"/> when it has been
         /// consumed.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
         /// <exception cref="IOException"></exception>
-        //TODO: Stream or IndexInput?
         Stream Open(string source, string fileName);
 
         /// <summary>

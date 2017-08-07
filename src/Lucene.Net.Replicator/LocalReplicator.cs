@@ -2,10 +2,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Search;
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Replicator
@@ -76,36 +76,6 @@ namespace Lucene.Net.Replicator
 
         public void Publish(IRevision revision)
         {
-            #region Java
-            //JAVA: public synchronized void publish(Revision revision) throws IOException {
-            //JAVA:   ensureOpen();
-            //JAVA:   if (currentRevision != null) {
-            //JAVA:     int compare = revision.compareTo(currentRevision.revision);
-            //JAVA:     if (compare == 0) {
-            //JAVA:       // same revision published again, ignore but release it
-            //JAVA:       revision.release();
-            //JAVA:       return;
-            //JAVA:     }
-            //JAVA:
-            //JAVA:     if (compare < 0) {
-            //JAVA:       revision.release();
-            //JAVA:       throw new IllegalArgumentException("Cannot publish an older revision: rev=" + revision + " current="
-            //JAVA:           + currentRevision);
-            //JAVA:     } 
-            //JAVA:   }
-            //JAVA:
-            //JAVA:   // swap revisions
-            //JAVA:   final RefCountedRevision oldRevision = currentRevision;
-            //JAVA:   currentRevision = new RefCountedRevision(revision);
-            //JAVA:   if (oldRevision != null) {
-            //JAVA:     oldRevision.decRef();
-            //JAVA:   }
-            //JAVA:
-            //JAVA:   // check for expired sessions
-            //JAVA:   checkExpiredSessions();
-            //JAVA: } 
-            #endregion
-
             lock (padlock)
             {
                 EnsureOpen();
@@ -137,34 +107,11 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
-        /// <param name="currentVersion"></param>
         /// <returns></returns>
         public SessionToken CheckForUpdate(string currentVersion)
         {
-            #region Java
-            //JAVA: public synchronized SessionToken checkForUpdate(String currentVersion) {
-            //JAVA:   ensureOpen();
-            //JAVA:   if (currentRevision == null) { // no published revisions yet
-            //JAVA:     return null;
-            //JAVA:   }
-            //JAVA:
-            //JAVA:   if (currentVersion != null && currentRevision.revision.compareTo(currentVersion) <= 0) {
-            //JAVA:     // currentVersion is newer or equal to latest published revision
-            //JAVA:     return null;
-            //JAVA:   }
-            //JAVA:
-            //JAVA:   // currentVersion is either null or older than latest published revision
-            //JAVA:   currentRevision.incRef();
-            //JAVA:   final String sessionID = Integer.toString(sessionToken.incrementAndGet());
-            //JAVA:   final SessionToken sessionToken = new SessionToken(sessionID, currentRevision.revision);
-            //JAVA:   final ReplicationSession timedSessionToken = new ReplicationSession(sessionToken, currentRevision);
-            //JAVA:   sessions.put(sessionID, timedSessionToken);
-            //JAVA:   return sessionToken;
-            //JAVA: } 
-            #endregion
-
             lock (padlock)
             {
                 EnsureOpen();
@@ -186,9 +133,8 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
-        /// <param name="sessionId"></param>
         /// <exception cref="InvalidOperationException"></exception>
         public void Release(string sessionId)
         {
@@ -199,26 +145,11 @@ namespace Lucene.Net.Replicator
             }
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         public Stream ObtainFile(string sessionId, string source, string fileName)
         {
-            #region Java
-            //JAVA: public synchronized InputStream obtainFile(String sessionID, String source, String fileName) throws IOException {
-            //JAVA:   ensureOpen();
-            //JAVA:   ReplicationSession session = sessions.get(sessionID);
-            //JAVA:   if (session != null && session.isExpired(expirationThresholdMilllis)) {
-            //JAVA:     releaseSession(sessionID);
-            //JAVA:     session = null;
-            //JAVA:   }
-            //JAVA:   // session either previously expired, or we just expired it
-            //JAVA:   if (session == null) {
-            //JAVA:     throw new SessionExpiredException("session (" + sessionID + ") expired while obtaining file: source=" + source
-            //JAVA:         + " file=" + fileName);
-            //JAVA:   }
-            //JAVA:   sessions.get(sessionID).markAccessed();
-            //JAVA:   return session.revision.revision.open(source, fileName);
-            //JAVA: }
-            #endregion
-
             lock (padlock)
             {
                 EnsureOpen();
@@ -240,21 +171,11 @@ namespace Lucene.Net.Replicator
 
         }
 
+        /// <summary>
+        /// TODO
+        /// </summary>
         public void Dispose()
         {
-            #region Java
-            //JAVA: public synchronized void close() throws IOException {
-            //JAVA:   if (!closed) {
-            //JAVA:     // release all managed revisions
-            //JAVA:     for (ReplicationSession session : sessions.values()) {
-            //JAVA:       session.revision.decRef();
-            //JAVA:     }
-            //JAVA:     sessions.clear();
-            //JAVA:     closed = true;
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             if (disposed)
                 return;
 
@@ -270,21 +191,6 @@ namespace Lucene.Net.Replicator
         /// <exception cref="InvalidOperationException"></exception>
         private void CheckExpiredSessions()
         {
-            #region Java
-            //JAVA: private void checkExpiredSessions() throws IOException {
-            //JAVA:   // make a "to-delete" list so we don't risk deleting from the map while iterating it
-            //JAVA:   final ArrayList<ReplicationSession> toExpire = new ArrayList<>();
-            //JAVA:   for (ReplicationSession token : sessions.values()) {
-            //JAVA:     if (token.isExpired(expirationThresholdMilllis)) {
-            //JAVA:       toExpire.add(token);
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA:   for (ReplicationSession token : toExpire) {
-            //JAVA:     releaseSession(token.session.id);
-            //JAVA:   }
-            //JAVA: }  
-            #endregion
-            
             // .NET NOTE: .ToArray() so we don't modify a collection we are enumerating...
             //            I am wondering if it would be overall more practical to switch to a concurrent dictionary...
             foreach (ReplicationSession token in sessions.Values.Where(token => token.IsExpired(ExpirationThreshold)).ToArray())
@@ -296,17 +202,6 @@ namespace Lucene.Net.Replicator
         /// <exception cref="InvalidOperationException"></exception>
         private void ReleaseSession(string sessionId)
         {
-            #region Java
-            //JAVA: private void releaseSession(String sessionID) throws IOException {
-            //JAVA:   ReplicationSession session = sessions.remove(sessionID);
-            //JAVA:   // if we're called concurrently by close() and release(), could be that one
-            //JAVA:   // thread beats the other to release the session.
-            //JAVA:   if (session != null) {
-            //JAVA:     session.revision.decRef();
-            //JAVA:   }
-            //JAVA: }          
-            #endregion
-
             ReplicationSession session;
             // if we're called concurrently by close() and release(), could be that one
             // thread beats the other to release the session.
@@ -349,7 +244,6 @@ namespace Lucene.Net.Replicator
             {
                 if (refCount.Get() <= 0)
                 {
-                    //JAVA: throw new IllegalStateException("this revision is already released");
                     throw new InvalidOperationException("this revision is already released");
                 }
 
@@ -373,7 +267,6 @@ namespace Lucene.Net.Replicator
                 }
                 else if (rc < 0)
                 {
-                    //JAVA: throw new IllegalStateException("too many decRef calls: refCount is " + rc + " after decrement");
                     throw new InvalidOperationException(string.Format("too many decRef calls: refCount is {0} after decrement", rc));
                 }
             }
@@ -395,19 +288,16 @@ namespace Lucene.Net.Replicator
             {
                 Session = session;
                 Revision = revision;
-                //JAVA: lastAccessTime = System.currentTimeMillis();
                 lastAccessTime = Stopwatch.GetTimestamp();
             }
 
             public bool IsExpired(long expirationThreshold)
             {
-                //JAVA: return lastAccessTime < (System.currentTimeMillis() - expirationThreshold);
                 return lastAccessTime < Stopwatch.GetTimestamp() - expirationThreshold * Stopwatch.Frequency / 1000;
             }
 
             public void MarkAccessed()
             {
-                //JAVA: lastAccessTime = System.currentTimeMillis();
                 lastAccessTime = Stopwatch.GetTimestamp();
             }
         }

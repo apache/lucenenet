@@ -64,8 +64,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ComponentWrapperInfoStream.cs" />
-    <Compile Include="Http\EnumerableExtensions.cs" />
     <Compile Include="Http\HttpClientBase.cs" />
     <Compile Include="Http\HttpReplicator.cs" />
     <Compile Include="Http\Abstractions\IReplicationRequest.cs" />

@@ -1,5 +1,3 @@
-//STATUS: DRAFT - 4.8.0
-
 using System;
 
 namespace Lucene.Net.Replicator
@@ -35,7 +33,6 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public string FileName { get; private set; }
         
-        //TODO: can this be readonly?
         /// <summary>
         /// Gets or sets the length of the file denoted by <see cref="FileName"/>.
         /// </summary>
@@ -44,7 +41,7 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Constructor with the given file name and optionally length. 
         /// </summary>
-        /// <param name="fileName"></param>
+        /// <param name="fileName">The name of the file</param>
         /// <param name="length">Optional, the length of the file.</param>
         public RevisionFile(string fileName, long length = -1)
         {

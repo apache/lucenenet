@@ -1,6 +1,7 @@
 //STATUS: DRAFT - 4.8.0
 
 using System;
+using System.IO;
 using System.Linq;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
@@ -8,6 +9,7 @@ using Lucene.Net.Replicator;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Tests.Replicator
 {
@@ -144,7 +146,7 @@ namespace Lucene.Net.Tests.Replicator
                 foreach (RevisionFile file in sourceFiles.Values.First())
                 {
                     IndexInput src = dir.OpenInput(file.FileName, IOContext.READ_ONCE);
-                    System.IO.Stream @in = rev.Open(source, file.FileName);
+                    Stream @in = rev.Open(source, file.FileName);
                     assertEquals(src.Length, @in.Length);
                     byte[] srcBytes = new byte[(int) src.Length];
                     byte[] inBytes = new byte[(int) src.Length];
@@ -156,9 +158,7 @@ namespace Lucene.Net.Tests.Replicator
                         {
                             skip = 0;
                         }
-                        //JAVA: in.skip(skip);
-                        byte[] skips = new byte[skip];
-                        @in.Read(skips, 0, skip);
+                        @in.Seek(skip, SeekOrigin.Current);
                         src.Seek(skip);
                         offset = skip;
                     }

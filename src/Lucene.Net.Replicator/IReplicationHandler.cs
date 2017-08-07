@@ -1,5 +1,5 @@
 ﻿//STATUS: DRAFT - 4.8.0
-using System;
+
 using System.Collections.Generic;
 using System.IO;
 using Directory = Lucene.Net.Store.Directory;

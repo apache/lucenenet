@@ -1,8 +1,5 @@
-//STATUS: DRAFT - 4.8.0
-
 using System;
 using System.IO;
-using System.Runtime.Serialization;
 
 namespace Lucene.Net.Replicator
 {

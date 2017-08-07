@@ -1,4 +1,3 @@
-//STATUS: DRAFT - 4.8.0
 using System;
 using System.IO;
 
@@ -62,15 +61,12 @@ namespace Lucene.Net.Replicator
         /// should call <see cref="Release"/> so that the session resources can be
         /// reclaimed, including the revision files.
         /// </remarks>
-        /// <param name="currentVersion"></param>
-        /// <returns></returns>
         /// <exception cref="IOException"></exception>
-        SessionToken CheckForUpdate(string currentVersion);// throws IOException;
+        SessionToken CheckForUpdate(string currentVersion);
 
         /// <summary>
         /// Notify that the specified <see cref="SessionToken"/> is no longer needed by the caller.
         /// </summary>
-        /// <param name="sessionId"></param>
         /// <exception cref="IOException"></exception>
         void Release(string sessionId);
 
@@ -81,10 +77,6 @@ namespace Lucene.Net.Replicator
         /// <remarks>
         /// It is the caller's responsibility to call <see cref="IDisposable.Dispose"/> on the returned stream.
         /// </remarks>
-        /// <param name="sessionId"></param>
-        /// <param name="source"></param>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
         /// <exception cref="SessionExpiredException">The specified session has already expired</exception>
         Stream ObtainFile(string sessionId, string source, string fileName);
     }

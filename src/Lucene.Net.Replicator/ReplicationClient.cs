@@ -1,14 +1,11 @@
-//STATUS: DRAFT - 4.8.0
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using Directory = Lucene.Net.Store.Directory;
@@ -45,14 +42,16 @@ namespace Lucene.Net.Replicator
     /// <remarks>
     /// Lucene.Experimental
     /// </remarks>
-    public partial class ReplicationClient : IDisposable
+    public class ReplicationClient : IDisposable
     {
         /// <summary>
         /// The component name to use with <see cref="Util.InfoStream.IsEnabled"/>
         /// </summary>
         public const string INFO_STREAM_COMPONENT = "ReplicationThread";
 
-        /// <summary> Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages. </summary>
+        /// <summary> 
+        /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages. 
+        /// </summary>
         public InfoStream InfoStream
         {
             get { return infoStream; }
@@ -86,84 +85,6 @@ namespace Lucene.Net.Replicator
         /// <exception cref="IOException"></exception>
         private void DoUpdate()
         {
-            #region Java
-            //JAVA: private void doUpdate() throws IOException {
-            //JAVA:   SessionToken session = null;
-            //JAVA:   final Map<String,Directory> sourceDirectory = new HashMap<>();
-            //JAVA:   final Map<String,List<String>> copiedFiles = new HashMap<>();
-            //JAVA:   boolean notify = false;
-            //JAVA:   try {
-            //JAVA:     final String version = handler.currentVersion();
-            //JAVA:     session = replicator.checkForUpdate(version);
-            //JAVA:     if (infoStream.isEnabled(INFO_STREAM_COMPONENT)) {
-            //JAVA:       infoStream.message(INFO_STREAM_COMPONENT, "doUpdate(): handlerVersion=" + version + " session=" + session);
-            //JAVA:     }
-            //JAVA:     if (session == null) {
-            //JAVA:       // already up to date
-            //JAVA:       return;
-            //JAVA:     }
-            //JAVA:     Map<String,List<RevisionFile>> requiredFiles = requiredFiles(session.sourceFiles);
-            //JAVA:     if (infoStream.isEnabled(INFO_STREAM_COMPONENT)) {
-            //JAVA:       infoStream.message(INFO_STREAM_COMPONENT, "doUpdate(): requiredFiles=" + requiredFiles);
-            //JAVA:     }
-            //JAVA:     for (Entry<String,List<RevisionFile>> e : requiredFiles.entrySet()) {
-            //JAVA:       String source = e.getKey();
-            //JAVA:       Directory dir = factory.getDirectory(session.id, source);
-            //JAVA:       sourceDirectory.put(source, dir);
-            //JAVA:       List<String> cpFiles = new ArrayList<>();
-            //JAVA:       copiedFiles.put(source, cpFiles);
-            //JAVA:       for (RevisionFile file : e.getValue()) {
-            //JAVA:         if (closed) {
-            //JAVA:           // if we're closed, abort file copy
-            //JAVA:           if (infoStream.isEnabled(INFO_STREAM_COMPONENT)) {
-            //JAVA:             infoStream.message(INFO_STREAM_COMPONENT, "doUpdate(): detected client was closed); abort file copy");
-            //JAVA:           }
-            //JAVA:           return;
-            //JAVA:         }
-            //JAVA:         InputStream in = null;
-            //JAVA:         IndexOutput out = null;
-            //JAVA:         try {
-            //JAVA:           in = replicator.obtainFile(session.id, source, file.fileName);
-            //JAVA:           out = dir.createOutput(file.fileName, IOContext.DEFAULT);
-            //JAVA:           copyBytes(out, in);
-            //JAVA:           cpFiles.add(file.fileName);
-            //JAVA:           // TODO add some validation, on size / checksum
-            //JAVA:         } finally {
-            //JAVA:           IOUtils.close(in, out);
-            //JAVA:         }
-            //JAVA:       }
-            //JAVA:     }
-            //JAVA:     // only notify if all required files were successfully obtained.
-            //JAVA:     notify = true;
-            //JAVA:   } finally {
-            //JAVA:     if (session != null) {
-            //JAVA:       try {
-            //JAVA:         replicator.release(session.id);
-            //JAVA:       } finally {
-            //JAVA:         if (!notify) { // cleanup after ourselves
-            //JAVA:           IOUtils.close(sourceDirectory.values());
-            //JAVA:           factory.cleanupSession(session.id);
-            //JAVA:         }
-            //JAVA:       }
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA:   
-            //JAVA:   // notify outside the try-finally above, so the session is released sooner.
-            //JAVA:   // the handler may take time to finish acting on the copied files, but the
-            //JAVA:   // session itself is no longer needed.
-            //JAVA:   try {
-            //JAVA:     if (notify && !closed ) { // no use to notify if we are closed already
-            //JAVA:       handler.revisionReady(session.version, session.sourceFiles, copiedFiles, sourceDirectory);
-            //JAVA:     }
-            //JAVA:   } finally {
-            //JAVA:     IOUtils.close(sourceDirectory.values());
-            //JAVA:     if (session != null) {
-            //JAVA:       factory.cleanupSession(session.id);
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             SessionToken session = null;
             Dictionary<string, Directory> sourceDirectory = new Dictionary<string, Directory>();
             Dictionary<string, IList<string>> copiedFiles = new Dictionary<string, IList<string>>();
@@ -285,37 +206,6 @@ namespace Lucene.Net.Replicator
         /// <returns></returns>
         private IDictionary<string, IList<RevisionFile>> RequiredFiles(IDictionary<string, IList<RevisionFile>> newRevisionFiles)
         {
-            #region Java
-            //JAVA: protected Map<String,List<RevisionFile>> requiredFiles(Map<String,List<RevisionFile>> newRevisionFiles) {
-            //JAVA:   Map<String,List<RevisionFile>> handlerRevisionFiles = handler.currentRevisionFiles();
-            //JAVA:   if (handlerRevisionFiles == null) {
-            //JAVA:     return newRevisionFiles;
-            //JAVA:   }
-            //JAVA:   
-            //JAVA:   Map<String,List<RevisionFile>> requiredFiles = new HashMap<>();
-            //JAVA:   for (Entry<String,List<RevisionFile>> e : handlerRevisionFiles.entrySet()) {
-            //JAVA:     // put the handler files in a Set, for faster contains() checks later
-            //JAVA:     Set<String> handlerFiles = new HashSet<>();
-            //JAVA:     for (RevisionFile file : e.getValue()) {
-            //JAVA:       handlerFiles.add(file.fileName);
-            //JAVA:     }
-            //JAVA:     
-            //JAVA:     // make sure to preserve revisionFiles order
-            //JAVA:     ArrayList<RevisionFile> res = new ArrayList<>();
-            //JAVA:     String source = e.getKey();
-            //JAVA:     assert newRevisionFiles.containsKey(source) : "source not found in newRevisionFiles: " + newRevisionFiles;
-            //JAVA:     for (RevisionFile file : newRevisionFiles.get(source)) {
-            //JAVA:       if (!handlerFiles.contains(file.fileName)) {
-            //JAVA:         res.add(file);
-            //JAVA:       }
-            //JAVA:     }
-            //JAVA:     requiredFiles.put(source, res);
-            //JAVA:   }
-            //JAVA:   
-            //JAVA:   return requiredFiles;
-            //JAVA: }
-            #endregion
-
             IDictionary<string, IList<RevisionFile>> handlerRevisionFiles = handler.CurrentRevisionFiles;
             if (handlerRevisionFiles == null)
                 return newRevisionFiles;
@@ -346,22 +236,6 @@ namespace Lucene.Net.Replicator
         /// <exception cref="InvalidOperationException"> if the thread has already been started </exception>
         public void StartUpdateThread(long intervalMillis, string threadName)
         {
-            #region Java
-            //JAVA: public synchronized void startUpdateThread(long intervalMillis, String threadName) {
-            //JAVA:   ensureOpen();
-            //JAVA:   if (updateThread != null && updateThread.isAlive()) {
-            //JAVA:     throw new IllegalStateException(
-            //JAVA:         "cannot start an update thread when one is running, must first call 'stopUpdateThread()'");
-            //JAVA:   }
-            //JAVA:   threadName = threadName == null ? INFO_STREAM_COMPONENT : "ReplicationThread-" + threadName;
-            //JAVA:   updateThread = new ReplicationThread(intervalMillis);
-            //JAVA:   updateThread.setName(threadName);
-            //JAVA:   updateThread.start();
-            //JAVA:   // we rely on isAlive to return true in isUpdateThreadAlive, assert to be on the safe side
-            //JAVA:   assert updateThread.isAlive() : "updateThread started but not alive?";
-            //JAVA: }
-            #endregion
-
             EnsureOpen();
             if (updateThread != null && updateThread.IsAlive)
                 throw new InvalidOperationException("cannot start an update thread when one is running, must first call 'stopUpdateThread()'");
@@ -379,24 +253,6 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public void StopUpdateThread()
         {
-            #region Java
-            //JAVA: public synchronized void stopUpdateThread() {
-            //JAVA:   if (updateThread != null) {
-            //JAVA:     // this will trigger the thread to terminate if it awaits the lock.
-            //JAVA:     // otherwise, if it's in the middle of replication, we wait for it to
-            //JAVA:     // stop.
-            //JAVA:     updateThread.stop.countDown();
-            //JAVA:     try {
-            //JAVA:       updateThread.join();
-            //JAVA:     } catch (InterruptedException e) {
-            //JAVA:       Thread.currentThread().interrupt();
-            //JAVA:       throw new ThreadInterruptedException(e);
-            //JAVA:     }
-            //JAVA:     updateThread = null;
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             // this will trigger the thread to terminate if it awaits the lock.
             // otherwise, if it's in the middle of replication, we wait for it to
             // stop.
@@ -496,53 +352,6 @@ namespace Lucene.Net.Replicator
         //Note: LUCENENET specific, .NET does not work with Threads in the same way as Java does, so we mimic the same behavior using the ThreadPool instead.
         private class ReplicationThread
         {
-            #region Java
-            //JAVA: private class ReplicationThread extends Thread {
-            //JAVA:   private final long interval;
-            //JAVA:   // client uses this to stop us
-            //JAVA:   final CountDownLatch stop = new CountDownLatch(1);
-            //JAVA:   
-            //JAVA:   public ReplicationThread(long interval) {
-            //JAVA:     this.interval = interval;
-            //JAVA:   }
-            //JAVA:   
-            //JAVA:   @SuppressWarnings("synthetic-access")
-            //JAVA:   @Override
-            //JAVA:   public void run() {
-            //JAVA:     while (true) {
-            //JAVA:       long time = System.currentTimeMillis();
-            //JAVA:       updateLock.lock();
-            //JAVA:       try {
-            //JAVA:         doUpdate();
-            //JAVA:       } catch (Throwable t) {
-            //JAVA:         handleUpdateException(t);
-            //JAVA:       } finally {
-            //JAVA:         updateLock.unlock();
-            //JAVA:       }
-            //JAVA:       time = System.currentTimeMillis() - time;
-            //JAVA:       
-            //JAVA:       // adjust timeout to compensate the time spent doing the replication.
-            //JAVA:       final long timeout = interval - time;
-            //JAVA:       if (timeout > 0) {
-            //JAVA:         try {
-            //JAVA:           // this will return immediately if we were ordered to stop (count=0)
-            //JAVA:           // or the timeout has elapsed. if it returns true, it means count=0,
-            //JAVA:           // so terminate.
-            //JAVA:           if (stop.await(timeout, TimeUnit.MILLISECONDS)) {
-            //JAVA:             return;
-            //JAVA:           }
-            //JAVA:         } catch (InterruptedException e) {
-            //JAVA:           // if we were interruted, somebody wants to terminate us, so just
-            //JAVA:           // throw the exception further.
-            //JAVA:           Thread.currentThread().interrupt();
-            //JAVA:           throw new ThreadInterruptedException(e);
-            //JAVA:         }
-            //JAVA:       }
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             private readonly Action doUpdate;
             private readonly Action<Exception> handleException;
             private readonly ReentrantLock @lock;

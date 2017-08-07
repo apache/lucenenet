@@ -1,11 +1,10 @@
-﻿//STATUS: DRAFT - 4.8.0
-
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using Lucene.Net.Support;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -42,15 +41,6 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         public const int DEFAULT_CONNECTION_TIMEOUT = 1000;
 
-        /**
-         * Default socket timeout for this client, in milliseconds.
-         * 
-         * @see #setSoTimeout(int)
-         */
-        //TODO: This goes to the Read and Write timeouts in the request (Closest we can get to a socket timeout in .NET?), those should be controlled in the messageHandler
-        //      if the choosen messagehandler provides such mechanishm (e.g. the WebRequestHandler) so this doesn't seem to make sense in .NET. 
-        //public const int DEFAULT_SO_TIMEOUT = 60000;
-
         // TODO compression?
 
         /// <summary>
@@ -60,15 +50,6 @@ namespace Lucene.Net.Replicator.Http
 
         private readonly HttpClient httpc;
 
-        //JAVA: /**
-        //JAVA:  * Set the connection timeout for this client, in milliseconds. This setting
-        //JAVA:  * is used to modify {@link HttpConnectionParams#setConnectionTimeout}.
-        //JAVA:  * 
-        //JAVA:  * @param timeout timeout to set, in millisecopnds
-        //JAVA:  */
-        //JAVA: public void setConnectionTimeout(int timeout) {
-        //JAVA:   HttpConnectionParams.setConnectionTimeout(httpc.getParams(), timeout);
-        //JAVA: }
         /// <summary>
         /// Gets or Sets the connection timeout for this client, in milliseconds. This setting
         /// is used to modify <see cref="HttpClient.Timeout"/>.
@@ -79,19 +60,6 @@ namespace Lucene.Net.Replicator.Http
             set { httpc.Timeout = TimeSpan.FromMilliseconds(value); }
         }
 
-        //JAVA: /**
-        //JAVA:  * Set the socket timeout for this client, in milliseconds. This setting
-        //JAVA:  * is used to modify {@link HttpConnectionParams#setSoTimeout}.
-        //JAVA:  * 
-        //JAVA:  * @param timeout timeout to set, in millisecopnds
-        //JAVA:  */
-        //JAVA: public void setSoTimeout(int timeout) {
-        //JAVA:   HttpConnectionParams.setSoTimeout(httpc.getParams(), timeout);
-        //JAVA: }
-        //TODO: This goes to the Read and Write timeouts in the request (Closest we can get to a socket timeout in .NET?), those should be controlled in the messageHandler
-        //      if the choosen messagehandler provides such mechanishm (e.g. the WebRequestHandler) so this doesn't seem to make sense in .NET. 
-        //public int SoTimeout { get; set; }
-
         /// <summary>
         /// Returns true if this instance was <see cref="Dispose(bool)"/>ed, otherwise
         /// returns false. Note that if you override <see cref="Dispose(bool)"/>, you must call
@@ -99,29 +67,56 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         public bool IsDisposed { get; private set; }
 
-        //TODO: HttpMessageHandler is not really a replacement for the ClientConnectionManager, allowing for custom message handlers will
-        //      provide flexibility, this is AFAIK also where users would be able to controll the equivalent of the SO timeout.
-        protected HttpClientBase(string host, int port, string path, HttpMessageHandler messageHandler)
+        /// <summary>
+        /// Creates a new <see cref="HttpClientBase"/> with the given host, port and path.
+        /// </summary>
+        /// <remarks>
+        /// The host, port and path parameters are normalized to <code>http://{host}:{port}{path}</code>, 
+        /// if path is <code>null</code> or <code>empty</code> it defaults to <code>/</code>.
+        /// <p>
+        /// A <see cref="HttpMessageHandler"/> is taken as an optional parameter as well, if this is not provided it defaults to null.
+        /// In this case the internal <see cref="HttpClient"/> will default to use a <see cref="HttpClientHandler"/>.
+        /// </p>
+        /// </remarks>
+        /// <param name="host">The host that the client should retrieve data from.</param>
+        /// <param name="port">The port to be used to connect on.</param>
+        /// <param name="path">The path to the replicator on the host.</param>
+        /// <param name="messageHandler">Optional, The HTTP handler stack to use for sending requests, defaults to null.</param>
+        protected HttpClientBase(string host, int port, string path, HttpMessageHandler messageHandler = null)
+            : this(NormalizedUrl(host, port, path), messageHandler)
         {
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="HttpClientBase"/> with the given url.
+        /// </summary>
+        /// <remarks>
+        /// A <see cref="HttpMessageHandler"/> is taken as an optional parameter as well, if this is not provided it defaults to null.
+        /// In this case the internal <see cref="HttpClient"/> will default to use a <see cref="HttpClientHandler"/>.
+        /// </remarks>
+        /// <param name="url">The full url, including with host, port and path.</param>
+        /// <param name="messageHandler">Optional, The HTTP handler stack to use for sending requests.</param>
+        //Note: LUCENENET Specific
+        protected HttpClientBase(string url, HttpMessageHandler messageHandler = null)
+            : this(url, new HttpClient(messageHandler ?? new HttpClientHandler()) { Timeout = TimeSpan.FromMilliseconds(DEFAULT_CONNECTION_TIMEOUT) })
+        {
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="HttpClientBase"/> with the given url and HttpClient.
+        /// </summary>
+        /// <remarks>
+        /// This allows full controll over how the HttpClient is created, 
+        /// prefer the <see cref="HttpClientBase(string, HttpMessageHandler)"/> over this unless you know you need the control of the HttpClient.
+        /// </remarks>
+        /// <param name="url"></param>
+        /// <param name="client">The <see cref="HttpClient"/> to use make remote http calls.</param>
+        //Note: LUCENENET Specific
+        protected HttpClientBase(string url, HttpClient client)
+        {
+            Url = url;
+            httpc = client;
             IsDisposed = false;
-
-            #region Java
-            //JAVA: /**
-            //JAVA:  * @param conMgr connection manager to use for this http client.
-            //JAVA:  *        <b>NOTE:</b>The provided {@link ClientConnectionManager} will not be
-            //JAVA:  *        {@link ClientConnectionManager#shutdown()} by this class.
-            //JAVA:  */
-            //JAVA: protected HttpClientBase(String host, int port, String path, ClientConnectionManager conMgr) {
-            //JAVA:   url = normalizedURL(host, port, path);
-            //JAVA:   httpc = new DefaultHttpClient(conMgr);
-            //JAVA:   setConnectionTimeout(DEFAULT_CONNECTION_TIMEOUT);
-            //JAVA:   setSoTimeout(DEFAULT_SO_TIMEOUT);
-            //JAVA: }
-            #endregion
-
-            Url = NormalizedUrl(host, port, path);
-            httpc = new HttpClient(messageHandler ?? new HttpClientHandler());
-            httpc.Timeout = TimeSpan.FromMilliseconds(DEFAULT_CONNECTION_TIMEOUT);
         }
 
         /// <summary>
@@ -130,14 +125,6 @@ namespace Lucene.Net.Replicator.Http
         /// <exception cref="ObjectDisposedException">client is already closed.</exception>
         protected void EnsureOpen()
         {
-            #region Java
-            //JAVA: protected final void ensureOpen() throws AlreadyClosedException {
-            //JAVA:   if (closed) {
-            //JAVA:     throw new AlreadyClosedException("HttpClient already closed");
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             if (IsDisposed)
             {
                 throw new ObjectDisposedException("HttpClient already closed");
@@ -146,18 +133,6 @@ namespace Lucene.Net.Replicator.Http
 
         private static string NormalizedUrl(string host, int port, string path)
         {
-            #region Java
-            //JAVA: /**
-            //JAVA:  * Create a URL out of the given parameters, translate an empty/null path to '/'
-            //JAVA:  */
-            //JAVA: private static String normalizedURL(String host, int port, String path) {
-            //JAVA:   if (path == null || path.length() == 0) {
-            //JAVA:     path = "/";
-            //JAVA:   }
-            //JAVA:   return "http://" + host + ":" + port + path;
-            //JAVA: }
-            #endregion
-
             if (string.IsNullOrEmpty(path))
                 path = "/";
             return string.Format("http://{0}:{1}{2}", host, port, path);
@@ -170,20 +145,6 @@ namespace Lucene.Net.Replicator.Http
         /// <exception cref="HttpRequestException">Unknown error received from the server.</exception>
         protected void VerifyStatus(HttpResponseMessage response)
         {
-            #region Java
-            //JAVA: 
-            //JAVA: /**
-            //JAVA:  * <b>Internal:</b> response status after invocation, and in case or error attempt to read the 
-            //JAVA:  * exception sent by the server. 
-            //JAVA:  */
-            //JAVA: protected void verifyStatus(HttpResponse response) throws IOException {
-            //JAVA:   StatusLine statusLine = response.getStatusLine();
-            //JAVA:   if (statusLine.getStatusCode() != HttpStatus.SC_OK) {
-            //JAVA:     throwKnownError(response, statusLine); 
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             if (!response.IsSuccessStatusCode)
             {
                 ThrowKnownError(response);
@@ -197,46 +158,16 @@ namespace Lucene.Net.Replicator.Http
         /// <exception cref="HttpRequestException">Unknown error received from the server.</exception>
         protected void ThrowKnownError(HttpResponseMessage response)
         {
-            #region Java
-            //JAVA: protected void throwKnownError(HttpResponse response, StatusLine statusLine) throws IOException {
-            //JAVA:   ObjectInputStream in = null;
-            //JAVA:   try {
-            //JAVA:     in = new ObjectInputStream(response.getEntity().getContent());
-            //JAVA:   } catch (Exception e) {
-            //JAVA:     // the response stream is not an exception - could be an error in servlet.init().
-            //JAVA:     throw new RuntimeException("Uknown error: " + statusLine);
-            //JAVA:   }
-            //JAVA:   
-            //JAVA:   Throwable t;
-            //JAVA:   try {
-            //JAVA:     t = (Throwable) in.readObject();
-            //JAVA:   } catch (Exception e) { 
-            //JAVA:     //not likely
-            //JAVA:     throw new RuntimeException("Failed to read exception object: " + statusLine, e);
-            //JAVA:   } finally {
-            //JAVA:     in.close();
-            //JAVA:   }
-            //JAVA:   if (t instanceof IOException) {
-            //JAVA:     throw (IOException) t;
-            //JAVA:   }
-            //JAVA:   if (t instanceof RuntimeException) {
-            //JAVA:     throw (RuntimeException) t;
-            //JAVA:   }
-            //JAVA:   throw new RuntimeException("unknown exception "+statusLine,t);
-            //JAVA: }
-            #endregion
-
             Stream input;
             try
             {
                 //.NET Note: Bridging from Async to Sync, this is not ideal and we could consider changing the interface to be Async or provide Async overloads
-                //      and have these Sync methods with their caveats.
+                //           and have these Sync methods with their caveats.
                 input = response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
             }
             catch (Exception)
             {
                 // the response stream is not an exception - could be an error in servlet.init().
-                //JAVA: throw new RuntimeException("Uknown error: " + statusLine);
                 response.EnsureSuccessStatusCode();
                 //Note: This is unreachable, but the compiler and resharper cant see that EnsureSuccessStatusCode always
                 //      throws an exception in this scenario. So it complains later on in the method.
@@ -270,21 +201,6 @@ namespace Lucene.Net.Replicator.Http
 
         protected HttpResponseMessage ExecutePost(string request, object entity, params string[] parameters)
         {
-            #region Java
-            //JAVA: /**
-            //JAVA:  * <b>internal:</b> execute a request and return its result
-            //JAVA:  * The <code>params</code> argument is treated as: name1,value1,name2,value2,...
-            //JAVA:  */
-            //JAVA: protected HttpResponse executePOST(String request, HttpEntity entity, String... params) throws IOException {
-            //JAVA:   ensureOpen();
-            //JAVA:   HttpPost m = new HttpPost(queryString(request, params));
-            //JAVA:   m.setEntity(entity);
-            //JAVA:   HttpResponse response = httpc.execute(m);
-            //JAVA:   verifyStatus(response);
-            //JAVA:   return response;
-            //JAVA: }
-            #endregion
-
             EnsureOpen();
             //.NET Note: No headers? No ContentType?... Bad use of Http?
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, QueryString(request, parameters));
@@ -301,20 +217,6 @@ namespace Lucene.Net.Replicator.Http
 
         protected HttpResponseMessage ExecuteGet(string request, params string[] parameters)
         {
-            #region Java
-            //JAVA: /**
-            //JAVA:  * <b>internal:</b> execute a request and return its result
-            //JAVA:  * The <code>params</code> argument is treated as: name1,value1,name2,value2,...
-            //JAVA:  */
-            //JAVA: protected HttpResponse executeGET(String request, String... params) throws IOException {
-            //JAVA:   ensureOpen();
-            //JAVA:   HttpGet m = new HttpGet(queryString(request, params));
-            //JAVA:   HttpResponse response = httpc.execute(m);
-            //JAVA:   verifyStatus(response);
-            //JAVA:   return response;
-            //JAVA: }
-            #endregion
-
             EnsureOpen();
             //Note: No headers? No ContentType?... Bad use of Http?
             HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Get, QueryString(request, parameters));
@@ -327,18 +229,6 @@ namespace Lucene.Net.Replicator.Http
 
         private string QueryString(string request, params string[] parameters)
         {
-            #region Java
-            //JAVA: private String queryString(String request, String... params) throws UnsupportedEncodingException {
-            //JAVA:   StringBuilder query = new StringBuilder(url).append('/').append(request).append('?');
-            //JAVA:   if (params != null) {
-            //JAVA:     for (int i = 0; i < params.length; i += 2) {
-            //JAVA:       query.append(params[i]).append('=').append(URLEncoder.encode(params[i+1], "UTF8")).append('&');
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA:   return query.substring(0, query.length() - 1);
-            //JAVA: }
-            #endregion
-
             return parameters == null 
                 ? string.Format("{0}/{1}", Url, request) 
                 : string.Format("{0}/{1}?{2}", Url, request, string
@@ -349,15 +239,8 @@ namespace Lucene.Net.Replicator.Http
         /// Internal utility: input stream of the provided response
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Stream ResponseInputStream(HttpResponseMessage response)// throws IOException
+        public Stream ResponseInputStream(HttpResponseMessage response)
         {
-            #region Java
-            //JAVA: /** Internal utility: input stream of the provided response */
-            //JAVA: public InputStream responseInputStream(HttpResponse response) throws IOException {
-            //JAVA:   return responseInputStream(response, false);
-            //JAVA: }
-            #endregion
-
             return ResponseInputStream(response, false);
         }
 
@@ -365,109 +248,26 @@ namespace Lucene.Net.Replicator.Http
         /// Internal utility: input stream of the provided response
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Stream ResponseInputStream(HttpResponseMessage response, bool consume)// throws IOException
+        public Stream ResponseInputStream(HttpResponseMessage response, bool consume)
         {
-            #region Java
-            //JAVA: TODO: can we simplify this Consuming !?!?!?
-            //JAVA: /**
-            //JAVA:  * Internal utility: input stream of the provided response, which optionally 
-            //JAVA:  * consumes the response's resources when the input stream is exhausted.
-            //JAVA:  */
-            //JAVA: public InputStream responseInputStream(HttpResponse response, boolean consume) throws IOException {
-            //JAVA:   final HttpEntity entity = response.getEntity();
-            //JAVA:   final InputStream in = entity.getContent();
-            //JAVA:   if (!consume) {
-            //JAVA:     return in;
-            //JAVA:   }
-            //JAVA:   return new InputStream() {
-            //JAVA:     private boolean consumed = false;
-            //JAVA:     @Override
-            //JAVA:     public int read() throws IOException {
-            //JAVA:       final int res = in.read();
-            //JAVA:       consume(res);
-            //JAVA:       return res;
-            //JAVA:     }
-            //JAVA:     @Override
-            //JAVA:     public void close() throws IOException {
-            //JAVA:       super.close();
-            //JAVA:       consume(-1);
-            //JAVA:     }
-            //JAVA:     @Override
-            //JAVA:     public int read(byte[] b) throws IOException {
-            //JAVA:       final int res = super.read(b);
-            //JAVA:       consume(res);
-            //JAVA:       return res;
-            //JAVA:     }
-            //JAVA:     @Override
-            //JAVA:     public int read(byte[] b, int off, int len) throws IOException {
-            //JAVA:       final int res = super.read(b, off, len);
-            //JAVA:       consume(res);
-            //JAVA:       return res;
-            //JAVA:     }
-            //JAVA:     private void consume(int minusOne) {
-            //JAVA:       if (!consumed && minusOne==-1) {
-            //JAVA:         try {
-            //JAVA:           EntityUtils.consume(entity);
-            //JAVA:         } catch (Exception e) {
-            //JAVA:           // ignored on purpose
-            //JAVA:         }
-            //JAVA:         consumed = true;
-            //JAVA:       }
-            //JAVA:     }
-            //JAVA:   };
-            //JAVA: }
-            #endregion
-
             return response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         }
 
+        /// <summary>
+        /// Calls the overload <see cref="DoAction{T}(HttpResponseMessage, Boolean, Func{T})"/> passing <code>true</code> to consume.
+        /// </summary>
         protected T DoAction<T>(HttpResponseMessage response, Func<T> call)
         {
-            #region Java
-            //JAVA: /**
-            //JAVA:  * Same as {@link #doAction(HttpResponse, boolean, Callable)} but always do consume at the end.
-            //JAVA:  */
-            //JAVA: protected <T> T doAction(HttpResponse response, Callable<T> call) throws IOException {
-            //JAVA:   return doAction(response, true, call);
-            //JAVA: }
-            #endregion
-
             return DoAction(response, true, call);
         }
 
+        /// <summary>
+        /// Do a specific action and validate after the action that the status is still OK, 
+        /// and if not, attempt to extract the actual server side exception. Optionally
+        /// release the response at exit, depending on <code>consume</code> parameter.
+        /// </summary>
         protected T DoAction<T>(HttpResponseMessage response, bool consume, Func<T> call)
         {
-            #region Java
-            //JAVA: /**
-            //JAVA:  * Do a specific action and validate after the action that the status is still OK, 
-            //JAVA:  * and if not, attempt to extract the actual server side exception. Optionally
-            //JAVA:  * release the response at exit, depending on <code>consume</code> parameter.
-            //JAVA:  */
-            //JAVA: protected <T> T doAction(HttpResponse response, boolean consume, Callable<T> call) throws IOException {
-            //JAVA:   IOException error = null;
-            //JAVA:   try {
-            //JAVA:     return call.call();
-            //JAVA:   } catch (IOException e) {
-            //JAVA:     error = e;
-            //JAVA:   } catch (Exception e) {
-            //JAVA:     error = new IOException(e);
-            //JAVA:   } finally {
-            //JAVA:     try {
-            //JAVA:       verifyStatus(response);
-            //JAVA:     } finally {
-            //JAVA:       if (consume) {
-            //JAVA:         try {
-            //JAVA:           EntityUtils.consume(response.getEntity());
-            //JAVA:         } catch (Exception e) {
-            //JAVA:           // ignoring on purpose
-            //JAVA:         }
-            //JAVA:       }
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA:   throw error; // should not get here
-            //JAVA: }
-            #endregion
-
             Exception error = new NotImplementedException();
             try
             {
@@ -483,30 +283,32 @@ namespace Lucene.Net.Replicator.Http
             }
             finally
             {
-                try
-                {
-                    VerifyStatus(response);
-                }
-                finally
-                {
-                    //TODO: Is there any reason for this on .NET?... What are they trying to achieve?
-                    //JAVA:       if (consume) {
-                    //JAVA:         try {
-                    //JAVA:           EntityUtils.consume(response.getEntity());
-                    //JAVA:         } catch (Exception e) {
-                    //JAVA:           // ignoring on purpose
-                    //JAVA:         }
-                    //JAVA:       }
-                }
+                //JAVA: Had a TryCatch here and then used a EntityUtils class to consume the response,
+                //JAVA: Unsure of what that was trying to achieve it was left out.
+                //JAVA: This also means that right now this overload does nothing more than support the signature given by the Java ver.
+                //JAVA: Overall from a .NET perspective, this method is overly suspicious.
+                VerifyStatus(response);
             }
             throw error; // should not get here
         }
 
+        /// <summary>
+        /// Disposes this <see cref="HttpClientBase"/>. 
+        /// When called with <code>true</code>, this disposes the underlying <see cref="HttpClient"/>.
+        /// </summary>
         protected virtual void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                httpc.Dispose();
+            }
             IsDisposed = true;
         }
 
+        /// <summary>
+        /// Disposes this <see cref="HttpClientBase"/>. 
+        /// This disposes the underlying <see cref="HttpClient"/>.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);

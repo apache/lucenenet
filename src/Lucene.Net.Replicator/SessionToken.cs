@@ -1,8 +1,4 @@
-//STATUS: DRAFT - 4.8.0
-
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using Lucene.Net.Store;
 using Lucene.Net.Support.IO;
@@ -67,7 +63,7 @@ namespace Lucene.Net.Replicator
             Id = reader.ReadUTF();
             Version = reader.ReadUTF();
 
-            var sourceFiles = new Dictionary<string, IList<RevisionFile>>();
+            Dictionary<string, IList<RevisionFile>> sourceFiles = new Dictionary<string, IList<RevisionFile>>();
             int numSources = reader.ReadInt32();
             while (numSources > 0)
             {

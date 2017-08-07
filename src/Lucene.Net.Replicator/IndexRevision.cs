@@ -3,7 +3,6 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -49,16 +48,6 @@ namespace Lucene.Net.Replicator
     /// </remarks>
     public class IndexRevision : IRevision
     {
-        #region Java
-        //JAVA: private static final int RADIX = 16;
-        //JAVA: private static final String SOURCE = "index";
-        //JAVA: private final IndexWriter writer;
-        //JAVA: private final IndexCommit commit;
-        //JAVA: private final SnapshotDeletionPolicy sdp;
-        //JAVA: private final String version;
-        //JAVA: private final Map<String, List<RevisionFile>> sourceFiles;
-        #endregion
-
         private const string SOURCE = "index";
 
         private readonly IndexWriter writer;
@@ -70,20 +59,6 @@ namespace Lucene.Net.Replicator
 
         public IndexRevision(IndexWriter writer)
         {
-            #region Java
-            //JAVA: public IndexRevision(IndexWriter writer) throws IOException {
-            //JAVA:   IndexDeletionPolicy delPolicy = writer.getConfig().getIndexDeletionPolicy();
-            //JAVA:   if (!(delPolicy instanceof SnapshotDeletionPolicy)) {
-            //JAVA:     throw new IllegalArgumentException("IndexWriter must be created with SnapshotDeletionPolicy");
-            //JAVA:   }
-            //JAVA:   this.writer = writer;
-            //JAVA:   this.sdp = (SnapshotDeletionPolicy) delPolicy;
-            //JAVA:   this.commit = sdp.snapshot();
-            //JAVA:   this.version = revisionVersion(commit);
-            //JAVA:   this.sourceFiles = revisionFiles(commit);
-            //JAVA: }              
-            #endregion
-
             sdp = writer.Config.IndexDeletionPolicy as SnapshotDeletionPolicy;
             if (sdp == null)
                 throw new ArgumentException("IndexWriter must be created with SnapshotDeletionPolicy", "writer");
@@ -96,11 +71,6 @@ namespace Lucene.Net.Replicator
 
         public int CompareTo(string version)
         {
-            #region Java
-            //JAVA: long gen = Long.parseLong(version, RADIX);
-            //JAVA: long commitGen = commit.getGeneration();
-            //JAVA: return commitGen < gen ? -1 : (commitGen > gen ? 1 : 0);
-            #endregion
             long gen = long.Parse(version, NumberStyles.HexNumber);
             long commitGen = commit.Generation;
             //TODO: long.CompareTo(); but which goes where.
@@ -109,10 +79,6 @@ namespace Lucene.Net.Replicator
 
         public int CompareTo(IRevision other)
         {
-            #region Java
-            //JAVA: IndexRevision other = (IndexRevision)o;
-            //JAVA: return commit.compareTo(other.commit);
-            #endregion
             //TODO: This breaks the contract and will fail if called with a different implementation
             //      This is a flaw inherited from the original source...
             //      It should at least provide a better description to the InvalidCastException
@@ -140,36 +106,12 @@ namespace Lucene.Net.Replicator
         // returns a RevisionFile with some metadata
         private static RevisionFile CreateRevisionFile(string fileName, Directory directory)
         {
-            #region Java
-            //JAVA: private static RevisionFile newRevisionFile(String file, Directory dir) throws IOException {
-            //JAVA:   RevisionFile revFile = new RevisionFile(file);
-            //JAVA:   revFile.size = dir.fileLength(file);
-            //JAVA:   return revFile;
-            //JAVA: }             
-            #endregion
             return new RevisionFile(fileName, directory.FileLength(fileName));
         }
 
         /** Returns a singleton map of the revision files from the given {@link IndexCommit}. */
         public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit commit)
         {
-            #region Java
-            //JAVA: public static Map<String,List<RevisionFile>> revisionFiles(IndexCommit commit) throws IOException {
-            //JAVA:   Collection<String> commitFiles = commit.getFileNames();
-            //JAVA:   List<RevisionFile> revisionFiles = new ArrayList<>(commitFiles.size());
-            //JAVA:   String segmentsFile = commit.getSegmentsFileName();
-            //JAVA:   Directory dir = commit.getDirectory();
-            //JAVA:   
-            //JAVA:   for (String file : commitFiles) {
-            //JAVA:     if (!file.equals(segmentsFile)) {
-            //JAVA:       revisionFiles.add(newRevisionFile(file, dir));
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA:   revisionFiles.add(newRevisionFile(segmentsFile, dir)); // segments_N must be last
-            //JAVA:   return Collections.singletonMap(SOURCE, revisionFiles);
-            //JAVA: }
-            #endregion
-
             List<RevisionFile> revisionFiles = commit.FileNames
                 .Where(file => !string.Equals(file, commit.SegmentsFileName))
                 .Select(file => CreateRevisionFile(file, commit.Directory))
@@ -189,11 +131,6 @@ namespace Lucene.Net.Replicator
         /// <returns></returns>
         public static string RevisionVersion(IndexCommit commit)
         {
-            #region Java
-            //JAVA: public static String revisionVersion(IndexCommit commit) {
-            //JAVA:   return Long.toString(commit.getGeneration(), RADIX);
-            //JAVA: }  
-            #endregion           
             return commit.Generation.ToString("X");
         }
     }

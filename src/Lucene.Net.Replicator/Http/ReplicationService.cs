@@ -1,6 +1,4 @@
-﻿//STATUS: DRAFT - 4.8.0
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using Lucene.Net.Replicator.Http.Abstractions;
@@ -122,7 +120,6 @@ namespace Lucene.Net.Replicator.Http
             string param = request.QueryParam(paramName);
             if (param == null)
             {
-                //JAVA: throw new ServletException("Missing mandatory parameter: " + paramName);
                 throw new InvalidOperationException("Missing mandatory parameter: " + paramName);
             }
             return param;

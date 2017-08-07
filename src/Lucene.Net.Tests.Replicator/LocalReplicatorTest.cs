@@ -61,9 +61,6 @@ namespace Lucene.Net.Tests.Replicator
         private IRevision CreateRevision(int id)
         {
             sourceWriter.AddDocument(new Document());
-            //JAVA: sourceWriter.setCommitData(new HashMap<String, String>() {{
-            //JAVA:     put(VERSION_ID, Integer.toString(id, 16));
-            //JAVA: }
             sourceWriter.SetCommitData(new Dictionary<string, string> {
                 { VERSION_ID, id.ToString() }
             });
@@ -175,8 +172,7 @@ namespace Lucene.Net.Tests.Replicator
                 replicator.ObtainFile(res.Id, res.SourceFiles.Keys.First(), "madeUpFile");
                 fail("should have failed obtaining an unrecognized file");
             }
-            //JAVA: } catch (FileNotFoundException | NoSuchFileException e) { -> Could not find a "NoSuchFileException" ?NoSuchItemException
-            catch (Exception e) when (e is FileNotFoundException)//|| e is NoSuchItemException)
+            catch (FileNotFoundException e)
             {
                 // expected
             }

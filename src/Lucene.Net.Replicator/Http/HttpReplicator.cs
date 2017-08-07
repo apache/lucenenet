@@ -1,9 +1,6 @@
-﻿//STATUS: DRAFT - 4.8.0
-
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Lucene.Net.Support.IO;
 
 namespace Lucene.Net.Replicator.Http
@@ -33,54 +30,49 @@ namespace Lucene.Net.Replicator.Http
     /// </remarks>
     public class HttpReplicator : HttpClientBase, IReplicator
     {
-        public HttpReplicator(string host, int port, string path, HttpMessageHandler messageHandler) 
+        /// <summary>
+        /// Creates a new <see cref="HttpReplicator"/> with the given host, port and path.
+        /// <see cref="HttpClientBase(string, int, string, HttpMessageHandler)"/> for more details.
+        /// </summary>
+        public HttpReplicator(string host, int port, string path, HttpMessageHandler messageHandler = null)
             : base(host, port, path, messageHandler)
         {
-            #region Java
-            //JAVA: /** Construct with specified connection manager. */
-            //JAVA: public HttpReplicator(String host, int port, String path, ClientConnectionManager conMgr) {
-            //JAVA:   super(host, port, path, conMgr);
-            //JAVA: }
-            #endregion
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="HttpReplicator"/> with the given url.
+        /// <see cref="HttpClientBase(string, HttpMessageHandler)"/> for more details.
+        /// </summary>
+        //Note: LUCENENET Specific
+        public HttpReplicator(string url, HttpMessageHandler messageHandler = null)
+            : this(url, new HttpClient(messageHandler ?? new HttpClientHandler()) { Timeout = TimeSpan.FromMilliseconds(DEFAULT_CONNECTION_TIMEOUT) })
+        {
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="HttpReplicator"/> with the given url and HttpClient.
+        /// <see cref="HttpClientBase(string, HttpClient)"/> for more details.
+        /// </summary>
+        //Note: LUCENENET Specific
+        public HttpReplicator(string url, HttpClient client)
+            : base(url, client)
+        {
         }
         
         /// <summary>
-        /// 
+        /// Not supported.
         /// </summary>
-        /// <param name="revision"></param>
         /// <exception cref="NotSupportedException">this replicator implementation does not support remote publishing of revisions</exception>
         public void Publish(IRevision revision)
         {
             throw new NotSupportedException("this replicator implementation does not support remote publishing of revisions");
         }
 
+        /// <summary>
+        /// Checks for updates at the remote host.
+        /// </summary>
         public SessionToken CheckForUpdate(string currentVersion)
         {
-            #region Java
-            //JAVA: public SessionToken checkForUpdate(String currVersion) throws IOException {
-            //JAVA:   String[] params = null;
-            //JAVA:   if (currVersion != null) {
-            //JAVA:     params = new String[] { ReplicationService.REPLICATE_VERSION_PARAM, currVersion };
-            //JAVA:   }
-            //JAVA:   final HttpResponse response = executeGET(ReplicationAction.UPDATE.name(), params);
-            //JAVA:   return doAction(response, new Callable<SessionToken>() {
-            //JAVA:     @Override
-            //JAVA:     public SessionToken call() throws Exception {
-            //JAVA:       final DataInputStream dis = new DataInputStream(responseInputStream(response));
-            //JAVA:       try {
-            //JAVA:         if (dis.readByte() == 0) {
-            //JAVA:           return null;
-            //JAVA:         } else {
-            //JAVA:           return new SessionToken(dis);
-            //JAVA:         }
-            //JAVA:       } finally {
-            //JAVA:         dis.close();
-            //JAVA:       }
-            //JAVA:     }
-            //JAVA:   });
-            //JAVA: }
-            #endregion
-
             string[] parameters = null;
             if (currentVersion != null)
                 parameters = new [] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion };
@@ -95,46 +87,21 @@ namespace Lucene.Net.Replicator.Http
             });
         }
 
+        /// <summary>
+        /// Releases a session obtained from the remote host.
+        /// </summary>
         public void Release(string sessionId)
         {
-            #region Java
-            //JAVA: public void release(String sessionID) throws IOException {
-            //JAVA:   String[] params = new String[] {
-            //JAVA:       ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionID
-            //JAVA:   };
-            //JAVA:   final HttpResponse response = executeGET(ReplicationAction.RELEASE.name(), params);
-            //JAVA:   doAction(response, new Callable<Object>() {
-            //JAVA:     @Override
-            //JAVA:     public Object call() throws Exception {
-            //JAVA:       return null; // do not remove this call: as it is still validating for us!
-            //JAVA:     }
-            //JAVA:   });
-            //JAVA: }
-            #endregion
-
             HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.RELEASE.ToString(), ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId);
             // do not remove this call: as it is still validating for us!
             DoAction<object>(response, () => null);
         }
 
+        /// <summary>
+        /// Obtains the given file from it's source at the remote host.
+        /// </summary>
         public Stream ObtainFile(string sessionId, string source, string fileName)
         {
-            #region Java
-            //JAVA: public InputStream obtainFile(String sessionID, String source, String fileName) throws IOException {
-            //JAVA:   String[] params = new String[] {
-            //JAVA:       ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionID,
-            //JAVA:       ReplicationService.REPLICATE_SOURCE_PARAM, source,
-            //JAVA:       ReplicationService.REPLICATE_FILENAME_PARAM, fileName,
-            //JAVA:   };
-            //JAVA:   final HttpResponse response = executeGET(ReplicationAction.OBTAIN.name(), params);
-            //JAVA:   return doAction(response, false, new Callable<InputStream>() {
-            //JAVA:     @Override
-            //JAVA:     public InputStream call() throws Exception {
-            //JAVA:       return responseInputStream(response,true);
-            //JAVA:     }
-            //JAVA:   });
-            //JAVA: }
-            #endregion
             HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.OBTAIN.ToString(), 
                 ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
                 ReplicationService.REPLICATE_SOURCE_PARAM, source,

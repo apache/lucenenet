@@ -44,7 +44,6 @@ namespace Lucene.Net.Tests.Replicator.Http
         public override void SetUp()
         {
             base.SetUp();
-            //JAVA:    System.setProperty("org.eclipse.jetty.LEVEL", "DEBUG"); // sets stderr logging to DEBUG level
             clientWorkDir = CreateTempDir("httpReplicatorTest");
             handlerIndexDir = NewDirectory();
             serverIndexDir = NewDirectory();
@@ -61,7 +60,6 @@ namespace Lucene.Net.Tests.Replicator.Http
         {
             StopHttpServer(server);
             IOUtils.Dispose(reader, writer, handlerIndexDir, serverIndexDir);
-            //JAVA:    System.clearProperty("org.eclipse.jetty.LEVEL");
             base.TearDown();
         }
 

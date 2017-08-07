@@ -1,5 +1,3 @@
-//STATUS: DRAFT - 4.8.0
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +5,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -56,8 +53,7 @@ namespace Lucene.Net.Replicator
     public class IndexReplicationHandler : IReplicationHandler
     {
         /// <summary>
-        /// The component used to log messages to the {@link InfoStream#getDefault()
-        /// default} <seealso cref="InfoStream"/>.
+        /// The component used to log messages to the <see cref="InfoStream"/>.
         /// </summary>
         public const string INFO_STREAM_COMPONENT = "IndexReplicationHandler";
 
@@ -78,32 +74,8 @@ namespace Lucene.Net.Replicator
         /// Constructor with the given index directory and callback to notify when the
         /// indexes were updated.
         /// </summary>
-        /// <param name="indexDirectory"></param>
-        /// <param name="callback"></param>
-        // .NET NOTE: Java uses a Callable<Boolean>, however it is never uses the returned value?
         public IndexReplicationHandler(Directory indexDirectory, Func<bool?> callback)
         {
-            #region JAVA
-            //JAVA: this.callback = callback;
-            //JAVA: this.indexDir = indexDir;
-            //JAVA: currentRevisionFiles = null;
-            //JAVA: currentVersion = null;
-            //JAVA: if (DirectoryReader.indexExists(indexDir))
-            //JAVA: {
-            //JAVA:     final List<IndexCommit> commits = DirectoryReader.listCommits(indexDir);
-            //JAVA:     final IndexCommit commit = commits.get(commits.size() - 1);
-            //JAVA:     currentRevisionFiles = IndexRevision.revisionFiles(commit);
-            //JAVA:     currentVersion = IndexRevision.revisionVersion(commit);
-            //JAVA:     final InfoStream infoStream = InfoStream.getDefault();
-            //JAVA:     if (infoStream.isEnabled(INFO_STREAM_COMPONENT))
-            //JAVA:     {
-            //JAVA:         infoStream.message(INFO_STREAM_COMPONENT, "constructor(): currentVersion=" + currentVersion
-            //JAVA:                                                   + " currentRevisionFiles=" + currentRevisionFiles);
-            //JAVA:         infoStream.message(INFO_STREAM_COMPONENT, "constructor(): commit=" + commit);
-            //JAVA:     }
-            //JAVA: }
-            #endregion
-
             this.InfoStream = InfoStream.Default;
             this.callback = callback;
             this.indexDirectory = indexDirectory;
@@ -130,65 +102,6 @@ namespace Lucene.Net.Replicator
             IDictionary<string, IList<string>> copiedFiles, 
             IDictionary<string, Directory> sourceDirectory)
         {
-            #region Java
-            //JAVA: if (revisionFiles.size() > 1) {
-            //JAVA:   throw new IllegalArgumentException("this handler handles only a single source; got " + revisionFiles.keySet());
-            //JAVA: }
-            //JAVA: 
-            //JAVA: Directory clientDir = sourceDirectory.values().iterator().next();
-            //JAVA: List<String> files = copiedFiles.values().iterator().next();
-            //JAVA: String segmentsFile = getSegmentsFile(files, false);
-            //JAVA: 
-            //JAVA: boolean success = false;
-            //JAVA: try {
-            //JAVA:   // copy files from the client to index directory
-            //JAVA:   copyFiles(clientDir, indexDir, files);
-            //JAVA:   
-            //JAVA:   // fsync all copied files (except segmentsFile)
-            //JAVA:   indexDir.sync(files);
-            //JAVA:   
-            //JAVA:   // now copy and fsync segmentsFile
-            //JAVA:   clientDir.copy(indexDir, segmentsFile, segmentsFile, IOContext.READONCE);
-            //JAVA:   indexDir.sync(Collections.singletonList(segmentsFile));
-            //JAVA:   
-            //JAVA:   success = true;
-            //JAVA: } finally {
-            //JAVA:   if (!success) {
-            //JAVA:     files.add(segmentsFile); // add it back so it gets deleted too
-            //JAVA:     cleanupFilesOnFailure(indexDir, files);
-            //JAVA:   }
-            //JAVA: }
-            //JAVA:
-            //JAVA: // all files have been successfully copied + sync'd. update the handler's state
-            //JAVA: currentRevisionFiles = revisionFiles;
-            //JAVA: currentVersion = version;
-            //JAVA: 
-            //JAVA: if (infoStream.isEnabled(INFO_STREAM_COMPONENT)) {
-            //JAVA:   infoStream.message(INFO_STREAM_COMPONENT, "revisionReady(): currentVersion=" + currentVersion
-            //JAVA:       + " currentRevisionFiles=" + currentRevisionFiles);
-            //JAVA: }
-            //JAVA:
-            //JAVA: // update the segments.gen file
-            //JAVA: writeSegmentsGen(segmentsFile, indexDir);
-            //JAVA: 
-            //JAVA: // Cleanup the index directory from old and unused index files.
-            //JAVA: // NOTE: we don't use IndexWriter.deleteUnusedFiles here since it may have
-            //JAVA: // side-effects, e.g. if it hits sudden IO errors while opening the index
-            //JAVA: // (and can end up deleting the entire index). It is not our job to protect
-            //JAVA: // against those errors, app will probably hit them elsewhere.
-            //JAVA: cleanupOldIndexFiles(indexDir, segmentsFile);
-            //JAVA:
-            //JAVA: // successfully updated the index, notify the callback that the index is
-            //JAVA: // ready.
-            //JAVA: if (callback != null) {
-            //JAVA:   try {
-            //JAVA:     callback.call();
-            //JAVA:   } catch (Exception e) {
-            //JAVA:     throw new IOException(e);
-            //JAVA:   }
-            //JAVA: }             
-            #endregion
-            //TODO: ArgumentOutOfRangeException more suited?
             if (revisionFiles.Count > 1) throw new ArgumentException(string.Format("this handler handles only a single source; got {0}", revisionFiles.Keys));
 
             Directory clientDirectory = sourceDirectory.Values.First();
@@ -246,7 +159,7 @@ namespace Lucene.Net.Replicator
             }           
         }
 
-        // .NET NOTE: Utility Method
+        //Note: LUCENENET Specific Utility Method
         private void WriteToInfoStream(params string[] messages)
         {
             if (!InfoStream.IsEnabled(INFO_STREAM_COMPONENT))
@@ -260,25 +173,9 @@ namespace Lucene.Net.Replicator
         /// Returns the last <see cref="IndexCommit"/> found in the <see cref="Directory"/>, or
         /// <code>null</code> if there are no commits.
         /// </summary>
-        /// <param name="directory"></param>
-        /// <returns></returns>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public static IndexCommit GetLastCommit(Directory directory)
         {
-            #region Java
-            //JAVA: try {
-            //JAVA:   if (DirectoryReader.indexExists(dir)) {
-            //JAVA:     List<IndexCommit> commits = DirectoryReader.listCommits(dir);
-            //JAVA:     // listCommits guarantees that we get at least one commit back, or
-            //JAVA:     // IndexNotFoundException which we handle below
-            //JAVA:     return commits.get(commits.size() - 1);
-            //JAVA:   }
-            //JAVA: } catch (IndexNotFoundException e) {
-            //JAVA:   // ignore the exception and return null
-            //JAVA: }
-            //JAVA: return null;       
-            #endregion
-
             try
             {
                 // IndexNotFoundException which we handle below
@@ -304,28 +201,8 @@ namespace Lucene.Net.Replicator
         /// that this indicates an error in the Revision implementation.
         /// </para>
         /// </summary>
-        /// <param name="files"></param>
-        /// <param name="allowEmpty"></param>
-        /// <returns></returns>
         public static string GetSegmentsFile(IList<string> files, bool allowEmpty)
         {
-            #region Java
-            //JAVA: if (files.isEmpty()) {
-            //JAVA:   if (allowEmpty) {
-            //JAVA:     return null;
-            //JAVA:   } else {
-            //JAVA:     throw new IllegalStateException("empty list of files not allowed");
-            //JAVA:   }
-            //JAVA: }
-            //JAVA: 
-            //JAVA: String segmentsFile = files.remove(files.size() - 1);
-            //JAVA: if (!segmentsFile.startsWith(IndexFileNames.SEGMENTS) || segmentsFile.equals(IndexFileNames.SEGMENTS_GEN)) {
-            //JAVA:   throw new IllegalStateException("last file to copy+sync must be segments_N but got " + segmentsFile
-            //JAVA:       + "; check your Revision implementation!");
-            //JAVA: }
-            //JAVA: return segmentsFile;    
-            #endregion
-
             if (!files.Any())
             {
                 if (allowEmpty)
@@ -348,21 +225,8 @@ namespace Lucene.Net.Replicator
         /// Cleanup the index directory by deleting all given files. Called when file
         /// copy or sync failed.
         /// </summary>
-        /// <param name="directory"></param>
-        /// <param name="files"></param>
         public static void CleanupFilesOnFailure(Directory directory, IList<string> files)
         {
-            #region Java
-            //JAVA: for (String file : files) {
-            //JAVA:     try {
-            //JAVA:         dir.deleteFile(file);
-            //JAVA:     } catch (Throwable t) {
-            //JAVA:         // suppress any exception because if we're here, it means copy
-            //JAVA:         // failed, and we must cleanup after ourselves.
-            //JAVA:     }
-            //JAVA: }
-            #endregion
-
             foreach (string file in files)
             {
                 try
@@ -379,35 +243,6 @@ namespace Lucene.Net.Replicator
 
         public static void CleanupOldIndexFiles(Directory directory, string segmentsFile)
         {
-            #region Java
-            //JAVA: try {
-            //JAVA:   IndexCommit commit = getLastCommit(dir);
-            //JAVA:   // commit == null means weird IO errors occurred, ignore them
-            //JAVA:   // if there were any IO errors reading the expected commit point (i.e.
-            //JAVA:   // segments files mismatch), then ignore that commit either.
-            //JAVA:   if (commit != null && commit.getSegmentsFileName().equals(segmentsFile)) {
-            //JAVA:     Set<String> commitFiles = new HashSet<>();
-            //JAVA:     commitFiles.addAll(commit.getFileNames());
-            //JAVA:     commitFiles.add(IndexFileNames.SEGMENTS_GEN);
-            //JAVA:     Matcher matcher = IndexFileNames.CODEC_FILE_PATTERN.matcher("");
-            //JAVA:     for (String file : dir.listAll()) {
-            //JAVA:       if (!commitFiles.contains(file)
-            //JAVA:           && (matcher.reset(file).matches() || file.startsWith(IndexFileNames.SEGMENTS))) {
-            //JAVA:         try {
-            //JAVA:           dir.deleteFile(file);
-            //JAVA:         } catch (Throwable t) {
-            //JAVA:           // suppress, it's just a best effort
-            //JAVA:         }
-            //JAVA:       }
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA: } catch (Throwable t) {
-            //JAVA:   // ignore any errors that happens during this state and only log it. this
-            //JAVA:   // cleanup will have a chance to succeed the next time we get a new
-            //JAVA:   // revision.
-            //JAVA: }             
-            #endregion
-
             try
             {
                 IndexCommit commit = GetLastCommit(directory);
@@ -445,22 +280,11 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// 
+        /// Copies the provided list of files from the <see cref="source"/> <see cref="Directory"/> to the <see cref="target"/> <see cref="Directory"/>.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <param name="files"></param>
-        /// <exception cref="System.IO.IOException"></exception>
+        /// <exception cref="IOException"></exception>
         public static void CopyFiles(Directory source, Directory target, IList<string> files)
         {
-            #region Java
-            //JAVA: if (!source.equals(target)) {
-            //JAVA:     for (String file : files) {
-            //JAVA:         source.copy(target, file, file, IOContext.READONCE);
-            //JAVA:     }
-            //JAVA: }
-            #endregion
-
             if (source.Equals(target))
                 return;
 
@@ -473,24 +297,8 @@ namespace Lucene.Net.Replicator
         /// the generation from the given <code>segmentsFile</code>. If it is <code>null</code>,
         /// this method deletes segments.gen from the directory.
         /// </summary>
-        /// <param name="segmentsFile"></param>
-        /// <param name="directory"></param>
         public static void WriteSegmentsGen(string segmentsFile, Directory directory)
         {
-            #region Java
-            //JAVA: public static void writeSegmentsGen(String segmentsFile, Directory dir) {
-            //JAVA:   if (segmentsFile != null) {
-            //JAVA:     SegmentInfos.writeSegmentsGen(dir, SegmentInfos.generationFromSegmentsFileName(segmentsFile));
-            //JAVA:   } else {
-            //JAVA:     try {
-            //JAVA:       dir.deleteFile(IndexFileNames.SEGMENTS_GEN);
-            //JAVA:     } catch (Throwable t) {
-            //JAVA:       // suppress any errors while deleting this file.
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             if (segmentsFile != null)
             {
                 SegmentInfos.WriteSegmentsGen(directory, SegmentInfos.GenerationFromSegmentsFileName(segmentsFile));

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Lucene.Net.Documents;
 using Lucene.Net.Facet;
@@ -11,6 +12,7 @@ using Lucene.Net.Replicator;
 using Lucene.Net.Store;
 using Lucene.Net.Util;
 using NUnit.Framework;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Tests.Replicator
 {
@@ -166,9 +168,7 @@ namespace Lucene.Net.Tests.Replicator
                             {
                                 skip = 0;
                             }
-                            //JAVA: in.skip(skip);
-                            byte[] skips = new byte[skip];
-                            @in.Read(skips, 0, skip);
+                            @in.Seek(skip, SeekOrigin.Current);
                             src.Seek(skip);
                             offset = skip;
                         }

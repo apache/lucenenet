@@ -1,14 +1,9 @@
-﻿//STATUS: DRAFT - 4.8.0
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using Directory = Lucene.Net.Store.Directory;
 
@@ -32,8 +27,8 @@ namespace Lucene.Net.Replicator
 	 */
 
     /// <summary>
-    /// A {@link ReplicationHandler} for replication of an index and taxonomy pair.
-    /// See {@link IndexReplicationHandler} for more detail. This handler ensures
+    /// A <see cref="IReplicationHandler"/> for replication of an index and taxonomy pair.
+    /// See <see cref="IReplicationHandler"/> for more detail. This handler ensures
     /// that the search and taxonomy indexes are replicated in a consistent way.
     /// 
     /// <see cref="IndexReplicationHandler"/>
@@ -51,7 +46,7 @@ namespace Lucene.Net.Replicator
     public class IndexAndTaxonomyReplicationHandler : IReplicationHandler
     {
         /// <summary>
-        /// The component used to log messages to the {@link InfoStream#getDefault()default} {@link InfoStream}.
+        /// The component used to log messages to the <see cref="InfoStream"/>.
         /// </summary>
         public const string INFO_STREAM_COMPONENT = "IndexAndTaxonomyReplicationHandler";
 
@@ -72,9 +67,6 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Constructor with the given index directory and callback to notify when the indexes were updated.
         /// </summary>
-        /// <param name="indexDirectory"></param>
-        /// <param name="taxonomyDirectory"></param>
-        /// <param name="callback"></param>
         /// <exception cref="System.IO.IOException"></exception>
         public IndexAndTaxonomyReplicationHandler(Directory indexDirectory, Directory taxonomyDirectory, Func<bool?> callback)
         {
@@ -88,7 +80,6 @@ namespace Lucene.Net.Replicator
             bool indexExists = DirectoryReader.IndexExists(indexDirectory);
             bool taxonomyExists = DirectoryReader.IndexExists(taxonomyDirectory);
 
-            //JAVA: IllegalStateException
             if (indexExists != taxonomyExists)
                 throw new InvalidOperationException(string.Format("search and taxonomy indexes must either both exist or not: index={0} taxo={1}", indexExists, taxonomyExists));
 
@@ -107,92 +98,14 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
-        /// <param name="version"></param>
-        /// <param name="revisionFiles"></param>
-        /// <param name="copiedFiles"></param>
-        /// <param name="sourceDirectory"></param>
         /// <exception cref=""></exception>
         public void RevisionReady(string version,
             IDictionary<string, IList<RevisionFile>> revisionFiles,
             IDictionary<string, IList<string>> copiedFiles,
             IDictionary<string, Directory> sourceDirectory)
         {
-            #region Java
-            //JAVA: Directory taxoClientDir = sourceDirectory.get(IndexAndTaxonomyRevision.TAXONOMY_SOURCE);
-            //JAVA: Directory indexClientDir = sourceDirectory.get(IndexAndTaxonomyRevision.INDEX_SOURCE);
-            //JAVA: List<String> taxoFiles = copiedFiles.get(IndexAndTaxonomyRevision.TAXONOMY_SOURCE);
-            //JAVA: List<String> indexFiles = copiedFiles.get(IndexAndTaxonomyRevision.INDEX_SOURCE);
-            //JAVA: String taxoSegmentsFile = IndexReplicationHandler.getSegmentsFile(taxoFiles, true);
-            //JAVA: String indexSegmentsFile = IndexReplicationHandler.getSegmentsFile(indexFiles, false);
-            //JAVA:
-            //JAVA: boolean success = false;
-            //JAVA: try {
-            //JAVA:   // copy taxonomy files before index files
-            //JAVA:   IndexReplicationHandler.copyFiles(taxoClientDir, taxoDir, taxoFiles);
-            //JAVA:   IndexReplicationHandler.copyFiles(indexClientDir, indexDir, indexFiles);
-            //JAVA:
-            //JAVA:   // fsync all copied files (except segmentsFile)
-            //JAVA:   if (!taxoFiles.isEmpty()) {
-            //JAVA:     taxoDir.sync(taxoFiles);
-            //JAVA:   }
-            //JAVA:   indexDir.sync(indexFiles);
-            //JAVA:
-            //JAVA:   // now copy and fsync segmentsFile, taxonomy first because it is ok if a
-            //JAVA:   // reader sees a more advanced taxonomy than the index.
-            //JAVA:   if (taxoSegmentsFile != null) {
-            //JAVA:     taxoClientDir.copy(taxoDir, taxoSegmentsFile, taxoSegmentsFile, IOContext.READONCE);
-            //JAVA:   }
-            //JAVA:   indexClientDir.copy(indexDir, indexSegmentsFile, indexSegmentsFile, IOContext.READONCE);
-            //JAVA:
-            //JAVA:   if (taxoSegmentsFile != null) {
-            //JAVA:     taxoDir.sync(Collections.singletonList(taxoSegmentsFile));
-            //JAVA:   }
-            //JAVA:   indexDir.sync(Collections.singletonList(indexSegmentsFile));
-            //JAVA:
-            //JAVA:   success = true;
-            //JAVA: } finally {
-            //JAVA:   if (!success) {
-            //JAVA:     taxoFiles.add(taxoSegmentsFile); // add it back so it gets deleted too
-            //JAVA:     IndexReplicationHandler.cleanupFilesOnFailure(taxoDir, taxoFiles);
-            //JAVA:     indexFiles.add(indexSegmentsFile); // add it back so it gets deleted too
-            //JAVA:     IndexReplicationHandler.cleanupFilesOnFailure(indexDir, indexFiles);
-            //JAVA:   }
-            //JAVA: }
-            //JAVA:
-            //JAVA: // all files have been successfully copied + sync'd. update the handler's state
-            //JAVA: currentRevisionFiles = revisionFiles;
-            //JAVA: currentVersion = version;
-            //JAVA:
-            //JAVA: if (infoStream.isEnabled(INFO_STREAM_COMPONENT)) {
-            //JAVA:   infoStream.message(INFO_STREAM_COMPONENT, "revisionReady(): currentVersion=" + currentVersion
-            //JAVA:       + " currentRevisionFiles=" + currentRevisionFiles);
-            //JAVA: }
-            //JAVA:
-            //JAVA: // update the segments.gen file
-            //JAVA: IndexReplicationHandler.writeSegmentsGen(taxoSegmentsFile, taxoDir);
-            //JAVA: IndexReplicationHandler.writeSegmentsGen(indexSegmentsFile, indexDir);
-            //JAVA:
-            //JAVA: // Cleanup the index directory from old and unused index files.
-            //JAVA: // NOTE: we don't use IndexWriter.deleteUnusedFiles here since it may have
-            //JAVA: // side-effects, e.g. if it hits sudden IO errors while opening the index
-            //JAVA: // (and can end up deleting the entire index). It is not our job to protect
-            //JAVA: // against those errors, app will probably hit them elsewhere.
-            //JAVA: IndexReplicationHandler.cleanupOldIndexFiles(indexDir, indexSegmentsFile);
-            //JAVA: IndexReplicationHandler.cleanupOldIndexFiles(taxoDir, taxoSegmentsFile);
-            //JAVA:
-            //JAVA: // successfully updated the index, notify the callback that the index is
-            //JAVA: // ready.
-            //JAVA: if (callback != null) {
-            //JAVA:   try {
-            //JAVA:     callback.call();
-            //JAVA:   } catch (Exception e) {
-            //JAVA:     throw new IOException(e);
-            //JAVA:   }
-            //JAVA: } 
-            #endregion
-
             Directory taxonomyClientDirectory = sourceDirectory[IndexAndTaxonomyRevision.TAXONOMY_SOURCE];
             Directory indexClientDirectory = sourceDirectory[IndexAndTaxonomyRevision.INDEX_SOURCE];
             IList<string> taxonomyFiles = copiedFiles[IndexAndTaxonomyRevision.TAXONOMY_SOURCE];

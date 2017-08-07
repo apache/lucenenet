@@ -116,36 +116,6 @@ namespace Lucene.Net.Tests.Replicator
 
         private void AssertHandlerRevision(int expectedId, Directory dir)
         {
-            //JAVA: private void assertHandlerRevision(int expectedID, Directory dir) throws IOException {
-            //JAVA:   // loop as long as client is alive. test-framework will terminate us if
-            //JAVA:   // there's a serious bug, e.g. client doesn't really update. otherwise,
-            //JAVA:   // introducing timeouts is not good, can easily lead to false positives.
-            //JAVA:   while (client.isUpdateThreadAlive()) {
-            //JAVA:     // give client a chance to update
-            //JAVA:     try {
-            //JAVA:       Thread.sleep(100);
-            //JAVA:     } catch (InterruptedException e) {
-            //JAVA:       throw new ThreadInterruptedException(e);
-            //JAVA:     }
-            //JAVA:     
-            //JAVA:     try {
-            //JAVA:       DirectoryReader reader = DirectoryReader.open(dir);
-            //JAVA:       try {
-            //JAVA:         int handlerID = Integer.parseInt(reader.getIndexCommit().getUserData().get(VERSION_ID), 16);
-            //JAVA:         if (expectedID == handlerID) {
-            //JAVA:           return;
-            //JAVA:         }
-            //JAVA:       } finally {
-            //JAVA:         reader.close();
-            //JAVA:       }
-            //JAVA:     } catch (Exception e) {
-            //JAVA:       // we can hit IndexNotFoundException or e.g. EOFException (on
-            //JAVA:       // segments_N) because it is being copied at the same time it is read by
-            //JAVA:       // DirectoryReader.open().
-            //JAVA:     }
-            //JAVA:   }
-            //JAVA: }
-
             // loop as long as client is alive. test-framework will terminate us if
             // there's a serious bug, e.g. client doesn't really update. otherwise,
             // introducing timeouts is not good, can easily lead to false positives.
@@ -180,15 +150,6 @@ namespace Lucene.Net.Tests.Replicator
 
         private IRevision CreateRevision(int id)
         {
-            //JAVA: private Revision createRevision(final int id) throws IOException {
-            //JAVA:   publishIndexWriter.addDocument(newDocument(publishTaxoWriter, id));
-            //JAVA:   publishIndexWriter.setCommitData(new HashMap<String, String>() {{
-            //JAVA:     put(VERSION_ID, Integer.toString(id, 16));
-            //JAVA:   }});
-            //JAVA:   publishIndexWriter.commit();
-            //JAVA:   publishTaxoWriter.commit();
-            //JAVA:   return new IndexAndTaxonomyRevision(publishIndexWriter, publishTaxoWriter);
-            //JAVA: }
             publishIndexWriter.AddDocument(NewDocument(publishTaxoWriter, id));
             publishIndexWriter.SetCommitData(new Dictionary<string, string>{
                 { VERSION_ID, id.ToString("X") }
@@ -309,12 +270,10 @@ namespace Lucene.Net.Tests.Replicator
             newTaxo.Dispose();
         }
 
-        //JAVA: /*
-        //JAVA:  * This test verifies that the client and handler do not end up in a corrupt
-        //JAVA:  * index if exceptions are thrown at any point during replication. Either when
-        //JAVA:  * a client copies files from the server to the temporary space, or when the
-        //JAVA:  * handler copies them to the index directory.
-        //JAVA:  */
+        // This test verifies that the client and handler do not end up in a corrupt
+        // index if exceptions are thrown at any point during replication. Either when
+        // a client copies files from the server to the temporary space, or when the
+        // handler copies them to the index directory.
         [Test]
         public void TestConsistencyOnExceptions()
         {
@@ -482,11 +441,6 @@ namespace Lucene.Net.Tests.Replicator
                         // category to all documents, there's nothing much more to validate
                         TestUtil.CheckIndex(test.handlerTaxoDir.Delegate);
                     }
-                    //TODO: Java had this, but considering what it does do we need it?
-                    //JAVA: catch (IOException e)
-                    //JAVA: {
-                    //JAVA:     throw new RuntimeException(e);
-                    //JAVA: }
                     finally
                     {
                         // count-down number of failures
@@ -507,8 +461,6 @@ namespace Lucene.Net.Tests.Replicator
                 }
                 else
                 {
-                    //JAVA:          if (t instanceof RuntimeException) throw (RuntimeException) t;
-                    //JAVA:          throw new RuntimeException(t);
                     throw exception;
                 }
             }

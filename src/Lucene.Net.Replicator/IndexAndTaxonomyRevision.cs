@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -43,15 +42,6 @@ namespace Lucene.Net.Replicator
     /// </remarks>
     public class IndexAndTaxonomyRevision : IRevision
     {
-        #region Java
-        //JAVA: private final IndexWriter indexWriter;
-        //JAVA: private final SnapshotDirectoryTaxonomyWriter taxoWriter;
-        //JAVA: private final IndexCommit indexCommit, taxoCommit;
-        //JAVA: private final SnapshotDeletionPolicy indexSDP, taxoSDP;
-        //JAVA: private final String version;
-        //JAVA: private final Map<String, List<RevisionFile>> sourceFiles;
-        #endregion
-
         public const string INDEX_SOURCE = "index";
         public const string TAXONOMY_SOURCE = "taxonomy";
 
@@ -64,36 +54,11 @@ namespace Lucene.Net.Replicator
         public IDictionary<string, IList<RevisionFile>> SourceFiles { get; private set; }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
-        /// <param name="indexWriter"></param>
-        /// <param name="taxonomyWriter"></param>
         /// <exception cref="IOException"></exception>
         public IndexAndTaxonomyRevision(IndexWriter indexWriter, SnapshotDirectoryTaxonomyWriter taxonomyWriter)
         {
-            #region Java
-            //JAVA: /**
-            //JAVA:  * Constructor over the given {@link IndexWriter}. Uses the last
-            //JAVA:  * {@link IndexCommit} found in the {@link Directory} managed by the given
-            //JAVA:  * writer.
-            //JAVA:  */
-            //JAVA: public IndexAndTaxonomyRevision(IndexWriter indexWriter, SnapshotDirectoryTaxonomyWriter taxoWriter)
-            //JAVA:     throws IOException {
-            //JAVA:   IndexDeletionPolicy delPolicy = indexWriter.getConfig().getIndexDeletionPolicy();
-            //JAVA:   if (!(delPolicy instanceof SnapshotDeletionPolicy)) {
-            //JAVA:     throw new IllegalArgumentException("IndexWriter must be created with SnapshotDeletionPolicy");
-            //JAVA:   }
-            //JAVA:   this.indexWriter = indexWriter;
-            //JAVA:   this.taxoWriter = taxoWriter;
-            //JAVA:   this.indexSDP = (SnapshotDeletionPolicy) delPolicy;
-            //JAVA:   this.taxoSDP = taxoWriter.getDeletionPolicy();
-            //JAVA:   this.indexCommit = indexSDP.snapshot();
-            //JAVA:   this.taxoCommit = taxoSDP.snapshot();
-            //JAVA:   this.version = revisionVersion(indexCommit, taxoCommit);
-            //JAVA:   this.sourceFiles = revisionFiles(indexCommit, taxoCommit);
-            //JAVA: }
-            #endregion
-
             this.indexSdp = indexWriter.Config.IndexDeletionPolicy as SnapshotDeletionPolicy;
             if (indexSdp == null)
                 throw new ArgumentException("IndexWriter must be created with SnapshotDeletionPolicy", "indexWriter");
@@ -107,35 +72,17 @@ namespace Lucene.Net.Replicator
             this.SourceFiles = RevisionFiles(indexCommit, taxonomyCommit);
         }
 
+        /// <summary>
+        /// Compares this <see cref="IndexAndTaxonomyRevision"/> to the given <see cref="version"/>.
+        /// </summary>
         public int CompareTo(string version)
         {
-            #region Java
-            //JAVA: public int compareTo(String version) {
-            //JAVA:   final String[] parts = version.split(":");
-            //JAVA:   final long indexGen = Long.parseLong(parts[0], RADIX);
-            //JAVA:   final long taxoGen = Long.parseLong(parts[1], RADIX);
-            //JAVA:   final long indexCommitGen = indexCommit.getGeneration();
-            //JAVA:   final long taxoCommitGen = taxoCommit.getGeneration();
-            //JAVA:   
-            //JAVA:   // if the index generation is not the same as this commit's generation,
-            //JAVA:   // compare by it. Otherwise, compare by the taxonomy generation.
-            //JAVA:   if (indexCommitGen < indexGen) {
-            //JAVA:     return -1;
-            //JAVA:   } else if (indexCommitGen > indexGen) {
-            //JAVA:     return 1;
-            //JAVA:   } else {
-            //JAVA:     return taxoCommitGen < taxoGen ? -1 : (taxoCommitGen > taxoGen ? 1 : 0);
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             string[] parts = version.Split(':');
             long indexGen = long.Parse(parts[0], NumberStyles.HexNumber);
             long taxonomyGen = long.Parse(parts[1], NumberStyles.HexNumber);
             long indexCommitGen = indexCommit.Generation;
             long taxonomyCommitGen = taxonomyCommit.Generation;
 
-            //TODO: long.CompareTo(); but which goes where.
             if (indexCommitGen < indexGen)
                 return -1;
 
@@ -147,68 +94,34 @@ namespace Lucene.Net.Replicator
 
         public int CompareTo(IRevision other)
         {
-            #region Java
-            //JAVA: public int compareTo(Revision o) {
-            //JAVA:   IndexAndTaxonomyRevision other = (IndexAndTaxonomyRevision) o;
-            //JAVA:   int cmp = indexCommit.compareTo(other.indexCommit);
-            //JAVA:   return cmp != 0 ? cmp : taxoCommit.compareTo(other.taxoCommit);
-            //JAVA: }
-            #endregion
+            if (other == null)
+                throw new ArgumentNullException("other");
 
-            //TODO: This breaks the contract and will fail if called with a different implementation
-            //      This is a flaw inherited from the original source...
-            //      It should at least provide a better description to the InvalidCastException
-            IndexAndTaxonomyRevision or = (IndexAndTaxonomyRevision)other;
-            int cmp = indexCommit.CompareTo(or.indexCommit);
-            return cmp != 0 ? cmp : taxonomyCommit.CompareTo(or.taxonomyCommit);
+            IndexAndTaxonomyRevision itr = other as IndexAndTaxonomyRevision;
+            if(itr == null)
+                throw new ArgumentException(string.Format("Cannot compare IndexAndTaxonomyRevision to a {0}", other.GetType()), "other");
+
+            int cmp = indexCommit.CompareTo(itr.indexCommit);
+            return cmp != 0 ? cmp : taxonomyCommit.CompareTo(itr.taxonomyCommit);
         }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="fileName"></param>
-        /// <returns></returns>
         /// <exception cref="IOException"></exception>
         public Stream Open(string source, string fileName)
         {
-            #region Java
-            //JAVA: public InputStream open(String source, String fileName) throws IOException {
-            //JAVA:   assert source.equals(INDEX_SOURCE) || source.equals(TAXONOMY_SOURCE) : "invalid source; expected=(" + INDEX_SOURCE
-            //JAVA:   + " or " + TAXONOMY_SOURCE + ") got=" + source;
-            //JAVA:   IndexCommit ic = source.equals(INDEX_SOURCE) ? indexCommit : taxoCommit;
-            //JAVA:   return new IndexInputStream(ic.getDirectory().openInput(fileName, IOContext.READONCE));
-            //JAVA: }
-            #endregion
-
-            Debug.Assert(source.Equals(INDEX_SOURCE) || source.Equals(TAXONOMY_SOURCE), 
-                string.Format("invalid source; expected=({0} or {1}) got={2}", INDEX_SOURCE, TAXONOMY_SOURCE, source));
+            Debug.Assert(source.Equals(INDEX_SOURCE) || source.Equals(TAXONOMY_SOURCE), string.Format("invalid source; expected=({0} or {1}) got={2}", INDEX_SOURCE, TAXONOMY_SOURCE, source));
             IndexCommit commit = source.Equals(INDEX_SOURCE) ? indexCommit : taxonomyCommit;
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }
 
         /// <summary>
-        /// 
+        /// TODO
         /// </summary>
         /// <exception cref="IOException"></exception>
         public void Release()
         {
-            #region Java
-            //JAVA: public void release() throws IOException {
-            //JAVA:   try {
-            //JAVA:     indexSDP.release(indexCommit);
-            //JAVA:   } finally {
-            //JAVA:     taxoSDP.release(taxoCommit);
-            //JAVA:   }
-            //JAVA:   
-            //JAVA:   try {
-            //JAVA:     indexWriter.deleteUnusedFiles();
-            //JAVA:   } finally {
-            //JAVA:     taxoWriter.getIndexWriter().deleteUnusedFiles();
-            //JAVA:   }
-            //JAVA: }
-            #endregion
-
             try
             {
                 indexSdp.Release(indexCommit);
@@ -228,7 +141,6 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        //.NET NOTE: Changed doc comment as the JAVA one seems to be a bit too much copy/paste
         /// <summary>
         /// Returns a map of the revision files from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.
         /// </summary>
@@ -238,17 +150,6 @@ namespace Lucene.Net.Replicator
         /// <exception cref="IOException"></exception>
         public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit indexCommit, IndexCommit taxonomyCommit)
         {
-            #region Java
-            //JAVA: /** Returns a singleton map of the revision files from the given {@link IndexCommit}. */
-            //JAVA: public static Map<String, List<RevisionFile>> revisionFiles(IndexCommit indexCommit, IndexCommit taxoCommit)
-            //JAVA:     throws IOException {
-            //JAVA:   HashMap<String,List<RevisionFile>> files = new HashMap<>();
-            //JAVA:   files.put(INDEX_SOURCE, IndexRevision.revisionFiles(indexCommit).values().iterator().next());
-            //JAVA:   files.put(TAXONOMY_SOURCE, IndexRevision.revisionFiles(taxoCommit).values().iterator().next());
-            //JAVA:   return files;
-            //JAVA: }
-            #endregion
-
             return new Dictionary<string, IList<RevisionFile>>{
                     { INDEX_SOURCE,  IndexRevision.RevisionFiles(indexCommit).Values.First() },
                     { TAXONOMY_SOURCE,  IndexRevision.RevisionFiles(taxonomyCommit).Values.First() }
@@ -263,12 +164,6 @@ namespace Lucene.Net.Replicator
         /// <returns>a String representation of a revision's version from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.</returns>
         public static string RevisionVersion(IndexCommit indexCommit, IndexCommit taxonomyCommit)
         {
-            #region Java
-            //JAVA: public static String revisionVersion(IndexCommit indexCommit, IndexCommit taxoCommit) {
-            //JAVA:   return Long.toString(indexCommit.getGeneration(), RADIX) + ":" + Long.toString(taxoCommit.getGeneration(), RADIX);
-            //JAVA: }   
-            #endregion
-
             return string.Format("{0:X}:{1:X}", indexCommit.Generation, taxonomyCommit.Generation);
         }
 
@@ -319,7 +214,7 @@ namespace Lucene.Net.Replicator
             }
 
             /// <summary>
-            /// 
+            /// TODO
             /// </summary>
             /// <param name="directory"></param>
             /// <param name="config"></param>
