@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 #if NETSTANDARD
 using System.Runtime.InteropServices;
 #else
@@ -226,12 +227,9 @@ namespace Lucene.Net.Util
 #endif
                 }
 				
-#if NETSTANDARD
                 if (variable == "PROCESSOR_ARCHITECTURE") {
-                    
                     return RuntimeInformation.OSArchitecture.ToString();
                 }
-#endif
 
                 if (variable == "RUNTIME_VERSION")
                 {
