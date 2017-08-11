@@ -4,5 +4,8 @@
   },  
   "frameworks": {
     "net451": {}
+  },
+  "dependencies": {
+    "System.Runtime.InteropServices.RuntimeInformation": "4.3.0"
   }
 }
