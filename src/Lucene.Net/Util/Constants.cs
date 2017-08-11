@@ -1,10 +1,8 @@
 using System;
-using System.Linq;
-using System.Reflection;
 #if NETSTANDARD
 using System.Runtime.InteropServices;
 #else
-using System.Diagnostics;
+using Microsoft.Win32;
 #endif
 using System.Text.RegularExpressions;
 
@@ -37,7 +35,7 @@ namespace Lucene.Net.Util
         }
 
         // LUCENENET NOTE: IMPORTANT - this line must be placed before RUNTIME_VERSION so it can be parsed.
-        private static Regex VERSION_PARSER = new Regex(@"(\d+\.\d+\.\d+\.\d+)", RegexOptions.Compiled);
+        private static Regex VERSION = new Regex(@"(\d+\.\d+(?:\.\d+)?(?:\.\d+)?)", RegexOptions.Compiled);
 
 #if NETSTANDARD
         /// <summary>
@@ -52,7 +50,7 @@ namespace Lucene.Net.Util
         /// NOTE: This was JAVA_VERSION in Lucene
         /// </summary>
 #endif
-        public static readonly string RUNTIME_VERSION = GetEnvironmentVariable("RUNTIME_VERSION", "?");
+        public static readonly string RUNTIME_VERSION;
 
 
         /// <summary>
@@ -63,32 +61,37 @@ namespace Lucene.Net.Util
         //public static readonly string JVM_VERSION = GetEnvironmentVariable("java.vm.version", "");
         //public static readonly string JVM_NAME = GetEnvironmentVariable("java.vm.name", "");
 
+#if NETSTANDARD
         /// <summary>
-        /// The value of <see cref="Environment.GetEnvironmentVariable(string)"/> with parameter "OS".</summary>
-        public static readonly string OS_NAME = GetEnvironmentVariable("OS", "Windows_NT") ?? "Linux";
+        /// The value of <see cref="RuntimeInformation.OSDescription"/>, excluding the version number.</summary>
+#else
+        /// <summary>
+        /// The value of <see cref="Environment.OSVersion.VersionString"/>, excluding the version number.</summary>
+#endif
+        public static readonly string OS_NAME; // = GetEnvironmentVariable("OS", "Windows_NT") ?? "Linux";
 
         /// <summary>
         /// True iff running on Linux. </summary>
-        public static readonly bool LINUX = OS_NAME.StartsWith("Linux", StringComparison.Ordinal);
+        public static readonly bool LINUX; // = OS_NAME.StartsWith("Linux", StringComparison.Ordinal);
 
         /// <summary>
         /// True iff running on Windows. </summary>
-        public static readonly bool WINDOWS = OS_NAME.StartsWith("Windows", StringComparison.Ordinal);
+        public static readonly bool WINDOWS; // = OS_NAME.StartsWith("Windows", StringComparison.Ordinal);
 
         /// <summary>
         /// True iff running on SunOS. </summary>
-        public static readonly bool SUN_OS = OS_NAME.StartsWith("SunOS", StringComparison.Ordinal);
+        public static readonly bool SUN_OS; // = OS_NAME.StartsWith("SunOS", StringComparison.Ordinal);
 
         /// <summary>
         /// True iff running on Mac OS X </summary>
-        public static readonly bool MAC_OS_X = OS_NAME.StartsWith("Mac OS X", StringComparison.Ordinal);
+        public static readonly bool MAC_OS_X; // = OS_NAME.StartsWith("Mac OS X", StringComparison.Ordinal);
 
         /// <summary>
         /// True iff running on FreeBSD </summary>
-        public static readonly bool FREE_BSD = OS_NAME.StartsWith("FreeBSD", StringComparison.Ordinal);
+        public static readonly bool FREE_BSD; // = OS_NAME.StartsWith("FreeBSD", StringComparison.Ordinal);
 
-        public static readonly string OS_ARCH = GetEnvironmentVariable("PROCESSOR_ARCHITECTURE", "x86");
-        public static readonly string OS_VERSION = GetEnvironmentVariable("OS_VERSION", "?");
+        public static readonly string OS_ARCH;
+        public static readonly string OS_VERSION;
 
         //[Obsolete("We are not running on Java for heavens sake")]
         //public static readonly bool JRE_IS_MINIMUM_JAVA6 = (bool)new bool?(true); // prevent inlining in foreign class files
@@ -106,65 +109,71 @@ namespace Lucene.Net.Util
 
         static Constants()
         {
+#if NETSTANDARD
+            // Possible Values: X86, X64, Arm, Arm64
+            OS_ARCH = RuntimeInformation.OSArchitecture.ToString();
+#else
+            if (Environment.Is64BitOperatingSystem)
+            {
+                OS_ARCH = "X64";
+            }
+            else
+            {
+                OS_ARCH = "X86";
+            }
+#endif
+
+            // LUCENENET NOTE: In Java, the check is for sun.misc.Unsafe.addressSize,
+            // which is the pointer size of the current environment. We don't need to
+            // fallback to the OS bitness in .NET because this property is reliable and 
+            // doesn't throw exceptions.
             if (IntPtr.Size == 8)
             {
                 RUNTIME_IS_64BIT = true;// 64 bit machine
             }
-            else if (IntPtr.Size == 4)
+            else // if (IntPtr.Size == 4)
             {
                 RUNTIME_IS_64BIT = false;// 32 bit machine
             }
 
-            //LUCENENET NOTE: Well that was all over the top to check architechture
-            //bool is64Bit = false;
-            //try
-            //{
-            //  Type unsafeClass = Type.GetType("sun.misc.Unsafe");
-            //  Field unsafeField = unsafeClass.getDeclaredField("theUnsafe");
-            //  unsafeField.Accessible = true;
-            //  object @unsafe = unsafeField.get(null);
-            //  int addressSize = (int)((Number) unsafeClass.GetMethod("addressSize").invoke(@unsafe));
-            //  is64Bit = addressSize >= 8;
-            //}
-            //catch (Exception e)
-            //{
-            //  string x = System.getProperty("sun.arch.data.model");
-            //  if (x != null)
-            //  {
-            //    is64Bit = x.IndexOf("64") != -1;
-            //  }
-            //  else
-            //  {
-            //    if (OS_ARCH != null && OS_ARCH.IndexOf("64") != -1)
-            //    {
-            //      is64Bit = true;
-            //    }
-            //    else
-            //    {
-            //      is64Bit = false;
-            //    }
-            //  }
-            //}
-            //RUNTIME_IS_64BIT = is64Bit;
+#if NETSTANDARD
+            WINDOWS = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            LINUX = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            MAC_OS_X = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+            // LUCENENET NOTE: SunOS and FreeBSD not supported
+#else
+            // LUCENENET NOTE: On .NET Framework, our only possibilities are Windows or Linux
+            PlatformID pid = Environment.OSVersion.Platform;
+            WINDOWS = pid == PlatformID.Win32NT || pid == PlatformID.Win32Windows;
 
-            //// this method only exists in Java 8:
-            //bool v8 = true;
-            //try
-            //{
-            //  typeof(Collections).getMethod("emptySortedSet");
-            //}
-            //catch (NoSuchMethodException nsme)
-            //{
-            //  v8 = false;
-            //}
-            //JRE_IS_MINIMUM_JAVA8 = v8;
-            //Package pkg = LucenePackage.Get();
-            //string v = (pkg == null) ? null : pkg.ImplementationVersion;
-            //if (v == null)
-            //{
-            //  v = MainVersionWithoutAlphaBeta() + "-SNAPSHOT";
-            //}
-            //LUCENE_VERSION = Ident(v);
+            // we use integers instead of enum tags because "MacOS"
+            // requires 2.0 SP2, 3.0 SP2 or 3.5 SP1.
+            // 128 is mono's old platform tag for Unix.
+            // Reference: https://stackoverflow.com/a/5117005
+            int id = (int)pid;
+            LINUX = id == 4 || id == 6 || id == 128;
+#endif
+
+#if NETSTANDARD
+            RUNTIME_VERSION = ExtractString(RuntimeInformation.FrameworkDescription, VERSION);
+#else
+            if (WINDOWS)
+            {
+                RUNTIME_VERSION = GetFramework45PlusFromRegistry();
+            }
+            else
+            {
+                RUNTIME_VERSION = Environment.Version.ToString();
+            }
+#endif
+
+#if NETSTANDARD
+            OS_VERSION = ExtractString(RuntimeInformation.OSDescription, VERSION);
+            OS_NAME = VERSION.Replace(RuntimeInformation.OSDescription, string.Empty).Trim();
+#else
+            OS_VERSION = Environment.OSVersion.Version.ToString();
+            OS_NAME = VERSION.Replace(Environment.OSVersion.VersionString, string.Empty).Trim();
+#endif
         }
 
         // this method prevents inlining the final version constant in compiled classes,
@@ -209,48 +218,67 @@ namespace Lucene.Net.Util
         }
 
         private static Regex MAIN_VERSION_WITHOUT_ALPHA_BETA = new Regex("\\.", RegexOptions.Compiled);
-        
 
-#region MEDIUM-TRUST Support
+#if !NETSTANDARD
 
-        private static string GetEnvironmentVariable(string variable, string defaultValueOnSecurityException)
+        // Gets the .NET Framework Version (if at least 4.5)
+        // Reference: https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/how-to-determine-which-versions-are-installed
+        private static string GetFramework45PlusFromRegistry()
         {
-            try
-            {
-                if (variable == "OS_VERSION")
-                {
-#if NETSTANDARD
-                    return RuntimeInformation.OSDescription;
-#else
-                    return Environment.OSVersion.ToString();
-#endif
-                }
-				
-#if NETSTANDARD
-                if (variable == "PROCESSOR_ARCHITECTURE") {
-                    
-                    return RuntimeInformation.OSArchitecture.ToString();
-                }
-#endif
+            const string subkey = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Full\";
 
-                if (variable == "RUNTIME_VERSION")
+            // As an alternative, if you know the computers you will query are running .NET Framework 4.5 
+            // or later, you can use:
+            using (RegistryKey ndpKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(subkey))
+            {
+                if (ndpKey != null && ndpKey.GetValue("Release") != null)
                 {
-#if NETSTANDARD
-                    return ExtractString(RuntimeInformation.FrameworkDescription, VERSION_PARSER);
-#else
+                    return CheckFor45PlusVersion((int)ndpKey.GetValue("Release"));
+                }
+                else
+                {
+                    // Fall back to Environment.Version (probably wrong, but this is our best guess if the registry check fails)
                     return Environment.Version.ToString();
-#endif
+                    //Console.WriteLine(".NET Framework Version 4.5 or later is not detected.");
                 }
-
-                return System.Environment.GetEnvironmentVariable(variable);
-            }
-            catch (System.Security.SecurityException)
-            {
-                return defaultValueOnSecurityException;
             }
         }
 
-#endregion MEDIUM-TRUST Support
+        // Checking the version using >= will enable forward compatibility.
+        private static string CheckFor45PlusVersion(int releaseKey)
+        {
+            if (releaseKey >= 460799)
+                return "4.8 or later";
+            if (releaseKey >= 460798)
+                return "4.7";
+            if (releaseKey >= 394802)
+                return "4.6.2";
+            if (releaseKey >= 394254)
+            {
+                return "4.6.1";
+            }
+            if (releaseKey >= 393295)
+            {
+                return "4.6";
+            }
+            if ((releaseKey >= 379893))
+            {
+                return "4.5.2";
+            }
+            if ((releaseKey >= 378675))
+            {
+                return "4.5.1";
+            }
+            if ((releaseKey >= 378389))
+            {
+                return "4.5";
+            }
+            // This code should never execute. A non-null release key should mean
+            // that 4.5 or later is installed.
+            return "No 4.5 or later version detected";
+        }
+
+#endif
 
         // LUCENENET TODO: Move to Support ?
         /// <summary>
