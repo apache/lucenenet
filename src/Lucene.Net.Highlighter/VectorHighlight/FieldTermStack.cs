@@ -44,7 +44,7 @@ namespace Lucene.Net.Search.VectorHighlight
         //  Directory dir = new RAMDirectory();
         //  IndexWriter writer = new IndexWriter(dir, new IndexWriterConfig(Version.LUCENE_CURRENT, analyzer));
         //  Document doc = new Document();
-        //  FieldType ft = new FieldType(TextField.TYPE_STORED);
+        //  IndexableFieldType ft = new IndexableFieldType(TextField.TYPE_STORED);
         //  ft.setStoreTermVectors(true);
         //  ft.setStoreTermVectorOffsets(true);
         //  ft.setStoreTermVectorPositions(true);

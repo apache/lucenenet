@@ -1629,7 +1629,7 @@ namespace Lucene.Net.Index
                         try
                         {
                             w.AddDocument(doc);
-                            Assert.IsFalse(field.FieldType.StoreTermVectors);
+                            Assert.IsFalse(field.IndexableFieldType.StoreTermVectors);
                         }
                         catch (Exception e)
                         {
@@ -1654,7 +1654,7 @@ namespace Lucene.Net.Index
                         try
                         {
                             w.AddDocument(doc);
-                            Assert.IsFalse(field.FieldType.StoreTermVectors);
+                            Assert.IsFalse(field.IndexableFieldType.StoreTermVectors);
                         }
                         catch (Exception e)
                         {
@@ -2001,7 +2001,7 @@ namespace Lucene.Net.Index
                 get { return "foo"; }
             }
 
-            public IIndexableFieldType FieldType
+            public IIndexableFieldType IndexableFieldType
             {
                 get { return StringField.TYPE_NOT_STORED; }
             }

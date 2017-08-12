@@ -43,7 +43,12 @@ namespace Lucene.Net.Index
         /// <see cref="IIndexableFieldType"/> describing the properties
         /// of this field.
         /// </summary>
-        IIndexableFieldType FieldType { get; }
+        // LUCENENET specific: Renamed from FieldType so we can use that name
+        // on the Field class and return FieldType instead of IIndexableFieldType
+        // to avoid a bunch of casting. In Java, it compiles when you implement this
+        // property with a class that derives from IIndexableFieldType, but in .NET it
+        // does not. 
+        IIndexableFieldType IndexableFieldType { get; }
 
         /// <summary>
         /// Returns the field's index-time boost.

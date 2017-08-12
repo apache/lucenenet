@@ -1052,7 +1052,7 @@ namespace Lucene.Net.Util
                 Field field1 = (Field)f;
                 Field field2;
                 DocValuesType dvType = field1.FieldType.DocValueType;
-                NumericType numType = ((FieldType)field1.FieldType).NumericType;
+                NumericType numType = field1.FieldType.NumericType;
                 if (dvType != DocValuesType.NONE)
                 {
                     switch (dvType)
@@ -1078,19 +1078,19 @@ namespace Lucene.Net.Util
                     switch (numType)
                     {
                         case NumericType.INT32:
-                            field2 = new Int32Field(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new Int32Field(field1.Name, (int)field1.GetNumericValue(), field1.FieldType);
                             break;
 
                         case NumericType.SINGLE:
-                            field2 = new SingleField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new SingleField(field1.Name, (int)field1.GetNumericValue(), field1.FieldType);
                             break;
 
                         case NumericType.INT64:
-                            field2 = new Int64Field(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new Int64Field(field1.Name, (int)field1.GetNumericValue(), field1.FieldType);
                             break;
 
                         case NumericType.DOUBLE:
-                            field2 = new DoubleField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new DoubleField(field1.Name, (int)field1.GetNumericValue(), field1.FieldType);
                             break;
 
                         default:
@@ -1099,7 +1099,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    field2 = new Field(field1.Name, field1.GetStringValue(), (FieldType)field1.FieldType);
+                    field2 = new Field(field1.Name, field1.GetStringValue(), field1.FieldType);
                 }
                 doc2.Add(field2);
             }

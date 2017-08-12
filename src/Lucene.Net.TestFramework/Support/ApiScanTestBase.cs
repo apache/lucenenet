@@ -1084,8 +1084,8 @@ namespace Lucene.Net.Support
                             }
                         }
                         //else if (member.MemberType == MemberTypes.Field
-                        //    && ((FieldInfo)member).FieldType.IsGenericType
-                        //    && ((FieldInfo)member).FieldType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
+                        //    && ((FieldInfo)member).IndexableFieldType.IsGenericType
+                        //    && ((FieldInfo)member).IndexableFieldType.GetGenericTypeDefinition().IsAssignableFrom(lookFor)
                         //    && (!publiclyVisibleOnly || (((FieldInfo)member).IsFamily || ((FieldInfo)member).IsFamilyOrAssembly)))
                         //{
                         //    result.Add(string.Concat(t.FullName, ".", member.Name, " (field)"));

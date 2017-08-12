@@ -67,7 +67,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             int tokenCount = 0;
             foreach (IIndexableField field in fields)
             {
-                if (!field.FieldType.IsTokenized ||
+                if (!field.IndexableFieldType.IsTokenized ||
                     field is Int32Field ||
                     field is Int64Field ||
                     field is SingleField ||

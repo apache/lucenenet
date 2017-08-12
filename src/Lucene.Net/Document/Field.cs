@@ -567,19 +567,28 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Returns the <see cref="Documents.FieldType"/> for this field. </summary>
-        public virtual IIndexableFieldType FieldType
+        /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="Documents.FieldType"/>. </summary>
+        // LUCENENET specific property to prevent the need to cast. The FieldType property was renamed IndexableFieldType
+        // in order to accommodate this (more Lucene like) property.
+        public virtual FieldType FieldType
+        {
+            get { return m_type; }
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="IIndexableFieldType"/> </summary>
+        public virtual IIndexableFieldType IndexableFieldType
         {
             get { return m_type; }
         }
 
         public virtual TokenStream GetTokenStream(Analyzer analyzer)
         {
-            if (!((FieldType)FieldType).IsIndexed)
+            if (!FieldType.IsIndexed)
             {
                 return null;
             }
-            NumericType numericType = ((FieldType)FieldType).NumericType;
+            NumericType numericType = FieldType.NumericType;
             if (numericType != NumericType.NONE)
             {
                 if (!(internalTokenStream is NumericTokenStream))
@@ -615,7 +624,7 @@ namespace Lucene.Net.Documents
                 return internalTokenStream;
             }
 
-            if (!((FieldType)FieldType).IsTokenized)
+            if (!IndexableFieldType.IsTokenized)
             {
                 if (GetStringValue() == null)
                 {

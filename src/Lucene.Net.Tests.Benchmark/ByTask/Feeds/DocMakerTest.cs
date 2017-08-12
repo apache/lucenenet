@@ -141,28 +141,28 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             // Don't set anything, use the defaults
             doc = createTestNormsDocument(false, false, false, false);
-            assertTrue(doc.GetField(DocMaker.TITLE_FIELD).FieldType.OmitNorms);
-            assertFalse(doc.GetField(DocMaker.BODY_FIELD).FieldType.OmitNorms);
+            assertTrue(doc.GetField(DocMaker.TITLE_FIELD).IndexableFieldType.OmitNorms);
+            assertFalse(doc.GetField(DocMaker.BODY_FIELD).IndexableFieldType.OmitNorms);
 
             // Set norms to false
             doc = createTestNormsDocument(true, false, false, false);
-            assertTrue(doc.GetField(DocMaker.TITLE_FIELD).FieldType.OmitNorms);
-            assertFalse(doc.GetField(DocMaker.BODY_FIELD).FieldType.OmitNorms);
+            assertTrue(doc.GetField(DocMaker.TITLE_FIELD).IndexableFieldType.OmitNorms);
+            assertFalse(doc.GetField(DocMaker.BODY_FIELD).IndexableFieldType.OmitNorms);
 
             // Set norms to true
             doc = createTestNormsDocument(true, true, false, false);
-            assertFalse(doc.GetField(DocMaker.TITLE_FIELD).FieldType.OmitNorms);
-            assertFalse(doc.GetField(DocMaker.BODY_FIELD).FieldType.OmitNorms);
+            assertFalse(doc.GetField(DocMaker.TITLE_FIELD).IndexableFieldType.OmitNorms);
+            assertFalse(doc.GetField(DocMaker.BODY_FIELD).IndexableFieldType.OmitNorms);
 
             // Set body norms to false
             doc = createTestNormsDocument(false, false, true, false);
-            assertTrue(doc.GetField(DocMaker.TITLE_FIELD).FieldType.OmitNorms);
-            assertTrue(doc.GetField(DocMaker.BODY_FIELD).FieldType.OmitNorms);
+            assertTrue(doc.GetField(DocMaker.TITLE_FIELD).IndexableFieldType.OmitNorms);
+            assertTrue(doc.GetField(DocMaker.BODY_FIELD).IndexableFieldType.OmitNorms);
 
             // Set body norms to true
             doc = createTestNormsDocument(false, false, true, true);
-            assertTrue(doc.GetField(DocMaker.TITLE_FIELD).FieldType.OmitNorms);
-            assertFalse(doc.GetField(DocMaker.BODY_FIELD).FieldType.OmitNorms);
+            assertTrue(doc.GetField(DocMaker.TITLE_FIELD).IndexableFieldType.OmitNorms);
+            assertFalse(doc.GetField(DocMaker.BODY_FIELD).IndexableFieldType.OmitNorms);
         }
 
         [Test]

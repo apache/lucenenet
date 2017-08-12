@@ -38,7 +38,7 @@ namespace Lucene.Net.Analysis
     /// <para/>Here's an example usage, for an <see cref="int"/> field:
     ///
     /// <code>
-    ///     FieldType fieldType = new FieldType(TextField.TYPE_NOT_STORED)
+    ///     IndexableFieldType fieldType = new IndexableFieldType(TextField.TYPE_NOT_STORED)
     ///     {
     ///         OmitNorms = true,
     ///         IndexOptions = IndexOptions.DOCS_ONLY
@@ -52,7 +52,7 @@ namespace Lucene.Net.Analysis
     ///
     /// <code>
     ///     NumericTokenStream stream = new NumericTokenStream(precisionStep);
-    ///     FieldType fieldType = new FieldType(TextField.TYPE_NOT_STORED)
+    ///     IndexableFieldType fieldType = new IndexableFieldType(TextField.TYPE_NOT_STORED)
     ///     {
     ///         OmitNorms = true,
     ///         IndexOptions = IndexOptions.DOCS_ONLY

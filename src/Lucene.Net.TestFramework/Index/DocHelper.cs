@@ -264,7 +264,7 @@ namespace Lucene.Net.Index
             {
                 IIndexableField f = Fields[i];
                 Add(All, f);
-                if (f.FieldType.IsIndexed)
+                if (f.IndexableFieldType.IsIndexed)
                 {
                     Add(Indexed, f);
                 }
@@ -272,15 +272,15 @@ namespace Lucene.Net.Index
                 {
                     Add(Unindexed, f);
                 }
-                if (f.FieldType.StoreTermVectors)
+                if (f.IndexableFieldType.StoreTermVectors)
                 {
                     Add(Termvector, f);
                 }
-                if (f.FieldType.IsIndexed && !f.FieldType.StoreTermVectors)
+                if (f.IndexableFieldType.IsIndexed && !f.IndexableFieldType.StoreTermVectors)
                 {
                     Add(Notermvector, f);
                 }
-                if (f.FieldType.IsStored)
+                if (f.IndexableFieldType.IsStored)
                 {
                     Add(Stored, f);
                 }
@@ -288,15 +288,15 @@ namespace Lucene.Net.Index
                 {
                     Add(Unstored, f);
                 }
-                if (f.FieldType.IndexOptions == IndexOptions.DOCS_ONLY)
+                if (f.IndexableFieldType.IndexOptions == IndexOptions.DOCS_ONLY)
                 {
                     Add(NoTf, f);
                 }
-                if (f.FieldType.OmitNorms)
+                if (f.IndexableFieldType.OmitNorms)
                 {
                     Add(NoNorms, f);
                 }
-                if (f.FieldType.IndexOptions == IndexOptions.DOCS_ONLY)
+                if (f.IndexableFieldType.IndexOptions == IndexOptions.DOCS_ONLY)
                 {
                     Add(NoTf, f);
                 }

@@ -195,7 +195,7 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            public IIndexableFieldType FieldType
+            public IIndexableFieldType IndexableFieldType
             {
                 get { return fieldType; }
             }
