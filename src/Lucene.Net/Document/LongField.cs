@@ -169,7 +169,7 @@ namespace Lucene.Net.Documents
         public Int64Field(string name, long value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            m_fieldsData = Convert.ToInt64(value);
+            m_fieldsData = new Int64(value);
         }
 
         /// <summary>
@@ -189,7 +189,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("type.NumericType must be NumericType.INT64 but got " + type.NumericType);
             }
-            m_fieldsData = Convert.ToInt64(value);
+            m_fieldsData = new Int64(value);
         }
     }
 }

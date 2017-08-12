@@ -73,11 +73,11 @@ namespace Lucene.Net.Index
         float Boost { get; }
 
         /// <summary>
-        /// Non-null if this field has a binary value </summary>
+        /// Non-null if this field has a binary value. </summary>
         BytesRef GetBinaryValue();
 
         /// <summary>
-        /// Non-null if this field has a string value </summary>
+        /// Non-null if this field has a string value. </summary>
         string GetStringValue();
 
         /// <summary>
@@ -85,8 +85,50 @@ namespace Lucene.Net.Index
         TextReader GetReaderValue();
 
         /// <summary>
-        /// Non-null if this field has a numeric value </summary>
+        /// Non-null if this field has a numeric value. </summary>
         object GetNumericValue(); // LUCENENET TODO: Can we eliminate object?
+
+        /// <summary>
+        /// Non-null if this field has a numeric value.
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        byte? GetByteValue();
+
+        /// <summary>
+        /// Non-null if this field has a numeric value.
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        short? GetInt16Value();
+
+        /// <summary>
+        /// Non-null if this field has a numeric value.
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        int? GetInt32Value();
+
+        /// <summary>
+        /// Non-null if this field has a numeric value.
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        long? GetInt64Value();
+
+        /// <summary>
+        /// Non-null if this field has a numeric value.
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        float? GetSingleValue();
+
+        /// <summary>
+        /// Non-null if this field has a numeric value.
+        /// <para/>
+        /// LUCENENET specific
+        /// </summary>
+        double? GetDoubleValue();
 
         /// <summary>
         /// Creates the <see cref="TokenStream"/> used for indexing this field.  If appropriate,

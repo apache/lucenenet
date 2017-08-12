@@ -204,6 +204,42 @@ namespace Lucene.Net.Documents
                 return GetRealValue().GetNumericValue();
             }
 
+            // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
+            public virtual byte? GetByteValue()
+            {
+                return GetRealValue().GetByteValue();
+            }
+
+            // LUCENENET specific - created overload for Short, since we have no Number class in .NET
+            public virtual short? GetInt16Value()
+            {
+                return GetRealValue().GetInt16Value();
+            }
+
+            // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
+            public virtual int? GetInt32Value()
+            {
+                return GetRealValue().GetInt32Value();
+            }
+
+            // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
+            public virtual long? GetInt64Value()
+            {
+                return GetRealValue().GetInt64Value();
+            }
+
+            // LUCENENET specific - created overload for Single, since we have no Number class in .NET
+            public virtual float? GetSingleValue()
+            {
+                return GetRealValue().GetSingleValue();
+            }
+
+            // LUCENENET specific - created overload for Double, since we have no Number class in .NET
+            public virtual double? GetDoubleValue()
+            {
+                return GetRealValue().GetDoubleValue();
+            }
+
             public virtual IIndexableFieldType IndexableFieldType
             {
                 get { return GetRealValue().IndexableFieldType; }

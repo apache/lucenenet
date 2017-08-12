@@ -159,7 +159,7 @@ namespace Lucene.Net.Documents
         public SingleField(string name, float value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            m_fieldsData = Convert.ToSingle(value);
+            m_fieldsData = new Single(value);
         }
 
         /// <summary>
@@ -178,7 +178,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("type.NumericType must be NumericType.SINGLE but got " + type.NumericType);
             }
-            m_fieldsData = Convert.ToSingle(value);
+            m_fieldsData = new Single(value);
         }
     }
 }

@@ -195,6 +195,42 @@ namespace Lucene.Net.Index
                 return null;
             }
 
+            // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
+            public virtual byte? GetByteValue()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Short, since we have no Number class in .NET
+            public virtual short? GetInt16Value()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
+            public virtual int? GetInt32Value()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
+            public virtual long? GetInt64Value()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Single, since we have no Number class in .NET
+            public virtual float? GetSingleValue()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Double, since we have no Number class in .NET
+            public virtual double? GetDoubleValue()
+            {
+                return null;
+            }
+
             public IIndexableFieldType IndexableFieldType
             {
                 get { return fieldType; }
