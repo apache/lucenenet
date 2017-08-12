@@ -723,7 +723,6 @@
     <Compile Include="Support\IO\Compression\Inflater.cs" />
     <Compile Include="Support\Threading\IThreadRunnable.cs" />
     <Compile Include="Support\Number.cs" />
-    <Compile Include="Support\OS.cs" />
     <Compile Include="Support\IO\Compression\SharpZipLib.cs" />
     <Compile Include="Support\Threading\ThreadClass.cs" />
     <Compile Include="Support\Threading\ThreadLock.cs" />
