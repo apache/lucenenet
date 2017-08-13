@@ -1,9 +1,10 @@
-using System;
-using System.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using System;
+using System.Globalization;
+using System.IO;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Classification.Utils
@@ -107,9 +108,20 @@ namespace Lucene.Net.Classification.Utils
                             {
                                 doc.Add(new Field(storableField.Name, storableField.GetStringValue(), ft));
                             }
-                            else if (storableField.GetNumericValue() != null)
+                            else if (storableField.GetDoubleValue() != null) // LUCENENET specific - This will cast any numeric type an check whether there is a value without boxing/unboxing
                             {
-                                doc.Add(new Field(storableField.Name, storableField.GetNumericValue().ToString(), ft));
+                                // LUCENENET specific - need to pass invariant culture here (we are assuming the Field will be stored)
+                                // and we need to round-trip floating point numbers so we don't lose precision. 
+                                Type numericType = storableField.GetNumericType();
+                                if (typeof(float).Equals(numericType) || typeof(double).Equals(numericType))
+                                {
+                                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
+                                    doc.Add(new Field(storableField.Name, storableField.GetStringValue("R", CultureInfo.InvariantCulture), ft));
+                                }
+                                else
+                                {
+                                    doc.Add(new Field(storableField.Name, storableField.GetStringValue(CultureInfo.InvariantCulture), ft));
+                                }
                             }
                         }
                     }

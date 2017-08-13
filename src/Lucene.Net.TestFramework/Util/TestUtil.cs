@@ -1058,7 +1058,7 @@ namespace Lucene.Net.Util
                     switch (dvType)
                     {
                         case DocValuesType.NUMERIC:
-                            field2 = new NumericDocValuesField(field1.Name, (long)field1.GetNumericValue());
+                            field2 = new NumericDocValuesField(field1.Name, field1.GetInt64Value().Value);
                             break;
 
                         case DocValuesType.BINARY:
@@ -1078,19 +1078,19 @@ namespace Lucene.Net.Util
                     switch (numType)
                     {
                         case NumericType.INT32:
-                            field2 = new Int32Field(field1.Name, (int)field1.GetNumericValue(), field1.FieldType);
+                            field2 = new Int32Field(field1.Name, field1.GetInt32Value().Value, field1.FieldType);
                             break;
 
                         case NumericType.SINGLE:
-                            field2 = new SingleField(field1.Name, (int)field1.GetNumericValue(), field1.FieldType);
+                            field2 = new SingleField(field1.Name, field1.GetInt32Value().Value, field1.FieldType);
                             break;
 
                         case NumericType.INT64:
-                            field2 = new Int64Field(field1.Name, (int)field1.GetNumericValue(), field1.FieldType);
+                            field2 = new Int64Field(field1.Name, field1.GetInt32Value().Value, field1.FieldType);
                             break;
 
                         case NumericType.DOUBLE:
-                            field2 = new DoubleField(field1.Name, (int)field1.GetNumericValue(), field1.FieldType);
+                            field2 = new DoubleField(field1.Name, field1.GetInt32Value().Value, field1.FieldType);
                             break;
 
                         default:

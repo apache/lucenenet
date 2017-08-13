@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Index;
 using Lucene.Net.Util;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -288,6 +289,7 @@ namespace Lucene.Net.Documents
         /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
         /// <see cref="GetBinaryValue()"/> must be set.
         /// </summary>
+        /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
         public virtual string GetStringValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
             if (m_fieldsData is string || m_fieldsData is Number)
@@ -305,7 +307,10 @@ namespace Lucene.Net.Documents
         /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
         /// <see cref="GetBinaryValue()"/> must be set.
         /// </summary>
-        public virtual string GetStringValue(IFormatProvider provider) // LUCENENET specific: Added verb Get to make it more clear that this returns the value
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+        // LUCENENET specific overload.
+        public virtual string GetStringValue(IFormatProvider provider) 
         {
             if (m_fieldsData is string)
             {
@@ -321,7 +326,15 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public virtual string GetStringValue(string format) // LUCENENET specific: Added verb Get to make it more clear that this returns the value
+        /// <summary>
+        /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+        /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+        /// <see cref="GetBinaryValue()"/> must be set.
+        /// </summary>
+        /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+        // LUCENENET specific overload.
+        public virtual string GetStringValue(string format) 
         {
             if (m_fieldsData is string)
             {
@@ -337,7 +350,16 @@ namespace Lucene.Net.Documents
             }
         }
 
-        public virtual string GetStringValue(string format, IFormatProvider provider) // LUCENENET specific: Added verb Get to make it more clear that this returns the value
+        /// <summary>
+        /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+        /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+        /// <see cref="GetBinaryValue()"/> must be set.
+        /// </summary>
+        /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+        // LUCENENET specific overload.
+        public virtual string GetStringValue(string format, IFormatProvider provider)
         {
             if (m_fieldsData is string)
             {
@@ -572,6 +594,7 @@ namespace Lucene.Net.Documents
             }
         }
 
+        [Obsolete("In .NET, use of this method will cause boxing/unboxing. Instead, call GetNumericType() to check the underlying type and call the appropriate GetXXXValue() method to retrieve the value.")]
         public virtual object GetNumericValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
             // LUCENENET NOTE: Originally, there was a conversion from string to a numeric value here.
@@ -608,6 +631,50 @@ namespace Lucene.Net.Documents
             return null;
         }
 
+        /// <summary>
+        /// Gets the <see cref="Type"/> of the underlying value, or <c>null</c> if the value is not set or non-numeric.
+        /// <para/>
+        /// LUCENENET specific. In Java, the numeric type was determined by checking the type of  
+        /// <see cref="GetNumericValue()"/>. However, since there are no reference number
+        /// types in .NET, using <see cref="GetNumericValue()"/> so will cause boxing/unboxing. It is
+        /// therefore recommended to call this method to check the underlying type and the corresponding 
+        /// <c>Get*Value()</c> method to retrieve the value.
+        /// </summary>
+        public virtual Type GetNumericType() 
+        {
+            if (m_fieldsData is Int32)
+            {
+                return typeof(int);
+            }
+            else if (m_fieldsData is Int64)
+            {
+                return typeof(long);
+            }
+            else if (m_fieldsData is Single)
+            {
+                return typeof(float);
+            }
+            else if (m_fieldsData is Double)
+            {
+                return typeof(double);
+            }
+            else if (m_fieldsData is Int16)
+            {
+                return typeof(short);
+            }
+            else if (m_fieldsData is Byte)
+            {
+                return typeof(byte);
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Returns the field value as <see cref="byte"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
         // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
         public virtual byte? GetByteValue()
         {
@@ -621,6 +688,11 @@ namespace Lucene.Net.Documents
             }
         }
 
+        /// <summary>
+        /// Returns the field value as <see cref="short"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
         // LUCENENET specific - created overload for Short, since we have no Number class in .NET
         public virtual short? GetInt16Value()
         {
@@ -634,6 +706,11 @@ namespace Lucene.Net.Documents
             }
         }
 
+        /// <summary>
+        /// Returns the field value as <see cref="int"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
         // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
         public virtual int? GetInt32Value()
         {
@@ -647,6 +724,11 @@ namespace Lucene.Net.Documents
             }
         }
 
+        /// <summary>
+        /// Returns the field value as <see cref="long"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
         // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
         public virtual long? GetInt64Value()
         {
@@ -660,6 +742,11 @@ namespace Lucene.Net.Documents
             }
         }
 
+        /// <summary>
+        /// Returns the field value as <see cref="float"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
         // LUCENENET specific - created overload for Single, since we have no Number class in .NET
         public virtual float? GetSingleValue()
         {
@@ -673,6 +760,11 @@ namespace Lucene.Net.Documents
             }
         }
 
+        /// <summary>
+        /// Returns the field value as <see cref="double"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
         // LUCENENET specific - created overload for Double, since we have no Number class in .NET
         public virtual double? GetDoubleValue()
         {
@@ -686,7 +778,8 @@ namespace Lucene.Net.Documents
             }
         }
 
-
+        /// <summary>
+        /// Non-null if this field has a binary value. </summary>
         public virtual BytesRef GetBinaryValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
             if (m_fieldsData is BytesRef)
@@ -728,7 +821,7 @@ namespace Lucene.Net.Documents
         }
 
         /// <summary>
-        /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="IIndexableFieldType"/> </summary>
+        /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="IIndexableFieldType"/>. </summary>
         public virtual IIndexableFieldType IndexableFieldType
         {
             get { return m_type; }
@@ -776,9 +869,14 @@ namespace Lucene.Net.Documents
                 return internalTokenStream;
             }
 
+            // LUCENENET specific - If the underlying type is numeric, we need
+            // to ensure it is setup to be round-tripped.
+            string format = (numericType == NumericType.SINGLE || numericType == NumericType.DOUBLE) ? "R" : null;
+            string stringValue = GetStringValue(format, CultureInfo.InvariantCulture);
+
             if (!IndexableFieldType.IsTokenized)
             {
-                if (GetStringValue() == null)
+                if (stringValue == null)
                 {
                     throw new System.ArgumentException("Non-Tokenized Fields must have a String value");
                 }
@@ -788,7 +886,7 @@ namespace Lucene.Net.Documents
                     // (attributes,...) if not needed (stored field loading)
                     internalTokenStream = new StringTokenStream();
                 }
-                ((StringTokenStream)internalTokenStream).SetValue(GetStringValue()); // LUCENENET TODO: API Make overload that accepts format/provider
+                ((StringTokenStream)internalTokenStream).SetValue(stringValue);
                 return internalTokenStream;
             }
 
@@ -800,9 +898,9 @@ namespace Lucene.Net.Documents
             {
                 return analyzer.GetTokenStream(Name, GetReaderValue());
             }
-            else if (GetStringValue() != null)
+            else if (stringValue != null)
             {
-                TextReader sr = new StringReader(GetStringValue()); // LUCENENET TODO: API Make overload that accepts format/provider
+                TextReader sr = new StringReader(stringValue);
                 return analyzer.GetTokenStream(Name, sr);
             }
 

@@ -107,51 +107,53 @@ namespace Lucene.Net.Codecs.SimpleText
 
             Write(TYPE);
 
-            var n = field.GetNumericValue();
-
-            if (n != null)
+            // LUCENENET specific - To avoid boxing/unboxing, we don't
+            // call GetNumericValue(). Instead, we check the field type and then
+            // call the appropriate conversion method. 
+            Type numericType = field.GetNumericType();
+            if (numericType != null)
             {
-                if (n is sbyte? || n is short? || n is int?)
+                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
                 {
                     Write(TYPE_INT);
                     NewLine();
 
                     Write(VALUE);
-                    Write(((int)n).ToString(CultureInfo.InvariantCulture));
+                    Write(field.GetStringValue(CultureInfo.InvariantCulture));
                     NewLine();
                 }
-                else if (n is long?)
+                else if (typeof(long).Equals(numericType))
                 {
                     Write(TYPE_LONG);
                     NewLine();
 
                     Write(VALUE);
-                    Write(((long)n).ToString(CultureInfo.InvariantCulture));
+                    Write(field.GetStringValue(CultureInfo.InvariantCulture));
                     NewLine();
                 }
-                else if (n is float?)
+                else if (typeof(float).Equals(numericType))
                 {
                     Write(TYPE_FLOAT);
                     NewLine();
 
                     Write(VALUE);
-                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564/181087
-                    Write(((float)n).ToString("R", CultureInfo.InvariantCulture));
+                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
+                    Write(field.GetStringValue("R", CultureInfo.InvariantCulture));
                     NewLine();
                 }
-                else if (n is double?)
+                else if (typeof(double).Equals(numericType))
                 {
                     Write(TYPE_DOUBLE);
                     NewLine();
 
                     Write(VALUE);
-                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564/181087
-                    Write(((double)n).ToString("R", CultureInfo.InvariantCulture));
+                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
+                    Write(field.GetStringValue("R", CultureInfo.InvariantCulture));
                     NewLine();
                 }
                 else
                 {
-                    throw new ArgumentException("cannot store numeric type " + n.GetType());
+                    throw new ArgumentException("cannot store numeric type " + numericType);
                 }
             }
             else

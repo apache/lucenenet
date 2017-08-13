@@ -117,28 +117,31 @@ namespace Lucene.Net.Codecs.Lucene3x
             // specific encodings for different fields?  and apps
             // can customize...
 
-            object number = field.GetNumericValue();
-            if (number != null)
+            // LUCENENET specific - To avoid boxing/unboxing, we don't
+            // call GetNumericValue(). Instead, we check the field type and then
+            // call the appropriate conversion method. 
+            Type numericType = field.GetNumericType();
+            if (numericType != null)
             {
-                if (number is sbyte? || number is short? || number is int?)
+                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
                 {
                     bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_INT;
                 }
-                else if (number is long?)
+                else if (typeof(long).Equals(numericType))
                 {
                     bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_LONG;
                 }
-                else if (number is float?)
+                else if (typeof(float).Equals(numericType))
                 {
                     bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_FLOAT;
                 }
-                else if (number is double?)
+                else if (typeof(double).Equals(numericType))
                 {
                     bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_DOUBLE;
                 }
                 else
                 {
-                    throw new System.ArgumentException("cannot store numeric type " + number.GetType());
+                    throw new System.ArgumentException("cannot store numeric type " + numericType);
                 }
                 @string = null;
                 bytes = null;
@@ -174,21 +177,21 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
             else
             {
-                if (number is sbyte? || number is short? || number is int?)
+                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
                 {
-                    FieldsStream.WriteInt32((int)number);
+                    FieldsStream.WriteInt32(field.GetInt32Value().Value);
                 }
-                else if (number is long?)
+                else if (typeof(long).Equals(numericType))
                 {
-                    FieldsStream.WriteInt64((long)number);
+                    FieldsStream.WriteInt64(field.GetInt64Value().Value);
                 }
-                else if (number is float?)
+                else if (typeof(float).Equals(numericType))
                 {
-                    FieldsStream.WriteInt32(Number.SingleToInt32Bits((float)number));
+                    FieldsStream.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
                 }
-                else if (number is double?)
+                else if (typeof(double).Equals(numericType))
                 {
-                    FieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits((double)number));
+                    FieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
                 }
                 else
                 {

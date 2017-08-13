@@ -2021,12 +2021,37 @@ namespace Lucene.Net.Index
                 return "baz";
             }
 
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified provider
+            public virtual string GetStringValue(IFormatProvider provider)
+            {
+                return GetStringValue();
+            }
+
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified format
+            public virtual string GetStringValue(string format)
+            {
+                return GetStringValue();
+            }
+
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified format and provider
+            public virtual string GetStringValue(string format, IFormatProvider provider)
+            {
+                return GetStringValue();
+            }
+
             public TextReader GetReaderValue()
             {
                 return null;
             }
 
             public object GetNumericValue()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - Since we have no numeric reference types in .NET, this method was added to check
+            // the numeric type of the inner field without boxing/unboxing.
+            public virtual Type GetNumericType()
             {
                 return null;
             }

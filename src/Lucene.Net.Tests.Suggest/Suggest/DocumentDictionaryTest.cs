@@ -160,7 +160,7 @@ namespace Lucene.Net.Search.Suggest
                 //Document doc = docs.Remove(f.Utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
-                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.GetNumericValue()) : 0);
+                assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
                 assertTrue(inputIterator.Payload.Equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
             }
 
@@ -203,7 +203,7 @@ namespace Lucene.Net.Search.Suggest
                 docs.Remove(field);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
-                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.GetNumericValue()) : 0);
+                assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
                 assertEquals(inputIterator.Payload, null);
             }
 
@@ -249,7 +249,7 @@ namespace Lucene.Net.Search.Suggest
                 //Document doc = docs.remove(f.utf8ToString());
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
-                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.GetNumericValue()) : 0);
+                assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
                 assertTrue(inputIterator.Payload.equals(doc.GetField(PAYLOAD_FIELD_NAME).GetBinaryValue()));
                 ISet<BytesRef> oriCtxs = new HashSet<BytesRef>();
                 IEnumerable<BytesRef> contextSet = inputIterator.Contexts;
@@ -327,7 +327,7 @@ namespace Lucene.Net.Search.Suggest
                 docs.Remove(field);
                 assertTrue(f.equals(new BytesRef(doc.Get(FIELD_NAME))));
                 IIndexableField weightField = doc.GetField(WEIGHT_FIELD_NAME);
-                assertEquals(inputIterator.Weight, (weightField != null) ? Convert.ToInt64(weightField.GetNumericValue()) : 0);
+                assertEquals(inputIterator.Weight, (weightField != null) ? weightField.GetInt64ValueOrDefault() : 0);
                 assertEquals(inputIterator.Payload, null);
             }
 

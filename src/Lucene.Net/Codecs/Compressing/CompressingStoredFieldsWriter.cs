@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using Document = Lucene.Net.Documents.Document;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -269,61 +270,31 @@ namespace Lucene.Net.Codecs.Compressing
             BytesRef bytes;
             string @string;
 
-            object number = (object)field.GetNumericValue();
-            if (number != null)
+            // LUCENENET specific - To avoid boxing/unboxing, we don't
+            // call GetNumericValue(). Instead, we check the field type and then
+            // call the appropriate conversion method. 
+            Type numericType = field.GetNumericType();
+            if (numericType != null)
             {
-                if (number is string)
+                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
                 {
-                    string numStr = number.ToString();
-                    sbyte dummySbyte;
-                    short dummyShort;
-                    int dummyInt;
-                    long dummyLong;
-                    float dummyFloat;
-                    double dummyDouble;
-                    if (sbyte.TryParse(numStr, out dummySbyte) || short.TryParse(numStr, out dummyShort) || int.TryParse(numStr, out dummyInt))
-                    {
-                        bits = NUMERIC_INT32;
-                    }
-                    else if (long.TryParse(numStr, out dummyLong))
-                    {
-                        bits = NUMERIC_INT64;
-                    }
-                    else if (float.TryParse(numStr, out dummyFloat))
-                    {
-                        bits = NUMERIC_SINGLE;
-                    }
-                    else if (double.TryParse(numStr, out dummyDouble))
-                    {
-                        bits = NUMERIC_DOUBLE;
-                    }
-                    else
-                    {
-                        throw new System.ArgumentException("cannot store numeric type " + number.GetType());
-                    }
+                    bits = NUMERIC_INT32;
+                }
+                else if (typeof(long).Equals(numericType))
+                {
+                    bits = NUMERIC_INT64;
+                }
+                else if (typeof(float).Equals(numericType))
+                {
+                    bits = NUMERIC_SINGLE;
+                }
+                else if (typeof(double).Equals(numericType))
+                {
+                    bits = NUMERIC_DOUBLE;
                 }
                 else
                 {
-                    if (number is sbyte || number is short || number is int)
-                    {
-                        bits = NUMERIC_INT32;
-                    }
-                    else if (number is long)
-                    {
-                        bits = NUMERIC_INT64;
-                    }
-                    else if (number is float)
-                    {
-                        bits = NUMERIC_SINGLE;
-                    }
-                    else if (number is double)
-                    {
-                        bits = NUMERIC_DOUBLE;
-                    }
-                    else
-                    {
-                        throw new System.ArgumentException("cannot store numeric type " + number.GetType());
-                    }
+                    throw new System.ArgumentException("cannot store numeric type " + numericType);
                 }
 
                 @string = null;
@@ -343,7 +314,7 @@ namespace Lucene.Net.Codecs.Compressing
                     @string = field.GetStringValue();
                     if (@string == null)
                     {
-                        throw new System.ArgumentException("field " + field.Name + " is stored but does not have binaryValue, stringValue nor numericValue");
+                        throw new System.ArgumentException("field " + field.Name + " is stored but does not have BinaryValue, StringValue nor NumericValue");
                     }
                 }
             }
@@ -362,59 +333,25 @@ namespace Lucene.Net.Codecs.Compressing
             }
             else
             {
-                if (number is string)
+                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
                 {
-                    string numStr = number.ToString();
-                    sbyte dummySbyte;
-                    short dummyShort;
-                    int dummyInt;
-                    long dummyLong;
-                    float dummyFloat;
-                    double dummyDouble;
-                    if (sbyte.TryParse(numStr, out dummySbyte) || short.TryParse(numStr, out dummyShort) ||
-                        int.TryParse(numStr, out dummyInt))
-                    {
-                        bits = NUMERIC_INT32;
-                    }
-                    else if (long.TryParse(numStr, out dummyLong))
-                    {
-                        bits = NUMERIC_INT64;
-                    }
-                    else if (float.TryParse(numStr, out dummyFloat))
-                    {
-                        bits = NUMERIC_SINGLE;
-                    }
-                    else if (double.TryParse(numStr, out dummyDouble))
-                    {
-                        bits = NUMERIC_DOUBLE;
-                    }
-                    else
-                    {
-                        throw new System.ArgumentException("cannot store numeric type " + number.GetType());
-                    }
+                    bufferedDocs.WriteInt32(field.GetInt32Value().Value);
+                }
+                else if (typeof(long).Equals(numericType))
+                {
+                    bufferedDocs.WriteInt64(field.GetInt64Value().Value);
+                }
+                else if (typeof(float).Equals(numericType))
+                {
+                    bufferedDocs.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
+                }
+                else if (typeof(double).Equals(numericType))
+                {
+                    bufferedDocs.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
                 }
                 else
                 {
-                    if (number is sbyte || number is short || number is int)
-                    {
-                        bufferedDocs.WriteInt32((int)number);
-                    }
-                    else if (number is long)
-                    {
-                        bufferedDocs.WriteInt64((long)number);
-                    }
-                    else if (number is float)
-                    {
-                        bufferedDocs.WriteInt32(Number.SingleToInt32Bits((float)number));
-                    }
-                    else if (number is double)
-                    {
-                        bufferedDocs.WriteInt64(BitConverter.DoubleToInt64Bits((double)number));
-                    }
-                    else
-                    {
-                        throw new Exception("Cannot get here");
-                    }
+                    throw new Exception("Cannot get here");
                 }
             }
         }

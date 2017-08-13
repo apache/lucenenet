@@ -52,7 +52,7 @@ namespace Lucene.Net.Documents
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(6d, (double)field.GetNumericValue(), 0.0d);
+                Assert.AreEqual(6d, field.GetDoubleValue().Value, 0.0d);
             }
         }
 
@@ -74,7 +74,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(6d, BitConverter.Int64BitsToDouble((long)field.GetNumericValue()), 0.0d);
+            Assert.AreEqual(6d, BitConverter.Int64BitsToDouble(field.GetInt64Value().Value), 0.0d);
         }
 
         [Test]
@@ -95,7 +95,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(6f, Number.Int32BitsToSingle(Convert.ToInt32(field.GetNumericValue())), 0.0f);
+            Assert.AreEqual(6f, Number.Int32BitsToSingle(field.GetInt32Value().Value), 0.0f);
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace Lucene.Net.Documents
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(6f, (float)field.GetNumericValue(), 0.0f);
+                Assert.AreEqual(6f, field.GetSingleValue().Value, 0.0f);
             }
         }
 
@@ -142,7 +142,7 @@ namespace Lucene.Net.Documents
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(6, (int)field.GetNumericValue());
+                Assert.AreEqual(6, field.GetInt32Value().Value);
             }
         }
 
@@ -164,7 +164,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(6L, (long)field.GetNumericValue());
+            Assert.AreEqual(6L, field.GetInt64Value().Value);
         }
 
         [Test]
@@ -187,7 +187,7 @@ namespace Lucene.Net.Documents
                 TrySetStringValue(field);
                 TrySetTokenStreamValue(field);
 
-                Assert.AreEqual(6L, (long)field.GetNumericValue());
+                Assert.AreEqual(6L, field.GetInt64Value().Value);
             }
         }
 
@@ -371,7 +371,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(5, (int)field.GetNumericValue());
+            Assert.AreEqual(5, field.GetInt32Value());
         }
 
         [Test]
@@ -391,7 +391,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(5D, (double)field.GetNumericValue(), 0.0D);
+            Assert.AreEqual(5D, field.GetDoubleValue().Value, 0.0D);
         }
 
         [Test]
@@ -411,7 +411,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(5f, (float)field.GetNumericValue(), 0.0f);
+            Assert.AreEqual(5f, field.GetSingleValue().Value, 0.0f);
         }
 
         [Test]
@@ -431,7 +431,7 @@ namespace Lucene.Net.Documents
             TrySetStringValue(field);
             TrySetTokenStreamValue(field);
 
-            Assert.AreEqual(5L, (long)field.GetNumericValue());
+            Assert.AreEqual(5L, field.GetInt64Value().Value);
         }
 
         private void TrySetByteValue(Field f)

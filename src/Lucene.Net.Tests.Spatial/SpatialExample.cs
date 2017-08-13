@@ -190,7 +190,7 @@ namespace Lucene.Net.Spatial
             gotIds = new int[docs.TotalHits];
             for (int i = 0; i < gotIds.Length; i++)
             {
-                gotIds[i] = Convert.ToInt32(indexSearcher.Doc(docs.ScoreDocs[i].Doc).GetField("id").GetNumericValue(), CultureInfo.InvariantCulture);
+                gotIds[i] = indexSearcher.Doc(docs.ScoreDocs[i].Doc).GetField("id").GetInt32Value().Value;
             }
             assertArrayEquals(ids, gotIds);
         }

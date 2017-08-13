@@ -11,6 +11,7 @@ using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -512,7 +513,7 @@ namespace Lucene.Net.Search.Highlight
 
             for (int i = 0; i < hits.TotalHits; i++)
             {
-                String text = searcher.Doc(hits.ScoreDocs[i].Doc).GetField(NUMERIC_FIELD_NAME).GetNumericValue().toString();
+                String text = searcher.Doc(hits.ScoreDocs[i].Doc).GetField(NUMERIC_FIELD_NAME).GetStringValue(CultureInfo.InvariantCulture);
                 TokenStream tokenStream = analyzer.GetTokenStream(FIELD_NAME, text);
 
                 highlighter.TextFragmenter = (new SimpleFragmenter(40));
