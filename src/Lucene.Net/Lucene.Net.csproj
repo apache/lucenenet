@@ -398,6 +398,7 @@
     <Compile Include="Support\Document\DocumentExtensions.cs" />
     <Compile Include="Support\Document\Field.cs" />
     <Compile Include="Support\Document\IndexableFieldExtensions.cs" />
+    <Compile Include="Support\EnumEnumerator.cs" />
     <Compile Include="Support\IO\Compression\LZOCompressor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AutomatonQuery.cs" />
