@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using Lucene.Net.Support;
 
 namespace Lucene.Net.Util

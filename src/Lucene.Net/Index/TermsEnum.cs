@@ -1,6 +1,9 @@
-using Lucene.Net.Util;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+
+using Lucene.Net.Util;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Index
 {
@@ -24,8 +27,6 @@ namespace Lucene.Net.Index
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
-    using System.Collections;
-    using Lucene.Net.Support;
 
     /// <summary>
     /// Iterator to seek (<see cref="SeekCeil(BytesRef)"/>, 
