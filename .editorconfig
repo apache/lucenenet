@@ -1,0 +1,5 @@
+# Code Files
+[*.{cs,csx}]
+indent_style = space
+trim_trailing_whitespace = true
+csharp_style_var_for_built_in_types = true:suggestion
