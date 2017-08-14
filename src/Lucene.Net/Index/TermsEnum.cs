@@ -24,6 +24,8 @@ namespace Lucene.Net.Index
     using AttributeSource = Lucene.Net.Util.AttributeSource;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
+    using System.Collections;
+    using Lucene.Net.Support;
 
     /// <summary>
     /// Iterator to seek (<see cref="SeekCeil(BytesRef)"/>, 
@@ -46,7 +48,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public abstract class TermsEnum : IBytesRefIterator
+    public abstract class TermsEnum : IBytesRefIterator, IEnumerable<BytesRef>
     {
         public abstract IComparer<BytesRef> Comparer { get; } // LUCENENET specific - must supply implementation for the interface
 
@@ -250,6 +252,16 @@ namespace Lucene.Net.Index
         public virtual TermState GetTermState() // LUCENENET NOTE: Renamed from TermState()
         {
             return new TermStateAnonymousInnerClassHelper(this);
+        }
+
+        public IEnumerator<BytesRef> GetEnumerator()
+        {
+            return EnumEnumerator<BytesRef>.CreateWithCapturedNext(Next);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         private class TermStateAnonymousInnerClassHelper : TermState

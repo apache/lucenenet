@@ -1,4 +1,7 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -22,7 +25,7 @@ namespace Lucene.Net.Util
     /// <summary>
     /// A simple iterator interface for <see cref="BytesRef"/> iteration.
     /// </summary>
-    public interface IBytesRefIterator
+    public interface IBytesRefIterator : IEnumerable<BytesRef>
     {
         /// <summary>
         /// Increments the iteration to the next <see cref="BytesRef"/> in the iterator.
@@ -71,6 +74,16 @@ namespace Lucene.Net.Util
             public IComparer<BytesRef> Comparer
             {
                 get { return null; }
+            }
+
+            public IEnumerator<BytesRef> GetEnumerator()
+            {
+                return new EnumEnumerator<BytesRef>(() => false, () => null);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
             }
         }
     }

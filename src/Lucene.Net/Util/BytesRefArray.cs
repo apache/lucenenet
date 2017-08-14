@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Util
 {
@@ -236,6 +238,16 @@ namespace Lucene.Net.Util
                 {
                     return comp;
                 }
+            }
+
+            public IEnumerator<BytesRef> GetEnumerator()
+            {
+                return EnumEnumerator<BytesRef>.CreateWithCapturedNext(Next);
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
             }
         }
     }
