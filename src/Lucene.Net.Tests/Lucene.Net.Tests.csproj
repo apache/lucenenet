@@ -524,6 +524,7 @@
     <Compile Include="Support\IO\TestStreamTokenizer.cs" />
     <Compile Include="Support\SmallObject.cs" />
     <Compile Include="Support\TestDictionaryExtensions.cs" />
+    <Compile Include="Support\TestEnumEnumerator.cs" />
     <Compile Include="Support\TestPriorityQueue.cs" />
     <Compile Include="Support\TestStringTokenizer.cs" />
     <Compile Include="Support\Threading\TestCloseableThreadLocal.cs" />
