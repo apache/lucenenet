@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -162,31 +163,30 @@ namespace Lucene.Net.Codecs.Lucene40
             // can customize...
 
             // LUCENENET specific - To avoid boxing/unboxing, we don't
-            // call GetNumericValue(). Instead, we check the field type and then
+            // call GetNumericValue(). Instead, we check the field.NumericType and then
             // call the appropriate conversion method. 
-            Type numericType = field.GetNumericType();
-            if (numericType != null)
+            if (field.NumericType != NumericFieldType.NONE)
             {
-                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
+                switch (field.NumericType)
                 {
-                    bits |= FIELD_IS_NUMERIC_INT;
+                    case NumericFieldType.BYTE:
+                    case NumericFieldType.INT16:
+                    case NumericFieldType.INT32:
+                        bits |= FIELD_IS_NUMERIC_INT;
+                        break;
+                    case NumericFieldType.INT64:
+                        bits |= FIELD_IS_NUMERIC_LONG;
+                        break;
+                    case NumericFieldType.SINGLE:
+                        bits |= FIELD_IS_NUMERIC_FLOAT;
+                        break;
+                    case NumericFieldType.DOUBLE:
+                        bits |= FIELD_IS_NUMERIC_DOUBLE;
+                        break;
+                    default:
+                        throw new System.ArgumentException("cannot store numeric type " + field.NumericType);
                 }
-                else if (typeof(long).Equals(numericType))
-                {
-                    bits |= FIELD_IS_NUMERIC_LONG;
-                }
-                else if (typeof(float).Equals(numericType))
-                {
-                    bits |= FIELD_IS_NUMERIC_FLOAT;
-                }
-                else if (typeof(double).Equals(numericType))
-                {
-                    bits |= FIELD_IS_NUMERIC_DOUBLE;
-                }
-                else
-                {
-                    throw new System.ArgumentException("cannot store numeric type " + numericType);
-                }
+
                 @string = null;
                 bytes = null;
             }
@@ -221,25 +221,24 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             else
             {
-                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
+                switch (field.NumericType)
                 {
-                    fieldsStream.WriteInt32(field.GetInt32Value().Value);
-                }
-                else if (typeof(long).Equals(numericType))
-                {
-                    fieldsStream.WriteInt64(field.GetInt64Value().Value);
-                }
-                else if (typeof(float).Equals(numericType))
-                {
-                    fieldsStream.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
-                }
-                else if (typeof(double).Equals(numericType))
-                {
-                    fieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
-                }
-                else
-                {
-                    throw new InvalidOperationException("Cannot get here");
+                    case NumericFieldType.BYTE:
+                    case NumericFieldType.INT16:
+                    case NumericFieldType.INT32:
+                        fieldsStream.WriteInt32(field.GetInt32Value().Value);
+                        break;
+                    case NumericFieldType.INT64:
+                        fieldsStream.WriteInt64(field.GetInt64Value().Value);
+                        break;
+                    case NumericFieldType.SINGLE:
+                        fieldsStream.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
+                        break;
+                    case NumericFieldType.DOUBLE:
+                        fieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
+                        break;
+                    default:
+                        throw new InvalidOperationException("Cannot get here");
                 }
             }
         }

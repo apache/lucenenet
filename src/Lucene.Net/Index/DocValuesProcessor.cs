@@ -73,10 +73,9 @@ namespace Lucene.Net.Index
                 }
                 else if (dvType == DocValuesType.NUMERIC)
                 {
-                    Type numericType = field.GetNumericType();
-                    if (!(typeof(long).Equals(numericType)))
+                    if (field.NumericType != NumericFieldType.INT64)
                     {
-                        throw new System.ArgumentException("illegal type " + numericType + ": DocValues types must be " + typeof(long));
+                        throw new System.ArgumentException("illegal type " + field.NumericType + ": DocValues types must be " + NumericFieldType.INT64);
                     }
                     AddNumericField(fieldInfo, docID, field.GetInt64ValueOrDefault());
                 }

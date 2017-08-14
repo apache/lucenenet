@@ -129,14 +129,14 @@ namespace Lucene.Net.Documents
             TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericType = NumericType.SINGLE;
+            TYPE_NOT_STORED.NumericType = Documents.NumericType.SINGLE;
             TYPE_NOT_STORED.Freeze();
 
             TYPE_STORED.IsIndexed = true;
             TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericType = NumericType.SINGLE;
+            TYPE_STORED.NumericType = Documents.NumericType.SINGLE;
             TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
@@ -159,7 +159,7 @@ namespace Lucene.Net.Documents
         public SingleField(string name, float value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            m_fieldsData = new Single(value);
+            FieldsData = new Single(value);
         }
 
         /// <summary>
@@ -174,11 +174,11 @@ namespace Lucene.Net.Documents
         public SingleField(string name, float value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericType != NumericType.SINGLE)
+            if (type.NumericType != Documents.NumericType.SINGLE)
             {
                 throw new System.ArgumentException("type.NumericType must be NumericType.SINGLE but got " + type.NumericType);
             }
-            m_fieldsData = new Single(value);
+            FieldsData = new Single(value);
         }
     }
 }

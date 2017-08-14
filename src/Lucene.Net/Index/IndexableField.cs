@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using System;
 using System.IO;
 
@@ -120,19 +121,28 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Non-null if this field has a numeric value. </summary>
-        [Obsolete("In .NET, use of this method will cause boxing/unboxing. Instead, call GetNumericType() to check the underlying type and call the appropriate GetXXXValue() method to retrieve the value.")]
-        object GetNumericValue(); 
+        [Obsolete("In .NET, use of this method will cause boxing/unboxing. Instead, use the NumericType property to check the underlying type and call the appropriate GetXXXValue() method to retrieve the value.")]
+        object GetNumericValue();
 
         /// <summary>
-        /// Gets the <see cref="Type"/> of the underlying value, or <c>null</c> if the value is not set or non-numeric.
+        /// Gets the <see cref="NumericFieldType"/> of the underlying value, or <see cref="NumericFieldType.NONE"/> if the value is not set or non-numeric.
         /// <para/>
-        /// LUCENENET specific. In Java, the numeric type was determined by checking the type of  
+        /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is 
+        /// this is represents the current state of the field (whether being written or read) and the
+        /// <see cref="FieldType"/> property represents instructions on how the field will be written,
+        /// but does not re-populate when reading back from an index (it is write-only).
+        /// <para/>
+        /// In Java, the numeric type was determined by checking the type of  
         /// <see cref="GetNumericValue()"/>. However, since there are no reference number
         /// types in .NET, using <see cref="GetNumericValue()"/> so will cause boxing/unboxing. It is
-        /// therefore recommended to call this method to check the underlying type and the corresponding 
+        /// therefore recommended to use this property to check the underlying type and the corresponding 
         /// <c>Get*Value()</c> method to retrieve the value.
+        /// <para/>
+        /// NOTE: Since Lucene codecs do not support <see cref="NumericFieldType.BYTE"/> or <see cref="NumericFieldType.INT16"/>,
+        /// fields created with these types will always be <see cref="NumericFieldType.INT32"/> when read back from the index.
         /// </summary>
-        Type GetNumericType();
+        // LUCENENET specific
+        NumericFieldType NumericType { get; }
 
         /// <summary>
         /// Returns the field value as <see cref="byte"/> or <c>null</c> if the type

@@ -2051,9 +2051,9 @@ namespace Lucene.Net.Index
 
             // LUCENENET specific - Since we have no numeric reference types in .NET, this method was added to check
             // the numeric type of the inner field without boxing/unboxing.
-            public virtual Type GetNumericType()
+            public virtual NumericFieldType NumericType
             {
-                return null;
+                get { return NumericFieldType.NONE; }
             }
 
             // LUCENENET specific - created overload for Byte, since we have no Number class in .NET

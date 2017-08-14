@@ -43,7 +43,7 @@ namespace Lucene.Net.Collation
         {
             this.name = name;
             this.collator = (Collator)collator.Clone();
-            m_fieldsData = bytes; // so wrong setters cannot be called
+            FieldsData = bytes; // so wrong setters cannot be called
         }
 
         public override string Name

@@ -139,14 +139,14 @@ namespace Lucene.Net.Documents
             TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericType = NumericType.INT64;
+            TYPE_NOT_STORED.NumericType = Documents.NumericType.INT64;
             TYPE_NOT_STORED.Freeze();
 
             TYPE_STORED.IsIndexed = true;
             TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericType = NumericType.INT64;
+            TYPE_STORED.NumericType = Documents.NumericType.INT64;
             TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Documents
         public Int64Field(string name, long value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            m_fieldsData = new Int64(value);
+            FieldsData = new Int64(value);
         }
 
         /// <summary>
@@ -185,11 +185,11 @@ namespace Lucene.Net.Documents
         public Int64Field(string name, long value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericType != NumericType.INT64)
+            if (type.NumericType != Documents.NumericType.INT64)
             {
                 throw new System.ArgumentException("type.NumericType must be NumericType.INT64 but got " + type.NumericType);
             }
-            m_fieldsData = new Int64(value);
+            FieldsData = new Int64(value);
         }
     }
 }

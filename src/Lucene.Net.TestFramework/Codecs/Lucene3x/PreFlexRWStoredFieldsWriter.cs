@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using System;
 using System.Diagnostics;
 
@@ -36,25 +37,25 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning disable 612, 618
     internal sealed class PreFlexRWStoredFieldsWriter : StoredFieldsWriter
     {
-        private readonly Directory Directory;
-        private readonly string Segment;
-        private IndexOutput FieldsStream;
-        private IndexOutput IndexStream;
+        private readonly Directory directory;
+        private readonly string segment;
+        private IndexOutput fieldsStream;
+        private IndexOutput indexStream;
 
         public PreFlexRWStoredFieldsWriter(Directory directory, string segment, IOContext context)
         {
             Debug.Assert(directory != null);
-            this.Directory = directory;
-            this.Segment = segment;
+            this.directory = directory;
+            this.segment = segment;
 
             bool success = false;
             try
             {
-                FieldsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), context);
-                IndexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION), context);
+                fieldsStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), context);
+                indexStream = directory.CreateOutput(IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION), context);
 
-                FieldsStream.WriteInt32(Lucene3xStoredFieldsReader.FORMAT_CURRENT);
-                IndexStream.WriteInt32(Lucene3xStoredFieldsReader.FORMAT_CURRENT);
+                fieldsStream.WriteInt32(Lucene3xStoredFieldsReader.FORMAT_CURRENT);
+                indexStream.WriteInt32(Lucene3xStoredFieldsReader.FORMAT_CURRENT);
 
                 success = true;
             }
@@ -73,8 +74,8 @@ namespace Lucene.Net.Codecs.Lucene3x
         // in the correct fields format.
         public override void StartDocument(int numStoredFields)
         {
-            IndexStream.WriteInt64(FieldsStream.GetFilePointer());
-            FieldsStream.WriteVInt32(numStoredFields);
+            indexStream.WriteInt64(fieldsStream.GetFilePointer());
+            fieldsStream.WriteVInt32(numStoredFields);
         }
 
         protected override void Dispose(bool disposing)
@@ -83,11 +84,11 @@ namespace Lucene.Net.Codecs.Lucene3x
             {
                 try
                 {
-                    IOUtils.Dispose(FieldsStream, IndexStream);
+                    IOUtils.Dispose(fieldsStream, indexStream);
                 }
                 finally
                 {
-                    FieldsStream = IndexStream = null;
+                    fieldsStream = indexStream = null;
                 }
             }
         }
@@ -103,12 +104,12 @@ namespace Lucene.Net.Codecs.Lucene3x
 #pragma warning restore 168
             {
             }
-            IOUtils.DeleteFilesIgnoringExceptions(Directory, IndexFileNames.SegmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(Segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
+            IOUtils.DeleteFilesIgnoringExceptions(directory, IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_EXTENSION), IndexFileNames.SegmentFileName(segment, "", Lucene3xStoredFieldsReader.FIELDS_INDEX_EXTENSION));
         }
 
         public override void WriteField(FieldInfo info, IIndexableField field)
         {
-            FieldsStream.WriteVInt32(info.Number);
+            fieldsStream.WriteVInt32(info.Number);
             int bits = 0;
             BytesRef bytes;
             string @string;
@@ -118,31 +119,30 @@ namespace Lucene.Net.Codecs.Lucene3x
             // can customize...
 
             // LUCENENET specific - To avoid boxing/unboxing, we don't
-            // call GetNumericValue(). Instead, we check the field type and then
+            // call GetNumericValue(). Instead, we check the field.NumericType and then
             // call the appropriate conversion method. 
-            Type numericType = field.GetNumericType();
-            if (numericType != null)
+            if (field.NumericType != NumericFieldType.NONE)
             {
-                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
+                switch (field.NumericType)
                 {
-                    bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_INT;
+                    case NumericFieldType.BYTE:
+                    case NumericFieldType.INT16:
+                    case NumericFieldType.INT32:
+                        bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_INT;
+                        break;
+                    case NumericFieldType.INT64:
+                        bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_LONG;
+                        break;
+                    case NumericFieldType.SINGLE:
+                        bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_FLOAT;
+                        break;
+                    case NumericFieldType.DOUBLE:
+                        bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_DOUBLE;
+                        break;
+                    default:
+                        throw new System.ArgumentException("cannot store numeric type " + field.NumericType);
                 }
-                else if (typeof(long).Equals(numericType))
-                {
-                    bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_LONG;
-                }
-                else if (typeof(float).Equals(numericType))
-                {
-                    bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_FLOAT;
-                }
-                else if (typeof(double).Equals(numericType))
-                {
-                    bits |= Lucene3xStoredFieldsReader.FIELD_IS_NUMERIC_DOUBLE;
-                }
-                else
-                {
-                    throw new System.ArgumentException("cannot store numeric type " + numericType);
-                }
+
                 @string = null;
                 bytes = null;
             }
@@ -164,52 +164,52 @@ namespace Lucene.Net.Codecs.Lucene3x
                 }
             }
 
-            FieldsStream.WriteByte((byte)(sbyte)bits);
+            fieldsStream.WriteByte((byte)(sbyte)bits);
 
             if (bytes != null)
             {
-                FieldsStream.WriteVInt32(bytes.Length);
-                FieldsStream.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
+                fieldsStream.WriteVInt32(bytes.Length);
+                fieldsStream.WriteBytes(bytes.Bytes, bytes.Offset, bytes.Length);
             }
             else if (@string != null)
             {
-                FieldsStream.WriteString(field.GetStringValue());
+                fieldsStream.WriteString(field.GetStringValue());
             }
             else
             {
-                if (typeof(byte).Equals(numericType) || typeof(short).Equals(numericType) || typeof(int).Equals(numericType))
+                switch (field.NumericType)
                 {
-                    FieldsStream.WriteInt32(field.GetInt32Value().Value);
-                }
-                else if (typeof(long).Equals(numericType))
-                {
-                    FieldsStream.WriteInt64(field.GetInt64Value().Value);
-                }
-                else if (typeof(float).Equals(numericType))
-                {
-                    FieldsStream.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
-                }
-                else if (typeof(double).Equals(numericType))
-                {
-                    FieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
-                }
-                else
-                {
-                    Debug.Assert(false);
+                    case NumericFieldType.BYTE:
+                    case NumericFieldType.INT16:
+                    case NumericFieldType.INT32:
+                        fieldsStream.WriteInt32(field.GetInt32Value().Value);
+                        break;
+                    case NumericFieldType.INT64:
+                        fieldsStream.WriteInt64(field.GetInt64Value().Value);
+                        break;
+                    case NumericFieldType.SINGLE:
+                        fieldsStream.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
+                        break;
+                    case NumericFieldType.DOUBLE:
+                        fieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
+                        break;
+                    default:
+                        Debug.Assert(false);
+                        break;
                 }
             }
         }
 
         public override void Finish(FieldInfos fis, int numDocs)
         {
-            if (4 + ((long)numDocs) * 8 != IndexStream.GetFilePointer())
+            if (4 + ((long)numDocs) * 8 != indexStream.GetFilePointer())
             // this is most likely a bug in Sun JRE 1.6.0_04/_05;
             // we detect that the bug has struck, here, and
             // throw an exception to prevent the corruption from
             // entering the index.  See LUCENE-1282 for
             // details.
             {
-                throw new Exception("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + IndexStream.GetFilePointer() + " file=" + IndexStream.ToString() + "; now aborting this merge to prevent index corruption");
+                throw new Exception("fdx size mismatch: docCount is " + numDocs + " but fdx file size is " + indexStream.GetFilePointer() + " file=" + indexStream.ToString() + "; now aborting this merge to prevent index corruption");
             }
         }
     }

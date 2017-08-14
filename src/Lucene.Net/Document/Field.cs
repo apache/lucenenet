@@ -63,8 +63,60 @@ namespace Lucene.Net.Documents
         protected readonly string m_name;
 
         /// <summary>
-        /// Field's value </summary>
-        protected object m_fieldsData;
+        /// Field's value.
+        /// </summary>
+        private object fieldsData;
+
+        /// <summary>
+        /// Field's value 
+        /// <para/>
+        /// Setting this property will automatically set the backing field for the
+        /// <see cref="NumericType"/> property.
+        /// </summary>
+        // LUCENENET specific: Made into a property
+        // so we can set the data type when it is set.
+        protected object FieldsData
+        {
+            get { return fieldsData; }
+            set
+            {
+                fieldsData = value;
+
+                if (value is Int32)
+                {
+                    numericType = NumericFieldType.INT32;
+                }
+                else if (value is Int64)
+                {
+                    numericType = NumericFieldType.INT64;
+                }
+                else if (value is Single)
+                {
+                    numericType = NumericFieldType.SINGLE;
+                }
+                else if (value is Double)
+                {
+                    numericType = NumericFieldType.DOUBLE;
+                }
+                else if (value is Int16)
+                {
+                    numericType = NumericFieldType.INT16;
+                }
+                else if (value is Byte)
+                {
+                    numericType = NumericFieldType.BYTE;
+                }
+                else
+                {
+                    numericType = NumericFieldType.NONE;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Field's numeric data type (or <see cref="NumericFieldType.NONE"/> if field non-numeric).
+        /// </summary>
+        private NumericFieldType numericType;
 
         /// <summary>
         /// Pre-analyzed <see cref="TokenStream"/> for indexed fields; this is
@@ -136,7 +188,7 @@ namespace Lucene.Net.Documents
             }
 
             this.m_name = name;
-            this.m_fieldsData = reader;
+            this.FieldsData = reader;
             this.m_type = type;
         }
 
@@ -173,7 +225,7 @@ namespace Lucene.Net.Documents
             }
 
             this.m_name = name;
-            this.m_fieldsData = null;
+            this.FieldsData = null;
             this.m_tokenStream = tokenStream;
             this.m_type = type;
         }
@@ -240,7 +292,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("Fields with BytesRef values cannot be indexed");
             }
-            this.m_fieldsData = bytes;
+            this.FieldsData = bytes;
             this.m_type = type;
             this.m_name = name;
         }
@@ -281,7 +333,7 @@ namespace Lucene.Net.Documents
 
             this.m_type = type;
             this.m_name = name;
-            this.m_fieldsData = value;
+            this.FieldsData = value;
         }
 
         /// <summary>
@@ -292,9 +344,9 @@ namespace Lucene.Net.Documents
         /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
         public virtual string GetStringValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            if (m_fieldsData is string || m_fieldsData is Number)
+            if (FieldsData is string || FieldsData is Number)
             {
-                return m_fieldsData.ToString();
+                return FieldsData.ToString();
             }
             else
             {
@@ -312,13 +364,13 @@ namespace Lucene.Net.Documents
         // LUCENENET specific overload.
         public virtual string GetStringValue(IFormatProvider provider) 
         {
-            if (m_fieldsData is string)
+            if (FieldsData is string)
             {
-                return m_fieldsData.ToString();
+                return FieldsData.ToString();
             }
-            else if (m_fieldsData is Number)
+            else if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).ToString(provider);
+                return ((Number)FieldsData).ToString(provider);
             }
             else
             {
@@ -336,13 +388,13 @@ namespace Lucene.Net.Documents
         // LUCENENET specific overload.
         public virtual string GetStringValue(string format) 
         {
-            if (m_fieldsData is string)
+            if (FieldsData is string)
             {
-                return m_fieldsData.ToString();
+                return FieldsData.ToString();
             }
-            else if (m_fieldsData is Number)
+            else if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).ToString(format);
+                return ((Number)FieldsData).ToString(format);
             }
             else
             {
@@ -361,13 +413,13 @@ namespace Lucene.Net.Documents
         // LUCENENET specific overload.
         public virtual string GetStringValue(string format, IFormatProvider provider)
         {
-            if (m_fieldsData is string)
+            if (FieldsData is string)
             {
-                return m_fieldsData.ToString();
+                return FieldsData.ToString();
             }
-            else if (m_fieldsData is Number)
+            else if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).ToString(format, provider);
+                return ((Number)FieldsData).ToString(format, provider);
             }
             else
             {
@@ -382,7 +434,7 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual TextReader GetReaderValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            return m_fieldsData is TextReader ? (TextReader)m_fieldsData : null;
+            return FieldsData is TextReader ? (TextReader)FieldsData : null;
         }
 
         /// <summary>
@@ -412,11 +464,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetStringValue(string value)
         {
-            if (!(m_fieldsData is string))
+            if (!(FieldsData is string))
             {
-                throw new ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to string");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to string");
             }
-            m_fieldsData = value;
+            FieldsData = value;
         }
 
         /// <summary>
@@ -425,11 +477,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetReaderValue(TextReader value)
         {
-            if (!(m_fieldsData is TextReader))
+            if (!(FieldsData is TextReader))
             {
-                throw new ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to TextReader");
+                throw new ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to TextReader");
             }
-            m_fieldsData = value;
+            FieldsData = value;
         }
 
         /// <summary>
@@ -441,15 +493,15 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetBytesValue(BytesRef value)
         {
-            if (!(m_fieldsData is BytesRef))
+            if (!(FieldsData is BytesRef))
             {
-                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to BytesRef");
+                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to BytesRef");
             }
             if (m_type.IsIndexed)
             {
                 throw new System.ArgumentException("cannot set a BytesRef value on an indexed field");
             }
-            m_fieldsData = value;
+            FieldsData = value;
         }
 
         /// <summary>
@@ -467,11 +519,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetByteValue(byte value)
         {
-            if (!(m_fieldsData is Byte))
+            if (!(FieldsData is Byte))
             {
-                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Byte");
+                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Byte");
             }
-            m_fieldsData = new Byte(value);
+            FieldsData = new Byte(value);
         }
 
         /// <summary>
@@ -480,11 +532,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt16Value(short value) // LUCENENET specific: Renamed from SetShortValue to follow .NET conventions
         {
-            if (!(m_fieldsData is Int16))
+            if (!(FieldsData is Int16))
             {
-                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Short");
+                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Short");
             }
-            m_fieldsData = new Int16(value);
+            FieldsData = new Int16(value);
         }
 
         /// <summary>
@@ -493,11 +545,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt32Value(int value) // LUCENENET specific: Renamed from SetIntValue to follow .NET conventions
         {
-            if (!(m_fieldsData is Int32))
+            if (!(FieldsData is Int32))
             {
-                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Integer");
+                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Integer");
             }
-            m_fieldsData = new Int32(value);
+            FieldsData = new Int32(value);
         }
 
         /// <summary>
@@ -506,11 +558,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetInt64Value(long value) // LUCENENET specific: Renamed from SetLongValue to follow .NET conventions
         {
-            if (!(m_fieldsData is Int64))
+            if (!(FieldsData is Int64))
             {
-                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Long");
+                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Long");
             }
-            m_fieldsData = new Int64(value);
+            FieldsData = new Int64(value);
         }
 
         /// <summary>
@@ -519,11 +571,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetSingleValue(float value) // LUCENENET specific: Renamed from SetFloatValue to follow .NET conventions
         {
-            if (!(m_fieldsData is Single))
+            if (!(FieldsData is Single))
             {
-                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Float");
+                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Float");
             }
-            m_fieldsData = new Single(value);
+            FieldsData = new Single(value);
         }
 
         /// <summary>
@@ -532,11 +584,11 @@ namespace Lucene.Net.Documents
         /// </summary>
         public virtual void SetDoubleValue(double value)
         {
-            if (!(m_fieldsData is Double))
+            if (!(FieldsData is Double))
             {
-                throw new System.ArgumentException("cannot change value type from " + m_fieldsData.GetType().Name + " to Double");
+                throw new System.ArgumentException("cannot change value type from " + FieldsData.GetType().Name + " to Double");
             }
-            m_fieldsData = new Double(value);
+            FieldsData = new Double(value);
         }
 
         // LUCENENET TODO: Add SetValue() overloads for each type?
@@ -554,7 +606,7 @@ namespace Lucene.Net.Documents
             {
                 throw new System.ArgumentException("TokenStream fields must be indexed and tokenized");
             }
-            if (m_type.NumericType != NumericType.NONE)
+            if (m_type.NumericType != Documents.NumericType.NONE)
             {
                 throw new System.ArgumentException("cannot set private TokenStream on numeric fields");
             }
@@ -594,7 +646,7 @@ namespace Lucene.Net.Documents
             }
         }
 
-        [Obsolete("In .NET, use of this method will cause boxing/unboxing. Instead, call GetNumericType() to check the underlying type and call the appropriate GetXXXValue() method to retrieve the value.")]
+        [Obsolete("In .NET, use of this method will cause boxing/unboxing. Instead, use the NumericType property to check the underlying type and call the appropriate GetXXXValue() method to retrieve the value.")]
         public virtual object GetNumericValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
             // LUCENENET NOTE: Originally, there was a conversion from string to a numeric value here.
@@ -603,71 +655,55 @@ namespace Lucene.Net.Documents
             // wrong StoredFieldsVisitor method will be called (in this case it was calling Int64Field() instead of StringField()).
             // This is an extremely difficult thing to track down and very confusing to end users.
 
-            if (m_fieldsData is Int32)
+            if (FieldsData is Int32)
             {
-                return ((Int32)m_fieldsData).GetInt32Value();
+                return ((Int32)FieldsData).GetInt32Value();
             }
-            else if (m_fieldsData is Int64)
+            else if (FieldsData is Int64)
             {
-                return ((Int64)m_fieldsData).GetInt64Value();
+                return ((Int64)FieldsData).GetInt64Value();
             }
-            else if (m_fieldsData is Single)
+            else if (FieldsData is Single)
             {
-                return ((Single)m_fieldsData).GetSingleValue();
+                return ((Single)FieldsData).GetSingleValue();
             }
-            else if (m_fieldsData is Double)
+            else if (FieldsData is Double)
             {
-                return ((Double)m_fieldsData).GetDoubleValue();
+                return ((Double)FieldsData).GetDoubleValue();
             }
-            else if (m_fieldsData is Int16)
+            else if (FieldsData is Int16)
             {
-                return ((Int16)m_fieldsData).GetInt16Value();
+                return ((Int16)FieldsData).GetInt16Value();
             }
-            else if (m_fieldsData is Byte)
+            else if (FieldsData is Byte)
             {
-                return ((Byte)m_fieldsData).GetByteValue();
+                return ((Byte)FieldsData).GetByteValue();
             }
 
             return null;
         }
 
         /// <summary>
-        /// Gets the <see cref="Type"/> of the underlying value, or <c>null</c> if the value is not set or non-numeric.
+        /// Gets the <see cref="NumericFieldType"/> of the underlying value, or <see cref="NumericFieldType.NONE"/> if the value is not set or non-numeric.
         /// <para/>
-        /// LUCENENET specific. In Java, the numeric type was determined by checking the type of  
+        /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is 
+        /// this is represents the current state of the field (whether being written or read) and the
+        /// <see cref="FieldType"/> property represents instructions on how the field will be written,
+        /// but does not re-populate when reading back from an index (it is write-only).
+        /// <para/>
+        /// In Java, the numeric type was determined by checking the type of  
         /// <see cref="GetNumericValue()"/>. However, since there are no reference number
         /// types in .NET, using <see cref="GetNumericValue()"/> so will cause boxing/unboxing. It is
-        /// therefore recommended to call this method to check the underlying type and the corresponding 
+        /// therefore recommended to use this property to check the underlying type and the corresponding 
         /// <c>Get*Value()</c> method to retrieve the value.
+        /// <para/>
+        /// NOTE: Since Lucene codecs do not support <see cref="NumericFieldType.BYTE"/> or <see cref="NumericFieldType.INT16"/>,
+        /// fields created with these types will always be <see cref="NumericFieldType.INT32"/> when read back from the index.
         /// </summary>
-        public virtual Type GetNumericType() 
+        // LUCENENET specific
+        public virtual NumericFieldType NumericType
         {
-            if (m_fieldsData is Int32)
-            {
-                return typeof(int);
-            }
-            else if (m_fieldsData is Int64)
-            {
-                return typeof(long);
-            }
-            else if (m_fieldsData is Single)
-            {
-                return typeof(float);
-            }
-            else if (m_fieldsData is Double)
-            {
-                return typeof(double);
-            }
-            else if (m_fieldsData is Int16)
-            {
-                return typeof(short);
-            }
-            else if (m_fieldsData is Byte)
-            {
-                return typeof(byte);
-            }
-
-            return null;
+            get { return numericType; }
         }
 
         /// <summary>
@@ -678,9 +714,9 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
         public virtual byte? GetByteValue()
         {
-            if (m_fieldsData is Number)
+            if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).GetByteValue();
+                return ((Number)FieldsData).GetByteValue();
             }
             else
             {
@@ -696,9 +732,9 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Short, since we have no Number class in .NET
         public virtual short? GetInt16Value()
         {
-            if (m_fieldsData is Number)
+            if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).GetInt16Value();
+                return ((Number)FieldsData).GetInt16Value();
             }
             else
             {
@@ -714,9 +750,9 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
         public virtual int? GetInt32Value()
         {
-            if (m_fieldsData is Number)
+            if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).GetInt32Value();
+                return ((Number)FieldsData).GetInt32Value();
             }
             else
             {
@@ -732,9 +768,9 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
         public virtual long? GetInt64Value()
         {
-            if (m_fieldsData is Number)
+            if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).GetInt64Value();
+                return ((Number)FieldsData).GetInt64Value();
             }
             else
             {
@@ -750,9 +786,9 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Single, since we have no Number class in .NET
         public virtual float? GetSingleValue()
         {
-            if (m_fieldsData is Number)
+            if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).GetSingleValue();
+                return ((Number)FieldsData).GetSingleValue();
             }
             else
             {
@@ -768,9 +804,9 @@ namespace Lucene.Net.Documents
         // LUCENENET specific - created overload for Double, since we have no Number class in .NET
         public virtual double? GetDoubleValue()
         {
-            if (m_fieldsData is Number)
+            if (FieldsData is Number)
             {
-                return ((Number)m_fieldsData).GetDoubleValue();
+                return ((Number)FieldsData).GetDoubleValue();
             }
             else
             {
@@ -782,9 +818,9 @@ namespace Lucene.Net.Documents
         /// Non-null if this field has a binary value. </summary>
         public virtual BytesRef GetBinaryValue() // LUCENENET specific: Added verb Get to make it more clear that this returns the value
         {
-            if (m_fieldsData is BytesRef)
+            if (FieldsData is BytesRef)
             {
-                return (BytesRef)m_fieldsData;
+                return (BytesRef)FieldsData;
             }
             else
             {
@@ -802,9 +838,9 @@ namespace Lucene.Net.Documents
             result.Append(m_name);
             result.Append(':');
 
-            if (m_fieldsData != null)
+            if (FieldsData != null)
             {
-                result.Append(m_fieldsData);
+                result.Append(FieldsData);
             }
 
             result.Append('>');
@@ -834,7 +870,7 @@ namespace Lucene.Net.Documents
                 return null;
             }
             NumericType numericType = FieldType.NumericType;
-            if (numericType != NumericType.NONE)
+            if (numericType != Documents.NumericType.NONE)
             {
                 if (!(internalTokenStream is NumericTokenStream))
                 {
@@ -844,22 +880,22 @@ namespace Lucene.Net.Documents
                 }
                 var nts = (NumericTokenStream)internalTokenStream;
                 // initialize value in TokenStream
-                Number val = (Number)m_fieldsData;
+                Number val = (Number)FieldsData;
                 switch (numericType)
                 {
-                    case NumericType.INT32:
+                    case Documents.NumericType.INT32:
                         nts.SetInt32Value(val.GetInt32Value());
                         break;
 
-                    case NumericType.INT64:
+                    case Documents.NumericType.INT64:
                         nts.SetInt64Value(val.GetInt64Value());
                         break;
 
-                    case NumericType.SINGLE:
+                    case Documents.NumericType.SINGLE:
                         nts.SetSingleValue(val.GetSingleValue());
                         break;
 
-                    case NumericType.DOUBLE:
+                    case Documents.NumericType.DOUBLE:
                         nts.SetDoubleValue(val.GetDoubleValue());
                         break;
 
@@ -871,7 +907,7 @@ namespace Lucene.Net.Documents
 
             // LUCENENET specific - If the underlying type is numeric, we need
             // to ensure it is setup to be round-tripped.
-            string format = (numericType == NumericType.SINGLE || numericType == NumericType.DOUBLE) ? "R" : null;
+            string format = (numericType == Documents.NumericType.SINGLE || numericType == Documents.NumericType.DOUBLE) ? "R" : null;
             string stringValue = GetStringValue(format, CultureInfo.InvariantCulture);
 
             if (!IndexableFieldType.IsTokenized)
@@ -1473,5 +1509,54 @@ namespace Lucene.Net.Documents
             }
             return Field.TermVector.YES;
         }
+    }
+
+    /// <summary>
+    /// Data type of the numeric <see cref="IIndexableField"/> value
+    /// </summary>
+    // LUCENENET specific
+    // Since we have more numeric types on Field than on FieldType,
+    // a new enumeration was created for .NET. In Java, this type was
+    // determined by checking the data type of the Field.numericValue() 
+    // method. However, since the corresponding GetNumericValue() method 
+    // in .NET returns type object (which would result in boxing/unboxing),
+    // this has been refactored to use an enumeration instead, which makes the
+    // API easier to use.
+    public enum NumericFieldType
+    {
+        /// <summary>
+        /// No numeric type (the field is not numeric).
+        /// </summary>
+        NONE,
+
+        /// <summary>
+        /// 8-bit unsigned integer numeric type
+        /// </summary>
+        BYTE,
+
+        /// <summary>
+        /// 16-bit short numeric type
+        /// </summary>
+        INT16,
+
+        /// <summary>
+        /// 32-bit integer numeric type
+        /// </summary>
+        INT32,
+
+        /// <summary>
+        /// 64-bit long numeric type
+        /// </summary>
+        INT64,
+
+        /// <summary>
+        /// 32-bit float numeric type
+        /// </summary>
+        SINGLE,
+
+        /// <summary>
+        /// 64-bit double numeric type 
+        /// </summary>
+        DOUBLE
     }
 }
