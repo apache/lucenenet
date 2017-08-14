@@ -1,8 +1,16 @@
+using Lucene.Net.Analysis;
+using Lucene.Net.Analysis.Standard;
+using Lucene.Net.Attributes;
+using Lucene.Net.Index;
+using Lucene.Net.Search;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
+using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Documents
 {
@@ -613,5 +621,116 @@ namespace Lucene.Net.Documents
                 // expected
             }
         }
+
+
+        // Possible issue reported via dev maling list: http://apache.markmail.org/search/?q=lucenenet+issue+with+doublefield#query:lucenenet%20issue%20with%20doublefield+page:1+mid:4ewxqrsg2nl3en5d+state:results
+        // As it turns out this is the correct behavior, as confirmed in Lucene using the following tests
+        [Test, LuceneNetSpecific]
+        public void TestStoreAndRetrieveFieldType()
+        {
+            Directory dir = new RAMDirectory();
+            Analyzer analyzer = new StandardAnalyzer(LuceneVersion.LUCENE_48);
+            IndexWriterConfig iwc = new IndexWriterConfig(LuceneVersion.LUCENE_48, analyzer);
+
+            double value = double.MaxValue;
+            string fieldName = "DoubleField";
+
+            FieldType type = new FieldType();
+            type.IsIndexed = true;
+            type.IsStored = true;
+            type.IsTokenized = false;
+            type.NumericType = NumericType.DOUBLE;
+
+
+            using (IndexWriter writer = new IndexWriter(dir, iwc))
+            {
+                Document doc = new Document();
+                Field field = new DoubleField(fieldName, value, type);
+                FieldType fieldType = field.FieldType;
+
+                assertEquals(true, fieldType.IsIndexed);
+                assertEquals(true, fieldType.IsStored);
+                assertEquals(false, fieldType.IsTokenized);
+                assertEquals(NumericType.DOUBLE, fieldType.NumericType);
+
+                doc.Add(field);
+                writer.AddDocument(doc);
+                writer.Commit();
+            }
+
+            using (IndexReader reader = DirectoryReader.Open(dir))
+            {
+                IndexSearcher searcher = new IndexSearcher(reader);
+                var hits = searcher.Search(new MatchAllDocsQuery(), 10).ScoreDocs;
+
+                Document doc = searcher.Doc(hits[0].Doc);
+                Field field = doc.GetField<Field>(fieldName);
+                FieldType fieldType = field.FieldType;
+
+                assertEquals(false, fieldType.IsIndexed);
+                assertEquals(true, fieldType.IsStored);
+                assertEquals(true, fieldType.IsTokenized);
+                assertEquals(NumericType.NONE, fieldType.NumericType);
+            }
+
+            dir.Dispose();
+        }
+
+        // In Java, the corresponding test is:
+        //public void testStoreAndRetrieveFieldType() throws java.io.IOException
+        //{
+        //    org.apache.lucene.store.Directory dir = new org.apache.lucene.store.RAMDirectory();
+        //    org.apache.lucene.analysis.Analyzer analyzer = new org.apache.lucene.analysis.standard.StandardAnalyzer(org.apache.lucene.util.Version.LUCENE_48);
+        //    org.apache.lucene.index.IndexWriterConfig iwc = new org.apache.lucene.index.IndexWriterConfig(org.apache.lucene.util.Version.LUCENE_48, analyzer);
+
+        //    double value = Double.MAX_VALUE;
+        //    String fieldName = "DoubleField";
+
+        //    FieldType type = new FieldType();
+        //    type.setIndexed(true);
+        //    type.setStored(true);
+        //    type.setTokenized(false);
+        //    type.setNumericType(FieldType.NumericType.DOUBLE);
+
+
+        //    org.apache.lucene.index.IndexWriter writer = new org.apache.lucene.index.IndexWriter(dir, iwc);
+        //    {
+        //        Document doc = new Document();
+        //        Field field = new DoubleField(fieldName, value, type);
+        //        FieldType fieldType = field.fieldType();
+
+
+        //        assertEquals(true, fieldType.indexed());
+
+        //        assertEquals(true, fieldType.stored());
+
+        //        assertEquals(false, fieldType.tokenized());
+
+        //        assertEquals(FieldType.NumericType.DOUBLE, fieldType.numericType());
+	
+        //        doc.add(field);
+        //        writer.addDocument(doc);
+        //        writer.commit();
+        //    }
+        //    writer.close();
+
+        //    org.apache.lucene.index.IndexReader reader = org.apache.lucene.index.DirectoryReader.open(dir);
+        //    {
+        //        org.apache.lucene.search.IndexSearcher searcher = new org.apache.lucene.search.IndexSearcher(reader);
+        //        org.apache.lucene.search.ScoreDoc[] hits = searcher.search(new org.apache.lucene.search.MatchAllDocsQuery(), 10).scoreDocs;
+
+        //        Document doc = searcher.doc(hits[0].doc);
+        //        Field field = (Field)doc.getField(fieldName);
+        //        FieldType fieldType = field.fieldType();
+
+        //        assertEquals(false, fieldType.indexed());
+        //        assertEquals(true, fieldType.stored());
+        //        assertEquals(true, fieldType.tokenized());
+        //        assertEquals(null, fieldType.numericType());
+        //    }
+        //    reader.close();
+
+        //    dir.close();
+        //}
     }
 }
