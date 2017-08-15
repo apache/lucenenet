@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public abstract class TermsEnum : IBytesRefIterator, IEnumerable<BytesRef>
+    public abstract class TermsEnum : IBytesRefIterator
     {
         public abstract IComparer<BytesRef> Comparer { get; } // LUCENENET specific - must supply implementation for the interface
 
