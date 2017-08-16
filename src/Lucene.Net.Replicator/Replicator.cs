@@ -22,22 +22,21 @@ namespace Lucene.Net.Replicator
 
     /// <summary>
     /// An interface for replicating files. Allows a producer to 
-    /// <see cref="Publish"/> <see cref="IRevision"/>s and consumers to
-    /// <see cref="CheckForUpdate"/>. When a client needs to be
+    /// <see cref="Publish(IRevision)"/> <see cref="IRevision"/>s and consumers to
+    /// <see cref="CheckForUpdate(string)"/>. When a client needs to be
     /// updated, it is given a <see cref="SessionToken"/> through which it can
-    /// <see cref="ObtainFile"/> the files of that
+    /// <see cref="ObtainFile(string, string, string)"/> the files of that
     /// revision. After the client has finished obtaining all the files, it should
-    /// <see cref="Release"/> the given session, so that the files can be
+    /// <see cref="Release(string)"/> the given session, so that the files can be
     /// reclaimed if they are not needed anymore.
-    /// <p>
+    /// <para/>
     /// A client is always updated to the newest revision available. That is, if a
     /// client is on revision <em>r1</em> and revisions <em>r2</em> and <em>r3</em>
-    /// were published, then when the cllient will next check for update, it will
+    /// were published, then when the client will next check for update, it will
     /// receive <em>r3</em>.
-    /// </p>
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public interface IReplicator : IDisposable
     {
@@ -54,10 +53,10 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Check whether the given version is up-to-date and returns a
         /// <see cref="SessionToken"/> which can be used for fetching the revision files,
-        /// otherwise returns <code>null</code>.
+        /// otherwise returns <c>null</c>.
         /// </summary>
         /// <remarks>
-        /// When the returned session token is no longer needed, you
+        /// <b>NOTE:</b> When the returned session token is no longer needed, you
         /// should call <see cref="Release"/> so that the session resources can be
         /// reclaimed, including the revision files.
         /// </remarks>
@@ -75,7 +74,7 @@ namespace Lucene.Net.Replicator
         /// context of the given <see cref="SessionToken.Id"/>.
         /// </summary>
         /// <remarks>
-        /// It is the caller's responsibility to call <see cref="IDisposable.Dispose"/> on the returned stream.
+        /// <b>NOTE:</b> It is the caller's responsibility to call <see cref="IDisposable.Dispose"/> on the returned stream.
         /// </remarks>
         /// <exception cref="SessionExpiredException">The specified session has already expired</exception>
         Stream ObtainFile(string sessionId, string source, string fileName);

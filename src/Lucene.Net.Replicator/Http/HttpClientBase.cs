@@ -31,7 +31,7 @@ namespace Lucene.Net.Replicator.Http
     /// Base class for Http clients.
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public abstract class HttpClientBase : IDisposable
     {
@@ -49,49 +49,32 @@ namespace Lucene.Net.Replicator.Http
         protected string Url { get; private set; }
 
         private readonly HttpClient httpc;
-
-        /// <summary>
-        /// Gets or Sets the connection timeout for this client, in milliseconds. This setting
-        /// is used to modify <see cref="HttpClient.Timeout"/>.
-        /// </summary>
-        public int ConnectionTimeout
-        {
-            get { return (int) httpc.Timeout.TotalMilliseconds; }
-            set { httpc.Timeout = TimeSpan.FromMilliseconds(value); }
-        }
-
-        /// <summary>
-        /// Returns true if this instance was <see cref="Dispose(bool)"/>ed, otherwise
-        /// returns false. Note that if you override <see cref="Dispose(bool)"/>, you must call
-        /// <see cref="Dispose(bool)"/> on the base class, in order for this instance to be properly disposed.
-        /// </summary>
-        public bool IsDisposed { get; private set; }
+        private volatile bool isDisposed = false;
 
         /// <summary>
         /// Creates a new <see cref="HttpClientBase"/> with the given host, port and path.
         /// </summary>
         /// <remarks>
-        /// The host, port and path parameters are normalized to <code>http://{host}:{port}{path}</code>, 
-        /// if path is <code>null</code> or <code>empty</code> it defaults to <code>/</code>.
-        /// <p>
-        /// A <see cref="HttpMessageHandler"/> is taken as an optional parameter as well, if this is not provided it defaults to null.
+        /// The host, port and path parameters are normalized to <c>http://{host}:{port}{path}</c>, 
+        /// if path is <c>null</c> or <c>empty</c> it defaults to <c>/</c>.
+        /// <para/>
+        /// A <see cref="HttpMessageHandler"/> is taken as an optional parameter as well, if this is not provided it defaults to <c>null</c>.
         /// In this case the internal <see cref="HttpClient"/> will default to use a <see cref="HttpClientHandler"/>.
-        /// </p>
         /// </remarks>
         /// <param name="host">The host that the client should retrieve data from.</param>
         /// <param name="port">The port to be used to connect on.</param>
         /// <param name="path">The path to the replicator on the host.</param>
-        /// <param name="messageHandler">Optional, The HTTP handler stack to use for sending requests, defaults to null.</param>
+        /// <param name="messageHandler">Optional, The HTTP handler stack to use for sending requests, defaults to <c>null</c>.</param>
         protected HttpClientBase(string host, int port, string path, HttpMessageHandler messageHandler = null)
             : this(NormalizedUrl(host, port, path), messageHandler)
         {
         }
 
         /// <summary>
-        /// Creates a new <see cref="HttpClientBase"/> with the given url.
+        /// Creates a new <see cref="HttpClientBase"/> with the given <paramref name="url"/>.
         /// </summary>
         /// <remarks>
-        /// A <see cref="HttpMessageHandler"/> is taken as an optional parameter as well, if this is not provided it defaults to null.
+        /// A <see cref="HttpMessageHandler"/> is taken as an optional parameter as well, if this is not provided it defaults to <c>null</c>.
         /// In this case the internal <see cref="HttpClient"/> will default to use a <see cref="HttpClientHandler"/>.
         /// </remarks>
         /// <param name="url">The full url, including with host, port and path.</param>
@@ -103,11 +86,11 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
-        /// Creates a new <see cref="HttpClientBase"/> with the given url and HttpClient.
+        /// Creates a new <see cref="HttpClientBase"/> with the given <paramref name="url"/> and <see cref="HttpClient"/>.
         /// </summary>
         /// <remarks>
-        /// This allows full controll over how the HttpClient is created, 
-        /// prefer the <see cref="HttpClientBase(string, HttpMessageHandler)"/> over this unless you know you need the control of the HttpClient.
+        /// This allows full controll over how the <see cref="HttpClient"/> is created, 
+        /// prefer the <see cref="HttpClientBase(string, HttpMessageHandler)"/> over this unless you know you need the control of the <see cref="HttpClient"/>.
         /// </remarks>
         /// <param name="url"></param>
         /// <param name="client">The <see cref="HttpClient"/> to use make remote http calls.</param>
@@ -116,21 +99,34 @@ namespace Lucene.Net.Replicator.Http
         {
             Url = url;
             httpc = client;
-            IsDisposed = false;
+            ConnectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
         }
 
         /// <summary>
-        /// Throws <see cref="ObjectDisposedException"/> if this client is already closed. 
+        /// Gets or Sets the connection timeout for this client, in milliseconds. This setting
+        /// is used to modify <see cref="HttpClient.Timeout"/>.
         /// </summary>
-        /// <exception cref="ObjectDisposedException">client is already closed.</exception>
+        public int ConnectionTimeout
+        {
+            get { return (int)httpc.Timeout.TotalMilliseconds; }
+            set { httpc.Timeout = TimeSpan.FromMilliseconds(value); }
+        }
+
+        /// <summary>
+        /// Throws <see cref="ObjectDisposedException"/> if this client is already disposed. 
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">client is already disposed.</exception>
         protected void EnsureOpen()
         {
             if (IsDisposed)
             {
-                throw new ObjectDisposedException("HttpClient already closed");
+                throw new ObjectDisposedException("HttpClient already disposed");
             }
         }
 
+        /// <summary>
+        /// Create a URL out of the given parameters, translate an empty/null path to '/'
+        /// </summary>
         private static string NormalizedUrl(string host, int port, string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -139,7 +135,7 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
-        /// Verifies the response status and if not successfull throws an exception.
+        /// <b>Internal:</b> Verifies the response status and if not successful throws an exception.
         /// </summary>
         /// <exception cref="IOException">IO Error happened at the server, check inner exception for details.</exception>
         /// <exception cref="HttpRequestException">Unknown error received from the server.</exception>
@@ -199,6 +195,10 @@ namespace Lucene.Net.Replicator.Http
             throw new HttpRequestException(string.Format("unknown exception: {0} {1}", response.StatusCode, response.ReasonPhrase), exception);
         }
 
+        /// <summary>
+        /// <b>Internal:</b> Execute a request and return its result.
+        /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
+        /// </summary>
         protected HttpResponseMessage ExecutePost(string request, object entity, params string[] parameters)
         {
             EnsureOpen();
@@ -215,6 +215,10 @@ namespace Lucene.Net.Replicator.Http
             return response;
         }
 
+        /// <summary>
+        /// <b>Internal:</b> Execute a request and return its result.
+        /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
+        /// </summary>
         protected HttpResponseMessage ExecuteGet(string request, params string[] parameters)
         {
             EnsureOpen();
@@ -236,7 +240,7 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
-        /// Internal utility: input stream of the provided response
+        /// Internal utility: input stream of the provided response.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public Stream ResponseInputStream(HttpResponseMessage response)
@@ -244,8 +248,10 @@ namespace Lucene.Net.Replicator.Http
             return ResponseInputStream(response, false);
         }
 
+        // TODO: can we simplify this Consuming !?!?!?
         /// <summary>
-        /// Internal utility: input stream of the provided response
+        /// Internal utility: input stream of the provided response, which optionally 
+        /// consumes the response's resources when the input stream is exhausted.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public Stream ResponseInputStream(HttpResponseMessage response, bool consume)
@@ -254,7 +260,14 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
-        /// Calls the overload <see cref="DoAction{T}(HttpResponseMessage, Boolean, Func{T})"/> passing <code>true</code> to consume.
+        /// Returns <c>true</c> if this instance was <see cref="Dispose(bool)"/>ed, otherwise
+        /// returns <c>false</c>. Note that if you override <see cref="Dispose(bool)"/>, you must call
+        /// <see cref="Dispose(bool)"/> on the base class, in order for this instance to be properly disposed.
+        /// </summary>
+        public bool IsDisposed { get { return isDisposed; } }
+
+        /// <summary>
+        /// Calls the overload <see cref="DoAction{T}(HttpResponseMessage, bool, Func{T})"/> passing <c>true</c> to consume.
         /// </summary>
         protected T DoAction<T>(HttpResponseMessage response, Func<T> call)
         {
@@ -264,7 +277,7 @@ namespace Lucene.Net.Replicator.Http
         /// <summary>
         /// Do a specific action and validate after the action that the status is still OK, 
         /// and if not, attempt to extract the actual server side exception. Optionally
-        /// release the response at exit, depending on <code>consume</code> parameter.
+        /// release the response at exit, depending on <paramref name="consume"/> parameter.
         /// </summary>
         protected T DoAction<T>(HttpResponseMessage response, bool consume, Func<T> call)
         {
@@ -302,7 +315,7 @@ namespace Lucene.Net.Replicator.Http
             {
                 httpc.Dispose();
             }
-            IsDisposed = true;
+            isDisposed = true;
         }
 
         /// <summary>

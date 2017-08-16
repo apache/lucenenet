@@ -26,7 +26,7 @@ namespace Lucene.Net.Replicator.Http
     /// An HTTP implementation of <see cref="IReplicator"/>. Assumes the API supported by <see cref="ReplicationService"/>.
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public class HttpReplicator : HttpClientBase, IReplicator
     {
@@ -50,22 +50,13 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
-        /// Creates a new <see cref="HttpReplicator"/> with the given url and HttpClient.
+        /// Creates a new <see cref="HttpReplicator"/> with the given <paramref name="url"/> and <see cref="HttpClient"/>.
         /// <see cref="HttpClientBase(string, HttpClient)"/> for more details.
         /// </summary>
         //Note: LUCENENET Specific
         public HttpReplicator(string url, HttpClient client)
             : base(url, client)
         {
-        }
-        
-        /// <summary>
-        /// Not supported.
-        /// </summary>
-        /// <exception cref="NotSupportedException">this replicator implementation does not support remote publishing of revisions</exception>
-        public void Publish(IRevision revision)
-        {
-            throw new NotSupportedException("this replicator implementation does not support remote publishing of revisions");
         }
 
         /// <summary>
@@ -75,9 +66,9 @@ namespace Lucene.Net.Replicator.Http
         {
             string[] parameters = null;
             if (currentVersion != null)
-                parameters = new [] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion };
+                parameters = new[] { ReplicationService.REPLICATE_VERSION_PARAM, currentVersion };
 
-            HttpResponseMessage response = base.ExecuteGet( ReplicationService.ReplicationAction.UPDATE.ToString(), parameters);
+            HttpResponseMessage response = base.ExecuteGet(ReplicationService.ReplicationAction.UPDATE.ToString(), parameters);
             return DoAction(response, () =>
             {
                 using (DataInputStream inputStream = new DataInputStream(ResponseInputStream(response)))
@@ -88,6 +79,27 @@ namespace Lucene.Net.Replicator.Http
         }
 
         /// <summary>
+        /// Obtains the given file from it's source at the remote host.
+        /// </summary>
+        public Stream ObtainFile(string sessionId, string source, string fileName)
+        {
+            HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.OBTAIN.ToString(),
+                ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
+                ReplicationService.REPLICATE_SOURCE_PARAM, source,
+                ReplicationService.REPLICATE_FILENAME_PARAM, fileName);
+            return DoAction(response, false, () => ResponseInputStream(response));
+        }
+
+        /// <summary>
+        /// Not supported.
+        /// </summary>
+        /// <exception cref="NotSupportedException">this replicator implementation does not support remote publishing of revisions</exception>
+        public void Publish(IRevision revision)
+        {
+            throw new NotSupportedException("this replicator implementation does not support remote publishing of revisions");
+        }
+
+        /// <summary>
         /// Releases a session obtained from the remote host.
         /// </summary>
         public void Release(string sessionId)
@@ -95,18 +107,6 @@ namespace Lucene.Net.Replicator.Http
             HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.RELEASE.ToString(), ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId);
             // do not remove this call: as it is still validating for us!
             DoAction<object>(response, () => null);
-        }
-
-        /// <summary>
-        /// Obtains the given file from it's source at the remote host.
-        /// </summary>
-        public Stream ObtainFile(string sessionId, string source, string fileName)
-        {
-            HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.OBTAIN.ToString(), 
-                ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
-                ReplicationService.REPLICATE_SOURCE_PARAM, source,
-                ReplicationService.REPLICATE_FILENAME_PARAM, fileName);
-            return DoAction(response, false, () => ResponseInputStream(response));
         }
     }
 }

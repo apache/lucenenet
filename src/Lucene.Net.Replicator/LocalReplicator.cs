@@ -1,12 +1,9 @@
-//STATUS: DRAFT - 4.8.0
-
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Replicator
 {
@@ -34,199 +31,17 @@ namespace Lucene.Net.Replicator
     /// <see cref="SessionToken"/> through which it can
     /// <see cref="ObtainFile"/> the files of that
     /// revision. As long as a revision is being replicated, this replicator
-    /// guarantees that it will not be <seealso cref="IRevision.Release"/>.
-    /// <para>
+    /// guarantees that it will not be <see cref="IRevision.Release"/>.
+    /// <para/>
     /// Replication sessions expire by default after
-    /// <seealso cref="DEFAULT_SESSION_EXPIRATION_THRESHOLD"/>, and the threshold can be
-    /// configured through <seealso cref="ExpirationThreshold"/>.
-    /// </para>
+    /// <seea cref="DEFAULT_SESSION_EXPIRATION_THRESHOLD"/>, and the threshold can be
+    /// configured through <see cref="ExpirationThreshold"/>.
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public class LocalReplicator : IReplicator
     {
-        /// <summary>Threshold for expiring inactive sessions. Defaults to 30 minutes.</summary>
-        public const long DEFAULT_SESSION_EXPIRATION_THRESHOLD = 1000 * 60 * 30;
-
-        private long expirationThreshold = DEFAULT_SESSION_EXPIRATION_THRESHOLD;
-        private readonly object padlock = new object();
-        private volatile RefCountedRevision currentRevision;
-        private volatile bool disposed = false;
-
-        private readonly AtomicInt32 sessionToken = new AtomicInt32(0);
-        private readonly Dictionary<string, ReplicationSession> sessions = new Dictionary<string, ReplicationSession>();
-
-        /// <summary>
-        /// Returns the expiration threshold.
-        /// </summary>
-        public long ExpirationThreshold
-        {
-            get { return expirationThreshold; }
-            set
-            {
-                lock (padlock)
-                {
-                    EnsureOpen();
-                    expirationThreshold = value;
-                    CheckExpiredSessions();
-                }
-            }
-        }
-
-        public void Publish(IRevision revision)
-        {
-            lock (padlock)
-            {
-                EnsureOpen();
-
-                if (currentRevision != null)
-                {
-                    int compare = revision.CompareTo(currentRevision.Revision);
-                    if (compare == 0)
-                    {
-                        // same revision published again, ignore but release it
-                        revision.Release();
-                        return;
-                    }
-
-                    if (compare < 0)
-                    {
-                        revision.Release();
-                        throw new ArgumentException(string.Format("Cannot publish an older revision: rev={0} current={1}", revision, currentRevision), "revision");
-                    }
-                }
-
-                RefCountedRevision oldRevision = currentRevision;
-                currentRevision = new RefCountedRevision(revision);
-                if(oldRevision != null) 
-                    oldRevision.DecRef();
-
-                CheckExpiredSessions();
-            }
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <returns></returns>
-        public SessionToken CheckForUpdate(string currentVersion)
-        {
-            lock (padlock)
-            {
-                EnsureOpen();
-                if (currentRevision == null)
-                    return null; // no published revisions yet
-
-                if (currentVersion != null && currentRevision.Revision.CompareTo(currentVersion) <= 0)
-                    return null; // currentVersion is newer or equal to latest published revision
-
-                // currentVersion is either null or older than latest published revision
-                currentRevision.IncRef();
-
-                string sessionID = sessionToken.IncrementAndGet().ToString();
-                SessionToken token = new SessionToken(sessionID, currentRevision.Revision);
-                sessions[sessionID] = new ReplicationSession(token, currentRevision);
-                return token;
-            }
-
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
-        public void Release(string sessionId)
-        {
-            lock (padlock)
-            {
-                EnsureOpen();
-                ReleaseSession(sessionId);
-            }
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        public Stream ObtainFile(string sessionId, string source, string fileName)
-        {
-            lock (padlock)
-            {
-                EnsureOpen();
-
-                ReplicationSession session = sessions[sessionId];
-                if (session != null && session.IsExpired(ExpirationThreshold))
-                {
-                    ReleaseSession(sessionId);
-                    session = null;
-                }
-                // session either previously expired, or we just expired it
-                if (session == null)
-                {
-                    throw new SessionExpiredException(string.Format("session ({0}) expired while obtaining file: source={1} file={2}", sessionId, source, fileName));
-                }
-                sessions[sessionId].MarkAccessed();
-                return session.Revision.Revision.Open(source, fileName);
-            }
-
-        }
-
-        /// <summary>
-        /// TODO
-        /// </summary>
-        public void Dispose()
-        {
-            if (disposed)
-                return;
-
-            lock (padlock)
-            {
-                foreach (ReplicationSession session in sessions.Values)
-                    session.Revision.DecRef();
-                sessions.Clear();
-            }
-            disposed = true;
-        }
-
-        /// <exception cref="InvalidOperationException"></exception>
-        private void CheckExpiredSessions()
-        {
-            // .NET NOTE: .ToArray() so we don't modify a collection we are enumerating...
-            //            I am wondering if it would be overall more practical to switch to a concurrent dictionary...
-            foreach (ReplicationSession token in sessions.Values.Where(token => token.IsExpired(ExpirationThreshold)).ToArray())
-            {
-                ReleaseSession(token.Session.Id);
-            }
-        }
-
-        /// <exception cref="InvalidOperationException"></exception>
-        private void ReleaseSession(string sessionId)
-        {
-            ReplicationSession session;
-            // if we're called concurrently by close() and release(), could be that one
-            // thread beats the other to release the session.
-            if (sessions.TryGetValue(sessionId, out session))
-            {
-                sessions.Remove(sessionId);
-                session.Revision.DecRef();
-            }
-        }
-
-        /// <summary>
-        /// Ensure that replicator is still open, or throw <see cref="ObjectDisposedException"/> otherwise.
-        /// </summary>
-        /// <exception cref="ObjectDisposedException">This replicator has already been closed</exception>
-        protected void EnsureOpen()
-        {
-            lock (padlock)
-            {
-                if (!disposed)
-                    return;
-
-                throw new ObjectDisposedException("This replicator has already been disposed");
-            }
-        }
-
         private class RefCountedRevision
         {
             private readonly AtomicInt32 refCount = new AtomicInt32(1);
@@ -274,7 +89,7 @@ namespace Lucene.Net.Replicator
             public void IncRef()
             {
                 refCount.IncrementAndGet();
-            }       
+            }
         }
 
         private class ReplicationSession
@@ -293,14 +108,185 @@ namespace Lucene.Net.Replicator
 
             public bool IsExpired(long expirationThreshold)
             {
-                return lastAccessTime < Stopwatch.GetTimestamp() - expirationThreshold * Stopwatch.Frequency / 1000;
+                return lastAccessTime < Stopwatch.GetTimestamp() - expirationThreshold * Stopwatch.Frequency / 1000; // LUCENENET TODO: CurrentTimeMilliseconds()
             }
 
             public void MarkAccessed()
             {
-                lastAccessTime = Stopwatch.GetTimestamp();
+                lastAccessTime = Stopwatch.GetTimestamp(); // LUCENENET TODO: CurrentTimeMilliseconds()
             }
         }
 
+        /// <summary>Threshold for expiring inactive sessions. Defaults to 30 minutes.</summary>
+        public const long DEFAULT_SESSION_EXPIRATION_THRESHOLD = 1000 * 60 * 30;
+
+        private long expirationThreshold = DEFAULT_SESSION_EXPIRATION_THRESHOLD;
+
+        private readonly object padlock = new object();
+
+        private volatile RefCountedRevision currentRevision;
+        private volatile bool disposed = false;
+
+        private readonly AtomicInt32 sessionToken = new AtomicInt32(0);
+        private readonly IDictionary<string, ReplicationSession> sessions = new Dictionary<string, ReplicationSession>();
+
+        /// <exception cref="InvalidOperationException"></exception>
+        private void CheckExpiredSessions()
+        {
+            // .NET NOTE: .ToArray() so we don't modify a collection we are enumerating...
+            //            I am wondering if it would be overall more practical to switch to a concurrent dictionary...
+            foreach (ReplicationSession token in sessions.Values.Where(token => token.IsExpired(ExpirationThreshold)).ToArray())
+            {
+                ReleaseSession(token.Session.Id);
+            }
+        }
+
+        /// <exception cref="InvalidOperationException"></exception>
+        private void ReleaseSession(string sessionId)
+        {
+            ReplicationSession session;
+            // if we're called concurrently by close() and release(), could be that one
+            // thread beats the other to release the session.
+            if (sessions.TryGetValue(sessionId, out session))
+            {
+                sessions.Remove(sessionId);
+                session.Revision.DecRef();
+            }
+        }
+
+        /// <summary>
+        /// Ensure that replicator is still open, or throw <see cref="ObjectDisposedException"/> otherwise.
+        /// </summary>
+        /// <exception cref="ObjectDisposedException">This replicator has already been disposed.</exception>
+        protected void EnsureOpen()
+        {
+            lock (padlock)
+            {
+                if (!disposed)
+                    return;
+
+                throw new ObjectDisposedException("This replicator has already been disposed");
+            }
+        }
+
+        public SessionToken CheckForUpdate(string currentVersion)
+        {
+            lock (padlock)
+            {
+                EnsureOpen();
+                if (currentRevision == null)
+                    return null; // no published revisions yet
+
+                if (currentVersion != null && currentRevision.Revision.CompareTo(currentVersion) <= 0)
+                    return null; // currentVersion is newer or equal to latest published revision
+
+                // currentVersion is either null or older than latest published revision
+                currentRevision.IncRef();
+
+                string sessionID = sessionToken.IncrementAndGet().ToString();
+                SessionToken token = new SessionToken(sessionID, currentRevision.Revision);
+                sessions[sessionID] = new ReplicationSession(token, currentRevision);
+                return token;
+            }
+        }
+
+        public void Dispose() // LUCENENET TODO: API Dispose pattern
+        {
+            if (disposed)
+                return;
+
+            lock (padlock)
+            {
+                foreach (ReplicationSession session in sessions.Values)
+                    session.Revision.DecRef();
+                sessions.Clear();
+            }
+            disposed = true;
+        }
+
+        /// <summary>
+        /// Gets or sets the expiration threshold.
+        /// <para/>
+        /// If a replication session is inactive this
+        /// long it is automatically expired, and further attempts to operate within
+        /// this session will throw a <see cref="SessionExpiredException"/>.
+        /// </summary>
+        public long ExpirationThreshold
+        {
+            get { return expirationThreshold; }
+            set
+            {
+                lock (padlock)
+                {
+                    EnsureOpen();
+                    expirationThreshold = value;
+                    CheckExpiredSessions();
+                }
+            }
+        }
+
+        public Stream ObtainFile(string sessionId, string source, string fileName)
+        {
+            lock (padlock)
+            {
+                EnsureOpen();
+
+                ReplicationSession session = sessions[sessionId];
+                if (session != null && session.IsExpired(ExpirationThreshold))
+                {
+                    ReleaseSession(sessionId);
+                    session = null;
+                }
+                // session either previously expired, or we just expired it
+                if (session == null)
+                {
+                    throw new SessionExpiredException(string.Format("session ({0}) expired while obtaining file: source={1} file={2}", sessionId, source, fileName));
+                }
+                sessions[sessionId].MarkAccessed();
+                return session.Revision.Revision.Open(source, fileName);
+            }
+        }
+
+        public void Publish(IRevision revision)
+        {
+            lock (padlock)
+            {
+                EnsureOpen();
+
+                if (currentRevision != null)
+                {
+                    int compare = revision.CompareTo(currentRevision.Revision);
+                    if (compare == 0)
+                    {
+                        // same revision published again, ignore but release it
+                        revision.Release();
+                        return;
+                    }
+
+                    if (compare < 0)
+                    {
+                        revision.Release();
+                        throw new ArgumentException(string.Format("Cannot publish an older revision: rev={0} current={1}", revision, currentRevision), "revision");
+                    }
+                }
+
+                RefCountedRevision oldRevision = currentRevision;
+                currentRevision = new RefCountedRevision(revision);
+                if (oldRevision != null)
+                    oldRevision.DecRef();
+
+                CheckExpiredSessions();
+            }
+        }
+
+        /// <exception cref="InvalidOperationException"></exception>
+        public void Release(string sessionId)
+        {
+            lock (padlock)
+            {
+                EnsureOpen();
+                ReleaseSession(sessionId);
+            }
+        }
     }
 }

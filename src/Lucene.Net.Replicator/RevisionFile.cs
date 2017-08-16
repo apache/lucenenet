@@ -24,7 +24,7 @@ namespace Lucene.Net.Replicator
     /// single revision to contain files from multiple sources (e.g. multiple indexes).
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public class RevisionFile : IEquatable<RevisionFile>
     {
@@ -51,19 +51,6 @@ namespace Lucene.Net.Replicator
             Length = length;
         }
 
-        public override string ToString()
-        {
-            return string.Format("fileName={0} length={1}", FileName, Length);
-        }
-
-        #region Resharper Generated Code
-        public bool Equals(RevisionFile other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return string.Equals(FileName, other.FileName) && Length == other.Length;
-        }
-
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -72,13 +59,25 @@ namespace Lucene.Net.Replicator
             return Equals((RevisionFile)obj);
         }
 
+        // LUCENENET specific Equals overload
+        public bool Equals(RevisionFile other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return string.Equals(FileName, other.FileName) && Length == other.Length;
+        }
+
         public override int GetHashCode()
         {
-            unchecked
+            unchecked // LUCENENET TODO: Correct hash code logic
             {
                 return (FileName.GetHashCode() * 397) ^ Length.GetHashCode();
             }
         }
-        #endregion
+
+        public override string ToString()
+        {
+            return string.Format("fileName={0} length={1}", FileName, Length);
+        }
     }
 }

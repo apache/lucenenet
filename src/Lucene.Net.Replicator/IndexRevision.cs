@@ -1,5 +1,3 @@
-//STATUS: DRAFT - 4.8.0
-
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -37,14 +35,13 @@ namespace Lucene.Net.Replicator
     /// <see cref="SnapshotDeletionPolicy"/> (this means that the given writer's
     /// <see cref="IndexWriterConfig.IndexDeletionPolicy"/> should return
     /// <see cref="SnapshotDeletionPolicy"/>).
-    /// <p>
-    /// When this revision is <see cref="Release"/>d, it releases the obtained
+    /// <para/>
+    /// When this revision is <see cref="Release()"/>d, it releases the obtained
     /// snapshot as well as calls <see cref="IndexWriter.DeleteUnusedFiles"/> so that the
     /// snapshotted files are deleted (if they are no longer needed).
-    /// </p>
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public class IndexRevision : IRevision
     {
@@ -54,9 +51,45 @@ namespace Lucene.Net.Replicator
         private readonly IndexCommit commit;
         private readonly SnapshotDeletionPolicy sdp;
 
-        public string Version { get; private set; }
         public IDictionary<string, IList<RevisionFile>> SourceFiles { get; private set; }
 
+        // returns a RevisionFile with some metadata
+        private static RevisionFile CreateRevisionFile(string fileName, Directory directory)
+        {
+            return new RevisionFile(fileName, directory.FileLength(fileName));
+        }
+
+        /// <summary>
+        /// Returns a singleton map of the revision files from the given <see cref="IndexCommit"/>.
+        /// </summary>
+        public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit commit)
+        {
+            List<RevisionFile> revisionFiles = commit.FileNames
+                .Where(file => !string.Equals(file, commit.SegmentsFileName))
+                .Select(file => CreateRevisionFile(file, commit.Directory))
+                //Note: segments_N must be last
+                .Union(new[] {CreateRevisionFile(commit.SegmentsFileName, commit.Directory)})
+                .ToList();
+            return new Dictionary<string, IList<RevisionFile>>
+            {
+                { SOURCE, revisionFiles }
+            };
+        }
+   
+        /// <summary>
+        /// Returns a string representation of a revision's version from the given 
+        /// <see cref="IndexCommit"/>
+        /// </summary>
+        public static string RevisionVersion(IndexCommit commit)
+        {
+            return commit.Generation.ToString("X");
+        }
+
+        /// <summary>
+        /// Constructor over the given <see cref="IndexWriter"/>. Uses the last
+        /// <see cref="IndexCommit"/> found in the <see cref="Directory"/> managed by the given
+        /// writer.
+        /// </summary>
         public IndexRevision(IndexWriter writer)
         {
             sdp = writer.Config.IndexDeletionPolicy as SnapshotDeletionPolicy;
@@ -86,6 +119,8 @@ namespace Lucene.Net.Replicator
             return commit.CompareTo(or.commit);
         }
 
+        public string Version { get; private set; }
+
         public Stream Open(string source, string fileName)
         {
             Debug.Assert(source.Equals(SOURCE), string.Format("invalid source; expected={0} got={1}", SOURCE, source));
@@ -101,37 +136,6 @@ namespace Lucene.Net.Replicator
         public override string ToString()
         {
             return "IndexRevision version=" + Version + " files=" + SourceFiles;
-        }
-
-        // returns a RevisionFile with some metadata
-        private static RevisionFile CreateRevisionFile(string fileName, Directory directory)
-        {
-            return new RevisionFile(fileName, directory.FileLength(fileName));
-        }
-
-        /** Returns a singleton map of the revision files from the given {@link IndexCommit}. */
-        public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit commit)
-        {
-            List<RevisionFile> revisionFiles = commit.FileNames
-                .Where(file => !string.Equals(file, commit.SegmentsFileName))
-                .Select(file => CreateRevisionFile(file, commit.Directory))
-                //Note: segments_N must be last
-                .Union(new[] {CreateRevisionFile(commit.SegmentsFileName, commit.Directory)})
-                .ToList();
-            return new Dictionary<string, IList<RevisionFile>>
-            {
-                { SOURCE, revisionFiles }
-            };
-        }
-   
-        /// <summary>
-        /// Returns a String representation of a revision's version from the given <see cref="IndexCommit"/>
-        /// </summary>
-        /// <param name="commit"></param>
-        /// <returns></returns>
-        public static string RevisionVersion(IndexCommit commit)
-        {
-            return commit.Generation.ToString("X");
         }
     }
 }

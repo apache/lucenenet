@@ -1,6 +1,4 @@
-﻿//STATUS: DRAFT - 4.8.0
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -38,10 +36,58 @@ namespace Lucene.Net.Replicator
     /// guarantee consistency of both on the replicating (client) side.
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
+    /// <seealso cref="IndexRevision"/>
     public class IndexAndTaxonomyRevision : IRevision
     {
+        /// <summary>
+        /// A <see cref="DirectoryTaxonomyWriter"/> which sets the underlying
+        /// <see cref="Index.IndexWriter"/>'s <see cref="IndexDeletionPolicy"/> to
+        /// <see cref="SnapshotDeletionPolicy"/>.
+        /// </summary>
+        public class SnapshotDirectoryTaxonomyWriter : DirectoryTaxonomyWriter
+        {
+            /// <summary>
+            /// Gets the <see cref="SnapshotDeletionPolicy"/> used by the underlying <see cref="Index.IndexWriter"/>.
+            /// </summary>
+            public SnapshotDeletionPolicy DeletionPolicy { get; private set; }
+            /// <summary>
+            /// Gets the <see cref="Index.IndexWriter"/> used by this <see cref="DirectoryTaxonomyWriter"/>.
+            /// </summary>
+            public IndexWriter IndexWriter { get; private set; }
+
+            /// <summary>
+            /// <see cref="DirectoryTaxonomyWriter(Directory, OpenMode, ITaxonomyWriterCache)"/>
+            /// </summary>
+            /// <exception cref="IOException"></exception>
+            public SnapshotDirectoryTaxonomyWriter(Directory directory, OpenMode openMode, ITaxonomyWriterCache cache)
+                : base(directory, openMode, cache)
+            {
+            }
+
+            /// <summary>
+            /// <see cref="DirectoryTaxonomyWriter(Directory, OpenMode)"/>
+            /// </summary>
+            /// <exception cref="IOException"></exception>
+            public SnapshotDirectoryTaxonomyWriter(Directory directory, OpenMode openMode = OpenMode.CREATE_OR_APPEND)
+                : base(directory, openMode)
+            {
+            }
+
+            protected override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
+            {
+                IndexWriterConfig conf = base.CreateIndexWriterConfig(openMode);
+                conf.IndexDeletionPolicy = DeletionPolicy = new SnapshotDeletionPolicy(conf.IndexDeletionPolicy);
+                return conf;
+            }
+
+            protected override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
+            {
+                return IndexWriter = base.OpenIndexWriter(directory, config);
+            }
+        }
+
         public const string INDEX_SOURCE = "index";
         public const string TAXONOMY_SOURCE = "taxonomy";
 
@@ -50,11 +96,33 @@ namespace Lucene.Net.Replicator
         private readonly IndexCommit indexCommit, taxonomyCommit;
         private readonly SnapshotDeletionPolicy indexSdp, taxonomySdp;
 
-        public string Version { get; private set; }
-        public IDictionary<string, IList<RevisionFile>> SourceFiles { get; private set; }
+        /// <summary>
+        /// Returns a map of the revision files from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.
+        /// </summary>
+        /// <exception cref="IOException"></exception>
+        public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit indexCommit, IndexCommit taxonomyCommit)
+        {
+            return new Dictionary<string, IList<RevisionFile>>{
+                    { INDEX_SOURCE,  IndexRevision.RevisionFiles(indexCommit).Values.First() },
+                    { TAXONOMY_SOURCE,  IndexRevision.RevisionFiles(taxonomyCommit).Values.First() }
+                };
+        }
 
         /// <summary>
-        /// TODO
+        /// Returns a <see cref="string"/> representation of a revision's version from the given
+        /// <see cref="IndexCommit"/>s of the search and taxonomy indexes.
+        /// </summary>
+        /// <param name="commit"></param>
+        /// <returns>a <see cref="string"/> representation of a revision's version from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.</returns>
+        public static string RevisionVersion(IndexCommit indexCommit, IndexCommit taxonomyCommit)
+        {
+            return string.Format("{0:X}:{1:X}", indexCommit.Generation, taxonomyCommit.Generation);
+        }
+
+        /// <summary>
+        /// Constructor over the given <see cref="IndexWriter"/>. Uses the last
+        /// <see cref="IndexCommit"/> found in the <see cref="Directory"/> managed by the given
+        /// writer.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public IndexAndTaxonomyRevision(IndexWriter indexWriter, SnapshotDirectoryTaxonomyWriter taxonomyWriter)
@@ -105,9 +173,10 @@ namespace Lucene.Net.Replicator
             return cmp != 0 ? cmp : taxonomyCommit.CompareTo(itr.taxonomyCommit);
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
+        public string Version { get; private set; }
+
+        public IDictionary<string, IList<RevisionFile>> SourceFiles { get; private set; }
+
         /// <exception cref="IOException"></exception>
         public Stream Open(string source, string fileName)
         {
@@ -116,9 +185,6 @@ namespace Lucene.Net.Replicator
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
         /// <exception cref="IOException"></exception>
         public void Release()
         {
@@ -140,90 +206,5 @@ namespace Lucene.Net.Replicator
                 taxonomyWriter.IndexWriter.DeleteUnusedFiles();
             }
         }
-
-        /// <summary>
-        /// Returns a map of the revision files from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.
-        /// </summary>
-        /// <param name="indexCommit"></param>
-        /// <param name="taxonomyCommit"></param>
-        /// <returns></returns>
-        /// <exception cref="IOException"></exception>
-        public static IDictionary<string, IList<RevisionFile>> RevisionFiles(IndexCommit indexCommit, IndexCommit taxonomyCommit)
-        {
-            return new Dictionary<string, IList<RevisionFile>>{
-                    { INDEX_SOURCE,  IndexRevision.RevisionFiles(indexCommit).Values.First() },
-                    { TAXONOMY_SOURCE,  IndexRevision.RevisionFiles(taxonomyCommit).Values.First() }
-                };
-        }
-
-        /// <summary>
-        /// Returns a String representation of a revision's version from the given
-        /// <see cref="IndexCommit"/>s of the search and taxonomy indexes.
-        /// </summary>
-        /// <param name="commit"></param>
-        /// <returns>a String representation of a revision's version from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.</returns>
-        public static string RevisionVersion(IndexCommit indexCommit, IndexCommit taxonomyCommit)
-        {
-            return string.Format("{0:X}:{1:X}", indexCommit.Generation, taxonomyCommit.Generation);
-        }
-
-        /// <summary>
-        /// A <seealso cref="DirectoryTaxonomyWriter"/> which sets the underlying
-        /// <seealso cref="IndexWriter"/>'s <seealso cref="IndexDeletionPolicy"/> to
-        /// <seealso cref="SnapshotDeletionPolicy"/>.
-        /// </summary>
-        public class SnapshotDirectoryTaxonomyWriter : DirectoryTaxonomyWriter
-        {
-            /// <summary>
-            /// Gets the <see cref="SnapshotDeletionPolicy"/> used by the underlying <see cref="IndexWriter"/>.
-            /// </summary>
-            public SnapshotDeletionPolicy DeletionPolicy { get; private set; }
-            /// <summary>
-            /// Gets the <see cref="IndexWriter"/> used by this <see cref="DirectoryTaxonomyWriter"/>.
-            /// </summary>
-            public IndexWriter IndexWriter { get; private set; }
-
-            /// <summary>
-            /// <see cref="DirectoryTaxonomyWriter(Directory, OpenMode, ITaxonomyWriterCache)"/>
-            /// </summary>
-            /// <exception cref="IOException"></exception>
-            public SnapshotDirectoryTaxonomyWriter(Directory directory, OpenMode openMode, ITaxonomyWriterCache cache) 
-                : base(directory, openMode, cache)
-            {
-            }
-
-            /// <summary>
-            /// <see cref="DirectoryTaxonomyWriter(Directory, OpenMode)"/>
-            /// </summary>
-            /// <exception cref="IOException"></exception>
-            public SnapshotDirectoryTaxonomyWriter(Directory directory, OpenMode openMode = OpenMode.CREATE_OR_APPEND)
-                : base(directory, openMode)
-            {
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="openMode"></param>
-            /// <returns></returns>
-            protected override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
-            {
-                IndexWriterConfig conf = base.CreateIndexWriterConfig(openMode);
-                conf.IndexDeletionPolicy = DeletionPolicy = new SnapshotDeletionPolicy(conf.IndexDeletionPolicy);
-                return conf;
-            }
-
-            /// <summary>
-            /// TODO
-            /// </summary>
-            /// <param name="directory"></param>
-            /// <param name="config"></param>
-            /// <returns></returns>
-            protected override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
-            {
-                return IndexWriter = base.OpenIndexWriter(directory, config);
-            }
-        }
-
     }
 }

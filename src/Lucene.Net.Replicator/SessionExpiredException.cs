@@ -1,5 +1,8 @@
 using System;
 using System.IO;
+#if FEATURE_SERIALIZABLE
+using System.Runtime.Serialization;
+#endif
 
 namespace Lucene.Net.Replicator
 {
@@ -24,11 +27,14 @@ namespace Lucene.Net.Replicator
     /// Exception indicating that a revision update session was expired due to lack of activity.
     /// </summary>
     /// <remarks>
-    /// <see cref="LocalReplicator.DEFAULT_SESSION_EXPIRATION_THRESHOLD"/>
-    /// <see cref="LocalReplicator.ExpirationThreshold"/>
-    /// 
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
+    /// <seealso cref="LocalReplicator.DEFAULT_SESSION_EXPIRATION_THRESHOLD"/>
+    /// <seealso cref="LocalReplicator.ExpirationThreshold"/>
+    // LUCENENET: All exeption classes should be marked serializable
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SessionExpiredException : IOException
     {
         //
@@ -51,5 +57,17 @@ namespace Lucene.Net.Replicator
             : base(message, inner)
         {
         }
+
+#if FEATURE_SERIALIZABLE
+        /// <summary>
+        /// Initializes a new instance of this class with serialized data.
+        /// </summary>
+        /// <param name="info">The <see cref="SerializationInfo"/> that holds the serialized object data about the exception being thrown.</param>
+        /// <param name="context">The <see cref="StreamingContext"/> that contains contextual information about the source or destination.</param>
+        public SessionExpiredException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
+        }
+#endif
     }
 }

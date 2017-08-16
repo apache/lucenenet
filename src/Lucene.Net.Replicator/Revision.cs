@@ -33,13 +33,19 @@ namespace Lucene.Net.Replicator
     /// they match at the client side.
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public interface IRevision : IComparable<IRevision>
     {
         /// <summary>
+        /// Compares the revision to the given version string. Behaves like
+        /// <see cref="IComparable{T}.CompareTo(T)"/>
+        /// </summary>
+        int CompareTo(string version);
+
+        /// <summary>
         /// Returns a string representation of the version of this revision. The
-        /// version is used by <see cref="CompareTo"/> as well as to
+        /// version is used by <see cref="CompareTo(string)"/> as well as to
         /// serialize/deserialize revision information. Therefore it must be self
         /// descriptive as well as be able to identify one revision from another.
         /// </summary>
@@ -52,14 +58,8 @@ namespace Lucene.Net.Replicator
         IDictionary<string, IList<RevisionFile>> SourceFiles { get; }
 
         /// <summary>
-        /// Compares the revision to the given version string. Behaves like
-        /// <see cref="IComparable{T}.CompareTo"/>
-        /// </summary>
-        int CompareTo(string version);
-
-        /// <summary>
-        /// Returns a <see cref="Stream"/> for the given fileName and source. It is the
-        /// caller's respnsibility to close the <see cref="Stream"/> when it has been
+        /// Returns a <see cref="Stream"/> for the given <paramref name="fileName"/> and <paramref name="source"/>. It is the
+        /// caller's respnsibility to dispose the <see cref="Stream"/> when it has been
         /// consumed.
         /// </summary>
         /// <exception cref="IOException"></exception>

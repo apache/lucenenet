@@ -49,6 +49,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -74,8 +77,6 @@
     <Compile Include="IndexInputInputStream.cs" />
     <Compile Include="IndexReplicationHandler.cs" />
     <Compile Include="IndexRevision.cs" />
-    <Compile Include="IReplicationHandler.cs" />
-    <Compile Include="ISourceDirectoryFactory.cs" />
     <Compile Include="LocalReplicator.cs" />
     <Compile Include="PerSessionDirectoryFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -85,9 +86,6 @@
     <Compile Include="RevisionFile.cs" />
     <Compile Include="SessionExpiredException.cs" />
     <Compile Include="SessionToken.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Http\package.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">

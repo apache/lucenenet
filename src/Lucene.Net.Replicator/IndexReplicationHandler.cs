@@ -34,130 +34,30 @@ namespace Lucene.Net.Replicator
     /// <see cref="IndexWriter"/> to make sure any unused files are deleted.
     /// </summary>
     /// <remarks>
-    /// <para>
-    /// This handler assumes that <see cref="IndexWriter"/> is not opened by
+    /// <b>NOTE:</b> This handler assumes that <see cref="IndexWriter"/> is not opened by
     /// another process on the index directory. In fact, opening an
     /// <see cref="IndexWriter"/> on the same directory to which files are copied can lead
     /// to undefined behavior, where some or all the files will be deleted, override
     /// other files or simply create a mess. When you replicate an index, it is best
     /// if the index is never modified by <see cref="IndexWriter"/>, except the one that is
     /// open on the source index, from which you replicate.
-    /// </para>
-    /// <para>
-    /// This handler notifies the application via a provided <see cref="Callable"/> when an
+    /// <para/>
+    /// This handler notifies the application via a provided <see cref="T:Func{bool?}"/> when an
     /// updated index commit was made available for it.
-    /// </para>
-    /// 
-    /// Lucene.Experimental
+    /// <para/>
+    /// @lucene.experimental
     /// </remarks>
     public class IndexReplicationHandler : IReplicationHandler
     {
         /// <summary>
-        /// The component used to log messages to the <see cref="InfoStream"/>.
+        /// The component used to log messages to the <see cref="Util.InfoStream.Default"/> 
+        /// <see cref="Util.InfoStream"/>.
         /// </summary>
         public const string INFO_STREAM_COMPONENT = "IndexReplicationHandler";
 
         private readonly Directory indexDirectory;
         private readonly Func<bool?> callback;
         private InfoStream infoStream;
-
-        public string CurrentVersion { get; private set; }
-        public IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get; private set; }
-
-        public InfoStream InfoStream
-        {
-            get { return infoStream; }
-            set { infoStream = value ?? InfoStream.NO_OUTPUT; }
-        }
-
-        /// <summary>
-        /// Constructor with the given index directory and callback to notify when the
-        /// indexes were updated.
-        /// </summary>
-        public IndexReplicationHandler(Directory indexDirectory, Func<bool?> callback)
-        {
-            this.InfoStream = InfoStream.Default;
-            this.callback = callback;
-            this.indexDirectory = indexDirectory;
-
-            CurrentVersion = null;
-            CurrentRevisionFiles = null;
-
-            if (DirectoryReader.IndexExists(indexDirectory))
-            {
-                IList<IndexCommit> commits = DirectoryReader.ListCommits(indexDirectory);
-                IndexCommit commit = commits.Last();
-
-                CurrentVersion = IndexRevision.RevisionVersion(commit);
-                CurrentRevisionFiles = IndexRevision.RevisionFiles(commit);
-
-                WriteToInfoStream(
-                    string.Format("constructor(): currentVersion={0} currentRevisionFiles={1}", CurrentVersion, CurrentRevisionFiles),
-                    string.Format("constructor(): commit={0}", commit));
-            }
-        }
-
-        public void RevisionReady(string version, 
-            IDictionary<string, IList<RevisionFile>> revisionFiles, 
-            IDictionary<string, IList<string>> copiedFiles, 
-            IDictionary<string, Directory> sourceDirectory)
-        {
-            if (revisionFiles.Count > 1) throw new ArgumentException(string.Format("this handler handles only a single source; got {0}", revisionFiles.Keys));
-
-            Directory clientDirectory = sourceDirectory.Values.First();
-            IList<string> files = copiedFiles.Values.First();
-            string segmentsFile = GetSegmentsFile(files, false);
-
-            bool success = false;
-            try
-            {
-                // copy files from the client to index directory
-                 CopyFiles(clientDirectory, indexDirectory, files);
-
-                // fsync all copied files (except segmentsFile)
-                indexDirectory.Sync(files);
-
-                // now copy and fsync segmentsFile
-                clientDirectory.Copy(indexDirectory, segmentsFile, segmentsFile, IOContext.READ_ONCE);
-                indexDirectory.Sync(new[] { segmentsFile });
-                
-                success = true;
-            }
-            finally
-            {
-                if (!success)
-                {
-                    files.Add(segmentsFile); // add it back so it gets deleted too
-                    CleanupFilesOnFailure(indexDirectory, files);
-                }
-            }
-            
-            // all files have been successfully copied + sync'd. update the handler's state
-            CurrentRevisionFiles = revisionFiles;
-            CurrentVersion = version;
-            
-            WriteToInfoStream(string.Format("revisionReady(): currentVersion={0} currentRevisionFiles={1}", CurrentVersion, CurrentRevisionFiles));
-
-            // update the segments.gen file
-            WriteSegmentsGen(segmentsFile, indexDirectory);
-
-            // Cleanup the index directory from old and unused index files.
-            // NOTE: we don't use IndexWriter.deleteUnusedFiles here since it may have
-            // side-effects, e.g. if it hits sudden IO errors while opening the index
-            // (and can end up deleting the entire index). It is not our job to protect
-            // against those errors, app will probably hit them elsewhere.
-            CleanupOldIndexFiles(indexDirectory, segmentsFile);
-            
-            // successfully updated the index, notify the callback that the index is
-            // ready.
-            if (callback != null) {
-              try {
-                callback.Invoke();
-              } catch (Exception e) {
-                throw new IOException(e.Message, e);
-              }
-            }           
-        }
 
         //Note: LUCENENET Specific Utility Method
         private void WriteToInfoStream(params string[] messages)
@@ -171,7 +71,7 @@ namespace Lucene.Net.Replicator
 
         /// <summary>
         /// Returns the last <see cref="IndexCommit"/> found in the <see cref="Directory"/>, or
-        /// <code>null</code> if there are no commits.
+        /// <c>null</c> if there are no commits.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public static IndexCommit GetLastCommit(Directory directory)
@@ -196,10 +96,9 @@ namespace Lucene.Net.Replicator
         /// last, after all files. This is important in order to guarantee that if a
         /// reader sees the new segments_N, all other segment files are already on
         /// stable storage.
-        /// <para>
+        /// <para/>
         /// The reason why the code fails instead of putting segments_N file last is
-        /// that this indicates an error in the Revision implementation.
-        /// </para>
+        /// that this indicates an error in the <see cref="IRevision"/> implementation.
         /// </summary>
         public static string GetSegmentsFile(IList<string> files, bool allowEmpty)
         {
@@ -241,6 +140,17 @@ namespace Lucene.Net.Replicator
             }
         }
 
+        /// <summary>
+        /// Cleans up the index directory from old index files. This method uses the
+        /// last commit found by <see cref="GetLastCommit(Directory)"/>. If it matches the
+        /// expected <paramref name="segmentsFile"/>, then all files not referenced by this commit point
+        /// are deleted.
+        /// </summary>
+        /// <remarks>
+        /// <b>NOTE:</b> This method does a best effort attempt to clean the index
+        /// directory. It suppresses any exceptions that occur, as this can be retried
+        /// the next time.
+        /// </remarks>
         public static void CleanupOldIndexFiles(Directory directory, string segmentsFile)
         {
             try
@@ -280,7 +190,8 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// Copies the provided list of files from the <see cref="source"/> <see cref="Directory"/> to the <see cref="target"/> <see cref="Directory"/>.
+        /// Copies the provided list of files from the <paramref name="source"/> <see cref="Directory"/> to the 
+        /// <paramref name="target"/> <see cref="Directory"/>, if they are not the same.
         /// </summary>
         /// <exception cref="IOException"></exception>
         public static void CopyFiles(Directory source, Directory target, IList<string> files)
@@ -294,7 +205,7 @@ namespace Lucene.Net.Replicator
 
         /// <summary>
         /// Writes <see cref="IndexFileNames.SEGMENTS_GEN"/> file to the directory, reading
-        /// the generation from the given <code>segmentsFile</code>. If it is <code>null</code>,
+        /// the generation from the given <paramref name="segmentsFile"/>. If it is <c>null</c>,
         /// this method deletes segments.gen from the directory.
         /// </summary>
         public static void WriteSegmentsGen(string segmentsFile, Directory directory)
@@ -313,6 +224,112 @@ namespace Lucene.Net.Replicator
             {
                 // suppress any errors while deleting this file.
             }
+        }
+
+        /// <summary>
+        /// Constructor with the given index directory and callback to notify when the
+        /// indexes were updated.
+        /// </summary>
+        public IndexReplicationHandler(Directory indexDirectory, Func<bool?> callback) // LUCENENET TODO: API - shouldn't this be Action ?
+        {
+            this.InfoStream = InfoStream.Default;
+            this.callback = callback;
+            this.indexDirectory = indexDirectory;
+
+            CurrentVersion = null;
+            CurrentRevisionFiles = null;
+
+            if (DirectoryReader.IndexExists(indexDirectory))
+            {
+                IList<IndexCommit> commits = DirectoryReader.ListCommits(indexDirectory);
+                IndexCommit commit = commits.Last();
+
+                CurrentVersion = IndexRevision.RevisionVersion(commit);
+                CurrentRevisionFiles = IndexRevision.RevisionFiles(commit);
+
+                WriteToInfoStream(
+                    string.Format("constructor(): currentVersion={0} currentRevisionFiles={1}", CurrentVersion, CurrentRevisionFiles),
+                    string.Format("constructor(): commit={0}", commit));
+            }
+        }
+
+        public string CurrentVersion { get; private set; }
+
+        public IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get; private set; }
+
+        public void RevisionReady(string version,
+            IDictionary<string, IList<RevisionFile>> revisionFiles,
+            IDictionary<string, IList<string>> copiedFiles,
+            IDictionary<string, Directory> sourceDirectory)
+        {
+            if (revisionFiles.Count > 1) throw new ArgumentException(string.Format("this handler handles only a single source; got {0}", revisionFiles.Keys));
+
+            Directory clientDirectory = sourceDirectory.Values.First();
+            IList<string> files = copiedFiles.Values.First();
+            string segmentsFile = GetSegmentsFile(files, false);
+
+            bool success = false;
+            try
+            {
+                // copy files from the client to index directory
+                CopyFiles(clientDirectory, indexDirectory, files);
+
+                // fsync all copied files (except segmentsFile)
+                indexDirectory.Sync(files);
+
+                // now copy and fsync segmentsFile
+                clientDirectory.Copy(indexDirectory, segmentsFile, segmentsFile, IOContext.READ_ONCE);
+                indexDirectory.Sync(new[] { segmentsFile });
+
+                success = true;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    files.Add(segmentsFile); // add it back so it gets deleted too
+                    CleanupFilesOnFailure(indexDirectory, files);
+                }
+            }
+
+            // all files have been successfully copied + sync'd. update the handler's state
+            CurrentRevisionFiles = revisionFiles;
+            CurrentVersion = version;
+
+            WriteToInfoStream(string.Format("revisionReady(): currentVersion={0} currentRevisionFiles={1}", CurrentVersion, CurrentRevisionFiles));
+
+            // update the segments.gen file
+            WriteSegmentsGen(segmentsFile, indexDirectory);
+
+            // Cleanup the index directory from old and unused index files.
+            // NOTE: we don't use IndexWriter.deleteUnusedFiles here since it may have
+            // side-effects, e.g. if it hits sudden IO errors while opening the index
+            // (and can end up deleting the entire index). It is not our job to protect
+            // against those errors, app will probably hit them elsewhere.
+            CleanupOldIndexFiles(indexDirectory, segmentsFile);
+
+            // successfully updated the index, notify the callback that the index is
+            // ready.
+            if (callback != null)
+            {
+                try
+                {
+                    callback.Invoke();
+                }
+                catch (Exception e)
+                {
+                    throw new IOException(e.ToString(), e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages.
+        /// </summary>
+        public InfoStream InfoStream
+        {
+            get { return infoStream; }
+            set { infoStream = value ?? InfoStream.NO_OUTPUT; }
         }
     }
 }

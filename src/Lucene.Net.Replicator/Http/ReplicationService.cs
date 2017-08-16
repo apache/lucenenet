@@ -26,24 +26,22 @@ namespace Lucene.Net.Replicator.Http
 
     /// <summary>
     /// A server-side service for handling replication requests. The service assumes
-    /// requests are sent in the format <code>/&lt;context&gt;/&lt;shard&gt;/&lt;action&gt;</code> where
-    /// <ul>
-    ///   <li><code>context</code> is the servlet context, e.g. <see cref="REPLICATION_CONTEXT"/></li>
-    ///   <li><code>shard</code> is the ID of the shard, e.g. "s1"</li>
-    ///   <li><code>action</code> is one of <see cref="ReplicationAction"/> values</li>
-    /// </ul>
+    /// requests are sent in the format <c>/&lt;context&gt;/&lt;shard&gt;/&lt;action&gt;</c> where
+    /// <list type="bullet">
+    ///   <item><description><c>context</c> is the servlet context, e.g. <see cref="REPLICATION_CONTEXT"/></description></item>
+    ///   <item><description><c>shard</c> is the ID of the shard, e.g. "s1"</description></item>
+    ///   <item><description><c>action</c> is one of <see cref="ReplicationAction"/> values</description></item>
+    /// </list>
     /// For example, to check whether there are revision updates for shard "s1" you
-    /// should send the request: <code>http://host:port/replicate/s1/update</code>.
+    /// should send the request: <c>http://host:port/replicate/s1/update</c>.
     /// </summary>
     /// <remarks>
     /// This service is written using abstractions over requests and responses which makes it easy
     /// to integrate into any hosting framework.
-    /// <p>
+    /// <para/>
     /// See the Lucene.Net.Replicator.AspNetCore for an example of an implementation for the AspNetCore Framework.
-    /// </p> 
-    /// </remarks>
-    /// <remarks>
-    /// Lucene.Experimental
+    /// <para/>
+    /// @lucene.experimental
     /// </remarks>
     public class ReplicationService
     {
@@ -83,6 +81,7 @@ namespace Lucene.Net.Replicator.Http
         /// <summary>
         /// Json Serializer Settings to use when serializing and deserializing errors.
         /// </summary>
+        // LUCENENET specific
         public static readonly JsonSerializerSettings JSON_SERIALIZER_SETTINGS = new JsonSerializerSettings()
         {
             TypeNameHandling = TypeNameHandling.All
@@ -125,6 +124,7 @@ namespace Lucene.Net.Replicator.Http
             return param;
         }
 
+        // LUCENENET specific - copy method not used
 
         /// <summary>
         /// Executes the replication task.
@@ -203,6 +203,5 @@ namespace Lucene.Net.Replicator.Http
                 response.Flush();
             }
         }
-
     }
 }

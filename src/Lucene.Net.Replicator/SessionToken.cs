@@ -1,7 +1,5 @@
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Store;
 using Lucene.Net.Support.IO;
+using System.Collections.Generic;
 
 namespace Lucene.Net.Replicator
 {
@@ -27,20 +25,19 @@ namespace Lucene.Net.Replicator
     /// files will be kept safe until the replication completes.
     /// </summary>
     /// <remarks>
-    /// <see cref="IReplicator.CheckForUpdate"/>
-    /// <see cref="IReplicator.Release"/>
-    /// <see cref="LocalReplicator.DEFAULT_SESSION_EXPIRATION_THRESHOLD"/>
-    /// 
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
+    /// <seealso cref="IReplicator.CheckForUpdate"/>
+    /// <seealso cref="IReplicator.Release"/>
+    /// <seealso cref="LocalReplicator.DEFAULT_SESSION_EXPIRATION_THRESHOLD"/>
     public sealed class SessionToken
     {
         /// <summary>
         /// Id of this session.
         /// Should be passed when releasing the session, thereby acknowledging the 
-        /// <see cref="IReplicator"/>  that this session is no longer in use.
-        /// <see cref="IReplicator.Release"/>
+        /// <see cref="IReplicator"/> that this session is no longer in use.
         /// </summary>
+        /// <seealso cref="IReplicator.Release"/>
         public string Id { get; private set; }
 
         /// <summary>
@@ -54,11 +51,10 @@ namespace Lucene.Net.Replicator
         public IDictionary<string, IList<RevisionFile>> SourceFiles { get; private set; }
 
         /// <summary>
-        /// Constructor which deserializes from the given <see cref="DataInput"/>.
+        /// Constructor which deserializes from the given <see cref="IDataInput"/>.
         /// </summary>
-        /// <param name="reader"></param>
-        /// <exception cref="IOException"></exception>
-        public SessionToken(DataInputStream reader)
+        /// <exception cref="System.IO.IOException"></exception>
+        public SessionToken(DataInputStream reader) // LUCENENET TODO: API : IDataInput
         {
             Id = reader.ReadUTF();
             Version = reader.ReadUTF();
@@ -82,11 +78,9 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>
-        /// Constructor with the given id and revision.
+        /// Constructor with the given <paramref name="id"/> and <paramref name="revision"/>.
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="revision"></param>
-        /// <exception cref="IOException"></exception>
+        /// <exception cref="System.IO.IOException"></exception>
         public SessionToken(string id, IRevision revision)
         {
             Id = id;
@@ -97,8 +91,7 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Serialize the token data for communication between server and client.
         /// </summary>
-        /// <param name="writer"></param>
-        /// <exception cref="IOException"></exception>
+        /// <exception cref="System.IO.IOException"></exception>
         public void Serialize(DataOutputStream writer)
         {
             writer.WriteUTF(Id);

@@ -28,13 +28,13 @@ namespace Lucene.Net.Replicator
     /// deleted.
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public class PerSessionDirectoryFactory : ISourceDirectoryFactory
     {
         private readonly string workingDirectory;
 
-        /** Constructor with the given sources mapping. */
+        /// <summary>Constructor with the given sources mapping.</summary>
         public PerSessionDirectoryFactory(string workingDirectory)
         {
             this.workingDirectory = workingDirectory;

@@ -30,23 +30,22 @@ namespace Lucene.Net.Replicator
     /// A <see cref="IReplicationHandler"/> for replication of an index and taxonomy pair.
     /// See <see cref="IReplicationHandler"/> for more detail. This handler ensures
     /// that the search and taxonomy indexes are replicated in a consistent way.
-    /// 
-    /// <see cref="IndexReplicationHandler"/>
     /// </summary>
     /// <remarks>
-    /// If you intend to recreate a taxonomy index, you should make sure
+    /// <b>NOTE:</b> If you intend to recreate a taxonomy index, you should make sure
     /// to reopen an IndexSearcher and TaxonomyReader pair via the provided callback,
     /// to guarantee that both indexes are in sync. This handler does not prevent
     /// replicating such index and taxonomy pairs, and if they are reopened by a
     /// different thread, unexpected errors can occur, as well as inconsistency
     /// between the taxonomy and index readers.
-    /// 
-    /// Lucene.Experimental
+    /// <para/>
+    /// @lucene.experimental
     /// </remarks>
+    /// <seealso cref="IndexReplicationHandler"/>
     public class IndexAndTaxonomyReplicationHandler : IReplicationHandler
     {
         /// <summary>
-        /// The component used to log messages to the <see cref="InfoStream"/>.
+        /// The component used to log messages to the <see cref="Util.InfoStream.Default"/> <see cref="Util.InfoStream"/>.
         /// </summary>
         public const string INFO_STREAM_COMPONENT = "IndexAndTaxonomyReplicationHandler";
 
@@ -58,6 +57,10 @@ namespace Lucene.Net.Replicator
 
         public string CurrentVersion { get; private set; }
         public IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get; private set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages.
+        /// </summary>
         public InfoStream InfoStream
         {
             get { return infoStream; }
@@ -97,10 +100,6 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        /// <summary>
-        /// TODO
-        /// </summary>
-        /// <exception cref=""></exception>
         public void RevisionReady(string version,
             IDictionary<string, IList<RevisionFile>> revisionFiles,
             IDictionary<string, IList<string>> copiedFiles,

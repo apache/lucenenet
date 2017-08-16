@@ -1,6 +1,4 @@
-﻿//STATUS: INPROGRESS - 4.8.0
-
-using System;
+﻿using System;
 using System.IO;
 using Lucene.Net.Store;
 
@@ -24,10 +22,10 @@ namespace Lucene.Net.Replicator
 	 */
 
     /// <summary>
-    /// 
+    /// A <see cref="Stream"/> which wraps an <see cref="IndexInput"/>.
     /// </summary>
     /// <remarks>
-    /// Lucene.Experimental
+    /// @lucene.experimental
     /// </remarks>
     public class IndexInputStream : Stream
     {
