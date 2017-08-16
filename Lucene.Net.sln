@@ -111,6 +111,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Replicator.AspNetCore", "src\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.csproj", "{763CCB5A-E397-456A-AF47-7C6E228B1852}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Replicator", "src\Lucene.Net.Tests.Replicator\Lucene.Net.Tests.Replicator.csproj", "{418E9D8E-2369-4B52-8D2F-5A987213999B}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Analysis.Kuromoji", "src\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj", "{8408625A-2508-46D5-8519-045183C43724}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lucene.Net.Tests.Analysis.Kuromoji", "src\Lucene.Net.Tests.Analysis.Kuromoji\Lucene.Net.Tests.Analysis.Kuromoji.csproj", "{34A2BCE8-1351-43BD-A365-F50E7C0B2C49}"
