@@ -167,7 +167,9 @@ namespace Lucene.Net.Replicator
                 replicator.ObtainFile(res.Id, res.SourceFiles.Keys.First(), "madeUpFile");
                 fail("should have failed obtaining an unrecognized file");
             }
+#pragma warning disable 168
             catch (FileNotFoundException e)
+#pragma warning restore 168
             {
                 // expected
             }
