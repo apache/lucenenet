@@ -55,7 +55,7 @@ namespace Lucene.Net.Replicator
 
             /// <summary/>
             /// <exception cref="InvalidOperationException"></exception>
-            public void DecRef()
+            public virtual void DecRef()
             {
                 if (refCount.Get() <= 0)
                 {
@@ -86,7 +86,7 @@ namespace Lucene.Net.Replicator
                 }
             }
 
-            public void IncRef()
+            public virtual void IncRef()
             {
                 refCount.IncrementAndGet();
             }
@@ -106,12 +106,12 @@ namespace Lucene.Net.Replicator
                 lastAccessTime = Stopwatch.GetTimestamp();
             }
 
-            public bool IsExpired(long expirationThreshold)
+            public virtual bool IsExpired(long expirationThreshold)
             {
                 return lastAccessTime < Stopwatch.GetTimestamp() - expirationThreshold * Stopwatch.Frequency / 1000; // LUCENENET TODO: CurrentTimeMilliseconds()
             }
 
-            public void MarkAccessed()
+            public virtual void MarkAccessed()
             {
                 lastAccessTime = Stopwatch.GetTimestamp(); // LUCENENET TODO: CurrentTimeMilliseconds()
             }
@@ -169,7 +169,7 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        public SessionToken CheckForUpdate(string currentVersion)
+        public virtual SessionToken CheckForUpdate(string currentVersion)
         {
             lock (padlock)
             {
@@ -190,9 +190,9 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        public void Dispose() // LUCENENET TODO: API Dispose pattern
+        protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
+            if (disposed || !disposing)
                 return;
 
             lock (padlock)
@@ -204,14 +204,20 @@ namespace Lucene.Net.Replicator
             disposed = true;
         }
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
         /// <summary>
-        /// Gets or sets the expiration threshold.
+        /// Gets or sets the expiration threshold in milliseconds.
         /// <para/>
         /// If a replication session is inactive this
         /// long it is automatically expired, and further attempts to operate within
         /// this session will throw a <see cref="SessionExpiredException"/>.
         /// </summary>
-        public long ExpirationThreshold
+        public virtual long ExpirationThreshold
         {
             get { return expirationThreshold; }
             set
@@ -225,7 +231,7 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        public Stream ObtainFile(string sessionId, string source, string fileName)
+        public virtual Stream ObtainFile(string sessionId, string source, string fileName)
         {
             lock (padlock)
             {
@@ -247,7 +253,7 @@ namespace Lucene.Net.Replicator
             }
         }
 
-        public void Publish(IRevision revision)
+        public virtual void Publish(IRevision revision)
         {
             lock (padlock)
             {
@@ -280,7 +286,7 @@ namespace Lucene.Net.Replicator
         }
 
         /// <exception cref="InvalidOperationException"></exception>
-        public void Release(string sessionId)
+        public virtual void Release(string sessionId)
         {
             lock (padlock)
             {

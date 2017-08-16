@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Index;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -53,19 +53,9 @@ namespace Lucene.Net.Replicator
         private readonly Directory taxonomyDirectory;
         private readonly Func<bool?> callback;
 
-        private InfoStream infoStream = InfoStream.Default;
-
-        public string CurrentVersion { get; private set; }
-        public IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get; private set; }
-
-        /// <summary>
-        /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages.
-        /// </summary>
-        public InfoStream InfoStream
-        {
-            get { return infoStream; }
-            set { infoStream = value ?? InfoStream.NO_OUTPUT; }
-        }
+        private volatile IDictionary<string, IList<RevisionFile>> currentRevisionFiles;
+        private volatile string currentVersion;
+        private volatile InfoStream infoStream = InfoStream.Default;
 
         /// <summary>
         /// Constructor with the given index directory and callback to notify when the indexes were updated.
@@ -77,8 +67,8 @@ namespace Lucene.Net.Replicator
             this.taxonomyDirectory = taxonomyDirectory;
             this.callback = callback;
 
-            CurrentVersion = null;
-            CurrentRevisionFiles = null;
+            currentVersion = null;
+            currentRevisionFiles = null;
 
             bool indexExists = DirectoryReader.IndexExists(indexDirectory);
             bool taxonomyExists = DirectoryReader.IndexExists(taxonomyDirectory);
@@ -91,16 +81,19 @@ namespace Lucene.Net.Replicator
                 IndexCommit indexCommit = IndexReplicationHandler.GetLastCommit(indexDirectory);
                 IndexCommit taxonomyCommit = IndexReplicationHandler.GetLastCommit(taxonomyDirectory);
 
-                CurrentRevisionFiles = IndexAndTaxonomyRevision.RevisionFiles(indexCommit, taxonomyCommit);
-                CurrentVersion = IndexAndTaxonomyRevision.RevisionVersion(indexCommit, taxonomyCommit);
+                currentRevisionFiles = IndexAndTaxonomyRevision.RevisionFiles(indexCommit, taxonomyCommit);
+                currentVersion = IndexAndTaxonomyRevision.RevisionVersion(indexCommit, taxonomyCommit);
 
                 WriteToInfoStream(
-                    string.Format("constructor(): currentVersion={0} currentRevisionFiles={1}", CurrentVersion, CurrentRevisionFiles),
+                    string.Format("constructor(): currentVersion={0} currentRevisionFiles={1}", currentVersion, currentRevisionFiles),
                     string.Format("constructor(): indexCommit={0} taxoCommit={1}", indexCommit, taxonomyCommit));
             }
         }
 
-        public void RevisionReady(string version,
+        public virtual string CurrentVersion { get { return currentVersion; } }
+        public virtual IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get { return currentRevisionFiles; } }
+
+        public virtual void RevisionReady(string version,
             IDictionary<string, IList<RevisionFile>> revisionFiles,
             IDictionary<string, IList<string>> copiedFiles,
             IDictionary<string, Directory> sourceDirectory)
@@ -148,10 +141,10 @@ namespace Lucene.Net.Replicator
             }
 
             // all files have been successfully copied + sync'd. update the handler's state
-            CurrentRevisionFiles = revisionFiles;
-            CurrentVersion = version;
+            currentRevisionFiles = revisionFiles;
+            currentVersion = version;
             
-            WriteToInfoStream("revisionReady(): currentVersion=" + CurrentVersion + " currentRevisionFiles=" + CurrentRevisionFiles);
+            WriteToInfoStream("revisionReady(): currentVersion=" + currentVersion + " currentRevisionFiles=" + currentRevisionFiles);
             
             // update the segments.gen file
             IndexReplicationHandler.WriteSegmentsGen(taxonomySegmentsFile, taxonomyDirectory);
@@ -176,6 +169,7 @@ namespace Lucene.Net.Replicator
             } 
         }
 
+        // LUCENENET specific utility method
         private void WriteToInfoStream(params string[] messages)
         {
             if (!InfoStream.IsEnabled(INFO_STREAM_COMPONENT))
@@ -183,6 +177,15 @@ namespace Lucene.Net.Replicator
 
             foreach (string message in messages)
                 InfoStream.Message(INFO_STREAM_COMPONENT, message);
+        }
+
+        /// <summary>
+        /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages.
+        /// </summary>
+        public virtual InfoStream InfoStream
+        {
+            get { return infoStream; }
+            set { infoStream = value ?? InfoStream.NO_OUTPUT; }
         }
     }
 }

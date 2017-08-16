@@ -1,11 +1,11 @@
+using Lucene.Net.Index;
+using Lucene.Net.Store;
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
-using Lucene.Net.Index;
-using Lucene.Net.Store;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -50,8 +50,8 @@ namespace Lucene.Net.Replicator
         private readonly IndexWriter writer;
         private readonly IndexCommit commit;
         private readonly SnapshotDeletionPolicy sdp;
-
-        public IDictionary<string, IList<RevisionFile>> SourceFiles { get; private set; }
+        private readonly string version;
+        private readonly IDictionary<string, IList<RevisionFile>> sourceFiles;
 
         // returns a RevisionFile with some metadata
         private static RevisionFile CreateRevisionFile(string fileName, Directory directory)
@@ -98,11 +98,11 @@ namespace Lucene.Net.Replicator
 
             this.writer = writer;
             this.commit = sdp.Snapshot();
-            this.Version = RevisionVersion(commit);
-            this.SourceFiles = RevisionFiles(commit);
+            this.version = RevisionVersion(commit);
+            this.sourceFiles = RevisionFiles(commit);
         }
 
-        public int CompareTo(string version)
+        public virtual int CompareTo(string version)
         {
             long gen = long.Parse(version, NumberStyles.HexNumber);
             long commitGen = commit.Generation;
@@ -110,7 +110,7 @@ namespace Lucene.Net.Replicator
             return commitGen < gen ? -1 : (commitGen > gen ? 1 : 0);
         }
 
-        public int CompareTo(IRevision other)
+        public virtual int CompareTo(IRevision other)
         {
             //TODO: This breaks the contract and will fail if called with a different implementation
             //      This is a flaw inherited from the original source...
@@ -119,15 +119,17 @@ namespace Lucene.Net.Replicator
             return commit.CompareTo(or.commit);
         }
 
-        public string Version { get; private set; }
+        public virtual string Version { get { return version; } }
 
-        public Stream Open(string source, string fileName)
+        public virtual IDictionary<string, IList<RevisionFile>> SourceFiles { get { return sourceFiles; } }
+
+        public virtual Stream Open(string source, string fileName)
         {
             Debug.Assert(source.Equals(SOURCE), string.Format("invalid source; expected={0} got={1}", SOURCE, source));
             return new IndexInputStream(commit.Directory.OpenInput(fileName, IOContext.READ_ONCE));
         }
 
-        public void Release()
+        public virtual void Release()
         {
             sdp.Release(commit);
             writer.DeleteUnusedFiles();

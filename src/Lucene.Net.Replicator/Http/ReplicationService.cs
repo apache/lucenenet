@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Lucene.Net.Replicator.Http.Abstractions;
+﻿using Lucene.Net.Replicator.Http.Abstractions;
 using Lucene.Net.Support.IO;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -130,7 +130,7 @@ namespace Lucene.Net.Replicator.Http
         /// Executes the replication task.
         /// </summary>
         /// <exception cref="InvalidOperationException">required parameters are missing</exception>
-        public void Perform(IReplicationRequest request, IReplicationResponse response)
+        public virtual void Perform(IReplicationRequest request, IReplicationResponse response)
         {
             string[] pathElements = GetPathElements(request);
             if (pathElements.Length != 2)

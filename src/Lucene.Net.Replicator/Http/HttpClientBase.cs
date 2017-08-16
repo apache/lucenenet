@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
-using Lucene.Net.Support;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -48,8 +48,8 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         protected string Url { get; private set; }
 
-        private readonly HttpClient httpc;
         private volatile bool isDisposed = false;
+        private readonly HttpClient httpc;
 
         /// <summary>
         /// Creates a new <see cref="HttpClientBase"/> with the given host, port and path.
@@ -106,7 +106,7 @@ namespace Lucene.Net.Replicator.Http
         /// Gets or Sets the connection timeout for this client, in milliseconds. This setting
         /// is used to modify <see cref="HttpClient.Timeout"/>.
         /// </summary>
-        public int ConnectionTimeout
+        public virtual int ConnectionTimeout
         {
             get { return (int)httpc.Timeout.TotalMilliseconds; }
             set { httpc.Timeout = TimeSpan.FromMilliseconds(value); }
@@ -139,7 +139,7 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         /// <exception cref="IOException">IO Error happened at the server, check inner exception for details.</exception>
         /// <exception cref="HttpRequestException">Unknown error received from the server.</exception>
-        protected void VerifyStatus(HttpResponseMessage response)
+        protected virtual void VerifyStatus(HttpResponseMessage response)
         {
             if (!response.IsSuccessStatusCode)
             {
@@ -152,7 +152,7 @@ namespace Lucene.Net.Replicator.Http
         /// </summary>
         /// <exception cref="IOException">IO Error happened at the server, check inner exception for details.</exception>
         /// <exception cref="HttpRequestException">Unknown error received from the server.</exception>
-        protected void ThrowKnownError(HttpResponseMessage response)
+        protected virtual void ThrowKnownError(HttpResponseMessage response)
         {
             Stream input;
             try
@@ -199,7 +199,7 @@ namespace Lucene.Net.Replicator.Http
         /// <b>Internal:</b> Execute a request and return its result.
         /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
         /// </summary>
-        protected HttpResponseMessage ExecutePost(string request, object entity, params string[] parameters)
+        protected virtual HttpResponseMessage ExecutePost(string request, object entity, params string[] parameters)
         {
             EnsureOpen();
             //.NET Note: No headers? No ContentType?... Bad use of Http?
@@ -219,7 +219,7 @@ namespace Lucene.Net.Replicator.Http
         /// <b>Internal:</b> Execute a request and return its result.
         /// The <paramref name="parameters"/> argument is treated as: name1,value1,name2,value2,...
         /// </summary>
-        protected HttpResponseMessage ExecuteGet(string request, params string[] parameters)
+        protected virtual HttpResponseMessage ExecuteGet(string request, params string[] parameters)
         {
             EnsureOpen();
             //Note: No headers? No ContentType?... Bad use of Http?
@@ -243,7 +243,7 @@ namespace Lucene.Net.Replicator.Http
         /// Internal utility: input stream of the provided response.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Stream ResponseInputStream(HttpResponseMessage response)
+        public virtual Stream ResponseInputStream(HttpResponseMessage response)
         {
             return ResponseInputStream(response, false);
         }
@@ -254,7 +254,7 @@ namespace Lucene.Net.Replicator.Http
         /// consumes the response's resources when the input stream is exhausted.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public Stream ResponseInputStream(HttpResponseMessage response, bool consume)
+        public virtual Stream ResponseInputStream(HttpResponseMessage response, bool consume)
         {
             return response.Content.ReadAsStreamAsync().ConfigureAwait(false).GetAwaiter().GetResult();
         }
@@ -269,7 +269,7 @@ namespace Lucene.Net.Replicator.Http
         /// <summary>
         /// Calls the overload <see cref="DoAction{T}(HttpResponseMessage, bool, Func{T})"/> passing <c>true</c> to consume.
         /// </summary>
-        protected T DoAction<T>(HttpResponseMessage response, Func<T> call)
+        protected virtual T DoAction<T>(HttpResponseMessage response, Func<T> call)
         {
             return DoAction(response, true, call);
         }
@@ -279,7 +279,7 @@ namespace Lucene.Net.Replicator.Http
         /// and if not, attempt to extract the actual server side exception. Optionally
         /// release the response at exit, depending on <paramref name="consume"/> parameter.
         /// </summary>
-        protected T DoAction<T>(HttpResponseMessage response, bool consume, Func<T> call)
+        protected virtual T DoAction<T>(HttpResponseMessage response, bool consume, Func<T> call)
         {
             Exception error = new NotImplementedException();
             try

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Lucene.Net.Facet.Taxonomy.Directory;
+using Lucene.Net.Facet.Taxonomy.WriterCache;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Facet.Taxonomy.Directory;
-using Lucene.Net.Facet.Taxonomy.WriterCache;
-using Lucene.Net.Index;
-using Lucene.Net.Store;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -48,14 +48,8 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public class SnapshotDirectoryTaxonomyWriter : DirectoryTaxonomyWriter
         {
-            /// <summary>
-            /// Gets the <see cref="SnapshotDeletionPolicy"/> used by the underlying <see cref="Index.IndexWriter"/>.
-            /// </summary>
-            public SnapshotDeletionPolicy DeletionPolicy { get; private set; }
-            /// <summary>
-            /// Gets the <see cref="Index.IndexWriter"/> used by this <see cref="DirectoryTaxonomyWriter"/>.
-            /// </summary>
-            public IndexWriter IndexWriter { get; private set; }
+            private SnapshotDeletionPolicy sdp;
+            private IndexWriter writer;
 
             /// <summary>
             /// <see cref="DirectoryTaxonomyWriter(Directory, OpenMode, ITaxonomyWriterCache)"/>
@@ -78,14 +72,24 @@ namespace Lucene.Net.Replicator
             protected override IndexWriterConfig CreateIndexWriterConfig(OpenMode openMode)
             {
                 IndexWriterConfig conf = base.CreateIndexWriterConfig(openMode);
-                conf.IndexDeletionPolicy = DeletionPolicy = new SnapshotDeletionPolicy(conf.IndexDeletionPolicy);
+                conf.IndexDeletionPolicy = sdp = new SnapshotDeletionPolicy(conf.IndexDeletionPolicy);
                 return conf;
             }
 
             protected override IndexWriter OpenIndexWriter(Directory directory, IndexWriterConfig config)
             {
-                return IndexWriter = base.OpenIndexWriter(directory, config);
+                return writer = base.OpenIndexWriter(directory, config);
             }
+
+            /// <summary>
+            /// Gets the <see cref="SnapshotDeletionPolicy"/> used by the underlying <see cref="Index.IndexWriter"/>.
+            /// </summary>
+            public virtual SnapshotDeletionPolicy DeletionPolicy { get { return sdp; } }
+
+            /// <summary>
+            /// Gets the <see cref="Index.IndexWriter"/> used by this <see cref="DirectoryTaxonomyWriter"/>.
+            /// </summary>
+            public virtual IndexWriter IndexWriter { get { return writer; } }
         }
 
         public const string INDEX_SOURCE = "index";
@@ -95,6 +99,8 @@ namespace Lucene.Net.Replicator
         private readonly SnapshotDirectoryTaxonomyWriter taxonomyWriter;
         private readonly IndexCommit indexCommit, taxonomyCommit;
         private readonly SnapshotDeletionPolicy indexSdp, taxonomySdp;
+        private readonly string version;
+        private readonly IDictionary<string, IList<RevisionFile>> sourceFiles;
 
         /// <summary>
         /// Returns a map of the revision files from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.
@@ -136,14 +142,14 @@ namespace Lucene.Net.Replicator
             this.taxonomySdp = taxonomyWriter.DeletionPolicy;
             this.indexCommit = indexSdp.Snapshot();
             this.taxonomyCommit = taxonomySdp.Snapshot();
-            this.Version = RevisionVersion(indexCommit, taxonomyCommit);
-            this.SourceFiles = RevisionFiles(indexCommit, taxonomyCommit);
+            this.version = RevisionVersion(indexCommit, taxonomyCommit);
+            this.sourceFiles = RevisionFiles(indexCommit, taxonomyCommit);
         }
 
         /// <summary>
         /// Compares this <see cref="IndexAndTaxonomyRevision"/> to the given <see cref="version"/>.
         /// </summary>
-        public int CompareTo(string version)
+        public virtual int CompareTo(string version)
         {
             string[] parts = version.Split(':');
             long indexGen = long.Parse(parts[0], NumberStyles.HexNumber);
@@ -160,7 +166,7 @@ namespace Lucene.Net.Replicator
             return taxonomyCommitGen < taxonomyGen ? -1 : (taxonomyCommitGen > taxonomyGen ? 1 : 0);
         }
 
-        public int CompareTo(IRevision other)
+        public virtual int CompareTo(IRevision other)
         {
             if (other == null)
                 throw new ArgumentNullException("other");
@@ -173,12 +179,12 @@ namespace Lucene.Net.Replicator
             return cmp != 0 ? cmp : taxonomyCommit.CompareTo(itr.taxonomyCommit);
         }
 
-        public string Version { get; private set; }
+        public virtual string Version { get { return version; } }
 
-        public IDictionary<string, IList<RevisionFile>> SourceFiles { get; private set; }
+        public virtual IDictionary<string, IList<RevisionFile>> SourceFiles { get { return sourceFiles; } }
 
         /// <exception cref="IOException"></exception>
-        public Stream Open(string source, string fileName)
+        public virtual Stream Open(string source, string fileName)
         {
             Debug.Assert(source.Equals(INDEX_SOURCE) || source.Equals(TAXONOMY_SOURCE), string.Format("invalid source; expected=({0} or {1}) got={2}", INDEX_SOURCE, TAXONOMY_SOURCE, source));
             IndexCommit commit = source.Equals(INDEX_SOURCE) ? indexCommit : taxonomyCommit;
@@ -186,7 +192,7 @@ namespace Lucene.Net.Replicator
         }
 
         /// <exception cref="IOException"></exception>
-        public void Release()
+        public virtual void Release()
         {
             try
             {

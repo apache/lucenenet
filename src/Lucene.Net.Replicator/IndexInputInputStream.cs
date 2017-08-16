@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Lucene.Net.Store;
+using System;
 using System.IO;
-using Lucene.Net.Store;
 
 namespace Lucene.Net.Replicator
 {

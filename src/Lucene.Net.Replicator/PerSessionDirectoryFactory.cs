@@ -1,6 +1,6 @@
+using Lucene.Net.Store;
 using System;
 using System.IO;
-using Lucene.Net.Store;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -40,14 +40,14 @@ namespace Lucene.Net.Replicator
             this.workingDirectory = workingDirectory;
         }
 
-        public Directory GetDirectory(string sessionId, string source)
+        public virtual Directory GetDirectory(string sessionId, string source)
         {
             string sourceDirectory = Path.Combine(workingDirectory, sessionId, source);
             System.IO.Directory.CreateDirectory(sourceDirectory);
             return FSDirectory.Open(sourceDirectory);
         }
 
-        public void CleanupSession(string sessionId)
+        public virtual void CleanupSession(string sessionId)
         {
             if (string.IsNullOrEmpty(sessionId)) throw new ArgumentException("sessionID cannot be empty", "sessionId");
 

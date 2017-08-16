@@ -1,11 +1,11 @@
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Lucene.Net.Index;
-using Lucene.Net.Store;
-using Lucene.Net.Util;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -57,7 +57,10 @@ namespace Lucene.Net.Replicator
 
         private readonly Directory indexDirectory;
         private readonly Func<bool?> callback;
-        private InfoStream infoStream;
+
+        private volatile IDictionary<string, IList<RevisionFile>> currentRevisionFiles;
+        private volatile string currentVersion;
+        private volatile InfoStream infoStream;
 
         //Note: LUCENENET Specific Utility Method
         private void WriteToInfoStream(params string[] messages)
@@ -236,28 +239,28 @@ namespace Lucene.Net.Replicator
             this.callback = callback;
             this.indexDirectory = indexDirectory;
 
-            CurrentVersion = null;
-            CurrentRevisionFiles = null;
+            currentVersion = null;
+            currentRevisionFiles = null;
 
             if (DirectoryReader.IndexExists(indexDirectory))
             {
                 IList<IndexCommit> commits = DirectoryReader.ListCommits(indexDirectory);
                 IndexCommit commit = commits.Last();
 
-                CurrentVersion = IndexRevision.RevisionVersion(commit);
-                CurrentRevisionFiles = IndexRevision.RevisionFiles(commit);
+                currentVersion = IndexRevision.RevisionVersion(commit);
+                currentRevisionFiles = IndexRevision.RevisionFiles(commit);
 
                 WriteToInfoStream(
-                    string.Format("constructor(): currentVersion={0} currentRevisionFiles={1}", CurrentVersion, CurrentRevisionFiles),
+                    string.Format("constructor(): currentVersion={0} currentRevisionFiles={1}", currentVersion, currentRevisionFiles),
                     string.Format("constructor(): commit={0}", commit));
             }
         }
 
-        public string CurrentVersion { get; private set; }
+        public virtual string CurrentVersion { get { return currentVersion; } }
 
-        public IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get; private set; }
+        public virtual IDictionary<string, IList<RevisionFile>> CurrentRevisionFiles { get { return currentRevisionFiles; } }
 
-        public void RevisionReady(string version,
+        public virtual void RevisionReady(string version,
             IDictionary<string, IList<RevisionFile>> revisionFiles,
             IDictionary<string, IList<string>> copiedFiles,
             IDictionary<string, Directory> sourceDirectory)
@@ -293,10 +296,10 @@ namespace Lucene.Net.Replicator
             }
 
             // all files have been successfully copied + sync'd. update the handler's state
-            CurrentRevisionFiles = revisionFiles;
-            CurrentVersion = version;
+            currentRevisionFiles = revisionFiles;
+            currentVersion = version;
 
-            WriteToInfoStream(string.Format("revisionReady(): currentVersion={0} currentRevisionFiles={1}", CurrentVersion, CurrentRevisionFiles));
+            WriteToInfoStream(string.Format("revisionReady(): currentVersion={0} currentRevisionFiles={1}", currentVersion, currentRevisionFiles));
 
             // update the segments.gen file
             WriteSegmentsGen(segmentsFile, indexDirectory);
@@ -326,7 +329,7 @@ namespace Lucene.Net.Replicator
         /// <summary>
         /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages.
         /// </summary>
-        public InfoStream InfoStream
+        public virtual InfoStream InfoStream
         {
             get { return infoStream; }
             set { infoStream = value ?? InfoStream.NO_OUTPUT; }

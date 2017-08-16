@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Lucene.Net.Support.IO;
+using System;
 using System.IO;
 using System.Net.Http;
-using Lucene.Net.Support.IO;
 
 namespace Lucene.Net.Replicator.Http
 {
@@ -62,7 +62,7 @@ namespace Lucene.Net.Replicator.Http
         /// <summary>
         /// Checks for updates at the remote host.
         /// </summary>
-        public SessionToken CheckForUpdate(string currentVersion)
+        public virtual SessionToken CheckForUpdate(string currentVersion)
         {
             string[] parameters = null;
             if (currentVersion != null)
@@ -81,7 +81,7 @@ namespace Lucene.Net.Replicator.Http
         /// <summary>
         /// Obtains the given file from it's source at the remote host.
         /// </summary>
-        public Stream ObtainFile(string sessionId, string source, string fileName)
+        public virtual Stream ObtainFile(string sessionId, string source, string fileName)
         {
             HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.OBTAIN.ToString(),
                 ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId,
@@ -94,7 +94,7 @@ namespace Lucene.Net.Replicator.Http
         /// Not supported.
         /// </summary>
         /// <exception cref="NotSupportedException">this replicator implementation does not support remote publishing of revisions</exception>
-        public void Publish(IRevision revision)
+        public virtual void Publish(IRevision revision)
         {
             throw new NotSupportedException("this replicator implementation does not support remote publishing of revisions");
         }
@@ -102,7 +102,7 @@ namespace Lucene.Net.Replicator.Http
         /// <summary>
         /// Releases a session obtained from the remote host.
         /// </summary>
-        public void Release(string sessionId)
+        public virtual void Release(string sessionId)
         {
             HttpResponseMessage response = ExecuteGet(ReplicationService.ReplicationAction.RELEASE.ToString(), ReplicationService.REPLICATE_SESSION_ID_PARAM, sessionId);
             // do not remove this call: as it is still validating for us!

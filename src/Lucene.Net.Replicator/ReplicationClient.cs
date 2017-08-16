@@ -1,3 +1,6 @@
+using Lucene.Net.Store;
+using Lucene.Net.Support.Threading;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -5,9 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Lucene.Net.Store;
-using Lucene.Net.Support.Threading;
-using Lucene.Net.Util;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Replicator
@@ -314,7 +314,7 @@ namespace Lucene.Net.Replicator
         }
 
         /// <summary>Throws <see cref="ObjectDisposedException"/> if the client has already been disposed.</summary>
-        protected virtual void EnsureOpen()
+        protected void EnsureOpen()
         {
             if (!disposed)
                 return;
@@ -350,7 +350,7 @@ namespace Lucene.Net.Replicator
         /// Returns the files required for replication. By default, this method returns
         /// all files that exist in the new revision, but not in the handler.
         /// </summary>
-        private IDictionary<string, IList<RevisionFile>> RequiredFiles(IDictionary<string, IList<RevisionFile>> newRevisionFiles)
+        protected virtual IDictionary<string, IList<RevisionFile>> RequiredFiles(IDictionary<string, IList<RevisionFile>> newRevisionFiles)
         {
             IDictionary<string, IList<RevisionFile>> handlerRevisionFiles = handler.CurrentRevisionFiles;
             if (handlerRevisionFiles == null)
@@ -375,7 +375,7 @@ namespace Lucene.Net.Replicator
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed)
+            if (disposed || !disposing)
                 return;
 
             StopUpdateThread();
@@ -395,7 +395,7 @@ namespace Lucene.Net.Replicator
         /// will be set.
         /// </summary>
         /// <exception cref="InvalidOperationException"> if the thread has already been started </exception>
-        public void StartUpdateThread(long intervalMillis, string threadName)
+        public virtual void StartUpdateThread(long intervalMillis, string threadName)
         {
             EnsureOpen();
             if (updateThread != null && updateThread.IsAlive)
@@ -412,7 +412,7 @@ namespace Lucene.Net.Replicator
         /// Stop the update thread. If the update thread is not running, silently does
         /// nothing. This method returns after the update thread has stopped.
         /// </summary>
-        public void StopUpdateThread()
+        public virtual void StopUpdateThread()
         {
             // this will trigger the thread to terminate if it awaits the lock.
             // otherwise, if it's in the middle of replication, we wait for it to
@@ -429,7 +429,7 @@ namespace Lucene.Net.Replicator
         /// caused it to terminate (i.e. <see cref="HandleUpdateException"/>
         /// threw the exception further).
         /// </summary>
-        public bool IsUpdateThreadAlive
+        public virtual bool IsUpdateThreadAlive
         {
             get { return updateThread != null && updateThread.IsAlive; }
         }
@@ -446,7 +446,7 @@ namespace Lucene.Net.Replicator
         /// is running or not.
         /// </summary>
         /// <exception cref="IOException"></exception>
-        public void UpdateNow() 
+        public virtual void UpdateNow() 
         {
             EnsureOpen();
             if (updateThread != null)
@@ -472,7 +472,7 @@ namespace Lucene.Net.Replicator
         /// <summary> 
         /// Gets or sets the <see cref="Util.InfoStream"/> to use for logging messages. 
         /// </summary>
-        public InfoStream InfoStream
+        public virtual InfoStream InfoStream
         {
             get { return infoStream; }
             set { infoStream = value ?? InfoStream.NO_OUTPUT; }

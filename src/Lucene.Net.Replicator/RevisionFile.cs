@@ -60,7 +60,7 @@ namespace Lucene.Net.Replicator
         }
 
         // LUCENENET specific Equals overload
-        public bool Equals(RevisionFile other)
+        public virtual bool Equals(RevisionFile other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
