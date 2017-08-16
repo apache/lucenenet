@@ -58,6 +58,6 @@ namespace Lucene.Net.Replicator
 
             IOUtils.Dispose(writer, directory);
         }
-        
+
     }
 }

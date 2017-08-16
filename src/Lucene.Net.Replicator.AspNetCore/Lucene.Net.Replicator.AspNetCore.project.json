@@ -1,0 +1,11 @@
+{
+  "runtimes": {
+    "win": {}
+  },
+  "dependencies": {
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.3"
+  },
+  "frameworks": {
+    "net451": {}
+  }
+}

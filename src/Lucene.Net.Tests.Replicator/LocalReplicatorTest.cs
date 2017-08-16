@@ -68,7 +68,7 @@ namespace Lucene.Net.Replicator
         {
             assertNull(replicator.CheckForUpdate(null));
         }
-        
+
         [Test]
         public void TestObtainFileAlreadyClosed()
         {

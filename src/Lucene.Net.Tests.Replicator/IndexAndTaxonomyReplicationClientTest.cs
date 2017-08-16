@@ -303,7 +303,7 @@ namespace Lucene.Net.Replicator
             // where the handler overwrites an existing index file, but
             // there's nothing currently we can do about it, unless we don't
             // use MDW.
-            handlerIndexDir.PreventDoubleWrite=(false);
+            handlerIndexDir.PreventDoubleWrite = (false);
             handlerTaxoDir.PreventDoubleWrite = (false);
 
             // wrap sourceDirFactory to return a MockDirWrapper so we can simulate errors
@@ -330,12 +330,12 @@ namespace Lucene.Net.Replicator
 
             // disable errors -- maybe randomness didn't exhaust all allowed failures,
             // and we don't want e.g. CheckIndex to hit false errors. 
-            handlerIndexDir.MaxSizeInBytes=(0);
-            handlerIndexDir.RandomIOExceptionRate=(0.0);
-            handlerIndexDir.RandomIOExceptionRateOnOpen=(0.0);
-            handlerTaxoDir.MaxSizeInBytes=(0);
-            handlerTaxoDir.RandomIOExceptionRate=(0.0);
-            handlerTaxoDir.RandomIOExceptionRateOnOpen=(0.0);
+            handlerIndexDir.MaxSizeInBytes = (0);
+            handlerIndexDir.RandomIOExceptionRate = (0.0);
+            handlerIndexDir.RandomIOExceptionRateOnOpen = (0.0);
+            handlerTaxoDir.MaxSizeInBytes = (0);
+            handlerTaxoDir.RandomIOExceptionRate = (0.0);
+            handlerTaxoDir.RandomIOExceptionRateOnOpen = (0.0);
         }
 
         private class SourceDirectoryFactoryAnonymousInnerClass : ISourceDirectoryFactory
@@ -378,7 +378,7 @@ namespace Lucene.Net.Replicator
                 { // handler should fail
                     if (Random().nextBoolean())
                     { // index dir fail
-                        test.handlerIndexDir.MaxSizeInBytes=(handlerIndexMaxSize);
+                        test.handlerIndexDir.MaxSizeInBytes = (handlerIndexMaxSize);
                         test.handlerIndexDir.RandomIOExceptionRate = (handlerIndexExRate);
                         test.handlerIndexDir.RandomIOExceptionRateOnOpen = (handlerIndexExRate);
                         handlerIndexMaxSize *= 2;

@@ -263,8 +263,8 @@ namespace Lucene.Net.Replicator
             // disable errors -- maybe randomness didn't exhaust all allowed failures,
             // and we don't want e.g. CheckIndex to hit false errors. 
             handlerDir.MaxSizeInBytes = 0;
-            handlerDir.RandomIOExceptionRate=0.0;
-            handlerDir.RandomIOExceptionRateOnOpen=0.0;
+            handlerDir.RandomIOExceptionRate = 0.0;
+            handlerDir.RandomIOExceptionRateOnOpen = 0.0;
         }
 
         private class SourceDirectoryFactoryAnonymousInnerClass : ISourceDirectoryFactory
@@ -377,11 +377,13 @@ namespace Lucene.Net.Replicator
                             }
                         }
                     }
-                } else {
+                }
+                else
+                {
                     throw exception;
                 }
             }
         }
-      
+
     }
 }

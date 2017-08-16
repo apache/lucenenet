@@ -145,8 +145,8 @@ namespace Lucene.Net.Replicator
                     IndexInput src = dir.OpenInput(file.FileName, IOContext.READ_ONCE);
                     Stream @in = rev.Open(source, file.FileName);
                     assertEquals(src.Length, @in.Length);
-                    byte[] srcBytes = new byte[(int) src.Length];
-                    byte[] inBytes = new byte[(int) src.Length];
+                    byte[] srcBytes = new byte[(int)src.Length];
+                    byte[] inBytes = new byte[(int)src.Length];
                     int offset = 0;
                     if (Random().nextBoolean())
                     {
