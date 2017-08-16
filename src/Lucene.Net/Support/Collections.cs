@@ -54,6 +54,15 @@ namespace Lucene.Net.Support
             return new SetFromMap<T>(map);
         }
 
+        public static void Reverse<T>(IList<T> list)
+        {
+            int size = list.Count;
+            for (int i = 0, mid = size >> 1, j = size - 1; i < mid; i++, j--)
+            {
+                Swap(list, i, j);
+            }
+        }
+
         public static IComparer<T> ReverseOrder<T>()
         {
             return (IComparer<T>)ReverseComparer<T>.REVERSE_ORDER;

@@ -67,8 +67,8 @@ namespace Lucene.Net.Documents
             Assert.AreEqual(2, doc.Fields.Count);
 
             Assert.IsTrue(binaryFld.GetBinaryValue() != null);
-            Assert.IsTrue(binaryFld.FieldType.IsStored);
-            Assert.IsFalse(binaryFld.FieldType.IsIndexed);
+            Assert.IsTrue(binaryFld.IndexableFieldType.IsStored);
+            Assert.IsFalse(binaryFld.IndexableFieldType.IsIndexed);
 
             string binaryTest = doc.GetBinaryValue("binary").Utf8ToString();
             Assert.IsTrue(binaryTest.Equals(BinaryVal));

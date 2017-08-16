@@ -78,18 +78,18 @@ namespace Lucene.Net.Index
             for (int i = 0; i < count; i++)
             {
                 IIndexableField field = fields[i];
-                if (field.FieldType.IsIndexed)
+                if (field.IndexableFieldType.IsIndexed)
                 {
-                    if (field.FieldType.StoreTermVectors)
+                    if (field.IndexableFieldType.StoreTermVectors)
                     {
                         doVectors = true;
-                        doVectorPositions |= field.FieldType.StoreTermVectorPositions;
-                        doVectorOffsets |= field.FieldType.StoreTermVectorOffsets;
+                        doVectorPositions |= field.IndexableFieldType.StoreTermVectorPositions;
+                        doVectorOffsets |= field.IndexableFieldType.StoreTermVectorOffsets;
                         if (doVectorPositions)
                         {
-                            doVectorPayloads |= field.FieldType.StoreTermVectorPayloads;
+                            doVectorPayloads |= field.IndexableFieldType.StoreTermVectorPayloads;
                         }
-                        else if (field.FieldType.StoreTermVectorPayloads)
+                        else if (field.IndexableFieldType.StoreTermVectorPayloads)
                         {
                             // TODO: move this check somewhere else, and impl the other missing ones
                             throw new System.ArgumentException("cannot index term vector payloads without term vector positions (field=\"" + field.Name + "\")");
@@ -97,15 +97,15 @@ namespace Lucene.Net.Index
                     }
                     else
                     {
-                        if (field.FieldType.StoreTermVectorOffsets)
+                        if (field.IndexableFieldType.StoreTermVectorOffsets)
                         {
                             throw new System.ArgumentException("cannot index term vector offsets when term vectors are not indexed (field=\"" + field.Name + "\")");
                         }
-                        if (field.FieldType.StoreTermVectorPositions)
+                        if (field.IndexableFieldType.StoreTermVectorPositions)
                         {
                             throw new System.ArgumentException("cannot index term vector positions when term vectors are not indexed (field=\"" + field.Name + "\")");
                         }
-                        if (field.FieldType.StoreTermVectorPayloads)
+                        if (field.IndexableFieldType.StoreTermVectorPayloads)
                         {
                             throw new System.ArgumentException("cannot index term vector payloads when term vectors are not indexed (field=\"" + field.Name + "\")");
                         }
@@ -113,19 +113,19 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
-                    if (field.FieldType.StoreTermVectors)
+                    if (field.IndexableFieldType.StoreTermVectors)
                     {
                         throw new System.ArgumentException("cannot index term vectors when field is not indexed (field=\"" + field.Name + "\")");
                     }
-                    if (field.FieldType.StoreTermVectorOffsets)
+                    if (field.IndexableFieldType.StoreTermVectorOffsets)
                     {
                         throw new System.ArgumentException("cannot index term vector offsets when field is not indexed (field=\"" + field.Name + "\")");
                     }
-                    if (field.FieldType.StoreTermVectorPositions)
+                    if (field.IndexableFieldType.StoreTermVectorPositions)
                     {
                         throw new System.ArgumentException("cannot index term vector positions when field is not indexed (field=\"" + field.Name + "\")");
                     }
-                    if (field.FieldType.StoreTermVectorPayloads)
+                    if (field.IndexableFieldType.StoreTermVectorPayloads)
                     {
                         throw new System.ArgumentException("cannot index term vector payloads when field is not indexed (field=\"" + field.Name + "\")");
                     }

@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,7 +55,7 @@ namespace Lucene.Net.Index
 
         public override void AddField(int docID, IIndexableField field, FieldInfo fieldInfo)
         {
-            DocValuesType dvType = field.FieldType.DocValueType;
+            DocValuesType dvType = field.IndexableFieldType.DocValueType;
             if (dvType != DocValuesType.NONE)
             {
                 fieldInfo.DocValuesType = dvType;
@@ -72,11 +73,11 @@ namespace Lucene.Net.Index
                 }
                 else if (dvType == DocValuesType.NUMERIC)
                 {
-                    if (!(field.GetNumericValue() is long?))
+                    if (field.NumericType != NumericFieldType.INT64)
                     {
-                        throw new System.ArgumentException("illegal type " + field.GetNumericValue().GetType() + ": DocValues types must be Long");
+                        throw new System.ArgumentException("illegal type " + field.NumericType + ": DocValues types must be " + NumericFieldType.INT64);
                     }
-                    AddNumericField(fieldInfo, docID, (long)field.GetNumericValue());
+                    AddNumericField(fieldInfo, docID, field.GetInt64ValueOrDefault());
                 }
                 else
                 {

@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Linq;
@@ -99,7 +100,7 @@ namespace Lucene.Net.Support.IO
 
             fileStream.Flush(true);
 
-            if (OS.IsWindows)
+            if (Constants.WINDOWS)
             {
 #if NETSTANDARD
                 // Getting the SafeFileHandle property automatically flushes the
@@ -110,7 +111,7 @@ namespace Lucene.Net.Support.IO
                     throw new IOException();
 #endif
             }
-            //else if (OS.IsUnix)
+            //else if (Constants.LINUX)
             //{
             //    if (fsync(fileStream.Handle) != IntPtr.Zero)
             //    throw new System.IO.IOException();

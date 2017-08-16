@@ -487,7 +487,7 @@ namespace Lucene.Net.Index.Memory
                 Document doc = new Document();
                 foreach (IIndexableField field in nextDoc.Fields)
                 {
-                    if (field.FieldType.IsIndexed)
+                    if (field.IndexableFieldType.IsIndexed)
                     {
                         doc.Add(field);
                         if (Random().nextInt(3) == 0)

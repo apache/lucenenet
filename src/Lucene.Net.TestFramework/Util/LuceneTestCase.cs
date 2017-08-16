@@ -2410,7 +2410,9 @@ namespace Lucene.Net.Util
             Assert.AreEqual(leftField.Name, rightField.Name, info);
             Assert.AreEqual(leftField.GetBinaryValue(), rightField.GetBinaryValue(), info);
             Assert.AreEqual(leftField.GetStringValue(), rightField.GetStringValue(), info);
+#pragma warning disable 612, 618
             Assert.AreEqual(leftField.GetNumericValue(), rightField.GetNumericValue(), info);
+#pragma warning restore 612, 618
             // TODO: should we check the FT at all?
         }
 

@@ -27,7 +27,7 @@
                 this.Description = FromResource("Description");
 
                 //this.Commands.Add(new AnalysisICUBuildRBBIRulesCommand.Configuration(options));
-                //this.Commands.Add(new AnalysisKuromojiBuildDictionaryCommand.Configuration(options));
+                this.Commands.Add(new AnalysisKuromojiBuildDictionaryCommand.Configuration(options));
                 this.Commands.Add(new AnalysisStempelCompileStemsCommand.Configuration(options));
                 this.Commands.Add(new AnalysisStempelPatchStemsCommand.Configuration(options));
 

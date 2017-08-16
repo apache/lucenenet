@@ -1,10 +1,9 @@
-#if FEATURE_COLLATION
 using Icu.Collation;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
+using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -55,7 +54,7 @@ namespace Lucene.Net.Analysis
         /// <returns> The encoded collation key for the original String </returns>
         /// @deprecated only for testing deprecated filters
         [Obsolete("only for testing deprecated filters")]
-		protected internal virtual string EncodeCollationKey(sbyte[] keyBits)
+		protected internal virtual string EncodeCollationKey(byte[] keyBits)
 		{
 			// Ensure that the backing char[] array is large enough to hold the encoded
 			// Binary String
@@ -268,7 +267,7 @@ namespace Lucene.Net.Analysis
 				}
 				finally
 				{
-					IOUtils.CloseWhileHandlingException(priorException, ts);
+					IOUtils.DisposeWhileHandlingException(priorException, ts);
 				}
 			}
 
@@ -328,7 +327,7 @@ namespace Lucene.Net.Analysis
 						}
 						finally
 						{
-							IOUtils.CloseWhileHandlingException(priorException, ts);
+							IOUtils.DisposeWhileHandlingException(priorException, ts);
 						}
 					}
 				}
@@ -340,4 +339,3 @@ namespace Lucene.Net.Analysis
 		}
 	}
 }
-#endif

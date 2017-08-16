@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Util;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Lucene.Net.Support
@@ -135,6 +136,35 @@ namespace Lucene.Net.Support
 
             // codePoint is negative or not found in string
             return -1;
+        }
+
+        // LUCENENET TODO: BUG Replace all calls to .Split("", StringSplitOptions.RemoveEmptyEntries)
+        // and Regex.Split("") with .Split("").TrimEnd() and Regex.Split("").TrimEnd() to match the 
+        // behavior of Java's Split() method.
+
+        /// <summary>
+        /// Removes null or empty elements from the end of a string array.
+        /// </summary>
+        /// <param name="input">This string array.</param>
+        /// <returns>The array with any null or empty elements removed from the end.</returns>
+        public static string[] TrimEnd(this string[] input)
+        {
+            if (input == null)
+                return null;
+            int lastElement;
+            for (lastElement = input.Length - 1; lastElement >= 0; lastElement--)
+            {
+                if (!string.IsNullOrEmpty(input[lastElement]))
+                    break;
+            }
+            if (lastElement > 0 && lastElement < input.Length)
+            {
+                int end = lastElement + 1;
+                string[] result = new string[end];
+                Array.Copy(input, result, end);
+                return result;
+            }
+            return input;
         }
     }
 }

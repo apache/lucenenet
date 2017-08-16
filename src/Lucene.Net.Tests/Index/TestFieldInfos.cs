@@ -49,7 +49,7 @@ namespace Lucene.Net.Index
             FieldInfos.Builder builder = new FieldInfos.Builder();
             foreach (IIndexableField field in TestDoc)
             {
-                builder.AddOrUpdate(field.Name, field.FieldType);
+                builder.AddOrUpdate(field.Name, field.IndexableFieldType);
             }
             FieldInfos fieldInfos = builder.Finish();
             //Since the complement is stored as well in the fields map
