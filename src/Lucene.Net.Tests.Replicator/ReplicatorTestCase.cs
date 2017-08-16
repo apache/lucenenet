@@ -24,6 +24,7 @@ namespace Lucene.Net.Replicator
 	 * limitations under the License.
 	 */
 
+    [SuppressCodecs("Lucene3x")]
     public class ReplicatorTestCase : LuceneTestCase
     {
         public static TestServer NewHttpServer<TStartUp>(ReplicationService service) where TStartUp : class
