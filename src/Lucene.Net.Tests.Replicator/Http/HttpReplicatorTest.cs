@@ -1,23 +1,33 @@
-//STATUS: DRAFT - 4.8.0
-
-using System;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using Microsoft.AspNetCore.TestHost;
+using NUnit.Framework;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Lucene.Net.Documents;
-using Lucene.Net.Index;
-using Lucene.Net.Replicator;
-using Lucene.Net.Replicator.Http;
-using Lucene.Net.Support;
-using Lucene.Net.Util;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.DependencyInjection;
-using NUnit.Framework;
 using Directory = Lucene.Net.Store.Directory;
 
-namespace Lucene.Net.Tests.Replicator.Http
+namespace Lucene.Net.Replicator.Http
 {
+    /*
+     * Licensed to the Apache Software Foundation (ASF) under one or more
+     * contributor license agreements.  See the NOTICE file distributed with
+     * this work for additional information regarding copyright ownership.
+     * The ASF licenses this file to You under the Apache License, Version 2.0
+     * (the "License"); you may not use this file except in compliance with
+     * the License.  You may obtain a copy of the License at
+     *
+     *     http://www.apache.org/licenses/LICENSE-2.0
+     *
+     * Unless required by applicable law or agreed to in writing, software
+     * distributed under the License is distributed on an "AS IS" BASIS,
+     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     * See the License for the specific language governing permissions and
+     * limitations under the License.
+     */
+
     public class HttpReplicatorTest : ReplicatorTestCase
     {
         private DirectoryInfo clientWorkDir;

@@ -1,20 +1,15 @@
-//STATUS: DRAFT - 4.8.0
-
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Lucene.Net.Documents;
-using Lucene.Net.Index;
-using Lucene.Net.Replicator;
-using Lucene.Net.Support;
-using Lucene.Net.Support.C5;
-using Lucene.Net.Util;
-using NUnit.Framework;
 using Directory = Lucene.Net.Store.Directory;
 
-namespace Lucene.Net.Tests.Replicator
+namespace Lucene.Net.Replicator
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more

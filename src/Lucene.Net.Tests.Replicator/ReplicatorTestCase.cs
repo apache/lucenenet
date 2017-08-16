@@ -1,13 +1,11 @@
-//STATUS: PENDING - 4.8.0
-
-using System;
 using Lucene.Net.Replicator.Http;
 using Lucene.Net.Util;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
-namespace Lucene.Net.Tests.Replicator
+namespace Lucene.Net.Replicator
 {
     /*
 	 * Licensed to the Apache Software Foundation (ASF) under one or more
