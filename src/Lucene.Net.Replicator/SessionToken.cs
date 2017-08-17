@@ -54,7 +54,7 @@ namespace Lucene.Net.Replicator
         /// Constructor which deserializes from the given <see cref="IDataInput"/>.
         /// </summary>
         /// <exception cref="System.IO.IOException"></exception>
-        public SessionToken(DataInputStream reader) // LUCENENET TODO: API : IDataInput
+        public SessionToken(IDataInput reader)
         {
             Id = reader.ReadUTF();
             Version = reader.ReadUTF();
