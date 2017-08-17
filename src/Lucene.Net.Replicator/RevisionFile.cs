@@ -69,10 +69,7 @@ namespace Lucene.Net.Replicator
 
         public override int GetHashCode()
         {
-            unchecked // LUCENENET TODO: Correct hash code logic
-            {
-                return (FileName.GetHashCode() * 397) ^ Length.GetHashCode();
-            }
+            return FileName.GetHashCode() ^ (int)(Length ^ (long)((ulong)Length >> 32));
         }
 
         public override string ToString()
