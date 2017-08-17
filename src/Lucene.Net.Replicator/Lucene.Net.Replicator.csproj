@@ -65,8 +65,8 @@
   <ItemGroup>
     <Compile Include="Http\HttpClientBase.cs" />
     <Compile Include="Http\HttpReplicator.cs" />
-    <Compile Include="Http\Abstractions\IReplicationRequest.cs" />
-    <Compile Include="Http\Abstractions\IReplicationResponse.cs" />
+    <Compile Include="Support\Http\Abstractions\IReplicationRequest.cs" />
+    <Compile Include="Support\Http\Abstractions\IReplicationResponse.cs" />
     <Compile Include="Http\ReplicationService.cs" />
     <Compile Include="IndexAndTaxonomyReplicationHandler.cs" />
     <Compile Include="IndexAndTaxonomyRevision.cs" />
