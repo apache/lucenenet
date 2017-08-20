@@ -45,7 +45,7 @@
     <Compile Include="AspNetCoreReplicationResponse.cs" />
     <Compile Include="AspNetCoreReplicationServiceExtentions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\CommonAssemblyInfo.cs">
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
@@ -54,7 +54,7 @@
     <None Include="Lucene.Net.Replicator.AspNetCore.project.json" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj">
+    <ProjectReference Include="..\..\Lucene.Net.Replicator\Lucene.Net.Replicator.csproj">
       <Project>{1F70D2DB-C1B3-4F78-9598-3E04E0C7EB06}</Project>
       <Name>Lucene.Net.Replicator</Name>
     </ProjectReference>

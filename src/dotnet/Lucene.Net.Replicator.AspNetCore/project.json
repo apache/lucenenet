@@ -13,7 +13,7 @@
   },
   "buildOptions": {
     "compile": {
-      "includeFiles": [ "../CommonAssemblyInfo.cs" ]
+      "includeFiles": [ "../../CommonAssemblyInfo.cs" ]
     },
     "nowarn": [ "1591", "1573" ]
   },

@@ -113,9 +113,11 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Benchmark"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Replicator", "src\Lucene.Net.Replicator\Lucene.Net.Replicator.xproj", "{7EF82DA1-570C-41A6-BBF3-E609E9AEE905}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Replicator.AspNetCore", "src\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.xproj", "{338E63C1-CEAC-47C4-A89A-090C764BE274}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Replicator.AspNetCore", "src\dotnet\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.xproj", "{338E63C1-CEAC-47C4-A89A-090C764BE274}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lucene.Net.Tests.Replicator", "src\Lucene.Net.Tests.Replicator\Lucene.Net.Tests.Replicator.xproj", "{685A1388-5D85-42D0-A98C-4EC3D0C01C5F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{71899090-8397-48EE-AFF9-60B0A33CC930}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -548,5 +550,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{D5F3414E-E743-4DCA-A50A-DA3278A2BA2B} = {C8F207AE-DB35-4B14-966C-C1FADCC28DAE}
 		{495B65F0-0B01-40FE-9DC8-5A82C49E07EF} = {C8F207AE-DB35-4B14-966C-C1FADCC28DAE}
+		{338E63C1-CEAC-47C4-A89A-090C764BE274} = {71899090-8397-48EE-AFF9-60B0A33CC930}
 	EndGlobalSection
 EndGlobal

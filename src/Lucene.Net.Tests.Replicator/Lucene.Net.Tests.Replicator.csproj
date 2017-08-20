@@ -65,7 +65,7 @@
       <Project>{48F7884A-9454-4E88-8413-9D35992CB440}</Project>
       <Name>Lucene.Net.Facet</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.csproj">
+    <ProjectReference Include="..\dotnet\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.csproj">
       <Project>{763ccb5a-e397-456a-af47-7c6e228b1852}</Project>
       <Name>Lucene.Net.Replicator.AspNetCore</Name>
     </ProjectReference>
