@@ -1,10 +1,4 @@
-using Lucene.Net.Replicator.AspNetCore;
-using Lucene.Net.Replicator.Http.Abstractions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using System.Threading.Tasks;
-
-namespace Lucene.Net.Replicator.Http
+﻿namespace Lucene.Net.Replicator.Http.Abstractions
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -23,15 +17,15 @@ namespace Lucene.Net.Replicator.Http
      * limitations under the License.
      */
 
-    public class ReplicationServlet
+    /// <summary>
+    /// Contract for a replication service.
+    /// </summary>
+    public interface IReplicationService
     {
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IReplicationService service)
-        {
-            app.Run(async context =>
-            {
-                await Task.Yield();
-                service.Perform(context.Request, context.Response);
-            });
-        }
+        /// <summary>
+        /// Executes the replication task.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">required parameters are missing</exception>
+        void Perform(IReplicationRequest request, IReplicationResponse response);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Replicator.Http;
+using Lucene.Net.Replicator.Http.Abstractions;
 using Microsoft.AspNetCore.Http;
 
 namespace Lucene.Net.Replicator.AspNetCore
@@ -24,9 +25,9 @@ namespace Lucene.Net.Replicator.AspNetCore
     public static class AspNetCoreReplicationServiceExtentions
     {
         /// <summary>
-        /// Extension method that mirrors the signature of <see cref="ReplicationService.Perform"/> using AspNetCore as implementation.
+        /// Extension method that mirrors the signature of <see cref="IReplicationService.Perform"/> using AspNetCore as implementation.
         /// </summary>
-        public static void Perform(this ReplicationService self, HttpRequest request, HttpResponse response)
+        public static void Perform(this IReplicationService self, HttpRequest request, HttpResponse response)
         {
             self.Perform(new AspNetCoreReplicationRequest(request), new AspNetCoreReplicationResponse(response));
         }

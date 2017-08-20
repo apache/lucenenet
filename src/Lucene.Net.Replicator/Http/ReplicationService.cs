@@ -43,7 +43,7 @@ namespace Lucene.Net.Replicator.Http
     /// <para/>
     /// @lucene.experimental
     /// </remarks>
-    public class ReplicationService
+    public class ReplicationService : IReplicationService // LUCENENET specific: added interface so we can mock easier.
     {
         /// <summary>
         /// Actions supported by the <see cref="ReplicationService"/>.

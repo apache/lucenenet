@@ -1,4 +1,5 @@
 using Lucene.Net.Replicator.Http;
+using Lucene.Net.Replicator.Http.Abstractions;
 using Lucene.Net.Util;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
@@ -27,7 +28,7 @@ namespace Lucene.Net.Replicator
     [SuppressCodecs("Lucene3x")]
     public class ReplicatorTestCase : LuceneTestCase
     {
-        public static TestServer NewHttpServer<TStartUp>(ReplicationService service) where TStartUp : class
+        public static TestServer NewHttpServer<TStartUp>(IReplicationService service) where TStartUp : class
         {
             var server = new TestServer(new WebHostBuilder()
                 .ConfigureServices(container =>
