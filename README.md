@@ -28,9 +28,11 @@ Working toward Lucene.Net 4.8.0 (currently in BETA)
 ## Download
 
 [![NuGet version](https://img.shields.io/nuget/v/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/)
+[![NuGet version](https://img.shields.io/nuget/v/Lucene.Net.Contrib.svg)](https://www.nuget.org/packages/Lucene.Net.Contrib/)
 
 ```
 PM> Install-Package Lucene.Net
+PM> Install-Package Lucene.Net.Contrib
 ```
 
 [![NuGet version](https://img.shields.io/nuget/vpre/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/)
