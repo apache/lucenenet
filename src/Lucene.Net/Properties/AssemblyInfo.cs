@@ -24,16 +24,9 @@ using System.Runtime.CompilerServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-//
-[assembly: AssemblyTitle("Lucene.Net")]
-[assembly: AssemblyDescription(
-    "Lucene.Net is a full-text search engine library capable of advanced text analysis, indexing, and searching. "
-    + "It can be used to easily add search capabilities to applications. " 
-    + "Lucene.Net is a C# port of the popular Java Lucene search engine framework from " 
-    + "The Apache Software Foundation, targeted at .NET Framework and .NET Core users.")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
+
 [assembly: CLSCompliant(true)]
 
 // LUCENENET NOTE: This attribute is required to disable optimizations so the 

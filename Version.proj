@@ -26,9 +26,10 @@
     <!-- IMPORTANT: VersionPrefix must always be the same as the Lucene version this is based on.
       Never increment it for an individual build - only increment this when an entire version's changes
       are ported over from Lucene. This is what determines the version of all of the NuGet packages and binaries. -->
-	  <VersionPrefix>4.8.0</VersionPrefix> <!-- LUCENENET TODO: Change to BuildVersion or VersionPre? Need to find out how this affects the build if linked. -->
+	  <VersionPrefix>4.8.0</VersionPrefix>
 
-    <!-- AssemblyVersion should only be changed for each major version update. -->
+    <!-- .NET enforces AssemblyVersion as the "major" version (when strong-named),
+      so AssemblyVersion should only be changed for each major version release. -->
     <AssemblyVersion>4.0.0</AssemblyVersion>
   </PropertyGroup>
 

@@ -10,7 +10,7 @@
     <AssemblyName>lucene-cli</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>lucene-cli</PackageId>
-    <Description>The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality.</Description>
+    <Description>The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality. Run 'dotnet lucene-cli.dll' to see usage information.</Description>
     <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query;maintenance;utility</PackageTags>
     <Authors>The Apache Software Foundation</Authors>
     <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
@@ -20,16 +20,8 @@
     <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
-    
-    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
-    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>

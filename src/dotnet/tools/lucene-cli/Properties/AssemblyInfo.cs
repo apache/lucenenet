@@ -22,10 +22,6 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("lucene-cli")]
-[assembly: AssemblyDescription(
-    "Lucene.Net maintenance utilities and demos. Run 'dotnet lucene-cli.dll' to see usage information.")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Cli")]
 
 // Setting ComVisible to false makes the types in this assembly not visible

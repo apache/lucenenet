@@ -24,6 +24,8 @@ properties {
 	[string]$tools_directory  = "$base_directory\lib"
 	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
 	[string]$test_results_directory = "$release_directory\TestResults"
+	[string]$solutionFile = "$base_directory\Lucene.Net.sln"
+	[string]$versionFile = "$base_directory\Version.proj"
 
 	[string]$buildCounter     = $(if ($buildCounter) { $buildCounter } else { $env:BuildCounter }) #NOTE: Pass in as a parameter (not a property) or environment variable to override
 	[string]$preReleaseCounterPattern = $(if ($preReleaseCounterPattern) { $preReleaseCounterPattern } else { if ($env:PreReleaseCounterPattern) { $env:PreReleaseCounterPattern } else { "00000" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
@@ -65,17 +67,17 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 	}
 	
 	Write-Host "Current SDK version: $sdkVersion" -ForegroundColor Yellow
-	if (!$sdkVersion.Equals("1.0.0-preview2-1-003177")) {
-		Write-Host "Require SDK version 1.0.0-preview2-1-003177, installing..." -ForegroundColor Red
+	if (!$sdkVersion.Equals("2.0.0")) {
+		Write-Host "Require SDK version 2.0.0, installing..." -ForegroundColor Red
 		#Install the correct version of the .NET SDK for this build
-	    Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.0-preview2-1-003177"
+	    Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 2.0.0"
 	}
 
 	# Safety check - this should never happen
 	& where.exe dotnet.exe
 
 	if ($LASTEXITCODE -ne 0) {
-		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK version 1.0.0-preview2-1-003177."
+		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK version 2.0.0."
 	}
 }
 
@@ -101,29 +103,44 @@ task Init -depends InstallSDK -description "This task makes sure the build envir
 }
 
 task Restore -description "This task restores the dependencies" {
-	pushd $base_directory
-		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Cli") -and !$_.Directory.Name.Contains("lucene-cli") }
-	popd
-
-	foreach ($package in $packages) {
-		Exec { & dotnet.exe restore $package }
+	Exec { 
+		&dotnet restore $solutionFile --no-dependencies
 	}
 }
 
-task Compile -depends Clean, Init -description "This task compiles the solution" {
+task Compile -depends Clean, Init, Restore -description "This task compiles the solution" {
 	try {
-		pushd $base_directory
-		$projects = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Cli") -and !$_.Directory.Name.Contains("lucene-cli") }
-		popd
-
-		Backup-Files $projects
 		if ($prepareForBuild -eq $true) {
-			Prepare-For-Build $projects
+			Prepare-For-Build
 		}
 
-		Invoke-Task Restore
+		#Use only the major version as the assembly version.
+		#This ensures binary compatibility unless the major version changes.
+		$version-match "(^\d+)"
+		$assemblyVersion = $Matches[0]
+		$assemblyVersion = "$assemblyVersion.0.0"
 
-		Build-Assemblies $projects
+		Write-Host "Assembly version set to: $assemblyVersion" -ForegroundColor Green
+
+		$pv = $packageVersion
+		#check for presense of Git
+		& where.exe git.exe
+		if ($LASTEXITCODE -eq 0) {
+			$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
+			$pv = "$packageVersion commit:[$gitCommit]"
+		}
+
+		Write-Host "Assembly informational version set to: $pv" -ForegroundColor Green
+
+		Exec {
+			&dotnet msbuild $solutionFile /t:Build `
+				/p:Configuration=$configuration `
+				/p:AssemblyVersion=$assemblyVersion `
+				/p:InformationalVersion=$pv `
+				/p:Product=$product_name `
+				/p:Company=$company_name `
+				/p:Copyright=$copyright
+		}
 
 		$success = $true
 	} finally {
@@ -134,9 +151,12 @@ task Compile -depends Clean, Init -description "This task compiles the solution"
 }
 
 task Pack -depends Compile -description "This task creates the NuGet packages" {
+	#create the nuget package output directory
+	Ensure-Directory-Exists "$nuget_package_directory"
+
 	try {
 		pushd $base_directory
-		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { 
+		$packages = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? { 
 			!$_.Directory.Name.Contains(".Test") -and 
 			!$_.Directory.Name.Contains(".Demo") -and 
 			!$_.Directory.Name.Contains(".Cli") -and 
@@ -254,46 +274,14 @@ function Get-Version() {
 	return $version
 }
 
-function Prepare-For-Build([string[]]$projects) {
+function Prepare-For-Build() {
 	Backup-File $common_assembly_info 
-	
-	$pv = $packageVersion
-	#check for presense of Git
-	& where.exe git.exe
-	if ($LASTEXITCODE -eq 0) {
-		$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
-		$pv = "$packageVersion commit:[$gitCommit]"
-	}
 
 	Generate-Assembly-Info `
-		-product $product_name `
-		-company $company_name `
-		-copyright $copyright `
 		-version $version `
-		-packageVersion $pv `
 		-file $common_assembly_info
 
 	Update-Constants-Version $packageVersion
-
-	foreach ($project in $projects) {
-		Write-Host "Updating project.json for build: $project" -ForegroundColor Cyan
-
-		#Update version (for NuGet package) and dependency version of this project's inter-dependencies
-		(Get-Content $project) | % {
-			$_-replace "(?<=""Lucene.Net[\w\.]*?""\s*?:\s*?"")([^""]+)", $packageVersion
-		} | Set-Content $project -Force
-
-		$json = (Get-Content $project -Raw) | ConvertFrom-Json
-		$json.version = $PackageVersion
-		if (!$project.Contains("Test")) {
-			if ($json.buildOptions.xmlDoc -eq $null) {
-				$json.buildOptions | Add-Member -Name "xmlDoc" -Value true -MemberType NoteProperty
-			} else {
-				$json.buildOptions | % {$_.xmlDoc = true}
-			}
-		}
-		$json | ConvertTo-Json -depth 100 | Out-File $project -encoding UTF8 -Force
-	}
 
 	if ($generateBuildBat -eq $true) {
 		Backup-File $build_bat
@@ -312,18 +300,9 @@ function Update-Constants-Version([string]$version) {
 
 function Generate-Assembly-Info {
 param(
-	[string]$product,
-	[string]$company,
-	[string]$copyright,
 	[string]$version,
-	[string]$packageVersion,
 	[string]$file = $(throw "file is a required parameter.")
 )
-	#Use only the major version as the assembly version.
-	#This ensures binary compatibility unless the major version changes.
-	$version-match "(^\d+)"
-	$assemblyVersion = $Matches[0]
-	$assemblyVersion = "$assemblyVersion.0.0"
 
   $asmInfo = "/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -344,13 +323,7 @@ param(
 using System;
 using System.Reflection;
 
-[assembly: AssemblyProduct(""$product"")]
-[assembly: AssemblyCompany(""$company"")]
-[assembly: AssemblyTrademark(""$copyright"")]
-[assembly: AssemblyCopyright(""$copyright"")]
-[assembly: AssemblyVersion(""$assemblyVersion"")] 
 [assembly: AssemblyFileVersion(""$version"")]
-[assembly: AssemblyInformationalVersion(""$packageVersion"")]
 "
 	$dir = [System.IO.Path]::GetDirectoryName($file)
 	Ensure-Directory-Exists $dir
@@ -435,20 +408,12 @@ endlocal
 	[System.IO.File]::WriteAllLines($file, $buildBat, $Utf8EncodingNoBom)
 }
 
-function Build-Assemblies([string[]]$projects) {
-	foreach ($project in $projects) {
-		Exec {
-			& dotnet.exe build $project --configuration $configuration
-		}
-	}
-}
-
 function Pack-Assemblies([string[]]$projects) {
 	Ensure-Directory-Exists $nuget_package_directory
 	foreach ($project in $projects) {
 		Write-Host "Creating NuGet package for $project..." -ForegroundColor Magenta
 		Exec {
-			& dotnet.exe pack $project --configuration $Configuration --output $nuget_package_directory --no-build
+			& dotnet.exe pack $project --configuration $Configuration --output $nuget_package_directory --no-build --include-symbols /p:PackageVersion=$packageVersion
 		}
 	}
 }

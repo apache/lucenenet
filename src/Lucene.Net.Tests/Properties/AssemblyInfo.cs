@@ -23,15 +23,10 @@ using NUnit.Framework;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-//
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-//
-[assembly: AssemblyTitle("Apache Lucene.Net")]
-[assembly: AssemblyDescription("The Apache Software Foundation Lucene.Net a full-text search engine library")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyDefaultAlias("Lucene.Net")]
+[assembly: AssemblyDefaultAlias("Lucene.Net.Tests")]
 [assembly: AssemblyCulture("")]
 
 // NOTE: Version information is in CommonAssemblyInfo.cs
