@@ -28,7 +28,10 @@ namespace Lucene.Net.Search.Suggest.Fst
     /// </summary>
     public class LargeInputFST
     {
-        public static void Main(string[] args)
+        // LUCENENET specific - renaming from Main() because we must only have 1 entry point.
+        // Not sure why this utility is in a test project anyway - this seems like something that should
+        // be in Lucene.Net.Suggest so we can put it into the lucene-cli tool.
+        public static void Main2(string[] args) 
         {
             FileInfo input = new FileInfo("/home/dweiss/tmp/shuffled.dict");
 

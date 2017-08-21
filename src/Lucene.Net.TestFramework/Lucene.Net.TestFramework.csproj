@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -19,513 +19,77 @@
  under the License.
 
 -->
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Version.proj" />
+  
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net</RootNamespace>
-    <AssemblyName>Lucene.Net.TestFramework</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
+    <TargetFrameworks>netstandard1.5;net451</TargetFrameworks>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
+
+    <AssemblyTitle>Lucene.Net.TestFramework</AssemblyTitle>
+    <Description>Framework for testing Lucene.Net-based applications from The Apache Software Foundation.</Description>
+    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query</PackageTags>
+    <Authors>The Apache Software Foundation</Authors>
+    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
+    <Compile Remove="Util\AbstractBeforeAfterRule.cs;Util\CloseableDirectory.cs;Util\FailureMarker.cs;Util\QuickPatchThreadsFilter.cs;Util\RemoveUponClose.cs;Util\RunListenerPrintReproduceInfo.cs;Util\TestRuleAssertionsRequired.cs;Util\TestRuleDelegate.cs;Util\TestRuleFieldCacheSanity.cs;Util\TestRuleIgnoreAfterMaxFailures.cs;Util\TestRuleIgnoreTestSuites.cs;Util\TestRuleMarkFailure.cs;Util\TestRuleSetupAndRestoreInstanceEnv.cs;Util\TestRuleSetupTeardownChained.cs;Util\TestRuleStoreClassName.cs;Util\TestRuleThreadAndTestName.cs;Util\TestSecurityManager.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" Exclude="Util\AbstractBeforeAfterRule.cs;Util\CloseableDirectory.cs;Util\FailureMarker.cs;Util\QuickPatchThreadsFilter.cs;Util\RemoveUponClose.cs;Util\RunListenerPrintReproduceInfo.cs;Util\TestRuleAssertionsRequired.cs;Util\TestRuleDelegate.cs;Util\TestRuleFieldCacheSanity.cs;Util\TestRuleIgnoreAfterMaxFailures.cs;Util\TestRuleIgnoreTestSuites.cs;Util\TestRuleMarkFailure.cs;Util\TestRuleSetupAndRestoreInstanceEnv.cs;Util\TestRuleSetupTeardownChained.cs;Util\TestRuleStoreClassName.cs;Util\TestRuleThreadAndTestName.cs;Util\TestSecurityManager.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="icu.net" Version="54.1.1-alpha" />
+    <PackageReference Include="NUnit" Version="3.5.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.0.1" />
+    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <DefineConstants>$(DefineConstants);FEATURE_STACKTRACE;NETSTANDARD</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Analysis\BaseTokenStreamTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\CannedBinaryTokenStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\CannedTokenStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\CollationTestBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\LookaheadTokenFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockBytesAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockBytesAttributeFactory.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockCharFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockFixedLengthPayloadFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockGraphTokenFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockHoleInjectingTokenFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockPayloadAnalyzer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockRandomLookaheadTokenFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockReaderWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockTokenFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockTokenizer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockUTF16TermAttributeImpl.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\MockVariableLengthPayloadFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\TokenStreamToDot.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\ValidatingTokenFilter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Analysis\VocabularyAssert.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Attributes\HasTimeoutAttribute.cs" />
-    <Compile Include="Attributes\LongRunningTestAttribute.cs" />
-    <Compile Include="Attributes\LuceneNetSpecificAttribute.cs" />
-    <Compile Include="Codecs\Asserting\AssertingCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Asserting\AssertingDocValuesFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Asserting\AssertingNormsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Asserting\AssertingPostingsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Asserting\AssertingStoredFieldsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Asserting\AssertingTermVectorsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Bloom\TestBloomFilteredLucene41Postings.cs" />
-    <Compile Include="Codecs\CheapBastard\CheapBastardCodec.cs" />
-    <Compile Include="Codecs\Compressing\CompressingCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Compressing\Dummy\DummyCompressingCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Compressing\FastCompressingCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Compressing\FastDecompressionCompressingCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Compressing\HighCompressionCompressingCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWFieldInfosFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWFieldInfosReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWFieldInfosWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWFieldsWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWNormsConsumer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWNormsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWPostingsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWSegmentInfoFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWSegmentInfoWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWSkipListWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWStoredFieldsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWStoredFieldsWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWTermVectorsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\PreFlexRWTermVectorsWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene3x\TermInfosWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene40\Lucene40DocValuesWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene40\Lucene40FieldInfosWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene40\Lucene40PostingsWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene40\Lucene40RWCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene40\Lucene40RWDocValuesFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene40\Lucene40RWNormsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene40\Lucene40RWPostingsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene40\Lucene40SkipListWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene41Ords\Lucene41WithOrds.cs" />
-    <Compile Include="Codecs\Lucene41\Lucene41RWCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene42\Lucene42DocValuesConsumer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene42\Lucene42FieldInfosWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene42\Lucene42RWCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene42\Lucene42RWDocValuesFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\Lucene45\Lucene45RWCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\MissingOrdRemapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\MockIntBlock\MockFixedIntBlockPostingsFormat.cs" />
-    <Compile Include="Codecs\MockIntBlock\MockVariableIntBlockPostingsFormat.cs" />
-    <Compile Include="Codecs\MockRandom\MockRandomPostingsFormat.cs" />
-    <Compile Include="Codecs\MockSep\MockSepPostingsFormat.cs" />
-    <Compile Include="Codecs\MockSep\MockSingleIntFactory.cs" />
-    <Compile Include="Codecs\MockSep\MockSingleIntIndexInput.cs" />
-    <Compile Include="Codecs\MockSep\MockSingleIntIndexOutput.cs" />
-    <Compile Include="Codecs\NestedPulsing\NestedPulsingPostingsFormat.cs" />
-    <Compile Include="Codecs\RAMOnly\RAMOnlyPostingsFormat.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Codecs\TestCodecFactory.cs" />
-    <Compile Include="Codecs\TestDocValuesFormatFactory.cs" />
-    <Compile Include="Codecs\TestPostingsFormatFactory.cs" />
-    <Compile Include="Index\AlcoholicMergePolicy.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\AllDeletedFilterReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\AssertingAtomicReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\AssertingDirectoryReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\BaseCompressingDocValuesFormatTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\BaseDocValuesFormatTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\BaseIndexFileFormatTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\BaseMergePolicyTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\BasePostingsFormatTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\BaseStoredFieldsFormatTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\BaseTermVectorsFormatTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\DocHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\FieldFilterAtomicReader.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\MockIndexInput.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\MockRandomMergePolicy.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\RandomCodec.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\RandomDocumentsWriterPerThreadPool.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\RandomIndexWriter.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Index\ThreadedIndexingAndSearchingTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="JavaCompatibility\AbstractBeforeAfterRule.cs" />
-    <Compile Include="Randomized\Attributes\SeedAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\Attributes\SeedDecoratorAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\Attributes\ThreadLeakScopeAttribute.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\Generators\RandomInts.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\InternalAssumptionViolatedException.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\ISeedDecorator.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\MurmurHash3.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\RandomizedContext.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\RandomizedRunner.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\Randomness.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\SeedUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\SingleThreadedRandom.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Randomized\ThreadGroup.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\AssertingBulkOutOfOrderScorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\AssertingBulkScorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\AssertingCollector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\AssertingIndexSearcher.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\AssertingQuery.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\AssertingScorer.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\AssertingWeight.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\CheckHits.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\QueryUtils.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\RandomOrderCollector.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\RandomSimilarityProvider.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\SearchEquivalenceTestBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Search\ShardSearchingTestBase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Store\BaseDirectoryWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Store\MockDirectoryWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Store\MockIndexInputWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Store\MockIndexOutputWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Store\MockLockFactoryWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Store\SlowClosingMockIndexInputWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Store\SlowOpeningMockIndexInputWrapper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Store\TestHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Support\CultureInfoSupport.cs" />
-    <Compile Include="Support\RandomizedTest.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Support\ExceptionSerializationTestBase.cs" />
-    <Compile Include="Support\ApiScanTestBase.cs" />
-    <Compile Include="Util\Automaton\AutomatonTestUtil.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\BaseDocIdSetTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\English.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\FailOnNonBulkMergesInfoStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\Fst\FSTTester.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\LineFileDocs.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\LuceneTestCase.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\NullInfoStream.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\Paths.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\StackTraceHelper.cs" />
-    <Compile Include="Util\TestRuleSetupAndRestoreClassEnv.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\TestUtil.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\ThrottledIndexOutput.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Util\TimeUnits.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="JavaCompatibility\RandomHelpers.cs" />
-    <Compile Include="JavaCompatibility\LuceneTestCase.cs" />
-    <Compile Include="JavaCompatibility\LuceneTypesHelpers.cs" />
-    <Compile Include="JavaCompatibility\SystemTypesHelpers.cs" />
-    <Compile Include="Util\VirtualMethod.cs" />
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
-      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
-      <Name>Lucene.Net.Analysis.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
-      <Project>{3f79b6d4-4359-4f83-b64f-07f4f6262425}</Project>
-      <Name>Lucene.Net.Codecs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
-      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
-      <Name>Lucene.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Lucene.Net.TestFramework.project.json" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

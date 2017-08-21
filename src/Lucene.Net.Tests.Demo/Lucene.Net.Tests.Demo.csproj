@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 
  Licensed to the Apache Software Foundation (ASF) under one
@@ -19,107 +19,69 @@
  under the License.
 
 -->
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\TestTargetFramework.proj" />
+  <Import Project="..\..\Version.proj" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{571B361E-B0D4-445E-A0BC-1A24AA184258}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Tests.Demo</RootNamespace>
-    <AssemblyName>Lucene.Net.Tests.Demo</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <!--<TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>-->
+    <!--<TargetFramework>net451</TargetFramework>
+    <TargetFramework Condition=" '$(Configuration)' == 'Debug_NetCoreApp1_0' OR '$(Configuration)' == 'Release_NetCoreApp1_0' ">netcoreapp1.0</TargetFramework>-->
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.6.0</NetStandardImplicitPackageVersion>
+    
+    <AssemblyTitle>Lucene.Net.Tests.Demo</AssemblyTitle>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <EmbeddedResource Include="Test-Files\Docs\*" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Demo\Lucene.Net.Demo.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dotnet-test-nunit-teamcity" Version="3.4.0-beta-3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="NUnit" Version="3.5.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <!-- Required by NUnit3TestAdapter on .NET Core -->
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <Compile Remove="Support\TestApiConsistency.cs" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+    <DebugType>full</DebugType>
   </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Facet\TestAssociationsFacetsExample.cs" />
-    <Compile Include="Facet\TestDistanceFacetsExample.cs" />
-    <Compile Include="Facet\TestExpressionAggregationFacetsExample.cs" />
-    <Compile Include="Facet\TestMultiCategoryListsFacetsExample.cs" />
-    <Compile Include="Facet\TestRangeFacetsExample.cs" />
-    <Compile Include="Facet\TestSimpleFacetsExample.cs" />
-    <Compile Include="Facet\TestSimpleSortedSetFacetsExample.cs" />
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="TestDemo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Demo\Lucene.Net.Demo.csproj">
-      <Project>{d1661154-8f5b-499a-8b2d-04b8a67f4232}</Project>
-      <Name>Lucene.Net.Demo</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
-      <Project>{48f7884a-9454-4e88-8413-9d35992cb440}</Project>
-      <Name>Lucene.Net.Facet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
-      <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
-      <Name>Lucene.Net.TestFramework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
-      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
-      <Name>Lucene.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Lucene.Net.Tests.Demo.project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Test-Files\Docs\apache1.0.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\apache1.1.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\apache2.0.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\cpl1.0.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\epl1.0.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\freebsd.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\gpl1.0.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\gpl2.0.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\gpl3.0.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\lgpl2.1.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\lgpl3.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\lpgl2.0.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\mit.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\mozilla1.1.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\mozilla_eula_firefox3.txt" />
-    <EmbeddedResource Include="Test-Files\Docs\mozilla_eula_thunderbird2.txt" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

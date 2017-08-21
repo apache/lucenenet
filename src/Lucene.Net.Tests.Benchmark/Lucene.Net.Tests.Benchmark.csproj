@@ -1,130 +1,92 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\TestTargetFramework.proj" />
+  <Import Project="..\..\Version.proj" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9257F543-44E2-4DB6-8B27-A8A354C13E5B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Benchmarks</RootNamespace>
-    <AssemblyName>Lucene.Net.Tests.Benchmark</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <!--<TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>-->
+    <!--<TargetFramework>net451</TargetFramework>
+    <TargetFramework Condition=" '$(Configuration)' == 'Debug_NetCoreApp1_0' OR '$(Configuration)' == 'Release_NetCoreApp1_0' ">netcoreapp1.0</TargetFramework>-->
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    
+    <AssemblyTitle>Lucene.Net.Tests.Benchmark</AssemblyTitle>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+    
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <EmbeddedResource Include="ByTask\Feeds\trecdocs.zip;ByTask\conf.zip;ByTask\reuters.first20.lines.txt;ByTask\test-mapping-ISOLatin1Accent-partial.txt;Quality\reuters.578.lines.txt.bz2;Quality\trecQRels.txt;Quality\trecTopics.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
+    <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dotnet-test-nunit-teamcity" Version="3.4.0-beta-3" />
+    <PackageReference Include="icu.net" Version="54.1.1-alpha" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="NUnit" Version="3.5.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <!-- Required by NUnit3TestAdapter on .NET Core -->
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE;FEATURE_THREAD_PRIORITY;FEATURE_THREADINTERRUPTEDEXCEPTION</DefineConstants>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BenchmarkTestCase.cs" />
-    <Compile Include="ByTask\Feeds\DocMakerTest.cs" />
-    <Compile Include="ByTask\Feeds\EnwikiContentSourceTest.cs" />
-    <Compile Include="ByTask\Feeds\LineDocSourceTest.cs" />
-    <Compile Include="ByTask\Feeds\TestHtmlParser.cs" />
-    <Compile Include="ByTask\Feeds\TrecContentSourceTest.cs" />
-    <Compile Include="ByTask\Tasks\AddIndexesTaskTest.cs" />
-    <Compile Include="ByTask\Tasks\Alt\AltPackageTaskTest.cs" />
-    <Compile Include="ByTask\Tasks\Alt\AltTestTask.cs" />
-    <Compile Include="ByTask\Tasks\CommitIndexTaskTest.cs" />
-    <Compile Include="ByTask\Tasks\CountingHighlighterTestTask.cs" />
-    <Compile Include="ByTask\Tasks\CountingSearchTestTask.cs" />
-    <Compile Include="ByTask\Tasks\CreateIndexTaskTest.cs" />
-    <Compile Include="ByTask\Tasks\PerfTaskTest.cs" />
-    <Compile Include="ByTask\Tasks\SearchWithSortTaskTest.cs" />
-    <Compile Include="ByTask\Tasks\WriteEnwikiLineDocTaskTest.cs" />
-    <Compile Include="ByTask\Tasks\WriteLineDocTaskTest.cs" />
-    <Compile Include="ByTask\TestPerfTasksLogic.cs" />
-    <Compile Include="ByTask\TestPerfTasksParse.cs" />
-    <Compile Include="ByTask\Utils\StreamUtilsTest.cs" />
-    <Compile Include="ByTask\Utils\TestConfig.cs" />
-    <Compile Include="Conf\ConfLoader.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Quality\TestQualityRun.cs" />
-    <Compile Include="Support\TestApiConsistency.cs" />
-    <Compile Include="Support\TestEnglishNumberFormatExtensions.cs" />
-    <Compile Include="Support\TestExceptionSerialization.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ByTask\Feeds\trecdocs.zip" />
-    <EmbeddedResource Include="ByTask\conf.zip" />
-    <None Include="Lucene.Net.Tests.Benchmark.project.json" />
-    <EmbeddedResource Include="Quality\reuters.578.lines.txt.bz2" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
-      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
-      <Name>Lucene.Net.Analysis.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj">
-      <Project>{edc77cb4-597f-4818-8c83-3c006d12c384}</Project>
-      <Name>Lucene.Net.Benchmark</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Facet\Lucene.Net.Facet.csproj">
-      <Project>{48F7884A-9454-4E88-8413-9D35992CB440}</Project>
-      <Name>Lucene.Net.Facet</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj">
-      <Project>{E9E769EA-8504-44BC-8DC9-CCF958765F8F}</Project>
-      <Name>Lucene.Net.Highlighter</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj">
-      <Project>{349CB7C9-7534-4E1D-9B0A-5521441AF0AE}</Project>
-      <Name>Lucene.Net.ICU</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
-      <Project>{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}</Project>
-      <Name>Lucene.Net.TestFramework</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
-      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
-      <Name>Lucene.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Quality\trecQRels.txt" />
-    <EmbeddedResource Include="Quality\trecTopics.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ByTask\reuters.first20.lines.txt" />
-    <EmbeddedResource Include="ByTask\test-mapping-ISOLatin1Accent-partial.txt" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

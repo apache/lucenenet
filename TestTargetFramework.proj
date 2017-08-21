@@ -19,17 +19,15 @@
  under the License.
 
 -->
+
 <Project>
 
-  <!-- IMPORTANT: When these values are changed, the TeamCity counter number should also be reset. -->
+  <!-- Changing this setting will allow testing on all target frameworks within Visual Studio 2017.
+    Note that the main libraries are multi-targeted, so this has no effect on how they are compiled,
+    this setting only affects the test projects. -->
   <PropertyGroup>
-    <!-- IMPORTANT: VersionPrefix must always be the same as the Lucene version this is based on.
-      Never increment it for an individual build - only increment this when an entire version's changes
-      are ported over from Lucene. This is what determines the version of all of the NuGet packages and binaries. -->
-	  <VersionPrefix>4.8.0</VersionPrefix> <!-- LUCENENET TODO: Change to BuildVersion or VersionPre? Need to find out how this affects the build if linked. -->
-
-    <!-- AssemblyVersion should only be changed for each major version update. -->
-    <AssemblyVersion>4.0.0</AssemblyVersion>
+    <TargetFramework>net451</TargetFramework>
+    <!--<TargetFramework>netcoreapp1.0</TargetFramework>-->
   </PropertyGroup>
-
+  
 </Project>

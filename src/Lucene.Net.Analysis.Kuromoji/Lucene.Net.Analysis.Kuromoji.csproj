@@ -1,118 +1,85 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\Version.proj" />
+  
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8408625A-2508-46D5-8519-045183C43724}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Analysis.Ja</RootNamespace>
-    <AssemblyName>Lucene.Net.Analysis.Kuromoji</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFrameworks>netstandard1.5;net451</TargetFrameworks>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
+
+    <AssemblyTitle>Lucene.Net.Analysis.Kuromoji</AssemblyTitle>
+    <Description>Japanese Morphological Analyzer for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query;japanese</PackageTags>
+    <Authors>The Apache Software Foundation</Authors>
+    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <EmbeddedResource Include="stoptags.txt;stopwords.txt;Dict\CharacterDefinition.dat;Dict\ConnectionCosts.dat;Dict\TokenInfoDictionary$buffer.dat;Dict\TokenInfoDictionary$fst.dat;Dict\TokenInfoDictionary$posDict.dat;Dict\TokenInfoDictionary$targetMap.dat;Dict\UnknownDictionary$buffer.dat;Dict\UnknownDictionary$posDict.dat;Dict\UnknownDictionary$targetMap.dat" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <PackageReference Include="System.Globalization.Extensions" Version="4.3.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
-    <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Dict\BinaryDictionary.cs" />
-    <Compile Include="Dict\CharacterDefinition.cs" />
-    <Compile Include="Dict\ConnectionCosts.cs" />
-    <Compile Include="Dict\Dictionary.cs" />
-    <Compile Include="Dict\TokenInfoDictionary.cs" />
-    <Compile Include="Dict\TokenInfoFST.cs" />
-    <Compile Include="Dict\UnknownDictionary.cs" />
-    <Compile Include="Dict\UserDictionary.cs" />
-    <Compile Include="GraphvizFormatter.cs" />
-    <Compile Include="JapaneseAnalyzer.cs" />
-    <Compile Include="JapaneseBaseFormFilter.cs" />
-    <Compile Include="JapaneseBaseFormFilterFactory.cs" />
-    <Compile Include="JapaneseIterationMarkCharFilter.cs" />
-    <Compile Include="JapaneseIterationMarkCharFilterFactory.cs" />
-    <Compile Include="JapaneseKatakanaStemFilter.cs" />
-    <Compile Include="JapaneseKatakanaStemFilterFactory.cs" />
-    <Compile Include="JapanesePartOfSpeechStopFilter.cs" />
-    <Compile Include="JapanesePartOfSpeechStopFilterFactory.cs" />
-    <Compile Include="JapaneseReadingFormFilter.cs" />
-    <Compile Include="JapaneseReadingFormFilterFactory.cs" />
-    <Compile Include="JapaneseTokenizer.cs" />
-    <Compile Include="JapaneseTokenizerFactory.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Token.cs" />
-    <Compile Include="TokenAttributes\BaseFormAttribute.cs" />
-    <Compile Include="TokenAttributes\BaseFormAttributeImpl.cs" />
-    <Compile Include="TokenAttributes\InflectionAttribute.cs" />
-    <Compile Include="TokenAttributes\InflectionAttributeImpl.cs" />
-    <Compile Include="TokenAttributes\PartOfSpeechAttribute.cs" />
-    <Compile Include="TokenAttributes\PartOfSpeechAttributeImpl.cs" />
-    <Compile Include="TokenAttributes\ReadingAttribute.cs" />
-    <Compile Include="TokenAttributes\ReadingAttributeImpl.cs" />
-    <Compile Include="Tools\BinaryDictionaryWriter.cs" />
-    <Compile Include="Tools\CharacterDefinitionWriter.cs" />
-    <Compile Include="Tools\ConnectionCostsBuilder.cs" />
-    <Compile Include="Tools\ConnectionCostsWriter.cs" />
-    <Compile Include="Tools\DictionaryBuilder.cs" />
-    <Compile Include="Tools\TokenInfoDictionaryBuilder.cs" />
-    <Compile Include="Tools\TokenInfoDictionaryWriter.cs" />
-    <Compile Include="Tools\UnknownDictionaryBuilder.cs" />
-    <Compile Include="Tools\UnknownDictionaryWriter.cs" />
-    <Compile Include="Util\CSVUtil.cs" />
-    <Compile Include="Util\ToStringUtil.cs" />
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
-      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
-      <Name>Lucene.Net.Analysis.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
-      <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
-      <Name>Lucene.Net</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Dict\CharacterDefinition.dat" />
-    <EmbeddedResource Include="Dict\ConnectionCosts.dat" />
-    <EmbeddedResource Include="Dict\TokenInfoDictionary%24buffer.dat" />
-    <EmbeddedResource Include="Dict\TokenInfoDictionary%24fst.dat" />
-    <EmbeddedResource Include="Dict\TokenInfoDictionary%24posDict.dat" />
-    <EmbeddedResource Include="Dict\TokenInfoDictionary%24targetMap.dat" />
-    <EmbeddedResource Include="Dict\UnknownDictionary%24buffer.dat" />
-    <EmbeddedResource Include="Dict\UnknownDictionary%24posDict.dat" />
-    <EmbeddedResource Include="Dict\UnknownDictionary%24targetMap.dat" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="stoptags.txt" />
-    <EmbeddedResource Include="stopwords.txt" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

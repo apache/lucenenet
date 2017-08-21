@@ -19,109 +19,65 @@
  under the License.
 
 -->
+<Project Sdk="Microsoft.NET.Sdk">
 
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\..\TestTargetFramework.proj" />
+  <Import Project="..\..\Version.proj" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{351B75B1-BBD5-4E32-8036-7BED4E0135A6}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Codecs.Tests</RootNamespace>
-    <AssemblyName>Lucene.Net.Codecs.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <!--<TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>-->
+    <!--<TargetFramework>net451</TargetFramework>
+    <TargetFramework Condition=" '$(Configuration)' == 'Debug_NetCoreApp1_0' OR '$(Configuration)' == 'Release_NetCoreApp1_0' ">netcoreapp1.0</TargetFramework>-->
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    
+    <AssemblyTitle>Lucene.Net.Tests.Codecs</AssemblyTitle>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+    
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="dotnet-test-nunit-teamcity" Version="3.4.0-beta-3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="NUnit" Version="3.5.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <!-- Required by NUnit3TestAdapter on .NET Core -->
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
+    <DebugType>full</DebugType>
   </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="BlockTerms\TestFixedGapPostingsFormat.cs" />
-    <Compile Include="Bloom\TestBloomPostingsFormat.cs" />
-    <Compile Include="DiskDv\TestDiskDocValuesFormat.cs" />
-    <Compile Include="IntBlock\TestFixedIntBlockPostingsFormat.cs" />
-    <Compile Include="IntBlock\TestIntBlockCodec.cs" />
-    <Compile Include="IntBlock\TestVariableIntBlockPostingsFormat.cs" />
-    <Compile Include="Memory\TestDirectDocValuesFormat.cs" />
-    <Compile Include="Memory\TestDirectPostingsFormat.cs" />
-    <Compile Include="Memory\TestFSTOrdPostingsFormat.cs" />
-    <Compile Include="Memory\TestFSTOrdPulsing41PostingsFormat.cs" />
-    <Compile Include="Memory\TestFSTPostingsFormat.cs" />
-    <Compile Include="Memory\TestFSTPulsing41PostingsFormat.cs" />
-    <Compile Include="Memory\TestMemoryDocValuesFormat.cs" />
-    <Compile Include="Memory\TestMemoryPostingsFormat.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pulsing\Test10KPulsings.cs" />
-    <Compile Include="Pulsing\TestPulsingPostingsFormat.cs" />
-    <Compile Include="Pulsing\TestPulsingReuse.cs" />
-    <Compile Include="Sep\TestSepPostingsFormat.cs" />
-    <Compile Include="SimpleText\TestSimpleTextDocValuesFormat.cs" />
-    <Compile Include="SimpleText\TestSimpleTextPostingsFormat.cs" />
-    <Compile Include="SimpleText\TestSimpleTextStoredFieldsFormat.cs" />
-    <Compile Include="SimpleText\TestSimpleTextTermVectorsFormat.cs" />
-    <Compile Include="Support\TestExceptionSerialization.cs" />
-    <Compile Include="Support\TestApiConsistency.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
-      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
-      <Name>Lucene.Net.Analysis.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Codecs\Lucene.Net.Codecs.csproj">
-      <Project>{3f79b6d4-4359-4f83-b64f-07f4f6262425}</Project>
-      <Name>Lucene.Net.Codecs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
-      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
-      <Name>Lucene.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
-      <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
-      <Name>Lucene.Net.TestFramework</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Lucene.Net.Tests.Codecs.project.json" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
