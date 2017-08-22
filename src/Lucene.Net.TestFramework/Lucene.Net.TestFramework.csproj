@@ -37,7 +37,9 @@
     <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
     <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
     <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <!-- LUCENENET TODO: If we ever complete the work to release this module, we should add the documentation and
+      remove all of the warnings this line produces. -->
+    <!--<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>-->
     <NoWarn>$(NoWarn);1591;1573</NoWarn>
 
     <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>

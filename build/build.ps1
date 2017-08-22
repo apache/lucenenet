@@ -104,7 +104,7 @@ task Init -depends InstallSDK -description "This task makes sure the build envir
 
 task Restore -description "This task restores the dependencies" {
 	Exec { 
-		&dotnet restore $solutionFile --no-dependencies
+		&dotnet restore $solutionFile --no-dependencies /p:TestFrameworks=true
 	}
 }
 
@@ -132,6 +132,10 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
 
 		Write-Host "Assembly informational version set to: $pv" -ForegroundColor Green
 
+		$testFrameworks = $frameworks_to_test.Replace(',', ';')
+
+		Write-Host "TestFrameworks set to: $testFrameworks" -ForegroundColor Green
+
 		Exec {
 			&dotnet msbuild $solutionFile /t:Build `
 				/p:Configuration=$configuration `
@@ -139,7 +143,10 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
 				/p:InformationalVersion=$pv `
 				/p:Product=$product_name `
 				/p:Company=$company_name `
-				/p:Copyright=$copyright
+				/p:Copyright=$copyright `
+				/p:TestFrameworks=true 
+
+			# workaround for parsing issue: https://github.com/Microsoft/msbuild/issues/471#issuecomment-181963350
 		}
 
 		$success = $true
@@ -174,11 +181,11 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
-task Test -depends InstallSDK, Restore -description "This task runs the tests" {
+task Test -depends InstallSDK -description "This task runs the tests" {
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
-	$testProjects = Get-ChildItem -Path "project.json" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
+	$testProjects = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
 	popd
 
 	Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
@@ -189,34 +196,16 @@ task Test -depends InstallSDK, Restore -description "This task runs the tests" {
 		Write-Host "Framework: $framework" -ForegroundColor Blue
 
 		foreach ($testProject in $testProjects) {
-
 			$testName = $testProject.Directory.Name
-			$projectDirectory = $testProject.DirectoryName
-			Write-Host "Directory: $projectDirectory" -ForegroundColor Green
-
-			if ($framework.StartsWith("netcore")) {
-				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --framework $framework --no-build"
-			} else {
-				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
-
-				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
-				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot\win7-x32\$testName.dll"
-				}
-				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot\$testName.dll"
-				} 
-
-				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
-			}
+			$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-build"
 
 			$testResultDirectory = "$test_results_directory\$framework\$testName"
-			Ensure-Directory-Exists $testResultDirectory
+			#Ensure-Directory-Exists $testResultDirectory
 
-			$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml --teamcity"
+			$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
 
 			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-				$testExpression = "$testExpression --where $where"
+				$testExpression = "$testExpression --filter $where"
 			}
 
 			Write-Host $testExpression -ForegroundColor Magenta
