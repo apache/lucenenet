@@ -133,7 +133,7 @@ namespace Lucene.Net.Support.Threading
             _threadField.IsBackground = isDaemon;
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
         /// <summary>
         /// Gets or sets a value indicating the scheduling priority of a thread
         /// </summary>
@@ -224,7 +224,7 @@ namespace Lucene.Net.Support.Threading
             Monitor.PulseAll(_threadField);
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
 
         /// <summary>
         /// Raises a ThreadAbortException in the thread on which it is invoked,
@@ -263,7 +263,7 @@ namespace Lucene.Net.Support.Threading
         /// <returns>A String that represents the current object</returns>
         public override System.String ToString()
         {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
             return "Thread[" + Name + "," + Priority.ToString() + "]";
 #else
             return "Thread[" + Name + "]";

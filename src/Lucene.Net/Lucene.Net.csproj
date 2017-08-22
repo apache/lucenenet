@@ -24,7 +24,7 @@
   <Import Project="..\..\Version.proj" />
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.5;net451</TargetFrameworks>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
 
@@ -62,6 +62,11 @@
     <PackageReference Include="System.Threading.ThreadPool" Version="4.0.10" />
   </ItemGroup>
 
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);FEATURE_CONCURRENTMERGESCHEDULER;NETSTANDARD</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
     <DefineConstants>$(DefineConstants);FEATURE_TASKMERGESCHEDULER;NETSTANDARD</DefineConstants>
     <DebugType>portable</DebugType>
