@@ -26,8 +26,8 @@
     <!-- Changing this setting will allow testing on all target frameworks within Visual Studio 2017.
     Note that the main libraries are multi-targeted, so this has no effect on how they are compiled,
     this setting only affects the test projects. -->
-    <!--<TargetFramework>net451</TargetFramework>-->
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFramework>net451</TargetFramework>
+    <!--<TargetFramework>netcoreapp1.0</TargetFramework>-->
 
     <!-- Allow the build script to pass in the test frameworks to build for.
       This overrides the above TargetFramework setting. 

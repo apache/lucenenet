@@ -21,8 +21,8 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\TestTargetFramework.proj" />
-  <Import Project="..\..\Version.proj" />
+  <Import Project="..\..\..\TestTargetFramework.proj" />
+  <Import Project="..\..\..\Version.proj" />
 
   <PropertyGroup>
     <!--<TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>-->
@@ -40,30 +40,30 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Analysis.Common\Analysis\Th\TestThaiAnalyzer.cs" Link="Analysis\Th\TestThaiAnalyzer.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Analysis.Common\Analysis\Th\TestThaiTokenizerFactory.cs" Link="Analysis\Th\TestThaiTokenizerFactory.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Analysis.Common\Analysis\Th\TestThaiWordFilterFactory.cs" Link="Analysis\Th\TestThaiWordFilterFactory.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestCharArrayIterator.cs" Link="Analysis\Util\TestCharArrayIterator.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestSegmentingTokenizerBase.cs" Link="Analysis\Util\TestSegmentingTokenizerBase.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationDocValuesField.cs" Link="Collation\TestICUCollationDocValuesField.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationKeyFilter.cs" Link="Collation\TestICUCollationKeyFilter.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationKeyFilterFactory.cs" Link="Collation\TestICUCollationKeyFilterFactory.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestMultiTermHighlighting.cs" Link="PostingsHighlight\TestMultiTermHighlighting.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestPostingsHighlighter.cs" Link="PostingsHighlight\TestPostingsHighlighter.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestPostingsHighlighterRanking.cs" Link="PostingsHighlight\TestPostingsHighlighterRanking.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestWholeBreakIterator.cs" Link="PostingsHighlight\TestWholeBreakIterator.cs" />
-    <Compile Include="..\Lucene.Net.Tests.Highlighter\VectorHighlight\BreakIteratorBoundaryScannerTest.cs" Link="VectorHighlight\BreakIteratorBoundaryScannerTest.cs" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Th\TestThaiAnalyzer.cs" Link="Analysis\Th\TestThaiAnalyzer.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Th\TestThaiTokenizerFactory.cs" Link="Analysis\Th\TestThaiTokenizerFactory.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Th\TestThaiWordFilterFactory.cs" Link="Analysis\Th\TestThaiWordFilterFactory.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestCharArrayIterator.cs" Link="Analysis\Util\TestCharArrayIterator.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.Common\Analysis\Util\TestSegmentingTokenizerBase.cs" Link="Analysis\Util\TestSegmentingTokenizerBase.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationDocValuesField.cs" Link="Collation\TestICUCollationDocValuesField.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationKeyFilter.cs" Link="Collation\TestICUCollationKeyFilter.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Analysis.ICU\Collation\TestICUCollationKeyFilterFactory.cs" Link="Collation\TestICUCollationKeyFilterFactory.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestMultiTermHighlighting.cs" Link="PostingsHighlight\TestMultiTermHighlighting.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestPostingsHighlighter.cs" Link="PostingsHighlight\TestPostingsHighlighter.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestPostingsHighlighterRanking.cs" Link="PostingsHighlight\TestPostingsHighlighterRanking.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Highlighter\PostingsHighlight\TestWholeBreakIterator.cs" Link="PostingsHighlight\TestWholeBreakIterator.cs" />
+    <Compile Include="..\..\Lucene.Net.Tests.Highlighter\VectorHighlight\BreakIteratorBoundaryScannerTest.cs" Link="VectorHighlight\BreakIteratorBoundaryScannerTest.cs" />
     <EmbeddedResource Include="Search\PostingsHighlight\CambridgeMA.utf8" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
     <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.Tests.Analysis.Common\Lucene.Net.Tests.Analysis.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -21,7 +21,7 @@
 -->
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\Version.proj" />
+  <Import Project="..\..\..\Version.proj" />
   
   <PropertyGroup>
     <TargetFrameworks>netstandard1.5;net451</TargetFrameworks>
@@ -47,35 +47,35 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiAnalyzer.cs" Link="Analysis\Th\ThaiAnalyzer.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiTokenizer.cs" Link="Analysis\Th\ThaiTokenizer.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiTokenizerFactory.cs" Link="Analysis\Th\ThaiTokenizerFactory.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiWordFilter.cs" Link="Analysis\Th\ThaiWordFilter.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiWordFilterFactory.cs" Link="Analysis\Th\ThaiWordFilterFactory.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.Common\Analysis\Util\CharArrayIterator.cs" Link="Analysis\Util\CharArrayIterator.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.Common\Analysis\Util\SegmentingTokenizerBase.cs" Link="Analysis\Util\SegmentingTokenizerBase.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationAttributeFactory.cs" Link="Collation\ICUCollationAttributeFactory.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationDocValuesField.cs" Link="Collation\ICUCollationDocValuesField.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyAnalyzer.cs" Link="Collation\ICUCollationKeyAnalyzer.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyFilter.cs" Link="Collation\ICUCollationKeyFilter.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyFilterFactory.cs" Link="Collation\ICUCollationKeyFilterFactory.cs" />
-    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\TokenAttributes\ICUCollatedTermAttributeImpl.cs" Link="Collation\TokenAttributes\ICUCollatedTermAttributeImpl.cs" />
-    <Compile Include="..\Lucene.Net.Highlighter\PostingsHighlight\DefaultPassageFormatter.cs" Link="PostingsHighlight\DefaultPassageFormatter.cs" />
-    <Compile Include="..\Lucene.Net.Highlighter\PostingsHighlight\MultiTermHighlighting.cs" Link="PostingsHighlight\MultiTermHighlighting.cs" />
-    <Compile Include="..\Lucene.Net.Highlighter\PostingsHighlight\Passage.cs" Link="PostingsHighlight\Passage.cs" />
-    <Compile Include="..\Lucene.Net.Highlighter\PostingsHighlight\PassageFormatter.cs" Link="PostingsHighlight\PassageFormatter.cs" />
-    <Compile Include="..\Lucene.Net.Highlighter\PostingsHighlight\PassageScorer.cs" Link="PostingsHighlight\PassageScorer.cs" />
-    <Compile Include="..\Lucene.Net.Highlighter\PostingsHighlight\PostingsHighlighter.cs" Link="PostingsHighlight\PostingsHighlighter.cs" />
-    <Compile Include="..\Lucene.Net.Highlighter\PostingsHighlight\WholeBreakIterator.cs" Link="PostingsHighlight\WholeBreakIterator.cs" />
-    <Compile Include="..\Lucene.Net.Highlighter\VectorHighlight\BreakIteratorBoundaryScanner.cs" Link="VectorHighlight\BreakIteratorBoundaryScanner.cs" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiAnalyzer.cs" Link="Analysis\Th\ThaiAnalyzer.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiTokenizer.cs" Link="Analysis\Th\ThaiTokenizer.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiTokenizerFactory.cs" Link="Analysis\Th\ThaiTokenizerFactory.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiWordFilter.cs" Link="Analysis\Th\ThaiWordFilter.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiWordFilterFactory.cs" Link="Analysis\Th\ThaiWordFilterFactory.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\CharArrayIterator.cs" Link="Analysis\Util\CharArrayIterator.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\SegmentingTokenizerBase.cs" Link="Analysis\Util\SegmentingTokenizerBase.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationAttributeFactory.cs" Link="Collation\ICUCollationAttributeFactory.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationDocValuesField.cs" Link="Collation\ICUCollationDocValuesField.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyAnalyzer.cs" Link="Collation\ICUCollationKeyAnalyzer.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyFilter.cs" Link="Collation\ICUCollationKeyFilter.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyFilterFactory.cs" Link="Collation\ICUCollationKeyFilterFactory.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\TokenAttributes\ICUCollatedTermAttributeImpl.cs" Link="Collation\TokenAttributes\ICUCollatedTermAttributeImpl.cs" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\DefaultPassageFormatter.cs" Link="PostingsHighlight\DefaultPassageFormatter.cs" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\MultiTermHighlighting.cs" Link="PostingsHighlight\MultiTermHighlighting.cs" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\Passage.cs" Link="PostingsHighlight\Passage.cs" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\PassageFormatter.cs" Link="PostingsHighlight\PassageFormatter.cs" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\PassageScorer.cs" Link="PostingsHighlight\PassageScorer.cs" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\PostingsHighlighter.cs" Link="PostingsHighlight\PostingsHighlighter.cs" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\WholeBreakIterator.cs" Link="PostingsHighlight\WholeBreakIterator.cs" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\VectorHighlight\BreakIteratorBoundaryScanner.cs" Link="VectorHighlight\BreakIteratorBoundaryScanner.cs" />
     <EmbeddedResource Include="Analysis\Th\stopwords.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
-    <ProjectReference Include="..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
   </ItemGroup>
 
   <ItemGroup>

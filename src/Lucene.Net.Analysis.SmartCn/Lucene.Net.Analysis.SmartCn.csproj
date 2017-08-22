@@ -50,9 +50,9 @@
   </ItemGroup>
 
   <ItemGroup>
+	<ProjectReference Include="..\dotnet\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
     <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj" />
     <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
-    <ProjectReference Include="..\Lucene.Net.ICU\Lucene.Net.ICU.csproj" />
   </ItemGroup>
 
   <ItemGroup>
