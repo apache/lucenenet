@@ -100,6 +100,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Http\replicator.md" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
