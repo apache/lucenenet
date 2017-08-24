@@ -92,7 +92,10 @@ namespace Lucene.Net.Store
         public const int DEFAULT_READ_CHUNK_SIZE = 8192;
 
         protected readonly DirectoryInfo m_directory; // The underlying filesystem directory
-        protected readonly ISet<string> m_staleFiles = new ConcurrentHashSet<string>(); // Files written, but not yet sync'ed
+
+        // LUCENENET specific: No such thing as "stale files" in .NET, since Flush(true) writes everything to disk before
+        // our FileStream is disposed.
+        //protected readonly ISet<string> m_staleFiles = new ConcurrentHashSet<string>(); // Files written, but not yet sync'ed
 #pragma warning disable 612, 618
         private int chunkSize = DEFAULT_READ_CHUNK_SIZE;
 #pragma warning restore 612, 618
@@ -310,7 +313,9 @@ namespace Lucene.Net.Store
             {
                 throw new IOException("Cannot delete " + file, e);
             }
-            m_staleFiles.Remove(name);
+            // LUCENENET specific: No such thing as "stale files" in .NET, since Flush(true) writes everything to disk before
+            // our FileStream is disposed.
+            //m_staleFiles.Remove(name);
         }
 
         /// <summary>
@@ -353,30 +358,35 @@ namespace Lucene.Net.Store
 
         protected virtual void OnIndexOutputClosed(FSIndexOutput io)
         {
-            m_staleFiles.Add(io.name);
+            // LUCENENET specific: No such thing as "stale files" in .NET, since Flush(true) writes everything to disk before
+            // our FileStream is disposed.
+            //m_staleFiles.Add(io.name);
         }
 
         public override void Sync(ICollection<string> names)
         {
             EnsureOpen();
-            ISet<string> toSync = new HashSet<string>(names);
-            toSync.IntersectWith(m_staleFiles);
 
-            // LUCENENET specific: Fsync breaks concurrency here.
-            // Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
-            //foreach (var name in toSync)
+            // LUCENENET specific: No such thing as "stale files" in .NET, since Flush(true) writes everything to disk before
+            // our FileStream is disposed. Therefore, there is nothing else to do in this method.
+            //ISet<string> toSync = new HashSet<string>(names);
+            //toSync.IntersectWith(m_staleFiles);
+
+            //// LUCENENET specific: Fsync breaks concurrency here.
+            //// Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
+            ////foreach (var name in toSync)
+            ////{
+            ////    Fsync(name);
+            ////}
+
+            //// fsync the directory itsself, but only if there was any file fsynced before
+            //// (otherwise it can happen that the directory does not yet exist)!
+            //if (toSync.Count > 0)
             //{
-            //    Fsync(name);
+            //    IOUtils.Fsync(m_directory.FullName, true);
             //}
 
-            // fsync the directory itsself, but only if there was any file fsynced before
-            // (otherwise it can happen that the directory does not yet exist)!
-            if (toSync.Count > 0)
-            {
-                IOUtils.Fsync(m_directory.FullName, true);
-            }
-
-            m_staleFiles.ExceptWith(toSync);
+            //m_staleFiles.ExceptWith(toSync);
         }
 
         public override string GetLockID()
@@ -489,14 +499,6 @@ namespace Lucene.Net.Store
                 //Debug.Assert(size == 0);
             }
 
-            // LUCENENET specific - file.Flush(flushToDisk: true) required in .NET for concurrency
-            // Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
-            public override void Flush()
-            {
-                base.Flush();
-                file.Flush(flushToDisk: true);
-            }
-
             protected override void Dispose(bool disposing)
             {
                 if (disposing)
@@ -509,6 +511,9 @@ namespace Lucene.Net.Store
                         try
                         {
                             base.Dispose(disposing);
+                            // LUCENENET specific - file.Flush(flushToDisk: true) required in .NET for concurrency
+                            // Part of a solution suggested by Vincent Van Den Berghe: http://apache.markmail.org/message/hafnuhq2ydhfjmi2
+                            file.Flush(flushToDisk: true);
                         }
                         catch (IOException ioe)
                         {
@@ -540,9 +545,12 @@ namespace Lucene.Net.Store
             // LUCENENET NOTE: FileStream doesn't have a way to set length
         }
 
-        protected virtual void Fsync(string name)
-        {
-            IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);            
-        }
+        // LUCENENET specific: Fsync is pointless in .NET, since we are 
+        // calling FileStream.Flush(true) before the stream is disposed
+        // which means we never need it at the point in Java where it is called.
+        //protected virtual void Fsync(string name)
+        //{
+        //    IOUtils.Fsync(Path.Combine(m_directory.FullName, name), false);            
+        //}
     }
 }

@@ -92,7 +92,7 @@ namespace Lucene.Net.Analysis.CharFilters
         }
 
         // "source" => "target"
-        private static Regex p = new Regex(@"\""(.*)\""\\s*=>\\s*\""(.*)\""\\s*$", RegexOptions.Compiled);
+        private static Regex p = new Regex(@"\""(.*)\""\s*=>\s*\""(.*)\""\s*$", RegexOptions.Compiled);
 
         protected virtual void ParseRules(IList<string> rules, NormalizeCharMap.Builder builder)
         {

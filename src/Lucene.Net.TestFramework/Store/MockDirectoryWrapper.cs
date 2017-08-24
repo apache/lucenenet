@@ -1360,7 +1360,7 @@ namespace Lucene.Net.Store
                     if (disposing)
                     {
                         DelegateHandle.Dispose();
-                        OuterInstance.RemoveOpenFile(OuterInstance, Name);
+                        OuterInstance.RemoveOpenFile(this, Name);
                     }
                 }
             }

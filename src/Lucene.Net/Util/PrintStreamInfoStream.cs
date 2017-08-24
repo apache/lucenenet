@@ -1,6 +1,8 @@
 using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 
 namespace Lucene.Net.Util
@@ -51,8 +53,8 @@ namespace Lucene.Net.Util
         private static readonly AtomicInt32 MESSAGE_ID = new AtomicInt32();
 
         protected readonly int m_messageID;
-
         protected readonly TextWriter m_stream;
+        private readonly bool isSystemStream;
 
         public TextWriterInfoStream(TextWriter stream)
             : this(stream, MESSAGE_ID.GetAndIncrement())
@@ -61,7 +63,11 @@ namespace Lucene.Net.Util
 
         public TextWriterInfoStream(TextWriter stream, int messageID)
         {
-            this.m_stream = stream;
+            // LUCENENET: Since we are wrapping our TextWriter to make it safe to use
+            // after calling Dispose(), we need to determine whether it is a system stream
+            // here instead of on demand.
+            this.isSystemStream = stream == SystemConsole.Out || stream == SystemConsole.Error;
+            this.m_stream = typeof(SafeTextWriterWrapper).GetTypeInfo().IsAssignableFrom(stream.GetType()) ? stream : new SafeTextWriterWrapper(stream);
             this.m_messageID = messageID;
         }
 
@@ -87,7 +93,7 @@ namespace Lucene.Net.Util
         {
             get
             {
-                return m_stream == Console.Out || m_stream == Console.Error;
+                return isSystemStream;
             }
         }
     }

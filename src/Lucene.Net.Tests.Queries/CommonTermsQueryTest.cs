@@ -384,52 +384,50 @@ namespace Lucene.Net.Tests.Queries
             dir.Dispose();
         }
 
-        /*
-         * LUCENENET TODO requires a better comparer implementation for PriorityQueue
         [Test]
         public void TestRandomIndex()
         {
             Directory dir = NewDirectory();
             MockAnalyzer analyzer = new MockAnalyzer(Random());
             analyzer.MaxTokenLength = TestUtil.NextInt(Random(), 1, IndexWriter.MAX_TERM_LENGTH);
-            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer);
+            RandomIndexWriter w = new RandomIndexWriter(Random(), dir, analyzer, Similarity, TimeZone);
             CreateRandomIndex(AtLeast(50), w, Random().NextLong());
             DirectoryReader reader = w.Reader;
             AtomicReader wrapper = SlowCompositeReaderWrapper.Wrap(reader);
             string field = @"body";
-            Terms terms = wrapper.Terms(field);
+            Terms terms = wrapper.GetTerms(field);
             var lowFreqQueue = new AnonymousPriorityQueue(this, 5);
             Util.PriorityQueue<TermAndFreq> highFreqQueue = new AnonymousPriorityQueue1(this, 5);
             try
             {
-                TermsEnum iterator = terms.Iterator(null);
+                TermsEnum iterator = terms.GetIterator(null);
                 while (iterator.Next() != null)
                 {
-                    if (highFreqQueue.Size() < 5)
+                    if (highFreqQueue.Count < 5)
                     {
-                        highFreqQueue.Add(new TermAndFreq(BytesRef.DeepCopyOf(iterator.Term()), iterator.DocFreq()));
-                        lowFreqQueue.Add(new TermAndFreq(BytesRef.DeepCopyOf(iterator.Term()), iterator.DocFreq()));
+                        highFreqQueue.Add(new TermAndFreq(BytesRef.DeepCopyOf(iterator.Term), iterator.DocFreq));
+                        lowFreqQueue.Add(new TermAndFreq(BytesRef.DeepCopyOf(iterator.Term), iterator.DocFreq));
                     }
                     else
                     {
-                        if (highFreqQueue.Top().freq < iterator.DocFreq())
+                        if (highFreqQueue.Top.freq < iterator.DocFreq)
                         {
-                            highFreqQueue.Top().freq = iterator.DocFreq();
-                            highFreqQueue.Top().term = BytesRef.DeepCopyOf(iterator.Term());
+                            highFreqQueue.Top.freq = iterator.DocFreq;
+                            highFreqQueue.Top.term = BytesRef.DeepCopyOf(iterator.Term);
                             highFreqQueue.UpdateTop();
                         }
 
-                        if (lowFreqQueue.Top().freq > iterator.DocFreq())
+                        if (lowFreqQueue.Top.freq > iterator.DocFreq)
                         {
-                            lowFreqQueue.Top().freq = iterator.DocFreq();
-                            lowFreqQueue.Top().term = BytesRef.DeepCopyOf(iterator.Term());
+                            lowFreqQueue.Top.freq = iterator.DocFreq;
+                            lowFreqQueue.Top.term = BytesRef.DeepCopyOf(iterator.Term);
                             lowFreqQueue.UpdateTop();
                         }
                     }
                 }
 
-                int lowFreq = lowFreqQueue.Top().freq;
-                int highFreq = highFreqQueue.Top().freq;
+                int lowFreq = lowFreqQueue.Top.freq;
+                int highFreq = highFreqQueue.Top.freq;
                 AssumeTrue(@"unlucky index", highFreq - 1 > lowFreq);
                 List<TermAndFreq> highTerms = QueueToList(highFreqQueue);
                 List<TermAndFreq> lowTerms = QueueToList(lowFreqQueue);
@@ -462,10 +460,10 @@ namespace Lucene.Net.Tests.Queries
                     assertTrue(hits.Remove(doc.Doc));
                 }
 
-                assertTrue(hits.IsEmpty());
+                assertTrue(hits.Count == 0);
                 w.ForceMerge(1);
                 DirectoryReader reader2 = w.Reader;
-                QueryUtils.Check(Random(), cq, NewSearcher(reader2));
+                QueryUtils.Check(Random(), cq, NewSearcher(reader2), Similarity);
                 reader2.Dispose();
             }
             finally
@@ -477,9 +475,10 @@ namespace Lucene.Net.Tests.Queries
             }
         }
 
-        private sealed class AnonymousPriorityQueue : Support.PriorityQueue<TermAndFreq>
+        private sealed class AnonymousPriorityQueue : Util.PriorityQueue<TermAndFreq>
         {
-            public AnonymousPriorityQueue(CommonTermsQueryTest parent)
+            public AnonymousPriorityQueue(CommonTermsQueryTest parent, int maxSize)
+                : base(maxSize)
             {
                 this.parent = parent;
             }
@@ -491,9 +490,10 @@ namespace Lucene.Net.Tests.Queries
             }
         }
 
-        private sealed class AnonymousPriorityQueue1 : Support.PriorityQueue<TermAndFreq>
+        private sealed class AnonymousPriorityQueue1 : Util.PriorityQueue<TermAndFreq>
         {
-            public AnonymousPriorityQueue1(CommonTermsQueryTest parent)
+            public AnonymousPriorityQueue1(CommonTermsQueryTest parent, int maxSize)
+                : base(maxSize)
             {
                 this.parent = parent;
             }
@@ -503,7 +503,7 @@ namespace Lucene.Net.Tests.Queries
             {
                 return a.freq < b.freq;
             }
-        }*/
+        }
 
         private static List<TermAndFreq> QueueToList(Util.PriorityQueue<TermAndFreq> queue)
         {

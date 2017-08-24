@@ -1,9 +1,11 @@
-using System;
-using System.IO;
 using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
+using Lucene.Net.Util;
+using System;
+using System.Globalization;
+using System.IO;
 using Directory = Lucene.Net.Store.Directory;
 
 namespace Lucene.Net.Classification.Utils
@@ -59,9 +61,9 @@ namespace Lucene.Net.Classification.Utils
         {
 #pragma warning disable 612, 618
             // create IWs for train / test / cv IDXs
-            IndexWriter testWriter = new IndexWriter(testIndex, new IndexWriterConfig(Util.LuceneVersion.LUCENE_CURRENT, analyzer));
-            IndexWriter cvWriter = new IndexWriter(crossValidationIndex, new IndexWriterConfig(Util.LuceneVersion.LUCENE_CURRENT, analyzer));
-            IndexWriter trainingWriter = new IndexWriter(trainingIndex, new IndexWriterConfig(Util.LuceneVersion.LUCENE_CURRENT, analyzer));
+            IndexWriter testWriter = new IndexWriter(testIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
+            IndexWriter cvWriter = new IndexWriter(crossValidationIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
+            IndexWriter trainingWriter = new IndexWriter(trainingIndex, new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, analyzer));
 #pragma warning restore 612, 618
 
             try
@@ -69,7 +71,7 @@ namespace Lucene.Net.Classification.Utils
                 int size = originalIndex.MaxDoc;
 
                 IndexSearcher indexSearcher = new IndexSearcher(originalIndex);
-                TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), Int32.MaxValue);
+                TopDocs topDocs = indexSearcher.Search(new MatchAllDocsQuery(), int.MaxValue);
 
                 // set the type to be indexed, stored, with term vectors
                 FieldType ft = new FieldType(TextField.TYPE_STORED);
@@ -107,9 +109,19 @@ namespace Lucene.Net.Classification.Utils
                             {
                                 doc.Add(new Field(storableField.Name, storableField.GetStringValue(), ft));
                             }
-                            else if (storableField.GetNumericValue() != null)
+                            else if (storableField.NumericType != NumericFieldType.NONE) // LUCENENET specific - checking the NumricType property is quicker than the type conversion
                             {
-                                doc.Add(new Field(storableField.Name, storableField.GetNumericValue().ToString(), ft));
+                                // LUCENENET specific - need to pass invariant culture here (we are assuming the Field will be stored)
+                                // and we need to round-trip floating point numbers so we don't lose precision. 
+                                if (storableField.NumericType == NumericFieldType.SINGLE || storableField.NumericType == NumericFieldType.DOUBLE)
+                                {
+                                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
+                                    doc.Add(new Field(storableField.Name, storableField.GetStringValue("R", CultureInfo.InvariantCulture), ft));
+                                }
+                                else
+                                {
+                                    doc.Add(new Field(storableField.Name, storableField.GetStringValue(CultureInfo.InvariantCulture), ft));
+                                }
                             }
                         }
                     }

@@ -11,7 +11,7 @@ The Apache Lucene.Net web site is at:
 
 ### Lucene.Net 4.8.0
 
-- .NET Standard 1.5 (includes .NET Core 1.0 and higher)
+- [.NET Standard 1.5](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
 - .NET Framework 4.5.1
 
 ### Lucene.Net 3.0.3
@@ -41,8 +41,14 @@ PM> Install-Package Lucene.Net -Pre
 ```
 
 As of 4.8.0, Lucene.Net is now divided into several specialized sub-packages, all available on NuGet.
-<!--- TO BE ADDED WHEN RELEASED - [Lucene.Net.Analysis.Phonetic](https://www.nuget.org/packages/Lucene.Net.Analysis.Phonetic/) - Analyzer for indexing phonetic signatures (for sounds-alike search) ) 
+
+<!--- TO BE ADDED WHEN RELEASED 
+- [Lucene.Net.Analysis.Kuromoji](https://www.nuget.org/packages/Lucene.Net.Analysis.Kuromoji/) - Japanese Morphological Analyzer 
+- [Lucene.Net.Analysis.Phonetic](https://www.nuget.org/packages/Lucene.Net.Analysis.Phonetic/) - Analyzer for indexing phonetic signatures (for sounds-alike search)
 - [Lucene.Net.Analysis.SmartCn](https://www.nuget.org/packages/Lucene.Net.Analysis.SmartCn/) - Analyzer for indexing Chinese)-->
+
+
+- [Lucene.Net](https://www.nuget.org/packages/Lucene.Net/) - Core library
 - [Lucene.Net.Analysis.Common](https://www.nuget.org/packages/Lucene.Net.Analysis.Common/) - Analyzers for indexing content in different languages and domains
 - [Lucene.Net.Analysis.Stempel](https://www.nuget.org/packages/Lucene.Net.Analysis.Stempel/) - Analyzer for indexing Polish
 - [Lucene.Net.Classification](https://www.nuget.org/packages/Lucene.Net.Classification/) - Classification module for Lucene
@@ -51,7 +57,7 @@ As of 4.8.0, Lucene.Net is now divided into several specialized sub-packages, al
 - [Lucene.Net.Facet](https://www.nuget.org/packages/Lucene.Net.Facet/) - Faceted indexing and search capabilities
 - [Lucene.Net.Grouping](https://www.nuget.org/packages/Lucene.Net.Grouping/) - Collectors for grouping search results
 - [Lucene.Net.Highlighter](https://www.nuget.org/packages/Lucene.Net.Highlighter/) - Highlights search keywords in results
-- [Lucene.Net.ICU](https://www.nuget.org/packages/Lucene.Net.ICU/) - Specialized international support for languages that don't space words
+- [Lucene.Net.ICU](https://www.nuget.org/packages/Lucene.Net.ICU/) - Specialized ICU (International Components for Unicode) Analyzers and Highlighters
 - [Lucene.Net.Join](https://www.nuget.org/packages/Lucene.Net.Join/) - Index-time and Query-time joins for normalized content
 - [Lucene.Net.Memory](https://www.nuget.org/packages/Lucene.Net.Memory/) - Single-document in-memory index implementation
 - [Lucene.Net.Misc](https://www.nuget.org/packages/Lucene.Net.Misc/) - Index tools and other miscellaneous code
@@ -80,7 +86,7 @@ There are several demos implemented as simple console applications that can be c
 
 ## How to Contribute
 
-Lucene.Net is a very large project (over 400,000 executable lines of code and nearly 1,000,000 lines of text total) and we welcome any and all help to maintain such an effort.
+Lucene.Net is a very large project (over 400,000 executable lines of code and nearly 1,000,000 lines of text total) and we welcome any and all help to maintain such an effort. Read our [Contribution Guide](https://github.com/apache/lucenenet/blob/master/CONTRIBUTING.md) or read on for ways that you can help.
 
 ### Join Mailing Lists
 
@@ -93,6 +99,10 @@ If you have a general how-to question or need help from the Lucene.Net community
 [user@lucenenet.apache.org](mailto:user@lucenenet.apache.org)
 
 We recommend you join the [user mailing list](https://cwiki.apache.org/confluence/display/LUCENENET/Mailing+Lists) to stay looped into all user discussions.
+
+Alternatively, you can get help via [StackOverflow](https://stackoverflow.com/questions/tagged/lucene.net).
+
+Please do not submit general how-to questions to JIRA, use JIRA for bug reports/tasks only.
 
 ### Report a Bug
 

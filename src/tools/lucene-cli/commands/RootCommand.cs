@@ -25,10 +25,8 @@
             {
                 this.Description = FromResource("RootCommandDescription");
 
-                //// LUCENENET TODO: Fix this to use CommandLine stuff...
-                //this.VersionOption("-v|--version", typeof(Program).GetTypeInfo().Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion);
-
                 this.Commands.Add(new AnalysisCommand.Configuration(options));
+                this.Commands.Add(new BenchmarkCommand.Configuration(options));
                 this.Commands.Add(new IndexCommand.Configuration(options));
                 this.Commands.Add(new LockCommand.Configuration(options));
                 this.Commands.Add(new DemoCommand.Configuration(options));

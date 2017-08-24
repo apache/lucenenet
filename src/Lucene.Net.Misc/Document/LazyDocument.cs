@@ -174,39 +174,198 @@ namespace Lucene.Net.Documents
                 return realValue;
             }
 
+            /// <summary>
+            /// The field's name
+            /// </summary>
             public virtual string Name
             {
                 get { return name; }
             }
 
+            /// <summary>
+            /// Gets the boost factor on this field.
+            /// </summary>
             public virtual float Boost
             {
                 get { return 1.0f; }
             }
 
+            /// <summary>
+            /// Non-null if this field has a binary value. </summary>
             public virtual BytesRef GetBinaryValue()
             {
                 return GetRealValue().GetBinaryValue();
             }
 
+            /// <summary>
+            /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+            /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+            /// <see cref="GetBinaryValue()"/> must be set.
+            /// </summary>
+            /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
             public virtual string GetStringValue()
             {
                 return GetRealValue().GetStringValue();
             }
 
+            /// <summary>
+            /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+            /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+            /// <see cref="GetBinaryValue()"/> must be set.
+            /// </summary>
+            /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+            /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified provider
+            public virtual string GetStringValue(IFormatProvider provider) 
+            {
+                return GetRealValue().GetStringValue(provider);
+            }
+
+            /// <summary>
+            /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+            /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+            /// <see cref="GetBinaryValue()"/> must be set.
+            /// </summary>
+            /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+            /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified format
+            public virtual string GetStringValue(string format) 
+            {
+                return GetRealValue().GetStringValue(format);
+            }
+
+            /// <summary>
+            /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+            /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+            /// <see cref="GetBinaryValue()"/> must be set.
+            /// </summary>
+            /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+            /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+            /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified format and provider
+            public virtual string GetStringValue(string format, IFormatProvider provider) 
+            {
+                return GetRealValue().GetStringValue(format, provider);
+            }
+
+            /// <summary>
+            /// The value of the field as a <see cref="TextReader"/>, or <c>null</c>. If <c>null</c>, the <see cref="string"/> value or
+            /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+            /// <see cref="GetBinaryValue()"/> must be set.
+            /// </summary>
             public virtual TextReader GetReaderValue()
             {
                 return GetRealValue().GetReaderValue();
             }
 
+            [Obsolete("In .NET, use of this method will cause boxing/unboxing. Instead, use the NumericType property to check the underlying type and call the appropriate GetXXXValue() method to retrieve the value.")]
             public virtual object GetNumericValue()
             {
                 return GetRealValue().GetNumericValue();
             }
 
-            public virtual IIndexableFieldType FieldType
+            /// <summary>
+            /// Gets the <see cref="NumericFieldType"/> of the underlying value, or <see cref="NumericFieldType.NONE"/> if the value is not set or non-numeric.
+            /// <para/>
+            /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is 
+            /// this is represents the current state of the field (whether being written or read) and the
+            /// <see cref="FieldType"/> property represents instructions on how the field will be written,
+            /// but does not re-populate when reading back from an index (it is write-only).
+            /// <para/>
+            /// In Java, the numeric type was determined by checking the type of  
+            /// <see cref="GetNumericValue()"/>. However, since there are no reference number
+            /// types in .NET, using <see cref="GetNumericValue()"/> so will cause boxing/unboxing. It is
+            /// therefore recommended to use this property to check the underlying type and the corresponding 
+            /// <c>Get*Value()</c> method to retrieve the value.
+            /// <para/>
+            /// NOTE: Since Lucene codecs do not support <see cref="NumericFieldType.BYTE"/> or <see cref="NumericFieldType.INT16"/>,
+            /// fields created with these types will always be <see cref="NumericFieldType.INT32"/> when read back from the index.
+            /// </summary>
+            // LUCENENET specific - Since we have no numeric reference types in .NET, this method was added to check
+            // the numeric type of the inner field without boxing/unboxing.
+            public virtual NumericFieldType NumericType
             {
-                get { return GetRealValue().FieldType; }
+                get { return GetRealValue().NumericType; }
+            }
+
+            /// <summary>
+            /// Returns the field value as <see cref="byte"/> or <c>null</c> if the type
+            /// is non-numeric.
+            /// </summary>
+            /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+            // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
+            public virtual byte? GetByteValue()
+            {
+                return GetRealValue().GetByteValue();
+            }
+
+            /// <summary>
+            /// Returns the field value as <see cref="short"/> or <c>null</c> if the type
+            /// is non-numeric.
+            /// </summary>
+            /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+            // LUCENENET specific - created overload for Short, since we have no Number class in .NET
+            public virtual short? GetInt16Value()
+            {
+                return GetRealValue().GetInt16Value();
+            }
+
+            /// <summary>
+            /// Returns the field value as <see cref="int"/> or <c>null</c> if the type
+            /// is non-numeric.
+            /// </summary>
+            /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+            // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
+            public virtual int? GetInt32Value()
+            {
+                return GetRealValue().GetInt32Value();
+            }
+
+            /// <summary>
+            /// Returns the field value as <see cref="long"/> or <c>null</c> if the type
+            /// is non-numeric.
+            /// </summary>
+            /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+            // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
+            public virtual long? GetInt64Value()
+            {
+                return GetRealValue().GetInt64Value();
+            }
+
+            /// <summary>
+            /// Returns the field value as <see cref="float"/> or <c>null</c> if the type
+            /// is non-numeric.
+            /// </summary>
+            /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+            // LUCENENET specific - created overload for Single, since we have no Number class in .NET
+            public virtual float? GetSingleValue()
+            {
+                return GetRealValue().GetSingleValue();
+            }
+
+            /// <summary>
+            /// Returns the field value as <see cref="double"/> or <c>null</c> if the type
+            /// is non-numeric.
+            /// </summary>
+            /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+            // LUCENENET specific - created overload for Double, since we have no Number class in .NET
+            public virtual double? GetDoubleValue()
+            {
+                return GetRealValue().GetDoubleValue();
+            }
+
+            /// <summary>
+            /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="Documents.FieldType"/>. </summary>
+            public virtual FieldType FieldType
+            {
+                get { return GetRealValue().IndexableFieldType as FieldType; }
+            }
+
+            /// <summary>
+            /// Returns the <see cref="Documents.FieldType"/> for this field as type <see cref="IIndexableFieldType"/>. </summary>
+            public virtual IIndexableFieldType IndexableFieldType
+            {
+                get { return GetRealValue().IndexableFieldType; }
             }
 
             public virtual TokenStream GetTokenStream(Analyzer analyzer)

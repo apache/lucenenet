@@ -35,8 +35,7 @@ namespace Lucene.Net.Store
     public class VerifyingLockFactory : LockFactory
     {
         internal readonly LockFactory lf;
-        internal readonly Stream @in;
-        internal readonly Stream @out;
+        internal readonly Stream stream;
 
         private class CheckedLock : Lock
         {
@@ -52,9 +51,9 @@ namespace Lucene.Net.Store
 
             private void Verify(byte message)
             {
-                outerInstance.@out.WriteByte(message);
-                outerInstance.@out.Flush();
-                int ret = outerInstance.@in.ReadByte();
+                outerInstance.stream.WriteByte(message);
+                outerInstance.stream.Flush();
+                int ret = outerInstance.stream.ReadByte();
                 if (ret < 0)
                 {
                     throw new InvalidOperationException("Lock server died because of locking error.");
@@ -106,13 +105,11 @@ namespace Lucene.Net.Store
         /// Creates a new <see cref="VerifyingLockFactory"/> instance.
         /// </summary>
         /// <param name="lf"> the <see cref="LockFactory"/> that we are testing </param>
-        /// <param name="in"> the socket's input to <see cref="LockVerifyServer"/> </param>
-        /// <param name="out"> the socket's output to <see cref="LockVerifyServer"/> </param>
-        public VerifyingLockFactory(LockFactory lf, Stream @in, Stream @out)
+        /// <param name="stream"> the socket's stream input/output to <see cref="LockVerifyServer"/> </param>
+        public VerifyingLockFactory(LockFactory lf, Stream stream)
         {
             this.lf = lf;
-            this.@in = @in;
-            this.@out = @out;
+            this.stream = stream;
         }
 
         public override Lock MakeLock(string lockName)

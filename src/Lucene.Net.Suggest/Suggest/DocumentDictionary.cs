@@ -230,9 +230,7 @@ namespace Lucene.Net.Search.Suggest
                 IIndexableField weight = doc.GetField(outerInstance.weightField);
                 if (weight != null) // found weight as stored
                 {
-                    // LUCENENET TODO: See if we can make NumericValue into Decimal (which can be converted to any other type of number)
-                    // rather than using object.
-                    return (weight.GetNumericValue() != null) ? Convert.ToInt64(weight.GetNumericValue()) : 0;
+                    return weight.GetInt64ValueOrDefault();
                 } // found weight as NumericDocValue
                 else if (weightValues != null)
                 {

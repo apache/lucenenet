@@ -403,23 +403,26 @@ namespace Lucene.Net.Store
                 // directory is empty
                 Assert.AreEqual(0, fsdir.ListAll().Length);
 
-                // fsync it
-                try
-                {
-                    fsdir.Sync(Collections.Singleton("afile"));
-                    Assert.Fail("didn't get expected exception, instead fsync created new files: " +
-                                Arrays.AsList(fsdir.ListAll()));
-                }
-                catch (FileNotFoundException)
-                {
-                    // ok
-                }
-                // LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
-                // in Lucene, we need to catch it here to be on the safe side.
-                catch (System.IO.DirectoryNotFoundException)
-                {
-                    // ok
-                }
+
+                // LUCENENET specific: Since FSDirectory.Sync() does not actually do anything in .NET
+                // we decided to remove the exception as well. This is safe to ignore here.
+                //// fsync it
+                //try
+                //{
+                //    fsdir.Sync(Collections.Singleton("afile"));
+                //    Assert.Fail("didn't get expected exception, instead fsync created new files: " +
+                //                Collections.ToString(fsdir.ListAll()));
+                //}
+                //catch (FileNotFoundException)
+                //{
+                //    // ok
+                //}
+                //// LUCENENET specific - since NoSuchDirectoryException subclasses FileNotFoundException
+                //// in Lucene, we need to catch it here to be on the safe side.
+                //catch (System.IO.DirectoryNotFoundException)
+                //{
+                //    // ok
+                //}
 
                 // directory is still empty
                 Assert.AreEqual(0, fsdir.ListAll().Length);
@@ -479,6 +482,8 @@ namespace Lucene.Net.Store
             }
         }
 
+
+#pragma warning disable 612, 618
         [Test]
         [LuceneNetSpecific]
         public void TestLUCENENET521()
@@ -507,6 +512,7 @@ namespace Lucene.Net.Store
             System.Threading.Tasks.Task.WaitAll(task);
             return;
         }
+#pragma warning restore 612, 618
 
         private static void Search(Index.IndexReader r, int times)
         {

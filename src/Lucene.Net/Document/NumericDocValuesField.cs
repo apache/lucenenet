@@ -55,7 +55,7 @@ namespace Lucene.Net.Documents
         public NumericDocValuesField(string name, long value)
             : base(name, TYPE)
         {
-            m_fieldsData = Convert.ToInt64(value);
+            FieldsData = new Int64(value);
         }
     }
 }

@@ -30,6 +30,7 @@ namespace Lucene.Net.Cli
 
         protected DemoConfiguration()
         {
+
             this.viewSourceOption = this.Option(
                 "-src|--view-source-code",
                 Resources.Strings.ViewSourceCodeDescription,

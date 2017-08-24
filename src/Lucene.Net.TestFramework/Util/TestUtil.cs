@@ -148,17 +148,35 @@ namespace Lucene.Net.Util
             {
                 foreach (var entry in zip.Entries)
                 {
+                    // Ignore internal folders - these are tacked onto the FullName anyway
+                    if (entry.FullName.EndsWith("/", StringComparison.Ordinal) || entry.FullName.EndsWith("\\", StringComparison.Ordinal))
+                    {
+                        continue;
+                    }
                     using (Stream input = entry.Open())
                     {
-                        FileInfo targetFile = new FileInfo(Path.Combine(destDir.FullName, entry.FullName));
+                        FileInfo targetFile = new FileInfo(CorrectPath(Path.Combine(destDir.FullName, entry.FullName)));
+                        if (!targetFile.Directory.Exists)
+                        {
+                            targetFile.Directory.Create();
+                        }
 
-                        using (Stream output = new FileStream(targetFile.FullName, FileMode.OpenOrCreate, FileAccess.Write))
+                        using (Stream output = new FileStream(targetFile.FullName, FileMode.Create, FileAccess.Write))
                         {
                             input.CopyTo(output);
                         }
                     }
                 }
             }
+        }
+
+        private static string CorrectPath(string input)
+        {
+            if (Path.DirectorySeparatorChar.Equals('/'))
+            {
+                return input.Replace('\\', '/');
+            }
+            return input.Replace('/', '\\');
         }
 
         public static void SyncConcurrentMerges(IndexWriter writer)
@@ -1034,13 +1052,13 @@ namespace Lucene.Net.Util
                 Field field1 = (Field)f;
                 Field field2;
                 DocValuesType dvType = field1.FieldType.DocValueType;
-                NumericType numType = ((FieldType)field1.FieldType).NumericType;
+                NumericType numType = field1.FieldType.NumericType;
                 if (dvType != DocValuesType.NONE)
                 {
                     switch (dvType)
                     {
                         case DocValuesType.NUMERIC:
-                            field2 = new NumericDocValuesField(field1.Name, (long)field1.GetNumericValue());
+                            field2 = new NumericDocValuesField(field1.Name, field1.GetInt64Value().Value);
                             break;
 
                         case DocValuesType.BINARY:
@@ -1060,19 +1078,19 @@ namespace Lucene.Net.Util
                     switch (numType)
                     {
                         case NumericType.INT32:
-                            field2 = new Int32Field(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new Int32Field(field1.Name, field1.GetInt32Value().Value, field1.FieldType);
                             break;
 
                         case NumericType.SINGLE:
-                            field2 = new SingleField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new SingleField(field1.Name, field1.GetInt32Value().Value, field1.FieldType);
                             break;
 
                         case NumericType.INT64:
-                            field2 = new Int64Field(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new Int64Field(field1.Name, field1.GetInt32Value().Value, field1.FieldType);
                             break;
 
                         case NumericType.DOUBLE:
-                            field2 = new DoubleField(field1.Name, (int)field1.GetNumericValue(), (FieldType)field1.FieldType);
+                            field2 = new DoubleField(field1.Name, field1.GetInt32Value().Value, field1.FieldType);
                             break;
 
                         default:
@@ -1081,7 +1099,7 @@ namespace Lucene.Net.Util
                 }
                 else
                 {
-                    field2 = new Field(field1.Name, field1.GetStringValue(), (FieldType)field1.FieldType);
+                    field2 = new Field(field1.Name, field1.GetStringValue(), field1.FieldType);
                 }
                 doc2.Add(field2);
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Documents;
+using System;
 using System.Globalization;
 
 namespace Lucene.Net.Codecs.SimpleText
@@ -107,51 +108,51 @@ namespace Lucene.Net.Codecs.SimpleText
 
             Write(TYPE);
 
-            var n = field.GetNumericValue();
-
-            if (n != null)
+            // LUCENENET specific - To avoid boxing/unboxing, we don't
+            // call GetNumericValue(). Instead, we check the field.NumericType and then
+            // call the appropriate conversion method. 
+            if (field.NumericType != NumericFieldType.NONE)
             {
-                if (n is sbyte? || n is short? || n is int?)
+                switch (field.NumericType)
                 {
-                    Write(TYPE_INT);
-                    NewLine();
+                    case NumericFieldType.BYTE:
+                    case NumericFieldType.INT16:
+                    case NumericFieldType.INT32:
+                        Write(TYPE_INT);
+                        NewLine();
 
-                    Write(VALUE);
-                    Write(((int)n).ToString(CultureInfo.InvariantCulture));
-                    NewLine();
-                }
-                else if (n is long?)
-                {
-                    Write(TYPE_LONG);
-                    NewLine();
+                        Write(VALUE);
+                        Write(field.GetStringValue(CultureInfo.InvariantCulture));
+                        NewLine();
+                        break;
+                    case NumericFieldType.INT64:
+                        Write(TYPE_LONG);
+                        NewLine();
 
-                    Write(VALUE);
-                    Write(((long)n).ToString(CultureInfo.InvariantCulture));
-                    NewLine();
-                }
-                else if (n is float?)
-                {
-                    Write(TYPE_FLOAT);
-                    NewLine();
+                        Write(VALUE);
+                        Write(field.GetStringValue(CultureInfo.InvariantCulture));
+                        NewLine();
+                        break;
+                    case NumericFieldType.SINGLE:
+                        Write(TYPE_FLOAT);
+                        NewLine();
 
-                    Write(VALUE);
-                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564/181087
-                    Write(((float)n).ToString("R", CultureInfo.InvariantCulture));
-                    NewLine();
-                }
-                else if (n is double?)
-                {
-                    Write(TYPE_DOUBLE);
-                    NewLine();
+                        Write(VALUE);
+                        // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
+                        Write(field.GetStringValue("R", CultureInfo.InvariantCulture));
+                        NewLine();
+                        break;
+                    case NumericFieldType.DOUBLE:
+                        Write(TYPE_DOUBLE);
+                        NewLine();
 
-                    Write(VALUE);
-                    // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564/181087
-                    Write(((double)n).ToString("R", CultureInfo.InvariantCulture));
-                    NewLine();
-                }
-                else
-                {
-                    throw new ArgumentException("cannot store numeric type " + n.GetType());
+                        Write(VALUE);
+                        // LUCENENET: Need to specify the "R" for round-trip: http://stackoverflow.com/a/611564
+                        Write(field.GetStringValue("R", CultureInfo.InvariantCulture));
+                        NewLine();
+                        break;
+                    default:
+                        throw new System.ArgumentException("cannot store numeric type " + field.NumericType);
                 }
             }
             else

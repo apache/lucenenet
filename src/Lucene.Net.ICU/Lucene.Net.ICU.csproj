@@ -80,6 +80,24 @@
     <Compile Include="..\Lucene.Net.Analysis.Common\Analysis\Util\SegmentingTokenizerBase.cs">
       <Link>Analysis\Util\SegmentingTokenizerBase.cs</Link>
     </Compile>
+    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationAttributeFactory.cs">
+      <Link>Collation\ICUCollationAttributeFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationDocValuesField.cs">
+      <Link>Collation\ICUCollationDocValuesField.cs</Link>
+    </Compile>
+    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyAnalyzer.cs">
+      <Link>Collation\ICUCollationKeyAnalyzer.cs</Link>
+    </Compile>
+    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyFilter.cs">
+      <Link>Collation\ICUCollationKeyFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyFilterFactory.cs">
+      <Link>Collation\ICUCollationKeyFilterFactory.cs</Link>
+    </Compile>
+    <Compile Include="..\Lucene.Net.Analysis.ICU\Collation\TokenAttributes\ICUCollatedTermAttributeImpl.cs">
+      <Link>Collation\TokenAttributes\ICUCollatedTermAttributeImpl.cs</Link>
+    </Compile>
     <Compile Include="..\Lucene.Net.Highlighter\PostingsHighlight\DefaultPassageFormatter.cs">
       <Link>Search\PostingsHighlight\DefaultPassageFormatter.cs</Link>
     </Compile>

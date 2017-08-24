@@ -53,7 +53,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_CLONEABLE;FEATURE_CONCURRENTMERGESCHEDULER;FEATURE_SERIALIZABLE;FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CLONEABLE;FEATURE_CONCURRENTMERGESCHEDULER;FEATURE_SERIALIZABLE;FEATURE_THREADPOOL_UNSAFEQUEUEWORKITEM;FEATURE_FILESTREAM_LOCK</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -394,7 +394,10 @@
     <Compile Include="Index\TwoStoredFieldsConsumers.cs" />
     <Compile Include="Index\UpgradeIndexMergePolicy.cs" />
     <Compile Include="LucenePackage.cs" />
+    <Compile Include="Support\AssemblyUtils.cs" />
     <Compile Include="Support\Document\DocumentExtensions.cs" />
+    <Compile Include="Support\Document\Field.cs" />
+    <Compile Include="Support\Document\IndexableFieldExtensions.cs" />
     <Compile Include="Support\IO\Compression\LZOCompressor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\AutomatonQuery.cs" />
@@ -652,9 +655,12 @@
     <Compile Include="Support\IO\FileStreamExtensions.cs" />
     <Compile Include="Support\ICallable.cs" />
     <Compile Include="Support\ICharSequence.cs" />
+    <Compile Include="Support\IO\StreamTokenizer.cs" />
     <Compile Include="Support\RectangularArrays.cs" />
     <Compile Include="Support\Search\ReferenceContext.cs" />
     <Compile Include="Support\Search\ReferenceManagerExtensions.cs" />
+    <Compile Include="Support\SystemConsole.cs" />
+    <Compile Include="Support\SystemProperties.cs" />
     <Compile Include="Support\Threading\ICompletionService.cs" />
     <Compile Include="Support\IO\IDataInput.cs" />
     <Compile Include="Support\IO\IDataOutput.cs" />
@@ -719,7 +725,6 @@
     <Compile Include="Support\IO\Compression\Inflater.cs" />
     <Compile Include="Support\Threading\IThreadRunnable.cs" />
     <Compile Include="Support\Number.cs" />
-    <Compile Include="Support\OS.cs" />
     <Compile Include="Support\IO\Compression\SharpZipLib.cs" />
     <Compile Include="Support\Threading\ThreadClass.cs" />
     <Compile Include="Support\Threading\ThreadLock.cs" />

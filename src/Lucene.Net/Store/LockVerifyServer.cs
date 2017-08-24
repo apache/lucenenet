@@ -113,10 +113,10 @@ namespace Lucene.Net.Store
 
             public override void Run()
             {
-                using (Stream @in = new NetworkStream(cs), os = new NetworkStream(cs))
+                using (Stream stream = new NetworkStream(cs))
                 {
-                    BinaryReader intReader = new BinaryReader(@in);
-                    BinaryWriter intWriter = new BinaryWriter(os);
+                    BinaryReader intReader = new BinaryReader(stream);
+                    BinaryWriter intWriter = new BinaryWriter(stream);
                     try
                     {
                         int id = intReader.ReadInt32();
@@ -125,14 +125,13 @@ namespace Lucene.Net.Store
                             throw new IOException("Client closed connection before communication started.");
                         }
 
-                        //LUCENE TO-DO NOt sure about this
                         startingGun.Wait();
                         intWriter.Write(43);
-                        os.Flush();
+                        stream.Flush();
 
                         while (true)
                         {
-                            int command = intReader.Read();
+                            int command = stream.ReadByte();
                             if (command < 0)
                             {
                                 return; // closed
@@ -170,8 +169,8 @@ namespace Lucene.Net.Store
                                     default:
                                         throw new Exception("Unrecognized command: " + command);
                                 }
-                                intWriter.Write(command);
-                                os.Flush();
+                                intWriter.Write((byte)command);
+                                stream.Flush();
                             }
                         }
                     }

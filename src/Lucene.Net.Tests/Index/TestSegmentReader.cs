@@ -191,9 +191,9 @@ namespace Lucene.Net.Index
             for (int i = 0; i < DocHelper.Fields.Length; i++)
             {
                 IIndexableField f = DocHelper.Fields[i];
-                if (f.FieldType.IsIndexed)
+                if (f.IndexableFieldType.IsIndexed)
                 {
-                    Assert.AreEqual(reader.GetNormValues(f.Name) != null, !f.FieldType.OmitNorms);
+                    Assert.AreEqual(reader.GetNormValues(f.Name) != null, !f.IndexableFieldType.OmitNorms);
                     Assert.AreEqual(reader.GetNormValues(f.Name) != null, !DocHelper.NoNorms.ContainsKey(f.Name));
                     if (reader.GetNormValues(f.Name) == null)
                     {

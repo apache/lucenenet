@@ -1,3 +1,5 @@
+using Lucene.Net.Documents;
+using System;
 using System.IO;
 
 namespace Lucene.Net.Index
@@ -43,7 +45,12 @@ namespace Lucene.Net.Index
         /// <see cref="IIndexableFieldType"/> describing the properties
         /// of this field.
         /// </summary>
-        IIndexableFieldType FieldType { get; }
+        // LUCENENET specific: Renamed from FieldType so we can use that name
+        // on the Field class and return FieldType instead of IIndexableFieldType
+        // to avoid a bunch of casting. In Java, it compiles when you implement this
+        // property with a class that derives from IIndexableFieldType, but in .NET it
+        // does not. 
+        IIndexableFieldType IndexableFieldType { get; }
 
         /// <summary>
         /// Returns the field's index-time boost.
@@ -68,20 +75,122 @@ namespace Lucene.Net.Index
         float Boost { get; }
 
         /// <summary>
-        /// Non-null if this field has a binary value </summary>
+        /// Non-null if this field has a binary value. </summary>
         BytesRef GetBinaryValue();
 
         /// <summary>
-        /// Non-null if this field has a string value </summary>
+        /// Non-null if this field has a string value. </summary>
+        /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
         string GetStringValue();
+
+        /// <summary>
+        /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+        /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+        /// <see cref="GetBinaryValue()"/> must be set.
+        /// </summary>
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+        // LUCENENET specific overload.
+        string GetStringValue(IFormatProvider provider);
+
+        /// <summary>
+        /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+        /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+        /// <see cref="GetBinaryValue()"/> must be set.
+        /// </summary>
+        /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+        // LUCENENET specific overload.
+        string GetStringValue(string format);
+
+        /// <summary>
+        /// The value of the field as a <see cref="string"/>, or <c>null</c>. If <c>null</c>, the <see cref="TextReader"/> value or
+        /// binary value is used. Exactly one of <see cref="GetStringValue()"/>, <see cref="GetReaderValue()"/>, and
+        /// <see cref="GetBinaryValue()"/> must be set.
+        /// </summary>
+        /// <param name="format">A standard or custom numeric format string. This parameter has no effect if this field is non-numeric.</param>
+        /// <param name="provider">An object that supplies culture-specific formatting information. This parameter has no effect if this field is non-numeric.</param>
+        /// <returns>The string representation of the value if it is either a <see cref="string"/> or numeric type.</returns>
+        // LUCENENET specific overload.
+        string GetStringValue(string format, IFormatProvider provider);
+
 
         /// <summary>
         /// Non-null if this field has a <see cref="TextReader"/> value </summary>
         TextReader GetReaderValue();
 
         /// <summary>
-        /// Non-null if this field has a numeric value </summary>
-        object GetNumericValue(); // LUCENENET TODO: Can we eliminate object?
+        /// Non-null if this field has a numeric value. </summary>
+        [Obsolete("In .NET, use of this method will cause boxing/unboxing. Instead, use the NumericType property to check the underlying type and call the appropriate GetXXXValue() method to retrieve the value.")]
+        object GetNumericValue();
+
+        /// <summary>
+        /// Gets the <see cref="NumericFieldType"/> of the underlying value, or <see cref="NumericFieldType.NONE"/> if the value is not set or non-numeric.
+        /// <para/>
+        /// Expert: The difference between this property and <see cref="FieldType.NumericType"/> is 
+        /// this is represents the current state of the field (whether being written or read) and the
+        /// <see cref="FieldType"/> property represents instructions on how the field will be written,
+        /// but does not re-populate when reading back from an index (it is write-only).
+        /// <para/>
+        /// In Java, the numeric type was determined by checking the type of  
+        /// <see cref="GetNumericValue()"/>. However, since there are no reference number
+        /// types in .NET, using <see cref="GetNumericValue()"/> so will cause boxing/unboxing. It is
+        /// therefore recommended to use this property to check the underlying type and the corresponding 
+        /// <c>Get*Value()</c> method to retrieve the value.
+        /// <para/>
+        /// NOTE: Since Lucene codecs do not support <see cref="NumericFieldType.BYTE"/> or <see cref="NumericFieldType.INT16"/>,
+        /// fields created with these types will always be <see cref="NumericFieldType.INT32"/> when read back from the index.
+        /// </summary>
+        // LUCENENET specific
+        NumericFieldType NumericType { get; }
+
+        /// <summary>
+        /// Returns the field value as <see cref="byte"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+        // LUCENENET specific
+        byte? GetByteValue();
+
+        /// <summary>
+        /// Returns the field value as <see cref="short"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+        // LUCENENET specific
+        short? GetInt16Value();
+
+        /// <summary>
+        /// Returns the field value as <see cref="int"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+        // LUCENENET specific
+        int? GetInt32Value();
+
+        /// <summary>
+        /// Returns the field value as <see cref="long"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+        // LUCENENET specific
+        long? GetInt64Value();
+
+        /// <summary>
+        /// Returns the field value as <see cref="float"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+        // LUCENENET specific
+        float? GetSingleValue();
+
+        /// <summary>
+        /// Returns the field value as <see cref="double"/> or <c>null</c> if the type
+        /// is non-numeric.
+        /// </summary>
+        /// <returns>The field value or <c>null</c> if the type is non-numeric.</returns>
+        // LUCENENET specific
+        double? GetDoubleValue();
 
         /// <summary>
         /// Creates the <see cref="TokenStream"/> used for indexing this field.  If appropriate,
