@@ -74,6 +74,9 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System" />
     <Reference Include="Microsoft.CSharp" />
+  <ItemGroup>
+    <None Include="Http\replicator.md" />
+    <None Include="packages.config" />
   </ItemGroup>
 
 </Project>
