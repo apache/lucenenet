@@ -267,7 +267,7 @@ namespace Lucene.Net.Search
             Directory dir = NewDirectory();
             // Test can deadlock if we use SMS:
             IConcurrentMergeScheduler scheduler;
-#if FEATURE_TASKMERGESCHEDULER
+#if !FEATURE_CONCURRENTMERGESCHEDULER
             scheduler = new TaskMergeScheduler();
 #else
             scheduler = new ConcurrentMergeScheduler();

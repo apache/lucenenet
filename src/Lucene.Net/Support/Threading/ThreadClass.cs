@@ -92,7 +92,7 @@ namespace Lucene.Net.Support.Threading
         /// </summary>
         public virtual void Interrupt()
         {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
             _threadField.Interrupt();
 #endif
         }

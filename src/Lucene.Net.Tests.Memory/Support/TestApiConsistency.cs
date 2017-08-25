@@ -87,7 +87,7 @@ namespace Lucene.Net.Tests.Memory
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Index.Memory.MemoryIndex))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

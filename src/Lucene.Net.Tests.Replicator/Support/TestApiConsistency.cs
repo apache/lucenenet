@@ -87,7 +87,7 @@ namespace Lucene.Net.Replicator
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Replicator.IReplicator))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

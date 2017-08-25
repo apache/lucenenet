@@ -307,7 +307,7 @@ namespace Lucene.Net.Index
         }
 
 
-#if NETSTANDARD
+#if !FEATURE_CONCURRENTMERGESCHEDULER
         /// <summary>
         /// Expert: Gets or sets the merge scheduler used by this writer. The default is
         /// <see cref="TaskMergeScheduler"/>.

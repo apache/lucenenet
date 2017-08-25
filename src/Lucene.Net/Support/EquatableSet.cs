@@ -34,7 +34,7 @@ namespace Lucene.Net.Support
     [Serializable]
 #endif
     public class EquatableSet<T> : ISet<T>, IEquatable<ISet<T>>
-#if !NETSTANDARD
+#if FEATURE_CLONEABLE
         , ICloneable
 #endif
     {

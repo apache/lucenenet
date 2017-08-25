@@ -1185,14 +1185,14 @@ namespace Lucene.Net.Index
 
                         if (waitForMerges)
                         {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                             try
                             {
 #endif    
                             // Give merge scheduler last chance to run, in case
                                 // any pending merges are waiting:
                                 mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                             }
                             catch (ThreadInterruptedException)
                             {
@@ -1210,13 +1210,13 @@ namespace Lucene.Net.Index
                         {
                             for (; ; )
                             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                                 try
                                 {
 #endif
                                     FinishMerges(waitForMerges && !interrupted);
                                     break;
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                                 }
                                 catch (ThreadInterruptedException)
                                 {
@@ -1297,7 +1297,7 @@ namespace Lucene.Net.Index
                 // finally, restore interrupt status:
                 if (interrupted)
                 {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     Thread.CurrentThread.Interrupt();
 #endif
                 }
@@ -5372,18 +5372,18 @@ namespace Lucene.Net.Index
                 // fails to be called, we wait for at most 1 second
                 // and then return so caller can check if wait
                 // conditions are satisfied:
-#if !NETSTANDARD
-                try
-                {
-#endif
+//#if !NETSTANDARD1_5
+//                try
+//                {
+//#endif
                     Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-#if !NETSTANDARD
-                }
-                catch (ThreadInterruptedException ie)
-                {
-                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                }
+//                catch (ThreadInterruptedException ie)
+//                {
+//                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+//                }
+//#endif
             }
         }
 

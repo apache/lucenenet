@@ -922,7 +922,7 @@ namespace Lucene.Net.Search
 
                         return true;
                     }
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     catch (ThreadInterruptedException e)
                     {
                         throw new ThreadInterruptedException(e.ToString(), e);

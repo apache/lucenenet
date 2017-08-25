@@ -24,9 +24,9 @@
   <Import Project="..\..\Version.proj" />
   
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.5;net451</TargetFrameworks>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
-    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>
+    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>-->
 
     <AssemblyTitle>Lucene.Net.Expressions</AssemblyTitle>
     <Description>Dynamically computed values to sort/facet/search on based on a pluggable grammar for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
@@ -54,13 +54,25 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="antlr3.runtime.netcore" Version="3.6.0-rc2" />
+    <!--<PackageReference Include="antlr3.runtime.netcore" Version="3.6.0-rc2" />-->
+    <PackageReference Include="Antlr3.Runtime" Version="3.5.1" />
+  </ItemGroup>
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
   </ItemGroup>
 
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD;FEATURE_SERIALIZABLE</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
-    <PackageReference Include="System.Reflection.Emit" Version="4.0.1" />
-    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.0.1" />
-    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.1.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.ILGeneration" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.3.0" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
@@ -68,9 +80,10 @@
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' OR '$(TargetFramework)' == 'netstandard2.0' ">
+    <!-- LUCENENET TODO: Do we really need to remove and re-add CommonAssemblyInfo just to use Exclude? -->
     <Compile Remove="Properties\Settings.Designer.cs;..\CommonAssemblyInfo.cs" />
-    <Compile Include="..\CommonAssemblyInfo.cs" Exclude="Properties\Settings.Designer.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" Exclude="Properties\Settings.Designer.cs" />
     <EmbeddedResource Include="JS\JavascriptCompiler.properties" />
   </ItemGroup>
 

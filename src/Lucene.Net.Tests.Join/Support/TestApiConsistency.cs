@@ -87,7 +87,7 @@ namespace Lucene.Net.Join
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Join.FakeScorer))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

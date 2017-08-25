@@ -146,18 +146,18 @@ namespace Lucene.Net.Util
             {
                 return;
             }
-#if !NETSTANDARD
-            try
-            {
-#endif 
+//#if !NETSTANDARD1_5
+//            try
+//            {
+//#endif 
                 Thread.Sleep(TimeSpan.FromMilliseconds(ms));
-#if !NETSTANDARD
-            }
-            catch (ThreadInterruptedException e)
-            {
-                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-            }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//            }
+//            catch (ThreadInterruptedException e)
+//            {
+//                throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+//            }
+//#endif
         }
 
         public override long Length

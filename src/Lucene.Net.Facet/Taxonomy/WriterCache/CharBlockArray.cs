@@ -242,19 +242,21 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual void Flush(Stream @out)
         {
-#if NETSTANDARD
+#if FEATURE_SERIALIZABLE
+            StreamUtils.SerializeToStream(this, @out);
+#else
             byte[] bytes = null;
             var json = JsonConvert.SerializeObject(this, new CharBlockArrayConverter());
             bytes = Encoding.UTF8.GetBytes(json);
             @out.Write(bytes, 0, bytes.Length);
-#else
-            StreamUtils.SerializeToStream(this, @out);
 #endif
         }
 
         public static CharBlockArray Open(Stream @in)
         {
-#if NETSTANDARD
+#if FEATURE_SERIALIZABLE
+            return StreamUtils.DeserializeFromStream(@in) as CharBlockArray;
+#else
             var contents = new byte[@in.Length];
             @in.Read(contents, 0, (int)@in.Length);
 
@@ -262,8 +264,6 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
             var deserialized = JsonConvert.DeserializeObject<CharBlockArray>(json);
 
             return deserialized;
-#else
-            return StreamUtils.DeserializeFromStream(@in) as CharBlockArray;
 #endif
         }
     }

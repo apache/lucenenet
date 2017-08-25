@@ -117,7 +117,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-#if NETSTANDARD
+#if NETSTANDARD1_5
                 return 2;
 #else
                 return (int)ThreadPriority.Normal;
@@ -368,10 +368,10 @@ namespace Lucene.Net.Index
                 return;
             }
 
-#if !NETSTANDARD
-            try
-            {
-#endif
+//#if !NETSTANDARD1_5
+//            try
+//            {
+//#endif
                 // When an exception is hit during merge, IndexWriter
                 // removes any partial files and then allows another
                 // merge to run.  If whatever caused the error is not
@@ -379,13 +379,13 @@ namespace Lucene.Net.Index
                 // so, we sleep here to avoid saturating CPU in such
                 // cases:
                 Thread.Sleep(250);
-#if !NETSTANDARD
-            }
-            catch (ThreadInterruptedException ie)
-            {
-                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-            }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//            }
+//            catch (ThreadInterruptedException ie)
+//            {
+//                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+//            }
+//#endif
             throw new MergePolicy.MergeException(exc, _directory);
         }
 

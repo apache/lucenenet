@@ -1,11 +1,12 @@
 ﻿using Icu.Collation;
-#if NETSTANDARD
-using Icu.ObjectModel; // For SortKey
-#endif
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using Lucene.Net.Util;
-using System.Globalization;
+#if NETSTANDARD
+using SortKey = Icu.ObjectModel.SortKey;
+#else
+using SortKey = System.Globalization.SortKey;
+#endif
 
 namespace Lucene.Net.Collation.TokenAttributes
 {

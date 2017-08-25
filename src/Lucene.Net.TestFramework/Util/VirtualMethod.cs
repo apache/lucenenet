@@ -2,7 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-#if NETSTANDARD
+#if NETSTANDARD1_5
 using System.Linq;
 #endif
 using System.Reflection;
@@ -169,7 +169,7 @@ namespace Lucene.Net.Util
 
         private MethodInfo GetMethod(Type clazz, string methodName, BindingFlags bindingFlags, Type[] methodParameters)
         {
-#if NETSTANDARD
+#if NETSTANDARD1_5
             var methods = clazz.GetTypeInfo().GetMethods(bindingFlags).Where(x => {
                 return x.Name.Equals(methodName, StringComparison.Ordinal)
                     && x.GetParameters().Select(y => y.ParameterType).SequenceEqual(methodParameters);

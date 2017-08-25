@@ -122,18 +122,18 @@ namespace Lucene.Net.Search
         {
             finish = true;
             reopenCond.Set();
-#if !NETSTANDARD
-            try
-            {
-#endif
+//#if !NETSTANDARD1_5
+//            try
+//            {
+//#endif
                 Join();
-#if !NETSTANDARD
-            }
-            catch (ThreadInterruptedException ie)
-            {
-                throw new ThreadInterruptedException(ie.ToString(), ie);
-            }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//            }
+//            catch (ThreadInterruptedException ie)
+//            {
+//                throw new ThreadInterruptedException(ie.ToString(), ie);
+//            }
+//#endif
             // LUCENENET specific: dispose reset event
             reopenCond.Dispose();
             available.Dispose();
@@ -232,12 +232,12 @@ namespace Lucene.Net.Search
                 long sleepNS = nextReopenStartNS - Time.NanoTime();
 
                 if (sleepNS > 0)
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     try
                     {
 #endif
                         reopenCond.WaitOne(TimeSpan.FromMilliseconds(sleepNS / Time.MILLISECONDS_PER_NANOSECOND));//Convert NS to Ticks
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     }
 #pragma warning disable 168
                     catch (ThreadInterruptedException ie)

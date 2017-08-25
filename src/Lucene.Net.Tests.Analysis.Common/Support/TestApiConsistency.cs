@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Standard.ClassicAnalyzer))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

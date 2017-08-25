@@ -237,7 +237,7 @@ namespace Lucene.Net.Support
                 "the consumer if the array is not cloned using arr.ToArray().");
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
         //[Test, LuceneNetSpecific]
         public virtual void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)
         {
@@ -823,7 +823,7 @@ namespace Lucene.Net.Support
             return result.ToArray();
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
         private static IEnumerable<string> GetMethodsThatReturnWritableArray(Assembly assembly)
         {
             var result = new List<string>();

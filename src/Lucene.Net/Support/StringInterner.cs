@@ -33,7 +33,7 @@ namespace Lucene.Net.Support
         /// <summary>Returns a single object instance for each equal string. </summary>
         public virtual System.String Intern(System.String s)
         {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
             return String.Intern(s);
 #else
             throw new PlatformNotSupportedException("String.Intern not supported.  Use SimpleStringInterner.");

@@ -310,18 +310,18 @@ namespace Lucene.Net.Index
             {
                 while (flushingWriters.Count != 0)
                 {
-#if !NETSTANDARD
-                    try
-                    {
-#endif
+//#if !NETSTANDARD1_5
+//                    try
+//                    {
+//#endif
                     Monitor.Wait(this);
-#if !NETSTANDARD
-                    }
-                    catch (ThreadInterruptedException e)
-                    {
-                        throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-                    }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                    }
+//                    catch (ThreadInterruptedException e)
+//                    {
+//                        throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+//                    }
+//#endif
                 }
             }
         }

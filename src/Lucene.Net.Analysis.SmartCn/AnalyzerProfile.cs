@@ -72,7 +72,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
             if (ANALYSIS_DATA_DIR.Length != 0)
                 return;
 
-#if NETSTANDARD
+#if NETSTANDARD1_5
             string currentPath = System.AppContext.BaseDirectory;
 #else
             string currentPath = AppDomain.CurrentDomain.BaseDirectory;
