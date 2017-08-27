@@ -128,6 +128,11 @@ namespace Lucene.Net.Codecs.Lucene46
         /// </summary>
         public virtual PostingsFormat GetPostingsFormatForField(string field)
         {
+            // LUCENENET specific - lazy initialize the codec to ensure we get the correct type if overridden.
+            if (defaultFormat == null)
+            {
+                defaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
+            }
             return defaultFormat;
         }
 
@@ -139,6 +144,11 @@ namespace Lucene.Net.Codecs.Lucene46
         /// </summary>
         public virtual DocValuesFormat GetDocValuesFormatForField(string field)
         {
+            // LUCENENET specific - lazy initialize the codec to ensure we get the correct type if overridden.
+            if (defaultDVFormat == null)
+            {
+                defaultDVFormat = Codecs.DocValuesFormat.ForName("Lucene45");
+            }
             return defaultDVFormat;
         }
 
@@ -147,8 +157,9 @@ namespace Lucene.Net.Codecs.Lucene46
             get { return docValuesFormat; }
         }
 
-        private readonly PostingsFormat defaultFormat = Codecs.PostingsFormat.ForName("Lucene41");
-        private readonly DocValuesFormat defaultDVFormat = Codecs.DocValuesFormat.ForName("Lucene45");
+        // LUCENENET specific - lazy initialize the codecs to ensure we get the correct type if overridden.
+        private PostingsFormat defaultFormat;
+        private DocValuesFormat defaultDVFormat;
 
         private readonly NormsFormat normsFormat = new Lucene42NormsFormat();
 

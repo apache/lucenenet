@@ -119,9 +119,15 @@ namespace Lucene.Net.Codecs.Lucene40
         /// </summary>
         public virtual PostingsFormat GetPostingsFormatForField(string field)
         {
+            // LUCENENET specific - lazy initialize the codec to ensure we get the correct type if overridden.
+            if (defaultFormat == null)
+            {
+                defaultFormat = Codecs.PostingsFormat.ForName("Lucene40");
+            }
             return defaultFormat;
         }
 
-        private readonly PostingsFormat defaultFormat = Codecs.PostingsFormat.ForName("Lucene40");
+        // LUCENENET specific - lazy initialize the codec to ensure we get the correct type if overridden.
+        private PostingsFormat defaultFormat;
     }
 }
