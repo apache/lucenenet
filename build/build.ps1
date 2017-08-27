@@ -77,7 +77,7 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 	& where.exe dotnet.exe
 
 	if ($LASTEXITCODE -ne 0) {
-		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK version 2.0.0."
+		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 2.0 SDK."
 	}
 }
 
