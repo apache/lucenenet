@@ -147,12 +147,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                // TODO: LUCENENET This should be throwing an exception during
-                // a test run on the original solution, but does not.
-                // ie. inclusiveLowerPoint > 0 && inclusiveUpperPoint > 0
-                // evaluates to false, but a DebugAssertionException is not
-                // thrown on the original test runs.
-                Debug.Assert(inclusiveLowerPoint > 0 && inclusiveUpperPoint > 0);
+                Debug.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
                 return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
