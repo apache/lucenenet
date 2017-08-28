@@ -62,7 +62,7 @@
 
   <ItemGroup>
     <PackageReference Include="icu.net" Version="54.1.1-alpha" />
-    <PackageReference Include="Spatial4n.Core" Version="0.4.1-beta00005" />
+    <PackageReference Include="Spatial4n.Core" Version="0.4.1-beta00007" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
