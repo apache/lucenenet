@@ -57,7 +57,7 @@
     <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.2" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
     <DebugType>portable</DebugType>
   </PropertyGroup>
