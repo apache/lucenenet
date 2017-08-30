@@ -819,7 +819,13 @@ namespace Lucene.Net.Codecs.Lucene3x
 
             public override int NextPosition()
             {
+                // LUCENENET TODO: on .NET Core 2.0, this assert causes an uncatchable exception.
+                // See: https://github.com/Microsoft/vstest/issues/1022
+                // Once the issue has been identified and fixed we can remove this conditional
+                // compilation for it on .NET Core 2.0.
+#if !NETSTANDARD2_0
                 Debug.Assert((positions != null && nextPos < positions.Length) || startOffsets != null && nextPos < startOffsets.Length);
+#endif
 
                 if (positions != null)
                 {
