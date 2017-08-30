@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using NUnit.Framework;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
+using System;
 
 namespace Lucene.Net.Spatial
 {
@@ -35,12 +36,18 @@ namespace Lucene.Net.Spatial
             // times distErrPct
 
             IShape superwide = ctx.MakeRectangle(-180, 180, 0, 0);
+
+            // LUCENENET specific: Added delta to the first 3 asserts because it is not a 
+            // valid expectation that they are exactly on the nose when dealing with floating point
+            // types. And in .NET Core 2.0, the implementation has changed which now makes this test
+            // fail without delta.
+
             //0 distErrPct means 0 distance always
-            assertEquals(0, SpatialArgs.CalcDistanceFromErrPct(superwide, 0, ctx), 0);
-            assertEquals(180 * DEP, SpatialArgs.CalcDistanceFromErrPct(superwide, DEP, ctx), 0);
+            assertEquals(0, SpatialArgs.CalcDistanceFromErrPct(superwide, 0, ctx), 0.0001);
+            assertEquals(180 * DEP, SpatialArgs.CalcDistanceFromErrPct(superwide, DEP, ctx), 0.0001);
 
             IShape supertall = ctx.MakeRectangle(0, 0, -90, 90);
-            assertEquals(90 * DEP, SpatialArgs.CalcDistanceFromErrPct(supertall, DEP, ctx), 0);
+            assertEquals(90 * DEP, SpatialArgs.CalcDistanceFromErrPct(supertall, DEP, ctx), 0.0001);
 
             IShape upperhalf = ctx.MakeRectangle(-180, 180, 0, 90);
             assertEquals(45 * DEP, SpatialArgs.CalcDistanceFromErrPct(upperhalf, DEP, ctx), 0.0001);
