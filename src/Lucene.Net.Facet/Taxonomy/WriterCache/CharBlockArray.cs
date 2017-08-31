@@ -42,7 +42,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 #endif
     public class CharBlockArray : ICharSequence
     {
-        private const long serialVersionUID = 1L;
+        //private const long serialVersionUID = 1L; // LUCENENET: Not used
 
         private const int DEFAULT_BLOCK_SIZE = 32 * 1024; // 32 KB default size
 
@@ -51,7 +51,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 #endif
         internal sealed class Block
         {
-            internal const long serialVersionUID = 1L;
+            //internal const long serialVersionUID = 1L; // LUCENENET: Not used
 
             internal readonly char[] chars;
             internal int length;
@@ -74,7 +74,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         internal IList<Block> blocks;
         internal Block current;
         internal int blockSize;
-        internal int length_Renamed;
+        internal int length;
 
         public CharBlockArray()
             : this(DEFAULT_BLOCK_SIZE)
@@ -116,7 +116,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 AddBlock();
             }
             this.current.chars[this.current.length++] = c;
-            this.length_Renamed++;
+            this.length++;
 
             return this;
         }
@@ -153,7 +153,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 this.current.length += toCopy;
             }
 
-            this.length_Renamed += length;
+            this.length += length;
             return this;
         }
 
@@ -179,7 +179,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 this.current.length += toCopy;
             }
 
-            this.length_Renamed += s.Length;
+            this.length += s.Length;
             return this;
         }
 
@@ -204,7 +204,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
         {
             get
             {
-                return this.length_Renamed;
+                return this.length;
             }
         }
 
