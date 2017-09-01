@@ -45,7 +45,7 @@ properties {
 	[string]$product_name = "Lucene.Net"
 	
 	#test paramters
-	[string]$frameworks_to_test = "netcoreapp1.0,net451"
+	[string]$frameworks_to_test = "netcoreapp2.0,netcoreapp1.0,net451"
 	[string]$where = ""
 }
 
@@ -144,9 +144,7 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
 				/p:Product=$product_name `
 				/p:Company=$company_name `
 				/p:Copyright=$copyright `
-				/p:TestFrameworks=true 
-
-			# workaround for parsing issue: https://github.com/Microsoft/msbuild/issues/471#issuecomment-181963350
+				/p:TestFrameworks=true # workaround for parsing issue: https://github.com/Microsoft/msbuild/issues/471#issuecomment-181963350
 		}
 
 		$success = $true
