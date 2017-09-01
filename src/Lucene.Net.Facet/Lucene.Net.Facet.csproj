@@ -60,7 +60,6 @@
   
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
     <PackageReference Include="System.Threading.Thread" Version="4.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
     <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
   </ItemGroup>
 

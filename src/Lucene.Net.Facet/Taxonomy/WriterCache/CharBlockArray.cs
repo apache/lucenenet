@@ -1,13 +1,8 @@
-﻿using Lucene.Net.Store;
-using Lucene.Net.Support;
-using Lucene.Net.Support.IO;
+﻿using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-#if !FEATURE_SERIALIZABLE
-using Newtonsoft.Json;
-#endif
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -31,24 +26,19 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
     /// <summary>
     /// Similar to <see cref="StringBuilder"/>, but with a more efficient growing strategy.
     /// This class uses char array blocks to grow.
-    /// 
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#else
-    [JsonConverter(typeof(CharBlockArrayConverter))]
-
-#endif
-    public class CharBlockArray : ICharSequence
+    // LUCENENET NOTE: The serialization features here are strictly for testing purposes,
+    // therefore it doesn't make any difference what type of serialization is used. 
+    // To make things simpler, we are using BinaryReader and BinaryWriter since 
+    // BinaryFormatter is not implemented in .NET Standard 1.x.
+    internal class CharBlockArray : ICharSequence
     {
         //private const long serialVersionUID = 1L; // LUCENENET: Not used
 
         private const int DEFAULT_BLOCK_SIZE = 32 * 1024; // 32 KB default size
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class Block
         {
             //internal const long serialVersionUID = 1L; // LUCENENET: Not used
@@ -68,6 +58,23 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 clone.length = length;
                 Array.Copy(chars, clone.chars, chars.Length);
                 return clone;
+            }
+
+            // LUCENENET specific
+            public void Serialize(BinaryWriter writer)
+            {
+                writer.Write(chars.Length);
+                writer.Write(chars);
+                writer.Write(length);
+            }
+
+            // LUCENENET specific
+            // Deserialization constructor
+            public Block(BinaryReader reader)
+            {
+                int charsLength = reader.ReadInt32();
+                this.chars = reader.ReadChars(charsLength);
+                this.length = reader.ReadInt32();
             }
         }
 
@@ -242,29 +249,49 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         internal virtual void Flush(Stream @out)
         {
-#if FEATURE_SERIALIZABLE
-            StreamUtils.SerializeToStream(this, @out);
-#else
-            byte[] bytes = null;
-            var json = JsonConvert.SerializeObject(this, new CharBlockArrayConverter());
-            bytes = Encoding.UTF8.GetBytes(json);
-            @out.Write(bytes, 0, bytes.Length);
-#endif
+            using (var writer = new BinaryWriter(@out, new UTF8Encoding(false, true), true))
+            {
+                writer.Write(blocks.Count);
+                int currentIndex = 0;
+                for (int i = 0; i < blocks.Count; i++)
+                {
+                    var block = blocks[i];
+                    block.Serialize(writer);
+                    if (block == current)
+                    {
+                        currentIndex = i;
+                    }
+                }
+                // Write the index of the current block so we can
+                // set the reference when deserializing
+                writer.Write(currentIndex);
+                writer.Write(blockSize);
+                writer.Write(length);
+                writer.Flush();
+            }
+        }
+
+        // LUCENENET specific
+        // Deserialization constructor
+        internal CharBlockArray(BinaryReader reader)
+        {
+            var blocksCount = reader.ReadInt32();
+            this.blocks = new List<Block>(blocksCount);
+            for (int i = 0; i < blocksCount; i++)
+            {
+                blocks.Add(new Block(reader));
+            }
+            this.current = blocks[reader.ReadInt32()];
+            this.blockSize = reader.ReadInt32();
+            this.length = reader.ReadInt32();
         }
 
         public static CharBlockArray Open(Stream @in)
         {
-#if FEATURE_SERIALIZABLE
-            return StreamUtils.DeserializeFromStream(@in) as CharBlockArray;
-#else
-            var contents = new byte[@in.Length];
-            @in.Read(contents, 0, (int)@in.Length);
-
-            var json = Encoding.UTF8.GetString(contents);
-            var deserialized = JsonConvert.DeserializeObject<CharBlockArray>(json);
-
-            return deserialized;
-#endif
+            using (var writer = new BinaryReader(@in, new UTF8Encoding(false, true), true))
+            {
+                return new CharBlockArray(writer);
+            }
         }
     }
 }
