@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -25,9 +24,6 @@ namespace Lucene.Net.Index
     /// <summary>
     /// <see cref="IndexReaderContext"/> for <see cref="CompositeReader"/> instance.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class CompositeReaderContext : IndexReaderContext
     {
         private readonly IList<IndexReaderContext> children;
@@ -87,9 +83,6 @@ namespace Lucene.Net.Index
             get { return reader; }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class Builder
         {
             private readonly CompositeReader reader;

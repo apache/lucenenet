@@ -38,9 +38,6 @@ namespace Lucene.Net.Index
     ///  
     /// LUCENENET specific
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TaskMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
     {
         public const string COMPONENT_NAME = "CMS";

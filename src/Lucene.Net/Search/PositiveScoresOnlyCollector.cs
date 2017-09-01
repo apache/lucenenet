@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -26,9 +24,6 @@ namespace Lucene.Net.Search
     /// <see cref="ICollector"/> and makes sure only documents with
     /// scores &gt; 0 are collected.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PositiveScoresOnlyCollector : ICollector
     {
         private readonly ICollector c;

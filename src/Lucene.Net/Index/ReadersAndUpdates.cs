@@ -44,9 +44,6 @@ namespace Lucene.Net.Index
     /// searching or merging), plus pending deletes and updates,
     /// for a given segment
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class ReadersAndUpdates
     {
         // Not final because we replace (clone) when we need to

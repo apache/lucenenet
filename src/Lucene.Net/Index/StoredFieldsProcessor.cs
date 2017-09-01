@@ -30,9 +30,6 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// This is a <see cref="StoredFieldsConsumer"/> that writes stored fields. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class StoredFieldsProcessor : StoredFieldsConsumer
     {
         internal StoredFieldsWriter fieldsWriter;

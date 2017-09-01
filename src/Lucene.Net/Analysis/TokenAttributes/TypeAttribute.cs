@@ -24,9 +24,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="ITypeAttribute"/>. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public partial class TypeAttribute : Attribute, ITypeAttribute
 #if FEATURE_CLONEABLE
         , ICloneable

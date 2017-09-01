@@ -33,9 +33,6 @@ namespace Lucene.Net.Search
     /// exceeded, the search thread is stopped by throwing a
     /// <see cref="TimeExceededException"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TimeLimitingCollector : ICollector
     {
         /// <summary>
@@ -273,9 +270,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class TimerThreadHolder
         {
             internal static readonly TimerThread THREAD;
@@ -293,9 +287,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class TimerThread : ThreadClass
         {
             public const string THREAD_NAME = "TimeLimitedCollector timer thread";

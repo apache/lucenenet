@@ -30,9 +30,6 @@ namespace Lucene.Net.Documents
     ///  for it.  You must not use the returned Field instances
     ///  after the provided reader has been closed. </summary>
     /// <seealso cref="GetField(FieldInfo)"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class LazyDocument
     {
         private readonly IndexReader reader;

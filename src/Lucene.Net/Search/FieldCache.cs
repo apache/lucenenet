@@ -358,17 +358,11 @@ namespace Lucene.Net.Search
         TextWriter InfoStream { set; get; }
     }
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public static class FieldCache 
     {
         /// <summary>
         /// Field values as 8-bit signed bytes
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class Bytes
         {
             /// <summary>
@@ -381,9 +375,6 @@ namespace Lucene.Net.Search
             /// </summary>
             public static readonly Bytes EMPTY = new EmptyBytes();
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private sealed class EmptyBytes : Bytes
             {
                 public override byte Get(int docID)
@@ -398,9 +389,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was Shorts in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class Int16s
         {
             /// <summary>
@@ -413,9 +401,6 @@ namespace Lucene.Net.Search
             /// </summary>
             public static readonly Int16s EMPTY = new EmptyInt16s();
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private sealed class EmptyInt16s : Int16s
             {
                 public override short Get(int docID)
@@ -430,9 +415,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was Ints in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class Int32s
         {
             /// <summary>
@@ -445,9 +427,6 @@ namespace Lucene.Net.Search
             /// </summary>
             public static readonly Int32s EMPTY = new EmptyInt32s();
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private sealed class EmptyInt32s : Int32s
             {
                 public override int Get(int docID)
@@ -462,9 +441,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was Longs in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class Int64s
         {
             /// <summary>
@@ -477,9 +453,6 @@ namespace Lucene.Net.Search
             /// </summary>
             public static readonly Int64s EMPTY = new EmptyInt64s();
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private sealed class EmptyInt64s : Int64s
             {
                 public override long Get(int docID)
@@ -494,9 +467,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was Floats in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class Singles
         {
             /// <summary>
@@ -509,9 +479,6 @@ namespace Lucene.Net.Search
             /// </summary>
             public static readonly Singles EMPTY = new EmptySingles();
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private sealed class EmptySingles : Singles
             {
                 public override float Get(int docID)
@@ -524,9 +491,6 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Field values as 64-bit doubles
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class Doubles
         {
             /// <summary>
@@ -540,9 +504,6 @@ namespace Lucene.Net.Search
             /// </summary>
             public static readonly Doubles EMPTY = new EmptyDoubles();
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private sealed class EmptyDoubles : Doubles
             {
                 public override double Get(int docID)
@@ -555,9 +516,6 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Placeholder indicating creation of this cache is currently in-progress.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class CreationPlaceholder
         {
             internal object Value { get; set; }
@@ -682,9 +640,6 @@ namespace Lucene.Net.Search
         public static readonly IByteParser DEFAULT_BYTE_PARSER = new ByteParser();
 
         [Obsolete]
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class ByteParser : IByteParser
         {
             public byte ParseByte(BytesRef term)
@@ -717,9 +672,6 @@ namespace Lucene.Net.Search
         public static readonly IInt16Parser DEFAULT_INT16_PARSER = new Int16Parser();
 
         [Obsolete]
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class Int16Parser : IInt16Parser
         {
             /// <summary>
@@ -755,9 +707,6 @@ namespace Lucene.Net.Search
         public static readonly IInt32Parser DEFAULT_INT32_PARSER = new Int32Parser();
 
         [Obsolete]
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class Int32Parser : IInt32Parser
         {
             /// <summary>
@@ -793,9 +742,6 @@ namespace Lucene.Net.Search
         public static readonly ISingleParser DEFAULT_SINGLE_PARSER = new SingleParser();
 
         [Obsolete]
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class SingleParser : ISingleParser
         {
             /// <summary>
@@ -838,9 +784,6 @@ namespace Lucene.Net.Search
         public static readonly IInt64Parser DEFAULT_INT64_PARSER = new Int64Parser();
 
         [Obsolete]
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class Int64Parser : IInt64Parser
         {
             /// <summary>
@@ -874,9 +817,6 @@ namespace Lucene.Net.Search
         public static readonly IDoubleParser DEFAULT_DOUBLE_PARSER = new DoubleParser();
 
         [Obsolete]
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class DoubleParser : IDoubleParser
         {
             public double ParseDouble(BytesRef term)
@@ -918,9 +858,6 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly IInt32Parser NUMERIC_UTILS_INT32_PARSER = new NumericUtilsInt32Parser();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class NumericUtilsInt32Parser : IInt32Parser
         {
             /// <summary>
@@ -950,9 +887,6 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly ISingleParser NUMERIC_UTILS_SINGLE_PARSER = new NumericUtilsSingleParser();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class NumericUtilsSingleParser : ISingleParser
         {
             /// <summary>
@@ -982,9 +916,6 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly IInt64Parser NUMERIC_UTILS_INT64_PARSER = new NumericUtilsInt64Parser();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class NumericUtilsInt64Parser : IInt64Parser
         {
             /// <summary>
@@ -1012,9 +943,6 @@ namespace Lucene.Net.Search
         /// </summary>
         public static readonly IDoubleParser NUMERIC_UTILS_DOUBLE_PARSER = new NumericUtilsDoubleParser();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class NumericUtilsDoubleParser : IDoubleParser
         {
             public double ParseDouble(BytesRef term)
@@ -1040,9 +968,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class CacheEntry
         {
             private readonly object readerKey;

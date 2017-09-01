@@ -43,9 +43,6 @@ namespace Lucene.Net.Index.Sorter
     /// </summary>
     public class SortingAtomicReader : FilterAtomicReader
     {
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortingFields : FilterFields
         {
             private readonly Sorter.DocMap docMap;
@@ -72,9 +69,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortingTerms : FilterTerms
         {
             private readonly Sorter.DocMap docMap;
@@ -98,9 +92,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortingTermsEnum : FilterTermsEnum
         {
             private readonly Sorter.DocMap docMap; // pkg-protected to avoid synthetic accessor methods
@@ -200,9 +191,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortingBinaryDocValues : BinaryDocValues
         {
             private readonly BinaryDocValues @in;
@@ -220,9 +208,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortingNumericDocValues : NumericDocValues
         {
             private readonly NumericDocValues @in;
@@ -240,9 +225,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortingBits : IBits
         {
             private readonly IBits @in;
@@ -265,9 +247,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortingSortedDocValues : SortedDocValues
         {
             private readonly SortedDocValues @in;
@@ -308,9 +287,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortingSortedSetDocValues : SortedSetDocValues
         {
             private readonly SortedSetDocValues @in;
@@ -351,9 +327,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal class SortingDocsEnum : FilterDocsEnum
         {
             private sealed class DocFreqSorter : TimSorter
@@ -549,9 +522,6 @@ namespace Lucene.Net.Index.Sorter
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal class SortingDocsAndPositionsEnum : FilterDocsAndPositionsEnum
         {
             /// <summary>

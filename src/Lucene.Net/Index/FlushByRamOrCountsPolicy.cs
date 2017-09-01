@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -61,9 +59,6 @@ namespace Lucene.Net.Index
     /// pending iff the global active RAM consumption is &gt;= the configured max RAM
     /// buffer.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class FlushByRamOrCountsPolicy : FlushPolicy
     {
         public override void OnDelete(DocumentsWriterFlushControl control, ThreadState state)

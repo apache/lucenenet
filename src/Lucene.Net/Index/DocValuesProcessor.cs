@@ -28,9 +28,6 @@ namespace Lucene.Net.Index
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class DocValuesProcessor : StoredFieldsConsumer
     {
         // TODO: somewhat wasteful we also keep a map here; would

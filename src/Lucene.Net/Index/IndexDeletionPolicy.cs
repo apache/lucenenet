@@ -51,9 +51,7 @@ namespace Lucene.Net.Index
     /// returns an independent instance able to work with any other <see cref="IndexWriter"/>
     /// or <see cref="Store.Directory"/> instance.</para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public abstract class IndexDeletionPolicy
     {
         /// <summary>

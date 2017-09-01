@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -24,9 +22,6 @@ namespace Lucene.Net.Search.Similarities
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class AfterEffectL : AfterEffect
     {
         /// <summary>

@@ -29,9 +29,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class QueryRescorer : Rescorer
     {
         private readonly Query query;
@@ -126,9 +123,6 @@ namespace Lucene.Net.Search
             return new TopDocs(firstPassTopDocs.TotalHits, hits, hits[0].Score);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ComparerAnonymousInnerClassHelper : IComparer<ScoreDoc>
         {
             private readonly QueryRescorer outerInstance;
@@ -144,9 +138,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ComparerAnonymousInnerClassHelper2 : IComparer<ScoreDoc>
         {
             private readonly QueryRescorer outerInstance;
@@ -222,9 +213,6 @@ namespace Lucene.Net.Search
             return new QueryRescorerAnonymousInnerClassHelper(query, weight).Rescore(searcher, topDocs, topN);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class QueryRescorerAnonymousInnerClassHelper : QueryRescorer
         {
             private double weight;

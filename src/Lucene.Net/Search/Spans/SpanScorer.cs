@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search.Spans
 {
     /*
@@ -24,9 +22,6 @@ namespace Lucene.Net.Search.Spans
     /// <summary>
     /// Public for extension only.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SpanScorer : Scorer
     {
         protected Spans m_spans;

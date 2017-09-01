@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
@@ -30,9 +29,6 @@ namespace Lucene.Net.Search.Spans
     /// <summary>
     /// Expert-only.  Public for use by other weight implementations
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SpanWeight : Weight
     {
         protected Similarity m_similarity;

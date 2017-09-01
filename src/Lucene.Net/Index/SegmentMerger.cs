@@ -41,9 +41,6 @@ namespace Lucene.Net.Index
     /// segments.
     /// </summary>
     /// <seealso cref="Merge()"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class SegmentMerger
     {
         private readonly Directory directory;

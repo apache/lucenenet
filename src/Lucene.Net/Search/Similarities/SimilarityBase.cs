@@ -41,9 +41,6 @@ namespace Lucene.Net.Search.Similarities
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class SimilarityBase : Similarity
     {
         /// <summary>
@@ -294,9 +291,6 @@ namespace Lucene.Net.Search.Similarities
         /// <see cref="SimilarityBase.Explain(BasicStats, int, Explanation, float)"/>,
         /// respectively.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BasicSimScorer : SimScorer
         {
             private readonly SimilarityBase outerInstance;

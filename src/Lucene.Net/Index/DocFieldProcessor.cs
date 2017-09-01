@@ -35,9 +35,7 @@ namespace Lucene.Net.Index
     /// of its own: it just forwards the fields to a
     /// <see cref="DocFieldConsumer"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     internal sealed class DocFieldProcessor : DocConsumer
     {
         internal readonly DocFieldConsumer consumer;
@@ -284,9 +282,6 @@ namespace Lucene.Net.Index
 
         private static readonly IComparer<DocFieldProcessorPerField> fieldsComp = new ComparerAnonymousInnerClassHelper();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ComparerAnonymousInnerClassHelper : IComparer<DocFieldProcessorPerField>
         {
             public ComparerAnonymousInnerClassHelper()

@@ -37,9 +37,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @since   1.4 </summary>
     /// <seealso cref="CachingWrapperFilter"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class FilteredQuery : Query
     {
         private readonly Query query;
@@ -89,9 +86,6 @@ namespace Lucene.Net.Search
             return new WeightAnonymousInnerClassHelper(this, weight);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class WeightAnonymousInnerClassHelper : Weight
         {
             private readonly FilteredQuery outerInstance;
@@ -187,9 +181,6 @@ namespace Lucene.Net.Search
         /// than document scoring or if the filter has a linear running time to compute
         /// the next matching doc like exact geo distances.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class QueryFirstScorer : Scorer
         {
             private readonly Scorer scorer;
@@ -255,9 +246,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class QueryFirstBulkScorer : BulkScorer
         {
             private readonly Scorer scorer;
@@ -305,9 +293,6 @@ namespace Lucene.Net.Search
         /// jumping past the target document. When both land on the same document, it's
         /// collected.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class LeapFrogScorer : Scorer
         {
             private readonly DocIdSetIterator secondary;
@@ -390,9 +375,6 @@ namespace Lucene.Net.Search
         }
 
         // TODO once we have way to figure out if we use RA or LeapFrog we can remove this scorer
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class PrimaryAdvancedLeapFrogScorer : LeapFrogScorer
         {
             private readonly int firstFilteredDoc;
@@ -576,9 +558,6 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Abstract class that defines how the filter (<see cref="DocIdSet"/>) applied during document collection. </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class FilterStrategy
         {
             /// <summary>
@@ -626,9 +605,6 @@ namespace Lucene.Net.Search
         /// <code>true</code>. Otherwise this strategy falls back to a "zig-zag join" (
         /// <see cref="FilteredQuery.LEAP_FROG_FILTER_FIRST_STRATEGY"/>) strategy .
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class RandomAccessFilterStrategy : FilterStrategy
         {
             public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)
@@ -684,9 +660,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class LeapFrogFilterStrategy : FilterStrategy
         {
             private readonly bool scorerFirst;
@@ -735,9 +708,6 @@ namespace Lucene.Net.Search
         /// matching doc like exact geo distances.
         /// </para>
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class QueryFirstFilterStrategy : FilterStrategy
         {
             public override Scorer FilteredScorer(AtomicReaderContext context, Weight weight, DocIdSet docIdSet)

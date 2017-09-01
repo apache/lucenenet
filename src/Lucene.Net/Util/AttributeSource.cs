@@ -35,9 +35,6 @@ namespace Lucene.Net.Util
     /// that type is already present. If yes, it returns the instance, otherwise
     /// it creates a new instance and returns it.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class AttributeSource
     {
         /// <summary>
@@ -104,9 +101,6 @@ namespace Lucene.Net.Util
         /// This class holds the state of an <see cref="AttributeSource"/>. </summary>
         /// <seealso cref="CaptureState()"/>
         /// <seealso cref="RestoreState(State)"/>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class State
         {
             internal Attribute attribute;

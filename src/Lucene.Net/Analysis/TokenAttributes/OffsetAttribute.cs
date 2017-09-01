@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
@@ -24,9 +22,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IOffsetAttribute"/>. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class OffsetAttribute : Attribute, IOffsetAttribute
     {
         private int startOffset;

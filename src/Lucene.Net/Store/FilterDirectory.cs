@@ -32,9 +32,6 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.internal
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class FilterDirectory : Directory
     {
         protected readonly Directory m_input;

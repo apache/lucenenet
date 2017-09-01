@@ -40,9 +40,7 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.internal
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public sealed class IndexFileNames
     {
         /// <summary>

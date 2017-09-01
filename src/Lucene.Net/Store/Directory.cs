@@ -40,9 +40,6 @@ namespace Lucene.Net.Store
     /// <see cref="Store.LockFactory"/>, and can be changed for each <see cref="Directory"/>
     /// instance using <see cref="SetLockFactory"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class Directory : IDisposable // LUCENENET TODO: Subclass System.IO.FileSystemInfo ?
     {
         /// <summary>
@@ -252,9 +249,6 @@ namespace Lucene.Net.Store
             return new IndexInputSlicerAnonymousInnerClassHelper(this, name, context);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
             private readonly Directory outerInstance;
@@ -305,9 +299,6 @@ namespace Lucene.Net.Store
         /// @lucene.internal
         /// @lucene.experimental
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class IndexInputSlicer : IDisposable
         {
             /// <summary>
@@ -334,9 +325,6 @@ namespace Lucene.Net.Store
         /// Implementation of an <see cref="IndexInput"/> that reads from a portion of
         /// a file.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class SlicedIndexInput : BufferedIndexInput
         {
             private IndexInput @base;

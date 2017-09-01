@@ -33,9 +33,6 @@ namespace Lucene.Net.Search.Spans
     /// Removes matches which overlap with another <see cref="SpanQuery"/> or
     /// within a x tokens before or y tokens after another <see cref="SpanQuery"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SpanNotQuery : SpanQuery
     {
         private SpanQuery include;
@@ -141,9 +138,6 @@ namespace Lucene.Net.Search.Spans
             return new SpansAnonymousInnerClassHelper(this, context, acceptDocs, termContexts);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SpansAnonymousInnerClassHelper : Spans
         {
             private readonly SpanNotQuery outerInstance;

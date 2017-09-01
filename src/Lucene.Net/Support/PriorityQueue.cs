@@ -36,9 +36,6 @@ namespace Lucene.Net.Support
     /// A <see cref="PriorityQueue{T}"/> is not synchronized.
     /// </summary>
     /// <typeparam name="T">Type of elements</typeparam>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PriorityQueue<T> : ICollection<T> where T : class // LUCENENET: added constraint so we can return null like the original code
     {
         private static readonly int DEFAULT_CAPACITY = 11;

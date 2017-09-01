@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -27,9 +26,6 @@ namespace Lucene.Net.Search
     /// This <see cref="Scorer"/> implements <see cref="DocIdSetIterator.Advance(int)"/>,
     /// and it uses the SkipTo() on the given scorers.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class ReqExclScorer : Scorer
     {
         private Scorer reqScorer;

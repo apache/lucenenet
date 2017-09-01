@@ -31,9 +31,6 @@ namespace Lucene.Net.Documents
     /// If you also need to store the value, you should add a
     /// separate <see cref="StoredField"/> instance.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class NumericDocValuesField : Field
     {
         /// <summary>

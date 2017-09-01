@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -23,9 +21,6 @@ namespace Lucene.Net.Search
     /// A <see cref="Scorer"/> for OR like queries, counterpart of <see cref="ConjunctionScorer"/>.
     /// This <see cref="Scorer"/> implements <see cref="DocIdSetIterator.Advance(int)"/> and uses Advance() on the given <see cref="Scorer"/>s.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class DisjunctionSumScorer : DisjunctionScorer
     {
         /// <summary>

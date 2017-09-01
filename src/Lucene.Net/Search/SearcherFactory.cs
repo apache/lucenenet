@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -44,9 +42,6 @@ namespace Lucene.Net.Search
     /// </list>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SearcherFactory
     {
         /// <summary>

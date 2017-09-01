@@ -1,5 +1,4 @@
 using Lucene.Net.Analysis.TokenAttributes;
-using System;
 using System.Reflection;
 using Attribute = Lucene.Net.Util.Attribute;
 using AttributeSource = Lucene.Net.Util.AttributeSource;
@@ -117,9 +116,6 @@ namespace Lucene.Net.Analysis
     /// this method now only prints the term text, no additional information anymore.
     /// </para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class Token : CharTermAttribute, ITypeAttribute, IPositionIncrementAttribute, IFlagsAttribute, IOffsetAttribute, IPayloadAttribute, IPositionLengthAttribute
     {
         private int startOffset, endOffset;

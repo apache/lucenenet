@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Store
@@ -29,9 +28,6 @@ namespace Lucene.Net.Store
     /// currently the default locking for <see cref="RAMDirectory"/>.
     /// </summary>
     /// <seealso cref="LockFactory"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SingleInstanceLockFactory : LockFactory
     {
         private HashSet<string> locks = new HashSet<string>();

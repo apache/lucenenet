@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -29,9 +27,6 @@ namespace Lucene.Net.Search.Similarities
     /// The default value for the <c>c</c> parameter is <c>1</c>.</para>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class NormalizationH2 : Normalization
     {
         private readonly float c;

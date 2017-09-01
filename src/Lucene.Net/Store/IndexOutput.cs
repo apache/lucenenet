@@ -28,9 +28,6 @@ namespace Lucene.Net.Store
     /// </summary>
     /// <seealso cref="Directory"/>
     /// <seealso cref="IndexInput"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class IndexOutput : DataOutput, IDisposable
     {
         /// <summary>

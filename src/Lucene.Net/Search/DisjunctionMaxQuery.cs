@@ -55,9 +55,6 @@ namespace Lucene.Net.Search
     /// };
     /// </code>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class DisjunctionMaxQuery : Query, IEnumerable<Query>
     {
         /// <summary>
@@ -145,9 +142,6 @@ namespace Lucene.Net.Search
         /// <para>NOTE: this API and implementation is subject to
         /// change suddenly in the next release.</para>
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         protected class DisjunctionMaxWeight : Weight
         {
             private readonly DisjunctionMaxQuery outerInstance;

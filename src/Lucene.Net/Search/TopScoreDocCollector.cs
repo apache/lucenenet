@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -35,15 +34,9 @@ namespace Lucene.Net.Search
     /// collector will not properly collect hits with such
     /// scores.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class TopScoreDocCollector : TopDocsCollector<ScoreDoc>
     {
         // Assumes docs are scored in order.
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class InOrderTopScoreDocCollector : TopScoreDocCollector
         {
             internal InOrderTopScoreDocCollector(int numHits)
@@ -79,9 +72,6 @@ namespace Lucene.Net.Search
         }
 
         // Assumes docs are scored in order.
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class InOrderPagingScoreDocCollector : TopScoreDocCollector
         {
             internal readonly ScoreDoc after;
@@ -149,9 +139,6 @@ namespace Lucene.Net.Search
         }
 
         // Assumes docs are scored out of order.
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class OutOfOrderTopScoreDocCollector : TopScoreDocCollector
         {
             internal OutOfOrderTopScoreDocCollector(int numHits)
@@ -190,9 +177,6 @@ namespace Lucene.Net.Search
         }
 
         // Assumes docs are scored out of order.
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class OutOfOrderPagingScoreDocCollector : TopScoreDocCollector
         {
             internal readonly ScoreDoc after;

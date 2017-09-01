@@ -22,9 +22,6 @@ namespace Lucene.Net.Index
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class ParallelPostingsArray
     {
         internal static readonly int BYTES_PER_POSTING = 3 * RamUsageEstimator.NUM_BYTES_INT32;

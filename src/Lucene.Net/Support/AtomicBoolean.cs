@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Lucene.Net.Support
 {
@@ -20,9 +19,6 @@ namespace Lucene.Net.Support
 	 * limitations under the License.
 	 */
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class AtomicBoolean
     {
         private int value = 0;

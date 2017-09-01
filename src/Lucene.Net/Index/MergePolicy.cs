@@ -62,9 +62,6 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class MergePolicy : IDisposable
     {
         /// <summary>
@@ -111,9 +108,7 @@ namespace Lucene.Net.Index
         ///  subset of segments to be merged as well as whether the
         ///  new segment should use the compound file format.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
+
         public class OneMerge
         {
             internal SegmentCommitInfo info; // used by IndexWriter
@@ -431,9 +426,7 @@ namespace Lucene.Net.Index
         /// necessary to perform multiple merges.  It simply
         /// contains a list of <see cref="OneMerge"/> instances.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
+
         public class MergeSpecification
         {
             /// <summary>

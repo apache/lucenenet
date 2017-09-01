@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Lucene.Net.Support
 {
@@ -20,9 +19,6 @@ namespace Lucene.Net.Support
 	 * limitations under the License.
 	 */
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class IdentityHashMap<TKey, TValue> : HashMap<TKey, TValue>
     {
         public IdentityHashMap()

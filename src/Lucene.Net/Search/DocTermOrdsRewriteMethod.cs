@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -37,9 +36,6 @@ namespace Lucene.Net.Search
     /// </para>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class DocTermOrdsRewriteMethod : MultiTermQuery.RewriteMethod
     {
         public override Query Rewrite(IndexReader reader, MultiTermQuery query)
@@ -49,9 +45,6 @@ namespace Lucene.Net.Search
             return result;
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal class MultiTermQueryDocTermOrdsWrapperFilter : Filter
         {
             protected readonly MultiTermQuery m_query;
@@ -130,9 +123,6 @@ namespace Lucene.Net.Search
                 return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader.MaxDoc, acceptDocs, docTermOrds, termSet);
             }
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class TermsAnonymousInnerClassHelper : Terms
             {
                 private readonly MultiTermQueryDocTermOrdsWrapperFilter outerInstance;
@@ -208,9 +198,6 @@ namespace Lucene.Net.Search
                 }
             }
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
             {
                 private readonly MultiTermQueryDocTermOrdsWrapperFilter outerInstance;

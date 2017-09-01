@@ -42,9 +42,6 @@ namespace Lucene.Net.Store
     /// implementation working directly on the file system cache of the
     /// operating system, so copying data to heap space is not useful.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class RAMDirectory : BaseDirectory
     {
         protected internal readonly ConcurrentDictionary<string, RAMFile> m_fileMap = new ConcurrentDictionary<string, RAMFile>();

@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -94,9 +92,7 @@ namespace Lucene.Net.Search
     ///
     /// Which filter is best is very application dependent.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public class FieldCacheTermsFilter : Filter
     {
         private string field;
@@ -141,9 +137,6 @@ namespace Lucene.Net.Search
             return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.Reader.MaxDoc, acceptDocs, fcsi, bits);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
         {
             private readonly FieldCacheTermsFilter outerInstance;

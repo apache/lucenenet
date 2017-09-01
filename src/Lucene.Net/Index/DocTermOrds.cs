@@ -106,9 +106,6 @@ namespace Lucene.Net.Index
     ///     </description></item>
     /// </list>
     /// </remarks>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class DocTermOrds
     {
         /// <summary>
@@ -740,9 +737,6 @@ namespace Lucene.Net.Index
         /// <see cref="TermsEnum.Ord"/>; in this case we "wrap" our own terms index
         /// around it.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class OrdWrappedTermsEnum : TermsEnum
         {
             internal void InitializeInstanceFields()
@@ -959,9 +953,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class Iterator : SortedSetDocValues
         {
             private readonly DocTermOrds outerInstance;

@@ -42,9 +42,6 @@ namespace Lucene.Net.Search
     /// rewrite method.
     /// </summary>
     /// <seealso cref="AutomatonQuery"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class WildcardQuery : AutomatonQuery
     {
         /// <summary>

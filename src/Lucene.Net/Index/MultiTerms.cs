@@ -31,9 +31,7 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public sealed class MultiTerms : Terms
     {
         private readonly Terms[] subs;

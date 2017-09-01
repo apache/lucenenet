@@ -52,9 +52,6 @@ namespace Lucene.Net.Search
     /// <see cref="Comparer"/>.  Each term in the enumeration is
     /// greater than all that precede it.</para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class FuzzyTermsEnum : TermsEnum
     {
         private void InitializeInstanceFields()
@@ -368,9 +365,6 @@ namespace Lucene.Net.Search
         /// as enumeration is logarithmic to the number of terms (instead of linear)
         /// and comparison is linear to length of the term (rather than quadratic)
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class AutomatonFuzzyTermsEnum : FilteredTermsEnum
         {
             internal virtual void InitializeInstanceFields()
@@ -491,9 +485,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.internal
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class LevenshteinAutomataAttribute : Attribute, ILevenshteinAutomataAttribute
         {
             // LUCENENET NOTE: Must use EquatableList for Equals and GetHashCode()

@@ -37,9 +37,6 @@ namespace Lucene.Net.Documents
     /// <i>not</i> available in documents retrieved from the index, e.g. with 
     /// <see cref="Search.ScoreDoc.Doc"/> or <see cref="IndexReader.Document(int)"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class Document : IEnumerable<IIndexableField>
     {
         private readonly List<IIndexableField> fields = new List<IIndexableField>();

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,9 +29,6 @@ namespace Lucene.Net.Store
     /// @lucene.experimental
     /// </summary>
     /// <seealso cref="SetRateLimiter(RateLimiter, IOContext.UsageContext)"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class RateLimitedDirectoryWrapper : FilterDirectory
     {
         // we need to be volatile here to make sure we see all the values that are set

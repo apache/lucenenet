@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -58,9 +57,6 @@ namespace Lucene.Net.Search
     /// conjunction can reduce the number of priority queue
     /// updates for the optional terms.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class BooleanScorer : BulkScorer
     {
         private sealed class BooleanScorerCollector : ICollector

@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -33,9 +32,6 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class MergeState
     {
         /// <summary>

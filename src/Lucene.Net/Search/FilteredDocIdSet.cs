@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -38,9 +36,6 @@ namespace Lucene.Net.Search
     /// this may be a better way to filter than ChainedFilter.
     /// </summary>
     /// <seealso cref="DocIdSet"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class FilteredDocIdSet : DocIdSet
     {
         private readonly DocIdSet innerSet;
@@ -72,9 +67,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BitsAnonymousInnerClassHelper : IBits
         {
             private readonly FilteredDocIdSet outerInstance;
@@ -118,9 +110,6 @@ namespace Lucene.Net.Search
             return new FilteredDocIdSetIteratorAnonymousInnerClassHelper(this, iterator);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class FilteredDocIdSetIteratorAnonymousInnerClassHelper : FilteredDocIdSetIterator
         {
             private readonly FilteredDocIdSet outerInstance;

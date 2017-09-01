@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Index
@@ -25,9 +24,6 @@ namespace Lucene.Net.Index
     /// separately, from a <see cref="Documents.Document"/>, and accepts a
     /// <see cref="InvertedDocConsumer"/> to process those terms.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class DocInverter : DocFieldConsumer
     {
         internal readonly InvertedDocConsumer consumer;

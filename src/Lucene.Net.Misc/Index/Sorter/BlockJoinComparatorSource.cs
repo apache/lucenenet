@@ -37,9 +37,6 @@ namespace Lucene.Net.Index.Sorter
     /// </summary>
     // TODO: can/should we clean this thing up (e.g. return a proper sort value)
     // and move to the join/ module?
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class BlockJoinComparerSource : FieldComparerSource
     {
         internal readonly Filter parentsFilter;

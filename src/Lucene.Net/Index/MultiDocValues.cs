@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
@@ -46,9 +45,6 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// @lucene.internal
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class MultiDocValues
     {
         /// <summary>
@@ -107,9 +103,6 @@ namespace Lucene.Net.Index
             return new NumericDocValuesAnonymousInnerClassHelper(values, starts);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
         {
             private NumericDocValues[] values;
@@ -178,9 +171,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class NumericDocValuesAnonymousInnerClassHelper2 : NumericDocValues
         {
             private NumericDocValues[] values;
@@ -310,9 +300,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
         {
             private BinaryDocValues[] values;
@@ -449,9 +436,6 @@ namespace Lucene.Net.Index
         /// maps per-segment ordinals to/from global ordinal space </summary>
         // TODO: use more efficient packed ints structures?
         // TODO: pull this out? its pretty generic (maps between N ord()-enabled TermsEnums)
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class OrdinalMap
         {
             // cache key of whoever asked for this awful thing
@@ -584,9 +568,6 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.internal
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class MultiSortedDocValues : SortedDocValues
         {
             /// <summary>
@@ -656,9 +637,6 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.internal
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class MultiSortedSetDocValues : SortedSetDocValues
         {
             /// <summary>

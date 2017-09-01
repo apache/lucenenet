@@ -42,9 +42,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.internal - Only public to be accessible by spans package.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class TopTermsRewrite<Q> : TermCollectingRewrite<Q>, ITopTermsRewrite
         where Q : Query
     {
@@ -98,9 +95,6 @@ namespace Lucene.Net.Search
             return q;
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class TermCollectorAnonymousInnerClassHelper : TermCollector
         {
             private readonly TopTermsRewrite<Q> outerInstance;
@@ -256,9 +250,6 @@ namespace Lucene.Net.Search
 
         private static readonly IComparer<ScoreTerm> scoreTermSortByTermComp = new ComparerAnonymousInnerClassHelper();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ComparerAnonymousInnerClassHelper : IComparer<ScoreTerm>
         {
             public ComparerAnonymousInnerClassHelper()
@@ -272,9 +263,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class ScoreTerm : IComparable<ScoreTerm>
         {
             public IComparer<BytesRef> TermComp { get; private set; }

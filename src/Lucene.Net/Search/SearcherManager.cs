@@ -58,9 +58,6 @@ namespace Lucene.Net.Search
     /// @lucene.experimental
     /// </summary>
     /// <seealso cref="SearcherFactory"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class SearcherManager : ReferenceManager<IndexSearcher>
     {
         private readonly SearcherFactory searcherFactory;

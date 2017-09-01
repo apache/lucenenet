@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -21,9 +19,6 @@ namespace Lucene.Net.Search
 
     using Lucene.Net.Util;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class HitQueue : PriorityQueue<ScoreDoc>
     {
         /// <summary>

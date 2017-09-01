@@ -1,6 +1,5 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
-using System;
 using System.Linq;
 using System.Text;
 
@@ -29,9 +28,6 @@ namespace Lucene.Net.Search.Spans
     /// Only return those matches that have a specific payload at
     /// the given position.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SpanNearPayloadCheckQuery : SpanPositionCheckQuery
     {
         protected readonly ICollection<byte[]> m_payloadToMatch;

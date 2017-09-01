@@ -67,9 +67,6 @@ namespace Lucene.Net.Search
     /// as the method to use to initialize. If there are multiple parameters, each parameter set
     /// must be surrounded by curly braces.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class MultiPhraseQuery : Query, IEnumerable<Term[]> // LUCENENET specific - implemented IEnumerable<Term[]>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
@@ -182,9 +179,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class MultiPhraseWeight : Weight
         {
             private readonly MultiPhraseQuery outerInstance;
@@ -545,14 +539,8 @@ namespace Lucene.Net.Search
     /// </summary>
 
     // TODO: if ever we allow subclassing of the *PhraseScorer
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class UnionDocsAndPositionsEnum : DocsAndPositionsEnum
     {
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class DocsQueue : Util.PriorityQueue<DocsAndPositionsEnum>
         {
             internal DocsQueue(ICollection<DocsAndPositionsEnum> docsEnums)
@@ -578,9 +566,6 @@ namespace Lucene.Net.Search
         /// <summary>
         /// NOTE: This was IntQueue in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class Int32Queue
         {
             public Int32Queue()

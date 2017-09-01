@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -97,9 +96,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @since   lucene 1.4
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class Sort
     {
         /// <summary>

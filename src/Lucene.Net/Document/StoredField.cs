@@ -1,5 +1,4 @@
 using Lucene.Net.Util;
-using System;
 
 namespace Lucene.Net.Documents
 {
@@ -25,9 +24,6 @@ namespace Lucene.Net.Documents
     /// <see cref="Search.IndexSearcher.Doc(int)"/> and <see cref="Index.IndexReader.Document(int)"/> will
     /// return the field and its value.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class StoredField : Field
     {
         /// <summary>

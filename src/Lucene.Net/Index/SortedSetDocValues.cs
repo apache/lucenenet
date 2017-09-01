@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -29,9 +27,6 @@ namespace Lucene.Net.Index
     /// dictionary value (ordinal) can be retrieved for each document. Ordinals
     /// are dense and in increasing sorted order.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class SortedSetDocValues
     {
         /// <summary>

@@ -39,9 +39,6 @@ namespace Lucene.Net.Index
     /// than the number of active <see cref="DocumentsWriterPerThreadPool.ThreadState"/>s threads are released and can
     /// continue indexing.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class DocumentsWriterStallControl
     {
         private volatile bool stalled;

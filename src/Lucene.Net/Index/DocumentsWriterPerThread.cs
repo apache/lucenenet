@@ -42,9 +42,6 @@ namespace Lucene.Net.Index
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using TrackingDirectoryWrapper = Lucene.Net.Store.TrackingDirectoryWrapper;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class DocumentsWriterPerThread
     {
         /// <summary>
@@ -52,9 +49,6 @@ namespace Lucene.Net.Index
         /// which returns the <see cref="DocConsumer"/> that the <see cref="DocumentsWriter"/> calls to process the
         /// documents.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal abstract class IndexingChain
         {
             internal abstract DocConsumer GetChain(DocumentsWriterPerThread documentsWriterPerThread);
@@ -67,9 +61,6 @@ namespace Lucene.Net.Index
             get { return defaultIndexingChain; }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class IndexingChainAnonymousInnerClassHelper : IndexingChain
         {
             public IndexingChainAnonymousInnerClassHelper()
@@ -115,9 +106,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class DocState
         {
             internal readonly DocumentsWriterPerThread docWriter;
@@ -149,9 +137,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal class FlushedSegment
         {
             internal readonly SegmentCommitInfo segmentInfo;
@@ -727,9 +712,6 @@ namespace Lucene.Net.Index
         /// <summary>
         /// NOTE: This was IntBlockAllocator in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class Int32BlockAllocator : Int32BlockPool.Allocator
         {
             private readonly Counter bytesUsed;

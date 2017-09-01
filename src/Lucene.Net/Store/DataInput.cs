@@ -34,9 +34,6 @@ namespace Lucene.Net.Store
     /// returning a new <see cref="DataInput"/> which operates on the same underlying
     /// resource, but positioned independently.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class DataInput
     {
         private const int SKIP_BUFFER_SIZE = 1024;

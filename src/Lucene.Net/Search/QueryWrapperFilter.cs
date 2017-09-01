@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -31,9 +29,6 @@ namespace Lucene.Net.Search
     /// <c>CachingWrapperFilter(QueryWrapperFilter)</c> that matches, e.g., only documents modified
     /// within the last week.  This would only need to be reconstructed once per day.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class QueryWrapperFilter : Filter
     {
         private readonly Query query;
@@ -69,9 +64,6 @@ namespace Lucene.Net.Search
             return new DocIdSetAnonymousInnerClassHelper(this, acceptDocs, privateContext, weight);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class DocIdSetAnonymousInnerClassHelper : DocIdSet
         {
             private readonly QueryWrapperFilter outerInstance;

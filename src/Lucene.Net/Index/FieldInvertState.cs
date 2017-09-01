@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -29,9 +27,6 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class FieldInvertState
     {
         // LUCENENET specific - made fields private and added internal setters so they can be set

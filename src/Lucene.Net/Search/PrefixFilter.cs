@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 
 namespace Lucene.Net.Search
@@ -26,9 +25,6 @@ namespace Lucene.Net.Search
     /// A <see cref="Filter"/> that restricts search results to values that have a matching prefix in a given
     /// field.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PrefixFilter : MultiTermQueryWrapperFilter<PrefixQuery>
     {
         public PrefixFilter(Term prefix)

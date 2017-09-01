@@ -34,9 +34,6 @@ namespace Lucene.Net.Search
     /// <see cref="MultiTermQuery.CONSTANT_SCORE_AUTO_REWRITE_DEFAULT"/>
     /// rewrite method.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PrefixQuery : MultiTermQuery
     {
         private readonly Term _prefix;

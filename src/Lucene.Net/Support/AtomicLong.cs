@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Lucene.Net.Support
 {
@@ -23,9 +22,6 @@ namespace Lucene.Net.Support
     /// <summary>
     /// NOTE: This was AtomicLong in the JDK
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class AtomicInt64
     {
         private long value;

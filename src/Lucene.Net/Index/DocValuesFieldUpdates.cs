@@ -1,6 +1,5 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
-using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Index
@@ -27,9 +26,6 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal abstract class DocValuesFieldUpdates
     {
         // LUCENENET specific: de-nested Type enum and renamed DocValuesFieldUpdatesType
@@ -39,9 +35,6 @@ namespace Lucene.Net.Index
         /// updates are returned by this iterator, and the documents are returned in
         /// increasing order.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class Iterator
         {
             /// <summary>
@@ -68,9 +61,6 @@ namespace Lucene.Net.Index
             public abstract void Reset();
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class Container
         {
             internal readonly IDictionary<string, NumericDocValuesFieldUpdates> numericDVUpdates = new Dictionary<string, NumericDocValuesFieldUpdates>();

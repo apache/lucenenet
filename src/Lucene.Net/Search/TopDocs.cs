@@ -27,9 +27,6 @@ namespace Lucene.Net.Search
     /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> and 
     /// <see cref="IndexSearcher.Search(Query,int)"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TopDocs
     {
         /// <summary>
@@ -77,9 +74,6 @@ namespace Lucene.Net.Search
         }
 
         // Refers to one hit:
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ShardRef
         {
             // Which shard (index into shardHits[]):
@@ -101,9 +95,6 @@ namespace Lucene.Net.Search
 
         // Specialized MergeSortQueue that just merges by
         // relevance score, descending:
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ScoreMergeSortQueue : Util.PriorityQueue<ShardRef>
         {
             internal readonly ScoreDoc[][] shardHits;
@@ -155,9 +146,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class MergeSortQueue : Util.PriorityQueue<ShardRef>
         {
             // These are really FieldDoc instances:

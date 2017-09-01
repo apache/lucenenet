@@ -29,9 +29,6 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class ByteArrayDataOutput : DataOutput
     {
         private byte[] bytes;

@@ -28,9 +28,6 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     /// <seealso cref="ITwoPhaseCommit"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class TwoPhaseCommitTool
     {
         /// <summary>

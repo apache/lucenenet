@@ -29,9 +29,6 @@ namespace Lucene.Net.Index
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class TermVectorsConsumerPerField : TermsHashConsumerPerField
     {
         internal readonly TermsHashPerField termsHashPerField;
@@ -331,9 +328,6 @@ namespace Lucene.Net.Index
             return new TermVectorsPostingsArray(size);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class TermVectorsPostingsArray : ParallelPostingsArray
         {
             public TermVectorsPostingsArray(int size)

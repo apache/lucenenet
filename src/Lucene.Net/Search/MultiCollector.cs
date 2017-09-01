@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -27,9 +25,6 @@ namespace Lucene.Net.Search
     /// list of collectors and wraps them with <see cref="MultiCollector"/>, while
     /// filtering out the <c>null</c> ones.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class MultiCollector : ICollector
     {
         /// <summary>

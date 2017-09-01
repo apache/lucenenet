@@ -108,9 +108,6 @@ namespace Lucene.Net.Documents
     ///
     /// @since 2.9
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class DoubleField : Field
     {
         /// <summary>

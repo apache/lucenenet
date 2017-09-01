@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -32,9 +31,7 @@ namespace Lucene.Net.Index
     /// for the doc/fields it saw, then the flush method below
     /// merges all of these together into a single _X.nrm file.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     internal sealed class NormsConsumer : InvertedDocEndConsumer
     {
         internal override void Abort()

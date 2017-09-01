@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -27,9 +25,7 @@ namespace Lucene.Net.Search
     /// Otherwise, a default implementation is wrapped around
     /// the <see cref="Scorer"/> returned by <see cref="Weight.GetScorer(Index.AtomicReaderContext, Util.IBits)"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public abstract class BulkScorer
     {
         /// <summary>

@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -35,9 +33,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @since 2.9
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TermRangeFilter : MultiTermQueryWrapperFilter<TermRangeQuery>
     {
         /// <param name="fieldName"> The field this range applies to </param>

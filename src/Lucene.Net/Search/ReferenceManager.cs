@@ -35,9 +35,6 @@ namespace Lucene.Net.Search
     /// </summary>
     /// <typeparam name="G">The concrete type that will be <see cref="Acquire()"/>d and
     ///          <see cref="Release(G)"/>d.</typeparam>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class ReferenceManager<G> : IDisposable
         where G : class //Make G nullable
     {

@@ -37,9 +37,6 @@ namespace Lucene.Net.Index
     /// Buffers up pending <see cref="T:byte[]"/>s per doc, deref and sorting via
     /// int ord, then flushes when segment flushes.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class SortedSetDocValuesWriter : DocValuesWriter
     {
         internal readonly BytesRefHash hash;

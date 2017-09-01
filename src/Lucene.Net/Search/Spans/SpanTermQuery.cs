@@ -35,9 +35,6 @@ namespace Lucene.Net.Search.Spans
 
     /// <summary>
     /// Matches spans containing a term. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SpanTermQuery : SpanQuery
     {
         protected Term m_term;

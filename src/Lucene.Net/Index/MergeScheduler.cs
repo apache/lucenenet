@@ -29,9 +29,6 @@ namespace Lucene.Net.Index
     /// instance.</para>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class MergeScheduler : IDisposable, IMergeScheduler
     {
         /// <summary>

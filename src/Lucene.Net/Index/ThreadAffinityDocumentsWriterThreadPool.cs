@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -35,9 +34,6 @@ namespace Lucene.Net.Index
     /// <see cref="ThreadAffinityDocumentsWriterThreadPool"/> tries to find the currently
     /// minimal contended <seea cref="ThreadState"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class ThreadAffinityDocumentsWriterThreadPool : DocumentsWriterPerThreadPool
     {
         private IDictionary<Thread, ThreadState> threadBindings = new ConcurrentDictionary<Thread, ThreadState>();

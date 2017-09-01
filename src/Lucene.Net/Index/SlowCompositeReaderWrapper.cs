@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -41,9 +40,6 @@ namespace Lucene.Net.Index
     /// atomic leaves and then operate per-AtomicReader,
     /// instead of using this class.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class SlowCompositeReaderWrapper : AtomicReader
     {
         private readonly CompositeReader @in;

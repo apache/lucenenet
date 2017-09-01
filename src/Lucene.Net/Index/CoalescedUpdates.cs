@@ -28,9 +28,6 @@ namespace Lucene.Net.Index
     using Query = Lucene.Net.Search.Query;
     using QueryAndLimit = Lucene.Net.Index.BufferedUpdatesStream.QueryAndLimit;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class CoalescedUpdates
     {
         internal readonly IDictionary<Query, int> queries = new Dictionary<Query, int>();
@@ -74,9 +71,6 @@ namespace Lucene.Net.Index
             return new IterableAnonymousInnerClassHelper(this);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class IterableAnonymousInnerClassHelper : IEnumerable<Term>
         {
             private readonly CoalescedUpdates outerInstance;
@@ -107,9 +101,6 @@ namespace Lucene.Net.Index
             return new IterableAnonymousInnerClassHelper2(this);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<QueryAndLimit>
         {
             private readonly CoalescedUpdates outerInstance;
@@ -129,9 +120,6 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class IteratorAnonymousInnerClassHelper : IEnumerator<QueryAndLimit>
             {
                 private readonly IterableAnonymousInnerClassHelper2 outerInstance;

@@ -1,7 +1,6 @@
 using Lucene.Net.Codecs;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -28,9 +27,6 @@ namespace Lucene.Net.Index
     /// Buffers up pending <see cref="T:byte[]"/> per doc, deref and sorting via
     /// int ord, then flushes when segment flushes.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class SortedDocValuesWriter : DocValuesWriter
     {
         internal readonly BytesRefHash hash;

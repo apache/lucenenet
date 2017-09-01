@@ -44,9 +44,6 @@ namespace Lucene.Net.Index
     /// same order to the other indexes. <em>Failure to do so will result in
     /// undefined behavior</em>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class ParallelAtomicReader : AtomicReader
     {
         private void InitializeInstanceFields()

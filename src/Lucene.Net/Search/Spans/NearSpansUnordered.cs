@@ -33,9 +33,6 @@ namespace Lucene.Net.Search.Spans
     /// Expert:
     /// Only public for subclassing.  Most implementations should not need this class
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class NearSpansUnordered : Spans
     {
         private SpanNearQuery query;
@@ -55,9 +52,6 @@ namespace Lucene.Net.Search.Spans
         private bool more = true; // true iff not done
         private bool firstTime = true; // true before first next()
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class CellQueue : Util.PriorityQueue<SpansCell>
         {
             private readonly NearSpansUnordered outerInstance;
@@ -83,9 +77,6 @@ namespace Lucene.Net.Search.Spans
 
         /// <summary>
         /// Wraps a <see cref="Spans"/>, and can be used to form a linked list. </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SpansCell : Spans
         {
             private readonly NearSpansUnordered outerInstance;

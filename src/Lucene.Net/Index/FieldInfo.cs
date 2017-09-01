@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -28,9 +27,7 @@ namespace Lucene.Net.Index
     ///  be adding documents at a time, with no other reader or writer threads
     ///  accessing this object.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public sealed class FieldInfo
     {
         /// <summary>
