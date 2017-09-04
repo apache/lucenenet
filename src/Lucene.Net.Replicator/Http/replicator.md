@@ -108,4 +108,55 @@ public static class AspNetCoreReplicationServiceExtentions
 
 Now the implementation can be used wihin AspNetCore in order to service Lucene Replicator requests over http.
 
-TODO: Finish.
+In order to enable replication of indexes, the IndewWriter that writes the index should be created with a `SnapshotDeletionPolicy`.
+
+```csharp
+IndexWriterConfig config = new IndexWriterConfig(...ver..., new StandardAnalyzer(...ver...));
+config.IndexDeletionPolicy = new SnapshotDeletionPolicy(config.IndexDeletionPolicy);
+IndexWriter writer = new IndexWriter(FSDirectory.Open("..."), config);
+```
+
+For the absolute minimal solution we can wire the ReplicatorService up on the server side as:
+
+```csharp
+LocalReplicator replicator = new LocalReplicator(); 
+ReplicatorService service = new ReplicationService(new Dictionary<string, IReplicator>{
+    ["shard_name"] = replicator
+}, "/api/replicate");
+
+app.Map("/api/replicate", builder => {
+    builder.Run(async context => {
+        await Task.Yield();
+        service.Perform(context.Request, context.Response); 
+    });
+});
+```
+
+Now in order to publish a Revision call the publish method in the LocalReplicator:
+
+```csharp
+IndexWriter writer = ...;
+LocalReplicator replicator = ...;
+replicator.Publish(new IndexRevision(writer));
+```
+
+On the client side create a new HttpReplicator and start replicating, e.g.:
+
+```csharp
+IReplicator replicator = new HttpReplicator("http://{host}:{port}/api/replicate/shard_name");
+ReplicationClient client = new ReplicationClient(
+    replicator, 
+    new IndexReplicationHandler(
+        FSDirectory.Open(...directory...), 
+        () => ...onUpdate...), 
+        new PerSessionDirectoryFactory(...temp-working-directory...));
+
+//Now either start the Update Thread or do manual pulls periodically.
+client.UpdateNow(); //Manual Pull
+client.StartUpdateThread(1000, "Replicator Thread"); //Pull automatically every second if there is any changes.
+```
+
+From here it would be natural to use a SearchManager over the directory in order to get Searchers updated outomatically.
+But this cannot be created before the first actual replication as the SearchManager will fail because there is no index.
+
+We can use the onUpdate handler to perform the first initialization in this case.
