@@ -1,3 +1,4 @@
+using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
@@ -161,29 +162,31 @@ namespace Lucene.Net.Codecs.Lucene40
             // specific encodings for different fields?  and apps
             // can customize...
 
-            object number = (object)field.GetNumericValue();
-            if (number != null)
+            // LUCENENET specific - To avoid boxing/unboxing, we don't
+            // call GetNumericValue(). Instead, we check the field.NumericType and then
+            // call the appropriate conversion method. 
+            if (field.NumericType != NumericFieldType.NONE)
             {
-                if (number is sbyte || number is short || number is int)
+                switch (field.NumericType)
                 {
-                    bits |= FIELD_IS_NUMERIC_INT;
+                    case NumericFieldType.BYTE:
+                    case NumericFieldType.INT16:
+                    case NumericFieldType.INT32:
+                        bits |= FIELD_IS_NUMERIC_INT;
+                        break;
+                    case NumericFieldType.INT64:
+                        bits |= FIELD_IS_NUMERIC_LONG;
+                        break;
+                    case NumericFieldType.SINGLE:
+                        bits |= FIELD_IS_NUMERIC_FLOAT;
+                        break;
+                    case NumericFieldType.DOUBLE:
+                        bits |= FIELD_IS_NUMERIC_DOUBLE;
+                        break;
+                    default:
+                        throw new System.ArgumentException("cannot store numeric type " + field.NumericType);
                 }
-                else if (number is long)
-                {
-                    bits |= FIELD_IS_NUMERIC_LONG;
-                }
-                else if (number is float)
-                {
-                    bits |= FIELD_IS_NUMERIC_FLOAT;
-                }
-                else if (number is double)
-                {
-                    bits |= FIELD_IS_NUMERIC_DOUBLE;
-                }
-                else
-                {
-                    throw new System.ArgumentException("cannot store numeric type " + number.GetType());
-                }
+
                 @string = null;
                 bytes = null;
             }
@@ -218,25 +221,24 @@ namespace Lucene.Net.Codecs.Lucene40
             }
             else
             {
-                if (number is sbyte || number is short || number is int)
+                switch (field.NumericType)
                 {
-                    fieldsStream.WriteInt32((int)number);
-                }
-                else if (number is long)
-                {
-                    fieldsStream.WriteInt64((long)number);
-                }
-                else if (number is float)
-                {
-                    fieldsStream.WriteInt32(Number.SingleToInt32Bits((float)number));
-                }
-                else if (number is double)
-                {
-                    fieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits((double)number));
-                }
-                else
-                {
-                    throw new InvalidOperationException("Cannot get here");
+                    case NumericFieldType.BYTE:
+                    case NumericFieldType.INT16:
+                    case NumericFieldType.INT32:
+                        fieldsStream.WriteInt32(field.GetInt32Value().Value);
+                        break;
+                    case NumericFieldType.INT64:
+                        fieldsStream.WriteInt64(field.GetInt64Value().Value);
+                        break;
+                    case NumericFieldType.SINGLE:
+                        fieldsStream.WriteInt32(Number.SingleToInt32Bits(field.GetSingleValue().Value));
+                        break;
+                    case NumericFieldType.DOUBLE:
+                        fieldsStream.WriteInt64(BitConverter.DoubleToInt64Bits(field.GetDoubleValue().Value));
+                        break;
+                    default:
+                        throw new InvalidOperationException("Cannot get here");
                 }
             }
         }

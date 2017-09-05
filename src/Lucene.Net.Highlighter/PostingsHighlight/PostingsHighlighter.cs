@@ -57,7 +57,7 @@ namespace Lucene.Net.Search.PostingsHighlight
     /// Example usage:
     /// <code>
     ///     // configure field with offsets at index time
-    ///     FieldType offsetsType = new FieldType(TextField.TYPE_STORED);
+    ///     IndexableFieldType offsetsType = new IndexableFieldType(TextField.TYPE_STORED);
     ///     offsetsType.IndexOptions = IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
     ///     Field body = new Field("body", "foobar", offsetsType);
     ///     

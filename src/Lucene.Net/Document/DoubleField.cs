@@ -131,14 +131,14 @@ namespace Lucene.Net.Documents
             TYPE_NOT_STORED.IsTokenized = true;
             TYPE_NOT_STORED.OmitNorms = true;
             TYPE_NOT_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_NOT_STORED.NumericType = NumericType.DOUBLE;
+            TYPE_NOT_STORED.NumericType = Documents.NumericType.DOUBLE;
             TYPE_NOT_STORED.Freeze();
 
             TYPE_STORED.IsIndexed = true;
             TYPE_STORED.IsTokenized = true;
             TYPE_STORED.OmitNorms = true;
             TYPE_STORED.IndexOptions = IndexOptions.DOCS_ONLY;
-            TYPE_STORED.NumericType = NumericType.DOUBLE;
+            TYPE_STORED.NumericType = Documents.NumericType.DOUBLE;
             TYPE_STORED.IsStored = true;
             TYPE_STORED.Freeze();
         }
@@ -155,7 +155,7 @@ namespace Lucene.Net.Documents
         public DoubleField(string name, double value, Store stored)
             : base(name, stored == Store.YES ? TYPE_STORED : TYPE_NOT_STORED)
         {
-            m_fieldsData = Convert.ToDouble(value);
+            FieldsData = new Double(value);
         }
 
         /// <summary>
@@ -170,11 +170,11 @@ namespace Lucene.Net.Documents
         public DoubleField(string name, double value, FieldType type)
             : base(name, type)
         {
-            if (type.NumericType != NumericType.DOUBLE)
+            if (type.NumericType != Documents.NumericType.DOUBLE)
             {
                 throw new System.ArgumentException("type.NumericType must be NumericType.DOUBLE but got " + type.NumericType);
             }
-            m_fieldsData = Convert.ToDouble(value);
+            FieldsData = new Double(value);
         }
     }
 }

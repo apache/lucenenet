@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Lucene.Net.Support
 {
@@ -27,6 +28,14 @@ namespace Lucene.Net.Support
         public static long NanoTime()
         {
             return DateTime.Now.Ticks * TICKS_PER_NANOSECOND;
+            // LUCENENET TODO: Change to
+            // return (Stopwatch.GetTimestamp() / Stopwatch.Frequency) * 1000000000;
+            // for better accuracy that is not affected by the system clock
+        }
+
+        public static long CurrentTimeMilliseconds()
+        {
+            return (Stopwatch.GetTimestamp() / Stopwatch.Frequency) * 1000;
         }
     }
 }

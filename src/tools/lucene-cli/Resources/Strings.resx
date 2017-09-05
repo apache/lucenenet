@@ -120,6 +120,41 @@
   <data name="AnalysisCommandDescription" xml:space="preserve">
     <value>Utilities to manage specialized analyzers.</value>
   </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandDescription" xml:space="preserve">
+    <value>Generates a set of custom dictionary files for the Lucene.Net.Analysis.Kuromoji library.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandExtendedHelpText" xml:space="preserve">
+    <value>Generates the following set of binary files:
+
+- CharacterDefinition.dat
+- ConnectionCosts.dat
+- TokenInfoDictionary$buffer.dat
+- TokenInfoDictionary$fst.dat
+- TokenInfoDictionary$posDict.dat
+- TokenInfoDictionary$targetMap.dat
+- UnknownDictionary$buffer.dat
+- UnknownDictionary$posDict.dat
+- UnknownDictionary$targetMap.dat
+
+If these files are placed into a subdirectory of your application named 'kuromoji-data', they will be used automatically by Lucene.Net.Analysis.Kuromoji features such as the JapaneseAnalyzer or JapaneseTokenizer. To use an alternate directory location, put the path in an environment variable named 'kuromoji.data.dir'. The files must be placed in a subdirectory of this location named 'kuromoji-data'.
+
+See this blog post (http://mentaldetritus.blogspot.com/2013/03/compiling-custom-dictionary-for.html) for information about the dictionary format. A sample is available at (https://sourceforge.net/projects/mecab/files/mecab-ipadic/2.7.0-20070801/). The Kuromoji project documentation (https://github.com/atilika/kuromoji) may also be helpful.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandFormatDescription" xml:space="preserve">
+    <value>The dictionary format. Valid values are IPADIC and UNIDIC. If an invalid value is passed, IPADIC is assumed.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandInputDirectoryDescription" xml:space="preserve">
+    <value>The directory where the dictionary input files are located.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandInputDirectoryEncodingDescription" xml:space="preserve">
+    <value>The file encoding used by the input files. If not supplied, the default value is EUC-JP.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandNormalizeDescription" xml:space="preserve">
+    <value>Normalize the entries using normalization form KC.</value>
+  </data>
+  <data name="AnalysisKuromojiBuildDictionaryCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>The directory to put the dictionary output.</value>
+  </data>
   <data name="AnalysisStempelCompileStemsCommandDescription" xml:space="preserve">
     <value>Compiles a stemmer table for the Egothor stemmer.</value>
   </data>
@@ -140,6 +175,63 @@
   </data>
   <data name="AnalysisStempelPatchStemsCommandStemmerTableFilesEncodingDescription" xml:space="preserve">
     <value>The encoding to use for the stemmer table files. If not supplied, defaults to UTF-8.</value>
+  </data>
+  <data name="BenchmarkCommandDescription" xml:space="preserve">
+    <value>Utilities for benchmarking Lucene.Net.</value>
+  </data>
+  <data name="BenchmarkExtractReutersCommandDescription" xml:space="preserve">
+    <value>Splits Reuters SGML documents into simple text files containing: Title, Date, Dateline, Body.</value>
+  </data>
+  <data name="BenchmarkExtractReutersCommandInputDirectoryDescription" xml:space="preserve">
+    <value>Path to Reuters SGML files.</value>
+  </data>
+  <data name="BenchmarkExtractReutersCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Path to a directory where the output files will be written.</value>
+  </data>
+  <data name="BenchmarkExtractWikipediaCommandDescription" xml:space="preserve">
+    <value>Extracts a downloaded Wikipedia dump into separate files for indexing.</value>
+  </data>
+  <data name="BenchmarkExtractWikipediaCommandDiscardImageOnlyDocsDescription" xml:space="preserve">
+    <value>Tells the extractor to skip WIKI docs that contain only images.</value>
+  </data>
+  <data name="BenchmarkExtractWikipediaCommandInputWikipediaFileDescription" xml:space="preserve">
+    <value>Input path to a Wikipedia XML file.</value>
+  </data>
+  <data name="BenchmarkExtractWikipediaCommandOutputDirectoryDescription" xml:space="preserve">
+    <value>Path to a directory where the output files will be written.</value>
+  </data>
+  <data name="BenchmarkFindQualityQueriesCommandDescription" xml:space="preserve">
+    <value>Suggests quality queries based on index contents. Used for making quality test benchmarks.</value>
+  </data>
+  <data name="BenchmarkRunCommandAlgorithmFileDescription" xml:space="preserve">
+    <value>An algorithm file specifying the parameters of the benchmark to run.</value>
+  </data>
+  <data name="BenchmarkRunCommandDescription" xml:space="preserve">
+    <value>Runs a benchmark based on an algorithm file.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandDescription" xml:space="preserve">
+    <value>Runs a TREC evaluation.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandOutputSubmissionFileDescription" xml:space="preserve">
+    <value>Output submission file for TREC evaluation.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandQueryOnDescriptionDescription" xml:space="preserve">
+    <value>Use description field in query.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandQueryOnNarrativeDescription" xml:space="preserve">
+    <value>Use narrative field in query.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandQueryOnTitleDescription" xml:space="preserve">
+    <value>Use title field in query. This flag will automatically be on if no other field is specified.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandQueryRelevanceFileDescription" xml:space="preserve">
+    <value>Input file conataining relevance judgements.</value>
+  </data>
+  <data name="BenchmarkRunTrecEvalCommandTopicsFileDescription" xml:space="preserve">
+    <value>Input file containing queries.</value>
+  </data>
+  <data name="BenchmarkSampleCommandDescription" xml:space="preserve">
+    <value>Sample of a performance test written programatically instead of using an algorithm file.</value>
   </data>
   <data name="CrossCheckTermVectorsDescription" xml:space="preserve">
     <value>Cross check term vectors.</value>

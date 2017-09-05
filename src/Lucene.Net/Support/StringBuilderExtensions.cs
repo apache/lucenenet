@@ -110,6 +110,29 @@ namespace Lucene.Net.Support
         }
 
         /// <summary>
+        /// Returns the character (Unicode code point) at the specified index. 
+        /// The index refers to char values (Unicode code units) and ranges from 0 to Length - 1.
+        /// <para/>
+        /// If the char value specified at the given index is in the high-surrogate range, 
+        /// the following index is less than the length of this sequence, and the char value 
+        /// at the following index is in the low-surrogate range, then the 
+        /// supplementary code point corresponding to this surrogate pair is returned. 
+        /// Otherwise, the char value at the given index is returned.
+        /// </summary>
+        /// <param name="text">this <see cref="StringBuilder"/></param>
+        /// <param name="index">the index to the char values</param>
+        /// <returns>the code point value of the character at the index</returns>
+        /// <exception cref="IndexOutOfRangeException">if the index argument is negative or not less than the length of this sequence.</exception>
+        public static int CodePointAt(this StringBuilder text, int index)
+        {
+            if ((index < 0) || (index >= text.Length))
+            {
+                throw new IndexOutOfRangeException();
+            }
+            return Character.CodePointAt(text.ToString(), index);
+        }
+
+        /// <summary>
         /// Copies the array from the <see cref="StringBuilder"/> into a new array
         /// and returns it.
         /// </summary>
@@ -145,6 +168,53 @@ namespace Lucene.Net.Support
         {
             text.Append(Character.ToChars(codePoint));
             return text;
+        }
+
+        /// <summary>
+        /// Searches for the first index of the specified character. The search for
+        /// the character starts at the beginning and moves towards the end.
+        /// </summary>
+        /// <param name="text">This <see cref="StringBuilder"/>.</param>
+        /// <param name="value">The string to find.</param>
+        /// <returns>The index of the specified character, or -1 if the character isn't found.</returns>
+        public static int IndexOf(this StringBuilder text, string value)
+        {
+            return IndexOf(text, value, 0);
+        }
+
+        /// <summary>
+        /// Searches for the index of the specified character. The search for the
+        /// character starts at the specified offset and moves towards the end.
+        /// </summary>
+        /// <param name="text">This <see cref="StringBuilder"/>.</param>
+        /// <param name="value">The string to find.</param>
+        /// <param name="startIndex">The starting offset.</param>
+        /// <returns>The index of the specified character, or -1 if the character isn't found.</returns>
+        public static int IndexOf(this StringBuilder text, string value, int startIndex)
+        {
+            if (text == null)
+                throw new ArgumentNullException("text");
+            if (value == null)
+                throw new ArgumentNullException("value");
+
+            int index;
+            int length = value.Length;
+            int maxSearchLength = (text.Length - length) + 1;
+
+            for (int i = startIndex; i < maxSearchLength; ++i)
+            {
+                if (text[i] == value[0])
+                {
+                    index = 1;
+                    while ((index < length) && (text[i + index] == value[index]))
+                        ++index;
+
+                    if (index == length)
+                        return i;
+                }
+            }
+
+            return -1;
         }
     }
 }

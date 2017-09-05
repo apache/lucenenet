@@ -448,7 +448,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Support\ExceptionSerializationTestBase.cs" />
-    <Compile Include="Support\SystemProperties.cs" />
     <Compile Include="Support\ApiScanTestBase.cs" />
     <Compile Include="Util\Automaton\AutomatonTestUtil.cs">
       <SubType>Code</SubType>

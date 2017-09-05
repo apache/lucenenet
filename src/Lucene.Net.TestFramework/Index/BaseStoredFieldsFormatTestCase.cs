@@ -335,9 +335,11 @@ namespace Lucene.Net.Index
                 for (int docID = 0; docID < sub.NumDocs; docID++)
                 {
                     Document doc = sub.Document(docID);
-                    Field f = (Field)doc.GetField("nf");
+                    Field f = doc.GetField<Field>("nf");
                     Assert.IsTrue(f is StoredField, "got f=" + f);
+#pragma warning disable 612, 618
                     Assert.AreEqual(answers[ids.Get(docID)], f.GetNumericValue());
+#pragma warning restore 612, 618
                 }
             }
             r.Dispose();
@@ -357,8 +359,8 @@ namespace Lucene.Net.Index
             w.AddDocument(doc);
             IndexReader r = w.Reader;
             w.Dispose();
-            Assert.IsFalse(r.Document(0).GetField("field").FieldType.IsIndexed);
-            Assert.IsTrue(r.Document(0).GetField("field2").FieldType.IsIndexed);
+            Assert.IsFalse(r.Document(0).GetField("field").IndexableFieldType.IsIndexed);
+            Assert.IsTrue(r.Document(0).GetField("field2").IndexableFieldType.IsIndexed);
             r.Dispose();
             dir.Dispose();
         }
@@ -410,7 +412,9 @@ namespace Lucene.Net.Index
                 }
                 else
                 {
+#pragma warning disable 612, 618
                     Assert.AreEqual(fld.GetNumericValue(), sField.GetNumericValue());
+#pragma warning restore 612, 618
                 }
             }
             reader.Dispose();
@@ -647,7 +651,7 @@ namespace Lucene.Net.Index
                     continue;
                 }
                 ++numDocs;
-                int docId = (int)doc.GetField("id").GetNumericValue();
+                int docId = (int)doc.GetField("id").GetInt32Value();
                 Assert.AreEqual(data[docId].Length + 1, doc.Fields.Count);
                 for (int j = 0; j < data[docId].Length; ++j)
                 {

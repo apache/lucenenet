@@ -1,0 +1,118 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8408625A-2508-46D5-8519-045183C43724}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lucene.Net.Analysis.Ja</RootNamespace>
+    <AssemblyName>Lucene.Net.Analysis.Kuromoji</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dict\BinaryDictionary.cs" />
+    <Compile Include="Dict\CharacterDefinition.cs" />
+    <Compile Include="Dict\ConnectionCosts.cs" />
+    <Compile Include="Dict\Dictionary.cs" />
+    <Compile Include="Dict\TokenInfoDictionary.cs" />
+    <Compile Include="Dict\TokenInfoFST.cs" />
+    <Compile Include="Dict\UnknownDictionary.cs" />
+    <Compile Include="Dict\UserDictionary.cs" />
+    <Compile Include="GraphvizFormatter.cs" />
+    <Compile Include="JapaneseAnalyzer.cs" />
+    <Compile Include="JapaneseBaseFormFilter.cs" />
+    <Compile Include="JapaneseBaseFormFilterFactory.cs" />
+    <Compile Include="JapaneseIterationMarkCharFilter.cs" />
+    <Compile Include="JapaneseIterationMarkCharFilterFactory.cs" />
+    <Compile Include="JapaneseKatakanaStemFilter.cs" />
+    <Compile Include="JapaneseKatakanaStemFilterFactory.cs" />
+    <Compile Include="JapanesePartOfSpeechStopFilter.cs" />
+    <Compile Include="JapanesePartOfSpeechStopFilterFactory.cs" />
+    <Compile Include="JapaneseReadingFormFilter.cs" />
+    <Compile Include="JapaneseReadingFormFilterFactory.cs" />
+    <Compile Include="JapaneseTokenizer.cs" />
+    <Compile Include="JapaneseTokenizerFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Token.cs" />
+    <Compile Include="TokenAttributes\BaseFormAttribute.cs" />
+    <Compile Include="TokenAttributes\BaseFormAttributeImpl.cs" />
+    <Compile Include="TokenAttributes\InflectionAttribute.cs" />
+    <Compile Include="TokenAttributes\InflectionAttributeImpl.cs" />
+    <Compile Include="TokenAttributes\PartOfSpeechAttribute.cs" />
+    <Compile Include="TokenAttributes\PartOfSpeechAttributeImpl.cs" />
+    <Compile Include="TokenAttributes\ReadingAttribute.cs" />
+    <Compile Include="TokenAttributes\ReadingAttributeImpl.cs" />
+    <Compile Include="Tools\BinaryDictionaryWriter.cs" />
+    <Compile Include="Tools\CharacterDefinitionWriter.cs" />
+    <Compile Include="Tools\ConnectionCostsBuilder.cs" />
+    <Compile Include="Tools\ConnectionCostsWriter.cs" />
+    <Compile Include="Tools\DictionaryBuilder.cs" />
+    <Compile Include="Tools\TokenInfoDictionaryBuilder.cs" />
+    <Compile Include="Tools\TokenInfoDictionaryWriter.cs" />
+    <Compile Include="Tools\UnknownDictionaryBuilder.cs" />
+    <Compile Include="Tools\UnknownDictionaryWriter.cs" />
+    <Compile Include="Util\CSVUtil.cs" />
+    <Compile Include="Util\ToStringUtil.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
+      <Project>{4ADD0BBC-B900-4715-9526-D871DE8EEA64}</Project>
+      <Name>Lucene.Net.Analysis.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
+      <Project>{5D4AD9BE-1FFB-41AB-9943-25737971BF57}</Project>
+      <Name>Lucene.Net</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Dict\CharacterDefinition.dat" />
+    <EmbeddedResource Include="Dict\ConnectionCosts.dat" />
+    <EmbeddedResource Include="Dict\TokenInfoDictionary%24buffer.dat" />
+    <EmbeddedResource Include="Dict\TokenInfoDictionary%24fst.dat" />
+    <EmbeddedResource Include="Dict\TokenInfoDictionary%24posDict.dat" />
+    <EmbeddedResource Include="Dict\TokenInfoDictionary%24targetMap.dat" />
+    <EmbeddedResource Include="Dict\UnknownDictionary%24buffer.dat" />
+    <EmbeddedResource Include="Dict\UnknownDictionary%24posDict.dat" />
+    <EmbeddedResource Include="Dict\UnknownDictionary%24targetMap.dat" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="stoptags.txt" />
+    <EmbeddedResource Include="stopwords.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

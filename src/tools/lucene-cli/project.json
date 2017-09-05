@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "4.8.0",
   "entryPoint": "Program",
   "buildOptions": {
@@ -10,6 +10,7 @@
     },
     "embed": {
       "include": [
+        "../../Lucene.Net.Benchmark/ByTask/Programmatic/Sample.cs",
         "../../Lucene.Net.Demo/*.cs",
         "../../Lucene.Net.Demo/Facet/*.cs"
       ]
@@ -19,7 +20,9 @@
   "dependencies": {
     "Lucene.Net": "4.8.0",
     "Lucene.Net.Analysis.Common": "4.8.0",
+    "Lucene.Net.Analysis.Kuromoji": "4.8.0",
     "Lucene.Net.Analysis.Stempel": "4.8.0",
+    "Lucene.Net.Benchmark": "4.8.0",
     "Lucene.Net.Demo": "4.8.0",
     "Lucene.Net.Expressions": "4.8.0",
     "Lucene.Net.Facet": "4.8.0",

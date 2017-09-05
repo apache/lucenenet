@@ -125,7 +125,7 @@ namespace Lucene.Net.Index
         {
             for (int i = 0; i < count; i++)
             {
-                if (fields[i].FieldType.IsIndexed)
+                if (fields[i].IndexableFieldType.IsIndexed)
                 {
                     return true;
                 }

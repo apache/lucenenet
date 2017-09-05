@@ -178,6 +178,24 @@ namespace Lucene.Net.Index
                 }
             }
 
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified provider
+            public virtual string GetStringValue(IFormatProvider provider)
+            {
+                return GetStringValue();
+            }
+
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified format
+            public virtual string GetStringValue(string format)
+            {
+                return GetStringValue();
+            }
+
+            // LUCENENET specific - created overload so we can format an underlying numeric type using specified format and provider
+            public virtual string GetStringValue(string format, IFormatProvider provider)
+            {
+                return GetStringValue();
+            }
+
             public TextReader GetReaderValue()
             {
                 if (Counter % 10 == 7)
@@ -195,7 +213,50 @@ namespace Lucene.Net.Index
                 return null;
             }
 
-            public IIndexableFieldType FieldType
+            // LUCENENET specific - Since we have no numeric reference types in .NET, this method was added to check
+            // the numeric type of the inner field without boxing/unboxing.
+            public virtual NumericFieldType NumericType
+            {
+                get { return NumericFieldType.NONE; }
+            }
+
+            // LUCENENET specific - created overload for Byte, since we have no Number class in .NET
+            public virtual byte? GetByteValue()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Short, since we have no Number class in .NET
+            public virtual short? GetInt16Value()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Int32, since we have no Number class in .NET
+            public virtual int? GetInt32Value()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Int64, since we have no Number class in .NET
+            public virtual long? GetInt64Value()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Single, since we have no Number class in .NET
+            public virtual float? GetSingleValue()
+            {
+                return null;
+            }
+
+            // LUCENENET specific - created overload for Double, since we have no Number class in .NET
+            public virtual double? GetDoubleValue()
+            {
+                return null;
+            }
+
+            public IIndexableFieldType IndexableFieldType
             {
                 get { return fieldType; }
             }
