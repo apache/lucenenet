@@ -112,18 +112,18 @@ namespace Lucene.Net.Index
                         if (ioe.Message.StartsWith("fake disk full at", StringComparison.Ordinal) || ioe.Message.Equals("now failing on purpose", StringComparison.Ordinal))
                         {
                             DiskFull = true;
-#if !NETSTANDARD
-                            try
-                            {
-#endif
+//#if !NETSTANDARD1_5
+//                            try
+//                            {
+//#endif
                                 Thread.Sleep(1);
-#if !NETSTANDARD
-                            }
-                            catch (ThreadInterruptedException ie)
-                            {
-                                throw new ThreadInterruptedException(ie.toString(), ie);
-                            }
-#endif
+//#if !NETSTANDARD1_5
+//                            }
+//                            catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                            {
+//                                throw new ThreadInterruptedException(ie.toString(), ie);
+//                            }
+//#endif
                             if (fullCount++ >= 5)
                             {
                                 break;

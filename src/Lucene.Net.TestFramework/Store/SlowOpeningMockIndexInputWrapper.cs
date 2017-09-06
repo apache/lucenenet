@@ -45,7 +45,7 @@ namespace Lucene.Net.Store
                 catch (Exception)
                 {
                 }
-                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+                throw new ThreadInterruptedException(ie.ToString(), ie);
             }
 #endif
         }

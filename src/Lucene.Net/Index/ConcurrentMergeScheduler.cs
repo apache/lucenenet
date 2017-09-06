@@ -457,14 +457,14 @@ namespace Lucene.Net.Index
                         {
                             Message("    too many merges; stalling...");
                         }
-                        try
-                        {
+                        //try
+                        //{
                             Monitor.Wait(this);
-                        }
-                        catch (ThreadInterruptedException ie)
-                        {
-                            throw new ThreadInterruptedException(ie.ToString(), ie);
-                        }
+                        //}
+                        //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+                        //{
+                        //    throw new ThreadInterruptedException(ie.ToString(), ie);
+                        //}
                     }
 
                     if (IsVerbose)
@@ -715,8 +715,8 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void HandleMergeException(Exception exc)
         {
-            try
-            {
+            //try
+            //{
                 // When an exception is hit during merge, IndexWriter
                 // removes any partial files and then allows another
                 // merge to run.  If whatever caused the error is not
@@ -724,11 +724,11 @@ namespace Lucene.Net.Index
                 // so, we sleep here to avoid saturating CPU in such
                 // cases:
                 Thread.Sleep(250);
-            }
-            catch (ThreadInterruptedException ie)
-            {
-                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-            }
+            //}
+            //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+            //{
+            //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+            //}
             throw new MergePolicy.MergeException(exc, m_dir);
         }
 

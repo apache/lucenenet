@@ -1308,7 +1308,7 @@ namespace Lucene.Net.Index
                             AllowInterrupt = true;
                         }
                     }
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     catch (ThreadInterruptedException re)
                     {
                         // NOTE: important to leave this verbosity/noise
@@ -1316,9 +1316,15 @@ namespace Lucene.Net.Index
                         // Jenkins hits a fail we need to study where the
                         // interrupts struck!
                         Console.WriteLine("TEST: got interrupt");
-                        Console.WriteLine(re.StackTrace);
-                        Exception e = re.InnerException;
-                        Assert.IsTrue(e is ThreadInterruptedException);
+                        Console.WriteLine(re.ToString());
+
+                        // LUCENENET NOTE: Since our original exception is ThreadInterruptException instead of InterruptException
+                        // in .NET, our expectation is typically that the InnerException is null (but it doesn't have to be).
+                        // So, this assertion is not needed in .NET. And if we get to this catch block, we already know we have
+                        // the right exception type, so there is nothing to test here. Besides, this throws an assertion that would
+                        // crash the test framework anyway.
+                        //Exception e = re.InnerException;
+                        //Assert.IsTrue(e is ThreadInterruptedException);
                         if (Finish)
                         {
                             break;
@@ -1328,7 +1334,7 @@ namespace Lucene.Net.Index
                     catch (Exception t)
                     {
                         Console.WriteLine("FAILED; unexpected exception");
-                        Console.WriteLine(t.StackTrace);
+                        Console.WriteLine(t.ToString());
                         Failed = true;
                         break;
                     }
@@ -1362,7 +1368,7 @@ namespace Lucene.Net.Index
                     {
                         Failed = true;
                         Console.WriteLine("CheckIndex FAILED: unexpected exception");
-                        Console.WriteLine(e.StackTrace);
+                        Console.WriteLine(e.ToString());
                     }
                     try
                     {
@@ -1374,7 +1380,7 @@ namespace Lucene.Net.Index
                     {
                         Failed = true;
                         Console.WriteLine("DirectoryReader.open FAILED: unexpected exception");
-                        Console.WriteLine(e.StackTrace);
+                        Console.WriteLine(e.ToString());
                     }
                 }
                 try

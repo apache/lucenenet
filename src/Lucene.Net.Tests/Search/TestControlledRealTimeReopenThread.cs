@@ -495,12 +495,12 @@ namespace Lucene.Net.Search
 
             public override void Run()
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
                     thread.WaitForGeneration(lastGen);
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
                 catch (ThreadInterruptedException ie)
                 {
@@ -530,24 +530,22 @@ namespace Lucene.Net.Search
             public override void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
             {
                 base.UpdateDocument(term, doc, analyzer);
-#if !NETSTANDARD
-                try
-                {
-#endif
+//#if !NETSTANDARD1_5
+//                try
+//                {
+//#endif
                     if (waitAfterUpdate)
                     {
                         signal.Reset(signal.CurrentCount == 0 ? 0 : signal.CurrentCount - 1);
                         latch.Wait();
                     }
-#if !NETSTANDARD
-                }
-#pragma warning disable 168
-                catch (ThreadInterruptedException e)
-#pragma warning restore 168
-                {
-                    throw;
-                }
-#endif
+//#if !NETSTANDARD1_5
+//                }
+//                catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                {
+//                    throw;
+//                }
+//#endif
             }
         }
 

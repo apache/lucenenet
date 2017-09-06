@@ -232,18 +232,18 @@ namespace Lucene.Net.Index
                             }
                         }
                     }
-#if !NETSTANDARD
-                    try
-                    {
-#endif 
+//#if !NETSTANDARD1_5
+//                    try
+//                    {
+//#endif 
                         Thread.Sleep(1);
-#if !NETSTANDARD
-                    }
-                    catch (ThreadInterruptedException ie)
-                    {
-                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                    }
-#endif
+//#if !NETSTANDARD1_5
+//                    }
+//                    catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                    {
+//                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+//                    }
+//#endif
                 } while (Environment.TickCount < StopTime);
             }
         }

@@ -356,7 +356,7 @@ namespace Lucene.Net.Search
 
             public override IndexSearcher NewSearcher(IndexReader r)
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
@@ -365,7 +365,7 @@ namespace Lucene.Net.Search
                         awaitEnterWarm.Signal();
                         awaitClose.Wait();
                     }
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)

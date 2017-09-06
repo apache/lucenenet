@@ -404,23 +404,21 @@ namespace Lucene.Net.Search
                 int docId = doc + docBase;
                 if (slowdown > 0)
                 {
-                    try
-                    {
+                    //try
+                    //{
                         ThreadClass.Sleep(slowdown);
-                    }
-#if NETSTANDARD
-                    catch (Exception)
-                    {
-                        throw;
-                    }
-#else
-#pragma warning disable 168
-                    catch (ThreadInterruptedException ie)
-#pragma warning restore 168
-                    {
-                        throw;
-                    }
-#endif
+//                    }
+//#if NETSTANDARD1_5
+//                    catch (Exception)
+//                    {
+//                        throw;
+//                    }
+//#else
+//                    catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                    {
+//                        throw;
+//                    }
+//#endif
                 }
                 Debug.Assert(docId >= 0, " base=" + docBase + " doc=" + doc);
                 bits.Set(docId);

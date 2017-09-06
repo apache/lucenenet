@@ -136,7 +136,7 @@ namespace Lucene.Net.Util
             int size = map.Count;
             for (int i = 0; size > 0 && i < 10; i++)
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
@@ -155,7 +155,7 @@ namespace Lucene.Net.Util
                     Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
                     Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
                     size = newSize;
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException ie)
@@ -255,7 +255,7 @@ namespace Lucene.Net.Util
             int size = map.Count;
             for (int i = 0; size > 0 && i < 10; i++)
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
@@ -274,7 +274,7 @@ namespace Lucene.Net.Util
                     Assert.IsTrue(size >= c, "previousSize(" + size + ")>=iteratorSize(" + c + ")");
                     Assert.IsTrue(c >= newSize, "iteratorSize(" + c + ")>=newSize(" + newSize + ")");
                     size = newSize;
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException ie)
