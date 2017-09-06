@@ -312,7 +312,7 @@ namespace Sax.Helpers
         /// is an undeclared prefix.
         /// </returns>
         /// <seealso cref="DeclarePrefix" />
-        /// <seealso cref="string.Intern(string)" />
+        /// <seealso cref="StringExtensions.Intern(string)" />
         public string[] ProcessName(string qName, string[] parts, bool isAttribute)
         {
             string[] myParts = currentContext.ProcessName(qName, isAttribute);

@@ -51,7 +51,7 @@ namespace Lucene.Net.Search.Highlight
         {
             if (defaultField != null)
             {
-                this.defaultField = StringHelper.Intern(defaultField);
+                this.defaultField = defaultField.Intern();
             }
         }
 
@@ -487,7 +487,7 @@ namespace Lucene.Net.Search.Highlight
         {
             if (fieldName != null)
             {
-                this.fieldName = StringHelper.Intern(fieldName);
+                this.fieldName = fieldName.Intern();
             }
             else
             {
@@ -521,7 +521,7 @@ namespace Lucene.Net.Search.Highlight
         public virtual IDictionary<string, WeightedSpanTerm> GetWeightedSpanTermsWithScores(
             Query query, TokenStream tokenStream, string fieldName, IndexReader reader)
         {
-            this.fieldName = fieldName == null ? null : StringHelper.Intern(fieldName);
+            this.fieldName = fieldName == null ? null : fieldName.Intern();
 
             this.tokenStream = tokenStream;
 

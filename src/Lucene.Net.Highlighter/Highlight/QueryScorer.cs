@@ -88,7 +88,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="defaultField">The default field for queries with the field name unspecified</param>
         public QueryScorer(Query query, IndexReader reader, string field, string defaultField)
         {
-            this.defaultField = StringHelper.Intern(defaultField);
+            this.defaultField = defaultField.Intern();
             Init(query, field, reader, true);
         }
 
@@ -100,7 +100,7 @@ namespace Lucene.Net.Search.Highlight
         /// <param name="defaultField">The default field for queries with the field name unspecified</param>
         public QueryScorer(Query query, string field, string defaultField)
         {
-            this.defaultField = StringHelper.Intern(defaultField);
+            this.defaultField = defaultField.Intern();
             Init(query, field, null, true);
         }
 

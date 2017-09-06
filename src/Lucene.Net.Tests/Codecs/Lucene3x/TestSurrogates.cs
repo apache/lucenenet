@@ -261,7 +261,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 for (int iter = 0; iter < num; iter++)
                 {
                     // seek to random spot
-                    string field = StringHelper.Intern("f" + r.Next(numField));
+                    string field = ("f" + r.Next(numField)).Intern();
                     Term tx = new Term(field, GetRandomString(r));
 
                     int spot = Array.BinarySearch(fieldTermsArray, tx);

@@ -166,5 +166,30 @@ namespace Lucene.Net.Support
             }
             return input;
         }
+
+
+        /// <summary> Expert:
+        /// The StringInterner implementation used by Lucene.
+        /// This shouldn't be changed to an incompatible implementation after other Lucene APIs have been used.
+        /// LUCENENET specific.
+        /// </summary>
+        private static StringInterner interner =
+#if NETSTANDARD1_5
+            new SimpleStringInterner(1024, 8);
+#else
+            new StringInterner();
+#endif
+
+        /// <summary>
+        /// Searches an internal table of strings for a string equal to this string.
+        /// If the string is not in the table, it is added. Returns the string
+        /// contained in the table which is equal to this string. The same string
+        /// object is always returned for strings which are equal.
+        /// </summary>
+        /// <returns>The interned string equal to this string.</returns>
+        public static string Intern(this string s)
+        {
+            return interner.Intern(s);
+        }
     }
 }
