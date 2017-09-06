@@ -68,12 +68,12 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail && TestThread() && Random().NextBoolean())
+                if (DoFail && TestThread())
                 {
                     bool isDoFlush = Util.StackTraceHelper.DoesStackTraceContainMethod("Flush");
                     bool isClose = Util.StackTraceHelper.DoesStackTraceContainMethod("Close");    
 
-                    if (isDoFlush && !isClose )
+                    if (isDoFlush && !isClose && Random().NextBoolean())
                     {
                         HitExc = true;
                         throw new IOException(Thread.CurrentThread.Name + ": now failing during flush");
@@ -378,7 +378,10 @@ namespace Lucene.Net.Index
                 {
                     Failed.Set(true);
                     m_writer.MergeFinish(merge);
-                    throw new Exception(t.ToString(), t);
+
+                    // LUCENENET specific - throwing an exception on a background thread causes the test
+                    // runner to crash on .NET Core 2.0.
+                    //throw new Exception(t.ToString(), t);
                 }
             }
         }
