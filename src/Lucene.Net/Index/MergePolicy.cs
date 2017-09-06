@@ -3,7 +3,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Text;
@@ -473,8 +473,9 @@ namespace Lucene.Net.Index
         /// Exception thrown if there are any problems while
         /// executing a merge.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class MergeException : Exception
@@ -497,13 +498,13 @@ namespace Lucene.Net.Index
                 this.dir = dir;
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             // For testing purposes
-            internal MergeException(string message)
+            public MergeException(string message)
                 : base(message)
             {
             }
 
-#if FEATURE_SERIALIZABLE
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
@@ -534,8 +535,9 @@ namespace Lucene.Net.Index
         /// <c>false</c>.  Normally this exception is
         /// privately caught and suppresed by <see cref="IndexWriter"/>.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class MergeAbortedException : System.IO.IOException
@@ -556,7 +558,7 @@ namespace Lucene.Net.Index
             {
             }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

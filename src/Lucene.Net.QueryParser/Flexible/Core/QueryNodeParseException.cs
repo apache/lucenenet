@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Core.Messages;
 using Lucene.Net.QueryParsers.Flexible.Messages;
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -31,7 +31,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// <seealso cref="QueryNodeException"/>
     /// <seealso cref="Parser.ISyntaxParser"/>
     /// <seealso cref="Nodes.IQueryNode"/>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class QueryNodeParseException : QueryNodeException
@@ -59,12 +61,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
         {
         }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         // For testing
-        internal QueryNodeParseException(string message)
+        public QueryNodeParseException(string message)
             : base(message)
         { }
 
-#if FEATURE_SERIALIZABLE
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

@@ -22,7 +22,7 @@
 // ANTLR GENERATED CODE: DO NOT EDIT (LUCENENET: Not really auto generated in the port)
 
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using Antlr.Runtime;
@@ -2186,8 +2186,9 @@ loop2_break: ;
 		}
 	}
 
-    // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class ParseException : Exception
@@ -2197,13 +2198,13 @@ loop2_break: ;
         {
         }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         // For testing
-        internal ParseException(string message)
+        public ParseException(string message)
             : base(message)
         {
         }
 
-#if FEATURE_SERIALIZABLE
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

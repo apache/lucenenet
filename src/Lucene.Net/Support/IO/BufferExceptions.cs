@@ -2,7 +2,7 @@
 // https://svn.apache.org/repos/asf/harmony/enhanced/java/trunk/
 
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -25,16 +25,18 @@ namespace Lucene.Net.Support.IO
 	 * limitations under the License.
 	 */
 
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    internal sealed class BufferUnderflowException : Exception
+    public sealed class BufferUnderflowException : Exception
     {
         public BufferUnderflowException()
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -47,16 +49,18 @@ namespace Lucene.Net.Support.IO
 #endif
     }
 
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    internal sealed class BufferOverflowException : Exception
+    public sealed class BufferOverflowException : Exception
     {
         public BufferOverflowException()
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -69,16 +73,18 @@ namespace Lucene.Net.Support.IO
 #endif
     }
 
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    internal sealed class ReadOnlyBufferException : /*NotSupported*/ Exception
+    public sealed class ReadOnlyBufferException : /*NotSupported*/ Exception
     {
         public ReadOnlyBufferException()
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -91,16 +97,18 @@ namespace Lucene.Net.Support.IO
 #endif
     }
 
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-    internal sealed class InvalidMarkException : Exception
+    public sealed class InvalidMarkException : Exception
     {
         public InvalidMarkException()
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

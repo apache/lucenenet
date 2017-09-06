@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -27,8 +27,9 @@ namespace Lucene.Net.Index
     /// Signals that no index was found in the <see cref="Directory"/>. Possibly because the
     /// directory is empty, however can also indicate an index corruption.
     /// </summary>
-    // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public sealed class IndexNotFoundException : FileNotFoundException
@@ -37,12 +38,12 @@ namespace Lucene.Net.Index
         /// Creates <see cref="IndexNotFoundException"/> with the
         /// description message.
         /// </summary>
-        public IndexNotFoundException(string msg)
-            : base(msg)
+        public IndexNotFoundException(string message)
+            : base(message)
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

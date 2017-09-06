@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.QueryParsers.Flexible.Messages;
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -28,7 +28,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     /// </summary>
     /// <seealso cref="NLS"/>
     /// <seealso cref="IMessage"/>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class QueryNodeError : Exception, INLSException
@@ -66,12 +68,12 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
             this.message = message;
         }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         // For testing
-        internal QueryNodeError(string message)
+        public QueryNodeError(string message)
             : base(message)
         { }
 
-#if FEATURE_SERIALIZABLE
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -83,10 +85,10 @@ namespace Lucene.Net.QueryParsers.Flexible.Core
     }
 #endif
 
-    /// <summary>
-    /// <see cref="INLSException.MessageObject"/> 
-    /// </summary>
-    public virtual IMessage MessageObject
+        /// <summary>
+        /// <see cref="INLSException.MessageObject"/> 
+        /// </summary>
+        public virtual IMessage MessageObject
         {
             get { return this.message; }
         }

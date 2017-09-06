@@ -55,7 +55,7 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CLONEABLE;FEATURE_DTD_PROCESSING;FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CLONEABLE;FEATURE_DTD_PROCESSING</DefineConstants>
     <DebugType>portable</DebugType>
   </PropertyGroup>
   
@@ -68,7 +68,7 @@
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
-    <DefineConstants>$(DefineConstants);FEATURE_CLONEABLE;FEATURE_DTD_PROCESSING;FEATURE_SERIALIZABLE</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_CLONEABLE;FEATURE_DTD_PROCESSING</DefineConstants>
     <DebugType>full</DebugType>
   </PropertyGroup>
 

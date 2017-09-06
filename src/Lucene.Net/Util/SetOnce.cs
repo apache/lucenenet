@@ -1,6 +1,6 @@
 using Lucene.Net.Support;
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -90,8 +90,9 @@ namespace Lucene.Net.Util
     /// Thrown when <see cref="SetOnce{T}.Set(T)"/> is called more than once. </summary>
     // LUCENENET specific - de-nested the class from SetOnce<T> to allow the test
     // framework to serialize it without the generic type.
-    // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public sealed class AlreadySetException : InvalidOperationException
@@ -104,7 +105,7 @@ namespace Lucene.Net.Util
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

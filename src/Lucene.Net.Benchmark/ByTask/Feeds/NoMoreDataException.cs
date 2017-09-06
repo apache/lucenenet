@@ -1,5 +1,5 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -27,7 +27,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
     /// Thrown by Docs Makers if <c>doc.maker.forever</c> is <c>false</c> and docs sources of that maker where exhausted.
     /// This is useful for iterating all document of a source, in case we don't know in advance how many docs there are.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class NoMoreDataException : Exception
@@ -35,7 +37,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         public NoMoreDataException()
         { }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

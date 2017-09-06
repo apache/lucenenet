@@ -1,5 +1,5 @@
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Text;
@@ -23,11 +23,13 @@ namespace Lucene.Net.QueryParsers.Classic
      * limitations under the License.
      */
 
-	/// <summary>Token Manager Error. </summary>
-#if FEATURE_SERIALIZABLE
+    /// <summary>Token Manager Error. </summary>
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-	public class TokenMgrError : Exception
+    public class TokenMgrError : Exception
 	{
         /*
 		* Ordinals for various reasons why an Error of this type can be thrown.
@@ -172,7 +174,7 @@ namespace Lucene.Net.QueryParsers.Classic
 		{
 		}
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

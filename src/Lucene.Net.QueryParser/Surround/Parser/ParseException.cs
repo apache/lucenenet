@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Text;
@@ -34,7 +34,9 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
     /// You can modify this class to customize your error reporting
     /// mechanisms so long as you retain the public fields.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class ParseException : Exception
@@ -76,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             : base(message, innerException)
         { }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

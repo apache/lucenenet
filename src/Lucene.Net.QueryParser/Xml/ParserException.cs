@@ -1,5 +1,5 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -26,7 +26,9 @@ namespace Lucene.Net.QueryParsers.Xml
     /// Thrown when the xml queryparser encounters 
     /// invalid syntax/configuration.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class ParserException : Exception
@@ -51,7 +53,7 @@ namespace Lucene.Net.QueryParsers.Xml
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

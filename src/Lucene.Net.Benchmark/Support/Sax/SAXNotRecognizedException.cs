@@ -5,7 +5,7 @@
 // $Id: SAXNotRecognizedException.java,v 1.7 2002/01/30 21:13:48 dbrownell Exp $
 
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -28,8 +28,9 @@ namespace Sax
     /// <author>David Megginson</author>
     /// <version>2.0.1 (sax2r2)</version>
     /// <see cref="SAXNotSupportedException"/>
-    // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class SAXNotRecognizedException : SAXException
@@ -51,7 +52,7 @@ namespace Sax
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

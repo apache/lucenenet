@@ -4,7 +4,7 @@
 // $Id: SAXParseException.java,v 1.11 2004/04/21 13:05:02 dmegginson Exp $
 
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -37,7 +37,9 @@ namespace Sax
     /// <seealso cref="SAXException"/>
     /// <seealso cref="ILocator"/>
     /// <seealso cref="IErrorHandler"/>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class SAXParseException : SAXException
@@ -45,15 +47,6 @@ namespace Sax
         //////////////////////////////////////////////////////////////////////
         // Constructors.
         //////////////////////////////////////////////////////////////////////
-
-        /// <summary>
-        /// Construct a new exception with no message.
-        /// </summary>
-        // LUCENENET specific for serialization
-        public SAXParseException()
-            : base()
-        {
-        }
 
         /// <summary>
         /// Create a new <see cref="SAXParseException"/> from a message and a <see cref="ILocator"/>.
@@ -159,7 +152,16 @@ namespace Sax
             Init(publicId, systemId, lineNumber, columnNumber);
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+        /// <summary>
+        /// Construct a new exception with no message.
+        /// </summary>
+        // LUCENENET specific for serialization
+        public SAXParseException(string message)
+            : base(message)
+        {
+        }
+
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

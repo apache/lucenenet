@@ -2,7 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -558,9 +558,10 @@ namespace Lucene.Net.Util
         /// Thrown if a <see cref="BytesRef"/> exceeds the <see cref="BytesRefHash"/> limit of
         /// <see cref="ByteBlockPool.BYTE_BLOCK_SIZE"/>-2.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
-        [Serializable]
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+    [Serializable]
 #endif
         public class MaxBytesLengthExceededException : Exception
         {
@@ -569,7 +570,7 @@ namespace Lucene.Net.Util
             {
             }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

@@ -63,7 +63,7 @@
   
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
     <!-- LUCENENET TODO: Change FEATURE_THREADINTERRUPTEDEXCEPTION to FEATURE_THREADINTERRUPT and add solution wide -->
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE;FEATURE_THREAD_PRIORITY;FEATURE_THREADINTERRUPTEDEXCEPTION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_THREAD_PRIORITY;FEATURE_THREADINTERRUPTEDEXCEPTION</DefineConstants>
     <DebugType>portable</DebugType>
   </PropertyGroup>
 
@@ -77,7 +77,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE;FEATURE_THREAD_PRIORITY;FEATURE_THREADINTERRUPTEDEXCEPTION</DefineConstants>
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS;FEATURE_THREAD_PRIORITY;FEATURE_THREADINTERRUPTEDEXCEPTION</DefineConstants>
     <DebugType>full</DebugType>
   </PropertyGroup>
 

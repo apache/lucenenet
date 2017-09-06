@@ -1,6 +1,6 @@
 using Lucene.Net.Support.Threading;
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Threading;
@@ -37,8 +37,9 @@ namespace Lucene.Net.Search
     {
         /// <summary>
         /// Thrown when elapsed search time exceeds allowed search time. </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class TimeExceededException : Exception
@@ -61,7 +62,7 @@ namespace Lucene.Net.Search
             {
             }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
