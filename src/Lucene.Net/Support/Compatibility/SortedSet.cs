@@ -19,7 +19,10 @@
 
 namespace System.Collections.Generic
 {
-    
+
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class SortedSet<T> : ISet<T>, ICollection
     {
         private readonly SortedList<T, byte> _list;

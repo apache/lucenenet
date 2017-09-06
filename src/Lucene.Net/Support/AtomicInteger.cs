@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace Lucene.Net.Support
 {
@@ -22,6 +23,9 @@ namespace Lucene.Net.Support
     /// <summary>
     /// NOTE: This was AtomicInteger in the JDK
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class AtomicInt32
     {
         private int value;

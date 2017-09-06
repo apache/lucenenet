@@ -30,6 +30,9 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.internal
     /// </summary>
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class CharsRef : IComparable<CharsRef>, ICharSequence
     {
         /// <summary>
