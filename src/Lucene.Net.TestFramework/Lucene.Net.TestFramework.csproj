@@ -58,7 +58,7 @@
 
   <ItemGroup>
     <PackageReference Include="icu.net" Version="54.1.1-alpha" />
-    <PackageReference Include="NUnit" Version="3.7.1" />
+    <PackageReference Include="NUnit" Version="3.8.1" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
