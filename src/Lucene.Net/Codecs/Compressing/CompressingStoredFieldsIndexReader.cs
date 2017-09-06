@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using ArrayUtil = Lucene.Net.Util.ArrayUtil;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -31,7 +32,7 @@ namespace Lucene.Net.Codecs.Compressing
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public sealed class CompressingStoredFieldsIndexReader
+    public sealed class CompressingStoredFieldsIndexReader : ICloneable
     {
         internal static long MoveLowOrderBitToSign(long n)
         {

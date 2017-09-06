@@ -52,7 +52,7 @@ namespace Lucene.Net.Index
     /// or <see cref="Store.Directory"/> instance.</para>
     /// </summary>
 
-    public abstract class IndexDeletionPolicy
+    public abstract class IndexDeletionPolicy : ICloneable
     {
         /// <summary>
         /// Sole constructor, typically called by sub-classes constructors. </summary>

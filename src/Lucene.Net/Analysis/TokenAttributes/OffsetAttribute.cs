@@ -22,7 +22,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IOffsetAttribute"/>. </summary>
-    public class OffsetAttribute : Attribute, IOffsetAttribute
+    public class OffsetAttribute : Attribute, IOffsetAttribute, System.ICloneable
     {
         private int startOffset;
         private int endOffset;

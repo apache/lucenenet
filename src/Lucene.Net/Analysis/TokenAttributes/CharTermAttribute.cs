@@ -33,10 +33,7 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="ICharTermAttribute"/>. </summary>
-    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute
-#if FEATURE_CLONEABLE
-        , ICloneable
-#endif
+    public class CharTermAttribute : Attribute, ICharTermAttribute, ITermToBytesRefAttribute, ICloneable
     {
         private static int MIN_BUFFER_SIZE = 10;
 

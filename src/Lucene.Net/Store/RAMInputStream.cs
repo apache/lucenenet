@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 
 namespace Lucene.Net.Store
@@ -24,7 +25,7 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public class RAMInputStream : IndexInput
+    public class RAMInputStream : IndexInput, ICloneable
     {
         internal const int BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
 

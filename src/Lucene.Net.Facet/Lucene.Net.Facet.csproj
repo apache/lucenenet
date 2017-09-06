@@ -67,7 +67,6 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
     <DebugType>full</DebugType>
   </PropertyGroup>
 

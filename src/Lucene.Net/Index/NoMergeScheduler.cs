@@ -46,7 +46,7 @@ namespace Lucene.Net.Index
         {
         }
 
-        public override IMergeScheduler Clone()
+        public override object Clone()
         {
             return this;
         }

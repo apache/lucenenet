@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// <summary>
     /// Attribute for Kuromoji inflection data.
     /// </summary>
-    public class InflectionAttribute : Attribute, IInflectionAttribute
+    public class InflectionAttribute : Attribute, IInflectionAttribute, System.ICloneable
     {
         private Token token;
 

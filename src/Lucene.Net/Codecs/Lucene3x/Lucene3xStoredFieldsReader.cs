@@ -42,7 +42,7 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// It uses &lt;segment&gt;.fdt and &lt;segment&gt;.fdx; files.
     /// </summary>
     [Obsolete("Only for reading existing 3.x indexes")]
-    internal sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, IDisposable
+    internal sealed class Lucene3xStoredFieldsReader : StoredFieldsReader, ICloneable, IDisposable
     {
         private const int FORMAT_SIZE = 4;
 

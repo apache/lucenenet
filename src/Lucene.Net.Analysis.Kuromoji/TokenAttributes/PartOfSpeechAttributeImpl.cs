@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// <summary>
     /// Attribute for <see cref="Token.GetPartOfSpeech()"/>.
     /// </summary>
-    public class PartOfSpeechAttribute : Attribute, IPartOfSpeechAttribute
+    public class PartOfSpeechAttribute : Attribute, IPartOfSpeechAttribute, System.ICloneable
     {
         private Token token;
 

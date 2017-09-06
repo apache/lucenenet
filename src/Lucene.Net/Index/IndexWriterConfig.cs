@@ -66,7 +66,7 @@ namespace Lucene.Net.Index
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class IndexWriterConfig : LiveIndexWriterConfig
+    public sealed class IndexWriterConfig : LiveIndexWriterConfig, ICloneable
     {
         // LUCENENET specific: De-nested OpenMode enum from this class to prevent naming conflict
 
@@ -196,7 +196,7 @@ namespace Lucene.Net.Index
             // such as line numbers, message throughput, ...
             clone.infoStream = (InfoStream)infoStream.Clone();
             clone.mergePolicy = (MergePolicy)mergePolicy.Clone();
-            clone.mergeScheduler = mergeScheduler.Clone();
+            clone.mergeScheduler = (IMergeScheduler)mergeScheduler.Clone();
 
             return clone;
 

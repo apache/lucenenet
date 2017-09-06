@@ -14,7 +14,7 @@
 //    /// <para/>
 //    /// @lucene.experimental
 //    /// </summary>
-//    public class ScriptAttribute : Attribute, IScriptAttribute
+//    public class ScriptAttribute : Attribute, IScriptAttribute, System.ICloneable
 //    {
 //        private int code = UScript.COMMON;
 

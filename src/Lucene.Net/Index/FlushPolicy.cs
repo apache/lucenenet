@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -51,7 +52,7 @@ namespace Lucene.Net.Index
     /// <seealso cref="DocumentsWriterFlushControl"/>
     /// <seealso cref="DocumentsWriterPerThread"/>
     /// <seealso cref="IndexWriterConfig.FlushPolicy"/>
-    internal abstract class FlushPolicy
+    internal abstract class FlushPolicy : ICloneable
     {
         protected LiveIndexWriterConfig m_indexWriterConfig;
         protected InfoStream m_infoStream;

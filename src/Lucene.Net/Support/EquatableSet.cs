@@ -33,10 +33,7 @@ namespace Lucene.Net.Support
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class EquatableSet<T> : ISet<T>, IEquatable<ISet<T>>
-#if FEATURE_CLONEABLE
-        , ICloneable
-#endif
+    public class EquatableSet<T> : ISet<T>, IEquatable<ISet<T>>, ICloneable
     {
         private readonly ISet<T> set;
 

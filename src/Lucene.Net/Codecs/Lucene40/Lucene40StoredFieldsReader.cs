@@ -41,7 +41,7 @@ namespace Lucene.Net.Codecs.Lucene40
     /// @lucene.internal
     /// </summary>
     /// <seealso cref="Lucene40StoredFieldsFormat"/>
-    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader, IDisposable
+    public sealed class Lucene40StoredFieldsReader : StoredFieldsReader, ICloneable, IDisposable
     {
         private readonly FieldInfos fieldInfos;
         private readonly IndexInput fieldsStream;

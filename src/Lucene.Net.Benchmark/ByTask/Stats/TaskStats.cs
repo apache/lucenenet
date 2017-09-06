@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
     /// The same task can run more than once, but, if that task records statistics, 
     /// each run would create its own TaskStats.
     /// </summary>
-    public class TaskStats
+    public class TaskStats : ICloneable
     {
         /// <summary>Task for which data was collected.</summary>
         private PerfTask task;
@@ -215,9 +215,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             }
         }
 
-#if FEATURE_CLONEABLE
         /// <seealso cref="ICloneable.Clone()"/>
-#endif
         public virtual object Clone()
         {
             TaskStats c = (TaskStats)base.MemberwiseClone();

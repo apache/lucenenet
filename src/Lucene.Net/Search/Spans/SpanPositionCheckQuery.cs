@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
@@ -28,7 +29,7 @@ namespace Lucene.Net.Search.Spans
     /// <summary>
     /// Base class for filtering a <see cref="SpanQuery"/> based on the position of a match.
     /// </summary>
-    public abstract class SpanPositionCheckQuery : SpanQuery
+    public abstract class SpanPositionCheckQuery : SpanQuery, ICloneable
     {
         protected SpanQuery m_match;
 

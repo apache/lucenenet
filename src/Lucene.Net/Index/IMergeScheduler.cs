@@ -20,10 +20,8 @@ namespace Lucene.Net.Index
      */
 
     // LUCENENET specific
-    public interface IMergeScheduler : IDisposable
+    public interface IMergeScheduler : ICloneable, IDisposable
     {
         void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
-
-        IMergeScheduler Clone();
     }
 }

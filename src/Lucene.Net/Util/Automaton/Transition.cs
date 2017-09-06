@@ -1,4 +1,5 @@
 using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -42,7 +43,7 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class Transition
+    public class Transition : ICloneable
     {
         /*
          * CLASS INVARIANT: min<=max

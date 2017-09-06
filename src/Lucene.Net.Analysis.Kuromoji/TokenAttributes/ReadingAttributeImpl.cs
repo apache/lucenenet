@@ -23,7 +23,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// <summary>
     /// Attribute for Kuromoji reading data
     /// </summary>
-    public class ReadingAttribute : Attribute, IReadingAttribute
+    public class ReadingAttribute : Attribute, IReadingAttribute, System.ICloneable
     {
         private Token token;
 

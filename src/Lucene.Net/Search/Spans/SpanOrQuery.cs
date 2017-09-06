@@ -32,7 +32,7 @@ namespace Lucene.Net.Search.Spans
 
     /// <summary>
     /// Matches the union of its clauses. </summary>
-    public class SpanOrQuery : SpanQuery
+    public class SpanOrQuery : SpanQuery, ICloneable
     {
         private readonly EquatableList<SpanQuery> clauses;
         private string field;

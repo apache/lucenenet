@@ -28,7 +28,7 @@ namespace Lucene.Net.Codecs
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public abstract class TermVectorsReader : IDisposable
+    public abstract class TermVectorsReader : ICloneable, IDisposable
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass

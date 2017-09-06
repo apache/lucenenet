@@ -757,7 +757,7 @@ namespace Lucene.Net.Index
             return sb.ToString();
         }
 
-        public override IMergeScheduler Clone()
+        public override object Clone()
         {
             ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler)base.Clone();
             clone.m_writer = null;

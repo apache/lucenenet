@@ -410,7 +410,7 @@ namespace Lucene.Net.Index
             return sb.ToString();
         }
 
-        public override IMergeScheduler Clone()
+        public override object Clone()
         {
             TaskMergeScheduler clone = (TaskMergeScheduler)base.Clone();
             clone._writer = null;

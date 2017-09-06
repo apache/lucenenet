@@ -62,7 +62,7 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergePolicy : IDisposable
+    public abstract class MergePolicy : ICloneable, IDisposable
     {
         /// <summary>
         /// A map of doc IDs. </summary>

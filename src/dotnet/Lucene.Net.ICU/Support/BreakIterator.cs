@@ -26,10 +26,7 @@ namespace Lucene.Net.Support
     /// maintain a current position and scan over text
     /// returning the index of characters where boundaries occur.
     /// </summary>
-    public abstract class BreakIterator
-#if FEATURE_CLONEABLE
-        : ICloneable
-#endif
+    public abstract class BreakIterator : ICloneable
     {
         /// <summary>
         /// Constructor. BreakIterator is stateless and has no default behavior.

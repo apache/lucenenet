@@ -36,7 +36,7 @@ namespace Lucene.Net.Index
     /// is reusing the flushing <see cref="DocumentsWriterPerThread"/>s <see cref="ThreadState"/> with a
     /// new <see cref="DocumentsWriterPerThread"/> instance.
     /// </summary>
-    internal abstract class DocumentsWriterPerThreadPool
+    internal abstract class DocumentsWriterPerThreadPool : ICloneable
     {
         /// <summary>
         /// <see cref="ThreadState"/> references and guards a

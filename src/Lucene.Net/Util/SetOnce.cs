@@ -32,7 +32,8 @@ namespace Lucene.Net.Util
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public sealed class SetOnce<T> where T : class // LUCENENET specific - added class constraint so we don't accept value types (which cannot be volatile)
+    public sealed class SetOnce<T> : ICloneable 
+        where T : class // LUCENENET specific - added class constraint so we don't accept value types (which cannot be volatile)
     {
         private volatile T obj = default(T);
         private readonly AtomicBoolean set;

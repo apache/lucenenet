@@ -39,7 +39,7 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class BytesRef : IComparable<BytesRef>, IComparable // LUCENENET specific - implemented IComparable for FieldComparator
+    public sealed class BytesRef : IComparable<BytesRef>, IComparable, ICloneable // LUCENENET specific - implemented IComparable for FieldComparator
     {
         /// <summary>
         /// An empty byte array for convenience </summary>
