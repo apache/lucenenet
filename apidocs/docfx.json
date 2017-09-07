@@ -4,14 +4,10 @@
       "src": [
         {
           "files": [
-            "Lucene.Net/Lucene.Net.csproj"            
+            "Lucene.Net/Lucene.Net.csproj",
+            "Lucene.Net.Misc/Lucene.Net.Misc.csproj"      
           ],
-          "exclude": [
-            "**/obj/**",
-            "**/bin/**",
-            "_site/**",
-            "**/Lucene.Net.Test*/**"
-          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
           "cwd": "../src"
         }
       ],
@@ -23,12 +19,7 @@
           "files": [
             "Lucene.Net.Queries/Lucene.Net.Queries.csproj"
           ],
-          "exclude": [
-            "**/obj/**",
-            "**/bin/**",
-            "_site/**",
-            "**/Lucene.Net.Test*/**"
-          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
           "cwd": "../src"
         }
       ],
@@ -38,37 +29,184 @@
       "src": [
         {
           "files": [
-            "Lucene.Net.Facet/Lucene.Net.Facet.csproj",
-            "Lucene.Net.Classification/Lucene.Net.Classification.csproj",
-            "Lucene.Net.Tests.Classification/Lucene.Net.Tests.Classification.csproj",
-            "Lucene.Net.Expressions/Lucene.Net.Expressions.csproj",
-            "Lucene.Net.Codecs/Lucene.Net.Codecs.csproj",
-            "Lucene.Net.Join/Lucene.Net.Join.csproj",
-            "Lucene.Net.Grouping/Lucene.Net.Grouping.csproj",
-            "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj",
-            "Lucene.Net.Tests.Analysis.Common/Lucene.Net.Tests.Analysis.Common.csproj",
-            "Lucene.Net.QueryParser/Lucene.Net.QueryParser.csproj",
-            "Lucene.Net.Misc/Lucene.Net.Misc.csproj",
-            "Lucene.Net.Suggest/Lucene.Net.Suggest.csproj",
-            "Lucene.Net.Memory/Lucene.Net.Memory.csproj",
-            "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj",
-            "Lucene.Net.Spatial/Lucene.Net.Spatial.csproj",
-            "Lucene.Net.Highlighter/Lucene.Net.Highlighter.csproj",
-            "Lucene.Net.ICU/Lucene.Net.ICU.csproj",
-            "Lucene.Net.Analysis.SmartCn/project.json",
-            "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj",
-            "tools/lucene-cli/project.json"
+            "Lucene.Net.Facet/Lucene.Net.Facet.csproj"
           ],
-          "exclude": [
-            "**/obj/**",
-            "**/bin/**",
-            "_site/**",
-            "**/Lucene.Net.Test*/**"
-          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
           "cwd": "../src"
         }
       ],
-      "dest": "api/Lucene.Other"
+      "dest": "api/Lucene.Net.Facet"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Classification/Lucene.Net.Classification.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Classification"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Expressions/Lucene.Net.Expressions.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Expressions"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Codecs/Lucene.Net.Codecs.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Codecs"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Join/Lucene.Net.Join.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Join"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Grouping/Lucene.Net.Grouping.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Grouping"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj",
+            "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj",
+            "Lucene.Net.Analysis.SmartCn/project.json",
+            "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Analysis"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.QueryParser/Lucene.Net.QueryParser.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.QueryParser"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Suggest/Lucene.Net.Suggest.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Suggest"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Memory/Lucene.Net.Memory.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Memory"
+    },    
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Spatial/Lucene.Net.Spatial.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Spatial"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Highlighter/Lucene.Net.Highlighter.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Highlighter"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.ICU/Lucene.Net.ICU.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.ICU"
+    },    
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.ICU/Lucene.Net.ICU.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.ICU"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "tools/lucene-cli/project.json"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.CLI"
     }
   ],
   "build": {
