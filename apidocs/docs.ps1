@@ -87,6 +87,18 @@ if ($Clean -eq 1) {
 
 $msbuild = &$vswhere -latest -products * -requires Microsoft.Component.MSBuild -property installationPath
 if ($msbuild) {
+  Write-Host "MSBuild path = $msbuild";
+
+  # Due to a bug with docfx and msbuild, we also need to set environment vars here
+  # https://github.com/dotnet/docfx/issues/1969
+
+  [Environment]::SetEnvironmentVariable("VSINSTALLDIR", "$msbuild")
+  [Environment]::SetEnvironmentVariable("VisualStudioVersion", "15.0")
+
+  # Then it turns out we also need 2015 build tools installed, wat!? 
+  # https://www.microsoft.com/en-us/download/details.aspx?id=48159
+  
+
   $msbuild = join-path $msbuild 'MSBuild\15.0\Bin\MSBuild.exe'
   if (-not (test-path $msbuild)) {
 	throw "MSBuild not found!"
@@ -96,6 +108,9 @@ if ($msbuild) {
   $PluginsFolder = (Join-Path -Path $ApiDocsFolder "lucenetemplate\plugins")
   New-Item PluginsFolder -type directory -force
   & $msbuild $sln "/p:OutDir=$PluginsFolder"
+}
+else {
+	throw "MSBuild not found!"
 }
 
 # NOTE: There's a ton of Lucene docs that we want to copy and re-format. I'm not sure if we can really automate this 
@@ -108,7 +123,7 @@ if ($msbuild) {
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
 
 Write-Host "Building metadata..."
-& $DocFxExe metadata $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel
+& $DocFxExe metadata $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel --force
 if($?) { 
 	if ($ServeDocs -eq 0){
 		# build the output		

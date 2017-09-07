@@ -4,8 +4,40 @@
       "src": [
         {
           "files": [
-            "Lucene.Net/Lucene.Net.csproj",
-            "Lucene.Net.Queries/Lucene.Net.Queries.csproj",
+            "Lucene.Net/Lucene.Net.csproj"            
+          ],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "_site/**",
+            "**/Lucene.Net.Test*/**"
+          ],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Queries/Lucene.Net.Queries.csproj"
+          ],
+          "exclude": [
+            "**/obj/**",
+            "**/bin/**",
+            "_site/**",
+            "**/Lucene.Net.Test*/**"
+          ],
+          "cwd": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Queries"
+    },
+    {
+      "src": [
+        {
+          "files": [
             "Lucene.Net.Facet/Lucene.Net.Facet.csproj",
             "Lucene.Net.Classification/Lucene.Net.Classification.csproj",
             "Lucene.Net.Tests.Classification/Lucene.Net.Tests.Classification.csproj",
@@ -36,7 +68,7 @@
           "cwd": "../src"
         }
       ],
-      "dest": "api"
+      "dest": "api/Lucene.Other"
     }
   ],
   "build": {
@@ -46,10 +78,10 @@
       },
       {
         "files": [
-          "docs/**.md",
-          "docs/**/toc.yml",
-          "wiki/**.md",
-          "wiki/**/toc.yml",
+          //"docs/**.md",
+          //"docs/**/toc.yml",
+          //"wiki/**.md",
+          //"wiki/**/toc.yml",
           "toc.yml",
           "*.md"
         ]

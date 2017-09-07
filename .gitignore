@@ -56,3 +56,4 @@ apidocs/tools/*
 apidocs/api/.manifest
 /apidocs/docfx.log
 /apidocs/lucenetemplate/plugins/*
+/apidocs/api/*
