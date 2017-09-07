@@ -46,7 +46,7 @@ to check if the results are what we expect):
 
 The Lucene API is divided into several packages:
 
-<!-- LUCENENET TODO: Fix links  -->
+<!-- LUCENENET TODO: Fix links  
 
 <ul>
 <li>
@@ -134,7 +134,9 @@ index for all the files contained in a directory.</li>
 queries and searches an index.</li>
 </ul>
 
-<!-- LUCENENET TODO: Fix this  -->
+-->
+
+<!-- LUCENENET TODO: Fix this 
 
 To demonstrate these, try something like:
 <blockquote><tt>> <b>java -cp lucene-core.jar:lucene-demo.jar:lucene-analyzers-common.jar org.apache.lucene.demo.IndexFiles -index index -docs rec.food.recipes/soups</b></tt>
@@ -156,3 +158,5 @@ To demonstrate these, try something like:
 and the word "manhattan" ... ]
 <br>&nbsp;&nbsp;&nbsp; [ Note: "+" and "-" are canonical, but "AND", "OR"
 and "NOT" may be used. ]</blockquote>
+
+ -->

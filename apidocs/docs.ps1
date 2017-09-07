@@ -80,7 +80,7 @@ if ($Clean -eq 1) {
 	Remove-Item (Join-Path -Path $ApiDocsFolder "_site\*") -recurse -force -ErrorAction SilentlyContinue
 	Remove-Item (Join-Path -Path $ApiDocsFolder "obj\*") -recurse -force -ErrorAction SilentlyContinue
 	Remove-Item (Join-Path -Path $ApiDocsFolder "obj") -force -ErrorAction SilentlyContinue
-	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md" -recurse -force -ErrorAction SilentlyContinue
+	Remove-Item (Join-Path -Path $ApiDocsFolder "api\*") -exclude "*.md,*.yml" -recurse -force -ErrorAction SilentlyContinue
 }
 
 # Build our custom docfx tools
@@ -123,7 +123,12 @@ else {
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
 
 Write-Host "Building metadata..."
-& $DocFxExe metadata $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel --force
+if ($Clean -eq 1) {
+	& $DocFxExe metadata $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel --force
+}
+else {
+	& $DocFxExe metadata $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel
+}
 if($?) { 
 	if ($ServeDocs -eq 0){
 		# build the output		
@@ -133,6 +138,6 @@ if($?) {
 	else {
 		# build + serve (for testing)
 		Write-Host "starting website..."
-		& $DocFxExe $DocFxJson --serve -l "obj\docfx.log" --loglevel $LogLevel
+		& $DocFxExe $DocFxJson --serve -l "obj\docfx.log"
 	}
 }
