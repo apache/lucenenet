@@ -1,4 +1,5 @@
 using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
@@ -1102,7 +1103,7 @@ namespace Lucene.Net.Index
         }
 
         // LUCENE-1044: test exception during sync
-        [Test]
+        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestExceptionDuringSync([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = NewMockDirectory();
@@ -1185,7 +1186,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestExceptionsDuringCommit()
         {
             FailOnlyInCommit[] failures = new FailOnlyInCommit[] { new FailOnlyInCommit(false, FailOnlyInCommit.PREPARE_STAGE), new FailOnlyInCommit(true, FailOnlyInCommit.PREPARE_STAGE), new FailOnlyInCommit(false, FailOnlyInCommit.FINISH_STAGE) };
@@ -1607,7 +1608,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-        [Test]
+        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestTermVectorExceptions()
         {
             FailOnTermVectors[] failures = new FailOnTermVectors[] { new FailOnTermVectors(FailOnTermVectors.AFTER_INIT_STAGE), new FailOnTermVectors(FailOnTermVectors.INIT_STAGE) };
@@ -2198,7 +2199,7 @@ namespace Lucene.Net.Index
         // full), and then the exception stops (e.g., disk frees
         // up), so we successfully close IW or open an NRT
         // reader, we don't lose any deletes or updates:
-        [Test]
+        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestNoLostDeletesOrUpdates()
         {
             int deleteCount = 0;
@@ -2582,7 +2583,7 @@ namespace Lucene.Net.Index
             }
         }
 
-        [Test]
+        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestRandomExceptionDuringRollback()
         {
             // fail in random places on i/o

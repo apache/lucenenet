@@ -353,7 +353,7 @@ namespace Lucene.Net.Index
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
         [Timeout(80000)]
 #endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest, HasTimeout] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();
