@@ -1,48 +1,32 @@
 - name: Lucene.Net
   href: Lucene.Net/
-  topicUid: Lucene.Net
 - name: Lucene.Net.Queries
   href: Lucene.Net.Queries/
-  topicUid: Lucene.Net.Queries
 - name: Lucene.Net.Analysis
   href: Lucene.Net.Analysis/
-  topicUid: Lucene.Net.Analysis
 - name: Lucene.Net.QueryParser
   href: Lucene.Net.QueryParser/
-  topicUid: Lucene.Net.QueryParser
 - name: Lucene.Net.Highlighter
   href: Lucene.Net.Highlighter/
-  topicUid: Lucene.Net.Highlighter
 - name: Lucene.Net.Facet
   href: Lucene.Net.Facet/
-  topicUid: Lucene.Net.Facet
 - name: Lucene.Net.Classification
   href: Lucene.Net.Classification/
-  topicUid: Lucene.Net.Classification
 - name: Lucene.Net.Expressions
   href: Lucene.Net.Expressions/
-  topicUid: Lucene.Net.Expressions
 - name: Lucene.Net.Codecs
   href: Lucene.Net.Codecs/
-  topicUid: Lucene.Net.Codecs
 - name: Lucene.Net.Join
   href: Lucene.Net.Join/
-  topicUid: Lucene.Net.Join
 - name: Lucene.Net.Grouping
   href: Lucene.Net.Grouping/
-  topicUid: Lucene.Net.Grouping
 - name: Lucene.Net.Suggest
   href: Lucene.Net.Suggest/
-  topicUid: Lucene.Net.Suggest
 - name: Lucene.Net.Memory
   href: Lucene.Net.Memory/
-  topicUid: Lucene.Net.Memory
 - name: Lucene.Net.Spatial
   href: Lucene.Net.Spatial/
-  topicUid: Lucene.Net.Spatial
 - name: Lucene.Net.ICU
   href: Lucene.Net.ICU/
-  topicUid: Lucene.Net.ICU
 - name: Lucene.Net.CLI
   href: Lucene.Net.CLI/
-  topicUid: Lucene.Net.CLI
