@@ -496,7 +496,7 @@ namespace Lucene.Net.Util
         /// Max 10mb of static data stored in a test suite class after the suite is complete.
         /// Prevents static data structures leaking and causing OOMs in subsequent tests.
         /// </summary>
-        private static readonly long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
+        //private static readonly long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
 
         /// <summary>
         /// By-name list of ignored types like loggers etc. </summary>
