@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -21,10 +23,12 @@ namespace Lucene.Net.Index
 
     internal abstract class DocValuesWriter
     {
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
 
         public abstract void Finish(int numDoc);
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Flush(SegmentWriteState state, DocValuesConsumer consumer);
     }
 }

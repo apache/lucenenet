@@ -2,6 +2,7 @@
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
@@ -411,6 +412,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
             lock (this)
@@ -524,6 +526,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Does the actual merge, by calling <see cref="IndexWriter.Merge(MergePolicy.OneMerge)"/> </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         protected virtual void DoMerge(MergePolicy.OneMerge merge)
         {
             m_writer.Merge(merge);

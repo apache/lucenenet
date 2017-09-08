@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Lucene.Net.Index
 {
     /*
@@ -34,6 +36,7 @@ namespace Lucene.Net.Index
         /// "synchronized" so that even if the application is using
         /// multiple threads, only one merge may run at a time.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound) // LUCENENET NOTE: This was internal in the original, but the base class is public so there isn't much choice here
         {
             lock (this)

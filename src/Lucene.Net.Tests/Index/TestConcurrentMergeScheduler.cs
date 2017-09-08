@@ -70,8 +70,11 @@ namespace Lucene.Net.Index
             {
                 if (DoFail && TestThread())
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool isDoFlush = Util.StackTraceHelper.DoesStackTraceContainMethod("Flush");
-                    bool isClose = Util.StackTraceHelper.DoesStackTraceContainMethod("Close");    
+                    bool isClose = Util.StackTraceHelper.DoesStackTraceContainMethod("Close") ||
+                        Util.StackTraceHelper.DoesStackTraceContainMethod("Dispose");    
 
                     if (isDoFlush && !isClose && Random().NextBoolean())
                     {

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Lucene.Net.Index
@@ -161,6 +162,7 @@ namespace Lucene.Net.Index
         /// currently buffered docs.  this resets our state,
         /// discarding any docs added since last flush.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal virtual void Abort(ISet<string> createdFiles)
         {
             //System.out.println(Thread.currentThread().getName() + ": now abort seg=" + segmentInfo.name);
@@ -418,6 +420,7 @@ namespace Lucene.Net.Index
             return docCount;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void FinishDocument(Term delTerm)
         {
             /*
@@ -513,6 +516,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Flush all pending docs to a new segment </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal virtual FlushedSegment Flush()
         {
             Debug.Assert(numDocsInRAM > 0);
@@ -612,6 +616,7 @@ namespace Lucene.Net.Index
         /// Seals the <see cref="Index.SegmentInfo"/> for the new flushed segment and persists
         /// the deleted documents <see cref="IMutableBits"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal virtual void SealFlushedSegment(FlushedSegment flushedSegment)
         {
             Debug.Assert(flushedSegment != null);

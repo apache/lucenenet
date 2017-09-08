@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -77,6 +78,7 @@ namespace Lucene.Net.Store
             @delegate.Seek(pos);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush()
         {
             try

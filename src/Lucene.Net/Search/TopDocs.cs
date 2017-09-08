@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
 {
@@ -250,6 +251,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static TopDocs Merge(Sort sort, int topN, TopDocs[] shardHits)
         {
             return Merge(sort, 0, topN, shardHits);
@@ -260,6 +262,7 @@ namespace Lucene.Net.Search
         /// on the provided start and size. The return <c>TopDocs</c> will always have a scoreDocs with length of 
         /// at most <see cref="Util.PriorityQueue{T}.Count"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static TopDocs Merge(Sort sort, int start, int size, TopDocs[] shardHits)
         {
             Util.PriorityQueue<ShardRef> queue;

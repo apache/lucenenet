@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -64,6 +65,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Called when a document and all its fields have been added. </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void FinishDocument()
         {
         }
@@ -76,6 +78,7 @@ namespace Lucene.Net.Codecs
         /// Aborts writing entirely, implementation should remove
         /// any partially-written files, etc.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
 
         /// <summary>
@@ -97,6 +100,7 @@ namespace Lucene.Net.Codecs
         /// Implementations can override this method for more sophisticated
         /// merging (bulk-byte copying, etc).
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual int Merge(MergeState mergeState)
         {
             int docCount = 0;

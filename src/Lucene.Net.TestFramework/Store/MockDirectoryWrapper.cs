@@ -1,17 +1,17 @@
-using System.Collections.Concurrent;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Lucene.Net.Store
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using System.IO;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -229,6 +229,7 @@ namespace Lucene.Net.Store
             return @delegate is NRTCachingDirectory;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Sync(ICollection<string> names)
         {
             lock (this)
@@ -536,6 +537,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void DeleteFile(string name)
         {
             lock (this)
@@ -581,6 +583,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void DeleteFile(string name, bool forced)
         {
             lock (this)

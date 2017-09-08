@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -177,6 +178,7 @@ namespace Lucene.Net.Index
         /// actual deleted docIDs in the liveDocs <see cref="Util.IMutableBits"/> for
         /// each <see cref="SegmentReader"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual ApplyDeletesResult ApplyDeletesAndUpdates(IndexWriter.ReaderPool readerPool, IList<SegmentCommitInfo> infos)
         {
             lock (this)

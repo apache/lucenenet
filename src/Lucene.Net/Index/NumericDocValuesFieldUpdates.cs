@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -208,6 +209,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(DocValuesFieldUpdates other)
         {
             Debug.Assert(other is NumericDocValuesFieldUpdates);

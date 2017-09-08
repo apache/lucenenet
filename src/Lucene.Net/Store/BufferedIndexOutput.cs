@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -119,6 +120,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush()
         {
             crc.Update(buffer, 0, bufferPosition);

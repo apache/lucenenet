@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -38,6 +39,7 @@ namespace Lucene.Net.Index
             this.endConsumer = endConsumer;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             IDictionary<string, InvertedDocConsumerPerField> childFieldsToFlush = new Dictionary<string, InvertedDocConsumerPerField>();
@@ -60,6 +62,7 @@ namespace Lucene.Net.Index
             endConsumer.StartDocument();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
             // TODO: allow endConsumer.finishDocument to also return
@@ -68,6 +71,7 @@ namespace Lucene.Net.Index
             consumer.FinishDocument();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()
         {
             try

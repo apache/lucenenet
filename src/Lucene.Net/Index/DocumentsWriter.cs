@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -247,6 +248,7 @@ namespace Lucene.Net.Index
         ///  currently buffered docs.  this resets our state,
         ///  discarding any docs added since last flush.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void Abort(IndexWriter writer)
         {
             lock (this)

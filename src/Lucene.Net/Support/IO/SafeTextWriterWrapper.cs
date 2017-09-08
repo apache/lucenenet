@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 #if !NETSTANDARD
 using System.Runtime.Remoting;
 #endif
@@ -102,6 +103,7 @@ namespace Lucene.Net.Support.IO
             return Run(() => textWriter.Equals(obj));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush()
         {
             Run(() => textWriter.Flush());

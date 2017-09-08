@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -221,6 +222,7 @@ namespace Lucene.Net.Index
             get { return _mergeThreads.Count(x => x.IsAlive && x.CurrentMerge != null); }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
             using (_lock.Write())

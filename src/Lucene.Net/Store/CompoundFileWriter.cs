@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -372,6 +373,7 @@ namespace Lucene.Net.Store
                 this.isSeparate = isSeparate;
             }
 
+            [MethodImpl(MethodImplOptions.NoInlining)]
             public override void Flush()
             {
                 @delegate.Flush();

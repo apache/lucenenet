@@ -167,8 +167,9 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                /*typeof(PersistentSnapshotDeletionPolicy).Name.Equals(frame.GetType().Name) && */
-                if (StackTraceHelper.DoesStackTraceContainMethod("Persist"))
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
+                if (StackTraceHelper.DoesStackTraceContainMethod(typeof(PersistentSnapshotDeletionPolicy).Name, "Persist"))
                 {
                     throw new IOException("now fail on purpose");
                 }

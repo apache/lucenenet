@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -79,6 +80,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             Reset();
@@ -103,6 +105,7 @@ namespace Lucene.Net.Index
             bytePool.Reset(false, false);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Flush(IDictionary<string, InvertedDocConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             IDictionary<string, TermsHashConsumerPerField> childFields = new Dictionary<string, TermsHashConsumerPerField>();
@@ -140,6 +143,7 @@ namespace Lucene.Net.Index
             return new TermsHashPerField(docInverterPerField, this, nextTermsHash, fieldInfo);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
             consumer.FinishDocument(this);

@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -164,6 +165,7 @@ namespace Lucene.Net.Index
         /// segment which received updates while it was being merged. The given updates
         /// should override whatever updates are in that instance.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Merge(DocValuesFieldUpdates other);
 
         /// <summary>

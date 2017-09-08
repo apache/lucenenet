@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 #if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
@@ -259,6 +260,7 @@ namespace Lucene.Net.Index
             /// before the merge is committed then the merge will
             /// not be committed.
             /// </summary>
+            [MethodImpl(MethodImplOptions.NoInlining)]
             internal virtual void Abort()
             {
                 lock (this)

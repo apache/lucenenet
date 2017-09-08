@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -147,6 +148,7 @@ namespace Lucene.Net.Index
             return doVectors;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Abort()
         {
         }
@@ -167,6 +169,7 @@ namespace Lucene.Net.Index
             termsWriter.AddFieldToFlush(this);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishDocument()
         {
             Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));

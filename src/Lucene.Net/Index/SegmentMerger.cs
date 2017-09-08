@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -85,6 +86,7 @@ namespace Lucene.Net.Index
         /// <returns> The number of documents that were merged </returns>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="System.IO.IOException"> if there is a low-level IO error </exception>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal MergeState Merge()
         {
             if (!ShouldMerge)
@@ -437,6 +439,7 @@ namespace Lucene.Net.Index
             return docBase;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void MergeTerms(SegmentWriteState segmentWriteState)
         {
             IList<Fields> fields = new List<Fields>();

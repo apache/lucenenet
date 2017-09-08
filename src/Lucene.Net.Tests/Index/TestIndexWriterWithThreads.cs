@@ -446,6 +446,8 @@ namespace Lucene.Net.Index
 
                 if (DoFail)
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool sawAbortOrFlushDoc = StackTraceHelper.DoesStackTraceContainMethod("Abort")
                         || StackTraceHelper.DoesStackTraceContainMethod("FinishDocument");
                     bool sawClose = StackTraceHelper.DoesStackTraceContainMethod("Close")
@@ -512,7 +514,9 @@ namespace Lucene.Net.Index
             {
                 if (DoFail)
                 {
-                    if (StackTraceHelper.DoesStackTraceContainMethod("Flush") /*&& "Lucene.Net.Index.DocFieldProcessor".Equals(frame.GetType().Name)*/)
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
+                    if (StackTraceHelper.DoesStackTraceContainMethod(typeof(DocFieldProcessor).Name, "Flush"))
                     {
                         if (OnlyOnce)
                         {

@@ -32,10 +32,13 @@ namespace Lucene.Net.Util
 {
     public static class StackTraceHelper
     {
-        private static Regex s_methodNameRegex = new Regex(@"at\s+(?<fullyQualifiedMethod>.*\.(?<method>[\w`]+))\(");
+        private static readonly Regex METHOD_NAME_REGEX = new Regex(@"at\s+(?<fullyQualifiedMethod>.*\.(?<method>[\w`]+))\(");
 
         /// <summary>
         /// Matches the StackTrace for a method name.
+        /// <para/>
+        /// IMPORTANT: To make the tests pass in release mode, the method(s) named here 
+        /// must be decorated with [MethodImpl(MethodImplOptions.NoInlining)].
         /// </summary>
         public static bool DoesStackTraceContainMethod(string methodName)
         {
@@ -58,6 +61,9 @@ namespace Lucene.Net.Util
 
         /// <summary>
         /// Matches the StackTrace for a particular class (not fully-qualified) and method name.
+        /// <para/>
+        /// IMPORTANT: To make the tests pass in release mode, the method(s) named here 
+        /// must be decorated with [MethodImpl(MethodImplOptions.NoInlining)].
         /// </summary>
         public static bool DoesStackTraceContainMethod(string className, string methodName)
         {
@@ -78,6 +84,7 @@ namespace Lucene.Net.Util
 #endif
         }
 
+#if FEATURE_STACKTRACE
         private static IEnumerable<string> GetStackTrace(bool includeFullyQualifiedName)
         {
             var matches =
@@ -85,7 +92,7 @@ namespace Lucene.Net.Util
                 .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(line =>
                 {
-                    var match = s_methodNameRegex.Match(line);
+                    var match = METHOD_NAME_REGEX.Match(line);
 
                     if (!match.Success)
                     {
@@ -100,5 +107,6 @@ namespace Lucene.Net.Util
 
             return matches;
         }
+#endif
     }
 }

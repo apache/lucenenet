@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -67,6 +68,7 @@ namespace Lucene.Net.Util.Packed
         {
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         protected override void Flush()
         {
             Debug.Assert(m_off > 0);

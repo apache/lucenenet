@@ -971,6 +971,8 @@ namespace Lucene.Net.Index
                 }
                 if (sawMaybe && !failed)
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool seen = 
                         StackTraceHelper.DoesStackTraceContainMethod("ApplyDeletesAndUpdates") ||
                         StackTraceHelper.DoesStackTraceContainMethod("SlowFileExists");                 
@@ -989,6 +991,8 @@ namespace Lucene.Net.Index
                 }
                 if (!failed)
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     if (StackTraceHelper.DoesStackTraceContainMethod("ApplyDeletesAndUpdates"))
                     {
                         if (VERBOSE)

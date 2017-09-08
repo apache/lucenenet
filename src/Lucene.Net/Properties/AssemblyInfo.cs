@@ -29,11 +29,6 @@ using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(true)]
 
-// LUCENENET NOTE: This attribute is required to disable optimizations so the 
-// Lucene.Net.Tests.Index.TestIndexWriterExceptions.TestExceptionsDuringCommit() test
-// can read the stack trace information, otherwise the test fails.
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default | DebuggableAttribute.DebuggingModes.DisableOptimizations)]
-
 // for testing
 //[assembly: InternalsVisibleTo("Lucene.Net.Test, PublicKey=002400000480000094000000060200000024000052534131000400000100010075a07ce602f88e" +
 //                                                         "f263c7db8cb342c58ebd49ecdcc210fac874260b0213fb929ac3dcaf4f5b39744b800f99073eca" +
@@ -41,9 +36,9 @@ using System.Runtime.CompilerServices;
 //                                                         "08437802fb4f8fb80a05e59f80afb99f4ccd0dfe44065743543c4b053b669509d29d332cd32a0c" +
 //                                                         "b1e97e84")]
 
-// LUCENENET NOTE: For now it is not possible to use a SNK because we have unmanaged references in Analysis.Common.
+// LUCENENET NOTE: For now we are not using a strong name key.
 // However, we still need InternalsVisibleTo in order to prevent making everything public just for the sake of testing.
-// This has broad implications, though because many methods are marked "protected internal", which means other assemblies
+// This has broad implications because many methods are marked "protected internal", which means other assemblies
 // must update overridden methods to match.
 [assembly: InternalsVisibleTo("Lucene.Net.Tests")]
 [assembly: InternalsVisibleTo("Lucene.Net.TestFramework")]

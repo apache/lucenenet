@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Packed;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -107,6 +108,7 @@ namespace Lucene.Net.Index
             bytesUsed = newBytesUsed;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
         {
             int maxDoc = state.SegmentInfo.DocCount;
@@ -127,6 +129,7 @@ namespace Lucene.Net.Index
                                       GetOrdsEnumberable(maxDoc, ordMap));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
         }

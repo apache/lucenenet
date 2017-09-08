@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -22,6 +23,7 @@ namespace Lucene.Net.Index
     // LUCENENET specific
     public interface IMergeScheduler : ICloneable, IDisposable
     {
+        [MethodImpl(MethodImplOptions.NoInlining)]
         void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
     }
 }

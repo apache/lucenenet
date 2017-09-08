@@ -733,6 +733,8 @@ namespace Lucene.Net.Index
             {
                 if (DoFail)
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool sawAppend = StackTraceHelper.DoesStackTraceContainMethod(typeof(FreqProxTermsWriterPerField).Name, "Flush");
                     bool sawFlush = StackTraceHelper.DoesStackTraceContainMethod("Flush");
 
@@ -1076,6 +1078,8 @@ namespace Lucene.Net.Index
             {
                 if (DoFail)
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool foundMethod =
                         StackTraceHelper.DoesStackTraceContainMethod(typeof(MockDirectoryWrapper).Name, "Sync");
 
@@ -1162,6 +1166,8 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 bool isCommit = StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentInfos).Name, Stage);
                 bool isDelete = StackTraceHelper.DoesStackTraceContainMethod(typeof(MockDirectoryWrapper).Name, "DeleteFile");
                 bool isInGlobalFieldMap = StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentInfos).Name, "WriteGlobalFieldMap");
@@ -1699,6 +1705,8 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 bool fail = StackTraceHelper.DoesStackTraceContainMethod(typeof(TermVectorsConsumer).Name, Stage);
 
                 if (fail)
@@ -1870,6 +1878,8 @@ namespace Lucene.Net.Index
 
             public override IndexInput OpenInput(string name, IOContext context)
             {
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 if (DoFail
                     && name.StartsWith("segments_", StringComparison.Ordinal)
                     && StackTraceHelper.DoesStackTraceContainMethod("Read"))
@@ -2452,6 +2462,8 @@ namespace Lucene.Net.Index
                     return;
                 }
 
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 bool sawSeal = StackTraceHelper.DoesStackTraceContainMethod("SealFlushedSegment");
                 bool sawWrite = StackTraceHelper.DoesStackTraceContainMethod("WriteLiveDocs")
                         || StackTraceHelper.DoesStackTraceContainMethod("WriteFieldUpdates");
@@ -2652,6 +2664,8 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 bool maybeFail = StackTraceHelper.DoesStackTraceContainMethod("RollbackInternal");
 
                 if (maybeFail && Random().Next(10) == 0)

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -45,6 +46,7 @@ namespace Lucene.Net.Index
         /// <param name="trigger"> the <see cref="MergeTrigger"/> that caused this merge to happen </param>
         /// <param name="newMergesFound"> <c>true</c> iff any new merges were found by the caller; otherwise <c>false</c>
         ///  </param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
 
         /// <summary>

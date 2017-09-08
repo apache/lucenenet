@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
@@ -1042,6 +1043,7 @@ namespace Lucene.Net.Index
         /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Dispose()
         {
             Dispose(true);
@@ -1070,6 +1072,7 @@ namespace Lucene.Net.Index
         /// running merges to abort, wait until those merges have
         /// finished (which should be at most a few seconds), and
         /// then return. </param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void Dispose(bool waitForMerges)
         {
             // Ensure that only one thread actually gets to do the
@@ -2522,6 +2525,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void RollbackInternal()
         {
             bool success = false;
@@ -3840,6 +3844,7 @@ namespace Lucene.Net.Index
         /// <param name="triggerMerge"> if <c>true</c>, we may merge segments (if
         /// deletes or docs were flushed) if necessary </param>
         /// <param name="applyAllDeletes"> whether pending deletes should also </param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Flush(bool triggerMerge, bool applyAllDeletes)
         {
             // NOTE: this method cannot be sync'd because
@@ -4541,6 +4546,7 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void Merge(MergePolicy.OneMerge merge)
         {
             bool success = false;
@@ -5920,6 +5926,7 @@ namespace Lucene.Net.Index
         /// (unlike <see cref="File.Exists(string)"/>) throws <see cref="IOException"/> if
         /// there's some unexpected error.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool SlowFileExists(Directory dir, string fileName)
         {
             try

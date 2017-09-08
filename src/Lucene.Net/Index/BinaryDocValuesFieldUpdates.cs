@@ -1,5 +1,6 @@
-using System;
 using Lucene.Net.Documents;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -244,6 +245,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(DocValuesFieldUpdates other)
         {
             BinaryDocValuesFieldUpdates otherUpdates = (BinaryDocValuesFieldUpdates)other;

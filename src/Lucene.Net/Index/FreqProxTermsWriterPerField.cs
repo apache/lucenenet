@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -384,6 +385,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Abort()
         {
         }
@@ -395,6 +397,7 @@ namespace Lucene.Net.Index
         /// instances) found in this field and serialize them
         /// into a single RAM segment.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void Flush(string fieldName, FieldsConsumer consumer, SegmentWriteState state)
         {
             if (!fieldInfo.IsIndexed)
