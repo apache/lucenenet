@@ -55,14 +55,14 @@ namespace Lucene.Net.Search
     /// should have low value integers, later documents high values.
     ///
     /// <para/><see cref="float"/> term values should conform to values accepted by
-    /// <see cref="Single"/> (except that <c>NaN</c>
+    /// <see cref="float"/> (except that <c>NaN</c>
     /// and <c>Infinity</c> are not supported).
     /// <see cref="Documents.Document"/>s which should appear first in the sort
     /// should have low values, later documents high values.
     ///
     /// <para/><see cref="string"/> term values can contain any valid <see cref="string"/>, but should
     /// not be tokenized.  The values are sorted according to their
-    /// comparable natural order (<see cref="StringComparer.Ordinal"/>).  Note that using this type
+    /// comparable natural order (<see cref="System.StringComparer.Ordinal"/>).  Note that using this type
     /// of term value has higher memory requirements than the other
     /// two types.
     ///

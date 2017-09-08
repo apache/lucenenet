@@ -34,7 +34,7 @@ namespace TagSoup
 
         /// <summary>
         /// Construct an <see cref="ElementType"/>:
-        /// but it's better to use <see cref="Schema.Element()"/> instead.
+        /// but it's better to use <see cref="Schema.ElementType(string, int, int, int)"/> instead.
         /// The content model, member-of, and flags vectors are specified as ints.
         /// </summary>
         /// <param name="name">The element type name</param>

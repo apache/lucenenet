@@ -41,7 +41,7 @@ namespace Sax
     /// obtained through this interface to find the entity and/or
     /// notation corresponding with the attribute value.
     /// </remarks>
-    /// <seealso cref="IXMLReader.SetDTDHandler"/>
+    /// <seealso cref="IXMLReader.DTDHandler"/>
     public interface IDTDHandler
     {
         /// <summary>

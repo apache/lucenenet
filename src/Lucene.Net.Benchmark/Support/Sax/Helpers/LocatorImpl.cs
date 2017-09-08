@@ -45,7 +45,7 @@ namespace Sax.Helpers
         /// Zero-argument constructor.
         /// <para/>This will not normally be useful, since the main purpose
         /// of this class is to make a snapshot of an existing <see cref="ILocator"/>.
-        /// <summary>
+        /// </summary>
         public Locator()
         {
         }
@@ -57,7 +57,7 @@ namespace Sax.Helpers
         /// When the original locator changes, this copy will still keep
         /// the original values (and it can be used outside the scope of
         /// DocumentHandler methods).
-        /// <summary>
+        /// </summary>
         /// <param name="locator">The locator to copy.</param>
         public Locator(ILocator locator)
         {

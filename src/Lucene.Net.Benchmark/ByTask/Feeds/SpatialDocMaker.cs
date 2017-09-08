@@ -240,7 +240,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
     /// <summary>
     /// Converts one shape to another. Created by
-    /// <see cref="MakeShapeConverter(SpatialStrategy, Config, string)"/>.
+    /// <see cref="SpatialDocMaker.MakeShapeConverter(SpatialStrategy, Config, string)"/>.
     /// </summary>
     public interface IShapeConverter
     {

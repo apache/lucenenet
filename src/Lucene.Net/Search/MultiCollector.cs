@@ -39,7 +39,7 @@ namespace Lucene.Net.Search
         /// non-<code>null</code> ones.</description></item>
         /// </list>
         /// </summary>
-        /// <exception cref="ArgumentException">
+        /// <exception cref="System.ArgumentException">
         ///           if either 0 collectors were input, or all collectors are
         ///           <c>null</c>. </exception>
         public static ICollector Wrap(params ICollector[] collectors)

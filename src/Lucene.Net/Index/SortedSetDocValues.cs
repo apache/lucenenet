@@ -72,7 +72,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// If <paramref name="key"/> exists, returns its ordinal, else
         /// returns <c>-insertionPoint-1</c>, like
-        /// <see cref="Array.BinarySearch(Array, int, int, object)"/>.
+        /// <see cref="System.Array.BinarySearch(System.Array, int, int, object)"/>.
         /// </summary>
         /// <param name="key"> Key to look up</param>
         public virtual long LookupTerm(BytesRef key)

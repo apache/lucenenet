@@ -52,7 +52,7 @@ namespace Lucene.Net.Search.Spans
         /// NOTE: This will set <see cref="MultiTermQuery.MultiTermRewriteMethod"/>
         /// on the wrapped <paramref name="query"/>, changing its rewrite method to a suitable one for spans.
         /// Be sure to not change the rewrite method on the wrapped query afterwards! Doing so will
-        /// throw <see cref="NotSupportedException"/> on rewriting this query! </param>
+        /// throw <see cref="System.NotSupportedException"/> on rewriting this query! </param>
         public SpanMultiTermQueryWrapper(Q query)
         {
             this.m_query = query;

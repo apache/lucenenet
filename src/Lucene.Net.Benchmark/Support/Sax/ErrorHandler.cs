@@ -35,7 +35,7 @@ namespace Sax
     /// <see cref="FatalError(SAXParseException)"/>.  In other words, a SAX driver class 
     /// may throw an exception after reporting any fatalError.
     /// Also parsers may throw appropriate exceptions for non - XML errors.
-    /// For example, <see cref="IXMLReader.Parse()"/> would throw
+    /// For example, <see cref="IXMLReader.Parse(InputSource)"/> would throw
     /// an <see cref="System.IO.IOException"/> for errors accessing entities or the document.
     /// </remarks>
     /// <since>SAX 1.0</since>

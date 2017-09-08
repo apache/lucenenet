@@ -34,7 +34,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         public static readonly char[] END_CHAR_ARRAY = "末##末".ToCharArray();
 
         /// <summary>
-        /// Delimiters will be filtered to this character by <see cref="HHMM.SegTokenFilter"/>
+        /// Delimiters will be filtered to this character by <see cref="Hhmm.SegTokenFilter"/>
         /// </summary>
         public static readonly char[] COMMON_DELIMITER = new char[] { ',' };
 

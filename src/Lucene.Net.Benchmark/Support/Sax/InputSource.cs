@@ -23,7 +23,7 @@ namespace Sax
     /// with a specified encoding), and/or a character stream.
     /// <para/>
     /// There are two places that the application can deliver an
-    /// input source to the parser: as the argument to the <see cref="IParser.Parse(InputSource)"/>
+    /// input source to the parser: as the argument to the IParser.Parse(InputSource)
     /// method, or as the return value of the <see cref="IEntityResolver.ResolveEntity(string, string)"/>
     /// method.
     /// <para/>

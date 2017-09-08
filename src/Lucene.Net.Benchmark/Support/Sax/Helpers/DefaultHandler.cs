@@ -202,7 +202,7 @@ namespace Sax.Helpers
         /// each element (such as allocating a new tree node or writing
         /// output to a file).
         /// </summary>
-        /// <param name="prefix">The Namespace URI, or the empty string if the
+        /// <param name="uri">The Namespace URI, or the empty string if the
         /// element has no Namespace URI or if Namespace
         /// processing is not being performed.</param>
         /// <param name="localName">The local name (without prefix), or the

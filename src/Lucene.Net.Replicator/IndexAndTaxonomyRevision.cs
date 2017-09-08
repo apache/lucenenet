@@ -118,7 +118,6 @@ namespace Lucene.Net.Replicator
         /// Returns a <see cref="string"/> representation of a revision's version from the given
         /// <see cref="IndexCommit"/>s of the search and taxonomy indexes.
         /// </summary>
-        /// <param name="commit"></param>
         /// <returns>a <see cref="string"/> representation of a revision's version from the given <see cref="IndexCommit"/>s of the search and taxonomy indexes.</returns>
         public static string RevisionVersion(IndexCommit indexCommit, IndexCommit taxonomyCommit)
         {

@@ -117,7 +117,7 @@ namespace TagSoup
         /// Has a value of "true" if all XML names (for elements,
         /// prefixes, attributes, entities, notations, and local
         /// names), as well as Namespace URIs, will have been interned
-        /// using <see cref="string.Intern" />. This supports fast testing of
+        /// using <see cref="StringExtensions.Intern(string)" />. This supports fast testing of
         /// equality/inequality against string constants, rather than forcing
         /// slower calls to <see cref="string.Equals(object)" />.  (We always intern.)
         /// </summary>
@@ -126,19 +126,19 @@ namespace TagSoup
         /// <summary>
         /// Returns "true" if the Attributes objects passed by this
         /// parser in <see cref="IContentHandler.StartElement" /> implement the
-        /// <see cref="Sax.Net.Ext.IAttributes2" /> interface.	(They don't.)
+        /// <see cref="Sax.Ext.IAttributes2" /> interface.	(They don't.)
         /// </summary>
         public const string USE_ATTRIBUTES2_FEATURE = "http://xml.org/sax/features/use-attributes2";
 
         /// <summary>
         ///   Returns "true" if the Locator objects passed by this parser
         ///   parser in <see cref="IContentHandler.SetDocumentLocator" /> implement the
-        ///   <see cref="Sax.Net.Ext.ILocator2" /> interface.  (They don't.)
+        ///   <see cref="Sax.Ext.ILocator2" /> interface.  (They don't.)
         /// </summary>
         public const string USE_LOCATOR2_FEATURE = "http://xml.org/sax/features/use-locator2";
         /// <summary>
         ///   Returns "true" if, when setEntityResolver is given an object
-        ///   implementing the  <see cref="Sax.Net.Ext.IEntityResolver2" /> interface,
+        ///   implementing the  <see cref="Sax.Ext.IEntityResolver2" /> interface,
         ///   those new methods will be used.  (They won't be.)
         /// </summary>
         public const string USE_ENTITY_RESOLVER2_FEATURE = "http://xml.org/sax/features/use-entity-resolver2";

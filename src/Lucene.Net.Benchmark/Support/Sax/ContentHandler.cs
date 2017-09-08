@@ -22,12 +22,14 @@ namespace Sax
     /// method.The parser uses the instance to report
     /// basic document-related events like the start and end of elements
     /// and character data.
-    /// <para/>The order of events in this interface is very important, and
+    /// <para/>
+    /// The order of events in this interface is very important, and
     /// mirrors the order of information in the document itself.For
     /// example, all of an element's content (character data, processing
     /// instructions, and/or subelements) will appear, in order, between
-    /// the startElement event and the corresponding endElement event.</p>
-    /// <p>This interface is similar to the now-deprecated SAX 1.0
+    /// the startElement event and the corresponding endElement event.
+    /// <para/>
+    /// This interface is similar to the now-deprecated SAX 1.0
     /// DocumentHandler interface, but it adds support for Namespaces
     /// and for reporting skipped entities(in non-validating XML
     /// processors).

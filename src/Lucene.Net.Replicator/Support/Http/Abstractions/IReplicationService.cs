@@ -25,7 +25,7 @@
         /// <summary>
         /// Executes the replication task.
         /// </summary>
-        /// <exception cref="InvalidOperationException">required parameters are missing</exception>
+        /// <exception cref="System.InvalidOperationException">required parameters are missing</exception>
         void Perform(IReplicationRequest request, IReplicationResponse response);
     }
 }

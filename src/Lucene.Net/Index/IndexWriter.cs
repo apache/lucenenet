@@ -51,7 +51,8 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// An <see cref="IndexWriter"/> creates and maintains an index.
-    ///
+    /// </summary>
+    /// <remarks>
     /// <para>The <see cref="OpenMode"/> option on
     /// <see cref="IndexWriterConfig.OpenMode"/> determines
     /// whether a new index is created, or whether an existing index is
@@ -155,7 +156,7 @@ namespace Lucene.Net.Index
     /// it's in a Wait() or <see cref="Thread.Sleep(int)"/>), and will then throw
     /// the unchecked exception <see cref="ThreadInterruptedException"/>
     /// and <b>clear</b> the interrupt status on the thread.</para>
-    /// </summary>
+    /// </remarks>
 
     /*
      * Clarification: Check Points (and commits)

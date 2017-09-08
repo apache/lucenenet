@@ -25,7 +25,7 @@ namespace Lucene.Net.Analysis.Ja
     /// <para/>
     /// This acts as a lemmatizer for verbs and adjectives.
     /// To prevent terms from being stemmed use an instance of
-    /// <see cref="SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
+    /// <see cref="Miscellaneous.SetKeywordMarkerFilter"/> or a custom <see cref="TokenFilter"/> that sets
     /// the <see cref="IKeywordAttribute"/> before this <see cref="TokenStream"/>.
     /// </summary>
     public sealed class JapaneseBaseFormFilter : TokenFilter

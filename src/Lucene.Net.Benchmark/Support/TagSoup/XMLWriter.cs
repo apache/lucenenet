@@ -102,7 +102,7 @@ namespace TagSoup
     /// <para>
     /// You need to invoke one of the <c>Characters</c> methods
     /// explicitly to add newlines or indentation.  Alternatively, you
-    /// can use <see cref="com.megginson.sax.DataWriter DataWriter" />, which
+    /// can use DataWriter, which
     /// is derived from this class -- it is optimized for writing
     /// purely data-oriented (or field-oriented) XML, and does automatic
     /// linebreaks and indentation (but does not support mixed content
@@ -133,7 +133,7 @@ namespace TagSoup
     /// </para>
     /// <list type="number">
     ///     <item><description>the qualified name</description></item>
-    ///     <item><description>the <see cref="Prefix" /> property.</description></item>
+    ///     <item><description>the <see cref="SetPrefix(string, string)" /> method.</description></item>
     /// </list>
     /// <para>
     /// Whenever the XML writer finds a new Namespace URI, it checks
@@ -780,7 +780,7 @@ namespace TagSoup
         /// <summary>
         /// Write an empty element.
         /// This method writes an empty element tag rather than a start tag
-        /// followed by an end tag.  Both a <see cref="StartElement" />
+        /// followed by an end tag.  Both a <see cref="StartElement(string, string, string, IAttributes)" />
         /// and an <see cref="EndElement(string,string,string)" /> event will
         /// be passed on down the filter chain.
         /// </summary>
@@ -807,7 +807,11 @@ namespace TagSoup
         /// writing the empty tag, or if a handler further down
         /// the filter chain raises an exception.
         /// </exception>
-        /// <seealso cref="StartElement" />
+        /// <seealso cref="StartElement(string)" />
+        /// <seealso cref="StartElement(string, string)" />
+        /// <seealso cref="StartElement(string, string, string, IAttributes)"/>
+        /// <seealso cref="EndElement(string)"/>
+        /// <seealso cref="EndElement(string, string)"/>
         /// <seealso cref="EndElement(string,string,string) " />
         public virtual void EmptyElement(string uri, string localName, string qName, IAttributes atts)
         {

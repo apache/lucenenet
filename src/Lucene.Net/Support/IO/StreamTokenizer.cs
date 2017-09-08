@@ -117,35 +117,35 @@ namespace Lucene.Net.Support.IO
         /// </summary>
         private StreamTokenizer()
         {
-            /*
-             * Initialize the default state per specification. All byte values 'A'
-             * through 'Z', 'a' through 'z', and '\u00A0' through '\u00FF' are
-             * considered to be alphabetic.
-             */
+            //
+            // Initialize the default state per specification. All byte values 'A'
+            // through 'Z', 'a' through 'z', and '\u00A0' through '\u00FF' are
+            // considered to be alphabetic.
+            //
             WordChars('A', 'Z');
             WordChars('a', 'z');
             WordChars(160, 255);
-            /**
-             * All byte values '\u0000' through '\u0020' are considered to be white
-             * space.
-             */
+            //
+            // All byte values '\u0000' through '\u0020' are considered to be white
+            // space.
+            //
             WhitespaceChars(0, 32);
-            /**
-             * '/' is a comment character. Single quote '\'' and double quote '"'
-             * are string quote characters.
-             */
+            //
+            // '/' is a comment character. Single quote '\'' and double quote '"'
+            // are string quote characters.
+            //
             CommentChar('/');
             QuoteChar('"');
             QuoteChar('\'');
-            /**
-             * Numbers are parsed.
-             */
+            //
+            // Numbers are parsed.
+            //
             ParseNumbers();
-            /**
-             * Ends of lines are treated as white space, not as separate tokens.
-             * C-style and C++-style comments are not recognized. These are the
-             * defaults and are not needed in constructor.
-             */
+            //
+            // Ends of lines are treated as white space, not as separate tokens.
+            // C-style and C++-style comments are not recognized. These are the
+            // defaults and are not needed in constructor.
+            //
         }
 
         /// <summary>
@@ -266,9 +266,9 @@ namespace Lucene.Net.Support.IO
                     : tokenTypes[currentChar];
             while ((currentType & TOKEN_WHITE) != 0)
             {
-                /**
-                 * Skip over white space until we hit a new line or a real token
-                 */
+                //
+                // Skip over white space until we hit a new line or a real token
+                //
                 if (currentChar == '\r')
                 {
                     lineNumber++;
@@ -306,10 +306,10 @@ namespace Lucene.Net.Support.IO
                         : tokenTypes[currentChar];
             }
 
-            /**
-             * Check for digits before checking for words since digits can be
-             * contained within words.
-             */
+            //
+            // Check for digits before checking for words since digits can be
+            // contained within words.
+            //
             if ((currentType & TOKEN_DIGIT) != 0)
             {
                 StringBuilder digits = new StringBuilder(20);

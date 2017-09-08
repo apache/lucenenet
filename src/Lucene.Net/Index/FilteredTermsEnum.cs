@@ -32,7 +32,7 @@ namespace Lucene.Net.Index
     /// greater than all that precede it.
     /// <para/><c>Please note:</c> Consumers of this enumeration cannot
     /// call <c>Seek()</c>, it is forward only; it throws
-    /// <see cref="NotSupportedException"/> when a seeking method
+    /// <see cref="System.NotSupportedException"/> when a seeking method
     /// is called.
     /// </summary>
     public abstract class FilteredTermsEnum : TermsEnum
@@ -172,7 +172,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this enum does not support seeking! </summary>
-        /// <exception cref="NotSupportedException"> In general, subclasses do not
+        /// <exception cref="System.NotSupportedException"> In general, subclasses do not
         ///         support seeking. </exception>
         public override bool SeekExact(BytesRef term)
         {
@@ -181,7 +181,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this enum does not support seeking! </summary>
-        /// <exception cref="NotSupportedException"> In general, subclasses do not
+        /// <exception cref="System.NotSupportedException"> In general, subclasses do not
         ///         support seeking. </exception>
         public override SeekStatus SeekCeil(BytesRef term)
         {
@@ -190,7 +190,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this enum does not support seeking! </summary>
-        /// <exception cref="NotSupportedException"> In general, subclasses do not
+        /// <exception cref="System.NotSupportedException"> In general, subclasses do not
         ///         support seeking. </exception>
         public override void SeekExact(long ord)
         {
@@ -214,7 +214,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// this enum does not support seeking! </summary>
-        /// <exception cref="NotSupportedException"> In general, subclasses do not
+        /// <exception cref="System.NotSupportedException"> In general, subclasses do not
         ///         support seeking. </exception>
         public override void SeekExact(BytesRef term, TermState state)
         {

@@ -111,7 +111,7 @@ namespace Sax.Ext
         /// <summary>
         /// Returns the current value of an attribute's "specified" flag.
         /// </summary>
-        /// <param name="qName">The attribute index (zero-based).</param>
+        /// <param name="index">The attribute index (zero-based).</param>
         /// <returns>current flag value</returns>
         /// <exception cref="IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
         public bool IsSpecified(int index)
@@ -198,7 +198,8 @@ namespace Sax.Ext
         /// Add an attribute to the end of the list, setting its
         /// "specified" flag to true.  To set that flag's value
         /// to false, use <see cref="SetSpecified(int, bool)"/>.
-        /// <p>Unless the attribute <em>type</em> is CDATA, this attribute
+        /// <para/>
+        /// Unless the attribute <em>type</em> is CDATA, this attribute
         /// is marked as being declared in the DTD.  To set that flag's value
         /// to true for CDATA attributes, use <see cref="SetDeclared(int, bool)"/>.
         /// </summary>
