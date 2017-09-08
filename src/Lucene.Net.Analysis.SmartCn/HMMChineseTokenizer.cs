@@ -1,5 +1,5 @@
 ﻿// lucene version compatibility level: 4.8.1
-using Lucene.Net.Analysis.Cn.Smart.HHMM;
+using Lucene.Net.Analysis.Cn.Smart.Hhmm;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;

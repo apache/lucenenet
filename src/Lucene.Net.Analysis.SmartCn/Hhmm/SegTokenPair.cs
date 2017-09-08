@@ -1,8 +1,7 @@
 ﻿// lucene version compatibility level: 4.8.1
 using Lucene.Net.Support;
-using System;
 
-namespace Lucene.Net.Analysis.Cn.Smart.HHMM
+namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -22,26 +21,33 @@ namespace Lucene.Net.Analysis.Cn.Smart.HHMM
      */
 
     /// <summary>
-    /// SmartChineseAnalyzer internal node representation
-    /// <para>
-    /// Used by <see cref="BiSegGraph"/> to maximize the segmentation with the Viterbi algorithm.
-    /// </para>
+    /// A pair of tokens in <see cref="SegGraph"/>
+    /// <para/>
     /// @lucene.experimental
     /// </summary>
-    internal class PathNode : IComparable<PathNode>
+    internal class SegTokenPair
     {
+        [WritableArray]
+        public char[] CharArray { get; set; }
+
+        /// <summary>
+        /// index of the first token in <see cref="SegGraph"/>
+        /// </summary>
+        public int From { get; set; }
+
+        /// <summary>
+        /// index of the second token in <see cref="SegGraph"/>
+        /// </summary>
+        public int To { get; set; }
+
         public double Weight { get; set; }
 
-        public int PreNode { get; set; }
-
-        public virtual int CompareTo(PathNode pn)
+        public SegTokenPair(char[] idArray, int from, int to, double weight)
         {
-            if (Weight < pn.Weight)
-                return -1;
-            else if (Weight == pn.Weight)
-                return 0;
-            else
-                return 1;
+            this.CharArray = idArray;
+            this.From = from;
+            this.To = to;
+            this.Weight = weight;
         }
 
         /// <summary>
@@ -51,7 +57,12 @@ namespace Lucene.Net.Analysis.Cn.Smart.HHMM
         {
             int prime = 31;
             int result = 1;
-            result = prime * result + PreNode;
+            for (int i = 0; i < CharArray.Length; i++)
+            {
+                result = prime * result + CharArray[i];
+            }
+            result = prime * result + From;
+            result = prime * result + To;
             long temp;
             temp = Number.DoubleToInt64Bits(Weight);
             result = prime * result + (int)(temp ^ (int)((uint)temp >> 32));
@@ -69,8 +80,12 @@ namespace Lucene.Net.Analysis.Cn.Smart.HHMM
                 return false;
             if (GetType() != obj.GetType())
                 return false;
-            PathNode other = (PathNode)obj;
-            if (PreNode != other.PreNode)
+            SegTokenPair other = (SegTokenPair)obj;
+            if (!Arrays.Equals(CharArray, other.CharArray))
+                return false;
+            if (From != other.From)
+                return false;
+            if (To != other.To)
                 return false;
             if (Number.DoubleToInt64Bits(Weight) != Number
                 .DoubleToInt64Bits(other.Weight))

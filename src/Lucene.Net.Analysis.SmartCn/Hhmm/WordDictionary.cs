@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace Lucene.Net.Analysis.Cn.Smart.HHMM
+namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

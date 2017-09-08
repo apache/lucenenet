@@ -1,5 +1,5 @@
 ﻿// lucene version compatibility level: 4.8.1
-namespace Lucene.Net.Analysis.Cn.Smart.HHMM
+namespace Lucene.Net.Analysis.Cn.Smart.Hhmm
 {
     /*
      * Licensed to the Apache Software Foundation (ASF) under one or more

@@ -46,7 +46,9 @@
 
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-    <EmbeddedResource Include="stopwords.txt;HHMM\bigramdict.mem;HHMM\coredict.mem" />
+    <EmbeddedResource Include="stopwords.txt" />
+    <EmbeddedResource Include="Hhmm\bigramdict.mem" />
+    <EmbeddedResource Include="Hhmm\coredict.mem" />
   </ItemGroup>
 
   <ItemGroup>
