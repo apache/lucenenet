@@ -57,7 +57,7 @@
     <PackageReference Include="Spatial4n.Core.NTS" Version="0.4.1-beta00007" />
     <!-- Required by NUnit3TestAdapter on .NET Core -->
     <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
-    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.2" />
+    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.3" />
   </ItemGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
