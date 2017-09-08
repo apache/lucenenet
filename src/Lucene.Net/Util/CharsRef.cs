@@ -33,7 +33,10 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class CharsRef : IComparable<CharsRef>, ICharSequence, ICloneable
+    public sealed class CharsRef : IComparable<CharsRef>, ICharSequence
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// An empty character array for convenience </summary>

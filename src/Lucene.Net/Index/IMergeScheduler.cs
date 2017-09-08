@@ -21,9 +21,16 @@ namespace Lucene.Net.Index
      */
 
     // LUCENENET specific
-    public interface IMergeScheduler : ICloneable, IDisposable
+    public interface IMergeScheduler : IDisposable
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         [MethodImpl(MethodImplOptions.NoInlining)]
         void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
+
+#if !FEATURE_CLONEABLE
+        object Clone();
+#endif
     }
 }

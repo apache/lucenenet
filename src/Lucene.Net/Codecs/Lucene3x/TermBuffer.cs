@@ -32,7 +32,10 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// @lucene.experimental 
     /// </summary>
     [Obsolete("(4.0)")]
-    internal sealed class TermBuffer : ICloneable
+    internal sealed class TermBuffer
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         private string field;
         private Term term; // cached

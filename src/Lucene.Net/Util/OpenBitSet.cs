@@ -77,7 +77,10 @@ namespace Lucene.Net.Util
     ///     </item>
     /// </list>
     /// </summary>
-    public class OpenBitSet : DocIdSet, IBits, ICloneable
+    public class OpenBitSet : DocIdSet, IBits
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         protected internal long[] m_bits;
         protected internal int m_wlen; // number of words (elements) used in the array

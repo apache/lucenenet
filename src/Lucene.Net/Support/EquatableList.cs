@@ -33,7 +33,10 @@ namespace Lucene.Net.Support
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public class EquatableList<T> : IList<T>, IEquatable<IList<T>>, ICloneable
+    public class EquatableList<T> : IList<T>, IEquatable<IList<T>>
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         private readonly IList<T> list;
 

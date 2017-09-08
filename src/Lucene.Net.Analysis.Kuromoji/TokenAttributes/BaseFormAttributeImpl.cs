@@ -22,7 +22,10 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
     /// <summary>
     /// Attribute for <see cref="Token.GetBaseForm()"/>.
     /// </summary>
-    public class BaseFormAttribute : Attribute, IBaseFormAttribute, System.ICloneable
+    public class BaseFormAttribute : Attribute, IBaseFormAttribute
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         private Token token;
 

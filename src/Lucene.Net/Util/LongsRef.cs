@@ -35,7 +35,10 @@ namespace Lucene.Net.Util
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif
-    public sealed class Int64sRef : IComparable<Int64sRef>, ICloneable
+    public sealed class Int64sRef : IComparable<Int64sRef>
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// An empty <see cref="long"/> array for convenience

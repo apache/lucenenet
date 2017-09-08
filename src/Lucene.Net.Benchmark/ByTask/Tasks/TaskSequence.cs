@@ -641,7 +641,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             get { return tasks; }
         }
 
-        /// <seealso cref="ICloneable.Clone()"/>
         public override object Clone()
         {
             TaskSequence res = (TaskSequence)base.Clone();

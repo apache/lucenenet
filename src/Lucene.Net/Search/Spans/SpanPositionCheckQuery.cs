@@ -29,7 +29,10 @@ namespace Lucene.Net.Search.Spans
     /// <summary>
     /// Base class for filtering a <see cref="SpanQuery"/> based on the position of a match.
     /// </summary>
-    public abstract class SpanPositionCheckQuery : SpanQuery, ICloneable
+    public abstract class SpanPositionCheckQuery : SpanQuery
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         protected SpanQuery m_match;
 

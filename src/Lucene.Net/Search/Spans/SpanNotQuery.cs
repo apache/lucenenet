@@ -33,7 +33,10 @@ namespace Lucene.Net.Search.Spans
     /// Removes matches which overlap with another <see cref="SpanQuery"/> or
     /// within a x tokens before or y tokens after another <see cref="SpanQuery"/>.
     /// </summary>
-    public class SpanNotQuery : SpanQuery, ICloneable
+    public class SpanNotQuery : SpanQuery
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         private SpanQuery include;
         private SpanQuery exclude;

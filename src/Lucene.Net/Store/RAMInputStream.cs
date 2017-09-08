@@ -25,7 +25,10 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.internal
     /// </summary>
-    public class RAMInputStream : IndexInput, ICloneable
+    public class RAMInputStream : IndexInput
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         internal const int BUFFER_SIZE = RAMOutputStream.BUFFER_SIZE;
 

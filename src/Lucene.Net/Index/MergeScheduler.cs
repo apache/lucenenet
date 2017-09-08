@@ -30,7 +30,10 @@ namespace Lucene.Net.Index
     /// instance.</para>
     /// @lucene.experimental
     /// </summary>
-    public abstract class MergeScheduler : ICloneable, IDisposable, IMergeScheduler
+    public abstract class MergeScheduler : IDisposable, IMergeScheduler
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass

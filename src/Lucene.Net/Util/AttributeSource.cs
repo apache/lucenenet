@@ -101,7 +101,10 @@ namespace Lucene.Net.Util
         /// This class holds the state of an <see cref="AttributeSource"/>. </summary>
         /// <seealso cref="CaptureState()"/>
         /// <seealso cref="RestoreState(State)"/>
-        public sealed class State : ICloneable
+        public sealed class State
+#if FEATURE_CLONEABLE
+            : System.ICloneable
+#endif
         {
             internal Attribute attribute;
             internal State next;

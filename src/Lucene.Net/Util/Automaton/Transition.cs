@@ -43,7 +43,10 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    public class Transition : ICloneable
+    public class Transition
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         /*
          * CLASS INVARIANT: min<=max

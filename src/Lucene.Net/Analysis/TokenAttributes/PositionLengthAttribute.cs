@@ -24,7 +24,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IPositionLengthAttribute"/>. </summary>
-    public class PositionLengthAttribute : Attribute, IPositionLengthAttribute, System.ICloneable
+    public class PositionLengthAttribute : Attribute, IPositionLengthAttribute
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         private int positionLength = 1;
 

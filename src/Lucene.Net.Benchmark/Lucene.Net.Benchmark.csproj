@@ -65,6 +65,7 @@
     <PackageReference Include="Spatial4n.Core" Version="0.4.1-beta00007" />
   </ItemGroup>
 
+  <!-- NOTE: Microsoft's recommendation is not to use the ICloneable interface. We put in a FEATURE_CLONEABLE constant in case anyone wants to add it to the build -->
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="SharpZipLib.NETStandard" Version="0.86.0.1" />
   </ItemGroup>

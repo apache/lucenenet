@@ -70,7 +70,10 @@ namespace Lucene.Net.Util.Automaton
     /// </para>
     /// @lucene.experimental
     /// </summary>
-    public class Automaton : ICloneable
+    public class Automaton
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         /// <summary>
         /// Minimize using Hopcroft's O(n log n) algorithm. this is regarded as one of

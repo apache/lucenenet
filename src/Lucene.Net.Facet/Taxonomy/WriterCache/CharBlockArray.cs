@@ -39,7 +39,10 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
 
         private const int DEFAULT_BLOCK_SIZE = 32 * 1024; // 32 KB default size
 
-        internal sealed class Block : ICloneable
+        internal sealed class Block
+#if FEATURE_CLONEABLE
+            : System.ICloneable
+#endif
         {
             //internal const long serialVersionUID = 1L; // LUCENENET: Not used
 

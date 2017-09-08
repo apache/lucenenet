@@ -34,7 +34,10 @@ namespace Lucene.Net.Store
     /// <see cref="ObjectDisposedException"/> when the original one is closed.
     /// </summary>
     /// <seealso cref="Directory"/>
-    public abstract class IndexInput : DataInput, ICloneable, IDisposable
+    public abstract class IndexInput : DataInput, IDisposable
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         private readonly string resourceDescription;
 
