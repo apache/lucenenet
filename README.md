@@ -9,15 +9,15 @@ The Apache Lucene.Net web site is at:
 
 ## Supported Frameworks
 
-### Lucene.Net 4.8.0
-
-- [.NET Standard 1.5](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
-- .NET Framework 4.5.1
-
 ### Lucene.Net 3.0.3
 
 - .NET Framework 4.0
 - .NET Framework 3.5
+
+### Lucene.Net 4.8.0
+
+- [.NET Standard 1.5](https://docs.microsoft.com/en-us/dotnet/standard/net-standard)
+- .NET Framework 4.5.1
 
 ## Status
 
@@ -27,27 +27,43 @@ Working toward Lucene.Net 4.8.0 (currently in BETA)
 
 ## Download
 
-[![NuGet version](https://img.shields.io/nuget/v/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/)
-[![NuGet version](https://img.shields.io/nuget/v/Lucene.Net.Contrib.svg)](https://www.nuget.org/packages/Lucene.Net.Contrib/)
+### Lucene.Net 3.0.3
+
+##### Core Library
+
+[![NuGet version](https://img.shields.io/nuget/v/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/3.0.3)
 
 ```
 PM> Install-Package Lucene.Net
-PM> Install-Package Lucene.Net.Contrib
 ```
 
-[![NuGet version](https://img.shields.io/nuget/vpre/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/)
+##### All Packages
 
+- [Lucene.Net](https://www.nuget.org/packages/Lucene.Net/3.0.3) - Core library
+- [Lucene.Net.Contrib](https://www.nuget.org/packages/Lucene.Net.Contrib/3.0.3) - Various user contributed functionality and extras
+- [Lucene.Net.Contrib.Spatial](https://www.nuget.org/packages/Lucene.Net.Contrib.Spatial/3.0.3) - Geospatial Search
+- [Lucene.Net.Contrib.Spatial.NTS](https://www.nuget.org/packages/Lucene.Net.Contrib.Spatial.NTS/3.0.3) - Geospatial search with support for NetTopologySuite.
+
+### Lucene.Net 4.8.0
+
+##### Core Library
+
+[![NuGet version](https://img.shields.io/nuget/vpre/Lucene.Net.svg)](https://www.nuget.org/packages/Lucene.Net/)
 
 ```
 PM> Install-Package Lucene.Net -Pre
 ```
 
-As of 4.8.0, Lucene.Net is now divided into several specialized sub-packages, all available on NuGet.
+##### All Packages
 
 <!--- TO BE ADDED WHEN RELEASED 
 - [Lucene.Net.Analysis.Kuromoji](https://www.nuget.org/packages/Lucene.Net.Analysis.Kuromoji/) - Japanese Morphological Analyzer 
 - [Lucene.Net.Analysis.Phonetic](https://www.nuget.org/packages/Lucene.Net.Analysis.Phonetic/) - Analyzer for indexing phonetic signatures (for sounds-alike search)
-- [Lucene.Net.Analysis.SmartCn](https://www.nuget.org/packages/Lucene.Net.Analysis.SmartCn/) - Analyzer for indexing Chinese)-->
+- [Lucene.Net.Analysis.SmartCn](https://www.nuget.org/packages/Lucene.Net.Analysis.SmartCn/) - Analyzer for indexing Chinese)
+- [Lucene.Net.Analysis.UIMA](https://www.nuget.org/packages/Lucene.Net.Analysis.UIMA/) - Analysis integration with Apache UIMA)
+- [Lucene.Net.Benchmark](https://www.nuget.org/packages/Lucene.Net.Benchmark/) - System for benchmarking Lucene)
+- [Lucene.Net.Replicator](https://www.nuget.org/packages/Lucene.Net.Replicator/)  Files replication utility)
+-->
 
 
 - [Lucene.Net](https://www.nuget.org/packages/Lucene.Net/) - Core library
@@ -133,7 +149,7 @@ Building on the Command Line is only supported on Windows.
 ##### Prerequisites
 
 1. [Powershell](https://msdn.microsoft.com/en-us/powershell/scripting/setup/installing-windows-powershell) 3.0 or higher (see [this question](http://stackoverflow.com/questions/1825585/determine-installed-powershell-version) to check your Powershell version)
-2. [.NET Framework 4.5.1 Developer Pack](https://www.microsoft.com/en-us/download/details.aspx?id=40772) (Under Programs & Features, check whether you have the .NET Framework 4.5.1 SDK)
+2. [.NET Core SDK 2.0 or higher](https://www.microsoft.com/net/download/core)
 
 ##### Execution
 
@@ -193,29 +209,15 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 
 ### Visual Studio
 
-#### .NET Framework
+#### Prerequisites
 
-##### Prerequisites
-
-1. Visual Studio 2012+
-2. [.NET Framework 4.5.1 Developer Pack](https://www.microsoft.com/en-us/download/details.aspx?id=40772) (Under Programs & Features, check whether you have the .NET Framework 4.5.1 SDK)
+1. Visual Studio 2017
+2. [.NET Core SDK 2.0 or higher](https://www.microsoft.com/net/download/core)
 3. [NUnit3 Test Adapter](https://marketplace.visualstudio.com/items?itemName=NUnitDevelopers.NUnit3TestAdapter)
 
-##### Execution
+#### Execution
 
-Open `Lucene.Net.sln` to compile/test in .NET Framework 4.5.1
-
-
-#### .NET Core
-
-##### Prerequisites
-
-1. [Visual Studio 2015 Update 3](http://stackoverflow.com/a/40068343) (NOTE: Other Visual Studio versions, including 2017 are not supported)
-2. [1.1 with SDK Preview 2.1 build 3177](https://github.com/dotnet/core/blob/master/release-notes/download-archive.md)
-3. [NUnit3 Test Adapter](https://marketplace.visualstudio.com/items?itemName=NUnitDevelopers.NUnit3TestAdapter)
-
-##### Execution
-
-Open `Lucene.Net.Portable.sln` to compile under .NET Standard and test under .NET Core
-
-> NOTE: You may need to run `dotnet restore` from the command line prior to opening the solution in order to successfully compile.
+1. Open `Lucene.Net.sln` in Visual Studio.
+2. Choose the target framework to test by opening `build/TestTargetFramework.proj` and uncommenting the corresponding `<TargetFramework>`.
+3. Build a project or the entire solution, and wait for Visual Studio to discover the tests - this may take several minutes.
+4. Run or debug the tests in Test Explorer, optionally using the desired filters.
