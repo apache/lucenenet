@@ -2859,6 +2859,17 @@ namespace Lucene.Net.Util
                         else if (System.IO.File.Exists(f))
                             File.Delete(f);
                     }
+                    // LUCENENET specific: UnauthorizedAccessException doesn't subclass IOException as
+                    // AccessDeniedException does in Java, so we need a special case for it.
+                    catch (UnauthorizedAccessException e)
+                    {
+                        //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
+                        //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
+                        //                    {
+                        Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
+                        return;
+                        //                    }
+                    }
                     catch (IOException e)
                     {
                         //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
