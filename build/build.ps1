@@ -196,7 +196,7 @@ task Test -depends InstallSDK -description "This task runs the tests" {
 
 		foreach ($testProject in $testProjects) {
 			$testName = $testProject.Directory.Name
-			$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-build"
+			$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-restore --no-build"
 
 			$testResultDirectory = "$test_results_directory\$framework\$testName"
 			#Ensure-Directory-Exists $testResultDirectory
