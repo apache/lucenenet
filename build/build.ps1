@@ -165,7 +165,8 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 			!$_.Directory.Name.Contains(".Test") -and 
 			!$_.Directory.Name.Contains(".Demo") -and 
 			!$_.Directory.Name.Contains(".Cli") -and 
-			!$_.Directory.Name.Contains("lucene-cli")
+			!$_.Directory.Name.Contains("lucene-cli") -and 
+			!$_.Directory.Name.Contains(".Replicator.AspNetCore")
 		}
 		popd
 
