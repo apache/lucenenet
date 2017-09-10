@@ -86,7 +86,7 @@ task InstallSDK2 -description "This task makes sure the correct SDK version is i
 task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" {
 	if ($frameworks_to_test.Contains("netcoreapp1.")) {
 		# Make sure framework for .NET Core 1.0.4 is available
-		if ((Test-Path "$sdkPath/1.0.4" -eq $false) -and (Test-Path "$sdkPath/1.1.0" -eq $false)) {
+		if (((Test-Path "$sdkPath/1.0.4") -eq $false) -and ((Test-Path "$sdkPath/1.1.0") -eq $false)) {
 			Write-Host "Requires SDK version 1.0.4, installing..." -ForegroundColor Red
 			Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.4"
 		}
@@ -215,15 +215,36 @@ task Test -depends InstallSDK1IfRequired, Restore -description "This task runs t
 
 		foreach ($testProject in $testProjects) {
 			$testName = $testProject.Directory.Name
-			$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-restore --no-build"
-
 			$testResultDirectory = "$test_results_directory\$framework\$testName"
 			Ensure-Directory-Exists $testResultDirectory
 
-			$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
+			if ($framework.StartsWith("netcore")) {
+				$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-restore --no-build"
+				$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
 
-			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-				$testExpression = "$testExpression --filter $where"
+				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+					$testExpression = "$testExpression --filter $where"
+				}
+			} else {
+				$projectDirectory = $testProject.DirectoryName
+				Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+
+				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
+
+				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
+				if (-not (Test-Path $testBinary)) {
+					$testBinary = "$binaryRoot\win7-x32\$testName.dll"
+				}
+				if (-not (Test-Path $testBinary)) {
+					$testBinary = "$binaryRoot\$testName.dll"
+				} 
+
+				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
+				$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml"
+
+				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+					$testExpression = "$testExpression --where=$where"
+				}
 			}
 
 			Write-Host $testExpression -ForegroundColor Magenta
