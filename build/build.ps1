@@ -189,7 +189,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
-task Test -depends InstallSDK -description "This task runs the tests" {
+task Test -depends InstallSDK, Restore -description "This task runs the tests" {
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
