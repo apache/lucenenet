@@ -72,20 +72,14 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 	if (!$sdkVersion.Equals("1.0.4")) {
 		Write-Host "Require SDK version 1.0.4, installing..." -ForegroundColor Red
 		#Install the correct version of the .NET SDK for this build
-	    $success = Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.5;$?"
-		if (-not $success) {
-			throw "The .NET Core 1.0.4 SDK failed to install."
-		}
+		Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.4"
 	}
 
 	# Make sure framework for .NET Core 2.0.0 is available
 	if (!$sdkVersion.Equals("2.0.0")) {
 		Write-Host "Require SDK version 2.0.0, installing..." -ForegroundColor Red
 		#Install the correct version of the .NET SDK for this build
-	    $success = Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 2.0.0;$?"
-		if (-not $success) {
-			throw "The .NET Core 2.0.0 SDK failed to install."
-		}
+		Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 2.0.0"
 	}
 
 	# Safety check - this should never happen
