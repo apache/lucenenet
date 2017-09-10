@@ -26,6 +26,7 @@ properties {
 	[string]$test_results_directory = "$release_directory\TestResults"
 	[string]$solutionFile = "$base_directory\Lucene.Net.sln"
 	[string]$versionFile = "$base_directory\Version.proj"
+	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
 
 	[string]$buildCounter     = $(if ($buildCounter) { $buildCounter } else { $env:BuildCounter }) #NOTE: Pass in as a parameter (not a property) or environment variable to override
 	[string]$preReleaseCounterPattern = $(if ($preReleaseCounterPattern) { $preReleaseCounterPattern } else { if ($env:PreReleaseCounterPattern) { $env:PreReleaseCounterPattern } else { "00000" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
@@ -58,27 +59,19 @@ task Clean -description "This task cleans up the build directory" {
 	Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
-task InstallSDK -description "This task makes sure the correct SDK version is installed" {
+task InstallSDK2 -description "This task makes sure the correct SDK version is installed to build and run .NET Core 2.0 tests" {
 	& where.exe dotnet.exe
-	$sdkVersion = ""
+	$sdkVersion = [version]"0.0.0.0"
 
 	if ($LASTEXITCODE -eq 0) {
-		$sdkVersion = ((& dotnet.exe --version) | Out-String).Trim()
+		$sdkVersion = [version][string]((& dotnet.exe --version) | Out-String).Trim()
 	}
-	
+
 	Write-Host "Current SDK version: $sdkVersion" -ForegroundColor Yellow
 
-	# Make sure framework for .NET Core 1.0.4 is available
-	if (!$sdkVersion.Equals("1.0.4")) {
-		Write-Host "Require SDK version 1.0.4, installing..." -ForegroundColor Red
-		#Install the correct version of the .NET SDK for this build
-		Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.4"
-	}
-
 	# Make sure framework for .NET Core 2.0.0 is available
-	if (!$sdkVersion.Equals("2.0.0")) {
-		Write-Host "Require SDK version 2.0.0, installing..." -ForegroundColor Red
-		#Install the correct version of the .NET SDK for this build
+	if (($sdkVersion -lt ([version]"2.0.0")) -or ($sdkVersion -ge ([version]"3.0.0"))) {
+		Write-Host "Requires SDK version 2.0.0 or greater, installing..." -ForegroundColor Red
 		Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 2.0.0"
 	}
 
@@ -90,7 +83,24 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 	}
 }
 
-task Init -depends InstallSDK -description "This task makes sure the build environment is correctly setup" {
+task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" {
+	if ($frameworks_to_test.Contains("netcoreapp1.")) {
+		# Make sure framework for .NET Core 1.0.4 is available
+		if ((Test-Path "$sdkPath/1.0.4" -eq $false) -and (Test-Path "$sdkPath/1.1.0" -eq $false)) {
+			Write-Host "Requires SDK version 1.0.4, installing..." -ForegroundColor Red
+			Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.4"
+		}
+
+		# Safety check - this should never happen
+		& where.exe dotnet.exe
+
+		if ($LASTEXITCODE -ne 0) {
+			throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.0.4 SDK."
+		}
+	}
+}
+
+task Init -depends InstallSDK2 -description "This task makes sure the build environment is correctly setup" {
 	#Update TeamCity or MyGet with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
 	Write-Output "##myget[buildNumber '$packageVersion']"
@@ -189,7 +199,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
-task Test -depends InstallSDK, Restore -description "This task runs the tests" {
+task Test -depends InstallSDK1IfRequired, Restore -description "This task runs the tests" {
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
@@ -205,10 +215,10 @@ task Test -depends InstallSDK, Restore -description "This task runs the tests" {
 
 		foreach ($testProject in $testProjects) {
 			$testName = $testProject.Directory.Name
-			$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-build"
+			$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-restore --no-build"
 
 			$testResultDirectory = "$test_results_directory\$framework\$testName"
-			#Ensure-Directory-Exists $testResultDirectory
+			Ensure-Directory-Exists $testResultDirectory
 
 			$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
 
@@ -445,8 +455,7 @@ function Restore-File([string]$path) {
 	}
 }
 
-function Ensure-Directory-Exists([string] $path)
-{
+function Ensure-Directory-Exists([string] $path) {
 	if (!(Test-Path $path)) {
 		New-Item $path -ItemType Directory
 	}
