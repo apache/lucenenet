@@ -221,3 +221,5 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 2. Choose the target framework to test by opening `build/TestTargetFramework.proj` and uncommenting the corresponding `<TargetFramework>`.
 3. Build a project or the entire solution, and wait for Visual Studio to discover the tests - this may take several minutes.
 4. Run or debug the tests in Test Explorer, optionally using the desired filters.
+
+> **NOTE:** When running tests in Visual Studio, be sure to [set the default processor architecture to 64 bit](https://stackoverflow.com/a/45946727) to avoid running out of virtual memory on some tests.
