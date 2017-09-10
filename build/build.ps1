@@ -61,16 +61,16 @@ task Clean -description "This task cleans up the build directory" {
 
 task InstallSDK2 -description "This task makes sure the correct SDK version is installed to build and run .NET Core 2.0 tests" {
 	& where.exe dotnet.exe
-	$sdkVersion = [version]"0.0.0.0"
+	$sdkVersion = "0.0.0.0"
 
 	if ($LASTEXITCODE -eq 0) {
-		$sdkVersion = [version][string]((& dotnet.exe --version) | Out-String).Trim()
+		$sdkVersion = [string]((& dotnet.exe --version) | Out-String).Trim()
 	}
 
 	Write-Host "Current SDK version: $sdkVersion" -ForegroundColor Yellow
 
 	# Make sure framework for .NET Core 2.0.0 is available
-	if (($sdkVersion -lt ([version]"2.0.0")) -or ($sdkVersion -ge ([version]"3.0.0"))) {
+	if (($sdkVersion.Contains("-")) -or ([version]$sdkVersion -lt ([version]"2.0.0")) -or ([version]$sdkVersion -ge ([version]"3.0.0"))) {
 		Write-Host "Requires SDK version 2.0.0 or greater, installing..." -ForegroundColor Red
 		Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 2.0.0"
 	}
