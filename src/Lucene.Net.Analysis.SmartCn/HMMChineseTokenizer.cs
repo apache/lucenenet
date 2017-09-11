@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// Creates a new <see cref="HMMChineseTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>
         /// </summary>
         public HMMChineseTokenizer(AttributeFactory factory, TextReader reader)
-            : base(factory, reader, new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture) { EnableHacks = false })
+            : base(factory, reader, new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture) { EnableHacks = false })
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
