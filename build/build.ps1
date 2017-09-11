@@ -231,7 +231,10 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 			Ensure-Directory-Exists $testResultDirectory
 
 			if ($framework.StartsWith("netcore")) {
-				$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-restore --no-build"
+				$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-build"
+				if ($framework -ne "netcoreapp1.0") {
+					$testExpression = "$testExpression --no-restore"
+				}
 				$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
 
 				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
