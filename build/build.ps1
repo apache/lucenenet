@@ -129,7 +129,7 @@ task Init -depends InstallSDK -description "This task makes sure the build envir
 
 task Restore -description "This task restores the dependencies" {
 	Exec { 
-		&dotnet restore $solutionFile --no-dependencies /p:TestFrameworks=true
+		& dotnet.exe restore $solutionFile --no-dependencies /p:TestFrameworks=true
 	}
 }
 
@@ -162,7 +162,7 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
 		Write-Host "TestFrameworks set to: $testFrameworks" -ForegroundColor Green
 
 		Exec {
-			&dotnet msbuild $solutionFile /t:Build `
+			& dotnet.exe msbuild $solutionFile /t:Build `
 				/p:Configuration=$configuration `
 				/p:AssemblyVersion=$assemblyVersion `
 				/p:InformationalVersion=$pv `
