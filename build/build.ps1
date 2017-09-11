@@ -106,7 +106,7 @@ task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SD
 	}
 }
 
-task Init -depends InstallSDK2 -description "This task makes sure the build environment is correctly setup" {
+task Init -depends InstallSDK -description "This task makes sure the build environment is correctly setup" {
 	#Update TeamCity or MyGet with packageVersion
 	Write-Output "##teamcity[buildNumber '$packageVersion']"
 	Write-Output "##myget[buildNumber '$packageVersion']"
