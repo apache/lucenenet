@@ -975,8 +975,13 @@ namespace Lucene.Net.Benchmarks.ByTask
             assertEquals(new CultureInfo("en-US"), benchmark.RunData.Locale);
 
             // specify language + country + variant
-            benchmark = execBenchmark(getLocaleConfig("no,NO,NY"));
-            assertEquals(new CultureInfo("no-NO"/*, "NY"*/), benchmark.RunData.Locale);
+            //benchmark = execBenchmark(getLocaleConfig("no,NO,NY"));
+            //assertEquals(new CultureInfo("no-NO"/*, "NY"*/), benchmark.RunData.Locale);
+            // LUCENENET specific - in .NET Norwegian is specified as either nb-NO (Bokmål) or 
+            // nn-NO (Nynorsk) + a few other dialects. no-NO works sometimes, but is not
+            // supported across all OS's, so doesn't make a reliable test case.
+            benchmark = execBenchmark(getLocaleConfig("nb,NO,NY"));
+            assertEquals(new CultureInfo("nb-NO"/*, "NY"*/), benchmark.RunData.Locale);
         }
 
         private String[] getLocaleConfig(String localeParam)

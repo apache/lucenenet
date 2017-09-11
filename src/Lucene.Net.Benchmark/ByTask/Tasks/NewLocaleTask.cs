@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// <list type="bullet">
     ///     <item><description><c>de</c>: Language "de"</description></item>
     ///     <item><description><code>en,US</code>: Language "en", country "US"</description></item>
-    ///     <item><description><code>no-NO</code>: Language "no", country "NO"</description></item>
+    ///     <item><description><code>nb-NO</code>: Language "nb" (Bokmål), country "NO"</description></item>
     ///     <item><description><code>ROOT</code>: The <see cref="CultureInfo.InvariantCulture"/></description></item>
     /// </list>
     /// </remarks>
