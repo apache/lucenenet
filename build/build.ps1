@@ -224,6 +224,11 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 			$testResultDirectory = "$test_results_directory\$framework\$testName"
 			Ensure-Directory-Exists $testResultDirectory
 
+			# Special case - our CLI tool only supports .NET Core 2.0
+			if ($testProject.Contains("Tests.Cli") -and ($framework -ne "netcoreapp2.0")) {
+				continue
+			}
+
 			if ($framework.StartsWith("netcore")) {
 				$testExpression = "dotnet.exe test '$testProject' --configuration $configuration --framework $framework --no-restore --no-build"
 				$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
