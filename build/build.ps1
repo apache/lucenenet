@@ -83,8 +83,8 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 	}
 }
 
-task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SDK (required for testing under .NET Core 2.0)" {
-	if ($frameworks_to_test.Contains("netcoreapp2.")) {
+task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SDK (required for testing under .NET Core 2.0 or .NET Framework)" {
+	if ($frameworks_to_test.Contains("netcoreapp2.") -or $frameworks_to_test.Contains("net45")) {
 		Invoke-Task InstallSDK
 	}
 }
