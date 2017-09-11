@@ -59,7 +59,7 @@ task Clean -description "This task cleans up the build directory" {
 	Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
-task InstallSDK2 -description "This task makes sure the correct SDK version is installed to build and run .NET Core 2.0 tests" {
+task InstallSDK -description "This task makes sure the correct SDK version is installed to build" {
 	& where.exe dotnet.exe
 	$sdkVersion = "0.0.0.0"
 
@@ -80,6 +80,12 @@ task InstallSDK2 -description "This task makes sure the correct SDK version is i
 
 	if ($LASTEXITCODE -ne 0) {
 		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 2.0 SDK."
+	}
+}
+
+task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SDK (required for testing under .NET Core 2.0)" {
+	if ($frameworks_to_test.Contains("netcoreapp2.")) {
+		Invoke-Task InstallSDK
 	}
 }
 
@@ -199,7 +205,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
-task Test -depends InstallSDK1IfRequired, Restore -description "This task runs the tests" {
+task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -description "This task runs the tests" {
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
