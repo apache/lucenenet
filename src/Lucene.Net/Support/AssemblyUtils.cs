@@ -96,7 +96,9 @@ namespace Lucene.Net.Support
             {
                 "System.",
                 "Microsoft.",
-                "Mono."
+                "Mono.",
+                // In .NET Standard 2.0, we also need to exclude this new assembly type
+                "Anonymously Hosted DynamicMethods Assembly"
             };
 
             /// <summary>
