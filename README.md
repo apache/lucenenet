@@ -211,7 +211,7 @@ Then all you need to do is choose the `Lucene.Net Local Packages` feed from the 
 
 #### Prerequisites
 
-1. Visual Studio 2017
+1. Visual Studio 2017 version 15.3 or higher
 2. [.NET Core SDK 2.0 or higher](https://www.microsoft.com/net/download/core)
 3. [NUnit3 Test Adapter](https://marketplace.visualstudio.com/items?itemName=NUnitDevelopers.NUnit3TestAdapter)
 

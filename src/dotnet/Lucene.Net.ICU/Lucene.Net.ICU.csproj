@@ -48,28 +48,14 @@
 
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiAnalyzer.cs" Link="Analysis\Th\ThaiAnalyzer.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiTokenizer.cs" Link="Analysis\Th\ThaiTokenizer.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiTokenizerFactory.cs" Link="Analysis\Th\ThaiTokenizerFactory.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiWordFilter.cs" Link="Analysis\Th\ThaiWordFilter.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\ThaiWordFilterFactory.cs" Link="Analysis\Th\ThaiWordFilterFactory.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\**\*.cs" LinkBase="Analysis\Th" />
+    <EmbeddedResource Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\stopwords.txt" Link="Analysis\Th\stopwords.txt" />
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\CharArrayIterator.cs" Link="Analysis\Util\CharArrayIterator.cs" />
     <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\SegmentingTokenizerBase.cs" Link="Analysis\Util\SegmentingTokenizerBase.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationAttributeFactory.cs" Link="Collation\ICUCollationAttributeFactory.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationDocValuesField.cs" Link="Collation\ICUCollationDocValuesField.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyAnalyzer.cs" Link="Collation\ICUCollationKeyAnalyzer.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyFilter.cs" Link="Collation\ICUCollationKeyFilter.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\ICUCollationKeyFilterFactory.cs" Link="Collation\ICUCollationKeyFilterFactory.cs" />
-    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\TokenAttributes\ICUCollatedTermAttributeImpl.cs" Link="Collation\TokenAttributes\ICUCollatedTermAttributeImpl.cs" />
-    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\DefaultPassageFormatter.cs" Link="PostingsHighlight\DefaultPassageFormatter.cs" />
-    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\MultiTermHighlighting.cs" Link="PostingsHighlight\MultiTermHighlighting.cs" />
-    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\Passage.cs" Link="PostingsHighlight\Passage.cs" />
-    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\PassageFormatter.cs" Link="PostingsHighlight\PassageFormatter.cs" />
-    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\PassageScorer.cs" Link="PostingsHighlight\PassageScorer.cs" />
-    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\PostingsHighlighter.cs" Link="PostingsHighlight\PostingsHighlighter.cs" />
-    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\WholeBreakIterator.cs" Link="PostingsHighlight\WholeBreakIterator.cs" />
-    <Compile Include="..\..\Lucene.Net.Highlighter\VectorHighlight\BreakIteratorBoundaryScanner.cs" Link="VectorHighlight\BreakIteratorBoundaryScanner.cs" />
-    <EmbeddedResource Include="Analysis\Th\stopwords.txt" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Analysis\**\*.cs" LinkBase="Analysis" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\**\*.cs" LinkBase="Collation" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\**\*.cs" LinkBase="Search\PostingsHighlight" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\VectorHighlight\BreakIteratorBoundaryScanner.cs" Link="Search\VectorHighlight\BreakIteratorBoundaryScanner.cs" />
   </ItemGroup>
 
   <ItemGroup>

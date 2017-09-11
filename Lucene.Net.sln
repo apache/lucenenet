@@ -3,6 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 15.0.26730.8
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{8CA61D33-3590-4024-A304-7B1F75B50653}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4016BDAB-6C33-4D1E-9439-57B416EA45D5}"
+	ProjectSection(SolutionItems) = preProject
+		build.bat = build.bat
+		build\build.ps1 = build\build.ps1
+		src\CommonAssemblyInfo.cs = src\CommonAssemblyInfo.cs
+		TestTargetFramework.proj = TestTargetFramework.proj
+		Version.proj = Version.proj
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DF7EACE-2B25-43F6-B558-8520BF20BD76}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net", "src\Lucene.Net\Lucene.Net.csproj", "{3A0AA37E-2B7B-4416-B528-DA4E0E6A6706}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Analysis.Common", "src\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj", "{3D0366A8-515D-44F0-835F-4118853CFA14}"
@@ -97,20 +110,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Replicator", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Tests.Replicator", "src\Lucene.Net.Tests.Replicator\Lucene.Net.Tests.Replicator.csproj", "{10D76AFD-AFE9-4C45-8452-E489FC6362B8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotnet", "dotnet", "{8CA61D33-3590-4024-A304-7B1F75B50653}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lucene.Net.Replicator.AspNetCore", "src\dotnet\Lucene.Net.Replicator.AspNetCore\Lucene.Net.Replicator.AspNetCore.csproj", "{EFB2E31A-5917-49D5-A808-FE5061A550B4}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{4016BDAB-6C33-4D1E-9439-57B416EA45D5}"
-	ProjectSection(SolutionItems) = preProject
-		build.bat = build.bat
-		build\build.ps1 = build\build.ps1
-		src\CommonAssemblyInfo.cs = src\CommonAssemblyInfo.cs
-		TestTargetFramework.proj = TestTargetFramework.proj
-		Version.proj = Version.proj
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DF7EACE-2B25-43F6-B558-8520BF20BD76}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "lucene-cli", "src\dotnet\tools\lucene-cli\lucene-cli.csproj", "{119BBACD-D4DB-4E3B-922F-3DA83E0B29E2}"
 EndProject
