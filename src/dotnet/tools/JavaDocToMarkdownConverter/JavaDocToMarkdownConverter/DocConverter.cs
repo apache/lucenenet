@@ -197,6 +197,16 @@ namespace JavaDocToMarkdownConverter
                 temp = temp.Replace(item.Key, item.Value);
             }
 
+            int index = temp.IndexOf('#');
+            if (index > -1)
+            {
+                var sb = new StringBuilder(temp);
+                // special case - capitalize char after #
+                sb[index + 1] = char.ToUpperInvariant(sb[index + 1]);
+                // special case - replace Java # with .
+                temp = sb.ToString().Replace('#', '.');
+            }
+
             return temp;
         }
 
