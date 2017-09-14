@@ -977,6 +977,7 @@ namespace Lucene.Net.Benchmarks.ByTask
             // specify language + country + variant
             //benchmark = execBenchmark(getLocaleConfig("no,NO,NY"));
             //assertEquals(new CultureInfo("no-NO"/*, "NY"*/), benchmark.RunData.Locale);
+
             // LUCENENET specific - in .NET Norwegian is specified as either nb-NO (Bokmål) or 
             // nn-NO (Nynorsk) + a few other dialects. no-NO works sometimes, but is not
             // supported across all OS's, so doesn't make a reliable test case.
@@ -1031,9 +1032,18 @@ namespace Lucene.Net.Benchmarks.ByTask
             expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.Create(new CultureInfo("en-US"), Collator.Fallback.FallbackAllowed));
             assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
 
+            //// specify language + country + variant
+            //benchmark = execBenchmark(getCollatorConfig("no,NO,NY", collatorParam));
+            //expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.Create(new CultureInfo("no-NO"/*, "NY"*/), Collator.Fallback.FallbackAllowed));
+            //assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
+
+            // LUCENENET specific - in .NET Norwegian is specified as either nb-NO (Bokmål) or 
+            // nn-NO (Nynorsk) + a few other dialects. no-NO works sometimes, but is not
+            // supported across all OS's, so doesn't make a reliable test case.
+
             // specify language + country + variant
-            benchmark = execBenchmark(getCollatorConfig("no,NO,NY", collatorParam));
-            expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.Create(new CultureInfo("no-NO"/*, "NY"*/), Collator.Fallback.FallbackAllowed));
+            benchmark = execBenchmark(getCollatorConfig("nb,NO,NY", collatorParam));
+            expected = new ICUCollationKeyAnalyzer(TEST_VERSION_CURRENT, Collator.Create(new CultureInfo("nb-NO"/*, "NY"*/), Collator.Fallback.FallbackAllowed));
             assertEqualCollation(expected, benchmark.RunData.Analyzer, "foobar");
         }
 
