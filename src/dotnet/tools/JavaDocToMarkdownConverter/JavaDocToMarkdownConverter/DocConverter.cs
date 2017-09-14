@@ -10,7 +10,7 @@ namespace JavaDocToMarkdownConverter
 {
     public class DocConverter
     {
-        private static Regex LinkRegex = new Regex(@"{@link (?<cref>org\.apache\.lucene\.[^} ]*)\s?(?<text>[^}]*)}", RegexOptions.Compiled);
+        private static Regex LinkRegex = new Regex(@"{@link\s*?(?<cref>org\.apache\.lucene\.[^}]*)\s?(?<text>[^}]*)}", RegexOptions.Compiled);
         private static Regex RepoLinkRegex = new Regex(@"(?<=\()(?<cref>src-html/[^)]*)", RegexOptions.Compiled);
 
         private static Regex JavaCodeExtension = new Regex(@".java$", RegexOptions.Compiled);
