@@ -273,27 +273,36 @@ namespace Lucene.Net.Store
             {
                 lock (this)
                 {
-                    if (channel != null)
+                    // whether or not we have created a file, we need to remove
+                    // the lock instance from the dictionary that tracks them.
+                    try
                     {
-                        try
-                        {
+                        lock (NativeFSLockFactory._locks)
                             NativeFSLockFactory._locks.Remove(path);
-                        }
-                        finally
+                    }
+                    finally
+                    {
+                        if (channel != null)
                         {
-                            IOUtils.DisposeWhileHandlingException(channel);
-                            channel = null;
-                        }
+                            try
+                            {
+                                IOUtils.DisposeWhileHandlingException(channel);
+                            }
+                            finally
+                            {
+                                channel = null;
+                            }
 #if FEATURE_FILESTREAM_LOCK
-                        // try to delete the file if we created it, but it's not an error if we can't.
-                        try
-                        {
-                            File.Delete(path);
-                        }
-                        catch
-                        {
-                        }
+                            // try to delete the file if we created it, but it's not an error if we can't.
+                            try
+                            {
+                                File.Delete(path);
+                            }
+                            catch
+                            {
+                            }
 #endif
+                        }
                     }
                 }
             }
