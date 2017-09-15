@@ -237,8 +237,8 @@ namespace Lucene.Net.Replicator
             {
                 EnsureOpen();
 
-                ReplicationSession session = sessions[sessionId];
-                if (session != null && session.IsExpired(ExpirationThreshold))
+                ReplicationSession session;
+                if (sessions.TryGetValue(sessionId, out session) && session != null && session.IsExpired(ExpirationThreshold))
                 {
                     ReleaseSession(sessionId);
                     session = null;
