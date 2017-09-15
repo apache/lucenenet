@@ -90,9 +90,9 @@ namespace Lucene.Net.Replicator.Http
         private const int SHARD_IDX = 0, ACTION_IDX = 1;
 
         private readonly string context;
-        private readonly IDictionary<string, IReplicator> replicators;
+        private readonly IReadOnlyDictionary<string, IReplicator> replicators;
 
-        public ReplicationService(IDictionary<string, IReplicator> replicators, string context = REPLICATION_CONTEXT)
+        public ReplicationService(IReadOnlyDictionary<string, IReplicator> replicators, string context = REPLICATION_CONTEXT)
         {
             this.context = context;
             this.replicators = replicators;
