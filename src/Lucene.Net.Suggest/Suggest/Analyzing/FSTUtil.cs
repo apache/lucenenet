@@ -30,12 +30,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
     /// Exposes a utility method to enumerate all paths
     /// intersecting an <see cref="Automaton"/> with an <see cref="FST"/>.
     /// </summary>
-    public class FSTUtil
+    public static class FSTUtil // LUCENENET specific - made static since all members are static
     {
-        private FSTUtil()
-        {
-        }
-
         /// <summary>
         /// Holds a pair (automaton, fst) of states and accumulated output in the intersected machine. </summary>
         public sealed class Path<T>
@@ -50,7 +46,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             /// <summary>
             /// Output of the path so far: </summary>
-            internal T Output { get; set; }
+            public T Output { get; set; } // LUCENENET NOTE: This was made public in Lucene 5.1, but our users require it now, so we are doing it in 4.8.
 
             /// <summary>
             /// Input of the path so far: </summary>
