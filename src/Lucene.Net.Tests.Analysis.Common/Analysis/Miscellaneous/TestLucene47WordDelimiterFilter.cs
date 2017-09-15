@@ -293,7 +293,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.protWords = protWords;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protWords));
@@ -314,7 +314,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.protWords = protWords;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(new LargePosIncTokenFilter(outerInstance, tokenizer), flags, protWords));
@@ -335,7 +335,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.protWords = protWords;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 StopFilter filter = new StopFilter(TEST_VERSION_CURRENT, tokenizer, StandardAnalyzer.STOP_WORDS_SET);
@@ -381,7 +381,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.protectedWords = protectedWords;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protectedWords));
@@ -425,7 +425,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
                 this.protectedWords = protectedWords;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new KeywordTokenizer(reader);
                 return new TokenStreamComponents(tokenizer, new Lucene47WordDelimiterFilter(tokenizer, flags, protectedWords));

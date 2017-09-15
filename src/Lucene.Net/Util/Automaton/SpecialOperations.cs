@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,12 +41,8 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    internal sealed class SpecialOperations
+    public static class SpecialOperations // LUCENENET specific - made static since all members are static
     {
-        private SpecialOperations()
-        {
-        }
-
         /// <summary>
         /// Finds the largest entry whose value is less than or equal to <paramref name="c"/>, or 0 if
         /// there is no such entry.

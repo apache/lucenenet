@@ -30,12 +30,12 @@ namespace Lucene.Net.Analysis.Fa
             {
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 return new TokenStreamComponents(new MockTokenizer(reader));
             }
 
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
+            protected override TextReader InitReader(string fieldName, TextReader reader)
             {
                 return new PersianCharFilter(reader);
             }

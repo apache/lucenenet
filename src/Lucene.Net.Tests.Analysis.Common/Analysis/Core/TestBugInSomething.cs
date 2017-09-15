@@ -65,14 +65,14 @@ namespace Lucene.Net.Analysis.Core
                 this.map = map;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer t = new MockTokenizer(new TestRandomChains.CheckThatYouDidntReadAnythingReaderWrapper(reader), MockTokenFilter.ENGLISH_STOPSET, false, -65);
                 TokenFilter f = new CommonGramsFilter(TEST_VERSION_CURRENT, t, cas);
                 return new TokenStreamComponents(t, f);
             }
 
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
+            protected override TextReader InitReader(string fieldName, TextReader reader)
             {
                 reader = new MockCharFilter(reader, 0);
                 reader = new MappingCharFilter(map, reader);
@@ -321,7 +321,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new EdgeNGramTokenizer(TEST_VERSION_CURRENT, reader, 2, 94);
                 //TokenStream stream = new SopTokenFilter(tokenizer);
@@ -356,7 +356,7 @@ namespace Lucene.Net.Analysis.Core
                 this.table = table;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new WikipediaTokenizer(reader);
                 TokenStream stream = new SopTokenFilter(tokenizer);

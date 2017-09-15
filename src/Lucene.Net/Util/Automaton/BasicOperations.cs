@@ -41,12 +41,8 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    internal sealed class BasicOperations
+    public static class BasicOperations // LUCENENET specific - made static since all members are static
     {
-        private BasicOperations()
-        {
-        }
-
         /// <summary>
         /// Returns an automaton that accepts the concatenation of the languages of the
         /// given automata.

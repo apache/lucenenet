@@ -38,12 +38,8 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    internal sealed class MinimizationOperations
+    public static class MinimizationOperations // LUCENENET specific - made static since all members are static
     {
-        private MinimizationOperations()
-        {
-        }
-
         /// <summary>
         /// Minimizes (and determinizes if not already deterministic) the given
         /// automaton.

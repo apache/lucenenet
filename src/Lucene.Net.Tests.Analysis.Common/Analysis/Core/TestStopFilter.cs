@@ -225,7 +225,7 @@ namespace Lucene.Net.Analysis.Core
                 this.outerInstance = outerInstance;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 TokenFilter filter = new MockSynonymFilter(outerInstance, tokenizer);

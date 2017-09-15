@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Synonym
                 this.map = map;
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new MockTokenizer(reader, MockTokenizer.WHITESPACE, false);
                 return new TokenStreamComponents(tokenizer, new SynonymFilter(tokenizer, map, false));

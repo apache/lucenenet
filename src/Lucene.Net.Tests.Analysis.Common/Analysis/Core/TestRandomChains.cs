@@ -855,7 +855,7 @@ namespace Lucene.Net.Analysis.Core
                 }
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Random random = new Random(seed);
                 TokenizerSpec tokenizerSpec = NewTokenizer(random, reader);
@@ -865,7 +865,7 @@ namespace Lucene.Net.Analysis.Core
                 return new TokenStreamComponents(tokenizerSpec.tokenizer, filterSpec.stream);
             }
 
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
+            protected override TextReader InitReader(string fieldName, TextReader reader)
             {
                 Random random = new Random(seed);
                 CharFilterSpec charfilterspec = NewCharFilterChain(random, reader);

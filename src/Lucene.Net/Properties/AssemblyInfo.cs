@@ -42,12 +42,7 @@ using System.Runtime.CompilerServices;
 // must update overridden methods to match.
 [assembly: InternalsVisibleTo("Lucene.Net.Tests")]
 [assembly: InternalsVisibleTo("Lucene.Net.TestFramework")]
-[assembly: InternalsVisibleTo("Lucene.Net.Highlighter")] // For Automaton
-[assembly: InternalsVisibleTo("Lucene.Net.ICU")] // For Automaton
 [assembly: InternalsVisibleTo("Lucene.Net.Misc")]
-[assembly: InternalsVisibleTo("Lucene.Net.Suggest")] // For Automaton
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Common")] // For Automaton
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Highlighter")] // For Automaton
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.ICU")] // For Analysis.Util.TestSegmentingTokenizerBase
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc")]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.QueryParser")]
