@@ -55,11 +55,13 @@ $backedUpFiles = New-Object System.Collections.ArrayList
 task default -depends Pack
 
 task Clean -description "This task cleans up the build directory" {
+	Write-Host "##teamcity[progressMessage 'Cleaning']"
 	Remove-Item $release_directory -Force -Recurse -ErrorAction SilentlyContinue
 	Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
 task InstallSDK -description "This task makes sure the correct SDK version is installed to build" {
+	Write-Host "##teamcity[progressMessage 'Installing SDK']"
 	& where.exe dotnet.exe
 	$sdkVersion = "0.0.0.0"
 
@@ -84,12 +86,14 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 }
 
 task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SDK (required for testing under .NET Core 2.0 or .NET Framework)" {
+	Write-Host "##teamcity[progressMessage 'Installing SDK']"
 	if ($frameworks_to_test.Contains("netcoreapp2.") -or $frameworks_to_test.Contains("net45")) {
 		Invoke-Task InstallSDK
 	}
 }
 
 task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" {
+	Write-Host "##teamcity[progressMessage 'Installing SDK']"
 	if ($frameworks_to_test.Contains("netcoreapp1.")) {
 		# Make sure framework for .NET Core 1.0.4 is available
 		if (((Test-Path "$sdkPath/1.0.4") -eq $false) -and ((Test-Path "$sdkPath/1.1.0") -eq $false)) {
@@ -128,12 +132,14 @@ task Init -depends InstallSDK -description "This task makes sure the build envir
 }
 
 task Restore -description "This task restores the dependencies" {
+	Write-Host "##teamcity[progressMessage 'Restoring']"
 	Exec { 
 		& dotnet.exe restore $solutionFile --no-dependencies /p:TestFrameworks=true
 	}
 }
 
 task Compile -depends Clean, Init, Restore -description "This task compiles the solution" {
+	Write-Host "##teamcity[progressMessage 'Compiling']"
 	try {
 		if ($prepareForBuild -eq $true) {
 			Prepare-For-Build
@@ -181,6 +187,7 @@ task Compile -depends Clean, Init, Restore -description "This task compiles the 
 }
 
 task Pack -depends Compile -description "This task creates the NuGet packages" {
+	Write-Host "##teamcity[progressMessage 'Packing']"
 	#create the nuget package output directory
 	Ensure-Directory-Exists "$nuget_package_directory"
 
@@ -206,6 +213,7 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 }
 
 task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -description "This task runs the tests" {
+	Write-Host "##teamcity[progressMessage 'Testing']"
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
