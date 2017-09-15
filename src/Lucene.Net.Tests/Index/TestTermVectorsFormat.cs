@@ -84,10 +84,6 @@ namespace Lucene.Net.Index
         [Test]
         public override void TestLotsOfFields()
         {
-#if NETCOREAPP2_0
-            fail("LUCENENET TODO: Fatally crashes NUnit");
-#endif
-
             base.TestLotsOfFields();
         }
 
