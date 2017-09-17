@@ -263,37 +263,37 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 			$testResultDirectory = "$test_results_directory\$framework\$testName"
 			Ensure-Directory-Exists $testResultDirectory
 
-			if ($framework.StartsWith("netcore")) {
+			#if ($framework.StartsWith("netcore")) {
 				$testExpression = "dotnet.exe test $testProject --configuration $configuration --framework $framework --no-build"
-				if ($framework -ne "netcoreapp1.0") {
+				#if ($framework -ne "netcoreapp1.0") {
 					$testExpression = "$testExpression --no-restore"
 					$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
-				}
+				#}
 				
 				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
 					$testExpression = "$testExpression --filter $where"
 				}
-			} else {
-				$projectDirectory = $testProject.DirectoryName
-				Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+			#} else {
+			#	$projectDirectory = $testProject.DirectoryName
+			#	Write-Host "Directory: $projectDirectory" -ForegroundColor Green
 
-				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
+			#	$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
 
-				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
-				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot\win7-x32\$testName.dll"
-				}
-				if (-not (Test-Path $testBinary)) {
-					$testBinary = "$binaryRoot\$testName.dll"
-				} 
+			#	$testBinary = "$binaryRoot\win7-x64\$testName.dll"
+			#	if (-not (Test-Path $testBinary)) {
+			#		$testBinary = "$binaryRoot\win7-x32\$testName.dll"
+			#	}
+			#	if (-not (Test-Path $testBinary)) {
+			#		$testBinary = "$binaryRoot\$testName.dll"
+			#	} 
 
-				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
-				$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml"
+			#	$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
+			#	$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml"
 
-				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-					$testExpression = "$testExpression --where=$where"
-				}
-			}
+			#	if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+			#		$testExpression = "$testExpression --where=$where"
+			#	}
+			#}
 
 			Write-Host $testExpression -ForegroundColor Magenta
 
