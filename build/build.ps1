@@ -24,6 +24,7 @@ properties {
 	[string]$tools_directory  = "$base_directory\lib"
 	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
 	[string]$test_results_directory = "$release_directory\TestResults"
+	[string]$publish_directory = "$release_directory\Publish"
 	[string]$solutionFile = "$base_directory\Lucene.Net.sln"
 	[string]$versionFile = "$base_directory\Version.proj"
 	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
@@ -52,7 +53,7 @@ properties {
 
 $backedUpFiles = New-Object System.Collections.ArrayList
 
-task default -depends Pack
+task default -depends Publish
 
 task Clean -description "This task cleans up the build directory" {
 	Write-Host "##teamcity[progressMessage 'Cleaning']"
@@ -209,6 +210,29 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 		#if ($success -ne $true) {
 			Restore-Files $backedUpFiles
 		#}
+	}
+}
+
+task Publish -depends Pack -description "This task publishes the command line tools" {
+	Write-Host "##teamcity[progressMessage 'Publishing']"
+	#create the publish output directory
+	Ensure-Directory-Exists "$publish_directory"
+
+	pushd $base_directory
+	$tools = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? {
+		$_.Directory.FullName.Contains("\tools\") -or $_.Directory.FullName.Contains("/tools/") -and 
+		!$_.Directory.Name.Contains(".Test") -and
+		!$_.Directory.Name.Contains("JavaDocToMarkdownConverter")
+	}
+	popd
+
+	foreach ($tool in $tools) {
+		Write-Host "Publishing $tool..." -ForegroundColor Magenta
+
+		$toolName = [io.path]::GetFileNameWithoutExtension($tool)
+		Exec {
+			& dotnet.exe publish $tool --configuration $Configuration --output "$publish_directory\$toolName"
+		}
 	}
 }
 
