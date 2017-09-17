@@ -88,9 +88,10 @@ task InstallSDK -description "This task makes sure the correct SDK version is in
 
 task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SDK (required for testing under .NET Core 2.0 or .NET Framework)" {
 	Write-Host "##teamcity[progressMessage 'Installing SDK']"
-	if ($frameworks_to_test.Contains("netcoreapp2.") -or $frameworks_to_test.Contains("net45")) {
+	# netcoreapp1.0 requires the .NET Core SDK 2.0 or there is an 'illegal characters in path' error
+	#if ($frameworks_to_test.Contains("netcoreapp2.") -or $frameworks_to_test.Contains("net45")) {
 		Invoke-Task InstallSDK
-	}
+	#}
 }
 
 task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" {
