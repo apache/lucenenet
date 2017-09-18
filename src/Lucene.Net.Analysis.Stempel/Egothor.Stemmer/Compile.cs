@@ -113,22 +113,8 @@ namespace Egothor.Stemmer
                 qq++;
             }
 
-            string charset = null;
+            string charset = SystemProperties.GetProperty("egothor.stemmer.charset", "UTF-8");
             var stemmerTables = new List<string>();
-            try
-            {
-                charset = System.Environment.GetEnvironmentVariable("egothor.stemmer.charset");
-            }
-            catch
-            {
-            }
-            finally
-            {
-                if (string.IsNullOrEmpty(charset))
-                {
-                    charset = "UTF-8";
-                }
-            }
 
             // LUCENENET specific
             // command line argument overrides environment variable or default, if supplied

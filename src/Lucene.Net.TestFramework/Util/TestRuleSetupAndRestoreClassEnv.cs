@@ -248,8 +248,8 @@ namespace Lucene.Net.Util
             Codec.Default = codec;
 
             // Initialize locale/ timezone.
-            string testLocale = System.Environment.GetEnvironmentVariable("tests.locale") ?? "random";
-            string testTimeZone = System.Environment.GetEnvironmentVariable("tests.timezone") ?? "random";
+            string testLocale = SystemProperties.GetProperty("tests.locale", "random");
+            string testTimeZone = SystemProperties.GetProperty("tests.timezone", "random");
 
             // Always pick a random one for consistency (whether tests.locale was specified or not).
             savedLocale = CultureInfo.CurrentCulture;

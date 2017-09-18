@@ -196,15 +196,7 @@ namespace Lucene.Net.Util
             {
                 if (good_fast_hash_seed == 0)
                 {
-                    string prop;
-                    try
-                    {
-                        prop = Environment.GetEnvironmentVariable("tests.seed");
-                    }
-                    catch (System.Security.SecurityException)
-                    {
-                        prop = null;
-                    }
+                    string prop = SystemProperties.GetProperty("tests.seed", null);
 
                     if (prop != null)
                     {

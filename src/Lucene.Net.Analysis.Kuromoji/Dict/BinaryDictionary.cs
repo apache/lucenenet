@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
         static BinaryDictionary()
         {
-            string currentPath = GetSystemProperty("kuromoji.data.dir",
+            string currentPath = SystemProperties.GetProperty("kuromoji.data.dir",
 #if NETSTANDARD1_5
                 System.AppContext.BaseDirectory
 #else
@@ -204,22 +204,6 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
             // The file exists - open a stream.
             return new FileStream(path, FileMode.Open, FileAccess.Read);
-        }
-
-        // LUCENENET specific helper to load environment variables and ignore security exceptions
-        private static string GetSystemProperty(string property, string defaultValue)
-        {
-            string setting;
-            try
-            {
-                setting = Environment.GetEnvironmentVariable(property);
-            }
-            catch (SecurityException)
-            {
-                setting = null;
-            }
-
-            return (setting == null) ? defaultValue : setting;
         }
 
         public virtual void LookupWordIds(int sourceId, Int32sRef @ref)
