@@ -263,7 +263,7 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 			$testResultDirectory = "$test_results_directory\$framework\$testName"
 			Ensure-Directory-Exists $testResultDirectory
 
-			#if ($framework.StartsWith("netcore")) {
+			if ($framework.StartsWith("netcore")) {
 				$testExpression = "dotnet.exe test $testProject --configuration $configuration --framework $framework --no-build"
 				#if ($framework -ne "netcoreapp1.0") {
 					$testExpression = "$testExpression --no-restore"
@@ -273,27 +273,31 @@ task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -descri
 				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
 					$testExpression = "$testExpression --filter $where"
 				}
-			#} else {
-			#	$projectDirectory = $testProject.DirectoryName
-			#	Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+			} else {
+				# NOTE: Tried to use dotnet.exe to test .NET Framework, but it produces different test results
+				# (more failures). These failures don't show up in Visual Studio. So the assumption is that
+				# since .NET Core 2.0 tools are brand new they are not yet completely stable, we will continue to
+				# use NUnit3 Console to test with for the time being.
+				$projectDirectory = $testProject.DirectoryName
+				Write-Host "Directory: $projectDirectory" -ForegroundColor Green
 
-			#	$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
+				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
 
-			#	$testBinary = "$binaryRoot\win7-x64\$testName.dll"
-			#	if (-not (Test-Path $testBinary)) {
-			#		$testBinary = "$binaryRoot\win7-x32\$testName.dll"
-			#	}
-			#	if (-not (Test-Path $testBinary)) {
-			#		$testBinary = "$binaryRoot\$testName.dll"
-			#	} 
+				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
+				if (-not (Test-Path $testBinary)) {
+					$testBinary = "$binaryRoot\win7-x32\$testName.dll"
+				}
+				if (-not (Test-Path $testBinary)) {
+					$testBinary = "$binaryRoot\$testName.dll"
+				} 
 
-			#	$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
-			#	$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml"
+				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
+				$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml"
 
-			#	if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-			#		$testExpression = "$testExpression --where=$where"
-			#	}
-			#}
+				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+					$testExpression = "$testExpression --where=$where"
+				}
+			}
 
 			Write-Host $testExpression -ForegroundColor Magenta
 
