@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -40,7 +40,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             RunData.SetIndexReader(null);
             if (reader.RefCount != 1)
             {
-                SystemConsole.WriteLine("WARNING: CloseReader: reference count is currently " + reader.RefCount);
+                Console.WriteLine("WARNING: CloseReader: reference count is currently " + reader.RefCount);
             }
             reader.DecRef();
             return 1;

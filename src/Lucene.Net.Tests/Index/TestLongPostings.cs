@@ -1,15 +1,14 @@
 using Lucene.Net.Analysis.TokenAttributes;
-using System;
-using System.Diagnostics;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using NUnit.Framework;
+using System.Diagnostics;
+using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using System.IO;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

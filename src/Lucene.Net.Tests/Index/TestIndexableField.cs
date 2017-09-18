@@ -1,14 +1,13 @@
-
+using Lucene.Net.Documents;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using Lucene.Net.Documents;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -27,7 +26,6 @@ namespace Lucene.Net.Index
          */
 
     using Analyzer = Lucene.Net.Analysis.Analyzer;
-    using BooleanClause = Lucene.Net.Search.BooleanClause;
     using BooleanQuery = Lucene.Net.Search.BooleanQuery;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Codec = Lucene.Net.Codecs.Codec;

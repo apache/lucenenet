@@ -1,9 +1,10 @@
 using System;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using Directory = Lucene.Net.Store.Directory;
 
     /*

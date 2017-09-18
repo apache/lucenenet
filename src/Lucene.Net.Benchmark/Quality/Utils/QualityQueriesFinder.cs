@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using System;
 using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.Quality.Utils
 {
@@ -50,14 +50,16 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
         {
             if (args.Length < 1)
             {
-                SystemConsole.Error.WriteLine("Usage: java QualityQueriesFinder <index-dir>");
-                Environment.Exit(1);
+                // LUCENENET specific - our wrapper console shows correct usage
+                throw new ArgumentException();
+                //Console.Error.WriteLine("Usage: java QualityQueriesFinder <index-dir>");
+                //Environment.Exit(1);
             }
             QualityQueriesFinder qqf = new QualityQueriesFinder(FSDirectory.Open(new DirectoryInfo(args[0])));
             string[] q = qqf.BestQueries("body", 20);
             for (int i = 0; i < q.Length; i++)
             {
-                SystemConsole.WriteLine(newline + FormatQueryAsTrecTopic(i, q[i], null, null));
+                Console.WriteLine(newline + FormatQueryAsTrecTopic(i, q[i], null, null));
             }
         }
 
@@ -120,7 +122,7 @@ namespace Lucene.Net.Benchmarks.Quality.Utils
             {
                 TermDf tdf = pq.Pop();
                 res[i++] = tdf.word;
-                SystemConsole.WriteLine(i + ".   word:  " + tdf.df + "   " + tdf.word);
+                Console.WriteLine(i + ".   word:  " + tdf.df + "   " + tdf.word);
             }
             return res;
         }

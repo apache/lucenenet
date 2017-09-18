@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {

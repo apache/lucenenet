@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -1848,7 +1849,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                System.Console.WriteLine("Success");
+                Console.WriteLine("Success");
             }
             finally
             {

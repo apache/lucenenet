@@ -24,9 +24,6 @@ namespace Lucene.Net.Support
      * limitations under the License.
      */
 
-    // LUCENENET TODO: Replace all interaction with System.Console with this class
-    // so we can swap all input/ouput during testing or production scenarios
-
     /// <summary>
     /// Mimics <see cref="System.Console"/>, but allows for swapping
     /// the <see cref="TextWriter"/> of 

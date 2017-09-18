@@ -5,6 +5,7 @@ using System.Linq;
 using Lucene.Net.Randomized;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.SortedSet
 {

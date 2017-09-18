@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using Lucene.Net.Documents;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {

@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index.Sorter
 {

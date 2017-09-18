@@ -1,11 +1,11 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Stats;
 using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -186,7 +186,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
             if (reportStats && depth <= maxDepthLogStart && !ShouldNeverLogAtStart)
             {
-                SystemConsole.WriteLine("------------> starting task: " + GetName());
+                Console.WriteLine("------------> starting task: " + GetName());
             }
             Setup();
             Points pnts = runData.Points;
@@ -330,7 +330,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             if (++logStepCount % m_logStep == 0)
             {
                 double time = (((Stopwatch.GetTimestamp() / Stopwatch.Frequency) * 1000) - runData.StartTimeMillis) / 1000.0;
-                SystemConsole.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:0000000.00}", time) + " sec --> "
+                Console.WriteLine(string.Format(CultureInfo.InvariantCulture, "{0:0000000.00}", time) + " sec --> "
                     + Thread.CurrentThread.Name + " " + GetLogMessage(logStepCount));
             }
         }

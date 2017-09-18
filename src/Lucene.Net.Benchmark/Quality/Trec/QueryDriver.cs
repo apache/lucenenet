@@ -1,13 +1,13 @@
 ﻿using Lucene.Net.Benchmarks.Quality.Utils;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.Quality.Trec
 {
@@ -37,14 +37,16 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
         {
             if (args.Length < 4 || args.Length > 5)
             {
-                SystemConsole.Error.WriteLine("Usage: QueryDriver <topicsFile> <qrelsFile> <submissionFile> <indexDir> [querySpec]");
-                SystemConsole.Error.WriteLine("topicsFile: input file containing queries");
-                SystemConsole.Error.WriteLine("qrelsFile: input file containing relevance judgements");
-                SystemConsole.Error.WriteLine("submissionFile: output submission file for trec_eval");
-                SystemConsole.Error.WriteLine("indexDir: index directory");
-                SystemConsole.Error.WriteLine("querySpec: string composed of fields to use in query consisting of T=title,D=description,N=narrative:");
-                SystemConsole.Error.WriteLine("\texample: TD (query on Title + Description). The default is T (title only)");
-                Environment.Exit(1);
+                // LUCENENET specific - our wrapper console shows correct usage
+                throw new ArgumentException();
+                //Console.Error.WriteLine("Usage: QueryDriver <topicsFile> <qrelsFile> <submissionFile> <indexDir> [querySpec]");
+                //Console.Error.WriteLine("topicsFile: input file containing queries");
+                //Console.Error.WriteLine("qrelsFile: input file containing relevance judgements");
+                //Console.Error.WriteLine("submissionFile: output submission file for trec_eval");
+                //Console.Error.WriteLine("indexDir: index directory");
+                //Console.Error.WriteLine("querySpec: string composed of fields to use in query consisting of T=title,D=description,N=narrative:");
+                //Console.Error.WriteLine("\texample: TD (query on Title + Description). The default is T (title only)");
+                //Environment.Exit(1);
             }
 
             FileInfo topicsFile = new FileInfo(args[0]);
@@ -59,7 +61,7 @@ namespace Lucene.Net.Benchmarks.Quality.Trec
                 int maxResults = 1000;
                 string docNameField = "docname";
 
-                TextWriter logger = SystemConsole.Out; //new StreamWriter(SystemConsole, Encoding.GetEncoding(0));
+                TextWriter logger = Console.Out; //new StreamWriter(Console, Encoding.GetEncoding(0));
 
                 // use trec utilities to read trec topics into quality queries
                 TrecTopicsReader qReader = new TrecTopicsReader();

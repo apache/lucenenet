@@ -6,6 +6,7 @@ using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
 using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {

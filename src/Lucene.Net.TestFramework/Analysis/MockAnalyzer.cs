@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
 {
-    using System.IO;
-    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -23,6 +22,7 @@ namespace Lucene.Net.Analysis
          * limitations under the License.
          */
 
+    using CharacterRunAutomaton = Lucene.Net.Util.Automaton.CharacterRunAutomaton;
     using LuceneTestCase = Lucene.Net.Util.LuceneTestCase;
 
     /// <summary>

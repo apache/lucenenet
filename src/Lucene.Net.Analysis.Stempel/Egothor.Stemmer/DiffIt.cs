@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 /*
                     Egothor Software License version 1.00

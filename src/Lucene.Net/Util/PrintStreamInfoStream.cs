@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util
 {
@@ -41,7 +42,7 @@ namespace Lucene.Net.Util
 
     /// <summary>
     /// <see cref="InfoStream"/> implementation over a <see cref="TextWriter"/>
-    /// such as <see cref="Console.Out"/>.
+    /// such as <see cref="System.Console.Out"/>.
     /// <para/>
     /// NOTE: This is analogous to PrintStreamInfoStream in Lucene.
     /// <para/>
@@ -66,7 +67,7 @@ namespace Lucene.Net.Util
             // LUCENENET: Since we are wrapping our TextWriter to make it safe to use
             // after calling Dispose(), we need to determine whether it is a system stream
             // here instead of on demand.
-            this.isSystemStream = stream == SystemConsole.Out || stream == SystemConsole.Error;
+            this.isSystemStream = stream == Console.Out || stream == Console.Error;
             this.m_stream = typeof(SafeTextWriterWrapper).GetTypeInfo().IsAssignableFrom(stream.GetType()) ? stream : new SafeTextWriterWrapper(stream);
             this.m_messageID = messageID;
         }

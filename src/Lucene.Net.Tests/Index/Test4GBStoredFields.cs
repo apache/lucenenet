@@ -1,12 +1,13 @@
 using System;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Document = Documents.Document;
     using Field = Field;

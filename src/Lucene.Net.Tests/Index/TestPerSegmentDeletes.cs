@@ -1,10 +1,11 @@
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using ArrayUtil = Lucene.Net.Util.ArrayUtil;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;

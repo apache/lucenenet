@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -219,7 +220,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             }
             if (print)
             {
-                SystemConsole.WriteLine(sb.Append(newline).ToString());
+                Console.WriteLine(sb.Append(newline).ToString());
                 printNum++;
             }
         }

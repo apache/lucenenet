@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 /*
                     Egothor Software License version 1.00
@@ -227,7 +228,7 @@ namespace Egothor.Stemmer
                         default:
                             continue;
                     }
-                    trie.PrintInfo(System.Console.Out, prefix + " ");
+                    trie.PrintInfo(Console.Out, prefix + " ");
                 }
 
                 using (DataOutputStream os = new DataOutputStream(

@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask
 {
@@ -107,19 +107,21 @@ namespace Lucene.Net.Benchmarks.ByTask
             // verify command line args
             if (args.Length < 1)
             {
-                SystemConsole.WriteLine("Usage: java Benchmark <algorithm file>");
-                Environment.Exit(1);
+                // LUCENENET specific - usage info printed by our wrapper console
+                throw new ArgumentException();
+                //Console.WriteLine("Usage: java Benchmark <algorithm file>");
+                //Environment.Exit(1);
             }
 
             // verify input files 
             FileInfo algFile = new FileInfo(args[0]);
             if (!algFile.Exists /*|| !algFile.isFile() ||!algFile.canRead()*/ )
             {
-                SystemConsole.WriteLine("cannot find/read algorithm file: " + algFile.FullName);
+                Console.WriteLine("cannot find/read algorithm file: " + algFile.FullName);
                 Environment.Exit(1);
             }
 
-            SystemConsole.WriteLine("Running algorithm from: " + algFile.FullName);
+            Console.WriteLine("Running algorithm from: " + algFile.FullName);
 
             Benchmark benchmark = null;
             try
@@ -128,12 +130,12 @@ namespace Lucene.Net.Benchmarks.ByTask
             }
             catch (Exception e)
             {
-                SystemConsole.WriteLine(e.ToString());
+                Console.WriteLine(e.ToString());
                 Environment.Exit(1);
             }
 
-            SystemConsole.WriteLine("------------> algorithm:");
-            SystemConsole.WriteLine(benchmark.Algorithm.ToString());
+            Console.WriteLine("------------> algorithm:");
+            Console.WriteLine(benchmark.Algorithm.ToString());
 
             // execute
             try
@@ -142,13 +144,13 @@ namespace Lucene.Net.Benchmarks.ByTask
             }
             catch (Exception e)
             {
-                SystemConsole.WriteLine("Error: cannot execute the algorithm! " + e.Message);
-                SystemConsole.WriteLine(e.StackTrace);
+                Console.WriteLine("Error: cannot execute the algorithm! " + e.Message);
+                Console.WriteLine(e.StackTrace);
             }
 
-            SystemConsole.WriteLine("####################");
-            SystemConsole.WriteLine("###  D O N E !!! ###");
-            SystemConsole.WriteLine("####################");
+            Console.WriteLine("####################");
+            Console.WriteLine("###  D O N E !!! ###");
+            Console.WriteLine("####################");
         }
 
         /// <summary>

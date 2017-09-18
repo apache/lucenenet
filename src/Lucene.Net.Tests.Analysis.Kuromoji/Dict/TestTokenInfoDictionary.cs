@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using Lucene.Net.Util.Fst;
 using NUnit.Framework;
 using System;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis.Ja.Dict
 {

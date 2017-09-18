@@ -1,13 +1,14 @@
 ﻿using Lucene.Net.Documents;
+using Lucene.Net.Index;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Tests
 {
-    using Index;
-    using Util;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;

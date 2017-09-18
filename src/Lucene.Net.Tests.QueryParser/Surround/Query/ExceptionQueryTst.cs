@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.QueryParsers.Surround.Parser;
 using System;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Surround.Query
 {

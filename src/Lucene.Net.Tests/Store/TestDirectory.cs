@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Store
 {

@@ -4,6 +4,7 @@ using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util
 {

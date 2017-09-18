@@ -5,6 +5,7 @@ using System.Threading;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
 using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy.Directory
 {

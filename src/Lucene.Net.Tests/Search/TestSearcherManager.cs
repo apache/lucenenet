@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {

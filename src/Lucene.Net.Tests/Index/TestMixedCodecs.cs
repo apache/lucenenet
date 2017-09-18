@@ -1,12 +1,13 @@
+using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using Codec = Lucene.Net.Codecs.Codec;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;

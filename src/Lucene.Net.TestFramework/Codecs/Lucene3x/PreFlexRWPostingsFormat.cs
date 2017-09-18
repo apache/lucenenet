@@ -1,6 +1,5 @@
 using System;
-using System.Reflection;
-using System.Diagnostics;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Surround.Parser
 {
@@ -123,7 +124,7 @@ namespace Lucene.Net.QueryParsers.Surround.Parser
             }
             catch (System.IO.IOException e)
             {
-                System.Console.Error.WriteLine("Caught: " + e + "; ignoring.");
+                Console.Error.WriteLine("Caught: " + e + "; ignoring.");
             }
         }
 

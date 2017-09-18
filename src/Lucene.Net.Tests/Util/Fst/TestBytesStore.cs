@@ -1,6 +1,7 @@
 using System;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Fst
 {

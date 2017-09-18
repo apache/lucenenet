@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Stats;
-using Lucene.Net.Support;
 using System.Collections.Generic;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -38,10 +38,10 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             Report rp = ReportAll(RunData.Points.TaskStats);
 
-            SystemConsole.WriteLine();
-            SystemConsole.WriteLine("------------> Report All (" + rp.Count + " out of " + rp.OutOf + ")");
-            SystemConsole.WriteLine(rp.Text);
-            SystemConsole.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("------------> Report All (" + rp.Count + " out of " + rp.OutOf + ")");
+            Console.WriteLine(rp.Text);
+            Console.WriteLine();
             return 0;
         }
 

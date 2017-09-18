@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Globalization;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -67,7 +68,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             CultureInfo locale = CreateLocale(culture /*language, country, variant*/);
             RunData.Locale = locale;
-            SystemConsole.WriteLine("Changed Locale to: " +
+            Console.WriteLine("Changed Locale to: " +
                 (locale == null ? "null" :
                 (locale.EnglishName.Length == 0) ? "root locale" : locale.ToString()));
             return 1;

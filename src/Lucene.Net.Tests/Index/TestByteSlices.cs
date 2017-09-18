@@ -2,6 +2,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using System;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {

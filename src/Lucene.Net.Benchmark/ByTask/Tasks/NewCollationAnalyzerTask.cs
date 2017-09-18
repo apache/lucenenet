@@ -4,6 +4,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -102,7 +103,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     "Locale must be set with the NewLocale task!");
                 Analyzer analyzer = CreateAnalyzer(locale, impl);
                 RunData.Analyzer = analyzer;
-                SystemConsole.WriteLine("Changed Analyzer to: "
+                Console.WriteLine("Changed Analyzer to: "
                     + analyzer.GetType().Name + "(" + locale + ")");
             }
             catch (Exception e)

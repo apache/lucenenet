@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Automaton
 {

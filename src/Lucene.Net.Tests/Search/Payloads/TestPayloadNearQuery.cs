@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Payloads
 {

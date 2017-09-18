@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {

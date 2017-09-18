@@ -6,6 +6,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {

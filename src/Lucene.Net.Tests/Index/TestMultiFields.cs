@@ -1,17 +1,16 @@
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Store;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Analysis;
-    
-    using Lucene.Net.Store;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet
 {

@@ -1,15 +1,15 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

@@ -1,9 +1,9 @@
 ﻿using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Globalization;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -115,12 +115,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             if (disposing)
             {
-                SystemConsole.WriteLine("NRT reopen times:");
+                Console.WriteLine("NRT reopen times:");
                 for (int i = 0; i < reopenCount; i++)
                 {
-                    SystemConsole.Write(" " + reopenTimes[i]);
+                    Console.Write(" " + reopenTimes[i]);
                 }
-                SystemConsole.WriteLine();
+                Console.WriteLine();
             }
         }
 

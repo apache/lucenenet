@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Lucene.Net.Documents;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {

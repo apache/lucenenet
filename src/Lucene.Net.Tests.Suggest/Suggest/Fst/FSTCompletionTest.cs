@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Suggest.Fst
 {

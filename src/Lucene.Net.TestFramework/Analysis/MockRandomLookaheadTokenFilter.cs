@@ -1,6 +1,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
 {

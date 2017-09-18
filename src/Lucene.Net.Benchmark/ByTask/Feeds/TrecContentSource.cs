@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -177,7 +178,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 FileInfo f = inputFiles[nextFile++];
                 if (m_verbose)
                 {
-                    SystemConsole.WriteLine("opening: " + f + " length: " + f.Length);
+                    Console.WriteLine("opening: " + f + " length: " + f.Length);
                 }
                 try
                 {
@@ -190,7 +191,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 {
                     if (m_verbose)
                     {
-                        SystemConsole.WriteLine("Skipping 'bad' file " + f.FullName + " due to " + e.Message);
+                        Console.WriteLine("Skipping 'bad' file " + f.FullName + " due to " + e.Message);
                         continue;
                     }
                     throw new NoMoreDataException();
@@ -214,7 +215,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             // do not fail test just because a date could not be parsed
             if (m_verbose)
             {
-                SystemConsole.WriteLine("failed to parse date (assigning 'now') for: " + dateStr);
+                Console.WriteLine("failed to parse date (assigning 'now') for: " + dateStr);
             }
             return null;
         }
@@ -234,8 +235,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             {
                 if (m_verbose)
                 {
-                    SystemConsole.WriteLine("failed to dispose reader !");
-                    SystemConsole.WriteLine(e.ToString());
+                    Console.WriteLine("failed to dispose reader !");
+                    Console.WriteLine(e.ToString());
                 }
             }
             reader = null;

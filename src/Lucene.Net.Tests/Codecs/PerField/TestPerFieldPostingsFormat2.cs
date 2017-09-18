@@ -13,6 +13,7 @@ using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using Lucene.Net.Store;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.PerField
 {

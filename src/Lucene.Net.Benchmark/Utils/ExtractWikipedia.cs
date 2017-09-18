@@ -1,12 +1,12 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Feeds;
 using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.Utils
 {
@@ -43,7 +43,7 @@ namespace Lucene.Net.Benchmarks.Utils
         {
             this.outputDir = outputDir;
             this.m_docMaker = docMaker;
-            SystemConsole.WriteLine("Deleting all files in " + outputDir);
+            Console.WriteLine("Deleting all files in " + outputDir);
             FileInfo[] files = outputDir.GetFiles();
             for (int i = 0; i < files.Length; i++)
             {
@@ -100,7 +100,7 @@ namespace Lucene.Net.Benchmarks.Utils
         public virtual void Extract()
         {
             Document doc = null;
-            SystemConsole.WriteLine("Starting Extraction");
+            Console.WriteLine("Starting Extraction");
             long start = Support.Time.CurrentTimeMilliseconds();
             try
             {
@@ -115,7 +115,7 @@ namespace Lucene.Net.Benchmarks.Utils
                 //continue
             }
             long finish = Support.Time.CurrentTimeMilliseconds();
-            SystemConsole.WriteLine("Extraction took " + (finish - start) + " ms");
+            Console.WriteLine("Extraction took " + (finish - start) + " ms");
         }
 
         public static void Main(string[] args)
@@ -157,22 +157,24 @@ namespace Lucene.Net.Benchmarks.Utils
             docMaker.ResetInputs();
             if (wikipedia.Exists)
             {
-                SystemConsole.WriteLine("Extracting Wikipedia to: " + outputDir + " using EnwikiContentSource");
+                Console.WriteLine("Extracting Wikipedia to: " + outputDir + " using EnwikiContentSource");
                 outputDir.Create();
                 ExtractWikipedia extractor = new ExtractWikipedia(docMaker, outputDir);
                 extractor.Extract();
             }
             else
             {
-                PrintUsage();
+                // LUCENENET specific - our wrapper console shows correct usage
+                throw new ArgumentException();
+                //PrintUsage();
             }
         }
 
-        private static void PrintUsage()
-        {
-            SystemConsole.Error.WriteLine("Usage: java -cp <...> org.apache.lucene.benchmark.utils.ExtractWikipedia --input|-i <Path to Wikipedia XML file> " +
-                    "[--output|-o <Output Path>] [--discardImageOnlyDocs|-d]");
-            SystemConsole.Error.WriteLine("--discardImageOnlyDocs tells the extractor to skip Wiki docs that contain only images");
-        }
+        //private static void PrintUsage()
+        //{
+        //    Console.Error.WriteLine("Usage: java -cp <...> org.apache.lucene.benchmark.utils.ExtractWikipedia --input|-i <Path to Wikipedia XML file> " +
+        //            "[--output|-o <Output Path>] [--discardImageOnlyDocs|-d]");
+        //    Console.Error.WriteLine("--discardImageOnlyDocs tells the extractor to skip Wiki docs that contain only images");
+        //}
     }
 }

@@ -10,6 +10,7 @@ using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {

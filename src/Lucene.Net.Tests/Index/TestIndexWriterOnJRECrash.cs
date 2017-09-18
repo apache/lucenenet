@@ -6,6 +6,7 @@
 //using System.Threading;
 //using Lucene.Net.Randomized;
 //using Lucene.Net.Randomized.Generators;
+//using Console = Lucene.Net.Support.SystemConsole;
 
 //namespace Lucene.Net.Index
 //{

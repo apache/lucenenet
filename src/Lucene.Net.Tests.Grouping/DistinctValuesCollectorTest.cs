@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Grouping
 {

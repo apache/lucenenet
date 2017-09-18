@@ -1,14 +1,17 @@
+using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
-    using Attributes;
-    using Lucene.Net.Analysis;
-    using Lucene.Net.Index;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -25,10 +28,6 @@ namespace Lucene.Net.Codecs.Lucene3x
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-
-    using Lucene.Net.Store;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestSurrogates : LuceneTestCase

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {

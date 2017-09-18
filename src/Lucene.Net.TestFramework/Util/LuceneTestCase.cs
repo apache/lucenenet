@@ -37,6 +37,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util
 {
