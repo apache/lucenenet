@@ -153,7 +153,7 @@ namespace Lucene.Net.Support
                 if (!string.IsNullOrEmpty(input[lastElement]))
                     break;
             }
-            if (lastElement > 0 && lastElement < input.Length)
+            if (lastElement >= -1 && lastElement < input.Length)
             {
                 int end = lastElement + 1;
                 string[] result = new string[end];
