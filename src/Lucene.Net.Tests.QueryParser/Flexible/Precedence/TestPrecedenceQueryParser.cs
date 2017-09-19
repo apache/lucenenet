@@ -450,9 +450,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             //}
             //return df.format(calendar.getTime());
 
-
-            var calendar = CultureInfo.CurrentCulture.Calendar;
+            var calendar = new GregorianCalendar(GregorianCalendarTypes.Localized);
             DateTime lastDate = calendar.ToDateTime(year, month, day, 0, 0, 0, 0);
+            lastDate = TimeZoneInfo.ConvertTime(lastDate, TimeZoneInfo.Local);
 
             if (extendLastDate)
             {
