@@ -58,6 +58,8 @@ namespace Lucene.Net.Search
         private Counter counter;
         private TimeLimitingCollector.TimerThread counterThread;
 
+        private readonly static Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
+
         /**
          * initializes searcher with a document set
          */
@@ -93,7 +95,7 @@ namespace Lucene.Net.Search
             // start from 1, so that the 0th doc never matches
             for (int i = 1; i < docText.Length; i++)
             {
-                string[] docTextParts = Regex.Split(docText[i], "\\s+");
+                string[] docTextParts = WHITESPACE.Split(docText[i]).TrimEnd();
                 foreach (string docTextPart in docTextParts)
                 {
                     // large query so that search will be longer

@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Replicator.Http.Abstractions;
 using Lucene.Net.Support.IO;
+using Lucene.Net.Support;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -111,7 +112,7 @@ namespace Lucene.Net.Replicator.Http
             if (path.Length > actionLength && path[actionLength] == '/')
                 ++startIndex;
 
-            return path.Substring(startIndex).Split('/');
+            return path.Substring(startIndex).Split('/').TrimEnd();
         }
 
         private static string ExtractRequestParam(IReplicationRequest request, string paramName)

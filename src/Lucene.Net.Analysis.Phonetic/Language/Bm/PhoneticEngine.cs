@@ -464,7 +464,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 }
             }
 
-            IList<string> words = WHITESPACE.Split(input).ToList();
+            IList<string> words = WHITESPACE.Split(input).TrimEnd().ToList();
             IList<string> words2 = new List<string>();
 
             // special-case handling of word prefixes based upon the name type
@@ -473,7 +473,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 case NameType.SEPHARDIC:
                     foreach (string aWord in words)
                     {
-                        string[] parts = aWord.Split(new char[] { '\'' }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] parts = aWord.Split('\'').TrimEnd();
                         string lastPart = parts[parts.Length - 1];
                         words2.Add(lastPart);
                     }

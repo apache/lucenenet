@@ -160,6 +160,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
         /// </summary>
         private sealed class Rule
         {
+            private readonly static Regex PIPE = new Regex(@"\|", RegexOptions.Compiled);
+
             private readonly string pattern;
             private readonly string[] replacementAtStart;
             private readonly string[] replacementBeforeVowel;
@@ -169,9 +171,9 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     string replacementDefault)
             {
                 this.pattern = pattern;
-                this.replacementAtStart = Regex.Split(replacementAtStart, "\\|");
-                this.replacementBeforeVowel = Regex.Split(replacementBeforeVowel, "\\|");
-                this.replacementDefault = Regex.Split(replacementDefault, "\\|");
+                this.replacementAtStart = PIPE.Split(replacementAtStart);
+                this.replacementBeforeVowel = PIPE.Split(replacementBeforeVowel);
+                this.replacementDefault = PIPE.Split(replacementDefault);
             }
 
             // LUCENENET specific - need read access to pattern
@@ -237,6 +239,8 @@ namespace Lucene.Net.Analysis.Phonetic.Language
 
         /// <summary>Folding rules.</summary>
         private static readonly IDictionary<char, char> FOLDINGS = new Dictionary<char, char>();
+
+        private static readonly Regex WHITESPACE = new Regex(@"\s+", RegexOptions.Compiled);
 
         private class DaitchMokotoffRuleComparer : IComparer<Rule>
         {
@@ -312,7 +316,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     if (line.Contains("="))
                     {
                         // folding
-                        string[] parts = line.Split(new string[] { "=" }, StringSplitOptions.RemoveEmptyEntries);
+                        string[] parts = line.Split('=').TrimEnd();
                         if (parts.Length != 2)
                         {
                             throw new ArgumentException("Malformed folding statement split into " + parts.Length +
@@ -335,7 +339,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language
                     else
                     {
                         // rule
-                        string[] parts = Regex.Split(line, "\\s+");
+                        string[] parts = WHITESPACE.Split(line).TrimEnd();
                         if (parts.Length != 4)
                         {
                             throw new ArgumentException("Malformed rule statement split into " + parts.Length +

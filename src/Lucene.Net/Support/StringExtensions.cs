@@ -138,10 +138,6 @@ namespace Lucene.Net.Support
             return -1;
         }
 
-        // LUCENENET TODO: BUG Replace all calls to .Split("", StringSplitOptions.RemoveEmptyEntries)
-        // and Regex.Split("") with .Split("").TrimEnd() and Regex.Split("").TrimEnd() to match the 
-        // behavior of Java's Split() method.
-
         /// <summary>
         /// Removes null or empty elements from the end of a string array.
         /// </summary>

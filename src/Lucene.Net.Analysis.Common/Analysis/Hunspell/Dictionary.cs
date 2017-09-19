@@ -309,7 +309,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
                 else if (line.StartsWith(CIRCUMFIX_KEY, StringComparison.Ordinal))
                 {
-                    string[] parts = whitespacePattern.Split(line);
+                    string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
                         throw new Exception(string.Format("Illegal CIRCUMFIX declaration, line {0}", lineNumber));
@@ -318,7 +318,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
                 else if (line.StartsWith(IGNORE_KEY, StringComparison.Ordinal))
                 {
-                    string[] parts = whitespacePattern.Split(line);
+                    string[] parts = whitespacePattern.Split(line).TrimEnd();
                     if (parts.Length != 2)
                     {
                         throw new Exception(string.Format("Illegal IGNORE declaration, line {0}", lineNumber));
@@ -329,7 +329,7 @@ namespace Lucene.Net.Analysis.Hunspell
                 }
                 else if (line.StartsWith(ICONV_KEY, StringComparison.Ordinal) || line.StartsWith(OCONV_KEY, StringComparison.Ordinal))
                 {
-                    string[] parts = whitespacePattern.Split(line);
+                    string[] parts = whitespacePattern.Split(line).TrimEnd();
                     string type = parts[0];
                     if (parts.Length != 2)
                     {
@@ -407,7 +407,7 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             BytesRef scratch = new BytesRef();
             StringBuilder sb = new StringBuilder();
-            string[] args = whitespacePattern.Split(header);
+            string[] args = whitespacePattern.Split(header).TrimEnd();
 
             bool crossProduct = args[2].Equals("Y");
 
@@ -419,7 +419,7 @@ namespace Lucene.Net.Analysis.Hunspell
             {
                 Debug.Assert(affixWriter.Position == currentAffix << 3);
                 string line = reader.ReadLine();
-                string[] ruleArgs = whitespacePattern.Split(line);
+                string[] ruleArgs = whitespacePattern.Split(line).TrimEnd();
 
                 // from the manpage: PFX flag stripping prefix [condition [morphological_fields...]]
                 // condition is optional
@@ -554,7 +554,7 @@ namespace Lucene.Net.Analysis.Hunspell
             for (int i = 0; i < num; i++)
             {
                 string line = reader.ReadLine();
-                string[] parts = whitespacePattern.Split(line);
+                string[] parts = whitespacePattern.Split(line).TrimEnd();
                 if (parts.Length != 3)
                 {
                     throw new Exception("invalid syntax: " + line /*, reader.LineNumber */); // LUCENENET TODO: LineNumberReader
@@ -683,7 +683,7 @@ namespace Lucene.Net.Analysis.Hunspell
         /// <returns> <see cref="FlagParsingStrategy"/> that handles parsing flags in the way specified in the FLAG definition </returns>
         internal static FlagParsingStrategy GetFlagParsingStrategy(string flagLine)
         {
-            string[] parts = whitespacePattern.Split(flagLine);
+            string[] parts = whitespacePattern.Split(flagLine).TrimEnd();
             if (parts.Length != 2)
             {
                 throw new System.ArgumentException("Illegal FLAG specification: " + flagLine);
@@ -982,7 +982,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         private void ParseAlias(string line)
         {
-            string[] ruleArgs = whitespacePattern.Split(line);
+            string[] ruleArgs = whitespacePattern.Split(line).TrimEnd();
             if (aliases == null)
             {
                 //first line should be the aliases count
@@ -1057,7 +1057,7 @@ namespace Lucene.Net.Analysis.Hunspell
         {
             internal override char[] ParseFlags(string rawFlags)
             {
-                string[] rawFlagParts = rawFlags.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] rawFlagParts = rawFlags.Trim().Split(',').TrimEnd();
                 char[] flags = new char[rawFlagParts.Length];
                 int upto = 0;
 

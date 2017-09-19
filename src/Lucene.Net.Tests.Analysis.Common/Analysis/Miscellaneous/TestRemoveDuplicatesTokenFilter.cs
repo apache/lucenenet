@@ -51,7 +51,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
             IEnumerator<Token> toks = Arrays.AsList(tokens).GetEnumerator();
             TokenStream ts = new RemoveDuplicatesTokenFilter((new TokenStreamAnonymousInnerClassHelper(this, toks)));
 
-            AssertTokenStreamContents(ts, Regex.Split(expected, "\\s"));
+            AssertTokenStreamContents(ts, Regex.Split(expected, "\\s").TrimEnd());
         }
 
         private class TokenStreamAnonymousInnerClassHelper : TokenStream

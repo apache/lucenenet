@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -535,7 +536,7 @@ namespace Lucene.Net.Codecs.SimpleText
                                 docID * (1 + _field.OrdPattern.Length));
                     SimpleTextUtil.ReadLine(_input, _scratch);
                     var ordList = _scratch.Utf8ToString().Trim();
-                    _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    _currentOrds = ordList.Length == 0 ? new string[0] : ordList.Split(',').TrimEnd();
                     _currentIndex = 0;
                 }
                 catch (System.IO.IOException ioe)

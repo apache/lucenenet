@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ namespace Lucene.Net.Analysis.Hunspell
 
         public virtual void Inform(IResourceLoader loader)
         {
-            string[] dicts = dictionaryFiles.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] dicts = dictionaryFiles.Split(',').TrimEnd();
 
             Stream affix = null;
             IList<Stream> dictionaries = new List<Stream>();

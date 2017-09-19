@@ -1,9 +1,11 @@
-using System;
 using Lucene.Net.Documents;
+using Lucene.Net.Support;
+using NUnit.Framework;
+using System;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
     using AtomicReaderContext = Lucene.Net.Index.AtomicReaderContext;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
@@ -38,6 +40,8 @@ namespace Lucene.Net.Search
     [TestFixture]
     public class TestSloppyPhraseQuery : LuceneTestCase
     {
+        private static Regex SPACES = new Regex(" +", RegexOptions.Compiled);
+
         private const string S_1 = "A A A";
         private const string S_2 = "A 1 2 3 A 4 5 6 A";
 
@@ -194,10 +198,12 @@ namespace Lucene.Net.Search
             return doc;
         }
 
+        
+
         private static PhraseQuery MakePhraseQuery(string terms)
         {
             PhraseQuery query = new PhraseQuery();
-            string[] t = terms.Split(" +".ToCharArray());
+            string[] t = SPACES.Split(terms).TrimEnd();
             for (int i = 0; i < t.Length; i++)
             {
                 query.Add(new Term("f", t[i]));

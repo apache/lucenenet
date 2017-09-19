@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis
 
                 InputLength = sb.Length;
 
-                string[] parts = sb.ToString().Split(' ');
+                string[] parts = sb.ToString().Split(' ').TrimEnd();
 
                 Tokens = new List<Token>();
                 int pos = 0;
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis
                 //System.out.println("again");
                 foreach (string part in parts)
                 {
-                    string[] overlapped = part.Split('/');
+                    string[] overlapped = part.Split('/').TrimEnd();
                     bool firstAtPos = true;
                     int minPosLength = int.MaxValue;
                     foreach (string part2 in overlapped)

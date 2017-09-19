@@ -190,7 +190,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             }
 
                             // split it up
-                            string[] parts = WHITESPACE.Split(line);
+                            string[] parts = WHITESPACE.Split(line).TrimEnd();
 
                             if (parts.Length != 3)
                             {
@@ -199,7 +199,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             }
 
                             Regex pattern = new Regex(parts[0], RegexOptions.Compiled);
-                            string[] langs = TOKEN.Split(parts[1]);
+                            string[] langs = TOKEN.Split(parts[1]).TrimEnd();
                             bool accept = parts[2].Equals("true");
 
                             rules.Add(new LangRule(pattern, new HashSet<string>(langs), accept));

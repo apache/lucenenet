@@ -2,6 +2,7 @@
 using Lucene.Net.Facet.Taxonomy.WriterCache;
 using Lucene.Net.Index;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -150,7 +151,7 @@ namespace Lucene.Net.Replicator
         /// </summary>
         public virtual int CompareTo(string version)
         {
-            string[] parts = version.Split(':');
+            string[] parts = version.Split(':').TrimEnd();
             long indexGen = long.Parse(parts[0], NumberStyles.HexNumber);
             long taxonomyGen = long.Parse(parts[1], NumberStyles.HexNumber);
             long indexCommitGen = indexCommit.Generation;

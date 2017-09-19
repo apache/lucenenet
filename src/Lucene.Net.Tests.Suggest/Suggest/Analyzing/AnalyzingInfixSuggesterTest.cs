@@ -751,7 +751,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                         query += " ";
                     }
 
-                    string[] queryTerms = Regex.Split(query, "\\s", RegexOptions.Compiled);
+                    string[] queryTerms = Regex.Split(query, "\\s", RegexOptions.Compiled).TrimEnd();
                     bool allTermsRequired = Random().nextInt(10) == 7;
                     bool doHilite = Random().nextBoolean();
 
@@ -765,7 +765,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                     for (int i = 0; i < visibleUpto; i++)
                     {
                         Input input = inputs.ElementAt(i);
-                        string[] inputTerms = Regex.Split(input.term.Utf8ToString(), "\\s", RegexOptions.Compiled);
+                        string[] inputTerms = Regex.Split(input.term.Utf8ToString(), "\\s", RegexOptions.Compiled).TrimEnd();
                         bool match = false;
                         for (int j = 0; j < queryTerms.Length; j++)
                         {

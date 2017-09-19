@@ -90,7 +90,7 @@ namespace Lucene.Net.Facet.Taxonomy
         /// </summary>
         public CategoryPath(string pathString, char delimiter)
         {
-            string[] comps = pathString.Split(new[] { delimiter }, StringSplitOptions.RemoveEmptyEntries);
+            string[] comps = pathString.Split(delimiter).TrimEnd();
             if (comps.Length == 1 && comps[0].Length == 0)
             {
                 Components = null;

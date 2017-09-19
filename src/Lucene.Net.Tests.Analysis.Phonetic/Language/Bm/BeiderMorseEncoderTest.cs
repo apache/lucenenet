@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Globalization;
 using System.Text;
@@ -168,7 +169,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             String phonemes = encoder.Encode(phrase);
             Assert.True(phonemes.Length > 0);
 
-            String[] phonemeArr = new Regex("\\|").Split(phonemes);
+            String[] phonemeArr = new Regex("\\|").Split(phonemes).TrimEnd();
             Assert.True(phonemeArr.Length <= 10);
         }
 

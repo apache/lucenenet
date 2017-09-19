@@ -364,7 +364,7 @@ namespace Lucene.Net.Analysis.Pt
             {
                 return null;
             }
-            string[] list = s.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] list = s.Split(',').TrimEnd();
             for (int i = 0; i < list.Length; i++)
             {
                 list[i] = ParseString(list[i].Trim());

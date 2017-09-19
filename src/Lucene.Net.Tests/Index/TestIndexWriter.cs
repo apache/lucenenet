@@ -1998,7 +1998,7 @@ namespace Lucene.Net.Index
                 {
                     b.Append(buffer, 0, n);
                 }
-                this.Tokens = b.ToString().Split(' ');
+                this.Tokens = b.ToString().Split(' ').TrimEnd();
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using Spatial4n.Core.Context;
+﻿using Lucene.Net.Support;
+using Spatial4n.Core.Context;
 using Spatial4n.Core.Exceptions;
 using Spatial4n.Core.Shapes;
 using System;
@@ -52,7 +53,7 @@ namespace Lucene.Net.Spatial
                         continue;
 
                     SpatialTestData data = new SpatialTestData();
-                    String[] vals = line.Split(new char[] { '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                    String[] vals = line.Split('\t').TrimEnd();
                     if (vals.Length != 3)
                         throw new Exception("bad format; expecting 3 tab-separated values for line: " + line);
                     data.id = vals[0];

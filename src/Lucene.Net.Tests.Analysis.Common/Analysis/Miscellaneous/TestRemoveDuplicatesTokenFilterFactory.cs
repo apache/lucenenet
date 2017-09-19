@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System.Text.RegularExpressions;
 
@@ -37,7 +38,7 @@ namespace Lucene.Net.Analysis.Miscellaneous
         {
             TokenStream stream = new CannedTokenStream(tokens);
             stream = TokenFilterFactory("RemoveDuplicates").Create(stream);
-            AssertTokenStreamContents(stream, Regex.Split(expected, "\\s"));
+            AssertTokenStreamContents(stream, Regex.Split(expected, "\\s").TrimEnd());
         }
 
         [Test]

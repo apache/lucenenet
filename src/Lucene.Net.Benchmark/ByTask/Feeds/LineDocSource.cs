@@ -123,7 +123,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
             if (line.StartsWith(headIndicator, StringComparison.Ordinal))
             {
-                header = line.Substring(headIndicator.Length).Split(new char[] { WriteLineDocTask.SEP }).TrimEnd();
+                header = line.Substring(headIndicator.Length).Split(WriteLineDocTask.SEP).TrimEnd();
                 skipHeaderLine = true; // mark to skip the header line when input file is reopened
             }
             else

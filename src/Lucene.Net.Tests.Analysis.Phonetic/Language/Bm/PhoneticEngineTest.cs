@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -72,15 +73,15 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
             if (concat)
             {
-                String[] split = new Regex("\\|").Split(phoneticActual);
+                String[] split = new Regex("\\|").Split(phoneticActual).TrimEnd();
                 Assert.True(split.Length <= maxPhonemes);
             }
             else
             {
-                String[] words = phoneticActual.Split(new string[] { "-" }, StringSplitOptions.RemoveEmptyEntries);
+                String[] words = phoneticActual.Split('-').TrimEnd();
                 foreach (String word in words)
                 {
-                    String[] split = new Regex("\\|").Split(word);
+                    String[] split = new Regex("\\|").Split(word).TrimEnd();
                     Assert.True(split.Length <= maxPhonemes);
                 }
             }

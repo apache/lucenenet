@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.Ja.TokenAttributes;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Attributes;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -797,7 +798,7 @@ namespace Lucene.Net.Analysis.Ja
                     IOUtils.DisposeWhileHandlingException(ts);
                 }
             }
-            String[] sentences = Regex.Split(line, "、|。");
+            String[] sentences = Regex.Split(line, "、|。").TrimEnd();
             if (VERBOSE)
             {
                 Console.WriteLine("Total time : " + (Environment.TickCount - totalStart));

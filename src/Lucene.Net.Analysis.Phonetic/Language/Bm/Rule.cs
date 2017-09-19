@@ -355,7 +355,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                 }
                 string before = ph.Substring(0, open - 0);
                 string input = ph.Substring(open + 1, (ph.Length - 1) - (open + 1));
-                ISet<string> langs = new HashSet<string>(PLUS.Split(input));
+                ISet<string> langs = new HashSet<string>(PLUS.Split(input).TrimEnd());
 
                 return new Phoneme(before, LanguageSet.From(langs));
             }
@@ -376,7 +376,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
 
                 IList<Phoneme> phs = new List<Phoneme>();
                 string body = ph.Substring(1, (ph.Length - 1) - 1);
-                foreach (string part in PIPE.Split(body))
+                foreach (string part in PIPE.Split(body).TrimEnd())
                 {
                     phs.Add(ParsePhoneme(part));
                 }
@@ -477,7 +477,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
                             else
                             {
                                 // rule
-                                string[] parts = WHITESPACE.Split(line);
+                                string[] parts = WHITESPACE.Split(line).TrimEnd();
                                 if (parts.Length != 4)
                                 {
                                     throw new ArgumentException("Malformed rule statement split into " + parts.Length +

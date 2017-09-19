@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
                 Document document = lineFileDocs.NextDoc();
                 // grab the title and add some SortedSet instances for fun
                 string title = document.Get("titleTokenized");
-                string[] split = whiteSpace.Split(title);
+                string[] split = whiteSpace.Split(title).TrimEnd();
                 foreach (string trash in split)
                 {
                     document.Add(new SortedSetDocValuesField("sortedset", new BytesRef(trash)));

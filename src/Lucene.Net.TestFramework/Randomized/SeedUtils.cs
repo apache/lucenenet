@@ -19,6 +19,7 @@
  *
 */
 
+using Lucene.Net.Support;
 using System;
 using System.Linq;
 using System.Text;
@@ -70,7 +71,7 @@ namespace Lucene.Net.Randomized
             if (matches.Count == 0)
                 throw new ArgumentException("Not a valid seed chain: " + chain, "chain");
 
-            var parts = chain.Split(":".ToCharArray());
+            var parts = chain.Split(':').TrimEnd();
             int[] result = new int[parts.Length];
 
             for (int i = 0; i < parts.Length; i++)

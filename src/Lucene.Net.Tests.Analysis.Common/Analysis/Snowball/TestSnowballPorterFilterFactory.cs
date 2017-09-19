@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Util;
+using Lucene.Net.Support;
 using Lucene.Net.Tartarus.Snowball.Ext;
 using NUnit.Framework;
 using System.IO;
@@ -32,7 +33,7 @@ namespace Lucene.Net.Analysis.Snowball
         {
             string text = "The fledgling banks were counting on a big boom in banking";
             EnglishStemmer stemmer = new EnglishStemmer();
-            string[] test = Regex.Split(text, "\\s");
+            string[] test = Regex.Split(text, "\\s").TrimEnd();
             string[] gold = new string[test.Length];
             for (int i = 0; i < test.Length; i++)
             {
