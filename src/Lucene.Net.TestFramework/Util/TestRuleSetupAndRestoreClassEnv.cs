@@ -269,8 +269,6 @@ namespace Lucene.Net.Util
             timeZone = testTimeZone.Equals("random", StringComparison.Ordinal) ? randomTimeZone : TimeZoneInfo.FindSystemTimeZoneById(testTimeZone);
             //TimeZone.Default = TimeZone; // LUCENENET NOTE: There doesn't seem to be an equivalent to this, but I don't think we need it.
 
-            //TimeZoneInfo.ConvertTime() // LUCENENET TODO: Everywhere TimeZoneInfo is supposed to be used, use this method to convert a dateTime object to the time zone
-
             similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(random);
 
             // Check codec restrictions once at class level.
