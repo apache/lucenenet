@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Store
 {
@@ -434,6 +435,26 @@ namespace Lucene.Net.Store
             }
             reader.Dispose();
             dir.Dispose();
+        }
+
+
+        [Test, LuceneNetSpecific]
+        public void TestDisposeIndexInput()
+        {
+            string name = "foobar";
+            var dir = CreateTempDir("testDisposeIndexInput");
+            string fileName = Path.Combine(dir.FullName, name);
+
+            // Create a zero byte file, and close it immediately
+            File.WriteAllText(fileName, string.Empty, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) /* No BOM */);
+
+            MMapDirectory mmapDir = new MMapDirectory(dir);
+            using (var indexInput = mmapDir.OpenInput(name, NewIOContext(Random())))
+            {
+            } // Dispose
+
+            // Now it should be possible to delete the file. This is the condition we are testing for.
+            File.Delete(fileName);
         }
     }
 }

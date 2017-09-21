@@ -220,16 +220,13 @@ namespace Lucene.Net.Store
         {
             EnsureOpen();
             var file = new FileInfo(Path.Combine(Directory.FullName, name));
-
-            var c = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
-            return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", c);
+            var fc = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+            return new MMapIndexInput(this, "MMapIndexInput(path=\"" + file + "\")", fc);
         }
 
         public override IndexInputSlicer CreateSlicer(string name, IOContext context)
         {
             var full = (MMapIndexInput)OpenInput(name, context);
-
             return new IndexInputSlicerAnonymousInnerClassHelper(this, full);
         }
 
@@ -269,30 +266,47 @@ namespace Lucene.Net.Store
 
         public sealed class MMapIndexInput : ByteBufferIndexInput
         {
-            private readonly bool useUnmapHack;
+            //private readonly bool useUnmapHack;
             //private string mapName; // LUCENENET NOTE: Not used
             internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
+            private readonly FileStream fc;
             private readonly MMapDirectory outerInstance;
 
             internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
                 : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, outerInstance.UseUnmap)
             {
                 this.outerInstance = outerInstance;
-                this.useUnmapHack = outerInstance.UseUnmap;
+                this.fc = fc ?? throw new ArgumentNullException("fc");
+                //this.useUnmapHack = outerInstance.UseUnmap;
                 this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
             }
 
-            protected override /*sealed*/ void Dispose(bool disposing) // LUCENENET specific - not marked sealed in case subclass needs to dispose
+            protected override sealed void Dispose(bool disposing)
             {
-                if (disposing)
+                try
                 {
-                    if (null != this.memoryMappedFile)
+                    if (disposing)
                     {
-                        this.memoryMappedFile.Dispose();
-                        this.memoryMappedFile = null;
+                        try
+                        {
+                            if (this.memoryMappedFile != null)
+                            {
+                                this.memoryMappedFile.Dispose();
+                                this.memoryMappedFile = null;
+                            }
+                        }
+                        finally
+                        {
+                            // LUCENENET: If the file is 0 length we will not create a memoryMappedFile above
+                            // so we must always ensure the FileStream is explicitly disposed.
+                            this.fc.Dispose();
+                        }
                     }
                 }
-                base.Dispose(disposing);
+                finally
+                {
+                    base.Dispose(disposing);
+                }
             }
 
             /// <summary>
@@ -344,7 +358,7 @@ namespace Lucene.Net.Store
                     memoryMappedFileSecurity: null,
 #endif
                     inheritability: HandleInheritability.Inheritable, 
-                    leaveOpen: false);
+                    leaveOpen: true); // LUCENENET: We explicitly dispose the FileStream separately.
             }
 
             long bufferStart = 0L;
