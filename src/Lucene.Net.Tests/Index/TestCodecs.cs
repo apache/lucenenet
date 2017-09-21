@@ -380,49 +380,52 @@ namespace Lucene.Net.Index
             FieldData field = new FieldData(this, "field", builder, terms, true, false);
             FieldData[] fields = new FieldData[] { field };
             FieldInfos fieldInfos = builder.Finish();
-            Directory dir = NewDirectory();
-            this.Write(fieldInfos, dir, fields, true);
-            Codec codec = Codec.Default;
-            SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
-
-            FieldsProducer reader = codec.PostingsFormat.FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR));
-
-            IEnumerator<string> fieldsEnum = reader.GetEnumerator();
-            fieldsEnum.MoveNext();
-            string fieldName = fieldsEnum.Current;
-            Assert.IsNotNull(fieldName);
-            Terms terms2 = reader.GetTerms(fieldName);
-            Assert.IsNotNull(terms2);
-
-            TermsEnum termsEnum = terms2.GetIterator(null);
-
-            DocsEnum docsEnum = null;
-            for (int i = 0; i < NUM_TERMS; i++)
+            // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
+            using (Directory dir = NewDirectory())
             {
-                BytesRef term = termsEnum.Next();
-                Assert.IsNotNull(term);
-                Assert.AreEqual(terms[i].Text2, term.Utf8ToString());
+                this.Write(fieldInfos, dir, fields, true);
+                Codec codec = Codec.Default;
+                SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
 
-                // do this twice to stress test the codec's reuse, ie,
-                // make sure it properly fully resets (rewinds) its
-                // internal state:
-                for (int iter = 0; iter < 2; iter++)
+                // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
+                using (FieldsProducer reader = codec.PostingsFormat.FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR)))
                 {
-                    docsEnum = TestUtil.Docs(Random(), termsEnum, null, docsEnum, DocsFlags.NONE);
-                    Assert.AreEqual(terms[i].Docs[0], docsEnum.NextDoc());
-                    Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.NextDoc());
+                    IEnumerator<string> fieldsEnum = reader.GetEnumerator();
+                    fieldsEnum.MoveNext();
+                    string fieldName = fieldsEnum.Current;
+                    Assert.IsNotNull(fieldName);
+                    Terms terms2 = reader.GetTerms(fieldName);
+                    Assert.IsNotNull(terms2);
+
+                    TermsEnum termsEnum = terms2.GetIterator(null);
+
+                    DocsEnum docsEnum = null;
+                    for (int i = 0; i < NUM_TERMS; i++)
+                    {
+                        BytesRef term = termsEnum.Next();
+                        Assert.IsNotNull(term);
+                        Assert.AreEqual(terms[i].Text2, term.Utf8ToString());
+
+                        // do this twice to stress test the codec's reuse, ie,
+                        // make sure it properly fully resets (rewinds) its
+                        // internal state:
+                        for (int iter = 0; iter < 2; iter++)
+                        {
+                            docsEnum = TestUtil.Docs(Random(), termsEnum, null, docsEnum, DocsFlags.NONE);
+                            Assert.AreEqual(terms[i].Docs[0], docsEnum.NextDoc());
+                            Assert.AreEqual(DocIdSetIterator.NO_MORE_DOCS, docsEnum.NextDoc());
+                        }
+                    }
+                    Assert.IsNull(termsEnum.Next());
+
+                    for (int i = 0; i < NUM_TERMS; i++)
+                    {
+                        Assert.AreEqual(termsEnum.SeekCeil(new BytesRef(terms[i].Text2)), TermsEnum.SeekStatus.FOUND);
+                    }
+
+                    Assert.IsFalse(fieldsEnum.MoveNext());
                 }
             }
-            Assert.IsNull(termsEnum.Next());
-
-            for (int i = 0; i < NUM_TERMS; i++)
-            {
-                Assert.AreEqual(termsEnum.SeekCeil(new BytesRef(terms[i].Text2)), TermsEnum.SeekStatus.FOUND);
-            }
-
-            Assert.IsFalse(fieldsEnum.MoveNext());
-            reader.Dispose();
-            dir.Dispose();
         }
 
         [Test]
@@ -438,42 +441,47 @@ namespace Lucene.Net.Index
                 fields[i] = new FieldData(this, FieldNames[i], builder, this.MakeRandomTerms(omitTF, storePayloads), omitTF, storePayloads);
             }
 
-            Directory dir = NewDirectory();
-            FieldInfos fieldInfos = builder.Finish();
-
-            if (VERBOSE)
+            // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
+            using (Directory dir = NewDirectory())
             {
-                Console.WriteLine("TEST: now write postings");
+                FieldInfos fieldInfos = builder.Finish();
+
+                if (VERBOSE)
+                {
+                    Console.WriteLine("TEST: now write postings");
+                }
+
+                this.Write(fieldInfos, dir, fields, false);
+                Codec codec = Codec.Default;
+                SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
+
+                if (VERBOSE)
+                {
+                    Console.WriteLine("TEST: now read postings");
+                }
+
+                // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
+                using (FieldsProducer terms = codec.PostingsFormat.FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR)))
+                {
+
+                    Verify[] threads = new Verify[NUM_TEST_THREADS - 1];
+                    for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
+                    {
+                        threads[i] = new Verify(this, si, fields, terms);
+                        threads[i].SetDaemon(true);
+                        threads[i].Start();
+                    }
+
+                    (new Verify(this, si, fields, terms)).Run();
+
+                    for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
+                    {
+                        threads[i].Join();
+                        Debug.Assert(!threads[i].Failed);
+                    }
+
+                }
             }
-
-            this.Write(fieldInfos, dir, fields, false);
-            Codec codec = Codec.Default;
-            SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
-
-            if (VERBOSE)
-            {
-                Console.WriteLine("TEST: now read postings");
-            }
-            FieldsProducer terms = codec.PostingsFormat.FieldsProducer(new SegmentReadState(dir, si, fieldInfos, NewIOContext(Random()), DirectoryReader.DEFAULT_TERMS_INDEX_DIVISOR));
-
-            Verify[] threads = new Verify[NUM_TEST_THREADS - 1];
-            for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
-            {
-                threads[i] = new Verify(this, si, fields, terms);
-                threads[i].SetDaemon(true);
-                threads[i].Start();
-            }
-
-            (new Verify(this, si, fields, terms)).Run();
-
-            for (int i = 0; i < NUM_TEST_THREADS - 1; i++)
-            {
-                threads[i].Join();
-                Debug.Assert(!threads[i].Failed);
-            }
-
-            terms.Dispose();
-            dir.Dispose();
         }
 
         [Test]
@@ -834,20 +842,22 @@ namespace Lucene.Net.Index
             SegmentInfo si = new SegmentInfo(dir, Constants.LUCENE_MAIN_VERSION, SEGMENT, 10000, false, codec, null);
             SegmentWriteState state = new SegmentWriteState(InfoStream.Default, dir, si, fieldInfos, termIndexInterval, null, NewIOContext(Random()));
 
-            FieldsConsumer consumer = codec.PostingsFormat.FieldsConsumer(state);
-            Array.Sort(fields);
-            foreach (FieldData field in fields)
+            // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
+            using (FieldsConsumer consumer = codec.PostingsFormat.FieldsConsumer(state))
             {
-#pragma warning disable 612, 618
-                if (!allowPreFlex && codec is Lucene3xCodec)
-#pragma warning restore 612, 618
+                Array.Sort(fields);
+                foreach (FieldData field in fields)
                 {
-                    // code below expects unicode sort order
-                    continue;
+#pragma warning disable 612, 618
+                    if (!allowPreFlex && codec is Lucene3xCodec)
+#pragma warning restore 612, 618
+                    {
+                        // code below expects unicode sort order
+                        continue;
+                    }
+                    field.Write(consumer);
                 }
-                field.Write(consumer);
             }
-            consumer.Dispose();
         }
 
         [Test]
@@ -855,66 +865,70 @@ namespace Lucene.Net.Index
         {
             // tests that when fields are indexed with DOCS_ONLY, the Codec
             // returns 1 in docsEnum.Freq()
-            Directory dir = NewDirectory();
-            Random random = Random();
-            IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)));
-            // we don't need many documents to assert this, but don't use one document either
-            int numDocs = AtLeast(random, 50);
-            for (int i = 0; i < numDocs; i++)
+            using (Directory dir = NewDirectory())
             {
-                Document doc = new Document();
-                doc.Add(new StringField("f", "doc", Store.NO));
-                writer.AddDocument(doc);
-            }
-            writer.Dispose();
-
-            Term term = new Term("f", new BytesRef("doc"));
-            DirectoryReader reader = DirectoryReader.Open(dir);
-            foreach (AtomicReaderContext ctx in reader.Leaves)
-            {
-                DocsEnum de = ((AtomicReader)ctx.Reader).GetTermDocsEnum(term);
-                while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+                Random random = Random();
+                using (IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random))))
                 {
-                    Assert.AreEqual(1, de.Freq, "wrong freq for doc " + de.DocID);
+                    // we don't need many documents to assert this, but don't use one document either
+                    int numDocs = AtLeast(random, 50);
+                    for (int i = 0; i < numDocs; i++)
+                    {
+                        Document doc = new Document();
+                        doc.Add(new StringField("f", "doc", Store.NO));
+                        writer.AddDocument(doc);
+                    }
                 }
-            }
-            reader.Dispose();
 
-            dir.Dispose();
+                Term term = new Term("f", new BytesRef("doc"));
+                using (DirectoryReader reader = DirectoryReader.Open(dir))
+                {
+                    foreach (AtomicReaderContext ctx in reader.Leaves)
+                    {
+                        DocsEnum de = ((AtomicReader)ctx.Reader).GetTermDocsEnum(term);
+                        while (de.NextDoc() != DocIdSetIterator.NO_MORE_DOCS)
+                        {
+                            Assert.AreEqual(1, de.Freq, "wrong freq for doc " + de.DocID);
+                        }
+                    }
+                }
+
+            }
         }
 
         [Test]
         public virtual void TestDisableImpersonation()
         {
             Codec[] oldCodecs = new Codec[] { new Lucene40RWCodec(), new Lucene41RWCodec(), new Lucene42RWCodec() };
-            Directory dir = NewDirectory();
-            IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
-            conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
-            IndexWriter writer = new IndexWriter(dir, conf);
-
-            Document doc = new Document();
-            doc.Add(new StringField("f", "bar", Store.YES));
-            doc.Add(new NumericDocValuesField("n", 18L));
-            writer.AddDocument(doc);
-
-            OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
-            try
+            using (Directory dir = NewDirectory())
             {
-                writer.Dispose();
-                Assert.Fail("should not have succeeded to impersonate an old format!");
-            }
+                IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
+                conf.SetCodec(oldCodecs[Random().Next(oldCodecs.Length)]);
+                IndexWriter writer = new IndexWriter(dir, conf);
+
+                Document doc = new Document();
+                doc.Add(new StringField("f", "bar", Store.YES));
+                doc.Add(new NumericDocValuesField("n", 18L));
+                writer.AddDocument(doc);
+
+                OLD_FORMAT_IMPERSONATION_IS_ACTIVE = false;
+                try
+                {
+                    writer.Dispose();
+                    Assert.Fail("should not have succeeded to impersonate an old format!");
+                }
 #pragma warning disable 168
-            catch (System.NotSupportedException e)
+                catch (System.NotSupportedException e)
 #pragma warning restore 168
-            {
-                writer.Rollback();
-            }
-            finally
-            {
-                OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
-            }
+                {
+                    writer.Rollback();
+                }
+                finally
+                {
+                    OLD_FORMAT_IMPERSONATION_IS_ACTIVE = true;
+                }
 
-            dir.Dispose();
+            }
         }
     }
 }

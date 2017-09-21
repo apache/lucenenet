@@ -69,18 +69,18 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
                 // Try again after save/load:
                 DirectoryInfo tmpDir = CreateTempDir("FreeTextSuggesterTest");
-                tmpDir.Create();
+                //tmpDir.Create();
 
                 FileInfo path = new FileInfo(Path.Combine(tmpDir.FullName, "suggester"));
 
-                Stream os = new FileStream(path.FullName, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                sug.Store(os);
-                os.Dispose();
+                using (Stream os = new FileStream(path.FullName, FileMode.Create, FileAccess.Write))
+                    sug.Store(os);
 
-                Stream @is = new FileStream(path.FullName, FileMode.Open);
-                sug = new FreeTextSuggester(a, a, 2, (byte)0x20);
-                sug.Load(@is);
-                @is.Dispose();
+                using (Stream @is = new FileStream(path.FullName, FileMode.Open, FileAccess.Read))
+                {
+                    sug = new FreeTextSuggester(a, a, 2, (byte)0x20);
+                    sug.Load(@is);
+                }
                 assertEquals(2, sug.Count);
             }
         }
