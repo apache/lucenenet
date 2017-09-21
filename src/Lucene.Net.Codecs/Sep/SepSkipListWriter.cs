@@ -33,121 +33,126 @@ namespace Lucene.Net.Codecs.Sep
     /// </summary>
     internal class SepSkipListWriter : MultiLevelSkipListWriter
     {
-        private readonly int[] _lastSkipDoc;
-        private readonly int[] _lastSkipPayloadLength;
-        private readonly long[] _lastSkipPayloadPointer;
+        private int[] lastSkipDoc;
+        private int[] lastSkipPayloadLength;
+        private long[] lastSkipPayloadPointer;
 
-        private readonly Int32IndexOutput.Index[] _docIndex;
-        private readonly Int32IndexOutput.Index[] _freqIndex;
-        private readonly Int32IndexOutput.Index[] _posIndex;
+        private Int32IndexOutput.Index[] docIndex;
+        private Int32IndexOutput.Index[] freqIndex;
+        private Int32IndexOutput.Index[] posIndex;
 
-        private readonly Int32IndexOutput _freqOutput;
-        private Int32IndexOutput _posOutput;
-        private IndexOutput _payloadOutput;
+        private Int32IndexOutput freqOutput;
+        // TODO: -- private again
+        internal Int32IndexOutput posOutput;
+        // TODO: -- private again
+        internal IndexOutput payloadOutput;
 
-        private int _curDoc;
-        private bool _curStorePayloads;
-        private int _curPayloadLength;
-        private long _curPayloadPointer;
+        private int curDoc;
+        private bool curStorePayloads;
+        private int curPayloadLength;
+        private long curPayloadPointer;
 
-        internal SepSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount, 
-            Int32IndexOutput freqOutput,
-            Int32IndexOutput docOutput, 
-            Int32IndexOutput posOutput, 
-            IndexOutput payloadOutput)
+        /// <exception cref="System.IO.IOException"/>
+        internal SepSkipListWriter(int skipInterval, int numberOfSkipLevels, int docCount,
+                          Int32IndexOutput freqOutput,
+                          Int32IndexOutput docOutput,
+                          Int32IndexOutput posOutput,
+                          IndexOutput payloadOutput)
             : base(skipInterval, numberOfSkipLevels, docCount)
         {
-            this._freqOutput = freqOutput;
-            this._posOutput = posOutput;
-            this._payloadOutput = payloadOutput;
 
-            _lastSkipDoc = new int[numberOfSkipLevels];
-            _lastSkipPayloadLength = new int[numberOfSkipLevels];
+            this.freqOutput = freqOutput;
+            this.posOutput = posOutput;
+            this.payloadOutput = payloadOutput;
+
+            lastSkipDoc = new int[numberOfSkipLevels];
+            lastSkipPayloadLength = new int[numberOfSkipLevels];
             // TODO: -- also cutover normal IndexOutput to use getIndex()?
-            _lastSkipPayloadPointer = new long[numberOfSkipLevels];
+            lastSkipPayloadPointer = new long[numberOfSkipLevels];
 
-            _freqIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
-            _docIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
-            _posIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
+            freqIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
+            docIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
+            posIndex = new Int32IndexOutput.Index[numberOfSkipLevels];
 
-            for (var i = 0; i < numberOfSkipLevels; i++)
+            for (int i = 0; i < numberOfSkipLevels; i++)
             {
                 if (freqOutput != null)
                 {
-                    _freqIndex[i] = freqOutput.GetIndex();
+                    freqIndex[i] = freqOutput.GetIndex();
                 }
-                _docIndex[i] = docOutput.GetIndex();
+                docIndex[i] = docOutput.GetIndex();
                 if (posOutput != null)
                 {
-                    _posIndex[i] = posOutput.GetIndex();
+                    posIndex[i] = posOutput.GetIndex();
                 }
             }
         }
 
-        private IndexOptions _indexOptions;
+        IndexOptions indexOptions;
 
-        internal virtual void SetIndexOptions(IndexOptions v)
+        internal void SetIndexOptions(IndexOptions v)
         {
-            _indexOptions = v;
+            indexOptions = v;
         }
 
-        internal virtual void SetPosOutput(Int32IndexOutput posOutput) 
+        /// <exception cref="System.IO.IOException"/>
+        internal void SetPosOutput(Int32IndexOutput posOutput)
         {
-            _posOutput = posOutput;
-            for (var i = 0; i < m_numberOfSkipLevels; i++)
+            this.posOutput = posOutput;
+            for (int i = 0; i < m_numberOfSkipLevels; i++)
             {
-                _posIndex[i] = posOutput.GetIndex();
+                posIndex[i] = posOutput.GetIndex();
             }
         }
 
-        internal virtual void SetPayloadOutput(IndexOutput payloadOutput)
+        internal void SetPayloadOutput(IndexOutput payloadOutput)
         {
-            _payloadOutput = payloadOutput;
+            this.payloadOutput = payloadOutput;
         }
 
         /// <summary>
         /// Sets the values for the current skip data. 
-        /// Called @ every index interval (every 128th (by default) doc).
         /// </summary>
-        internal virtual void SetSkipData(int doc, bool storePayloads, int payloadLength)
+        // Called @ every index interval (every 128th (by default)
+        // doc)
+        internal void SetSkipData(int doc, bool storePayloads, int payloadLength)
         {
-            this._curDoc = doc;
-            this._curStorePayloads = storePayloads;
-            this._curPayloadLength = payloadLength;
-            if (_payloadOutput != null)
+            this.curDoc = doc;
+            this.curStorePayloads = storePayloads;
+            this.curPayloadLength = payloadLength;
+            if (payloadOutput != null)
             {
-                _curPayloadPointer = _payloadOutput.GetFilePointer();
+                this.curPayloadPointer = payloadOutput.GetFilePointer();
             }
         }
 
-        /// <summary>
-        /// Called @ start of new term.
-        /// </summary>
-        protected internal virtual void ResetSkip(Int32IndexOutput.Index topDocIndex, Int32IndexOutput.Index topFreqIndex,
-            Int32IndexOutput.Index topPosIndex)
+        // Called @ start of new term
+        /// <exception cref="System.IO.IOException"/>
+        protected internal void ResetSkip(Int32IndexOutput.Index topDocIndex, Int32IndexOutput.Index topFreqIndex, Int32IndexOutput.Index topPosIndex)
         {
             base.ResetSkip();
 
-            Arrays.Fill(_lastSkipDoc, 0);
-            Arrays.Fill(_lastSkipPayloadLength, -1); // we don't have to write the first length in the skip list
+            Arrays.Fill(lastSkipDoc, 0);
+            Arrays.Fill(lastSkipPayloadLength, -1);  // we don't have to write the first length in the skip list
             for (int i = 0; i < m_numberOfSkipLevels; i++)
             {
-                _docIndex[i].CopyFrom(topDocIndex, true);
-                if (_freqOutput != null)
+                docIndex[i].CopyFrom(topDocIndex, true);
+                if (freqOutput != null)
                 {
-                    _freqIndex[i].CopyFrom(topFreqIndex, true);
+                    freqIndex[i].CopyFrom(topFreqIndex, true);
                 }
-                if (_posOutput != null)
+                if (posOutput != null)
                 {
-                    _posIndex[i].CopyFrom(topPosIndex, true);
+                    posIndex[i].CopyFrom(topPosIndex, true);
                 }
             }
-            if (_payloadOutput != null)
+            if (payloadOutput != null)
             {
-                Arrays.Fill(_lastSkipPayloadPointer, _payloadOutput.GetFilePointer());
+                Arrays.Fill(lastSkipPayloadPointer, payloadOutput.GetFilePointer());
             }
         }
 
+        /// <exception cref="System.IO.IOException"/>
         protected override void WriteSkipData(int level, IndexOutput skipBuffer)
         {
             // To efficiently store payloads in the posting lists we do not store the length of
@@ -171,12 +176,12 @@ namespace Lucene.Net.Codecs.Sep
             //         current payload length equals the length at the previous
             //         skip point
 
-            Debug.Assert(_indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !_curStorePayloads);
+            Debug.Assert(indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS || !curStorePayloads);
 
-            if (_curStorePayloads)
+            if (curStorePayloads)
             {
-                int delta = _curDoc - _lastSkipDoc[level];
-                if (_curPayloadLength == _lastSkipPayloadLength[level])
+                int delta = curDoc - lastSkipDoc[level];
+                if (curPayloadLength == lastSkipPayloadLength[level])
                 {
                     // the current payload length equals the length at the previous skip point,
                     // so we don't store the length again
@@ -187,35 +192,35 @@ namespace Lucene.Net.Codecs.Sep
                     // the payload length is different from the previous one. We shift the DocSkip, 
                     // set the lowest bit and store the current payload length as VInt.
                     skipBuffer.WriteVInt32(delta << 1 | 1);
-                    skipBuffer.WriteVInt32(_curPayloadLength);
-                    _lastSkipPayloadLength[level] = _curPayloadLength;
+                    skipBuffer.WriteVInt32(curPayloadLength);
+                    lastSkipPayloadLength[level] = curPayloadLength;
                 }
             }
             else
             {
                 // current field does not store payloads
-                skipBuffer.WriteVInt32(_curDoc - _lastSkipDoc[level]);
+                skipBuffer.WriteVInt32(curDoc - lastSkipDoc[level]);
             }
 
-            if (_indexOptions != IndexOptions.DOCS_ONLY)
+            if (indexOptions != IndexOptions.DOCS_ONLY)
             {
-                _freqIndex[level].Mark();
-                _freqIndex[level].Write(skipBuffer, false);
+                freqIndex[level].Mark();
+                freqIndex[level].Write(skipBuffer, false);
             }
-            _docIndex[level].Mark();
-            _docIndex[level].Write(skipBuffer, false);
-            if (_indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
+            docIndex[level].Mark();
+            docIndex[level].Write(skipBuffer, false);
+            if (indexOptions == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS)
             {
-                _posIndex[level].Mark();
-                _posIndex[level].Write(skipBuffer, false);
-                if (_curStorePayloads)
+                posIndex[level].Mark();
+                posIndex[level].Write(skipBuffer, false);
+                if (curStorePayloads)
                 {
-                    skipBuffer.WriteVInt32((int)(_curPayloadPointer - _lastSkipPayloadPointer[level]));
+                    skipBuffer.WriteVInt32((int)(curPayloadPointer - lastSkipPayloadPointer[level]));
                 }
             }
 
-            _lastSkipDoc[level] = _curDoc;
-            _lastSkipPayloadPointer[level] = _curPayloadPointer;
+            lastSkipDoc[level] = curDoc;
+            lastSkipPayloadPointer[level] = curPayloadPointer;
         }
     }
 }
