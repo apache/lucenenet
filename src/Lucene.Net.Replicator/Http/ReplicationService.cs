@@ -190,7 +190,6 @@ namespace Lucene.Net.Replicator.Http
                 response.StatusCode = 500;
                 try
                 {
-                    // LUCENENET TODO: Add support for native serialization in .NET Framework/.NET Standard 2.0 ?
                     TextWriter writer = new StreamWriter(response.Body);
                     JsonSerializer serializer = JsonSerializer.Create(JSON_SERIALIZER_SETTINGS);
                     serializer.Serialize(writer, e, e.GetType());

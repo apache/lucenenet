@@ -482,7 +482,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             String hourField = "hour";
             PrecedenceQueryParser qp = new PrecedenceQueryParser(new MockAnalyzer(Random()));
 
-            // LUCENENET TODO: Can we eliminate this nullable??
             IDictionary<string, DateTools.Resolution?> fieldMap = new HashMap<string, DateTools.Resolution?>();
             // set a field specific date resolution
             fieldMap.Put(monthField, DateTools.Resolution.MONTH);

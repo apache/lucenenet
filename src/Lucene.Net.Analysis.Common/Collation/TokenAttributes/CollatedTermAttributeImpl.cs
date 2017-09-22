@@ -26,9 +26,6 @@ namespace Lucene.Net.Collation.TokenAttributes
     /// Extension of <see cref="CharTermAttribute"/> that encodes the term
     /// text as a binary Unicode collation key instead of as UTF-8 bytes.
     /// </summary>
-    // LUCENENET TODO: A better option would be to contribute to the icu.net library and
-    // make it CLS compliant (at least the parts of it we use)
-    [CLSCompliant(false)]
     public class CollatedTermAttributeImpl : CharTermAttribute
 	{
 		private readonly Collator collator;

@@ -266,8 +266,6 @@ namespace Lucene.Net.Analysis.Core
 
             public virtual int Compare(ConstructorInfo arg0, ConstructorInfo arg1)
             {
-                // LUCENENET TODO: Need to ensure we have the right sort order
-                // original: arg0.toGenericString().compareTo(arg1.toGenericString());
                 return arg0.ToString().CompareToOrdinal(arg1.ToString());
             }
         }

@@ -24,7 +24,6 @@ namespace Lucene.Net.Cli.Commands
      * limitations under the License.
      */
 
-    // LUCENENET TODO: Move to TestFramework ?
     public abstract class CommandTestCase : LuceneTestCase
     {
         protected abstract ConfigurationBase CreateConfiguration(MockConsoleApp app);

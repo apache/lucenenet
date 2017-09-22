@@ -21,8 +21,6 @@ namespace Lucene.Net.Cli.Commands
      * limitations under the License.
      */
 
-    // LUCENENET TODO: Test to ensure all of the commands and arguments have a description (in all commands except for root)
-
     public class IndexCheckCommandTest : CommandTestCase
     {
         protected override ConfigurationBase CreateConfiguration(MockConsoleApp app)
