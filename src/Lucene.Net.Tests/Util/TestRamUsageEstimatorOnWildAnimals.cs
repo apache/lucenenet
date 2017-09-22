@@ -25,15 +25,18 @@ namespace Lucene.Net.Util
     [TestFixture]
     public class TestRamUsageEstimatorOnWildAnimals : LuceneTestCase
     {
-#if !NETSTANDARD // StackOverflowException cannot be caught in .NET Core. This test does not apply.
         public class ListElement
         {
             internal ListElement Next;
         }
 
+
         [Test]
         public virtual void TestOverflowMaxChainLength()
         {
+#if NETSTANDARD
+            AssumeTrue("StackOverflowException cannot be caught in .NET Core. This test does not apply.", false);
+#endif
             int UPPERLIMIT = 100000;
             int lower = 0;
             int upper = UPPERLIMIT;
@@ -65,6 +68,5 @@ namespace Lucene.Net.Util
                 Assert.Fail("Max object chain length till stack overflow: " + lower);
             }
         }
-#endif
     }
 }
