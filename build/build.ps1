@@ -118,6 +118,7 @@ task Init -depends InstallSDK -description "This task makes sure the build envir
 	Write-Output "##myget[buildNumber '$packageVersion']"
 
 	& dotnet.exe --version
+	& dotnet.exe --info
 	Write-Host "Base Directory: $base_directory"
 	Write-Host "Release Directory: $release_directory"
 	Write-Host "Source Directory: $source_directory"
