@@ -2488,7 +2488,7 @@ namespace Lucene.Net.Index
         }
 
         private class ConcurrentMergeSchedulerAnonymousInnerClassHelper :
-#if NETSTANDARD
+#if NETSTANDARD1_5
             TaskMergeScheduler
 #else
             ConcurrentMergeScheduler
