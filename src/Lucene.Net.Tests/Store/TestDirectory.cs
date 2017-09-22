@@ -213,11 +213,12 @@ namespace Lucene.Net.Store
                     Assert.IsTrue(SlowFileExists(d2, fname));
                     Assert.AreEqual(1 + largeBuffer.Length, d2.FileLength(fname));
 
-                    // don't do read tests if unmapping is not supported!
-                    if (d2 is MMapDirectory && !((MMapDirectory)d2).UseUnmap)
-                    {
-                        continue;
-                    }
+                    // LUCENENET specific - unmap hack not needed
+                    //// don't do read tests if unmapping is not supported!
+                    //if (d2 is MMapDirectory && !((MMapDirectory)d2).UseUnmap)
+                    //{
+                    //    continue;
+                    //}
 
                     IndexInput input = d2.OpenInput(fname, NewIOContext(Random()));
                     Assert.AreEqual((byte)i, input.ReadByte());

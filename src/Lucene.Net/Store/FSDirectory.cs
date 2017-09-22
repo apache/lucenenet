@@ -172,8 +172,8 @@ namespace Lucene.Net.Store
         /// </summary>
         public static FSDirectory Open(DirectoryInfo path, LockFactory lockFactory)
         {
-            if ((Constants.WINDOWS || Constants.SUN_OS || Constants.LINUX) && Constants.RUNTIME_IS_64BIT &&
-                MMapDirectory.UNMAP_SUPPORTED)
+            if ((Constants.WINDOWS || Constants.SUN_OS || Constants.LINUX) && Constants.RUNTIME_IS_64BIT /*&&
+                MMapDirectory.UNMAP_SUPPORTED*/) // LUCENENET specific - unmap hack not needed
             {
                 return new MMapDirectory(path, lockFactory);
             }

@@ -51,7 +51,7 @@ namespace Lucene.Net.Store
     /// </summary>
     public class MMapDirectory : FSDirectory
     {
-        private bool useUnmapHack = UNMAP_SUPPORTED;
+        // LUCENENET specific - unmap hack not needed
 
         /// <summary>
         /// Default max chunk size. </summary>
@@ -166,42 +166,9 @@ namespace Lucene.Net.Store
         {
         }
 
-        /// <summary>
-        /// <c>true</c>, if this platform supports unmapping mmapped files.
-        /// </summary>
-        // LUCENENET NOTE: Some JREs had a bug that didn't allow them to unmap.
+        // LUCENENET specific - Some JREs had a bug that didn't allow them to unmap.
         // But according to MSDN, the MemoryMappedFile.Dispose() method will
-        // indeed "release all resources".
-        public static readonly bool UNMAP_SUPPORTED = true;
-
-        // LUCENENET specific: No need for static constructor, since unmap is always supported
-
-        /// <summary>
-        /// This property enables the workaround for unmapping the buffers
-        /// from address space after closing <see cref="IndexInput"/>, that is
-        /// mentioned in the bug report. This hack may fail on non-Sun JVMs.
-        /// It forcefully unmaps the buffer on close by using
-        /// an undocumented internal cleanup functionality.
-        /// <para/><b>NOTE:</b> Enabling this is completely unsupported
-        /// by Java and may lead to JVM crashes if <see cref="IndexInput"/>
-        /// is closed while another thread is still accessing it (SIGSEGV). </summary>
-        /// <exception cref="ArgumentException"> if <see cref="UNMAP_SUPPORTED"/>
-        /// is <c>false</c> and the workaround cannot be enabled. </exception>
-        public virtual bool UseUnmap
-        {
-            set
-            {
-                if (value && !UNMAP_SUPPORTED)
-                {
-                    throw new System.ArgumentException("Unmap hack not supported on this platform!");
-                }
-                this.useUnmapHack = value;
-            }
-            get
-            {
-                return useUnmapHack;
-            }
-        }
+        // indeed "release all resources". Therefore unmap hack is not needed in .NET.
 
         /// <summary>
         /// Returns the current mmap chunk size. </summary>
@@ -266,18 +233,15 @@ namespace Lucene.Net.Store
 
         public sealed class MMapIndexInput : ByteBufferIndexInput
         {
-            //private readonly bool useUnmapHack;
-            //private string mapName; // LUCENENET NOTE: Not used
             internal MemoryMappedFile memoryMappedFile; // .NET port: this is equivalent to FileChannel.map
             private readonly FileStream fc;
             private readonly MMapDirectory outerInstance;
 
             internal MMapIndexInput(MMapDirectory outerInstance, string resourceDescription, FileStream fc)
-                : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, outerInstance.UseUnmap)
+                : base(resourceDescription, null, fc.Length, outerInstance.chunkSizePower, true)
             {
                 this.outerInstance = outerInstance;
                 this.fc = fc ?? throw new ArgumentNullException("fc");
-                //this.useUnmapHack = outerInstance.UseUnmap;
                 this.SetBuffers(outerInstance.Map(this, fc, 0, fc.Length));
             }
 

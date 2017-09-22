@@ -404,11 +404,12 @@ namespace Lucene.Net.Store
         {
             DirectoryInfo path = CreateTempDir("mmap" + chunkSize);
             MMapDirectory mmapDir = new MMapDirectory(path, null, chunkSize);
-            // we will map a lot, try to turn on the unmap hack
-            if (MMapDirectory.UNMAP_SUPPORTED)
-            {
-                mmapDir.UseUnmap = true;
-            }
+            // LUCENENET specific - unmap hack not needed
+            //// we will map a lot, try to turn on the unmap hack
+            //if (MMapDirectory.UNMAP_SUPPORTED)
+            //{
+            //    mmapDir.UseUnmap = true;
+            //}
             MockDirectoryWrapper dir = new MockDirectoryWrapper(random, mmapDir);
             RandomIndexWriter writer = new RandomIndexWriter(random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
             Document doc = new Document();
