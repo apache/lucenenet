@@ -381,11 +381,7 @@ namespace Lucene.Net.Search
         /*
          * LUCENE-3528 - NRTManager hangs in certain situations 
          */
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestThreadStarvationNoDeleteNRTReader()
         {
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -637,12 +633,8 @@ namespace Lucene.Net.Search
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(40000)]
-#endif
         // LUCENE-5461
-        [Test, HasTimeout]
+        [Test]
         public virtual void TestCRTReopen()
         {
             //test behaving badly

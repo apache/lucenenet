@@ -195,11 +195,7 @@ namespace Lucene.Net.Index
           FSDirectory.
         */
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestAtomicUpdates()
         {
             Directory directory;

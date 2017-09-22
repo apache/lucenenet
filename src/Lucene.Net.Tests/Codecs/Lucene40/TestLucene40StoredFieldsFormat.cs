@@ -83,21 +83,13 @@ namespace Lucene.Net.Codecs.Lucene40
             base.TestReadSkip();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public override void TestEmptyDocs()
         {
             base.TestEmptyDocs();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public override void TestConcurrentReads()
         {
             base.TestConcurrentReads();
@@ -109,11 +101,7 @@ namespace Lucene.Net.Codecs.Lucene40
             base.TestWriteReadMerge();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(80000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

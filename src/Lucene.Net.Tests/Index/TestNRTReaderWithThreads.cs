@@ -37,11 +37,7 @@ namespace Lucene.Net.Index
     {
         internal AtomicInt32 Seq = new AtomicInt32(1);
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestIndexing()
         {
             Directory mainDir = NewDirectory();

@@ -317,11 +317,7 @@ namespace Lucene.Net.Store
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestSeeking()
         {
             for (int i = 0; i < 10; i++)
@@ -353,11 +349,7 @@ namespace Lucene.Net.Store
 
         // note instead of seeking to offset and reading length, this opens slices at the
         // the various offset+length and just does readBytes.
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestSlicedSeeking()
         {
             for (int i = 0; i < 10; i++)

@@ -1,3 +1,4 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -133,7 +134,7 @@ namespace Lucene.Net
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
         [Timeout(500)]
 #endif
-        [Test]
+        [Test, HasTimeout]
         public virtual void TestTimeout()
         {
             Thread.Sleep(5000);

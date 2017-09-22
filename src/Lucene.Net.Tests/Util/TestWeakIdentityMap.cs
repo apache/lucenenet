@@ -197,11 +197,7 @@ namespace Lucene.Net.Util
             Assert.IsTrue(map.IsEmpty);
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test]
         public virtual void TestConcurrentHashMap()
         {
             // don't make threadCount and keyCount random, otherwise easily OOMs or fails otherwise:

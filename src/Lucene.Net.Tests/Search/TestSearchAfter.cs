@@ -232,11 +232,7 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(90000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestQueries()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test

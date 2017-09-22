@@ -311,11 +311,7 @@ namespace Lucene.Net.Index
             d.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(40000)]
-#endif
-        [Test, HasTimeout]
+        [Test]
         public virtual void TestTermVectors()
         {
             Directory d = NewDirectory();

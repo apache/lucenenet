@@ -51,11 +51,7 @@ namespace Lucene.Net.Search
 
         private SearcherLifetimeManager.IPruner pruner;
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestSearcherManager_Mem()
         {
             pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt(Random(), 1, 20) : 1);

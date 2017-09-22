@@ -165,11 +165,7 @@ namespace Lucene.Net.Index
             return ret;
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestTermDocPerf()
         {
             // performance test for 10% of documents containing a term

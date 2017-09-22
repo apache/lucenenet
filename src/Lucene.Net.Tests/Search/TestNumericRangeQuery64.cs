@@ -711,11 +711,7 @@ namespace Lucene.Net.Search
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestSorting_8bit()
         {
             TestSorting(8);

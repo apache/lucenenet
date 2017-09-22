@@ -201,11 +201,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestNoExtraFiles()
         {
             Directory directory = NewDirectory();
@@ -237,11 +233,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();
@@ -406,11 +398,7 @@ namespace Lucene.Net.Index
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestTotalBytesSize()
         {
             Directory d = NewDirectory();
