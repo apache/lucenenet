@@ -29,7 +29,7 @@ namespace Lucene.Net.Support.IO
     /// <summary>
     /// Represents the methods to support some operations over files.
     /// </summary>
-    public class FileSupport
+    public static class FileSupport
     {
         private static readonly object _lock = new object();
 
