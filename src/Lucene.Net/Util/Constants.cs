@@ -140,7 +140,8 @@ namespace Lucene.Net.Util
             WINDOWS = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             LINUX = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             MAC_OS_X = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-            // LUCENENET NOTE: SunOS and FreeBSD not supported
+            FREE_BSD = RuntimeInformation.IsOSPlatform(OSPlatform.Create("FreeBSD"));
+            SUN_OS = RuntimeInformation.IsOSPlatform(OSPlatform.Create("SunOS"));
 #else
             // LUCENENET NOTE: On .NET Framework, our only possibilities are Windows or Linux
             PlatformID pid = Environment.OSVersion.Platform;
