@@ -90,8 +90,8 @@ namespace Lucene.Net.Search
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Reader.Dispose();
-            Small.Dispose();
+            Reader?.Dispose();
+            Small?.Dispose();
             Reader = null;
             Small = null;
             base.AfterClass();
