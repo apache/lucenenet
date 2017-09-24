@@ -1,5 +1,6 @@
 using Lucene.Net.Util;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -176,6 +177,129 @@ namespace Lucene.Net.Support.IO
             }
 
             return Path.Combine(directory.FullName, string.Concat(prefix, randomFileName));
+        }
+
+        private static readonly IDictionary<string, string> fileCanonPathCache = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Returns the absolute path of this <see cref="FileSystemInfo"/> with all references resolved and
+        /// any drive letters normalized to upper case on Windows. An
+        /// <em>absolute</em> path is one that begins at the root of the file
+        /// system. The canonical path is one in which all references have been
+        /// resolved. For the cases of '..' and '.', where the file system supports
+        /// parent and working directory respectively, these are removed and replaced
+        /// with a direct directory reference. 
+        /// </summary>
+        /// <param name="path">This <see cref="FileSystemInfo"/> instance.</param>
+        /// <returns>The canonical path of this file.</returns>
+        // LUCENENET NOTE: Implementation ported mostly from Apache Harmony
+        public static string GetCanonicalPath(this FileSystemInfo path)
+        {
+            string absPath = path.FullName; // LUCENENET NOTE: This internally calls GetFullPath(), which resolves relative paths
+            byte[] result = Encoding.UTF8.GetBytes(absPath);
+
+            string canonPath;
+            if (fileCanonPathCache.TryGetValue(absPath, out canonPath) && canonPath != null)
+            {
+                return canonPath;
+            }
+
+            // LUCENENET TODO: On Unix, this resolves symbolic links. Not sure
+            // if it is safe to assume Path.GetFullPath() does that for us.
+            //if (Path.DirectorySeparatorChar == '/')
+            //{
+            //    //// resolve the full path first
+            //    //result = resolveLink(result, result.Length, false);
+            //    //// resolve the parent directories
+            //    //result = resolve(result);
+            //}
+            int numSeparators = 1;
+            for (int i = 0; i < result.Length; i++)
+            {
+                if (result[i] == Path.DirectorySeparatorChar)
+                {
+                    numSeparators++;
+                }
+            }
+            int[] sepLocations = new int[numSeparators];
+            int rootLoc = 0;
+            if (Path.DirectorySeparatorChar == '\\')
+            {
+                if (result[0] == '\\')
+                {
+                    rootLoc = (result.Length > 1 && result[1] == '\\') ? 1 : 0;
+                }
+                else
+                {
+                    rootLoc = 2; // skip drive i.e. c:
+                }
+            }
+            byte[] newResult = new byte[result.Length + 1];
+            int newLength = 0, lastSlash = 0, foundDots = 0;
+            sepLocations[lastSlash] = rootLoc;
+            for (int i = 0; i <= result.Length; i++)
+            {
+                if (i < rootLoc)
+                {
+                    // Normalize case of Windows drive letter to upper
+                    newResult[newLength++] = (byte)char.ToUpperInvariant((char)result[i]);
+                }
+                else
+                {
+                    if (i == result.Length || result[i] == Path.DirectorySeparatorChar)
+                    {
+                        if (i == result.Length && foundDots == 0)
+                        {
+                            break;
+                        }
+                        if (foundDots == 1)
+                        {
+                            /* Don't write anything, just reset and continue */
+                            foundDots = 0;
+                            continue;
+                        }
+                        if (foundDots > 1)
+                        {
+                            /* Go back N levels */
+                            lastSlash = lastSlash > (foundDots - 1) ? lastSlash
+                                    - (foundDots - 1) : 0;
+                            newLength = sepLocations[lastSlash] + 1;
+                            foundDots = 0;
+                            continue;
+                        }
+                        sepLocations[++lastSlash] = newLength;
+                        newResult[newLength++] = (byte)Path.DirectorySeparatorChar;
+                        continue;
+                    }
+                    if (result[i] == '.')
+                    {
+                        foundDots++;
+                        continue;
+                    }
+                    /* Found some dots within text, write them out */
+                    if (foundDots > 0)
+                    {
+                        for (int j = 0; j < foundDots; j++)
+                        {
+                            newResult[newLength++] = (byte)'.';
+                        }
+                    }
+                    newResult[newLength++] = result[i];
+                    foundDots = 0;
+                }
+            }
+            // remove trailing slash
+            if (newLength > (rootLoc + 1)
+                    && newResult[newLength - 1] == Path.DirectorySeparatorChar)
+            {
+                newLength--;
+            }
+            newResult[newLength] = 0;
+            //newResult = getCanonImpl(newResult);
+            newLength = newResult.Length;
+            canonPath = Encoding.UTF8.GetString(newResult, 0, newLength).TrimEnd('\0'); // LUCENENET: Eliminate null terminator char
+            fileCanonPathCache[absPath] = canonPath;
+            return canonPath;
         }
     }
 }
