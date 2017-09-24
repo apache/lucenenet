@@ -1,9 +1,9 @@
+using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;// Used only for WRITE_LOCK_NAME in deprecated create=true case:
-using Lucene.Net.Support;
 
 namespace Lucene.Net.Store
 {
@@ -118,7 +118,7 @@ namespace Lucene.Net.Store
             {
                 lockFactory = new NativeFSLockFactory();
             }
-            m_directory = path; // Lucene.NET doesn't need to call GetCanonicalPath since we already have DirectoryInfo handy
+            m_directory = new DirectoryInfo(path.GetCanonicalPath());
 
             if (File.Exists(path.FullName))
             {
@@ -215,7 +215,7 @@ namespace Lucene.Net.Store
                     lf.SetLockDir(m_directory);
                     lf.LockPrefix = null;
                 }
-                else if (dir.FullName.Equals(m_directory.FullName, StringComparison.Ordinal))
+                else if (dir.GetCanonicalPath().Equals(m_directory.GetCanonicalPath(), StringComparison.Ordinal))
                 {
                     lf.LockPrefix = null;
                 }
@@ -395,7 +395,7 @@ namespace Lucene.Net.Store
             string dirName; // name to be hashed
             try
             {
-                dirName = m_directory.FullName;
+                dirName = m_directory.GetCanonicalPath();
             }
             catch (IOException e)
             {

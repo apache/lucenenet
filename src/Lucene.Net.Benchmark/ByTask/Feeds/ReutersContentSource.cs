@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
+using Lucene.Net.Support.IO;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -95,7 +96,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     iteration++;
                 }
                 f = inputFiles[nextFile++];
-                name = f.FullName + "_" + iteration;
+                name = f.GetCanonicalPath() + "_" + iteration;
             }
 
             using (TextReader reader = new StreamReader(new FileStream(f.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8))

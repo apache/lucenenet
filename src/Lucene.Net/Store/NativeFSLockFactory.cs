@@ -1,3 +1,4 @@
+using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using System;
 using System.IO;
@@ -96,18 +97,18 @@ namespace Lucene.Net.Store
         /// </summary>
         /// <param name="lockName"></param>
         /// <returns></returns>
-        private string GetPathOfLockFile(string lockName)
+        private string GetCanonicalPathOfLockFile(string lockName)
         {
             if (m_lockPrefix != null)
             {
                 lockName = m_lockPrefix + "-" + lockName;
             }
-            return Path.Combine(m_lockDir.FullName, lockName);
+            return new FileInfo(Path.Combine(m_lockDir.FullName, lockName)).GetCanonicalPath();
         }
 
         public override Lock MakeLock(string lockName)
         {
-            var path = GetPathOfLockFile(lockName);
+            var path = GetCanonicalPathOfLockFile(lockName);
             NativeFSLock l;
             lock (_locks)
                 if (!_locks.TryGetValue(path, out l))
@@ -117,7 +118,7 @@ namespace Lucene.Net.Store
 
         public override void ClearLock(string lockName)
         {
-            var path = GetPathOfLockFile(lockName);
+            var path = GetCanonicalPathOfLockFile(lockName);
             NativeFSLock l;
             // this is the reason why we can't use ConcurrentDictionary: we need the removal and disposal of the lock to be atomic
             // otherwise it may clash with MakeLock making a lock and ClearLock disposing of it in another thread.
