@@ -90,7 +90,7 @@ namespace Lucene.Net.Store
 
         // LUCENENET: NativeFSLocks in Java are infact singletons; this is how we mimick that to track instances and make sure
         // IW.Unlock and IW.IsLocked works correctly
-        internal static readonly Dictionary<string, NativeFSLock> _locks = new Dictionary<string, NativeFSLock>();
+        internal static readonly Dictionary<string, Lock> _locks = new Dictionary<string, Lock>();
 
         /// <summary>
         /// Given a lock name, return the full prefixed path of the actual lock file.
@@ -109,17 +109,27 @@ namespace Lucene.Net.Store
         public override Lock MakeLock(string lockName)
         {
             var path = GetCanonicalPathOfLockFile(lockName);
-            NativeFSLock l;
+            Lock l;
             lock (_locks)
                 if (!_locks.TryGetValue(path, out l))
-                    _locks.Add(path, l = new NativeFSLock(this, m_lockDir, path));
+                    _locks.Add(path, l = NewLock(path));
             return l;
+        }
+
+        // Internal for testing
+        internal virtual Lock NewLock(string path)
+        {
+            if (Constants.WINDOWS)
+                return new WindowsNativeFSLock(this, m_lockDir, path);
+
+            // Fallback implementation for unknown platforms that don't rely on HResult
+            return new NativeFSLock(this, m_lockDir, path);
         }
 
         public override void ClearLock(string lockName)
         {
             var path = GetCanonicalPathOfLockFile(lockName);
-            NativeFSLock l;
+            Lock l;
             // this is the reason why we can't use ConcurrentDictionary: we need the removal and disposal of the lock to be atomic
             // otherwise it may clash with MakeLock making a lock and ClearLock disposing of it in another thread.
             lock (_locks)
@@ -131,14 +141,24 @@ namespace Lucene.Net.Store
         }
     }
 
+
+    // LUCENENET NOTE: We use this implementation as a fallback for platforms that we don't
+    // know the HResult numbers for lock and file sharing errors.
+    //
+    // Note that using SharingAwareNativeFSLock would be ideal for all platforms. However,
+    // at the time of this writing there is no cross-platform way to identify sharing errors
+    // or lock errors because the values of HResult depend on the specific OS platform we
+    // are running on. Unfortunately, researching what these numbers may be even for Linux and
+    // OSx turned up nothing, and it is also unclear whether different flavors of Linux/Unix will have
+    // different HResult numbers. The best we can hope for is for people to contribute subclasses
+    // of SharingAwareNativeFSLock for the most popular platforms and fall back to this (substandard)
+    // implementation for all of the other platforms. See WindowsNativeFSLock for an example of what
+    // one of these subclasses should look like. The NativeFSLockFactory.NewLock() factory method
+    // is the only place where adding the platform-specific logic which class to instantiate is required.
+    // 
+    // Reference: https://stackoverflow.com/q/46380483
     internal class NativeFSLock : Lock
     {
-#if FEATURE_FILESTREAM_LOCK
-        private const int ERROR_LOCK_VIOLATION = 0x21;
-#else
-        private const int ERROR_SHARE_VIOLATION = 0x20;
-#endif
-
         private readonly NativeFSLockFactory outerInstance;
 
         private FileStream channel;
@@ -152,20 +172,179 @@ namespace Lucene.Net.Store
             this.path = path;
         }
 
-        /// <summary>
-        /// Return true if the <see cref="IOException"/> is the result of a lock violation
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        private static bool IsLockOrShareViolation(IOException e)
+        public override bool Obtain()
         {
-            var result = e.HResult & 0xFFFF;
-#if FEATURE_FILESTREAM_LOCK
-            return result == ERROR_LOCK_VIOLATION;
-#else
-            return result == ERROR_SHARE_VIOLATION;
-#endif
+            lock (this)
+            {
+                FailureReason = null;
+
+                if (channel != null)
+                {
+                    // Our instance is already locked:
+                    return false;
+                }
+
+                if (!System.IO.Directory.Exists(lockDir.FullName))
+                {
+                    try
+                    {
+                        System.IO.Directory.CreateDirectory(lockDir.FullName);
+                    }
+                    catch
+                    {
+                        throw new IOException("Cannot create directory: " + lockDir.FullName);
+                    }
+                }
+                else if (File.Exists(lockDir.FullName))
+                {
+                    throw new IOException("Found regular file where directory expected: " + lockDir.FullName);
+                }
+
+                var success = false;
+                try
+                {
+                    channel = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+
+                    success = true;
+                }
+                catch (IOException e)
+                {
+                    FailureReason = e;
+                }
+                // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
+                catch (UnauthorizedAccessException e)
+                {
+                    // At least on OS X, we will sometimes get an
+                    // intermittent "Permission Denied" Exception,
+                    // which seems to simply mean "you failed to get
+                    // the lock".  But other IOExceptions could be
+                    // "permanent" (eg, locking is not supported via
+                    // the filesystem).  So, we record the failure
+                    // reason here; the timeout obtain (usually the
+                    // one calling us) will use this as "root cause"
+                    // if it fails to get the lock.
+                    FailureReason = e;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        IOUtils.DisposeWhileHandlingException(channel);
+                        channel = null;
+                    }
+                }
+
+                return channel != null;
+            }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                lock (this)
+                {
+                    // whether or not we have created a file, we need to remove
+                    // the lock instance from the dictionary that tracks them.
+                    try
+                    {
+                        lock (NativeFSLockFactory._locks)
+                            NativeFSLockFactory._locks.Remove(path);
+                    }
+                    finally
+                    {
+                        if (channel != null)
+                        {
+                            IOUtils.DisposeWhileHandlingException(channel);
+                            channel = null;
+
+                            bool tmpBool;
+                            if (File.Exists(path))
+                            {
+                                File.Delete(path);
+                                tmpBool = true;
+                            }
+                            else if (System.IO.Directory.Exists(path))
+                            {
+                                System.IO.Directory.Delete(path);
+                                tmpBool = true;
+                            }
+                            else
+                            {
+                                tmpBool = false;
+                            }
+                            if (!tmpBool)
+                            {
+                                throw new LockReleaseFailedException("failed to delete " + path);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public override bool IsLocked()
+        {
+            lock (this)
+            {
+                // The test for is isLocked is not directly possible with native file locks:
+
+                // First a shortcut, if a lock reference in this instance is available
+                if (channel != null)
+                {
+                    return true;
+                }
+
+                // Look if lock file is present; if not, there can definitely be no lock!
+                bool tmpBool;
+                if (System.IO.File.Exists(path))
+                    tmpBool = true;
+                else
+                    tmpBool = System.IO.Directory.Exists(path);
+                if (!tmpBool)
+                    return false;
+
+                // Try to obtain and release (if was locked) the lock
+                try
+                {
+                    bool obtained = Obtain();
+                    if (obtained)
+                    {
+                        Dispose();
+                    }
+                    return !obtained;
+                }
+                catch (IOException)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            return "NativeFSLock@" + path;
+        }
+    }
+
+    // Abstract class that can be used to create additional native locks that
+    // work with OS-specific HResult values.
+    internal abstract class SharingAwareNativeFSLock : Lock
+    {
+        private readonly NativeFSLockFactory outerInstance;
+
+        private FileStream channel;
+        private readonly string path;
+        private readonly DirectoryInfo lockDir;
+
+        public SharingAwareNativeFSLock(NativeFSLockFactory outerInstance, DirectoryInfo lockDir, string path)
+        {
+            this.outerInstance = outerInstance;
+            this.lockDir = lockDir;
+            this.path = path;
+        }
+
+        protected abstract bool IsLockOrShareViolation(IOException e);
 
         private FileStream GetLockFileStream(FileMode mode)
         {
@@ -220,10 +399,15 @@ namespace Lucene.Net.Store
                 // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
                 catch (UnauthorizedAccessException e)
                 {
-                    // On Windows, we can get intermittent "Access
-                    // Denied" here.  So, we treat this as failure to
-                    // acquire the lock, but, store the reason in case
-                    // there is in fact a real error case.
+                    // At least on OS X, we will sometimes get an
+                    // intermittent "Permission Denied" Exception,
+                    // which seems to simply mean "you failed to get
+                    // the lock".  But other IOExceptions could be
+                    // "permanent" (eg, locking is not supported via
+                    // the filesystem).  So, we record the failure
+                    // reason here; the timeout obtain (usually the
+                    // one calling us) will use this as "root cause"
+                    // if it fails to get the lock.
                     FailureReason = e;
                 }
 
@@ -257,10 +441,15 @@ namespace Lucene.Net.Store
                 // LUCENENET: UnauthorizedAccessException does not derive from IOException like in java
                 catch (UnauthorizedAccessException e)
                 {
-                    // On Windows, we can get intermittent "Access
-                    // Denied" here.  So, we treat this as failure to
-                    // acquire the lock, but, store the reason in case
-                    // there is in fact a real error case.
+                    // At least on OS X, we will sometimes get an
+                    // intermittent "Permission Denied" Exception,
+                    // which seems to simply mean "you failed to get
+                    // the lock".  But other IOExceptions could be
+                    // "permanent" (eg, locking is not supported via
+                    // the filesystem).  So, we record the failure
+                    // reason here; the timeout obtain (usually the
+                    // one calling us) will use this as "root cause"
+                    // if it fails to get the lock.
                     FailureReason = e;
                 }
 #endif
@@ -347,6 +536,35 @@ namespace Lucene.Net.Store
         public override string ToString()
         {
             return "NativeFSLock@" + path;
+        }
+    }
+
+
+    // LUCENENET: Lock that uses HResult native to Windows
+    internal class WindowsNativeFSLock : SharingAwareNativeFSLock
+    {
+#if FEATURE_FILESTREAM_LOCK
+        private const int ERROR_LOCK_VIOLATION = 0x21;
+#else
+        private const int ERROR_SHARE_VIOLATION = 0x20;
+#endif
+
+        public WindowsNativeFSLock(NativeFSLockFactory outerInstance, DirectoryInfo lockDir, string path)
+            : base(outerInstance, lockDir, path)
+        {
+        }
+
+        /// <summary>
+        /// Return true if the <see cref="IOException"/> is the result of a lock violation
+        /// </summary>
+        protected override bool IsLockOrShareViolation(IOException e)
+        {
+            var result = e.HResult & 0xFFFF;
+#if FEATURE_FILESTREAM_LOCK
+            return result == ERROR_LOCK_VIOLATION;
+#else
+            return result == ERROR_SHARE_VIOLATION;
+#endif
         }
     }
 }
