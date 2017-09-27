@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Analysis
+summary: *content
+---
+
 API and code to convert text into indexable/searchable tokens. Covers [](xref:Lucene.Net.Analysis.Analyzer) and related classes.
 
 ## Parsing? Tokenization? Analysis!

@@ -7,8 +7,8 @@
             "Lucene.Net/Lucene.Net.csproj",
             "Lucene.Net.Misc/Lucene.Net.Misc.csproj"      
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net"
@@ -19,8 +19,8 @@
           "files": [
             "Lucene.Net.Queries/Lucene.Net.Queries.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Queries"
@@ -31,8 +31,8 @@
           "files": [
             "Lucene.Net.Facet/Lucene.Net.Facet.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Facet"
@@ -43,8 +43,8 @@
           "files": [
             "Lucene.Net.Classification/Lucene.Net.Classification.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Classification"
@@ -55,8 +55,8 @@
           "files": [
             "Lucene.Net.Expressions/Lucene.Net.Expressions.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Expressions"
@@ -67,8 +67,8 @@
           "files": [
             "Lucene.Net.Codecs/Lucene.Net.Codecs.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Codecs"
@@ -79,8 +79,8 @@
           "files": [
             "Lucene.Net.Join/Lucene.Net.Join.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Join"
@@ -91,8 +91,8 @@
           "files": [
             "Lucene.Net.Grouping/Lucene.Net.Grouping.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Grouping"
@@ -103,12 +103,12 @@
           "files": [
             "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj",
             "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj",
-            "Lucene.Net.Analysis.SmartCn/Lucene.Net.Tests.Analysis.SmartCn.csproj",
+            "Lucene.Net.Analysis.SmartCn/Lucene.Net.Analysis.SmartCn.csproj",
             "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj",
             "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Analysis"
@@ -119,8 +119,8 @@
           "files": [
             "Lucene.Net.QueryParser/Lucene.Net.QueryParser.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.QueryParser"
@@ -131,8 +131,8 @@
           "files": [
             "Lucene.Net.Suggest/Lucene.Net.Suggest.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Suggest"
@@ -143,8 +143,8 @@
           "files": [
             "Lucene.Net.Memory/Lucene.Net.Memory.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Memory"
@@ -155,8 +155,8 @@
           "files": [
             "Lucene.Net.Spatial/Lucene.Net.Spatial.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Spatial"
@@ -167,8 +167,8 @@
           "files": [
             "Lucene.Net.Highlighter/Lucene.Net.Highlighter.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
         }
       ],
       "dest": "api/Lucene.Net.Highlighter"
@@ -177,13 +177,37 @@
       "src": [
         {
           "files": [
+            "Lucene.Net.Replicator/Lucene.Net.Replicator.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Replicator"
+    },
+    {
+      "src": [
+        {
+          "files": [
             "Lucene.Net.ICU/Lucene.Net.ICU.csproj"
           ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src/dotnet"
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src/dotnet"
         }
       ],
       "dest": "api/Lucene.Net.ICU"
+    },
+    {
+      "src": [
+        {
+          "files": [
+            "Lucene.Net.Demo/Lucene.Net.Demo.csproj"
+          ],
+          "exclude": ["**/obj/**", "**/bin/**", "**/Lucene.Net.Test*/**"],
+          "src": "../src"
+        }
+      ],
+      "dest": "api/Lucene.Net.Demo"
     }
   ],
   "build": {
@@ -192,9 +216,13 @@
         "files": ["api/**.yml", "api/index.md"] 
       },
       {
-        "files": ["*.md", "*.yml", "**/*.md", "**/*.yml"],
+        "files": ["**.md", "**.yml"],
         "src": "../src/dotnet/tools/lucene-cli/docs",
         "dest": "cli"
+      },
+      {
+        "files": ["**/package.md","**/overview.md"],
+        "src": "../src"
       },
       {
         "files": [          
@@ -226,13 +254,11 @@
     },
     "overwrite": [
       {
-        "files": [
-          "apispec/**.md"
-        ],
-        "exclude": [
-          "obj/**",
-          "_site/**"
-        ]
+        "files": ["apispec/**.md"]
+      },
+      {
+        "files": ["**/package.md","**/overview.md"],
+        "src": "../src"
       }
     ],
     "dest": "_site",

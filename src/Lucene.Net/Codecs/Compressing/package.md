@@ -16,4 +16,9 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Codecs.Compressing
+summary: *content
+---
+
 StoredFieldsFormat that allows cross-document and cross-field compression of stored fields.

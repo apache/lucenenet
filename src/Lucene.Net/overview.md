@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net
+summary: *content
+---
+
 Apache Lucene is a high-performance, full-featured text search engine library. Here's a simple example how to use Lucene for indexing and searching (using JUnit to check if the results are what we expect):
 
 <!-- =   Java2Html Converter 5.0 [2006-03-04] by Markus Gebhard  markus@jave.de   = -->

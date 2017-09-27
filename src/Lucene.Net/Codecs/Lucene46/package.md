@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Codecs.Lucene46
+summary: *content
+---
+
 Lucene 4.6 file format.
 
 # Apache Lucene - Index File Formats

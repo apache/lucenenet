@@ -1,30 +1,45 @@
 - name: Lucene.Net
   href: Lucene.Net/toc.yml
+  topicUid: Lucene.Net
 - name: Lucene.Net.Queries
   href: Lucene.Net.Queries/toc.yml
+  topicUid: Lucene.Net.Queries
 - name: Lucene.Net.Analysis
   href: Lucene.Net.Analysis/toc.yml
+  topicUid: Lucene.Net.Analysis
 - name: Lucene.Net.QueryParser
   href: Lucene.Net.QueryParser/toc.yml
 - name: Lucene.Net.Highlighter
   href: Lucene.Net.Highlighter/toc.yml
+  topicUid: Lucene.Net.Highlighter
 - name: Lucene.Net.Facet
   href: Lucene.Net.Facet/toc.yml
+  topicUid: Lucene.Net.Facet  
 - name: Lucene.Net.Classification
   href: Lucene.Net.Classification/toc.yml
+  topicUid: Lucene.Net.Classification
 - name: Lucene.Net.Expressions
   href: Lucene.Net.Expressions/toc.yml
+  topicUid: Lucene.Net.Expressions
 - name: Lucene.Net.Codecs
   href: Lucene.Net.Codecs/toc.yml
+  topicUid: Lucene.Net.Codecs
 - name: Lucene.Net.Join
   href: Lucene.Net.Join/toc.yml
+  topicUid: Lucene.Net.Join
 - name: Lucene.Net.Grouping
   href: Lucene.Net.Grouping/toc.yml
+  topicUid: Lucene.Net.Grouping
 - name: Lucene.Net.Suggest
   href: Lucene.Net.Suggest/toc.yml
 - name: Lucene.Net.Memory
   href: Lucene.Net.Memory/toc.yml
 - name: Lucene.Net.Spatial
   href: Lucene.Net.Spatial/toc.yml
+  topicUid: Lucene.Net.Spatial
+- name: Lucene.Net.Replicator
+  href: Lucene.Net.Replicator/toc.yml
+  topicUid: Lucene.Net.Replicator
 - name: Lucene.Net.ICU
   href: Lucene.Net.ICU/toc.yml
+  topicUid: Lucene.Net.Analysis.ICU

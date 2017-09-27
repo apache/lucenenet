@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Search.Spans
+summary: *content
+---
+
 The calculus of spans.
 
 A span is a `<doc,startPosition,endPosition>` tuple.

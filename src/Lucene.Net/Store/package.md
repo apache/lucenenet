@@ -16,4 +16,9 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Store
+summary: *content
+---
+
 Binary i/o API, used for all index data.

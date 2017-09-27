@@ -15,8 +15,9 @@
  limitations under the License.
 -->
 
-  <title>
-    classification
-  </title>
+---
+uid: Lucene.Net.Classification
+summary: *content
+---
 
 Provides a classification module which leverages Lucene index information.

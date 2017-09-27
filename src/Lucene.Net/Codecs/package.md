@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Codecs
+summary: *content
+---
+
 Codecs API: API for customization of the encoding and structure of the index.
 
  The Codec API allows you to customise the way the following pieces of index information are stored: * Postings lists - see [](xref:Lucene.Net.Codecs.PostingsFormat) * DocValues - see [](xref:Lucene.Net.Codecs.DocValuesFormat) * Stored fields - see [](xref:Lucene.Net.Codecs.StoredFieldsFormat) * Term vectors - see [](xref:Lucene.Net.Codecs.TermVectorsFormat) * FieldInfos - see [](xref:Lucene.Net.Codecs.FieldInfosFormat) * SegmentInfo - see [](xref:Lucene.Net.Codecs.SegmentInfoFormat) * Norms - see [](xref:Lucene.Net.Codecs.NormsFormat) * Live documents - see [](xref:Lucene.Net.Codecs.LiveDocsFormat) 

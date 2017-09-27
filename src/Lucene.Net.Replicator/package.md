@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Replicator
+summary: *content
+---
+
 # Files replication framework
 
 	The

@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Search.Similarities
+summary: *content
+---
+
 This package contains the various ranking models that can be used in Lucene. The
 abstract class [](xref:Lucene.Net.Search.Similarities.Similarity) serves
 as the base for ranking functions. For searching, users can employ the models

@@ -16,4 +16,9 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Codecs.Lucene3x
+summary: *content
+---
+
 Codec to support Lucene 3.x indexes (readonly)

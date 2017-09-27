@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Spatial
+summary: *content
+---
+
 # The Spatial Module for Apache Lucene
 
  The spatial module is new to Lucene 4, replacing the old "contrib" module that came before it. The principle interface to the module is a [](xref:Lucene.Net.Spatial.SpatialStrategy) which encapsulates an approach to indexing and searching based on shapes. Different Strategies have different features and performance profiles, which are documented at each Strategy implementation class level. 

@@ -16,4 +16,9 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Util
+summary: *content
+---
+
 Some utility classes.

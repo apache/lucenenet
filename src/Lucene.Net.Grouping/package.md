@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Grouping
+summary: *content
+---
+
 This module enables search result grouping with Lucene, where hits with the same value in the specified single-valued group field are grouped together. For example, if you group by the `author` field, then all documents with the same value in the `author` field fall into a single group.
 
 Grouping requires a number of inputs:

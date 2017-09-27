@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Search
+summary: *content
+---
+
 Code to search indices.
 
 ## Table Of Contents

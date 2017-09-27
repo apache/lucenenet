@@ -16,10 +16,10 @@
 -->
 <!-- :Post-Release-Update-Version.LUCENE_XY: - several mentions in this file -->
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>
-      Apache Lucene ICU integration module
-    </title>
+---
+uid: Lucene.Net.Analysis.ICU
+summary: *content
+---
 
 This module exposes functionality from 
 [ICU](http://site.icu-project.org/) to Apache Lucene. ICU4J is a Java

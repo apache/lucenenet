@@ -14,10 +14,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 -->
-
-    <title>
-      Apache Lucene Kuromoji Analyzer
-    </title>
+---
+uid: Lucene.Net.Analysis.Kuromoji
+summary: *content
+---
 
   Kuromoji is a morphological analyzer for Japanese text.  
 

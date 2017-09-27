@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Join
+summary: *content
+---
+
 This modules support index-time and query-time joins.
 
 ## Index-time joins

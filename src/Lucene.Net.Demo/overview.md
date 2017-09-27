@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Demo
+summary: *content
+---
+
 The demo module offers simple example code to show the features of Lucene.
 
 # Apache Lucene - Building and Installing the Basic Demo

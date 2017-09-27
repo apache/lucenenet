@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Facet
+summary: *content
+---
+
 # faceted search
 
  This module provides multiple methods for computing facet counts and value aggregations: * Taxonomy-based methods rely on a separate taxonomy index to map hierarchical facet paths to global int ordinals for fast counting at search time; these methods can compute counts (([](xref:Lucene.Net.Facet.Taxonomy.FastTaxonomyFacetCounts), [](xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetCounts)) aggregate long or double values [](xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumIntAssociations), [](xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumFloatAssociations), [](xref:Lucene.Net.Facet.Taxonomy.TaxonomyFacetSumValueSource). Add [](xref:Lucene.Net.Facet.FacetField) or [](xref:Lucene.Net.Facet.Taxonomy.AssociationFacetField) to your documents at index time to use taxonomy-based methods. Sorted-set doc values method does not require a separate taxonomy index, and computes counts based on sorted set doc values fields ([](xref:Lucene.Net.Facet.Sortedset.SortedSetDocValuesFacetCounts)). Add [](xref:Lucene.Net.Facet.Sortedset.SortedSetDocValuesFacetField) to your documents at index time to use sorted set facet counts. Range faceting [](xref:Lucene.Net.Facet.Range.LongRangeFacetCounts), [](xref:Lucene.Net.Facet.Range.DoubleRangeFacetCounts) compute counts for a dynamic numeric range from a provided [](xref:Lucene.Net.Queries.Function.ValueSource) (previously indexed numeric field, or a dynamic expression such as distance). 

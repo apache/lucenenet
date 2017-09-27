@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Expressions
+summary: *content
+---
+
 # The Expressions Module for Apache Lucene
 
  The expressions module is new to Lucene 4.6. It provides an API for dynamically computing per-document values based on string expressions. 

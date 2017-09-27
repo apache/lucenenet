@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Analysis.Common
+summary: *content
+---
+
   Analyzers for indexing content in different languages and domains.
 
  For an introduction to Lucene's analysis API, see the [](xref:Lucene.Net.Analysis) package documentation. 

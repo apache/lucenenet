@@ -15,9 +15,10 @@
  limitations under the License.
 -->
 
-    <title>
-      analyzers-phonetic
-    </title>
+---
+uid: Lucene.Net.Analysis.Phonetic
+summary: *content
+---
 
   Analysis for indexing phonetic signatures (for sounds-alike search)
 

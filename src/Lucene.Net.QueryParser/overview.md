@@ -15,9 +15,10 @@
   limitations under the License.
   -->
 
-    <title>
-      QueryParsers
-    </title>
+---
+uid: Lucene.Net.QueryParser
+summary: *content
+---
 
   Apache Lucene QueryParsers.
 

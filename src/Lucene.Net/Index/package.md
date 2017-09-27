@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Index
+summary: *content
+---
+
 Code to maintain and access indices.
 
 ## Table Of Contents

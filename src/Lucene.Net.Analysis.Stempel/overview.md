@@ -15,6 +15,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Analysis.Stempel
+summary: *content
+---
+
 # *Stempel* - Algorithmic Stemmer for Polish Language
 
 ## Introduction

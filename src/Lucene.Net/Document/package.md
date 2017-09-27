@@ -16,6 +16,11 @@
  limitations under the License.
 -->
 
+---
+uid: Lucene.Net.Documents
+summary: *content
+---
+
 The logical representation of a [](xref:Lucene.Net.Documents.Document) for indexing and searching.
 
 The document package provides the user level logical representation of content to be indexed and searched. The package also provides utilities for working with [](xref:Lucene.Net.Documents.Document)s and [](xref:Lucene.Net.Index.IndexableField)s.

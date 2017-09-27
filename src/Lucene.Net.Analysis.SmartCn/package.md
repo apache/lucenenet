@@ -16,7 +16,10 @@
  limitations under the License.
 -->
 
-<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+---
+uid: Lucene.Net.Analysis.SmartCn
+summary: *content
+---
 
 Analyzer for Simplified Chinese, which indexes words.
 @lucene.experimental
