@@ -104,7 +104,8 @@
             "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj",
             "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj",
             "Lucene.Net.Analysis.SmartCn/Lucene.Net.Tests.Analysis.SmartCn.csproj",
-            "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj"
+            "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj",
+            "Lucene.Net.Analysis.Kuromoji/Lucene.Net.Analysis.Kuromoji.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
           "cwd": "../src"
