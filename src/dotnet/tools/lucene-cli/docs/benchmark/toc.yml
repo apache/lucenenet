@@ -1,0 +1,12 @@
+- name: extract-reuters
+  href: extract-reuters.md
+- name: extract-wikipedia
+  href: extract-wikipedia.md
+- name: find-quality-queries
+  href: find-quality-queries.md
+- name: run-trec-eval
+  href: run-trec-eval.md
+- name: run
+  href: run.md
+- name: sample
+  href: sample.md

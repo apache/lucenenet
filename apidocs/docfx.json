@@ -211,11 +211,14 @@
   ],
   "build": {
     "content": [
+     
       {
-        "files": ["api/**.yml", "api/index.md"]        
+        "files": ["*.md", "*.yml", "**/*.md", "**/*.yml"],
+        "src": "../src/dotnet/tools/lucene-cli/docs",
+        "dest": "cli"
       },
       {
-        "files": [
+        "files": [          
           //"docs/**.md",
           //"docs/**/toc.yml",
           //"wiki/**.md",
@@ -231,13 +234,14 @@
           "logo/favicon.ico",
           "logo/lucene-net-icon-64x64.png"
         ],
-        "cwd": "../branding"
+        "src": "../branding"
       }
     ],   
     "globalMetadata": {
       "_appTitle": "Apache Lucene.NET 4.8.0 Documentation",      
       "_disableContribution": false,
       "_appFaviconPath": "logo/favicon.ico",
+      "_enableSearch": true,
       "_appLogoPath": "logo/lucene-net-icon-64x64.png",
       "_appFooter": "Copyright © 2017 Licensed to the Apache Software Foundation (ASF)"
     },

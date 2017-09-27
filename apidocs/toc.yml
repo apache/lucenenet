@@ -1,3 +1,6 @@
-- name: Lucene.NET API Docs
+- name: Lucene.NET API
   href: api/
   topicHref: api/index.md
+- name: Lucene.NET CLI
+  href: ../src/dotnet/tools/lucene-cli/docs/
+  topicHref: ../src/dotnet/tools/lucene-cli/docs/index.md
