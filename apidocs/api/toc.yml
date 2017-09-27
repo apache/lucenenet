@@ -37,9 +37,6 @@
 - name: Lucene.Net.Spatial
   href: Lucene.Net.Spatial/toc.yml
   topicUid: Lucene.Net.Spatial
-- name: Lucene.Net.Replicator
-  href: Lucene.Net.Replicator/toc.yml
-  topicUid: Lucene.Net.Replicator
 - name: Lucene.Net.ICU
   href: Lucene.Net.ICU/toc.yml
   topicUid: Lucene.Net.Analysis.ICU
