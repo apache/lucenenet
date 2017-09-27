@@ -188,7 +188,7 @@ namespace Lucene.Net.Index
         {
             foreach (var merge in _mergeThreads.ToArray())
             {
-                if (!merge.IsAlive)
+                if (merge == null || !merge.IsAlive)
                 {
                     continue;
                 }
