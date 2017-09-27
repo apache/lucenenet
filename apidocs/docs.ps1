@@ -45,7 +45,7 @@ if (-not (test-path $DocFxExe))
 {
 	Write-Host "Retrieving docfx..."
 	$DocFxZip = "$ToolsFolder\tmp\docfx.zip"
-	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.23.1/docfx.zip" -OutFile $DocFxZip
+	Invoke-WebRequest "https://github.com/dotnet/docfx/releases/download/v2.24/docfx.zip" -OutFile $DocFxZip
 	#unzip
 	Expand-Archive $DocFxZip -DestinationPath (Join-Path -Path $ToolsFolder -ChildPath "docfx")
 }
@@ -138,6 +138,6 @@ if($?) {
 	else {
 		# build + serve (for testing)
 		Write-Host "starting website..."
-		& $DocFxExe $DocFxJson --serve -l "obj\docfx.log"
+		& $DocFxExe $DocFxJson --serve
 	}
 }
