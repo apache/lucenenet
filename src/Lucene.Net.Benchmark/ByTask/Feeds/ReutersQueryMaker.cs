@@ -8,6 +8,7 @@ using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -93,7 +94,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     }
                     else
                     {
-                        SystemConsole.Error.WriteLine("Unsupported Query Type: " + query);
+                        Console.Error.WriteLine("Unsupported Query Type: " + query);
                     }
 
                     if (q != null)
@@ -104,7 +105,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 catch (Exception e)
                 {
-                    SystemConsole.Error.WriteLine(e.ToString());
+                    Console.Error.WriteLine(e.ToString());
                 }
             }
 

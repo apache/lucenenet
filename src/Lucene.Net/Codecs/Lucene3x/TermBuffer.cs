@@ -33,6 +33,9 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// </summary>
     [Obsolete("(4.0)")]
     internal sealed class TermBuffer
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         private string field;
         private Term term; // cached
@@ -86,7 +89,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 {
                     Debug.Assert(fieldInfos.FieldInfo(currentFieldNumber) != null, currentFieldNumber.ToString());
                     
-                    field = StringHelper.Intern(fieldInfos.FieldInfo(currentFieldNumber).Name);
+                    field = fieldInfos.FieldInfo(currentFieldNumber).Name.Intern();
                 }
             }
             else
@@ -106,7 +109,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 return;
             }
             bytes.CopyBytes(term.Bytes);
-            field = StringHelper.Intern(term.Field);
+            field = term.Field.Intern();
 
             currentFieldNumber = -1;
             this.term = term;

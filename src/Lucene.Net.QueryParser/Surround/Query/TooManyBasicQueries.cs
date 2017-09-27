@@ -1,5 +1,5 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -26,7 +26,9 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// Exception thrown when <see cref="BasicQueryFactory"/> would exceed the limit
     /// of query clauses.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class TooManyBasicQueries : System.IO.IOException
@@ -35,12 +37,12 @@ namespace Lucene.Net.QueryParsers.Surround.Query
             : base("Exceeded maximum of " + maxBasicQueries + " basic queries.")
         { }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         // For testing
-        internal TooManyBasicQueries(string message)
+        public TooManyBasicQueries(string message)
             : base(message)
         { }
 
-#if FEATURE_SERIALIZABLE
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

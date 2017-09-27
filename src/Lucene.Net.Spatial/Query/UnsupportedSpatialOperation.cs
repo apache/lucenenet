@@ -1,5 +1,5 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -27,7 +27,9 @@ namespace Lucene.Net.Spatial.Queries
     /// 
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class UnsupportedSpatialOperation : NotSupportedException
@@ -37,13 +39,13 @@ namespace Lucene.Net.Spatial.Queries
         {
         }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         // For testing
-        internal UnsupportedSpatialOperation(string message)
+        public UnsupportedSpatialOperation(string message)
             : base(message)
         {
         }
 
-#if FEATURE_SERIALIZABLE
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

@@ -7,12 +7,12 @@ using Lucene.Net.Facet.Taxonomy;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask
 {
@@ -123,8 +123,8 @@ namespace Lucene.Net.Benchmarks.ByTask
 
             if (bool.Parse(config.Get("log.queries", "false")))
             {
-                SystemConsole.WriteLine("------------> queries:");
-                SystemConsole.WriteLine(GetQueryMaker(new SearchTask(this)).PrintQueries());
+                Console.WriteLine("------------> queries:");
+                Console.WriteLine(GetQueryMaker(new SearchTask(this)).PrintQueries());
             }
         }
 

@@ -32,6 +32,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.MockRandom
 {

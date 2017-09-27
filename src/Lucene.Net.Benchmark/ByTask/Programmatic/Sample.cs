@@ -1,7 +1,7 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Tasks;
 using Lucene.Net.Benchmarks.ByTask.Utils;
-using Lucene.Net.Support;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Programmatic
 {
@@ -60,7 +60,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Programmatic
             top.AddTask(rep);
 
             // print algorithm
-            SystemConsole.WriteLine(top.ToString());
+            Console.WriteLine(top.ToString());
 
             // execute
             top.DoLogic();

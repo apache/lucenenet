@@ -312,7 +312,7 @@ namespace Sax.Helpers
         /// is an undeclared prefix.
         /// </returns>
         /// <seealso cref="DeclarePrefix" />
-        /// <seealso cref="string.Intern(string)" />
+        /// <seealso cref="StringExtensions.Intern(string)" />
         public string[] ProcessName(string qName, string[] parts, bool isAttribute)
         {
             string[] myParts = currentContext.ProcessName(qName, isAttribute);
@@ -617,12 +617,11 @@ namespace Sax.Helpers
             /// </summary>
             /// <param name="qName">The XML qualified name.</param>
             /// <param name="isAttribute">true if this is an attribute name.</param>
-            /// <param name="namespaceDeclUris"></param>
             /// <returns>An array of three strings containing the
             /// URI part (or empty string), the local part,
             /// and the raw name, all internalized, or null
             /// if there is an undeclared prefix.</returns>
-            /// <seealso cref="NamespaceSupport.ProcessName(string, bool)"/>
+            /// <seealso cref="DeclarePrefix(string, string)"/>
             internal string[] ProcessName(string qName, bool isAttribute)
             {
                 string[] name;

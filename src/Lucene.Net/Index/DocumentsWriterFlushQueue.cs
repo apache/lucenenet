@@ -28,9 +28,6 @@ namespace Lucene.Net.Index
     /// <summary>
     /// @lucene.internal
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class DocumentsWriterFlushQueue
     {
         private readonly LinkedList<FlushTicket> queue = new LinkedList<FlushTicket>();
@@ -225,9 +222,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal abstract class FlushTicket
         {
             protected FrozenBufferedUpdates m_frozenUpdates;
@@ -290,9 +284,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class GlobalDeletesTicket : FlushTicket
         {
             internal GlobalDeletesTicket(FrozenBufferedUpdates frozenUpdates) // LUCENENET NOTE: Made internal rather than protected because class is sealed
@@ -314,9 +305,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class SegmentFlushTicket : FlushTicket
         {
             internal FlushedSegment segment;

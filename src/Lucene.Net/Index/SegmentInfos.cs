@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
@@ -109,10 +110,11 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public sealed class SegmentInfos : IEnumerable<SegmentCommitInfo>
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// The file format version for the segments_N codec header, up to 4.5. </summary>
@@ -342,6 +344,7 @@ namespace Lucene.Net.Index
         /// <param name="segmentFileName"> segment file to load </param>
         /// <exception cref="CorruptIndexException"> if the index is corrupt </exception>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Read(Directory directory, string segmentFileName)
         {
             var success = false;
@@ -460,6 +463,7 @@ namespace Lucene.Net.Index
         /// Find the latest commit (<c>segments_N file</c>) and
         /// load all <see cref="SegmentCommitInfo"/>s.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Read(Directory directory)
         {
             generation = lastGeneration = -1;
@@ -1141,6 +1145,7 @@ namespace Lucene.Net.Index
         /// method if changes have been made to this <see cref="SegmentInfos"/> instance
         /// </para>
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void PrepareCommit(Directory dir)
         {
             if (pendingSegnOutput != null)
@@ -1182,6 +1187,7 @@ namespace Lucene.Net.Index
             return files;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishCommit(Directory dir)
         {
             if (pendingSegnOutput == null)

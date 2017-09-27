@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Lucene.Net.Index;
+using Lucene.Net.Support;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Lucene.Net.Index;
-using Lucene.Net.Util;
 
 namespace Lucene.Net.Search.Highlight
 {
@@ -82,7 +82,7 @@ namespace Lucene.Net.Search.Highlight
             var terms = new HashSet<WeightedTerm>();
             if (fieldName != null)
             {
-                fieldName = StringHelper.Intern(fieldName);
+                fieldName = fieldName.Intern();
             }
             GetTerms(query, terms, prohibited, fieldName);
             return terms.ToArray();

@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -35,14 +36,8 @@ namespace Lucene.Net.Store
     /// @lucene.internal 
     /// </summary>
     /// <seealso cref="CompoundFileDirectory"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class CompoundFileWriter : IDisposable
     {
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class FileEntry
         {
             /// <summary>
@@ -357,9 +352,6 @@ namespace Lucene.Net.Store
             return entries.Keys.ToArray();
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class DirectCFSIndexOutput : IndexOutput
         {
             private readonly CompoundFileWriter outerInstance;
@@ -381,6 +373,7 @@ namespace Lucene.Net.Store
                 this.isSeparate = isSeparate;
             }
 
+            [MethodImpl(MethodImplOptions.NoInlining)]
             public override void Flush()
             {
                 @delegate.Flush();

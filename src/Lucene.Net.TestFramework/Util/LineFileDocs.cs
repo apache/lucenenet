@@ -1,16 +1,16 @@
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using System;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util
 {
-    using Lucene.Net.Randomized.Generators;
-    using System.Threading;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with

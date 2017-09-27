@@ -32,9 +32,6 @@ namespace Lucene.Net.Search.Spans
     /// <see cref="SpanNearPayloadCheckQuery"/> since it properly handles the fact that payloads
     /// aren't ordered by <see cref="Lucene.Net.Search.Spans.SpanNearQuery"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SpanPayloadCheckQuery : SpanPositionCheckQuery
     {
         protected readonly ICollection<byte[]> m_payloadToMatch;

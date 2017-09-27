@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -35,9 +36,7 @@ namespace Lucene.Net.Index
     /// of its own: it just forwards the fields to a
     /// <see cref="DocFieldConsumer"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     internal sealed class DocFieldProcessor : DocConsumer
     {
         internal readonly DocFieldConsumer consumer;
@@ -69,6 +68,7 @@ namespace Lucene.Net.Index
             this.storedConsumer = storedConsumer;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(SegmentWriteState state)
         {
             IDictionary<string, DocFieldConsumerPerField> childFields = new Dictionary<string, DocFieldConsumerPerField>();
@@ -91,6 +91,7 @@ namespace Lucene.Net.Index
             infosWriter.Write(state.Directory, state.SegmentInfo.Name, "", state.FieldInfos, IOContext.DEFAULT);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             Exception th = null;
@@ -284,9 +285,6 @@ namespace Lucene.Net.Index
 
         private static readonly IComparer<DocFieldProcessorPerField> fieldsComp = new ComparerAnonymousInnerClassHelper();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ComparerAnonymousInnerClassHelper : IComparer<DocFieldProcessorPerField>
         {
             public ComparerAnonymousInnerClassHelper()
@@ -299,6 +297,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
             try

@@ -31,14 +31,14 @@ namespace Lucene.Net.Support
     /// <remarks>
     /// The set of delimiters (the codepoints that separate tokens) may be specified
     /// either at creation time or on a per-token basis.
-    /// <p>
+    /// <para/>
     /// An instance of <see cref="StringTokenizer"/> behaves in one of three ways,
     /// depending on whether it was created with the <c>returnDelimiters</c> flag
     /// having the value <c>true</c> or <c>false</c>:
     /// <list type="bullet">
     /// <item><description>If returnDelims is <c>false</c>, delimiter code points serve to separate
     /// tokens. A token is a maximal sequence of consecutive code points that are not
-    /// delimiters.</description>
+    /// delimiters.</description></item>
     /// <item><description>If returnDelims is <c>true</c>, delimiter code points are themselves
     /// considered to be tokens. In this case a token will be received for each
     /// delimiter code point.</description></item>

@@ -3,6 +3,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.IO;
+using System.Text;
 
 namespace Lucene.Net.Store
 {
@@ -316,11 +317,7 @@ namespace Lucene.Net.Store
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestSeeking()
         {
             for (int i = 0; i < 10; i++)
@@ -352,11 +349,7 @@ namespace Lucene.Net.Store
 
         // note instead of seeking to offset and reading length, this opens slices at the
         // the various offset+length and just does readBytes.
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestSlicedSeeking()
         {
             for (int i = 0; i < 10; i++)
@@ -403,11 +396,12 @@ namespace Lucene.Net.Store
         {
             DirectoryInfo path = CreateTempDir("mmap" + chunkSize);
             MMapDirectory mmapDir = new MMapDirectory(path, null, chunkSize);
-            // we will map a lot, try to turn on the unmap hack
-            if (MMapDirectory.UNMAP_SUPPORTED)
-            {
-                mmapDir.UseUnmap = true;
-            }
+            // LUCENENET specific - unmap hack not needed
+            //// we will map a lot, try to turn on the unmap hack
+            //if (MMapDirectory.UNMAP_SUPPORTED)
+            //{
+            //    mmapDir.UseUnmap = true;
+            //}
             MockDirectoryWrapper dir = new MockDirectoryWrapper(random, mmapDir);
             RandomIndexWriter writer = new RandomIndexWriter(random, dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(random)).SetMergePolicy(NewLogMergePolicy()));
             Document doc = new Document();
@@ -434,6 +428,26 @@ namespace Lucene.Net.Store
             }
             reader.Dispose();
             dir.Dispose();
+        }
+
+
+        [Test, LuceneNetSpecific]
+        public void TestDisposeIndexInput()
+        {
+            string name = "foobar";
+            var dir = CreateTempDir("testDisposeIndexInput");
+            string fileName = Path.Combine(dir.FullName, name);
+
+            // Create a zero byte file, and close it immediately
+            File.WriteAllText(fileName, string.Empty, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false) /* No BOM */);
+
+            MMapDirectory mmapDir = new MMapDirectory(dir);
+            using (var indexInput = mmapDir.OpenInput(name, NewIOContext(Random())))
+            {
+            } // Dispose
+
+            // Now it should be possible to delete the file. This is the condition we are testing for.
+            File.Delete(fileName);
         }
     }
 }

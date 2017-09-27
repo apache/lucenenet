@@ -2,6 +2,7 @@ using Lucene.Net.Attributes;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
 using System;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -29,11 +30,7 @@ namespace Lucene.Net.Index
     [TestFixture]
     public class TestByteSlices : LuceneTestCase
     {
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestBasic()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test

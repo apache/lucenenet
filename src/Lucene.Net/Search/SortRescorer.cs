@@ -27,9 +27,7 @@ namespace Lucene.Net.Search
     /// A <see cref="Rescorer"/> that re-sorts according to a provided
     /// Sort.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public class SortRescorer : Rescorer
     {
         private readonly Sort sort;
@@ -90,9 +88,6 @@ namespace Lucene.Net.Search
             return collector.GetTopDocs();
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ComparerAnonymousInnerClassHelper : IComparer<ScoreDoc>
         {
             private readonly SortRescorer outerInstance;

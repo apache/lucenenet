@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -422,11 +423,7 @@ namespace Lucene.Net.Index
             dir1.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestAddIndexesAndDoDeletesThreads()
         {
             const int numIter = 2;
@@ -510,18 +507,18 @@ namespace Lucene.Net.Index
             {
                 for (int i = 0; i < OuterInstance.NumThreads; i++)
                 {
-#if !NETSTANDARD
-                    try
-                    {
-#endif
+//#if !NETSTANDARD1_5
+//                    try
+//                    {
+//#endif
                     Threads[i].Join();
-#if !NETSTANDARD
-                    }
-                    catch (ThreadInterruptedException ie)
-                    {
-                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                    }
-#endif
+//#if !NETSTANDARD1_5
+//                    }
+//                    catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                    {
+//                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+//                    }
+//#endif
                 }
             }
 
@@ -745,11 +742,7 @@ namespace Lucene.Net.Index
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestMergeWarmer([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
@@ -864,7 +857,7 @@ namespace Lucene.Net.Index
         }
 
         // Stress test reopen during addIndexes
-        [Test]
+        [Test, LongRunningTest] // LUCENENET TODO: Can this test be optimized to run faster on .NET Core 1.0?
         public virtual void TestDuringAddIndexes()
         {
             Directory dir1 = GetAssertNoDeletesDirectory(NewDirectory());
@@ -1388,6 +1381,8 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 if (ShouldFail.Get() && StackTraceHelper.DoesStackTraceContainMethod("GetReadOnlyClone"))
                 {
                     if (VERBOSE)
@@ -1405,11 +1400,7 @@ namespace Lucene.Net.Index
         /// Make sure if all we do is open NRT reader against
         ///  writer, we don't see merge starvation.
         /// </summary>
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestTooManySegments()
         {
             Directory dir = GetAssertNoDeletesDirectory(NewDirectory());

@@ -3,6 +3,7 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,9 +39,6 @@ namespace Lucene.Net.Index
     ///  
     /// LUCENENET specific
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TaskMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
     {
         public const string COMPONENT_NAME = "CMS";
@@ -117,7 +115,7 @@ namespace Lucene.Net.Index
         {
             get
             {
-#if NETSTANDARD
+#if NETSTANDARD1_5
                 return 2;
 #else
                 return (int)ThreadPriority.Normal;
@@ -224,6 +222,7 @@ namespace Lucene.Net.Index
             get { return _mergeThreads.Count(x => x.IsAlive && x.CurrentMerge != null); }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
             using (_lock.Write())
@@ -368,10 +367,10 @@ namespace Lucene.Net.Index
                 return;
             }
 
-#if !NETSTANDARD
-            try
-            {
-#endif
+//#if !NETSTANDARD1_5
+//            try
+//            {
+//#endif
                 // When an exception is hit during merge, IndexWriter
                 // removes any partial files and then allows another
                 // merge to run.  If whatever caused the error is not
@@ -379,13 +378,13 @@ namespace Lucene.Net.Index
                 // so, we sleep here to avoid saturating CPU in such
                 // cases:
                 Thread.Sleep(250);
-#if !NETSTANDARD
-            }
-            catch (ThreadInterruptedException ie)
-            {
-                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-            }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//            }
+//            catch (ThreadInterruptedException ie)
+//            {
+//                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+//            }
+//#endif
             throw new MergePolicy.MergeException(exc, _directory);
         }
 
@@ -413,7 +412,7 @@ namespace Lucene.Net.Index
             return sb.ToString();
         }
 
-        public override IMergeScheduler Clone()
+        public override object Clone()
         {
             TaskMergeScheduler clone = (TaskMergeScheduler)base.Clone();
             clone._writer = null;

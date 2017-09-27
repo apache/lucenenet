@@ -27,8 +27,8 @@ namespace Lucene.Net.Analysis.Ja
     /// <remarks>
     /// Sequences of iteration marks are supported.  In case an illegal sequence of iteration
     /// marks is encountered, the implementation emits the illegal source character as-is
-    /// without considering its script.  For example, with input "&#x003f;&#x309d", we get
-    /// "&#x003f;&#x003f" even though "&#x003f;" isn't hiragana.
+    /// without considering its script.  For example, with input "&#63;&#12445;", we get
+    /// "&#63;&#63;" even though "&#63;" isn't hiragana.
     /// <para/>
     /// Note that a full stop punctuation character "&#x3002;" (U+3002) can not be iterated
     /// (see below). Iteration marks themselves can be emitted in case they are illegal,

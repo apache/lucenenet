@@ -29,6 +29,9 @@ namespace Lucene.Net.Codecs
     /// @lucene.experimental
     /// </summary>
     public abstract class TermVectorsReader : IDisposable
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass

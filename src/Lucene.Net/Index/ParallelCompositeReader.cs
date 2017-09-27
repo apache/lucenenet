@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -47,9 +46,6 @@ namespace Lucene.Net.Index
     /// by number of documents per segment. If you use different <see cref="MergePolicy"/>s
     /// it might happen that the segment structure of your index is no longer predictable.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class ParallelCompositeReader : BaseCompositeReader<IndexReader>
     {
         private readonly bool closeSubReaders;
@@ -165,9 +161,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ParallelAtomicReaderAnonymousInnerClassHelper : ParallelAtomicReader
         {
             public ParallelAtomicReaderAnonymousInnerClassHelper(Lucene.Net.Index.AtomicReader[] atomicSubs, Lucene.Net.Index.AtomicReader[] storedSubs)
@@ -180,9 +173,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ParallelCompositeReaderAnonymousInnerClassHelper : ParallelCompositeReader
         {
             public ParallelCompositeReaderAnonymousInnerClassHelper(Lucene.Net.Index.CompositeReader[] compositeSubs, Lucene.Net.Index.CompositeReader[] storedSubs)

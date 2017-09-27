@@ -100,8 +100,8 @@ namespace Sax
         /// or null to request that the parser open a regular
         /// URI connection to the system identifier.</returns>
         /// <exception cref="SAXException">Any SAX exception, possibly wrapping another exception.</exception>
-        /// <exception cref="IOException">A .NET-specific IO exception, possibly the result of creating 
-        /// a new <see cref="InputStream"/> or <see cref="System.IO.TextReader"/> for the <see cref="InputSource"/>.</exception>
+        /// <exception cref="System.IO.IOException">A .NET-specific IO exception, possibly the result of creating 
+        /// a new <see cref="System.IO.Stream"/> or <see cref="System.IO.TextReader"/> for the <see cref="InputSource"/>.</exception>
         /// <seealso cref="InputSource"/>
         InputSource ResolveEntity(string publicId,
                            string systemId);

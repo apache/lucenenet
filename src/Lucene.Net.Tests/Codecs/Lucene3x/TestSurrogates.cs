@@ -1,14 +1,17 @@
+using Lucene.Net.Analysis;
+using Lucene.Net.Attributes;
+using Lucene.Net.Documents;
+using Lucene.Net.Index;
+using Lucene.Net.Store;
+using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using Lucene.Net.Documents;
-using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
-    using Attributes;
-    using Lucene.Net.Analysis;
-    using Lucene.Net.Index;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -25,10 +28,6 @@ namespace Lucene.Net.Codecs.Lucene3x
          * See the License for the specific language governing permissions and
          * limitations under the License.
          */
-
-    using Lucene.Net.Store;
-    using Lucene.Net.Util;
-    using NUnit.Framework;
 
     [TestFixture]
     public class TestSurrogates : LuceneTestCase
@@ -261,7 +260,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 for (int iter = 0; iter < num; iter++)
                 {
                     // seek to random spot
-                    string field = StringHelper.Intern("f" + r.Next(numField));
+                    string field = ("f" + r.Next(numField)).Intern();
                     Term tx = new Term(field, GetRandomString(r));
 
                     int spot = Array.BinarySearch(fieldTermsArray, tx);
@@ -341,11 +340,7 @@ namespace Lucene.Net.Codecs.Lucene3x
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestSurrogatesOrder()
         {
             Directory dir = NewDirectory();

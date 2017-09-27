@@ -1,3 +1,4 @@
+using System;
 using BytesRef = Lucene.Net.Util.BytesRef;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -25,6 +26,9 @@ namespace Lucene.Net.Codecs.Compressing
     /// A decompressor.
     /// </summary>
     public abstract class Decompressor
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         /// <summary>
         /// Sole constructor, typically called from sub-classes. </summary>

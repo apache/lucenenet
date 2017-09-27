@@ -1,6 +1,6 @@
 using Lucene.Net.Support.Threading;
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Threading;
@@ -33,15 +33,13 @@ namespace Lucene.Net.Search
     /// exceeded, the search thread is stopped by throwing a
     /// <see cref="TimeExceededException"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TimeLimitingCollector : ICollector
     {
         /// <summary>
         /// Thrown when elapsed search time exceeds allowed search time. </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class TimeExceededException : Exception
@@ -64,7 +62,7 @@ namespace Lucene.Net.Search
             {
             }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
@@ -273,9 +271,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class TimerThreadHolder
         {
             internal static readonly TimerThread THREAD;
@@ -293,9 +288,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class TimerThread : ThreadClass
         {
             public const string THREAD_NAME = "TimeLimitedCollector timer thread";
@@ -336,18 +328,18 @@ namespace Lucene.Net.Search
                 {
                     // TODO: Use System.nanoTime() when Lucene moves to Java SE 5.
                     counter.AddAndGet(resolution);
-#if !NETSTANDARD
-                    try
-                    {
-#endif
+//#if !NETSTANDARD1_5
+//                    try
+//                    {
+//#endif
                         Thread.Sleep(TimeSpan.FromMilliseconds(Interlocked.Read(ref resolution)));
-#if !NETSTANDARD
-                    }
-                    catch (ThreadInterruptedException ie)
-                    {
-                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                    }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                    }
+//                    catch (ThreadInterruptedException ie)
+//                    {
+//                        throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+//                    }
+//#endif
                 }
             }
 

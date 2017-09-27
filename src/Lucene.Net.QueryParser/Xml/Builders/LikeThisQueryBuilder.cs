@@ -2,6 +2,7 @@
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Queries.Mlt;
 using Lucene.Net.Search;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace Lucene.Net.QueryParsers.Xml.Builders
             string[] fields = defaultFieldNames;
             if ((fieldsList != null) && (fieldsList.Trim().Length > 0))
             {
-                fields = fieldsList.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                fields = fieldsList.Trim().Split(',').TrimEnd();
                 //trim the fieldnames
                 for (int i = 0; i < fields.Length; i++)
                 {

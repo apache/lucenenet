@@ -107,11 +107,7 @@ namespace Lucene.Net.Index
             base.TestConcurrentReads();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public override void TestBigDocuments()
         {
             base.TestBigDocuments();

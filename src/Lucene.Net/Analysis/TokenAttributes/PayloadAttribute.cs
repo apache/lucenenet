@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
@@ -25,10 +23,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IPayloadAttribute"/>. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PayloadAttribute : Attribute, IPayloadAttribute
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         private BytesRef payload;
 

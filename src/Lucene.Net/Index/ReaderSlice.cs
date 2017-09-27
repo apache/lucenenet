@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -24,9 +22,6 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.internal
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class ReaderSlice
     {
         /// <summary>

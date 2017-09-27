@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -30,9 +29,6 @@ namespace Lucene.Net.Search.Spans
     /// This class is a simple extension of <see cref="SpanPositionRangeQuery"/> in that it assumes the
     /// start to be zero and only checks the end boundary.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SpanFirstQuery : SpanPositionRangeQuery
     {
         /// <summary>

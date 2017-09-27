@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -29,10 +30,10 @@ namespace Lucene.Net.Index
     /// instance.</para>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class MergeScheduler : IDisposable, IMergeScheduler
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// Sole constructor. (For invocation by subclass
@@ -48,6 +49,7 @@ namespace Lucene.Net.Index
         /// <param name="trigger"> the <see cref="MergeTrigger"/> that caused this merge to happen </param>
         /// <param name="newMergesFound"> <c>true</c> iff any new merges were found by the caller; otherwise <c>false</c>
         ///  </param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound);
 
         /// <summary>
@@ -62,7 +64,7 @@ namespace Lucene.Net.Index
         /// Dispose this MergeScheduler. </summary>
         protected abstract void Dispose(bool disposing);
 
-        public virtual IMergeScheduler Clone()
+        public virtual object Clone()
         {
             return (MergeScheduler)base.MemberwiseClone();
         }

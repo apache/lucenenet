@@ -1,13 +1,15 @@
 using System;
 using System.Diagnostics;
+using System.IO;
+using Lucene.Net.Codecs;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Lucene.Net.Util;
+using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-    using System.IO;
-    using Util;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -568,15 +570,17 @@ namespace Lucene.Net.Index
                     return;
                 }
 
-                /*typeof(SegmentMerger).Name.Equals(frame.GetType().Name) && */
-                if (StackTraceHelper.DoesStackTraceContainMethod("MergeTerms") && !DidFail1)
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
+                if (StackTraceHelper.DoesStackTraceContainMethod(typeof(SegmentMerger).Name, "MergeTerms") && !DidFail1)
                 {
                     DidFail1 = true;
                     throw new IOException("fake disk full during mergeTerms");
                 }
 
-                /*typeof(LiveDocsFormat).Name.Equals(frame.GetType().Name) && */
-                if (StackTraceHelper.DoesStackTraceContainMethod("WriteLiveDocs") && !DidFail2)
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
+                if (StackTraceHelper.DoesStackTraceContainMethod(typeof(LiveDocsFormat).Name, "WriteLiveDocs") && !DidFail2)
                 {
                     DidFail2 = true;
                     throw new IOException("fake disk full while writing LiveDocs");

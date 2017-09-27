@@ -36,9 +36,6 @@ namespace Lucene.Net.Index
     /// structure to hold them. We don't hold docIDs because these are applied on
     /// flush.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class FrozenBufferedUpdates
     {
         /// <summary>Query we often undercount (say 24 bytes), plus int.</summary>
@@ -158,9 +155,6 @@ namespace Lucene.Net.Index
             return new IterableAnonymousInnerClassHelper(this);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class IterableAnonymousInnerClassHelper : IEnumerable<Term>
         {
             private readonly FrozenBufferedUpdates outerInstance;
@@ -187,9 +181,6 @@ namespace Lucene.Net.Index
             return new IterableAnonymousInnerClassHelper2(this);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class IterableAnonymousInnerClassHelper2 : IEnumerable<QueryAndLimit>
         {
             private readonly FrozenBufferedUpdates outerInstance;
@@ -209,9 +200,6 @@ namespace Lucene.Net.Index
                 return GetEnumerator();
             }
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class IteratorAnonymousInnerClassHelper : IEnumerator<QueryAndLimit>
             {
                 private readonly IterableAnonymousInnerClassHelper2 outerInstance;

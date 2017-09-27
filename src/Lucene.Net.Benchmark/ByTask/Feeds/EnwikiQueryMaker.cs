@@ -5,11 +5,11 @@ using Lucene.Net.Index;
 using Lucene.Net.QueryParsers.Classic;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -113,7 +113,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                     }
                     else
                     {
-                        SystemConsole.WriteLine("Unsupported Query Type: " + query);
+                        Console.WriteLine("Unsupported Query Type: " + query);
                     }
 
                     if (q != null)
@@ -124,7 +124,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 catch (Exception e)
                 {
-                    SystemConsole.WriteLine(e.ToString());
+                    Console.WriteLine(e.ToString());
                 }
             }
 

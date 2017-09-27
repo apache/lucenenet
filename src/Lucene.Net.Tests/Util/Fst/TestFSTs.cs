@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -267,11 +268,7 @@ namespace Lucene.Net.Util.Fst
         }
 
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(27000000)]
-#endif
-        [Test, LongRunningTest, HasTimeout] // 45 minutes to be on the safe side
+        [Test, LongRunningTest] // Can take up to 15 minutes
         public virtual void TestRandomWords()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test

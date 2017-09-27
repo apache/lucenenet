@@ -1,9 +1,9 @@
 using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading;
-using Lucene.Net.Util;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {

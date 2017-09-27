@@ -2,6 +2,7 @@ using Lucene.Net.Documents;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -28,9 +29,6 @@ namespace Lucene.Net.Index
     using DocValuesFormat = Lucene.Net.Codecs.DocValuesFormat;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class DocValuesProcessor : StoredFieldsConsumer
     {
         // TODO: somewhat wasteful we also keep a map here; would
@@ -49,6 +47,7 @@ namespace Lucene.Net.Index
         {
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
         }
@@ -86,6 +85,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(SegmentWriteState state)
         {
             if (writers.Count > 0)
@@ -222,6 +222,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             foreach (DocValuesWriter writer in writers.Values)

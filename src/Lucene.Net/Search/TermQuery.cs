@@ -50,9 +50,6 @@ namespace Lucene.Net.Search
         private readonly int docFreq;
         private readonly TermContext perReaderTermState;
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class TermWeight : Weight
         {
             private readonly TermQuery outerInstance;

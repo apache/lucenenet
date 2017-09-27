@@ -1,4 +1,4 @@
-using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -18,17 +18,18 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     internal abstract class DocConsumer
     {
         public abstract void ProcessDocument(FieldInfos.Builder fieldInfos);
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void FinishDocument();
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Flush(SegmentWriteState state);
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
     }
 }

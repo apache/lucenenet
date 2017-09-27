@@ -6,6 +6,7 @@ using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -1124,11 +1125,7 @@ namespace Lucene.Net.Util.Packed
         }
 
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(180000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestAppendingLongBuffer()
         {
 
@@ -1485,11 +1482,7 @@ namespace Lucene.Net.Util.Packed
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(180000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestBlockReaderOverflow()
         {
             long valueCount = TestUtil.NextLong(Random(), 1L + int.MaxValue, (long)int.MaxValue * 2);

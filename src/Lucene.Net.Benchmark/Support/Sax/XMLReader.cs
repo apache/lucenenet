@@ -294,7 +294,7 @@ namespace Sax
         /// <para/>If the system identifier is a URL, it must be fully resolved
         /// by the application before it is passed to the parser.
         /// </remarks>
-        /// <param name="input">The system identifier (URI).</param>
+        /// <param name="systemId">The system identifier (URI).</param>
         /// <exception cref="SAXException">Any SAX exception, possibly
         /// wrapping another exception.</exception>
         /// <exception cref="System.IO.IOException">An IO exception from the parser,

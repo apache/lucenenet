@@ -1,15 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Attributes;
-    using NUnit.Framework;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -196,11 +196,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestRandomWithPrefix()
         {
             Directory dir = NewDirectory();

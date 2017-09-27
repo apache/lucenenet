@@ -2,15 +2,16 @@ using Lucene.Net.Documents;
 using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
 using Lucene.Net.Support.Threading;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
     using IBits = Lucene.Net.Util.IBits;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
@@ -554,93 +555,96 @@ namespace Lucene.Net.Index
             long bytes = TotalPostings * 8 + TotalPayloadBytes;
 
             SegmentWriteState writeState = new SegmentWriteState(null, dir, segmentInfo, newFieldInfos, 32, null, new IOContext(new FlushInfo(MaxDoc, bytes)));
-            FieldsConsumer fieldsConsumer = codec.PostingsFormat.FieldsConsumer(writeState);
 
-            foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in Fields)
+            // LUCENENET specific - BUG: we must wrap this in a using block in case anything in the below loop throws
+            using (FieldsConsumer fieldsConsumer = codec.PostingsFormat.FieldsConsumer(writeState))
             {
-                string field = fieldEnt.Key;
-                IDictionary<BytesRef, long> terms = fieldEnt.Value;
 
-                FieldInfo fieldInfo = newFieldInfos.FieldInfo(field);
-
-                IndexOptions indexOptions = fieldInfo.IndexOptions;
-
-                if (VERBOSE)
+                foreach (KeyValuePair<string, SortedDictionary<BytesRef, long>> fieldEnt in Fields)
                 {
-                    Console.WriteLine("field=" + field + " indexOtions=" + indexOptions);
-                }
+                    string field = fieldEnt.Key;
+                    IDictionary<BytesRef, long> terms = fieldEnt.Value;
 
-                bool doFreq = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
-                bool doPos = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
-                bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
-                bool doOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+                    FieldInfo fieldInfo = newFieldInfos.FieldInfo(field);
 
-                TermsConsumer termsConsumer = fieldsConsumer.AddField(fieldInfo);
-                long sumTotalTF = 0;
-                long sumDF = 0;
-                FixedBitSet seenDocs = new FixedBitSet(MaxDoc);
-                foreach (KeyValuePair<BytesRef, long> termEnt in terms)
-                {
-                    BytesRef term = termEnt.Key;
-                    SeedPostings postings = GetSeedPostings(term.Utf8ToString(), termEnt.Value, false, maxAllowed);
+                    IndexOptions indexOptions = fieldInfo.IndexOptions;
+
                     if (VERBOSE)
                     {
-                        Console.WriteLine("  term=" + field + ":" + term.Utf8ToString() + " docFreq=" + postings.DocFreq + " seed=" + termEnt.Value);
+                        Console.WriteLine("field=" + field + " indexOtions=" + indexOptions);
                     }
 
-                    PostingsConsumer postingsConsumer = termsConsumer.StartTerm(term);
-                    long totalTF = 0;
-                    int docID = 0;
-                    while ((docID = postings.NextDoc()) != DocsEnum.NO_MORE_DOCS)
+                    bool doFreq = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS) >= 0;
+                    bool doPos = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0;
+                    bool doPayloads = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS) >= 0 && allowPayloads;
+                    bool doOffsets = indexOptions.CompareTo(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS) >= 0;
+
+                    TermsConsumer termsConsumer = fieldsConsumer.AddField(fieldInfo);
+                    long sumTotalTF = 0;
+                    long sumDF = 0;
+                    FixedBitSet seenDocs = new FixedBitSet(MaxDoc);
+                    foreach (KeyValuePair<BytesRef, long> termEnt in terms)
                     {
-                        int freq = postings.Freq;
+                        BytesRef term = termEnt.Key;
+                        SeedPostings postings = GetSeedPostings(term.Utf8ToString(), termEnt.Value, false, maxAllowed);
                         if (VERBOSE)
                         {
-                            Console.WriteLine("    " + postings.Upto + ": docID=" + docID + " freq=" + postings.Freq_Renamed);
+                            Console.WriteLine("  term=" + field + ":" + term.Utf8ToString() + " docFreq=" + postings.DocFreq + " seed=" + termEnt.Value);
                         }
-                        postingsConsumer.StartDoc(docID, doFreq ? postings.Freq_Renamed : -1);
-                        seenDocs.Set(docID);
-                        if (doPos)
-                        {
-                            totalTF += postings.Freq_Renamed;
-                            for (int posUpto = 0; posUpto < freq; posUpto++)
-                            {
-                                int pos = postings.NextPosition();
-                                BytesRef payload = postings.GetPayload();
 
-                                if (VERBOSE)
-                                {
-                                    if (doPayloads)
-                                    {
-                                        Console.WriteLine("      pos=" + pos + " payload=" + (payload == null ? "null" : payload.Length + " bytes"));
-                                    }
-                                    else
-                                    {
-                                        Console.WriteLine("      pos=" + pos);
-                                    }
-                                }
-                                postingsConsumer.AddPosition(pos, doPayloads ? payload : null, doOffsets ? postings.StartOffset : -1, doOffsets ? postings.EndOffset : -1);
+                        PostingsConsumer postingsConsumer = termsConsumer.StartTerm(term);
+                        long totalTF = 0;
+                        int docID = 0;
+                        while ((docID = postings.NextDoc()) != DocsEnum.NO_MORE_DOCS)
+                        {
+                            int freq = postings.Freq;
+                            if (VERBOSE)
+                            {
+                                Console.WriteLine("    " + postings.Upto + ": docID=" + docID + " freq=" + postings.Freq_Renamed);
                             }
+                            postingsConsumer.StartDoc(docID, doFreq ? postings.Freq_Renamed : -1);
+                            seenDocs.Set(docID);
+                            if (doPos)
+                            {
+                                totalTF += postings.Freq_Renamed;
+                                for (int posUpto = 0; posUpto < freq; posUpto++)
+                                {
+                                    int pos = postings.NextPosition();
+                                    BytesRef payload = postings.GetPayload();
+
+                                    if (VERBOSE)
+                                    {
+                                        if (doPayloads)
+                                        {
+                                            Console.WriteLine("      pos=" + pos + " payload=" + (payload == null ? "null" : payload.Length + " bytes"));
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("      pos=" + pos);
+                                        }
+                                    }
+                                    postingsConsumer.AddPosition(pos, doPayloads ? payload : null, doOffsets ? postings.StartOffset : -1, doOffsets ? postings.EndOffset : -1);
+                                }
+                            }
+                            else if (doFreq)
+                            {
+                                totalTF += freq;
+                            }
+                            else
+                            {
+                                totalTF++;
+                            }
+                            postingsConsumer.FinishDoc();
                         }
-                        else if (doFreq)
-                        {
-                            totalTF += freq;
-                        }
-                        else
-                        {
-                            totalTF++;
-                        }
-                        postingsConsumer.FinishDoc();
+                        termsConsumer.FinishTerm(term, new TermStats(postings.DocFreq, doFreq ? totalTF : -1));
+                        sumTotalTF += totalTF;
+                        sumDF += postings.DocFreq;
                     }
-                    termsConsumer.FinishTerm(term, new TermStats(postings.DocFreq, doFreq ? totalTF : -1));
-                    sumTotalTF += totalTF;
-                    sumDF += postings.DocFreq;
+
+                    termsConsumer.Finish(doFreq ? sumTotalTF : -1, sumDF, seenDocs.Cardinality());
                 }
 
-                termsConsumer.Finish(doFreq ? sumTotalTF : -1, sumDF, seenDocs.Cardinality());
             }
-
-            fieldsConsumer.Dispose();
 
             if (VERBOSE)
             {

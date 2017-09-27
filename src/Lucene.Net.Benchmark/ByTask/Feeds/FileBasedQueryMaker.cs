@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -98,7 +99,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                                 }
                                 catch (ParseException e)
                                 {
-                                    SystemConsole.Error.WriteLine("Exception: " + e.Message + " occurred while parsing line: " + lineNum + " Text: " + line);
+                                    Console.Error.WriteLine("Exception: " + e.Message + " occurred while parsing line: " + lineNum + " Text: " + line);
                                 }
                             }
                             lineNum++;
@@ -111,7 +112,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 else
                 {
-                    SystemConsole.Error.WriteLine("No Reader available for: " + fileName);
+                    Console.Error.WriteLine("No Reader available for: " + fileName);
                 }
 
             }

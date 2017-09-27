@@ -46,7 +46,7 @@ namespace Lucene.Net.Analysis.Th
         /// If this is false, this tokenizer will not work at all!
         /// </summary>
         public static readonly bool DBBI_AVAILABLE;
-        private static readonly BreakIterator proto = new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, new CultureInfo("th"));
+        private static readonly BreakIterator proto = new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.WORD, new CultureInfo("th"));
         static ThaiTokenizer()
         {
             // check that we have a working dictionary-based break iterator for thai
@@ -73,13 +73,13 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// Creates a new <see cref="ThaiTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/> </summary>
         public ThaiTokenizer(AttributeFactory factory, TextReader reader)
-            : base(factory, reader, new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, new CultureInfo("th")))
+            : base(factory, reader, new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.SENTENCE, new CultureInfo("th")))
         {
             if (!DBBI_AVAILABLE)
             {
                 throw new System.NotSupportedException("This JRE does not have support for Thai segmentation");
             }
-            wordBreaker = new ThaiWordBreaker(new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.WORD, CultureInfo.InvariantCulture));
+            wordBreaker = new ThaiWordBreaker(new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.WORD, CultureInfo.InvariantCulture));
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();
         }

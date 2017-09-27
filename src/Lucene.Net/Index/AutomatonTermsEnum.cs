@@ -45,9 +45,6 @@ namespace Lucene.Net.Index
     /// </para>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class AutomatonTermsEnum : FilteredTermsEnum
     {
         // a tableized array-based form of the DFA

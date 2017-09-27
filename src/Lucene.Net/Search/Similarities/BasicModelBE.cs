@@ -31,9 +31,6 @@ namespace Lucene.Net.Search.Similarities
     /// geometric approximation (<see cref="BasicModelG"/>) instead, which provides the same relevance
     /// but with less practical problems.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class BasicModelBE : BasicModel
     {
         /// <summary>

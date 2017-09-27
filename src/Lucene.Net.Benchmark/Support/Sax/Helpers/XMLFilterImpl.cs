@@ -37,7 +37,7 @@ namespace Sax.Helpers
         /// This filter will have no parent: you must assign a parent
         /// before you start a parse or do any configuration with
         /// setFeature or setProperty, unless you use this as a pure event
-        /// consumer rather than as an <see cref="IXmlReader" />.
+        /// consumer rather than as an <see cref="IXMLReader" />.
         /// </para>
         /// </summary>
         /// <seealso cref="IXMLReader.SetFeature" />

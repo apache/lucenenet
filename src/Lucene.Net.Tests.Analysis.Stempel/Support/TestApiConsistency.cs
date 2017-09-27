@@ -87,7 +87,7 @@ namespace Lucene.Net.Analysis.Stempel
             base.TestForPropertiesThatReturnArray(typeFromTargetAssembly);
         }
 
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
         [Test, LuceneNetSpecific]
         [TestCase(typeof(Lucene.Net.Analysis.Stempel.StempelFilter))]
         public override void TestForMethodsThatReturnWritableArray(Type typeFromTargetAssembly)

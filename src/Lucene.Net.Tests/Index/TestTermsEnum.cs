@@ -6,6 +6,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Search;
 using Lucene.Net.Support;
 using Lucene.Net.Util.Automaton;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -229,11 +230,7 @@ namespace Lucene.Net.Index
         }
 
         // Tests Terms.intersect
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestIntersectRandom()
         {
             Directory dir = NewDirectory();

@@ -38,9 +38,6 @@ namespace Lucene.Net.Documents
     /// </summary>
     /// <seealso cref="SortedDocValuesField"/>
     [Obsolete("Use SortedDocValuesField instead.")]
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class SortedBytesDocValuesField : SortedDocValuesField
     {
         /// <summary>

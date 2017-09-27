@@ -1,5 +1,5 @@
 using Lucene.Net.Support;
-using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -24,9 +24,6 @@ namespace Lucene.Net.Store
     /// Wraps another <see cref="IChecksum"/> with an internal buffer
     /// to speed up checksum calculations.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class BufferedChecksum : IChecksum
     {
         private readonly IChecksum @in;
@@ -100,6 +97,7 @@ namespace Lucene.Net.Store
             @in.Reset();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void Flush()
         {
             if (upto > 0)

@@ -1,6 +1,5 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Index;
-using Lucene.Net.Support;
 using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using NUnit.Framework;
@@ -8,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -54,9 +54,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         public void TestInfoStream_SystemOutErr()
         {
 
-            TextWriter curOut = SystemConsole.Out;
+            TextWriter curOut = Console.Out;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            SystemConsole.Out = new StreamWriter(baos, Encoding.GetEncoding(0));
+            Console.Out = new StreamWriter(baos, Encoding.GetEncoding(0));
             try
             {
                 PerfRunData runData = createPerfRunData("SystemOut");
@@ -67,12 +67,12 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
             finally
             {
-                SystemConsole.Out = curOut;
+                Console.Out = curOut;
             }
 
-            TextWriter curErr = SystemConsole.Error;
+            TextWriter curErr = Console.Error;
             baos = new ByteArrayOutputStream();
-            SystemConsole.Error = new StreamWriter(baos, Encoding.GetEncoding(0));
+            Console.Error = new StreamWriter(baos, Encoding.GetEncoding(0));
             try
             {
                 PerfRunData runData = createPerfRunData("SystemErr");
@@ -83,7 +83,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             }
             finally
             {
-                SystemConsole.Error = curErr;
+                Console.Error = curErr;
             }
 
         }

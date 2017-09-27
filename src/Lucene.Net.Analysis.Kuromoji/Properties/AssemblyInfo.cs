@@ -23,10 +23,6 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Lucene.Net.Analysis.Kuromoji")]
-[assembly: AssemblyDescription("Japanese Morphological Analyzer " +
-    "for the Lucene.Net full-text search engine library from The Apache Software Foundation.")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net.Analysis.Kuromoji")]
 [assembly: AssemblyCulture("")]
 

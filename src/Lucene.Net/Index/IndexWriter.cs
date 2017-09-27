@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
@@ -50,7 +51,8 @@ namespace Lucene.Net.Index
 
     /// <summary>
     /// An <see cref="IndexWriter"/> creates and maintains an index.
-    ///
+    /// </summary>
+    /// <remarks>
     /// <para>The <see cref="OpenMode"/> option on
     /// <see cref="IndexWriterConfig.OpenMode"/> determines
     /// whether a new index is created, or whether an existing index is
@@ -154,7 +156,7 @@ namespace Lucene.Net.Index
     /// it's in a Wait() or <see cref="Thread.Sleep(int)"/>), and will then throw
     /// the unchecked exception <see cref="ThreadInterruptedException"/>
     /// and <b>clear</b> the interrupt status on the thread.</para>
-    /// </summary>
+    /// </remarks>
 
     /*
      * Clarification: Check Points (and commits)
@@ -441,9 +443,6 @@ namespace Lucene.Net.Index
         /// places if it is in "near real-time mode" (<see cref="GetReader()"/>
         /// has been called on this instance).
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal class ReaderPool : IDisposable
         {
             private readonly IndexWriter outerInstance;
@@ -1045,6 +1044,7 @@ namespace Lucene.Net.Index
         /// <see cref="IndexWriter"/> for details.</para>
         /// </summary>
         /// <exception cref="IOException"> if there is a low-level IO error </exception>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Dispose()
         {
             Dispose(true);
@@ -1073,6 +1073,7 @@ namespace Lucene.Net.Index
         /// running merges to abort, wait until those merges have
         /// finished (which should be at most a few seconds), and
         /// then return. </param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void Dispose(bool waitForMerges)
         {
             // Ensure that only one thread actually gets to do the
@@ -1185,14 +1186,14 @@ namespace Lucene.Net.Index
 
                         if (waitForMerges)
                         {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                             try
                             {
 #endif    
                             // Give merge scheduler last chance to run, in case
                                 // any pending merges are waiting:
                                 mergeScheduler.Merge(this, MergeTrigger.CLOSING, false);
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                             }
                             catch (ThreadInterruptedException)
                             {
@@ -1210,13 +1211,13 @@ namespace Lucene.Net.Index
                         {
                             for (; ; )
                             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                                 try
                                 {
 #endif
                                     FinishMerges(waitForMerges && !interrupted);
                                     break;
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                                 }
                                 catch (ThreadInterruptedException)
                                 {
@@ -1297,7 +1298,7 @@ namespace Lucene.Net.Index
                 // finally, restore interrupt status:
                 if (interrupted)
                 {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     Thread.CurrentThread.Interrupt();
 #endif
                 }
@@ -2525,6 +2526,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void RollbackInternal()
         {
             bool success = false;
@@ -3843,6 +3845,7 @@ namespace Lucene.Net.Index
         /// <param name="triggerMerge"> if <c>true</c>, we may merge segments (if
         /// deletes or docs were flushed) if necessary </param>
         /// <param name="applyAllDeletes"> whether pending deletes should also </param>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Flush(bool triggerMerge, bool applyAllDeletes)
         {
             // NOTE: this method cannot be sync'd because
@@ -4044,9 +4047,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class MergedDeletesAndUpdates
         {
             internal ReadersAndUpdates mergedDeletesAndUpdates = null;
@@ -4547,6 +4547,7 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void Merge(MergePolicy.OneMerge merge)
         {
             bool success = false;
@@ -5372,18 +5373,18 @@ namespace Lucene.Net.Index
                 // fails to be called, we wait for at most 1 second
                 // and then return so caller can check if wait
                 // conditions are satisfied:
-#if !NETSTANDARD
-                try
-                {
-#endif
+//#if !NETSTANDARD1_5
+//                try
+//                {
+//#endif
                     Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-#if !NETSTANDARD
-                }
-                catch (ThreadInterruptedException ie)
-                {
-                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                }
+//                catch (ThreadInterruptedException ie)
+//                {
+//                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+//                }
+//#endif
             }
         }
 
@@ -5620,9 +5621,6 @@ namespace Lucene.Net.Index
         /// <para/><b>NOTE</b>: <see cref="Warm(AtomicReader)"/> is called before any deletes have
         /// been carried over to the merged segment.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class IndexReaderWarmer
         {
             /// <summary>
@@ -5929,6 +5927,7 @@ namespace Lucene.Net.Index
         /// (unlike <see cref="File.Exists(string)"/>) throws <see cref="IOException"/> if
         /// there's some unexpected error.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private static bool SlowFileExists(Directory dir, string fileName)
         {
             try

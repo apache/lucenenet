@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -88,6 +89,7 @@ namespace Lucene.Net.Util.Fst
             return NO_OUTPUT;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
             Debug.Assert(first == NO_OUTPUT);

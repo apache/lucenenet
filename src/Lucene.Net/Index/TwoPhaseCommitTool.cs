@@ -1,5 +1,5 @@
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -28,9 +28,6 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     /// <seealso cref="ITwoPhaseCommit"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class TwoPhaseCommitTool
     {
         /// <summary>
@@ -43,8 +40,9 @@ namespace Lucene.Net.Index
         /// Thrown by <see cref="TwoPhaseCommitTool.Execute(ITwoPhaseCommit[])"/> when an
         /// object fails to <see cref="ITwoPhaseCommit.PrepareCommit()"/>.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class PrepareCommitFailException
@@ -55,15 +53,15 @@ namespace Lucene.Net.Index
             public PrepareCommitFailException(Exception cause, ITwoPhaseCommit obj)
                 : base("prepareCommit() failed on " + obj, cause)
             {
-            }
+            }  
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             // For testing purposes
-            internal PrepareCommitFailException(string message)
+            public PrepareCommitFailException(string message)
                 : base(message)
             {
             }
 
-#if FEATURE_SERIALIZABLE
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
@@ -80,8 +78,9 @@ namespace Lucene.Net.Index
         /// Thrown by <see cref="TwoPhaseCommitTool.Execute(ITwoPhaseCommit[])"/> when an
         /// object fails to <see cref="ITwoPhaseCommit.Commit()"/>.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class CommitFailException : System.IO.IOException
@@ -93,13 +92,13 @@ namespace Lucene.Net.Index
             {
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             // For testing purposes
-            internal CommitFailException(string message)
+            public CommitFailException(string message)
                 : base(message)
             {
             }
 
-#if FEATURE_SERIALIZABLE
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

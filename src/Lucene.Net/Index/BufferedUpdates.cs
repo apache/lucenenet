@@ -39,9 +39,6 @@ namespace Lucene.Net.Index
     /// instance on <see cref="DocumentsWriterPerThread"/>, or via sync'd code by
     /// <see cref="DocumentsWriterDeleteQueue"/>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class BufferedUpdates // LUCENENET NOTE: Made public rather than internal because it is available through a public API
     {
         /* Rough logic: HashMap has an array[Entry] w/ varying

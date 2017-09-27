@@ -29,9 +29,6 @@ namespace Lucene.Net.Search
     /// </summary>
     /// <seealso cref="DocIdSet"/>
     /// <seealso cref="Lucene.Net.Search.Filter"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class BitsFilteredDocIdSet : FilteredDocIdSet
     {
         private readonly IBits acceptDocs;

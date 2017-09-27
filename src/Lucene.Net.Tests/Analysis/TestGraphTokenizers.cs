@@ -1,15 +1,15 @@
 using Lucene.Net.Analysis.TokenAttributes;
+using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
 {
-    using Lucene.Net.Support;
-    using NUnit.Framework;
-    using System.IO;
-
     /*
          * Licensed to the Apache Software Foundation (ASF) under one or more
          * contributor license agreements.  See the NOTICE file distributed with
@@ -136,7 +136,7 @@ namespace Lucene.Net.Analysis
 
                 InputLength = sb.Length;
 
-                string[] parts = sb.ToString().Split(' ');
+                string[] parts = sb.ToString().Split(' ').TrimEnd();
 
                 Tokens = new List<Token>();
                 int pos = 0;
@@ -145,7 +145,7 @@ namespace Lucene.Net.Analysis
                 //System.out.println("again");
                 foreach (string part in parts)
                 {
-                    string[] overlapped = part.Split('/');
+                    string[] overlapped = part.Split('/').TrimEnd();
                     bool firstAtPos = true;
                     int minPosLength = int.MaxValue;
                     foreach (string part2 in overlapped)

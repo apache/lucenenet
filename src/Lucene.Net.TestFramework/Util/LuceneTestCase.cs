@@ -37,6 +37,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util
 {
@@ -496,7 +497,7 @@ namespace Lucene.Net.Util
         /// Max 10mb of static data stored in a test suite class after the suite is complete.
         /// Prevents static data structures leaking and causing OOMs in subsequent tests.
         /// </summary>
-        private static readonly long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
+        //private static readonly long STATIC_LEAK_THRESHOLD = 10 * 1024 * 1024;
 
         /// <summary>
         /// By-name list of ignored types like loggers etc. </summary>
@@ -959,7 +960,7 @@ namespace Lucene.Net.Util
                 int maxMergeCount = TestUtil.NextInt(Random(), maxThreadCount, maxThreadCount + 4);
                 IConcurrentMergeScheduler mergeScheduler;
 
-#if NETSTANDARD
+#if !FEATURE_CONCURRENTMERGESCHEDULER
                 mergeScheduler = new TaskMergeScheduler();
 #else
                 if (r.NextBoolean())
@@ -2751,7 +2752,10 @@ namespace Lucene.Net.Util
                 {
                     throw new Exception("Failed to get a temporary name too many times, check your temp directory and consider manually cleaning it: " + System.IO.Path.GetTempPath());
                 }
-                f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), "LuceneTemp", prefix + "-" + attempt));
+                // LUCENENET specific - need to use a random file name instead of a sequential one or two threads may attempt to do 
+                // two operations on a file at the same time.
+                //f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), "LuceneTemp", prefix + "-" + attempt));
+                f = new DirectoryInfo(Path.Combine(System.IO.Path.GetTempPath(), "LuceneTemp", prefix + "-" + Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
 
                 try
                 {
@@ -2859,6 +2863,17 @@ namespace Lucene.Net.Util
                         else if (System.IO.File.Exists(f))
                             File.Delete(f);
                     }
+                    // LUCENENET specific: UnauthorizedAccessException doesn't subclass IOException as
+                    // AccessDeniedException does in Java, so we need a special case for it.
+                    catch (UnauthorizedAccessException e)
+                    {
+                        //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
+                        //                    if (suiteClass.IsAnnotationPresent(typeof(SuppressTempFileChecks)))
+                        //                    {
+                        Console.Error.WriteLine("WARNING: Leftover undeleted temporary files " + e.Message);
+                        return;
+                        //                    }
+                    }
                     catch (IOException e)
                     {
                         //                    Type suiteClass = RandomizedContext.Current.GetTargetType;
@@ -2889,7 +2904,7 @@ namespace Lucene.Net.Util
         public static class ConcurrentMergeSchedulerFactories
         {
             public static readonly Func<IConcurrentMergeScheduler>[] Values = new Func<IConcurrentMergeScheduler>[] {
-#if !NETSTANDARD
+#if FEATURE_CONCURRENTMERGESCHEDULER
                 () => new ConcurrentMergeScheduler(),
 #endif
                 () => new TaskMergeScheduler()

@@ -13,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -971,6 +972,8 @@ namespace Lucene.Net.Index
                 }
                 if (sawMaybe && !failed)
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool seen = 
                         StackTraceHelper.DoesStackTraceContainMethod("ApplyDeletesAndUpdates") ||
                         StackTraceHelper.DoesStackTraceContainMethod("SlowFileExists");                 
@@ -989,6 +992,8 @@ namespace Lucene.Net.Index
                 }
                 if (!failed)
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     if (StackTraceHelper.DoesStackTraceContainMethod("ApplyDeletesAndUpdates"))
                     {
                         if (VERBOSE)
@@ -1301,11 +1306,7 @@ namespace Lucene.Net.Index
 
         // Make sure buffered (pushed) deletes don't use up so
         // much RAM that it forces long tail of tiny segments:
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestApplyDeletesOnFlush()
         {
             Directory dir = NewDirectory();

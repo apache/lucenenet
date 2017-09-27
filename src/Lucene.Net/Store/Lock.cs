@@ -136,18 +136,18 @@ namespace Lucene.Net.Store
                     throw e;
                 }
 
-#if !NETSTANDARD
-                try
-                {
-#endif
+//#if !NETSTANDARD1_5
+//                try
+//                {
+//#endif
                     Thread.Sleep(TimeSpan.FromMilliseconds(LOCK_POLL_INTERVAL));
-#if !NETSTANDARD                
-                }
-                catch (ThreadInterruptedException ie)
-                {
-                    throw new ThreadInterruptedException(ie.ToString(), ie);
-                }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                }
+//                catch (ThreadInterruptedException ie)
+//                {
+//                    throw new ThreadInterruptedException(ie.ToString(), ie);
+//                }
+//#endif
                 locked = Obtain();
             }
             return locked;

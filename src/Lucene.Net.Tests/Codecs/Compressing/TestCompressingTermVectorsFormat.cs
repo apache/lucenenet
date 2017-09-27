@@ -128,11 +128,7 @@ namespace Lucene.Net.Codecs.Compressing
             base.TestRandom();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(30000)]
-#endif
-        [Test, HasTimeout]
+        [Test]
         public override void TestMerge()
         {
             base.TestMerge();

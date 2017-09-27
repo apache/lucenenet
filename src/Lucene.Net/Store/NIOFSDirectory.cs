@@ -48,9 +48,6 @@ namespace Lucene.Net.Store
     /// favor of <see cref="NIOFSDirectory"/>.</font>
     /// </para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class NIOFSDirectory : FSDirectory
     {
         /// <summary>
@@ -119,9 +116,6 @@ namespace Lucene.Net.Store
             return new IndexInputSlicerAnonymousInnerClassHelper(context, path, fc);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class IndexInputSlicerAnonymousInnerClassHelper : IndexInputSlicer
         {
             private readonly IOContext context;
@@ -167,9 +161,6 @@ namespace Lucene.Net.Store
         /// Reads bytes with the <see cref="FileStreamExtensions.Read(FileStream, ByteBuffer, long)"/>
         /// extension method for <see cref="FileStream"/>.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         protected class NIOFSIndexInput : BufferedIndexInput
         {
             /// <summary>

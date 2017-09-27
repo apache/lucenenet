@@ -8,6 +8,7 @@ using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Spatial.Prefix
 {
@@ -37,13 +38,9 @@ namespace Lucene.Net.Spatial.Prefix
             try
             {
                 IDictionary<string, string> args = new Dictionary<string, string>();
-#if NETSTANDARD
-                throw new TypeLoadException(".NET Core build of Spatial4n.Core does not include Spatial4n.Core.NTS");
-#else
                 args.Put("spatialContextFactory",
                     typeof(Spatial4n.Core.Context.Nts.NtsSpatialContextFactory).AssemblyQualifiedName);
                 ctx = SpatialContextFactory.MakeSpatialContext(args /*, getClass().getClassLoader()*/);
-#endif
             }
             catch (TypeLoadException e) //LUCENENET TODO: Does this match NoClassDefFoundError ??
             {

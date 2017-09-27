@@ -24,9 +24,6 @@ namespace Lucene.Net.Store
     /// Simple implementation of <see cref="ChecksumIndexInput"/> that wraps
     /// another input and delegates calls.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class BufferedChecksumIndexInput : ChecksumIndexInput
     {
         internal readonly IndexInput main;

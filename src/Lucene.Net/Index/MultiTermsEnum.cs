@@ -32,9 +32,6 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class MultiTermsEnum : TermsEnum
     {
         private readonly TermMergeQueue queue;
@@ -53,9 +50,6 @@ namespace Lucene.Net.Index
         private BytesRef current;
         private IComparer<BytesRef> termComp;
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class TermsEnumIndex
         {
             public static readonly TermsEnumIndex[] EMPTY_ARRAY = new TermsEnumIndex[0];
@@ -635,9 +629,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class TermsEnumWithSlice
         {
             internal ReaderSlice SubSlice { get; private set; }

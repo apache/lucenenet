@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -32,15 +32,15 @@ namespace Lucene.Net.Index
     /// for the doc/fields it saw, then the flush method below
     /// merges all of these together into a single _X.nrm file.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     internal sealed class NormsConsumer : InvertedDocEndConsumer
     {
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()
         {
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Flush(IDictionary<string, InvertedDocEndConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             bool success = false;
@@ -87,6 +87,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument()
         {
         }

@@ -1,6 +1,5 @@
 using System;
-using System.Reflection;
-using System.Diagnostics;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -72,6 +71,8 @@ namespace Lucene.Net.Codecs.Lucene3x
                     // we are part of a "merge", we must sort by UTF16:
                     bool unicodeSortOrder = true;
 
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     if (Util.StackTraceHelper.DoesStackTraceContainMethod("Merge"))
                     {
                         unicodeSortOrder = false;

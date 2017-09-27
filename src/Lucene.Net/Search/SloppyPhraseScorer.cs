@@ -27,9 +27,6 @@ namespace Lucene.Net.Search
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
     using Term = Lucene.Net.Index.Term;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class SloppyPhraseScorer : Scorer
     {
         private PhrasePositions min, max;
@@ -450,9 +447,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ComparerAnonymousInnerClassHelper : IComparer<PhrasePositions>
         {
             private readonly SloppyPhraseScorer outerInstance;

@@ -3,6 +3,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Payloads
 {
@@ -102,7 +103,7 @@ namespace Lucene.Net.Search.Payloads
 
         private PayloadNearQuery NewPhraseQuery(string fieldName, string phrase, bool inOrder, PayloadFunction function)
         {
-            var words = _whiteSpaceRegex.Split(phrase);
+            var words = _whiteSpaceRegex.Split(phrase).TrimEnd();
             var clauses = new SpanQuery[words.Length];
             for (var i = 0; i < clauses.Length; i++)
             {
@@ -300,7 +301,7 @@ namespace Lucene.Net.Search.Payloads
 
         private SpanNearQuery SpanNearQuery(string fieldName, string words)
         {
-            var wordList = _whiteSpaceRegex.Split(words);
+            var wordList = _whiteSpaceRegex.Split(words).TrimEnd();
             var clauses = new SpanQuery[wordList.Length];
             for (var i = 0; i < clauses.Length; i++)
             {

@@ -1,5 +1,5 @@
 ﻿using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -25,8 +25,10 @@ namespace Lucene.Net.Search.Highlight
     /// <summary>
     /// Exception thrown if TokenStream Tokens are incompatible with provided text
     /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
+    [Serializable]
 #endif
     public class InvalidTokenOffsetsException : Exception
     {
@@ -42,7 +44,7 @@ namespace Lucene.Net.Search.Highlight
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

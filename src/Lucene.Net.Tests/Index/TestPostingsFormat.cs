@@ -87,6 +87,12 @@ namespace Lucene.Net.Index
         [Test]
         public override void TestRandom()
         {
+#if DEBUG
+#if NETSTANDARD1_5
+            fail("LUCENENET TODO: Fatally crashes NUnit");
+#endif
+#endif
+
             base.TestRandom();
         }
 

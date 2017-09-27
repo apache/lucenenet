@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
@@ -275,7 +276,7 @@ namespace Lucene.Net.Search
 
             nrtDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtDeletes, maxReopenSec, minReopenSec);
             nrtDeletesThread.Name = "NRTDeletes Reopen Thread";
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
             nrtDeletesThread.Priority = (ThreadPriority)Math.Min((int)Thread.CurrentThread.Priority + 2, (int)ThreadPriority.Highest);
 #endif
             nrtDeletesThread.SetDaemon(true);
@@ -283,7 +284,7 @@ namespace Lucene.Net.Search
 
             nrtNoDeletesThread = new ControlledRealTimeReopenThread<IndexSearcher>(genWriter, nrtNoDeletes, maxReopenSec, minReopenSec);
             nrtNoDeletesThread.Name = "NRTNoDeletes Reopen Thread";
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
             nrtNoDeletesThread.Priority = (ThreadPriority)Math.Min((int)Thread.CurrentThread.Priority + 2, (int)ThreadPriority.Highest);
 #endif
             nrtNoDeletesThread.SetDaemon(true);
@@ -380,11 +381,7 @@ namespace Lucene.Net.Search
         /*
          * LUCENE-3528 - NRTManager hangs in certain situations 
          */
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestThreadStarvationNoDeleteNRTReader()
         {
             IndexWriterConfig conf = NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random()));
@@ -495,12 +492,12 @@ namespace Lucene.Net.Search
 
             public override void Run()
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
                     thread.WaitForGeneration(lastGen);
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
                 catch (ThreadInterruptedException ie)
                 {
@@ -530,24 +527,22 @@ namespace Lucene.Net.Search
             public override void UpdateDocument(Term term, IEnumerable<IIndexableField> doc, Analyzer analyzer)
             {
                 base.UpdateDocument(term, doc, analyzer);
-#if !NETSTANDARD
-                try
-                {
-#endif
+//#if !NETSTANDARD1_5
+//                try
+//                {
+//#endif
                     if (waitAfterUpdate)
                     {
                         signal.Reset(signal.CurrentCount == 0 ? 0 : signal.CurrentCount - 1);
                         latch.Wait();
                     }
-#if !NETSTANDARD
-                }
-#pragma warning disable 168
-                catch (ThreadInterruptedException e)
-#pragma warning restore 168
-                {
-                    throw;
-                }
-#endif
+//#if !NETSTANDARD1_5
+//                }
+//                catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                {
+//                    throw;
+//                }
+//#endif
             }
         }
 
@@ -638,12 +633,8 @@ namespace Lucene.Net.Search
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(40000)]
-#endif
         // LUCENE-5461
-        [Test, HasTimeout]
+        [Test]
         public virtual void TestCRTReopen()
         {
             //test behaving badly

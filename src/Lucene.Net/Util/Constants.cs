@@ -57,16 +57,16 @@ namespace Lucene.Net.Util
         /// NOTE: This was JAVA_VENDOR in Lucene
         /// </summary>
         public static readonly string RUNTIME_VENDOR = "Microsoft"; // AppSettings.Get("java.vendor", "");
-        //public static readonly string JVM_VENDOR = GetEnvironmentVariable("java.vm.vendor", "");
-        //public static readonly string JVM_VERSION = GetEnvironmentVariable("java.vm.version", "");
-        //public static readonly string JVM_NAME = GetEnvironmentVariable("java.vm.name", "");
+                                                                    //public static readonly string JVM_VENDOR = GetEnvironmentVariable("java.vm.vendor", "");
+                                                                    //public static readonly string JVM_VERSION = GetEnvironmentVariable("java.vm.version", "");
+                                                                    //public static readonly string JVM_NAME = GetEnvironmentVariable("java.vm.name", "");
 
 #if NETSTANDARD
         /// <summary>
         /// The value of <see cref="RuntimeInformation.OSDescription"/>, excluding the version number.</summary>
 #else
         /// <summary>
-        /// The value of <see cref="Environment.OSVersion.VersionString"/>, excluding the version number.</summary>
+        /// The value of System.Environment.OSVersion.VersionString, excluding the version number.</summary>
 #endif
         public static readonly string OS_NAME; // = GetEnvironmentVariable("OS", "Windows_NT") ?? "Linux";
 
@@ -140,7 +140,8 @@ namespace Lucene.Net.Util
             WINDOWS = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             LINUX = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             MAC_OS_X = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-            // LUCENENET NOTE: SunOS and FreeBSD not supported
+            FREE_BSD = RuntimeInformation.IsOSPlatform(OSPlatform.Create("FreeBSD"));
+            SUN_OS = RuntimeInformation.IsOSPlatform(OSPlatform.Create("SunOS"));
 #else
             // LUCENENET NOTE: On .NET Framework, our only possibilities are Windows or Linux
             PlatformID pid = Environment.OSVersion.Platform;
@@ -166,7 +167,7 @@ namespace Lucene.Net.Util
                 RUNTIME_VERSION = Environment.Version.ToString();
             }
 #endif
-
+            
 #if NETSTANDARD
             OS_VERSION = ExtractString(RuntimeInformation.OSDescription, VERSION);
             OS_NAME = VERSION.Replace(RuntimeInformation.OSDescription, string.Empty).Trim();

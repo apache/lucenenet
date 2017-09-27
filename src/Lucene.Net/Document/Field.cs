@@ -47,9 +47,6 @@ namespace Lucene.Net.Documents
     /// Field it is used in.  It is strongly recommended that no
     /// changes be made after <see cref="Field"/> instantiation.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public partial class Field : IIndexableField
     {
         /// <summary>
@@ -120,7 +117,7 @@ namespace Lucene.Net.Documents
 
         /// <summary>
         /// Pre-analyzed <see cref="TokenStream"/> for indexed fields; this is
-        /// separate from <see cref="m_fieldsData"/> because you are allowed to
+        /// separate from <see cref="FieldsData"/> because you are allowed to
         /// have both; eg maybe field has a <see cref="string"/> value but you
         /// customize how it's tokenized
         /// </summary>

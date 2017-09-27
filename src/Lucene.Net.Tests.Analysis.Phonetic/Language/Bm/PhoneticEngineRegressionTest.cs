@@ -209,7 +209,7 @@ namespace Lucene.Net.Analysis.Phonetic.Language.Bm
             }
             else
             {
-                languageSet = LanguageSet.From(new HashSet<String>(Arrays.AsList(languageSetArg.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries))));
+                languageSet = LanguageSet.From(new HashSet<String>(Arrays.AsList(languageSetArg.Split(',').TrimEnd())));
             }
 
             /*

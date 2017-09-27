@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -29,9 +27,6 @@ namespace Lucene.Net.Index
     /// dictionary value (ordinal) can be retrieved for each document. Ordinals
     /// are dense and in increasing sorted order.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class SortedDocValues : BinaryDocValues
     {
         /// <summary>
@@ -81,7 +76,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// If <paramref name="key"/> exists, returns its ordinal, else
         /// returns <c>-insertionPoint-1</c>, like 
-        /// <see cref="Array.BinarySearch(Array, int, int, object)"/>
+        /// <see cref="System.Array.BinarySearch(System.Array, int, int, object)"/>
         /// </summary>
         /// <param name="key"> Key to look up</param>
         public virtual int LookupTerm(BytesRef key)

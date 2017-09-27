@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Analysis;
+﻿#if !NETSTANDARD1_5
+using Lucene.Net.Analysis;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
@@ -185,3 +186,4 @@ namespace Lucene.Net.QueryParsers.Xml
         }
     }
 }
+#endif

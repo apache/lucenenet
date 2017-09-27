@@ -370,6 +370,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         private class ThreadAnonymousHelper : ThreadClass
         {
             private readonly WriteLineDocTask wldt;
+            internal Exception Exception { get; private set; }
             public ThreadAnonymousHelper(string name, WriteLineDocTask wldt)
                 : base(name)
             {
@@ -384,7 +385,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 }
                 catch (Exception e)
                 {
-                    throw new Exception(e.ToString(), e);
+                    //throw new Exception(e.ToString(), e);
+                    this.Exception = e;
                 }
             }
         }
@@ -406,6 +408,17 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
 
             wldt.Dispose();
 
+            // LUCENENET specific - need to transfer any exception that occurred back to this thread
+            foreach (ThreadClass t in threads)
+            {
+                var thread = t as ThreadAnonymousHelper;
+
+                if (thread?.Exception != null)
+                {
+                    throw thread.Exception;
+                }
+            }
+
             ISet<String> ids = new HashSet<string>();
             TextReader br = new StreamReader(new FileStream(file.FullName, FileMode.Open, FileAccess.Read), Encoding.UTF8);
             try
@@ -416,7 +429,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 {
                     line = br.ReadLine();
                     String[] parts = line.Split(WriteLineDocTask.SEP).TrimEnd();
-                    assertEquals(3, parts.Length);
+                    assertEquals(line, 3, parts.Length);
                     // check that all thread names written are the same in the same line
                     String tname = parts[0].Substring(parts[0].IndexOf('_'));
                     ids.add(tname);

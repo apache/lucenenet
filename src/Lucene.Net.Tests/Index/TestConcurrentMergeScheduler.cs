@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Threading;
 using Lucene.Net.Documents;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -68,12 +69,15 @@ namespace Lucene.Net.Index
 
             public override void Eval(MockDirectoryWrapper dir)
             {
-                if (DoFail && TestThread() && Random().NextBoolean())
+                if (DoFail && TestThread())
                 {
+                    // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                    // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                     bool isDoFlush = Util.StackTraceHelper.DoesStackTraceContainMethod("Flush");
-                    bool isClose = Util.StackTraceHelper.DoesStackTraceContainMethod("Close");    
+                    bool isClose = Util.StackTraceHelper.DoesStackTraceContainMethod("Close") ||
+                        Util.StackTraceHelper.DoesStackTraceContainMethod("Dispose");    
 
-                    if (isDoFlush && !isClose )
+                    if (isDoFlush && !isClose && Random().NextBoolean())
                     {
                         HitExc = true;
                         throw new IOException(Thread.CurrentThread.Name + ": now failing during flush");
@@ -197,11 +201,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestNoExtraFiles()
         {
             Directory directory = NewDirectory();
@@ -233,11 +233,7 @@ namespace Lucene.Net.Index
             directory.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestNoWaitClose()
         {
             Directory directory = NewDirectory();
@@ -374,11 +370,14 @@ namespace Lucene.Net.Index
                         RunningMergeCount.DecrementAndGet();
                     }
                 }
-                catch (Exception t)
+                catch (Exception /*t*/)
                 {
                     Failed.Set(true);
                     m_writer.MergeFinish(merge);
-                    throw new Exception(t.ToString(), t);
+
+                    // LUCENENET specific - throwing an exception on a background thread causes the test
+                    // runner to crash on .NET Core 2.0.
+                    //throw new Exception(t.ToString(), t);
                 }
             }
         }
@@ -399,11 +398,7 @@ namespace Lucene.Net.Index
             }
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestTotalBytesSize()
         {
             Directory d = NewDirectory();

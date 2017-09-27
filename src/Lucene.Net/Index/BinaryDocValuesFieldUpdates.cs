@@ -1,5 +1,6 @@
-using System;
 using Lucene.Net.Documents;
+using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -36,14 +37,8 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class BinaryDocValuesFieldUpdates : DocValuesFieldUpdates
     {
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         new internal sealed class Iterator : DocValuesFieldUpdates.Iterator
         {
             private readonly PagedGrowableWriter offsets;
@@ -191,9 +186,6 @@ namespace Lucene.Net.Index
             return new Iterator(size, offsets, lengths, docs, values, docsWithField);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
         {
             private readonly BinaryDocValuesFieldUpdates outerInstance;
@@ -253,6 +245,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(DocValuesFieldUpdates other)
         {
             BinaryDocValuesFieldUpdates otherUpdates = (BinaryDocValuesFieldUpdates)other;

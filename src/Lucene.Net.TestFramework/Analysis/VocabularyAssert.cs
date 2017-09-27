@@ -1,4 +1,4 @@
-using Lucene.Net.Util;
+using Lucene.Net.Support;
 using NUnit.Framework;
 using System.IO;
 using System.IO.Compression;
@@ -54,7 +54,7 @@ namespace Lucene.Net.Analysis
                 {
                     continue; // comment
                 }
-                string[] words = inputLine.Split('\t');
+                string[] words = inputLine.Split('\t').TrimEnd();
                 BaseTokenStreamTestCase.CheckOneTerm(a, words[0], words[1]);
             }
         }

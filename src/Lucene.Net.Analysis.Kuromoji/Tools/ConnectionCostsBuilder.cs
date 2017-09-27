@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Lucene.Net.Support;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -38,7 +39,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                 StreamReader streamReader = new StreamReader(inputStream, Encoding.ASCII);
 
                 string line = streamReader.ReadLine();
-                string[] dimensions = whiteSpaceRegex.Split(line);
+                string[] dimensions = whiteSpaceRegex.Split(line).TrimEnd();
 
                 Debug.Assert(dimensions.Length == 2);
 
@@ -51,7 +52,7 @@ namespace Lucene.Net.Analysis.Ja.Util
 
                 while ((line = streamReader.ReadLine()) != null)
                 {
-                    string[] fields = whiteSpaceRegex.Split(line);
+                    string[] fields = whiteSpaceRegex.Split(line).TrimEnd();
 
                     Debug.Assert(fields.Length == 3);
 

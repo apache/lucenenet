@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Support;
+using Lucene.Net.Support.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -198,7 +199,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 f = inputFiles.Current;
                 // System.err.println(f);
-                name = f.FullName + "_" + iteration;
+                name = f.GetCanonicalPath() + "_" + iteration;
             }
 
             string line = null;

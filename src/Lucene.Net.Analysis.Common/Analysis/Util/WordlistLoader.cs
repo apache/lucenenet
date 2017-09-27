@@ -1,9 +1,11 @@
-﻿using Lucene.Net.Util;
+﻿using Lucene.Net.Support;
+using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Lucene.Net.Analysis.Util
 {
@@ -33,6 +35,9 @@ namespace Lucene.Net.Analysis.Util
     public class WordlistLoader
     {
         private const int INITIAL_CAPACITY = 16;
+
+        // LUCENENET specific
+        private readonly static Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
 
         /// <summary>
         /// no instance </summary>
@@ -155,7 +160,7 @@ namespace Lucene.Net.Analysis.Util
                     {
                         line = line.Substring(0, comment);
                     }
-                    string[] words = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(w => w.Trim()).ToArray();
+                    string[] words = WHITESPACE.Split(line).TrimEnd();
                     foreach (var word in words)
                     {
                         if (word.Length > 0)
@@ -206,7 +211,7 @@ namespace Lucene.Net.Analysis.Util
                 string line;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    string[] wordstem = line.Split(new char[] { '\t' }, 2, StringSplitOptions.RemoveEmptyEntries);
+                    string[] wordstem = line.Split(new char[] { '\t' }, 2);
                     result.Put(wordstem[0], wordstem[1]);
                 }
             }

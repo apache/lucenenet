@@ -51,7 +51,8 @@ namespace Lucene.Net.Tests.Queries
             directory = NewDirectory();
             RandomIndexWriter writer = new RandomIndexWriter(Random(), directory, Similarity, TimeZone);
             // we use the default Locale/TZ since LuceneTestCase randomizes it
-            var cal = new GregorianCalendar().ToDateTime(1970, 1, 1, 0, 0, 0, (int)TestUtil.NextLong(Random(), 0, long.MaxValue));
+            var cal = new GregorianCalendar().ToDateTime(2003, 1, 1, 0, 0, 0, 0); // 2003 January 01
+            cal = TimeZoneInfo.ConvertTime(cal, TimeZoneInfo.Local);
 
             for (int i = 0; i < Max; i++)
             {

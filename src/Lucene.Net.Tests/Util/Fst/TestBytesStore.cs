@@ -1,6 +1,7 @@
 using System;
 using Lucene.Net.Randomized.Generators;
 using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -32,11 +33,7 @@ namespace Lucene.Net.Util.Fst
     public class TestBytesStore : LuceneTestCase
     {
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(720000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestRandom()
         {
 

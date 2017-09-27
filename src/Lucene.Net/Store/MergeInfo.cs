@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Store
 {
     /*
@@ -23,9 +21,6 @@ namespace Lucene.Net.Store
     /// <para>A MergeInfo provides information required for a MERGE context.
     /// It is used as part of an <see cref="IOContext"/> in case of MERGE context.</para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class MergeInfo
     {
         public int TotalDocCount { get; private set; }

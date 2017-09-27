@@ -542,11 +542,7 @@ namespace Lucene.Net.Codecs.PerField
             base.TestSortedSetFixedLengthVsUninvertedField();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public override void TestSortedSetVariableLengthVsUninvertedField()
         {
             base.TestSortedSetVariableLengthVsUninvertedField();

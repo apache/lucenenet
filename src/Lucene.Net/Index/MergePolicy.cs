@@ -3,7 +3,8 @@ using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-#if FEATURE_SERIALIZABLE
+using System.Runtime.CompilerServices;
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Text;
@@ -62,10 +63,10 @@ namespace Lucene.Net.Index
     ///
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class MergePolicy : IDisposable
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// A map of doc IDs. </summary>
@@ -111,9 +112,7 @@ namespace Lucene.Net.Index
         ///  subset of segments to be merged as well as whether the
         ///  new segment should use the compound file format.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
+
         public class OneMerge
         {
             internal SegmentCommitInfo info; // used by IndexWriter
@@ -264,6 +263,7 @@ namespace Lucene.Net.Index
             /// before the merge is committed then the merge will
             /// not be committed.
             /// </summary>
+            [MethodImpl(MethodImplOptions.NoInlining)]
             internal virtual void Abort()
             {
                 lock (this)
@@ -301,20 +301,20 @@ namespace Lucene.Net.Index
 
                     while (paused)
                     {
-#if !NETSTANDARD
-                        try
-                        {
-#endif
+//#if !NETSTANDARD1_5
+//                        try
+//                        {
+//#endif
                             // In theory we could wait() indefinitely, but we
                             // do 1000 msec, defensively
                             Monitor.Wait(this, TimeSpan.FromMilliseconds(1000));
-#if !NETSTANDARD
-                        }
-                        catch (ThreadInterruptedException ie)
-                        {
-                            throw new Exception(ie.ToString(), ie);
-                        }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                        }
+//                        catch (ThreadInterruptedException ie)
+//                        {
+//                            throw new Exception(ie.ToString(), ie);
+//                        }
+//#endif
                         if (aborted)
                         {
                             throw new MergeAbortedException("merge is aborted: " + SegString(dir));
@@ -431,9 +431,7 @@ namespace Lucene.Net.Index
         /// necessary to perform multiple merges.  It simply
         /// contains a list of <see cref="OneMerge"/> instances.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
+
         public class MergeSpecification
         {
             /// <summary>
@@ -480,8 +478,9 @@ namespace Lucene.Net.Index
         /// Exception thrown if there are any problems while
         /// executing a merge.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class MergeException : Exception
@@ -504,13 +503,13 @@ namespace Lucene.Net.Index
                 this.dir = dir;
             }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             // For testing purposes
-            internal MergeException(string message)
+            public MergeException(string message)
                 : base(message)
             {
             }
 
-#if FEATURE_SERIALIZABLE
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
@@ -541,8 +540,9 @@ namespace Lucene.Net.Index
         /// <c>false</c>.  Normally this exception is
         /// privately caught and suppresed by <see cref="IndexWriter"/>.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class MergeAbortedException : System.IO.IOException
@@ -563,7 +563,7 @@ namespace Lucene.Net.Index
             {
             }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

@@ -162,9 +162,6 @@ namespace Lucene.Net.Search
     ///
     /// @since 2.9
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class NumericRangeQuery<T> : MultiTermQuery
         where T : struct, IComparable<T> // best equiv constraint for java's number class
     {
@@ -320,9 +317,6 @@ namespace Lucene.Net.Search
         /// <see cref="NumericUtils.SplitInt32Range(NumericUtils.Int32RangeBuilder, int, int, int)"/> generates the sub-ranges. For
         /// <see cref="MultiTermQuery"/> ordering is not relevant.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class NumericRangeTermsEnum : FilteredTermsEnum
         {
             private readonly NumericRangeQuery<T> outerInstance;
@@ -440,9 +434,6 @@ namespace Lucene.Net.Search
                 termComp = Comparer;
             }
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class Int64RangeBuilderAnonymousInnerClassHelper : NumericUtils.Int64RangeBuilder
             {
                 private readonly NumericRangeTermsEnum outerInstance;
@@ -459,9 +450,6 @@ namespace Lucene.Net.Search
                 }
             }
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class Int32RangeBuilderAnonymousInnerClassHelper : NumericUtils.Int32RangeBuilder
             {
                 private readonly NumericRangeTermsEnum outerInstance;

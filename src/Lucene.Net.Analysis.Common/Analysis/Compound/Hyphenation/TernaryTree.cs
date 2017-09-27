@@ -67,7 +67,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
     public class TernaryTree
 #if FEATURE_CLONEABLE
-        : ICloneable
+        : System.ICloneable
 #endif
     {
         // We use 4 arrays to represent a node.I guess I should have created a proper
@@ -555,7 +555,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
 
             private class Item
 #if FEATURE_CLONEABLE
-                : ICloneable
+                : System.ICloneable
 #endif
             {
                 internal char parent;

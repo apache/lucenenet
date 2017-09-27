@@ -67,9 +67,6 @@ namespace Lucene.Net.Collation
     ///   ICUCollationAttributeFactory on the query side, or vice versa.
     /// </para>
     /// </summary>
-    // LUCENENET TODO: A better option would be to contribute to the icu.net library and
-    // make it CLS compliant (at least the parts of it we use)
-    [System.CLSCompliant(false)]
     public class CollationAttributeFactory : AttributeSource.AttributeFactory
 	{
 		private readonly Collator collator;

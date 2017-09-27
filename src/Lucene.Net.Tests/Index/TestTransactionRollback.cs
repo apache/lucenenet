@@ -195,7 +195,11 @@ namespace Lucene.Net.Index
                         // this code reads the last id ("30" in this example) and deletes it
                         // if it is after the desired rollback point
                         string x = userData["index"];
-                        string lastVal = x.Substring(x.LastIndexOf("-") + 1);
+
+                        // LUCENENET specific - Bug in the original when "-" is the last character in
+                        // the string, it tries to match one larger than what is available.
+                        int lastIndex = x.LastIndexOf("-");
+                        string lastVal = x.Substring(lastIndex + 1 == x.Length ? lastIndex : lastIndex + 1);
                         int last = Convert.ToInt32(lastVal);
                         if (last > RollbackPoint)
                         {

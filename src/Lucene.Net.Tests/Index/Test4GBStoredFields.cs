@@ -1,12 +1,13 @@
 using System;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
 using Lucene.Net.Support;
+using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
     using Document = Documents.Document;
     using Field = Field;
@@ -42,11 +43,7 @@ namespace Lucene.Net.Index
     public class Test4GBStoredFields : LuceneTestCase
     {
         [Ignore("//LUCENENET NOTE: This was marked Nightly in Java")]
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void Test([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             MockDirectoryWrapper dir = new MockDirectoryWrapper(Random(), new MMapDirectory(CreateTempDir("4GBStoredFields")));

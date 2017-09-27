@@ -30,6 +30,9 @@ namespace Lucene.Net.Util
     /// @lucene.internal
     /// </summary>
     public abstract class InfoStream : IDisposable
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// Instance of <see cref="InfoStream"/> that does no logging at all. </summary>

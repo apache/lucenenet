@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Sandbox.Queries
 {
@@ -120,7 +121,7 @@ namespace Lucene.Net.Sandbox.Queries
             while ((line = reader.ReadLine()) != null)
             {
                 lineNum++;
-                String[] @params = line.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                String[] @params = line.Split(',').TrimEnd();
                 String query = MapInt(codePointTable, int.Parse(@params[0], CultureInfo.InvariantCulture));
                 int prefix = int.Parse(@params[1], CultureInfo.InvariantCulture);
                 int pqSize = int.Parse(@params[2], CultureInfo.InvariantCulture);
@@ -134,7 +135,7 @@ namespace Lucene.Net.Sandbox.Queries
                 assertEquals(expectedResults, docs.TotalHits);
                 for (int i = 0; i < expectedResults; i++)
                 {
-                    String[] scoreDoc = reader.ReadLine().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    String[] scoreDoc = reader.ReadLine().Split(',').TrimEnd();
                     assertEquals(int.Parse(scoreDoc[0], CultureInfo.InvariantCulture), docs.ScoreDocs[i].Doc);
                     assertEquals(float.Parse(scoreDoc[1], CultureInfo.InvariantCulture), docs.ScoreDocs[i].Score, epsilon);
                 }

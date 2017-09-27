@@ -57,7 +57,7 @@ namespace Lucene.Net.Analysis.Util
             // internal buffer size is 1024 make sure we have a surrogate pair right at the border
             builder.Insert(1023, "\ud801\udc1c");
             var tokenizer = new LowerCaseTokenizer(TEST_VERSION_CURRENT, new StringReader(builder.ToString()));
-            AssertTokenStreamContents(tokenizer, builder.ToString().ToLowerInvariant().Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+            AssertTokenStreamContents(tokenizer, builder.ToString().ToLowerInvariant().Split(' ').TrimEnd());
         }
 
         /*
@@ -151,7 +151,7 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class AnalyzerAnonymousInnerClassHelper : Analyzer
         {
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizerAnonymousInnerClassHelper(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -214,7 +214,7 @@ namespace Lucene.Net.Analysis.Util
 
         private sealed class AnalyzerAnonymousInnerClassHelper2 : Analyzer
         {
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new LetterTokenizerAnonymousInnerClassHelper2(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);
@@ -260,7 +260,7 @@ namespace Lucene.Net.Analysis.Util
             public AnalyzerAnonymousInnerClassHelper3()
             { }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Tokenizer tokenizer = new NumberAndSurrogatePairTokenizer(TEST_VERSION_CURRENT, reader);
                 return new TokenStreamComponents(tokenizer, tokenizer);

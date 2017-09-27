@@ -4,10 +4,10 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
 using Lucene.Net.Util;
 using System;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -140,14 +140,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                     string printHitsField = RunData.Config.Get("print.hits.field", null);
                     if (hits != null && printHitsField != null && printHitsField.Length > 0)
                     {
-                        SystemConsole.WriteLine("totalHits = " + hits.TotalHits);
-                        SystemConsole.WriteLine("maxDoc()  = " + reader.MaxDoc);
-                        SystemConsole.WriteLine("numDocs() = " + reader.NumDocs);
+                        Console.WriteLine("totalHits = " + hits.TotalHits);
+                        Console.WriteLine("maxDoc()  = " + reader.MaxDoc);
+                        Console.WriteLine("numDocs() = " + reader.NumDocs);
                         for (int i = 0; i < hits.ScoreDocs.Length; i++)
                         {
                             int docID = hits.ScoreDocs[i].Doc;
                             Document doc = reader.Document(docID);
-                            SystemConsole.WriteLine("  " + i + ": doc=" + docID + " score=" + hits.ScoreDocs[i].Score + " " + printHitsField + " =" + doc.Get(printHitsField));
+                            Console.WriteLine("  " + i + ": doc=" + docID + " score=" + hits.ScoreDocs[i].Score + " " + printHitsField + " =" + doc.Get(printHitsField));
                         }
                     }
 

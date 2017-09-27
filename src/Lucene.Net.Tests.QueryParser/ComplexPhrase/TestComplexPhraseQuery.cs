@@ -3,6 +3,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Store;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -106,7 +107,7 @@ namespace Lucene.Net.QueryParsers.ComplexPhrase
             Query q = qp.Parse(qString);
 
             HashSet<string> expecteds = new HashSet<string>();
-            string[] vals = expectedVals.Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
+            string[] vals = expectedVals.Split(',').TrimEnd();
             for (int i = 0; i < vals.Length; i++)
             {
                 if (vals[i].Length > 0)

@@ -2,6 +2,7 @@ using System;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
@@ -43,8 +44,11 @@ namespace Lucene.Net.Search
         /// threshold for comparing floats </summary>
         public const float SCORE_COMP_THRESH = 1e-6f;
 
-        internal static Directory Small;
-        internal static IndexReader Reader;
+        // LUCENENET specific - made these instance variables
+        // since our BeforeClass() and AfterClass() are instance
+        // methods and not doing so makes them cross runner threads.
+        internal /*static*/ Directory Small;
+        internal /*static*/ IndexReader Reader;
 
         public static void AssertEquals(string m, int e, int a)
         {
@@ -86,8 +90,8 @@ namespace Lucene.Net.Search
         [OneTimeTearDown]
         public override void AfterClass()
         {
-            Reader.Dispose();
-            Small.Dispose();
+            Reader?.Dispose();
+            Small?.Dispose();
             Reader = null;
             Small = null;
             base.AfterClass();

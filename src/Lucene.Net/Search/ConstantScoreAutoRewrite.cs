@@ -31,7 +31,6 @@ namespace Lucene.Net.Search
     using TermsEnum = Lucene.Net.Index.TermsEnum;
     using TermState = Lucene.Net.Index.TermState;
 
-
     /// <summary>
     /// A rewrite method that tries to pick the best
     /// constant-score rewrite method based on term and
@@ -44,9 +43,6 @@ namespace Lucene.Net.Search
     // LUCENENET specific: made this class public. In Lucene there was a derived class 
     // with the same name that was nested within MultiTermQuery, but in .NET it is 
     // more intuitive if our classes are not nested.
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class ConstantScoreAutoRewrite : TermCollectingRewrite<BooleanQuery>
     {
         /// <summary>
@@ -149,9 +145,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class CutOffTermCollector : TermCollector
         {
             private void InitializeInstanceFields()
@@ -241,9 +234,6 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Special implementation of <see cref="BytesRefHash.BytesStartArray"/> that keeps parallel arrays for <see cref="TermContext"/> </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class TermStateByteStart : BytesRefHash.DirectBytesStartArray
         {
             internal TermContext[] termState;

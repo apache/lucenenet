@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search.Payloads
 {
     /*
@@ -24,9 +22,6 @@ namespace Lucene.Net.Search.Payloads
     /// <para/>
     /// Is thread safe and completely reusable.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class AveragePayloadFunction : PayloadFunction
     {
         public override float CurrentScore(int docId, string field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore)

@@ -1,4 +1,4 @@
-using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -18,15 +18,14 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     internal abstract class DocFieldConsumerPerField
     {
         /// <summary>
         /// Processes all occurrences of a single field </summary>
         public abstract void ProcessFields(IIndexableField[] fields, int count);
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void Abort();
 
         internal abstract FieldInfo FieldInfo { get; }

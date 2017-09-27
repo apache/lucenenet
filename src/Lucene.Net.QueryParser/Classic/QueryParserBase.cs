@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Text;
@@ -55,8 +55,9 @@ namespace Lucene.Net.QueryParsers.Classic
         /// <summary>
         /// Do not catch this exception in your code, it means you are using methods that you should no longer use.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class MethodRemovedUseAnother : Exception
@@ -64,7 +65,7 @@ namespace Lucene.Net.QueryParsers.Classic
             public MethodRemovedUseAnother()
             { }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

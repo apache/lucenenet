@@ -24,6 +24,10 @@ properties {
 	[string]$tools_directory  = "$base_directory\lib"
 	[string]$nuget_package_directory = "$release_directory\NuGetPackages"
 	[string]$test_results_directory = "$release_directory\TestResults"
+	[string]$publish_directory = "$release_directory\Publish"
+	[string]$solutionFile = "$base_directory\Lucene.Net.sln"
+	[string]$versionFile = "$base_directory\Version.proj"
+	[string]$sdkPath = "$env:programfiles/dotnet/sdk"
 
 	[string]$buildCounter     = $(if ($buildCounter) { $buildCounter } else { $env:BuildCounter }) #NOTE: Pass in as a parameter (not a property) or environment variable to override
 	[string]$preReleaseCounterPattern = $(if ($preReleaseCounterPattern) { $preReleaseCounterPattern } else { if ($env:PreReleaseCounterPattern) { $env:PreReleaseCounterPattern } else { "00000" } })  #NOTE: Pass in as a parameter (not a property) or environment variable to override
@@ -43,39 +47,68 @@ properties {
 	[string]$product_name = "Lucene.Net"
 	
 	#test paramters
-	[string]$frameworks_to_test = "netcoreapp1.0,net451"
+	[string]$frameworks_to_test = "netcoreapp2.0,netcoreapp1.0,net451"
 	[string]$where = ""
 }
 
 $backedUpFiles = New-Object System.Collections.ArrayList
 
-task default -depends Pack
+task default -depends Publish
 
 task Clean -description "This task cleans up the build directory" {
+	Write-Host "##teamcity[progressMessage 'Cleaning']"
 	Remove-Item $release_directory -Force -Recurse -ErrorAction SilentlyContinue
 	Get-ChildItem $base_directory -Include *.bak -Recurse | foreach ($_) {Remove-Item $_.FullName}
 }
 
-task InstallSDK -description "This task makes sure the correct SDK version is installed" {
+task InstallSDK -description "This task makes sure the correct SDK version is installed to build" {
+	Write-Host "##teamcity[progressMessage 'Installing SDK']"
 	& where.exe dotnet.exe
-	$sdkVersion = ""
+	$sdkVersion = "0.0.0.0"
 
 	if ($LASTEXITCODE -eq 0) {
-		$sdkVersion = ((& dotnet.exe --version) | Out-String).Trim()
+		$sdkVersion = [string]((& dotnet.exe --version) | Out-String).Trim()
 	}
-	
+
 	Write-Host "Current SDK version: $sdkVersion" -ForegroundColor Yellow
-	if (!$sdkVersion.Equals("1.0.0-preview2-1-003177")) {
-		Write-Host "Require SDK version 1.0.0-preview2-1-003177, installing..." -ForegroundColor Red
-		#Install the correct version of the .NET SDK for this build
-	    Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.0-preview2-1-003177"
+
+	# Make sure framework for .NET Core 2.0.0 is available
+	if (($sdkVersion.Contains("-")) -or ([version]$sdkVersion -lt ([version]"2.0.0")) -or ([version]$sdkVersion -ge ([version]"3.0.0"))) {
+		Write-Host "Requires SDK version 2.0.0 or greater, installing..." -ForegroundColor Red
+		Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 2.0.0"
 	}
 
 	# Safety check - this should never happen
 	& where.exe dotnet.exe
 
 	if ($LASTEXITCODE -ne 0) {
-		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.1 SDK version 1.0.0-preview2-1-003177."
+		throw "Could not find dotnet CLI in PATH. Please install the .NET Core 2.0 SDK."
+	}
+}
+
+task InstallSDK2IfRequired -description "This task installs the .NET Core 2.x SDK (required for testing under .NET Core 2.0 or .NET Framework)" {
+	Write-Host "##teamcity[progressMessage 'Installing SDK']"
+	# netcoreapp1.0 requires the .NET Core SDK 2.0 or there is an 'illegal characters in path' error
+	#if ($frameworks_to_test.Contains("netcoreapp2.") -or $frameworks_to_test.Contains("net45")) {
+		Invoke-Task InstallSDK
+	#}
+}
+
+task InstallSDK1IfRequired -description "This task installs the .NET Core 1.x SDK (required for testing under .NET Core 1.0)" {
+	Write-Host "##teamcity[progressMessage 'Installing SDK']"
+	if ($frameworks_to_test.Contains("netcoreapp1.")) {
+		# Make sure framework for .NET Core 1.0.4 is available
+		if (((Test-Path "$sdkPath/1.0.4") -eq $false) -and ((Test-Path "$sdkPath/1.1.0") -eq $false)) {
+			Write-Host "Requires SDK version 1.0.4, installing..." -ForegroundColor Red
+			Invoke-Expression "$base_directory\build\dotnet-install.ps1 -Version 1.0.4"
+		}
+
+		# Safety check - this should never happen
+		& where.exe dotnet.exe
+
+		if ($LASTEXITCODE -ne 0) {
+			throw "Could not find dotnet CLI in PATH. Please install the .NET Core 1.0.4 SDK."
+		}
 	}
 }
 
@@ -85,6 +118,7 @@ task Init -depends InstallSDK -description "This task makes sure the build envir
 	Write-Output "##myget[buildNumber '$packageVersion']"
 
 	& dotnet.exe --version
+	& dotnet.exe --info
 	Write-Host "Base Directory: $base_directory"
 	Write-Host "Release Directory: $release_directory"
 	Write-Host "Source Directory: $source_directory"
@@ -101,29 +135,51 @@ task Init -depends InstallSDK -description "This task makes sure the build envir
 }
 
 task Restore -description "This task restores the dependencies" {
-	pushd $base_directory
-		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Cli") -and !$_.Directory.Name.Contains("lucene-cli") }
-	popd
-
-	foreach ($package in $packages) {
-		Exec { & dotnet.exe restore $package }
+	Write-Host "##teamcity[progressMessage 'Restoring']"
+	Exec { 
+		& dotnet.exe restore $solutionFile --no-dependencies /p:TestFrameworks=true
 	}
 }
 
-task Compile -depends Clean, Init -description "This task compiles the solution" {
+task Compile -depends Clean, Init, Restore -description "This task compiles the solution" {
+	Write-Host "##teamcity[progressMessage 'Compiling']"
 	try {
-		pushd $base_directory
-		$projects = Get-ChildItem -Path "project.json" -Recurse | ? { !$_.Directory.Name.Contains(".Cli") -and !$_.Directory.Name.Contains("lucene-cli") }
-		popd
-
-		Backup-Files $projects
 		if ($prepareForBuild -eq $true) {
-			Prepare-For-Build $projects
+			Prepare-For-Build
 		}
 
-		Invoke-Task Restore
+		#Use only the major version as the assembly version.
+		#This ensures binary compatibility unless the major version changes.
+		$version-match "(^\d+)"
+		$assemblyVersion = $Matches[0]
+		$assemblyVersion = "$assemblyVersion.0.0"
 
-		Build-Assemblies $projects
+		Write-Host "Assembly version set to: $assemblyVersion" -ForegroundColor Green
+
+		$pv = $packageVersion
+		#check for presense of Git
+		& where.exe git.exe
+		if ($LASTEXITCODE -eq 0) {
+			$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
+			$pv = "$packageVersion commit:[$gitCommit]"
+		}
+
+		Write-Host "Assembly informational version set to: $pv" -ForegroundColor Green
+
+		$testFrameworks = $frameworks_to_test.Replace(',', ';')
+
+		Write-Host "TestFrameworks set to: $testFrameworks" -ForegroundColor Green
+
+		Exec {
+			& dotnet.exe msbuild $solutionFile /t:Build `
+				/p:Configuration=$configuration `
+				/p:AssemblyVersion=$assemblyVersion `
+				/p:InformationalVersion=$pv `
+				/p:Product=$product_name `
+				/p:Company=$company_name `
+				/p:Copyright=$copyright `
+				/p:TestFrameworks=true # workaround for parsing issue: https://github.com/Microsoft/msbuild/issues/471#issuecomment-181963350
+		}
 
 		$success = $true
 	} finally {
@@ -134,13 +190,18 @@ task Compile -depends Clean, Init -description "This task compiles the solution"
 }
 
 task Pack -depends Compile -description "This task creates the NuGet packages" {
+	Write-Host "##teamcity[progressMessage 'Packing']"
+	#create the nuget package output directory
+	Ensure-Directory-Exists "$nuget_package_directory"
+
 	try {
 		pushd $base_directory
-		$packages = Get-ChildItem -Path "project.json" -Recurse | ? { 
+		$packages = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? { 
 			!$_.Directory.Name.Contains(".Test") -and 
 			!$_.Directory.Name.Contains(".Demo") -and 
-			!$_.Directory.Name.Contains(".Cli") -and 
-			!$_.Directory.Name.Contains("lucene-cli")
+			!$_.Directory.FullName.Contains("\tools\") -and 
+			!$_.Directory.FullName.Contains("/tools/") -and 
+			!$_.Directory.Name.Contains(".Replicator.AspNetCore")
 		}
 		popd
 
@@ -154,11 +215,35 @@ task Pack -depends Compile -description "This task creates the NuGet packages" {
 	}
 }
 
-task Test -depends InstallSDK, Restore -description "This task runs the tests" {
+task Publish -depends Pack -description "This task publishes the command line tools" {
+	Write-Host "##teamcity[progressMessage 'Publishing']"
+	#create the publish output directory
+	Ensure-Directory-Exists "$publish_directory"
+
+	pushd $base_directory
+	$tools = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? {
+		$_.Directory.FullName.Contains("\tools\") -or $_.Directory.FullName.Contains("/tools/") -and 
+		!$_.Directory.Name.Contains(".Test") -and
+		!$_.Directory.Name.Contains("JavaDocToMarkdownConverter")
+	}
+	popd
+
+	foreach ($tool in $tools) {
+		Write-Host "Publishing $tool..." -ForegroundColor Magenta
+
+		$toolName = [io.path]::GetFileNameWithoutExtension($tool)
+		Exec {
+			& dotnet.exe publish $tool --configuration $Configuration --output "$publish_directory\$toolName"
+		}
+	}
+}
+
+task Test -depends InstallSDK1IfRequired, InstallSDK2IfRequired, Restore -description "This task runs the tests" {
+	Write-Host "##teamcity[progressMessage 'Testing']"
 	Write-Host "Running tests..." -ForegroundColor DarkCyan
 
 	pushd $base_directory
-	$testProjects = Get-ChildItem -Path "project.json" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
+	$testProjects = Get-ChildItem -Path "$source_directory\**\*.csproj" -Recurse | ? { $_.Directory.Name.Contains(".Tests") }
 	popd
 
 	Write-Host "frameworks_to_test: $frameworks_to_test" -ForegroundColor Yellow
@@ -169,14 +254,34 @@ task Test -depends InstallSDK, Restore -description "This task runs the tests" {
 		Write-Host "Framework: $framework" -ForegroundColor Blue
 
 		foreach ($testProject in $testProjects) {
-
 			$testName = $testProject.Directory.Name
-			$projectDirectory = $testProject.DirectoryName
-			Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+
+			# Special case - our CLI tool only supports .NET Core 2.0
+			if ($testName.Contains("Tests.Cli") -and ($framework -ne "netcoreapp2.0")) {
+				continue
+			}
+
+			$testResultDirectory = "$test_results_directory\$framework\$testName"
+			Ensure-Directory-Exists $testResultDirectory
 
 			if ($framework.StartsWith("netcore")) {
-				$testExpression = "dotnet.exe test '$projectDirectory\project.json' --configuration $configuration --framework $framework --no-build"
+				$testExpression = "dotnet.exe test $testProject --configuration $configuration --framework $framework --no-build"
+				#if ($framework -ne "netcoreapp1.0") {
+					$testExpression = "$testExpression --no-restore"
+					$testExpression = "$testExpression --results-directory $testResultDirectory\TestResult.xml"
+				#}
+				
+				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+					$testExpression = "$testExpression --filter $where"
+				}
 			} else {
+				# NOTE: Tried to use dotnet.exe to test .NET Framework, but it produces different test results
+				# (more failures). These failures don't show up in Visual Studio. So the assumption is that
+				# since .NET Core 2.0 tools are brand new they are not yet completely stable, we will continue to
+				# use NUnit3 Console to test with for the time being.
+				$projectDirectory = $testProject.DirectoryName
+				Write-Host "Directory: $projectDirectory" -ForegroundColor Green
+
 				$binaryRoot = "$projectDirectory\bin\$configuration\$framework"
 
 				$testBinary = "$binaryRoot\win7-x64\$testName.dll"
@@ -187,16 +292,12 @@ task Test -depends InstallSDK, Restore -description "This task runs the tests" {
 					$testBinary = "$binaryRoot\$testName.dll"
 				} 
 
-				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary"
-			}
+				$testExpression = "$tools_directory\NUnit\NUnit.ConsoleRunner.3.5.0\tools\nunit3-console.exe $testBinary --teamcity"
+				$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml"
 
-			$testResultDirectory = "$test_results_directory\$framework\$testName"
-			Ensure-Directory-Exists $testResultDirectory
-
-			$testExpression = "$testExpression --result:$testResultDirectory\TestResult.xml --teamcity"
-
-			if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
-				$testExpression = "$testExpression --where $where"
+				if ($where -ne $null -and (-Not [System.String]::IsNullOrEmpty($where))) {
+					$testExpression = "$testExpression --where=$where"
+				}
 			}
 
 			Write-Host $testExpression -ForegroundColor Magenta
@@ -254,46 +355,14 @@ function Get-Version() {
 	return $version
 }
 
-function Prepare-For-Build([string[]]$projects) {
+function Prepare-For-Build() {
 	Backup-File $common_assembly_info 
-	
-	$pv = $packageVersion
-	#check for presense of Git
-	& where.exe git.exe
-	if ($LASTEXITCODE -eq 0) {
-		$gitCommit = ((git rev-parse --verify --short=10 head) | Out-String).Trim()
-		$pv = "$packageVersion commit:[$gitCommit]"
-	}
 
 	Generate-Assembly-Info `
-		-product $product_name `
-		-company $company_name `
-		-copyright $copyright `
 		-version $version `
-		-packageVersion $pv `
 		-file $common_assembly_info
 
 	Update-Constants-Version $packageVersion
-
-	foreach ($project in $projects) {
-		Write-Host "Updating project.json for build: $project" -ForegroundColor Cyan
-
-		#Update version (for NuGet package) and dependency version of this project's inter-dependencies
-		(Get-Content $project) | % {
-			$_-replace "(?<=""Lucene.Net[\w\.]*?""\s*?:\s*?"")([^""]+)", $packageVersion
-		} | Set-Content $project -Force
-
-		$json = (Get-Content $project -Raw) | ConvertFrom-Json
-		$json.version = $PackageVersion
-		if (!$project.Contains("Test")) {
-			if ($json.buildOptions.xmlDoc -eq $null) {
-				$json.buildOptions | Add-Member -Name "xmlDoc" -Value true -MemberType NoteProperty
-			} else {
-				$json.buildOptions | % {$_.xmlDoc = true}
-			}
-		}
-		$json | ConvertTo-Json -depth 100 | Out-File $project -encoding UTF8 -Force
-	}
 
 	if ($generateBuildBat -eq $true) {
 		Backup-File $build_bat
@@ -312,18 +381,9 @@ function Update-Constants-Version([string]$version) {
 
 function Generate-Assembly-Info {
 param(
-	[string]$product,
-	[string]$company,
-	[string]$copyright,
 	[string]$version,
-	[string]$packageVersion,
 	[string]$file = $(throw "file is a required parameter.")
 )
-	#Use only the major version as the assembly version.
-	#This ensures binary compatibility unless the major version changes.
-	$version-match "(^\d+)"
-	$assemblyVersion = $Matches[0]
-	$assemblyVersion = "$assemblyVersion.0.0"
 
   $asmInfo = "/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -344,13 +404,7 @@ param(
 using System;
 using System.Reflection;
 
-[assembly: AssemblyProduct(""$product"")]
-[assembly: AssemblyCompany(""$company"")]
-[assembly: AssemblyTrademark(""$copyright"")]
-[assembly: AssemblyCopyright(""$copyright"")]
-[assembly: AssemblyVersion(""$assemblyVersion"")] 
 [assembly: AssemblyFileVersion(""$version"")]
-[assembly: AssemblyInformationalVersion(""$packageVersion"")]
 "
 	$dir = [System.IO.Path]::GetDirectoryName($file)
 	Ensure-Directory-Exists $dir
@@ -435,20 +489,12 @@ endlocal
 	[System.IO.File]::WriteAllLines($file, $buildBat, $Utf8EncodingNoBom)
 }
 
-function Build-Assemblies([string[]]$projects) {
-	foreach ($project in $projects) {
-		Exec {
-			& dotnet.exe build $project --configuration $configuration
-		}
-	}
-}
-
 function Pack-Assemblies([string[]]$projects) {
 	Ensure-Directory-Exists $nuget_package_directory
 	foreach ($project in $projects) {
 		Write-Host "Creating NuGet package for $project..." -ForegroundColor Magenta
 		Exec {
-			& dotnet.exe pack $project --configuration $Configuration --output $nuget_package_directory --no-build
+			& dotnet.exe pack $project --configuration $Configuration --output $nuget_package_directory --no-build --include-symbols /p:PackageVersion=$packageVersion
 		}
 	}
 }
@@ -483,8 +529,7 @@ function Restore-File([string]$path) {
 	}
 }
 
-function Ensure-Directory-Exists([string] $path)
-{
+function Ensure-Directory-Exists([string] $path) {
 	if (!(Test-Path $path)) {
 		New-Item $path -ItemType Directory
 	}

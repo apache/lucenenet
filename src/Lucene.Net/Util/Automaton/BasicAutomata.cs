@@ -39,7 +39,7 @@ namespace Lucene.Net.Util.Automaton
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-    internal sealed class BasicAutomata
+    public sealed class BasicAutomata
     {
         private BasicAutomata()
         {

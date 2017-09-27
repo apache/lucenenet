@@ -6,6 +6,7 @@ using Lucene.Net.Util;
 using System;
 using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -48,8 +49,8 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// This task also supports a "writer.info.stream" property with the following
     /// values:
     /// <list type="bullet">
-    ///     <item><term>SystemOut</term><description>Sets <see cref="IndexWriterConfig.SetInfoStream(InfoStream)"/> to <see cref="SystemConsole.Out"/>.</description></item>
-    ///     <item><term>SystemErr</term><description>Sets <see cref="IndexWriterConfig.SetInfoStream(InfoStream)"/> to <see cref="SystemConsole.Error"/></description></item>
+    ///     <item><term>SystemOut</term><description>Sets <see cref="IndexWriterConfig.SetInfoStream(InfoStream)"/> to <see cref="Console.Out"/>.</description></item>
+    ///     <item><term>SystemErr</term><description>Sets <see cref="IndexWriterConfig.SetInfoStream(InfoStream)"/> to <see cref="Console.Error"/></description></item>
     ///     <item><term>&lt;file_name&gt;</term><description>
     ///     Attempts to create a file given that name and sets <see cref="IndexWriterConfig.SetInfoStream(InfoStream)"/>
     ///     to that file. If this denotes an invalid file name, or some error occurs, an exception will be thrown.
@@ -220,11 +221,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             {
                 if (infoStreamVal.Equals("SystemOut", StringComparison.Ordinal))
                 {
-                    iwc.SetInfoStream(SystemConsole.Out);
+                    iwc.SetInfoStream(Console.Out);
                 }
                 else if (infoStreamVal.Equals("SystemErr", StringComparison.Ordinal))
                 {
-                    iwc.SetInfoStream(SystemConsole.Error);
+                    iwc.SetInfoStream(Console.Error);
                 }
                 else
                 {

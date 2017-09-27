@@ -37,9 +37,6 @@ namespace Lucene.Net.Support.IO
     ///     <item><description><see cref="Wrap(byte[])"/> an existing byte array to create a new buffer</description></item>
     /// </list>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class ByteBuffer : Buffer, IComparable<ByteBuffer>
     {
         /// <summary>

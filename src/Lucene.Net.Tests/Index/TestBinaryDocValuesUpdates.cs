@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -1621,11 +1622,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestTonsOfUpdates()
         {
             // LUCENE-5248: make sure that when there are many updates, we don't use too much RAM
@@ -1848,7 +1845,7 @@ namespace Lucene.Net.Index
                     }
                 }
 
-                System.Console.WriteLine("Success");
+                Console.WriteLine("Success");
             }
             finally
             {

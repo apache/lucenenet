@@ -5,6 +5,7 @@ using System.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net
 {
@@ -102,6 +103,8 @@ namespace Lucene.Net
         {
             public override void Eval(MockDirectoryWrapper dir)
             {
+                // LUCENENET specific: for these to work in release mode, we have added [MethodImpl(MethodImplOptions.NoInlining)]
+                // to each possible target of the StackTraceHelper. If these change, so must the attribute on the target methods.
                 if (StackTraceHelper.DoesStackTraceContainMethod("DoMerge"))
                 {
                     throw new IOException("now failing during merge");

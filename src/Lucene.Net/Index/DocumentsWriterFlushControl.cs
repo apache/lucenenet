@@ -38,9 +38,6 @@ namespace Lucene.Net.Index
     /// <see cref="IndexWriterConfig.RAMPerThreadHardLimitMB"/> to prevent address
     /// space exhaustion.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class DocumentsWriterFlushControl
     {
         private readonly long hardMaxBytesPerDWPT;
@@ -310,18 +307,18 @@ namespace Lucene.Net.Index
             {
                 while (flushingWriters.Count != 0)
                 {
-#if !NETSTANDARD
-                    try
-                    {
-#endif
+//#if !NETSTANDARD1_5
+//                    try
+//                    {
+//#endif
                     Monitor.Wait(this);
-#if !NETSTANDARD
-                    }
-                    catch (ThreadInterruptedException e)
-                    {
-                        throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-                    }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                    }
+//                    catch (ThreadInterruptedException e)
+//                    {
+//                        throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+//                    }
+//#endif
                 }
             }
         }
@@ -503,9 +500,6 @@ namespace Lucene.Net.Index
             return new IteratorAnonymousInnerClassHelper(this, upto);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class IteratorAnonymousInnerClassHelper : IEnumerator<ThreadState>
         {
             private readonly DocumentsWriterFlushControl outerInstance;
@@ -909,9 +903,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BlockedFlush
         {
             internal DocumentsWriterPerThread Dwpt { get; private set; }

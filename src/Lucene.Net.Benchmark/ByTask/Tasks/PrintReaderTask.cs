@@ -1,6 +1,6 @@
 ﻿using Lucene.Net.Index;
 using Lucene.Net.Store;
-using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -52,7 +52,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
                 r = DirectoryReader.Open(dir);
             else
                 r = DirectoryReader.Open(OpenReaderTask.FindIndexCommit(dir, userData));
-            SystemConsole.WriteLine("--> numDocs:" + r.NumDocs + " dels:" + r.NumDeletedDocs);
+            Console.WriteLine("--> numDocs:" + r.NumDocs + " dels:" + r.NumDeletedDocs);
             r.Dispose();
             return 1;
         }

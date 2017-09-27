@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis
 {
@@ -693,12 +694,12 @@ namespace Lucene.Net.Analysis
                 startingGun.Signal();
                 foreach (var t in threads)
                 {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     try
                     {
 #endif
                         t.Join();
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     }
 #pragma warning disable 168
                     catch (ThreadInterruptedException e)

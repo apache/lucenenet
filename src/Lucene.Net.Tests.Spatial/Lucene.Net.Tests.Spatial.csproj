@@ -19,121 +19,68 @@
  under the License.
 
 -->
+<Project Sdk="Microsoft.NET.Sdk">
 
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\..\TestTargetFramework.proj" />
+  <Import Project="..\..\Version.proj" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{31F52F5C-A08F-4363-8003-23D6F7D6EB3A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Tests.Spatial</RootNamespace>
-    <AssemblyName>Lucene.Net.Tests.Spatial</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <!--<TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>-->
+    <!--<TargetFramework>net451</TargetFramework>
+    <TargetFramework Condition=" '$(Configuration)' == 'Debug_NetCoreApp1_0' OR '$(Configuration)' == 'Release_NetCoreApp1_0' ">netcoreapp1.0</TargetFramework>-->
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">1.6.0</NetStandardImplicitPackageVersion>
+
+    <AssemblyTitle>Lucene.Net.Tests.Spatial</AssemblyTitle>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <EmbeddedResource Include="Test-Files\cities-Intersects-BBox.txt;Test-Files\Data\countries-bbox.txt;Test-Files\Data\countries-poly.txt;Test-Files\Data\geonames-IE.txt;Test-Files\Data\LUCENE-4464.txt;Test-Files\Data\simple-bbox.txt;Test-Files\Data\states-bbox.txt;Test-Files\Data\states-poly.txt;Test-Files\Data\world-cities-points.txt;Test-Files\simple-Queries-BBox.txt;Test-Files\states-Intersects-BBox.txt;Test-Files\states-IsWithin-BBox.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="NUnit" Version="3.8.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <PackageReference Include="Spatial4n.Core" Version="0.4.1-beta00007" />
+    <PackageReference Include="Spatial4n.Core.NTS" Version="0.4.1-beta00007" />
+    <!-- Required by NUnit3TestAdapter on .NET Core -->
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.3" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD1_5</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DistanceStrategyTest.cs" />
-    <Compile Include="PortedSolr3Test.cs" />
-    <Compile Include="Prefix\NtsPolygonTest.cs" />
-    <Compile Include="Prefix\SpatialOpRecursivePrefixTreeTest.cs" />
-    <Compile Include="Prefix\TestRecursivePrefixTreeStrategy.cs" />
-    <Compile Include="Prefix\TestTermQueryPrefixGridStrategy.cs" />
-    <Compile Include="Prefix\Tree\SpatialPrefixTreeTest.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QueryEqualsHashCodeTest.cs" />
-    <Compile Include="Query\SpatialArgsParserTest.cs" />
-    <Compile Include="Serialized\SerializedStrategyTest.cs" />
-    <Compile Include="SpatialArgsTest.cs" />
-    <Compile Include="SpatialExample.cs" />
-    <Compile Include="SpatialMatchConcern.cs" />
-    <Compile Include="SpatialTestCase.cs" />
-    <Compile Include="SpatialTestData.cs" />
-    <Compile Include="SpatialTestQuery.cs" />
-    <Compile Include="StrategyTestCase.cs" />
-    <Compile Include="Support\TestExceptionSerialization.cs" />
-    <Compile Include="Support\TestApiConsistency.cs" />
-    <Compile Include="TestTestFramework.cs" />
-    <Compile Include="Vector\TestPointVectorStrategy.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
-      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
-      <Name>Lucene.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
-      <Project>{69D7956C-C2CC-4708-B399-A188FEC384C4}</Project>
-      <Name>Lucene.Net.Queries</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Spatial\Lucene.Net.Spatial.csproj">
-      <Project>{35c347f4-24b2-4be5-8117-a0e3001551ce}</Project>
-      <Name>Lucene.Net.Spatial</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
-      <Project>{B2C0D749-CE34-4F62-A15E-00CB2FF5DDB3}</Project>
-      <Name>Lucene.Net.TestFramework</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Lucene.Net.Tests.Spatial.project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Test-Files\cities-Intersects-BBox.txt" />
-    <EmbeddedResource Include="Test-Files\Data\countries-bbox.txt" />
-    <EmbeddedResource Include="Test-Files\Data\countries-poly.txt" />
-    <EmbeddedResource Include="Test-Files\Data\geonames-IE.txt" />
-    <EmbeddedResource Include="Test-Files\Data\LUCENE-4464.txt" />
-    <EmbeddedResource Include="Test-Files\Data\simple-bbox.txt" />
-    <EmbeddedResource Include="Test-Files\Data\states-bbox.txt" />
-    <EmbeddedResource Include="Test-Files\Data\states-poly.txt" />
-    <EmbeddedResource Include="Test-Files\Data\world-cities-points.txt" />
-    <EmbeddedResource Include="Test-Files\simple-Queries-BBox.txt" />
-    <EmbeddedResource Include="Test-Files\states-Intersects-BBox.txt" />
-    <EmbeddedResource Include="Test-Files\states-IsWithin-BBox.txt" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

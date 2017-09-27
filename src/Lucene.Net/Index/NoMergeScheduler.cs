@@ -1,4 +1,4 @@
-using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -29,9 +29,6 @@ namespace Lucene.Net.Index
     /// <see cref="MergeScheduler"/> implementation is ever executed. Hence it is
     /// recommended to use both if you want to disable merges from ever happening.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class NoMergeScheduler : MergeScheduler
     {
         /// <summary>
@@ -47,11 +44,12 @@ namespace Lucene.Net.Index
         {
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
         }
 
-        public override IMergeScheduler Clone()
+        public override object Clone()
         {
             return this;
         }

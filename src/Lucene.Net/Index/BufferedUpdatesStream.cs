@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -46,9 +47,6 @@ namespace Lucene.Net.Index
     /// track which BufferedDeletes packets to apply to any given
     /// segment.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class BufferedUpdatesStream
     {
         // TODO: maybe linked list?
@@ -129,9 +127,6 @@ namespace Lucene.Net.Index
             get { return bytesUsed.Get(); }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class ApplyDeletesResult
         {
             // True if any actual deletes took place:
@@ -154,9 +149,6 @@ namespace Lucene.Net.Index
         // Sorts SegmentInfos from smallest to biggest bufferedDelGen:
         private static readonly IComparer<SegmentCommitInfo> sortSegInfoByDelGen = new ComparerAnonymousInnerClassHelper();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ComparerAnonymousInnerClassHelper : IComparer<SegmentCommitInfo>
         {
             public ComparerAnonymousInnerClassHelper()
@@ -186,6 +178,7 @@ namespace Lucene.Net.Index
         /// actual deleted docIDs in the liveDocs <see cref="Util.IMutableBits"/> for
         /// each <see cref="SegmentReader"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual ApplyDeletesResult ApplyDeletesAndUpdates(IndexWriter.ReaderPool readerPool, IList<SegmentCommitInfo> infos)
         {
             lock (this)
@@ -645,9 +638,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class QueryAndLimit
         {
             public Query Query { get; private set; }

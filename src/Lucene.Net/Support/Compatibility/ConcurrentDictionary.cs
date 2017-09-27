@@ -17,7 +17,12 @@
 
 #if NET35
 
-namespace Lucene.Net.Support.Compatibility
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace System.Collections.Concurrent
 {
     /// <summary>
     /// Support class that emulates the behavior of the ConcurrentDictionary
@@ -27,6 +32,9 @@ namespace Lucene.Net.Support.Compatibility
     /// all return a snapshot of the data at the time it was called.
     /// </summary>
     
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class ConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
         private readonly object _lockObj = new object();

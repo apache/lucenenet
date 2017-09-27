@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 
 namespace Lucene.Net.Search
 {
@@ -44,9 +43,6 @@ namespace Lucene.Net.Search
     /// as the method to use to initialize. If there are multiple parameters, each parameter set
     /// must be surrounded by curly braces.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class NGramPhraseQuery : PhraseQuery
     {
         private readonly int n;

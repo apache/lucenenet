@@ -7,6 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 using Occur = Lucene.Net.Search.Occur;
 
 namespace Lucene.Net

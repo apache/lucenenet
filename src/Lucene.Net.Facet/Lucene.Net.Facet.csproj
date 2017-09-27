@@ -19,139 +19,61 @@
  under the License.
 
 -->
+<Project Sdk="Microsoft.NET.Sdk">
 
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\..\Version.proj" />
+  
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{48F7884A-9454-4E88-8413-9D35992CB440}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.Facet</RootNamespace>
-    <AssemblyName>Lucene.Net.Facet</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>-->
+
+    <AssemblyTitle>Lucene.Net.Facet</AssemblyTitle>
+    <Description>Faceted indexing and search capabilities for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query;facet;faceted</PackageTags>
+    <Authors>The Apache Software Foundation</Authors>
+    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573</NoWarn>
+
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Join\Lucene.Net.Join.csproj" />
+    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj" />
+  </ItemGroup>
+
+  <!-- NOTE: Microsoft's recommendation is not to use the ICloneable interface. We put in a FEATURE_CLONEABLE constant in case anyone wants to add it to the build -->
+  <!--<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>-->
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DrillDownQuery.cs" />
-    <Compile Include="DrillSideways.cs" />
-    <Compile Include="DrillSidewaysQuery.cs" />
-    <Compile Include="DrillSidewaysScorer.cs" />
-    <Compile Include="FacetField.cs" />
-    <Compile Include="FacetResult.cs" />
-    <Compile Include="Facets.cs" />
-    <Compile Include="FacetsCollector.cs" />
-    <Compile Include="FacetsConfig.cs" />
-    <Compile Include="LabelAndValue.cs" />
-    <Compile Include="MultiFacets.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RandomSamplingFacetsCollector.cs" />
-    <Compile Include="Range\DoubleRange.cs" />
-    <Compile Include="Range\DoubleRangeFacetCounts.cs" />
-    <Compile Include="Range\LongRange.cs" />
-    <Compile Include="Range\LongRangeCounter.cs" />
-    <Compile Include="Range\LongRangeFacetCounts.cs" />
-    <Compile Include="Range\Range.cs" />
-    <Compile Include="Range\RangeFacetCounts.cs" />
-    <Compile Include="SortedSet\DefaultSortedSetDocValuesReaderState.cs" />
-    <Compile Include="SortedSet\SortedSetDocValuesFacetCounts.cs" />
-    <Compile Include="SortedSet\SortedSetDocValuesFacetField.cs" />
-    <Compile Include="SortedSet\SortedSetDocValuesReaderState.cs" />
-    <Compile Include="Taxonomy\AssociationFacetField.cs" />
-    <Compile Include="Taxonomy\CachedOrdinalsReader.cs" />
-    <Compile Include="Taxonomy\CategoryPath.cs" />
-    <Compile Include="Taxonomy\Directory\Consts.cs" />
-    <Compile Include="Taxonomy\Directory\DirectoryTaxonomyReader.cs" />
-    <Compile Include="Taxonomy\Directory\DirectoryTaxonomyWriter.cs" />
-    <Compile Include="Taxonomy\Directory\TaxonomyIndexArrays.cs" />
-    <Compile Include="Taxonomy\DocValuesOrdinalsReader.cs" />
-    <Compile Include="Taxonomy\FacetLabel.cs" />
-    <Compile Include="Taxonomy\FastTaxonomyFacetCounts.cs" />
-    <Compile Include="Taxonomy\FloatAssociationFacetField.cs" />
-    <Compile Include="Taxonomy\FloatTaxonomyFacets.cs" />
-    <Compile Include="Taxonomy\IntAssociationFacetField.cs" />
-    <Compile Include="Taxonomy\IntTaxonomyFacets.cs" />
-    <Compile Include="Taxonomy\LRUHashMap.cs" />
-    <Compile Include="Taxonomy\OrdinalsReader.cs" />
-    <Compile Include="Taxonomy\ParallelTaxonomyArrays.cs" />
-    <Compile Include="Taxonomy\PrintTaxonomyStats.cs" />
-    <Compile Include="Taxonomy\SearcherTaxonomyManager.cs" />
-    <Compile Include="Taxonomy\TaxonomyFacetCounts.cs" />
-    <Compile Include="Taxonomy\TaxonomyFacets.cs" />
-    <Compile Include="Taxonomy\TaxonomyFacetSumFloatAssociations.cs" />
-    <Compile Include="Taxonomy\TaxonomyFacetSumIntAssociations.cs" />
-    <Compile Include="Taxonomy\TaxonomyFacetSumValueSource.cs" />
-    <Compile Include="Taxonomy\TaxonomyReader.cs" />
-    <Compile Include="Taxonomy\TaxonomyWriter.cs" />
-    <Compile Include="Taxonomy\WriterCache\CategoryPathUtils.cs" />
-    <Compile Include="Taxonomy\WriterCache\CharBlockArray.cs" />
-    <Compile Include="Taxonomy\WriterCache\Cl2oTaxonomyWriterCache.cs" />
-    <Compile Include="Taxonomy\WriterCache\CollisionMap.cs" />
-    <Compile Include="Taxonomy\WriterCache\CompactLabelToOrdinal.cs" />
-    <Compile Include="Taxonomy\WriterCache\LabelToOrdinal.cs" />
-    <Compile Include="Taxonomy\WriterCache\LruTaxonomyWriterCache.cs" />
-    <Compile Include="Taxonomy\WriterCache\NameHashIntCacheLRU.cs" />
-    <Compile Include="Taxonomy\WriterCache\NameIntCacheLRU.cs" />
-    <Compile Include="Taxonomy\WriterCache\TaxonomyWriterCache.cs" />
-    <Compile Include="TopOrdAndFloatQueue.cs" />
-    <Compile Include="TopOrdAndIntQueue.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
-      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
-      <Name>Lucene.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Join\Lucene.Net.Join.csproj">
-      <Project>{e8a339c7-fcf6-4a72-8586-56d8961d7b99}</Project>
-      <Name>Lucene.Net.Join</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Queries\Lucene.Net.Queries.csproj">
-      <Project>{69d7956c-c2cc-4708-b399-a188fec384c4}</Project>
-      <Name>Lucene.Net.Queries</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Lucene.Net.Facet.project.json" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

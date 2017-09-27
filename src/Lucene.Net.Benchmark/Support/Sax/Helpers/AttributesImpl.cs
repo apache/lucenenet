@@ -182,7 +182,7 @@ namespace Sax.Helpers
         /// <remarks>In many cases, it will be more efficient to look up the name once and
         /// use the index query methods rather than using the name query methods
         /// repeatedly.</remarks>
-        /// <param name="index">The attribute's Namespace URI, or the empty
+        /// <param name="uri">The attribute's Namespace URI, or the empty
         /// string if none is available.</param>
         /// <param name="localName">The attribute's local name.</param>
         /// <returns>The attribute's index, or -1 if none matches.</returns>
@@ -319,7 +319,7 @@ namespace Sax.Helpers
         /// Note that little memory is freed by this call:
         /// the current array is kept so it can be 
         /// reused.
-        /// <summary>
+        /// </summary>
         public virtual void Clear()
         {
             if (data != null)

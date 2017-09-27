@@ -1,6 +1,7 @@
 using Lucene.Net.Documents;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -35,14 +36,8 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class NumericDocValuesFieldUpdates : DocValuesFieldUpdates
     {
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         new internal sealed class Iterator : DocValuesFieldUpdates.Iterator
         {
             private readonly int size;
@@ -161,9 +156,6 @@ namespace Lucene.Net.Index
             return new Iterator(size, values, docsWithField, docs);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class InPlaceMergeSorterAnonymousInnerClassHelper : InPlaceMergeSorter
         {
             private readonly NumericDocValuesFieldUpdates outerInstance;
@@ -217,6 +209,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(DocValuesFieldUpdates other)
         {
             Debug.Assert(other is NumericDocValuesFieldUpdates);

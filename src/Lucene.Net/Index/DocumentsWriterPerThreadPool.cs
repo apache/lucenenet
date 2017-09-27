@@ -36,10 +36,10 @@ namespace Lucene.Net.Index
     /// is reusing the flushing <see cref="DocumentsWriterPerThread"/>s <see cref="ThreadState"/> with a
     /// new <see cref="DocumentsWriterPerThread"/> instance.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal abstract class DocumentsWriterPerThreadPool
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         /// <summary>
         /// <see cref="ThreadState"/> references and guards a
@@ -52,9 +52,6 @@ namespace Lucene.Net.Index
         /// and release the lock in a finally block via <see cref="ReentrantLock.Unlock()"/>
         /// (on the <see cref="ThreadState"/> instance) before accessing the state.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class ThreadState : ReentrantLock
         {
             internal DocumentsWriterPerThread dwpt;

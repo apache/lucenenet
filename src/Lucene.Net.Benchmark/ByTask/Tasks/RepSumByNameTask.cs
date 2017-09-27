@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Stats;
 using Lucene.Net.Support;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -37,11 +38,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             Report rp = ReportSumByName(RunData.Points.TaskStats);
 
-            SystemConsole.WriteLine();
-            SystemConsole.WriteLine("------------> Report Sum By (any) Name (" +
+            Console.WriteLine();
+            Console.WriteLine("------------> Report Sum By (any) Name (" +
                 rp.Count + " about " + rp.Reported + " out of " + rp.OutOf + ")");
-            SystemConsole.WriteLine(rp.Text);
-            SystemConsole.WriteLine();
+            Console.WriteLine(rp.Text);
+            Console.WriteLine();
 
             return 0;
         }

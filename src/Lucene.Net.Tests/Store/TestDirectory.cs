@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Store
 {
@@ -60,11 +61,7 @@ namespace Lucene.Net.Store
 
         // test is occasionally very slow, i dont know why
         // try this seed: 7D7E036AD12927F5:93333EF9E6DE44DE
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestThreadSafety()
         {
             BaseDirectoryWrapper dir = NewDirectory();
@@ -177,11 +174,7 @@ namespace Lucene.Net.Store
 
         // Test that different instances of FSDirectory can coexist on the same
         // path, can read, write, and lock files.
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestDirectInstantiation()
         {
             DirectoryInfo path = CreateTempDir("testDirectInstantiation");
@@ -212,11 +205,12 @@ namespace Lucene.Net.Store
                     Assert.IsTrue(SlowFileExists(d2, fname));
                     Assert.AreEqual(1 + largeBuffer.Length, d2.FileLength(fname));
 
-                    // don't do read tests if unmapping is not supported!
-                    if (d2 is MMapDirectory && !((MMapDirectory)d2).UseUnmap)
-                    {
-                        continue;
-                    }
+                    // LUCENENET specific - unmap hack not needed
+                    //// don't do read tests if unmapping is not supported!
+                    //if (d2 is MMapDirectory && !((MMapDirectory)d2).UseUnmap)
+                    //{
+                    //    continue;
+                    //}
 
                     IndexInput input = d2.OpenInput(fname, NewIOContext(Random()));
                     Assert.AreEqual((byte)i, input.ReadByte());

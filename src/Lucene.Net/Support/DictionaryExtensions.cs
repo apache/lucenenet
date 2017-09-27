@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 
@@ -343,7 +344,7 @@ namespace Lucene.Net.Support
                     WriteComments(writer, comments);
                 }
                 writer.Write('#');
-                writer.Write(new DateTime().ToString("yyyy-MM-dd"));
+                writer.Write(new DateTime().ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
                 writer.Write(lineSeparator);
 
                 StringBuilder buffer = new StringBuilder(200);

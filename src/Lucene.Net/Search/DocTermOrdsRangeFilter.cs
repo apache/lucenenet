@@ -33,9 +33,7 @@ namespace Lucene.Net.Search
     ///    using a <see cref="TermRangeQuery"/> with <see cref="DocTermOrdsRewriteMethod"/>: it will only do
     ///    two ordinal to term lookups.</para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public abstract class DocTermOrdsRangeFilter : Filter
     {
         internal readonly string field;
@@ -67,9 +65,6 @@ namespace Lucene.Net.Search
             return new DocTermOrdsRangeFilterAnonymousInnerClassHelper(field, lowerVal, upperVal, includeLower, includeUpper);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class DocTermOrdsRangeFilterAnonymousInnerClassHelper : DocTermOrdsRangeFilter
         {
             public DocTermOrdsRangeFilterAnonymousInnerClassHelper(string field, BytesRef lowerVal, BytesRef upperVal, bool includeLower, bool includeUpper)
@@ -133,9 +128,6 @@ namespace Lucene.Net.Search
                 return new FieldCacheDocIdSetAnonymousInnerClassHelper(this, context.AtomicReader.MaxDoc, acceptDocs, docTermOrds, inclusiveLowerPoint, inclusiveUpperPoint);
             }
 
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class FieldCacheDocIdSetAnonymousInnerClassHelper : FieldCacheDocIdSet
             {
                 private readonly DocTermOrdsRangeFilterAnonymousInnerClassHelper outerInstance;

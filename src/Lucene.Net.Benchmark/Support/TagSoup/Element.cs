@@ -21,7 +21,7 @@ namespace TagSoup
     /// for use in constructing stacks and queues of Elements.
     /// </summary>
     /// <seealso cref="ElementType" />
-    /// <seealso cref="Sax.Net.Helpers.Attributes" />
+    /// <seealso cref="Sax.Helpers.Attributes" />
     public class Element
     {
         private readonly Attributes _atts; // attributes of element

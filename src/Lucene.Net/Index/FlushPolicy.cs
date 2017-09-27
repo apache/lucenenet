@@ -52,10 +52,10 @@ namespace Lucene.Net.Index
     /// <seealso cref="DocumentsWriterFlushControl"/>
     /// <seealso cref="DocumentsWriterPerThread"/>
     /// <seealso cref="IndexWriterConfig.FlushPolicy"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal abstract class FlushPolicy
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         protected LiveIndexWriterConfig m_indexWriterConfig;
         protected InfoStream m_infoStream;

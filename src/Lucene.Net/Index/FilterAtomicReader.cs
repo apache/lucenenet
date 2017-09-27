@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -44,9 +43,6 @@ namespace Lucene.Net.Index
     /// overridden as well if the <see cref="LiveDocs"/> are not changed
     /// either.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class FilterAtomicReader : AtomicReader
     {
         /// <summary>
@@ -66,9 +62,6 @@ namespace Lucene.Net.Index
         /// Base class for filtering <see cref="Index.Fields"/>
         /// implementations.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class FilterFields : Fields
         {
             /// <summary>
@@ -105,9 +98,6 @@ namespace Lucene.Net.Index
         /// these terms are going to be intersected with automata, you could consider
         /// overriding <see cref="Terms.Intersect"/> for better performance.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class FilterTerms : Terms
         {
             /// <summary>
@@ -187,9 +177,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Base class for filtering <see cref="TermsEnum"/> implementations. </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class FilterTermsEnum : TermsEnum
         {
             /// <summary>
@@ -265,9 +252,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Base class for filtering <see cref="DocsEnum"/> implementations. </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class FilterDocsEnum : DocsEnum
         {
             /// <summary>
@@ -316,9 +300,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Base class for filtering <see cref="DocsAndPositionsEnum"/> implementations. </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class FilterDocsAndPositionsEnum : DocsAndPositionsEnum
         {
             /// <summary>

@@ -30,9 +30,6 @@ namespace Lucene.Net.Documents
     /// requiring eight bytes per document. Consider encoding double
     /// values yourself with only as much precision as you require.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class DoubleDocValuesField : NumericDocValuesField
     {
         /// <summary>

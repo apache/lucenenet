@@ -33,9 +33,6 @@ namespace Lucene.Net.Search.Similarities
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class BM25Similarity : Similarity
     {
         private readonly float k1;
@@ -245,9 +242,6 @@ namespace Lucene.Net.Search.Similarities
             return new BM25DocScorer(this, bm25stats, context.AtomicReader.GetNormValues(bm25stats.Field));
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BM25DocScorer : SimScorer
         {
             private readonly BM25Similarity outerInstance;
@@ -291,9 +285,6 @@ namespace Lucene.Net.Search.Similarities
 
         /// <summary>
         /// Collection statistics for the BM25 model. </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BM25Stats : SimWeight
         {
             /// <summary>

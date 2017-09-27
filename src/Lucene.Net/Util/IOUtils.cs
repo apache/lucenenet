@@ -568,18 +568,18 @@ namespace Lucene.Net.Util
         //                    {
         //                        throw;
         //                    }
-        //#if !NETSTANDARD
+        //#if !NETSTANDARD1_5
         //                    try
         //                    {
         //#endif
         //                        // Pause 5 msec
         //                        Thread.Sleep(5);
-        //#if !NETSTANDARD
+        //#if !NETSTANDARD1_5
         //                    }
         //                    catch (ThreadInterruptedException ie)
         //                    {
         //                        var ex = new ThreadInterruptedException(ie.ToString(), ie);
-        //                        //ex.AddSuppressed(exc);
+        //                        ex.AddSuppressed(e);
         //                        throw ex;
         //                    }
         //#endif

@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -25,9 +25,6 @@ namespace Lucene.Net.Index
     /// separately, from a <see cref="Documents.Document"/>, and accepts a
     /// <see cref="InvertedDocConsumer"/> to process those terms.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class DocInverter : DocFieldConsumer
     {
         internal readonly InvertedDocConsumer consumer;
@@ -42,6 +39,7 @@ namespace Lucene.Net.Index
             this.endConsumer = endConsumer;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             IDictionary<string, InvertedDocConsumerPerField> childFieldsToFlush = new Dictionary<string, InvertedDocConsumerPerField>();
@@ -64,6 +62,7 @@ namespace Lucene.Net.Index
             endConsumer.StartDocument();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
             // TODO: allow endConsumer.finishDocument to also return
@@ -72,6 +71,7 @@ namespace Lucene.Net.Index
             consumer.FinishDocument();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()
         {
             try

@@ -22,7 +22,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using SCG = System.Collections.Generic;
@@ -7090,14 +7090,16 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// An exception to throw from library code when an internal inconsistency is encountered.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class InternalException : Exception
     {
         internal InternalException(string message) : base(message) { }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7116,7 +7118,9 @@ namespace Lucene.Net.Support.C5
     /// (method or set property) is called. No check is made to see if the update operation, 
     /// if allowed, would actually change the collection. </para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class ReadOnlyCollectionException : Exception
@@ -7130,7 +7134,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public ReadOnlyCollectionException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7146,7 +7150,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class FixedSizeCollectionException : Exception
@@ -7160,7 +7166,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public FixedSizeCollectionException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7176,7 +7182,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class UnlistenableEventException : Exception
@@ -7190,7 +7198,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public UnlistenableEventException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7206,7 +7214,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// An exception thrown by the MemorySafeEnumerator if the collection is enumerated by multiple threads concurrently
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class ConcurrentEnumerationException : Exception
@@ -7224,7 +7234,7 @@ namespace Lucene.Net.Support.C5
         /// <param name="message"></param>
         public ConcurrentEnumerationException(string message) : base(message) { }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7240,7 +7250,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by the MemorySafeEnumerator if the collection is enumerated multiple times when the 
     /// memory mode is set to Strict 
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class MultipleEnumerationException : Exception
@@ -7258,7 +7270,7 @@ namespace Lucene.Net.Support.C5
         /// <param name="message"></param>
         public MultipleEnumerationException(string message) : base(message) { }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7274,7 +7286,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by enumerators, range views etc. when accessed after 
     /// the underlying collection has been modified.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class CollectionModifiedException : Exception
@@ -7288,7 +7302,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public CollectionModifiedException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7310,7 +7324,9 @@ namespace Lucene.Net.Support.C5
     /// Sort, Reverse or Shuffle on some other, overlapping view or the whole list.
     /// </para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class ViewDisposedException : Exception
@@ -7324,7 +7340,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public ViewDisposedException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7343,7 +7359,9 @@ namespace Lucene.Net.Support.C5
     /// <para>The typical scenario is a lookup by key in a dictionary with an indexer,
     /// see e.g. <see cref="P:C5.IDictionary`2.Item(`0)"/></para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class NoSuchItemException : Exception
@@ -7357,7 +7375,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public NoSuchItemException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7374,7 +7392,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by an operation on a list (<see cref="T:C5.IList`1"/>)
     /// that only makes sense for a view, not for an underlying list.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class NotAViewException : Exception
@@ -7388,7 +7408,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public NotAViewException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7409,7 +7429,9 @@ namespace Lucene.Net.Support.C5
     /// </para>
     /// <para>With dictionaries this can happen with the <see cref="M:C5.IDictionary`2.Add(`0,`1)"/> metod.</para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class DuplicateNotAllowedException : Exception
@@ -7423,7 +7445,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public DuplicateNotAllowedException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7439,7 +7461,9 @@ namespace Lucene.Net.Support.C5
     /// <summary>
     /// 
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class InvalidPriorityQueueHandleException : Exception
@@ -7453,7 +7477,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public InvalidPriorityQueueHandleException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7470,7 +7494,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by an operation that need to construct a natural
     /// comparer for a type.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class NotComparableException : Exception
@@ -7484,7 +7510,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public NotComparableException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>
@@ -7501,7 +7527,9 @@ namespace Lucene.Net.Support.C5
     /// An exception thrown by operations on a list that expects an argument
     /// that is a view on the same underlying list.
     /// </summary>
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class IncompatibleViewException : Exception
@@ -7515,7 +7543,7 @@ namespace Lucene.Net.Support.C5
         /// </summary>
         /// <param name="message"></param>
         public IncompatibleViewException(string message) : base(message) { }
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

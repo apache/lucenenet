@@ -1,13 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
+using NUnit.Framework;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using NUnit.Framework;
-    using System.IO;
     using Directory = Lucene.Net.Store.Directory;
     using Document = Documents.Document;
     using Field = Field;
@@ -667,11 +668,7 @@ namespace Lucene.Net.Index
          * around, through creates.
          */
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(300000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestKeepLastNDeletionPolicyWithCreates()
         {
             const int N = 10;

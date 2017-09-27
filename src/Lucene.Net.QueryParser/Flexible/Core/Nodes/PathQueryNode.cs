@@ -46,7 +46,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
         /// </summary>
         public class QueryText
 #if FEATURE_CLONEABLE
-            : ICloneable
+            : System.ICloneable
 #endif
         {
             private string value = null;

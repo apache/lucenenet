@@ -23,9 +23,6 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Base implementation class for buffered <see cref="IndexInput"/>. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class BufferedIndexInput : IndexInput
     {
         /// <summary>

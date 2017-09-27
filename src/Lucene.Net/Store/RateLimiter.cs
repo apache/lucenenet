@@ -126,18 +126,18 @@ namespace Lucene.Net.Store
                     var pauseNS = targetNS - curNS;
                     if (pauseNS > 0)
                     {
-#if !NETSTANDARD
-                        try
-                        {
-#endif
+//#if !NETSTANDARD1_5
+//                        try
+//                        {
+//#endif
                             Thread.Sleep(TimeSpan.FromMilliseconds(pauseNS / 1000000));
-#if !NETSTANDARD
-                        }
-                        catch (ThreadInterruptedException ie)
-                        {
-                            throw new ThreadInterruptedException(ie.ToString(), ie);
-                        }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                        }
+//                        catch (ThreadInterruptedException ie)
+//                        {
+//                            throw new ThreadInterruptedException(ie.ToString(), ie);
+//                        }
+//#endif
                         curNS = Time.NanoTime();
                         continue;
                     }

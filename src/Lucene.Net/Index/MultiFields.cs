@@ -1,5 +1,4 @@
 using Lucene.Net.Util;
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -42,9 +41,7 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public sealed class MultiFields : Fields
     {
         private readonly Fields[] subs;

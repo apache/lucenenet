@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Store
@@ -25,9 +24,6 @@ namespace Lucene.Net.Store
     /// <para/>
     /// @lucene.internal
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class RAMFile
     {
         protected List<byte[]> m_buffers = new List<byte[]>();

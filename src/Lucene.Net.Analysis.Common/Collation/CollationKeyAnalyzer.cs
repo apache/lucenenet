@@ -81,9 +81,6 @@ namespace Lucene.Net.Collation
     /// </list>
     /// </para>
     /// </summary>
-    // LUCENENET TODO: A better option would be to contribute to the icu.net library and
-    // make it CLS compliant (at least the parts of it we use)
-    [CLSCompliant(false)]
     public sealed class CollationKeyAnalyzer : Analyzer
 	{
 		private readonly Collator collator;

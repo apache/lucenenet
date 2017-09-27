@@ -32,7 +32,7 @@ namespace Lucene.Net.QueryParsers.Flexible.Core.Nodes
     /// </summary>
     public abstract class QueryNode : IQueryNode
 #if FEATURE_CLONEABLE
-        , ICloneable
+        , System.ICloneable
 #endif
     {
         /// <summary>

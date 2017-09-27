@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
@@ -50,11 +51,7 @@ namespace Lucene.Net.Search
 
         private SearcherLifetimeManager.IPruner pruner;
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestSearcherManager_Mem()
         {
             pruner = new SearcherLifetimeManager.PruneByAge(TEST_NIGHTLY ? TestUtil.NextInt(Random(), 1, 20) : 1);
@@ -267,7 +264,7 @@ namespace Lucene.Net.Search
             Directory dir = NewDirectory();
             // Test can deadlock if we use SMS:
             IConcurrentMergeScheduler scheduler;
-#if FEATURE_TASKMERGESCHEDULER
+#if !FEATURE_CONCURRENTMERGESCHEDULER
             scheduler = new TaskMergeScheduler();
 #else
             scheduler = new ConcurrentMergeScheduler();
@@ -356,7 +353,7 @@ namespace Lucene.Net.Search
 
             public override IndexSearcher NewSearcher(IndexReader r)
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
@@ -365,7 +362,7 @@ namespace Lucene.Net.Search
                         awaitEnterWarm.Signal();
                         awaitClose.Wait();
                     }
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)

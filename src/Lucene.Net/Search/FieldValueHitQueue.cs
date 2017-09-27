@@ -26,9 +26,6 @@ namespace Lucene.Net.Search
     public static class FieldValueHitQueue
     {
         // had to change from internal to public, due to public accessability of FieldValueHitQueue
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class Entry : ScoreDoc
         {
             public int Slot { get; set; } // LUCENENET NOTE: For some reason, this was not made readonly in the original
@@ -48,9 +45,6 @@ namespace Lucene.Net.Search
         /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
         /// there is just one comparer.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class OneComparerFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
         {
@@ -94,9 +88,6 @@ namespace Lucene.Net.Search
         /// <summary> An implementation of <see cref="FieldValueHitQueue" /> which is optimized in case
         /// there is more than one comparer.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class MultiComparersFieldValueHitQueue<T> : FieldValueHitQueue<T>
             where T : FieldValueHitQueue.Entry
         {
@@ -172,9 +163,6 @@ namespace Lucene.Net.Search
     /// @since 2.9 </summary>
     /// <seealso cref="IndexSearcher.Search(Query,Filter,int,Sort)"/>
     /// <seealso cref="FieldCache"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class FieldValueHitQueue<T> : Util.PriorityQueue<T>
         where T : FieldValueHitQueue.Entry
     {

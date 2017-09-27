@@ -138,10 +138,6 @@ namespace Lucene.Net.Support
             return -1;
         }
 
-        // LUCENENET TODO: BUG Replace all calls to .Split("", StringSplitOptions.RemoveEmptyEntries)
-        // and Regex.Split("") with .Split("").TrimEnd() and Regex.Split("").TrimEnd() to match the 
-        // behavior of Java's Split() method.
-
         /// <summary>
         /// Removes null or empty elements from the end of a string array.
         /// </summary>
@@ -157,7 +153,7 @@ namespace Lucene.Net.Support
                 if (!string.IsNullOrEmpty(input[lastElement]))
                     break;
             }
-            if (lastElement > 0 && lastElement < input.Length)
+            if (lastElement >= -1 && lastElement < input.Length)
             {
                 int end = lastElement + 1;
                 string[] result = new string[end];
@@ -165,6 +161,31 @@ namespace Lucene.Net.Support
                 return result;
             }
             return input;
+        }
+
+
+        /// <summary> Expert:
+        /// The StringInterner implementation used by Lucene.
+        /// This shouldn't be changed to an incompatible implementation after other Lucene APIs have been used.
+        /// LUCENENET specific.
+        /// </summary>
+        private static StringInterner interner =
+#if NETSTANDARD1_5
+            new SimpleStringInterner(1024, 8);
+#else
+            new StringInterner();
+#endif
+
+        /// <summary>
+        /// Searches an internal table of strings for a string equal to this string.
+        /// If the string is not in the table, it is added. Returns the string
+        /// contained in the table which is equal to this string. The same string
+        /// object is always returned for strings which are equal.
+        /// </summary>
+        /// <returns>The interned string equal to this string.</returns>
+        public static string Intern(this string s)
+        {
+            return interner.Intern(s);
         }
     }
 }

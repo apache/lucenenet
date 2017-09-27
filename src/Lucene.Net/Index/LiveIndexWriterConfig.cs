@@ -153,7 +153,7 @@ namespace Lucene.Net.Index
             useCompoundFile = IndexWriterConfig.DEFAULT_USE_COMPOUND_FILE_SYSTEM;
             openMode = Index.OpenMode.CREATE_OR_APPEND;
             similarity = IndexSearcher.DefaultSimilarity;
-#if FEATURE_TASKMERGESCHEDULER
+#if !FEATURE_CONCURRENTMERGESCHEDULER
             mergeScheduler = new TaskMergeScheduler();
 #else
             mergeScheduler = new ConcurrentMergeScheduler();

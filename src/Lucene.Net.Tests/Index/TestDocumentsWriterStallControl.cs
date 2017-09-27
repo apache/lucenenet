@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -263,12 +264,12 @@ namespace Lucene.Net.Index
                         Ctrl.WaitIfStalled();
                         if (CheckPoint.Get())
                         {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                             try
                             {
 #endif
                                 Assert.IsTrue(Sync.await());
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                             }
                             catch (ThreadInterruptedException e)
                             {
@@ -326,7 +327,7 @@ namespace Lucene.Net.Index
                             {
                                 Assert.IsTrue(Sync.await());
                             }
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                             catch (ThreadInterruptedException e)
                             {
                                 Console.WriteLine("[Updater] got interrupted - wait count: " + Sync.Waiter.CurrentCount);

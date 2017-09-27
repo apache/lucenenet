@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Index;
 using NUnit.Framework;
 using System;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.VectorHighlight
 {

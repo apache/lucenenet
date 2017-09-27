@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -85,9 +83,6 @@ namespace Lucene.Net.Search.Similarities
     /// <seealso cref="Similarities.BasicModel"/>
     /// <seealso cref="Similarities.AfterEffect"/>
     /// <seealso cref="Similarities.Normalization"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class DFRSimilarity : SimilarityBase
     {
         /// <summary>

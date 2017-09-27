@@ -86,6 +86,9 @@ namespace Lucene.Net.Documents
             public abstract string ToString(string format, IFormatProvider provider);
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected sealed class Byte : Number
         {
             /// <summary>
@@ -139,6 +142,9 @@ namespace Lucene.Net.Documents
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected sealed class Int16 : Number
         {
             /// <summary>
@@ -197,6 +203,9 @@ namespace Lucene.Net.Documents
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected sealed class Int32 : Number
         {
             /// <summary>
@@ -250,6 +259,9 @@ namespace Lucene.Net.Documents
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected sealed class Int64 : Number
         {
             /// <summary>
@@ -303,6 +315,9 @@ namespace Lucene.Net.Documents
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected sealed class Double : Number
         {
             /// <summary>
@@ -356,6 +371,9 @@ namespace Lucene.Net.Documents
             }
         }
 
+#if FEATURE_SERIALIZABLE
+        [Serializable]
+#endif
         protected sealed class Single : Number
         {
             /// <summary>

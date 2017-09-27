@@ -247,7 +247,7 @@ namespace Lucene.Net.Codecs.Memory
 
         // TODO: in some cases representing missing with minValue-1 wouldn't take up additional space and so on,
         // but this is very simple, and algorithms only check this for values of 0 anyway (doesnt slow down normal decode)
-        internal virtual void WriteMissingBitset<T1>(IEnumerable<T1> values) // LUCENENET TODO: Rename generic parameter T ?
+        internal virtual void WriteMissingBitset<T1>(IEnumerable<T1> values)
         {
             long bits = 0;
             int count = 0;

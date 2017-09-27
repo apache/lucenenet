@@ -20,6 +20,9 @@ namespace Lucene.Net.Support
 	 * limitations under the License.
 	 */
 
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public class AtomicObject<T> where T : class
     {
         private T _value;

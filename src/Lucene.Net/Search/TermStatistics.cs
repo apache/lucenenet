@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -27,9 +26,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TermStatistics
     {
         private readonly BytesRef term;

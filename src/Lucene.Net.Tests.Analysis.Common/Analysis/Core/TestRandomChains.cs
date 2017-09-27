@@ -29,6 +29,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis.Core
 {
@@ -265,8 +266,6 @@ namespace Lucene.Net.Analysis.Core
 
             public virtual int Compare(ConstructorInfo arg0, ConstructorInfo arg1)
             {
-                // LUCENENET TODO: Need to ensure we have the right sort order
-                // original: arg0.toGenericString().compareTo(arg1.toGenericString());
                 return arg0.ToString().CompareToOrdinal(arg1.ToString());
             }
         }
@@ -855,7 +854,7 @@ namespace Lucene.Net.Analysis.Core
                 }
             }
 
-            protected internal override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
+            protected override TokenStreamComponents CreateComponents(string fieldName, TextReader reader)
             {
                 Random random = new Random(seed);
                 TokenizerSpec tokenizerSpec = NewTokenizer(random, reader);
@@ -865,7 +864,7 @@ namespace Lucene.Net.Analysis.Core
                 return new TokenStreamComponents(tokenizerSpec.tokenizer, filterSpec.stream);
             }
 
-            protected internal override TextReader InitReader(string fieldName, TextReader reader)
+            protected override TextReader InitReader(string fieldName, TextReader reader)
             {
                 Random random = new Random(seed);
                 CharFilterSpec charfilterspec = NewCharFilterChain(random, reader);

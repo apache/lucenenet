@@ -1,5 +1,5 @@
 ﻿// lucene version compatibility level: 4.8.1
-using Lucene.Net.Analysis.Cn.Smart.HHMM;
+using Lucene.Net.Analysis.Cn.Smart.Hhmm;
 using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Analysis.Util;
 using Lucene.Net.Support;
@@ -56,7 +56,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         /// Creates a new <see cref="HMMChineseTokenizer"/>, supplying the <see cref="Lucene.Net.Util.AttributeSource.AttributeFactory"/>
         /// </summary>
         public HMMChineseTokenizer(AttributeFactory factory, TextReader reader)
-            : base(factory, reader, new IcuBreakIterator(Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture) { EnableHacks = false })
+            : base(factory, reader, new IcuBreakIterator(global::Icu.BreakIterator.UBreakIteratorType.SENTENCE, CultureInfo.InvariantCulture) { EnableHacks = false })
         {
             termAtt = AddAttribute<ICharTermAttribute>();
             offsetAtt = AddAttribute<IOffsetAttribute>();

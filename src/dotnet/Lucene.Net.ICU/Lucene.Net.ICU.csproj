@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+
+ Licensed to the Apache Software Foundation (ASF) under one
+ or more contributor license agreements.  See the NOTICE file
+ distributed with this work for additional information
+ regarding copyright ownership.  The ASF licenses this file
+ to you under the Apache License, Version 2.0 (the
+ "License"); you may not use this file except in compliance
+ with the License.  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing,
+ software distributed under the License is distributed on an
+ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ KIND, either express or implied.  See the License for the
+ specific language governing permissions and limitations
+ under the License.
+
+-->
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\Version.proj" />
+  
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.5;net45</TargetFrameworks>
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.5' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <!--<NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.5' ">1.6.0</NetStandardImplicitPackageVersion>-->
+
+    <AssemblyTitle>Lucene.Net.ICU</AssemblyTitle>
+    <Description>International Components for Unicode-based features including Thai analyzer support, an international postings highlighter, and BreakIterator support for the vector highlighter for the Lucene.Net full-text search engine library from The Apache Software Foundation.</Description>
+    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query;icu;international;unicode</PackageTags>
+    <PackageReleaseNotes>This package depends on a temporary version of icu.net hosted on MyGet until official .NET Core support is added. To install, copy the NuGet.config file from https://github.com/apache/lucenenet/blob/master/NuGet.config into your project and then install this package via Package Manager Console as usual.</PackageReleaseNotes>
+    <Authors>The Apache Software Foundation</Authors>
+    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573</NoWarn>
+    <DefineConstants>$(DefineConstants);FEATURE_BREAKITERATOR</DefineConstants>
+
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\**\*.cs" LinkBase="Analysis\Th" />
+    <EmbeddedResource Include="..\..\Lucene.Net.Analysis.Common\Analysis\Th\stopwords.txt" Link="Analysis\Th\stopwords.txt" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\CharArrayIterator.cs" Link="Analysis\Util\CharArrayIterator.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.Common\Analysis\Util\SegmentingTokenizerBase.cs" Link="Analysis\Util\SegmentingTokenizerBase.cs" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Analysis\**\*.cs" LinkBase="Analysis" />
+    <Compile Include="..\..\Lucene.Net.Analysis.ICU\Collation\**\*.cs" LinkBase="Collation" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\PostingsHighlight\**\*.cs" LinkBase="Search\PostingsHighlight" />
+    <Compile Include="..\..\Lucene.Net.Highlighter\VectorHighlight\BreakIteratorBoundaryScanner.cs" Link="Search\VectorHighlight\BreakIteratorBoundaryScanner.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\..\Lucene.Net.Highlighter\Lucene.Net.Highlighter.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="icu.net" Version="54.1.1-alpha" />
+  </ItemGroup>
+
+  <!-- NOTE: Microsoft's recommendation is not to use the ICloneable interface. We put in a FEATURE_CLONEABLE constant in case anyone wants to add it to the build -->
+  <!--<PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>-->
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <PackageReference Include="System.Globalization" Version="4.3.0" />
+    <PackageReference Include="System.Net.Primitives" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+
+</Project>

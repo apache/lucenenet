@@ -29,7 +29,7 @@ namespace Lucene.Net.Analysis.Compound.Hyphenation
     /// </summary>
     public class CharVector
 #if FEATURE_CLONEABLE
-        : ICloneable
+        : System.ICloneable
 #endif
     {
         /// <summary>

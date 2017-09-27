@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -79,6 +80,7 @@ namespace Lucene.Net.Codecs
         /// <see cref="PostingsFormat"/> can override this default
         /// implementation to do its own merging.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void Merge(MergeState mergeState, Fields fields)
         {
             foreach (string field in fields)

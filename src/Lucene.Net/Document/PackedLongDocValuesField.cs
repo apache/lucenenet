@@ -39,9 +39,6 @@ namespace Lucene.Net.Documents
     /// </summary>
     /// <seealso cref="NumericDocValuesField"/>
     [Obsolete("Use NumericDocValuesField instead.")]
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PackedInt64DocValuesField : NumericDocValuesField
     {
         /// <summary>

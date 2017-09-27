@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search.Similarities
 {
     /*
@@ -30,9 +28,6 @@ namespace Lucene.Net.Search.Similarities
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class PerFieldSimilarityWrapper : Similarity
     {
         /// <summary>
@@ -67,9 +62,6 @@ namespace Lucene.Net.Search.Similarities
         /// </summary>
         public abstract Similarity Get(string name);
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal class PerFieldSimWeight : SimWeight
         {
             internal Similarity @delegate;

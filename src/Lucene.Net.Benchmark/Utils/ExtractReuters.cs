@@ -1,8 +1,8 @@
-﻿using Lucene.Net.Support;
-using System;
+﻿using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.Utils
 {
@@ -36,7 +36,7 @@ namespace Lucene.Net.Benchmarks.Utils
         {
             this.reutersDir = reutersDir;
             this.outputDir = outputDir;
-            SystemConsole.WriteLine("Deleting all files in " + outputDir);
+            Console.WriteLine("Deleting all files in " + outputDir);
             foreach (FileInfo f in outputDir.EnumerateFiles())
             {
                 f.Delete();
@@ -55,7 +55,7 @@ namespace Lucene.Net.Benchmarks.Utils
             }
             else
             {
-                SystemConsole.Error.WriteLine("No .sgm files in " + reutersDir);
+                Console.Error.WriteLine("No .sgm files in " + reutersDir);
             }
         }
 
@@ -161,7 +161,9 @@ namespace Lucene.Net.Benchmarks.Utils
 
         private static void Usage(string msg)
         {
-            SystemConsole.Error.WriteLine("Usage: " + msg + " :: java -cp <...> org.apache.lucene.benchmark.utils.ExtractReuters <Path to Reuters SGM files> <Output Path>");
+            // LUCENENET specific - our wrapper console shows correct usage
+            throw new ArgumentException(msg);
+            //Console.Error.WriteLine("Usage: " + msg + " :: java -cp <...> org.apache.lucene.benchmark.utils.ExtractReuters <Path to Reuters SGM files> <Output Path>");
         }
     }
 }

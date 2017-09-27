@@ -1,6 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -26,11 +26,9 @@ namespace Lucene.Net.Index
     using FieldsConsumer = Lucene.Net.Codecs.FieldsConsumer;
     using IOUtils = Lucene.Net.Util.IOUtils;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class FreqProxTermsWriter : TermsHashConsumer
     {
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         { }
 
@@ -39,6 +37,7 @@ namespace Lucene.Net.Index
         // under the same FieldInfo together, up into TermsHash*.
         // Other writers would presumably share alot of this...
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(IDictionary<string, TermsHashConsumerPerField> fieldsToFlush, SegmentWriteState state)
         {
             // Gather all FieldData's that have postings, across all
@@ -124,6 +123,7 @@ namespace Lucene.Net.Index
             return new FreqProxTermsWriterPerField(termsHashPerField, this, fieldInfo);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void FinishDocument(TermsHash termsHash)
         {
         }

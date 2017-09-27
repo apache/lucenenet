@@ -6,6 +6,7 @@ using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
 using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -164,11 +165,7 @@ namespace Lucene.Net.Index
             return ret;
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestTermDocPerf()
         {
             // performance test for 10% of documents containing a term

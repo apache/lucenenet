@@ -35,9 +35,6 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class PrefixCodedTerms : IEnumerable<Term>
     {
         internal readonly RAMFile buffer;
@@ -64,9 +61,6 @@ namespace Lucene.Net.Index
             return GetEnumerator();
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal class PrefixCodedTermsIterator : IEnumerator<Term>
         {
             private readonly IndexInput input;
@@ -138,9 +132,6 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Builds a <see cref="PrefixCodedTerms"/>: call add repeatedly, then finish. </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class Builder
         {
             public Builder()

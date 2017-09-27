@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="..\..\..\..\Version.proj" />
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    
+    <AssemblyName>lucene-cli</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>lucene-cli</PackageId>
+    <Description>The Lucene.Net command line interface (CLI) is a new cross-platform toolchain with utilities for maintaining Lucene.Net and demos for learning basic Lucene.Net functionality. Run 'dotnet lucene-cli.dll' to see usage information.</Description>
+    <PackageTags>lucene.net;core;text;search;information;retrieval;lucene;apache;analysis;index;query;maintenance;utility</PackageTags>
+    <Authors>The Apache Software Foundation</Authors>
+    <RepositoryUrl>https://github.com/apache/lucenenet</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/apache/lucenenet/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageProjectUrl>http://lucenenet.apache.org/</PackageProjectUrl>
+    <PackageIconUrl>https://github.com/apache/lucenenet/blob/master/branding/logo/lucene-net-icon-128x128.png?raw=true</PackageIconUrl>
+    <Copyright>Copyright © 2006 - 2017 The Apache Software Foundation</Copyright>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>$(NoWarn);1591;1573</NoWarn>
+
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <!--<EmbeddedResource Include="..\..\..\Lucene.Net.Benchmark\ByTask\Programmatic\Sample.cs;..\..\..\Lucene.Net.Demo\*.cs;..\..\..\Lucene.Net.Demo\Facet\*.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />-->
+    <EmbeddedResource Include="..\..\..\Lucene.Net.Benchmark\ByTask\Programmatic\Sample.cs" Link="Resources\Sample.cs" />
+    <EmbeddedResource Include="..\..\..\Lucene.Net.Demo\*.cs" Exclude="bin\**;obj\**;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="..\..\..\Lucene.Net.Demo\Facet\*.cs" Exclude="bin\**;obj\**;packages\**;@(EmbeddedResource)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Lucene.Net\Lucene.Net.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.Analysis.Kuromoji\Lucene.Net.Analysis.Kuromoji.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.Analysis.Stempel\Lucene.Net.Analysis.Stempel.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.Benchmark\Lucene.Net.Benchmark.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.Demo\Lucene.Net.Demo.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.Expressions\Lucene.Net.Expressions.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.Facet\Lucene.Net.Facet.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.Misc\Lucene.Net.Misc.csproj" />
+    <ProjectReference Include="..\..\..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
+  </ItemGroup>
+
+</Project>

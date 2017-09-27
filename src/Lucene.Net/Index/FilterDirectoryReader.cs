@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -32,9 +31,6 @@ namespace Lucene.Net.Index
     /// implement a <see cref="SubReaderWrapper"/> subclass, and pass an instance to its base
     /// constructor.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class FilterDirectoryReader : DirectoryReader
     {
         /// <summary>
@@ -43,9 +39,6 @@ namespace Lucene.Net.Index
         /// can use this to, e.g., wrap the subreaders with specialized
         /// <see cref="FilterAtomicReader"/> implementations.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class SubReaderWrapper
         {
             internal virtual AtomicReader[] Wrap(IList<AtomicReader> readers)
@@ -75,9 +68,6 @@ namespace Lucene.Net.Index
         /// A no-op <see cref="SubReaderWrapper"/> that simply returns the parent
         /// <see cref="DirectoryReader"/>'s original subreaders.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class StandardReaderWrapper : SubReaderWrapper
         {
             /// <summary>

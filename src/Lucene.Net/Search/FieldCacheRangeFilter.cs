@@ -57,9 +57,7 @@ namespace Lucene.Net.Search
     /// <para/>This class does not have an constructor, use one of the static factory methods available,
     /// that create a correct instance for different data types supported by <see cref="IFieldCache"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public static class FieldCacheRangeFilter
     {
 #if FEATURE_SERIALIZABLE
@@ -67,9 +65,6 @@ namespace Lucene.Net.Search
 #endif
         private class AnonymousStringFieldCacheRangeFilter : FieldCacheRangeFilter<string>
         {
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
                 private SortedDocValues fcsi;
@@ -147,12 +142,7 @@ namespace Lucene.Net.Search
                     return null;
                 }
 
-                // TODO: LUCENENET This should be throwing an exception during
-                // a test run on the original solution, but does not.
-                // ie. inclusiveLowerPoint > 0 && inclusiveUpperPoint > 0
-                // evaluates to false, but a DebugAssertionException is not
-                // thrown on the original test runs.
-                Debug.Assert(inclusiveLowerPoint > 0 && inclusiveUpperPoint > 0);
+                Debug.Assert(inclusiveLowerPoint >= 0 && inclusiveUpperPoint >= 0);
 
                 return new AnonymousClassFieldCacheDocIdSet(fcsi, inclusiveLowerPoint, inclusiveUpperPoint, context.Reader.MaxDoc, acceptDocs);
             }
@@ -163,9 +153,6 @@ namespace Lucene.Net.Search
 #endif
         private class AnonymousBytesRefFieldCacheRangeFilter : FieldCacheRangeFilter<BytesRef>
         {
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
                 private SortedDocValues fcsi;
@@ -253,9 +240,6 @@ namespace Lucene.Net.Search
 #endif
         private class AnonymousSbyteFieldCacheRangeFilter : FieldCacheRangeFilter<sbyte?>
         {
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
                 private FieldCache.Bytes values;
@@ -325,9 +309,6 @@ namespace Lucene.Net.Search
 #endif
         private class AnonymousInt16FieldCacheRangeFilter : FieldCacheRangeFilter<short?>
         {
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
                 private FieldCache.Int16s values;
@@ -398,9 +379,6 @@ namespace Lucene.Net.Search
 #endif
         private class AnonymousInt32FieldCacheRangeFilter : FieldCacheRangeFilter<int?>
         {
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
                 private FieldCache.Int32s values;
@@ -468,9 +446,6 @@ namespace Lucene.Net.Search
 #endif
         private class AnonymousInt64FieldCacheRangeFilter : FieldCacheRangeFilter<long?>
         {
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
                 private FieldCache.Int64s values;
@@ -538,9 +513,6 @@ namespace Lucene.Net.Search
 #endif
         private class AnonymousSingleFieldCacheRangeFilter : FieldCacheRangeFilter<float?>
         {
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
                 private FieldCache.Singles values;
@@ -613,9 +585,6 @@ namespace Lucene.Net.Search
 #endif
         private class AnonymousDoubleFieldCacheRangeFilter : FieldCacheRangeFilter<double?>
         {
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             private class AnonymousClassFieldCacheDocIdSet : FieldCacheDocIdSet
             {
                 private FieldCache.Doubles values;
@@ -845,9 +814,6 @@ namespace Lucene.Net.Search
         }
     }
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class FieldCacheRangeFilter<T> : Filter
     {
         internal readonly string field;

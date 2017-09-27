@@ -1,6 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Packed
 {
@@ -138,6 +139,7 @@ namespace Lucene.Net.Util.Packed
             get { return m_ord; }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         protected abstract void Flush();
 
         protected void WriteValues(int bitsRequired)

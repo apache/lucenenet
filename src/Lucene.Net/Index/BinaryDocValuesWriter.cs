@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -36,9 +37,6 @@ namespace Lucene.Net.Index
     /// Buffers up pending <see cref="T:byte[]"/> per doc, then flushes when
     /// segment flushes.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class BinaryDocValuesWriter : DocValuesWriter
     {
         /// <summary>
@@ -124,6 +122,7 @@ namespace Lucene.Net.Index
         {
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
         {
             int maxDoc = state.SegmentInfo.DocCount;
@@ -131,6 +130,7 @@ namespace Lucene.Net.Index
             dvConsumer.AddBinaryField(fieldInfo, GetBytesIterator(maxDoc));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
         }

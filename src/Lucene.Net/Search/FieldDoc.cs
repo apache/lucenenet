@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -40,9 +39,6 @@ namespace Lucene.Net.Search
     /// @since   lucene 1.4 </summary>
     /// <seealso cref="ScoreDoc"/>
     /// <seealso cref="TopFieldDocs"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class FieldDoc : ScoreDoc // LUCENENET TODO: Is it possible to make this class generic so we don't have to deal with boxing?
     {
         /// <summary>

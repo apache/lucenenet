@@ -1,6 +1,6 @@
 using System;
 using System.Diagnostics;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -29,8 +29,9 @@ namespace Lucene.Net.Index
     /// This exception is thrown when Lucene detects
     /// an index that is too old for this Lucene version
     /// </summary>
-    // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public class IndexFormatTooOldException : CorruptIndexException
@@ -89,13 +90,13 @@ namespace Lucene.Net.Index
         {
         }
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         // For testing purposes
-        internal IndexFormatTooOldException(string message)
+        public IndexFormatTooOldException(string message)
             : base(message)
         {
         }
 
-#if FEATURE_SERIALIZABLE
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

@@ -89,9 +89,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class FieldComparer<T> : FieldComparer
     {
         /// <summary>
@@ -216,9 +213,6 @@ namespace Lucene.Net.Search
 
     // .NET Port: Using a non-generic class here so that we avoid having to use the
     // type parameter to access these nested types. Also moving non-generic methods here for casting without generics.
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class FieldComparer
     {
         public abstract int CompareValues(object first, object second);
@@ -332,9 +326,6 @@ namespace Lucene.Net.Search
         /// <summary>
         /// Base FieldComparer class for numeric types
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public abstract class NumericComparer<T> : FieldComparer<T>
             where T : struct
         {
@@ -372,9 +363,6 @@ namespace Lucene.Net.Search
         /// <see cref="IFieldCache.GetBytes(Index.AtomicReader, string, FieldCache.IByteParser, bool)"/> and sorts by ascending value
         /// </summary>
         [Obsolete, CLSCompliant(false)] // LUCENENET NOTE: marking non-CLS compliant because of sbyte - it is obsolete, anyway
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class ByteComparer : NumericComparer<sbyte>
         {
             private readonly sbyte[] values;
@@ -462,9 +450,6 @@ namespace Lucene.Net.Search
         /// Parses field's values as <see cref="double"/> (using 
         /// <see cref="IFieldCache.GetDoubles(Index.AtomicReader, string, FieldCache.IDoubleParser, bool)"/> and sorts by ascending value
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class DoubleComparer : NumericComparer<double>
         {
             private readonly double[] values;
@@ -566,9 +551,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was FloatComparator in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class SingleComparer : NumericComparer<float>
         {
             private readonly float[] values;
@@ -672,9 +654,6 @@ namespace Lucene.Net.Search
         /// NOTE: This was ShortComparator in Lucene
         /// </summary>
         [Obsolete]
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class Int16Comparer : NumericComparer<short>
         {
             private readonly short[] values;
@@ -765,9 +744,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was IntComparator in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class Int32Comparer : NumericComparer<int>
         {
             private readonly int[] values;
@@ -855,9 +831,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// NOTE: This was LongComparator in Lucene
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class Int64Comparer : NumericComparer<long>
         {
             private readonly long[] values;
@@ -952,9 +925,6 @@ namespace Lucene.Net.Search
         /// <see cref="IndexSearcher.Search(Query, int)"/> use when no <see cref="Sort"/> is
         /// specified).
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class RelevanceComparer : FieldComparer<float>
         {
             private readonly float[] scores;
@@ -1038,9 +1008,6 @@ namespace Lucene.Net.Search
 
         /// <summary>
         /// Sorts by ascending docID </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class DocComparer : FieldComparer<int?>
         {
             private readonly int[] docIDs;
@@ -1113,9 +1080,6 @@ namespace Lucene.Net.Search
         /// than <see cref="Lucene.Net.Search.FieldComparer.TermValComparer"/>.  For very small
         /// result sets it may be slower.
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class TermOrdValComparer : FieldComparer<BytesRef>
         {
             /// <summary>
@@ -1457,9 +1421,6 @@ namespace Lucene.Net.Search
         /// very fast for very small results sets.
         /// </summary>
         // TODO: should we remove this?  who really uses it?
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public sealed class TermValComparer : FieldComparer<BytesRef>
         {
             // sentinels, just used internally in this comparer

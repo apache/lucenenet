@@ -31,7 +31,7 @@ namespace Lucene.Net.Analysis.Cn.Smart
         [Test]
         public void TestHHMMSegmenter()
         {
-            var x = new HHMM.HHMMSegmenter();
+            var x = new Hhmm.HHMMSegmenter();
         }
 
         /// <summary>

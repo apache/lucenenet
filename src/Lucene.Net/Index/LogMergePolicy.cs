@@ -41,9 +41,7 @@ namespace Lucene.Net.Index
     /// subclass that measures size as the total byte size of the
     /// file(s) for the segment.</para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public abstract class LogMergePolicy : MergePolicy
     {
         /// <summary>

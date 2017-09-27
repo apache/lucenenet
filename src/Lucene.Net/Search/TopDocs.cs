@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Search
 {
@@ -27,9 +28,6 @@ namespace Lucene.Net.Search
     /// <see cref="IndexSearcher.Search(Query,Filter,int)"/> and 
     /// <see cref="IndexSearcher.Search(Query,int)"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TopDocs
     {
         /// <summary>
@@ -77,9 +75,6 @@ namespace Lucene.Net.Search
         }
 
         // Refers to one hit:
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ShardRef
         {
             // Which shard (index into shardHits[]):
@@ -101,9 +96,6 @@ namespace Lucene.Net.Search
 
         // Specialized MergeSortQueue that just merges by
         // relevance score, descending:
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class ScoreMergeSortQueue : Util.PriorityQueue<ShardRef>
         {
             internal readonly ScoreDoc[][] shardHits;
@@ -155,9 +147,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class MergeSortQueue : Util.PriorityQueue<ShardRef>
         {
             // These are really FieldDoc instances:
@@ -262,6 +251,7 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static TopDocs Merge(Sort sort, int topN, TopDocs[] shardHits)
         {
             return Merge(sort, 0, topN, shardHits);
@@ -272,6 +262,7 @@ namespace Lucene.Net.Search
         /// on the provided start and size. The return <c>TopDocs</c> will always have a scoreDocs with length of 
         /// at most <see cref="Util.PriorityQueue{T}.Count"/>.
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public static TopDocs Merge(Sort sort, int start, int size, TopDocs[] shardHits)
         {
             Util.PriorityQueue<ShardRef> queue;

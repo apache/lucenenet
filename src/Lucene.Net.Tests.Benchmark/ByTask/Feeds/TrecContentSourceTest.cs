@@ -1,5 +1,6 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Utils;
 using Lucene.Net.Documents;
+using Lucene.Net.Support.IO;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -374,7 +375,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
             props["content.source.verbose"] = "false";
             props["content.source.excludeIteration"] = "true";
             props["doc.maker.forever"] = "false";
-            props["docs.dir"] = dataDir.FullName.Replace('\\', '/');
+            props["docs.dir"] = dataDir.GetCanonicalPath().Replace('\\', '/');
             props["trec.doc.parser"] = typeof(TrecParserByPath).AssemblyQualifiedName;
             props["content.source.forever"] = "false";
             tcs.SetConfig(new Config(props));

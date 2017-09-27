@@ -2,6 +2,7 @@ using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs.Lucene40
 {
@@ -134,6 +135,7 @@ namespace Lucene.Net.Codecs.Lucene40
             tvf.WriteByte((byte)bits);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
             Debug.Assert(fieldCount == numVectorFields);
@@ -316,6 +318,7 @@ namespace Lucene.Net.Codecs.Lucene40
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             try
@@ -357,6 +360,7 @@ namespace Lucene.Net.Codecs.Lucene40
             Debug.Assert(tvf.GetFilePointer() == tvfPosition);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override int Merge(MergeState mergeState)
         {
             // Used for bulk-reading raw bytes for term vectors

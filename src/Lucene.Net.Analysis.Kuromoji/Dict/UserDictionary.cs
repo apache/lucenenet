@@ -88,8 +88,8 @@ namespace Lucene.Net.Analysis.Ja.Dict
 
             foreach (string[] values in featureEntries)
             {
-                string[] segmentation = commentLine.Replace(values[1], " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                string[] readings = commentLine.Replace(values[2], " ").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] segmentation = commentLine.Replace(values[1], " ").Split(' ').TrimEnd();
+                string[] readings = commentLine.Replace(values[2], " ").Split(' ').TrimEnd();
                 string pos = values[3];
 
                 if (segmentation.Length != readings.Length)
@@ -265,7 +265,7 @@ namespace Lucene.Net.Analysis.Ja.Dict
                 return null;
             }
 
-            return allFeatures.Split(new string[] { Dictionary.INTERNAL_SEPARATOR }, StringSplitOptions.RemoveEmptyEntries);
+            return allFeatures.Split(new string[] { Dictionary.INTERNAL_SEPARATOR }, StringSplitOptions.None).TrimEnd();
         }
 
         private string GetFeature(int wordId, params int[] fields)

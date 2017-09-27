@@ -1,8 +1,10 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Support.Threading;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net
 {
@@ -53,12 +55,12 @@ namespace Lucene.Net
 
             public override void Run()
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
                     Thread.Sleep(10000);
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)
@@ -132,7 +134,7 @@ namespace Lucene.Net
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
         [Timeout(500)]
 #endif
-        [Test]
+        [Test, HasTimeout]
         public virtual void TestTimeout()
         {
             Thread.Sleep(5000);
@@ -149,12 +151,12 @@ namespace Lucene.Net
         {
             while (true)
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
                     Thread.Sleep(1000);
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
 #pragma warning disable 168
                 catch (ThreadInterruptedException e)

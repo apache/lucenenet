@@ -48,9 +48,6 @@ namespace Lucene.Net.Index
     /// @lucene.experimental
     /// </summary>
     /// <seealso cref="IndexUpgrader"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class UpgradeIndexMergePolicy : MergePolicy
     {
         /// <summary>

@@ -276,18 +276,18 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-#if !NETSTANDARD
-                try
-                {
-#endif
+//#if !NETSTANDARD1_5
+//                try
+//                {
+//#endif
                     Latch.Wait();
-#if !NETSTANDARD
-                }
-                catch (ThreadInterruptedException e)
-                {
-                    throw new ThreadInterruptedException("Thread Interrupted Exception", e);
-                }
-#endif
+//#if !NETSTANDARD1_5
+//                }
+//                catch (ThreadInterruptedException e) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                {
+//                    throw new ThreadInterruptedException("Thread Interrupted Exception", e);
+//                }
+//#endif
 
                 int i = 0;
                 while ((i = Index.GetAndIncrement()) < Ids.Length)

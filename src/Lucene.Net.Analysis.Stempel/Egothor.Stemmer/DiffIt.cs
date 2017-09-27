@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 /*
                     Egothor Software License version 1.00
@@ -99,22 +100,8 @@ namespace Egothor.Stemmer
             int rep = Get(2, args[0]);
             int nop = Get(3, args[0]);
 
-            string charset = null;
+            string charset = SystemProperties.GetProperty("egothor.stemmer.charset", "UTF-8");
             var stemmerTables = new List<string>();
-            try
-            {
-                charset = System.Environment.GetEnvironmentVariable("egothor.stemmer.charset");
-            }
-            catch
-            {
-            }
-            finally
-            {
-                if (string.IsNullOrEmpty(charset))
-                {
-                    charset = "UTF-8";
-                }
-            }
 
             // LUCENENET specific
             // command line argument overrides environment variable or default, if supplied

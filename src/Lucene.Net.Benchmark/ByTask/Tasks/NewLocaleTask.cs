@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Support;
 using System;
 using System.Globalization;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -29,7 +30,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
     /// <list type="bullet">
     ///     <item><description><c>de</c>: Language "de"</description></item>
     ///     <item><description><code>en,US</code>: Language "en", country "US"</description></item>
-    ///     <item><description><code>no-NO</code>: Language "no", country "NO"</description></item>
+    ///     <item><description><code>nb-NO</code>: Language "nb" (Bokmål), country "NO"</description></item>
     ///     <item><description><code>ROOT</code>: The <see cref="CultureInfo.InvariantCulture"/></description></item>
     /// </list>
     /// </remarks>
@@ -67,7 +68,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             CultureInfo locale = CreateLocale(culture /*language, country, variant*/);
             RunData.Locale = locale;
-            SystemConsole.WriteLine("Changed Locale to: " +
+            Console.WriteLine("Changed Locale to: " +
                 (locale == null ? "null" :
                 (locale.EnglishName.Length == 0) ? "root locale" : locale.ToString()));
             return 1;

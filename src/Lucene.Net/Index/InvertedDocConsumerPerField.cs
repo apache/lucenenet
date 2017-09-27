@@ -1,4 +1,4 @@
-using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -18,9 +18,7 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     internal abstract class InvertedDocConsumerPerField
     {
         // Called once per field, and is given all IndexableField
@@ -40,6 +38,7 @@ namespace Lucene.Net.Index
         internal abstract void Finish();
 
         // Called on hitting an aborting exception
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Abort();
     }
 }

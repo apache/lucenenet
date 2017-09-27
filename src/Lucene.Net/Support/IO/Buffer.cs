@@ -66,9 +66,6 @@ namespace Lucene.Net.Support.IO
     /// required, then the callers are responsible to take care of the
     /// synchronization issues.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class Buffer
     {
         /// <summary>

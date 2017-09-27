@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Lucene.Net.Index
@@ -44,9 +45,6 @@ namespace Lucene.Net.Index
     /// searching or merging), plus pending deletes and updates,
     /// for a given segment
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class ReadersAndUpdates
     {
         // Not final because we replace (clone) when we need to
@@ -292,6 +290,7 @@ namespace Lucene.Net.Index
         /// Returns a ref to a clone. NOTE: you should <see cref="DecRef()"/> the reader when you're
         /// done (ie do not call <see cref="IndexReader.Dispose()"/>).
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual SegmentReader GetReadOnlyClone(IOContext context)
         {
             lock (this)
@@ -389,6 +388,7 @@ namespace Lucene.Net.Index
         // _X_N updates files) to the directory; returns true if it wrote any file
         // and false if there were no new deletes or updates to write:
         // TODO (DVU_RENAME) to writeDeletesAndUpdates
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual bool WriteLiveDocs(Directory dir)
         {
             lock (this)
@@ -453,6 +453,7 @@ namespace Lucene.Net.Index
         }
 
         // Writes field updates (new _X_N updates files) to the directory
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void WriteFieldUpdates(Directory dir, DocValuesFieldUpdates.Container dvUpdates)
         {
             lock (this)

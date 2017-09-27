@@ -2,6 +2,7 @@
 using Lucene.Net.Support.Threading;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
@@ -44,9 +45,6 @@ namespace Lucene.Net.Index
     /// incoming threads by pausing until one more more merges
     /// complete.</para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class ConcurrentMergeScheduler : MergeScheduler, IConcurrentMergeScheduler
     {
         private int mergeThreadPriority = -1;
@@ -414,6 +412,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Merge(IndexWriter writer, MergeTrigger trigger, bool newMergesFound)
         {
             lock (this)
@@ -460,14 +459,14 @@ namespace Lucene.Net.Index
                         {
                             Message("    too many merges; stalling...");
                         }
-                        try
-                        {
+                        //try
+                        //{
                             Monitor.Wait(this);
-                        }
-                        catch (ThreadInterruptedException ie)
-                        {
-                            throw new ThreadInterruptedException(ie.ToString(), ie);
-                        }
+                        //}
+                        //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+                        //{
+                        //    throw new ThreadInterruptedException(ie.ToString(), ie);
+                        //}
                     }
 
                     if (IsVerbose)
@@ -527,6 +526,7 @@ namespace Lucene.Net.Index
 
         /// <summary>
         /// Does the actual merge, by calling <see cref="IndexWriter.Merge(MergePolicy.OneMerge)"/> </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         protected virtual void DoMerge(MergePolicy.OneMerge merge)
         {
             m_writer.Merge(merge);
@@ -718,8 +718,8 @@ namespace Lucene.Net.Index
         /// </summary>
         protected virtual void HandleMergeException(Exception exc)
         {
-            try
-            {
+            //try
+            //{
                 // When an exception is hit during merge, IndexWriter
                 // removes any partial files and then allows another
                 // merge to run.  If whatever caused the error is not
@@ -727,11 +727,11 @@ namespace Lucene.Net.Index
                 // so, we sleep here to avoid saturating CPU in such
                 // cases:
                 Thread.Sleep(250);
-            }
-            catch (ThreadInterruptedException ie)
-            {
-                throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-            }
+            //}
+            //catch (ThreadInterruptedException ie) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+            //{
+            //    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+            //}
             throw new MergePolicy.MergeException(exc, m_dir);
         }
 
@@ -760,7 +760,7 @@ namespace Lucene.Net.Index
             return sb.ToString();
         }
 
-        public override IMergeScheduler Clone()
+        public override object Clone()
         {
             ConcurrentMergeScheduler clone = (ConcurrentMergeScheduler)base.Clone();
             clone.m_writer = null;

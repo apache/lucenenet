@@ -1,8 +1,10 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Analysis.Ja
 {
@@ -62,9 +64,9 @@ namespace Lucene.Net.Analysis.Ja
                     {
                         Console.WriteLine("Line no. " + lineNumber + ": " + line);
                     }
-                    String[] fields = new Regex("\t").Split(line, 2); // Regex.Split(line, "\t", 2);
+                    String[] fields = new Regex("\t").Split(line, 2);
                     String sourceText = fields[0];
-                    String[] expectedTokens = Regex.Split(fields[1], "\\s+");
+                    String[] expectedTokens = Regex.Split(fields[1], "\\s+").TrimEnd();
                     int[] expectedPosIncrs = new int[expectedTokens.Length];
                     int[] expectedPosLengths = new int[expectedTokens.Length];
                     for (int tokIDX = 0; tokIDX < expectedTokens.Length; tokIDX++)

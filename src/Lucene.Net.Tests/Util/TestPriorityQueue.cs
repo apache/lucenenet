@@ -2,6 +2,7 @@ using Lucene.Net.Attributes;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util
 {
@@ -509,8 +510,8 @@ namespace Lucene.Net.Util
             end = DateTime.Now;
             total = end - start;
 
-            System.Console.WriteLine("Total adding time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
-            System.Console.WriteLine("Average time per add: {0} ticks", total.Ticks / size);
+            Console.WriteLine("Total adding time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            Console.WriteLine("Average time per add: {0} ticks", total.Ticks / size);
 
             start = DateTime.Now;
 
@@ -519,8 +520,8 @@ namespace Lucene.Net.Util
             end = DateTime.Now;
             total = end - start;
 
-            System.Console.WriteLine("Total popping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
-            System.Console.WriteLine("Average time per pop: {0} ticks", total.Ticks / size);
+            Console.WriteLine("Total popping time: {0} ticks or {1}ms", total.Ticks, total.Milliseconds);
+            Console.WriteLine("Average time per pop: {0} ticks", total.Ticks / size);
         }
 
         [Test, LuceneNetSpecific]
@@ -608,19 +609,19 @@ namespace Lucene.Net.Util
                 elements[i] = Random().Next();
             }
 
-            System.Console.WriteLine("Random list of elements...");
+            Console.WriteLine("Random list of elements...");
 
             TimedAddAndPop<int?>(pq, elements);
             pq.Clear();
 
-            System.Console.WriteLine("\nSorted list of elements...");
+            Console.WriteLine("\nSorted list of elements...");
 
             pq = new IntegerQueue(maxSize);
             ArrayUtil.IntroSort(elements, new Less());
             TimedAddAndPop<int?>(pq, elements);
             pq.Clear();
 
-            System.Console.WriteLine("\nReverse sorted list of elements...");
+            Console.WriteLine("\nReverse sorted list of elements...");
 
             pq = new IntegerQueue(maxSize);
             ArrayUtil.IntroSort(elements, new Greater());

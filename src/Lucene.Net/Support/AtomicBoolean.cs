@@ -19,7 +19,6 @@ namespace Lucene.Net.Support
 	 * See the License for the specific language governing permissions and
 	 * limitations under the License.
 	 */
-
 #if FEATURE_SERIALIZABLE
     [Serializable]
 #endif

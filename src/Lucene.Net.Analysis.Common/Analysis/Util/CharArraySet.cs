@@ -374,10 +374,8 @@ namespace Lucene.Net.Analysis.Util
         }
 
         [Obsolete("Not applicable in this class.")]
-#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-#endif
         public virtual bool Remove(string item)
         {
             // LUCENENET NOTE: According to the documentation header, Remove should not be supported
@@ -523,10 +521,8 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
         [Obsolete("Not applicable in this class.")]
-#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-#endif
         public void IntersectWith(IEnumerable<string> other)
         {
             throw new NotSupportedException();
@@ -535,10 +531,8 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
         [Obsolete("Not applicable in this class.")]
-#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-#endif
         public void ExceptWith(IEnumerable<string> other)
         {
             throw new NotSupportedException();
@@ -547,10 +541,8 @@ namespace Lucene.Net.Analysis.Util
         // LUCENENET - no modifications should be made outside of original
         // Java implmentation's methods.
         [Obsolete("Not applicable in this class.")]
-#if !NETSTANDARD
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-#endif
         public void SymmetricExceptWith(IEnumerable<string> other)
         {
             throw new NotSupportedException();

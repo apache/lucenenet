@@ -3,6 +3,7 @@
 
 using System;
 using System.IO;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Support.IO
 {
@@ -59,6 +60,7 @@ namespace Lucene.Net.Support.IO
             buff = new byte[8];
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void Flush()
         {
             @out.Flush();

@@ -1,4 +1,5 @@
 ﻿using Lucene.Net.Analysis.Ja.Dict;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -120,7 +121,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                         }
                         else
                         {
-                            string[] codePoints = Regex.Split(values[0], "\\.\\.");
+                            string[] codePoints = Regex.Split(values[0], "\\.\\.").TrimEnd();
                             int cpFrom = Convert.ToInt32(codePoints[0], 16);
                             int cpTo = Convert.ToInt32(codePoints[1], 16);
 
@@ -132,7 +133,7 @@ namespace Lucene.Net.Analysis.Ja.Util
                     }
                     else
                     {  // Invoke definition
-                        string[] values = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries); // Consecutive space is merged above
+                        string[] values = line.Split(' ').TrimEnd(); // Consecutive space is merged above
                         string characterClassName = values[0];
                         int invoke = int.Parse(values[1], CultureInfo.InvariantCulture);
                         int group = int.Parse(values[2], CultureInfo.InvariantCulture);

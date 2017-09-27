@@ -1,7 +1,9 @@
 using Lucene.Net.Index;
+using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Codecs.Lucene3x
 {
@@ -798,7 +800,7 @@ namespace Lucene.Net.Codecs.Lucene3x
                 //System.out.println("pff.reset te=" + termEnum);
                 this.fieldInfo = fieldInfo;
                 
-                internedFieldName = StringHelper.Intern(fieldInfo.Name);
+                internedFieldName = fieldInfo.Name.Intern();
 
                 Term term = new Term(internedFieldName);
                 if (termEnum == null)

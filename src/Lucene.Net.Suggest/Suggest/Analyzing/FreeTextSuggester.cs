@@ -308,13 +308,12 @@ namespace Lucene.Net.Search.Suggest.Analyzing
 
             string prefix = this.GetType().Name;
             var directory = OfflineSorter.DefaultTempDir();
-            // TODO: messy ... java7 has Files.createTempDirectory
-            // ... but 4.x is java6:
+
+            // LUCENENET specific - using GetRandomFileName() instead of picking a random int
             DirectoryInfo tempIndexPath = null;
-            Random random = new Random();
             while (true)
             {
-                tempIndexPath = new DirectoryInfo(Path.Combine(directory.FullName, prefix + ".index." + random.Next(int.MaxValue)));
+                tempIndexPath = new DirectoryInfo(Path.Combine(directory.FullName, prefix + ".index." + Path.GetFileNameWithoutExtension(Path.GetRandomFileName())));
                 tempIndexPath.Create();
                 if (System.IO.Directory.Exists(tempIndexPath.FullName))
                 {
@@ -322,7 +321,8 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
             }
 
-            using (Directory dir = FSDirectory.Open(tempIndexPath))
+            Directory dir = FSDirectory.Open(tempIndexPath);
+            try
             {
 #pragma warning disable 612, 618
                 IndexWriterConfig iwc = new IndexWriterConfig(LuceneVersion.LUCENE_CURRENT, indexAnalyzer);
@@ -411,41 +411,35 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 }
                 finally
                 {
+                    if (success)
+                    {
+                        IOUtils.Dispose(writer, reader);
+                    }
+                    else
+                    {
+                        IOUtils.DisposeWhileHandlingException(writer, reader);
+                    }
+                }
+            }
+            finally
+            {
+                try
+                {
+                    IOUtils.Dispose(dir);
+                }
+                finally
+                {
+                    // LUCENENET specific - since we are removing the entire directory anyway,
+                    // it doesn't make sense to first do a loop in order remove the files.
+                    // Let the System.IO.Directory.Delete() method handle that.
+                    // We also need to dispose the Directory instance first before deleting from disk.
                     try
                     {
-                        if (success)
-                        {
-                            IOUtils.Dispose(writer, reader);
-                        }
-                        else
-                        {
-                            IOUtils.DisposeWhileHandlingException(writer, reader);
-                        }
+                        System.IO.Directory.Delete(tempIndexPath.FullName, true);
                     }
-                    finally
+                    catch (Exception e)
                     {
-                        foreach (string file in dir.ListAll())
-                        {
-                            FileInfo path = new FileInfo(Path.Combine(tempIndexPath.FullName, file));
-                            try
-                            {
-                                path.Delete();
-                            }
-                            catch (Exception e)
-                            {
-                                throw new InvalidOperationException("failed to remove " + path, e);
-                            }
-                        }
-
-                        try
-                        {
-                            tempIndexPath.Delete();
-                        }
-                        catch (Exception e)
-                        {
-                            throw new InvalidOperationException("failed to remove " + tempIndexPath, e);
-                        }
-
+                        throw new InvalidOperationException("failed to remove " + tempIndexPath, e);
                     }
                 }
             }

@@ -10,6 +10,7 @@ using System;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
@@ -57,6 +58,8 @@ namespace Lucene.Net.Search
         private Counter counter;
         private TimeLimitingCollector.TimerThread counterThread;
 
+        private readonly static Regex WHITESPACE = new Regex("\\s+", RegexOptions.Compiled);
+
         /**
          * initializes searcher with a document set
          */
@@ -92,7 +95,7 @@ namespace Lucene.Net.Search
             // start from 1, so that the 0th doc never matches
             for (int i = 1; i < docText.Length; i++)
             {
-                string[] docTextParts = Regex.Split(docText[i], "\\s+");
+                string[] docTextParts = WHITESPACE.Split(docText[i]).TrimEnd();
                 foreach (string docTextPart in docTextParts)
                 {
                     // large query so that search will be longer
@@ -404,23 +407,21 @@ namespace Lucene.Net.Search
                 int docId = doc + docBase;
                 if (slowdown > 0)
                 {
-                    try
-                    {
+                    //try
+                    //{
                         ThreadClass.Sleep(slowdown);
-                    }
-#if NETSTANDARD
-                    catch (Exception)
-                    {
-                        throw;
-                    }
-#else
-#pragma warning disable 168
-                    catch (ThreadInterruptedException ie)
-#pragma warning restore 168
-                    {
-                        throw;
-                    }
-#endif
+//                    }
+//#if NETSTANDARD1_5
+//                    catch (Exception)
+//                    {
+//                        throw;
+//                    }
+//#else
+//                    catch (ThreadInterruptedException) // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                    {
+//                        throw;
+//                    }
+//#endif
                 }
                 Debug.Assert(docId >= 0, " base=" + docBase + " doc=" + doc);
                 bits.Set(docId);

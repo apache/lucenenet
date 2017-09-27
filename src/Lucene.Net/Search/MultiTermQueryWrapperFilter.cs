@@ -1,5 +1,4 @@
 using Lucene.Net.Index;
-using System;
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -44,9 +43,6 @@ namespace Lucene.Net.Search
     /// <see cref="MultiTermQuery.CONSTANT_SCORE_FILTER_REWRITE"/>;
     /// this is why it is not abstract.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class MultiTermQueryWrapperFilter<Q> : Filter where Q : MultiTermQuery
     {
         protected readonly Q m_query;

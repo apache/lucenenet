@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util
 {
@@ -247,8 +248,8 @@ namespace Lucene.Net.Util
             Codec.Default = codec;
 
             // Initialize locale/ timezone.
-            string testLocale = System.Environment.GetEnvironmentVariable("tests.locale") ?? "random";
-            string testTimeZone = System.Environment.GetEnvironmentVariable("tests.timezone") ?? "random";
+            string testLocale = SystemProperties.GetProperty("tests.locale", "random");
+            string testTimeZone = SystemProperties.GetProperty("tests.timezone", "random");
 
             // Always pick a random one for consistency (whether tests.locale was specified or not).
             savedLocale = CultureInfo.CurrentCulture;
@@ -267,8 +268,6 @@ namespace Lucene.Net.Util
             TimeZoneInfo randomTimeZone = LuceneTestCase.RandomTimeZone(random);
             timeZone = testTimeZone.Equals("random", StringComparison.Ordinal) ? randomTimeZone : TimeZoneInfo.FindSystemTimeZoneById(testTimeZone);
             //TimeZone.Default = TimeZone; // LUCENENET NOTE: There doesn't seem to be an equivalent to this, but I don't think we need it.
-
-            //TimeZoneInfo.ConvertTime() // LUCENENET TODO: Everywhere TimeZoneInfo is supposed to be used, use this method to convert a dateTime object to the time zone
 
             similarity = random.NextBoolean() ? (Similarity)new DefaultSimilarity() : new RandomSimilarityProvider(random);
 

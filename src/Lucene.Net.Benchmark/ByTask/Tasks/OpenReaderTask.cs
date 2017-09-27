@@ -63,7 +63,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             base.SetParams(@params);
             if (@params != null)
             {
-                string[] split = @params.Split(new char[] { ',' }).TrimEnd();
+                string[] split = @params.Split(',').TrimEnd();
                 if (split.Length > 0)
                 {
                     commitUserData = split[0];

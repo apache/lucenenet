@@ -53,9 +53,6 @@ namespace Lucene.Net.Search
     /// not match an indexed term "ab", and <see cref="FuzzyQuery"/> on term "a" with maxEdits=2 will not
     /// match an indexed term "abc".
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class FuzzyQuery : MultiTermQuery
     {
         public const int DefaultMaxEdits = LevenshteinAutomata.MAXIMUM_SUPPORTED_DISTANCE;

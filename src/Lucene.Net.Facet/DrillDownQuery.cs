@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Facet
 {
@@ -142,6 +143,7 @@ namespace Lucene.Net.Facet
         /// Merges (ORs) a new path into an existing AND'd
         /// clause. 
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void Merge(string dim, string[] path)
         {
             int index = 0;

@@ -450,9 +450,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             //}
             //return df.format(calendar.getTime());
 
-
-            var calendar = CultureInfo.CurrentCulture.Calendar;
+            var calendar = new GregorianCalendar(GregorianCalendarTypes.Localized);
             DateTime lastDate = calendar.ToDateTime(year, month, day, 0, 0, 0, 0);
+            lastDate = TimeZoneInfo.ConvertTime(lastDate, TimeZoneInfo.Local);
 
             if (extendLastDate)
             {
@@ -482,7 +482,6 @@ namespace Lucene.Net.QueryParsers.Flexible.Precedence
             String hourField = "hour";
             PrecedenceQueryParser qp = new PrecedenceQueryParser(new MockAnalyzer(Random()));
 
-            // LUCENENET TODO: Can we eliminate this nullable??
             IDictionary<string, DateTools.Resolution?> fieldMap = new HashMap<string, DateTools.Resolution?>();
             // set a field specific date resolution
             fieldMap.Put(monthField, DateTools.Resolution.MONTH);

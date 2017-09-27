@@ -33,9 +33,7 @@ namespace Lucene.Net.Search
     /// the same time by two threads, because in this case you
     /// cannot in general know which thread "won".
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     public abstract class LiveFieldValues<S, T> : ReferenceManager.IRefreshListener, IDisposable
         where S : class
     {

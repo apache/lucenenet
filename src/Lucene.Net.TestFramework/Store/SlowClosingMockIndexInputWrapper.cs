@@ -40,12 +40,12 @@ namespace Lucene.Net.Store
                 {
                     Thread.Sleep(50);
                 }
-#if !NETSTANDARD
-                catch (ThreadInterruptedException ie)
-                {
-                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
-                }
-#endif
+//#if !NETSTANDARD1_5 // LUCENENET NOTE: Senseless to catch and rethrow the same exception type
+//                catch (ThreadInterruptedException ie)
+//                {
+//                    throw new ThreadInterruptedException("Thread Interrupted Exception", ie);
+//                }
+//#endif
                 finally
                 {
                     base.Dispose(disposing);

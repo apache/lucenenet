@@ -1,5 +1,5 @@
-using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -19,25 +19,26 @@ namespace Lucene.Net.Index
      * See the License for the specific language governing permissions and
      * limitations under the License.
      */
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
+
     internal abstract class DocFieldConsumer
     {
         /// <summary>
         /// Called when <see cref="DocumentsWriterPerThread"/> decides to create a new
         /// segment
         /// </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void Flush(IDictionary<string, DocFieldConsumerPerField> fieldsToFlush, SegmentWriteState state);
 
         /// <summary>
         /// Called when an aborting exception is hit </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal abstract void Abort();
 
         public abstract void StartDocument();
 
         public abstract DocFieldConsumerPerField AddField(FieldInfo fi);
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void FinishDocument();
     }
 }

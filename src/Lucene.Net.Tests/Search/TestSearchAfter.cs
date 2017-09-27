@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
+using Lucene.Net.Randomized.Generators;
+using Lucene.Net.Support;
 using Lucene.Net.Util;
+using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using Lucene.Net.Randomized.Generators;
-    using Lucene.Net.Support;
-    using NUnit.Framework;
     using BinaryDocValuesField = BinaryDocValuesField;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
@@ -231,11 +232,7 @@ namespace Lucene.Net.Search
             base.TearDown();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(90000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestQueries()
         {
             // LUCENENET specific: NUnit will crash with an OOM if we do the full test

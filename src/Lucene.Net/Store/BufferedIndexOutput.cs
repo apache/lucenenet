@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -22,9 +23,6 @@ namespace Lucene.Net.Store
 
     /// <summary>
     /// Base implementation class for buffered <see cref="IndexOutput"/>. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class BufferedIndexOutput : IndexOutput
     {
         /// <summary>
@@ -122,6 +120,7 @@ namespace Lucene.Net.Store
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush()
         {
             crc.Update(buffer, 0, bufferPosition);

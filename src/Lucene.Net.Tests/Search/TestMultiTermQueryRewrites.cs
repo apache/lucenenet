@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using Lucene.Net.Documents;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {

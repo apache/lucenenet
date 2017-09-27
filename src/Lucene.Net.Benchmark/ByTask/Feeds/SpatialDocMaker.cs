@@ -3,11 +3,11 @@ using Lucene.Net.Documents;
 using Lucene.Net.Spatial;
 using Lucene.Net.Spatial.Prefix;
 using Lucene.Net.Spatial.Prefix.Tree;
-using Lucene.Net.Support;
 using Spatial4n.Core.Context;
 using Spatial4n.Core.Shapes;
 using System;
 using System.Collections.Generic;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Feeds
 {
@@ -132,7 +132,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 spatialStrategyCache[config.RoundNumber] = strategy;
                 //TODO remove previous round config?
                 shapeConverter = MakeShapeConverter(strategy, config, "doc.spatial.");
-                SystemConsole.WriteLine("Spatial Strategy: " + strategy);
+                Console.WriteLine("Spatial Strategy: " + strategy);
             }
         }
 
@@ -224,7 +224,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
                 }
                 catch (Exception e)
                 {//InvalidShapeException TODO
-                    SystemConsole.Error.WriteLine("Shape " + name + " wasn't parseable: " + e + "  (skipping it)");
+                    Console.Error.WriteLine("Shape " + name + " wasn't parseable: " + e + "  (skipping it)");
                     return null;
                 }
             }
@@ -240,7 +240,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
 
     /// <summary>
     /// Converts one shape to another. Created by
-    /// <see cref="MakeShapeConverter(SpatialStrategy, Config, string)"/>.
+    /// <see cref="SpatialDocMaker.MakeShapeConverter(SpatialStrategy, Config, string)"/>.
     /// </summary>
     public interface IShapeConverter
     {

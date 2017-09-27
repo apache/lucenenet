@@ -31,6 +31,9 @@ namespace Lucene.Net.Codecs.Lucene3x
     /// </summary>
     [Obsolete("(4.0) No longer used with flex indexing, except for reading old segments")]
     internal sealed class SegmentTermEnum : IDisposable
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         private IndexInput input;
         internal FieldInfos fieldInfos;

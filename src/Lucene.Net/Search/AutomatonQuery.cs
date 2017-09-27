@@ -46,9 +46,6 @@ namespace Lucene.Net.Search
     /// </para>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class AutomatonQuery : MultiTermQuery
     {
         /// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Store
 {
@@ -28,13 +29,11 @@ namespace Lucene.Net.Store
     /// </summary>
     /// <seealso cref="Directory"/>
     /// <seealso cref="IndexInput"/>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class IndexOutput : DataOutput, IDisposable
     {
         /// <summary>
         /// Forces any buffered output to be written. </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public abstract void Flush();
 
         /// <summary>

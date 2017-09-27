@@ -63,11 +63,7 @@ namespace Lucene.Net.Store
 
         /// <summary>
         /// Test huge RAMFile with more than Integer.MAX_VALUE bytes. (LUCENE-957) </summary>
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestHugeFile()
         {
             var f = new DenseRAMFile();

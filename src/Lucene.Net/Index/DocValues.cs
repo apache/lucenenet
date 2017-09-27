@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Index
 {
     /*
@@ -25,9 +23,6 @@ namespace Lucene.Net.Index
     /// <summary>
     /// This class contains utility methods and constants for <see cref="DocValues"/>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class DocValues
     {
         /* no instantiation */
@@ -41,9 +36,6 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly BinaryDocValues EMPTY_BINARY = new BinaryDocValuesAnonymousInnerClassHelper();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BinaryDocValuesAnonymousInnerClassHelper : BinaryDocValues
         {
             public BinaryDocValuesAnonymousInnerClassHelper()
@@ -63,9 +55,6 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly NumericDocValues EMPTY_NUMERIC = new NumericDocValuesAnonymousInnerClassHelper();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class NumericDocValuesAnonymousInnerClassHelper : NumericDocValues
         {
             public NumericDocValuesAnonymousInnerClassHelper()
@@ -83,9 +72,6 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly SortedDocValues EMPTY_SORTED = new SortedDocValuesAnonymousInnerClassHelper();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class SortedDocValuesAnonymousInnerClassHelper : SortedDocValues
         {
             public SortedDocValuesAnonymousInnerClassHelper()
@@ -118,9 +104,6 @@ namespace Lucene.Net.Index
         /// </summary>
         public static readonly SortedSetDocValues EMPTY_SORTED_SET = new RandomAccessOrdsAnonymousInnerClassHelper();
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class RandomAccessOrdsAnonymousInnerClassHelper : RandomAccessOrds
         {
             public RandomAccessOrdsAnonymousInnerClassHelper()
@@ -192,9 +175,6 @@ namespace Lucene.Net.Index
             return new BitsAnonymousInnerClassHelper(dv, maxDoc);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BitsAnonymousInnerClassHelper : IBits
         {
             private Lucene.Net.Index.SortedDocValues dv;
@@ -225,9 +205,6 @@ namespace Lucene.Net.Index
             return new BitsAnonymousInnerClassHelper2(dv, maxDoc);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class BitsAnonymousInnerClassHelper2 : IBits
         {
             private Lucene.Net.Index.SortedSetDocValues dv;

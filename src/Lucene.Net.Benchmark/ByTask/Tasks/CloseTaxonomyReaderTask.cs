@@ -1,5 +1,5 @@
 ﻿using Lucene.Net.Facet.Taxonomy;
-using Lucene.Net.Support;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -38,7 +38,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
             RunData.SetTaxonomyReader(null);
             if (taxoReader.RefCount != 1)
             {
-                SystemConsole.WriteLine("WARNING: CloseTaxonomyReader: reference count is currently " + taxoReader.RefCount);
+                Console.WriteLine("WARNING: CloseTaxonomyReader: reference count is currently " + taxoReader.RefCount);
             }
             taxoReader.Dispose();
             return 1;

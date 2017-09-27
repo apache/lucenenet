@@ -1,6 +1,7 @@
 using Lucene.Net.Index;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Codecs
 {
@@ -95,6 +96,7 @@ namespace Lucene.Net.Codecs
 
         /// <summary>
         /// Default merge impl. </summary>
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public virtual void Merge(MergeState mergeState, IndexOptions indexOptions, TermsEnum termsEnum)
         {
             BytesRef term;

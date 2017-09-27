@@ -8,6 +8,7 @@ using Lucene.Net.Util.Packed;
 using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using Document = Lucene.Net.Documents.Document;
 
 namespace Lucene.Net.Codecs.Compressing
@@ -160,6 +161,7 @@ namespace Lucene.Net.Codecs.Compressing
             ++numBufferedDocs;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void FinishDocument()
         {
             endOffsets[numBufferedDocs - 1] = bufferedDocs.Length;
@@ -232,6 +234,7 @@ namespace Lucene.Net.Codecs.Compressing
             return bufferedDocs.Length >= chunkSize || numBufferedDocs >= MAX_DOCUMENTS_PER_CHUNK; // chunks of at least chunkSize bytes
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         private void Flush()
         {
             indexWriter.WriteIndex(numBufferedDocs, fieldsStream.GetFilePointer());
@@ -354,6 +357,7 @@ namespace Lucene.Net.Codecs.Compressing
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             IOUtils.DisposeWhileHandlingException(this);
@@ -379,6 +383,7 @@ namespace Lucene.Net.Codecs.Compressing
             Debug.Assert(bufferedDocs.Length == 0);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override int Merge(MergeState mergeState)
         {
             int docCount = 0;

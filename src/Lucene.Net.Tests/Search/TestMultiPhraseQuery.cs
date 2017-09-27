@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lucene.Net.Documents;
+using NUnit.Framework;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
-    using NUnit.Framework;
     using BytesRef = Lucene.Net.Util.BytesRef;
 
     /*

@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Diagnostics;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Util.Automaton
 {

@@ -20,7 +20,7 @@ namespace Lucene.Net.Analysis.Ja.TokenAttributes
      */
 
     /// <summary>
-    /// Attribute for <see cref="Token.BaseForm"/>
+    /// Attribute for <see cref="Token.GetBaseForm()"/>
     /// <para/>
     /// Note: depending on part of speech, this value may not be applicable,
     /// and will be null.

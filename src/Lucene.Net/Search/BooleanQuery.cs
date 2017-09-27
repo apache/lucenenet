@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Text;
@@ -76,8 +76,9 @@ namespace Lucene.Net.Search
         /// a <see cref="PrefixQuery"/>, <see cref="FuzzyQuery"/>, <see cref="WildcardQuery"/>, or <see cref="TermRangeQuery"/>
         /// is expanded to many terms during search.
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         [Serializable]
 #endif
         public class TooManyClausesException : Exception // LUCENENET specific - added Exception suffix
@@ -87,7 +88,7 @@ namespace Lucene.Net.Search
             {
             }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>
@@ -245,9 +246,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class BooleanWeight : Weight
         {
             private readonly BooleanQuery outerInstance;

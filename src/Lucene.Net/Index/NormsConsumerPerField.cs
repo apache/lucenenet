@@ -1,5 +1,6 @@
 using Lucene.Net.Support;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -23,9 +24,6 @@ namespace Lucene.Net.Index
     using DocValuesConsumer = Lucene.Net.Codecs.DocValuesConsumer;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class NormsConsumerPerField : InvertedDocEndConsumerPerField, IComparable<NormsConsumerPerField>
     {
         private readonly FieldInfo fieldInfo;
@@ -60,6 +58,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void Flush(SegmentWriteState state, DocValuesConsumer normsWriter)
         {
             int docCount = state.SegmentInfo.DocCount;
@@ -81,6 +80,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal override void Abort()
         {
             //

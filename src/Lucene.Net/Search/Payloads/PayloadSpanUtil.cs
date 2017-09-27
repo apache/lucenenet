@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -38,9 +37,6 @@ namespace Lucene.Net.Search.Payloads
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PayloadSpanUtil
     {
         private IndexReaderContext context;

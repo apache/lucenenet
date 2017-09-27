@@ -4,6 +4,7 @@ using Lucene.Net.Store;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {

@@ -1,6 +1,4 @@
-﻿// LUCENENET TODO: API: Replace all references to Environment.GetEnvironmentVariable() with this (safer) class.
-
-/*
+﻿/*
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file

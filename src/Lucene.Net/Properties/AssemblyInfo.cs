@@ -24,22 +24,10 @@ using System.Runtime.CompilerServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-//
-[assembly: AssemblyTitle("Lucene.Net")]
-[assembly: AssemblyDescription(
-    "Lucene.Net is a full-text search engine library capable of advanced text analysis, indexing, and searching. "
-    + "It can be used to easily add search capabilities to applications. " 
-    + "Lucene.Net is a C# port of the popular Java Lucene search engine framework from " 
-    + "The Apache Software Foundation, targeted at .NET Framework and .NET Core users.")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDefaultAlias("Lucene.Net")]
 [assembly: AssemblyCulture("")]
-[assembly: CLSCompliant(true)]
 
-// LUCENENET NOTE: This attribute is required to disable optimizations so the 
-// Lucene.Net.Tests.Index.TestIndexWriterExceptions.TestExceptionsDuringCommit() test
-// can read the stack trace information, otherwise the test fails.
-[assembly: Debuggable(DebuggableAttribute.DebuggingModes.Default | DebuggableAttribute.DebuggingModes.DisableOptimizations)]
+[assembly: CLSCompliant(true)]
 
 // for testing
 //[assembly: InternalsVisibleTo("Lucene.Net.Test, PublicKey=002400000480000094000000060200000024000052534131000400000100010075a07ce602f88e" +
@@ -48,18 +36,13 @@ using System.Runtime.CompilerServices;
 //                                                         "08437802fb4f8fb80a05e59f80afb99f4ccd0dfe44065743543c4b053b669509d29d332cd32a0c" +
 //                                                         "b1e97e84")]
 
-// LUCENENET NOTE: For now it is not possible to use a SNK because we have unmanaged references in Analysis.Common.
+// LUCENENET NOTE: For now we are not using a strong name key.
 // However, we still need InternalsVisibleTo in order to prevent making everything public just for the sake of testing.
-// This has broad implications, though because many methods are marked "protected internal", which means other assemblies
+// This has broad implications because many methods are marked "protected internal", which means other assemblies
 // must update overridden methods to match.
 [assembly: InternalsVisibleTo("Lucene.Net.Tests")]
 [assembly: InternalsVisibleTo("Lucene.Net.TestFramework")]
-[assembly: InternalsVisibleTo("Lucene.Net.Highlighter")] // For Automaton
-[assembly: InternalsVisibleTo("Lucene.Net.ICU")] // For Automaton
 [assembly: InternalsVisibleTo("Lucene.Net.Misc")]
-[assembly: InternalsVisibleTo("Lucene.Net.Suggest")] // For Automaton
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Analysis.Common")] // For Automaton
-[assembly: InternalsVisibleTo("Lucene.Net.Tests.Highlighter")] // For Automaton
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.ICU")] // For Analysis.Util.TestSegmentingTokenizerBase
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.Misc")]
 [assembly: InternalsVisibleTo("Lucene.Net.Tests.QueryParser")]

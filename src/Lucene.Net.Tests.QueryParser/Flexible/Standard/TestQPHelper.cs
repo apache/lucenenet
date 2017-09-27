@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.QueryParsers.Flexible.Standard
 {
@@ -763,8 +764,9 @@ namespace Lucene.Net.QueryParsers.Flexible.Standard
 
         private String GetLocalizedDate(int year, int month, int day)
         {
-            DateTime d = new DateTime(year, month, day, 23, 59, 59, 999);
-            return d.ToString("d"); //.ToShortDateString();
+            DateTime date = new GregorianCalendar().ToDateTime(year, month, day, 23, 59, 59, 999);
+            date = TimeZoneInfo.ConvertTime(date, TimeZoneInfo.Local);
+            return date.ToString("d"); //.ToShortDateString();
 
             //// we use the default Locale/TZ since LuceneTestCase randomizes it
             //DateFormat df = DateFormat.getDateInstance(DateFormat.SHORT, Locale.getDefault());

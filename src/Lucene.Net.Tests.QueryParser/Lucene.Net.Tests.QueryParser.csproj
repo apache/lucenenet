@@ -19,166 +19,62 @@
  under the License.
 
 -->
+<Project Sdk="Microsoft.NET.Sdk">
 
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\..\TestTargetFramework.proj" />
+  <Import Project="..\..\Version.proj" />
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5719FB4F-BF80-40E5-BACC-37E8E18FCA2E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lucene.Net.QueryParsers</RootNamespace>
-    <AssemblyName>Lucene.Net.Tests.QueryParser</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <!--<TargetFrameworks>netcoreapp1.0;net451</TargetFrameworks>-->
+    <!--<TargetFramework>net451</TargetFramework>
+    <TargetFramework Condition=" '$(Configuration)' == 'Debug_NetCoreApp1_0' OR '$(Configuration)' == 'Release_NetCoreApp1_0' ">netcoreapp1.0</TargetFramework>-->
+    <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+
+    <AssemblyTitle>Lucene.Net.Tests.QueryParser</AssemblyTitle>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
+
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <!--<Configurations>Debug;Release;Debug_NetCoreApp1_0;Release_NetCoreApp1_0</Configurations>-->
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <EmbeddedResource Include="Xml\albumBooleanQuery.xsl;Xml\albumFilteredQuery.xsl;Xml\albumLuceneClassicQuery.xsl;Xml\BooleanFilter.xml;Xml\BooleanQuery.xml;Xml\BoostingQuery.xml;Xml\BoostingTermQuery.xml;Xml\CachedFilter.xml;Xml\ConstantScoreQuery.xml;Xml\DisjunctionMaxQuery.xml;Xml\DuplicateFilterQuery.xml;Xml\FuzzyLikeThisQuery.xml;Xml\LikeThisQuery.xml;Xml\MatchAllDocsQuery.xml;Xml\NestedBooleanQuery.xml;Xml\NumericRangeFilterQuery.xml;Xml\NumericRangeQueryQuery.xml;Xml\RangeFilterQuery.xml;Xml\reuters21578.txt;Xml\SpanQuery.xml;Xml\TermQuery.xml;Xml\TermsFilterQuery.xml;Xml\TermsQuery.xml;Xml\UserInputQuery.xml;Xml\UserInputQueryCustomField.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj" />
+    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj" />
+    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
+    <PackageReference Include="NUnit" Version="3.8.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.8.0" />
+    <!-- Required by NUnit3TestAdapter on .NET Core -->
+    <PackageReference Include="System.Runtime.InteropServices.RuntimeInformation" Version="4.3.0" />
+    <PackageReference Include="TeamCity.VSTest.TestAdapter" Version="1.0.3" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.0' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.0' ">
+    <DefineConstants>$(DefineConstants);NETSTANDARD1_5</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE_EXCEPTIONS</DefineConstants>
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <DefineConstants>$(DefineConstants);FEATURE_SERIALIZABLE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Analyzing\TestAnalyzingQueryParser.cs" />
-    <Compile Include="Classic\TestMultiFieldQueryParser.cs" />
-    <Compile Include="Classic\TestMultiPhraseQueryParsing.cs" />
-    <Compile Include="Classic\TestQueryParser.cs" />
-    <Compile Include="ComplexPhrase\TestComplexPhraseQuery.cs" />
-    <Compile Include="Ext\ExtensionStub.cs" />
-    <Compile Include="Ext\TestExtendableQueryParser.cs" />
-    <Compile Include="Ext\TestExtensions.cs" />
-    <Compile Include="Flexible\Core\Builders\TestQueryTreeBuilder.cs" />
-    <Compile Include="Flexible\Core\Nodes\TestQueryNode.cs" />
-    <Compile Include="Flexible\Messages\MessagesTestBundle.cs" />
-    <Compile Include="Flexible\Messages\MessagesTestBundleBundle.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>MessagesTestBundleBundle.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Flexible\Messages\TestNLS.cs" />
-    <Compile Include="Flexible\Precedence\TestPrecedenceQueryParser.cs" />
-    <Compile Include="Flexible\Spans\SpanOrQueryNodeBuilder.cs" />
-    <Compile Include="Flexible\Spans\SpansQueryConfigHandler.cs" />
-    <Compile Include="Flexible\Spans\SpansQueryTreeBuilder.cs" />
-    <Compile Include="Flexible\Spans\SpansValidatorQueryNodeProcessor.cs" />
-    <Compile Include="Flexible\Spans\SpanTermQueryNodeBuilder.cs" />
-    <Compile Include="Flexible\Spans\TestSpanQueryParser.cs" />
-    <Compile Include="Flexible\Spans\TestSpanQueryParserSimpleSample.cs" />
-    <Compile Include="Flexible\Spans\UniqueFieldAttribute.cs" />
-    <Compile Include="Flexible\Spans\UniqueFieldAttributeImpl.cs" />
-    <Compile Include="Flexible\Spans\UniqueFieldQueryNodeProcessor.cs" />
-    <Compile Include="Flexible\Standard\TestMultiAnalyzerQPHelper.cs" />
-    <Compile Include="Flexible\Standard\TestMultiFieldQPHelper.cs" />
-    <Compile Include="Flexible\Standard\TestNumericQueryParser.cs" />
-    <Compile Include="Flexible\Standard\TestQPHelper.cs" />
-    <Compile Include="Flexible\Standard\TestStandardQP.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Classic\TestMultiAnalyzer.cs" />
-    <Compile Include="Simple\TestSimpleQueryParser.cs" />
-    <Compile Include="Support\TestExceptionSerialization.cs" />
-    <Compile Include="Surround\Query\BooleanQueryTst.cs" />
-    <Compile Include="Surround\Query\ExceptionQueryTst.cs" />
-    <Compile Include="Surround\Query\SingleFieldTestDb.cs" />
-    <Compile Include="Surround\Query\SrndQueryTest.cs" />
-    <Compile Include="Surround\Query\Test01Exceptions.cs" />
-    <Compile Include="Surround\Query\Test02Boolean.cs" />
-    <Compile Include="Surround\Query\Test03Distance.cs" />
-    <Compile Include="Support\TestApiConsistency.cs" />
-    <Compile Include="Util\QueryParserTestBase.cs" />
-    <Compile Include="Xml\Builders\TestNumericRangeFilterBuilder.cs" />
-    <Compile Include="Xml\Builders\TestNumericRangeQueryBuilder.cs" />
-    <Compile Include="Xml\TestParser.cs" />
-    <Compile Include="Xml\TestQueryTemplateManager.cs" />
-	<Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lucene.Net.QueryParser\Lucene.Net.QueryParser.csproj">
-      <Project>{949ba34b-6ae6-4ce3-b578-61e13e4d76bf}</Project>
-      <Name>Lucene.Net.QueryParser</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.Analysis.Common\Lucene.Net.Analysis.Common.csproj">
-      <Project>{4add0bbc-b900-4715-9526-d871de8eea64}</Project>
-      <Name>Lucene.Net.Analysis.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net\Lucene.Net.csproj">
-      <Project>{5d4ad9be-1ffb-41ab-9943-25737971bf57}</Project>
-      <Name>Lucene.Net</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Lucene.Net.TestFramework\Lucene.Net.TestFramework.csproj">
-      <Project>{b2c0d749-ce34-4f62-a15e-00cb2ff5ddb3}</Project>
-      <Name>Lucene.Net.TestFramework</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Lucene.Net.Tests.QueryParser.project.json" />
-    <EmbeddedResource Include="Flexible\Messages\MessagesTestBundleBundle.ja.resx" />
-    <EmbeddedResource Include="Flexible\Messages\MessagesTestBundleBundle.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>MessagesTestBundleBundle.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Xml\albumBooleanQuery.xsl" />
-    <EmbeddedResource Include="Xml\albumFilteredQuery.xsl" />
-    <EmbeddedResource Include="Xml\albumLuceneClassicQuery.xsl" />
-    <EmbeddedResource Include="Xml\BooleanFilter.xml" />
-    <EmbeddedResource Include="Xml\BooleanQuery.xml" />
-    <EmbeddedResource Include="Xml\BoostingQuery.xml" />
-    <EmbeddedResource Include="Xml\BoostingTermQuery.xml" />
-    <EmbeddedResource Include="Xml\CachedFilter.xml" />
-    <EmbeddedResource Include="Xml\ConstantScoreQuery.xml" />
-    <EmbeddedResource Include="Xml\DisjunctionMaxQuery.xml" />
-    <EmbeddedResource Include="Xml\DuplicateFilterQuery.xml" />
-    <EmbeddedResource Include="Xml\FuzzyLikeThisQuery.xml" />
-    <EmbeddedResource Include="Xml\LikeThisQuery.xml" />
-    <EmbeddedResource Include="Xml\MatchAllDocsQuery.xml" />
-    <EmbeddedResource Include="Xml\NestedBooleanQuery.xml" />
-    <EmbeddedResource Include="Xml\NumericRangeFilterQuery.xml" />
-    <EmbeddedResource Include="Xml\NumericRangeQueryQuery.xml" />
-    <EmbeddedResource Include="Xml\RangeFilterQuery.xml" />
-    <EmbeddedResource Include="Xml\reuters21578.txt" />
-    <EmbeddedResource Include="Xml\SpanQuery.xml" />
-    <EmbeddedResource Include="Xml\TermQuery.xml" />
-    <EmbeddedResource Include="Xml\TermsFilterQuery.xml" />
-    <EmbeddedResource Include="Xml\TermsQuery.xml" />
-    <EmbeddedResource Include="Xml\UserInputQuery.xml" />
-    <EmbeddedResource Include="Xml\UserInputQueryCustomField.xml" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

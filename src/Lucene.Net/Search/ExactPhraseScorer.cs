@@ -1,4 +1,3 @@
-using System;   
 using System.Diagnostics;
 
 namespace Lucene.Net.Search
@@ -24,9 +23,6 @@ namespace Lucene.Net.Search
     using Lucene.Net.Support;
     using Similarity = Lucene.Net.Search.Similarities.Similarity;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class ExactPhraseScorer : Scorer
     {
         private readonly int endMinus1;
@@ -40,9 +36,6 @@ namespace Lucene.Net.Search
         internal bool noDocs;
         private readonly long cost;
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class ChunkState
         {
             internal DocsAndPositionsEnum PosEnum { get; private set; }

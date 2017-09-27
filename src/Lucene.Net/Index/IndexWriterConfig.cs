@@ -67,6 +67,9 @@ namespace Lucene.Net.Index
     [Serializable]
 #endif
     public sealed class IndexWriterConfig : LiveIndexWriterConfig
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         // LUCENENET specific: De-nested OpenMode enum from this class to prevent naming conflict
 
@@ -196,7 +199,7 @@ namespace Lucene.Net.Index
             // such as line numbers, message throughput, ...
             clone.infoStream = (InfoStream)infoStream.Clone();
             clone.mergePolicy = (MergePolicy)mergePolicy.Clone();
-            clone.mergeScheduler = mergeScheduler.Clone();
+            clone.mergeScheduler = (IMergeScheduler)mergeScheduler.Clone();
 
             return clone;
 
@@ -307,7 +310,7 @@ namespace Lucene.Net.Index
         }
 
 
-#if NETSTANDARD
+#if !FEATURE_CONCURRENTMERGESCHEDULER
         /// <summary>
         /// Expert: Gets or sets the merge scheduler used by this writer. The default is
         /// <see cref="TaskMergeScheduler"/>.

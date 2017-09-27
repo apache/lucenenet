@@ -1,7 +1,9 @@
+using Lucene.Net.Attributes;
 using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using System;
 using System.Collections;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search
 {
@@ -394,7 +396,7 @@ namespace Lucene.Net.Search
         // LUCENENET: There is no Timeout on NUnit for .NET Core.
         [Timeout(20000)] // LUCENENET TODO: Sometimes doesn't finish
 #endif
-        [Test]
+        [Test, HasTimeout]
         public virtual void TestConjunctions()
         {
             // test many small sets... the bugs will be found on boundary conditions

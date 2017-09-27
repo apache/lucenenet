@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -37,9 +38,6 @@ namespace Lucene.Net.Index
     /// Buffers up pending <see cref="T:byte[]"/>s per doc, deref and sorting via
     /// int ord, then flushes when segment flushes.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal class SortedSetDocValuesWriter : DocValuesWriter
     {
         internal readonly BytesRefHash hash;
@@ -161,6 +159,7 @@ namespace Lucene.Net.Index
             bytesUsed = newBytesUsed;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Flush(SegmentWriteState state, DocValuesConsumer dvConsumer)
         {
             int maxDoc = state.SegmentInfo.DocCount;
@@ -185,6 +184,7 @@ namespace Lucene.Net.Index
                                       GetOrdCountEnumberable(maxCountPerDoc, ordMap));
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
         }

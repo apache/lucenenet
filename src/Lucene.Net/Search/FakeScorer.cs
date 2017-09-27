@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -24,9 +23,6 @@ namespace Lucene.Net.Search
     /// Used by <see cref="BulkScorer"/>s that need to pass a
     /// <see cref="Scorer"/> to <see cref="ICollector.SetScorer(Scorer)"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class FakeScorer : Scorer
     {
         internal float score;

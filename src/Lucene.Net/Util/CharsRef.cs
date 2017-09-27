@@ -34,6 +34,9 @@ namespace Lucene.Net.Util
     [Serializable]
 #endif
     public sealed class CharsRef : IComparable<CharsRef>, ICharSequence
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// An empty character array for convenience </summary>

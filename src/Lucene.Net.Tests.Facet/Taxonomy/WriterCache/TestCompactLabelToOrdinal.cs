@@ -1,9 +1,11 @@
-﻿using NUnit.Framework;
+﻿using Lucene.Net.Support;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Facet.Taxonomy.WriterCache
 {
@@ -93,7 +95,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
                 else
                 {
-                    label = new FacetLabel(s.Split("/".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    label = new FacetLabel(s.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
                 }
 
                 int ord1 = map.GetOrdinal(label);
@@ -124,7 +126,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
                 else
                 {
-                    label = new FacetLabel(s.Split("/".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    label = new FacetLabel(s.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
                 }
                 int ord1 = map.GetOrdinal(label);
                 int ord2 = compact.GetOrdinal(label);
@@ -209,7 +211,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                     }
                     else
                     {
-                        label = new FacetLabel(s.Split("/".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                        label = new FacetLabel(s.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
                     }
 
                     int ord1 = map.GetOrdinal(label);
@@ -241,7 +243,7 @@ namespace Lucene.Net.Facet.Taxonomy.WriterCache
                 }
                 else
                 {
-                    label = new FacetLabel(s.Split("/".ToCharArray(), StringSplitOptions.RemoveEmptyEntries));
+                    label = new FacetLabel(s.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries));
                 }
                 int ord1 = map.GetOrdinal(label);
                 int ord2 = compact.GetOrdinal(label);

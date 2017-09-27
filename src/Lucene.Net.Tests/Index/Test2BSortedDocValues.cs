@@ -3,6 +3,7 @@ using Lucene.Net.Documents;
 using Lucene.Net.Support;
 using NUnit.Framework;
 using System;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -37,11 +38,7 @@ namespace Lucene.Net.Index
     public class Test2BSortedDocValues : LuceneTestCase
     {
         // indexes Integer.MAX_VALUE docs with a fixed binary field
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestFixedSorted([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BFixedSorted"));
@@ -102,12 +99,8 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
         // indexes Integer.MAX_VALUE docs with a fixed binary field
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void Test2BOrds([ValueSource(typeof(ConcurrentMergeSchedulerFactories), "Values")]Func<IConcurrentMergeScheduler> newScheduler)
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("2BOrds"));

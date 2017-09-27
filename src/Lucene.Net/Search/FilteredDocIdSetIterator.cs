@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -25,9 +23,6 @@ namespace Lucene.Net.Search
     /// mechanism on an underlying <see cref="DocIdSetIterator"/>.  See 
     /// <see cref="DocIdSetIterator"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class FilteredDocIdSetIterator : DocIdSetIterator
     {
         protected DocIdSetIterator m_innerIter;

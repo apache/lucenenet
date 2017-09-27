@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Store
 {
@@ -198,11 +199,7 @@ namespace Lucene.Net.Store
         }
 
         // Verify: NativeFSLockFactory works correctly
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(int.MaxValue)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestNativeFSLockFactory()
         {
             var f = new NativeFSLockFactory(CreateTempDir("testNativeFsLockFactory"));

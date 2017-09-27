@@ -22,9 +22,6 @@ namespace Lucene.Net.Search.Payloads
     /// <summary>
     /// Calculates the minimum payload seen
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class MinPayloadFunction : PayloadFunction
     {
         public override float CurrentScore(int docId, string field, int start, int end, int numPayloadsSeen, float currentScore, float currentPayloadScore)

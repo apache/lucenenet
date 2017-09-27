@@ -15,6 +15,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Highlight
 {
@@ -2060,7 +2061,7 @@ namespace Lucene.Net.Search.Highlight
          *      java.io.Reader)
          */
 
-        protected internal override TokenStreamComponents CreateComponents(String arg0, TextReader arg1)
+        protected override TokenStreamComponents CreateComponents(String arg0, TextReader arg1)
         {
             Tokenizer stream = new MockTokenizer(arg1, MockTokenizer.SIMPLE, true);
             stream.AddAttribute<ICharTermAttribute>();

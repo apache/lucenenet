@@ -261,11 +261,7 @@ namespace Lucene.Net.Util
 
         // large enough to flush obvious bugs, small enough to run in <.5 sec as part of a
         // larger testsuite.
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(60000)]
-#endif
-        [Test, HasTimeout]
+        [Test]
         public virtual void TestSmall()
         {
             DoRandomSets(AtLeast(1200), AtLeast(1000), 1);
@@ -552,11 +548,7 @@ namespace Lucene.Net.Util
         /// <summary>
         /// Compare the content of the set against a <seealso cref="BitSet"/>.
         /// </summary>
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(150000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public override void TestAgainstBitSet()
         {
             base.TestAgainstBitSet();

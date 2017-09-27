@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Support;
+﻿#if FEATURE_BREAKITERATOR
+using Lucene.Net.Support;
 using Lucene.Net.Util;
 using NUnit.Framework;
 using System;
@@ -108,3 +109,4 @@ namespace Lucene.Net.Analysis.Icu.Segmentation
         }
     }
 }
+#endif

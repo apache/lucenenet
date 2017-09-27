@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Collections;
 
 namespace Lucene.Net.Util
@@ -27,9 +26,6 @@ namespace Lucene.Net.Util
     /// <summary>
     /// Simple <see cref="DocIdSet"/> and <see cref="DocIdSetIterator"/> backed by a <see cref="BitArray"/> 
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class DocIdBitSet : DocIdSet, IBits
     {
         private readonly BitArray bitSet;

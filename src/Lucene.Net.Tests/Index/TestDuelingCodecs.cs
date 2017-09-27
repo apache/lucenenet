@@ -151,7 +151,7 @@ namespace Lucene.Net.Index
                 Document document = lineFileDocs.NextDoc();
                 // grab the title and add some SortedSet instances for fun
                 string title = document.Get("titleTokenized");
-                string[] split = whiteSpace.Split(title);
+                string[] split = whiteSpace.Split(title).TrimEnd();
                 foreach (string trash in split)
                 {
                     document.Add(new SortedSetDocValuesField("sortedset", new BytesRef(trash)));
@@ -171,11 +171,7 @@ namespace Lucene.Net.Index
         /// <summary>
         /// checks the two indexes are equivalent
         /// </summary>
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [Test, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestEquals()
         {
             AssertReaderEquals(Info, LeftReader, RightReader);

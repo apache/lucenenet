@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Search.Suggest.Analyzing
 {
@@ -927,7 +928,7 @@ namespace Lucene.Net.Search.Suggest.Analyzing
                 List<TermFreq2> matches = new List<TermFreq2>();
 
                 // "Analyze" the key:
-                string[] tokens = prefix.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] tokens = prefix.Split(' ').TrimEnd();
                 StringBuilder builder = new StringBuilder();
                 bool lastRemoved = false;
                 for (int i = 0; i < tokens.Length; i++)

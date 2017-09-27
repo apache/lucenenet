@@ -1,5 +1,4 @@
 using Lucene.Net.Support;
-using System;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Lucene.Net.Search
@@ -25,9 +24,6 @@ namespace Lucene.Net.Search
     /// Represents hits returned by 
     /// <see cref="IndexSearcher.Search(Query, Filter, int, Sort)"/>.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TopFieldDocs : TopDocs
     {
         /// <summary>

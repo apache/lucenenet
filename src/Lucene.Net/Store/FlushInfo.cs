@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Store
 {
     /*
@@ -23,9 +21,6 @@ namespace Lucene.Net.Store
     /// <para>A FlushInfo provides information required for a FLUSH context.
     /// It is used as part of an <see cref="IOContext"/> in case of FLUSH context.</para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class FlushInfo
     {
         public int NumDocs { get; private set; }

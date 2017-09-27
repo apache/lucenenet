@@ -2,6 +2,7 @@
 using Lucene.Net.Store;
 using System;
 using System.IO;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Misc
 {
@@ -60,7 +61,6 @@ namespace Lucene.Net.Misc
         // LUCENENET specific - our wrapper console shows the correct usage
         //private static void Usage()
         //{
-        //    // LUCENENET TODO: Usage info is dependant on packaging this into a standalone console application
         //    Console.WriteLine("\n\nusage:\n\t" + "java " + typeof(GetTermInfo).FullName + " <index dir> field term \n\n");
         //}
     }

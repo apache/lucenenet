@@ -40,6 +40,9 @@ namespace Lucene.Net.Util
     [Serializable]
 #endif
     public sealed class BytesRef : IComparable<BytesRef>, IComparable // LUCENENET specific - implemented IComparable for FieldComparator
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         /// <summary>
         /// An empty byte array for convenience </summary>

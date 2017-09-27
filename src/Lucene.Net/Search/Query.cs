@@ -49,6 +49,9 @@ namespace Lucene.Net.Search
     [Serializable]
 #endif
     public abstract class Query
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         // LUCENENET NOTE: We can't set the default boost in the constructor because the
         // Boost property can be overridden by subclasses (and possibly throw exceptions).

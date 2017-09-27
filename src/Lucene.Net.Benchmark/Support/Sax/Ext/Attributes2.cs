@@ -39,7 +39,7 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="index">The attribute index (zero-based).</param>
         /// <returns>true if the attribute was declared in the DTD, false otherwise.</returns>
-        /// <exception cref="IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
+        /// <exception cref="System.IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
         bool IsDeclared(int index);
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="qName">The XML qualified (prefixed) name.</param>
         /// <returns>true if the attribute was declared in the DTD, false otherwise.</returns>
-        /// <exception cref="ArgumentException">When the supplied name does not identify an attribute.</exception>
+        /// <exception cref="System.ArgumentException">When the supplied name does not identify an attribute.</exception>
         bool IsDeclared(string qName);
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Sax.Ext
         /// <param name="uri">The Namespace URI, or the empty string if the name has no Namespace URI.</param>
         /// <param name="localName">The attribute's local name.</param>
         /// <returns>true if the attribute was declared in the DTD, false otherwise.</returns>
-        /// <exception cref="ArgumentException">When the supplied names do not identify an attribute.</exception>
+        /// <exception cref="System.ArgumentException">When the supplied names do not identify an attribute.</exception>
         bool IsDeclared(string uri, string localName);
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="index">The attribute index (zero-based).</param>
         /// <returns>true if the value was found in the XML text, false if the value was provided by DTD defaulting.</returns>
-        /// <exception cref="IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
+        /// <exception cref="System.IndexOutOfRangeException">When the supplied index does not identify an attribute.</exception>
         bool IsSpecified(int index);
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Sax.Ext
         /// <param name="uri">The Namespace URI, or the empty string if the name has no Namespace URI.</param>
         /// <param name="localName">The attribute's local name.</param>
         /// <returns>true if the value was found in the XML text, false if the value was provided by DTD defaulting.</returns>
-        /// <exception cref="ArgumentException">When the supplied names do not identify an attribute.</exception>
+        /// <exception cref="System.ArgumentException">When the supplied names do not identify an attribute.</exception>
         bool IsSpecified(string uri, string localName);
 
         /// <summary>
@@ -102,7 +102,7 @@ namespace Sax.Ext
         /// </summary>
         /// <param name="qName">The XML qualified (prefixed) name.</param>
         /// <returns>true if the value was found in the XML text, false if the value was provided by DTD defaulting.</returns>
-        /// <exception cref="ArgumentException">When the supplied name does not identify an attribute.</exception>
+        /// <exception cref="System.ArgumentException">When the supplied name does not identify an attribute.</exception>
         bool IsSpecified(string qName);
     }
 }

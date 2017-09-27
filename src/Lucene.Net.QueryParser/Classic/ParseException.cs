@@ -1,7 +1,7 @@
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics.CodeAnalysis;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 using System.Text;
@@ -25,19 +25,21 @@ namespace Lucene.Net.QueryParsers.Classic
      * limitations under the License.
      */
 
-	/// <summary> 
+    /// <summary> 
     /// This exception is thrown when parse errors are encountered.
-	/// You can explicitly create objects of this exception type by
-	/// calling the method GenerateParseException in the generated
-	/// parser.
-	/// 
-	/// You can modify this class to customize your error reporting
-	/// mechanisms so long as you retain the public fields.
-	/// </summary>
-#if FEATURE_SERIALIZABLE
+    /// You can explicitly create objects of this exception type by
+    /// calling the method GenerateParseException in the generated
+    /// parser.
+    /// 
+    /// You can modify this class to customize your error reporting
+    /// mechanisms so long as you retain the public fields.
+    /// </summary>
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
-	public class ParseException : Exception
+    public class ParseException : Exception
 	{
         /// <summary>
         /// This constructor is used by the method GenerateParseException()
@@ -76,7 +78,7 @@ namespace Lucene.Net.QueryParsers.Classic
             : base(message, innerException)
         { }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

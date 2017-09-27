@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Analysis.TokenAttributes
 {
     /*
@@ -24,9 +22,6 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IKeywordAttribute"/>. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public sealed class KeywordAttribute : Attribute, IKeywordAttribute
     {
         private bool keyword;

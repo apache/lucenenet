@@ -608,7 +608,7 @@ namespace Lucene.Net.Expressions.JS
             {
                 foreach (var property in GetDefaultSettings())
                 {
-                    string[] vals = property.Value.Split(',');
+                    string[] vals = property.Value.Split(',').TrimEnd();
                     if (vals.Length != 3)
                     {
                         throw new Exception("Error reading Javascript functions from settings");

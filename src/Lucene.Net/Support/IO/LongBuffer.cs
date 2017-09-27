@@ -36,9 +36,6 @@ namespace Lucene.Net.Support.IO
     ///     buffer</description></item>
     /// </list>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class Int64Buffer : Buffer, IComparable<Int64Buffer>
     {
         /// <summary>

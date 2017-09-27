@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
@@ -22,9 +21,6 @@ namespace Lucene.Net.Support
 	 * limitations under the License.
 	 */
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class IdentityComparer<T> : IEqualityComparer<T>
     {
         public bool Equals(T x, T y)
@@ -38,9 +34,6 @@ namespace Lucene.Net.Support
         }
     }
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class IdentityComparer : IEqualityComparer
     {
         public new bool Equals(object x, object y)

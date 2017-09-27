@@ -3,7 +3,7 @@ using Lucene.Net.Search;
 using Lucene.Net.Util;
 using Lucene.Net.Util.Mutable;
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -205,8 +205,9 @@ namespace Lucene.Net.Queries.Function.DocValues
         /// <summary>
         /// Custom <see cref="Exception"/> to be thrown when the DocTermsIndex for a field cannot be generated
         /// </summary>
-        // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+        // LUCENENET: It is no longer good practice to use binary serialization. 
+        // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
         public sealed class DocTermsIndexException : Exception
@@ -214,15 +215,15 @@ namespace Lucene.Net.Queries.Function.DocValues
             public DocTermsIndexException(string fieldName, Exception cause)
                 : base("Can't initialize DocTermsIndex to generate (function) FunctionValues for field: " + fieldName, cause)
             {
-            }
+            }  
 
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
             // For testing
-            internal DocTermsIndexException(string message)
+            public DocTermsIndexException(string message)
                 : base(message)
             {
             }
 
-#if FEATURE_SERIALIZABLE
             /// <summary>
             /// Initializes a new instance of this class with serialized data.
             /// </summary>

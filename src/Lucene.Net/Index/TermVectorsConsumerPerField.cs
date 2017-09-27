@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using Lucene.Net.Support;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -29,9 +30,6 @@ namespace Lucene.Net.Index
     using RamUsageEstimator = Lucene.Net.Util.RamUsageEstimator;
     using TermVectorsWriter = Lucene.Net.Codecs.TermVectorsWriter;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class TermVectorsConsumerPerField : TermsHashConsumerPerField
     {
         internal readonly TermsHashPerField termsHashPerField;
@@ -150,6 +148,7 @@ namespace Lucene.Net.Index
             return doVectors;
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public void Abort()
         {
         }
@@ -170,6 +169,7 @@ namespace Lucene.Net.Index
             termsWriter.AddFieldToFlush(this);
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         internal void FinishDocument()
         {
             Debug.Assert(docState.TestPoint("TermVectorsTermsWriterPerField.finish start"));
@@ -331,9 +331,6 @@ namespace Lucene.Net.Index
             return new TermVectorsPostingsArray(size);
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal sealed class TermVectorsPostingsArray : ParallelPostingsArray
         {
             public TermVectorsPostingsArray(int size)

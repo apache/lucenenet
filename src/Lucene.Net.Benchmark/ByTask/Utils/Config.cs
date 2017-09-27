@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Utils
 {
@@ -137,14 +138,14 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
 
         private void PrintProps()
         {
-            SystemConsole.WriteLine("------------> config properties:");
+            Console.WriteLine("------------> config properties:");
             List<string> propKeys = new List<string>(props.Keys);
             propKeys.Sort();
             foreach (string propName in propKeys)
             {
-                SystemConsole.WriteLine(propName + " = " + props[propName]);
+                Console.WriteLine(propName + " = " + props[propName]);
             }
-            SystemConsole.WriteLine("-------------------------------");
+            Console.WriteLine("-------------------------------");
         }
 
         /// <summary>
@@ -376,9 +377,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Utils
                 }
             }
 
-            SystemConsole.WriteLine();
-            SystemConsole.WriteLine(sb.ToString());
-            SystemConsole.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine(sb.ToString());
+            Console.WriteLine();
 
             return roundNumber;
         }

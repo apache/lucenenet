@@ -37,7 +37,7 @@ namespace Lucene.Net.Analysis.Synonym
 
         internal static IList<string> Strings(string str)
         {
-            string[] arr = str.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            string[] arr = str.Split(' ').TrimEnd();
             return Arrays.AsList(arr);
         }
 
@@ -277,12 +277,12 @@ namespace Lucene.Net.Analysis.Synonym
         [Obsolete("(3.0) does not support attributes api")]
         private IList<Token> Tokens(string str)
         {
-            string[] arr = str.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+            string[] arr = str.Split(' ').TrimEnd();
             IList<Token> result = new List<Token>();
             for (int i = 0; i < arr.Length; i++)
             {
-                string[] toks = arr[i].Split(new string[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
-                string[] @params = toks[0].Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                string[] toks = arr[i].Split('/').TrimEnd();
+                string[] @params = toks[0].Split(',').TrimEnd();
 
                 int posInc;
                 int start;

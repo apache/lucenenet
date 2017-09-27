@@ -26,6 +26,9 @@ using System.Linq;
 
 namespace Lucene.Net.Support
 {
+#if FEATURE_SERIALIZABLE
+    [Serializable]
+#endif
     public sealed class WeakDictionary<TKey, TValue> : IDictionary<TKey, TValue> where TKey : class 
     {
         private HashMap<WeakKey<TKey>, TValue> _hm;

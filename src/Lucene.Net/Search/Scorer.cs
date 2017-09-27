@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search
@@ -41,9 +40,6 @@ namespace Lucene.Net.Search
     /// with these scores.
     /// </para>
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class Scorer : DocsEnum
     {
         /// <summary>
@@ -96,9 +92,6 @@ namespace Lucene.Net.Search
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class ChildScorer
         {
             /// <summary>

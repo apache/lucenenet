@@ -2,6 +2,7 @@ using Lucene.Net.Analysis.TokenAttributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Index
 {
@@ -28,9 +29,6 @@ namespace Lucene.Net.Index
     using Counter = Lucene.Net.Util.Counter;
     using Int32BlockPool = Lucene.Net.Util.Int32BlockPool;
 
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     internal sealed class TermsHashPerField : InvertedDocConsumerPerField
     {
         private const int HASH_INIT_SIZE = 4;
@@ -102,6 +100,7 @@ namespace Lucene.Net.Index
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override void Abort()
         {
             Reset();
@@ -338,9 +337,6 @@ namespace Lucene.Net.Index
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private sealed class PostingsBytesStartArray : BytesRefHash.BytesStartArray
         {
             private readonly TermsHashPerField perField;

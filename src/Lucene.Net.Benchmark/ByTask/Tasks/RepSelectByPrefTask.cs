@@ -1,8 +1,8 @@
 ﻿using Lucene.Net.Benchmarks.ByTask.Stats;
-using Lucene.Net.Support;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Benchmarks.ByTask.Tasks
 {
@@ -39,11 +39,11 @@ namespace Lucene.Net.Benchmarks.ByTask.Tasks
         {
             Report rp = ReportSelectByPrefix(RunData.Points.TaskStats);
 
-            SystemConsole.WriteLine();
-            SystemConsole.WriteLine("------------> Report Select By Prefix (" + m_prefix + ") (" +
+            Console.WriteLine();
+            Console.WriteLine("------------> Report Select By Prefix (" + m_prefix + ") (" +
                 rp.Count + " about " + rp.Reported + " out of " + rp.OutOf + ")");
-            SystemConsole.WriteLine(rp.Text);
-            SystemConsole.WriteLine();
+            Console.WriteLine(rp.Text);
+            Console.WriteLine();
 
             return 0;
         }

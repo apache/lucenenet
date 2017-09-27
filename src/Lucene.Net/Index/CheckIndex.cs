@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -58,9 +59,6 @@ namespace Lucene.Net.Index
     /// <para/>
     /// @lucene.experimental
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class CheckIndex
     {
         private TextWriter infoStream;
@@ -71,9 +69,6 @@ namespace Lucene.Net.Index
         /// <para/>
         /// @lucene.experimental
         /// </summary>
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         public class Status
         {
             internal Status()
@@ -164,9 +159,6 @@ namespace Lucene.Net.Index
             /// <para/>
             /// @lucene.experimental
             /// </summary>
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             public class SegmentInfoStatus
             {
                 internal SegmentInfoStatus()
@@ -273,9 +265,6 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Status from testing field norms.
             /// </summary>
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             public sealed class FieldNormStatus
             {
                 internal FieldNormStatus()
@@ -297,9 +286,6 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Status from testing term index.
             /// </summary>
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             public sealed class TermIndexStatus
             {
                 internal TermIndexStatus()
@@ -345,9 +331,6 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Status from testing stored fields.
             /// </summary>
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             public sealed class StoredFieldStatus
             {
                 internal StoredFieldStatus()
@@ -374,9 +357,6 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Status from testing stored fields.
             /// </summary>
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             public sealed class TermVectorStatus
             {
                 internal TermVectorStatus()
@@ -403,9 +383,6 @@ namespace Lucene.Net.Index
             /// <summary>
             /// Status from testing <see cref="DocValues"/>
             /// </summary>
-#if FEATURE_SERIALIZABLE
-            [Serializable]
-#endif
             public sealed class DocValuesStatus
             {
                 internal DocValuesStatus()

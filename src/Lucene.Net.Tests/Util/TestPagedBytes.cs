@@ -38,11 +38,7 @@ namespace Lucene.Net.Util
         // Writes random byte/s to "normal" file in dir, then
         // copies into PagedBytes and verifies with
         // PagedBytes.Reader:
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(90000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestDataInputOutput()
         {
             Random random = Random();
@@ -119,11 +115,7 @@ namespace Lucene.Net.Util
         // Writes random byte/s into PagedBytes via
         // .getDataOutput(), then verifies with
         // PagedBytes.getDataInput():
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(90000)]
-#endif
-        [Test, LongRunningTest, HasTimeout]
+        [Test, LongRunningTest]
         public virtual void TestDataInputOutput2()
         {
             Random random = Random();
@@ -189,11 +181,7 @@ namespace Lucene.Net.Util
 
         [Ignore("// memory hole")] 
         [Test]
-#if !NETSTANDARD
-        // LUCENENET: There is no Timeout on NUnit for .NET Core.
-        [Timeout(120000)]
-#endif
-        [LongRunningTest, HasTimeout]
+        [LongRunningTest]
         public virtual void TestOverflow()
         {
             BaseDirectoryWrapper dir = NewFSDirectory(CreateTempDir("testOverflow"));

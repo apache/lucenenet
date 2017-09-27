@@ -1,5 +1,5 @@
 using System;
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
 using System.Runtime.Serialization;
 #endif
 
@@ -30,8 +30,9 @@ namespace Lucene.Net.Search
     /// <see cref="IndexSearcher.Search(Weight, FieldDoc, int, Sort, bool, bool, bool)"/> as it is unnecessary and might hide misuse
     /// of this exception.
     /// </summary>
-    // LUCENENET: All exeption classes should be marked serializable
-#if FEATURE_SERIALIZABLE
+    // LUCENENET: It is no longer good practice to use binary serialization. 
+    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
     [Serializable]
 #endif
     public sealed class CollectionTerminatedException : Exception
@@ -43,7 +44,7 @@ namespace Lucene.Net.Search
         {
         }
 
-#if FEATURE_SERIALIZABLE
+#if FEATURE_SERIALIZABLE_EXCEPTIONS
         /// <summary>
         /// Initializes a new instance of this class with serialized data.
         /// </summary>

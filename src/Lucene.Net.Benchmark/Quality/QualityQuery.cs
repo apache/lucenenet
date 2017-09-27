@@ -29,7 +29,7 @@ namespace Lucene.Net.Benchmarks.Quality
     /// The ID allows to map the quality query with its judgements.
     /// <para/>
     /// The name-value pairs are used by a 
-    /// <see cref="QualityQueryParser"/>
+    /// <see cref="IQualityQueryParser"/>
     /// to create a Lucene <see cref="Search.Query"/>.
     /// <para/>
     /// It is very likely that name-value-pairs would be mapped into fields in a Lucene query,

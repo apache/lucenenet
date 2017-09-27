@@ -1,6 +1,7 @@
 ﻿using Lucene.Net.Store;
 using System;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Lucene.Net.Util.Fst
 {
@@ -293,6 +294,7 @@ namespace Lucene.Net.Util.Fst
             return output.ToString();
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
         public override object Merge(object first, object second)
         {
             Debug.Assert(Valid(first, false));

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace Lucene.Net.Search.Spans
@@ -27,9 +26,6 @@ namespace Lucene.Net.Search.Spans
 
     /// <summary>
     /// Base class for span-based queries. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public abstract class SpanQuery : Query
     {
         /// <summary>

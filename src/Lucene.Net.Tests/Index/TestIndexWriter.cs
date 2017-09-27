@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -319,6 +320,7 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestSmallRAMBuffer()
         {
+
             Directory dir = NewDirectory();
             IndexWriter writer = new IndexWriter(dir, NewIndexWriterConfig(TEST_VERSION_CURRENT, new MockAnalyzer(Random())).SetRAMBufferSizeMB(0.000001).SetMergePolicy(NewLogMergePolicy(10)));
             int lastNumFile = dir.ListAll().Length;
@@ -776,7 +778,7 @@ namespace Lucene.Net.Index
             dir.Dispose();
         }
 
-#if !NETSTANDARD //NOTE: Cannot set ThreadPriority in .NET Core.
+#if !NETSTANDARD1_5 //NOTE: Cannot set ThreadPriority in .NET Core.
         // LUCENE-1036
         [Test]
         public virtual void TestMaxThreadPriority()
@@ -1141,6 +1143,7 @@ namespace Lucene.Net.Index
 
             internal volatile bool Failed;
             internal volatile bool Finish;
+            internal volatile Exception Exception;
 
             internal volatile bool AllowInterrupt = false;
             internal readonly Random Random;
@@ -1308,7 +1311,7 @@ namespace Lucene.Net.Index
                             AllowInterrupt = true;
                         }
                     }
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                     catch (ThreadInterruptedException re)
                     {
                         // NOTE: important to leave this verbosity/noise
@@ -1316,9 +1319,15 @@ namespace Lucene.Net.Index
                         // Jenkins hits a fail we need to study where the
                         // interrupts struck!
                         Console.WriteLine("TEST: got interrupt");
-                        Console.WriteLine(re.StackTrace);
-                        Exception e = re.InnerException;
-                        Assert.IsTrue(e is ThreadInterruptedException);
+                        Console.WriteLine(re.ToString());
+
+                        // LUCENENET NOTE: Since our original exception is ThreadInterruptException instead of InterruptException
+                        // in .NET, our expectation is typically that the InnerException is null (but it doesn't have to be).
+                        // So, this assertion is not needed in .NET. And if we get to this catch block, we already know we have
+                        // the right exception type, so there is nothing to test here. Besides, this throws an assertion that would
+                        // crash the test framework anyway.
+                        //Exception e = re.InnerException;
+                        //Assert.IsTrue(e is ThreadInterruptedException);
                         if (Finish)
                         {
                             break;
@@ -1328,7 +1337,7 @@ namespace Lucene.Net.Index
                     catch (Exception t)
                     {
                         Console.WriteLine("FAILED; unexpected exception");
-                        Console.WriteLine(t.StackTrace);
+                        Console.WriteLine(t.ToString());
                         Failed = true;
                         break;
                     }
@@ -1348,9 +1357,25 @@ namespace Lucene.Net.Index
                         {
                             w.Rollback();
                         }
+#if !NETSTANDARD1_5
+                        // LUCENENET TODO: Is this the right decision here, or is IndexWriter
+                        // supposed to swallow ThreadInterruptedException?
+
+                        // LUCENENET specific - there is a chance that our thread will be
+                        // interrupted here, so we need to catch and ignore that exception
+                        // when our MockDirectoryWrapper throws it.
+                        catch (ThreadInterruptedException)
+                        {
+                            // ignore
+                        }
+#endif
                         catch (IOException ioe)
                         {
-                            throw new Exception(ioe.ToString(), ioe);
+                            //throw new Exception(ioe.ToString(), ioe);
+                            // LUCENENET specific - throwing the exception on
+                            // a background thread will crash the runner, so we
+                            // need to store and throw it from the test.
+                            this.Exception = ioe;
                         }
                     }
 
@@ -1362,7 +1387,7 @@ namespace Lucene.Net.Index
                     {
                         Failed = true;
                         Console.WriteLine("CheckIndex FAILED: unexpected exception");
-                        Console.WriteLine(e.StackTrace);
+                        Console.WriteLine(e.ToString());
                     }
                     try
                     {
@@ -1374,7 +1399,7 @@ namespace Lucene.Net.Index
                     {
                         Failed = true;
                         Console.WriteLine("DirectoryReader.open FAILED: unexpected exception");
-                        Console.WriteLine(e.StackTrace);
+                        Console.WriteLine(e.ToString());
                     }
                 }
                 try
@@ -1383,7 +1408,11 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.ToString(), e);
+                    //throw new Exception(e.ToString(), e);
+                    // LUCENENET specific - throwing the exception on
+                    // a background thread will crash the runner, so we
+                    // need to store and throw it from the test.
+                    this.Exception = e;
                 }
                 try
                 {
@@ -1391,7 +1420,11 @@ namespace Lucene.Net.Index
                 }
                 catch (IOException e)
                 {
-                    throw new Exception(e.ToString(), e);
+                    //throw new Exception(e.ToString(), e);
+                    // LUCENENET specific - throwing the exception on
+                    // a background thread will crash the runner, so we
+                    // need to store and throw it from the test.
+                    this.Exception = e;
                 }
             }
         }
@@ -1399,6 +1432,16 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestThreadInterruptDeadlock()
         {
+#if DEBUG
+#if NETSTANDARD1_5
+            fail("LUCENENET TODO: Uncaught exceptions on background thread causing test runner crash");
+#endif
+#endif
+
+#if NETCOREAPP2_0
+            fail("LUCENENET TODO: Uncaught exceptions on background thread causing test runner crash");
+#endif
+
             IndexerThreadInterrupt t = new IndexerThreadInterrupt(this);
             t.SetDaemon(true);
             t.Start();
@@ -1429,6 +1472,10 @@ namespace Lucene.Net.Index
             }
             t.Finish = true;
             t.Join();
+
+            // LUCENENET specific - if our background thread had an exception,
+            // we need to report it here on the main thread.
+            Assert.IsNull(t.Exception, t.Exception?.ToString());
             Assert.IsFalse(t.Failed);
         }
 
@@ -1437,6 +1484,10 @@ namespace Lucene.Net.Index
         [Test]
         public virtual void TestTwoThreadsInterruptDeadlock()
         {
+#if NETCOREAPP2_0
+            fail("LUCENENET TODO: Uncaught exceptions on background thread causing test runner crash");
+#endif
+
             IndexerThreadInterrupt t1 = new IndexerThreadInterrupt(this);
             t1.SetDaemon(true);
             t1.Start();
@@ -1475,7 +1526,15 @@ namespace Lucene.Net.Index
             t2.Finish = true;
             t1.Join();
             t2.Join();
+
+            // LUCENENET specific - if our background thread had an exception,
+            // we need to report it here on the main thread.
+            Assert.IsNull(t1.Exception, t1.Exception?.ToString());
             Assert.IsFalse(t1.Failed);
+
+            // LUCENENET specific - if our background thread had an exception,
+            // we need to report it here on the main thread.
+            Assert.IsNull(t2.Exception, t2.Exception?.ToString());
             Assert.IsFalse(t2.Failed);
         }
 
@@ -1939,7 +1998,7 @@ namespace Lucene.Net.Index
                 {
                     b.Append(buffer, 0, n);
                 }
-                this.Tokens = b.ToString().Split(' ');
+                this.Tokens = b.ToString().Split(' ').TrimEnd();
             }
         }
 

@@ -27,7 +27,7 @@ namespace Lucene.Net.QueryParsers.Surround.Query
     /// </summary>
     public abstract class SrndQuery
 #if FEATURE_CLONEABLE
-    : ICloneable
+        : System.ICloneable
 #endif
     {
         //public SrndQuery() { }

@@ -6,6 +6,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Threading;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
@@ -200,12 +201,12 @@ namespace Lucene.Net.Index
 
             public override void Run()
             {
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 try
                 {
 #endif
                     Latch.Wait();
-#if !NETSTANDARD
+#if !NETSTANDARD1_5
                 }
                 catch (ThreadInterruptedException e)
                 {

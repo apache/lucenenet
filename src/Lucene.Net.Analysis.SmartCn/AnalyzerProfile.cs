@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Security;
+using Lucene.Net.Support;
 
 namespace Lucene.Net.Analysis.Cn.Smart
 {
@@ -68,11 +69,11 @@ namespace Lucene.Net.Analysis.Cn.Smart
 
             // Try the system property：-Danalysis.data.dir=/path/to/analysis-data
             //ANALYSIS_DATA_DIR = System.getProperty("analysis.data.dir", "");
-            ANALYSIS_DATA_DIR = GetSystemProperty("analysis.data.dir", "");
+            ANALYSIS_DATA_DIR = SystemProperties.GetProperty("analysis.data.dir", "");
             if (ANALYSIS_DATA_DIR.Length != 0)
                 return;
 
-#if NETSTANDARD
+#if NETSTANDARD1_5
             string currentPath = System.AppContext.BaseDirectory;
 #else
             string currentPath = AppDomain.CurrentDomain.BaseDirectory;
@@ -165,20 +166,5 @@ namespace Lucene.Net.Analysis.Cn.Smart
         //        return "";
         //    }
         //}
-
-        private static string GetSystemProperty(string property, string defaultValue)
-        {
-            string setting;
-            try
-            {
-                setting = Environment.GetEnvironmentVariable(property);
-            }
-            catch (SecurityException)
-            {
-                setting = null;
-            }
-
-            return (setting == null) ? defaultValue : setting;
-        }
     }
 }

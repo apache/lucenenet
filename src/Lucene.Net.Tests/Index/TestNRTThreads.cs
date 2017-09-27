@@ -1,12 +1,13 @@
+using Lucene.Net.Randomized.Generators;
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Console = Lucene.Net.Support.SystemConsole;
 
 namespace Lucene.Net.Index
 {
-    using Lucene.Net.Randomized.Generators;
-    using NUnit.Framework;
-    using System.Collections.Generic;
     using Directory = Lucene.Net.Store.Directory;
 
     /*

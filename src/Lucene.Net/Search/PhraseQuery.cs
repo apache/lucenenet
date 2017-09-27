@@ -63,9 +63,6 @@ namespace Lucene.Net.Search
     /// as the method to use to initialize. If there are multiple parameters, each parameter set
     /// must be surrounded by curly braces.
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PhraseQuery : Query, IEnumerable<Term> // LUCENENET specific - implemented IEnumerable<Term>, which allows for use of collection initializer. See: https://stackoverflow.com/a/9195144
     {
         private string field;
@@ -192,9 +189,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         internal class PostingsAndFreq : IComparable<PostingsAndFreq>
         {
             internal readonly DocsAndPositionsEnum postings;
@@ -302,9 +296,6 @@ namespace Lucene.Net.Search
             }
         }
 
-#if FEATURE_SERIALIZABLE
-        [Serializable]
-#endif
         private class PhraseWeight : Weight
         {
             private readonly PhraseQuery outerInstance;

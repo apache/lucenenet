@@ -46,9 +46,9 @@ namespace Lucene.Net.Analysis.Ja.Util
         /// <param name="characterClassName">Character class name.</param>
         public void PutCharacterCategory(int codePoint, string characterClassName)
         {
-            characterClassName = characterClassName.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[0]; // use first
-                                                                                                                         // category
-                                                                                                                         // class
+            characterClassName = characterClassName.Split(' ')[0]; // use first
+                                                                    // category
+                                                                    // class
 
             // Override Nakaguro
             if (codePoint == 0x30FB)

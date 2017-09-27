@@ -30,7 +30,7 @@ namespace Lucene.Net.Benchmarks.ByTask.Feeds
         /// </summary>
         /// <param name="size">The size of the query - number of terms, etc.</param>
         /// <returns></returns>
-        /// <exception cref="Exception">If cannot make the query, or if size > 0 was specified but this feature is not supported.</exception>
+        /// <exception cref="System.Exception">If cannot make the query, or if size > 0 was specified but this feature is not supported.</exception>
         Query MakeQuery(int size);
 
         /// <summary>Create the next query</summary>

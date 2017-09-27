@@ -34,8 +34,8 @@ namespace Lucene.Net.Support
     [Serializable]
 #endif
     public class EquatableList<T> : IList<T>, IEquatable<IList<T>>
-#if !NETSTANDARD
-        , ICloneable
+#if FEATURE_CLONEABLE
+        , System.ICloneable
 #endif
     {
         private readonly IList<T> list;

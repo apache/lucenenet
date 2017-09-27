@@ -30,6 +30,9 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
     /// each run would create its own TaskStats.
     /// </summary>
     public class TaskStats
+#if FEATURE_CLONEABLE
+        : System.ICloneable
+#endif
     {
         /// <summary>Task for which data was collected.</summary>
         private PerfTask task;
@@ -215,9 +218,6 @@ namespace Lucene.Net.Benchmarks.ByTask.Stats
             }
         }
 
-#if FEATURE_CLONEABLE
-        /// <seealso cref="ICloneable.Clone()"/>
-#endif
         public virtual object Clone()
         {
             TaskStats c = (TaskStats)base.MemberwiseClone();

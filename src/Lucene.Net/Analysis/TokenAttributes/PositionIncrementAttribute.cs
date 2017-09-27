@@ -24,10 +24,10 @@ namespace Lucene.Net.Analysis.TokenAttributes
 
     /// <summary>
     /// Default implementation of <see cref="IPositionIncrementAttribute"/>. </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class PositionIncrementAttribute : Attribute, IPositionIncrementAttribute
+#if FEATURE_CLONEABLE
+        , System.ICloneable
+#endif
     {
         private int positionIncrement = 1;
 

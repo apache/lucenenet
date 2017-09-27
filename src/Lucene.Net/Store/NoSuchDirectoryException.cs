@@ -28,8 +28,9 @@
 //    /// This exception is thrown when you try to list a
 //    /// non-existent directory.
 //    /// </summary>
-//    // LUCENENET: All exeption classes should be marked serializable
-//#if FEATURE_SERIALIZABLE
+//    // LUCENENET: It is no longer good practice to use binary serialization. 
+//    // See: https://github.com/dotnet/corefx/issues/23584#issuecomment-325724568
+//#if FEATURE_SERIALIZABLE_EXCEPTIONS
 //    [Serializable]
 //#endif
 //    public class NoSuchDirectoryException : FileNotFoundException

@@ -1,5 +1,3 @@
-using System;
-
 namespace Lucene.Net.Search
 {
     /*
@@ -35,9 +33,6 @@ namespace Lucene.Net.Search
     /// <para/>
     /// @since 2.9
     /// </summary>
-#if FEATURE_SERIALIZABLE
-    [Serializable]
-#endif
     public class TermRangeFilter : MultiTermQueryWrapperFilter<TermRangeQuery>
     {
         /// <param name="fieldName"> The field this range applies to </param>
@@ -45,7 +40,7 @@ namespace Lucene.Net.Search
         /// <param name="upperTerm"> The upper bound on this range </param>
         /// <param name="includeLower"> Does this range include the lower bound? </param>
         /// <param name="includeUpper"> Does this range include the upper bound? </param>
-        /// <exception cref="ArgumentException"> if both terms are <c>null</c> or if
+        /// <exception cref="System.ArgumentException"> if both terms are <c>null</c> or if
         ///  lowerTerm is <c>null</c> and includeLower is <c>true</c> (similar for upperTerm
         ///  and includeUpper) </exception>
         public TermRangeFilter(string fieldName, BytesRef lowerTerm, BytesRef upperTerm, bool includeLower, bool includeUpper)
