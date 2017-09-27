@@ -103,7 +103,7 @@
           "files": [
             "Lucene.Net.Analysis.Common/Lucene.Net.Analysis.Common.csproj",
             "Lucene.Net.Analysis.Stempel/Lucene.Net.Analysis.Stempel.csproj",
-            "Lucene.Net.Analysis.SmartCn/project.json",
+            "Lucene.Net.Analysis.SmartCn/Lucene.Net.Tests.Analysis.SmartCn.csproj",
             "Lucene.Net.Analysis.Phonetic/Lucene.Net.Analysis.Phonetic.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
@@ -179,39 +179,17 @@
             "Lucene.Net.ICU/Lucene.Net.ICU.csproj"
           ],
           "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
+          "cwd": "../src/dotnet"
         }
       ],
       "dest": "api/Lucene.Net.ICU"
-    },    
-    {
-      "src": [
-        {
-          "files": [
-            "Lucene.Net.ICU/Lucene.Net.ICU.csproj"
-          ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
-        }
-      ],
-      "dest": "api/Lucene.Net.ICU"
-    },
-    {
-      "src": [
-        {
-          "files": [
-            "tools/lucene-cli/project.json"
-          ],
-          "exclude": ["**/obj/**", "**/bin/**", "_site/**", "**/Lucene.Net.Test*/**"],
-          "cwd": "../src"
-        }
-      ],
-      "dest": "api/Lucene.Net.CLI"
     }
   ],
   "build": {
     "content": [
-     
+      {
+        "files": ["api/**.yml", "api/index.md"] 
+      },
       {
         "files": ["*.md", "*.yml", "**/*.md", "**/*.yml"],
         "src": "../src/dotnet/tools/lucene-cli/docs",
