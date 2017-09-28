@@ -121,19 +121,20 @@ else {
 #				For these ones, could we go fetch them and download all *.html files from Git?
 
 $DocFxJson = Join-Path -Path $RepoRoot "apidocs\docfx.json"
+$DocFxLog = Join-Path -Path $RepoRoot "apidocs\obj\docfx.log"
 
 Write-Host "Building metadata..."
 if ($Clean -eq 1) {
-	& $DocFxExe metadata $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel --force
+	& $DocFxExe metadata $DocFxJson -l "$DocFxLog" --loglevel $LogLevel --force
 }
 else {
-	& $DocFxExe metadata $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel
+	& $DocFxExe metadata $DocFxJson -l "$DocFxLog" --loglevel $LogLevel
 }
 if($?) { 
 	if ($ServeDocs -eq 0){
 		# build the output		
 		Write-Host "Building docs..."
-		& $DocFxExe build $DocFxJson -l "obj\docfx.log" --loglevel $LogLevel
+		& $DocFxExe build $DocFxJson -l "$DocFxLog" --loglevel $LogLevel
 	}
 	else {
 		# build + serve (for testing)
