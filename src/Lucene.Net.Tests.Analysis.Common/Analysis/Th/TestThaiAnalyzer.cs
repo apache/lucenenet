@@ -131,7 +131,11 @@ namespace Lucene.Net.Analysis.Th
 
         /// <summary>
         /// blast some random strings through the analyzer </summary>
-        [Test]
+#if !NETSTANDARD
+         // LUCENENET: There is no Timeout on NUnit for .NET Core.		
+         [Timeout(120000)] // LUCENENET TODO: Sometimes doesn't finish on .NET 4.5.1		
+#endif
+        [Test, HasTimeout]
         public virtual void TestRandomStrings()
         {
 #if NETSTANDARD
@@ -143,7 +147,11 @@ namespace Lucene.Net.Analysis.Th
         /// <summary>
         /// blast some random large strings through the analyzer </summary>
         /// 
-        [Test]
+#if !NETSTANDARD
+         // LUCENENET: There is no Timeout on NUnit for .NET Core.		
+         [Timeout(120000)] // LUCENENET TODO: Sometimes doesn't finish on .NET 4.5.1		
+#endif
+        [Test, HasTimeout]
         public virtual void TestRandomHugeStrings()
         {
 #if NETSTANDARD
